@@ -51,7 +51,7 @@ class cachestore_mongodb_addinstance_form extends cachestore_addinstance_form {
         global $OUTPUT;
         $form = $this->_form;
 
-        if (!class_exists('MongoClient')) {
+        if (!version_compare(phpversion('mongodb'), '1.5', 'ge')) {
             $form->addElement('html', $OUTPUT->notification(get_string('pleaseupgrademongo', 'cachestore_mongodb')));
         }
 
