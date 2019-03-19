@@ -834,6 +834,7 @@ $string['usergrade'] = 'User {$a->fullname} ({$a->useridnumber}) on item {$a->gr
 $string['userid'] = 'User ID';
 $string['useridnumberwarning'] = 'Users without an ID number are excluded from the export as they cannot be imported';
 $string['usermappingerror'] = 'User mapping error: Could not find user with {$a->field} of "{$a->value}".';
+$string['usermappingerrormultipleusersfound'] = 'User mapping error: Multiple users found with {$a->field} of "{$a->value}". Please use a more unique mapping field.';
 $string['usermappingerrorusernotfound'] = 'User mapping error. Could not find user.';
 $string['usermappingerrorcurrentgroup'] = 'User is not a member of current group.';
 $string['userpreferences'] = 'User preferences';
