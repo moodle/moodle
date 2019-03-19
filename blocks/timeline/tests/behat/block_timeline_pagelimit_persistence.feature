@@ -35,9 +35,9 @@ Feature: The timeline block allows user persistence of their page limits
 
   Scenario: Toggle the page limit 5 - 25
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     And I click on "All" "link" in the "Timeline" "block"
-    And I click on "Sort" "button" in the "Timeline" "block"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by dates" "link" in the "Timeline" "block"
     When I click on "5" "button" in the "Timeline" "block"
     And I click on "25" "link"
@@ -48,9 +48,9 @@ Feature: The timeline block allows user persistence of their page limits
 
   Scenario: Toggle the page limit 25 - 5
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     And I click on "All" "link" in the "Timeline" "block"
-    And I click on "Sort" "button" in the "Timeline" "block"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by dates" "link" in the "Timeline" "block"
     When I click on "5" "button" in the "Timeline" "block"
     And I click on "25" "link"

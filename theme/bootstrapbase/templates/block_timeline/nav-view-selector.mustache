@@ -23,22 +23,22 @@
     {}
 }}
 <div data-region="view-selector" class="btn-group pull-right">
-    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} ariaviewselector, block_timeline{{/str}}" aria-controls="menusortby">
         {{#pix}} t/sort_by {{/pix}}
-        <span class="sr-only">
-            {{#str}} ariaviewselector, block_timeline{{/str}}
-            <span data-active-item-text>{{#str}} sortbydates, block_timeline {{/str}}</span>
-        </span>
         <span data-region="caret" class="caret"></span>
+        <span class="sr-only" data-active-item-text>
+            {{#sorttimelinecourses}}{{#str}} sortbycourses, block_timeline{{/str}}{{/sorttimelinecourses}}
+            {{#sorttimelinedates}}{{#str}} sortbydates, block_timeline {{/str}}{{/sorttimelinedates}}
+        </span>
     </button>
-    <ul role="menu" class="dropdown-menu dropdown-menu-right" data-show-active-item>
+    <ul id="menusortby" role="menu" class="dropdown-menu dropdown-menu-right" data-show-active-item>
         <li class="dropdown-item {{#sorttimelinedates}}active{{/sorttimelinedates}}" data-target="#view_dates_{{uniqid}}" data-toggle="tab" data-filtername="sortbydates">
-            <a href="#" aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbydates, block_timeline {{/str}}{{/str}}">
+            <a href="#" aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbydates, block_timeline {{/str}}{{/str}}" role="menuitem" {{#sorttimelinedates}}aria-current="true"{{/sorttimelinedates}}>
                 {{#str}} sortbydates, block_timeline {{/str}}
             </a>
         </li>
         <li class="dropdown-item {{#sorttimelinecourses}}active{{/sorttimelinecourses}}" data-target="#view_courses_{{uniqid}}" data-toggle="tab" data-filtername="sortbycourses">
-            <a href="#" aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbycourses, block_timeline {{/str}}{{/str}}">
+            <a href="#" aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbycourses, block_timeline {{/str}}{{/str}}" role="menuitem" {{#sorttimelinecourses}}aria-current="true"{{/sorttimelinecourses}}>
                 {{#str}} sortbycourses, block_timeline {{/str}}
             </a>
         </li>
