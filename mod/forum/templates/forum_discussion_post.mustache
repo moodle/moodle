@@ -31,7 +31,11 @@
 }}
 <article id="p{{id}}" class="relativelink mb-2" tabindex="-1" data-post-id="{{id}}">
 
-    <div class="d-flex border p-2 mb-2 forumpost {{#unread}}unread{{/unread}}">
+    <!-- The firstpost and starter classes below aren't used for anything other than to identify the first post in behat -->
+    <div
+        class="d-flex border p-2 mb-2 forumpost {{#unread}}unread{{/unread}} {{#firstpost}}firstpost starter{{/firstpost}}"
+        aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
+    >
         {{#isfirstunread}}<a id="unread"></a>{{/isfirstunread}}
         <div style="width: 45px;">
             {{^isdeleted}}

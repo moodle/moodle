@@ -194,6 +194,7 @@ class renderer {
                             unset($exportedpost->author);
                         }
 
+                        $exportedpost->firstpost = false;
                         $exportedpost->readonly = $readonly;
                         $exportedpost->hasreplies = false;
                         $exportedpost->replies = [];
@@ -226,6 +227,11 @@ class renderer {
                     $exportedfirstpost->replies = $exportedposts;
                     $exportedfirstpost->hasreplies = true;
                     $exportedposts = [$exportedfirstpost];
+                }
+
+                if (!empty($exportedposts)) {
+                    // Need to identify the first post so that we can use it in behat tests.
+                    $exportedposts[0]->firstpost = true;
                 }
 
                 return $exportedposts;
