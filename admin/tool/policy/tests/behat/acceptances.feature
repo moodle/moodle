@@ -82,7 +82,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
-    And I should not see "Next"
+    And I should see "Course overview"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "1 of 4 (25%)" "link" in the "This site policy" "table_row"
     And I click on "Accept This site policy" "link" in the "User One" "table_row"
