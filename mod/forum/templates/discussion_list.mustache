@@ -81,14 +81,15 @@
                 {{$discussion_list_body}}
                 <tbody>
                     {{#summaries}}
-                        <tr>
+                        <!-- The discussion class is only required for behat tests to identify the row -->
+                        <tr class="discussion">
                             <td scope="col" class="pinned p-0 text-center align-middle">
                                 {{#discussion.pinned}}
                                     {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
                                 {{/discussion.pinned}}
                             </td>
                             <td scope="col" class="topic p-0">
-                                <a class="p-3 p-l-0 w-100 h-100 d-block" href="{{discussion.urls.view}}">{{discussion.name}}</a>
+                                <a class="p-3 p-l-0 w-100 h-100 d-block" href="{{discussion.urls.view}}">{{{discussion.name}}}</a>
                             </td>
                             <td scope="col" class="author">
                                 {{#firstpostauthor}}

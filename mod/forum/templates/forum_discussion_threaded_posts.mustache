@@ -33,7 +33,8 @@
 {{#posts}}
     {{< mod_forum/forum_discussion_post }}
         {{$replies}}
-            <div class="indent">
+            <!-- The forumthread class is only added for behat -->
+            <div class="indent forumthread">
                 {{#replies}}
                     {{> mod_forum/forum_discussion_threaded_post }}
                 {{/replies}}
