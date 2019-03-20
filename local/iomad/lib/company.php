@@ -3419,6 +3419,14 @@ class company {
             return;
         }
 
+        // Deal with the human allocation.
+        if (empty($licenserecord->program)) {
+            $DB->set_field('companylicense', 'humanallocation', $licenserecord->allocation, array('id' => $licenseid));
+        } else {
+            $coursecount = $DB->count_records('companylicense_courses', array('licenseid' => $liceneid));
+            $DB->set_field('companylicense', 'humanallocation', $licenserecord->allocation / $coursecount, array('id' => $licenserecord->id));
+        }
+
         // Update the license usage.
         if (!empty($parentid)) {
             self::update_license_usage($parentid);
@@ -3554,9 +3562,6 @@ class company {
         // Deal with any children.
         if ($children = $DB->get_records('companylicense', array('parentid' => $licenseid))) {
             foreach ($children as $child) {
-                // Get the courses.
-                 $oldcourses = $DB->get_records('companylicense_courses', array('licenseid' => $child->id), null, 'courseid');
-
                 // Clear down all of them initially.
                 $DB->delete_records('companylicense_courses', array('licenseid' => $child->id));
                 if (!empty($currentcourses)) {
@@ -3574,6 +3579,13 @@ class company {
                         $allocation = $child->allocation / $old * $new;
                         $child->allocation = $allocation;
                     }
+                }
+
+                // Deal with the human allocation.
+                if (empty($child->program)) {
+                    $child->humanallocation  = $child->allocation;
+                } else {
+                    $child->humanallocation  = $child->allocation / $new;
                 }
 
                 // Did we change anything else about the license?

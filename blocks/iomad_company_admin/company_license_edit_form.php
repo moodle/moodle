@@ -428,7 +428,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
     redirect(new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));
 } else {
     if ( $data = $mform->get_data() ) {
-	global $DB, $USER;
+        global $DB, $USER;
 
         if (empty($data->instant)) {
             $data->instant = 0;
@@ -445,6 +445,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $licensedata['program'] = $data->program;
             $licensedata['allocation'] = $data->allocation * count($data->licensecourses);
         }
+        $licensedata['humanallocation'] = $data->allocation;
         $licensedata['instant'] = $data->instant;
         $licensedata['expirydate'] = $data->expirydate;
         $licensedata['startdate'] = $data->startdate;

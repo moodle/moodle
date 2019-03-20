@@ -1955,5 +1955,33 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030101, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030102) {
+
+        // Define field humanallocation to be added to companylicense.
+        $table = new xmldb_table('companylicense');
+        $field = new xmldb_field('humanallocation', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'allocation');
+
+        // Conditionally launch add field humanallocation.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add the right value to the new human allocation.
+        if ($licenses = $DB->get_records('companylicense')) {
+            foreach ($licenses as $license) {
+                if (empty($license->program)) {
+                    $DB->set-field('companylicense', 'humanallocation', $license->allocation, array('id' => $license->id));
+                } else {
+                    // Get the number of courses.
+                    $coursecount = $DB->count_records('companylicense_courses', array('licenseid' => $license->id));
+                    $DB->set_field('companylicense', 'humanallocation', $license->allocation / $coursecount, array('id' => $license->id));
+                }
+            }
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030102, 'local', 'iomad');
+    }
+
     return $result;
 }
