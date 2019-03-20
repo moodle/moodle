@@ -94,9 +94,9 @@
                                     {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
                                 {{/discussion.pinned}}
                                 {{^discussion.pinned}}
-                                    {{#discussion.userstate.favourited}}
-                                        {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
-                                    {{/discussion.userstate.favourited}}
+                                    {{#discussion}}
+                                        {{> mod_forum/forum_discussion_favourite_toggle}}
+                                    {{/discussion}}
                                 {{/discussion.pinned}}
                             </td>
                             <td scope="col" class="topic p-0 align-middle">
@@ -218,7 +218,14 @@
                             </td>
                             <td scope="col" class="p-0 align-middle">
                                 {{#discussion}}
-                                    {{> mod_forum/discussion_subscription_toggle}}
+                                    <div class="d-flex flex-wrap">
+                                        <div class="p1-1">
+                                            {{> mod_forum/discussion_subscription_toggle}}
+                                        </div>
+                                        <div class="p1-1 m-t-1">
+                                            {{> mod_forum/forum_action_menu}}
+                                        </div>
+                                    </div>
                                 {{/discussion}}
                             </td>
                         </tr>

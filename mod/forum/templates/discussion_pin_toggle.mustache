@@ -32,28 +32,26 @@
     {
     }
 }}
-{{#capabilities.favourite}}
+{{#capabilities.pin}}
     <a
-        class="p-t-0 btn btn-link"
-        data-type="favorite-toggle"
+        class="btn btn-link"
+        data-type="pin-toggle"
         data-action="toggle"
         data-discussionid="{{id}}"
         data-forumid="{{forumid}}"
-        href="#"
-        {{#userstate.favourited}}
+        href="{{urls.pin}}"
+        {{#pinned}}
             data-targetstate="0"
-        {{/userstate.favourited}}
-        {{^userstate.favourited}}
+        {{/pinned}}
+        {{^pinned}}
             data-targetstate="1"
-        {{/userstate.favourited}}
+        {{/pinned}}
     >
-        {{$favouritecontent}}
-            {{#userstate.favourited}}
-                {{#str}}removefromfavourites, mod_forum{{/str}}
-            {{/userstate.favourited}}
-            {{^userstate.favourited}}
-                {{#str}}addtofavourites, mod_forum{{/str}}
-            {{/userstate.favourited}}
-        {{/favouritecontent}}
+        {{#pinned}}
+            {{#str}}unpindiscussion, mod_forum{{/str}}
+        {{/pinned}}
+        {{^pinned}}
+            {{#str}}pindiscussion, mod_forum{{/str}}
+        {{/pinned}}
     </a>
-{{/capabilities.favourite}}
+{{/capabilities.pin}}

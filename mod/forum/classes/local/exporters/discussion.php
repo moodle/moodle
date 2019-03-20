@@ -121,7 +121,11 @@ class discussion extends exporter {
                         'type' => PARAM_URL,
                     ],
                     'markasread' => ['type' => PARAM_URL],
-                    'subscribe' => ['type' => PARAM_URL]
+                    'subscribe' => ['type' => PARAM_URL],
+                    'pin' => [
+                        'optional' => true,
+                        'type' => PARAM_URL,
+                    ],
                 ],
             ],
             'timed' => [
@@ -221,6 +225,10 @@ class discussion extends exporter {
                     $discussion,
                     $this->related['latestpostid']
                 )->out(false);
+        }
+
+        if ($capabilitymanager->can_pin_discussions($user)) {
+            $data['urls']['pin'] = $urlfactory->get_pin_discussion_url_from_discussion($discussion)->out(false);
         }
 
         if ($groupdata) {

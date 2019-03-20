@@ -21,10 +21,35 @@
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['mod_forum/subscription_toggle'], function(SubscriptionToggle) {
+define([
+    'jquery',
+    'mod_forum/subscription_toggle',
+    'mod_forum/selectors',
+    'mod_forum/repository',
+], function(
+    $,
+    SubscriptionToggle,
+    Selectors,
+    Repository
+) {
+    var registerEventListeners = function(root) {
+        root.on('click', Selectors.favourite.toggle, function(e) {
+            var toggleElement = $(this);
+            var forumId = toggleElement.data('forumid');
+            var discussionId = toggleElement.data('discussionid');
+            var subscriptionState = toggleElement.data('targetstate');
+            Repository.toggleFavouriteDiscussionState(forumId, discussionId, subscriptionState)
+                .then(function(context) {
+                    location.reload();
+                })
+                .catch(Notification.exception);
+        });
+    };
+
     return {
         init: function(root) {
             SubscriptionToggle.init(root);
+            registerEventListeners(root);
         }
     };
 });

@@ -315,7 +315,10 @@ class discussion_list extends db_table_vault {
             'allgroupsid' => -1,
         ]);
 
-        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder));
+        list($favsql, $favparams) = $this->get_favourite_sql();
+        $params += $favparams;
+
+        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder), $favsql);
         $records = $this->get_db()->get_records_sql($sql, $params, $offset, $limit);
 
         return $this->transform_db_records_to_entities($records);

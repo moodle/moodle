@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/discussion_subscription_toggle
+    @template mod_forum/forum_discussion_nested_post
 
-    Template to display the discussion subscription toggle.
+    Template which defines a forum post for sending in a single-post HTML email.
 
     Classes required for JS:
     * none
@@ -25,35 +25,17 @@
     Data attributes required for JS:
     * none
 
-    Context variables required for this template:
-    * TODO
-
     Example context (json):
     {
     }
 }}
-{{#capabilities.favourite}}
-    <a
-        class="p-t-0 btn btn-link"
-        data-type="favorite-toggle"
-        data-action="toggle"
-        data-discussionid="{{id}}"
-        data-forumid="{{forumid}}"
-        href="#"
+{{< mod_forum/discussion_favourite_toggle }}
+    {{$favouritecontent}}
         {{#userstate.favourited}}
-            data-targetstate="0"
+            {{#pix}}t/star, mod_forum{{/pix}}
         {{/userstate.favourited}}
         {{^userstate.favourited}}
-            data-targetstate="1"
+            {{#pix}}t/unsubscribed, mod_forum{{/pix}}
         {{/userstate.favourited}}
-    >
-        {{$favouritecontent}}
-            {{#userstate.favourited}}
-                {{#str}}removefromfavourites, mod_forum{{/str}}
-            {{/userstate.favourited}}
-            {{^userstate.favourited}}
-                {{#str}}addtofavourites, mod_forum{{/str}}
-            {{/userstate.favourited}}
-        {{/favouritecontent}}
-    </a>
-{{/capabilities.favourite}}
+    {{/favouritecontent}}
+{{/ mod_forum/discussion_favourite_toggle }}

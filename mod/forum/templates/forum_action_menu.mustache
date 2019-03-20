@@ -30,14 +30,23 @@
         data-toggle="dropdown"
         aria-haspopup="true"
         aria-expanded="false">
-        {{#pix}} i/settings, core{{/pix}}{{#str}} settings, mod_forum {{/str}}
+        {{#settings.togglemoreicon}}
+            {{#pix}} i/moremenu, core{{/pix}}
+        {{/settings.togglemoreicon}}
+        {{^settings.togglemoreicon}}
+            {{#pix}} i/settings, core{{/pix}}
+        {{/settings.togglemoreicon}}
+        {{^settings.excludetext}}
+            {{#str}} settings, mod_forum {{/str}}
+        {{/settings.excludetext}}
+
     </button>
     <div class="dropdown-menu dropdown-menu-right">
         <div class="dropdown-item">
             {{> mod_forum/discussion_favourite_toggle}}
         </div>
         <div class="dropdown-item">
-            {{{pindiscussion}}}
+            {{> mod_forum/discussion_pin_toggle}}
         </div>
     </div>
 </div>
