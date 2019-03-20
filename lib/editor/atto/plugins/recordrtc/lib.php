@@ -34,8 +34,6 @@ defined('MOODLE_INTERNAL') || die();
  * @param stdClass $fpoptions - unused.
  */
 function atto_recordrtc_params_for_js($elementid, $options, $fpoptions) {
-    global $CFG;
-
     $context = $options['context'];
     if (!$context) {
         $context = context_system::instance();
@@ -45,7 +43,10 @@ function atto_recordrtc_params_for_js($elementid, $options, $fpoptions) {
     $audiobitrate = get_config('atto_recordrtc', 'audiobitrate');
     $videobitrate = get_config('atto_recordrtc', 'videobitrate');
     $timelimit = get_config('atto_recordrtc', 'timelimit');
-    $maxrecsize = ini_get('upload_max_filesize');
+    $maxrecsize = get_max_upload_file_size();
+    if (!empty($options['maxbytes'])) {
+        $maxrecsize = min($maxrecsize, $options['maxbytes']);
+    }
     $audiortcicon = 'i/audiortc';
     $videortcicon = 'i/videortc';
     $params = array('contextid' => $context->id,
