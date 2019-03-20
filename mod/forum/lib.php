@@ -3479,30 +3479,6 @@ function forum_trigger_content_uploaded_event($post, $cm, $name) {
 }
 
 /**
- * @global object
- * @param object $post
- * @param bool $children
- * @return int
- */
-function forum_count_replies($post, $children=true) {
-    global $DB;
-    $count = 0;
-
-    if ($children) {
-        if ($childposts = $DB->get_records('forum_posts', array('parent' => $post->id))) {
-           foreach ($childposts as $childpost) {
-               $count ++;                   // For this child
-               $count += forum_count_replies($childpost, true);
-           }
-        }
-    } else {
-        $count += $DB->count_records('forum_posts', array('parent' => $post->id));
-    }
-
-    return $count;
-}
-
-/**
  * Given a new post, subscribes or unsubscribes as appropriate.
  * Returns some text which describes what happened.
  *

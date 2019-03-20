@@ -346,7 +346,7 @@ class capability {
      *
      */
     public function can_view_post_shell(stdClass $user, post_entity $post) : bool {
-        if (empty($post->get_private_reply_recipient_id())) {
+        if (!$post->is_private_reply()) {
             return true;
         }
 

@@ -266,6 +266,59 @@ class post extends db_table_vault {
     }
 
     /**
+     * Get a mapping of replies to the specified discussions.
+     *
+     * @param   stdClass    $user The user to check the unread count for
+     * @param   int         $postid The post to collect replies to
+     * @param   int         $discussionid The list of discussions to fetch counts for
+     * @param   bool        $canseeprivatereplies Whether this user can see all private replies or not
+     * @return  int         The number of replies for each discussion returned in an associative array
+     */
+    public function get_reply_count_for_post_id_in_discussion_id(
+            stdClass $user, int $postid, int $discussionid, bool $canseeprivatereplies) : int {
+        [
+            'where' => $privatewhere,
+            'params' => $privateparams,
+        ] = $this->get_private_reply_sql($user, $canseeprivatereplies);
+
+        $alias = $this->get_table_alias();
+        $table = self::TABLE;
+
+        $sql = "SELECT {$alias}.id, {$alias}.parent
+                  FROM {{$table}} {$alias}
+                 WHERE p.discussion = :discussionid {$privatewhere}";
+
+        $postparents = $this->get_db()->get_records_sql_menu($sql, array_merge([
+                'discussionid' => $discussionid,
+            ], $privateparams));
+
+        return $this->count_children_from_parent_recursively($postparents, $postid);
+    }
+
+    /**
+     * Count the children whose parent matches the current record recursively.
+     *
+     * @param   array   $postparents The full mapping of posts.
+     * @param   int     $postid The ID to check for
+     * @return  int     $count
+     */
+    private function count_children_from_parent_recursively(array $postparents, int $postid) : int {
+        if (!isset($postparents[$postid])) {
+            // Post not found at all.
+            return 0;
+        }
+
+        $count = 0;
+        foreach ($postparents as $pid => $parentid) {
+            if ($postid == $parentid) {
+                $count += $this->count_children_from_parent_recursively($postparents, $pid) + 1;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
      * Get a mapping of unread post counts for the specified discussions.
      *
      * @param   stdClass    $user The user to fetch counts for
@@ -308,7 +361,8 @@ class post extends db_table_vault {
      * @param   bool        $canseeprivatereplies Whether this user can see all private replies or not
      * @return  int[]       The post id of the most recent post for each discussions returned in an associative array
      */
-    public function get_latest_post_id_for_discussion_ids(stdClass $user, array $discussionids, bool $canseeprivatereplies) : array {
+    public function get_latest_post_id_for_discussion_ids(
+            stdClass $user, array $discussionids, bool $canseeprivatereplies) : array {
         global $CFG;
 
         if (empty($discussionids)) {

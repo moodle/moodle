@@ -60,6 +60,7 @@ $string['cannotaddteacherforumto'] = 'Could not add converted teacher forum inst
 $string['cannotcreatediscussion'] = 'Could not create new discussion';
 $string['cannotcreateinstanceforteacher'] = 'Could not create new course module instance for the teacher forum';
 $string['cannotdeletepost'] = 'You can\'t delete this post!';
+$string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';
 $string['cannoteditposts'] = 'You can\'t edit other people\'s posts!';
 $string['cannotfinddiscussion'] = 'Could not find the discussion in this forum';
 $string['cannotfindfirstpost'] = 'Could not find the first post in this forum';

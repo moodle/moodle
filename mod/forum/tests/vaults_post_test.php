@@ -327,7 +327,7 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         // -> Reply pc [otherstudent]
         // ---> Reply pca [student]
         // -----> Reply pcaa [otherstudent]
-        // -------> Private Reply pcaaa [teacher]
+        // -------> Private Reply pcaaa [teacher].
 
         [$student, $otherstudent] = $this->helper_create_users($course, 2, 'student');
         [$teacher, $otherteacher] = $this->helper_create_users($course, 2, 'teacher');
@@ -511,7 +511,11 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->assertEquals(3, $counts[$discussion1->id]);
         $this->assertEquals(1, $counts[$discussion2->id]);
 
-        $counts = $this->vault->get_reply_count_for_discussion_ids($user, [$discussion1->id, $discussion2->id, $discussion3->id], false);
+        $counts = $this->vault->get_reply_count_for_discussion_ids($user, [
+            $discussion1->id,
+            $discussion2->id,
+            $discussion3->id
+        ], false);
         $this->assertCount(2, $counts);
         $this->assertEquals(3, $counts[$discussion1->id]);
         $this->assertEquals(1, $counts[$discussion2->id]);
@@ -525,6 +529,139 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->assertCount(2, $counts);
         $this->assertEquals(3, $counts[$discussion1->id]);
         $this->assertEquals(1, $counts[$discussion2->id]);
+    }
+
+    /**
+     * Test get_reply_count_for_discussion_ids.
+     *
+     * @covers ::get_reply_count_for_discussion_ids
+     * @covers ::<!public>
+     */
+    public function test_get_reply_count_for_discussion_ids_private_replies() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', [
+            'course' => $course->id,
+        ]);
+
+        // Generate a structure:
+        // Initial post p [student]
+        // -> Reply pa [otherstudent]
+        // ---> Reply paa [student]
+        // ---> Private Reply pab [teacher]
+        // -> Private Reply pb [teacher]
+        // -> Reply pc [otherstudent]
+        // ---> Reply pca [student]
+        // -----> Reply pcaa [otherstudent]
+        // -------> Private Reply pcaaa [teacher].
+
+        [$student, $otherstudent] = $this->helper_create_users($course, 2, 'student');
+        [$teacher, $otherteacher] = $this->helper_create_users($course, 2, 'teacher');
+
+        [$discussion, $p] = $this->helper_post_to_forum($forum, $student);
+
+        $pa = $this->helper_reply_to_post($p, $otherstudent);
+        $paa = $this->helper_reply_to_post($pa, $student);
+        $pab = $this->helper_reply_to_post($pa, $teacher, ['privatereplyto' => $otherstudent->id]);
+
+        $pb = $this->helper_reply_to_post($p, $teacher, ['privatereplyto' => $student->id]);
+
+        $pc = $this->helper_reply_to_post($p, $otherteacher);
+        $pca = $this->helper_reply_to_post($pc, $student);
+        $pcaa = $this->helper_reply_to_post($pca, $otherstudent);
+        $pcaaa = $this->helper_reply_to_post($pcaa, $teacher, ['privatereplyto' => $otherstudent->id]);
+
+        $this->assertEquals([$discussion->id => 6],
+            $this->vault->get_reply_count_for_discussion_ids($student, [$discussion->id], false));
+        $this->assertEquals([$discussion->id => 7],
+            $this->vault->get_reply_count_for_discussion_ids($otherstudent, [$discussion->id], false));
+        $this->assertEquals([$discussion->id => 8],
+            $this->vault->get_reply_count_for_discussion_ids($teacher, [$discussion->id], true));
+        $this->assertEquals([$discussion->id => 8],
+            $this->vault->get_reply_count_for_discussion_ids($otherteacher, [$discussion->id], true));
+    }
+
+    /**
+     * Test get_reply_count_for_discussion_id.
+     *
+     * @covers ::get_reply_count_for_post_id_in_discussion_id
+     * @covers ::<!public>
+     */
+    public function test_get_reply_count_for_post_id_in_discussion_id() {
+        $this->resetAfterTest();
+
+        $datagenerator = $this->getDataGenerator();
+        $user = $datagenerator->create_user();
+        $course = $datagenerator->create_course();
+        $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
+        [$discussion1, $post1] = $this->helper_post_to_forum($forum, $user);
+        $post2 = $this->helper_reply_to_post($post1, $user);
+        $post3 = $this->helper_reply_to_post($post1, $user);
+        $post4 = $this->helper_reply_to_post($post2, $user);
+        [$discussion2, $post5] = $this->helper_post_to_forum($forum, $user);
+        $post6 = $this->helper_reply_to_post($post5, $user);
+        [$discussion3, $post7] = $this->helper_post_to_forum($forum, $user);
+
+        $this->assertEquals(3,
+            $this->vault->get_reply_count_for_post_id_in_discussion_id($user, $post1->id, $discussion1->id, false));
+        $this->assertEquals(1,
+            $this->vault->get_reply_count_for_post_id_in_discussion_id($user, $post5->id, $discussion2->id, false));
+        $this->assertEquals(0,
+            $this->vault->get_reply_count_for_post_id_in_discussion_id($user, $post7->id, $discussion3->id, false));
+        $this->assertEquals(0,
+            $this->vault->get_reply_count_for_post_id_in_discussion_id($user, $post7->id + 1000, $discussion3->id, false));
+    }
+
+    /**
+     * Test get_reply_count_for_post_id_in_discussion_id.
+     *
+     * @covers ::get_reply_count_for_post_id_in_discussion_id
+     * @covers ::<!public>
+     */
+    public function test_get_reply_count_for_post_id_in_discussion_id_private_replies() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', [
+            'course' => $course->id,
+        ]);
+
+        // Generate a structure:
+        // Initial post p [student]
+        // -> Reply pa [otherstudent]
+        // ---> Reply paa [student]
+        // ---> Private Reply pab [teacher]
+        // -> Private Reply pb [teacher]
+        // -> Reply pc [otherstudent]
+        // ---> Reply pca [student]
+        // -----> Reply pcaa [otherstudent]
+        // -------> Private Reply pcaaa [teacher].
+
+        [$student, $otherstudent] = $this->helper_create_users($course, 2, 'student');
+        [$teacher, $otherteacher] = $this->helper_create_users($course, 2, 'teacher');
+
+        [$discussion, $p] = $this->helper_post_to_forum($forum, $student);
+
+        $pa = $this->helper_reply_to_post($p, $otherstudent);
+        $paa = $this->helper_reply_to_post($pa, $student);
+        $pab = $this->helper_reply_to_post($pa, $teacher, ['privatereplyto' => $otherstudent->id]);
+
+        $pb = $this->helper_reply_to_post($p, $teacher, ['privatereplyto' => $student->id]);
+
+        $pc = $this->helper_reply_to_post($p, $otherteacher);
+        $pca = $this->helper_reply_to_post($pc, $student);
+        $pcaa = $this->helper_reply_to_post($pca, $otherstudent);
+        $pcaaa = $this->helper_reply_to_post($pcaa, $teacher, ['privatereplyto' => $otherstudent->id]);
+
+        $this->assertEquals(6,
+            $this->vault->get_reply_count_for_post_id_in_discussion_id($student, $p->id, $discussion->id, false));
+        $this->assertEquals(7,
+            $this->vault->get_reply_count_for_post_id_in_discussion_id($otherstudent, $p->id, $discussion->id, false));
+        $this->assertEquals(8,
+            $this->vault->get_reply_count_for_post_id_in_discussion_id($teacher, $p->id, $discussion->id, true));
+        $this->assertEquals(8,
+            $this->vault->get_reply_count_for_post_id_in_discussion_id($otherteacher, $p->id, $discussion->id, true));
     }
 
     /**
@@ -629,12 +766,14 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->assertCount(1, $ids);
         $this->assertEquals($post4->id, $ids[$discussion1->id]);
 
-        $ids = $this->vault->get_latest_post_id_for_discussion_ids($user, [$discussion1->id, $discussion2->id], false);
+        $ids = $this->vault->get_latest_post_id_for_discussion_ids($user,
+            [$discussion1->id, $discussion2->id], false);
         $this->assertCount(2, $ids);
         $this->assertEquals($post4->id, $ids[$discussion1->id]);
         $this->assertEquals($post6->id, $ids[$discussion2->id]);
 
-        $ids = $this->vault->get_latest_post_id_for_discussion_ids($user, [$discussion1->id, $discussion2->id, $discussion3->id], false);
+        $ids = $this->vault->get_latest_post_id_for_discussion_ids($user,
+            [$discussion1->id, $discussion2->id, $discussion3->id], false);
         $this->assertCount(3, $ids);
         $this->assertEquals($post4->id, $ids[$discussion1->id]);
         $this->assertEquals($post6->id, $ids[$discussion2->id]);

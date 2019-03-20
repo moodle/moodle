@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
   * Deprecated all of the forum_print_* functions in lib.php.
   * The forum_print_latest_discussions function has been deprecated and will not be replaced.
   * The get_forum_discussion_posts web service has been deprecated in favour of get_discussion_posts.
+  * The forum_count_replies function has been deprecated in favour of get_reply_count_for_post_id_in_discussion_id in
+    the Post vault.
 
 === 3.6 ===
 
