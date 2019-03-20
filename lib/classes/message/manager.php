@@ -162,6 +162,14 @@ class manager {
 
             // Spoof the userto based on the current member id.
             $localisedeventdata->userto = $recipient;
+            // Check if the notification is including images that will need a user token to be displayed outside Moodle.
+            if (!empty($localisedeventdata->customdata)) {
+                $customdata = json_decode($localisedeventdata->customdata);
+                if (is_object($customdata) && !empty($customdata->notificationiconurl)) {
+                    $customdata->tokenpluginfile = get_user_key('core_files', $localisedeventdata->userto->id);
+                    $localisedeventdata->customdata = $customdata; // Message class will JSON encode again.
+                }
+            }
 
             $s = new \stdClass();
             $s->sitename = format_string($SITE->shortname, true, array('context' => \context_course::instance(SITEID)));

@@ -4753,7 +4753,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
+        $sink = $this->redirectMessages();
         $request = \core_message\api::create_contact_request($user1->id, $user2->id);
+        $messages = $sink->get_messages();
+        $sink->close();
+        // Test customdata.
+        $customdata =  json_decode($messages[0]->customdata);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
 
         $this->assertEquals($user1->id, $request->userid);
         $this->assertEquals($user2->id, $request->requesteduserid);
@@ -5777,8 +5783,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Send a message to an individual conversation.
         $sink = $this->redirectEvents();
+        $messagesSink = $this->redirectMessages();
         $message1 = \core_message\api::send_message_to_conversation($user1->id, $ic1->id, 'this is a message', FORMAT_MOODLE);
         $events = $sink->get_events();
+        $messages = $messagesSink->get_messages();
+        // Test customdata.
+        $customdata =  json_decode($messages[0]->customdata);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
 
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
@@ -5818,15 +5829,18 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Send a message to a group conversation.
         $sink = $this->redirectEvents();
+        $messagesSink = $this->redirectMessages();
         $message1 = \core_message\api::send_message_to_conversation($user1->id, $gc2->id, 'message to the group', FORMAT_MOODLE);
         $events = $sink->get_events();
-
+        $messages = $messagesSink->get_messages();
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
         $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
         $this->assertAttributeEquals('message to the group', 'text', $message1);
         $this->assertObjectHasAttribute('timecreated', $message1);
+        // Test customdata.
+        $this->assertObjectHasAttribute('customdata', $messages[0]);    // No group image means no customdata.
 
         // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
         // however, we can still determine the number and ids of any recipients this way.
@@ -5835,6 +5849,64 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertNotContains($user1->id, $userids);
         $this->assertContains($user3->id, $userids);
         $this->assertContains($user4->id, $userids);
+    }
+
+    /**
+     * Test verifying that messages can be sent to existing linked group conversations.
+     */
+    public function test_send_message_to_conversation_linked_group_conversation() {
+        global $CFG;
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a group with a linked conversation and a valid image.
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $group = $this->getDataGenerator()->create_group([
+            'courseid' => $course->id,
+            'enablemessaging' => 1,
+            'picturepath' => $CFG->dirroot . '/lib/tests/fixtures/gd-logo.png'
+        ]);
+
+        // Add users to group.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user2->id));
+
+        // Verify the group with the image works as expected.
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $this->assertEquals(2, $conversations[0]->membercount);
+        $this->assertEquals($course->shortname, $conversations[0]->subname);
+        $groupimageurl = get_group_picture_url($group, $group->courseid, true);
+        $this->assertEquals($groupimageurl, $conversations[0]->imageurl);
+
+        // Redirect messages.
+        // This marks messages as read, but we can still observe and verify the number of conversation recipients,
+        // based on the message_viewed events generated as part of marking the message as read for each user.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        // Send a message to a group conversation.
+        $messagesSink = $this->redirectMessages();
+        $message1 = \core_message\api::send_message_to_conversation($user1->id, $conversations[0]->id,
+            'message to the group', FORMAT_MOODLE);
+        $messages = $messagesSink->get_messages();
+        // Verify the message returned.
+        $this->assertInstanceOf(\stdClass::class, $message1);
+        $this->assertObjectHasAttribute('id', $message1);
+        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
+        $this->assertAttributeEquals('message to the group', 'text', $message1);
+        $this->assertObjectHasAttribute('timecreated', $message1);
+        // Test customdata.
+        $customdata =  json_decode($messages[0]->customdata);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertEquals($groupimageurl, $customdata->notificationiconurl);;
     }
 
     /**
