@@ -31,13 +31,18 @@ $forumvault = $vaultfactory->get_forum_vault();
 $discussionvault = $vaultfactory->get_discussion_vault();
 $postvault = $vaultfactory->get_post_vault();
 
-$cmid = required_param('id', PARAM_INT);
+$cmid = optional_param('id', 0, PARAM_INT);
+$forumid = optional_param('f', 0, PARAM_INT);
 $pageno = optional_param('p', 0, PARAM_INT);
 $pagesize = optional_param('s', 0, PARAM_INT);
 $sortorder = optional_param('o', null, PARAM_INT);
 $mode = optional_param('mode', 0, PARAM_INT);
 
-$forum = $forumvault->get_from_course_module_id($cmid);
+if (!$cmid && !$forumid) {
+    print_error('missingparameter');
+}
+
+$forum = $forumid ? $forumvault->get_from_id($forumid) : $forumvault->get_from_course_module_id($cmid);
 if (!$forum) {
     throw new \moodle_exception('Unable to find forum with id ' . $forumid);
 }
@@ -45,7 +50,7 @@ if (!$forum) {
 $urlfactory = mod_forum\local\container::get_url_factory();
 $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
-$url = $urlfactory->get_forum_view_url_from_course_module_id($cmid);
+$url = $urlfactory->get_forum_view_url_from_forum($forum);
 $PAGE->set_url($url);
 
 $course = $forum->get_course_record();
@@ -60,7 +65,7 @@ $PAGE->add_body_class('forumtype-' . $forum->get_type());
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button(forum_search_form($course));
 
-if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
+if (empty($cm->visible) && !has_capability('moodle/course:viewhiddenactivities', $forum->get_context())) {
     redirect(
         $urlfactory->get_course_url_from_forum($forum),
         get_string('activityiscurrentlyhidden'),
@@ -84,6 +89,9 @@ forum_view(
     $forum->get_course_module_record(),
     $forum->get_context()
 );
+
+// Return here if we post or set subscription etc.
+$SESSION->fromdiscussion = qualified_me();
 
 if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forum->get_rss_type() && $forum->get_rss_articles()) {
     require_once("{$CFG->libdir}/rsslib.php");
