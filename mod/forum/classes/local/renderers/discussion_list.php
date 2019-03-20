@@ -154,7 +154,13 @@ class discussion_list {
         $discussions = $this->get_discussions($user, $groupids, $sortorder, $pageno, $pagesize);
 
         $forumview = [
-            'forum' => (array) $forumexporter->export($this->renderer)
+            'forum' => (array) $forumexporter->export($this->renderer),
+            'groupchangemenu' => groups_print_activity_menu(
+                $cm,
+                $this->urlfactory->get_forum_view_url_from_forum($forum),
+                true
+            ),
+            'notifications' => $this->get_notifications($user, $groupid)
         ];
 
         if (!$discussions) {
@@ -169,12 +175,6 @@ class discussion_list {
         $forumview = array_merge(
             $forumview,
             [
-                'notifications' => $this->get_notifications($user, $groupid),
-                'groupchangemenu' => groups_print_activity_menu(
-                    $cm,
-                    $this->urlfactory->get_forum_view_url_from_forum($forum),
-                    true
-                ),
                 'pagination' => $this->renderer->render(new \paging_bar($alldiscussionscount, $pageno, $pagesize, $PAGE->url, 'p')),
             ],
             $exportedposts
@@ -348,12 +348,20 @@ class discussion_list {
             ))->set_show_closebutton();
         }
 
-        if ($forum->is_in_group_mode()) {
-            if (
-                ($groupid === null && !$capabilitymanager->can_access_all_groups($user)) ||
-                ($groupid !== null && !$capabilitymanager->can_access_group($user, $groupid))
-            ) {
-                // Cannot post to the current group.
+        if ($forum->is_in_group_mode() && !$capabilitymanager->can_access_all_groups($user)) {
+            if ($groupid === null) {
+                if (!$capabilitymanager->can_post_to_my_groups($user)) {
+                    $notifications[] = (new notification(
+                        get_string('cannotadddiscussiongroup', 'mod_forum'),
+                        \core\output\notification::NOTIFY_WARNING
+                    ))->set_show_closebutton();
+                } else {
+                    $notifications[] = (new notification(
+                        get_string('cannotadddiscussionall', 'mod_forum'),
+                        \core\output\notification::NOTIFY_WARNING
+                    ))->set_show_closebutton();
+                }
+            } else if (!$capabilitymanager->can_access_group($user, $groupid)) {
                 $notifications[] = (new notification(
                     get_string('cannotadddiscussion', 'mod_forum'),
                     \core\output\notification::NOTIFY_WARNING

@@ -144,7 +144,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_access_all_groups(stdClass $user) {
+    public function can_access_all_groups(stdClass $user) : bool {
         return has_capability('moodle/site:accessallgroups', $this->get_context(), $user);
     }
 
@@ -155,7 +155,7 @@ class capability {
      * @param int $groupid The id of the group that the forum is set to
      * @return bool
      */
-    public function can_access_group(stdClass $user, int $groupid) {
+    public function can_access_group(stdClass $user, int $groupid) : bool {
         if ($this->can_access_all_groups($user)) {
             // This user has access to all groups.
             return true;
@@ -165,6 +165,16 @@ class capability {
         // Check if the user is a member.
         // This is the most expensive check.
         return groups_is_member($groupid, $user->id);
+    }
+
+    /**
+     * Can the user post to their groups?
+     *
+     * @param stdClass $user The user to check
+     * @return bool
+     */
+    public function can_post_to_my_groups(stdClass $user) : bool {
+        return has_capability('mod/forum:canposttomygroups', $this->get_context(), $user);
     }
 
     /**
