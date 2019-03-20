@@ -166,11 +166,21 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
+        $forumgenerator = $datagenerator->get_plugin_generator('mod_forum');
         $user = $datagenerator->create_user();
         $course = $datagenerator->create_course();
         $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
         [$discussion1, $post1] = $this->helper_post_to_forum($forum, $user);
-        $post2 = $this->helper_reply_to_post($post1, $user);
+        // Create a post with the same created time as the parent post to ensure
+        // we've covered every possible scenario.
+        $post2 = $forumgenerator->create_post((object) [
+            'discussion' => $post1->discussion,
+            'parent' => $post1->id,
+            'userid' => $user->id,
+            'mailnow' => 1,
+            'subject' => 'Some subject',
+            'created' => $post1->created
+        ]);
         $post3 = $this->helper_reply_to_post($post1, $user);
         $post4 = $this->helper_reply_to_post($post2, $user);
         [$discussion2, $post5] = $this->helper_post_to_forum($forum, $user);

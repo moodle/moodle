@@ -33,10 +33,13 @@ $postvault = $vaultfactory->get_post_vault();
 
 $cmid = optional_param('id', 0, PARAM_INT);
 $forumid = optional_param('f', 0, PARAM_INT);
-$pageno = optional_param('p', 0, PARAM_INT);
+$mode = optional_param('mode', 0, PARAM_INT);
+$showall = optional_param('showall', '', PARAM_INT);
+$pageno = optional_param('page', 0, PARAM_INT);
+$search = optional_param('search', '', PARAM_CLEAN);
+$pageno = optional_param('p', $pageno, PARAM_INT);
 $pagesize = optional_param('s', 0, PARAM_INT);
 $sortorder = optional_param('o', null, PARAM_INT);
-$mode = optional_param('mode', 0, PARAM_INT);
 
 if (!$cmid && !$forumid) {
     print_error('missingparameter');
@@ -45,6 +48,12 @@ if (!$cmid && !$forumid) {
 $forum = $forumid ? $forumvault->get_from_id($forumid) : $forumvault->get_from_course_module_id($cmid);
 if (!$forum) {
     throw new \moodle_exception('Unable to find forum with id ' . $forumid);
+}
+
+if (!empty($showall)) {
+    // The user wants to see all discussions.
+    $pageno = 0;
+    $pagesize = 0;
 }
 
 $urlfactory = mod_forum\local\container::get_url_factory();
@@ -63,7 +72,7 @@ $PAGE->set_context($forum->get_context());
 $PAGE->set_title($forum->get_name());
 $PAGE->add_body_class('forumtype-' . $forum->get_type());
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button(forum_search_form($course));
+$PAGE->set_button(forum_search_form($course, $search));
 
 if (empty($cm->visible) && !has_capability('moodle/course:viewhiddenactivities', $forum->get_context())) {
     redirect(

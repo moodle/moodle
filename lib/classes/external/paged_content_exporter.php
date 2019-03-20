@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use renderer_base;
 
 /**
- * Forum class.
+ * Paged Content exporter.
  *
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -44,7 +44,7 @@ class paged_content_exporter extends exporter {
     /** @var int recordcount The total number of records available */
     private $recordcount;
 
-    /** @var closurcallable The callback to use to determine a page URL */
+    /** @var callable The callback to use to determine a page URL */
     private $pageurlcallback;
 
     /**

@@ -1268,7 +1268,7 @@ class mod_forum_external extends external_api {
      * @return  \stdClass
      */
     public static function set_subscription_state($forumid, $discussionid, $targetstate) {
-        global $DB, $PAGE, $USER;
+        global $PAGE, $USER;
 
         $params = self::validate_parameters(self::set_subscription_state_parameters(), [
             'forumid' => $forumid,
@@ -1279,14 +1279,11 @@ class mod_forum_external extends external_api {
         $vaultfactory = mod_forum\local\container::get_vault_factory();
         $forumvault = $vaultfactory->get_forum_vault();
         $forum = $forumvault->get_from_id($params['forumid']);
-        $course = $forum->get_course_record();
         $coursemodule = $forum->get_course_module_record();
         $context = $forum->get_context();
 
         self::validate_context($context);
 
-        $managerfactory = mod_forum\local\container::get_manager_factory();
-        $capabilitymanager = $managerfactory->get_capability_manager($forum);
         $discussionvault = $vaultfactory->get_discussion_vault();
         $discussion = $discussionvault->get_from_id($params['discussionid']);
         $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();

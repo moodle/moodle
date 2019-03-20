@@ -26,6 +26,8 @@ namespace mod_forum\local\exporters;
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_forum\local\entities\author as author_entity;
+use mod_forum\local\entities\post as post_entity;
 use mod_forum\local\exporters\post as post_exporter;
 use core\external\exporter;
 use renderer_base;
@@ -149,7 +151,6 @@ class posts extends exporter {
      */
     protected static function define_related() {
         return [
-            'legacydatamapperfactory' => 'mod_forum\local\factories\legacy_data_mapper',
             'capabilitymanager' => 'mod_forum\local\managers\capability',
             'urlfactory' => 'mod_forum\local\factories\url',
             'forum' => 'mod_forum\local\entities\forum',

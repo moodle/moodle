@@ -257,23 +257,17 @@ class post extends exporter {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
-        global $CFG;
-
         $post = $this->post;
         $authorgroups = $this->related['authorgroups'];
         $forum = $this->related['forum'];
         $discussion = $this->related['discussion'];
         $author = $this->related['author'];
         $user = $this->related['user'];
-        $context = $this->related['context'];
         $readreceiptcollection = $this->related['readreceiptcollection'];
         $rating = $this->related['rating'];
         $tags = $this->related['tags'];
         $attachments = $this->related['attachments'];
         $includehtml = $this->related['includehtml'];
-        $forumrecord = $this->get_forum_record();
-        $discussionrecord = $this->get_discussion_record();
-        $postrecord = $this->get_post_record();
         $isdeleted = $post->is_deleted();
         $hasrating = $rating != null;
         $hastags = !empty($tags);
@@ -375,7 +369,6 @@ class post extends exporter {
      */
     protected static function define_related() {
         return [
-            'legacydatamapperfactory' => 'mod_forum\local\factories\legacy_data_mapper',
             'capabilitymanager' => 'mod_forum\local\managers\capability',
             'readreceiptcollection' => 'mod_forum\local\entities\post_read_receipt_collection?',
             'urlfactory' => 'mod_forum\local\factories\url',
@@ -399,6 +392,8 @@ class post extends exporter {
      * @return string
      */
     private function get_message(post_entity $post) : string {
+        global $CFG;
+
         $context = $this->related['context'];
         $message = file_rewrite_pluginfile_urls(
             $post->get_message(),
@@ -411,6 +406,7 @@ class post extends exporter {
 
         if (!empty($CFG->enableplagiarism)) {
             require_once($CFG->libdir . '/plagiarismlib.php');
+            $forum = $this->related['forum'];
             $message .= plagiarism_get_links([
                 'userid' => $post->get_author_id(),
                 'content' => $message,
@@ -463,7 +459,6 @@ class post extends exporter {
             $post,
             $urlfactory
         ) {
-            $contextid = $attachment->get_contextid();
             $exporter = new stored_file_exporter($attachment, ['context' => $context]);
             $exportedattachment = $exporter->export($output);
             $exporturl = $canexport ? $urlfactory->get_export_attachment_url_from_post_and_attachment($post, $attachment) : null;
@@ -523,6 +518,7 @@ class post extends exporter {
      *
      * @param stdClass $exportedauthor The exported author object
      * @param int $timecreated The post time created timestamp if it's to be displayed
+     * @return string
      */
     private function get_author_subheading_html(stdClass $exportedauthor, int $timecreated) : string {
         $fullname = $exportedauthor->fullname;
@@ -531,35 +527,5 @@ class post extends exporter {
         $name = $profileurl ? "<a href=\"{$profileurl}\">{$fullname}</a>" : $fullname;
         $date = "<time>{$formatteddate}</time>";
         return get_string('bynameondate', 'mod_forum', ['name' => $name, 'date' => $date]);
-    }
-
-    /**
-     * Get the legacy forum record.
-     *
-     * @return stdClass
-     */
-    private function get_forum_record() : stdClass {
-        $forumdbdatamapper = $this->related['legacydatamapperfactory']->get_forum_data_mapper();
-        return $forumdbdatamapper->to_legacy_object($this->related['forum']);
-    }
-
-    /**
-     * Get the legacy discussion record.
-     *
-     * @return stdClass
-     */
-    private function get_discussion_record() : stdClass {
-        $discussiondbdatamapper = $this->related['legacydatamapperfactory']->get_discussion_data_mapper();
-        return $discussiondbdatamapper->to_legacy_object($this->related['discussion']);
-    }
-
-    /**
-     * Get the legacy post record.
-     *
-     * @return stdClass
-     */
-    private function get_post_record() : stdClass {
-        $postdbdatamapper = $this->related['legacydatamapperfactory']->get_post_data_mapper();
-        return $postdbdatamapper->to_legacy_object($this->post);
     }
 }

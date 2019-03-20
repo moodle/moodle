@@ -52,12 +52,14 @@ class mod_forum_entities_sorter_testcase extends advanced_testcase {
         $b = ['id' => 2, 'parent' => 1];
         $c = ['id' => 3, 'parent' => 1];
         $d = ['id' => 4, 'parent' => 2];
+        $e = ['id' => 5, 'parent' => 0];
 
         $expected = [
-            [$a, [[$b, [[$d, []]]], [$c, []]]]
+            [$e, []],
+            [$a, [[$b, [[$d, []]]], [$c, []]]],
         ];
 
-        $actual = $sorter->sort_into_children([$d, $b, $a, $c]);
+        $actual = $sorter->sort_into_children([$d, $b, $e, $a, $c]);
 
         $this->assertEquals($expected, $actual);
     }

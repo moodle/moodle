@@ -145,10 +145,10 @@ class post extends db_table_vault {
      */
     public function get_replies_to_post(post_entity $post, string $orderby = 'created ASC') : array {
         $alias = $this->get_table_alias();
-        $params = [$post->get_discussion_id(), $post->get_time_created()];
+        $params = [$post->get_discussion_id(), $post->get_time_created(), $post->get_id()];
         // Unfortunately the best we can do to filter down the query is ignore all posts
         // that were created before the given post (since they can't be replies).
-        $wheresql = "{$alias}.discussion = ? and {$alias}.created > ?";
+        $wheresql = "{$alias}.discussion = ? and {$alias}.created >= ? and {$alias}.id != ?";
         $orderbysql = $alias . '.' . $orderby;
         $sql = $this->generate_get_records_sql($wheresql, $orderbysql);
         $records = $this->get_db()->get_records_sql($sql, $params);

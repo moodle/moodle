@@ -225,7 +225,6 @@ class exporter {
         bool $includehtml = false
     ) : posts_exporter {
         return new posts_exporter($posts, $authorsbyid, $attachmentsbypostid, $groupsbyauthorid, $tagsbypostid, $ratingbypostid, [
-            'legacydatamapperfactory' => $this->legacydatamapperfactory,
             'capabilitymanager' => $this->managerfactory->get_capability_manager($forum),
             'urlfactory' => $this->urlfactory,
             'forum' => $forum,
