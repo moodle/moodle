@@ -44,6 +44,18 @@ define([
                 })
                 .catch(Notification.exception);
         });
+
+        root.on('click', Selectors.pin.toggle, function() {
+            var toggleElement = $(this);
+            var forumId = toggleElement.data('forumid');
+            var discussionId = toggleElement.data('discussionid');
+            var state = toggleElement.data('targetstate');
+            Repository.togglePin(forumId, discussionId, state)
+                .then(function() {
+                    location.reload();
+                })
+                .catch(Notification.exception);
+        });
     };
 
     return {

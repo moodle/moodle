@@ -330,7 +330,7 @@ class capability {
      */
     public function can_favourite_discussion(stdClass $user, discussion_entity $discussion) : bool {
         $context = $this->get_context();
-        return has_capability('mod/forum::cantogglefavourite', $context, $user);
+        return has_capability('mod/forum:cantogglefavourite', $context, $user);
     }
 
     /**

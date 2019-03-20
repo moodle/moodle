@@ -1643,17 +1643,18 @@ class mod_forum_external extends external_api {
         $forum = $forumvault->get_from_id($params['forumid']);
 
         self::validate_context($forum->get_context());
-        if (!$forum->can_subscribe()) {
+
+        $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+        $forumrecord = $legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
+        if (!\mod_forum\subscriptions::is_subscribable($forumrecord)) {
             // Nothing to do. We won't actually output any content here though.
             throw new \moodle_exception('cannotsubscribe', 'mod_forum');
         }
 
         $discussion = $discussionvault->get_from_id($params['discussionid']);
         $discussion->set_pinned($targetstate);
-
-        $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
         $discussionrecord = $legacydatamapperfactory->get_discussion_data_mapper()->to_legacy_object($discussion);
-        $discussionvault->update_discussion($discussion);
+        $discussionvault->update_discussion($discussionrecord);
 
         $exporterfactory = mod_forum\local\container::get_exporter_factory();
         $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);

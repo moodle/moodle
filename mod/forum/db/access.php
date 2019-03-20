@@ -405,13 +405,12 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'mod/forum:canoverridediscussionlock'
     ),
-    'mod/forum::cantogglefavourite' => array(
+    'mod/forum:cantogglefavourite' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'user' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'moodle/user:manageownfiles'
+        )
     )
 );
 

@@ -300,6 +300,15 @@ class discussion {
         return $this->get_group_id() > 0;
     }
 
+    public function set_pinned(int $targetstate): bool {
+        if ($targetstate != $this->pinned) {
+            $this->pinned = $targetstate;
+        }
+
+        return true;
+    }
+
+
     /**
      * Check if the discussion is timed.
      *

@@ -65,13 +65,14 @@
 {{#html.neighbourlinks}}{{{.}}}{{/html.neighbourlinks}}
 </div>
 {{#js}}
-require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lock_toggle', 'mod_forum/favourite_toggle'],
-    function($, Discussion, PostsList, LockToggle, FavouriteToggle) {
+require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lock_toggle', 'mod_forum/favourite_toggle', 'mod_forum/pin_toggle'],
+    function($, Discussion, PostsList, LockToggle, FavouriteToggle, Pin) {
         var root = $("[data-content='forum-discussion']");
         Discussion.init(root);
         PostsList.init(root);
         var root = $('[data-container="discussion-tools"]');
         LockToggle.init(root);
         FavouriteToggle.init(root);
+        Pin.init(root);
 });
 {{/js}}
