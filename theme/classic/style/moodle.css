@@ -10780,6 +10780,10 @@ div.editor_atto_toolbar button .icon {
   overflow: hidden !important;
   /* stylelint-disable-line declaration-no-important */ }
 
+.text-break {
+  overflow-wrap: break-word !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
 .icon {
   font-size: 16px;
   width: 16px;
