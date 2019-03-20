@@ -83,7 +83,7 @@
         <div class="d-flex align-self-stretch">
             <div
                 class="px-2 py-1 small position-absolute position-right text-muted {{^lastmessagedate}}hidden{{/lastmessagedate}}"
-                data-region="last-message-date"
+                data-region="last-message-date" aria-hidden="true"
             >
                 {{#lastmessagedate}}
                     {{#userdate}} {{.}}, {{#str}} strftimetime24, core_langconfig  {{/str}} {{/userdate}}
@@ -93,6 +93,7 @@
                 <span
                     class="badge badge-pill badge-primary bg-primary {{^unreadcount}}hidden{{/unreadcount}}"
                     data-region="unread-count"
+                    aria-label="{{#str}} unreadmessages, core_message, {{unreadcount}} {{/str}}"
                 >
                     {{unreadcount}}
                 </span>
