@@ -1285,15 +1285,40 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $record->files = file_get_unused_draft_itemid();
         $usercontext = context_user::instance($USER->id);
         $extensions = array('txt', 'png', 'pdf');
+        $fs = get_file_storage();
         foreach ($extensions as $key => $extension) {
             // Add actual file there.
             $filerecord = array('component' => 'user', 'filearea' => 'draft',
                     'contextid' => $usercontext->id, 'itemid' => $record->files,
                     'filename' => 'resource' . $key . '.' . $extension, 'filepath' => '/');
-            $fs = get_file_storage();
             $fs->create_file_from_string($filerecord, 'Test resource ' . $key . ' file');
         }
 
+        // Create file reference.
+        $repos = repository::get_instances(array('type' => 'user'));
+        $userrepository = reset($repos);
+
+        // Create a user private file.
+        $userfilerecord = new stdClass;
+        $userfilerecord->contextid = $usercontext->id;
+        $userfilerecord->component = 'user';
+        $userfilerecord->filearea  = 'private';
+        $userfilerecord->itemid    = 0;
+        $userfilerecord->filepath  = '/';
+        $userfilerecord->filename  = 'userfile.txt';
+        $userfilerecord->source    = 'test';
+        $userfile = $fs->create_file_from_string($userfilerecord, 'User file content');
+        $userfileref = $fs->pack_reference($userfilerecord);
+
+        // Clone latest "normal" file.
+        $filerefrecord = clone (object) $filerecord;
+        $filerefrecord->filename = 'testref.txt';
+        $fileref = $fs->create_file_from_reference($filerefrecord, $userrepository->id, $userfileref);
+        // Set main file pointing to the file reference.
+        file_set_sortorder($usercontext->id, 'user', 'draft', $record->files, $filerefrecord->filepath,
+            $filerefrecord->filename, 1);
+
+        // Once the reference has been created, create the file resource.
         $resource2 = self::getDataGenerator()->create_module('resource', $record);
 
         $result = core_course_external::get_course_contents($course->id);
@@ -1306,10 +1331,11 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($module['contents'][0]['filesize'], $module['contentsinfo']['filessize']);
                 $this->assertEquals(array('text/plain'), $module['contentsinfo']['mimetypes']);
             } else {
-                $this->assertEquals(count($extensions), $module['contentsinfo']['filescount']);
+                $this->assertEquals(count($extensions) + 1, $module['contentsinfo']['filescount']);
                 $filessize = $module['contents'][0]['filesize'] + $module['contents'][1]['filesize'] +
-                    $module['contents'][2]['filesize'];
+                    $module['contents'][2]['filesize'] + $module['contents'][3]['filesize'];
                 $this->assertEquals($filessize, $module['contentsinfo']['filessize']);
+                $this->assertEquals('user', $module['contentsinfo']['repositorytype']);
                 $this->assertGreaterThanOrEqual($timenow, $module['contentsinfo']['lastmodified']);
                 $this->assertEquals(array('text/plain', 'image/png', 'application/pdf'), $module['contentsinfo']['mimetypes']);
             }

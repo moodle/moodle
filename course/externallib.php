@@ -326,6 +326,10 @@ class core_course_external extends external_api {
                                     'mimetypes' => array(),
                                 );
                                 foreach ($contents as $content) {
+                                    // Check repository file (only main file).
+                                    if (!isset($module['contentsinfo']['repositorytype'])) {
+                                        $module['contentsinfo']['repositorytype'] = isset($content['repositorytype']) ? $content['repositorytype'] : '';
+                                    }
                                     if (isset($content['filesize'])) {
                                         $module['contentsinfo']['filessize'] += $content['filesize'];
                                     }
@@ -501,6 +505,8 @@ class core_course_external extends external_api {
                                                 new external_value(PARAM_RAW, 'File mime type.'),
                                                 'Files mime types.'
                                             ),
+                                            'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for
+                                                the main file.', VALUE_OPTIONAL),
                                         ), 'Contents summary information.', VALUE_OPTIONAL
                                     ),
                                 )
