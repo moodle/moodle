@@ -57,7 +57,7 @@ class forum {
                 'scale' => $forum->get_scale(),
                 'maxbytes' => $forum->get_max_bytes(),
                 'maxattachments' => $forum->get_max_attachments(),
-                'forcesubscribe' => $forum->is_subscription_forced(),
+                'forcesubscribe' => $forum->get_subscription_mode(),
                 'trackingtype' => $forum->get_tracking_type(),
                 'rsstype' => $forum->get_rss_type(),
                 'rssarticles' => $forum->get_rss_articles(),

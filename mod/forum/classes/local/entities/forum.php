@@ -27,6 +27,7 @@ namespace mod_forum\local\entities;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->dirroot . '/rating/lib.php');
 
 use mod_forum\local\entities\discussion as discussion_entity;
@@ -72,8 +73,8 @@ class forum {
     private $maxbytes;
     /** @var int $maxattachments Maximum number of attachments */
     private $maxattachments;
-    /** @var bool $forcesubscription Does the forum force users to subscribe? */
-    private $forcesubscription;
+    /** @var int $forcesubscribe Does the forum force users to subscribe? */
+    private $forcesubscribe;
     /** @var int $trackingtype Tracking type */
     private $trackingtype;
     /** @var int $rsstype RSS type */
@@ -118,7 +119,7 @@ class forum {
      * @param int $scale The rating scale
      * @param int $maxbytes Maximum attachment size
      * @param int $maxattachments Maximum number of attachments
-     * @param bool $forcesubscribe Does the forum force users to subscribe?
+     * @param int $forcesubscribe Does the forum force users to subscribe?
      * @param int $trackingtype Tracking type
      * @param int $rsstype RSS type
      * @param int $rssarticles RSS articles
@@ -149,7 +150,7 @@ class forum {
         int $scale,
         int $maxbytes,
         int $maxattachments,
-        bool $forcesubscribe,
+        int $forcesubscribe,
         int $trackingtype,
         int $rsstype,
         int $rssarticles,
@@ -357,12 +358,48 @@ class forum {
     }
 
     /**
-     * Does the forum force subscription?
+     * Get the subscription mode.
+     *
+     * @return int
+     */
+    public function get_subscription_mode() : int {
+        return $this->forcesubscribe;
+    }
+
+    /**
+     * Is the subscription mode set to optional.
+     *
+     * @return bool
+     */
+    public function is_subscription_optional() : bool {
+        return $this->get_subscription_mode() === FORUM_CHOOSESUBSCRIBE;
+    }
+
+    /**
+     * Is the subscription mode set to forced.
      *
      * @return bool
      */
     public function is_subscription_forced() : bool {
-        return $this->forcesubscribe;
+        return $this->get_subscription_mode() === FORUM_FORCESUBSCRIBE;
+    }
+
+    /**
+     * Is the subscription mode set to automatic.
+     *
+     * @return bool
+     */
+    public function is_subscription_automatic() : bool {
+        return $this->get_subscription_mode() === FORUM_INITIALSUBSCRIBE;
+    }
+
+    /**
+     * Is the subscription mode set to disabled.
+     *
+     * @return bool
+     */
+    public function is_subscription_disabled() : bool {
+        return $this->get_subscription_mode() === FORUM_DISALLOWSUBSCRIBE;
     }
 
     /**

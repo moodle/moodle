@@ -79,7 +79,7 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
         $scale = 0;
         $maxbytes = 200;
         $maxattachments = 5;
-        $forcesubscribe = false;
+        $forcesubscribe = 0;
         $trackingtype = 1;
         $rsstype = 0;
         $rssarticles = 0;
@@ -144,7 +144,7 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
         $this->assertEquals($scale, $forum->get_scale());
         $this->assertEquals($maxbytes, $forum->get_max_bytes());
         $this->assertEquals($maxattachments, $forum->get_max_attachments());
-        $this->assertEquals($forcesubscribe, $forum->is_subscription_forced());
+        $this->assertEquals($forcesubscribe, $forum->get_subscription_mode());
         $this->assertEquals($trackingtype, $forum->get_tracking_type());
         $this->assertEquals($rsstype, $forum->get_rss_type());
         $this->assertEquals($rssarticles, $forum->get_rss_articles());
