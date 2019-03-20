@@ -119,7 +119,7 @@ class course_bin extends base_bin {
             $cm->id,
             \backup::FORMAT_MOODLE,
             \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL,
+            \backup::MODE_AUTOMATED,
             $user->id
         );
         $controller->execute_plan();
@@ -224,7 +224,7 @@ class course_bin extends base_bin {
             $tempdir,
             $this->_courseid,
             \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL,
+            \backup::MODE_AUTOMATED,
             $user->id,
             \backup::TARGET_EXISTING_ADDING
         );
