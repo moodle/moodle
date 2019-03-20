@@ -1281,8 +1281,9 @@ class mod_forum_external extends external_api {
         $forum = $forumvault->get_from_id($params['forumid']);
         $course = $forum->get_course_record();
         $coursemodule = $forum->get_course_module_record();
+        $context = $forum->get_context();
 
-        self::validate_context($forum->get_context());
+        self::validate_context($context);
 
         $managerfactory = mod_forum\local\container::get_manager_factory();
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
