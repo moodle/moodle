@@ -86,7 +86,13 @@
                 data-region="last-message-date"
             >
                 {{#lastmessagedate}}
-                    {{#userdate}} {{.}}, {{#str}} strftimetime24, core_langconfig  {{/str}} {{/userdate}}
+                    {{#istoday}}
+                        {{#userdate}} {{.}}, {{#str}} strftimetime24, core_langconfig  {{/str}} {{/userdate}}
+                    {{/istoday}}
+                    {{^istoday}}
+                        {{#userdate}} {{.}}, {{#str}} strftimedatefullshort, core_langconfig  {{/str}} {{/userdate}}
+                    {{/istoday}}
+
                 {{/lastmessagedate}}
             </div>
             <div class="d-flex align-self-center align-items-center">
