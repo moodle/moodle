@@ -155,4 +155,13 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'mod_forum_set_pin_state' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'set_pin_state',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Set the pin state',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );

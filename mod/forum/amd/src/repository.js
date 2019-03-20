@@ -81,7 +81,19 @@ define(['core/ajax'], function(Ajax) {
             args: {
                 forumid: forumId,
                 discussionid: discussionId,
-                targetstate: targetState
+                targetstate: targetState}
+        };
+        return Ajax.call([request])[0];
+    };
+
+    var togglePin = function(forumid, discussionid, targetstate, includetext) {
+        var request = {
+            methodname: 'mod_forum_set_pin_state',
+            args: {
+                forumid: forumid,
+                discussionid: discussionid,
+                targetstate: targetstate,
+                includetext: includetext,
             }
         };
         return Ajax.call([request])[0];
@@ -91,6 +103,7 @@ define(['core/ajax'], function(Ajax) {
         setDiscussionSubscriptionState: setDiscussionSubscriptionState,
         addDiscussionPost: addDiscussionPost,
         setDiscussionLockState: setDiscussionLockState,
-        toggleFavouriteDiscussionState: toggleFavouriteDiscussionState
+        toggleFavouriteDiscussionState: toggleFavouriteDiscussionState,
+        togglePin: togglePin
     };
 });
