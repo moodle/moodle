@@ -78,6 +78,7 @@ class mod_forum_vaults_discussion_list_testcase extends advanced_testcase {
         $datagenerator = $this->getDataGenerator();
         $vault = $this->vault;
         $user = $datagenerator->create_user();
+        self::setUser($user);
         $course = $datagenerator->create_course();
         $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
 
@@ -127,6 +128,7 @@ class mod_forum_vaults_discussion_list_testcase extends advanced_testcase {
         $datagenerator = $this->getDataGenerator();
         $vault = $this->vault;
         $user = $datagenerator->create_user();
+        self::setUser($user);
         $course = $datagenerator->create_course();
         $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
 
@@ -231,6 +233,7 @@ class mod_forum_vaults_discussion_list_testcase extends advanced_testcase {
         $datagenerator = $this->getDataGenerator();
         $vault = $this->vault;
         $user = $datagenerator->create_user();
+        self::setUser($user);
         $course = $datagenerator->create_course();
         $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
 
