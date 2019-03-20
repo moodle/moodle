@@ -15,36 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Steps definitions related with administration.
+ * Step definitions related to administration overrides for the Classic theme.
  *
- * @package   core_admin
- * @category  test
- * @copyright 2013 David Monllaó
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    theme_classic
+ * @category   test
+ * @copyright  2019 Michael Hawkins
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
+// For that reason, we can't even rely on $CFG->admin being available here.
 
-require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
-require_once(__DIR__ . '/../../../lib/behat/behat_field_manager.php');
+require_once(__DIR__ . '/../../../../admin/tests/behat/behat_admin.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
- * Site administration level steps definitions.
+ * Site administration level steps definitions overrides for the Classic theme.
  *
- * @package    core_admin
+ * @package    theme_classic
  * @category   test
- * @copyright  2013 David Monllaó
+ * @copyright  2019 Michael Hawkins
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_admin extends behat_base {
+class behat_theme_classic_behat_admin extends behat_admin {
 
     /**
      * Sets the specified site settings. A table with | Setting label | value | is expected.
      *
-     * @Given /^I set the following administration settings values:$/
      * @param TableNode $table
      */
     public function i_set_the_following_administration_settings_values(TableNode $table) {
@@ -55,11 +54,19 @@ class behat_admin extends behat_base {
 
         foreach ($data as $label => $value) {
 
-            $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', [get_string('administrationsite')]);
+            // We expect admin block to be visible, otherwise go to homepage.
+            if (!$this->getSession()->getPage()->find('css', '.block_settings')) {
+                $this->getSession()->visit($this->locate_path('/'));
+                $this->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+            }
 
             // Search by label.
-            $this->execute('behat_forms::i_set_the_field_to', [get_string('query', 'admin'), $label]);
-            $this->execute("behat_forms::press_button", get_string('search', 'admin'));
+            $searchbox = $this->find_field(get_string('searchinsettings', 'admin'));
+            $searchbox->setValue($label);
+            $submitsearch = $this->find('css', 'form.adminsearchform input[type=submit]');
+            $submitsearch->press();
+
+            $this->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
 
             // Admin settings does not use the same DOM structure than other moodle forms
             // but we also need to use lib/behat/form_field/* to deal with the different moodle form elements.
@@ -108,43 +115,6 @@ class behat_admin extends behat_base {
             $field->set_value($value);
 
             $this->find_button(get_string('savechanges'))->press();
-        }
-    }
-
-    /**
-     * Sets the specified site settings. A table with | config | value | (optional)plugin | is expected.
-     *
-     * @Given /^the following config values are set as admin:$/
-     * @param TableNode $table
-     */
-    public function the_following_config_values_are_set_as_admin(TableNode $table) {
-
-        if (!$data = $table->getRowsHash()) {
-            return;
-        }
-
-        foreach ($data as $config => $value) {
-            // Default plugin value is null.
-            $plugin = null;
-
-            if (is_array($value)) {
-                $plugin = $value[1];
-                $value = $value[0];
-            }
-            set_config($config, $value, $plugin);
-        }
-    }
-
-    /**
-     * Waits with the provided params if we are running a JS session.
-     *
-     * @param int $timeout
-     * @param string $javascript
-     * @return void
-     */
-    protected function wait($timeout, $javascript = false) {
-        if ($this->running_javascript()) {
-            $this->getSession()->wait($timeout, $javascript);
         }
     }
 }

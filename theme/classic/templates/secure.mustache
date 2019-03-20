@@ -1,0 +1,110 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_classic/secure
+
+    Classic secure layout template.
+
+    Context variables required for this template:
+    * sitename - The name of the site
+    * output - The core renderer for the page
+    * bodyattributes - Attributes for the body tag as a string of html attributes
+    * sidepreblocks - HTML for the pre blocks
+    * sidepostblocks - HTML for the post blocks
+    * haspreblocks - true if there are pre blocks on this page
+    * haspostblocks - true if there are post blocks on this page
+    * bodyattributes - attributes for the body tag as a string of html attributes
+
+      Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+         },
+        "bodyattributes":"",
+        "sidepreblocks": "<h2>Pre blocks html goes here</h2>",
+        "sidepostblocks": "<h2>Post blocks html goes here</h2>",
+        "haspreblocks":true,
+        "haspostblocks":true,
+        "bodyattributes": ""
+    }
+}}
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+
+<div id="page-wrapper">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    {{>theme_classic/navbar-secure}}
+
+    <div id="page" class="container-fluid">
+        {{! Secured full header }}
+
+        <div id="page-header" class="row">
+            <div class="col-12 py-3">
+                <div class="page-context-header">
+                    <div class="page-header-headings">
+                        {{{ output.page_heading }}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-content" class="row {{#haspreblocks}} blocks-pre {{/haspreblocks}} {{#haspostblocks}} blocks-post {{/haspostblocks}}">
+            <div id="region-main-box" class="region-main col-12">
+                <section id="region-main" aria-label="{{#str}}content{{/str}}">
+                    <div class="card">
+                        <div class="card-body">
+                            {{{ output.course_content_header }}}
+                            {{{ output.main_content }}}
+                            {{{ output.course_content_footer }}}
+                        </div>
+                    </div>
+                </section>
+                <div class="columnleft {{#haspreblocks}} has-blocks {{/haspreblocks}}">
+                    <section data-region="blocks-column" class="hidden-print" aria-label="{{#str}}blocks{{/str}}">
+                        {{{ sidepreblocks }}}
+                    </section>
+                </div>
+
+                <div class="columnright {{#haspostblocks}} has-blocks {{/haspostblocks}}">
+                    <section data-region="blocks-column" class="hidden-print" aria-label="{{#str}}blocks{{/str}}">
+                        {{{ sidepostblocks }}}
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer id="page-footer" class="py-3 bg-dark text-light">
+        <div class="container">
+            <div id="course-footer">{{{ output.course_footer }}}</div>
+
+            {{{ output.standard_end_of_body_html }}}
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>
+{{#js}}
+require(['theme_boost/loader']);
+{{/js}}

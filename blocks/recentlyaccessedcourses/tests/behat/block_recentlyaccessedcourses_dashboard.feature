@@ -34,6 +34,7 @@ Feature: The recently accessed courses block allows users to easily access their
     When I am on "Course 1" course homepage
     And I am on "Course 2" course homepage
     And I follow "Dashboard" in the user menu
+    And I change window size to "large"
     Then I should see "Course 1" in the "Recently accessed courses" "block"
     And I should see "Course 2" in the "Recently accessed courses" "block"
     And I should not see "Course 3" in the "Recently accessed courses" "block"
