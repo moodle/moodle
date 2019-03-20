@@ -33,13 +33,13 @@ define([
     Repository
 ) {
     var registerEventListeners = function(root) {
-        root.on('click', Selectors.favourite.toggle, function(e) {
+        root.on('click', Selectors.favourite.toggle, function() {
             var toggleElement = $(this);
             var forumId = toggleElement.data('forumid');
             var discussionId = toggleElement.data('discussionid');
             var subscriptionState = toggleElement.data('targetstate');
             Repository.toggleFavouriteDiscussionState(forumId, discussionId, subscriptionState)
-                .then(function(context) {
+                .then(function() {
                     location.reload();
                 })
                 .catch(Notification.exception);

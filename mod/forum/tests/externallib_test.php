@@ -181,6 +181,47 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test the toggle favourite state
+     */
+    public function test_mod_forum_toggle_favourite_state() {
+        global $USER, $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a user.
+        $user = self::getDataGenerator()->create_user(array('trackforums' => 1));
+
+        // Set to the user.
+        self::setUser($user);
+
+        // Create courses to add the modules.
+        $course1 = self::getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+        $forum1->introfiles = [];
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user->id;
+        $record->forum = $forum1->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $response = mod_forum_external::toggle_favourite_state($forum1->id, $discussion1->id, 1);
+        $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
+        $this->assertTrue($response['userstate']['favourited']);
+
+        $response = mod_forum_external::toggle_favourite_state($forum1->id, $discussion1->id, 0);
+        $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
+        $this->assertFalse($response['userstate']['favourited']);
+    }
+
+    /**
      * Test get forum posts
      */
     public function test_mod_forum_get_forum_discussion_posts() {

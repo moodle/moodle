@@ -1149,7 +1149,7 @@ class mod_forum_external extends external_api {
         return discussion_exporter::get_read_structure();
     }
 
-    public function toggle_favourite_state_parameters() {
+    public static function toggle_favourite_state_parameters() {
         return new external_function_parameters(
             [
                 'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in'),

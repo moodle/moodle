@@ -158,6 +158,54 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
         $this->assertEquals($isvisible, $discussion->is_timed_discussion_visible(), $testdescription);
     }
 
+    public function test_is_favourited() {
+        $this->resetAfterTest(true);
+
+        $time = time() + 10;
+        // Create a user.
+        $user = self::getDataGenerator()->create_user(array('trackforums' => 1));
+
+        // Set to the user.
+        self::setUser($user);
+
+        // Create courses to add the modules.
+        $course1 = self::getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+
+        $discussion = new discussion_entity(
+            1,
+            $course1->id,
+            $forum1->id,
+            'test discussion',
+            4,
+            5,
+            6,
+            false,
+            $time,
+            $time,
+            0,
+            0,
+            false
+        );
+        $coursemodule = get_coursemodule_from_instance('forum', $forum1->id);
+        $contextmodule = context_module::instance($coursemodule->id);
+
+        $this->assertFalse(\mod_forum\local\entities\discussion::is_favourited($discussion, $contextmodule, $user));
+
+        // Toggle the favourite for discussion
+        $usercontext = \context_user::instance($user->id);
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        $ufservice->create_favourite('mod_forum', 'discussions', $discussion->get_id(), $contextmodule);
+
+        $this->assertTrue(\mod_forum\local\entities\discussion::is_favourited($discussion, $contextmodule, $user));
+    }
+
     /**
      * Data provider for test_display_period_settings().
      *
