@@ -2242,6 +2242,7 @@ class block_iomad_company_admin_external extends external_api {
             )
         );
     }
+
     /**
      * Delete capability template
      *
@@ -2270,6 +2271,84 @@ class block_iomad_company_admin_external extends external_api {
      */
     public static function capability_delete_template_returns() {
         return new external_value(PARAM_BOOL, 'True capability update succeeds');
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.2
+     */
+    public static function get_license_from_id_parameters() {
+        return new external_function_parameters(
+            array(
+                'licenseid' => new external_value(PARAM_INT, 'License ID.'),
+            )
+        );
+    }
+
+    /**
+     * Return license info (given license ID)
+     *
+     * @param int $licenseid
+     */
+    public static function get_license_from_id($licenseid) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::get_license_id_parameters(), [
+            'licenseid' => $templateid,
+        ]);
+
+        // Security.
+        $context = context_system::instance();
+        iomad::require_capability('block/iomad_company_admin:allocate_licenses', $context);
+
+        // Get license
+        $license = $DB->get_record('companylicense', ['id' => $params['licenseid']], '*', MUST_EXIST);
+
+        // Get license courses (with extra)
+        $sql = 'SELECT co.id AS id, co.fullname AS fullname
+            FROM {course} co JOIN {companylicense_courses} clc
+            ON co.id = clc.courseid
+            WHERE clc.licenseid = :licenseid
+            ORDER BY co.fullname';
+        $liccourses = $DB->get_records_sql($sql, ['licenseid' => $params['licenseid']]);
+
+        return [
+            'license' => $license,
+            'courses' => $liccourses,
+        ];
+    }
+
+    /**
+     * Returns description for get_license_info
+     * @return external_description
+     */
+    public static function get_license_from_id_returns() {
+        return new external_single_structure([
+            'license' => new external_single_structure([
+                'id' => new external_value(PARAM_INT, 'License ID'),
+                'name' => new external_value(PARAM_ALPHA, 'License name'),
+                'allocation' => new external_value(PARAM_INT, 'Allocation'),
+                'validlength' => new external_value(PARAM_INT, 'Valid length'),
+                'startdate' => new external_value(PARAM_INT, 'Start date'),
+                'expirydate' => new external_value(PARAM_INT, 'Expiry date'),
+                'used' => new external_value(PARAM_INT, 'Used'),
+                'companyid' => new external_value(PARAM_INT, 'Company ID'),
+                'parentid' => new external_value(PARAM_INT, 'Parent ID'),
+                'type' => new external_value(PARAM_BOOL, 'Type'),
+                'program' => new external_value(PARAM_BOOL, 'Program'),
+                'reference' => new external_value(PARAM_ALPHA, 'Reference'),
+                'instant' => new external_value(PARAM_BOOL, 'Instant'),
+            ]),
+            'courses' => new external_multiple_structure(
+                new external_single_structure([
+                    'id' => new external_value(PARAM_INT, 'Course ID'),
+                    'fullname' => new external_value(PARAM_ALPHA, 'Course full name'),
+                ]),
+                'List of available or program courses for License'
+            )
+        ]);
     }
 
 }

@@ -201,4 +201,12 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
+    'block_iomad_company_admin_get_licence_from_id' => array(
+        'classname' => 'block_iomad_company_admin_external',
+        'methodname' => 'get_license_from_id',
+        'classpath' => 'blocks/iomad_company_admin/externallib.php',
+        'description' => 'Get licence data give the ID',
+        'type' => 'read',
+        'ajax' => true,
+    ),
 );
