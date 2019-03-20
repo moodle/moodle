@@ -2278,7 +2278,8 @@ function send_headers($contenttype, $cacheable = true) {
     }
     @header('Accept-Ranges: none');
 
-    if (empty($CFG->allowframembedding)) {
+    // The Moodle app must be allowed to embed content always.
+    if (empty($CFG->allowframembedding) && !core_useragent::is_moodle_app()) {
         @header('X-Frame-Options: sameorigin');
     }
 }
