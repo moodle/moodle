@@ -171,7 +171,6 @@ class discussion_list {
             ),
             'hasmore' => ($alldiscussionscount > $pagesize),
             'notifications' => $this->get_notifications($user, $groupid),
-            'notifications' => $this->get_notifications($user, $groupid)
             'settings' => [
                 'excludetext' => true,
                 'togglemoreicon' => true

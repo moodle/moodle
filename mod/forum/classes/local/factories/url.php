@@ -455,6 +455,7 @@ class url {
             'sesskey' => sesskey(),
             'id' => $discussion->get_forum_id(),
             'd' => $discussion->get_id()
+        ]);
     }
 
     /**

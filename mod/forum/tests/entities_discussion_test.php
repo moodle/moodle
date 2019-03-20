@@ -198,7 +198,7 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
 
         $this->assertFalse(\mod_forum\local\entities\discussion::is_favourited($discussion, $contextmodule, $user));
 
-        // Toggle the favourite for discussion
+        // Toggle the favourite for discussion.
         $usercontext = \context_user::instance($user->id);
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
         $ufservice->create_favourite('mod_forum', 'discussions', $discussion->get_id(), $contextmodule);

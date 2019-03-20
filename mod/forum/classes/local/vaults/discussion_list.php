@@ -74,6 +74,11 @@ class discussion_list extends db_table_vault {
         return 'd';
     }
 
+    /**
+     * Get the favourite table alias
+     *
+     * @return string
+     */
     protected function get_favourite_alias() : string {
         return 'favalias';
     }
@@ -83,6 +88,8 @@ class discussion_list extends db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
+     * @param  string|null $joinsql Additional join conditions for the sql
+     *
      * @return string
      */
     protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null, ?string $joinsql = null) : string {
@@ -188,15 +195,20 @@ class discussion_list extends db_table_vault {
 
         $alias = $this->get_table_alias();
 
-        $keyfield = "{$alias}.timemodified";
-        $direction = "DESC";
+        if ($sortmethod == self::SORTORDER_CREATED_DESC) {
+            $keyfield = "fp.created";
+            $direction = "DESC";
+        } else {
+            $keyfield = "{$alias}.timemodified";
+            $direction = "DESC";
 
-        if ($sortmethod == self::SORTORDER_OLDEST_FIRST) {
-            $direction = "ASC";
-        }
+            if ($sortmethod == self::SORTORDER_OLDEST_FIRST) {
+                $direction = "ASC";
+            }
 
-        if (!empty($CFG->forum_enabletimedposts)) {
-            $keyfield = "CASE WHEN {$keyfield} < {$alias}.timestart THEN {$alias}.timestart ELSE {$keyfield} END";
+            if (!empty($CFG->forum_enabletimedposts)) {
+                $keyfield = "CASE WHEN {$keyfield} < {$alias}.timestart THEN {$alias}.timestart ELSE {$keyfield} END";
+            }
         }
 
         return "{$alias}.pinned DESC, {$this->get_favourite_alias()}.id DESC, {$keyfield} {$direction}";
@@ -404,7 +416,8 @@ class discussion_list extends db_table_vault {
         $usercontext = \context_user::instance($USER->id);
         $alias = $this->get_table_alias();
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
-        list($favsql, $favparams) = $ufservice->get_join_sql_by_type('mod_forum', 'discussions', $this->get_favourite_alias(), "$alias.id");
+        list($favsql, $favparams) = $ufservice->get_join_sql_by_type('mod_forum', 'discussions',
+            $this->get_favourite_alias(), "$alias.id");
 
         return [$favsql, $favparams];
     }

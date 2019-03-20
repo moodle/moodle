@@ -300,6 +300,12 @@ class discussion {
         return $this->get_group_id() > 0;
     }
 
+    /**
+     * Set the pinned value for this entity
+     *
+     * @param int $targetstate The state to change the pin to
+     * @return bool
+     */
     public function set_pinned(int $targetstate): bool {
         if ($targetstate != $this->pinned) {
             $this->pinned = $targetstate;
@@ -307,7 +313,6 @@ class discussion {
 
         return true;
     }
-
 
     /**
      * Check if the discussion is timed.
@@ -336,6 +341,8 @@ class discussion {
      * @param discussion $discussion The discussion record
      * @param context $forumcontext Forum context
      * @param \stdClass $user The user to check the favourite against
+     *
+     * @return bool Whether or not the user has favourited the discussion
      */
     public static function is_favourited(discussion $discussion, \context_module $forumcontext, \stdClass $user) {
         $usercontext = \context_user::instance($user->id);

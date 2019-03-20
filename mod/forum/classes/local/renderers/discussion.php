@@ -201,10 +201,6 @@ class discussion {
             $exporteddiscussion['html']['pindiscussion'] = $this->get_pin_discussion_html();
         }
 
-        if ($capabilities['favourite']) {
-            $exporteddiscussion['html']['favouritediscussion'] = $this->get_favourite_discussion_html($exporteddiscussion);
-        }
-
         return $this->renderer->render_from_template('mod_forum/forum_discussion', $exporteddiscussion);
     }
 
@@ -353,10 +349,6 @@ class discussion {
         $url = new moodle_url('discuss.php', $params);
         $link = new \action_link($url, $pintext, null, ['class' => 'btn btn-link']);
         return $this->renderer->render($link);
-    }
-
-    private function get_favourite_discussion_html($exporteddiscussion) : string {
-        return $this->renderer->render_from_template('mod_forum/discussion_favourite_toggle', $exporteddiscussion);
     }
 
     /**

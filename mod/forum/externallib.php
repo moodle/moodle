@@ -1097,6 +1097,14 @@ class mod_forum_external extends external_api {
         );
     }
 
+    /**
+     * Toggle the favouriting value for the discussion provided
+     *
+     * @param int $forumid The forum id
+     * @param int $discussionid The discussion we need to favourite
+     * @param bool $targetstate The state of the favourite value
+     * @return array The exported discussion
+     */
     public static function toggle_favourite_state($forumid, $discussionid, $targetstate) {
         global $DB, $PAGE, $USER;
 
@@ -1149,6 +1157,11 @@ class mod_forum_external extends external_api {
         return discussion_exporter::get_read_structure();
     }
 
+    /**
+     * Defines the parameters for the toggle_favourite_state method
+     *
+     * @return external_function_parameters
+     */
     public static function toggle_favourite_state_parameters() {
         return new external_function_parameters(
             [
@@ -1638,17 +1651,19 @@ class mod_forum_external extends external_api {
             'targetstate' => $targetstate,
         ]);
         $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $managerfactory = mod_forum\local\container::get_manager_factory();
         $forumvault = $vaultfactory->get_forum_vault();
         $discussionvault = $vaultfactory->get_discussion_vault();
         $forum = $forumvault->get_from_id($params['forumid']);
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
         self::validate_context($forum->get_context());
 
         $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
         $forumrecord = $legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
-        if (!\mod_forum\subscriptions::is_subscribable($forumrecord)) {
+        if (!$capabilitymanager->can_pin_discussions($USER)) {
             // Nothing to do. We won't actually output any content here though.
-            throw new \moodle_exception('cannotsubscribe', 'mod_forum');
+            throw new \moodle_exception('cannotpindiscussions', 'mod_forum');
         }
 
         $discussion = $discussionvault->get_from_id($params['discussionid']);
@@ -1684,9 +1699,12 @@ class mod_forum_external extends external_api {
     public static function set_pin_state_parameters() {
         return new external_function_parameters(
             [
-                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in', VALUE_REQUIRED, null, NULL_NOT_ALLOWED),
-                'discussionid' => new external_value(PARAM_INT, 'The discussion to pin or unpin', VALUE_REQUIRED, null, NULL_NOT_ALLOWED),
-                'targetstate' => new external_value(PARAM_INT, 'The target state', VALUE_REQUIRED, null, NULL_NOT_ALLOWED),
+                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in', VALUE_REQUIRED,
+                    null, NULL_NOT_ALLOWED),
+                'discussionid' => new external_value(PARAM_INT, 'The discussion to pin or unpin', VALUE_REQUIRED,
+                    null, NULL_NOT_ALLOWED),
+                'targetstate' => new external_value(PARAM_INT, 'The target state', VALUE_REQUIRED,
+                    null, NULL_NOT_ALLOWED),
             ]
         );
     }
