@@ -61,6 +61,8 @@ class discussion_list extends db_table_vault {
     public const SORTORDER_NEWEST_FIRST = 1;
     /** Sort by oldest first */
     public const SORTORDER_OLDEST_FIRST = 2;
+    /** Sort by created desc */
+    public const SORTORDER_CREATED_DESC = 3;
 
     /**
      * Get the table alias.
@@ -180,19 +182,24 @@ class discussion_list extends db_table_vault {
 
         $alias = $this->get_table_alias();
 
-        // TODO consider user favourites...
-        $keyfield = "{$alias}.timemodified";
-        $direction = "DESC";
+        if ($sortmethod == self::SORTORDER_CREATED_DESC) {
+            $keyfield = "fp.created";
+            $direction = "DESC";
+        } else {
+            // TODO consider user favourites...
+            $keyfield = "{$alias}.timemodified";
+            $direction = "DESC";
 
-        if ($sortmethod == self::SORTORDER_OLDEST_FIRST) {
-            $direction = "ASC";
+            if ($sortmethod == self::SORTORDER_OLDEST_FIRST) {
+                $direction = "ASC";
+            }
+
+            if (!empty($CFG->forum_enabletimedposts)) {
+                $keyfield = "CASE WHEN {$keyfield} < {$alias}.timestart THEN {$alias}.timestart ELSE {$keyfield} END";
+            }
         }
 
-        if (!empty($CFG->forum_enabletimedposts)) {
-            $keyfield = "CASE WHEN {$keyfield} < {$alias}.timestart THEN {$alias}.timestart ELSE {$keyfield} END";
-        }
-
-        return "{$alias}.pinned DESC, {$keyfield} {$direction}";
+        return "{$alias}.pinned DESC, {$keyfield} {$direction}, {$alias}.id DESC";
     }
 
     /**
