@@ -289,7 +289,7 @@ class model {
                     $timesplitting = \core_analytics\manager::get_time_splitting($options['timesplitting']);
                     $timesplittings = array($timesplitting->get_id() => $timesplitting);
                 } else {
-                    $timesplittings = \core_analytics\manager::get_enabled_time_splitting_methods();
+                    $timesplittings = \core_analytics\manager::get_time_splitting_methods_for_evaluation();
                 }
             } else {
 
