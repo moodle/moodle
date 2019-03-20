@@ -33,16 +33,19 @@
     }
 }}
 {{#capabilities.subscribe}}
-    <button
+    <a
+        href="{{{urls.subscribe}}}"
         class="p-3 btn btn-link"
         data-type="subscription-toggle"
         data-action="toggle"
         data-discussionid="{{id}}"
         data-forumid="{{forumid}}"
         {{#userstate.subscribed}}
+            title="{{#str}}clicktounsubscribe, mod_forum{{/str}}"
             data-targetstate="0"
         {{/userstate.subscribed}}
         {{^userstate.subscribed}}
+            title="{{#str}}clicktosubscribe, mod_forum{{/str}}"
             data-targetstate="1"
         {{/userstate.subscribed}}
     >
@@ -52,5 +55,5 @@
         {{^userstate.subscribed}}
             {{#pix}}t/unsubscribed, mod_forum, {{#str}}clicktosubscribe, mod_forum{{/str}}{{/pix}}
         {{/userstate.subscribed}}
-    </button>
+    </a>
 {{/capabilities.subscribe}}

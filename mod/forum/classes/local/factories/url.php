@@ -443,4 +443,18 @@ class url {
             'return' => $this->get_forum_view_url_from_forum($forum)->out(),
         ]);
     }
+
+    /**
+     * Get the url to subscribe to a discussion.
+     *
+     * @param discussion_entity $discussion The discussion
+     * @return moodle_url
+     */
+    public function get_discussion_subscribe_url(discussion_entity $discussion) : moodle_url {
+        return new moodle_url('/mod/forum/subscribe.php', [
+            'sesskey' => sesskey(),
+            'id' => $discussion->get_forum_id(),
+            'd' => $discussion->get_id()
+        ]);
+    }
 }

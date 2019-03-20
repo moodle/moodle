@@ -115,6 +115,7 @@ class discussion extends exporter {
                         'type' => PARAM_URL,
                     ],
                     'markasread' => ['type' => PARAM_URL],
+                    'subscribe' => ['type' => PARAM_URL]
                 ],
             ]
         ];
@@ -182,6 +183,7 @@ class discussion extends exporter {
                 'view' => $urlfactory->get_discussion_view_url_from_discussion($discussion)->out(false),
                 'viewfirstunread' => $viewfirstunreadurl->out(false),
                 'markasread' => $urlfactory->get_mark_discussion_as_read_url_from_discussion($forum, $discussion)->out(false),
+                'subscribe' => $urlfactory->get_discussion_subscribe_url($discussion)->out(false)
             ]
         ];
 
