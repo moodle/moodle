@@ -34,7 +34,7 @@ Feature: Edited forum posts handle tags correctly
       | Subject | Student post subject |
       | Message | Student post message |
       | Tags    | Tag1                 |
-    Then I should see "Tag1" in the ".forum-tags" "css_element"
+    Then I should see "Tag1" in the ".tag_list" "css_element"
     And I click on "Edit" "link" in the "//div[@aria-label='Student post subject by Student 1']" "xpath_element"
     Then I should see "Tag1" in the ".form-autocomplete-selection" "css_element"
 
@@ -50,7 +50,7 @@ Feature: Edited forum posts handle tags correctly
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test forum"
-    And I click on "Add a new discussion topic" "button"
+    And I click on "Add a new discussion topic" "link"
     And I expand all fieldsets
     And I open the autocomplete suggestions list
     And I should see "OT1" in the ".form-autocomplete-suggestions" "css_element"
@@ -60,9 +60,9 @@ Feature: Edited forum posts handle tags correctly
       | Subject | Student post subject |
       | Message | Student post message |
       | Tags | OT1, OT3 |
-    Then I should see "OT1" in the ".forum-tags" "css_element"
-    And I should see "OT3" in the ".forum-tags" "css_element"
-    And I should not see "OT2" in the ".forum-tags" "css_element"
+    Then I should see "OT1" in the ".tag_list" "css_element"
+    And I should see "OT3" in the ".tag_list" "css_element"
+    And I should not see "OT2" in the ".tag_list" "css_element"
     And I click on "Edit" "link" in the "//div[@aria-label='Student post subject by Teacher 1']" "xpath_element"
     And I should see "OT1" in the ".form-autocomplete-selection" "css_element"
     And I should see "OT3" in the ".form-autocomplete-selection" "css_element"

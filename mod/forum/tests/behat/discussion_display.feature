@@ -68,12 +68,12 @@ Feature: Students can choose from 4 discussion display options and their choice 
     And I follow "Discussion 1"
     When I select "Display replies in threaded form" from the "mode" singleselect
     Then I should see "Discussion contents 1, first message"
-    And I should see "Reply 1 to discussion 1" in the "span.forumthread" "css_element"
+    And I should see "Reply 1 to discussion 1" in the "div.forumthread" "css_element"
     And I follow "Test forum name"
     And I follow "Discussion 2"
     And the field "Display mode" matches value "Display replies in threaded form"
     And I should see "Discussion contents 2, first message"
-    And I should see "Reply 1 to discussion 2" in the "span.forumthread" "css_element"
+    And I should see "Reply 1 to discussion 2" in the "div.forumthread" "css_element"
 
   Scenario: Display replies in nested form
     Given I follow "Test forum name"
