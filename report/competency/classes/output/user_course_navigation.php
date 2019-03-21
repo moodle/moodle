@@ -82,6 +82,10 @@ class user_course_navigation implements renderable, templatable {
         $data->userid = $this->userid;
         $data->courseid = $this->courseid;
         $data->moduleid = $this->moduleid;
+        if (empty($data->moduleid)) {
+            // Moduleid is optional.
+            $data->moduleid = 0;
+        }
         $data->baseurl = $this->baseurl;
         $data->groupselector = '';
 
