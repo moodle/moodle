@@ -34,6 +34,7 @@ use \core_privacy\local\metadata\types\external_location;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_privacy\local\metadata\types\external_location
  */
 class core_privacy_metadata_types_external_location extends advanced_testcase {
 
@@ -44,6 +45,7 @@ class core_privacy_metadata_types_external_location extends advanced_testcase {
      * @param   string  $name Name
      * @param   array   $fields List of fields
      * @param   string  $summary Summary
+     * @covers ::__construct
      */
     public function test_invalid_configs($name, $fields, $summary) {
         $record = new external_location($name, $fields, $summary);
@@ -57,6 +59,7 @@ class core_privacy_metadata_types_external_location extends advanced_testcase {
      * @param   string  $name Name
      * @param   array   $fields List of fields
      * @param   string  $summary Summary
+     * @covers ::__construct
      */
     public function test_invalid_configs_debug_normal($name, $fields, $summary) {
         global $CFG;
@@ -74,6 +77,7 @@ class core_privacy_metadata_types_external_location extends advanced_testcase {
      * @param   string  $name Name
      * @param   array   $fields List of fields
      * @param   string  $summary Summary
+     * @covers ::__construct
      */
     public function test_valid_configs($name, $fields, $summary) {
         $record = new external_location($name, $fields, $summary);

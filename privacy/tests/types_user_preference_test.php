@@ -34,6 +34,7 @@ use \core_privacy\local\metadata\types\user_preference;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_privacy\local\metadata\types\user_preference
  */
 class core_privacy_metadata_types_user_preference extends advanced_testcase {
 
@@ -43,6 +44,7 @@ class core_privacy_metadata_types_user_preference extends advanced_testcase {
      * @dataProvider invalid_string_provider
      * @param   string  $name Name
      * @param   string  $summary Summary
+     * @covers ::__construct
      */
     public function test_invalid_configs($name, $summary) {
         $record = new user_preference($name, $summary);
@@ -55,6 +57,7 @@ class core_privacy_metadata_types_user_preference extends advanced_testcase {
      * @dataProvider invalid_string_provider
      * @param   string  $name Name
      * @param   string  $summary Summary
+     * @covers ::__construct
      */
     public function test_invalid_configs_debug_normal($name, $summary) {
         global $CFG;
@@ -71,6 +74,7 @@ class core_privacy_metadata_types_user_preference extends advanced_testcase {
      * @dataProvider valid_string_provider
      * @param   string  $name Name
      * @param   string  $summary Summary
+     * @covers ::__construct
      */
     public function test_valid_configs($name, $summary) {
         $record = new user_preference($name, $summary);

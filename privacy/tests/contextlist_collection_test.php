@@ -36,10 +36,14 @@ use \core_privacy\local\request\approved_contextlist;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_privacy\local\request\contextlist_collection
  */
 class contextlist_collection_test extends advanced_testcase {
     /**
      * A contextlist_collection should support the contextlist type.
+     *
+     * @covers ::add_contextlist
+     * @covers ::<!public>
      */
     public function test_supports_contextlist() {
         $uit = new contextlist_collection(1);
@@ -52,6 +56,9 @@ class contextlist_collection_test extends advanced_testcase {
 
     /**
      * A contextlist_collection should support the approved_contextlist type.
+     *
+     * @covers ::add_contextlist
+     * @covers ::<!public>
      */
     public function test_supports_approved_contextlist() {
         $uit = new contextlist_collection(1);
@@ -64,6 +71,9 @@ class contextlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that get_contextlist_for_component returns the correct contextlist.
+     *
+     * @covers ::get_contextlist_for_component
+     * @covers ::<!public>
      */
     public function test_get_contextlist_for_component() {
         $uit = new contextlist_collection(1);
@@ -83,6 +93,9 @@ class contextlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that get_contextlist_for_component does not die horribly when querying a non-existent component.
+     *
+     * @covers ::get_contextlist_for_component
+     * @covers ::<!public>
      */
     public function test_get_contextlist_for_component_not_found() {
         $uit = new contextlist_collection(1);
@@ -92,6 +105,9 @@ class contextlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that a duplicate contextlist in the collection throws an Exception.
+     *
+     * @covers ::add_contextlist
+     * @covers ::<!public>
      */
     public function test_duplicate_addition_throws() {
         $uit = new contextlist_collection(1);
@@ -106,6 +122,9 @@ class contextlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that the contextlist_collection is countable.
+     *
+     * @covers ::count
+     * @covers ::<!public>
      */
     public function test_countable() {
         $uit = new contextlist_collection(1);
@@ -123,6 +142,13 @@ class contextlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that the contextlist_collection iterates over the set of contextlists.
+     *
+     * @covers ::current
+     * @covers ::key
+     * @covers ::next
+     * @covers ::rewind
+     * @covers ::valid
+     * @covers ::<!public>
      */
     public function test_iteration() {
         $uit = new contextlist_collection(1);
@@ -156,6 +182,9 @@ class contextlist_collection_test extends advanced_testcase {
 
     /**
      * Test that the userid is correctly returned.
+     *
+     * @covers ::get_userid
+     * @covers ::<!public>
      */
     public function test_get_userid() {
         $uit = new contextlist_collection(1);
