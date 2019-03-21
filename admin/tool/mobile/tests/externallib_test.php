@@ -213,6 +213,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         // Enable requeriments.
         $_GET['wstoken'] = $token->token;   // Mock parameters.
 
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+                'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
         // Even if we force the password change for the current user we should be able to retrieve the key.
         set_user_preference('auth_forcepasswordchange', 1, $user->id);
 
@@ -240,6 +244,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         global $CFG;
         $this->resetAfterTest(true);
 
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+            'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
         // Need to disable webservices to verify that's checked.
         $CFG->enablewebservices = 0;
         $CFG->enablemobilewebservice = 0;
@@ -255,6 +263,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_autologin_key_missing_https() {
         global $CFG;
+
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+            'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         // Need to simulate a non HTTPS site here.
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
@@ -276,6 +288,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+            'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('autologinnotallowedtoadmins', 'tool_mobile'));
         $result = external::get_autologin_key('');
@@ -296,6 +312,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $token = external_generate_token_for_current_user($service);
         $_GET['wstoken'] = $token->token;   // Mock parameters.
 
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+            'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
         $result = external::get_autologin_key($token->privatetoken);
         $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
 
@@ -309,6 +329,20 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('autologinkeygenerationlockout', 'tool_mobile'));
         $result = external::get_autologin_key($token->privatetoken);
+    }
+
+    /**
+     * Test get_autologin_key missing app_request.
+     */
+    public function test_get_autologin_key_missing_app_request() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('apprequired', 'tool_mobile'));
+        $result = external::get_autologin_key('');
     }
 
     /**

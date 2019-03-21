@@ -262,6 +262,8 @@ class external extends external_api {
     /**
      * Creates an auto-login key for the current user. Is created only in https sites and is restricted by time and ip address.
      *
+     * Please note that it only works if the request comes from the Moodle mobile or desktop app.
+     *
      * @param string $privatetoken the user private token for validating the request
      * @return array with the settings and warnings
      * @since  Moodle 3.2
