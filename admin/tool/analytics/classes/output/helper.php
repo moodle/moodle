@@ -92,4 +92,17 @@ class helper {
         $PAGE->set_title($title);
         $PAGE->set_heading($title);
     }
+
+    /**
+     * Resets the current page.
+     *
+     * Note that this function can only be used by analytics pages that work at the system context.
+     *
+     * @return null
+     */
+    public static function reset_page() {
+        global $PAGE;
+        $PAGE->reset_theme_and_output();
+        $PAGE->set_context(\context_system::instance());
+    }
 }
