@@ -2295,8 +2295,8 @@ class block_iomad_company_admin_external extends external_api {
     public static function get_license_from_id($licenseid) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::get_license_id_parameters(), [
-            'licenseid' => $templateid,
+        $params = self::validate_parameters(self::get_license_from_id_parameters(), [
+            'licenseid' => $licenseid,
         ]);
 
         // Security.
@@ -2314,9 +2314,12 @@ class block_iomad_company_admin_external extends external_api {
             ORDER BY co.fullname';
         $liccourses = $DB->get_records_sql($sql, ['licenseid' => $params['licenseid']]);
 
+        // Licenses used?
+        $license->allallocated = $license->used >= $license->allocation;
+
         return [
             'license' => $license,
-            'courses' => $liccourses,
+            'courses' => array_values($liccourses),
         ];
     }
 
@@ -2328,7 +2331,7 @@ class block_iomad_company_admin_external extends external_api {
         return new external_single_structure([
             'license' => new external_single_structure([
                 'id' => new external_value(PARAM_INT, 'License ID'),
-                'name' => new external_value(PARAM_ALPHA, 'License name'),
+                'name' => new external_value(PARAM_TEXT, 'License name'),
                 'allocation' => new external_value(PARAM_INT, 'Allocation'),
                 'validlength' => new external_value(PARAM_INT, 'Valid length'),
                 'startdate' => new external_value(PARAM_INT, 'Start date'),
@@ -2338,13 +2341,14 @@ class block_iomad_company_admin_external extends external_api {
                 'parentid' => new external_value(PARAM_INT, 'Parent ID'),
                 'type' => new external_value(PARAM_BOOL, 'Type'),
                 'program' => new external_value(PARAM_BOOL, 'Program'),
-                'reference' => new external_value(PARAM_ALPHA, 'Reference'),
+                'reference' => new external_value(PARAM_TEXT, 'Reference'),
                 'instant' => new external_value(PARAM_BOOL, 'Instant'),
+                'allallocated' => new external_value(PARAM_BOOL, 'All licenses allocated'),
             ]),
             'courses' => new external_multiple_structure(
                 new external_single_structure([
                     'id' => new external_value(PARAM_INT, 'Course ID'),
-                    'fullname' => new external_value(PARAM_ALPHA, 'Course full name'),
+                    'fullname' => new external_value(PARAM_TEXT, 'Course full name'),
                 ]),
                 'List of available or program courses for License'
             )

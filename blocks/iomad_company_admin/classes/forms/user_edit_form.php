@@ -262,7 +262,7 @@ class user_edit_form extends \moodleform {
                 }
             }
 
-            $mform->addElement('html', '<div id="licensecoursescontainer" style="display:none;">');
+            $mform->addElement('html', '<div id="licensecoursescontainer" class="invisible">');
             $licensecourseselect = $mform->addElement('select', 'licensecourses',
                                                       get_string('select_license_courses', 'block_iomad_company_admin'),
                                                       $licensecourses, array('id' => 'licensecourseselector'));

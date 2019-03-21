@@ -56,7 +56,7 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 
-$PAGE->requires->jquery();
+$PAGE->requires->js_call_amd('block_iomad_company_admin/company_user', 'init', []);;
 
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
@@ -242,39 +242,6 @@ if (!empty($departmentid) && !company::check_valid_department($companyid, $depar
 if (!empty($userid) && !company::check_valid_user($companyid, $userid, $departmentid)) {
     print_error('invaliduserdepartment', 'block_iomad_company_management');
 }
-
-?>
-<script type="text/javascript">
-Y.on('change', submit_form, '#licenseidselector');
- function submit_form() {
-     var nValue = Y.one('#licenseidselector').get('value');
-    $.ajax({
-        type: "GET",
-        url: "<?php echo $CFG->wwwroot; ?>/blocks/iomad_company_admin/js/company_user_create_form.ajax.php?licenseid="+nValue,
-        datatype: "HTML",
-        success: function(response){
-            $("#licensecourseselector").html(response);
-        }
-    });
-    $.ajax({
-        type: "GET",
-        url: "<?php echo $CFG->wwwroot; ?>/blocks/iomad_company_admin/js/company_user_create_form-license.ajax.php?licenseid="+nValue,
-        datatype: "HTML",
-        success: function(response){
-            $("#licensedetails").html(response);
-        }
-    });
-    $.ajax({
-        type: "GET",
-        url: "<?php echo $CFG->wwwroot; ?>/blocks/iomad_company_admin/js/company_user_create_form-license-courses.ajax.php?licenseid="+nValue,
-        datatype: "HTML",
-        success: function(response){
-            $("#licensecoursescontainer")[0].style.display = response;
-        }
-    });
- }
-</script>
-<?php
 
 // Display a message if user is created..
 if ($createdok) {

@@ -1,0 +1,10 @@
+{{# license.allallocated }}
+    <div class="licensewarning">
+         {{# str }}nolicensesleft, block_iomad_company_admin{{/ str }}
+    </div>
+{{/ license.allallocated }}
+{{^ license.allallocated }}
+    <div class="licenseok">
+        {{# str }}licensedetails, block_iomad_company_admin, { "used": "{{ license.used }}", "allocation": "{{ license.allocation }}" }{{/ str }}
+    </div>
+{{/ license.allallocated }}
