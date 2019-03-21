@@ -869,6 +869,31 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = null, $
 }
 
 /**
+ * Returns list of roles per users into course.
+ *
+ * @param int $courseid Course id.
+ * @return array Array[$userid][$roleid] = role_assignment.
+ */
+function enrol_get_course_users_roles(int $courseid) : array {
+    global $DB;
+
+    $context = context_course::instance($courseid);
+
+    $roles = array();
+
+    $records = $DB->get_recordset('role_assignments', array('contextid' => $context->id));
+    foreach ($records as $record) {
+        if (isset($roles[$record->userid]) === false) {
+            $roles[$record->userid] = array();
+        }
+        $roles[$record->userid][$record->roleid] = $record;
+    }
+    $records->close();
+
+    return $roles;
+}
+
+/**
  * Can user access at least one enrolled course?
  *
  * Cheat if necessary, but find out as fast as possible!
