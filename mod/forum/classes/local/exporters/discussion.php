@@ -117,6 +117,22 @@ class discussion extends exporter {
                     'markasread' => ['type' => PARAM_URL],
                     'subscribe' => ['type' => PARAM_URL]
                 ],
+            ],
+            'timed' => [
+                'type' => [
+                    'istimed' => [
+                        'type' => PARAM_BOOL,
+                        'optional' => true,
+                        'default' => null,
+                        'null' => NULL_ALLOWED
+                    ],
+                    'visible' => [
+                        'type' => PARAM_BOOL,
+                        'optional' => true,
+                        'default' => null,
+                        'null' => NULL_ALLOWED
+                    ]
+                ]
             ]
         ];
     }
@@ -128,6 +144,7 @@ class discussion extends exporter {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
+
         $capabilitymanager = $this->related['capabilitymanager'];
         $urlfactory = $this->related['urlfactory'];
 
@@ -197,6 +214,11 @@ class discussion extends exporter {
         if ($groupdata) {
             $data['group'] = $groupdata;
         }
+
+        $canviewhiddentimedposts = $capabilitymanager->can_view_hidden_posts($user);
+        $canalwaysseetimedpost = $user->id == $discussion->get_user_id() || $canviewhiddentimedposts;
+        $data['timed']['istimed'] = $canalwaysseetimedpost ? $discussion->is_timed_discussion() : null;
+        $data['timed']['visible'] = $canalwaysseetimedpost ? $discussion->is_timed_discussion_visible() : null;
 
         return $data;
     }
