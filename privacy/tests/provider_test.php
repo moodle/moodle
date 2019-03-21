@@ -292,15 +292,24 @@ class provider_testcase extends advanced_testcase {
     public function test_table_coverage() {
         global $DB;
         $dbman = $DB->get_manager();
-        $schema = $dbman->get_install_xml_schema();
         $tables = [];
-        foreach ($schema->getTables() as $table) {
-            if ($table->getName() === 'role_sortorder') {
-                // TODO MDL-62459 this table is not used anywhere. Remove the table and this statement.
+
+        foreach ($dbman->get_install_xml_files() as $filename) {
+            $xmldbfile = new xmldb_file($filename);
+            if (!$xmldbfile->loadXMLStructure()) {
                 continue;
             }
-            if ($fields = $this->get_userid_fields($table)) {
-                $tables[$table->getName()] = '  - ' . $table->getName() . ' (' . join(', ', $fields) . ')';
+            $structure = $xmldbfile->getStructure();
+            $tablelist = $structure->getTables();
+
+            foreach ($tablelist as $table) {
+                if ($table->getName() === 'role_sortorder') {
+                    // TODO MDL-62459 this table is not used anywhere. Remove the table and this statement.
+                    continue;
+                }
+                if ($fields = $this->get_userid_fields($table)) {
+                    $tables[$table->getName()] = '  - ' . $table->getName() . ' (' . join(', ', $fields) . ')';
+                }
             }
         }
 
