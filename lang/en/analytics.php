@@ -70,6 +70,8 @@ $string['fixedack'] = 'Acknowledged';
 $string['insightmessagesubject'] = 'New insight for "{$a->contextname}": {$a->insightname}';
 $string['insightinfomessage'] = 'The system generated some insights for you: {$a}';
 $string['insightinfomessagehtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
+$string['insightinfomessageprediction'] = 'The system generated some insights for you: {$a}';
+$string['insightinfomessagepredictionhtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
 $string['invalidtimesplitting'] = 'Model with ID {$a} needs a time-splitting method before it can be used to train.';
 $string['invalidanalysablefortimesplitting'] = 'It cannot be analysed using {$a} time-splitting method.';
 $string['nocourses'] = 'No courses to analyse';

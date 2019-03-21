@@ -45,6 +45,15 @@ class courses extends \core_analytics\local\analyser\by_course {
     }
 
     /**
+     * Just one sample per analysable.
+     *
+     * @return bool
+     */
+    public static function one_sample_per_analysable() {
+        return true;
+    }
+
+    /**
      * Returns the analysable of a sample
      *
      * @param int $sampleid

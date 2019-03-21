@@ -41,6 +41,13 @@ abstract class base {
     protected $id;
 
     /**
+     * The model id.
+     *
+     * @var int
+     */
+    protected $modelid;
+
+    /**
      * @var \core_analytics\analysable
      */
     protected $analysable;
@@ -75,7 +82,8 @@ abstract class base {
      * Define the time splitting methods ranges.
      *
      * 'time' value defines when predictions are executed, their values will be compared with
-     * the current time in ready_to_predict
+     * the current time in ready_to_predict. The ranges should be sorted by 'time' in
+     * ascending order.
      *
      * @return array('start' => time(), 'end' => time(), 'time' => time())
      */
@@ -158,6 +166,20 @@ abstract class base {
      */
     public function ready_to_predict($range) {
         if ($range['time'] <= time()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Should we use this time range for training?
+     *
+     * @param array $range
+     * @return bool
+     */
+    public function ready_to_train($range) {
+        $now = time();
+        if ($range['time'] <= $now && $range['end'] <= $now) {
             return true;
         }
         return false;
@@ -341,7 +363,7 @@ abstract class base {
      */
     protected function fill_dataset(&$dataset, $calculatedtarget = false) {
 
-        $nranges = count($this->get_all_ranges());
+        $nranges = count($this->get_distinct_ranges());
 
         foreach ($dataset as $uniquesampleid => $unmodified) {
 
@@ -422,6 +444,53 @@ abstract class base {
     }
 
     /**
+     * By default all ranges are for training.
+     *
+     * @return array
+     */
+    public function get_training_ranges() {
+        return $this->ranges;
+    }
+
+    /**
+     * Returns the distinct range indexes in this time splitting method.
+     *
+     * @return int[]
+     */
+    public function get_distinct_ranges() {
+        if ($this->include_range_info_in_training_data()) {
+            return array_keys($this->ranges);
+        } else {
+            return [0];
+        }
+    }
+
+    /**
+     * Returns the most recent range that can be used to predict.
+     *
+     * This method is only called when calculating predictions.
+     *
+     * @return array
+     */
+    public function get_most_recent_prediction_range() {
+
+        $ranges = $this->get_all_ranges();
+
+        // Opposite order as we are interested in the last range that can be used for prediction.
+        krsort($ranges);
+
+        // We already provided the analysable to the time splitting method, there is no need to feed it back.
+        foreach ($ranges as $rangeindex => $range) {
+            if ($this->ready_to_predict($range)) {
+                // We need to maintain the same indexes.
+                return array($rangeindex => $range);
+            }
+        }
+
+        return array();
+    }
+
+    /**
      * Returns range data by its index.
      *
      * @param int $rangeindex
@@ -441,7 +510,7 @@ abstract class base {
      * @param int $rangeindex
      * @return string
      */
-    public function append_rangeindex($sampleid, $rangeindex) {
+    public final function append_rangeindex($sampleid, $rangeindex) {
         return $sampleid . '-' . $rangeindex;
     }
 
@@ -451,8 +520,32 @@ abstract class base {
      * @param string $uniquesampleid
      * @return array array($sampleid, $rangeindex)
      */
-    public function infer_sample_info($uniquesampleid) {
+    public final function infer_sample_info($uniquesampleid) {
         return explode('-', $uniquesampleid);
+    }
+
+    /**
+     * Whether to include the range index in the training data or not.
+     *
+     * By default, we consider that the different time ranges included in a time splitting method may not be
+     * compatible between them (i.e. the indicators calculated at the end of the course can easily
+     * differ from indicators calculated at the beginning of the course). So we include the range index as
+     * one of the variables that the machine learning backend uses to generate predictions.
+     *
+     * If the indicators calculated using the different time ranges available in this time splitting method
+     * are comparable you can overwrite this method to return false.
+     *
+     * Note that:
+     *  - This is only relevant for models whose predictions are not based on assumptions
+     *    (i.e. the ones using a machine learning backend to generate predictions).
+     *  - The ranges can only be included in the training data when
+     *    we know the final number of ranges the time splitting method will have. E.g.
+     *    We can not know the final number of ranges of a 'daily' time splitting method
+     *    as we will have one new range every day.
+     * @return bool
+     */
+    public function include_range_info_in_training_data() {
+        return true;
     }
 
     /**
@@ -473,9 +566,9 @@ abstract class base {
 
         // We always have 1 column for each time splitting method range, it does not depend on how
         // many ranges we calculated.
-        $ranges = $this->get_all_ranges();
+        $ranges = $this->get_distinct_ranges();
         if (count($ranges) > 1) {
-            foreach ($ranges as $rangeindex => $range) {
+            foreach ($ranges as $rangeindex) {
                 $headers[] = 'range/' . $rangeindex;
             }
         }

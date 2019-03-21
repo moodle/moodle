@@ -59,7 +59,7 @@ function report_insights_extend_navigation_course($navigation, $course, $context
 function report_insights_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
 
     $context = \context_user::instance($user->id);
-    if (has_capability('moodle/analytics:listinsights', $context)) {
+    if (\core_analytics\manager::check_can_list_insights($context, true)) {
 
         $modelids = report_insights_context_insights($context);
         if (!empty($modelids)) {

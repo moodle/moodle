@@ -787,11 +787,12 @@ class model {
         }
 
         if ($result->predictions) {
-            $samplecontexts = $this->execute_prediction_callbacks($result->predictions, $indicatorcalculations);
+            list($samplecontexts, $predictionrecords) = $this->execute_prediction_callbacks($result->predictions,
+                $indicatorcalculations);
         }
 
         if (!empty($samplecontexts) && $this->uses_insights()) {
-            $this->trigger_insights($samplecontexts);
+            $this->trigger_insights($samplecontexts, $predictionrecords);
         }
 
         $this->flag_file_as_used($samplesfile, 'predicted');
@@ -855,7 +856,7 @@ class model {
      * @param array $indicatorcalculations
      * @return array
      */
-    protected function execute_prediction_callbacks($predictions, $indicatorcalculations) {
+    protected function execute_prediction_callbacks(&$predictions, $indicatorcalculations) {
 
         // Here we will store all predictions' contexts, this will be used to limit which users will see those predictions.
         $samplecontexts = array();
@@ -887,19 +888,38 @@ class model {
             $this->save_predictions($records);
         }
 
-        return $samplecontexts;
+        return [$samplecontexts, $records];
     }
 
     /**
      * Generates insights and updates the cache.
      *
      * @param \context[] $samplecontexts
+     * @param  \stdClass[] $predictionrecords
      * @return void
      */
-    protected function trigger_insights($samplecontexts) {
+    protected function trigger_insights($samplecontexts, $predictionrecords) {
 
         // Notify the target that all predictions have been processed.
-        $this->get_target()->generate_insight_notifications($this->model->id, $samplecontexts);
+        if ($this->get_analyser()::one_sample_per_analysable()) {
+
+            // We need to do something unusual here. self::save_predictions uses the bulk-insert function (insert_records()) for
+            // performance reasons and that function does not return us the inserted ids. We need to retrieve them from
+            // the database, and we need to do it using one single database query (for performance reasons as well).
+            $predictionrecords = $this->add_prediction_ids($predictionrecords);
+
+            // Get \core_analytics\prediction objects also fetching the samplesdata. This costs us
+            // 1 db read, but we have to pay it if we want that our insights include links to the
+            // suggested actions.
+            $predictions = array_map(function($predictionobj) {
+                $prediction = new \core_analytics\prediction($predictionobj, $this->prediction_sample_data($predictionobj));
+                return $prediction;
+            }, $predictionrecords);
+        } else {
+            $predictions = false;
+        }
+
+        $this->get_target()->generate_insight_notifications($this->model->id, $samplecontexts, $predictions);
 
         // Update cache.
         $cache = \cache::make('core', 'contextwithinsights');
@@ -969,16 +989,20 @@ class model {
                 $this->get_target()->add_sample_data($data->indicatorsdata);
 
                 // Append new elements (we can not get duplicates because sample-analysable relation is N-1).
-                $range = $this->get_time_splitting()->get_range_by_index($rangeindex);
+                $timesplitting = $this->get_time_splitting();
+                $timesplitting->set_analysable($data->analysable);
+                $range = $timesplitting->get_range_by_index($rangeindex);
+
                 $this->get_target()->filter_out_invalid_samples($data->sampleids, $data->analysable, false);
                 $calculations = $this->get_target()->calculate($data->sampleids, $data->analysable, $range['start'], $range['end']);
 
                 // Missing $indicatorcalculations values in $calculations are caused by is_valid_sample. We need to remove
                 // these $uniquesampleid from $indicatorcalculations because otherwise they will be stored as calculated
                 // by self::save_prediction.
-                $indicatorcalculations = array_filter($indicatorcalculations, function($indicators, $uniquesampleid) use ($calculations) {
-                    list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
-                    if (!isset($calculations[$sampleid])) {
+                $indicatorcalculations = array_filter($indicatorcalculations, function($indicators, $uniquesampleid)
+                        use ($calculations, $rangeindex) {
+                    list($sampleid, $indicatorsrangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
+                    if ($rangeindex == $indicatorsrangeindex && !isset($calculations[$sampleid])) {
                         return false;
                     }
                     return true;
@@ -1640,6 +1664,44 @@ class model {
         $this->model->timemodified = time();
         $this->model->usermodified = $USER->id;
         $DB->update_record('analytics_models', $this->model);
+    }
+
+    /**
+     * Adds the id from {analytics_predictions} db table to the prediction \stdClass objects.
+     *
+     * @param  \stdClass[] $predictionrecords
+     * @return \stdClass[] The prediction records including their ids in {analytics_predictions} db table.
+     */
+    private function add_prediction_ids($predictionrecords) {
+        global $DB;
+
+        $firstprediction = reset($predictionrecords);
+
+        $contextids = array_map(function($predictionobj) {
+            return $predictionobj->contextid;
+        }, $predictionrecords);
+        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
+
+        // We select the fields that will allow us to map ids to $predictionrecords. Given that we already filter by modelid
+        // we have enough with sampleid and rangeindex. The reason is that the sampleid relation to a site is N - 1.
+        $fields = 'id, sampleid, rangeindex';
+
+        // We include the contextid and the timecreated filter to reduce the number of records in $dbpredictions. We can not
+        // add as many OR conditions as records in $predictionrecords.
+        $sql = "SELECT $fields
+                  FROM {analytics_predictions}
+                 WHERE modelid = :modelid
+                       AND contextid $contextsql
+                       AND timecreated >= :firsttimecreated";
+        $params = $contextparams + ['modelid' => $this->model->id, 'firsttimecreated' => $firstprediction->timecreated];
+        $dbpredictions = $DB->get_recordset_sql($sql, $params);
+        foreach ($dbpredictions as $id => $dbprediction) {
+            // The append_rangeindex implementation is the same regardless of the time splitting method in use.
+            $uniqueid = $this->get_time_splitting()->append_rangeindex($dbprediction->sampleid, $dbprediction->rangeindex);
+            $predictionrecords[$uniqueid]->id = $dbprediction->id;
+        }
+
+        return $predictionrecords;
     }
 
     /**

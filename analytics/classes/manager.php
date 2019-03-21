@@ -80,10 +80,23 @@ class manager {
      *
      * @throws \required_capability_exception
      * @param \context $context
+     * @param  bool $return The method returns a bool if true.
      * @return void
      */
-    public static function check_can_list_insights(\context $context) {
-        require_capability('moodle/analytics:listinsights', $context);
+    public static function check_can_list_insights(\context $context, bool $return = false) {
+        global $USER;
+
+        if ($context->contextlevel === CONTEXT_USER && $context->instanceid == $USER->id) {
+            $capability = 'moodle/analytics:listowninsights';
+        } else {
+            $capability = 'moodle/analytics:listinsights';
+        }
+
+        if ($return) {
+            return has_capability($capability, $context);
+        } else {
+            require_capability($capability, $context);
+        }
     }
 
     /**
