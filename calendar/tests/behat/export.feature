@@ -48,6 +48,14 @@ Feature: Export calendar events
     When I click on "Get calendar URL" "button"
     Then I should see "&preset_what=groups&"
 
+  Scenario: Generating calendar URL for category events
+    Given I follow "This month"
+    And I click on "Export calendar" "button"
+    And I set the field "Events related to categories" to "1"
+    And I set the field "Recent and next 60 days" to "1"
+    When I click on "Get calendar URL" "button"
+    Then I should see "&preset_what=categories&"
+
   Scenario: Generating calendar URL for user events
     Given I follow "This month"
     And I click on "Export calendar" "button"
