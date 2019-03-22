@@ -31,6 +31,12 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
 * It is possible to pass additional conditions to get_courses_search();
   core_course_category::search_courses() now allows to search only among courses with completion enabled.
 * Add support for a new xxx_after_require_login callback
+* `$includetoken` parameter type has been changed. Now supports:
+   boolean: False indicates to not include the token, true indicates to generate a token for the current user ($USER).
+   integer: Indicates to generate a token for the user whose id is the integer value.
+* The following functions have been updated to support the new usage:
+    - make_pluginfile_url
+    - file_rewrite_pluginfile_urls
 
 === 3.6 ===
 

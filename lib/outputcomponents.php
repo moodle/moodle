@@ -207,7 +207,8 @@ class user_picture implements renderable {
     public $includefullname = false;
 
     /**
-     * @var bool Include user authentication token.
+     * @var mixed Include user authentication token. True indicates to generate a token for current user, and integer value
+     * indicates to generate a token for the user whose id is the value indicated.
      */
     public $includetoken = false;
 
