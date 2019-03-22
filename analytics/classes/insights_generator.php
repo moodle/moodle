@@ -1,0 +1,193 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Insights generator.
+ *
+ * @package   core_analytics
+ * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core_analytics;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/lib/messagelib.php');
+
+/**
+ * Insights generator.
+ *
+ * @package   core_analytics
+ * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class insights_generator {
+
+    /**
+     * @var int
+     */
+    private $modelid;
+
+    /**
+     * @var \core_analytics\local\target\base
+     */
+    private $target;
+
+    /**
+     * @var int[]
+     */
+    private $contextcourseids;
+
+    /**
+     * Constructor.
+     *
+     * @param int $modelid
+     * @param \core_analytics\local\target\base $target
+     */
+    public function __construct(int $modelid, \core_analytics\local\target\base $target) {
+        $this->modelid = $modelid;
+        $this->target = $target;
+    }
+
+    /**
+     * Generates insight notifications.
+     *
+     * @param array                      $samplecontexts    The contexts these predictions belong to
+     * @param \core_analytics\prediction $predictions       The prediction records
+     * @return  null
+     */
+    public function generate($samplecontexts, $predictions) {
+
+        $analyserclass = $this->target->get_analyser_class();
+
+        if ($analyserclass::one_sample_per_analysable()) {
+            foreach ($predictions as $prediction) {
+
+                $context = $samplecontexts[$prediction->get_prediction_data()->contextid];
+                list($insighturl, $fullmessage, $fullmessagehtml) = $this->prediction_info($prediction);
+                $this->notifications($context, $insighturl, $fullmessage, $fullmessagehtml);
+            }
+
+        } else {
+            foreach ($samplecontexts as $context) {
+
+                $insighturl = $this->target->get_insight_context_url($this->modelid, $context);
+                $fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
+                $fullmessagehtml = get_string('insightinfomessagehtml', 'analytics', $insighturl->out());
+                $this->notifications($context, $insighturl, $fullmessage, $fullmessagehtml);
+            }
+        }
+    }
+
+    /**
+     * Generates a insight notification for the user.
+     *
+     * @param  \context    $context
+     * @param  \moodle_url $insighturl    The insight URL
+     * @param  string      $fullmessage
+     * @param  string      $fullmessagehtml
+     * @return null
+     */
+    private function notifications(\context $context, \moodle_url $insighturl, string $fullmessage, string $fullmessagehtml) {
+        $users = $this->target->get_insights_users($context);
+        foreach ($users as $user) {
+
+            $subject = $this->target->get_insight_subject($this->modelid, $context);
+
+            $message = new \core\message\message();
+            $message->component = 'moodle';
+            $message->name = 'insights';
+
+            $message->userfrom = \core_user::get_noreply_user();
+            $message->userto = $user;
+
+            $message->subject = $subject;
+
+            // Same than the subject.
+            $message->contexturlname = $message->subject;
+            $message->courseid = $this->get_context_courseid($context);
+
+            $message->fullmessage = $fullmessage;
+            $message->fullmessageformat = FORMAT_PLAIN;
+            $message->fullmessagehtml = $fullmessagehtml;
+            $message->smallmessage = $fullmessage;
+            $message->contexturl = $insighturl->out(false);
+
+            message_send($message);
+        }
+    }
+
+    /**
+     * Returns the course context of the provided context reading an internal cache first.
+     *
+     * @param  \context $context
+     * @return int
+     */
+    private function get_context_courseid(\context $context) {
+
+        if (empty($this->contextcourseids[$context->id])) {
+
+            $coursecontext = $context->get_course_context(false);
+            if (!$coursecontext) {
+                // Default to the frontpage course context.
+                $coursecontext = \context_course::instance(SITEID);
+            }
+            $this->contextcourseids[$context->id] = $coursecontext->instanceid;
+        }
+
+        return $this->contextcourseids[$context->id];
+    }
+
+    /**
+     * Extracts info from the prediction for display purposes.
+     *
+     * @param  \core_analytics\prediction $prediction
+     * @return array Three items array with formats [\moodle_url, string, string]
+     */
+    private function prediction_info(\core_analytics\prediction $prediction) {
+
+        $predictionactions = $this->target->prediction_actions($prediction, true);
+
+        $messageactions  = '';
+        $messageactionshtml  = '';
+        $insighturl = null;
+        foreach ($predictionactions as $action) {
+            $actionurl = $action->get_url();
+            if (!$actionurl->get_param('forwardurl')) {
+
+                $actiondoneurl = new \moodle_url('/report/insights/done.php');
+                // Set the forward url to the 'done' script.
+                $actionurl->param('forwardurl', $actiondoneurl->out(false));
+            }
+
+            $btnstyle = 'btn-default';
+            if (empty($insighturl)) {
+                // We use the primary action url as insight url so we log that the user followed the provided link.
+                $insighturl = $action->get_url();
+                $btnstyle = 'btn-primary';
+            }
+            $messageactions .= $action->get_text() . ': ' . $action->get_url()->out(false) . PHP_EOL;
+            $messageactionshtml .= '<a href="' . $action->get_url()->out() . '" class="btn ' . $btnstyle . ' m-r-1 m-b-1">' .
+                $action->get_text() . '</a>';
+        }
+
+        $fullmessage = get_string('insightinfomessageprediction', 'analytics', $messageactions);
+        $fullmessagehtml = get_string('insightinfomessagepredictionhtml', 'analytics', $messageactionshtml);
+
+        return [$insighturl, $fullmessage, $fullmessagehtml];
+    }
+}

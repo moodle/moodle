@@ -196,106 +196,9 @@ abstract class base extends \core_analytics\calculable {
      * @return void
      */
     public function generate_insight_notifications($modelid, $samplecontexts, array $predictions = []) {
-
-        $analyserclass = $this->get_analyser_class();
-        if ($analyserclass::one_sample_per_analysable()) {
-            foreach ($predictions as $prediction) {
-                $context = $samplecontexts[$prediction->get_prediction_data()->contextid];
-
-                $subject = $this->get_insight_subject($modelid, $context);
-                $users = $this->get_insights_users($context);
-
-                if (!$coursecontext = $context->get_course_context(false)) {
-                    $coursecontext = \context_course::instance(SITEID);
-                }
-
-                $predictionactions = $this->prediction_actions($prediction, true);
-
-                $messageactions  = '';
-                $messageactionshtml  = '';
-                $insighturl = null;
-                foreach ($predictionactions as $action) {
-                    $actionurl = $action->get_url();
-                    if (!$actionurl->get_param('forwardurl')) {
-
-                        $actiondoneurl = new \moodle_url('/report/insights/done.php');
-                        // Set the forward url to the 'done' script.
-                        $actionurl->param('forwardurl', $actiondoneurl->out(false));
-                    }
-                    if (empty($insighturl)) {
-                        // We use the primary action url as insight url so we logged that the user followed the provided link.
-                        $insighturl = $action->get_url();
-                    }
-                    $messageactions .= $action->get_text() . ': ' . $action->get_url()->out(false) . PHP_EOL;
-                    $messageactionshtml .= '<a href="' . $action->get_url()->out() . '" class="btn btn-default m-r-1 m-b-1">' .
-                        $action->get_text() . '</a>';
-                }
-
-                $fullmessage = get_string('insightinfomessageprediction', 'analytics', $messageactions);
-                $fullmessagehtml = get_string('insightinfomessagepredictionhtml', 'analytics', $messageactionshtml);
-
-                foreach ($users as $user) {
-                    $this->generate_insight_notification($user, $subject, $insighturl, $coursecontext,
-                        $fullmessage, $fullmessagehtml);
-                }
-            }
-
-        } else {
-
-            foreach ($samplecontexts as $context) {
-
-                $subject = $this->get_insight_subject($modelid, $context);
-                $users = $this->get_insights_users($context);
-
-                if (!$coursecontext = $context->get_course_context(false)) {
-                    $coursecontext = \context_course::instance(SITEID);
-                }
-
-                foreach ($users as $user) {
-                    $insighturl = $this->get_insight_context_url($modelid, $context);
-                    $fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
-                    $fullmessagehtml = get_string('insightinfomessagehtml', 'analytics', $insighturl->out());
-                    $this->generate_insight_notification($user, $subject, $insighturl, $coursecontext,
-                        $fullmessage, $fullmessagehtml);
-                }
-            }
-        }
-    }
-
-    /**
-     * Generates a insight notification for the user.
-     *
-     * @param  \stdClass   $user          The user
-     * @param  string      $subject       The notification subject
-     * @param  \moodle_url $insighturl    The insight URL
-     * @param  \context    $coursecontext
-     * @param  string      $fullmessage
-     * @param  string      $fullmessagehtml
-     * @return null
-     */
-    protected function generate_insight_notification(\stdClass $user, string $subject, \moodle_url $insighturl,
-            \context $coursecontext, string $fullmessage, string $fullmessagehtml) {
-
-        $message = new \core\message\message();
-        $message->component = 'moodle';
-        $message->name = 'insights';
-
-        $message->userfrom = \core_user::get_noreply_user();
-        $message->userto = $user;
-
-        $message->subject = $subject;
-
-        // Same than the subject.
-        $message->contexturlname = $message->subject;
-        $message->courseid = $coursecontext->instanceid;
-
-        $message->fullmessage = $fullmessage;
-        $message->fullmessageformat = FORMAT_PLAIN;
-        $message->fullmessagehtml = $fullmessagehtml;
-        $message->smallmessage = $fullmessage;
-        $message->contexturl = $insighturl->out(false);
-
-        message_send($message);
+        // Delegate the processing of insights to the insights_generator.
+        $insightsgenerator = new \core_analytics\insights_generator($modelid, $this);
+        $insightsgenerator->generate($samplecontexts, $predictions);
     }
 
     /**
@@ -307,7 +210,7 @@ abstract class base extends \core_analytics\calculable {
      * @param \context $context
      * @return array
      */
-    protected function get_insights_users(\context $context) {
+    public function get_insights_users(\context $context) {
         if ($context->contextlevel === CONTEXT_USER) {
             $users = [$context->instanceid => \core_user::get_user($context->instanceid)];
         } else if ($context->contextlevel >= CONTEXT_COURSE) {
@@ -327,7 +230,7 @@ abstract class base extends \core_analytics\calculable {
      * @param  \context $context
      * @return \moodle_url
      */
-    protected function get_insight_context_url($modelid, $context) {
+    public function get_insight_context_url($modelid, $context) {
         return new \moodle_url('/report/insights/insights.php?modelid=' . $modelid . '&contextid=' . $context->id);
     }
 
@@ -338,11 +241,8 @@ abstract class base extends \core_analytics\calculable {
      * @param  \context $context
      * @return string
      */
-    protected function get_insight_subject(int $modelid, \context $context) {
-        $insightinfo = new \stdClass();
-        $insightinfo->insightname = $this->get_name();
-        $insightinfo->contextname = $context->get_context_name();
-        return get_string('insightmessagesubject', 'analytics', $insightinfo);
+    public function get_insight_subject(int $modelid, \context $context) {
+        return get_string('insightmessagesubject', 'analytics', $context->get_context_name());
     }
 
     /**

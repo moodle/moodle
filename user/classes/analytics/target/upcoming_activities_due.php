@@ -64,7 +64,7 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
      * @param  \context $context
      * @return string
      */
-    protected function get_insight_subject(int $modelid, \context $context) {
+    public function get_insight_subject(int $modelid, \context $context) {
         return get_string('youhaveupcomingactivitiesdue');
     }
 
