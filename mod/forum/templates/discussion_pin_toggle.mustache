@@ -42,9 +42,11 @@
         href="{{urls.pin}}"
         {{#pinned}}
             data-targetstate="0"
+            title="{{#str}}unpindiscussion, mod_forum{{/str}}"
         {{/pinned}}
         {{^pinned}}
             data-targetstate="1"
+            title="{{#str}}pindiscussion, mod_forum{{/str}}"
         {{/pinned}}
     >
         {{#pinned}}

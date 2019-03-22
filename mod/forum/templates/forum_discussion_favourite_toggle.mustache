@@ -32,10 +32,10 @@
 {{< mod_forum/discussion_favourite_toggle }}
     {{$favouritecontent}}
         {{#userstate.favourited}}
-            {{#pix}}t/star, mod_forum{{/pix}}
+            {{#pix}}t/star, mod_forum, {{#str}}removefromfavourites, mod_forum{{/str}}{{/pix}}
         {{/userstate.favourited}}
         {{^userstate.favourited}}
-            {{#pix}}t/unstar, mod_forum{{/pix}}
+            {{#pix}}t/emptystar, mod_forum, {{#str}}addtofavourites, mod_forum{{/str}}{{/pix}}
         {{/userstate.favourited}}
     {{/favouritecontent}}
 {{/ mod_forum/discussion_favourite_toggle }}

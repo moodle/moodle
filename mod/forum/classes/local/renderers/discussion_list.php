@@ -314,7 +314,8 @@ class discussion_list {
                 $user->id,
                 $sortorder,
                 $this->get_page_size($pagesize),
-                $this->get_page_number($pageno) * $this->get_page_size($pagesize));
+                $this->get_page_number($pageno) * $this->get_page_size($pagesize),
+                $user);
         } else {
             return $discussions = $discussionvault->get_from_forum_id_and_group_id(
                 $forum->get_id(),
@@ -323,7 +324,8 @@ class discussion_list {
                 $user->id,
                 $sortorder,
                 $this->get_page_size($pagesize),
-                $this->get_page_number($pageno) * $this->get_page_size($pagesize));
+                $this->get_page_number($pageno) * $this->get_page_size($pagesize),
+                $user);
         }
     }
 

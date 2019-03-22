@@ -48,7 +48,7 @@ define([
             var discussionId = toggleElement.data('discussionid');
             var subscriptionState = toggleElement.data('targetstate');
 
-            Repository.toggleFavouriteDiscussionState(forumId, discussionId, subscriptionState)
+            Repository.setFavouriteDiscussionState(forumId, discussionId, subscriptionState)
                 .then(function(context) {
                     return Templates.render('mod_forum/discussion_favourite_toggle', context);
                 })

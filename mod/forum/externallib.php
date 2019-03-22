@@ -1100,23 +1100,25 @@ class mod_forum_external extends external_api {
     /**
      * Toggle the favouriting value for the discussion provided
      *
-     * @param int $forumid The forum id
      * @param int $discussionid The discussion we need to favourite
      * @param bool $targetstate The state of the favourite value
      * @return array The exported discussion
      */
-    public static function toggle_favourite_state($forumid, $discussionid, $targetstate) {
+    public static function toggle_favourite_state($discussionid, $targetstate) {
         global $DB, $PAGE, $USER;
 
         $params = self::validate_parameters(self::toggle_favourite_state_parameters(), [
-            'forumid' => $forumid,
             'discussionid' => $discussionid,
             'targetstate' => $targetstate
         ]);
 
         $vaultfactory = mod_forum\local\container::get_vault_factory();
+        // Get the discussion vault and the corresponding discussion entity.
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+
         $forumvault = $vaultfactory->get_forum_vault();
-        $forum = $forumvault->get_from_id($params['forumid']);
+        $forum = $forumvault->get_from_id($discussion->get_forum_id());
         $forumcontext = $forum->get_context();
         $usercontext = context_user::instance($USER->id);
 
@@ -1125,9 +1127,7 @@ class mod_forum_external extends external_api {
         $managerfactory = mod_forum\local\container::get_manager_factory();
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
-        // Get the discussion vault and the corresponding discussion entity.
-        $discussionvault = $vaultfactory->get_discussion_vault();
-        $discussion = $discussionvault->get_from_id($params['discussionid']);
+
 
         // Does the user have the ability to favourite the discussion?
         if (!$capabilitymanager->can_favourite_discussion($USER, $discussion)) {
@@ -1165,7 +1165,6 @@ class mod_forum_external extends external_api {
     public static function toggle_favourite_state_parameters() {
         return new external_function_parameters(
             [
-                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in'),
                 'discussionid' => new external_value(PARAM_INT, 'The discussion to subscribe or unsubscribe'),
                 'targetstate' => new external_value(PARAM_BOOL, 'The target state')
             ]
@@ -1588,7 +1587,7 @@ class mod_forum_external extends external_api {
      * @return external_description
      */
     public static function set_subscription_state_returns() {
-        return \mod_forum\local\exporters\discussion::get_read_structure();
+        return discussion_exporter::get_read_structure();
     }
 
     /**
@@ -1638,15 +1637,13 @@ class mod_forum_external extends external_api {
     /**
      * Set the pin state.
      *
-     * @param   int     $forumid
      * @param   int     $discussionid
      * @param   bool    $targetstate
      * @return  \stdClass
      */
-    public static function set_pin_state($forumid, $discussionid, $targetstate) {
+    public static function set_pin_state($discussionid, $targetstate) {
         global $PAGE, $USER;
         $params = self::validate_parameters(self::set_pin_state_parameters(), [
-            'forumid' => $forumid,
             'discussionid' => $discussionid,
             'targetstate' => $targetstate,
         ]);
@@ -1654,19 +1651,18 @@ class mod_forum_external extends external_api {
         $managerfactory = mod_forum\local\container::get_manager_factory();
         $forumvault = $vaultfactory->get_forum_vault();
         $discussionvault = $vaultfactory->get_discussion_vault();
-        $forum = $forumvault->get_from_id($params['forumid']);
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+        $forum = $forumvault->get_from_id($discussion->get_forum_id());
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
         self::validate_context($forum->get_context());
 
         $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
-        $forumrecord = $legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
         if (!$capabilitymanager->can_pin_discussions($USER)) {
             // Nothing to do. We won't actually output any content here though.
             throw new \moodle_exception('cannotpindiscussions', 'mod_forum');
         }
 
-        $discussion = $discussionvault->get_from_id($params['discussionid']);
         $discussion->set_pinned($targetstate);
         $discussionrecord = $legacydatamapperfactory->get_discussion_data_mapper()->to_legacy_object($discussion);
         $discussionvault->update_discussion($discussionrecord);
@@ -1699,8 +1695,6 @@ class mod_forum_external extends external_api {
     public static function set_pin_state_parameters() {
         return new external_function_parameters(
             [
-                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in', VALUE_REQUIRED,
-                    null, NULL_NOT_ALLOWED),
                 'discussionid' => new external_value(PARAM_INT, 'The discussion to pin or unpin', VALUE_REQUIRED,
                     null, NULL_NOT_ALLOWED),
                 'targetstate' => new external_value(PARAM_INT, 'The target state', VALUE_REQUIRED,
@@ -1730,6 +1724,6 @@ class mod_forum_external extends external_api {
      * @return external_single_structure
      */
     public static function set_pin_state_returns() {
-        return \mod_forum\local\exporters\discussion::get_read_structure();
+        return discussion_exporter::get_read_structure();
     }
 }

@@ -39,12 +39,14 @@
         data-action="toggle"
         data-discussionid="{{id}}"
         data-forumid="{{forumid}}"
-        href="#"
+        tabindex="-1"
         {{#userstate.favourited}}
             data-targetstate="0"
+            title="{{#str}}removefromfavourites, mod_forum{{/str}}"
         {{/userstate.favourited}}
         {{^userstate.favourited}}
             data-targetstate="1"
+            title="{{#str}}addtofavourites, mod_forum{{/str}}"
         {{/userstate.favourited}}
     >
         {{$favouritecontent}}

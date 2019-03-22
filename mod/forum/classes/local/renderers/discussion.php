@@ -197,10 +197,6 @@ class discussion {
             $exporteddiscussion['html']['movediscussion'] = $this->get_move_discussion_html();
         }
 
-        if ($capabilities['pin']) {
-            $exporteddiscussion['html']['pindiscussion'] = $this->get_pin_discussion_html();
-        }
-
         return $this->renderer->render_from_template('mod_forum/forum_discussion', $exporteddiscussion);
     }
 
@@ -323,32 +319,6 @@ class discussion {
         }
 
         return null;
-    }
-
-    /**
-     * Get the HTML to render the pin discussion button.
-     *
-     * @return string
-     */
-    private function get_pin_discussion_html() : string {
-        $discussion = $this->discussion;
-
-        if ($discussion->is_pinned()) {
-            $pinlink = FORUM_DISCUSSION_UNPINNED;
-            $pintext = get_string('unpindiscussion', 'forum');
-        } else {
-            $pinlink = FORUM_DISCUSSION_PINNED;
-            $pintext = get_string('pindiscussion', 'forum');
-        }
-
-        $params = [
-            'pin' => $pinlink,
-            'd' => $discussion->get_id(),
-            'sesskey' => sesskey(),
-        ];
-        $url = new moodle_url('discuss.php', $params);
-        $link = new \action_link($url, $pintext, null, ['class' => 'btn btn-link']);
-        return $this->renderer->render($link);
     }
 
     /**

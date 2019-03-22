@@ -306,12 +306,10 @@ class discussion {
      * @param int $targetstate The state to change the pin to
      * @return bool
      */
-    public function set_pinned(int $targetstate): bool {
+    public function set_pinned(int $targetstate): void {
         if ($targetstate != $this->pinned) {
             $this->pinned = $targetstate;
         }
-
-        return true;
     }
 
     /**

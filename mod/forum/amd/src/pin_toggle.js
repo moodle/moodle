@@ -54,17 +54,12 @@ define([
             var forumid = toggleElement.data('forumid');
             var discussionid = toggleElement.data('discussionid');
             var pinstate = toggleElement.data('targetstate');
-            var includetext = toggleElement.data('includetext');
-
-            Repository.togglePin(forumid, discussionid, pinstate, includetext)
+            Repository.setPinDiscussionState(forumid, discussionid, pinstate)
                 .then(function(context) {
                     return Templates.render('mod_forum/discussion_pin_toggle', context);
                 })
                 .then(function(html, js) {
                     return Templates.replaceNode(toggleElement, html, js);
-                })
-                .then(function() {
-                    return Notification.fetchNotifications();
                 })
                 .fail(Notification.exception);
 

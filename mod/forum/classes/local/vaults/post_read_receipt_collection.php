@@ -57,9 +57,10 @@ class post_read_receipt_collection extends db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
+     * @param \stdClass|null $user The user object
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, \stdClass $user = null) : string {
         $selectsql = 'SELECT * FROM {' . self::TABLE . '} ' . $this->get_table_alias();
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
         $selectsql .= $sortsql ? ' ORDER BY ' . $sortsql : '';

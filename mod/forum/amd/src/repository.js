@@ -60,14 +60,13 @@ define(['core/ajax'], function(Ajax) {
      *
      * @param {number} forumId ID of the forum the discussion belongs to
      * @param {number} discussionId ID of the discussion with the subscription state
-     * @param {boolean} targetState Set the favourite state. True == favourited; false == unfavourited.
+     * @param {null|date} targetState Set the favourite state. True == favourited; false == unfavourited.
      * @return {object} jQuery promise
      */
-    var toggleFavouriteDiscussionState = function(forumId, discussionId, targetState) {
+    var setFavouriteDiscussionState = function(forumId, discussionId, targetState) {
         var request = {
             methodname: 'mod_forum_toggle_favourite_state',
             args: {
-                forumid: forumId,
                 discussionid: discussionId,
                 targetstate: targetState
             }
@@ -86,14 +85,21 @@ define(['core/ajax'], function(Ajax) {
         return Ajax.call([request])[0];
     };
 
-    var togglePin = function(forumid, discussionid, targetstate, includetext) {
+    /**
+     * Set the pinned state for the discussion provided.
+     *
+     * @param {number} forumid
+     * @param {number} discussionid
+     * @param {boolean} targetstate
+     * @param includetext
+     * @return {*|Promise}
+     */
+    var setPinDiscussionState = function(forumid, discussionid, targetstate) {
         var request = {
             methodname: 'mod_forum_set_pin_state',
             args: {
-                forumid: forumid,
                 discussionid: discussionid,
-                targetstate: targetstate,
-                includetext: includetext,
+                targetstate: targetstate
             }
         };
         return Ajax.call([request])[0];
@@ -103,7 +109,7 @@ define(['core/ajax'], function(Ajax) {
         setDiscussionSubscriptionState: setDiscussionSubscriptionState,
         addDiscussionPost: addDiscussionPost,
         setDiscussionLockState: setDiscussionLockState,
-        toggleFavouriteDiscussionState: toggleFavouriteDiscussionState,
-        togglePin: togglePin
+        setFavouriteDiscussionState: setFavouriteDiscussionState,
+        setPinDiscussionState: setPinDiscussionState
     };
 });

@@ -202,7 +202,7 @@ class discussion extends exporter {
             ],
             'userstate' => [
                 'subscribed' => \mod_forum\subscriptions::is_subscribed($user->id, $forumrecord, $discussion->get_id()),
-                'favourited' => discussion_entity::is_favourited($discussion, $forum->get_context(), $user),
+                'favourited' => $this->is_favourited($discussion, $forum->get_context(), $user),
             ],
             'capabilities' => [
                 'subscribe' => $capabilitymanager->can_subscribe_to_discussion($user, $discussion),
@@ -241,6 +241,21 @@ class discussion extends exporter {
         $data['timed']['visible'] = $canalwaysseetimedpost ? $discussion->is_timed_discussion_visible() : null;
 
         return $data;
+    }
+
+    /**
+     * Check whether the provided discussion has been favourited by the user.
+     *
+     * @param discussion $discussion The discussion record
+     * @param context $forumcontext Forum context
+     * @param \stdClass $user The user to check the favourite against
+     *
+     * @return bool Whether or not the user has favourited the discussion
+     */
+    private function is_favourited(discussion_entity $discussion, \context_module $forumcontext, \stdClass $user) {
+        $usercontext = \context_user::instance($user->id);
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        return $ufservice->favourite_exists('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);
     }
 
     /**

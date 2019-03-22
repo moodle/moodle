@@ -88,13 +88,19 @@ class discussion_list extends db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
-     * @param  string|null $joinsql Additional join conditions for the sql
+     * @param string|null $joinsql Additional join conditions for the sql
+     * @param stdClass|null $user User we are performing this query for
      *
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null, ?string $joinsql = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null, stdClass $user = null) : string {
         $alias = $this->get_table_alias();
         $db = $this->get_db();
+
+        list($favsql, $favparams) = $this->get_favourite_sql($user);
+        foreach ($favparams as $key => $param) {
+            $favsql = str_replace(":$key", "'$param'", $favsql);
+        }
 
         // Fetch:
         // - Discussion
@@ -117,7 +123,7 @@ class discussion_list extends db_table_vault {
         $tables .= ' JOIN {user} fa ON fa.id = ' . $alias . '.userid';
         $tables .= ' JOIN {user} la ON la.id = ' . $alias . '.usermodified';
         $tables .= ' JOIN ' . $posttable->get_from_sql() . ' ON fp.id = ' . $alias . '.firstpost';
-        $tables .= $joinsql ? $joinsql : '';
+        $tables .= $favsql ? $favsql : '';
 
         $selectsql = 'SELECT ' . $fields . ' FROM ' . $tables;
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
@@ -260,7 +266,8 @@ class discussion_list extends db_table_vault {
         ?int $includepostsforuser,
         ?int $sortorder,
         int $limit,
-        int $offset
+        int $offset,
+        stdClass $user
     ) {
         $alias = $this->get_table_alias();
         $wheresql = "{$alias}.forum = :forumid";
@@ -274,10 +281,7 @@ class discussion_list extends db_table_vault {
             'forumid' => $forumid,
         ]);
 
-        list($favsql, $favparams) = $this->get_favourite_sql();
-        $params += $favparams;
-
-        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder), $favsql);
+        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder), $user);
         $records = $this->get_db()->get_records_sql($sql, $params, $offset, $limit);
 
         return $this->transform_db_records_to_entities($records);
@@ -303,7 +307,8 @@ class discussion_list extends db_table_vault {
         ?int $includepostsforuser,
         ?int $sortorder,
         int $limit,
-        int $offset
+        int $offset,
+        stdClass $user
     ) {
         $alias = $this->get_table_alias();
 
@@ -327,10 +332,7 @@ class discussion_list extends db_table_vault {
             'allgroupsid' => -1,
         ]);
 
-        list($favsql, $favparams) = $this->get_favourite_sql();
-        $params += $favparams;
-
-        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder), $favsql);
+        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder), $user);
         $records = $this->get_db()->get_records_sql($sql, $params, $offset, $limit);
 
         return $this->transform_db_records_to_entities($records);
@@ -411,9 +413,8 @@ class discussion_list extends db_table_vault {
     /**
      * Get the standard favouriting sql.
      */
-    private function get_favourite_sql(): array {
-        global $USER;
-        $usercontext = \context_user::instance($USER->id);
+    private function get_favourite_sql($user): array {
+        $usercontext = \context_user::instance($user->id);
         $alias = $this->get_table_alias();
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
         list($favsql, $favparams) = $ufservice->get_join_sql_by_type('mod_forum', 'discussions',
