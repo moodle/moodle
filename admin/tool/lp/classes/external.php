@@ -425,6 +425,7 @@ class external extends external_api {
                 ),
             ))),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
+            'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the course competencies page.'),
         ));
 
     }
