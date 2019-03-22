@@ -47,13 +47,13 @@ class discussion_list extends db_table_vault {
     /** The table for this vault */
     private const TABLE = 'forum_discussions';
     /** Alias for first author id */
-    private const FIRST_AUTHOR_ID_ALIAS = 'userpictureid';
+    private const FIRST_AUTHOR_ID_ALIAS = 'fauserpictureid';
     /** Alias for author fields */
-    private const FIRST_AUTHOR_ALIAS = 'userrecord';
+    private const FIRST_AUTHOR_ALIAS = 'fauserrecord';
     /** Alias for last author id */
-    private const LATEST_AUTHOR_ID_ALIAS = 'userpictureid';
+    private const LATEST_AUTHOR_ID_ALIAS = 'lauserpictureid';
     /** Alias for last author fields */
-    private const LATEST_AUTHOR_ALIAS = 'userrecord';
+    private const LATEST_AUTHOR_ALIAS = 'lauserrecord';
     /** Default limit */
     public const PAGESIZE_DEFAULT = 100;
 
