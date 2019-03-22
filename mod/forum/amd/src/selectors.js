@@ -25,6 +25,11 @@ define([], function() {
     return {
         subscription: {
             toggle: "[data-type='subscription-toggle'][data-action='toggle']",
+        },
+        post: {
+            post: '[data-region="post"]',
+            action: '[data-region="post-action"]',
+            actions_container: '[data-region="post-actions-container"]'
         }
     };
 });
