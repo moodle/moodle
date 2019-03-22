@@ -29,17 +29,31 @@
     }
 }}
 {{#master}}
-    <input id="{{id}}" name="{{name}}" type="checkbox" {{#classes}}class="{{.}}"{{/classes}} value="{{value}}"
-           data-action="toggle"
-           data-toggle="master"
-           data-togglegroup="{{togglegroup}}"
-           data-toggle-selectall="{{selectall}}"
-           data-toggle-deselectall="{{deselectall}}"
-           {{#checked}}checked="checked"{{/checked}}
-    />
-    {{#label}}
-        <label for="{{id}}" class="{{labelclasses}}">{{.}}</label>
-    {{/label}}
+    {{#isbutton}}
+        <button type="button" id="{{id}}" name="{{name}}" class="btn btn-secondary {{classes}}"
+                data-action="toggle"
+                data-toggle="master"
+                data-togglegroup="{{togglegroup}}"
+                data-toggle-selectall="{{selectall}}"
+                data-toggle-deselectall="{{deselectall}}"
+                data-checkall="{{#checked}}0{{/checked}}{{^checked}}1{{/checked}}">
+            {{#checked}}{{deselectall}}{{/checked}}
+            {{^checked}}{{selectall}}{{/checked}}
+        </button>
+    {{/isbutton}}
+    {{^isbutton}}
+        <input id="{{id}}" name="{{name}}" type="checkbox" {{#classes}}class="{{.}}"{{/classes}} value="{{value}}"
+               data-action="toggle"
+               data-toggle="master"
+               data-togglegroup="{{togglegroup}}"
+               data-toggle-selectall="{{selectall}}"
+               data-toggle-deselectall="{{deselectall}}"
+               {{#checked}}checked="checked"{{/checked}}
+        />
+        {{#label}}
+            <label for="{{id}}" class="{{labelclasses}}">{{.}}</label>
+        {{/label}}
+    {{/isbutton}}
 {{/master}}
 {{^master}}
     <input id="{{id}}" name="{{name}}" type="checkbox" {{#classes}}class="{{.}}"{{/classes}} value="{{value}}"

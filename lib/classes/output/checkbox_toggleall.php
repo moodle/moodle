@@ -48,6 +48,9 @@ class checkbox_toggleall implements renderable, templatable {
     /** @var array $options The options for the checkbox. */
     protected $options;
 
+    /** @var bool $isbutton Whether to render this as a button. Applies to master checkboxes only. */
+    protected $isbutton;
+
     /**
      * Constructor.
      *
@@ -67,11 +70,13 @@ class checkbox_toggleall implements renderable, templatable {
      *         <li><b>deselectall </b> string - Master only. The language string that will be used to indicate that clicking on
      *                                 the master will select all of the slave checkboxes. Defaults to "Deselect all".</li>
      *     </ul>
+     * @param bool $isbutton Whether to render this as a button. Applies to master only.
      */
-    public function __construct(string $togglegroup, bool $ismaster, $options = []) {
+    public function __construct(string $togglegroup, bool $ismaster, $options = [], $isbutton = false) {
         $this->togglegroup = $togglegroup;
         $this->ismaster = $ismaster;
         $this->options = $options;
+        $this->isbutton = $ismaster && $isbutton;
     }
 
     /**
@@ -97,6 +102,8 @@ class checkbox_toggleall implements renderable, templatable {
             $data->selectall = $this->options['selectall'] ?? get_string('selectall');
             $data->deselectall = $this->options['deselectall'] ?? get_string('deselectall');
         }
+
+        $data->isbutton = $this->isbutton;
 
         return $data;
     }
