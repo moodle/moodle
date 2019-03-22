@@ -45,9 +45,16 @@ if (!$cmid && !$forumid) {
     print_error('missingparameter');
 }
 
-$forum = $forumid ? $forumvault->get_from_id($forumid) : $forumvault->get_from_course_module_id($cmid);
-if (!$forum) {
-    throw new \moodle_exception('Unable to find forum with id ' . $forumid);
+if ($cmid) {
+    $forum = $forumvault->get_from_course_module_id($cmid);
+    if (empty($forum)) {
+        throw new \moodle_exception('Unable to find forum with cmid ' . $cmid);
+    }
+} else {
+    $forum = $forumvault->get_from_id($forumid);
+    if (empty($forum)) {
+        throw new \moodle_exception('Unable to find forum with id ' . $forumid);
+    }
 }
 
 if (!empty($showall)) {

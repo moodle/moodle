@@ -366,6 +366,21 @@ class renderer {
         $rendererbase = $this->rendererbase;
         $notifications = [];
 
+        switch ($forum->get_type()) {
+            case 'news':
+                if (SITEID == $forum->get_course_id()) {
+                    $template = 'mod_forum/frontpage_news_discussion_list';
+                } else {
+                    $template = 'mod_forum/news_discussion_list';
+                }
+                break;
+            case 'qanda':
+                $template = 'mod_forum/qanda_discussion_list';
+                break;
+            default:
+                $template = 'mod_forum/discussion_list';
+        }
+
         return new discussion_list_renderer(
             $forum,
             $rendererbase,
@@ -375,6 +390,7 @@ class renderer {
             $this->builderfactory,
             $capabilitymanager,
             $this->urlfactory,
+            $template,
             $notifications,
             function($discussions, $user, $forum) {
 
@@ -389,13 +405,15 @@ class renderer {
     }
 
     /**
-     * Create a blog type discussion list renderer.
+     * Create a discussion list renderer which shows more information about the first post.
      *
      * @param forum_entity $forum The forum that the discussions belong to
+     * @param string $template The template to use
      * @return discussion_list_renderer
      */
-    public function get_blog_discussion_list_renderer(
-        forum_entity $forum
+    private function get_detailed_discussion_list_renderer(
+        forum_entity $forum,
+        string $template
     ) : discussion_list_renderer {
 
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
@@ -411,6 +429,7 @@ class renderer {
             $this->builderfactory,
             $capabilitymanager,
             $this->urlfactory,
+            $template,
             $notifications,
             function($discussions, $user, $forum) {
                 $exportedpostsbuilder = $this->builderfactory->get_exported_posts_builder();
@@ -443,6 +462,42 @@ class renderer {
                 return $exportedposts;
             }
         );
+    }
+
+    /**
+     * Create a blog type discussion list renderer.
+     *
+     * @param forum_entity $forum The forum that the discussions belong to
+     * @return discussion_list_renderer
+     */
+    public function get_blog_discussion_list_renderer(
+        forum_entity $forum
+    ) : discussion_list_renderer {
+        return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/blog_discussion_list');
+    }
+
+    /**
+     * Create a discussion list renderer for the social course format.
+     *
+     * @param forum_entity $forum The forum that the discussions belong to
+     * @return discussion_list_renderer
+     */
+    public function get_social_discussion_list_renderer(
+        forum_entity $forum
+    ) : discussion_list_renderer {
+        return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/social_discussion_list');
+    }
+
+    /**
+     * Create a discussion list renderer for the social course format.
+     *
+     * @param forum_entity $forum The forum that the discussions belong to
+     * @return discussion_list_renderer
+     */
+    public function get_frontpage_news_discussion_list_renderer(
+        forum_entity $forum
+    ) : discussion_list_renderer {
+        return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/frontpage_social_discussion_list');
     }
 
     /**

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/blog_discussion_list
+    @template mod_forum/frontpage_social_discussion_list
 
     Template which defines a forum post for sending in a single-post HTML email.
 
@@ -33,4 +33,10 @@
     {{$discussion_create_text}}
         {{#str}}addanewtopic, forum{{/str}}
     {{/discussion_create_text}}
+    {{$discussion_top_pagination}}{{/discussion_top_pagination}}
+    {{$discussion_bottom_pagination}}
+        {{#hasmore}}
+            <a href="{{{forum.urls.view}}}">{{#str}}oldertopics, mod_forum{{/str}}...</a>
+        {{/hasmore}}
+    {{/discussion_bottom_pagination}}
 {{/ mod_forum/social_discussion_list }}

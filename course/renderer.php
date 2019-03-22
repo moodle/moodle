@@ -2334,10 +2334,10 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Output news for the frontpage (extract from site-wide news forum)
      *
-     * @param stdClass $newsforum record from db table 'forum' that represents the site news forum
+     * @param stdClass $forum record from db table 'forum' that represents the site news forum
      * @return string
      */
-    protected function frontpage_news($newsforum) {
+    protected function frontpage_news($forum) {
         global $CFG, $SITE, $SESSION, $USER;
         require_once($CFG->dirroot .'/mod/forum/lib.php');
 
@@ -2346,23 +2346,27 @@ class core_course_renderer extends plugin_renderer_base {
         if (isloggedin()) {
             $SESSION->fromdiscussion = $CFG->wwwroot;
             $subtext = '';
-            if (\mod_forum\subscriptions::is_subscribed($USER->id, $newsforum)) {
-                if (!\mod_forum\subscriptions::is_forcesubscribed($newsforum)) {
+            if (\mod_forum\subscriptions::is_subscribed($USER->id, $forum)) {
+                if (!\mod_forum\subscriptions::is_forcesubscribed($forum)) {
                     $subtext = get_string('unsubscribe', 'forum');
                 }
             } else {
                 $subtext = get_string('subscribe', 'forum');
             }
-            $suburl = new moodle_url('/mod/forum/subscribe.php', array('id' => $newsforum->id, 'sesskey' => sesskey()));
+            $suburl = new moodle_url('/mod/forum/subscribe.php', array('id' => $forum->id, 'sesskey' => sesskey()));
             $output .= html_writer::tag('div', html_writer::link($suburl, $subtext), array('class' => 'subscribelink'));
         }
 
-        ob_start();
-        forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems, 'plain', 'p.modified DESC');
-        $output .= ob_get_contents();
-        ob_end_clean();
+        $coursemodule = get_coursemodule_from_instance('forum', $forum->id);
+        $context = context_module::instance($coursemodule->id);
 
-        return $output;
+        $entityfactory = mod_forum\local\container::get_entity_factory();
+        $forumentity = $entityfactory->get_forum_from_stdclass($forum, $context, $coursemodule, $SITE);
+
+        $rendererfactory = mod_forum\local\container::get_renderer_factory();
+        $discussionsrenderer = $rendererfactory->get_frontpage_news_discussion_list_renderer($forumentity);
+        $cm = \cm_info::create($coursemodule);
+        return $output . $discussionsrenderer->render($USER, $cm, null, null, 0, $SITE->newsitems);
     }
 
     /**

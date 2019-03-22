@@ -50,7 +50,9 @@
     {{/forum.capabilities.create}}
 
     {{#state.hasdiscussions}}
-        {{{ pagination }}}
+        {{$discussion_top_pagination}}
+            {{{ pagination }}}
+        {{/discussion_top_pagination}}
         {{$discussion_list_output}}
             <table class="table table-hover table-striped">
                 {{$discussion_list_header}}
@@ -217,9 +219,9 @@
                 {{/discussion_list_body}}
             </table>
         {{/discussion_list_output}}
-        {{$pagination_output}}
+        {{$discussion_bottom_pagination}}
             {{{ pagination }}}
-        {{/pagination_output}}
+        {{/discussion_bottom_pagination}}
         {{#can_create_discussion}}
             <div class="forumaddnew">
                 <a href="{{create_discussion_link}}" class="btn btn-primary">{{create_discussion_link_text}}</a>

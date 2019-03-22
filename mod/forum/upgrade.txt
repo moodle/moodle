@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
   * Changed the forum discussion rendering to use templates rather than print functions.
   * Added new forum entities, factories, exporters, renderers, and vaults in the local namespace to better encapsulate the forum data.
   * Deprecated all of the forum_print_* functions in lib.php.
+  * The forum_print_latest_discussions function has been deprecated and will not be replaced.
 
 === 3.6 ===
   * forum_print_post should be surrounded with calls to forum_print_post_start and forum_print_post_end to create the proper HTML structure for the post.
