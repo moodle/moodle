@@ -2,6 +2,7 @@
 -------------------------*/
 div.logo {
     background: url([[setting:logo]]) 0 0 no-repeat;
+    background-size: contain;
     display: block;
     float: left;
     height: 75px;
