@@ -422,6 +422,7 @@ class external extends external_api {
                 'comppath' => competency_path_exporter::get_read_structure(),
             ))),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
+            'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the course competencies page.'),
         ));
 
     }
