@@ -93,6 +93,7 @@ class discussion_list {
      * @param   capability_manager  $capabilitymanager The managed used to check capabilities on the forum
      * @param   url_factory         $urlfactory The factory used to create URLs in the forum
      * @param   notification[]      $notifications A list of any notifications to be displayed within the page
+     * @param   callable|null       $postprocessfortemplate Callback function to process discussion lists for templates
      */
     public function __construct(
         forum_entity $forum,

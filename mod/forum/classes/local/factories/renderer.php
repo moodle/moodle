@@ -416,7 +416,7 @@ class renderer {
                 $exportedpostsbuilder = $this->builderfactory->get_exported_posts_builder();
                 $discussionentries = [];
                 $postentries = [];
-                foreach($discussions as $discussion) {
+                foreach ($discussions as $discussion) {
                     $discussionentries[] = $discussion->get_discussion();
                     $discussionentriesids[] = $discussion->get_discussion()->get_id();
                     $postentries[] = $discussion->get_first_post();
@@ -433,7 +433,7 @@ class renderer {
                 $discussionrepliescount = $postvault->get_reply_count_for_discussion_ids($discussionentriesids);
 
                 array_walk($exportedposts['posts'], function($post) use ($discussionrepliescount) {
-                    $post->discussionrepliescount =  $discussionrepliescount[$post->discussionid] ?? 0;
+                    $post->discussionrepliescount = $discussionrepliescount[$post->discussionid] ?? 0;
                     // TODO: Find a better solution due to language differences when defining the singular and plural form.
                     $post->isreplyplural = $post->discussionrepliescount != 1 ? true : false;
                 });

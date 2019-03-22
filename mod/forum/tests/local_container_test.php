@@ -47,7 +47,10 @@ class mod_forum_local_container_testcase extends advanced_testcase {
      * @covers ::get_legacy_data_mapper_factory
      */
     public function test_get_legacy_data_mapper_factory() {
-        $this->assertInstanceOf(\mod_forum\local\factories\legacy_data_mapper::class, \mod_forum\local\container::get_legacy_data_mapper_factory());
+        $this->assertInstanceOf(
+            \mod_forum\local\factories\legacy_data_mapper::class,
+            \mod_forum\local\container::get_legacy_data_mapper_factory()
+        );
     }
 
     /**

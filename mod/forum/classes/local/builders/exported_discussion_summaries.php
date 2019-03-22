@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_forum\local\entities\discussion as discussion_entity;
 use mod_forum\local\entities\forum as forum_entity;
-use mod_forum\local\entities\forum;
 use mod_forum\local\entities\post as post_entity;
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\exporter as exporter_factory;
@@ -38,6 +37,8 @@ use renderer_base;
 use stdClass;
 
 /**
+ * Exported discussion summaries builder class.
+ *
  * This class is an implementation of the builder pattern (loosely). It is responsible
  * for taking a set of related forums, discussions, and posts and generate the exported
  * version of the discussion summaries.
@@ -48,6 +49,10 @@ use stdClass;
  *
  * See this doc for more information on the builder pattern:
  * https://designpatternsphp.readthedocs.io/en/latest/Creational/Builder/README.html
+ *
+ * @package    mod_forum
+ * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class exported_discussion_summaries {
     /** @var renderer_base $renderer Core renderer */
@@ -100,7 +105,7 @@ class exported_discussion_summaries {
      */
     public function build(
         stdClass $user,
-        forum $forum,
+        forum_entity $forum,
         array $discussions
     ) : array {
 

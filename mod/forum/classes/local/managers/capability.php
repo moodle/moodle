@@ -91,7 +91,7 @@ class capability {
      */
     public function can_subscribe_to_forum(stdClass $user) : bool {
         if ($this->forum->get_type() == 'single') {
-           return false;
+            return false;
         }
 
         return !is_guest($this->get_context(), $user) &&
