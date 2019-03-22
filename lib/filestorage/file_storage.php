@@ -598,7 +598,7 @@ class file_storage {
      * @param int $contextid context ID
      * @param string $component component
      * @param mixed $filearea file area/s, you cannot specify multiple fileareas as well as an itemid
-     * @param int $itemid item ID or all files if not specified
+     * @param int|int[]|false $itemid item ID(s) or all files if not specified
      * @param string $sort A fragment of SQL to use for sorting
      * @param bool $includedirs whether or not include directories
      * @param int $updatedsince return files updated since this time
@@ -617,8 +617,10 @@ class file_storage {
         if ($itemid !== false && is_array($filearea)) {
             throw new coding_exception('You cannot specify multiple fileareas as well as an itemid.');
         } else if ($itemid !== false) {
-            $itemidsql = ' AND f.itemid = :itemid ';
-            $conditions['itemid'] = $itemid;
+            $itemids = is_array($itemid) ? $itemid : [$itemid];
+            list($itemidinorequalsql, $itemidconditions) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
+            $itemidsql = " AND f.itemid {$itemidinorequalsql}";
+            $conditions = array_merge($conditions, $itemidconditions);
         } else {
             $itemidsql = '';
         }

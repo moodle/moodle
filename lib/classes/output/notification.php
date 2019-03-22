@@ -162,6 +162,10 @@ class notification implements \renderable, \templatable {
             'extraclasses'  => implode(' ', $this->extraclasses),
             'announce'      => $this->announce,
             'closebutton'   => $this->closebutton,
+            'issuccess'         => $this->messagetype === 'success',
+            'isinfo'            => $this->messagetype === 'info',
+            'iswarning'         => $this->messagetype === 'warning',
+            'iserror'           => $this->messagetype === 'error',
         );
     }
 

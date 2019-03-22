@@ -29,14 +29,14 @@ require_once("lib.php");
 $f          = required_param('f',PARAM_INT); // The forum to mark
 $mark       = required_param('mark',PARAM_ALPHA); // Read or unread?
 $d          = optional_param('d',0,PARAM_INT); // Discussion to mark.
-$returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
+$return     = optional_param('return', null, PARAM_LOCALURL);    // Page to return to.
 
 $url = new moodle_url('/mod/forum/markposts.php', array('f'=>$f, 'mark'=>$mark));
 if ($d !== 0) {
     $url->param('d', $d);
 }
-if ($returnpage !== 'index.php') {
-    $url->param('returnpage', $returnpage);
+if (null !== $return) {
+    $url->param('return', $return);
 }
 $PAGE->set_url($url);
 
@@ -57,10 +57,10 @@ $user = $USER;
 require_login($course, false, $cm);
 require_sesskey();
 
-if ($returnpage == 'index.php') {
-    $returnto = new moodle_url("/mod/forum/$returnpage", array('id' => $course->id));
+if (null === $return) {
+    $returnto = new moodle_url("/mod/forum/index.php", ['id' => $course->id]);
 } else {
-    $returnto = new moodle_url("/mod/forum/$returnpage", array('f' => $forum->id));
+    $returnto = new moodle_url($return);
 }
 
 if (isguestuser()) {   // Guests can't change forum
@@ -93,14 +93,6 @@ if ($mark == 'read') {
         }
         forum_tp_mark_forum_read($user, $forum->id, $currentgroup);
     }
-
-/// FUTURE - Add ability to mark them as unread.
-//    } else { // subscribe
-//        if (forum_tp_start_tracking($forum->id, $user->id)) {
-//            redirect($returnto, get_string("nowtracking", "forum", $info), 1);
-//        } else {
-//            print_error("Could not start tracking that forum", get_local_referer());
-//        }
 }
 
 redirect($returnto);

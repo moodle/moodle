@@ -233,90 +233,78 @@ foreach ($searchterms as $key => $searchterm) {
     }
 }
 $strippedsearch = implode(' ', $searchterms);    // Rebuild the string
+$entityfactory = mod_forum\local\container::get_entity_factory();
+$vaultfactory = mod_forum\local\container::get_vault_factory();
+$rendererfactory = mod_forum\local\container::get_renderer_factory();
+$managerfactory = mod_forum\local\container::get_manager_factory();
+$legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+$forumdatamapper = $legacydatamapperfactory->get_forum_data_mapper();
+
+$discussionvault = $vaultfactory->get_discussion_vault();
+$discussionids = array_keys(array_reduce($posts, function($carry, $post) {
+    $carry[$post->discussion] = true;
+    return $carry;
+}, []));
+$discussions = $discussionvault->get_from_ids($discussionids);
+$discussionsbyid = array_reduce($discussions, function($carry, $discussion) {
+    $carry[$discussion->get_id()] = $discussion;
+    return $carry;
+}, []);
+
+$forumvault = $vaultfactory->get_forum_vault();
+$forumids = array_keys(array_reduce($discussions, function($carry, $discussion) {
+    $carry[$discussion->get_forum_id()] = true;
+    return $carry;
+}, []));
+$forums = $forumvault->get_from_ids($forumids);
+$forumsbyid = array_reduce($forums, function($carry, $forum) {
+    $carry[$forum->get_id()] = $forum;
+    return $carry;
+}, []);
+
+$postids = array_map(function($post) {
+    return $post->id;
+}, $posts);
+
+$poststorender = [];
 
 foreach ($posts as $post) {
 
     // Replace the simple subject with the three items forum name -> thread name -> subject
     // (if all three are appropriate) each as a link.
-    if (! $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
+    if (!isset($discussionsbyid[$post->discussion])) {
         print_error('invaliddiscussionid', 'forum');
     }
-    if (! $forum = $DB->get_record('forum', array('id' => "$discussion->forum"))) {
+
+    $discussion = $discussionsbyid[$post->discussion];
+    if (!isset($forumsbyid[$discussion->get_forum_id()])) {
         print_error('invalidforumid', 'forum');
     }
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-        print_error('invalidcoursemodule');
+    $forum = $forumsbyid[$discussion->get_forum_id()];
+    $capabilitymanager = $managerfactory->get_capability_manager($forum);
+    $postentity = $entityfactory->get_post_from_stdclass($post);
+
+    if (!$capabilitymanager->can_view_post($USER, $discussion, $postentity)) {
+        // Don't render posts that the user can't view.
+        continue;
     }
 
-    $post->subject = highlight($strippedsearch, $post->subject);
-    $discussion->name = highlight($strippedsearch, $discussion->name);
-
-    $fullsubject = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
-    if ($forum->type != 'single') {
-        $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a>";
-        if ($post->parent != 0) {
-            $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">".format_string($post->subject,true)."</a>";
-        }
+    if ($postentity->is_deleted()) {
+        // Don't render deleted posts.
+        continue;
     }
 
-    $post->subject = $fullsubject;
-    $post->subjectnoformat = true;
-
-    //add the ratings information to the post
-    //Unfortunately seem to have do this individually as posts may be from different forums
-    if ($forum->assessed != RATING_AGGREGATE_NONE) {
-        $modcontext = context_module::instance($cm->id);
-        $ratingoptions->context = $modcontext;
-        $ratingoptions->items = array($post);
-        $ratingoptions->aggregate = $forum->assessed;//the aggregation method
-        $ratingoptions->scaleid = $forum->scale;
-        $ratingoptions->assesstimestart = $forum->assesstimestart;
-        $ratingoptions->assesstimefinish = $forum->assesstimefinish;
-        $postswithratings = $rm->get_ratings($ratingoptions);
-
-        if ($postswithratings && count($postswithratings)==1) {
-            $post = $postswithratings[0];
-        }
-    }
-
-    // Identify search terms only found in HTML markup, and add a warning about them to
-    // the start of the message text. However, do not do the highlighting here. forum_print_post
-    // will do it for us later.
-    $missing_terms = "";
-
-    $options = new stdClass();
-    $options->trusted = $post->messagetrust;
-    $post->message = highlight($strippedsearch,
-                    format_text($post->message, $post->messageformat, $options, $course->id),
-                    0, '<fgw9sdpq4>', '</fgw9sdpq4>');
-
-    foreach ($searchterms as $searchterm) {
-        if (preg_match("/$searchterm/i",$post->message) && !preg_match('/<fgw9sdpq4>'.$searchterm.'<\/fgw9sdpq4>/i',$post->message)) {
-            $missing_terms .= " $searchterm";
-        }
-    }
-
-    $post->message = str_replace('<fgw9sdpq4>', '<span class="highlight">', $post->message);
-    $post->message = str_replace('</fgw9sdpq4>', '</span>', $post->message);
-
-    if ($missing_terms) {
-        $strmissingsearchterms = get_string('missingsearchterms','forum');
-        $post->message = '<p class="highlight2">'.$strmissingsearchterms.' '.$missing_terms.'</p>'.$post->message;
-    }
-
-    // Prepare a link to the post in context, to be displayed after the forum post.
-    $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".get_string("postincontext", "forum")."</a>";
-
-    // Message is now html format.
-    if ($post->messageformat != FORMAT_HTML) {
-        $post->messageformat = FORMAT_HTML;
-    }
-
-    // Now pring the post.
-    forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false,
-            $fulllink, '', -99, false);
+    $poststorender[] = $postentity;
 }
+
+$renderer = $rendererfactory->get_posts_search_results_renderer($searchterms);
+echo $renderer->render(
+    $USER,
+    $forumsbyid,
+    $discussionsbyid,
+    $poststorender
+);
 
 echo $OUTPUT->paging_bar($totalcount, $page, $perpage, $url);
 

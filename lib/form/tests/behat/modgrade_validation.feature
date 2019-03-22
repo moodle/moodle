@@ -92,7 +92,7 @@ Feature: Using the activity grade form element
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I press "Add a new discussion topic"
+    And I click on "Add a new discussion topic" "link"
     And I set the following fields to these values:
       | Subject  | Discussion subject |
       | Message | Discussion message |
@@ -170,7 +170,7 @@ Feature: Using the activity grade form element
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I press "Add a new discussion topic"
+    And I click on "Add a new discussion topic" "link"
     And I set the following fields to these values:
       | Subject  | Discussion subject |
       | Message | Discussion message |

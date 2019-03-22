@@ -1,0 +1,72 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/forum_posts_with_context_links
+
+    Template to render a list of posts with breadcrumb style subject and a link
+    in the footer to the full discussion.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+{{#posts}}
+    {{< mod_forum/forum_discussion_post }}
+        {{$subject}}
+            {{#coursename}}
+                {{#urls.viewcourse}}
+                    <a href="{{{urls.viewcourse}}}">{{{coursename}}}</a> ->
+                {{/urls.viewcourse}}
+                {{^urls.viewcourse}}
+                    {{coursename}} ->
+                {{/urls.viewcourse}}
+            {{/coursename}}
+            {{#urls.viewforum}}
+                <a href="{{{urls.viewforum}}}">{{{forumname}}}</a>
+            {{/urls.viewforum}}
+            {{^urls.viewforum}}
+                {{{forumname}}}
+            {{/urls.viewforum}}
+            {{#showdiscussionname}}
+                {{#urls.viewdiscussion}}
+                    -> <a href="{{{urls.viewdiscussion}}}">{{{discussionname}}}</a>
+                {{/urls.viewdiscussion}}
+                {{^urls.viewdiscussion}}
+                    {{{discussionname}}}
+                {{/urls.viewdiscussion}}
+                {{#hasparent}}
+                    {{#urls.viewparent}}
+                        -> <a href="{{{urls.viewparent}}}">{{{subject}}}</a>
+                    {{/urls.viewparent}}
+                    {{^urls.viewparent}}
+                        {{{subject}}}
+                    {{/urls.viewparent}}
+                {{/hasparent}}
+            {{/showdiscussionname}}
+        {{/subject}}
+        {{$replies}}{{/replies}}
+        {{$footer}}
+            <div><a href="{{{urls.view}}}">{{#str}} postincontext, mod_forum {{/str}}</a></div>
+        {{/footer}}
+    {{/ mod_forum/forum_discussion_post }}
+{{/posts}}

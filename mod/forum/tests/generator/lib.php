@@ -300,6 +300,10 @@ class mod_forum_generator extends testing_module_generator {
             $record['mailnow'] = 0;
         }
 
+        if (!isset($record['deleted'])) {
+            $record['deleted'] = 0;
+        }
+
         $record = (object) $record;
 
         // Add the post.

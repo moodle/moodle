@@ -259,7 +259,7 @@ class portfolio_add_button {
      *                    Optional, defaults to PORTFOLIO_ADD_FULL_FORM
      * @param string $addstr string to use for the button or icon alt text or link text.
      *                       This is whole string, not key.  optional, defaults to 'Add to portfolio';
-     * @return void|string
+     * @return void|string|moodle_url
      */
     public function to_html($format=null, $addstr=null) {
         global $CFG, $COURSE, $OUTPUT, $USER;
@@ -327,6 +327,11 @@ class portfolio_add_button {
                 return;
             }
         }
+        // If we just want a moodle_url to redirect to, do it now.
+        if ($format == PORTFOLIO_ADD_MOODLE_URL) {
+            return $url;
+        }
+
         // if we just want a url to redirect to, do it now
         if ($format == PORTFOLIO_ADD_FAKE_URL) {
             return $url->out(false);
