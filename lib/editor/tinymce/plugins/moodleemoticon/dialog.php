@@ -51,7 +51,7 @@ header('X-UA-Compatible: IE=edge');
     <table border="0" align="center" style="width:100%;">
 <?php
 
-$emoticons = $emoticonmanager->get_emoticons();
+$emoticons = $emoticonmanager->get_emoticons(true);
 // This is tricky - we must somehow include the information about the original
 // emoticon text so that we can replace the image back with it on editor save.
 // so we are going to encode the index of the emoticon. this will break when the
