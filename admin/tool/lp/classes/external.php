@@ -363,7 +363,13 @@ class external extends external_api {
             'The course id',
             VALUE_REQUIRED
         );
-        $params = array('courseid' => $courseid);
+        $moduleid = new external_value(
+            PARAM_INT,
+            'The module id',
+            VALUE_DEFAULT,
+            0
+        );
+        $params = array('courseid' => $courseid, 'moduleid' => $moduleid);
         return new external_function_parameters($params);
     }
 
@@ -371,16 +377,18 @@ class external extends external_api {
      * Loads the data required to render the course_competencies_page template.
      *
      * @param int $courseid The course id to check.
+     * @param int $moduleid The module id to check (0 for no filter).
      * @return boolean
      */
-    public static function data_for_course_competencies_page($courseid) {
+    public static function data_for_course_competencies_page($courseid, $moduleid) {
         global $PAGE;
         $params = self::validate_parameters(self::data_for_course_competencies_page_parameters(), array(
             'courseid' => $courseid,
+            'moduleid' => $moduleid,
         ));
         self::validate_context(context_course::instance($params['courseid']));
 
-        $renderable = new output\course_competencies_page($params['courseid']);
+        $renderable = new output\course_competencies_page($params['courseid'], $params['moduleid']);
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);

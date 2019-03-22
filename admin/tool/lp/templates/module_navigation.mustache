@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/module_navigation
+
+    Show an auto-complete for filtering by competencies linked to a module.
+
+    Context variables required for this template:
+    * hasmodules
+    * modules - array
+      * id
+      * selected
+      * name
+
+    // No example context because the JS is connected to webservices
+}}
+<div class="float-right card p-2">
+<form class="user-competency-course-navigation">
+{{#hasmodules}}
+<span>
+<label for="module-nav-{{uniqid}}" class="accesshide">{{#str}}filterbyactivity, tool_lp{{/str}}</label>
+<select id="module-nav-{{uniqid}}">
+{{#modules}}
+<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
+{{/modules}}
+</select>
+</span>
+{{/hasmodules}}
+</form>
+</div>
+{{#js}}
+require(['core/form-autocomplete', 'tool_lp/module_navigation'], function(autocomplete, nav) {
+    (new nav('#module-nav-{{uniqid}}', '{{baseurl}}', {{courseid}}, {{moduleid}}));
+{{#hasmodules}}
+    autocomplete.enhance('#module-nav-{{uniqid}}', false, false, {{# quote }}{{# str }}filterbyactivity, tool_lp{{/ str }}{{/ quote }});
+{{/hasmodules}}
+});
+{{/js}}

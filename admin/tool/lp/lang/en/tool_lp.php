@@ -146,6 +146,7 @@ $string['nfiles'] = '{$a} file(s)';
 $string['noactivities'] = 'No activities';
 $string['nocompetencies'] = 'No competencies have been created in this framework.';
 $string['nocompetenciesincourse'] = 'No competencies have been linked to this course.';
+$string['nocompetenciesinactivity'] = 'No competencies have been linked to this activity or resource.';
 $string['nocompetenciesinevidence'] = 'No competencies have been linked to this evidence.';
 $string['nocompetenciesinlearningplan'] = 'No competencies have been linked to this learning plan.';
 $string['nocompetenciesintemplate'] = 'No competencies have been linked to this learning plan template.';
