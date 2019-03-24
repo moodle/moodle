@@ -43,7 +43,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class phpunit_autoloader implements \PHPUnit\Runner\TestSuiteLoader {
-    public function load($suiteClassName, $suiteClassFile = '') {
+    public function load(string $suiteClassName, string $suiteClassFile = ''): ReflectionClass {
         global $CFG;
 
         // Let's guess what user entered on the commandline...
@@ -197,7 +197,7 @@ class phpunit_autoloader implements \PHPUnit\Runner\TestSuiteLoader {
         return new ReflectionClass($classname);
     }
 
-    public function reload(ReflectionClass $aClass) {
+    public function reload(ReflectionClass $aClass): ReflectionClass {
         return $aClass;
     }
 }

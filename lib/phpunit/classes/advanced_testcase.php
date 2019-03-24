@@ -63,7 +63,7 @@ abstract class advanced_testcase extends base_testcase {
      * Runs the bare test sequence.
      * @return void
      */
-    final public function runBare() {
+    final public function runBare(): void {
         global $DB;
 
         if (phpunit_util::$lastdbwrites != $DB->perf_get_writes()) {
