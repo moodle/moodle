@@ -360,6 +360,16 @@ class model {
         $modelobj->timemodified = $now;
         $modelobj->usermodified = $USER->id;
 
+        if ($timesplittingid) {
+            if (!\core_analytics\manager::is_valid($timesplittingid, '\core_analytics\local\time_splitting\base')) {
+                throw new \moodle_exception('errorinvalidtimesplitting', 'analytics');
+            }
+            if (substr($timesplittingid, 0, 1) !== '\\') {
+                throw new \moodle_exception('errorinvalidtimesplitting', 'analytics');
+            }
+            $modelobj->timesplitting = $timesplittingid;
+        }
+
         if ($processor &&
                 !manager::is_valid($processor, '\core_analytics\classifier') &&
                 !manager::is_valid($processor, '\core_analytics\regressor')) {
@@ -374,10 +384,6 @@ class model {
         $modelobj = $DB->get_record('analytics_models', array('id' => $id), '*', MUST_EXIST);
 
         $model = new static($modelobj);
-
-        if ($timesplittingid) {
-            $model->enable($timesplittingid);
-        }
 
         if ($model->is_static()) {
             $model->mark_as_trained();
