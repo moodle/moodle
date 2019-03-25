@@ -66,6 +66,12 @@ function tool_mobile_create_app_download_url() {
     }
 
     $downloadurl = new moodle_url($mobilesettings->setuplink);
+
+    // Do not update the URL if it is a custom one (we may break it completely).
+    if ($mobilesettings->setuplink != 'https://download.moodle.org/mobile') {
+        return $downloadurl;
+    }
+
     $downloadurl->param('version', $CFG->version);
     $downloadurl->param('lang', current_language());
 
