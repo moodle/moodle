@@ -10253,3 +10253,28 @@ function get_callable_name($callable) {
         return $name;
     }
 }
+
+/**
+ * Tries to guess if $CFG->wwwroot is publicly accessible or not.
+ * Never put your faith on this function and rely on its accuracy as there might be false positives.
+ * It just performs some simple checks, and mainly is used for places where we want to hide some options
+ * such as site registration when $CFG->wwwroot is not publicly accessible.
+ * Good thing is there is no false negative.
+ *
+ * @return bool
+ */
+function site_is_public() {
+    global $CFG;
+
+    $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
+
+    if ($host === 'localhost' || preg_match('|^127\.\d+\.\d+\.\d+$|', $host)) {
+        $ispublic = false;
+    } else if (\core\ip_utils::is_ip_address($host) && !ip_is_public($host)) {
+        $ispublic = false;
+    } else {
+        $ispublic = true;
+    }
+
+    return $ispublic;
+}
