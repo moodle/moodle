@@ -867,11 +867,11 @@ class core_messagelib_testcase extends advanced_testcase {
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user3);
 
-        // Now, send a message and verify the email processor is NOT hit.
+        // Now, send a message and verify the email processor are hit.
         $sink = $this->redirectEmails();
         $messageid = message_send($message);
         $emails = $sink->get_messages();
-        $this->assertCount(0, $emails);
+        $this->assertCount(2, $emails);
 
         // Verify the record was created in 'messages'.
         $recordexists = $DB->record_exists('messages', ['id' => $messageid]);
@@ -952,7 +952,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $transaction->allow_commit();
         $events = $eventsink->get_events();
         $emails = $sink->get_messages();
-        $this->assertCount(0, $emails); // Email processor is disabled for messages to group conversations.
+        $this->assertCount(2, $emails);
         $this->assertCount(1, $events);
         $this->assertInstanceOf('\core\event\group_message_sent', $events[0]);
     }
