@@ -46,7 +46,6 @@ $string['errorcantenablenotimesplitting'] = 'You need to select a time-splitting
 $string['errornoenabledandtrainedmodels'] = 'There are no enabled and trained models to predict.';
 $string['errornoenabledmodels'] = 'There are no enabled models to train.';
 $string['errornoexport'] = 'Only trained models can be exported';
-$string['errornostaticedit'] = 'Models based on assumptions cannot be edited.';
 $string['errornostaticevaluated'] = 'Models based on assumptions cannot be evaluated. They are always 100% correct according to how they were defined.';
 $string['errornostaticlog'] = 'Models based on assumptions cannot be evaluated because there is no performance log.';
 $string['erroronlycli'] = 'Execution only allowed via command line';
