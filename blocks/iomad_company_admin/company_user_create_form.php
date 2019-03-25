@@ -73,7 +73,7 @@ $company = new company($companyid);
 // Check if the company has gone over the user quota.
 if (!$company->check_usercount(1)) {
     $maxusers = $company->get('maxusers');
-    print_error('maxuserswarning', 'block_iomad_company_admin', $dashboardurl, $maxusers->maxusers);
+    print_error('maxuserswarning', 'block_iomad_company_admin', $dashboardurl, $maxusers);
 }
 
 $mform = new \block_iomad_company_admin\forms\user_edit_form($PAGE->url, $companyid, $departmentid, $licenseid);

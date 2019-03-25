@@ -38,8 +38,8 @@ class company_user {
 
         if ( $data->companyid ) {
             $company = new company($data->companyid);
-            $c = $company->get('shortname');
-            $data->company = $c->shortname;
+            $cshort = $company->get('shortname');
+            $data->company = $cshort;
         } else {
             $company = company::by_shortname( $data->company );
         }

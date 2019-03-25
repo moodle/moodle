@@ -33,7 +33,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/modal_factory', 'core/
                         templates.render('block_iomad_company_admin/licensecourseselector', licensedata)
                             .then(function(html) {
                                 $("#licensecourseselector").html(html);
- 
+
                             })
                             .fail(notification.exception);
 
@@ -45,8 +45,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/modal_factory', 'core/
 
                     },
                     fail: notification.exception
-                }])
-            })
+                }]);
+            });
         }
     };
 });

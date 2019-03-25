@@ -203,7 +203,7 @@ if (empty($iid)) {
         // Check if the company has gone over the user quota.
         if (!$company->check_usercount($newusercount)) {
             $maxusers = $company->get('maxusers');
-            print_error('maxuserswarningplural', 'block_iomad_company_admin', $returnurl, $maxusers->maxusers);
+            print_error('maxuserswarningplural', 'block_iomad_company_admin', $returnurl, $maxusers);
         }
 
         if ($readcount === false) {

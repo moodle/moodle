@@ -19,13 +19,44 @@ require_once(dirname(__FILE__) . '/iomad.php');
 require_once(dirname(__FILE__) . '/user.php');
 
 class company {
+
     public $id = 0;
+
+    protected $companyrecord = null;
 
     // These are the fields that will be retrieved by.
     public $cssfields = array('bgcolor_header', 'bgcolor_content');
 
     public function __construct($companyid) {
+        global $DB;
+
         $this->id = $companyid;
+        $this->companyrecord = $DB->get_record('company', ['id' => $this->id], '*', MUST_EXIST);
+    }
+
+    /**
+     * Get selected fields
+     * @param mixed fields string or array
+     * @return mixed string or object (if array)
+     */
+    public function get($fields) {
+        if (is_string($fields)) {
+            if (isset($this->companyrecord->$fields)) {
+                return $this->companyrecord->$fields;
+            } else {
+                throw new \Exception("Field not found in company record - " . $fields);
+            }
+        } else {
+            $result = new \stdClass;
+            foreach ($fields as $field) {
+                if (property_exists($this->companyrecord, $field)) {
+                    $result->$field = $this->companyrecord->$field;
+                } else {
+                    throw new \Exception("Field not found in company record - " . $field);
+                }    
+            }
+            return $result;
+        }
     }
 
     /**
@@ -53,34 +84,13 @@ class company {
     }
 
     /**
-     * Gets the company DB record.
-     *
-     * Paramters -
-     *             $firelds = array();
-     *
-     * Returns - stdclass();
-     *
-     **/
-    public function get($fields = '*') {
-        global $DB;
-
-        if ( $this->id == 0 ) {
-            return '';
-        }
-        $companyrecord = $DB->get_record('company', array('id' => $this->id), $fields, MUST_EXIST);
-
-        return $companyrecord;
-    }
-
-    /**
      * Gets the company name for the current instance
      *
      * Returns text;
      *
      **/
     public function get_name() {
-        $companyrecord = $this->get('Name');
-        return $companyrecord->name;
+        return $this->companyrecord->name;
     }
 
     /**
@@ -109,34 +119,32 @@ class company {
     /**
      * Gets the company short name for the current instance
      *
-     * Returns text;
+     * @return string;
      *
      **/
     public function get_shortname() {
-        $companyrecord = $this->get('shortname');
-        return $companyrecord->shortname;
+        return $this->companyrecord->shortname;
     }
 
     /**
      * Gets the company theme name for the current instance
      *
-     * Returns text;
+     * @return string
      *
      **/
     public function get_theme() {
-        $companyrecord = $this->get('theme');
-        return $companyrecord->theme;
+        return $this->companyrecord->theme;
     }
 
     /**
      * Gets the company parentid name for the current instance
      *
-     * Returns int;
+     * @return mixed
      *
      **/
     public function get_parentid() {
-        if ($companyrecord = $this->get('parentid')) {
-            return $companyrecord->parentid;
+        if (!empty($this->companyrecord->parentid)) {
+            return $this->companyrecord->parentid;
         } else {
             return false;
         }
@@ -145,7 +153,7 @@ class company {
     /**
      * Recurses up the company tree to get the parent company.
      *
-     * Returns int;
+     * @return int
      *
      **/
     public function get_topcompanyid() {
@@ -167,9 +175,9 @@ class company {
     /**
      * Gets the file path for the company logo for the current instance
      *
-     * Returns text;
+     * @return string
      *
-     **/
+     */
     public function get_logo_filename() {
         global $DB;
 
@@ -189,13 +197,12 @@ class company {
     /**
      * Gets the record set of all companies
      *
-     * Parameters -
-     *              $page = int;
-     *              $perpage = int;
+     * @param int $page
+     * @param int $perpage
      *
-     * Returns array;
+     * @return array
      *
-     **/
+     */
     public static function get_companies_rs($page=0, $perpage=0) {
         global $DB;
 
@@ -205,9 +212,9 @@ class company {
     /**
      * Creates an array of companies to be used in a Select menu
      *
-     * Returns array;
+     * @return array
      *
-     **/
+     */
     public static function get_companies_select($showsuspended=false) {
         global $DB, $USER;
 
@@ -245,9 +252,9 @@ class company {
     /**
      * Creates an array of child companies to be used in a Select menu
      *
-     * Returns array;
+     * @return array
      *
-     **/
+     */
     public function get_child_companies() {
         global $DB;
 
@@ -2437,8 +2444,7 @@ class company {
         global $DB, $USER;
 
         // Get the company maximum.
-        $maxusers = $this->get('maxusers');
-        if (empty($maxusers->maxusers)) {
+        if (empty($this->companyrecord->maxusers)) {
             return true;
         } else {
             // Get the current number of users.
@@ -2459,7 +2465,7 @@ class company {
                                                  AND u.deleted = 0
                                                  AND u.suspended = 0",
                                                  array('companyid' => $this->id));
-            if ($usercount + $new > $maxusers->maxusers) {
+            if ($usercount + $new > $this->companyrecord->maxusers) {
                 return false;
             } else {
                 return true;

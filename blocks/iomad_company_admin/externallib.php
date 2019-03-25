@@ -651,7 +651,7 @@ class block_iomad_company_admin_external extends external_api {
             // Check if the company has gone over the user quota.
             if (!$company->check_usercount(1)) {
                 $maxusers = $company->get('maxusers');
-                $errormessage = get_string('maxuserswarning', 'block_iomad_company_admin', $maxusers->maxusers);
+                $errormessage = get_string('maxuserswarning', 'block_iomad_company_admin', $maxusers);
             }
 
             if (!$company->assign_user_to_company($userrecord['userid'],

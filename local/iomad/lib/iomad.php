@@ -146,10 +146,9 @@ class iomad {
         if (!isset($USER->company->id)) {
             if (self::is_company_user()) {
                 $company = company::by_userid($USER->id);
-                $fields = 'id, shortname, name';
-                $cssfields = implode(',', $company->cssfields);
-                if ($cssfields) {
-                    $fields .= ', ' . $cssfields;
+                $fields = ['id', 'shortname', 'name'];
+                if ($company->cssfields) {
+                    $fields = array_merge($fields, $company->cssfields);
                 }
 
                 $USER->company = $company->get( $fields );

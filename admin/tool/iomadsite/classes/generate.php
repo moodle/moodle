@@ -171,6 +171,8 @@ class generate {
 
     protected $lastnames;
 
+    protected $licenseindex = 1;
+
     public function __construct() {
         global $CFG;
 
@@ -276,8 +278,6 @@ class generate {
 
         \company::initialise_departments($companyid);
 
-        echo "<p>Created company '$fullname'</p>\n";
-
         return $company;
     }
 
@@ -301,11 +301,51 @@ class generate {
             $course = create_course($data);
             $comp->add_course($course, 0, true);
            
-            echo "<p>Created course '$fullname'</p>\n";
+            mtrace("Created course '$fullname'");
 
             // Add some users
             $this->users($company, $shortname);
         }
+    }
+
+    /**
+     * Create batch of licenses for company
+     * @param int $companyid
+     *
+     */
+    protected function licenses($companyid) {
+        global $DB;
+
+        $numberoflicenses = rand(10, 30);
+        for ($i=0; $i < $numberoflicenses; $i++) {
+            $licenseid = $this->create_license($companyid);
+        }
+    }
+
+    /**
+     * Create random license
+     * 
+     * @param int $companyid
+     * @return int id
+     */
+    protected function create_license($companyid) {
+        global $DB;
+
+        $license = new \stdClass;
+        $license->name = "License " . ++$this->licenseindex;
+        $license->allocation = rand(10, 250);
+        $license->validlength = rand(30, 365);
+        $license->startdate = time();
+        $license->expirydate = time() + 31557600;
+        $license->used = 0;
+        $license->companyid = $companyid;
+        $license->parentid = 0;
+        $license->program = 0;
+        $license->reference = '';
+        $license->instant = 0;
+        $id = $DB->insert_record('companylicense', $license);
+
+        return $id;
     }
 
     /**
@@ -357,6 +397,7 @@ class generate {
 
             // Make sure it doesn't already exist.
             if (!$company = $DB->get_record('company', ['shortname' => $shortname])) {
+                mtrace("Making company - $fullname");
                 $company = $this->company_record($shortname, $fullname);
             }
             $this->courses($company);

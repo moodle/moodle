@@ -375,7 +375,7 @@ if ($confirmuser and confirm_sesskey()) {
     // Check if the company has gone over the user quota.
     if (!$company->check_usercount(1)) {
         $maxusers = $company->get('maxusers');
-        print_error('maxuserswarning', 'block_iomad_company_admin', $returnurl, $maxusers->maxusers);
+        print_error('maxuserswarning', 'block_iomad_company_admin', $returnurl, $maxusers);
     }
 
     // Unsuspends a selected user, after confirmation.

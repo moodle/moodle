@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CLI interface for creating a test site.
+ * CLI interface for creating an Iomad test site.
  *
- * @package tool_generator
- * @copyright 2013 David Monllaó
+ * @package tool_iomadsite
+ * @copyright 2019 Howard Miller
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -43,19 +43,13 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
-$sitesizes = '* ' . implode(PHP_EOL . '* ', tool_generator_site_backend::get_size_choices());
-
 // Display help.
-if (!empty($options['help']) || empty($options['size'])) {
+if (!empty($options['help'])) {
     echo "
-Utility to generate a standard test site data set.
+Utility to generate test data for an Iomad site. 
 
 Not for use on live sites; only normally works if debugging is set to DEVELOPER
 level.
-
-Consider that, depending on the size you select, this CLI tool can really generate a lot of data, aproximated sizes:
-
-$sitesizes
 
 Options:
 --size           Size of the generated site, this value affects the number of courses and their size. Accepted values: XS, S, M, L, XL, or XXL (required)
@@ -67,7 +61,7 @@ Options:
 -h, --help     Print out this help
 
 Example from Moodle root directory:
-\$ php admin/tool/generator/cli/maketestsite.php --size=S
+\$ php admin/tool/iomadsite/cli/maketestsite.php --size=S
 ";
     // Exit with error unless we're showing this because they asked for it.
     exit(empty($options['help']) ? 1 : 0);
@@ -79,20 +73,13 @@ if (empty($options['bypasscheck']) && !$CFG->debugdeveloper) {
 }
 
 // Get options.
-$sizename = $options['size'];
-$fixeddataset = $options['fixeddataset'];
-$filesizelimit = $options['filesizelimit'];
-
-// Check size.
-try {
-    $size = tool_generator_site_backend::size_for_name($sizename);
-} catch (coding_exception $e) {
-    cli_error("Invalid size ($sizename). Use --help for help.");
-}
+//$sizename = $options['size'];
+//$fixeddataset = $options['fixeddataset'];
+//$filesizelimit = $options['filesizelimit'];
 
 // Switch to admin user account.
 \core\session\manager::set_user(get_admin());
 
 // Do backend code to generate site.
-$backend = new tool_generator_site_backend($size, $options['bypasscheck'], $fixeddataset, $filesizelimit, empty($options['quiet']));
-$backend->make();
+$generate = new tool_iomadsite\generate();
+$generate->companies();

@@ -29,6 +29,7 @@ class user_edit_form extends \moodleform {
     protected $context = null;
     protected $courseselector = null;
     protected $departmentid = 0;
+    protected $companyname = '';
     protected $licenseid = 0;
     protected $licensecourses = array();
 
@@ -38,8 +39,9 @@ class user_edit_form extends \moodleform {
         $this->selectedcompany = $companyid;
         $this->departmentid = $departmentid;
         $this->licenseid = $licenseid;
-        $company = new \company($this->selectedcompany);
-        $parentlevel = \company::get_company_parentnode($company->id);
+        $company = new company($this->selectedcompany);
+        $this->companyname = $company->get_name();
+        $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
         $systemcontext = \context_system::instance();
 
@@ -50,7 +52,7 @@ class user_edit_form extends \moodleform {
             $userhierarchylevel = $userlevel->id;
         }
 
-        $this->subhierarchieslist = \company::get_all_subdepartments($userhierarchylevel);
+        $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
         if ($this->departmentid == 0) {
             $departmentid = $userhierarchylevel;
         } else {
@@ -82,7 +84,7 @@ class user_edit_form extends \moodleform {
         $mform =& $this->_form;
 
         // Then show the fields about where this block appears.
-        $mform->addElement('header', 'header', get_string('companyuser', 'block_iomad_company_admin'));
+        $mform->addElement('header', 'header', get_string('companyuser', 'block_iomad_company_admin', $this->companyname));
 
         $mform->addElement('hidden', 'companyid', $this->selectedcompany);
         $mform->setType('companyid', PARAM_INT);
