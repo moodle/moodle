@@ -1843,7 +1843,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
             $courselicenses = $DB->get_records('companylicense_courses', array('courseid' => $deletedcourse));
             foreach ($courselicenses as $courselicense) {
                 // Delete the course from the license.
-                $DB->delete_record('companylicense_courses', array('id' => $courselicense->id));
+                $DB->delete_records('companylicense_courses', array('id' => $courselicense->id));
                 // Does the license have any courses left?
                 if ($DB->get_records('companylicense_courses', array('licensid' => $courselicense->licenseid))) {
                     company::update_license_usage($courselicense->licenseid);
@@ -1970,7 +1970,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
         if ($licenses = $DB->get_records('companylicense')) {
             foreach ($licenses as $license) {
                 if (empty($license->program)) {
-                    $DB->set-field('companylicense', 'humanallocation', $license->allocation, array('id' => $license->id));
+                    $DB->set_field('companylicense', 'humanallocation', $license->allocation, array('id' => $license->id));
                 } else {
                     // Get the number of courses.
                     $coursecount = $DB->count_records('companylicense_courses', array('licenseid' => $license->id));
