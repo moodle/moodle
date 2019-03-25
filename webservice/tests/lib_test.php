@@ -137,6 +137,63 @@ class webservice_test extends advanced_testcase {
     }
 
     /**
+     * Tests update_token_lastaccess() function.
+     *
+     * @throws dml_exception
+     */
+    public function test_update_token_lastaccess() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Set current user.
+        $this->setAdminUser();
+
+        // Add a web service.
+        $webservice = new stdClass();
+        $webservice->name = 'Test web service';
+        $webservice->enabled = true;
+        $webservice->restrictedusers = false;
+        $webservice->component = 'moodle';
+        $webservice->timecreated = time();
+        $webservice->downloadfiles = true;
+        $webservice->uploadfiles = true;
+        $DB->insert_record('external_services', $webservice);
+
+        // Add token.
+        $tokenstr = external_create_service_token($webservice->name, context_system::instance()->id);
+        $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
+
+        // Trigger last access once (at current time).
+        webservice::update_token_lastaccess($token);
+
+        // Check last access.
+        $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
+        $this->assertLessThan(5, abs(time() - $token->lastaccess));
+
+        // Try setting it to +1 second. This should not update yet.
+        $before = (int)$token->lastaccess;
+        webservice::update_token_lastaccess($token, $before + 1);
+        $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
+        $this->assertEquals($before, $token->lastaccess);
+
+        // To -1000 seconds. This should not update.
+        webservice::update_token_lastaccess($token, $before - 1000);
+        $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
+        $this->assertEquals($before, $token->lastaccess);
+
+        // To +59 seconds. This should also not quite update.
+        webservice::update_token_lastaccess($token, $before + 59);
+        $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
+        $this->assertEquals($before, $token->lastaccess);
+
+        // Finally to +60 seconds, where it should update.
+        webservice::update_token_lastaccess($token, $before + 60);
+        $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
+        $this->assertEquals($before + 60, $token->lastaccess);
+    }
+
+    /**
      * Utility method that tests the parameter type of a method info's input/output parameter.
      *
      * @param string $type The parameter type that is being evaluated.

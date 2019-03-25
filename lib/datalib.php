@@ -45,6 +45,9 @@ define('MAX_COURSE_CATEGORIES', 10000);
  *
  * We allow overwrites from config.php, useful to ensure coherence in performance
  * tests results.
+ *
+ * Note: For web service requests in the external_tokens field, we use a different constant
+ * webservice::TOKEN_LASTACCESS_UPDATE_SECS.
  */
 if (!defined('LASTACCESS_UPDATE_SECS')) {
     define('LASTACCESS_UPDATE_SECS', 60);
