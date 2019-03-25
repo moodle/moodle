@@ -97,9 +97,11 @@ class discussion_list extends db_table_vault {
         $alias = $this->get_table_alias();
         $db = $this->get_db();
 
-        list($favsql, $favparams) = $this->get_favourite_sql($user);
-        foreach ($favparams as $key => $param) {
-            $favsql = str_replace(":$key", "'$param'", $favsql);
+        if ($user) {
+            list($favsql, $favparams) = $this->get_favourite_sql($user);
+            foreach ($favparams as $key => $param) {
+                $favsql = str_replace(":$key", "'$param'", $favsql);
+            }
         }
 
         // Fetch:
@@ -412,8 +414,11 @@ class discussion_list extends db_table_vault {
 
     /**
      * Get the standard favouriting sql.
+     *
+     * @param stdClass $user The user we are getting the sql for
+     * @return [$sql, $params] An array comprising of the sql and any associated params
      */
-    private function get_favourite_sql($user): array {
+    private function get_favourite_sql(stdClass $user): array {
         $usercontext = \context_user::instance($user->id);
         $alias = $this->get_table_alias();
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);

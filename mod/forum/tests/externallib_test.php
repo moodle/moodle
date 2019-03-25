@@ -212,11 +212,11 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->forum = $forum1->id;
         $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
-        $response = mod_forum_external::toggle_favourite_state($forum1->id, $discussion1->id, 1);
+        $response = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
         $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
         $this->assertTrue($response['userstate']['favourited']);
 
-        $response = mod_forum_external::toggle_favourite_state($forum1->id, $discussion1->id, 0);
+        $response = mod_forum_external::toggle_favourite_state($discussion1->id, 0);
         $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
         $this->assertFalse($response['userstate']['favourited']);
     }
@@ -252,17 +252,17 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         try {
-            $response = mod_forum_external::set_pin_state($forum1->id, $discussion1->id, 1);
+            $response = mod_forum_external::set_pin_state($discussion1->id, 1);
         } catch (Exception $e) {
             $this->assertEquals('cannotpindiscussions', $e->errorcode);
         }
 
         self::setAdminUser();
-        $response = mod_forum_external::set_pin_state($forum1->id, $discussion1->id, 1);
+        $response = mod_forum_external::set_pin_state($discussion1->id, 1);
         $response = external_api::clean_returnvalue(mod_forum_external::set_pin_state_returns(), $response);
         $this->assertTrue($response['pinned']);
 
-        $response = mod_forum_external::set_pin_state($forum1->id, $discussion1->id, 0);
+        $response = mod_forum_external::set_pin_state($discussion1->id, 0);
         $response = external_api::clean_returnvalue(mod_forum_external::set_pin_state_returns(), $response);
         $this->assertFalse($response['pinned']);
     }
@@ -1754,7 +1754,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Check default values for capabilities.
         $enabledcaps = array('canviewdiscussion', 'canstartdiscussion', 'canreplypost', 'canviewrating', 'cancreateattachment',
-            'canexportownpost', 'candeleteownpost', 'canallowforcesubscribe');
+            'canexportownpost', 'cancantogglefavourite', 'candeleteownpost', 'canallowforcesubscribe');
 
         unset($result['warnings']);
         foreach ($result as $capname => $capvalue) {

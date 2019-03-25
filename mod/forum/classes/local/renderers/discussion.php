@@ -90,6 +90,8 @@ class discussion {
     private $notifications;
     /** @var sorter_entity $exportedpostsorter Sorter for the exported posts */
     private $exportedpostsorter;
+    /** @var callable $postprocessfortemplate Function to process exported posts before template rendering */
+    private $postprocessfortemplate;
 
     /**
      * Constructor.
@@ -123,7 +125,8 @@ class discussion {
         rating_manager $ratingmanager,
         sorter_entity $exportedpostsorter,
         moodle_url $baseurl,
-        array $notifications = []
+        array $notifications = [],
+        callable $postprocessfortemplate = null
     ) {
         $this->forum = $forum;
         $this->discussion = $discussion;
@@ -140,6 +143,7 @@ class discussion {
         $this->notifications = $notifications;
 
         $this->exportedpostsorter = $exportedpostsorter;
+        $this->postprocessfortemplate = $postprocessfortemplate;
 
         $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
         $this->forumrecord = $forumdatamapper->to_legacy_object($forum);
@@ -173,7 +177,12 @@ class discussion {
 
         $posts = array_merge([$firstpost], array_values($replies));
 
-        $exporteddiscussion = $this->get_exported_discussion($user);
+        if ($this->postprocessfortemplate !== null) {
+            $exporteddiscussion = ($this->postprocessfortemplate) ($this->discussion, $user, $this->forum);
+        } else {
+            $exporteddiscussion = $this->get_exported_discussion($user);
+        }
+
         $exporteddiscussion = array_merge($exporteddiscussion, [
             'notifications' => $this->get_notifications($user),
             'html' => [

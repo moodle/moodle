@@ -175,6 +175,7 @@ class discussion_summary extends exporter {
             'capabilitymanager' => 'mod_forum\local\managers\capability',
             'urlfactory' => 'mod_forum\local\factories\url',
             'user' => 'stdClass',
+            'favouriteids' => 'int[]?'
         ];
     }
 }

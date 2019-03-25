@@ -6437,7 +6437,6 @@ function mod_forum_get_fontawesome_icon_map() {
         'mod_forum:t/selected' => 'fa-check',
         'mod_forum:t/subscribed' => 'fa-envelope-o',
         'mod_forum:t/unsubscribed' => 'fa-envelope-open-o',
-        'mod_forum:t/emptystar' => 'fa-star-o',
         'mod_forum:t/star' => 'fa-star',
     ];
 }

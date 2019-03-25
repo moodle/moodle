@@ -356,6 +356,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/edit' => 'fa-cog',
             'core:t/emailno' => 'fa-ban',
             'core:t/email' => 'fa-envelope-o',
+            'core:t/emptystar' => 'fa-star-o',
             'core:t/enrolusers' => 'fa-user-plus',
             'core:t/expanded' => 'fa-caret-down',
             'core:t/go' => 'fa-play',

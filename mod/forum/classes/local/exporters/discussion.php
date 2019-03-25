@@ -157,6 +157,7 @@ class discussion extends exporter {
 
         $capabilitymanager = $this->related['capabilitymanager'];
         $urlfactory = $this->related['urlfactory'];
+        $favouriteids = isset($this->related['favouriteids']) ? $this->related['favouriteids'] : [];
 
         $forum = $this->related['forum'];
         $forumrecord = $this->get_forum_record();
@@ -202,7 +203,7 @@ class discussion extends exporter {
             ],
             'userstate' => [
                 'subscribed' => \mod_forum\subscriptions::is_subscribed($user->id, $forumrecord, $discussion->get_id()),
-                'favourited' => $this->is_favourited($discussion, $forum->get_context(), $user),
+                'favourited' => in_array($discussion->get_id(), $favouriteids) ? true : false,
             ],
             'capabilities' => [
                 'subscribe' => $capabilitymanager->can_subscribe_to_discussion($user, $discussion),
@@ -244,21 +245,6 @@ class discussion extends exporter {
     }
 
     /**
-     * Check whether the provided discussion has been favourited by the user.
-     *
-     * @param discussion $discussion The discussion record
-     * @param context $forumcontext Forum context
-     * @param \stdClass $user The user to check the favourite against
-     *
-     * @return bool Whether or not the user has favourited the discussion
-     */
-    private function is_favourited(discussion_entity $discussion, \context_module $forumcontext, \stdClass $user) {
-        $usercontext = \context_user::instance($user->id);
-        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
-        return $ufservice->favourite_exists('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);
-    }
-
-    /**
      * Get the legacy forum record from the forum entity.
      *
      * @return stdClass
@@ -282,7 +268,8 @@ class discussion extends exporter {
             'urlfactory' => 'mod_forum\local\factories\url',
             'user' => 'stdClass',
             'groupsbyid' => 'stdClass[]',
-            'latestpostid' => 'int?'
+            'latestpostid' => 'int?',
+            'favouriteids' => 'int[]?'
         ];
     }
 }

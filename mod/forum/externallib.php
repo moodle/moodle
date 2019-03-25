@@ -1127,8 +1127,6 @@ class mod_forum_external extends external_api {
         $managerfactory = mod_forum\local\container::get_manager_factory();
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
-
-
         // Does the user have the ability to favourite the discussion?
         if (!$capabilitymanager->can_favourite_discussion($USER, $discussion)) {
             throw new moodle_exception('cannotfavourite', 'forum');
@@ -1143,7 +1141,9 @@ class mod_forum_external extends external_api {
         }
 
         $exporterfactory = mod_forum\local\container::get_exporter_factory();
-        $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
+        $builder = mod_forum\local\container::get_builder_factory()->get_exported_discussion_builder();
+        $favourited = ($builder->is_favourited($discussion, $forumcontext, $USER) ? [$discussion->get_id()] : []);
+        $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion, [], $favourited);
         return $exporter->export($PAGE->get_renderer('mod_forum'));
     }
 

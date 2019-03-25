@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_forum\local\builders\exported_posts as exported_posts_builder;
 use mod_forum\local\builders\exported_discussion_summaries as exported_discussion_summaries_builder;
+use mod_forum\local\builders\exported_discussion as exported_discussion_builder;
 use mod_forum\local\factories\vault as vault_factory;
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\exporter as exporter_factory;
@@ -106,6 +107,21 @@ class builder {
             $this->exporterfactory,
             $this->vaultfactory,
             $this->managerfactory
+        );
+    }
+
+    /**
+     * Get an instance of the exported discussion builder.
+     *
+     * @return exported_discussion_summaries_builder
+     */
+    public function get_exported_discussion_builder() : exported_discussion_builder {
+        return new exported_discussion_builder(
+            $this->rendererbase,
+            $this->legacydatamapperfactory,
+            $this->exporterfactory,
+            $this->vaultfactory,
+            $this->managerfactory->get_rating_manager()
         );
     }
 }
