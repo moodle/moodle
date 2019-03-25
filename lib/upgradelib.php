@@ -383,8 +383,8 @@ function upgrade_block_savepoint($result, $version, $blockname, $allowabort=true
  * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
- * @param string $type name of plugin
- * @param string $dir location of plugin
+ * @param string $type The type of the plugin.
+ * @param string $plugin The name of the plugin.
  * @param bool $allowabort allow user to abort script execution here
  * @return void
  */
