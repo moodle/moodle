@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use mod_forum\local\vaults\preprocessors\extract_record as extract_record_preprocessor;
 use mod_forum\local\vaults\preprocessors\extract_user as extract_user_preprocessor;
 use mod_forum\local\renderers\discussion_list as discussion_list_renderer;
+use core\dml\table as dml_table;
 use stdClass;
 
 /**
@@ -89,22 +90,22 @@ class discussion_list extends db_table_vault {
         // - First post
         // - Author
         // - Most recent editor.
-        $tablefields = $db->get_preload_columns(self::TABLE, $alias);
-        $postfields = $db->get_preload_columns('forum_posts', 'p_');
+        $thistable = new dml_table(self::TABLE, $alias, $alias);
+        $posttable = new dml_table('forum_posts', 'fp', 'p_');
         $firstauthorfields = \user_picture::fields('fa', null, self::FIRST_AUTHOR_ID_ALIAS, self::FIRST_AUTHOR_ALIAS);
         $latestuserfields = \user_picture::fields('la', null, self::LATEST_AUTHOR_ID_ALIAS, self::LATEST_AUTHOR_ALIAS);
 
         $fields = implode(', ', [
-            $db->get_preload_columns_sql($tablefields, $alias),
-            $db->get_preload_columns_sql($postfields, 'fp'),
+            $thistable->get_field_select(),
+            $posttable->get_field_select(),
             $firstauthorfields,
             $latestuserfields,
         ]);
 
-        $tables = '{' . self::TABLE . '} ' . $alias;
+        $tables = $thistable->get_from_sql();
         $tables .= ' JOIN {user} fa ON fa.id = ' . $alias . '.userid';
         $tables .= ' JOIN {user} la ON la.id = ' . $alias . '.usermodified';
-        $tables .= ' JOIN {forum_posts} fp ON fp.id = ' . $alias . '.firstpost';
+        $tables .= ' JOIN ' . $posttable->get_from_sql() . ' ON fp.id = ' . $alias . '.firstpost';
 
         $selectsql = 'SELECT ' . $fields . ' FROM ' . $tables;
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
@@ -139,8 +140,8 @@ class discussion_list extends db_table_vault {
         return array_merge(
             parent::get_preprocessors(),
             [
-                'discussion' => new extract_record_preprocessor($this->get_db(), self::TABLE, $this->get_table_alias()),
-                'firstpost' => new extract_record_preprocessor($this->get_db(), 'forum_posts', 'p_'),
+                'discussion' => new extract_record_preprocessor(self::TABLE, $this->get_table_alias()),
+                'firstpost' => new extract_record_preprocessor('forum_posts', 'p_'),
                 'firstpostauthor' => new extract_user_preprocessor(self::FIRST_AUTHOR_ID_ALIAS, self::FIRST_AUTHOR_ALIAS),
                 'latestpostauthor' => new extract_user_preprocessor(self::LATEST_AUTHOR_ID_ALIAS, self::LATEST_AUTHOR_ALIAS),
             ]
