@@ -3447,6 +3447,17 @@ class core_course_external extends external_api {
         $id = $params['id'];
         $sectionreturn = $params['sectionreturn'];
 
+        // Set of permissions an editing user may have.
+        $contextarray = [
+                'moodle/course:update',
+                'moodle/course:manageactivities',
+                'moodle/course:activityvisibility',
+                'moodle/course:sectionvisibility',
+                'moodle/course:movesections',
+                'moodle/course:setcurrentsection',
+        ];
+        $PAGE->set_other_editing_capability($contextarray);
+
         list($course, $cm) = get_course_and_cm_from_cmid($id);
         $modcontext = context_module::instance($cm->id);
         $coursecontext = context_course::instance($course->id);
@@ -3553,6 +3564,17 @@ class core_course_external extends external_api {
             array('id' => $id, 'sectionreturn' => $sectionreturn));
         $id = $params['id'];
         $sectionreturn = $params['sectionreturn'];
+
+        // Set of permissions an editing user may have.
+        $contextarray = [
+            'moodle/course:update',
+            'moodle/course:manageactivities',
+            'moodle/course:activityvisibility',
+            'moodle/course:sectionvisibility',
+            'moodle/course:movesections',
+            'moodle/course:setcurrentsection',
+        ];
+        $PAGE->set_other_editing_capability($contextarray);
 
         // Validate access to the course (note, this is html for the course view page, we don't validate access to the module).
         list($course, $cm) = get_course_and_cm_from_cmid($id);
