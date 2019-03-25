@@ -4719,7 +4719,7 @@ EOD;
      * @return string
      */
     public function render_checkbox_toggleall(\core\output\checkbox_toggleall $element) {
-        return $this->render_from_template('core/checkbox-toggleall', $element->export_for_template($this));
+        return $this->render_from_template($element->get_template(), $element->export_for_template($this));
     }
 }
 

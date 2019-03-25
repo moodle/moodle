@@ -88,7 +88,6 @@ class checkbox_toggleall implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         $data = (object)[
             'togglegroup' => $this->togglegroup,
-            'master' => $this->ismaster,
             'id' => $this->options['id'] ?? null,
             'name' => $this->options['name'] ?? null,
             'value' => $this->options['value'] ?? null,
@@ -103,8 +102,22 @@ class checkbox_toggleall implements renderable, templatable {
             $data->deselectall = $this->options['deselectall'] ?? get_string('deselectall');
         }
 
-        $data->isbutton = $this->isbutton;
-
         return $data;
+    }
+
+    /**
+     * Fetches the appropriate template for the checkbox toggle all element.
+     *
+     * @return string
+     */
+    public function get_template() {
+        if ($this->ismaster) {
+            if ($this->isbutton) {
+                return 'core/checkbox-toggleall-master-button';
+            } else {
+                return 'core/checkbox-toggleall-master';
+            }
+        }
+        return 'core/checkbox-toggleall-slave';
     }
 }
