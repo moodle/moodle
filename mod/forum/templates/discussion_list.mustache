@@ -41,11 +41,14 @@
 
     {{#forum.capabilities.create}}
         <div class="p-t-1 p-b-1">
-            <a href="{{forum.urls.create}}" class="btn btn-primary">
+            <a class="btn btn-primary" data-toggle="collapse" href="#collapseAddForm">
                 {{$discussion_create_text}}
                     {{#str}}addanewdiscussion, forum{{/str}}
                 {{/discussion_create_text}}
             </a>
+            <div class="collapse" id="collapseAddForm">
+                {{{newdiscussionhtml}}}
+            </div>
         </div>
     {{/forum.capabilities.create}}
 
