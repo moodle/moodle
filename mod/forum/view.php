@@ -85,22 +85,25 @@ if (empty($cm->visible) && !has_capability('moodle/course:viewhiddenactivities',
     redirect(
         $urlfactory->get_course_url_from_forum($forum),
         get_string('activityiscurrentlyhidden'),
+        null,
         \core\output\notification::NOTIFY_WARNING
     );
 }
 
-if (!$capabilitymanager->can_view_discussions($USER, $forum)) {
+if (!$capabilitymanager->can_view_discussions($USER)) {
     redirect(
         $urlfactory->get_course_url_from_forum($forum),
         get_string('noviewdiscussionspermission', 'fourm'),
+        null,
         \core\output\notification::NOTIFY_WARNING
     );
 }
 
 // Mark viewed and trigger the course_module_viewed event.
 $forumdatamapper = $legacydatamapperfactory->get_forum_data_mapper();
+$forumrecord = $forumdatamapper->to_legacy_object($forum);
 forum_view(
-    $forumdatamapper->to_legacy_object($forum),
+    $forumrecord,
     $forum->get_course_record(),
     $forum->get_course_module_record(),
     $forum->get_context()
@@ -115,17 +118,13 @@ if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forum
     $rsstitle = format_string($course->shortname, true, [
             'context' => context_course::instance($course->id),
         ]) . ': ' . format_string($forum->get_name());
-    rss_add_http_header($forum->get_context(), 'mod_forum', $forum, $rsstitle);
+    rss_add_http_header($forum->get_context(), 'mod_forum', $forumrecord, $rsstitle);
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($forum->get_name()), 2);
 
 if ('single' !== $forum->get_type() && !empty($forum->get_intro())) {
-    $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
-    $forumdbdatamapper = $legacydatamapperfactory->get_forum_data_mapper();
-    $forumrecord = $forumdbdatamapper->to_legacy_object($forum);
-
     echo $OUTPUT->box(format_module_intro('forum', $forumrecord, $cm->id), 'generalbox', 'intro');
 }
 
