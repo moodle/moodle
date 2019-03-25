@@ -1803,7 +1803,7 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
         $updatedsincesql = 'AND d.timemodified > ?';
         $params[] = $updatedsince;
     }
-    $discussionfields = "d.id as discussionid, d.course, d.forum, d.name, d.firstpost, d.userid, d.groupid, d.assessed," .
+    $discussionfields = "d.id as discussionid, d.course, d.forum, d.name, d.firstpost, d.groupid, d.assessed," .
     " d.timemodified, d.usermodified, d.timestart, d.timeend, d.pinned";
 
     $allnames = get_all_user_name_fields(true, 'u');
