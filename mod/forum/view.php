@@ -85,14 +85,16 @@ if (empty($cm->visible) && !has_capability('moodle/course:viewhiddenactivities',
     redirect(
         $urlfactory->get_course_url_from_forum($forum),
         get_string('activityiscurrentlyhidden'),
+        null,
         \core\output\notification::NOTIFY_WARNING
     );
 }
 
-if (!$capabilitymanager->can_view_discussions($USER, $forum)) {
+if (!$capabilitymanager->can_view_discussions($USER)) {
     redirect(
         $urlfactory->get_course_url_from_forum($forum),
         get_string('noviewdiscussionspermission', 'fourm'),
+        null,
         \core\output\notification::NOTIFY_WARNING
     );
 }
