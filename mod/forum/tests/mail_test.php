@@ -130,11 +130,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($author, [$post]);
         $events = $this->eventsink->get_events();
         $event = reset($events);
-        $this->assertInstanceOf('\core\event\notification_viewed', $event);
 
-        // And next event should be the 'notification_sent' one.
-        $event = $events[1];
-        $this->assertInstanceOf('\core\event\notification_sent', $event);
         $this->assertEquals($course->id, $event->other['courseid']);
 
         $this->send_notifications_and_assert($recipient, [$post]);
