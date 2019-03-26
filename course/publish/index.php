@@ -39,7 +39,10 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('publish', 'core_hub') . ': ' . $COURSE->fullname);
 $PAGE->set_heading($COURSE->fullname);
 
-require_capability('moodle/course:publish', context_course::instance($courseid));
+$context = context_course::instance($courseid);
+if (empty($CFG->enablecoursepublishing) || !has_capability('moodle/course:publish', $context)) {
+    throw new moodle_exception('nopermission');
+}
 
 // If the site is not registered display an error page.
 if (!\core\hub\registration::is_registered()) {

@@ -45,8 +45,9 @@ $hubcourseid = required_param('hubcourseid', PARAM_INT);
 //some permissions and parameters checking
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 require_login($course);
-if (!has_capability('moodle/course:publish', context_course::instance($id))
-        or !confirm_sesskey()) {
+
+$context = context_course::instance($courseid);
+if (empty($CFG->enablecoursepublishing) || !has_capability('moodle/course:publish', $context) || !confirm_sesskey()) {
     throw new moodle_exception('nopermission');
 }
 
