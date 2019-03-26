@@ -308,6 +308,9 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
         $this->assertCount(2, $result['coursenotes']);
+        // Teacher can manage only the course notes.
+        $this->assertFalse($result['canmanagesystemnotes']);
+        $this->assertTrue($result['canmanagecoursenotes']);
 
         foreach ($result['coursenotes'] as $coursenote) {
             if ($coursenote['id'] != $notea1->id and $coursenote['id'] != $notea2->id) {
@@ -328,6 +331,9 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $result = core_notes_external::get_course_notes(0, $student1->id);
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEmpty($result['sitenotes']);
+        // Teacher can't manage system notes.
+        $this->assertFalse($result['canmanagesystemnotes']);
+        $this->assertFalse($result['canmanagecoursenotes']);
 
         foreach ($result['coursenotes'] as $coursenote) {
             if ($coursenote['id'] != $notea1->id and $coursenote['id'] != $notea2->id) {
@@ -342,6 +348,9 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
         $this->assertCount(1, $result['sitenotes']);
+        // Admin user can manage both system and course notes.
+        $this->assertTrue($result['canmanagesystemnotes']);
+        $this->assertTrue($result['canmanagecoursenotes']);
 
         $this->setUser($teacher1);
         $result = core_notes_external::get_course_notes(0, 0);
@@ -349,6 +358,9 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEmpty($result['sitenotes']);
         $this->assertEmpty($result['coursenotes']);
         $this->assertEmpty($result['personalnotes']);
+        // Teacher can't manage system notes.
+        $this->assertFalse($result['canmanagesystemnotes']);
+        $this->assertFalse($result['canmanagecoursenotes']);
 
         $this->setUser($teacher2);
         $result = core_notes_external::get_course_notes($course1->id, $student1->id);
@@ -363,6 +375,9 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(1, $result['sitenotes']);
         $this->assertCount(2, $result['coursenotes']);
+        // Teacher can manage only the course notes.
+        $this->assertFalse($result['canmanagesystemnotes']);
+        $this->assertTrue($result['canmanagecoursenotes']);
 
         $result = core_notes_external::get_course_notes($course1->id, 0);
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
@@ -382,6 +397,9 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notep1->id, $result['personalnotes'][0]['id']);
         $this->assertCount(1, $result['personalnotes']);
+        // Teacher can manage only the course notes.
+        $this->assertFalse($result['canmanagesystemnotes']);
+        $this->assertTrue($result['canmanagecoursenotes']);
 
     }
 
