@@ -57,6 +57,62 @@ class mod_workshop_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test calendar event provide action open for a non user.
+     */
+    public function test_workshop_core_calendar_provide_event_action_open_for_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $now = time();
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', ['course' => $course->id,
+            'submissionstart' => $now - DAYSECS, 'submissionend' => $now + DAYSECS]);
+        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_workshop_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
+    /**
+     * Test calendar event provide action open when user id is provided.
+     */
+    public function test_workshop_core_calendar_provide_event_action_open_for_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $now = time();
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', ['course' => $course->id,
+            'submissionstart' => $now - DAYSECS, 'submissionend' => $now + DAYSECS]);
+        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Now log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_workshop_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('viewworkshopsummary', 'workshop'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    /**
      * Test calendar event provide action closed.
      */
     public function test_workshop_core_calendar_provide_event_action_closed() {
@@ -79,9 +135,61 @@ class mod_workshop_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test calendar event provide action closed for a non user.
+     */
+    public function test_workshop_core_calendar_provide_event_action_closed_for_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $course->id,
+            'submissionend' => time() - DAYSECS));
+        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_workshop_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
+    /**
+     * Test calendar event provide action closed when user id is provided.
+     */
+    public function test_workshop_core_calendar_provide_event_action_closed_for_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $course->id,
+            'submissionend' => time() - DAYSECS));
+        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Now log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_workshop_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('viewworkshopsummary', 'workshop'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    /**
      * Test calendar event action open in future.
-     *
-     * @throws coding_exception
      */
     public function test_workshop_core_calendar_provide_event_action_open_in_future() {
         $this->resetAfterTest();
@@ -103,9 +211,61 @@ class mod_workshop_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test calendar event action open in future for a non user.
+     */
+    public function test_workshop_core_calendar_provide_event_action_open_in_future_for_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', ['course' => $course->id,
+            'submissionstart' => time() + DAYSECS]);
+        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_workshop_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
+    /**
+     * Test calendar event action open in future when user id is provided.
+     */
+    public function test_workshop_core_calendar_provide_event_action_open_in_future_for_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', ['course' => $course->id,
+            'submissionstart' => time() + DAYSECS]);
+        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Now log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_workshop_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('viewworkshopsummary', 'workshop'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    /**
      * Test calendar event with no time specified.
-     *
-     * @throws coding_exception
      */
     public function test_workshop_core_calendar_provide_event_action_no_time_specified() {
         $this->resetAfterTest();
@@ -123,6 +283,30 @@ class mod_workshop_lib_testcase extends advanced_testcase {
         $this->assertInstanceOf('moodle_url', $actionevent->get_url());
         $this->assertEquals(1, $actionevent->get_item_count());
         $this->assertTrue($actionevent->is_actionable());
+    }
+
+    /**
+     * Test calendar event with no time specified for a non user.
+     */
+    public function test_workshop_core_calendar_provide_event_action_no_time_specified_for_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', ['course' => $course->id]);
+        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_workshop_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
     }
 
     /**
