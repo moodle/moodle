@@ -305,6 +305,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $zipfilename = 'model-zip-' . microtime() . '.zip';
         $zipfilepath = $model->export_model($zipfilename);
 
+        $modelconfig = new \core_analytics\model_config();
+        list($modelconfig, $mlbackend) = $modelconfig->extract_import_contents($zipfilepath);
+        $this->assertNotFalse($mlbackend);
+
         $importmodel = \core_analytics\model::import_model($zipfilepath);
         $importmodel->enable();
 
@@ -316,6 +320,13 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         }
 
         $this->assertFalse($importmodel->trained_locally());
+
+        $zipfilename = 'model-zip-' . microtime() . '.zip';
+        $zipfilepath = $model->export_model($zipfilename, false);
+
+        $modelconfig = new \core_analytics\model_config();
+        list($modelconfig, $mlbackend) = $modelconfig->extract_import_contents($zipfilepath);
+        $this->assertFalse($mlbackend);
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
