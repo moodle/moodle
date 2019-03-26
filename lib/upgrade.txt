@@ -24,6 +24,8 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   and get_reduced_timeout(). These allow for timeouts to be increased by a setting in config.php.
 * The $draftitemid parameter of file_save_draft_area_files() function now supports the constant IGNORE_FILE_MERGE:
   When the parameter is set to that constant, the function won't process file merging, keeping the original state of the file area.
+* Introduced new callback for plugin developers '<component>_pre_processor_message_send($procname, $proceventdata)':
+  This will allow any plugin to manipulate messages or notifications before they are sent by a processor (email, mobile...)
 
 === 3.6 ===
 
@@ -639,13 +641,13 @@ the groupid field.
       $OUTPUT->download_dataformat_selector() instead.
   when building Xpath, or pass the unescaped value when using the named selector.
 * Add new file_is_executable(), to consistently check for executables even in Windows (PHP bug #41062).
-* Introduced new hooks for plugin developers.
+* Introduced new callbacks for plugin developers.
     - <component>_pre_course_category_delete($category)
     - <component>_pre_course_delete($course)
     - <component>_pre_course_module_delete($cm)
     - <component>_pre_block_delete($instance)
     - <component>_pre_user_delete($user)
-  These hooks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
+  These callbacks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
   a module (plugins located in the mod folder) called 'xxx' and you wish to interact with the user object before it is
   deleted then the function to create would be mod_xxx_pre_user_delete($user) in mod/xxx/lib.php.
 * pear::Net::GeoIP has been removed.
