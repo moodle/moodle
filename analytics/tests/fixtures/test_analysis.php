@@ -31,18 +31,17 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_analyser extends \core\analytics\analyser\courses {
+class test_analysis extends \core_analytics\analysis {
 
     /**
      * Overwritten to add a delay.
      *
      * @param \core_analytics\analysable $analysable
-     * @param mixed $includetarget
-     * @return null
+     * @return array
      */
-    public function process_analysable($analysable, $includetarget) {
+    public function process_analysable(\core_analytics\analysable $analysable): array {
         // A bit more than 1 second.
-        usleep(1100000);
-        return parent::process_analysable($analysable, $includetarget);
+        usleep(550000);
+        return parent::process_analysable($analysable);
     }
 }

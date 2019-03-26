@@ -149,9 +149,10 @@ class no_teaching extends \core_analytics\local\target\binary {
 
         $now = time();
 
-        // No courses without start date, no finished courses nor predictions before start - 1 week.
+        // No courses without start date, no finished courses, no predictions before start - 1 week nor
+        // predictions for courses that started more than 1 week ago.
         if (!$course->startdate || (!empty($course->enddate) && $course->enddate < $now) ||
-                $course->startdate - WEEKSECS > $now) {
+                $course->startdate - WEEKSECS > $now || $course->startdate + WEEKSECS < $now) {
             return false;
         }
         return true;

@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once(__DIR__ . '/fixtures/test_indicator_max.php');
 require_once(__DIR__ . '/fixtures/test_indicator_min.php');
+require_once(__DIR__ . '/fixtures/test_indicator_null.php');
 require_once(__DIR__ . '/fixtures/test_indicator_fullname.php');
 require_once(__DIR__ . '/fixtures/test_indicator_random.php');
 require_once(__DIR__ . '/fixtures/test_target_shortname.php');
@@ -86,18 +87,14 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         // 1 range for each analysable.
         $predictedranges = $DB->get_records('analytics_predict_samples', array('modelid' => $model->get_id()));
         $this->assertCount(2, $predictedranges);
-        $this->assertEquals(1, $DB->count_records('analytics_used_files',
-            array('modelid' => $model->get_id(), 'action' => 'predicted')));
         // 2 predictions for each range.
         $this->assertEquals(2, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
 
-        // No new generated files nor records as there are no new courses available.
+        // No new generated records as there are no new courses available.
         $model->predict();
         $predictedranges = $DB->get_records('analytics_predict_samples', array('modelid' => $model->get_id()));
         $this->assertCount(2, $predictedranges);
-        $this->assertEquals(1, $DB->count_records('analytics_used_files',
-            array('modelid' => $model->get_id(), 'action' => 'predicted')));
         $this->assertEquals(2, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
     }
@@ -553,8 +550,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     public function test_not_null_samples() {
         $this->resetAfterTest(true);
 
-        $classname = '\core\analytics\time_splitting\quarters';
-        $timesplitting = \core_analytics\manager::get_time_splitting($classname);
+        $timesplitting = \core_analytics\manager::get_time_splitting('\core\analytics\time_splitting\quarters');
         $timesplitting->set_analysable(new \core_analytics\site());
 
         $ranges = array(
@@ -563,35 +559,49 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         );
         $samples = array(123 => 123, 321 => 321);
 
-        $indicator1 = $this->getMockBuilder('test_indicator_max')
-            ->setMethods(['calculate_sample'])
-            ->getMock();
-        $indicator1->method('calculate_sample')
-            ->willReturn(null);
+        $target = \core_analytics\manager::get_target('test_target_shortname');
+        $indicators = array('test_indicator_null', 'test_indicator_min');
+        foreach ($indicators as $key => $indicator) {
+            $indicators[$key] = \core_analytics\manager::get_indicator($indicator);
+        }
+        $model = \core_analytics\model::create($target, $indicators, '\core\analytics\time_splitting\no_splitting');
 
-        $indicator2 = \core_analytics\manager::get_indicator('test_indicator_min');
+        $analyser = $model->get_analyser();
+        $result = new \core_analytics\local\analysis\result_array($model->get_id(), false, $analyser->get_options());
+        $analysis = new \core_analytics\analysis($analyser, false, $result);
 
         // Samples with at least 1 not null value are returned.
         $params = array(
+            $timesplitting,
             $samples,
-            'whatever',
-            array($indicator1, $indicator2),
             $ranges
         );
-        $dataset = phpunit_util::call_internal_method($timesplitting, 'calculate_indicators', $params, $classname);
+        $dataset = phpunit_util::call_internal_method($analysis, 'calculate_indicators', $params,
+            '\core_analytics\analysis');
         $this->assertArrayHasKey('123-0', $dataset);
         $this->assertArrayHasKey('123-1', $dataset);
         $this->assertArrayHasKey('321-0', $dataset);
         $this->assertArrayHasKey('321-1', $dataset);
 
+
+        $indicators = array('test_indicator_null');
+        foreach ($indicators as $key => $indicator) {
+            $indicators[$key] = \core_analytics\manager::get_indicator($indicator);
+        }
+        $model = \core_analytics\model::create($target, $indicators, '\core\analytics\time_splitting\no_splitting');
+
+        $analyser = $model->get_analyser();
+        $result = new \core_analytics\local\analysis\result_array($model->get_id(), false, $analyser->get_options());
+        $analysis = new \core_analytics\analysis($analyser, false, $result);
+
         // Samples with only null values are not returned.
         $params = array(
+            $timesplitting,
             $samples,
-            'whatever',
-            array($indicator1),
             $ranges
         );
-        $dataset = phpunit_util::call_internal_method($timesplitting, 'calculate_indicators', $params, $classname);
+        $dataset = phpunit_util::call_internal_method($analysis, 'calculate_indicators', $params,
+            '\core_analytics\analysis');
         $this->assertArrayNotHasKey('123-0', $dataset);
         $this->assertArrayNotHasKey('123-1', $dataset);
         $this->assertArrayNotHasKey('321-0', $dataset);

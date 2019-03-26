@@ -15,48 +15,48 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Time splitting method that generates predictions periodically.
+ * Test indicator. Always null.
  *
  * @package   core_analytics
- * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core_analytics\local\time_splitting;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Time splitting method that generates predictions periodically.
+ * Test indicator. Always null.
  *
  * @package   core_analytics
- * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class upcoming_periodic extends periodic {
+class test_indicator_null extends \core_analytics\local\indicator\binary {
 
     /**
-     * The next range indicator calculations should be based on upcoming dates.
+     * Returns a lang_string object representing the name for the indicator.
      *
-     * @param  \DateTimeImmutable $next
-     * @return array
+     * Used as column identificator.
+     *
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    protected function get_next_range(\DateTimeImmutable $next) {
-
-        $start = $next->getTimestamp();
-        $end = $next->add($this->periodicity())->getTimestamp();
-        return [
-            'start' => $start,
-            'end' => $end,
-            'time' => $start
-        ];
+    public static function get_name() : \lang_string {
+        // Using a string that exists and contains a corresponding '_help' string.
+        return new \lang_string('allowstealthmodules');
     }
 
     /**
-     * Whether to cache or not the indicator calculations.
-     * @return bool
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param string $samplesorigin
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
      */
-    public function cache_indicator_calculations(): bool {
-        return false;
+    protected function calculate_sample($sampleid, $samplesorigin, $starttime, $endtime) {
+        return null;
     }
 }

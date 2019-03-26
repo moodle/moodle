@@ -119,7 +119,7 @@ class users extends \core_analytics\local\analyser\base {
      * @param \core_analytics\analysable $user
      * @return array
      */
-    protected function get_all_samples(\core_analytics\analysable $user) {
+    public function get_all_samples(\core_analytics\analysable $user) {
 
         $context = \context_user::instance($user->get_id());
 

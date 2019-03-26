@@ -306,12 +306,6 @@ class model {
             }
         }
 
-        if (!empty($options['evaluation'])) {
-            foreach ($timesplittings as $timesplitting) {
-                $timesplitting->set_evaluating(true);
-            }
-        }
-
         $classname = $target->get_analyser_class();
         if (!class_exists($classname)) {
             throw new \coding_exception($classname . ' class does not exists');
@@ -541,7 +535,7 @@ class model {
             $this->get_analyser()->add_log(get_string('noevaluationbasedassumptions', 'analytics'));
             $result = new \stdClass();
             $result->status = self::NO_DATASET;
-            return array($this->get_time_splitting()->get_id() => $result);
+            return array($result);
         }
 
         $options['evaluation'] = true;
@@ -736,50 +730,67 @@ class model {
         // Before get_unlabelled_data call so we get an early exception if it is not writable.
         $outputdir = $this->get_output_dir(array('execution'));
 
-        // Before get_unlabelled_data call so we get an early exception if it is not ready.
         if (!$this->is_static()) {
+            // Predictions using a machine learning backend.
+
+            // Before get_unlabelled_data call so we get an early exception if it is not ready.
             $predictor = $this->get_predictions_processor();
-        }
 
-        $samplesdata = $this->get_analyser()->get_unlabelled_data();
+            $samplesdata = $this->get_analyser()->get_unlabelled_data();
 
-        // Get the prediction samples file.
-        if (empty($samplesdata) || empty($samplesdata[$this->model->timesplitting])) {
+            // Get the prediction samples file.
+            if (empty($samplesdata) || empty($samplesdata[$this->model->timesplitting])) {
 
-            $result = new \stdClass();
-            $result->status = self::NO_DATASET;
-            $result->info = $this->get_analyser()->get_logs();
-            return $result;
-        }
-        $samplesfile = $samplesdata[$this->model->timesplitting];
+                $result = new \stdClass();
+                $result->status = self::NO_DATASET;
+                $result->info = $this->get_analyser()->get_logs();
+                return $result;
+            }
+            $samplesfile = $samplesdata[$this->model->timesplitting];
 
-        // We need to throw an exception if we are trying to predict stuff that was already predicted.
-        $params = array('modelid' => $this->model->id, 'action' => 'predicted', 'fileid' => $samplesfile->get_id());
-        if ($predicted = $DB->get_record('analytics_used_files', $params)) {
-            throw new \moodle_exception('erroralreadypredict', 'analytics', '', $samplesfile->get_id());
-        }
+            // We need to throw an exception if we are trying to predict stuff that was already predicted.
+            $params = array('modelid' => $this->model->id, 'action' => 'predicted', 'fileid' => $samplesfile->get_id());
+            if ($predicted = $DB->get_record('analytics_used_files', $params)) {
+                throw new \moodle_exception('erroralreadypredict', 'analytics', '', $samplesfile->get_id());
+            }
 
-        $indicatorcalculations = \core_analytics\dataset_manager::get_structured_data($samplesfile);
+            $indicatorcalculations = \core_analytics\dataset_manager::get_structured_data($samplesfile);
 
-        // Prepare the results object.
-        $result = new \stdClass();
-
-        if ($this->is_static()) {
-            // Prediction based on assumptions.
-            $result->status = self::OK;
-            $result->info = [];
-            $result->predictions = $this->get_static_predictions($indicatorcalculations);
-
-        } else {
             // Estimation and classification processes run on the machine learning backend side.
             if ($this->get_target()->is_linear()) {
                 $predictorresult = $predictor->estimate($this->get_unique_id(), $samplesfile, $outputdir);
             } else {
                 $predictorresult = $predictor->classify($this->get_unique_id(), $samplesfile, $outputdir);
             }
+
+            // Prepare the results object.
+            $result = new \stdClass();
             $result->status = $predictorresult->status;
             $result->info = $predictorresult->info;
             $result->predictions = $this->format_predictor_predictions($predictorresult);
+
+        } else {
+            // Predictions based on assumptions.
+
+            $indicatorcalculations = $this->get_analyser()->get_static_data();
+            // Get the prediction samples file.
+            if (empty($indicatorcalculations) || empty($indicatorcalculations[$this->model->timesplitting])) {
+
+                $result = new \stdClass();
+                $result->status = self::NO_DATASET;
+                $result->info = $this->get_analyser()->get_logs();
+                return $result;
+            }
+
+            // Same as reset($indicatorcalculations) as models based on assumptions only analyse 1 single
+            // time-splitting method.
+            $indicatorcalculations = $indicatorcalculations[$this->model->timesplitting];
+
+            // Prepare the results object.
+            $result = new \stdClass();
+            $result->status = self::OK;
+            $result->info = [];
+            $result->predictions = $this->get_static_predictions($indicatorcalculations);
         }
 
         if ($result->status !== self::OK) {
@@ -795,7 +806,9 @@ class model {
             $this->trigger_insights($samplecontexts, $predictionrecords);
         }
 
-        $this->flag_file_as_used($samplesfile, 'predicted');
+        if (!$this->is_static()) {
+            $this->flag_file_as_used($samplesfile, 'predicted');
+        }
 
         return $result;
     }
@@ -866,7 +879,6 @@ class model {
 
             // The unique sample id contains both the sampleid and the rangeindex.
             list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
-
             if ($this->get_target()->triggers_callback($prediction->prediction, $prediction->predictionscore)) {
 
                 // Prepare the record to store the predicted values.
@@ -942,9 +954,15 @@ class model {
      * Get predictions from a static model.
      *
      * @param array $indicatorcalculations
+     * @param string[] $headers
      * @return \stdClass[]
      */
     protected function get_static_predictions(&$indicatorcalculations) {
+
+        $headers = array_shift($indicatorcalculations);
+
+        // Get rid of the sampleid header.
+        array_shift($headers);
 
         // Group samples by analysable for \core_analytics\local\target::calculate.
         $analysables = array();
@@ -952,6 +970,12 @@ class model {
         $sampleids = array();
 
         foreach ($indicatorcalculations as $uniquesampleid => $indicators) {
+
+            // Get rid of the sampleid column.
+            unset($indicators[0]);
+            $indicators = array_combine($headers, $indicators);
+            $indicatorcalculations[$uniquesampleid] = $indicators;
+
             list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
 
             $analysable = $this->get_analyser()->get_sample_analysable($sampleid);
@@ -966,6 +990,7 @@ class model {
                     'sampleids' => array()
                 ];
             }
+
             // Using the sampleid as a key so we can easily merge indicators data later.
             $analysables[$analysableclass][$rangeindex]->indicatorsdata[$sampleid] = $indicators;
             // We could use indicatorsdata keys but the amount of redundant data is not that big and leaves code below cleaner.

@@ -34,7 +34,6 @@ require_once(__DIR__ . '/fixtures/test_indicator_max.php');
 require_once(__DIR__ . '/fixtures/test_indicator_min.php');
 require_once(__DIR__ . '/fixtures/test_target_site_users.php');
 require_once(__DIR__ . '/fixtures/test_target_course_users.php');
-require_once(__DIR__ . '/fixtures/test_analyser.php');
 
 /**
  * Unit tests for privacy.

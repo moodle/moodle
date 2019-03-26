@@ -2934,5 +2934,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019040200.01);
     }
 
+    if ($oldversion < 2019040600.02) {
+
+        // Define key fileid (foreign) to be dropped form analytics_train_samples.
+        $table = new xmldb_table('analytics_train_samples');
+        $key = new xmldb_key('fileid', XMLDB_KEY_FOREIGN, ['fileid'], 'files', ['id']);
+
+        // Launch drop key fileid.
+        $dbman->drop_key($table, $key);
+
+        // Define field fileid to be dropped from analytics_train_samples.
+        $table = new xmldb_table('analytics_train_samples');
+        $field = new xmldb_field('fileid');
+
+        // Conditionally launch drop field fileid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019040600.02);
+    }
+
     return true;
 }

@@ -52,31 +52,10 @@ abstract class base {
      */
     protected $analysable;
 
-
-    /**
-     * @var int[]
-     */
-    protected $sampleids;
-
-    /**
-     * @var string
-     */
-    protected $samplesorigin;
-
     /**
      * @var array
      */
     protected $ranges = [];
-
-    /**
-     * @var \core_analytics\local\indicator\base
-     */
-    protected static $indicators = [];
-
-    /**
-     * @var bool
-     */
-    protected $evaluation = false;
 
     /**
      * Define the time splitting methods ranges.
@@ -107,24 +86,6 @@ abstract class base {
      */
     public function get_id() {
         return '\\' . get_class($this);
-    }
-
-    /**
-     * Returns current evaluation value.
-     *
-     * @return bool
-     */
-    public function is_evaluating() {
-        return $this->evaluation;
-    }
-
-    /**
-     * Sets the evaluation flag.
-     *
-     * @param bool $evaluation
-     */
-    public function set_evaluating($evaluation) {
-        $this->evaluation = (bool)$evaluation;
     }
 
     /**
@@ -183,255 +144,6 @@ abstract class base {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Calculates indicators and targets.
-     *
-     * @param array $sampleids
-     * @param string $samplesorigin
-     * @param \core_analytics\local\indicator\base[] $indicators
-     * @param array $ranges
-     * @param \core_analytics\local\target\base $target
-     * @return array|bool
-     */
-    public function calculate(&$sampleids, $samplesorigin, $indicators, $ranges, $target = false) {
-
-        $calculatedtarget = false;
-        if ($target) {
-            // We first calculate the target because analysable data may still be invalid or none
-            // of the analysable samples may be valid ($sampleids is also passed by reference).
-            $calculatedtarget = $target->calculate($sampleids, $this->analysable);
-
-            // We remove samples we can not calculate their target.
-            $sampleids = array_filter($sampleids, function($sampleid) use ($calculatedtarget) {
-                if (is_null($calculatedtarget[$sampleid])) {
-                    return false;
-                }
-                return true;
-            });
-        }
-
-        // No need to continue calculating if the target couldn't be calculated for any sample.
-        if (empty($sampleids)) {
-            return false;
-        }
-
-        $dataset = $this->calculate_indicators($sampleids, $samplesorigin, $indicators, $ranges);
-
-        if (empty($dataset)) {
-            return false;
-        }
-
-        // Now that we have the indicators in place we can add the time range indicators (and target if provided) to each of them.
-        $this->fill_dataset($dataset, $calculatedtarget);
-
-        $this->add_metadata($dataset, $indicators, $target);
-
-        if (!PHPUNIT_TEST && CLI_SCRIPT) {
-            echo PHP_EOL;
-        }
-
-        return $dataset;
-    }
-
-    /**
-     * Calculates indicators.
-     *
-     * @param array $sampleids
-     * @param string $samplesorigin
-     * @param \core_analytics\local\indicator\base[] $indicators
-     * @param array $ranges
-     * @return array
-     */
-    protected function calculate_indicators($sampleids, $samplesorigin, $indicators, $ranges) {
-        global $DB;
-
-        $dataset = array();
-
-        // Faster to run 1 db query per range.
-        $existingcalculations = array();
-        foreach ($ranges as $rangeindex => $range) {
-            // Load existing calculations.
-            $existingcalculations[$rangeindex] = \core_analytics\manager::get_indicator_calculations($this->analysable,
-                $range['start'], $range['end'], $samplesorigin);
-        }
-
-        // Here we store samples which calculations are not all null.
-        $notnulls = array();
-
-        // Fill the dataset samples with indicators data.
-        $newcalculations = array();
-        foreach ($indicators as $indicator) {
-
-            // Hook to allow indicators to store analysable-dependant data.
-            $indicator->fill_per_analysable_caches($this->analysable);
-
-            // Per-range calculations.
-            foreach ($ranges as $rangeindex => $range) {
-
-                // Indicator instances are per-range.
-                $rangeindicator = clone $indicator;
-
-                $prevcalculations = array();
-                if (!empty($existingcalculations[$rangeindex][$rangeindicator->get_id()])) {
-                    $prevcalculations = $existingcalculations[$rangeindex][$rangeindicator->get_id()];
-                }
-
-                // Calculate the indicator for each sample in this time range.
-                list($samplesfeatures, $newindicatorcalculations, $indicatornotnulls) = $rangeindicator->calculate($sampleids,
-                    $samplesorigin, $range['start'], $range['end'], $prevcalculations);
-
-                // Copy the features data to the dataset.
-                foreach ($samplesfeatures as $analysersampleid => $features) {
-
-                    $uniquesampleid = $this->append_rangeindex($analysersampleid, $rangeindex);
-
-                    if (!isset($notnulls[$uniquesampleid]) && !empty($indicatornotnulls[$analysersampleid])) {
-                        $notnulls[$uniquesampleid] = $uniquesampleid;
-                    }
-
-                    // Init the sample if it is still empty.
-                    if (!isset($dataset[$uniquesampleid])) {
-                        $dataset[$uniquesampleid] = array();
-                    }
-
-                    // Append the features indicator features at the end of the sample.
-                    $dataset[$uniquesampleid] = array_merge($dataset[$uniquesampleid], $features);
-                }
-
-                if (!$this->is_evaluating()) {
-                    $timecreated = time();
-                    foreach ($newindicatorcalculations as $sampleid => $calculatedvalue) {
-                        // Prepare the new calculations to be stored into DB.
-
-                        $indcalc = new \stdClass();
-                        $indcalc->contextid = $this->analysable->get_context()->id;
-                        $indcalc->starttime = $range['start'];
-                        $indcalc->endtime = $range['end'];
-                        $indcalc->sampleid = $sampleid;
-                        $indcalc->sampleorigin = $samplesorigin;
-                        $indcalc->indicator = $rangeindicator->get_id();
-                        $indcalc->value = $calculatedvalue;
-                        $indcalc->timecreated = $timecreated;
-                        $newcalculations[] = $indcalc;
-                    }
-                }
-            }
-
-            if (!$this->is_evaluating()) {
-                $batchsize = self::get_insert_batch_size();
-                if (count($newcalculations) > $batchsize) {
-                    // We don't want newcalculations array to grow too much as we already keep the
-                    // system memory busy storing $dataset contents.
-
-                    // Insert from the beginning.
-                    $remaining = array_splice($newcalculations, $batchsize);
-
-                    // Sorry mssql and oracle, this will be slow.
-                    $DB->insert_records('analytics_indicator_calc', $newcalculations);
-                    $newcalculations = $remaining;
-                }
-            }
-        }
-
-        if (!$this->is_evaluating() && $newcalculations) {
-            // Insert the remaining records.
-            $DB->insert_records('analytics_indicator_calc', $newcalculations);
-        }
-
-        // Delete rows where all calculations are null.
-        // We still store the indicator calculation and we still store the sample id as
-        // processed so we don't have to process this sample again, but we exclude it
-        // from the dataset because it is not useful.
-        $nulls = array_diff_key($dataset, $notnulls);
-        foreach ($nulls as $uniqueid => $ignoredvalues) {
-            unset($dataset[$uniqueid]);
-        }
-
-        return $dataset;
-    }
-
-    /**
-     * Adds time range indicators and the target to each sample.
-     *
-     * This will identify the sample as belonging to a specific range.
-     *
-     * @param array $dataset
-     * @param array $calculatedtarget
-     * @return void
-     */
-    protected function fill_dataset(&$dataset, $calculatedtarget = false) {
-
-        $nranges = count($this->get_distinct_ranges());
-
-        foreach ($dataset as $uniquesampleid => $unmodified) {
-
-            list($analysersampleid, $rangeindex) = $this->infer_sample_info($uniquesampleid);
-
-            // No need to add range features if this time splitting method only defines one time range.
-            if ($nranges > 1) {
-
-                // 1 column for each range.
-                $timeindicators = array_fill(0, $nranges, 0);
-
-                $timeindicators[$rangeindex] = 1;
-
-                $dataset[$uniquesampleid] = array_merge($timeindicators, $dataset[$uniquesampleid]);
-            }
-
-            if ($calculatedtarget) {
-                // Add this sampleid's calculated target and the end.
-                $dataset[$uniquesampleid][] = $calculatedtarget[$analysersampleid];
-
-            } else {
-                // Add this sampleid, it will be used to identify the prediction that comes back from
-                // the predictions processor.
-                array_unshift($dataset[$uniquesampleid], $uniquesampleid);
-            }
-        }
-    }
-
-    /**
-     * Adds dataset context info.
-     *
-     * The final dataset document will look like this:
-     * ----------------------------------------------------
-     * metadata1,metadata2,metadata3,.....
-     * value1, value2, value3,.....
-     *
-     * indicator1,indicator2,indicator3,indicator4,.....
-     * stud1value1,stud1value2,stud1value3,stud1value4,.....
-     * stud2value1,stud2value2,stud2value3,stud2value4,.....
-     * .....
-     * ----------------------------------------------------
-     *
-     * @param array $dataset
-     * @param \core_analytics\local\indicator\base[] $indicators
-     * @param \core_analytics\local\target\base|false $target
-     * @return void
-     */
-    protected function add_metadata(&$dataset, $indicators, $target = false) {
-
-        $metadata = array(
-            'timesplitting' => $this->get_id(),
-            // If no target the first column is the sampleid, if target the last column is the target.
-            // This will need to be updated when we support unsupervised learning models.
-            'nfeatures' => count(current($dataset)) - 1
-        );
-
-        // The first 2 samples will be used to store metadata about the dataset.
-        $metadatacolumns = [];
-        $metadatavalues = [];
-        foreach ($metadata as $key => $value) {
-            $metadatacolumns[] = $key;
-            $metadatavalues[] = $value;
-        }
-
-        $headers = $this->get_headers($indicators, $target);
-
-        // This will also reset samples' dataset keys.
-        array_unshift($dataset, $metadatacolumns, $metadatavalues, $headers);
     }
 
     /**
@@ -549,41 +261,11 @@ abstract class base {
     }
 
     /**
-     * Returns the headers for the csv file based on the indicators and the target.
-     *
-     * @param \core_analytics\local\indicator\base[] $indicators
-     * @param \core_analytics\local\target\base|false $target
-     * @return string[]
+     * Whether to cache or not the indicator calculations.
+     * @return bool
      */
-    protected function get_headers($indicators, $target = false) {
-        // 3rd column will contain the indicator ids.
-        $headers = array();
-
-        if (!$target) {
-            // The first column is the sampleid.
-            $headers[] = 'sampleid';
-        }
-
-        // We always have 1 column for each time splitting method range, it does not depend on how
-        // many ranges we calculated.
-        $ranges = $this->get_distinct_ranges();
-        if (count($ranges) > 1) {
-            foreach ($ranges as $rangeindex) {
-                $headers[] = 'range/' . $rangeindex;
-            }
-        }
-
-        // Model indicators.
-        foreach ($indicators as $indicator) {
-            $headers = array_merge($headers, $indicator::get_feature_headers());
-        }
-
-        // The target as well.
-        if ($target) {
-            $headers[] = $target->get_id();
-        }
-
-        return $headers;
+    public function cache_indicator_calculations(): bool {
+        return true;
     }
 
     /**
@@ -600,33 +282,5 @@ abstract class base {
                     '" range is not fully defined. We need a start timestamp and an end timestamp.');
             }
         }
-    }
-
-    /**
-     * Returns the batch size used for insert_records.
-     *
-     * This method tries to find the best batch size without getting
-     * into dml internals. Maximum 1000 records to save memory.
-     *
-     * @return int
-     */
-    private static function get_insert_batch_size() {
-        global $DB;
-
-        // 500 is pgsql default so using 1000 is fine, no other db driver uses a hardcoded value.
-        if (empty($DB->dboptions['bulkinsertsize'])) {
-            return 1000;
-        }
-
-        $bulkinsert = $DB->dboptions['bulkinsertsize'];
-        if ($bulkinsert < 1000) {
-            return $bulkinsert;
-        }
-
-        while ($bulkinsert > 1000) {
-            $bulkinsert = round($bulkinsert / 2, 0);
-        }
-
-        return (int)$bulkinsert;
     }
 }

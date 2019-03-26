@@ -15,48 +15,62 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Time splitting method that generates predictions periodically.
+ * Keeps track of the analysis results.
  *
  * @package   core_analytics
  * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\time_splitting;
+namespace core_analytics\local\analysis;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Time splitting method that generates predictions periodically.
+ * Keeps track of the analysis results.
  *
  * @package   core_analytics
  * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class upcoming_periodic extends periodic {
+class result {
 
     /**
-     * The next range indicator calculations should be based on upcoming dates.
-     *
-     * @param  \DateTimeImmutable $next
-     * @return array
+     * @var int
      */
-    protected function get_next_range(\DateTimeImmutable $next) {
+    protected $modelid;
 
-        $start = $next->getTimestamp();
-        $end = $next->add($this->periodicity())->getTimestamp();
-        return [
-            'start' => $start,
-            'end' => $end,
-            'time' => $start
-        ];
+    /**
+     * @var bool
+     */
+    protected $includetarget;
+
+    /**
+     * @var array Analysis options
+     */
+    protected $options;
+
+    /**
+     * Stores analysis data at instance level.
+     * @param int   $modelid
+     * @param bool  $includetarget
+     * @param array $options
+     */
+    public function __construct(int $modelid, bool $includetarget, array $options) {
+        $this->modelid = $modelid;
+        $this->includetarget = $includetarget;
+        $this->options = $options;
     }
 
     /**
-     * Whether to cache or not the indicator calculations.
-     * @return bool
+     * Retrieves cached results during evaluation.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @param  \core_analytics\analysable                $analysable
+     * @return mixed It can be in whatever format the result uses.
      */
-    public function cache_indicator_calculations(): bool {
+    public function retrieve_cached_result(\core_analytics\local\time_splitting\base $timesplitting,
+        \core_analytics\analysable $analysable) {
         return false;
     }
 }

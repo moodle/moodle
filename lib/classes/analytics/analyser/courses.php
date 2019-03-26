@@ -88,7 +88,7 @@ class courses extends \core_analytics\local\analyser\by_course {
      * @param \core_analytics\analysable $course
      * @return array
      */
-    protected function get_all_samples(\core_analytics\analysable $course) {
+    public function get_all_samples(\core_analytics\analysable $course) {
 
         $context = \context_course::instance($course->get_id());
 

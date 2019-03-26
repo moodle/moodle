@@ -348,9 +348,11 @@ class analytics_manager_testcase extends advanced_testcase {
 
         $noteaching = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
         $dropout = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
+        $upcomingactivities = \core_analytics\manager::get_target('\core_user\analytics\target\upcoming_activities_due');
 
         $this->assertTrue(\core_analytics\model::exists($noteaching));
         $this->assertTrue(\core_analytics\model::exists($dropout));
+        $this->assertTrue(\core_analytics\model::exists($upcomingactivities));
 
         foreach (\core_analytics\manager::get_all_models() as $model) {
             $model->delete();
@@ -358,14 +360,17 @@ class analytics_manager_testcase extends advanced_testcase {
 
         $this->assertFalse(\core_analytics\model::exists($noteaching));
         $this->assertFalse(\core_analytics\model::exists($dropout));
+        $this->assertFalse(\core_analytics\model::exists($upcomingactivities));
 
         $updated = \core_analytics\manager::update_default_models_for_component('moodle');
 
-        $this->assertEquals(2, count($updated));
+        $this->assertEquals(3, count($updated));
+        $this->assertTrue(array_pop($updated) instanceof \core_analytics\model);
         $this->assertTrue(array_pop($updated) instanceof \core_analytics\model);
         $this->assertTrue(array_pop($updated) instanceof \core_analytics\model);
         $this->assertTrue(\core_analytics\model::exists($noteaching));
         $this->assertTrue(\core_analytics\model::exists($dropout));
+        $this->assertTrue(\core_analytics\model::exists($upcomingactivities));
 
         $repeated = \core_analytics\manager::update_default_models_for_component('moodle');
 
