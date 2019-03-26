@@ -26,6 +26,7 @@ namespace tool_mobile;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->dirroot/webservice/lib.php");
 
 use external_api;
 use external_files;
@@ -459,5 +460,120 @@ class external extends external_api {
                 )
             )
         );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.7
+     */
+    public static function call_external_functions_parameters() {
+        return new external_function_parameters([
+            'requests' => new external_multiple_structure(
+                new external_single_structure([
+                    'function' => new external_value(PARAM_ALPHANUMEXT, 'Function name'),
+                    'arguments' => new external_value(PARAM_RAW, 'JSON-encoded object with named arguments', VALUE_DEFAULT, '{}'),
+                    'settingraw' => new external_value(PARAM_BOOL, 'Return raw text', VALUE_DEFAULT, false),
+                    'settingfilter' => new external_value(PARAM_BOOL, 'Filter text', VALUE_DEFAULT, false),
+                    'settingfileurl' => new external_value(PARAM_BOOL, 'Rewrite plugin file URLs', VALUE_DEFAULT, true),
+                    'settinglang' => new external_value(PARAM_LANG, 'Session language', VALUE_DEFAULT, ''),
+                ])
+            )
+        ]);
+    }
+
+    /**
+     * Call multiple external functions and return all responses.
+     *
+     * @param array $requests List of requests.
+     * @return array Responses.
+     * @since Moodle 3.7
+     */
+    public static function call_external_functions($requests) {
+        global $SESSION;
+
+        $params = self::validate_parameters(self::call_external_functions_parameters(), ['requests' => $requests]);
+
+        // We need to check if the functions being called are included in the service of the current token.
+        // This function only works when using mobile services via REST (this is intended).
+        $webservicemanager = new \webservice;
+        $token = $webservicemanager->get_user_ws_token(required_param('wstoken', PARAM_ALPHANUM));
+
+        $settings = \external_settings::get_instance();
+        $defaultlang = current_language();
+        $responses = [];
+
+        foreach ($params['requests'] as $request) {
+            // Some external functions modify _GET or $_POST data, we need to restore the original data after each call.
+            $originalget = fullclone($_GET);
+            $originalpost = fullclone($_POST);
+
+            // Set external settings and language.
+            $settings->set_raw($request['settingraw']);
+            $settings->set_filter($request['settingfilter']);
+            $settings->set_fileurl($request['settingfileurl']);
+            $settings->set_lang($request['settinglang']);
+            $SESSION->lang = $request['settinglang'] ?: $defaultlang;
+
+            // Parse arguments to an array, validation is done in external_api::call_external_function.
+            $args = @json_decode($request['arguments'], true);
+            if (!is_array($args)) {
+                $args = [];
+            }
+
+            if ($webservicemanager->service_function_exists($request['function'], $token->externalserviceid)) {
+                $response = external_api::call_external_function($request['function'], $args, false);
+            } else {
+                // Function not included in the service, return an access exception.
+                $response = [
+                    'error' => true,
+                    'exception' => [
+                        'errorcode' => 'accessexception',
+                        'module' => 'webservice'
+                    ]
+                ];
+                if (debugging('', DEBUG_DEVELOPER)) {
+                    $response['exception']['debuginfo'] = 'Access to the function is not allowed.';
+                }
+            }
+
+            if (isset($response['data'])) {
+                $response['data'] = json_encode($response['data']);
+            }
+            if (isset($response['exception'])) {
+                $response['exception'] = json_encode($response['exception']);
+            }
+            $responses[] = $response;
+
+            // Restore original $_GET and $_POST.
+            $_GET = $originalget;
+            $_POST = $originalpost;
+
+            if ($response['error']) {
+                // Do not process the remaining requests.
+                break;
+            }
+        }
+
+        return ['responses' => $responses];
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_single_structure
+     * @since Moodle 3.7
+     */
+    public static function call_external_functions_returns() {
+        return new external_function_parameters([
+            'responses' => new external_multiple_structure(
+                new external_single_structure([
+                    'error' => new external_value(PARAM_BOOL, 'Whether an exception was thrown.'),
+                    'data' => new external_value(PARAM_RAW, 'JSON-encoded response data', VALUE_OPTIONAL),
+                    'exception' => new external_value(PARAM_RAW, 'JSON-encoed exception info', VALUE_OPTIONAL),
+                ])
+             )
+        ]);
     }
 }
