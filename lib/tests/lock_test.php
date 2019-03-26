@@ -59,10 +59,31 @@ class lock_testcase extends advanced_testcase {
                     $lock2 = $lockfactory->get_lock('abc', 2);
                     $this->assertNotEmpty($lock2, 'Get a stacked lock');
                     $this->assertTrue($lock2->release(), 'Release a stacked lock');
+
+                    // This stacked lock should be gained almost instantly.
+                    $duration = -microtime(true);
+                    $lock3 = $lockfactory->get_lock('abc', 0);
+                    $duration += microtime(true);
+                    $lock3->release();
+                    $this->assertTrue($duration < 0.100, 'Lock should be gained almost instantly');
+
+                    // We should also assert that locks fail instantly if locked
+                    // from another process but this is hard to unit test.
+
                 } else {
-                    // This should timeout.
+                    // This should timeout after 2 seconds.
+                    $duration = -microtime(true);
                     $lock2 = $lockfactory->get_lock('abc', 2);
+                    $duration += microtime(true);
                     $this->assertFalse($lock2, 'Cannot get a stacked lock');
+                    $this->assertTrue($duration > 1, 'Lock should timeout after more than 1 second');
+
+                    // This should timeout almost instantly.
+                    $duration = -microtime(true);
+                    $lock2 = $lockfactory->get_lock('abc', 0);
+                    $duration += microtime(true);
+                    $this->assertFalse($lock2, 'Cannot get a stacked lock');
+                    $this->assertTrue($duration < 0.100, 'Lock should timeout almost instantly < 100ms');
                 }
             }
             // Release the lock.
