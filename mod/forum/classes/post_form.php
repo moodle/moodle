@@ -93,11 +93,13 @@ class mod_forum_post_form extends moodleform {
         $subscribe = $this->_customdata['subscribe'];
         $edit = $this->_customdata['edit'];
         $thresholdwarning = $this->_customdata['thresholdwarning'];
-        $canreplyprivately = $this->_customdata['canreplyprivately'];
+        $canreplyprivately = array_key_exists('canreplyprivately', $this->_customdata) ?
+            $this->_customdata['canreplyprivately'] : false;
         $stripped = isset($this->_customdata['inpagereply']) ? $this->_customdata['inpagereply'] : false;
 
         if (!$stripped) {
-            $mform->addElement('header', 'general', '');//fill in the data depending on page params later using set_data
+            // Fill in the data depending on page params later using set_data.
+            $mform->addElement('header', 'general', '');
         }
 
         // If there is a warning message and we are not editing a post we need to handle the warning.
@@ -273,9 +275,9 @@ class mod_forum_post_form extends moodleform {
         //-------------------------------------------------------------------------------
         // buttons
         if (isset($post->edit)) { // hack alert
-            $submit_string = get_string('savechanges');
+            $submitstring = get_string('savechanges');
         } else {
-            $submit_string = get_string('posttoforum', 'forum');
+            $submitstring = get_string('posttoforum', 'forum');
         }
 
         // Always register a no submit button so it can be picked up if redirecting to the original post form.
@@ -284,18 +286,18 @@ class mod_forum_post_form extends moodleform {
         // This is an inpage add discussion which requires custom buttons.
         if ($stripped) {
             $buttonarray = array();
-            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submit_string);
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitstring);
             $buttonarray[] = &$mform->createElement('button', 'cancelbtn',
                 get_string('cancel', 'core'),
-                // Additional attribs to handle collapsible div
+                // Additional attribs to handle collapsible div.
                 ['data-toggle' => 'collapse', 'data-target' => "#collapseAddForm"]);
             $buttonarray[] = &$mform->createElement('submit', 'advancedadddiscussion',
-                get_string('advanced'), ['customclassoverride'=>'btn-link']);
+                get_string('advanced'), ['customclassoverride' => 'btn-link']);
 
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
             $mform->closeHeaderBefore('buttonar');
         } else {
-            $this->add_action_buttons(true, $submit_string);
+            $this->add_action_buttons(true, $submitstring);
         }
 
         $mform->addElement('hidden', 'course');

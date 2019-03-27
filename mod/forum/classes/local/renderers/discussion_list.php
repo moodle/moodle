@@ -223,7 +223,8 @@ class discussion_list {
         ];
         $thresholdwarning = forum_check_throttling($forum, $cm);
 
-        $mformpost = new \mod_forum_post_form('post.php', array('course' => $forum->get_course_record(),
+        $formparams = array(
+            'course' => $forum->get_course_record(),
             'cm' => $cm,
             'coursecontext' => $coursecontext,
             'modcontext' => $modcontext,
@@ -233,7 +234,9 @@ class discussion_list {
                 null, $cm),
             'thresholdwarning' => $thresholdwarning,
             'inpagereply' => true,
-            'edit' => 0), 'post', '', array('id' => 'mformforum'));
+            'edit' => 0
+        );
+        $mformpost = new \mod_forum_post_form('post.php', $formparams, 'post', '', array('id' => 'mformforum'));
 
         $params = array('reply' => 0, 'forum' => $forumrecord->id, 'edit' => 0) +
             (isset($post->groupid) ? array('groupid' => $post->groupid) : array()) +

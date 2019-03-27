@@ -61,6 +61,18 @@ class behat_mod_forum extends behat_base {
     }
 
     /**
+     * Adds a discussion to the forum specified by it's name with the provided table data (usually Subject and Message).
+     * The step begins from the forum's course page.
+     *
+     * @Given /^I add a new discussion to "(?P<forum_name_string>(?:[^"]|\\")*)" forum inline with:$/
+     * @param string $forumname
+     * @param TableNode $table
+     */
+    public function i_add_a_forum_discussion_to_forum_inline_with($forumname, TableNode $table) {
+        $this->add_new_discussion_inline($forumname, $table, get_string('addanewdiscussion', 'forum'));
+    }
+
+    /**
      * Adds a reply to the specified post of the specified forum. The step begins from the forum's page or from the forum's course page.
      *
      * @Given /^I reply "(?P<post_subject_string>(?:[^"]|\\")*)" post from "(?P<forum_name_string>(?:[^"]|\\")*)" forum with:$/
@@ -118,6 +130,34 @@ class behat_mod_forum extends behat_base {
         $this->execute('behat_general::click_link', $buttonstr);
         $this->execute('behat_forms::press_button', get_string('advanced'));
 
+        $this->fill_new_discussion_form($table);
+    }
+
+    /**
+     * Returns the steps list to add a new discussion to a forum inline.
+     *
+     * Abstracts add a new topic and add a new discussion, as depending
+     * on the forum type the button string changes.
+     *
+     * @param string $forumname
+     * @param TableNode $table
+     * @param string $buttonstr
+     */
+    protected function add_new_discussion_inline($forumname, TableNode $table, $buttonstr) {
+
+        // Navigate to forum.
+        $this->execute('behat_general::click_link', $this->escape($forumname));
+        $this->execute('behat_general::click_link', $buttonstr);
+        $this->fill_new_discussion_form($table);
+    }
+
+    /**
+     * Fill in the forum's post form and submit. It assumes you've already navigated and enabled the form for view.
+     *
+     * @param TableNode $table
+     * @throws coding_exception
+     */
+    protected function fill_new_discussion_form(TableNode $table) {
         // Fill form and post.
         $this->execute('behat_forms::i_set_the_following_fields_to_these_values', $table);
         $this->execute('behat_forms::press_button', get_string('posttoforum', 'forum'));
