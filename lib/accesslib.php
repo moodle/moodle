@@ -3163,9 +3163,11 @@ function get_assignable_roles(context $context, $rolenamedisplay = ROLENAME_ALIA
  * test the moodle/role:switchroles to see if the user is allowed to switch in the first place.
  *
  * @param context $context a context.
+ * @param int $rolenamedisplay the type of role name to display. One of the
+ *      ROLENAME_X constants. Default ROLENAME_ALIAS.
  * @return array an array $roleid => $rolename.
  */
-function get_switchable_roles(context $context) {
+function get_switchable_roles(context $context, $rolenamedisplay = ROLENAME_ALIAS) {
     global $USER, $DB;
 
     // You can't switch roles without this capability.
@@ -3208,7 +3210,7 @@ function get_switchable_roles(context $context) {
       ORDER BY r.sortorder";
     $roles = $DB->get_records_sql($query, $params);
 
-    return role_fix_names($roles, $context, ROLENAME_ALIAS, true);
+    return role_fix_names($roles, $context, $rolenamedisplay, true);
 }
 
 /**
@@ -3216,9 +3218,11 @@ function get_switchable_roles(context $context) {
  *
  * @param context $context a context.
  * @param int $userid id of user.
+ * @param int $rolenamedisplay the type of role name to display. One of the
+ *      ROLENAME_X constants. Default ROLENAME_ALIAS.
  * @return array an array $roleid => $rolename.
  */
-function get_viewable_roles(context $context, $userid = null) {
+function get_viewable_roles(context $context, $userid = null, $rolenamedisplay = ROLENAME_ALIAS) {
     global $USER, $DB;
 
     if ($userid == null) {
@@ -3260,7 +3264,7 @@ function get_viewable_roles(context $context, $userid = null) {
       ORDER BY r.sortorder";
     $roles = $DB->get_records_sql($query, $params);
 
-    return role_fix_names($roles, $context, ROLENAME_ALIAS, true);
+    return role_fix_names($roles, $context, $rolenamedisplay, true);
 }
 
 /**
