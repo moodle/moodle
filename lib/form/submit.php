@@ -49,6 +49,13 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
     protected $primary;
 
     /**
+     * Any class apart from 'btn' would be override with this content
+     *
+     * @var string $customclassoverride Custom class override for the input element
+     */
+    protected $customclassoverride;
+
+    /**
      * constructor
      *
      * @param string $elementName (optional) name of the field
@@ -64,6 +71,12 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
             $this->primary = $this->getName() != 'cancel';
         } else {
             $this->primary = $primary;
+        }
+
+        $class = $this->getAttribute('customclassoverride');
+        if ($class) {
+            $this->removeAttribute('customclassoverride');
+            $this->customclassoverride = $class;
         }
     }
 
@@ -130,6 +143,10 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
         $context = $this->export_for_template_base($output);
         if (!$this->primary) {
             $context['secondary'] = true;
+        }
+
+        if ($this->customclassoverride) {
+            $context['customclass'] = $this->customclassoverride;
         }
         return $context;
     }
