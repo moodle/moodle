@@ -100,6 +100,6 @@ class tool_dataprivacy_metadata_registry_testcase extends advanced_testcase {
         $this->assertEquals(1, $corerating['compliant']);
         $this->assertNotEmpty($corerating['metadata']);
         $this->assertEquals('database_table', $corerating['metadata'][0]['type']);
-        $this->assertNotEmpty('database_table', $corerating['metadata'][0]['fields']);
+        $this->assertNotEmpty($corerating['metadata'][0]['fields']);
     }
 }
