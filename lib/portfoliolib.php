@@ -936,40 +936,6 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
 }
 
 /**
- * Main portfolio cronjob.
- * Currently just cleans up expired transfer records.
- */
-function portfolio_cron() {
-    global $DB, $CFG;
-
-    require_once($CFG->libdir . '/portfolio/exporter.php');
-    if ($expired = $DB->get_records_select('portfolio_tempdata', 'expirytime < ?', array(time()), '', 'id')) {
-        foreach ($expired as $d) {
-            try {
-                $e = portfolio_exporter::rewaken_object($d->id);
-                $e->process_stage_cleanup(true);
-            } catch (Exception $e) {
-                mtrace('Exception thrown in portfolio cron while cleaning up ' . $d->id . ': ' . $e->getMessage());
-            }
-        }
-    }
-
-    $process = $DB->get_records('portfolio_tempdata', array('queued' => 1), 'id ASC', 'id');
-    foreach ($process as $d) {
-        try {
-            $exporter = portfolio_exporter::rewaken_object($d->id);
-            $exporter->process_stage_package();
-            $exporter->process_stage_send();
-            $exporter->save();
-            $exporter->process_stage_cleanup();
-        } catch (Exception $e) {
-            // This will get probably retried in the next cron until it is discarded by the code above.
-            mtrace('Exception thrown in portfolio cron while processing ' . $d->id . ': ' . $e->getMessage());
-        }
-    }
-}
-
-/**
  * Helper function to rethrow a caught portfolio_exception as an export exception.
  * Used because when a portfolio_export exception is thrown the export is cancelled
  * throws portfolio_export_exceptiog
