@@ -1,4 +1,7 @@
 This files describes API changes for code that uses the plagiarism API.
+=== 3.7 ===
+
+* The plagiarism_cron() function has been deleted, plugins should implement their own scheduled tasks.
 
 === 3.4 ===
 

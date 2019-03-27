@@ -160,27 +160,7 @@ function plagiarism_print_disclosure($cmid) {
     }
     return $output;
 }
-/**
- * used by admin/cron.php to get similarity scores from submitted files.
- *
- */
-function plagiarism_cron() {
-    global $CFG;
-    if (empty($CFG->enableplagiarism)) {
-        return '';
-    }
-    $plagiarismplugins = plagiarism_load_available_plugins();
-    foreach($plagiarismplugins as $plugin => $dir) {
-        require_once($dir.'/lib.php');
-        $plagiarismclass = "plagiarism_plugin_$plugin";
-        $plagiarismplugin = new $plagiarismclass;
-        if (method_exists($plagiarismplugin, 'cron')) {
-            mtrace('Processing cron function for plagiarism_plugin_' . $plugin . '...', '');
-            cron_trace_time_and_memory();
-            $plagiarismplugin->cron();
-        }
-    }
-}
+
 /**
  * helper function - also loads lib file of plagiarism plugin
  * @return array of available plugins
