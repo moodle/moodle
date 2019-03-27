@@ -173,6 +173,20 @@ class analytics_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests for the {@link \core_analytics\manager::load_default_models_for_all_components()} implementation.
+     */
+    public function test_load_default_models_for_all_components() {
+        $this->resetAfterTest();
+
+        $models = \core_analytics\manager::load_default_models_for_all_components();
+
+        $this->assertTrue(is_array($models['core']));
+        $this->assertNotEmpty($models['core']);
+        $this->assertNotEmpty($models['core'][0]['target']);
+        $this->assertNotEmpty($models['core'][0]['indicators']);
+    }
+
+    /**
      * Tests for the successful execution of the {@link \core_analytics\manager::validate_models_declaration()}.
      */
     public function test_validate_models_declaration() {

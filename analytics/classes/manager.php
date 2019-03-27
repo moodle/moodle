@@ -684,6 +684,43 @@ class manager {
     }
 
     /**
+     * Return the list of all the models declared anywhere in this Moodle installation.
+     *
+     * Models defined by the core and core subsystems come first, followed by those provided by plugins.
+     *
+     * @return array indexed by the frankenstyle component
+     */
+    public static function load_default_models_for_all_components(): array {
+
+        $tmp = [];
+
+        foreach (\core_component::get_component_list() as $type => $components) {
+            foreach (array_keys($components) as $component) {
+                if ($loaded = static::load_default_models_for_component($component)) {
+                    $tmp[$type][$component] = $loaded;
+                }
+            }
+        }
+
+        $result = [];
+
+        if ($loaded = static::load_default_models_for_component('core')) {
+            $result['core'] = $loaded;
+        }
+
+        if (!empty($tmp['core'])) {
+            $result += $tmp['core'];
+            unset($tmp['core']);
+        }
+
+        foreach ($tmp as $components) {
+            $result += $components;
+        }
+
+        return $result;
+    }
+
+    /**
      * Validate the declaration of prediction models according the syntax expected in the component's db folder.
      *
      * The expected structure looks like this:
