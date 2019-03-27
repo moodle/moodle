@@ -4,6 +4,10 @@ information provided here is intended especially for developers.
 === 3.7 ===
  * External function core_completion_external::get_activities_completion_status new returns the following additional field:
    - valueused (indicates whether the completion state affects the availability of other content)
+ * On the course page, only users with the capability 'moodle/course:isincompletionreports' (students, by default) can now tick the
+   completion checkboxes. Teachers no longer get working checkboxes; tey see slightly different icons that indicate whether
+   completion is enabled for the activity. These are the same icons which have always been shown to teachers before when the
+   enabled the course editing mode.
 
 === 2.9 ===
 
