@@ -1530,11 +1530,13 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($author, [$post]);
         $this->send_notifications_and_assert($commenter, [$post]);
         $messages = $this->messagesink->get_messages();
-        $customdata =  json_decode($messages[0]->customdata);
+        $customdata = json_decode($messages[0]->customdata);
         $this->assertEquals($forum->id, $customdata->instance);
         $this->assertEquals($forum->cmid, $customdata->cmid);
         $this->assertEquals($post->id, $customdata->postid);
         $this->assertEquals($discussion->id, $customdata->discussionid);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(1, (array) $customdata->actionbuttons);
     }
 }

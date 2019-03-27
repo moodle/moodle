@@ -97,7 +97,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertEquals($expectedurl->out(false), $message->contexturl);
         $this->assertEquals($expectedurlname, $message->contexturlname);
         // Test customdata.
-        $customdata =  json_decode($message->customdata);
+        $customdata = json_decode($message->customdata);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
         $this->assertContains('tokenpluginfile.php', $customdata->notificationiconurl);
         $userpicture = new \user_picture($u1);
@@ -226,7 +226,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u1->id, $message->useridto);
         // Test customdata.
-        $customdata =  json_decode($message->customdata);
+        $customdata = json_decode($message->customdata);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
 
         // Post a comment in a plan with reviewer. The reviewer is messaged.

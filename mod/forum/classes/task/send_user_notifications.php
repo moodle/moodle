@@ -360,6 +360,9 @@ class send_user_notifications extends \core\task\adhoc_task {
             'discussionid' => $discussion->id,
             'postid' => $post->id,
             'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),
+            'actionbuttons' => [
+                'reply' => get_string_manager()->get_string('reply', 'forum', null, $eventdata->userto->lang),
+            ],
         ];
 
         return message_send($eventdata);

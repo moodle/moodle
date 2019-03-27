@@ -309,7 +309,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->assertCount(1, $messages);
         $message = array_pop($messages);
         // Check we have the expected data.
-        $customdata =  json_decode($message->customdata);
+        $customdata = json_decode($message->customdata);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
         $this->assertObjectHasAttribute('hash', $customdata);
 

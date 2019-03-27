@@ -23,6 +23,7 @@
  */
 
 $string['abouttobeinstalled'] = 'about to be installed';
+$string['accept'] = 'Accept';
 $string['action'] = 'Action';
 $string['actionchoice'] = 'What do you want to do with the file \'{$a}\'?';
 $string['actions'] = 'Actions';

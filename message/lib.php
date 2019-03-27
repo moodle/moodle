@@ -356,6 +356,12 @@ function message_post_message($userfrom, $userto, $message, $format) {
     $userpicture->includetoken = $userto->id; // Generate an out-of-session token for the user receiving the message.
     $eventdata->customdata = [
         'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),
+        'actionbuttons' => [
+            'send' => get_string_manager()->get_string('send', 'message', null, $eventdata->userto->lang),
+        ],
+        'placeholders' => [
+            'send' => get_string_manager()->get_string('writeamessage', 'message', null, $eventdata->userto->lang),
+        ],
     ];
     return message_send($eventdata);
 }

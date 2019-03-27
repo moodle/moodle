@@ -519,7 +519,7 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(7, $tmpitems);   // 2 from the first page + 5 from the second page.
 
         // And finally, save everything! We are going to modify one previous recorded value.
-        $messagesSink = $this->redirectMessages();
+        $messagessink = $this->redirectMessages();
         $data[2]['value'] = 2; // 2 is value of the option 'b'.
         $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
         $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata);
@@ -544,10 +544,10 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $completed->courseid);
 
         // Test notifications sent.
-        $messages = $messagesSink->get_messages();
-        $messagesSink->close();
+        $messages = $messagessink->get_messages();
+        $messagessink->close();
         // Test customdata.
-        $customdata =  json_decode($messages[0]->customdata);
+        $customdata = json_decode($messages[0]->customdata);
         $this->assertEquals($this->feedback->id, $customdata->instance);
         $this->assertEquals($this->feedback->cmid, $customdata->cmid);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);

@@ -4758,8 +4758,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $messages = $sink->get_messages();
         $sink->close();
         // Test customdata.
-        $customdata =  json_decode($messages[0]->customdata);
+        $customdata = json_decode($messages[0]->customdata);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(2, (array) $customdata->actionbuttons);
 
         $this->assertEquals($user1->id, $request->userid);
         $this->assertEquals($user2->id, $request->requesteduserid);
@@ -5783,13 +5785,17 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Send a message to an individual conversation.
         $sink = $this->redirectEvents();
-        $messagesSink = $this->redirectMessages();
+        $messagessink = $this->redirectMessages();
         $message1 = \core_message\api::send_message_to_conversation($user1->id, $ic1->id, 'this is a message', FORMAT_MOODLE);
         $events = $sink->get_events();
-        $messages = $messagesSink->get_messages();
+        $messages = $messagessink->get_messages();
         // Test customdata.
-        $customdata =  json_decode($messages[0]->customdata);
+        $customdata = json_decode($messages[0]->customdata);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(1, (array) $customdata->actionbuttons);
+        $this->assertObjectHasAttribute('placeholders', $customdata);
+        $this->assertCount(1, (array) $customdata->placeholders);
 
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
@@ -5829,10 +5835,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Send a message to a group conversation.
         $sink = $this->redirectEvents();
-        $messagesSink = $this->redirectMessages();
+        $messagessink = $this->redirectMessages();
         $message1 = \core_message\api::send_message_to_conversation($user1->id, $gc2->id, 'message to the group', FORMAT_MOODLE);
         $events = $sink->get_events();
-        $messages = $messagesSink->get_messages();
+        $messages = $messagessink->get_messages();
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
@@ -5840,7 +5846,12 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertAttributeEquals('message to the group', 'text', $message1);
         $this->assertObjectHasAttribute('timecreated', $message1);
         // Test customdata.
-        $this->assertObjectHasAttribute('customdata', $messages[0]);    // No group image means no customdata.
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(1, (array) $customdata->actionbuttons);
+        $this->assertObjectHasAttribute('placeholders', $customdata);
+        $this->assertCount(1, (array) $customdata->placeholders);
+        $this->assertObjectNotHasAttribute('notificationiconurl', $customdata);    // No group image means no image.
 
         // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
         // however, we can still determine the number and ids of any recipients this way.
@@ -5893,10 +5904,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $sink = $this->redirectMessages();
 
         // Send a message to a group conversation.
-        $messagesSink = $this->redirectMessages();
+        $messagessink = $this->redirectMessages();
         $message1 = \core_message\api::send_message_to_conversation($user1->id, $conversations[0]->id,
             'message to the group', FORMAT_MOODLE);
-        $messages = $messagesSink->get_messages();
+        $messages = $messagessink->get_messages();
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
@@ -5904,9 +5915,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertAttributeEquals('message to the group', 'text', $message1);
         $this->assertObjectHasAttribute('timecreated', $message1);
         // Test customdata.
-        $customdata =  json_decode($messages[0]->customdata);
+        $customdata = json_decode($messages[0]->customdata);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
-        $this->assertEquals($groupimageurl, $customdata->notificationiconurl);;
+        $this->assertEquals($groupimageurl, $customdata->notificationiconurl);
+        $this->assertEquals($group->name, $customdata->conversationname);
+
     }
 
     /**

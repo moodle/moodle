@@ -97,7 +97,14 @@ class message_popup_externallib_testcase extends advanced_testcase {
         $result = message_popup_external::get_popup_notifications($recipient->id, false, 0, 0);
         $this->assertCount(4, $result['notifications']);
         // Check we receive custom data as a unserialisable json.
-        $this->assertObjectHasAttribute('datakey', json_decode($result['notifications'][0]->customdata));
+        $found = 0;
+        foreach ($result['notifications'] as $notification) {
+            if (!empty($notification->customdata)) {
+                $this->assertObjectHasAttribute('datakey', json_decode($notification->customdata));
+                $found++;
+            }
+        }
+        $this->assertEquals(2, $found);
 
         $this->setUser($recipient);
         $result = message_popup_external::get_popup_notifications($recipient->id, false, 0, 0);

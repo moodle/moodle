@@ -1521,7 +1521,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertEquals(1, $messages[0]->notification);
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
         // Test customdata.
-        $customdata =  json_decode($messages[0]->customdata);
+        $customdata = json_decode($messages[0]->customdata);
         $this->assertEquals($assign->get_course_module()->id, $customdata->cmid);
         $this->assertEquals($assign->get_instance()->id, $customdata->instance);
         $this->assertEquals('feedbackavailable', $customdata->messagetype);

@@ -1193,6 +1193,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::FINISHED, $result['state']);
         $messages = $sink->get_messages();
+        $message = reset($messages);
         $sink->close();
         // Test customdata.
         if (!empty($message->customdata)) {

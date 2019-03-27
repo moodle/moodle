@@ -1915,6 +1915,15 @@ class api {
 
         $eventdata->timecreated     = time();
         $eventdata->notification    = 0;
+        // Custom data for event.
+        $customdata = [
+            'actionbuttons' => [
+                'send' => get_string('send', 'message'),
+            ],
+            'placeholders' => [
+                'send' => get_string('writeamessage', 'message'),
+            ],
+        ];
 
         $conv = $DB->get_record('message_conversations', ['id' => $conversationid]);
         if ($conv->type == self::MESSAGE_CONVERSATION_TYPE_GROUP) {
@@ -1922,16 +1931,20 @@ class api {
             // Conversation image.
             $imageurl = isset($convextrafields[$conv->id]) ? $convextrafields[$conv->id]['imageurl'] : null;
             if ($imageurl) {
-                $eventdata->customdata = [
-                    'notificationiconurl' => $imageurl,
-                ];
+                $customdata['notificationiconurl'] = $imageurl;
             }
+            // Conversation name.
+            if (is_null($conv->contextid)) {
+                $convcontext = \context_user::instance($userid);
+            } else {
+                $convcontext = \context::instance_by_id($conv->contextid);
+            }
+            $customdata['conversationname'] = format_string($conv->name, true, ['context' => $convcontext]);
         } else if ($conv->type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
             $userpicture = new \user_picture($eventdata->userfrom);
-            $eventdata->customdata = [
-                'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),
-            ];
+            $customdata['notificationiconurl'] = $userpicture->get_url($PAGE)->out(false);
         }
+        $eventdata->customdata = $customdata;
 
         $messageid = message_send($eventdata);
 
@@ -2564,6 +2577,10 @@ class api {
         $userpicture->includetoken = $userto->id; // Generate an out-of-session token for the user receiving the message.
         $message->customdata = [
             'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),
+            'actionbuttons' => [
+                'accept' => get_string_manager()->get_string('accept', 'moodle', null, $userto->lang),
+                'reject' => get_string_manager()->get_string('reject', 'moodle', null, $userto->lang),
+            ],
         ];
 
         message_send($message);
