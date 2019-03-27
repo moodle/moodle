@@ -150,6 +150,15 @@ $tasks = array(
         'month' => '*'
     ),
     array(
+        'classname' => 'core\task\grade_history_cleanup_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '0',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+    array(
         'classname' => 'core\task\completion_regular_task',
         'blocking' => 0,
         'minute' => '*',

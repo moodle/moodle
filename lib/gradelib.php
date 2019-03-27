@@ -1553,58 +1553,6 @@ function grade_user_unenrol($courseid, $userid) {
 }
 
 /**
- * Grading cron job. Performs background clean up on the gradebook
- */
-function grade_cron() {
-    global $CFG, $DB;
-
-    $now = time();
-
-    $sql = "SELECT i.*
-              FROM {grade_items} i
-             WHERE i.locked = 0 AND i.locktime > 0 AND i.locktime < ? AND EXISTS (
-                SELECT 'x' FROM {grade_items} c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
-
-    // go through all courses that have proper final grades and lock them if needed
-    $rs = $DB->get_recordset_sql($sql, array($now));
-    foreach ($rs as $item) {
-        $grade_item = new grade_item($item, false);
-        $grade_item->locked = $now;
-        $grade_item->update('locktime');
-    }
-    $rs->close();
-
-    $grade_inst = new grade_grade();
-    $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
-
-    $sql = "SELECT $fields
-              FROM {grade_grades} g, {grade_items} i
-             WHERE g.locked = 0 AND g.locktime > 0 AND g.locktime < ? AND g.itemid=i.id AND EXISTS (
-                SELECT 'x' FROM {grade_items} c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
-
-    // go through all courses that have proper final grades and lock them if needed
-    $rs = $DB->get_recordset_sql($sql, array($now));
-    foreach ($rs as $grade) {
-        $grade_grade = new grade_grade($grade, false);
-        $grade_grade->locked = $now;
-        $grade_grade->update('locktime');
-    }
-    $rs->close();
-
-    //TODO: do not run this cleanup every cron invocation
-    // cleanup history tables
-    if (!empty($CFG->gradehistorylifetime)) {  // value in days
-        $histlifetime = $now - ($CFG->gradehistorylifetime * 3600 * 24);
-        $tables = array('grade_outcomes_history', 'grade_categories_history', 'grade_items_history', 'grade_grades_history', 'scale_history');
-        foreach ($tables as $table) {
-            if ($DB->delete_records_select($table, "timemodified < ?", array($histlifetime))) {
-                mtrace("    Deleted old grade history records from '$table'");
-            }
-        }
-    }
-}
-
-/**
  * Reset all course grades, refetch from the activities and recalculate
  *
  * @param int $courseid The course to reset
