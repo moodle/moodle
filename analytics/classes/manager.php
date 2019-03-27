@@ -770,4 +770,14 @@ class manager {
 
         return $created;
     }
+
+    /**
+     * Returns a string uniquely representing the given model declaration.
+     *
+     * @param array $model Model declaration
+     * @return string complying with PARAM_ALPHANUM rules and starting with an 'id' prefix
+     */
+    public static function model_declaration_identifier(array $model) : string {
+        return 'id'.sha1(serialize($model));
+    }
 }

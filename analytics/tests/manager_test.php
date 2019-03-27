@@ -403,4 +403,47 @@ class analytics_manager_testcase extends advanced_testcase {
         $defaultforevaluation = \core_analytics\manager::get_time_splitting_methods_for_evaluation(false);
         $this->assertArrayNotHasKey('\core\analytics\time_splitting\quarters', $defaultforevaluation);
     }
+
+    /**
+     * Test the implementation of the {@link \core_analytics\manager::model_declaration_identifier()}.
+     */
+    public function test_model_declaration_identifier() {
+
+        $noteaching1 = $this->load_models_from_fixture_file('no_teaching');
+        $noteaching2 = $this->load_models_from_fixture_file('no_teaching');
+        $noteaching3 = $this->load_models_from_fixture_file('no_teaching');
+
+        // Same model declaration should always lead to same identifier.
+        $this->assertEquals(
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching1)),
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching2))
+        );
+
+        // If something is changed, the identifier should change, too.
+        $noteaching2[0]['target'] .= '_';
+        $this->assertNotEquals(
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching1)),
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching2))
+        );
+
+        $noteaching3[0]['indicators'][] = '\core_analytics\local\indicator\binary';
+        $this->assertNotEquals(
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching1)),
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching3))
+        );
+
+        // The identifier is supposed to contain PARAM_ALPHANUM only.
+        $this->assertEquals(
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching1)),
+            clean_param(\core_analytics\manager::model_declaration_identifier(reset($noteaching1)), PARAM_ALPHANUM)
+        );
+        $this->assertEquals(
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching2)),
+            clean_param(\core_analytics\manager::model_declaration_identifier(reset($noteaching2)), PARAM_ALPHANUM)
+        );
+        $this->assertEquals(
+            \core_analytics\manager::model_declaration_identifier(reset($noteaching3)),
+            clean_param(\core_analytics\manager::model_declaration_identifier(reset($noteaching3)), PARAM_ALPHANUM)
+        );
+    }
 }
