@@ -62,7 +62,7 @@ function loadContent(datafile, callback) {
     }
 
     newscript.type = 'text/javascript';
-    newscript.src = data;
+    newscript.src = encodeURIComponent(data);
     newscript.charset = 'utf-8';
     document.getElementsByTagName("head")[0].appendChild(newscript);
 
