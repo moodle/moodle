@@ -1,5 +1,5 @@
-This file describes API changes in the recentlyaccesscourses block code.
+This file describes API changes in the recentlyaccessedcourses block code.
 
 === 3.7 ===
 
-* The 'block/recentlyaccesscourses:addinstance' capability has been removed. It has never been used in code.
+* The 'block/recentlyaccessedcourses:addinstance' capability has been removed. It has never been used in code.
