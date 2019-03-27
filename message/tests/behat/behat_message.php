@@ -194,11 +194,12 @@ class behat_message extends behat_base {
      * @Given /^I open contact menu$/
      */
     public function i_open_contact_menu() {
-         $this->execute('behat_general::i_click_on_in_the',
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+        $this->execute('behat_general::i_click_on_in_the',
             array(
-                '',
                 'button',
-                '[data-region="header-container"]',
+                'css_element',
+                '[data-region="message-drawer"] [data-region="header-container"]',
                 'css_element',
             )
         );
