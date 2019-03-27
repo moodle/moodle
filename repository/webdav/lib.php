@@ -184,7 +184,7 @@ class repository_webdav extends repository {
         $mform->setType('webdav_port', PARAM_INT);
         $mform->addElement('text', 'webdav_user', get_string('webdav_user', 'repository_webdav'), array('size' => '40'));
         $mform->setType('webdav_user', PARAM_RAW_TRIMMED); // Not for us to clean.
-        $mform->addElement('password', 'webdav_password', get_string('webdav_password', 'repository_webdav'),
+        $mform->addElement('passwordunmask', 'webdav_password', get_string('webdav_password', 'repository_webdav'),
             array('size' => '40'));
     }
     public function supported_returntypes() {
