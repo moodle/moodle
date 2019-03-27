@@ -62,8 +62,33 @@ class models_list implements \renderable, \templatable {
         global $PAGE;
 
         $data = new \stdClass();
-        $data->importmodelurl = new \moodle_url('/admin/tool/analytics/importmodel.php');
-        $data->createmodelurl = new \moodle_url('/admin/tool/analytics/createmodel.php');
+
+        $newmodelmenu = new \action_menu();
+        $newmodelmenu->set_menu_trigger(get_string('newmodel', 'tool_analytics'), 'btn btn-default');
+        $newmodelmenu->set_alignment(\action_menu::TL, \action_menu::BL);
+
+        $newmodelmenu->add(new \action_menu_link(
+            new \moodle_url('/admin/tool/analytics/createmodel.php'),
+            new \pix_icon('i/edit', ''),
+            get_string('createmodel', 'tool_analytics'),
+            false
+        ));
+
+        $newmodelmenu->add(new \action_menu_link(
+            new \moodle_url('/admin/tool/analytics/importmodel.php'),
+            new \pix_icon('i/import', ''),
+            get_string('importmodel', 'tool_analytics'),
+            false
+        ));
+
+        $newmodelmenu->add(new \action_menu_link(
+            new \moodle_url('/admin/tool/analytics/restoredefault.php'),
+            new \pix_icon('i/reload', ''),
+            get_string('restoredefault', 'tool_analytics'),
+            false
+        ));
+
+        $data->newmodelmenu = $newmodelmenu->export_for_template($output);
 
         $onlycli = get_config('analytics', 'onlycli');
         if ($onlycli === false) {

@@ -1,0 +1,225 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_analytics/restorable_models
+
+    Displays the list of missing prediction models that can be restored.
+
+    Classes required for JS:
+    * The list should be wrapped within a id="restorablemodelslist" element.
+
+    Data attributes required for JS:
+    * [data-widget="toggle"] indicates the clickable element for expanding/collapsing
+      the list of indicators used by the given model.
+    * [data-select] indicates a clickable element used for selecting multiple checkboxes.
+    * [data-component] should be set for checkboxes that select the particular model.
+
+    Context variables required for this template:
+    * hasdata: boolean - do we have data to display
+    * submiturl: string - URL where the form should be submitted
+    * backurl: string - URL where the user should be sent without making any changes
+    * sesskey: string
+    * components: array - list of components to display
+        - name: string - human readable name of the component
+        - component: string - frankenstyle name of the component
+        - models: array - list of restorable models provided by the component
+            + defid: string - model definition identifier
+            + targetname: string - human readable name of the target
+            + targetclass: string - fully qualified classname of the target
+            + indicatorsnum: int - number of indicators
+            + indicators: array - list of indicators
+                ~ name: string - human readable name of the indicator
+                ~ classname: string - fully qualified classname of the indicator
+
+    Example context (json):
+    {
+        "hasdata": true,
+        "submiturl": "https://example.com/moodle/admin/tool/analytics/restoredefault.php",
+        "backurl": "https://example.com/moodle/admin/tool/analytics/index.php",
+        "sesskey": "abcdefg123456",
+        "components": [
+            {
+                "name": "Core",
+                "component": "core",
+                "models": [
+                    {
+                        "defid": "id24680aceg",
+                        "targetname": "No teaching",
+                        "targetclass": "\\core\\analytics\\target\\no_teaching",
+                        "indicatorsnum": 2,
+                        "indicators": [
+                            {
+                                "name": "There are no teachers",
+                                "classname": "\\core\\analytics\\indicator\\no_teacher"
+                            },
+                            {
+                                "name": "There are no students",
+                                "classname": "\\core\\analytics\\indicator\\no_students"
+                            }
+                        ]
+                    },
+                    {
+                        "defid": "id13579bdfi",
+                        "targetname": "Students at risk of dropping out",
+                        "targetclass": "\\core\\analytics\\target\\course_dropout",
+                        "indicatorsnum": 1,
+                        "indicators": [
+                            {
+                                "name": "Read actions amount",
+                                "classname": "\\core\\analytics\\indicator\\read_actions"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Custom analytics plugin",
+                "component": "tool_customanalytics",
+                "models": [
+                    {
+                        "defid": "id566dsgffg655",
+                        "targetname": "Cheater",
+                        "targetclass": "\\tool_customanalytics\\analytics\\target\\cheater",
+                        "indicatorsnum": 1,
+                        "indicators": [
+                            {
+                                "name": "Copy-pasted submissions",
+                                "classname": "\\tool_customanalytics\\analytics\\indicator\\copy_paster_submissions"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}}
+<div class="box">
+    {{^hasdata}}
+    <p>{{#str}} restoredefaultnone, tool_analytics {{/str}}</p>
+    <div><a href="{{backurl}}" class="btn btn-secondary">{{#str}} back {{/str}}</a></div>
+    {{/hasdata}}
+
+    {{#hasdata}}
+    <p>{{#str}} restoredefaultinfo, tool_analytics {{/str}}</p>
+    <form method="post" action="{{submiturl}}">
+        <table id="restorablemodelslist" class="generaltable fullwidth">
+            <colgroup>
+                <col width="10%">
+                <col width="45%">
+                <col width="45%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th scope="col"><a href="" data-select="*">{{#str}} selectall {{/str}}</a></th>
+                    <th scope="col">{{#str}} target, tool_analytics {{/str}}</th>
+                    <th scope="col">{{#str}} indicators, tool_analytics {{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{#components}}
+                <tr>
+                    <th scope="rowgroup" colspan="3">
+                        <span class="component-name">
+                            <a href=""
+                                    title="{{#str}} componentselect, tool_analytics, {{name}} {{/str}}"
+                                    data-select="{{component}}">
+                                {{name}}
+                            </a>
+                        </span>
+                        <div><small class="component-frankenstyle">{{component}}</small></div>
+                    </th>
+                </tr>
+                {{#models}}
+                <tr>
+                    <td>
+                        <input data-component="{{component}}" type="checkbox" name="restoreid[]" value="{{defid}}">
+                    </td>
+                    <td>
+                        <span class="target-name">{{targetname}}</span>
+                        {{#targethelp}}
+                            {{>core/help_icon}}
+                        {{/targethelp}}
+                        <div><small class="target-class">{{targetclass}}</small></div>
+                    </td>
+                    <td>
+                        <a data-widget="toggle"
+                                title="{{#str}} clicktohideshow {{/str}}"
+                                aria-expanded="false"
+                                aria-controls="indicators-{{defid}}"
+                                role="button"
+                                href="">
+                            {{#str}} indicatorsnum, tool_analytics, {{indicatorsnum}} {{/str}}
+                        </a>
+                        <ul class="hidden listunstyled" id="indicators-{{defid}}">
+                        {{#indicators}}
+                            <li>
+                                {{name}}
+                                {{#indicatorhelp}}
+                                    {{>core/help_icon}}
+                                {{/indicatorhelp}}
+                                <div><small>{{classname}}</small></div>
+                            </li>
+                        {{/indicators}}
+                        </ul>
+                    </td>
+                </tr>
+                {{/models}}
+            {{/components}}
+            </tbody>
+        </table>
+        <div>
+            <input class="btn btn-primary" type="submit" value="{{#str}} restoredefaultsubmit, tool_analytics {{/str}}">
+            <input class="btn btn-secondary" type="reset" value="{{#str}} componentselectnone, tool_analytics {{/str}}">
+            <a href="{{backurl}}" class="btn btn-secondary">{{#str}} back {{/str}}</a>
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+        </div>
+    </form>
+    {{/hasdata}}
+</div>
+
+{{#js}}
+require(['jquery'], function($) {
+
+    // Toggle the visibility of the indicators list.
+    $('#restorablemodelslist').on('click', '[data-widget="toggle"]', function(e) {
+        e.preventDefault();
+        var toggle = $(e.currentTarget);
+        var listid = toggle.attr('aria-controls');
+
+        $(document.getElementById(listid)).toggle();
+
+        if (toggle.attr('aria-expanded') == 'false') {
+            toggle.attr('aria-expanded', 'true');
+        } else {
+            toggle.attr('aria-expanded', 'false');
+        }
+    });
+
+    // Selecting all / all in component checkboxes.
+    $('#restorablemodelslist').on('click', '[data-select]', function(e) {
+        e.preventDefault();
+        var handler = $(e.currentTarget);
+        var component = handler.attr('data-select');
+
+        if (component == '*') {
+            $('input[data-component]').prop('checked', true);
+        } else {
+            $('input[data-component="' + component + '"]').prop('checked', true);
+        }
+    });
+});
+{{/js}}
