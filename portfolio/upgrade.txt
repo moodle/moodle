@@ -1,6 +1,10 @@
 This files describes API changes in /portfolio/ portfolio system,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+* The portfolio_cron() function has been removed. Please use portfolio_cron_task scheduled task instead.
+
 === 3.1 ===
 
 * The following functions, previously used (exclusively) by upgrade steps are not available
