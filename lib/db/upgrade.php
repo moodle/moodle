@@ -3000,5 +3000,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019041300.01);
     }
 
+    if ($oldversion < 2019042200.00) {
+
+        // Define table role_sortorder to be dropped.
+        $table = new xmldb_table('role_sortorder');
+
+        // Conditionally launch drop table for role_sortorder.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019042200.00);
+    }
+
     return true;
 }
