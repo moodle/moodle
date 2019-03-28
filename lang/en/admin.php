@@ -1244,6 +1244,7 @@ $string['taskplagiarismcron'] = 'Background processing for legacy cron in plagia
 $string['taskportfoliocron'] = 'Background processing for portfolio plugins';
 $string['taskprocessing'] = 'Task processing';
 $string['taskquestioncron'] = 'Background processing for cleaning up the old question previews';
+$string['taskquestionstatscleanupcron'] = 'Background processing for cleaning up the old question statistics cache';
 $string['taskrefreshsystemtokens'] = 'Refresh OAuth tokens for service accounts';
 $string['taskregistrationcron'] = 'Site registration';
 $string['tasksendfailedloginnotifications'] = 'Send failed login notifications';
