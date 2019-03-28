@@ -132,6 +132,7 @@ $string['cliupgradedefaultheading'] = 'Setting new default values';
 $string['cliupgradedefaultverbose'] = 'New setting: {$a->name}, Default value: {$a->defaultsetting}';
 $string['cliupgradefinished'] = 'Command line upgrade from {$a->oldversion} to {$a->newversion} completed successfully.';
 $string['cliupgradenoneed'] = 'No upgrade needed for the installed version {$a}. Thanks for coming anyway!';
+$string['cliupgradepending'] = 'An upgrade is pending';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
 $string['commentsperpage'] = 'Comments displayed per page';
 $string['commonactivitysettings'] = 'Common activity settings';

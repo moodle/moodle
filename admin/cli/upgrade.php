@@ -52,7 +52,8 @@ list($options, $unrecognized) = cli_get_params(
         'allow-unstable'    => false,
         'help'              => false,
         'lang'              => $lang,
-        'verbose-settings'  => false
+        'verbose-settings'  => false,
+        'is-pending'        => false,
     ),
     array(
         'h' => 'help'
@@ -88,6 +89,8 @@ Options:
 --verbose-settings    Show new settings values. By default only the name of
                       new core or plugin settings are displayed. This option
                       outputs the new values as well as the setting name.
+--is-pending          If an upgrade is needed it exits with an error code of
+                      2 so it distinct from other types of errors.
 -h, --help            Print out this help
 
 Example:
@@ -114,6 +117,10 @@ $newversion = "$release ($version)";
 
 if (!moodle_needs_upgrading()) {
     cli_error(get_string('cliupgradenoneed', 'core_admin', $newversion), 0);
+}
+
+if ($options['is-pending']) {
+    cli_error(get_string('cliupgradepending', 'core_admin'), 2);
 }
 
 // Test environment first.
