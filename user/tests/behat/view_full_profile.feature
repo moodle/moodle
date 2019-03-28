@@ -83,9 +83,12 @@ Feature: Access to full profiles of users
     And I click on "//div[@class='userselector']/descendant::option[contains(., 'Student 3')]" "xpath_element"
     And I press "Add"
     And I log out
+    # Message search will not return a course contact unless the searcher shares a course with them,
+    # or site-wide messaging is enabled ($CFG->messagingallusers).
     When I log in as "student1"
-    And I view the "Student 3" contact in the message area
-    Then I should see "First access to site"
+    And I open messaging
+    And I search for "Student 3" in messaging
+    Then I should see "No results"
 
   @javascript
   Scenario: View full profiles of someone in the same group in a course with separate groups.

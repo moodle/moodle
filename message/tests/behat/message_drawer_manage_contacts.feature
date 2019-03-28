@@ -11,6 +11,15 @@ Feature: Manage contacts
       | student2 | Student   | 2        | student2@example.com |
       | student3 | Student   | 3        | student3@example.com |
       | student4 | Student   | 4        | student4@example.com |
+    And the following "courses" exist:
+      | fullname | shortname |
+      | course1 | C1 |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | student1 | C1 | student |
+      | student2 | C1 | student |
+      | student3 | C1 | student |
+      | student4 | C1 | student |
     And the following "message contacts" exist:
       | user     | contact |
       | student1 | student2 |
