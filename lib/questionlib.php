@@ -659,7 +659,7 @@ function question_move_question_tags_to_new_context(array $questions, context $n
 /**
  * This function should be considered private to the question bank, it is called from
  * question/editlib.php question/contextmoveq.php and a few similar places to to the
- * work of acutally moving questions and associated data. However, callers of this
+ * work of actually moving questions and associated data. However, callers of this
  * function also have to do other work, which is why you should not call this method
  * directly from outside the questionbank.
  *

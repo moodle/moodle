@@ -54,7 +54,7 @@ require_once(__DIR__ . '/../interactive/behaviour.php');
  *  - For the last part, they were wrong at the last try, so 0/3.
  * So, total mark is 6/12. (Really, a fraction of 0.5.)
  *
- * Of course, the details of the grading are acutally up to the particular
+ * Of course, the details of the grading are actually up to the particular
  * question type. The point is that the final grade can take into account all
  * of the tries the student made.
  *

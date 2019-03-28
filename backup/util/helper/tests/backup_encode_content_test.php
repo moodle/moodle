@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_course_task.class.php');
 /**
  * Tests for encoding content links in backup_course_task.
  *
- * The code that this tests is acutally in backup/moodle2/backup_course_task.class.php,
+ * The code that this tests is actually in backup/moodle2/backup_course_task.class.php,
  * but there is no place for unit tests near there, and perhaps one day it will
  * be refactored so it becomes more generic.
  */

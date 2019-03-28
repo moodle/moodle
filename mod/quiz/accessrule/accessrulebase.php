@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * want to say that access is allowed, or explain the reason why it is block.
  * Therefore instead of is_access_allowed(...) we have prevent_access(...) that
  * return false if access is permitted, or a string explanation (which is treated
- * as true) if access should be blocked. Slighly unnatural, but acutally the easist
+ * as true) if access should be blocked. Slighly unnatural, but actually the easiest
  * way to implement this.
  *
  * @copyright 2009 Tim Hunt
