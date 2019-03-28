@@ -237,3 +237,9 @@ div.iomadlink {
     font-family: FontAwesome;
     content: "\f0e4  ";
 }
+
+/* company admin block */
+div.block_iomad_company_admin div.iomadlink_container {
+    top: 0px;
+    opacity: 100;
+}

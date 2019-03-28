@@ -98,3 +98,9 @@ body {
 #fitem_id_auth{
     display: none;
 }
+
+/* Company admin block */
+div.block_iomad_company_admin div.iomadlink_container {
+    top: 0px;
+    opacity: 100;
+}
