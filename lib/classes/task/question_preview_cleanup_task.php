@@ -45,12 +45,29 @@ class question_preview_cleanup_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        global $CFG;
 
-        // Run question bank clean-up.
-        require_once($CFG->libdir . '/questionlib.php');
-        \question_bank::cron();
+        // We delete previews that have not been touched for 24 hours.
+        $lastmodifiedcutoff = time() - DAYSECS;
 
+        mtrace("\n  Cleaning up old question previews...", '');
+        $oldpreviews = new \qubaid_join('{question_usages} quba', 'quba.id',
+            'quba.component = :qubacomponent
+                    AND NOT EXISTS (
+                        SELECT 1
+                          FROM {question_attempts}      subq_qa
+                          JOIN {question_attempt_steps} subq_qas ON subq_qas.questionattemptid = subq_qa.id
+                          JOIN {question_usages}        subq_qu  ON subq_qu.id = subq_qa.questionusageid
+                         WHERE subq_qa.questionusageid = quba.id
+                           AND subq_qu.component = :qubacomponent2
+                           AND (subq_qa.timemodified > :qamodifiedcutoff
+                                    OR subq_qas.timecreated > :stepcreatedcutoff)
+                    )
+            ',
+            ['qubacomponent' => 'core_question_preview', 'qubacomponent2' => 'core_question_preview',
+                'qamodifiedcutoff' => $lastmodifiedcutoff, 'stepcreatedcutoff' => $lastmodifiedcutoff]);
+
+        \question_engine::delete_questions_usage_by_activities($oldpreviews);
+        mtrace('done.');
     }
 
 }
