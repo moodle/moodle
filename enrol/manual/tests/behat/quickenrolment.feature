@@ -155,6 +155,16 @@ Feature: Teacher can search and enrol users one by one into the course
     Then I should see "Too many users (>100) to show"
 
   @javascript
+  Scenario: Changing the Maximum users per page setting affects the enrolment pop-up.
+    Given the following config values are set as admin:
+      | maxusersperpage | 5 |
+    And I navigate to course participants
+    And I press "Enrol users"
+    When I set the field "Select users" to "student00"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
+    Then I should see "Too many users (>5) to show"
+
+  @javascript
   Scenario: Change the Show user identity setting affects the enrolment pop-up.
     Given I log out
     When I log in as "admin"
