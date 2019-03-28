@@ -460,4 +460,19 @@ class analytics_manager_testcase extends advanced_testcase {
             clean_param(\core_analytics\manager::model_declaration_identifier(reset($noteaching3)), PARAM_ALPHANUM)
         );
     }
+
+    /**
+     * Tests for the {@link \core_analytics\manager::get_declared_target_and_indicators_instances()}.
+     */
+    public function test_get_declared_target_and_indicators_instances() {
+        $this->resetAfterTest();
+
+        $definition = $this->load_models_from_fixture_file('no_teaching');
+
+        list($target, $indicators) = \core_analytics\manager::get_declared_target_and_indicators_instances($definition[0]);
+
+        $this->assertTrue($target instanceof \core_analytics\local\target\base);
+        $this->assertNotEmpty($indicators);
+        $this->assertContainsOnlyInstancesOf(\core_analytics\local\indicator\base::class, $indicators);
+    }
 }

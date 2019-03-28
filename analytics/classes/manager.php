@@ -784,14 +784,7 @@ class manager {
      */
     public static function create_declared_model(array $definition): \core_analytics\model {
 
-        $target = static::get_target($definition['target']);
-
-        $indicators = [];
-
-        foreach ($definition['indicators'] as $indicatorname) {
-            $indicator = static::get_indicator($indicatorname);
-            $indicators[$indicator->get_id()] = $indicator;
-        }
+        list($target, $indicators) = static::get_declared_target_and_indicators_instances($definition);
 
         if (isset($definition['timesplitting'])) {
             $timesplitting = $definition['timesplitting'];
@@ -816,5 +809,25 @@ class manager {
      */
     public static function model_declaration_identifier(array $model) : string {
         return 'id'.sha1(serialize($model));
+    }
+
+    /**
+     * Given a model definition, return actual target and indicators instances.
+     *
+     * @param array $definition See {@link self::validate_models_declaration()} for the syntax.
+     * @return array [0] => target instance, [1] => array of indicators instances
+     */
+    public static function get_declared_target_and_indicators_instances(array $definition): array {
+
+        $target = static::get_target($definition['target']);
+
+        $indicators = [];
+
+        foreach ($definition['indicators'] as $indicatorname) {
+            $indicator = static::get_indicator($indicatorname);
+            $indicators[$indicator->get_id()] = $indicator;
+        }
+
+        return [$target, $indicators];
     }
 }
