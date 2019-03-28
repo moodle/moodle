@@ -48,6 +48,7 @@ class core_userliblib_testcase extends advanced_testcase {
         // Create user and modify user profile.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
 
         $course1 = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course1->id);
@@ -72,6 +73,68 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->assertEquals(fullname($user2), $result['fullname']);
         $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
 
+        // Get user2 details as a user who doesn't share any course with user2.
+        $this->setUser($user3);
+        $result = user_get_user_details_courses($user2);
+        $this->assertNull($result);
+    }
+
+    /**
+     * Verify return when course groupmode set to 'no groups'.
+     */
+    public function test_user_get_user_details_courses_groupmode_nogroups() {
+        $this->resetAfterTest();
+
+        // Enrol 2 users into a course with groupmode set to 'no groups'.
+        // Profiles should be visible.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course((object) ['groupmode' => 0]);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+
+        $this->setUser($user1);
+        $userdetails = user_get_user_details_courses($user2);
+        $this->assertInternalType('array', $userdetails);
+        $this->assertEquals($user2->id, $userdetails['id']);
+    }
+
+    /**
+     * Verify return when course groupmode set to 'separate groups'.
+     */
+    public function test_user_get_user_details_courses_groupmode_separate() {
+        $this->resetAfterTest();
+
+        // Enrol 2 users into a course with groupmode set to 'separate groups'.
+        // The users are not in any groups, so profiles should be hidden (same as if they were in separate groups).
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course((object) ['groupmode' => 1]);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+
+        $this->setUser($user1);
+        $this->assertNull(user_get_user_details_courses($user2));
+    }
+
+    /**
+     * Verify return when course groupmode set to 'visible groups'.
+     */
+    public function test_user_get_user_details_courses_groupmode_visible() {
+        $this->resetAfterTest();
+
+        // Enrol 2 users into a course with groupmode set to 'visible groups'.
+        // The users are not in any groups, and profiles should be visible because of the groupmode.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course((object) ['groupmode' => 2]);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+
+        $this->setUser($user1);
+        $userdetails = user_get_user_details_courses($user2);
+        $this->assertInternalType('array', $userdetails);
+        $this->assertEquals($user2->id, $userdetails['id']);
     }
 
     /**
