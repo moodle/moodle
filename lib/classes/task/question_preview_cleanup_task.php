@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A scheduled task.
+ * Task to cleanup old question previews.
  *
  * @package    core
  * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com
@@ -24,9 +24,12 @@
 namespace core\task;
 
 /**
- * Simple task to run the question cron.
+ * A task to cleanup old question previews.
+ *
+ * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_cron_task extends scheduled_task {
+class question_preview_cleanup_task extends scheduled_task {
 
     /**
      * Get a descriptive name for this task (shown to admins).

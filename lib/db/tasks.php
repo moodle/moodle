@@ -213,7 +213,7 @@ $tasks = array(
         'month' => '*'
     ),
     array(
-        'classname' => 'core\task\question_cron_task',
+        'classname' => 'core\task\question_preview_cleanup_task',
         'blocking' => 0,
         'minute' => '*',
         'hour' => '*',
