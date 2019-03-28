@@ -28,12 +28,14 @@ define([
         'core/notification',
         'mod_forum/repository',
         'mod_forum/selectors',
+        'core/str',
     ], function(
         $,
         Templates,
         Notification,
         Repository,
-        Selectors
+        Selectors,
+        String
     ) {
 
     /**
@@ -54,6 +56,15 @@ define([
                 })
                 .then(function(html, js) {
                     return Templates.replaceNode(toggleElement, html, js);
+                })
+                .then(function() {
+                    return String.get_string("favouriteupdated", "forum")
+                        .done(function(s) {
+                            return Notification.addNotification({
+                                message: s,
+                                type: "info"
+                            });
+                        });
                 })
                 .catch(Notification.exception);
 

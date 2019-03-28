@@ -125,7 +125,7 @@ class discussion_list extends db_table_vault {
         $tables .= ' JOIN {user} fa ON fa.id = ' . $alias . '.userid';
         $tables .= ' JOIN {user} la ON la.id = ' . $alias . '.usermodified';
         $tables .= ' JOIN ' . $posttable->get_from_sql() . ' ON fp.id = ' . $alias . '.firstpost';
-        $tables .= $favsql ? $favsql : '';
+        $tables .= isset($favsql) ? $favsql : '';
 
         $selectsql = 'SELECT ' . $fields . ' FROM ' . $tables;
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';

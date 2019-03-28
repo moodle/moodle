@@ -34,11 +34,12 @@
 }}
 {{#capabilities.favourite}}
     <a
-        class="p-t-0 btn btn-link"
+        class="btn btn-link"
         data-type="favorite-toggle"
         data-action="toggle"
         data-discussionid="{{id}}"
         data-forumid="{{forumid}}"
+        role="menuitem",
         tabindex="-1"
         {{#userstate.favourited}}
             data-targetstate="0"
