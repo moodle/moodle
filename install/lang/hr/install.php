@@ -85,5 +85,5 @@ $string['welcomep30'] = 'Ova inačica <strong>{$a->installername}</strong> uklju
 $string['welcomep40'] = 'Ovaj paket obuhvaća i <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Korištenje svih aplikacija u ovom paketu je uređeno licencama pod kojima su izdane. Cijeli paket <strong>{$a->installername}</strong> je rješenje <a href="http://www.opensource.org/docs/definition_plain.html">otvorenog koda</a> distribuirano pod <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licencom.';
 $string['welcomep60'] = 'Sljedeće stranice će vas voditi kroz postupak instalacije i podešavanja sustava <em>Moodle</em> na poslužitelju. Možete prihvatiti zadane postavke ili promijeniti iste sukladno vašim potrebama.';
-$string['welcomep70'] = 'Kliknite na "Next" gumb kako bi započeli <strong>Moodle</strong> instalaciju.';
+$string['welcomep70'] = 'Kliknite na "Next" gumb kako biste započeli <strong>Moodle</strong> instalaciju.';
 $string['wwwroot'] = 'Web adresa';
