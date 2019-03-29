@@ -271,6 +271,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
+        $cache = cache::make('mod_forum', 'forum_is_tracked');
         $useron = $this->getDataGenerator()->create_user(array('trackforums' => 1));
         $useroff = $this->getDataGenerator()->create_user(array('trackforums' => 0));
         $course = $this->getDataGenerator()->create_course();
@@ -310,6 +311,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $result = forum_tp_is_tracked($forumoptional, $useroff);
         $this->assertEquals(false, $result);
 
+        $cache->purge();
         // Don't allow force.
         $CFG->forum_allowforcedreadtracking = 0;
 
@@ -343,6 +345,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         forum_tp_stop_tracking($forumforce->id, $useroff->id);
         forum_tp_stop_tracking($forumoptional->id, $useroff->id);
 
+        $cache->purge();
         // Allow force.
         $CFG->forum_allowforcedreadtracking = 1;
 
@@ -362,6 +365,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $result = forum_tp_is_tracked($forumoptional, $useroff);
         $this->assertEquals(false, $result);
 
+        $cache->purge();
         // Don't allow force.
         $CFG->forum_allowforcedreadtracking = 0;
 
@@ -3005,6 +3009,22 @@ class mod_forum_lib_testcase extends advanced_testcase {
      * @param   bool        $expect
      */
     public function test_forum_discussion_is_locked($forum, $discussion, $expect) {
+        $this->resetAfterTest();
+
+        $datagenerator = $this->getDataGenerator();
+        $plugingenerator = $datagenerator->get_plugin_generator('mod_forum');
+
+        $course = $datagenerator->create_course();
+        $user = $datagenerator->create_user();
+        $forum = $datagenerator->create_module('forum', (object) array_merge([
+            'course' => $course->id
+        ], $forum));
+        $discussion = $plugingenerator->create_discussion((object) array_merge([
+            'course' => $course->id,
+            'userid' => $user->id,
+            'forum' => $forum->id,
+        ], $discussion));
+
         $this->assertEquals($expect, forum_discussion_is_locked($forum, $discussion));
     }
 
@@ -3015,39 +3035,29 @@ class mod_forum_lib_testcase extends advanced_testcase {
      */
     public function forum_discussion_is_locked_provider() {
         return [
-            'Unlocked: lockdiscussionafter is unset' => [
-                (object) [],
-                (object) [],
-                false
-            ],
             'Unlocked: lockdiscussionafter is false' => [
-                (object) ['lockdiscussionafter' => false],
-                (object) [],
-                false
-            ],
-            'Unlocked: lockdiscussionafter is null' => [
-                (object) ['lockdiscussionafter' => null],
-                (object) [],
+                ['lockdiscussionafter' => false],
+                [],
                 false
             ],
             'Unlocked: lockdiscussionafter is set; forum is of type single; post is recent' => [
-                (object) ['lockdiscussionafter' => DAYSECS, 'type' => 'single'],
-                (object) ['timemodified' => time()],
+                ['lockdiscussionafter' => DAYSECS, 'type' => 'single'],
+                ['timemodified' => time()],
                 false
             ],
             'Unlocked: lockdiscussionafter is set; forum is of type single; post is old' => [
-                (object) ['lockdiscussionafter' => MINSECS, 'type' => 'single'],
-                (object) ['timemodified' => time() - DAYSECS],
+                ['lockdiscussionafter' => MINSECS, 'type' => 'single'],
+                ['timemodified' => time() - DAYSECS],
                 false
             ],
             'Unlocked: lockdiscussionafter is set; forum is of type eachuser; post is recent' => [
-                (object) ['lockdiscussionafter' => DAYSECS, 'type' => 'eachuser'],
-                (object) ['timemodified' => time()],
+                ['lockdiscussionafter' => DAYSECS, 'type' => 'eachuser'],
+                ['timemodified' => time()],
                 false
             ],
             'Locked: lockdiscussionafter is set; forum is of type eachuser; post is old' => [
-                (object) ['lockdiscussionafter' => MINSECS, 'type' => 'eachuser'],
-                (object) ['timemodified' => time() - DAYSECS],
+                ['lockdiscussionafter' => MINSECS, 'type' => 'eachuser'],
+                ['timemodified' => time() - DAYSECS],
                 true
             ],
         ];

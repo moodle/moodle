@@ -58,6 +58,7 @@ function(
         BLOCKED_ICON_CONTAINER: '[data-region="contact-icon-blocked"]',
         LAST_MESSAGE: '[data-region="last-message"]',
         LAST_MESSAGE_DATE: '[data-region="last-message-date"]',
+        MUTED_ICON_CONTAINER: '[data-region="muted-icon-container"]',
         UNREAD_COUNT: '[data-region="unread-count"]',
         SECTION_TOTAL_COUNT: '[data-region="section-total-count"]',
         SECTION_TOTAL_COUNT_CONTAINER: '[data-region="section-total-count-container"]',
@@ -169,6 +170,7 @@ function(
                 name: conversation.name,
                 subname: conversation.subname,
                 unreadcount: conversation.unreadcount,
+                ismuted: conversation.ismuted,
                 lastmessagedate: lastMessage ? lastMessage.timecreated : null,
                 sentfromcurrentuser: lastMessage ? lastMessage.useridfrom == userId : null,
                 lastmessage: lastMessage ? $(lastMessage.text).text() || lastMessage.text : null
@@ -212,7 +214,7 @@ function(
      * Build the callback to load conversations.
      *
      * @param  {Number} type The conversation type.
-     * @param  {Bool} includeFavourites Include/exclude favourites.
+     * @param  {bool} includeFavourites Include/exclude favourites.
      * @param  {Number} offset Result offset
      * @return {Function}
      */
@@ -332,6 +334,24 @@ function(
      */
     var getConversationElementFromUserId = function(root, userId) {
         return root.find('[data-user-id="' + userId + '"]');
+    };
+
+    /**
+     * Show the conversation is muted icon.
+     *
+     * @param  {Object} conversationElement The conversation element.
+     */
+    var muteConversation = function(conversationElement) {
+        conversationElement.find(SELECTORS.MUTED_ICON_CONTAINER).removeClass('hidden');
+    };
+
+    /**
+     * Hide the conversation is muted icon.
+     *
+     * @param  {Object} conversationElement The conversation element.
+     */
+    var unmuteConversation = function(conversationElement) {
+        conversationElement.find(SELECTORS.MUTED_ICON_CONTAINER).addClass('hidden');
     };
 
     /**
@@ -483,12 +503,13 @@ function(
     /**
      * Listen to, and handle events in this section.
      *
+     * @param {String} namespace Unique identifier for the Routes
      * @param {Object} root The section container element.
      * @param {Function} loadCallback The callback to load items.
      * @param {Number} type The conversation type for this section
-     * @param {Bool} includeFavourites If this section includes favourites
+     * @param {bool} includeFavourites If this section includes favourites
      */
-    var registerEventListeners = function(root, loadCallback, type, includeFavourites) {
+    var registerEventListeners = function(namespace, root, loadCallback, type, includeFavourites) {
         var listRoot = LazyLoadList.getRoot(root);
 
         // Set the minimum height of the section to the height of the toggle. This
@@ -514,8 +535,25 @@ function(
 
         PubSub.subscribe(MessageDrawerEvents.CONTACT_UNBLOCKED, function(userId) {
             var conversationElement = getConversationElementFromUserId(root, userId);
+
             if (conversationElement.length) {
                 unblockContact(conversationElement);
+            }
+        });
+
+        PubSub.subscribe(MessageDrawerEvents.CONVERSATION_SET_MUTED, function(conversation) {
+            var conversationId = conversation.id;
+            var conversationElement = getConversationElement(root, conversationId);
+            if (conversationElement.length) {
+                muteConversation(conversationElement);
+            }
+        });
+
+        PubSub.subscribe(MessageDrawerEvents.CONVERSATION_UNSET_MUTED, function(conversation) {
+            var conversationId = conversation.id;
+            var conversationElement = getConversationElement(root, conversationId);
+            if (conversationElement.length) {
+                unmuteConversation(conversationElement);
             }
         });
 
@@ -586,7 +624,7 @@ function(
             var conversationElement = $(e.target).closest(SELECTORS.CONVERSATION);
             var conversationId = conversationElement.attr('data-conversation-id');
             var conversation = loadedConversationsById[conversationId];
-            MessageDrawerRouter.go(MessageDrawerRoutes.VIEW_CONVERSATION, conversation);
+            MessageDrawerRouter.go(namespace, MessageDrawerRoutes.VIEW_CONVERSATION, conversation);
 
             data.originalEvent.preventDefault();
         });
@@ -595,18 +633,21 @@ function(
     /**
      * Setup the section.
      *
-     * @param {Object} root The section container element.
+     * @param {String} namespace Unique identifier for the Routes
+     * @param {Object} header The header container element.
+     * @param {Object} body The section container element.
+     * @param {Object} footer The footer container element.
      * @param {Number} type The conversation type for this section
-     * @param {Bool} includeFavourites If this section includes favourites
+     * @param {bool} includeFavourites If this section includes favourites
      * @param {Object} totalCountPromise Resolves wth the total conversations count
      * @param {Object} unreadCountPromise Resolves wth the unread conversations count
      */
-    var show = function(root, type, includeFavourites, totalCountPromise, unreadCountPromise) {
-        root = $(root);
+    var show = function(namespace, header, body, footer, type, includeFavourites, totalCountPromise, unreadCountPromise) {
+        var root = $(body);
 
         if (!root.attr('data-init')) {
             var loadCallback = getLoadCallback(type, includeFavourites, 0);
-            registerEventListeners(root, loadCallback, type, includeFavourites);
+            registerEventListeners(namespace, root, loadCallback, type, includeFavourites);
 
             if (isVisible(root)) {
                 setExpanded(root);

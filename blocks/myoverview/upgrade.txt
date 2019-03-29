@@ -1,0 +1,5 @@
+This file describes API changes in the myoverview block code.
+
+=== 3.7 ===
+
+* The 'block/myoverview:addinstance' capability has been removed. It has never been used in code.

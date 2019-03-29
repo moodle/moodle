@@ -194,5 +194,8 @@
 <!--@plugin_suites_end@-->
 
     </testsuites>
+    <filter>
+<!--@filterlist@-->
+    </filter>
 
 </phpunit>

@@ -104,6 +104,9 @@ function(
     // This is the render function which will be generated when this module is
     // first called. See generateRenderFunction for details.
     var render = null;
+    // The list of renderers that have been registered to render
+    // this conversation. See generateRenderFunction for details.
+    var renderers = [];
 
     var NEWEST_FIRST = Constants.NEWEST_MESSAGES_FIRST;
     var LOAD_MESSAGE_LIMIT = Constants.LOAD_MESSAGE_LIMIT;
@@ -237,6 +240,7 @@ function(
             subname: state.subname,
             imageUrl: state.imageUrl,
             isFavourite: state.isFavourite,
+            isMuted: state.isMuted,
             type: state.type,
             totalMemberCount: state.totalMemberCount,
             loggedInUserId: state.loggedInUserId,
@@ -325,6 +329,7 @@ function(
         newState = StateManager.setImageUrl(newState, imageUrl);
         newState = StateManager.setTotalMemberCount(newState, conversation.membercount);
         newState = StateManager.setIsFavourite(newState, conversation.isfavourite);
+        newState = StateManager.setIsMuted(newState, conversation.ismuted);
         newState = StateManager.addMessages(newState, conversation.messages);
         return newState;
     };
@@ -793,6 +798,50 @@ function(
     };
 
     /**
+     * Set the current conversation as a muted conversation.
+     *
+     * @return {Promise} Renderer promise.
+     */
+    var setMuted = function() {
+        var userId = viewState.loggedInUserId;
+        var conversationId = viewState.id;
+
+        return Repository.setMutedConversations(userId, [conversationId])
+            .then(function() {
+                var newState = StateManager.setIsMuted(viewState, true);
+                return render(newState);
+            })
+            .then(function() {
+                return PubSub.publish(
+                    MessageDrawerEvents.CONVERSATION_SET_MUTED,
+                    formatConversationForEvent(viewState)
+                );
+            });
+    };
+
+    /**
+     * Unset the current conversation as a muted conversation.
+     *
+     * @return {Promise} Renderer promise.
+     */
+    var unsetMuted = function() {
+        var userId = viewState.loggedInUserId;
+        var conversationId = viewState.id;
+
+        return Repository.unsetMutedConversations(userId, [conversationId])
+            .then(function() {
+                var newState = StateManager.setIsMuted(viewState, false);
+                return render(newState);
+            })
+            .then(function() {
+                return PubSub.publish(
+                    MessageDrawerEvents.CONVERSATION_UNSET_MUTED,
+                    formatConversationForEvent(viewState)
+                );
+            });
+    };
+
+    /**
      * Tell the statemanager there is a request to delete the selected messages
      * and run the renderer to show confirm delete messages dialogue.
      *
@@ -1049,15 +1098,33 @@ function(
      * @param  {Object} header The conversation header container element.
      * @param  {Object} body The conversation body container element.
      * @param  {Object} footer The conversation footer container element.
+     * @param  {Bool} isNewConversation Has someone else already initialised a conversation?
      * @return {Promise} Renderer promise.
      */
-    var generateRenderFunction = function(header, body, footer) {
+    var generateRenderFunction = function(header, body, footer, isNewConversation) {
+        var rendererFunc = function(patch) {
+            return Renderer.render(header, body, footer, patch);
+        };
+
+        if (!isNewConversation) {
+            // Looks like someone got here before us! We'd better update our
+            // UI to make sure it matches.
+            var initialState = StateManager.buildInitialState(viewState.midnight, viewState.loggedInUserId, viewState.id);
+            var syncPatch = Patcher.buildPatch(initialState, viewState);
+            rendererFunc(syncPatch);
+        }
+
+        renderers.push(rendererFunc);
+
         return function(newState) {
             var patch = Patcher.buildPatch(viewState, newState);
             // This is a great place to add in some console logging if you need
             // to debug something. You can log the current state, the next state,
             // and the generated patch and see exactly what will be updated.
-            return Renderer.render(header, body, footer, patch)
+            var renderPromises = renderers.map(function(renderFunc) {
+                return renderFunc(patch);
+            });
+            return $.when.apply(null, renderPromises)
                 .then(function() {
                     viewState = newState;
                     if (newState.id) {
@@ -1154,14 +1221,16 @@ function(
     /**
      * Show the view contact page.
      *
-     * @param {Object} e Element this event handler is called on.
-     * @param {Object} data Data for this event.
+     * @param {String} namespace Unique identifier for the Routes
+     * @return {Function} View contact handler.
      */
-    var handleViewContact = function(e, data) {
-        var otherUserId = getOtherUserId();
-        var otherUser = viewState.members[otherUserId];
-        MessageDrawerRouter.go(MessageDrawerRoutes.VIEW_CONTACT, otherUser);
-        data.originalEvent.preventDefault();
+    var generateHandleViewContact = function(namespace) {
+        return function(e, data) {
+            var otherUserId = getOtherUserId();
+            var otherUser = viewState.members[otherUserId];
+            MessageDrawerRouter.go(namespace, MessageDrawerRoutes.VIEW_CONTACT, otherUser);
+            data.originalEvent.preventDefault();
+        };
     };
 
     /**
@@ -1187,68 +1256,96 @@ function(
     };
 
     /**
-     * Show the view contact page.
+     * Show the view group info page.
+     * Set this conversation as muted.
      *
      * @param {Object} e Element this event handler is called on.
      * @param {Object} data Data for this event.
      */
-    var handleViewGroupInfo = function(e, data) {
-        MessageDrawerRouter.go(
-            MessageDrawerRoutes.VIEW_GROUP_INFO,
-            {
-                id: viewState.id,
-                name: viewState.name,
-                subname: viewState.subname,
-                imageUrl: viewState.imageUrl,
-                totalMemberCount: viewState.totalMemberCount
-            },
-            viewState.loggedInUserId
-        );
+    var handleSetMuted = function(e, data) {
+        setMuted().catch(Notification.exception);
         data.originalEvent.preventDefault();
     };
 
-    var headerActivateHandlers = [
-        [SELECTORS.ACTION_REQUEST_BLOCK, generateConfirmActionHandler(requestBlockUser)],
-        [SELECTORS.ACTION_REQUEST_UNBLOCK, generateConfirmActionHandler(requestUnblockUser)],
-        [SELECTORS.ACTION_REQUEST_ADD_CONTACT, generateConfirmActionHandler(requestAddContact)],
-        [SELECTORS.ACTION_REQUEST_REMOVE_CONTACT, generateConfirmActionHandler(requestRemoveContact)],
-        [SELECTORS.ACTION_REQUEST_DELETE_CONVERSATION, generateConfirmActionHandler(requestDeleteConversation)],
-        [SELECTORS.ACTION_CANCEL_EDIT_MODE, handleCancelEditMode],
-        [SELECTORS.ACTION_VIEW_CONTACT, handleViewContact],
-        [SELECTORS.ACTION_VIEW_GROUP_INFO, handleViewGroupInfo],
-        [SELECTORS.ACTION_CONFIRM_FAVOURITE, handleSetFavourite],
-        [SELECTORS.ACTION_CONFIRM_UNFAVOURITE, handleUnsetFavourite],
-    ];
-    var bodyActivateHandlers = [
-        [SELECTORS.ACTION_CANCEL_CONFIRM, generateConfirmActionHandler(cancelRequest)],
-        [SELECTORS.ACTION_CONFIRM_BLOCK, generateConfirmActionHandler(blockUser)],
-        [SELECTORS.ACTION_CONFIRM_UNBLOCK, generateConfirmActionHandler(unblockUser)],
-        [SELECTORS.ACTION_CONFIRM_ADD_CONTACT, generateConfirmActionHandler(addContact)],
-        [SELECTORS.ACTION_CONFIRM_REMOVE_CONTACT, generateConfirmActionHandler(removeContact)],
-        [SELECTORS.ACTION_CONFIRM_DELETE_SELECTED_MESSAGES, generateConfirmActionHandler(deleteSelectedMessages)],
-        [SELECTORS.ACTION_CONFIRM_DELETE_CONVERSATION, generateConfirmActionHandler(deleteConversation)],
-        [SELECTORS.ACTION_REQUEST_ADD_CONTACT, generateConfirmActionHandler(requestAddContact)],
-        [SELECTORS.ACTION_ACCEPT_CONTACT_REQUEST, generateConfirmActionHandler(acceptContactRequest)],
-        [SELECTORS.ACTION_DECLINE_CONTACT_REQUEST, generateConfirmActionHandler(declineContactRequest)],
-        [SELECTORS.MESSAGE, handleSelectMessage]
-    ];
-    var footerActivateHandlers = [
-        [SELECTORS.SEND_MESSAGE_BUTTON, handleSendMessage],
-        [SELECTORS.ACTION_REQUEST_DELETE_SELECTED_MESSAGES, generateConfirmActionHandler(requestDeleteSelectedMessages)],
-        [SELECTORS.ACTION_REQUEST_ADD_CONTACT, generateConfirmActionHandler(requestAddContact)],
-        [SELECTORS.ACTION_REQUEST_UNBLOCK, generateConfirmActionHandler(requestUnblockUser)],
-    ];
+    /**
+     * Unset this conversation as muted.
+     *
+     * @param {Object} e Element this event handler is called on.
+     * @param {Object} data Data for this event.
+     */
+    var handleUnsetMuted = function(e, data) {
+        unsetMuted().catch(Notification.exception);
+        data.originalEvent.preventDefault();
+    };
+
+    /**
+     * Show the view contact page.
+     *
+     * @param {String} namespace Unique identifier for the Routes
+     * @return {Function} View group info handler.
+     */
+    var generateHandleViewGroupInfo = function(namespace) {
+        return function(e, data) {
+            MessageDrawerRouter.go(
+                namespace,
+                MessageDrawerRoutes.VIEW_GROUP_INFO,
+                {
+                    id: viewState.id,
+                    name: viewState.name,
+                    subname: viewState.subname,
+                    imageUrl: viewState.imageUrl,
+                    totalMemberCount: viewState.totalMemberCount
+                },
+                viewState.loggedInUserId
+            );
+            data.originalEvent.preventDefault();
+        };
+    };
 
     /**
      * Listen to, and handle events for conversations.
      *
+     * @param {string} namespace The route namespace.
      * @param {Object} header Conversation header container element.
      * @param {Object} body Conversation body container element.
      * @param {Object} footer Conversation footer container element.
      */
-    var registerEventListeners = function(header, body, footer) {
+    var registerEventListeners = function(namespace, header, body, footer) {
         var isLoadingMoreMessages = false;
         var messagesContainer = getMessagesContainer(body);
+        var headerActivateHandlers = [
+            [SELECTORS.ACTION_REQUEST_BLOCK, generateConfirmActionHandler(requestBlockUser)],
+            [SELECTORS.ACTION_REQUEST_UNBLOCK, generateConfirmActionHandler(requestUnblockUser)],
+            [SELECTORS.ACTION_REQUEST_ADD_CONTACT, generateConfirmActionHandler(requestAddContact)],
+            [SELECTORS.ACTION_REQUEST_REMOVE_CONTACT, generateConfirmActionHandler(requestRemoveContact)],
+            [SELECTORS.ACTION_REQUEST_DELETE_CONVERSATION, generateConfirmActionHandler(requestDeleteConversation)],
+            [SELECTORS.ACTION_CANCEL_EDIT_MODE, handleCancelEditMode],
+            [SELECTORS.ACTION_VIEW_CONTACT, generateHandleViewContact(namespace)],
+            [SELECTORS.ACTION_VIEW_GROUP_INFO, generateHandleViewGroupInfo(namespace)],
+            [SELECTORS.ACTION_CONFIRM_FAVOURITE, handleSetFavourite],
+            [SELECTORS.ACTION_CONFIRM_MUTE, handleSetMuted],
+            [SELECTORS.ACTION_CONFIRM_UNFAVOURITE, handleUnsetFavourite],
+            [SELECTORS.ACTION_CONFIRM_UNMUTE, handleUnsetMuted]
+        ];
+        var bodyActivateHandlers = [
+            [SELECTORS.ACTION_CANCEL_CONFIRM, generateConfirmActionHandler(cancelRequest)],
+            [SELECTORS.ACTION_CONFIRM_BLOCK, generateConfirmActionHandler(blockUser)],
+            [SELECTORS.ACTION_CONFIRM_UNBLOCK, generateConfirmActionHandler(unblockUser)],
+            [SELECTORS.ACTION_CONFIRM_ADD_CONTACT, generateConfirmActionHandler(addContact)],
+            [SELECTORS.ACTION_CONFIRM_REMOVE_CONTACT, generateConfirmActionHandler(removeContact)],
+            [SELECTORS.ACTION_CONFIRM_DELETE_SELECTED_MESSAGES, generateConfirmActionHandler(deleteSelectedMessages)],
+            [SELECTORS.ACTION_CONFIRM_DELETE_CONVERSATION, generateConfirmActionHandler(deleteConversation)],
+            [SELECTORS.ACTION_REQUEST_ADD_CONTACT, generateConfirmActionHandler(requestAddContact)],
+            [SELECTORS.ACTION_ACCEPT_CONTACT_REQUEST, generateConfirmActionHandler(acceptContactRequest)],
+            [SELECTORS.ACTION_DECLINE_CONTACT_REQUEST, generateConfirmActionHandler(declineContactRequest)],
+            [SELECTORS.MESSAGE, handleSelectMessage]
+        ];
+        var footerActivateHandlers = [
+            [SELECTORS.SEND_MESSAGE_BUTTON, handleSendMessage],
+            [SELECTORS.ACTION_REQUEST_DELETE_SELECTED_MESSAGES, generateConfirmActionHandler(requestDeleteSelectedMessages)],
+            [SELECTORS.ACTION_REQUEST_ADD_CONTACT, generateConfirmActionHandler(requestAddContact)],
+            [SELECTORS.ACTION_REQUEST_UNBLOCK, generateConfirmActionHandler(requestUnblockUser)],
+        ];
 
         AutoRows.init(footer);
 
@@ -1503,6 +1600,7 @@ function(
      * 2.) A conversation id with no action or other user id (e.g. from the contacts page)
      * 3.) No conversation/id with an action and other other user id. (e.g. from contact page)
      *
+     * @param {string} namespace The route namespace.
      * @param {Object} header Conversation header container element.
      * @param {Object} body Conversation body container element.
      * @param {Object} footer Conversation footer container element.
@@ -1511,7 +1609,7 @@ function(
      * @param {Number} otherUserId The other user id for a private conversation
      * @return {Object} jQuery promise
      */
-    var show = function(header, body, footer, conversationOrId, action, otherUserId) {
+    var show = function(namespace, header, body, footer, conversationOrId, action, otherUserId) {
         var conversation = null;
         var conversationId = null;
 
@@ -1531,14 +1629,6 @@ function(
             conversationId = getCachedPrivateConversationIdFromUserId(otherUserId);
         }
 
-        if (!body.attr('data-init')) {
-            // Generate the render function to bind the header, body, and footer
-            // elements to it so that we don't need to pass them around this module.
-            render = generateRenderFunction(header, body, footer);
-            registerEventListeners(header, body, footer);
-            body.attr('data-init', true);
-        }
-
         // This is a new conversation if:
         // 1. We don't already have a state
         // 2. The given conversation doesn't match the one currently loaded
@@ -1548,6 +1638,15 @@ function(
         //    with to viewing a different user that they also haven't initialised a
         //    conversation with.
         var isNewConversation = !viewState || (viewState.id != conversationId) || (otherUserId && otherUserId != getOtherUserId());
+
+        if (!body.attr('data-init')) {
+            // Generate the render function to bind the header, body, and footer
+            // elements to it so that we don't need to pass them around this module.
+            render = generateRenderFunction(header, body, footer, isNewConversation);
+            registerEventListeners(namespace, header, body, footer);
+            body.attr('data-init', true);
+        }
+
         if (isNewConversation) {
             // Reset all of the states back to the beginning if we're loading a new
             // conversation.

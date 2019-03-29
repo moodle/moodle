@@ -82,7 +82,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
-    And I should not see "Next"
+    And I should see "Course overview"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "1 of 4 (25%)" "link" in the "This site policy" "table_row"
     And I click on "Accept This site policy" "link" in the "User One" "table_row"
@@ -292,3 +292,23 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     When I press "Give consent"
     Then "Accepted on user's behalf" "text" should exist in the "User One" "table_row"
     And "Accepted on user's behalf" "text" should exist in the "User Two" "table_row"
+
+  Scenario: View acceptances made by users on their own after inactivating a policy
+    Given I log in as "user1"
+    And I should see "This site policy"
+    And I should not see "Course overview"
+    And I press "Next"
+    And I set the field "I agree to the This site policy" to "1"
+    And I press "Next"
+    And I should see "Course overview"
+    And I log out
+    And I log in as "admin"
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
+    And I click on "Actions" "link_or_button" in the "This privacy policy" "table_row"
+    And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
+    And I press "Continue"
+    And I click on "Set status to \"Inactive\"" "link" in the "This privacy policy" "table_row"
+    And I press "Continue"
+    And I log out
+    When I log in as "user1"
+    Then I should see "Course overview"

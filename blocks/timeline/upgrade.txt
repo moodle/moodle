@@ -1,0 +1,5 @@
+This file describes API changes in the timeline block code.
+
+=== 3.7 ===
+
+* The 'block/timeline:addinstance' capability has been removed. It has never been used in code.

@@ -591,6 +591,11 @@ class core_externallib_testcase extends advanced_testcase {
         $files = external_util::get_area_files($context, $component, $filearea, false);
         $this->assertEquals($expectedfiles, $files);
 
+        $DB->method('get_in_or_equal')->willReturn([
+            '= :mock1',
+            ['mock1' => $itemid]
+        ]);
+
         // Get just the file indicated by $itemid.
         $files = external_util::get_area_files($context, $component, $filearea, $itemid);
         $this->assertEquals($expectedfiles, $files);

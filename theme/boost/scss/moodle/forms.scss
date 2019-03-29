@@ -327,6 +327,13 @@ fieldset.coursesearchbox label {
     top: 0.2em;
     left: -1.5em;
     cursor: pointer;
+
+    .loading-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: $white;
+    }
 }
 
 .form-autocomplete-selection:focus {

@@ -72,7 +72,7 @@ class behat_workshopallocation_manual extends behat_base {
             $this->find('xpath', $xpathtd."/descendant::input[@value=$go]")->click();
         } else {
             // With Javascript we just wait for the page to reload.
-            $this->getSession()->wait(self::EXTENDED_TIMEOUT, self::PAGE_READY_JS);
+            $this->getSession()->wait(behat_base::get_extended_timeout(), self::PAGE_READY_JS);
         }
         // Check the success string to appear.
         $allocatedtext = behat_context_helper::escape(

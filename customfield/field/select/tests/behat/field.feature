@@ -71,7 +71,7 @@ Feature: Managers can manage course custom fields select
       | Name       | Test field |
       | Short name | testfield  |
     And I press "Save changes"
-    And I should see "Please provide at least two options separated with a newline" in the "Menu options (one per line)" "form_row"
+    And I should see "Please provide at least two options, with each on a new line." in the "Menu options (one per line)" "form_row"
     And I set the field "Menu options (one per line)" to multiline:
     """
     a
@@ -79,7 +79,7 @@ Feature: Managers can manage course custom fields select
     """
     And I set the field "Default value" to "c"
     And I press "Save changes"
-    And I should see "Default value must be one of the options from the list above" in the "Default value" "form_row"
+    And I should see "The default value must be one of the options from the list above" in the "Default value" "form_row"
     And I set the field "Default value" to "b"
     And I press "Save changes"
     And "testfield" "text" should exist in the "Test field" "table_row"

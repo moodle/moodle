@@ -38,6 +38,26 @@ require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 class behat_message extends behat_base {
 
     /**
+     * Open the messaging UI.
+     *
+     * @Given /^I open messaging$/
+     */
+    public function i_open_messaging() {
+        // Visit home page and follow messages.
+        $this->execute("behat_general::i_am_on_homepage");
+        $this->execute("behat_general::i_click_on", [get_string('togglemessagemenu', 'core_message'), 'link']);
+    }
+
+    /**
+     * Open the messaging UI.
+     *
+     * @Given /^I open messaging information$/
+     */
+    public function i_open_messaging_information() {
+        $this->execute('behat_general::i_click_on', ["[data-action='view-group-info']", 'css_element']);
+    }
+
+    /**
      * View the contact information of a user in the messages ui.
      *
      * @Given /^I view the "(?P<user_full_name_string>(?:[^"]|\\")*)" contact in the message area$/
@@ -67,11 +87,7 @@ class behat_message extends behat_base {
      * @param string $userfullname
      */
     public function i_select_user_in_messaging($userfullname) {
-
-        // Visit home page and follow messages.
-        $this->execute("behat_general::i_am_on_homepage");
-
-        $this->execute("behat_general::i_click_on", [get_string('togglemessagemenu', 'core_message'), 'link']);
+        $this->i_open_messaging();
 
         $this->execute('behat_general::i_click_on', [get_string('search', 'core'), 'field']);
 
@@ -99,7 +115,6 @@ class behat_message extends behat_base {
 
         $this->execute('behat_general::wait_until_the_page_is_ready');
     }
-
 
     /**
      * Sends a message to the specified user from the logged user. The user full name should contain the first and last names.
@@ -139,5 +154,54 @@ class behat_message extends behat_base {
         );
 
         $this->execute("behat_forms::press_button", get_string('send', 'message'));
+    }
+
+    /**
+     * Navigate back in the messages ui drawer.
+     *
+     * @Given /^I go back in "(?P<parent_element_string>(?:[^"]|\\")*)" message drawer$/
+     * @param string $parentelement
+     */
+    public function i_go_back_in_message_drawer($parentelement) {
+        $this->execute('behat_general::i_click_on_in_the',
+            array(
+                'a[data-route-back]',
+                'css_element',
+                '[data-region="'.$this->escape($parentelement).'"]',
+                'css_element',
+            )
+        );
+    }
+
+    /**
+     * Select a user in the messaging UI.
+     *
+     * @Given /^I select "(?P<conversation_name_string>(?:[^"]|\\")*)" conversation in messaging$/
+     * @param string $conversationname
+     */
+    public function i_select_conversation_in_messaging($conversationname) {
+        $this->execute('behat_general::i_click_on',
+            array(
+                $this->escape($conversationname),
+                'group_message',
+            )
+        );
+    }
+
+    /**
+     * Open the contact menu.
+     *
+     * @Given /^I open contact menu$/
+     */
+    public function i_open_contact_menu() {
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+        $this->execute('behat_general::i_click_on_in_the',
+            array(
+                'button',
+                'css_element',
+                '[data-region="message-drawer"] [data-region="header-container"]',
+                'css_element',
+            )
+        );
     }
 }

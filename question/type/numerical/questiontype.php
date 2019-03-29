@@ -52,6 +52,17 @@ class qtype_numerical extends question_type {
     const UNITGRADEDOUTOFMARK = 1;
     const UNITGRADEDOUTOFMAX = 2;
 
+    /**
+     * Validate that a string is a number formatted correctly for the current locale.
+     * @param string $x a string
+     * @return bool whether $x is a number that the numerical question type can interpret.
+     */
+    public static function is_valid_number(string $x) : bool {
+        $ap = new qtype_numerical_answer_processor(array());
+        list($value, $unit) = $ap->apply_units($x);
+        return !is_null($value) && !$unit;
+    }
+
     public function get_question_options($question) {
         global $CFG, $DB, $OUTPUT;
         parent::get_question_options($question);

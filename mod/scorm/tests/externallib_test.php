@@ -868,4 +868,55 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('cannotfindsco', $e->errorcode);
         }
     }
+
+    /**
+     * Test mod_scorm_get_scorm_access_information.
+     */
+    public function test_mod_scorm_get_scorm_access_information() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $student = self::getDataGenerator()->create_user();
+        $course = self::getDataGenerator()->create_course();
+        // Create the scorm.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $scorm = self::getDataGenerator()->create_module('scorm', $record);
+        $context = context_module::instance($scorm->cmid);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+
+        self::setUser($student);
+        $result = mod_scorm_external::get_scorm_access_information($scorm->id);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_access_information_returns(), $result);
+
+        // Check default values for capabilities.
+        $enabledcaps = array('canskipview', 'cansavetrack', 'canviewscores');
+
+        unset($result['warnings']);
+        foreach ($result as $capname => $capvalue) {
+            if (in_array($capname, $enabledcaps)) {
+                $this->assertTrue($capvalue);
+            } else {
+                $this->assertFalse($capvalue);
+            }
+        }
+        // Now, unassign one capability.
+        unassign_capability('mod/scorm:viewscores', $studentrole->id);
+        array_pop($enabledcaps);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $result = mod_scorm_external::get_scorm_access_information($scorm->id);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_access_information_returns(), $result);
+        unset($result['warnings']);
+        foreach ($result as $capname => $capvalue) {
+            if (in_array($capname, $enabledcaps)) {
+                $this->assertTrue($capvalue);
+            } else {
+                $this->assertFalse($capvalue);
+            }
+        }
+    }
 }

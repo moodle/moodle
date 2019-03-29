@@ -25,7 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__ . '/../../../../lib/behat/behat_files.php');
+require_once(__DIR__ . '/../../../../lib/behat/core_behat_file_helper.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Gherkin\Node\TableNode as TableNode;
@@ -33,14 +33,14 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
 /**
  * Steps definitions to deal with the upload repository.
  *
- * Extends behat_files rather than behat_base as is file-related.
- *
  * @package    repository_upload
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_repository_upload extends behat_files {
+class behat_repository_upload extends behat_base {
+
+    use core_behat_file_helper;
 
     /**
      * Uploads a file to the specified filemanager leaving other fields in upload form default. The paths should be relative to moodle codebase.
@@ -115,13 +115,14 @@ class behat_repository_upload extends behat_files {
         // Ensure all the form is ready.
         $noformexception = new ExpectationException('The upload file form is not ready', $this->getSession());
         $this->find(
-            'xpath',
-            "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
+                'xpath',
+                "//div[contains(concat(' ', normalize-space(@class), ' '), ' container ')]" .
                 "[contains(concat(' ', normalize-space(@class), ' '), ' repository_upload ')]" .
+                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
                 "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
                 "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-upload-form ')]" .
                 "/descendant::form",
-            $noformexception
+                $noformexception
         );
         // After this we have the elements we want to interact with.
 
@@ -160,7 +161,7 @@ class behat_repository_upload extends behat_files {
         $submit->press();
 
         // We wait for all the JS to finish as it is performing an action.
-        $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
+        $this->getSession()->wait(self::get_timeout(), self::PAGE_READY_JS);
 
         if ($overwriteaction !== false) {
             $overwritebutton = $this->find_button($overwriteaction);
@@ -168,9 +169,42 @@ class behat_repository_upload extends behat_files {
             $overwritebutton->click();
 
             // We wait for all the JS to finish.
-            $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
+            $this->getSession()->wait(self::get_timeout(), self::PAGE_READY_JS);
         }
 
+    }
+
+    /**
+     * Try to get the filemanager node specified by the element
+     *
+     * @param string $filepickerelement
+     * @return \Behat\Mink\Element\NodeElement
+     * @throws ExpectationException
+     */
+    protected function get_filepicker_node($filepickerelement) {
+
+        // More info about the problem (in case there is a problem).
+        $exception = new ExpectationException('"' . $filepickerelement . '" filepicker can not be found', $this->getSession());
+
+        // If no file picker label is mentioned take the first file picker from the page.
+        if (empty($filepickerelement)) {
+            $filepickercontainer = $this->find(
+                    'xpath',
+                    "//*[@class=\"form-filemanager\"]",
+                    $exception
+            );
+        } else {
+            // Gets the filemanager node specified by the locator which contains the filepicker container.
+            $filepickerelement = behat_context_helper::escape($filepickerelement);
+            $filepickercontainer = $this->find(
+                    'xpath',
+                    "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
+                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')]",
+                    $exception
+            );
+        }
+
+        return $filepickercontainer;
     }
 
 }

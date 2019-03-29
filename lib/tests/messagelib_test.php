@@ -1118,6 +1118,51 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertTrue($storedfileexists);
     }
 
+    public function test_send_message_when_muted() {
+        $this->preventResetByRollback();
+        $this->resetAfterTest();
+
+        $userfrom = $this->getDataGenerator()->create_user();
+        $userto = $this->getDataGenerator()->create_user();
+
+        // Create a conversation between the users.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $userfrom->id,
+                $userto->id
+            ]
+        );
+
+        $message = new \core\message\message();
+        $message->courseid = 1;
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        $message->userfrom = $userfrom;
+        $message->convid = $conversation->id;
+        $message->subject = 'message subject 1';
+        $message->fullmessage = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml = '<p>message body</p>';
+        $message->smallmessage = 'small message';
+        $message->notification = '0';
+
+        $sink = $this->redirectEmails();
+        message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(1, $emails);
+        $sink->clear();
+
+        // Mute the conversation.
+        \core_message\api::mute_conversation($userto->id, $conversation->id);
+
+        $sink = $this->redirectEmails();
+        message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $sink->clear();
+    }
+
     /**
      * Is a particular message type in the list of message types.
      * @param string $component

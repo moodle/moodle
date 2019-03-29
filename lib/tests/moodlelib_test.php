@@ -4293,4 +4293,65 @@ class core_moodlelib_testcase extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Data provider for \core_moodlelib_testcase::test_get_complete_user_data().
+     *
+     * @return array
+     */
+    public function user_data_provider() {
+        return [
+            'Fetch data using a valid username' => [
+                'username', 's1', true
+            ],
+            'Fetch data using a valid username, different case' => [
+                'username', 'S1', true
+            ],
+            'Fetch data using a valid username, different case for fieldname and value' => [
+                'USERNAME', 'S1', true
+            ],
+            'Fetch data using an invalid username' => [
+                'username', 's2', false
+            ],
+        ];
+    }
+
+    /**
+     * Test for get_complete_user_data().
+     *
+     * @dataProvider user_data_provider
+     * @param string $field The field to use for the query.
+     * @param string|boolean $value The field value. When fetching by ID, set true to fetch valid user ID, false otherwise.
+     * @param boolean $success Whether we expect for the fetch to succeed or return false.
+     */
+    public function test_get_complete_user_data($field, $value, $success) {
+        $this->resetAfterTest();
+
+        // Generate the user data.
+        $generator = $this->getDataGenerator();
+        $userdata = [
+            'username' => 's1',
+            'email' => 's1@example.com',
+        ];
+        $user = $generator->create_user($userdata);
+
+        // Since the data provider can't know what user ID to use, do a special handling for ID field tests.
+        if ($field === 'id') {
+            if ($value) {
+                // Test for fetching data using a valid user ID. Use the generated user's ID.
+                $value = $user->id;
+            } else {
+                // Test for fetching data using a non-existent user ID.
+                $value = $user->id + 1;
+            }
+        }
+        $fetcheduser = get_complete_user_data($field, $value);
+        if ($success) {
+            $this->assertEquals($user->id, $fetcheduser->id);
+            $this->assertEquals($user->username, $fetcheduser->username);
+            $this->assertEquals($user->email, $fetcheduser->email);
+        } else {
+            $this->assertFalse($fetcheduser);
+        }
+    }
 }

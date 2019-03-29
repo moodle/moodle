@@ -24,15 +24,41 @@
         "day": "Today",
         "url": "http://example.com/",
         "title": "Monday 2nd January",
-        "content": "<img class='icon smallicon' alt='icon' src='../../../pix/i/siteevent.svg'>Test site event"
+        "content": "<img class='icon smallicon' src='../../../pix/i/siteevent.svg'>Test site event"
     }
 }}
-{{< core/hover_tooltip }}
-    {{$anchor}}
-        <a href="{{url}}">{{$day}}{{day}}{{/day}}</a>
-    {{/anchor}}
-    {{$tooltip}}
-        <b>{{$title}}{{title}}{{/title}}</b>
-        {{$content}}{{{content}}}{{/content}}
-    {{/tooltip}}
-{{/ core/hover_tooltip }}
+<a {{!
+    }} id="calendar-day-popover-link-{{courseid}}-{{year}}-{{yday}}-{{uniqid}}"{{!
+    }} href="{{$url}}{{url}}{{/url}}"{{!
+    }} data-container="body"{{!
+    }} data-toggle="popover"{{!
+    }} data-html="true"{{!
+    }} data-trigger="hover"{{!
+    }} data-placement="top"{{!
+    }} data-title="{{$title}}{{title}}{{/title}}"{{!
+    }} data-alternate="{{$nocontent}}{{/nocontent}}"{{!
+}}>{{$day}}{{day}}{{/day}}</a>
+<div class="hidden">
+    {{$content}}{{/content}}
+</div>
+{{#js}}
+require(['jquery'], function($) {
+    require(['theme_boost/popover'], function() {
+        var target = $("#calendar-day-popover-link-{{courseid}}-{{year}}-{{yday}}-{{uniqid}}");
+        target.popover({
+            content: function() {
+                var source = target.next().find("> *:not('.hidden')");
+                var content = $('<div>');
+
+                if (source.length) {
+                    content.html(source.clone(false));
+                } else {
+                    content.html(target.data('alternate'));
+                }
+
+                return content.html();
+            }
+        });
+    });
+});
+{{/js}}

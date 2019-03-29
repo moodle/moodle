@@ -45,18 +45,22 @@
     }
 
 }}
-<div class="modal" data-role="flexitour-step">
-    <div data-role="arrow"></div>
+<div class="modal-dialog" role="document" data-role="flexitour-step">
+  <div class="modal-content">
+    <div class="tooltip-arrow" data-role="arrow"></div>
     <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true" data-role="end">&times;</button>
-      <h3 data-placeholder="title"></h3>
+      <h5 class="modal-title" data-placeholder="title"></h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-role="end">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
     </div>
-    <div class="modal-body" data-placeholder="body"></div>
+    <div class="modal-body" data-placeholder="body">
+    </div>
     <div class="modal-footer">
-        <div class="btn-group">
-            <button href="#" class="btn" data-role="previous">{{# str }} previous, moodle {{/ str }}</button>
-            <button href="#" class="btn btn-primary" data-role="next">{{# str }} next, moodle {{/ str }}</button>
-        </div>
-        <button class="btn" data-role="end"> {{# str }} endtour, tool_usertours {{/ str }} </button>
+      <button type="button" class="btn btn-secondary" data-role="previous">{{# str }} previous, moodle {{/ str }}</button>
+      <button type="button" class="btn btn-primary" data-role="next">{{# str }} next, moodle {{/ str }}</button>
+      <button class="btn btn-secondary" data-role="end"> {{# str }} endtour, tool_usertours {{/ str }} </button>
     </div>
+  </div>
 </div>

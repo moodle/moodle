@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['crontask'] = 'Background processing for scheduled allocation';
 $string['currentstatus'] = 'Current status';
 $string['currentstatusexecution'] = 'Status';
 $string['currentstatusexecution1'] = 'Executed on {$a->datetime}';

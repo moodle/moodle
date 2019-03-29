@@ -48,8 +48,8 @@ class qtype_numerical_renderer extends qtype_renderer {
             'name' => $inputname,
             'value' => $currentanswer,
             'id' => $inputname,
-            'size' => 80,
-            'class' => 'form-control',
+            'size' => 30,
+            'class' => 'form-control d-inline',
         );
 
         if ($options->readonly) {

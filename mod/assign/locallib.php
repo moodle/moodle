@@ -813,6 +813,7 @@ class assign {
         }
 
         // Delete the instance.
+        // We must delete the module record after we delete the grade item.
         $DB->delete_records('assign', array('id'=>$this->get_instance()->id));
 
         return $result;
@@ -5287,7 +5288,7 @@ class assign {
 
             // Show the grader's identity if 'Hide Grader' is disabled or has the 'Show Hidden Grader' capability.
             $showgradername = (
-                    has_capability('mod/assign:showhiddengrader', $this->context, $user) or
+                    has_capability('mod/assign:showhiddengrader', $this->context) or
                     !$this->is_hidden_grader()
             );
 

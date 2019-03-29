@@ -108,7 +108,7 @@ Feature: Teachers can edit course custom fields
     Then I should see "You must supply a value here" in the "Short name" "form_row"
     And I set the field "Short name" to "short name"
     And I press "Save changes"
-    And I should see "Short name can only contain lowercase latin letters, digits and an underscore sign" in the "Short name" "form_row"
+    And I should see "The short name can only contain alphanumeric lowercase characters and underscores (_)." in the "Short name" "form_row"
     And I set the field "Short name" to "f1"
     And I press "Save changes"
     And I should see "Short name already exists" in the "Short name" "form_row"

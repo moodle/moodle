@@ -25,13 +25,40 @@
         "formhtml": "(Form html would go here)"
     }
 }}
-{{#error}}
-    <div class="alert alert-danger" role="alert">
-        {{{error}}}
+<div class="container-fluid mt-1 mt-md-5">
+    <div class="row justify-content-md-center">
+        <div class="col-md-8 push-md-2 col-xl-6 push-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title text-xs-center">
+                        {{#logourl}}
+                            <h2><img src="{{logourl}}" title="{{sitename}}" alt="{{sitename}}"/></h2>
+                        {{/logourl}}
+                        {{^logourl}}
+                            <h2>{{sitename}}</h2>
+                        {{/logourl}}
+                        <hr>
+                    </div>
+                    {{#error}}
+                        <div class="alert alert-danger" role="alert" data-aria-autofocus="true">
+                            {{{error}}}
+                        </div>
+                    {{/error}}
+                    <div class="card-title">
+                        <h3>{{#str}}agelocationverification{{/str}}</h3>
+                    </div>
+                    <div class="m-t-2 m-b-2">
+                        {{{formhtml}}}
+                    </div>
+                    <hr>
+                    <div class="card-title">
+                        <h3>{{#str}}whyisthisrequired{{/str}}</h3>
+                    </div>
+                    <div class="m-t-1">
+                        <p >{{#str}}explanationdigitalminor{{/str}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-{{/error}}
-<h3>{{#str}}agelocationverification{{/str}}</h3>
-{{{formhtml}}}
-<hr>
-<h3>{{#str}}whyisthisrequired{{/str}}</h3>
-<p >{{#str}}explanationdigitalminor{{/str}}</p>
+</div>

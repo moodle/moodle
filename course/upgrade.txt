@@ -2,8 +2,10 @@ This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
 === 3.7 ===
+
  * External function core_course_external::get_course_contents new returns the following additional completiondata field:
    - valueused (indicates whether the completion state affects the availability of other content)
+ * External function core_course_external::get_course_contents now returns a new contentsinfo field with summary files information.
 
 === 3.6 ===
 

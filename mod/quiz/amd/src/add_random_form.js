@@ -201,12 +201,14 @@ define(
      * @param {jquery} formId The form element id.
      * @param {int} contextId The current context id.
      * @param {string[]} topCategories List of top category values (matching the select box values)
+     * @param {bool} isTagsEnabled Whether tags feature is enabled or not.
      */
-    var init = function(formId, contextId, topCategories) {
-        var form = $('#' + formId);
-
-        reloadQuestionPreview(form, contextId, topCategories);
-        addEventListeners(form, contextId, topCategories);
+    var init = function(formId, contextId, topCategories, isTagsEnabled) {
+         if (isTagsEnabled == true) {
+             var form = $('#' + formId);
+             reloadQuestionPreview(form, contextId, topCategories, isTagsEnabled);
+             addEventListeners(form, contextId, topCategories, isTagsEnabled);
+         }
     };
 
     return {

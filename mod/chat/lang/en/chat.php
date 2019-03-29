@@ -40,6 +40,7 @@ $string['configservermax'] = 'Max number of clients allowed';
 $string['configserverport'] = 'Port to use on the server for the daemon';
 $string['compact'] = 'Compact';
 $string['coursetheme'] = 'Course theme';
+$string['crontask'] = 'Background processing for chat module';
 $string['currentchats'] = 'Active chat sessions';
 $string['currentusers'] = 'Current users';
 $string['deletesession'] = 'Delete this session';

@@ -174,6 +174,7 @@ class provider implements
         // Remove table entries.
         $DB->delete_records_select('assignfeedback_editpdf_annot', "gradeid $sql", $params);
         $DB->delete_records_select('assignfeedback_editpdf_cmnt', "gradeid $sql", $params);
+        $DB->delete_records_select('assignfeedback_editpdf_rot', "gradeid $sql", $params);
         // Submission records in assignfeedback_editpdf_queue will be cleaned up in a scheduled task
     }
 }

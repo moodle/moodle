@@ -108,12 +108,18 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             array('nofeatures', __DIR__.'/fixtures/theme/nofeatures'),
             array('defaulttheme', __DIR__.'/fixtures/theme/defaulttheme'),
         );
-
         // List of themes is const for test.
         if ($notheme) {
             $themelist = array('defaulttheme');
         } else {
             $themelist = array('withfeatures', 'nofeatures', 'defaulttheme');
+        }
+
+        $thememap = [];
+        foreach ($themelist as $themename) {
+            $mock = $this->getMockBuilder('theme_config');
+            $mock->disableOriginalConstructor();
+            $thememap[] = [$themename, $mock->getMock()];
         }
 
         $behatconfigutil->expects($this->any())
@@ -124,6 +130,11 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $behatconfigutil->expects($this->any())
             ->method('get_theme_test_directory')
             ->will($this->returnValueMap($map));
+
+        // Theme directory for testing.
+        $behatconfigutil->expects($this->any())
+                ->method('get_theme_config')
+                ->will($this->returnValueMap($thememap));
 
         $behatconfigutil->expects($this->any())
             ->method('get_default_theme')
@@ -138,7 +149,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_single_run() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme'));
+        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -177,7 +188,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_single_run_no_theme() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme'));
+        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -231,7 +242,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_parallel_run() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme'));
+        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -334,7 +345,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_parallel_run_optimize_tags() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme'));
+        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -479,7 +490,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
         $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_blacklisted_tests_for_theme',
-            'get_default_theme'));
+            'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -543,7 +554,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
         $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_blacklisted_tests_for_theme',
-            'get_default_theme'));
+            'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -621,7 +632,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_core_features_to_include_in_specified_theme() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme'));
+        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 

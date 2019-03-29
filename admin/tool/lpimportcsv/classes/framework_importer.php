@@ -274,7 +274,6 @@ class framework_importer {
             // We are calling from browser, display progress bar.
             if ($this->useprogressbar === true) {
                 $this->progress = new \core\progress\display_if_slow(get_string('processingfile', 'tool_lpimportcsv'));
-                $this->progress->start_html();
             } else {
                 // Avoid html output on CLI scripts.
                 $this->progress = new \core\progress\none();
@@ -464,7 +463,6 @@ class framework_importer {
         $framework = api::create_framework($record);
         if ($this->useprogressbar === true) {
             $this->progress = new \core\progress\display_if_slow(get_string('importingfile', 'tool_lpimportcsv'));
-            $this->progress->start_html();
         } else {
             $this->progress = new \core\progress\none();
         }

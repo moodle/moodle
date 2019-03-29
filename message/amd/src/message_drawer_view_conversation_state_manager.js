@@ -121,6 +121,7 @@ define(['jquery'], function($) {
             totalMemberCount: null,
             imageUrl: null,
             isFavourite: null,
+            isMuted: null,
             members: {},
             messages: [],
             hasTriedToLoadMessages: false,
@@ -344,6 +345,19 @@ define(['jquery'], function($) {
     var setIsFavourite = function(state, isFavourite) {
         var newState = cloneState(state);
         newState.isFavourite = isFavourite;
+        return newState;
+    };
+
+    /**
+     * Set whether the conversation is a muted conversation.
+     *
+     * @param  {Object} state Current state.
+     * @param  {bool} isMuted If it's muted.
+     * @return {Object} New state.
+     */
+    var setIsMuted = function(state, isMuted) {
+        var newState = cloneState(state);
+        newState.isMuted = isMuted;
         return newState;
     };
 
@@ -659,6 +673,7 @@ define(['jquery'], function($) {
         setSubname: setSubname,
         setType: setType,
         setIsFavourite: setIsFavourite,
+        setIsMuted: setIsMuted,
         setTotalMemberCount: setTotalMemberCount,
         setImageUrl: setImageUrl,
         setLoadingConfirmAction: setLoadingConfirmAction,

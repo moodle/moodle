@@ -34,6 +34,7 @@ Feature: Role assignments can be made at the category level
       | Teacher             | Not assignable |
       | Non-editing teacher | Not assignable |
       | Student             | Not assignable |
+    And I change window size to "large"
     And I log out
     And I log in as "manager"
     And I am on course index

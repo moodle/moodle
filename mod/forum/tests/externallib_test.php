@@ -1248,4 +1248,57 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $posts['ratinginfo']['ratings'][0]['count']);
         $this->assertEquals(($rating1->rating + $rating2->rating) / 2, $posts['ratinginfo']['ratings'][0]['aggregate']);
     }
+
+    /**
+     * Test mod_forum_get_forum_access_information.
+     */
+    public function test_mod_forum_get_forum_access_information() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $student = self::getDataGenerator()->create_user();
+        $course = self::getDataGenerator()->create_course();
+        // Create the forum.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+
+        self::setUser($student);
+        $result = mod_forum_external::get_forum_access_information($forum->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::get_forum_access_information_returns(), $result);
+
+        // Check default values for capabilities.
+        $enabledcaps = array('canviewdiscussion', 'canstartdiscussion', 'canreplypost', 'canviewrating', 'cancreateattachment',
+            'canexportownpost', 'candeleteownpost', 'canallowforcesubscribe');
+
+        unset($result['warnings']);
+        foreach ($result as $capname => $capvalue) {
+            if (in_array($capname, $enabledcaps)) {
+                $this->assertTrue($capvalue);
+            } else {
+                $this->assertFalse($capvalue);
+            }
+        }
+        // Now, unassign some capabilities.
+        unassign_capability('mod/forum:deleteownpost', $studentrole->id);
+        unassign_capability('mod/forum:allowforcesubscribe', $studentrole->id);
+        array_pop($enabledcaps);
+        array_pop($enabledcaps);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $result = mod_forum_external::get_forum_access_information($forum->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::get_forum_access_information_returns(), $result);
+        unset($result['warnings']);
+        foreach ($result as $capname => $capvalue) {
+            if (in_array($capname, $enabledcaps)) {
+                $this->assertTrue($capvalue);
+            } else {
+                $this->assertFalse($capvalue);
+            }
+        }
+    }
 }

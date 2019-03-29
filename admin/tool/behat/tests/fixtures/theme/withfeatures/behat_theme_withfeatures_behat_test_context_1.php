@@ -24,7 +24,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__ . '/../behat_test_context_1.php');
+require_once(__DIR__ . '/../../core/behat_test_context_1.php');
 
 /**
  * Theme test context 1

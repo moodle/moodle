@@ -82,6 +82,7 @@ abstract class calculable {
      * @return string
      */
     public function get_id() {
+        // Using get_class as get_component_classes_in_namespace returns double escaped fully qualified class names.
         return '\\' . get_class($this);
     }
 

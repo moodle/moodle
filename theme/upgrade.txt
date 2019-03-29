@@ -3,6 +3,10 @@ information provided here is intended especially for theme designer.
 
 === 3.7 ===
 * The core/form_autocompelte_input template now has a `data-tags` attribute.
+* Boost theme renderer overrides have now been migrated to core.
+* Renderers that were overridden by Boost are now in Bootstrapbase
+* Core templates in Boost have now moved into core
+* Templates that were overridden by boost are now located in Bootstrapbase
 
 === 3.6 ===
 

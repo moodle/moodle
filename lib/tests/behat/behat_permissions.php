@@ -105,7 +105,7 @@ class behat_permissions extends behat_base {
                 $advancedtoggle->click();
 
                 // Wait for the page to load.
-                $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+                $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
             }
         } catch (Exception $e) {
             // We already are in advanced mode.

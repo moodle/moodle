@@ -347,20 +347,6 @@ function wiki_print_recent_activity($course, $viewfullnames, $timestart) {
 
     return true; //  True if anything was printed, otherwise false
 }
-/**
- * Function to be run periodically according to the moodle cron
- * This function searches for things that need to be done, such
- * as sending out mail, toggling flags etc ...
- *
- * @uses $CFG
- * @return boolean
- * @todo Finish documenting this function
- **/
-function wiki_cron() {
-    global $CFG;
-
-    return true;
-}
 
 /**
  * Must return an array of grades for a given instance of this module,
@@ -815,15 +801,28 @@ function mod_wiki_get_fontawesome_icon_map() {
  *
  * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
  * @return \core_calendar\local\event\entities\action_interface|null
  */
 function mod_wiki_core_calendar_provide_event_action(calendar_event $event,
-                                                    \core_calendar\action_factory $factory) {
-    $cm = get_fast_modinfo($event->courseid)->instances['wiki'][$event->instance];
+                                                    \core_calendar\action_factory $factory,
+                                                    int $userid = 0) {
+    global $USER;
+
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['wiki'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
 
     $completion = new \completion_info($cm->get_course());
 
-    $completiondata = $completion->get_data($cm, false);
+    $completiondata = $completion->get_data($cm, false, $userid);
 
     if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
         return null;

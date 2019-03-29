@@ -53,13 +53,16 @@
         ]
     }
 }}
+{{!
+    Setting configmultiselect with optgroup support.
+}}
 <div class="form-select">
     <input type="hidden" name="{{name}}[xxxxx]" value="1">
-    <select id="{{id}}" name="{{name}}[]" size="{{size}}" multiple>
-        {{#options}}
-            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-        {{/options}}
-        {{#optgroups}}
+    <select id="{{id}}" name="{{name}}[]" size="{{size}}" class="form-control" multiple>
+    {{#options}}
+        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+    {{/options}}
+    {{#optgroups}}
             <optgroup label="{{label}}">
                 {{#options}}
                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>

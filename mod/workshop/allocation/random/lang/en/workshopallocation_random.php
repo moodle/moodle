@@ -26,7 +26,7 @@
 
 $string['addselfassessment'] = 'Add self-assessments';
 $string['allocationaddeddetail'] = 'New assessment to be done: <strong>{$a->reviewername}</strong> is reviewer of <strong>{$a->authorname}</strong>';
-$string['allocationdeallocategraded'] = 'Unable to deallocate already graded assessment: reviewer <strong>{$a->reviewername}</strong>, submission author: <strong>{$a->authorname}</strong>';
+$string['allocationdeallocategraded'] = 'Unable to deallocate already graded assessment: reviewer <strong>{$a->reviewername}</strong>, submission author <strong>{$a->authorname}</strong>';
 $string['allocationreuseddetail'] = 'Reused assessment: <strong>{$a->reviewername}</strong> kept as reviewer of <strong>{$a->authorname}</strong>';
 $string['allocationsettings'] = 'Allocation settings';
 $string['assessmentdeleteddetail'] = 'Assessment deallocated: <strong>{$a->reviewername}</strong> is no longer reviewer of <strong>{$a->authorname}</strong>';

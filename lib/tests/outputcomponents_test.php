@@ -465,4 +465,168 @@ EOF;
         $reason = 'An icon with alt text is not hidden from screenreaders.';
         $this->assertNotContains('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
     }
+
+    /**
+     * Test for checking the template context data for the single_select element.
+     */
+    public function test_single_select() {
+        global $PAGE;
+
+        $fakename = 'fakename';
+        $fakeclass = 'fakeclass';
+        $faketitle = 'faketitle';
+        $fakedisabled = true;
+        $fakefor = 'fakefor';
+
+        $someid = 'someid';
+        $realname = 'realname';
+        $realclass = 'realclass';
+        $realtitle = 'realtitle';
+        $realdisabled = false;
+        $reallabel = 'Some cool label';
+        $labelclass = 'somelabelclass';
+        $labelstyle = 'font-weight: bold';
+
+        $dataaction = 'actiondata';
+        $dataother = 'otherdata';
+
+        $attributes = [
+            'id' => $someid,
+            'class' => $fakeclass,
+            'title' => $faketitle,
+            'disabled' => $fakedisabled,
+            'name' => $fakename,
+            'data-action' => $dataaction,
+            'data-other' => $dataother,
+        ];
+        $labelattributes = [
+            'for' => $fakefor,
+            'class' => $labelclass,
+            'style' => $labelstyle
+        ];
+
+        $options = [ "Option A", "Option B", "Option C" ];
+        $nothing = ['' => 'choosedots'];
+
+        $url = new moodle_url('/');
+
+        $singleselect = new single_select($url, $realname, $options, null, $nothing, 'someformid');
+        $singleselect->class = $realclass;
+        $singleselect->tooltip = $realtitle;
+        $singleselect->disabled = $realdisabled;
+        $singleselect->attributes = $attributes;
+        $singleselect->label = $reallabel;
+        $singleselect->labelattributes = $labelattributes;
+
+        $renderer = $PAGE->get_renderer('core');
+        $data = $singleselect->export_for_template($renderer);
+
+        $this->assertEquals($realtitle, $data->title);
+        $this->assertEquals($singleselect->class, $data->classes);
+        $this->assertEquals($realname, $data->name);
+        $this->assertEquals($reallabel, $data->label);
+        $this->assertEquals($realdisabled, $data->disabled);
+        $this->assertEquals($someid, $data->id);
+
+        // Validate attributes array.
+        // The following should not be included: id, class, name, disabled.
+        $this->assertFalse(in_array(['name' => 'id', 'value' => $someid], $data->attributes));
+        $this->assertFalse(in_array(['name' => 'class', 'value' => $fakeclass], $data->attributes));
+        $this->assertFalse(in_array(['name' => 'name', 'value' => $fakeclass], $data->attributes));
+        $this->assertFalse(in_array(['name' => 'disabled', 'value' => $fakedisabled], $data->attributes));
+        // The rest should be fine.
+        $this->assertTrue(in_array(['name' => 'data-action', 'value' => $dataaction], $data->attributes));
+        $this->assertTrue(in_array(['name' => 'data-other', 'value' => $dataother], $data->attributes));
+
+        // Validate label attributes.
+        // The for attribute should not be included.
+        $this->assertFalse(in_array(['name' => 'for', 'value' => $someid], $data->labelattributes));
+        // The rest should be fine.
+        $this->assertTrue(in_array(['name' => 'class', 'value' => $labelclass], $data->labelattributes));
+        $this->assertTrue(in_array(['name' => 'style', 'value' => $labelstyle], $data->labelattributes));
+    }
+
+    /**
+     * Test for checking the template context data for the url_select element.
+     */
+    public function test_url_select() {
+        global $PAGE;
+
+        $fakename = 'fakename';
+        $fakeclass = 'fakeclass';
+        $faketitle = 'faketitle';
+        $fakedisabled = true;
+        $fakefor = 'fakefor';
+
+        $someid = 'someid';
+        $realclass = 'realclass';
+        $realtitle = 'realtitle';
+        $realdisabled = false;
+        $reallabel = 'Some cool label';
+        $labelclass = 'somelabelclass';
+        $labelstyle = 'font-weight: bold';
+
+        $dataaction = 'actiondata';
+        $dataother = 'otherdata';
+
+        $attributes = [
+            'id' => $someid,
+            'class' => $fakeclass,
+            'title' => $faketitle,
+            'disabled' => $fakedisabled,
+            'name' => $fakename,
+            'data-action' => $dataaction,
+            'data-other' => $dataother,
+        ];
+        $labelattributes = [
+            'for' => $fakefor,
+            'class' => $labelclass,
+            'style' => $labelstyle
+        ];
+
+        $url1 = new moodle_url("/#a");
+        $url2 = new moodle_url("/#b");
+        $url3 = new moodle_url("/#c");
+
+        $urls = [
+            $url1->out() => 'A',
+            $url2->out() => 'B',
+            $url3->out() => 'C',
+        ];
+        $nothing = ['' => 'choosedots'];
+
+        $urlselect = new url_select($urls, null, $nothing, 'someformid');
+        $urlselect->class = $realclass;
+        $urlselect->tooltip = $realtitle;
+        $urlselect->disabled = $realdisabled;
+        $urlselect->attributes = $attributes;
+        $urlselect->label = $reallabel;
+        $urlselect->labelattributes = $labelattributes;
+
+        $renderer = $PAGE->get_renderer('core');
+        $data = $urlselect->export_for_template($renderer);
+
+        $this->assertEquals($realtitle, $data->title);
+        $this->assertEquals($urlselect->class, $data->classes);
+        $this->assertEquals($reallabel, $data->label);
+        $this->assertEquals($realdisabled, $data->disabled);
+        $this->assertEquals($someid, $data->id);
+
+        // Validate attributes array.
+        // The following should not be included: id, class, name, disabled.
+        $this->assertFalse(in_array(['name' => 'id', 'value' => $someid], $data->attributes));
+        $this->assertFalse(in_array(['name' => 'class', 'value' => $fakeclass], $data->attributes));
+        $this->assertFalse(in_array(['name' => 'name', 'value' => $fakeclass], $data->attributes));
+        $this->assertFalse(in_array(['name' => 'disabled', 'value' => $fakedisabled], $data->attributes));
+        // The rest should be fine.
+        $this->assertTrue(in_array(['name' => 'data-action', 'value' => $dataaction], $data->attributes));
+        $this->assertTrue(in_array(['name' => 'data-other', 'value' => $dataother], $data->attributes));
+
+        // Validate label attributes.
+        // The for attribute should not be included.
+        $this->assertFalse(in_array(['name' => 'for', 'value' => $someid], $data->labelattributes));
+        // The rest should be fine.
+        $this->assertTrue(in_array(['name' => 'class', 'value' => $labelclass], $data->labelattributes));
+        $this->assertTrue(in_array(['name' => 'style', 'value' => $labelstyle], $data->labelattributes));
+    }
 }

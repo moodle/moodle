@@ -21,10 +21,100 @@
 
     Example context (json):
     {
+        "text": "Example link text",
+        "title": "Example link title",
+        "url": "http://example.com/link",
+        "classes": "icon menu-action",
         "instance": "1",
-        "title": "Trigger me!",
-        "menutrigger": true,
-        "triggerextraclasses": ""
+        "triggerextraclasses": "",
+        "attributes": [
+            {"name": "role", "value": "menuitem" },
+            {"name": "data-title", "value": "mymoodle,admin" }
+        ],
+        "secondary": {
+            "classes": "menu  align-tr-br",
+            "attributes": [
+                {"name": "id", "value": "action-menu-0-menu"},
+                {"name": "data-rel", "value": "menu-content"},
+                {"name": "role", "value": "menu"},
+                {"name": "data-align", "value": "tr-br"}
+            ],
+            "items": [
+                {"actionmenulink":
+                    {
+                    "id": "action_link59ecf8394a68078",
+                    "disabled": false,
+                    "text": "Dashboard",
+                    "url": "http://example.com/link",
+                    "icon": {
+                        "key": "i/dashboard",
+                        "component": null,
+                        "title": "Dashboard"
+                        },
+                    "classes": "icon menu-action",
+                    "attributes": [
+                        {"name": "role", "value": "menuitem"},
+                        {"name": "data-title", "value": "mymoodle,admin"}
+                        ],
+                    "instance": 1,
+                    "showtext": true
+                    }
+                },
+                {"actionmenufiller":
+                    {
+                    "id": "action_link59ecf8394a68079",
+                    "disabled": false,
+                    "text": "",
+                    "url": "",
+                    "icon": null,
+                    "classes": "",
+                    "attributes": [
+                        {"name": "role", "value": "menuitem"}
+                        ]
+                    }
+                }
+            ]
+        }
     }
 }}
-<a href="#" class="{{triggerextraclasses}} toggle-display {{#menutrigger}}textmenu{{/menutrigger}}" id="action-menu-toggle-{{instance}}" title="{{title}}" role="menuitem">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
+<div class="dropdown">
+    <a href="#" tabindex="0" class="{{triggerextraclasses}} dropdown-toggle icon-no-margin" id="dropdown-{{instance}}" aria-label="{{title}}" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="action-menu-{{instance}}-menu">
+        {{{actiontext}}}
+        {{{menutrigger}}}
+            {{#icon}}
+                {{#pix}}
+                    {{key}},{{component}},{{title}}
+                {{/pix}}
+            {{/icon}}
+            {{#rawicon}}{{{.}}}{{/rawicon}}
+        {{#menutrigger}}
+        <b class="caret"></b>
+        {{/menutrigger}}
+    </a>
+    {{#secondary}}
+        <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} id="dropdown-menu-{{instance}}">
+            {{#items}}
+                {{#actionmenulink}}
+                    <a href="{{url}}" class="dropdown-item {{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>
+                        {{#icon}}
+                            {{#pix}}{{key}},{{component}},{{title}}{{/pix}}
+                        {{/icon}}
+                        {{#showtext}}
+                        <span class="menu-action-text" id="actionmenuaction-{{instance}}">
+                            {{{text}}}
+                        </span>
+                        {{/showtext}}
+                    </a>
+                {{/actionmenulink}}
+                {{#actionmenufiller}}
+                    <div class="dropdown-divider" role="presentation"><span class="filler">&nbsp;</span></div>
+                {{/actionmenufiller}}
+                {{^actionmenulink}}
+                    {{^actionmenufiller}}
+                        <div class="dropdown-item">{{> core/action_menu_item }}</div>
+                    {{/actionmenufiller}}
+                {{/actionmenulink}}
+            {{/items}}
+        </div>
+    {{/secondary}}
+</div>

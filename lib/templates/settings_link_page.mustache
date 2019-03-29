@@ -39,105 +39,107 @@
 
 <ul class="nav nav-tabs" role="tablist">
 <!-- First the top most node and immediate children -->
-    <li class="active"> <a href="#link{{node.key}}" data-toggle="tab" role="tab">{{node.text}}</a> </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="#link{{node.key}}" data-toggle="tab" role="tab">{{node.text}}</a>
+    </li>
 <!-- Now the first level children with sub nodes -->
 {{#node.children}}
     {{#children.count}}
         {{#display}}
             {{^is_short_branch}}
-                <li> <a href="#link{{key}}" data-toggle="tab" role="tab">{{text}}</a> </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#link{{key}}" data-toggle="tab" role="tab">{{text}}</a>
+                </li>
             {{/is_short_branch}}
         {{/display}}
     {{/children.count}}
 {{/node.children}}
 </ul>
 
-<div class="tab-content">
+<div class="tab-content mt-3">
     <div class="tab-pane active" id="link{{node.key}}" role="tabpanel">
-        <div class="well">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="span9 offset3">
-                        <ul class="unstyled indented-list">
-                            {{#node.children}}
-                                {{^children.count}}
-                                    {{#display}}
-                                        <li><a href="{{{action}}}">{{text}}</a></li>
-                                    {{/display}}
-                                {{/children.count}}
-                            {{/node.children}}
-                        </ul>
-                    </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3">
                 </div>
+                <div class="col">
+                    <ul class="list-unstyled">
+                        {{#node.children}}
+                            {{^children.count}}
+                                {{#display}}
+                                    <li><a href="{{{action}}}">{{text}}</a></li>
+                                {{/display}}
+                            {{/children.count}}
+                        {{/node.children}}
+                    </ul>
+                </div>
+            </div>
 
-                {{#node.children}}
-                    {{#display}}
-                        {{#children.count}}
-                            {{#is_short_branch}}
+            {{#node.children}}
+                {{#display}}
+                    {{#children.count}}
+                        {{#is_short_branch}}
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
+                                    {{^action}}<h4>{{text}}<h4>{{/action}}
+                                </div>
+                                <div class="col">
+                                    <ul class="list-unstyled">
+                                        {{#children}}
+                                            {{> core/settings_link_page_single }}
+                                        {{/children}}
+                                    </ul>
+                                </div>
+                            </div>
+                        {{/is_short_branch}}
+                    {{/children.count}}
+                {{/display}}
+            {{/node.children}}
+        </div>
+    </div>
+    {{#node.children}}
+        {{#children.count}}
+            <div class="tab-pane" id="link{{key}}" role="tabpanel">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
+                            {{^action}}<h4>{{text}}<h4>{{/action}}
+                        </div>
+                        <div class="col-sm-9">
+                            <ul class="list-unstyled">
+                                {{#children}}
+                                    {{#display}}
+                                        {{^children.count}}
+                                            <li><a href="{{{action}}}">{{text}}</a></li>
+                                        {{/children.count}}
+                                    {{/display}}
+                                {{/children}}
+                            </ul>
+                        </div>
+                    </div>
+                    {{#children}}
+                        {{#display}}
+                            {{#children.count}}
                                 <hr>
                                 <div class="row">
-                                    <div class="span3">
+                                    <div class="col-sm-3">
                                         {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
                                         {{^action}}<h4>{{text}}<h4>{{/action}}
                                     </div>
-                                    <div class="span9">
-                                        <ul class="unstyled indented-list">
+                                    <div class="col-sm-9">
+                                        <ul class="list-unstyled">
                                             {{#children}}
                                                 {{> core/settings_link_page_single }}
                                             {{/children}}
                                         </ul>
                                     </div>
                                 </div>
-                            {{/is_short_branch}}
-                        {{/children.count}}
-                    {{/display}}
-                {{/node.children}}
-            </div>
-        </div>
-    </div>
-    {{#node.children}}
-        {{#children.count}}
-            <div class="tab-pane" id="link{{key}}" role="tabpanel">
-                <div class="well">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="span3">
-                                {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
-                                {{^action}}<h4>{{text}}<h4>{{/action}}
-                            </div>
-                            <div class="span9">
-                                <ul class="unstyled">
-                                    {{#children}}
-                                        {{#display}}
-                                            {{^children.count}}
-                                                <li><a href="{{{action}}}">{{text}}</a></li>
-                                            {{/children.count}}
-                                        {{/display}}
-                                    {{/children}}
-                                </ul>
-                            </div>
-                        </div>
-                        {{#children}}
-                            {{#display}}
-                                {{#children.count}}
-                                    <hr>
-                                    <div class="row">
-                                        <div class="span3">
-                                            {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
-                                            {{^action}}<h4>{{text}}<h4>{{/action}}
-                                        </div>
-                                        <div class="span9">
-                                            <ul class="unstyled indented-list">
-                                                {{#children}}
-                                                    {{> core/settings_link_page_single }}
-                                                {{/children}}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                {{/children.count}}
-                            {{/display}}
-                        {{/children}}
-                    </div>
+                            {{/children.count}}
+                        {{/display}}
+                    {{/children}}
                 </div>
             </div>
         {{/children.count}}

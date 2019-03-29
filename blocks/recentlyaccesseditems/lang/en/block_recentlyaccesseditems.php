@@ -28,5 +28,4 @@ $string['privacy:metadata:block_recentlyaccesseditemstablesummary'] = 'The Recen
 $string['privacy:metadata:timeaccess'] = 'The time when the user last accessed the item';
 $string['privacy:metadata:userid'] = 'The ID of the user who accessed the item';
 $string['privacy:recentlyaccesseditemspath'] = 'Recently accessed items';
-$string['recentlyaccesseditems:addinstance'] = 'Add a new recently accessed items block';
 $string['recentlyaccesseditems:myaddinstance'] = 'Add a new recently accessed items block to Dashboard';

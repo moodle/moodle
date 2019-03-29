@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/setting_devicedetectregex
+
+    Admin devicedetectregex setting template.
+
+    Context variables required for this template:
+    * expressions - List of expressions containing index, name, expression and value
+
+    Example context (json):
+    {
+        "expressions": [
+            { "index": "i1", "name": "Name", "expression": "/bird|yellow/", "value": "Canary" }
+        ]
+    }
+}}
+<table class="generaltable">
+    <thead>
+        <tr>
+            <th>{{#str}}devicedetectregexexpression, admin{{/str}}</th>
+            <th>{{#str}}devicedetectregexvalue, admin{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#expressions}}
+            <tr>
+                <td class="c{{index}}">
+                    <input type="text" name="{{name}}[expression{{index}}]" class="form-text text-ltr" value="{{expression}}">
+                </td>
+                <td class="c{{index}}">
+                    <input type="text" name="{{name}}[value{{index}}]" class="form-text text-ltr" value="{{value}}">
+                </td>
+            </tr>
+        {{/expressions}}
+    </tbody>
+</table>

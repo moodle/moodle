@@ -139,7 +139,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->userrole = create_role('User role', 'userrole', 'learning plan user role description');
 
         assign_capability('moodle/competency:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('moodle/competency:competencycompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:coursecompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('moodle/competency:competencyview', CAP_ALLOW, $this->userrole, $syscontext->id);
         assign_capability('moodle/competency:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('moodle/competency:planmanagedraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);

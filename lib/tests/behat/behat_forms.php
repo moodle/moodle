@@ -126,7 +126,7 @@ class behat_forms extends behat_base {
                     "//a[contains(concat(' ', @class, ' '), ' fheader ') and @aria-expanded = 'false']";
 
             $collapseexpandlink = $this->find('xpath', $expandallxpath . '|' . $expandonlysection,
-                    false, false, self::REDUCED_TIMEOUT);
+                    false, false, behat_base::get_reduced_timeout());
             $collapseexpandlink->click();
 
         } catch (ElementNotFoundException $e) {

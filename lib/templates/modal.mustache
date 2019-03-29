@@ -40,28 +40,28 @@
     }
 }}
 
-<div class="modal-container moodle-has-zindex hide" data-region="modal-container" aria-hidden="true" role="dialog">
-    <div class="modal {{$classes}}{{/classes}}"
-        data-region="modal"
-        aria-labelledby="{{uniqid}}-modal-title"
-        role="document" tabindex="0">
-        <div class="modal-header {{$headerclasses}}{{headerclasses}}{{/headerclasses}}" data-region="header">
-            <button type="button" class="close" data-action="hide" title="{{#str}} closebuttontitle {{/str}}"></button>
-            {{$header}}
-                <h3 id="{{uniqid}}-modal-title" class="modal-title" data-region="title">
-                    {{$title}}{{title}}{{/title}}
-                </h3>
-            {{/header}}
-        </div>
-        <div class="modal-body" data-region="body">
-            {{$body}}
-                {{{body}}}
-            {{/body}}
-        </div>
-        <div class="modal-footer" data-region="footer">
-            {{$footer}}
-                {{{footer}}}
-            {{/footer}}
+<div class="modal moodle-has-zindex" data-region="modal-container" aria-hidden="true" role="dialog">
+    <div class="modal-dialog {{$classes}}{{/classes}}" role="document" data-region="modal" aria-labelledby="{{uniqid}}-modal-title" tabindex="0">
+        <div class="modal-content">
+            <div class="modal-header {{$headerclasses}}{{headerclasses}}{{/headerclasses}}" data-region="header">
+
+                {{$header}}
+                    <h5 id="{{uniqid}}-modal-title" class="modal-title" data-region="title">{{$title}}{{title}}{{/title}}</h5>
+                {{/header}}
+                <button type="button" class="close" data-action="hide" aria-label={{#quote}}{{#str}}closebuttontitle{{/str}}{{/quote}}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" data-region="body">
+                {{$body}}
+                    {{{body}}}
+                {{/body}}
+            </div>
+            <div class="modal-footer" data-region="footer">
+                {{$footer}}
+                    {{{footer}}}
+                {{/footer}}
+            </div>
         </div>
     </div>
 </div>

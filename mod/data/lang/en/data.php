@@ -166,8 +166,8 @@ $string['fieldheightlistview'] = 'Height in list view';
 $string['fieldheightsingleview'] = 'Height in single view';
 $string['fieldids'] = 'Field ids';
 $string['fieldmappings'] = 'Field mappings';
-$string['fieldmappings_help'] = 'This menu allows you to keep the data from the existing database. To preserve the data in a field, you must map it to a new field, where the data will appear. Any field can also be left blank, with no infomation copied into it. Any old field not mapped to a new one will be lost and all it\'s data removed.
-You can only map fields of the same type, so each dropdown will have different fields in it. Also, you must be careful not to try and map one old field to more than one new field.';
+$string['fieldmappings_help'] = 'This menu allows you to keep the data from the existing database. To preserve the data in a field, you must map it to a new field, where the data will appear. Any field can also be left blank, with no information copied into it. Any old field not mapped to a new one will be lost and all its data removed.
+You can only map fields of the same type, so each drop-down menu will have different fields in it. Also, you must be careful not to try and map one old field to more than one new field.';
 $string['fieldname'] = 'Field name';
 $string['fieldnotmatched'] = 'The following fields in your file are not known in this database: {$a}';
 $string['fieldoptions'] = 'Options (one per line)';
@@ -243,7 +243,7 @@ $string['menuchoose'] = 'Choose...';
 $string['missingdata'] = 'Data id or object must be provided to field class';
 $string['missingfield'] = 'Programmer error: You must specify field and/or data when defining field class.';
 $string['modulename'] = 'Database';
-$string['modulename_help'] = 'The database activity module enables participants to create, maintain and search a collection of entries (i.e. records).  The structure of the entries is defined by the teacher as a number of fields. Field types include checkbox, radio buttons, dropdown menu, text area, URL, picture and uploaded file.
+$string['modulename_help'] = 'The database activity module enables participants to create, maintain and search a collection of entries (i.e. records).  The structure of the entries is defined by the teacher as a number of fields. Field types include checkbox, radio buttons, drop-down menu, text area, URL, picture and uploaded file.
 
 The visual layout of information when listing, viewing or editing database entries may be controlled by database templates. Database activities may be shared between courses as presets and a teacher may also import and export database entries.
 
@@ -254,7 +254,7 @@ A teacher can allow comments on entries. Entries can also be rated by teachers o
 Database activities have many uses, such as
 
 * A collaborative collection of web links, books, book reviews, journal references etc
-* For displaying student-created photos, posters, websites or poems for peer comment and review';
+* For displaying student-created photos, posters, websites or poems for peer comment and review.';
 $string['modulename_link'] = 'mod/data/view';
 $string['modulenameplural'] = 'Databases';
 $string['more'] = 'More';
@@ -265,7 +265,7 @@ $string['multimenu'] = 'Menu (Multi-select)';
 $string['multipletags'] = 'Multiple tags found! Template not saved';
 $string['newentry'] = 'New entry';
 $string['newfield'] = 'Create a new field';
-$string['newfield_help'] = 'A field allows the input of data. Each entry in a database activity can have multiple fields of multiple types such as a date field, which allows participants to select a day, month and year from a dropdown list, a picture field, which allows participants to upload an image file, or a checkbox field, which allows participants to select one or more options.
+$string['newfield_help'] = 'A field allows the input of data. Each entry in a database activity can have multiple fields of multiple types such as a date field, which allows participants to select a day, month and year from a drop-down menu, a picture field, which allows participants to upload an image file, or a checkbox field, which allows participants to select one or more options.
 
 Each field must have a unique field name. The field description is optional.';
 $string['noaccess'] = 'You do not have access to this page';

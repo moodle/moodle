@@ -41,7 +41,7 @@ class course_search_testcase extends advanced_testcase {
     /**
      * @var string Area id
      */
-    protected $mycoursesareaid = null;
+    protected $coursesareaid = null;
 
     /**
      * @var string Area id for sections
@@ -57,7 +57,7 @@ class course_search_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         set_config('enableglobalsearch', true);
 
-        $this->mycoursesareaid = \core_search\manager::generate_areaid('core_course', 'mycourse');
+        $this->coursesareaid = \core_search\manager::generate_areaid('core_course', 'course');
         $this->sectionareaid = \core_search\manager::generate_areaid('core_course', 'section');
         $this->customfieldareaid = \core_search\manager::generate_areaid('core_course', 'customfield');
 
@@ -66,15 +66,15 @@ class course_search_testcase extends advanced_testcase {
     }
 
     /**
-     * Indexing my courses contents.
+     * Indexing courses contents.
      *
      * @return void
      */
-    public function test_mycourses_indexing() {
+    public function test_courses_indexing() {
 
         // Returns the instance as long as the area is supported.
-        $searcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
-        $this->assertInstanceOf('\core_course\search\mycourse', $searcharea);
+        $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
+        $this->assertInstanceOf('\core_course\search\course', $searcharea);
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -113,10 +113,10 @@ class course_search_testcase extends advanced_testcase {
     /**
      * Tests course indexing support for contexts.
      */
-    public function test_mycourses_indexing_contexts() {
+    public function test_courses_indexing_contexts() {
         global $DB, $USER, $SITE;
 
-        $searcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
+        $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
 
         // Create some courses in categories, and a forum.
         $generator = $this->getDataGenerator();
@@ -194,11 +194,11 @@ class course_search_testcase extends advanced_testcase {
      *
      * @return void
      */
-    public function test_mycourses_document() {
+    public function test_courses_document() {
 
         // Returns the instance as long as the area is supported.
-        $searcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
-        $this->assertInstanceOf('\core_course\search\mycourse', $searcharea);
+        $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
+        $this->assertInstanceOf('\core_course\search\course', $searcharea);
 
         $user = self::getDataGenerator()->create_user();
         $course = self::getDataGenerator()->create_course();
@@ -207,7 +207,7 @@ class course_search_testcase extends advanced_testcase {
         $doc = $searcharea->get_document($course);
         $this->assertInstanceOf('\core_search\document', $doc);
         $this->assertEquals($course->id, $doc->get('itemid'));
-        $this->assertEquals($this->mycoursesareaid . '-' . $course->id, $doc->get('id'));
+        $this->assertEquals($this->coursesareaid . '-' . $course->id, $doc->get('id'));
         $this->assertEquals($course->id, $doc->get('courseid'));
         $this->assertFalse($doc->is_set('userid'));
         $this->assertEquals(\core_search\manager::NO_OWNER_ID, $doc->get('owneruserid'));
@@ -224,10 +224,11 @@ class course_search_testcase extends advanced_testcase {
      *
      * @return void
      */
-    public function test_mycourses_access() {
+    public function test_courses_access() {
+        $this->resetAfterTest();
 
         // Returns the instance as long as the area is supported.
-        $searcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
+        $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -244,13 +245,13 @@ class course_search_testcase extends advanced_testcase {
         $this->setUser($user1);
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1->id));
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course2->id));
-        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course3->id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course3->id));
         $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-123));
 
         $this->setUser($user2);
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1->id));
         $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course2->id));
-        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course3->id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course3->id));
     }
 
     /**
@@ -538,10 +539,43 @@ class course_search_testcase extends advanced_testcase {
     }
 
     /**
-     * Test document icon for mycourse area.
+     * Document accesses for customfield area.
      */
-    public function test_get_doc_icon_for_mycourse_area() {
-        $searcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
+    public function test_customfield_access() {
+        $this->resetAfterTest();
+
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->customfieldareaid);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course(array('visible' => 0));
+        $course3 = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'teacher');
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, 'teacher');
+        $this->getDataGenerator()->enrol_user($user2->id, $course2->id, 'student');
+
+        $this->setUser($user1);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1->id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course2->id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course3->id));
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-123));
+
+        $this->setUser($user2);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1->id));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course2->id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course3->id));
+    }
+
+    /**
+     * Test document icon for course area.
+     */
+    public function test_get_doc_icon_for_course_area() {
+        $searcharea = \core_search\manager::get_search_area($this->coursesareaid);
 
         $document = $this->getMockBuilder('\core_search\document')
             ->disableOriginalConstructor()
@@ -573,7 +607,7 @@ class course_search_testcase extends advanced_testcase {
      * Test assigned search categories.
      */
     public function test_get_category_names() {
-        $coursessearcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
+        $coursessearcharea = \core_search\manager::get_search_area($this->coursesareaid);
         $sectionsearcharea = \core_search\manager::get_search_area($this->sectionareaid);
 
         $this->assertEquals(['core-courses'], $coursessearcharea->get_category_names());

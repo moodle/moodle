@@ -114,6 +114,7 @@ $string['eventsupdated'] = 'Events updated: {$a}';
 $string['eventsfor'] = '{$a} events';
 $string['eventskey'] = 'Events key';
 $string['eventspersonal'] = 'My personal events';
+$string['eventsrelatedtocategories'] = 'Events related to categories';
 $string['eventsrelatedtocourses'] = 'Events related to courses';
 $string['eventsrelatedtogroups'] = 'Events related to groups';
 $string['eventstarttime'] = 'Start time';

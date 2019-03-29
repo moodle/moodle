@@ -17,7 +17,7 @@
 {{!
     Dropdown attribute.
 }}
-<select id="{{name}}" name="{{name}}" tabindex="1" {{#disabled}}disabled{{/disabled}}>
+<select id="{{name}}" name="{{name}}" class="custom-select" tabindex="1" {{#disabled}}disabled{{/disabled}}>
     {{#options}}
         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
     {{/options}}

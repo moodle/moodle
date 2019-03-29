@@ -34,9 +34,12 @@
                      { "name": "Option 2", "value": "V", "selected": true } ]
     }
 }}
+{{!
+    Setting configmultiselect.
+}}
 <div class="form-select">
     <input type="hidden" name="{{name}}[xxxxx]" value="1">
-    <select id="{{id}}" name="{{name}}[]" size="{{size}}" multiple>
+    <select id="{{id}}" name="{{name}}[]" size="{{size}}" class="form-control" multiple>
         {{#options}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
         {{/options}}

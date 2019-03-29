@@ -35,6 +35,8 @@ Options:
 --non-interactive      Not interactive questions
 --timesplitting        Restrict the evaluation to 1 single time splitting method (Optional)
 --filter               Analyser dependant. e.g. A courseid would evaluate the model using a single course (Optional)
+--mode                 'configuration' or 'trainedmodel'. You can only use mode=trainedmodel when the trained" .
+    " model was imported" . "
 --reuse-prev-analysed  Reuse recently analysed courses instead of analysing the whole site. Set it to false while" .
     " coding indicators. Defaults to true (Optional)" . "
 -h, --help             Print out this help
@@ -50,6 +52,7 @@ list($options, $unrecognized) = cli_get_params(
         'modelid'               => false,
         'list'                  => false,
         'timesplitting'         => false,
+        'mode'                  => 'configuration',
         'reuse-prev-analysed'   => true,
         'non-interactive'       => false,
         'filter'                => false
@@ -64,14 +67,28 @@ if ($options['help']) {
     exit(0);
 }
 
-if ($options['list'] || $options['modelid'] === false) {
+if ($options['list']) {
     \tool_analytics\clihelper::list_models();
+    exit(0);
+}
+
+if ($options['modelid'] === false) {
+    // All actions but --list require a modelid.
+    echo $help;
     exit(0);
 }
 
 // Reformat them as an array.
 if ($options['filter'] !== false) {
     $options['filter'] = explode(',', $options['filter']);
+}
+
+if ($options['mode'] !== 'configuration' && $options['mode'] !== 'trainedmodel') {
+    cli_error('Error: The provided mode is not supported');
+}
+
+if ($options['mode'] == 'trainedmodel' && $options['timesplitting']) {
+    cli_error('Sorry, no time splitting method can be specified when using \'trainedmodel\' mode.');
 }
 
 // We need admin permissions.
@@ -89,6 +106,7 @@ $analyseroptions = array(
     'filter' => $options['filter'],
     'timesplitting' => $options['timesplitting'],
     'reuseprevanalysed' => $options['reuse-prev-analysed'],
+    'mode' => $options['mode'],
 );
 // Evaluate its suitability to predict accurately.
 $results = $model->evaluate($analyseroptions);

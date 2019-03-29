@@ -41,6 +41,13 @@
     {{$placeholder}}
         <div class="text-center py-2">{{> core/loading }}</div>
     {{/placeholder}}
+    {{$notification}}
+        {{#overview.notification}}
+            <div class="text-center p-2">
+                <p class="text-center text-muted mt-2">{{.}}</p>
+            </div>
+        {{/overview.notification}}
+    {{/notification}}
     {{$emptymessage}}
         <p class="text-muted mt-2">{{#str}} noindividualconversations, core_message {{/str}}</p>
     {{/emptymessage}}

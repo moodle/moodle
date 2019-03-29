@@ -26,12 +26,33 @@
         "homelink": "/"
     }
 }}
-<h3>{{#str}}considereddigitalminor{{/str}}</h3>
-<p class="m-b-0">{{#str}}digitalminor_desc{{/str}}</p>
-<div class="p-t-1 p-b-1">
-    <p class="m-b-0">{{{supportname}}}</p>
-    <p class="m-b-0">{{{supportemail}}}</p>
-</div>
-<div class="backlink">
-    <a href="{{homelink}}">{{#str}}backtohome{{/str}}</a>
+<div class="container-fluid mt-1 mt-md-5">
+    <div class="row justify-content-md-center">
+        <div class="col-md-8 push-md-2 col-xl-6 push-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title text-xs-center">
+                        {{#logourl}}
+                            <h2><img src="{{logourl}}" title="{{sitename}}" alt="{{sitename}}"/></h2>
+                        {{/logourl}}
+                        {{^logourl}}
+                            <h2>{{sitename}}</h2>
+                        {{/logourl}}
+                        <hr>
+                    </div>
+                     <div class="card-title">
+                        <h3>{{#str}}considereddigitalminor{{/str}}</h3>
+                    </div>
+                    <div class="p-t-1 p-b-2">
+                        <p>{{#str}}digitalminor_desc{{/str}}</p>
+                        <p class="m-b-0">{{{supportname}}}</p>
+                        <p class="m-b-0">{{{supportemail}}}</p>
+                    </div>
+                    <div class="backlink">
+                        <a href="{{homelink}}">{{#str}}backtohome{{/str}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

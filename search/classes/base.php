@@ -175,8 +175,7 @@ abstract class base {
         list($componentname, $varname) = $this->get_config_var_name();
 
         $config = [];
-        $settingnames = array('_enabled', '_indexingstart', '_indexingend', '_lastindexrun',
-                '_docsignored', '_docsprocessed', '_recordsprocessed', '_partial');
+        $settingnames = self::get_settingnames();
         foreach ($settingnames as $name) {
             $config[$varname . $name] = get_config($componentname, $varname . $name);
         }
@@ -186,6 +185,16 @@ abstract class base {
             $config[$varname . '_enabled'] = 1;
         }
         return $config;
+    }
+
+    /**
+     * Return a list of all required setting names.
+     *
+     * @return array
+     */
+    public static function get_settingnames() {
+        return array('_enabled', '_indexingstart', '_indexingend', '_lastindexrun',
+            '_docsignored', '_docsprocessed', '_recordsprocessed', '_partial');
     }
 
     /**

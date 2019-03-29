@@ -29,6 +29,7 @@ $q = optional_param('q', '', PARAM_NOTAGS);
 $title = optional_param('title', '', PARAM_NOTAGS);
 $contextid = optional_param('context', 0, PARAM_INT);
 $cat = optional_param('cat', '', PARAM_NOTAGS);
+$mycoursesonly = optional_param('mycoursesonly', 0, PARAM_INT);
 
 if (\core_search\manager::is_search_area_categories_enabled()) {
     $cat = \core_search\manager::get_search_area_category_by_name($cat);
@@ -113,6 +114,7 @@ if (!$data && $q) {
     $data->timeend = optional_param('timeend', 0, PARAM_INT);
 
     $data->context = $contextid;
+    $data->mycoursesonly = $mycoursesonly;
 
     $mform->set_data($data);
 }
@@ -152,6 +154,7 @@ if ($data) {
     }
     $urlparams['timestart'] = $data->timestart;
     $urlparams['timeend'] = $data->timeend;
+    $urlparams['mycoursesonly'] = isset($data->mycoursesonly) ? $data->mycoursesonly : 0;
 }
 
 if ($cat instanceof \core_search\area_category) {

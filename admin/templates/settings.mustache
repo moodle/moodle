@@ -36,8 +36,11 @@
         "showsave": true
     }
 }}
+{{!
+    Settings.
+}}
 <form action="{{actionurl}}" method="post" id="adminsettings">
-    <div class="settingsform clearfix">
+    <div class="settingsform">
         {{#params}}
             <input type="hidden" name="{{name}}" value="{{value}}">
             <input type="hidden" name="action" value="save-settings">
@@ -49,8 +52,10 @@
         {{/title}}
         {{{settings}}}
         {{#showsave}}
-            <div class="form-buttons">
-                <input type="submit" class="form-submit" value={{#quote}}{{#str}}savechanges, admin{{/str}}{{/quote}}>
+            <div class="row">
+                <div class="offset-sm-3 col-sm-3">
+                    <button type="submit" class="btn btn-primary">{{#str}}savechanges, admin{{/str}}</button>
+                </div>
             </div>
         {{/showsave}}
     </div>

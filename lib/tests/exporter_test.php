@@ -179,6 +179,8 @@ class core_exporter_testcase extends advanced_testcase {
         $this->assertEquals('otherstring description', $properties['otherstring']['description']);
         // Other properties default description.
         $this->assertEquals('otherstrings', $properties['otherstrings']['description']);
+        // Assert nested elements are formatted correctly.
+        $this->assertEquals('id', $properties['nestedarray']['type']['id']['description']);
     }
 }
 
@@ -228,6 +230,13 @@ class core_testable_exporter extends \core\external\exporter {
             'otherstrings' => array(
                 'type' => PARAM_TEXT,
                 'multiple' => true
+            ),
+            'nestedarray' => array(
+                'multiple' => true,
+                'optional' => true,
+                'type' => [
+                    'id' => ['type' => PARAM_INT]
+                ]
             )
         );
     }

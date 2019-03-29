@@ -115,7 +115,8 @@ class mod_assign_external extends external_api {
             try {
                 $context = context_module::instance($cm->id);
                 self::validate_context($context);
-                require_capability('mod/assign:grade', $context);
+                $assign = new assign($context, null, null);
+                $assign->require_view_grades();
             } catch (Exception $e) {
                 $requestedassignmentids = array_diff($requestedassignmentids, array($cm->instance));
                 $warning = array();
@@ -211,7 +212,7 @@ class mod_assign_external extends external_api {
                 'attemptnumber'     => new external_value(PARAM_INT, 'attempt number'),
                 'timecreated'       => new external_value(PARAM_INT, 'grade creation time'),
                 'timemodified'      => new external_value(PARAM_INT, 'grade last modified time'),
-                'grader'            => new external_value(PARAM_INT, 'grader'),
+                'grader'            => new external_value(PARAM_INT, 'grader, -1 if grader is hidden'),
                 'grade'             => new external_value(PARAM_TEXT, 'grade'),
                 'gradefordisplay'   => new external_value(PARAM_RAW, 'grade rendered into a format suitable for display',
                                                             VALUE_OPTIONAL),
@@ -734,8 +735,8 @@ class mod_assign_external extends external_api {
             try {
                 $context = context_module::instance($cm->id);
                 self::validate_context($context);
-                require_capability('mod/assign:grade', $context);
                 $assign = new assign($context, null, null);
+                $assign->require_view_grades();
                 $assigns[] = $assign;
             } catch (Exception $e) {
                 $warnings[] = array(
@@ -2383,7 +2384,7 @@ class mod_assign_external extends external_api {
             $result['gradingsummary'] = $gradingsummary;
         }
         // Show the grader's identity if 'Hide Grader' is disabled or has the 'Show Hidden Grader' capability.
-        $showgradername = (has_capability('mod/assign:showhiddengrader', $context, $user) or
+        $showgradername = (has_capability('mod/assign:showhiddengrader', $context) or
             !$assign->is_hidden_grader());
 
         // Did we submit anything?
@@ -2432,7 +2433,7 @@ class mod_assign_external extends external_api {
         if ($feedback) {
             if ($feedback->grade) {
                 if (!$showgradername) {
-                    $feedback->grade->grader = false;
+                    $feedback->grade->grader = -1;
                 }
                 $feedbackplugins = $assign->get_feedback_plugins();
                 $feedback->plugins = self::get_plugins_data($assign, $feedbackplugins, $feedback->grade);
@@ -2473,7 +2474,7 @@ class mod_assign_external extends external_api {
                 if ($grade) {
                     // From object to id.
                     if (!$showgradername) {
-                        $grade->grader = false;
+                        $grade->grader = -1;
                     } else {
                         $grade->grader = $grade->grader->id;
                     }

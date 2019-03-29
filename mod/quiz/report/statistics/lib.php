@@ -59,17 +59,3 @@ function quiz_statistics_question_preview_pluginfile($previewcontext, $questioni
 
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
-
-/**
- * Quiz statistics report cron code. Deletes cached data more than a certain age.
- */
-function quiz_statistics_cron() {
-    global $DB;
-
-    mtrace("\n  Cleaning up old quiz statistics cache records...", '');
-
-    $expiretime = time() - 5*HOURSECS;
-    $DB->delete_records_select('quiz_statistics', 'timemodified < ?', array($expiretime));
-
-    return true;
-}

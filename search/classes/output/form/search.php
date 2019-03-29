@@ -24,6 +24,8 @@
 
 namespace core_search\output\form;
 
+use core_search\manager;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/formslib.php');
@@ -105,13 +107,24 @@ class search extends \moodleform {
         );
         $mform->addElement('autocomplete', 'areaids', get_string('searcharea', 'search'), $areanames, $options);
 
+        if (is_siteadmin()) {
+            $limittoenrolled = false;
+        } else {
+            $limittoenrolled = !manager::include_all_courses();
+        }
+
         $options = array(
             'multiple' => true,
-            'limittoenrolled' => !is_siteadmin(),
+            'limittoenrolled' => $limittoenrolled,
             'noselectionstring' => get_string('allcourses', 'search'),
         );
         $mform->addElement('course', 'courseids', get_string('courses', 'core'), $options);
         $mform->setType('courseids', PARAM_INT);
+
+        if (manager::include_all_courses() || !empty(get_config('core', 'searchallavailablecourses'))) {
+            $mform->addElement('checkbox', 'mycoursesonly', get_string('mycoursesonly', 'search'));
+            $mform->setType('mycoursesonly', PARAM_INT);
+        }
 
         // If the search engine can search by user, and the user is logged in (so we have
         // permission to call the user-listing web service) then show the user selector.

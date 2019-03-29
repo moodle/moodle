@@ -35,41 +35,8 @@
     }
 }}
 
-<div class="card-deck dashboard-card-deck {{$classes}}{{/classes}}" role="list">
+<div class="card-deck dashboard-card-deck {{$classes}}{{/classes}}" data-region="card-deck" role="list">
 {{#courses}}
-    <div class="card dashboard-card" role="listitem"
-        data-region="course-content"
-        data-course-id="{{{id}}}">
-        <a href="{{viewurl}}" tabindex="-1">
-            <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
-                <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
-            </div>
-        </a>
-        <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
-            <div class="d-flex align-items-start">
-                <a href="{{viewurl}}" class="coursename mr-2 text-truncate">
-                    <div class="text-muted muted d-flex w-100 mb-1 text-truncate" style="flex-flow:wrap;">
-                        {{$coursecategory}}{{/coursecategory}}
-                        {{#showshortname}}
-                        {{$divider}}{{/divider}}
-                        <span class="sr-only">
-                            {{#str}}aria:courseshortname, core_course{{/str}}
-                        </span>
-                        <div>
-                            {{{shortname}}}
-                        </div>
-                        {{/showshortname}}
-                    </div>
-                    {{> core_course/favouriteicon }}
-                    <span class="sr-only">
-                        {{#str}}aria:coursename, core_course{{/str}}
-                    </span>
-                    {{$coursename}}{{/coursename}}
-                </a>
-                {{$menu}}{{/menu}}
-            </div>
-        </div>
-        {{$progress}}{{/progress}}
-    </div>
+    {{> core_course/coursecard }}
 {{/courses}}
 </div>

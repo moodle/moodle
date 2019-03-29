@@ -1,0 +1,245 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/discussion_list
+
+    Template to display the list of forum discussions.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * TODO
+
+    Example context (json):
+    {
+    }
+}}
+<div id="discussion-list-{{uniqid}}">
+    {{{groupchangemenu}}}
+
+    {{#notifications}}
+        {{> core/notification}}
+    {{/notifications}}
+
+    {{#forum.capabilities.create}}
+        <div class="p-t-1 p-b-1">
+            <a href="{{forum.urls.create}}" class="btn btn-primary">
+                {{$discussion_create_text}}
+                    {{#str}}addanewdiscussion, forum{{/str}}
+                {{/discussion_create_text}}
+            </a>
+        </div>
+    {{/forum.capabilities.create}}
+
+    {{#state.hasdiscussions}}
+        {{$discussion_top_pagination}}
+            {{{ pagination }}}
+        {{/discussion_top_pagination}}
+        {{$discussion_list_output}}
+            <table class="table table-hover table-striped">
+                {{$discussion_list_header}}
+                <thead>
+                    <tr>
+                        <th scope="col">&nbsp;</th>
+                        <th scope="col">&nbsp;</th>
+                        <th scope="col" class="p-l-0">{{#str}}discussion, mod_forum{{/str}}</th>
+                        <th scope="col" class="author">{{#str}}startedby, mod_forum{{/str}}</th>
+                        {{#forum.state.groupmode}}
+                            <th scope="col" class="group">{{#str}}group{{/str}}</th>
+                        {{/forum.state.groupmode}}
+                        {{#forum.capabilities.viewdiscussions}}
+                            <th scope="col" class="text-center">{{#str}}replies, mod_forum{{/str}}</th>
+                            {{#forum.userstate.tracked}}
+                            <th scope="col" class="text-center">
+                                {{#str}}unread, mod_forum{{/str}}
+                                <a href="{{{forum.urls.markasread}}}">{{#pix}}t/markasread, core, {{#str}}markallread, mod_forum{{/str}}{{/pix}}</a>
+                            </th>
+                            {{/forum.userstate.tracked}}
+                        {{/forum.capabilities.viewdiscussions}}
+                        <th scope="col" class="lastpost">{{#str}}lastpost, mod_forum{{/str}}</th>
+                        {{#forum.capabilities.subscribe}}
+                            <th scope="col" class="discussionsubscription"></th>
+                        {{/forum.capabilities.subscribe}}
+                    </tr>
+                </thead>
+                {{/discussion_list_header}}
+                {{$discussion_list_body}}
+                <tbody>
+                    {{#summaries}}
+                        <!-- The discussion class is only required for behat tests to identify the row -->
+                        <tr class="discussion {{#discussion.timed}}{{#istimed}}{{^visible}}dimmed_text{{/visible}}{{/istimed}}{{/discussion.timed}}">
+                            <td scope="col" class="pinned p-0 text-center align-middle">
+                                {{#discussion.pinned}}
+                                    {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
+                                {{/discussion.pinned}}
+                            </td>
+                            <td scope="col" class="timed p-0 text-center align-middle">
+                                {{#discussion.timed.istimed}}
+                                    <div class="timedpost">
+                                        {{#pix}}
+                                            i/calendar, moodle,
+                                            {{#discussion.times.start}}
+{{!                                           }}{{#str}} displaystart, mod_forum {{/str}}: {{#userdate}}{{.}}, {{#str}}strftimerecentfull {{/str}}{{/userdate}}
+                                            {{/discussion.times.start}}
+                                            {{#discussion.times.end}}
+{{!                                           }}{{#str}} displayend, mod_forum {{/str}}: {{#userdate}}{{.}}, {{#str}} strftimerecentfull {{/str}}{{/userdate}}
+                                            {{/discussion.times.end}}
+                                            {{#discussion.timed.visible}}
+{{!                                           }}{{#str}} timedvisible, mod_forum {{/str}}
+                                            {{/discussion.timed.visible}}
+                                            {{^discussion.timed.visible}}
+{{!                                           }}{{#str}} timedhidden, mod_forum {{/str}}
+                                            {{/discussion.timed.visible}}
+                                        {{/pix}}
+                                    </div>
+                                {{/discussion.timed.istimed}}
+                            </td>
+                            <td scope="col" class="topic p-0 align-middle">
+                                <a class="p-3 p-l-0 w-100 h-100 d-block" href="{{discussion.urls.view}}">{{{discussion.name}}}</a>
+                            </td>
+                            <td scope="col" class="author align-middle">
+                                {{#firstpostauthor}}
+                                    <a href="{{urls.profile}}">
+                                        <div class="d-flex flex-row">
+                                            <div class="align-middle p-0">
+                                                <a href="{{urls.profile}}">
+                                                    <img {{!
+                                                        }} class="h-auto rounded-circle userpicture" {{!
+                                                        }} src="{{urls.profileimage}}" {{!
+                                                        }} alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}" {{!
+                                                        }}>
+                                                </a>
+                                            </div>
+                                            <div class="align-middle p-2">
+                                                <a href="{{urls.profile}}">{{fullname}}</a>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {{/firstpostauthor}}
+                            </td>
+                            {{#forum.state.groupmode}}
+                                <td scope="col" class="group">
+                                    {{#discussion.group}}
+                                        {{#urls.picture}}
+                                            {{#urls.userlist}}
+                                                <a href="{{{urls.userlist}}}">
+                                                    <img class="border rounded h-auto rounded-circle" src="{{{urls.picture}}}">
+                                                </a>
+                                            {{/urls.userlist}}
+                                            {{^urls.userlist}}
+                                                <img class="border rounded h-auto rounded-circle" src="{{{urls.picture}}}">
+                                            {{/urls.userlist}}
+                                        {{/urls.picture}}
+                                        {{^urls.picture}}
+                                            {{#urls.userlist}}
+                                                <a href="{{{urls.userlist}}}">{{name}}</a>
+                                            {{/urls.userlist}}
+                                            {{^urls.userlist}}
+                                                {{name}}
+                                            {{/urls.userlist}}
+                                        {{/urls.picture}}
+                                    {{/discussion.group}}
+                                </td>
+                            {{/forum.state.groupmode}}
+                            {{#forum.capabilities.viewdiscussions}}
+                                <td scope="col" class="p-0 text-center align-middle">
+                                    <a href="{{discussion.urls.view}}" class="p-3 w-100 h-100 d-block">
+                                        {{replies}}
+                                    </a>
+                                </td>
+                                {{#forum.userstate.tracked}}
+                                    <td scope="col" class="p-0 text-center align-middle">
+                                        {{#unread}}
+                                            {{! TODO Rewrite as AJAX}}
+                                            <div class="p-3 w-100 h-100 d-block">
+                                                <a href="{{{discussion.urls.viewfirstunread}}}">{{unread}}</a>
+                                                <a href="{{{discussion.urls.markasread}}}">{{#pix}}t/markasread, core, {{#str}}markalldread, mod_forum{{/str}}{{/pix}}</a>
+                                            </div>
+                                        {{/unread}}
+                                        {{^unread}}
+                                            <span class="p-3 w-100 h-100 d-block">
+                                                0
+                                            </span>
+                                        {{/unread}}
+                                    </td>
+                                {{/forum.userstate.tracked}}
+                            {{/forum.capabilities.viewdiscussions}}
+                            <td scope="col" class="text-left">
+                                {{! TODO Check q&a, eachuser }}
+                                {{#latestpostid}}
+                                    <div class="d-flex flex-row">
+                                        <div class="align-middle p-0">
+                                            <a href="{{latestpostauthor.urls.profile}}">
+                                                <img {{!
+                                                    }} class="h-auto rounded-circle userpicture" {{!
+                                                    }} src="{{latestpostauthor.urls.profileimage}}" {{!
+                                                    }} alt="{{#str}}pictureof, moodle, {{latestpostauthor.fullname}}{{/str}}" {{!
+                                                    }}>
+                                            </a>
+                                        </div>
+                                        <div class="p-2 p-t-0 p-b-0 d-inline-flex flex-column">
+                                            <div>
+                                                <a href="{{latestpostauthor.urls.profile}}">{{latestpostauthor.fullname}}</a>
+                                            </div>
+                                            <div>
+                                                <a href="{{{discussion.urls.viewlatest}}}">{{#userdate}}
+                                                    {{discussion.times.modified}}, {{#str}}strftimerecentfull{{/str}}
+                                                {{/userdate}}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/latestpostid}}
+                            </td>
+                            <td scope="col" class="p-0 align-middle">
+                                {{#discussion}}
+                                    {{> mod_forum/discussion_subscription_toggle}}
+                                {{/discussion}}
+                            </td>
+                        </tr>
+                    {{/summaries}}
+                </tbody>
+                {{/discussion_list_body}}
+            </table>
+        {{/discussion_list_output}}
+        {{$discussion_bottom_pagination}}
+            {{{ pagination }}}
+        {{/discussion_bottom_pagination}}
+        {{#can_create_discussion}}
+            <div class="forumaddnew">
+                <a href="{{create_discussion_link}}" class="btn btn-primary">{{create_discussion_link_text}}</a>
+            </div>
+        {{/can_create_discussion}}
+    {{/state.hasdiscussions}}
+    {{^state.hasdiscussions}}
+        <div class="forumnodiscuss">
+            {{$no_discussions_text}}
+                ({{#str}}nodiscussions, forum{{/str}})
+            {{/no_discussions_text}}
+        </div>
+    {{/state.hasdiscussions}}
+
+</div>
+{{#js}}
+    require(['jquery', 'mod_forum/discussion_list'], function($, View) {
+        var root = $('#discussion-list-{{uniqid}}');
+        View.init(root);
+    });
+{{/js}}

@@ -1,6 +1,9 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+* The block:addinstance capability is no longer required if the block can only be added to a dashboard.
+
 === 3.6 ===
 
 * The timeline view from block_myoverview has been split out into block_timeline.

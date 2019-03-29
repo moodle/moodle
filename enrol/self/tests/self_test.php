@@ -602,8 +602,8 @@ class enrol_self_testcase extends advanced_testcase {
         $selfplugin->enrol_user($instance1, $user2->id, $editingteacherrole->id);
 
         $this->setUser($guest);
-        $noaccesshtml = get_string('noguestaccess', 'enrol') . $OUTPUT->continue_button(get_login_url());
-        $this->assertSame($noaccesshtml, $selfplugin->can_self_enrol($instance1, true));
+        $this->assertContains(get_string('noguestaccess', 'enrol'),
+                $selfplugin->can_self_enrol($instance1, true));
 
         $this->setUser($user1);
         $this->assertTrue($selfplugin->can_self_enrol($instance1, true));

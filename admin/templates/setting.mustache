@@ -29,6 +29,7 @@
     * element - The Element HTML
     * forceltr - Force this element to be displayed LTR
     * default - Default value
+    * dependenton - optional message listing the settings this one is dependent on
 
     Example context (json):
     {
@@ -43,8 +44,11 @@
         "default": "Default value"
     }
 }}
-<div class="form-item clearfix" id="{{id}}">
-    <div class="form-label">
+{{!
+    Setting.
+}}
+<div class="form-item row" id="{{id}}">
+    <div class="form-label col-sm-3 text-sm-right">
         <label {{#labelfor}}for="{{labelfor}}"{{/labelfor}}>
             {{{title}}}
             {{#override}}
@@ -54,16 +58,17 @@
                 <div class="form-warning">{{warning}}</div>
             {{/warning}}
         </label>
-        <span class="form-shortname">{{{name}}}</span>
+        <span class="form-shortname d-block small text-muted">{{{name}}}</span>
     </div>
-    <div class="form-setting">
+    <div class="form-setting col-sm-9">
         {{#error}}
             <div><span class="error">{{error}}</span></div>
         {{/error}}
         {{{element}}}
         {{#default}}
-            <div class="form-defaultinfo {{#forceltr}}text-ltr{{/forceltr}}">{{{default}}}</div>
+            <div class="form-defaultinfo text-muted {{#forceltr}}text-ltr{{/forceltr}}">{{{default}}}</div>
         {{/default}}
+        <div class="form-description mt-3">{{{description}}}</div>
+        {{#dependenton}}<div class="form-dependenton mb-4 text-muted">{{{.}}}</div>{{/dependenton}}
     </div>
-    <div class="form-description">{{{description}}}</div>
 </div>

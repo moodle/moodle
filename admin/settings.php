@@ -156,4 +156,11 @@ $PAGE->requires->yui_module('moodle-core-formchangechecker',
 );
 $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
 
+if ($settingspage->has_dependencies()) {
+    $opts = [
+        'dependencies' => $settingspage->get_dependencies_for_javascript()
+    ];
+    $PAGE->requires->js_call_amd('core/showhidesettings', 'init', [$opts]);
+}
+
 echo $OUTPUT->footer();

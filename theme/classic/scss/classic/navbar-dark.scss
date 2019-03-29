@@ -1,0 +1,25 @@
+.navbar-bootswatch {
+    @extend .navbar-dark;
+    background-color: $primary;
+
+    .usermenu {
+        color: $navbar-dark-color;
+        .login a {
+            color: $navbar-dark-color;
+        }
+    }
+    a.dropdown-toggle,
+    a .usertext {
+        color: $navbar-dark-color;
+        @include hover-focus {
+            color: $navbar-dark-hover-color;
+        }
+
+        &.disabled {
+            color: $navbar-dark-disabled-color;
+        }
+    }
+    .dropdown-menu a .icon {
+        color: inherit !important; // stylelint-disable-line declaration-no-important
+    }
+}

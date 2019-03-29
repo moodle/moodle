@@ -32,7 +32,7 @@ $string['actionaftercorrectanswer_help'] = 'After answering a question correctly
 * Show an unanswered page - Pages are shown in a random order, with pages containing unanswered questions shown again';
 $string['actions'] = 'Actions';
 $string['activitylink'] = 'Link to next activity';
-$string['activitylink_help'] = 'To provide a link at the end of the lesson to another activity in the course, select the activity from the dropdown list.';
+$string['activitylink_help'] = 'To provide a link at the end of the lesson to another activity in the course, select the activity from the drop-down menu.';
 $string['activitylinkname'] = 'Go to {$a}';
 $string['activityoverview'] = 'You have lessons that are due';
 $string['addabranchtable'] = 'Add a content page';

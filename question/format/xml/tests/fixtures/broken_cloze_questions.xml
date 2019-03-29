@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 1  -->
+  <question type="cloze">
+    <name>
+      <text>Multianswer question without subquestions</text>
+    </name>
+    <questiontext format="html">
+      <text>Please select the fruits.</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+  </question>
+
+  <!-- question: 2  -->
+  <question type="cloze">
+    <name>
+      <text>Multichoice subquestion without choices</text>
+    </name>
+    <questiontext format="html">
+      <text>Please select the fruits {1:MULTICHOICE}</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+  </question>
+
+  <!-- question: 3  -->
+  <question type="cloze">
+    <name>
+      <text>Multichoice subquestion with only one choice</text>
+    </name>
+    <questiontext format="html">
+      <text>Please select the fruits {1:MULTICHOICE:=Apple#Correct}</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+  </question>
+
+  <!-- question: 4  -->
+  <question type="cloze">
+    <name>
+      <text>Multichoice subquestion with no completely correct answer</text>
+    </name>
+    <questiontext format="html">
+      <text>Please select the fruits {1:MULTICHOICE:Pear#Incorrect~%50%Apple#Correct}</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+  </question>
+
+    <!-- question: 5  -->
+  <question type="cloze">
+    <name>
+      <text>Numerical subquestion with buggy answer</text>
+    </name>
+    <questiontext format="html">
+      <text>What grade would you give it? {3:NUMERICAL:=zero}</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+  </question>
+</quiz>

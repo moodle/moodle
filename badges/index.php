@@ -96,6 +96,7 @@ if (!has_any_capability(array(
         'moodle/badges:viewawarded',
         'moodle/badges:createbadge',
         'moodle/badges:awardbadge',
+        'moodle/badges:configurecriteria',
         'moodle/badges:configuremessages',
         'moodle/badges:configuredetails',
         'moodle/badges:deletebadge'), $PAGE->context)) {

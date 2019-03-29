@@ -259,7 +259,7 @@ class portfolio_add_button {
      *                    Optional, defaults to PORTFOLIO_ADD_FULL_FORM
      * @param string $addstr string to use for the button or icon alt text or link text.
      *                       This is whole string, not key.  optional, defaults to 'Add to portfolio';
-     * @return void|string
+     * @return void|string|moodle_url
      */
     public function to_html($format=null, $addstr=null) {
         global $CFG, $COURSE, $OUTPUT, $USER;
@@ -327,6 +327,11 @@ class portfolio_add_button {
                 return;
             }
         }
+        // If we just want a moodle_url to redirect to, do it now.
+        if ($format == PORTFOLIO_ADD_MOODLE_URL) {
+            return $url;
+        }
+
         // if we just want a url to redirect to, do it now
         if ($format == PORTFOLIO_ADD_FAKE_URL) {
             return $url->out(false);
@@ -928,40 +933,6 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
         return $output;
     }
     echo $output;
-}
-
-/**
- * Main portfolio cronjob.
- * Currently just cleans up expired transfer records.
- */
-function portfolio_cron() {
-    global $DB, $CFG;
-
-    require_once($CFG->libdir . '/portfolio/exporter.php');
-    if ($expired = $DB->get_records_select('portfolio_tempdata', 'expirytime < ?', array(time()), '', 'id')) {
-        foreach ($expired as $d) {
-            try {
-                $e = portfolio_exporter::rewaken_object($d->id);
-                $e->process_stage_cleanup(true);
-            } catch (Exception $e) {
-                mtrace('Exception thrown in portfolio cron while cleaning up ' . $d->id . ': ' . $e->getMessage());
-            }
-        }
-    }
-
-    $process = $DB->get_records('portfolio_tempdata', array('queued' => 1), 'id ASC', 'id');
-    foreach ($process as $d) {
-        try {
-            $exporter = portfolio_exporter::rewaken_object($d->id);
-            $exporter->process_stage_package();
-            $exporter->process_stage_send();
-            $exporter->save();
-            $exporter->process_stage_cleanup();
-        } catch (Exception $e) {
-            // This will get probably retried in the next cron until it is discarded by the code above.
-            mtrace('Exception thrown in portfolio cron while processing ' . $d->id . ': ' . $e->getMessage());
-        }
-    }
 }
 
 /**

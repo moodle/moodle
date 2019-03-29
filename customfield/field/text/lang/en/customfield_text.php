@@ -25,20 +25,20 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['displaysize'] = 'Form input size';
-$string['errorconfigdisplaysize'] = 'Form input size must be between 1 and 200 characters';
-$string['errorconfiglinkplaceholder'] = 'Link must contain placeholder $$';
-$string['errorconfiglinksyntax'] = 'Link must be a valid URL starting with either http:// or https://';
-$string['errorconfigmaxlen'] = 'Maximum length must be between 1 and 1333';
-$string['errormaxlength'] = 'This field maximum length is {$a}';
+$string['errorconfigdisplaysize'] = 'The form input size must be between 1 and 200 characters.';
+$string['errorconfiglinkplaceholder'] = 'The link must contain a placeholder $$.';
+$string['errorconfiglinksyntax'] = 'The link must be a valid URL starting with either http:// or https://.';
+$string['errorconfigmaxlen'] = 'The maximum length must be between 1 and 1333.';
+$string['errormaxlength'] = 'This field maximum length is {$a}.';
 $string['islink'] = 'Link field';
-$string['islink_help'] = 'To transform the text into a link, enter a URL containing $$, where $$ will be replaced with the text. For example, to transform a Twitter ID to a link, enter http://twitter.com/$$.';
+$string['islink_help'] = 'To transform the text into a link, enter a URL containing $$ as a placeholder, where $$ will be replaced with the text. For example, to transform a Twitter ID to a link, enter http://twitter.com/$$.';
 $string['ispassword'] = 'Password field';
 $string['linktarget'] = 'Link target';
 $string['maxlength'] = 'Maximum length';
 $string['newwindow'] = 'New window';
 $string['none'] = 'None';
 $string['pluginname'] = 'Text field';
-$string['privacy:metadata'] = 'Text field field type plugin does not store any personal data, it uses tables defined in core';
+$string['privacy:metadata'] = 'The Text field field type plugin doesn\'t store any personal data; it uses tables defined in core.';
 $string['sameframe'] = 'Same frame';
 $string['samewindow'] = 'Same window';
 $string['specificsettings'] = 'Settings for the text field';

@@ -25,47 +25,101 @@ require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-// This is an admin page
+// This is an admin page.
 admin_externalpage_setup('managemessageoutputs');
 
-// Get the submitted params
-$disable    = optional_param('disable', 0, PARAM_INT);
-$enable     = optional_param('enable', 0, PARAM_INT);
+// Fetch processors.
+$allprocessors = get_message_processors();
+$processors = array_filter($allprocessors, function($processor) {
+    return $processor->enabled;
+});
+// Fetch message providers.
+$providers = get_message_providers();
+// Fetch the manage message outputs interface.
+$preferences = get_message_output_default_preferences();
 
-$headingtitle = get_string('managemessageoutputs', 'message');
+if (($form = data_submitted()) && confirm_sesskey()) {
+    $preferences = array();
+    // Prepare default message outputs settings.
+    foreach ($providers as $provider) {
+        $componentproviderbase = $provider->component.'_'.$provider->name;
+        $disableprovidersetting = $componentproviderbase.'_disable';
+        $providerdisabled = false;
+        if (!isset($form->$disableprovidersetting)) {
+            $providerdisabled = true;
+            $preferences[$disableprovidersetting] = 1;
+        } else {
+            $preferences[$disableprovidersetting] = 0;
+        }
 
-if (!empty($disable) && confirm_sesskey()) {
-    if (!$processor = $DB->get_record('message_processors', array('id'=>$disable))) {
-        print_error('outputdoesnotexist', 'message');
+        foreach (array('permitted', 'loggedin', 'loggedoff') as $setting) {
+            $value = null;
+            $componentprovidersetting = $componentproviderbase.'_'.$setting;
+            if ($setting == 'permitted') {
+                // If we deal with permitted select element, we need to create individual
+                // setting for each possible processor. Note that this block will
+                // always be processed first after entring parental foreach iteration
+                // so we can change form values on this stage.
+                foreach ($allprocessors as $processor) {
+                    $value = '';
+                    if (isset($form->{$componentprovidersetting}[$processor->name])) {
+                        $value = $form->{$componentprovidersetting}[$processor->name];
+                    }
+                    // Ensure that loggedin loggedoff options are set correctly for this permission.
+                    if (($value == 'disallowed') || $providerdisabled) {
+                        // It might be better to unset them, but I can't figure out why that cause error.
+                        $form->{$componentproviderbase.'_loggedin'}[$processor->name] = 0;
+                        $form->{$componentproviderbase.'_loggedoff'}[$processor->name] = 0;
+                    } else if ($value == 'forced') {
+                        $form->{$componentproviderbase.'_loggedin'}[$processor->name] = 1;
+                        $form->{$componentproviderbase.'_loggedoff'}[$processor->name] = 1;
+                    }
+                    // Record the site preference.
+                    $preferences[$processor->name.'_provider_'.$componentprovidersetting] = $value;
+                }
+            } else if (array_key_exists($componentprovidersetting, $form)) {
+                // We must be processing loggedin or loggedoff checkboxes. Store
+                // defained comma-separated processors as setting value.
+                // Using array_filter eliminates elements set to 0 above.
+                $value = join(',', array_keys(array_filter($form->{$componentprovidersetting})));
+                if (empty($value)) {
+                    $value = null;
+                }
+            }
+            if ($setting != 'permitted') {
+                // We have already recoded site preferences for 'permitted' type.
+                $preferences['message_provider_'.$componentprovidersetting] = $value;
+            }
+        }
     }
-    \core_message\api::update_processor_status($processor, 0);     // Disable output.
-    core_plugin_manager::reset_caches();
-}
 
-if (!empty($enable) && confirm_sesskey()) {
-    if (!$processor = $DB->get_record('message_processors', array('id'=>$enable))) {
-        print_error('outputdoesnotexist', 'message');
+    // Update database.
+    $transaction = $DB->start_delegated_transaction();
+
+    // Save processors enabled/disabled status.
+    foreach ($allprocessors as $processor) {
+        $enabled = isset($form->{$processor->name});
+        \core_message\api::update_processor_status($processor, $enabled);
     }
-    \core_message\api::update_processor_status($processor, 1);      // Enable output.
-    core_plugin_manager::reset_caches();
-}
 
-if ($disable || $enable) {
+    foreach ($preferences as $name => $value) {
+        set_config($name, $value, 'message');
+    }
+    $transaction->allow_commit();
+
+    core_plugin_manager::reset_caches();
+
     $url = new moodle_url('message.php');
     redirect($url);
 }
+
 // Page settings
 $PAGE->set_context(context_system::instance());
+$PAGE->requires->js_init_call('M.core_message.init_defaultoutputs');
 
-// Grab the renderer
 $renderer = $PAGE->get_renderer('core', 'message');
 
-// Display the manage message outputs interface
-$processors = get_message_processors();
-$messageoutputs = $renderer->manage_messageoutputs($processors);
-
-// Display the page
+// Display the page.
 echo $OUTPUT->header();
-echo $OUTPUT->heading($headingtitle);
-echo $messageoutputs;
+echo $renderer->manage_messageoutput_settings($allprocessors, $processors, $providers, $preferences);
 echo $OUTPUT->footer();

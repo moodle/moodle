@@ -53,7 +53,11 @@ class quizaccess_timelimit extends quiz_access_rule_base {
     }
 
     public function end_time($attempt) {
-        return $attempt->timestart + $this->quiz->timelimit;
+        $timedue = $attempt->timestart + $this->quiz->timelimit;
+        if ($this->quiz->timeclose) {
+            $timedue = min($timedue, $this->quiz->timeclose);
+        }
+        return $timedue;
     }
 
     public function time_left_display($attempt, $timenow) {

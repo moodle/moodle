@@ -1153,11 +1153,12 @@ function data_delete_instance($id) {    // takes the dataid
         $event->delete();
     }
 
-    // Delete the instance itself
-    $result = $DB->delete_records('data', array('id'=>$id));
-
     // cleanup gradebook
     data_grade_item_delete($data);
+
+    // Delete the instance itself
+    // We must delete the module record after we delete the grade item.
+    $result = $DB->delete_records('data', array('id'=>$id));
 
     return $result;
 }

@@ -411,6 +411,125 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Mute conversations parameters description.
+     *
+     * @return external_function_parameters
+     */
+    public static function mute_conversations_parameters() {
+        return new external_function_parameters(
+            [
+                'userid' => new external_value(PARAM_INT, 'The id of the user who is blocking'),
+                'conversationids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of the conversation', VALUE_REQUIRED)
+                ),
+            ]
+        );
+    }
+
+    /**
+     * Mutes conversations.
+     *
+     * @param int $userid The id of the user who is blocking
+     * @param array $conversationids The list of conversations being muted
+     * @return external_description
+     */
+    public static function mute_conversations(int $userid, array $conversationids) {
+        global $CFG, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = ['userid' => $userid, 'conversationids' => $conversationids];
+        $params = self::validate_parameters(self::mute_conversations_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
+        foreach ($params['conversationids'] as $conversationid) {
+            if (!\core_message\api::is_conversation_muted($params['userid'], $conversationid)) {
+                \core_message\api::mute_conversation($params['userid'], $conversationid);
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Mute conversations return description.
+     *
+     * @return external_description
+     */
+    public static function mute_conversations_returns() {
+        return new external_warnings();
+    }
+
+    /**
+     * Unmute conversations parameters description.
+     *
+     * @return external_function_parameters
+     */
+    public static function unmute_conversations_parameters() {
+        return new external_function_parameters(
+            [
+                'userid' => new external_value(PARAM_INT, 'The id of the user who is unblocking'),
+                'conversationids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of the conversation', VALUE_REQUIRED)
+                ),
+            ]
+        );
+    }
+
+    /**
+     * Unmute conversations.
+     *
+     * @param int $userid The id of the user who is unblocking
+     * @param array $conversationids The list of conversations being muted
+     */
+    public static function unmute_conversations(int $userid, array $conversationids) {
+        global $CFG, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = ['userid' => $userid, 'conversationids' => $conversationids];
+        $params = self::validate_parameters(self::unmute_conversations_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
+        foreach ($params['conversationids'] as $conversationid) {
+            \core_message\api::unmute_conversation($params['userid'], $conversationid);
+        }
+
+        return [];
+    }
+
+    /**
+     * Unmute conversations return description.
+     *
+     * @return external_description
+     */
+    public static function unmute_conversations_returns() {
+        return new external_warnings();
+    }
+
+    /**
      * Block user parameters description.
      *
      * @return external_function_parameters
@@ -1123,7 +1242,8 @@ class core_message_external extends external_api {
                 'imageurl' => new external_value(PARAM_URL, 'A link to the conversation picture, if set', VALUE_DEFAULT, null),
                 'type' => new external_value(PARAM_INT, 'The type of the conversation (1=individual,2=group)'),
                 'membercount' => new external_value(PARAM_INT, 'Total number of conversation members'),
-                'isfavourite' => new external_value(PARAM_BOOL, 'If the user marked conversation this conversation as a favourite'),
+                'ismuted' => new external_value(PARAM_BOOL, 'If the user muted this conversation'),
+                'isfavourite' => new external_value(PARAM_BOOL, 'If the user marked this conversation as a favourite'),
                 'isread' => new external_value(PARAM_BOOL, 'If the user has read all messages in the conversation'),
                 'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation',
                     VALUE_DEFAULT, null),
@@ -1250,10 +1370,6 @@ class core_message_external extends external_api {
      *
      * @deprecated since 3.6
      *
-     * NOTE: We are deprecating this function but not search_users_in_course API function for backwards compatibility
-     * with messaging UI. But should be removed once new group messaging UI is in place and old messaging UI is removed.
-     * Followup: MDL-63915
-     *
      * @param int $userid The id of the user who is performing the search
      * @param int $courseid The id of the course
      * @param string $search The string being searched
@@ -1350,10 +1466,6 @@ class core_message_external extends external_api {
      * Get messagearea search users results.
      *
      * @deprecated since 3.6
-     *
-     * NOTE: We are deprecating this function but not search_users API function for backwards compatibility
-     * with messaging UI. But should be removed once new group messaging UI is in place and old messaging UI is removed.
-     * Followup: MDL-63915
      *
      * @param int $userid The id of the user who is performing the search
      * @param string $search The string being searched
@@ -1538,7 +1650,7 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_search_messages($userid, $search, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $PAGE, $USER;
+        global $CFG, $USER;
 
         // Check if messaging is enabled.
         if (empty($CFG->messaging)) {
@@ -1567,10 +1679,38 @@ class core_message_external extends external_api {
             $params['limitfrom'],
             $params['limitnum']
         );
-        $results = new \core_message\output\messagearea\message_search_results($messages);
 
-        $renderer = $PAGE->get_renderer('core_message');
-        return $results->export_for_template($renderer);
+        $data = new \stdClass();
+        $data->contacts = [];
+        foreach ($messages as $message) {
+            $contact = new \stdClass();
+            $contact->userid = $message->userid;
+            $contact->fullname = $message->fullname;
+            $contact->profileimageurl = $message->profileimageurl;
+            $contact->profileimageurlsmall = $message->profileimageurlsmall;
+            $contact->messageid = $message->messageid;
+            $contact->ismessaging = $message->ismessaging;
+            $contact->sentfromcurrentuser = false;
+            if ($message->lastmessage) {
+                if ($message->userid !== $message->useridfrom) {
+                    $contact->sentfromcurrentuser = true;
+                }
+                $contact->lastmessage = shorten_text($message->lastmessage, 60);
+            } else {
+                $contact->lastmessage = null;
+            }
+            $contact->lastmessagedate = $message->lastmessagedate;
+            $contact->showonlinestatus = is_null($message->isonline) ? false : true;
+            $contact->isonline = $message->isonline;
+            $contact->isblocked = $message->isblocked;
+            $contact->isread = $message->isread;
+            $contact->unreadcount = $message->unreadcount;
+            $contact->conversationid = $message->conversationid;
+
+            $data->contacts[] = $contact;
+        }
+
+        return $data;
     }
 
     /**

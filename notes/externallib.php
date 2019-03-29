@@ -534,10 +534,15 @@ class core_notes_external extends external_api {
 
         $course = get_course($params['courseid']);
 
+        $systemcontext = context_system::instance();
+        $canmanagesystemnotes = has_capability('moodle/notes:manage', $systemcontext);
+
         if ($course->id == SITEID) {
-            $context = context_system::instance();
+            $context = $systemcontext;
+            $canmanagecoursenotes = $canmanagesystemnotes;
         } else {
             $context = context_course::instance($course->id);
+            $canmanagecoursenotes = has_capability('moodle/notes:manage', $context);
         }
         self::validate_context($context);
 
@@ -548,7 +553,7 @@ class core_notes_external extends external_api {
         if ($course->id != SITEID) {
 
             require_capability('moodle/notes:view', $context);
-            $sitenotes = self::create_note_list(0, context_system::instance(), $params['userid'], NOTES_STATE_SITE);
+            $sitenotes = self::create_note_list(0, $systemcontext, $params['userid'], NOTES_STATE_SITE);
             $coursenotes = self::create_note_list($course->id, $context, $params['userid'], NOTES_STATE_PUBLIC);
             $personalnotes = self::create_note_list($course->id, $context, $params['userid'], NOTES_STATE_DRAFT,
                                                         $USER->id);
@@ -572,6 +577,8 @@ class core_notes_external extends external_api {
             'sitenotes'     => $sitenotes,
             'coursenotes'   => $coursenotes,
             'personalnotes' => $personalnotes,
+            'canmanagesystemnotes' => $canmanagesystemnotes,
+            'canmanagecoursenotes' => $canmanagecoursenotes,
             'warnings'      => $warnings
         );
         return $results;
@@ -607,22 +614,20 @@ class core_notes_external extends external_api {
     public static function get_course_notes_returns() {
         return new external_single_structure(
             array(
-                  'sitenotes' => new external_multiple_structure(
-                      new external_single_structure(
-                          self::get_note_structure() , ''
-                      ), 'site notes', VALUE_OPTIONAL
-                   ),
-                   'coursenotes' => new external_multiple_structure(
-                      new external_single_structure(
-                          self::get_note_structure() , ''
-                      ), 'couse notes', VALUE_OPTIONAL
-                   ),
-                   'personalnotes' => new external_multiple_structure(
-                      new external_single_structure(
-                          self::get_note_structure() , ''
-                      ), 'personal notes', VALUE_OPTIONAL
-                   ),
-                 'warnings' => new external_warnings()
+                'sitenotes' => new external_multiple_structure(
+                    new external_single_structure(self::get_note_structure() , ''), 'site notes', VALUE_OPTIONAL
+                ),
+                'coursenotes' => new external_multiple_structure(
+                    new external_single_structure(self::get_note_structure() , ''), 'couse notes', VALUE_OPTIONAL
+                ),
+                'personalnotes' => new external_multiple_structure(
+                    new external_single_structure(self::get_note_structure() , ''), 'personal notes', VALUE_OPTIONAL
+                ),
+                'canmanagesystemnotes' => new external_value(PARAM_BOOL, 'Whether the user can manage notes at system level.',
+                    VALUE_OPTIONAL),
+                'canmanagecoursenotes' => new external_value(PARAM_BOOL, 'Whether the user can manage notes at the given course.',
+                    VALUE_OPTIONAL),
+                'warnings' => new external_warnings()
             ), 'notes'
         );
     }

@@ -23,20 +23,23 @@
     {}
 }}
 <div data-region="view-selector" class="btn-group">
-    <button type="button" class="btn btn-outline-secondary dropdown-toggle icon-no-margin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{#pix}} i/filter {{/pix}}
-        <span class="sr-only">
-            {{#sorttimelinecourses}}<span data-active-item-text>{{/sorttimelinecourses}}{{#str}} ariaviewselector, block_timeline{{/str}}{{#sorttimelinecourses}}</span>{{/sorttimelinecourses}}
-            {{#sorttimelinedates}}<span data-active-item-text>{{/sorttimelinedates}}{{#str}} sortbydates, block_timeline {{/str}}{{#sorttimelinedates}}</span>{{/sorttimelinedates}}
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle icon-no-margin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+            aria-label="{{#str}} ariaviewselector, block_timeline{{/str}}" aria-controls="menusortby">
+        {{#pix}} t/sort_by {{/pix}}
+        <span class="sr-only" data-active-item-text>
+            {{#sorttimelinecourses}}{{#str}} sortbycourses, block_timeline{{/str}}{{/sorttimelinecourses}}
+            {{#sorttimelinedates}}{{#str}} sortbydates, block_timeline {{/str}}{{/sorttimelinedates}}
         </span>
     </button>
-    <div role="menu" class="dropdown-menu dropdown-menu-right list-group hidden" data-show-active-item data-skip-active-class="true" >
+    <div id="menusortby" role="menu" class="dropdown-menu dropdown-menu-right list-group hidden" data-show-active-item data-skip-active-class="true">
         <a
             class="dropdown-item {{#sorttimelinedates}}active{{/sorttimelinedates}}"
             href="#view_dates_{{uniqid}}"
             data-toggle="tab"
             data-filtername="sortbydates"
             aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbydates, block_timeline {{/str}}{{/str}}"
+            role="menuitem"
+            {{#sorttimelinedates}}aria-current="true"{{/sorttimelinedates}}
         >
             {{#str}} sortbydates, block_timeline {{/str}}
         </a>
@@ -46,6 +49,8 @@
             data-toggle="tab"
             data-filtername="sortbycourses"
             aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbycourses, block_timeline {{/str}}{{/str}}"
+            role="menuitem"
+            {{#sorttimelinecourses}}aria-current="true"{{/sorttimelinecourses}}
         >
             {{#str}} sortbycourses, block_timeline {{/str}}
         </a>

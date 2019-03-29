@@ -109,7 +109,7 @@ $string['role_mapping_context'] = 'LDAP contexts for {$a}';
 $string['role_mapping_key'] = 'Map roles from LDAP ';
 $string['roles'] = 'Role mapping';
 $string['server_settings'] = 'LDAP server settings';
-$string['syncenrolmentstask'] = 'Synchronise enrolments task';
+$string['syncenrolmentstask'] = 'Synchronise LDAP enrolments task';
 $string['synccourserole'] = "== Synching course '{\$a->idnumber}' for role '{\$a->role_shortname}'\n";
 $string['template'] = 'Optional: auto-created courses can copy their settings from a template course';
 $string['template_key'] = 'Template';

@@ -39,7 +39,7 @@
 }}
 <div
     id="message-drawer-{{uniqid}}"
-    class="message-drawer bg-light hidden"
+    class="message-app drawer bg-light hidden"
     aria-expanded="false"
     aria-hidden="true"
     data-region="message-drawer"
@@ -68,6 +68,7 @@
     </div>
     <div class="footer-container position-relative" data-region="footer-container">
         {{> core_message/message_drawer_view_conversation_footer }}
+        {{> core_message/message_drawer_view_overview_footer }}
     </div>
 </div>
 
@@ -85,7 +86,7 @@ function(
 ) {
 
     var root = $('#message-drawer-{{uniqid}}');
-    MessageDrawer.init(root);
+    MessageDrawer.init(root, '{{uniqid}}', false);
 
     var toggle = $('#message-drawer-close-{{uniqid}}');
     Popover.init(toggle);

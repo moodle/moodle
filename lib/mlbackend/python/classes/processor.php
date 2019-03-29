@@ -33,12 +33,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor implements  \core_analytics\classifier, \core_analytics\regressor {
+class processor implements  \core_analytics\classifier, \core_analytics\regressor, \core_analytics\packable {
 
     /**
      * The required version of the python package that performs all calculations.
      */
-    const REQUIRED_PIP_PACKAGE_VERSION = '0.0.5';
+    const REQUIRED_PIP_PACKAGE_VERSION = '1.0.0';
 
     /**
      * The path to the Python bin.
@@ -229,9 +229,11 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      * @param int $niterations
      * @param \stored_file $dataset
      * @param string $outputdir
+     * @param  string $trainedmodeldir
      * @return \stdClass
      */
-    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
+    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset,
+            $outputdir, $trainedmodeldir) {
 
         // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
@@ -243,6 +245,10 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
             escapeshellarg(\core_analytics\model::MIN_SCORE) . ' ' .
             escapeshellarg($maxdeviation) . ' ' .
             escapeshellarg($niterations);
+
+        if ($trainedmodeldir) {
+            $cmd .= ' ' . escapeshellarg($trainedmodeldir);
+        }
 
         if (!PHPUNIT_TEST && CLI_SCRIPT) {
             debugging($cmd, DEBUG_DEVELOPER);
@@ -261,6 +267,78 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         return $resultobj;
+    }
+
+    /**
+     * Exports the machine learning model.
+     *
+     * @throws \moodle_exception
+     * @param  string $uniqueid  The model unique id
+     * @param  string $modeldir  The directory that contains the trained model.
+     * @return string            The path to the directory that contains the exported model.
+     */
+    public function export(string $uniqueid, string $modeldir) : string {
+
+        // We include an exporttmpdir as we want to be sure that the file is not deleted after the
+        // python process finishes.
+        $exporttmpdir = make_request_directory('mlbackend_python_export');
+
+        $cmd = "{$this->pathtopython} -m moodlemlbackend.export " .
+            escapeshellarg($uniqueid) . ' ' .
+            escapeshellarg($modeldir) . ' ' .
+            escapeshellarg($exporttmpdir);
+
+        if (!PHPUNIT_TEST && CLI_SCRIPT) {
+            debugging($cmd, DEBUG_DEVELOPER);
+        }
+
+        $output = null;
+        $exitcode = null;
+        $exportdir = exec($cmd, $output, $exitcode);
+
+        if ($exitcode != 0) {
+            throw new \moodle_exception('errorexportmodelresult', 'analytics');
+        }
+
+        if (!$exportdir) {
+            throw new \moodle_exception('errorexportmodelresult', 'analytics');
+        }
+
+        return $exportdir;
+    }
+
+    /**
+     * Imports the provided machine learning model.
+     *
+     * @param  string $uniqueid The model unique id
+     * @param  string $modeldir  The directory that will contain the trained model.
+     * @param  string $importdir The directory that contains the files to import.
+     * @return bool Success
+     */
+    public function import(string $uniqueid, string $modeldir, string $importdir) : bool {
+
+        $cmd = "{$this->pathtopython} -m moodlemlbackend.import " .
+            escapeshellarg($uniqueid) . ' ' .
+            escapeshellarg($modeldir) . ' ' .
+            escapeshellarg($importdir);
+
+        if (!PHPUNIT_TEST && CLI_SCRIPT) {
+            debugging($cmd, DEBUG_DEVELOPER);
+        }
+
+        $output = null;
+        $exitcode = null;
+        $success = exec($cmd, $output, $exitcode);
+
+        if ($exitcode != 0) {
+            throw new \moodle_exception('errorimportmodelresult', 'analytics');
+        }
+
+        if (!$success) {
+            throw new \moodle_exception('errorimportmodelresult', 'analytics');
+        }
+
+        return $success;
     }
 
     /**
@@ -298,9 +376,11 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      * @param int $niterations
      * @param \stored_file $dataset
      * @param string $outputdir
+     * @param  string $trainedmodeldir
      * @return \stdClass
      */
-    public function evaluate_regression($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
+    public function evaluate_regression($uniqueid, $maxdeviation, $niterations, \stored_file $dataset,
+            $outputdir, $trainedmodeldir) {
         throw new \coding_exception('This predictor does not support regression yet.');
     }
 

@@ -37,6 +37,7 @@ use Behat\Testwork\Hook\Scope\BeforeSuiteScope,
     Behat\Behat\Hook\Scope\AfterScenarioScope,
     Behat\Behat\Hook\Scope\BeforeStepScope,
     Behat\Behat\Hook\Scope\AfterStepScope,
+    Behat\Mink\Exception\ExpectationException,
     Behat\Mink\Exception\DriverException as DriverException,
     WebDriver\Exception\NoSuchWindow as NoSuchWindow,
     WebDriver\Exception\UnexpectedAlertOpen as UnexpectedAlertOpen,
@@ -71,6 +72,11 @@ class behat_hooks extends behat_base {
      * @var For actions that should only run once.
      */
     protected static $initprocessesfinished = false;
+
+    /**
+     * @var bool Scenario running
+     */
+    protected $scenariorunning = false;
 
     /**
      * Some exceptions can only be caught in a before or after step hook,
@@ -370,22 +376,8 @@ class behat_hooks extends behat_base {
             self::$runningsuite = $suitename;
         }
 
-        // Start always in the the homepage.
-        try {
-            // Let's be conservative as we never know when new upstream issues will affect us.
-            $session->visit($this->locate_path('/'));
-        } catch (UnknownError $e) {
-            throw new behat_stop_exception($e->getMessage());
-        }
-
-        // Checking that the root path is a Moodle test site.
-        if (self::is_first_scenario()) {
-            $notestsiteexception = new behat_stop_exception('The base URL (' . $CFG->wwwroot . ') is not a behat test site, ' .
-                'ensure you started the built-in web server in the correct directory or your web server is correctly started and set up');
-            $this->find("xpath", "//head/child::title[normalize-space(.)='" . behat_util::BEHATSITENAME . "']", $notestsiteexception);
-
-            self::$initprocessesfinished = true;
-        }
+        // Reset the scenariorunning variable to ensure that Step 0 occurs.
+        $this->scenariorunning = false;
 
         // Run all test with medium (1024x768) screen size, to avoid responsive problems.
         $this->resize_window('medium');
@@ -396,6 +388,46 @@ class behat_hooks extends behat_base {
         // If scenario requires the Moodle app to be running, set this up.
         if ($this->has_tag('app')) {
             $this->execute('behat_app::start_scenario');
+        }
+    }
+
+    /**
+     * Hook to open the site root before the first step in the suite.
+     * Yes, this is in a strange location and should be in the BeforeScenario hook, but failures in the test setUp lead
+     * to the test being incorrectly marked as skipped with no way to force the test to be failed.
+     *
+     * @param   BeforeStepScope $scope
+     * @BeforeStep
+     */
+    public function before_step(BeforeStepScope $scope) {
+        global $CFG;
+
+        if (!$this->scenariorunning) {
+            // We need to visit / before the first step in any Scenario.
+            // This is our Step 0.
+            // Ideally this would be in the BeforeScenario hook, but any exception in there will lead to the test being
+            // skipped rather than it being failed.
+            //
+            // We also need to check that the site returned is a Behat site.
+            // Again, this would be better in the BeforeSuite hook, but that does not have access to the selectors in
+            // order to perform the necessary searches.
+            $session = $this->getSession();
+            $session->visit($this->locate_path('/'));
+
+            // Checking that the root path is a Moodle test site.
+            if (self::is_first_scenario()) {
+                $message = "The base URL ({$CFG->wwwroot}) is not a behat test site. " .
+                    'Ensure that you started the built-in web server in the correct directory, ' .
+                    'or that your web server is correctly set up and started.';
+
+                $this->find(
+                        "xpath", "//head/child::title[normalize-space(.)='" . behat_util::BEHATSITENAME . "']",
+                        new ExpectationException($message, $session)
+                    );
+
+                self::$initprocessesfinished = true;
+            }
+            $this->scenariorunning = true;
         }
     }
 
@@ -523,13 +555,13 @@ class behat_hooks extends behat_base {
      * @AfterScenario @_switch_window
      */
     public function after_scenario_switchwindow(AfterScenarioScope $scope) {
-        for ($count = 0; $count < self::EXTENDED_TIMEOUT; $count++) {
+        for ($count = 0; $count < behat_base::get_extended_timeout(); $count++) {
             try {
                 $this->getSession()->restart();
                 break;
             } catch (DriverException $e) {
                 // Wait for timeout and try again.
-                sleep(self::TIMEOUT);
+                sleep(self::get_timeout());
             }
         }
         // If session is not restarted above then it will try to start session before next scenario

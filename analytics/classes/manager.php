@@ -46,6 +46,11 @@ class manager {
     protected static $predictionprocessors = null;
 
     /**
+     * @var \core_analytics\local\target\base[]
+     */
+    protected static $alltargets = null;
+
+    /**
      * @var \core_analytics\local\indicator\base[]
      */
     protected static $allindicators = null;
@@ -249,11 +254,26 @@ class manager {
     /**
      * Returns the enabled time splitting methods.
      *
+     * @deprecated since Moodle 3.7
+     * @todo MDL-65086 This will be deleted in Moodle 4.1
+     * @see \core_analytics\manager::get_time_splitting_methods_for_evaluation
      * @return \core_analytics\local\time_splitting\base[]
      */
     public static function get_enabled_time_splitting_methods() {
+        debugging('This function has been deprecated. You can use self::get_time_splitting_methods_for_evaluation if ' .
+            'you want to get the default time splitting methods for evaluation, or you can use self::get_all_time_splittings if ' .
+            'you want to get all the time splitting methods available on this site.');
+        return self::get_time_splitting_methods_for_evaluation();
+    }
 
-        if ($enabledtimesplittings = get_config('analytics', 'timesplittings')) {
+    /**
+     * Returns the default time splitting methods for model evaluation.
+     *
+     * @return \core_analytics\local\time_splitting\base[]
+     */
+    public static function get_time_splitting_methods_for_evaluation() {
+
+        if ($enabledtimesplittings = get_config('analytics', 'defaulttimesplittingsevaluation')) {
             $enabledtimesplittings = array_flip(explode(',', $enabledtimesplittings));
         }
 
@@ -282,6 +302,28 @@ class manager {
     }
 
     /**
+     * Return all targets in the system.
+     *
+     * @return \core_analytics\local\target\base[]
+     */
+    public static function get_all_targets() : array {
+        if (self::$alltargets !== null) {
+            return self::$alltargets;
+        }
+
+        $classes = self::get_analytics_classes('target');
+
+        self::$alltargets = [];
+        foreach ($classes as $fullclassname => $classpath) {
+            $instance = self::get_target($fullclassname);
+            if ($instance) {
+                self::$alltargets[$instance->get_id()] = $instance;
+            }
+        }
+
+        return self::$alltargets;
+    }
+    /**
      * Return all system indicators.
      *
      * @return \core_analytics\local\indicator\base[]
@@ -297,7 +339,6 @@ class manager {
         foreach ($classes as $fullclassname => $classpath) {
             $instance = self::get_indicator($fullclassname);
             if ($instance) {
-                // Using get_class as get_component_classes_in_namespace returns double escaped fully qualified class names.
                 self::$allindicators[$instance->get_id()] = $instance;
             }
         }

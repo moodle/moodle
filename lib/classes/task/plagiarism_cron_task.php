@@ -44,8 +44,22 @@ class plagiarism_cron_task extends scheduled_task {
     public function execute() {
         global $CFG;
 
-        require_once($CFG->libdir.'/plagiarismlib.php');
-        plagiarism_cron();
+        if (!empty($CFG->enableplagiarism)) {
+            require_once($CFG->libdir.'/plagiarismlib.php');
+            $plagiarismplugins = plagiarism_load_available_plugins();
+            foreach ($plagiarismplugins as $plugin => $dir) {
+                require_once($dir . '/lib.php');
+                $plagiarismclass = "plagiarism_plugin_$plugin";
+                $plagiarismplugin = new $plagiarismclass;
+                if (method_exists($plagiarismplugin, 'cron')) {
+                    mtrace('Processing cron function for plagiarism_plugin_' . $plugin . '...', '');
+                    cron_trace_time_and_memory();
+                    mtrace('It has been detected the class ' . $plagiarismclass . ' has a legacy cron method
+                            implemented. Plagiarism plugins should implement their own schedule tasks.', '');
+                    $plagiarismplugin->cron();
+                }
+            }
+        }
     }
 
 }

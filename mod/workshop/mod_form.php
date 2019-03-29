@@ -370,8 +370,7 @@ class mod_workshop_mod_form extends moodleform_mod {
                     // gradecategory and gradinggradecategory - grrr QuickForms
                     $decimalpoints = $gradeitem->get_decimals();
                     if ($gradeitem->itemnumber == 0) {
-                        $submissiongradepass = $mform->getElement('submissiongradepass');
-                        $submissiongradepass->setValue(format_float($gradeitem->gradepass, $decimalpoints));
+                        $mform->setDefault('submissiongradepass', format_float($gradeitem->gradepass, $decimalpoints));
                         $group = $mform->getElement('submissiongradegroup');
                         $elements = $group->getElements();
                         foreach ($elements as $element) {
@@ -380,8 +379,7 @@ class mod_workshop_mod_form extends moodleform_mod {
                             }
                         }
                     } else if ($gradeitem->itemnumber == 1) {
-                        $gradinggradepass = $mform->getElement('gradinggradepass');
-                        $gradinggradepass->setValue(format_float($gradeitem->gradepass, $decimalpoints));
+                        $mform->setDefault('gradinggradepass', format_float($gradeitem->gradepass, $decimalpoints));
                         $group = $mform->getElement('gradinggradegroup');
                         $elements = $group->getElements();
                         foreach ($elements as $element) {

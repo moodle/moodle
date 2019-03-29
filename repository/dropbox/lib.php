@@ -807,13 +807,3 @@ class repository_dropbox extends repository {
         return $this->cachelimit;
     }
 }
-
-/**
- * Dropbox plugin cron task.
- */
-function repository_dropbox_cron() {
-    $instances = repository::get_instances(array('type'=>'dropbox'));
-    foreach ($instances as $instance) {
-        $instance->cron();
-    }
-}

@@ -32,7 +32,9 @@
             [
                 {"name": "Item 3", "isgroup": false, "value": "3"},
                 {"name": "Item 4", "isgroup": false, "value": "4"}
-            ]}]
+            ]}],
+        "disabled": false,
+        "title": "Some cool title"
     }
 }}
 <div class="{{classes}}">
@@ -46,7 +48,8 @@
         {{#helpicon}}
             {{>core/help_icon}}
         {{/helpicon}}
-        <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="jump">
+        <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="jump"
+                {{#title}}title="{{.}}"{{/title}} {{#disabled}}disabled{{/disabled}}>
             {{#options}}
                 {{#isgroup}}
                     <optgroup label="{{name}}">

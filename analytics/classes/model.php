@@ -289,7 +289,7 @@ class model {
                     $timesplitting = \core_analytics\manager::get_time_splitting($options['timesplitting']);
                     $timesplittings = array($timesplitting->get_id() => $timesplitting);
                 } else {
-                    $timesplittings = \core_analytics\manager::get_enabled_time_splitting_methods();
+                    $timesplittings = \core_analytics\manager::get_time_splitting_methods_for_evaluation();
                 }
             } else {
 
@@ -338,11 +338,12 @@ class model {
      *
      * @param \core_analytics\local\target\base $target
      * @param \core_analytics\local\indicator\base[] $indicators
-     * @param string $timesplittingid The time splitting method id (its fully qualified class name)
+     * @param string|false $timesplittingid The time splitting method id (its fully qualified class name)
+     * @param string|null $processor The machine learning backend this model will use.
      * @return \core_analytics\model
      */
     public static function create(\core_analytics\local\target\base $target, array $indicators,
-                                  $timesplittingid = false, $processor = false) {
+                                  $timesplittingid = false, $processor = null) {
         global $USER, $DB;
 
         \core_analytics\manager::check_can_manage_models();
@@ -360,8 +361,8 @@ class model {
         $modelobj->usermodified = $USER->id;
 
         if ($processor &&
-                !self::is_valid($processor, '\core_analytics\classifier') &&
-                !self::is_valid($processor, '\core_analytics\regressor')) {
+                !manager::is_valid($processor, '\core_analytics\classifier') &&
+                !manager::is_valid($processor, '\core_analytics\regressor')) {
             throw new \coding_exception('The provided predictions processor \\' . $processor . '\processor is not valid');
         } else {
             $modelobj->predictionsprocessor = $processor;
@@ -462,6 +463,7 @@ class model {
 
             // It needs to be reset as the version changes.
             $this->uniqueid = null;
+            $this->indicators = null;
 
             // We update the version of the model so different time splittings are not mixed up.
             $this->model->version = $now;
@@ -535,6 +537,29 @@ class model {
         }
 
         $options['evaluation'] = true;
+
+        if (empty($options['mode'])) {
+            $options['mode'] = 'configuration';
+        }
+
+        switch ($options['mode']) {
+            case 'trainedmodel':
+
+                // We are only interested on the time splitting method used by the trained model.
+                $options['timesplitting'] = $this->model->timesplitting;
+
+                // Provide the trained model directory to the ML backend if that is what we want to evaluate.
+                $trainedmodeldir = $this->get_output_dir(['execution']);
+                break;
+            case 'configuration':
+
+                $trainedmodeldir = false;
+                break;
+
+            default:
+                throw new \moodle_exception('errorunknownaction', 'analytics');
+        }
+
         $this->init_analyser($options);
 
         if (empty($this->get_indicators())) {
@@ -573,10 +598,10 @@ class model {
             // Evaluate the dataset, the deviation we accept in the results depends on the amount of iterations.
             if ($this->get_target()->is_linear()) {
                 $predictorresult = $predictor->evaluate_regression($this->get_unique_id(), self::ACCEPTED_DEVIATION,
-                self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+                    self::EVALUATION_ITERATIONS, $dataset, $outputdir, $trainedmodeldir);
             } else {
                 $predictorresult = $predictor->evaluate_classification($this->get_unique_id(), self::ACCEPTED_DEVIATION,
-                self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+                    self::EVALUATION_ITERATIONS, $dataset, $outputdir, $trainedmodeldir);
             }
 
             $result->status = $predictorresult->status;
@@ -594,7 +619,7 @@ class model {
                 $dir = $predictorresult->dir;
             }
 
-            $result->logid = $this->log_result($timesplitting->get_id(), $result->score, $dir, $result->info);
+            $result->logid = $this->log_result($timesplitting->get_id(), $result->score, $dir, $result->info, $options['mode']);
 
             $results[$timesplitting->get_id()] = $result;
         }
@@ -1308,7 +1333,7 @@ class model {
      * @param bool $onlymodelid Preference over $subdirs
      * @return string
      */
-    protected function get_output_dir($subdirs = array(), $onlymodelid = false) {
+    public function get_output_dir($subdirs = array(), $onlymodelid = false) {
         global $CFG;
 
         $subdirstr = '';
@@ -1357,7 +1382,7 @@ class model {
     }
 
     /**
-     * Exports the model data.
+     * Exports the model data for displaying it in a template.
      *
      * @return \stdClass
      */
@@ -1377,6 +1402,58 @@ class model {
             $data->indicators[] = $indicator->get_name();
         }
         return $data;
+    }
+
+    /**
+     * Exports the model data to a zip file.
+     *
+     * @param string $zipfilename
+     * @return string Zip file path
+     */
+    public function export_model(string $zipfilename) : string {
+
+        \core_analytics\manager::check_can_manage_models();
+
+        $modelconfig = new model_config($this);
+        return $modelconfig->export($zipfilename);
+    }
+
+    /**
+     * Imports the provided model.
+     *
+     * Note that this method assumes that model_config::check_dependencies has already been called.
+     *
+     * @throws \moodle_exception
+     * @param  string $zipfilepath Zip file path
+     * @return \core_analytics\model
+     */
+    public static function import_model(string $zipfilepath) : \core_analytics\model {
+
+        \core_analytics\manager::check_can_manage_models();
+
+        $modelconfig = new \core_analytics\model_config();
+        return $modelconfig->import($zipfilepath);
+    }
+
+    /**
+     * Can this model be exported?
+     *
+     * @return bool
+     */
+    public function can_export_configuration() : bool {
+
+        if (empty($this->model->timesplitting)) {
+            return false;
+        }
+        if (!$this->get_indicators()) {
+            return false;
+        }
+
+        if ($this->is_static()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -1409,6 +1486,29 @@ class model {
     }
 
     /**
+     * Has the model been trained using data from this site?
+     *
+     * This method is useful to determine if a trained model can be evaluated as
+     * we can not use the same data for training and for evaluation.
+     *
+     * @return bool
+     */
+    public function trained_locally() : bool {
+        global $DB;
+
+        if (!$this->is_trained() || $this->is_static()) {
+            // Early exit.
+            return false;
+        }
+
+        if ($DB->record_exists('analytics_train_samples', ['modelid' => $this->model->id])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Flag the provided file as used for training or prediction.
      *
      * @param \stored_file $file
@@ -1433,14 +1533,16 @@ class model {
      * @param float $score
      * @param string $dir
      * @param array $info
+     * @param string $evaluationmode
      * @return int The inserted log id
      */
-    protected function log_result($timesplittingid, $score, $dir = false, $info = false) {
+    protected function log_result($timesplittingid, $score, $dir = false, $info = false, $evaluationmode = 'configuration') {
         global $DB, $USER;
 
         $log = new \stdClass();
         $log->modelid = $this->get_id();
         $log->version = $this->model->version;
+        $log->evaluationmode = $evaluationmode;
         $log->target = $this->model->target;
         $log->indicators = $this->model->indicators;
         $log->timesplitting = $timesplittingid;
@@ -1524,7 +1626,10 @@ class model {
         // 1 db read per context.
         $this->purge_insights_cache();
 
-        $this->model->trained = 0;
+        if (!$this->is_static()) {
+            $this->model->trained = 0;
+        }
+
         $this->model->timemodified = time();
         $this->model->usermodified = $USER->id;
         $DB->update_record('analytics_models', $this->model);

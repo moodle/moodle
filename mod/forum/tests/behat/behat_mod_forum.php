@@ -96,7 +96,7 @@ class behat_mod_forum extends behat_base {
 
         // Navigate to forum.
         $this->execute('behat_general::click_link', $this->escape($forumname));
-        $this->execute('behat_forms::press_button', $buttonstr);
+        $this->execute('behat_general::click_link', $buttonstr);
 
         // Fill form and post.
         $this->execute('behat_forms::i_set_the_following_fields_to_these_values', $table);

@@ -42,7 +42,7 @@ function(
 ) {
 
     var limit = 100;
-    var offset = 0;
+    var initialOffset = 0;
 
     var SELECTORS = {
         BLOCK_ICON_CONTAINER: '[data-region="block-icon-container"]',
@@ -87,28 +87,29 @@ function(
     /**
      * Load the user contacts and call the renderer.
      *
-     * @param {Object} listRoot The lazy loaded list root element
-     * @param {Integer} userId The logged in user id.
-     * @return {Object} jQuery promise
+     * @param {Number} offset The offset to use for loading contacts
+     * @return {Function} the callback.
      */
-    var load = function(listRoot, userId) {
-        return MessageRepository.getContacts(userId, (limit + 1), offset)
-            .then(function(result) {
-                return result;
-            })
-            .then(function(contacts) {
-                if (contacts.length > limit) {
-                    contacts.pop();
-                } else {
-                    LazyLoadList.setLoadedAll(listRoot, true);
-                }
-                return contacts;
-            })
-            .then(function(contacts) {
-                offset = offset + limit;
-                return contacts;
-            })
-            .catch(Notification.exception);
+    var getLoadFunction = function(offset) {
+        return function(listRoot, userId) {
+            return MessageRepository.getContacts(userId, (limit + 1), offset)
+                .then(function(result) {
+                    return result;
+                })
+                .then(function(contacts) {
+                    if (contacts.length > limit) {
+                        contacts.pop();
+                    } else {
+                        LazyLoadList.setLoadedAll(listRoot, true);
+                    }
+                    return contacts;
+                })
+                .then(function(contacts) {
+                    offset = offset + limit;
+                    return contacts;
+                })
+                .catch(Notification.exception);
+        };
     };
 
     /**
@@ -191,7 +192,7 @@ function(
         }
 
         // The root element is already the lazy loaded list root.
-        LazyLoadList.show(root, load, render);
+        LazyLoadList.show(root, getLoadFunction(initialOffset), render);
     };
 
     return {

@@ -1028,4 +1028,56 @@ class core_enrollib_testcase extends advanced_testcase {
 
         $this->assertEquals($expectedcourses, $actual);
     }
+
+    /**
+     * Test enrol_get_course_users_roles function.
+     *
+     * @return void
+     */
+    public function test_enrol_get_course_users_roles() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $roles = array();
+        $roles['student'] = $DB->get_field('role', 'id', array('shortname' => 'student'), MUST_EXIST);
+        $roles['teacher'] = $DB->get_field('role', 'id', array('shortname' => 'teacher'), MUST_EXIST);
+
+        $manual = enrol_get_plugin('manual');
+        $this->assertNotEmpty($manual);
+
+        $enrol = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+
+        // Test without enrolments.
+        $this->assertEmpty(enrol_get_course_users_roles($course->id));
+
+        // Test with 1 user, 1 role.
+        $manual->enrol_user($enrol, $user1->id, $roles['student']);
+        $return = enrol_get_course_users_roles($course->id);
+        $this->assertArrayHasKey($user1->id, $return);
+        $this->assertArrayHasKey($roles['student'], $return[$user1->id]);
+        $this->assertArrayNotHasKey($roles['teacher'], $return[$user1->id]);
+
+        // Test with 1 user, 2 role.
+        $manual->enrol_user($enrol, $user1->id, $roles['teacher']);
+        $return = enrol_get_course_users_roles($course->id);
+        $this->assertArrayHasKey($user1->id, $return);
+        $this->assertArrayHasKey($roles['student'], $return[$user1->id]);
+        $this->assertArrayHasKey($roles['teacher'], $return[$user1->id]);
+
+        // Test with another user, 1 role.
+        $manual->enrol_user($enrol, $user2->id, $roles['student']);
+        $return = enrol_get_course_users_roles($course->id);
+        $this->assertArrayHasKey($user1->id, $return);
+        $this->assertArrayHasKey($roles['student'], $return[$user1->id]);
+        $this->assertArrayHasKey($roles['teacher'], $return[$user1->id]);
+        $this->assertArrayHasKey($user2->id, $return);
+        $this->assertArrayHasKey($roles['student'], $return[$user2->id]);
+        $this->assertArrayNotHasKey($roles['teacher'], $return[$user2->id]);
+    }
 }

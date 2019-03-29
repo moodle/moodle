@@ -1303,6 +1303,50 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test verifying get_conversations identifies if a conversation is muted or not.
+     */
+    public function test_get_conversations_some_muted() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+        testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1');
+        testhelper::send_fake_message_to_conversation($user2, $conversation1->id, 'Message 2');
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+
+        $conversation2 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user3->id]);
+        testhelper::send_fake_message_to_conversation($user1, $conversation2->id, 'Message 1');
+        testhelper::send_fake_message_to_conversation($user2, $conversation2->id, 'Message 2');
+
+        $conversation3 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id]);
+        \core_message\api::mute_conversation($user1->id, $conversation3->id);
+
+        $conversation4 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user3->id]);
+
+        $conversations = \core_message\api::get_conversations($user1->id);
+
+        usort($conversations, function($first, $second){
+            return $first->id > $second->id;
+        });
+
+        $conv1 = array_shift($conversations);
+        $conv2 = array_shift($conversations);
+        $conv3 = array_shift($conversations);
+        $conv4 = array_shift($conversations);
+
+        $this->assertTrue($conv1->ismuted);
+        $this->assertFalse($conv2->ismuted);
+        $this->assertTrue($conv3->ismuted);
+        $this->assertFalse($conv4->ismuted);
+    }
+
+    /**
      * Tests retrieving conversations with a limit and offset to ensure pagination works correctly.
      */
     public function test_get_conversations_limit_offset() {
@@ -4913,6 +4957,84 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test muting a conversation.
+     */
+    public function test_mute_conversation() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        \core_message\api::mute_conversation($user1->id, $conversationid);
+
+        $mutedconversation = $DB->get_records('message_conversation_actions');
+
+        $this->assertCount(1, $mutedconversation);
+
+        $mutedconversation = reset($mutedconversation);
+
+        $this->assertEquals($user1->id, $mutedconversation->userid);
+        $this->assertEquals($conversationid, $mutedconversation->conversationid);
+        $this->assertEquals(\core_message\api::CONVERSATION_ACTION_MUTED, $mutedconversation->action);
+    }
+
+    /**
+     * Test unmuting a conversation.
+     */
+    public function test_unmute_conversation() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        \core_message\api::mute_conversation($user1->id, $conversationid);
+        \core_message\api::unmute_conversation($user1->id, $conversationid);
+
+        $this->assertEquals(0, $DB->count_records('message_conversation_actions'));
+    }
+
+    /**
+     * Test if a conversation is muted.
+     */
+    public function test_is_conversation_muted() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertFalse(\core_message\api::is_conversation_muted($user1->id, $conversationid));
+
+        \core_message\api::mute_conversation($user1->id, $conversationid);
+
+        $this->assertTrue(\core_message\api::is_conversation_muted($user1->id, $conversationid));
+    }
+
+    /**
      * Test is contact check.
      */
     public function test_is_contact() {
@@ -5773,6 +5895,32 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test the get_conversation() function with a muted conversation.
+     */
+    public function test_get_conversation_with_muted_conversation() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+
+        $conversation = \core_message\api::get_conversation($user1->id, $conversation->id);
+
+        $this->assertFalse($conversation->ismuted);
+
+        // Now, mute the conversation.
+        \core_message\api::mute_conversation($user1->id, $conversation->id);
+
+        $conversation = \core_message\api::get_conversation($user1->id, $conversation->id);
+
+        $this->assertTrue($conversation->ismuted);
+    }
+
+    /**
      * Data provider for test_get_conversation_counts().
      */
     public function test_get_conversation_counts_test_cases() {
@@ -6289,6 +6437,103 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
         $this->assertEquals($expectedunreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
             $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+    }
+
+    public function test_delete_all_conversation_data() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+
+        // Add users to both groups.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id));
+
+        $groupconversation1 = \core_message\api::get_conversation_by_area(
+            'core_group',
+            'groups',
+            $group1->id,
+            $coursecontext1->id
+        );
+
+        $groupconversation2 = \core_message\api::get_conversation_by_area(
+            'core_group',
+            'groups',
+            $group2->id,
+            $coursecontext1->id
+        );
+
+        // Send a few messages.
+        $g1m1 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation1->id);
+        $g1m2 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation1->id);
+        $g1m3 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation1->id);
+        $g1m4 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation1->id);
+
+        $g2m1 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation2->id);
+        $g2m2 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation2->id);
+        $g2m3 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation2->id);
+        $g2m4 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation2->id);
+
+        // Delete a few messages.
+        \core_message\api::delete_message($user1->id, $g1m1);
+        \core_message\api::delete_message($user1->id, $g1m2);
+        \core_message\api::delete_message($user1->id, $g2m1);
+        \core_message\api::delete_message($user1->id, $g2m2);
+
+        // Mute the conversations.
+        \core_message\api::mute_conversation($user1->id, $groupconversation1->id);
+        \core_message\api::mute_conversation($user1->id, $groupconversation2->id);
+
+        // Now, delete all the data for the group 1 conversation.
+        \core_message\api::delete_all_conversation_data($groupconversation1->id);
+
+        // Confirm group conversation was deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('message_conversations', ['id' => $groupconversation1->id]));
+        $this->assertEquals(1, $DB->count_records('message_conversations', ['id' => $groupconversation2->id]));
+
+        // Confirm conversation members were deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('message_conversation_members', ['conversationid' => $groupconversation1->id]));
+        $this->assertEquals(2, $DB->count_records('message_conversation_members', ['conversationid' => $groupconversation2->id]));
+
+        // Confirm message conversation actions were deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('message_conversation_actions', ['conversationid' => $groupconversation1->id]));
+        $this->assertEquals(1, $DB->count_records('message_conversation_actions', ['conversationid' => $groupconversation2->id]));
+
+        // Confirm message user actions were deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g1m1]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g1m2]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g1m3]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g1m4]));
+        $this->assertEquals(1, $DB->count_records('message_user_actions', ['messageid' => $g2m1]));
+        $this->assertEquals(1, $DB->count_records('message_user_actions', ['messageid' => $g2m2]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g2m3]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g2m4]));
+
+        // Confirm messages were deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('messages', ['id' => $g1m1]));
+        $this->assertEquals(0, $DB->count_records('messages', ['id' => $g1m2]));
+        $this->assertEquals(0, $DB->count_records('messages', ['id' => $g1m3]));
+        $this->assertEquals(0, $DB->count_records('messages', ['id' => $g1m4]));
+        $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m1]));
+        $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m2]));
+        $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m3]));
+        $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m4]));
     }
 
     /**

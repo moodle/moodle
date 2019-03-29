@@ -56,6 +56,8 @@ class registration {
             'commnews', // Receive communication news. This was added in 3.4 and is "On" by default. Admin must confirm or opt-out.
             'mobileservicesenabled', 'mobilenotificationsenabled', 'registereduserdevices', 'registeredactiveuserdevices' // Mobile stats added in 3.4.
         ],
+        // Analytics stats added in Moodle 3.7.
+        2019022200 => ['analyticsenabledmodels', 'analyticspredictions', 'analyticsactions', 'analyticsactionsnotuseful'],
     ];
 
     /** @var Site privacy: not displayed */
@@ -196,6 +198,12 @@ class registration {
             }
         }
 
+        // Analytics related data follow.
+        $siteinfo['analyticsenabledmodels'] = \core_analytics\stats::enabled_models();
+        $siteinfo['analyticspredictions'] = \core_analytics\stats::predictions();
+        $siteinfo['analyticsactions'] = \core_analytics\stats::actions();
+        $siteinfo['analyticsactionsnotuseful'] = \core_analytics\stats::actions_not_useful();
+
         // IMPORTANT: any new fields in siteinfo have to be added to the constant CONFIRM_NEW_FIELDS.
 
         return $siteinfo;
@@ -236,6 +244,10 @@ class registration {
             'mobilenotificationsenabled' => get_string('mobilenotificationsenabled', 'hub', $mobilenotificationsenabled),
             'registereduserdevices' => get_string('registereduserdevices', 'hub', $siteinfo['registereduserdevices']),
             'registeredactiveuserdevices' => get_string('registeredactiveuserdevices', 'hub', $siteinfo['registeredactiveuserdevices']),
+            'analyticsenabledmodels' => get_string('analyticsenabledmodels', 'hub', $siteinfo['analyticsenabledmodels']),
+            'analyticspredictions' => get_string('analyticspredictions', 'hub', $siteinfo['analyticspredictions']),
+            'analyticsactions' => get_string('analyticsactions', 'hub', $siteinfo['analyticsactions']),
+            'analyticsactionsnotuseful' => get_string('analyticsactionsnotuseful', 'hub', $siteinfo['analyticsactionsnotuseful']),
         ];
 
         foreach ($senddata as $key => $str) {

@@ -484,19 +484,146 @@ EXPECTED;
     }
 
     /**
-     * Tests for validate_email() function.
+     * Data provider for validate_email() function.
+     *
+     * @return array Returns aray of test data for the test_validate_email function
      */
-    public function test_validate_email() {
+    public function data_validate_email() {
+        return [
+            // Test addresses that should pass.
+            [
+                'email' => 'moodle@example.com',
+                'result' => true
+            ],
+            [
+                'email' => 'moodle@localhost.local',
+                'result' => true
+            ],
+            [
+                'email' => 'verp_email+is=mighty@moodle.org',
+                'result' => true
+            ],
+            [
+                'email' => "but_potentially'dangerous'too@example.org",
+                'result' => true
+            ],
+            [
+                'email' => 'posts+AAAAAAAAAAIAAAAAAAAGQQAAAAABFSXz1eM/P/lR2bYyljM+@posts.moodle.org',
+                'result' => true
+            ],
 
-        $this->assertTrue(validate_email('moodle@example.com'));
-        $this->assertTrue(validate_email('moodle@localhost.local'));
-        $this->assertTrue(validate_email('verp_email+is=mighty@moodle.org'));
-        $this->assertTrue(validate_email("but_potentially'dangerous'too@example.org"));
-        $this->assertTrue(validate_email('posts+AAAAAAAAAAIAAAAAAAAGQQAAAAABFSXz1eM/P/lR2bYyljM+@posts.moodle.org'));
+            // Test addresses that should NOT pass.
+            [
+                'email' => 'moodle@localhost',
+                'result' => false
+            ],
+            [
+                'email' => '"attacker\\" -oQ/tmp/ -X/var/www/vhost/moodle/backdoor.php  some"@email.com',
+                'result' => false
+            ],
+            [
+                'email' => "moodle@example.com>\r\nRCPT TO:<victim@example.com",
+                'result' => false
+            ],
 
-        $this->assertFalse(validate_email('moodle@localhost'));
-        $this->assertFalse(validate_email('"attacker\\" -oQ/tmp/ -X/var/www/vhost/moodle/backdoor.php  some"@email.com'));
-        $this->assertFalse(validate_email("moodle@example.com>\r\nRCPT TO:<victim@example.com"));
+            // Extra email addresses from Wikipedia page on Email Addresses.
+            // Valid.
+            [
+                'email' => 'simple@example.com',
+                'result' => true
+            ],
+            [
+                'email' => 'very.common@example.com',
+                'result' => true
+            ],
+            [
+                'email' => 'disposable.style.email.with+symbol@example.com',
+                'result' => true
+            ],
+            [
+                'email' => 'other.email-with-hyphen@example.com',
+                'result' => true
+            ],
+            [
+                'email' => 'fully-qualified-domain@example.com',
+                'result' => true
+            ],
+            [
+                'email' => 'user.name+tag+sorting@example.com',
+                'result' => true
+            ],
+            // One-letter local-part.
+            [
+                'email' => 'x@example.com',
+                'result' => true
+            ],
+            [
+                'email' => 'example-indeed@strange-example.com',
+                'result' => true
+            ],
+            // See the List of Internet top-level domains.
+            [
+                'email' => 'example@s.example',
+                'result' => true
+            ],
+            // Quoted double dot.
+            [
+                'email' => '"john..doe"@example.org',
+                'result' => true
+            ],
+
+            // Invalid.
+            // No @ character.
+            [
+                'email' => 'Abc.example.com',
+                'result' => false
+            ],
+            // Only one @ is allowed outside quotation marks.
+            [
+                'email' => 'A@b@c@example.com',
+                'result' => false
+            ],
+            // None of the special characters in this local-part are allowed outside quotation marks.
+            [
+                'email' => 'a"b(c)d,e:f;g<h>i[j\k]l@example.com',
+                'result' => false
+            ],
+            // Quoted strings must be dot separated or the only element making up the local-part.
+            [
+                'email' => 'just"not"right@example.com',
+                'result' => false
+            ],
+            // Spaces, quotes, and backslashes may only exist when within quoted strings and preceded by a backslash.
+            [
+                'email' => 'this is"not\allowed@example.com',
+                'result' => false
+            ],
+            // Even if escaped (preceded by a backslash), spaces, quotes, and backslashes must still be contained by quotes.
+            [
+                'email' => 'this\ still\"not\\allowed@example.com',
+                'result' => false
+            ],
+            // Local part is longer than 64 characters.
+            [
+                'email' => '1234567890123456789012345678901234567890123456789012345678901234+x@example.com',
+                'result' => false
+            ],
+        ];
+    }
+
+    /**
+     * Tests valid and invalid email address using the validate_email() function.
+     *
+     * @param string $email the email address to test
+     * @param boolean $result Expected result (true or false)
+     * @dataProvider    data_validate_email
+     */
+    public function test_validate_email($email, $result) {
+        if ($result) {
+            $this->assertTrue(validate_email($email));
+        } else {
+            $this->assertFalse(validate_email($email));
+        }
     }
 
     /**

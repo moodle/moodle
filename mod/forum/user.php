@@ -240,92 +240,30 @@ if (empty($result->posts)) {
     die;
 }
 
-// Post output will contain an entry containing HTML to display each post by the
-// time we are done.
-$postoutput = array();
-
 $discussions = array();
 foreach ($result->posts as $post) {
     $discussions[] = $post->discussion;
 }
 $discussions = $DB->get_records_list('forum_discussions', 'id', array_unique($discussions));
 
-//todo Rather than retrieving the ratings for each post individually it would be nice to do them in groups
-//however this requires creating arrays of posts with each array containing all of the posts from a particular forum,
-//retrieving the ratings then reassembling them all back into a single array sorted by post.modified (descending)
-$rm = new rating_manager();
-$ratingoptions = new stdClass;
-$ratingoptions->component = 'mod_forum';
-$ratingoptions->ratingarea = 'post';
-foreach ($result->posts as $post) {
-    if (!isset($result->forums[$post->forum]) || !isset($discussions[$post->discussion])) {
-        // Something very VERY dodgy has happened if we end up here
-        continue;
-    }
-    $forum = $result->forums[$post->forum];
-    $cm = $forum->cm;
-    $discussion = $discussions[$post->discussion];
-    $course = $result->courses[$discussion->course];
-
-    $forumurl = new moodle_url('/mod/forum/view.php', array('id' => $cm->id));
-    $discussionurl = new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion));
-
-    // load ratings
-    if ($forum->assessed != RATING_AGGREGATE_NONE) {
-        $ratingoptions->context = $cm->context;
-        $ratingoptions->items = array($post);
-        $ratingoptions->aggregate = $forum->assessed;//the aggregation method
-        $ratingoptions->scaleid = $forum->scale;
-        $ratingoptions->userid = $user->id;
-        $ratingoptions->assesstimestart = $forum->assesstimestart;
-        $ratingoptions->assesstimefinish = $forum->assesstimefinish;
-        if ($forum->type == 'single' or !$post->discussion) {
-            $ratingoptions->returnurl = $forumurl;
-        } else {
-            $ratingoptions->returnurl = $discussionurl;
-        }
-
-        $updatedpost = $rm->get_ratings($ratingoptions);
-        //updating the array this way because we're iterating over a collection and updating them one by one
-        $result->posts[$updatedpost[0]->id] = $updatedpost[0];
-    }
-
-    $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
-    $forumname = format_string($forum->name, true, array('context' => $cm->context));
-
-    $fullsubjects = array();
-    if (!$isspecificcourse && !$hasparentaccess) {
-        $fullsubjects[] = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $courseshortname);
-        $fullsubjects[] = html_writer::link($forumurl, $forumname);
-    } else {
-        $fullsubjects[] = html_writer::tag('span', $courseshortname);
-        $fullsubjects[] = html_writer::tag('span', $forumname);
-    }
-    if ($forum->type != 'single') {
-        $discussionname = format_string($discussion->name, true, array('context' => $cm->context));
-        if (!$isspecificcourse && !$hasparentaccess) {
-            $fullsubjects[] .= html_writer::link($discussionurl, $discussionname);
-        } else {
-            $fullsubjects[] .= html_writer::tag('span', $discussionname);
-        }
-        if ($post->parent != 0) {
-            $postname = format_string($post->subject, true, array('context' => $cm->context));
-            if (!$isspecificcourse && !$hasparentaccess) {
-                $fullsubjects[] .= html_writer::link(new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion, 'parent' => $post->id)), $postname);
-            } else {
-                $fullsubjects[] .= html_writer::tag('span', $postname);
-            }
-        }
-    }
-    $post->subject = join(' -> ', $fullsubjects);
-    // This is really important, if the strings are formatted again all the links
-    // we've added will be lost.
-    $post->subjectnoformat = true;
-    $discussionurl->set_anchor('p'.$post->id);
-    $fulllink = html_writer::link($discussionurl, get_string("postincontext", "forum"));
-
-    $postoutput[] = forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, $fulllink, '', null, true, null, true);
-}
+$entityfactory = mod_forum\local\container::get_entity_factory();
+$rendererfactory = mod_forum\local\container::get_renderer_factory();
+$postsrenderer = $rendererfactory->get_user_forum_posts_report_renderer(!$isspecificcourse && !$hasparentaccess);
+$postoutput = $postsrenderer->render(
+    $USER,
+    array_map(function($forum) use ($entityfactory, $result) {
+        $cm = $forum->cm;
+        $context = context_module::instance($cm->id);
+        $course = $result->courses[$forum->course];
+        return $entityfactory->get_forum_from_stdclass($forum, $context, $cm, $course);
+    }, $result->forums),
+    array_map(function($discussion) use ($entityfactory) {
+        return $entityfactory->get_discussion_from_stdclass($discussion);
+    }, $discussions),
+    array_map(function($post) use ($entityfactory) {
+        return $entityfactory->get_post_from_stdclass($post);
+    }, $result->posts)
+);
 
 $userfullname = fullname($user);
 
@@ -385,10 +323,7 @@ if ($isspecificcourse) {
 
 if (!empty($postoutput)) {
     echo $OUTPUT->paging_bar($result->totalcount, $page, $perpage, $url);
-    foreach ($postoutput as $post) {
-        echo $post;
-        echo html_writer::empty_tag('br');
-    }
+    echo $postoutput;
     echo $OUTPUT->paging_bar($result->totalcount, $page, $perpage, $url);
 } else if ($discussionsonly) {
     echo $OUTPUT->heading(get_string('nodiscussionsstartedby', 'forum', $userfullname));

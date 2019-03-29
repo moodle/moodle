@@ -193,6 +193,11 @@ class behat_data_generators extends behat_base {
                 'category' => 'categoryid',
             )
         ),
+        'message contacts' => array(
+            'datagenerator' => 'message_contacts',
+            'required' => array('user', 'contact'),
+            'switchids' => array('user' => 'userid', 'contact' => 'contactid')
+        ),
     );
 
     /**
@@ -847,4 +852,28 @@ class behat_data_generators extends behat_base {
         return $context;
     }
 
+    /**
+     * Adds user to contacts
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_message_contacts($data) {
+        \core_message\api::add_contact($data['userid'], $data['contactid']);
+    }
+
+    /**
+     * Gets the contact id from it's username.
+     * @throws Exception
+     * @param string $username
+     * @return int
+     */
+    protected function get_contact_id($username) {
+        global $DB;
+
+        if (!$id = $DB->get_field('user', 'id', array('username' => $username))) {
+            throw new Exception('The specified user with username "' . $username . '" does not exist');
+        }
+        return $id;
+    }
 }

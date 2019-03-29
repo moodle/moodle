@@ -804,63 +804,10 @@ function core_message_render_navbar_output(\renderer_base $renderer) {
 }
 
 /**
- * Render the message drawer to be included in the top of the body of
- * each page.
+ * Render the message drawer to be included in the top of the body of each page.
  *
  * @return string HTML
  */
 function core_message_standard_after_main_region_html() {
-    global $USER, $CFG, $PAGE;
-
-    // Early bail out conditions.
-    if (empty($CFG->messaging) || !isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
-        get_user_preferences('auth_forcepasswordchange') ||
-        (!$USER->policyagreed && !is_siteadmin() &&
-            ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
-        return '';
-    }
-
-    $renderer = $PAGE->get_renderer('core');
-    $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
-    $contactscount = \core_message\api::count_contacts($USER->id);
-
-    $choices = [];
-    $choices[] = [
-        'value' => \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
-        'text' => get_string('contactableprivacy_onlycontacts', 'message')
-    ];
-    $choices[] = [
-        'value' => \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
-        'text' => get_string('contactableprivacy_coursemember', 'message')
-    ];
-    if (!empty($CFG->messagingallusers)) {
-        // Add the MESSAGE_PRIVACY_SITE option when site-wide messaging between users is enabled.
-        $choices[] = [
-            'value' => \core_message\api::MESSAGE_PRIVACY_SITE,
-            'text' => get_string('contactableprivacy_site', 'message')
-        ];
-    }
-
-    // Enter to send.
-    $entertosend = get_user_preferences('message_entertosend', $CFG->messagingdefaultpressenter, $USER);
-
-    return $renderer->render_from_template('core_message/message_drawer', [
-        'contactrequestcount' => $requestcount,
-        'loggedinuser' => [
-            'id' => $USER->id,
-            'midnight' => usergetmidnight(time())
-        ],
-        'contacts' => [
-            'sectioncontacts' => [
-                'placeholders' => array_fill(0, $contactscount > 50 ? 50 : $contactscount, true)
-            ],
-            'sectionrequests' => [
-                'placeholders' => array_fill(0, $requestcount > 50 ? 50 : $requestcount, true)
-            ],
-        ],
-        'settings' => [
-            'privacy' => $choices,
-            'entertosend' => $entertosend
-        ]
-    ]);
+    return \core_message\helper::render_messaging_widget(true, null, null);
 }

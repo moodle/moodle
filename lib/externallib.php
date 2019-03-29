@@ -206,7 +206,7 @@ class external_api {
             }
 
             // Do not allow access to write or delete webservices as a public user.
-            if ($externalfunctioninfo->loginrequired) {
+            if ($externalfunctioninfo->loginrequired && !WS_SERVER) {
                 if (defined('NO_MOODLE_COOKIES') && NO_MOODLE_COOKIES && !PHPUNIT_TEST) {
                     throw new moodle_exception('servicerequireslogin', 'webservice');
                 }

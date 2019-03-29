@@ -125,6 +125,10 @@ class core_calendar_local_api_testcase extends advanced_testcase {
         $result = \core_calendar\local\api::get_action_events_by_timesort(9);
 
         $this->assertEmpty($result);
+
+        $this->setAdminUser();
+        $result = \core_calendar\local\api::get_action_events_by_timesort(5, null, null, 20, false, $user);
+        $this->assertCount(4, $result);
     }
 
     /**

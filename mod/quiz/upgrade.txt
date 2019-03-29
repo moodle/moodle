@@ -1,5 +1,10 @@
 This files describes API changes in the quiz code.
 
+=== 3.7 ===
+
+* Quiz_cron() has been removed. Sub-plugins should implemented scheduled tasks, however legacy cron in subplugins are
+  supported.
+
 === 3.6 ===
 
 * The following renamed classes have been completely removed:

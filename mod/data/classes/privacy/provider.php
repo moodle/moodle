@@ -103,29 +103,57 @@ class provider implements
      * @return contextlist the list of contexts containing user info for the user.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-        // Fetch all data records.
+        $contextlist = new contextlist();
+
+        // Fetch all data records that the user rote.
         $sql = "SELECT c.id
                   FROM {context} c
-            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {data} d ON d.id = cm.instance
-            INNER JOIN {data_records} dr ON dr.dataid = d.id
-             LEFT JOIN {comments} com ON com.commentarea=:commentarea and com.itemid = dr.id AND com.userid = :userid1
-             LEFT JOIN {rating} r ON r.contextid = c.id AND r.itemid  = dr.id AND r.component = :moddata
-                       AND r.ratingarea = :ratingarea AND r.userid = :userid2
-                 WHERE dr.userid = :userid OR com.id IS NOT NULL OR r.id IS NOT NULL";
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {data} d ON d.id = cm.instance
+                  JOIN {data_records} dr ON dr.dataid = d.id
+                 WHERE dr.userid = :userid";
 
         $params = [
-            'modname'       => 'data',
             'contextlevel'  => CONTEXT_MODULE,
+            'modname'       => 'data',
             'userid'        => $userid,
-            'userid1'       => $userid,
-            'userid2'       => $userid,
-            'commentarea'   => 'database_entry',
-            'moddata'       => 'mod_data',
-            'ratingarea'    => 'entry',
         ];
-        $contextlist = new contextlist();
+        $contextlist->add_from_sql($sql, $params);
+
+        // Fetch contexts where the user commented.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {data} d ON d.id = cm.instance
+                  JOIN {data_records} dr ON dr.dataid = d.id
+                  JOIN {comments} com ON com.commentarea = :commentarea and com.itemid = dr.id
+                 WHERE com.userid = :userid";
+
+        $params = [
+            'contextlevel'  => CONTEXT_MODULE,
+            'modname'       => 'data',
+            'commentarea'   => 'database_entry',
+            'userid'        => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
+        // Fetch all data records.
+        $ratingquery = \core_rating\privacy\provider::get_sql_join('r', 'mod_data', 'entry', 'dr.id', $userid, true);
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {data} d ON d.id = cm.instance
+                  JOIN {data_records} dr ON dr.dataid = d.id
+            {$ratingquery->join}
+                 WHERE {$ratingquery->userwhere}";
+
+        $params = [
+            'contextlevel'  => CONTEXT_MODULE,
+            'modname'       => 'data',
+        ] + $ratingquery->params;
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;

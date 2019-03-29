@@ -364,33 +364,42 @@
         width: ~"calc(100% - 0.5rem)";
         flex-basis: auto;
     }
-    @media (min-width: 647px) {
-        .dashboard-card {
-            display: flex;
-            flex-direction: column;
 
-            width: ~"calc(50% - 0.5rem)";
+    &.fixed-width-cards {
+        .dashboard-card {
+            width: 300px;
         }
     }
-    @media (min-width: 888px) {
-        .dashboard-card {
-            width: ~"calc(33.333% - 0.5rem)";
+
+    &:not(.fixed-width-cards) {
+        @media (min-width: 647px) {
+            .dashboard-card {
+                display: flex;
+                flex-direction: column;
+
+                width: ~"calc(50% - 0.5rem)";
+            }
         }
-    }
-    @media (min-width: 1147px) {
-        .dashboard-card {
-            width: ~"calc(25% - 0.5rem)";
+        @media (min-width: 888px) {
+            .dashboard-card {
+                width: ~"calc(33.333% - 0.5rem)";
+            }
         }
-    }
-    @media (min-width: 1407px) {
-        .dashboard-card {
-            width: ~"calc(20% - 0.5rem)";
+        @media (min-width: 1147px) {
+            .dashboard-card {
+                width: ~"calc(25% - 0.5rem)";
+            }
+        }
+        @media (min-width: 1407px) {
+            .dashboard-card {
+                width: ~"calc(20% - 0.5rem)";
+            }
         }
     }
 }
 body.used-region-side-pre.empty-region-side-post,
 body.used-region-side-post.empty-region-side-pre {
-    .dashboard-card-deck {
+    .dashboard-card-deck:not(.fixed-width-cards) {
         @media (min-width: 768px) {
             .dashboard-card {
                 width: ~"calc(100% - 0.5rem)";
@@ -414,7 +423,7 @@ body.used-region-side-post.empty-region-side-pre {
     }
 }
 body.used-region-side-pre.used-region-side-post {
-    .dashboard-card-deck {
+    .dashboard-card-deck:not(.fixed-width-cards) {
         @media (min-width: 768px) {
             .dashboard-card {
                 width: ~"calc(100% - 0.5rem)";

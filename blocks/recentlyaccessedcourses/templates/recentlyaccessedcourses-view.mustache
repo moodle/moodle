@@ -21,20 +21,32 @@
 
     Example context (json):
     {
-        "nocoursesimg": "https://moodlesite/theme/image.php/boost/block_recentlyaccessedcourses/1535727318/courses"
     }
 }}
-<div id="recentlyaccessedcourses-view-{{uniqid}}"
-     data-region="recentlyaccessedcourses-view"
-     data-nocoursesimg="{{nocoursesimg}}">
-    <div data-region="recentlyaccessedcourses-view-content">
-        <div data-region="recentlyaccessedcourses-loading-placeholder">
-            <div class="card-deck dashboard-card-deck one-row" style="height: 11.1rem">
-                {{> core_course/placeholder-course }}
-                {{> core_course/placeholder-course }}
-                {{> core_course/placeholder-course }}
-                {{> core_course/placeholder-course }}
-            </div>
+<div id="recentlyaccessedcourses-view-{{uniqid}}" data-region="recentlyaccessedcourses-view">
+    <div data-region="loading-placeholder">
+        <div class="card-deck dashboard-card-deck one-row overflow-hidden" style="height: 13.05rem">
+            {{> core_course/placeholder-course }}
+            {{> core_course/placeholder-course }}
+            {{> core_course/placeholder-course }}
+            {{> core_course/placeholder-course }}
         </div>
+    </div>
+    <div class="hidden" data-region="view-content">
+        {{#pagingbar}}
+            <div class="d-flex paging-bar-container mb-3" data-region="paging-bar-container">
+                {{> core/paged_content_paging_bar }}
+            </div>
+        {{/pagingbar}}
+        {{< core_course/coursecards }}
+            {{$classes}}one-row fixed-width-cards justify-content-center overflow-hidden{{/classes}}
+        {{/ core_course/coursecards }}
+    </div>
+    <div class="hidden text-xs-center text-center m-t-3" data-region="empty-message">
+        <img class="empty-placeholder-image-lg m-t-1"
+            src="{{nocoursesimgurl}}"
+            alt="{{#str}} nocourses, block_recentlyaccessedcourses {{/str}}"
+            role="presentation">
+        <p class="text-muted mt-3">{{#str}} nocourses, block_recentlyaccessedcourses {{/str}}</p>
     </div>
 </div>

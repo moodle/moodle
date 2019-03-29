@@ -332,3 +332,4 @@ $string['unnamedsection'] = 'Unnamed section';
 $string['userinfo'] = 'Userinfo';
 $string['module'] = 'Module';
 $string['morecoursesearchresults'] = 'More than {$a} courses found, showing first {$a} results';
+$string['recyclebin_desc'] = 'These settings will be also applied to recycle bin';

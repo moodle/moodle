@@ -97,17 +97,4 @@ abstract class plagiarism_plugin {
      */
     public function update_status($course, $cm) {
     }
-
-    /**
-     * Deprecated cron method.
-     *
-     * This method was added by mistake in the previous versions of Moodle, do not override it since it is never called.
-     * To implement cron you need to register a scheduled task, see https://docs.moodle.org/dev/Task_API.
-     * For backward compatibility with the old cron API the method cron() from this class can also be used.
-     *
-     * @deprecated since Moodle 3.1 MDL-52702 - please use scheduled tasks instead.
-     */
-    public function plagiarism_cron() {
-        debugging('plagiarism_plugin::plagiarism_cron() is deprecated. Please use scheduled tasks instead', DEBUG_DEVELOPER);
-    }
 }

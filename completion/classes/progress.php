@@ -60,6 +60,10 @@ class progress {
             return null;
         }
 
+        if (!$completion->is_tracked_user($userid)) {
+            return null;
+        }
+
         // Before we check how many modules have been completed see if the course has.
         if ($completion->is_course_complete($userid)) {
             return 100;
@@ -75,7 +79,7 @@ class progress {
         // Get the number of modules that have been completed.
         $completed = 0;
         foreach ($modules as $module) {
-            $data = $completion->get_data($module, false, $userid);
+            $data = $completion->get_data($module, true, $userid);
             $completed += $data->completionstate == COMPLETION_INCOMPLETE ? 0 : 1;
         }
 

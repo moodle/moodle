@@ -217,7 +217,7 @@ function(
 
         setCourseFavouriteState(courseId, true).then(function(success) {
             if (success) {
-                PubSub.publish(CourseEvents.favourited);
+                PubSub.publish(CourseEvents.favourited, courseId);
                 removeAction.removeClass('hidden');
                 addAction.addClass('hidden');
                 showFavouriteIcon(root, courseId);
@@ -240,7 +240,7 @@ function(
 
         setCourseFavouriteState(courseId, false).then(function(success) {
             if (success) {
-                PubSub.publish(CourseEvents.unfavorited);
+                PubSub.publish(CourseEvents.unfavorited, courseId);
                 removeAction.addClass('hidden');
                 addAction.removeClass('hidden');
                 hideFavouriteIcon(root, courseId);

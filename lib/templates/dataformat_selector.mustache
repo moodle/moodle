@@ -17,8 +17,6 @@
 {{!
     @template core/dataformat_selector
 
-    Template for dataformat selection and download form.
-
     Context variables required for this template:
     * label
     * base
@@ -32,24 +30,26 @@
     {
         "base": "http://example.org/",
         "name": "test",
+        "value": "test",
         "label": "Download table data as",
         "params": false,
         "options": [{"label": "CSV", "name": "csv"}, {"label": "Excel", "name": "excel"}],
-        "submit": "Download"
+        "submit": "Download",
+        "sesskey": ""
     }
 }}
-<form method="get" action="{{base}}" class="dataformatselector">
-    <div class="mdl-align">
+<form method="get" action="{{base}}" class="dataformatselector m-1">
+    <div class="form-inline text-xs-right">
         <input type="hidden" name="sesskey" value="{{sesskey}}">
-        <label for="downloadtype_{{name}}">{{label}}</label>
-        <select name="{{name}}" id="downloadtype_{{name}}">
-        {{#options}}
-            <option value="{{value}}">{{label}}</option>
-        {{/options}}
+        <label for="downloadtype_{{name}}" class="mr-1">{{label}}</label>
+        <select name="{{name}}" id="downloadtype_{{name}}" class="form-control">
+            {{#options}}
+                <option value="{{value}}">{{label}}</option>
+            {{/options}}
         </select>
-        <input type="submit" value="{{submit}}">
+        <button type="submit" class="btn btn-secondary">{{submit}}</button>
         {{#params}}
-        <input type="hidden" name="{{name}}" value="{{value}}" />
+            <input type="hidden" name="{{name}}" value="{{value}}">
         {{/params}}
     </div>
 </form>

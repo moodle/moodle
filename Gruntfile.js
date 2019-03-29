@@ -140,11 +140,12 @@ module.exports = function(grunt) {
         sass: {
             dist: {
                 files: {
-                    "theme/boost/style/moodle.css": "theme/boost/scss/preset/default.scss"
+                    "theme/boost/style/moodle.css": "theme/boost/scss/preset/default.scss",
+                    "theme/classic/style/moodle.css": "theme/classic/scss/classicgrunt.scss"
                 }
             },
             options: {
-                includePaths: ["theme/boost/scss/"]
+                includePaths: ["theme/boost/scss/", "theme/classic/scss/"]
             }
         },
         watch: {
@@ -226,7 +227,8 @@ module.exports = function(grunt) {
           'theme/bootstrapbase/style/',
           'theme/clean/style/custom.css',
           'theme/more/style/custom.css',
-          'theme/boost/style/moodle.css'
+          'theme/boost/style/moodle.css',
+          'theme/classic/style/moodle.css',
       ].concat(thirdPartyPaths);
       grunt.file.write('.stylelintignore', stylelintIgnores.join('\n'));
     };

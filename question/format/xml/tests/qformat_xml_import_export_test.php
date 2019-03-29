@@ -422,4 +422,30 @@ class qformat_xml_import_export_test extends advanced_testcase {
         $expectedxml = file_get_contents(__DIR__ . '/fixtures/nested_categories_with_questions.xml');
         $this->assert_same_xml($expectedxml, $qformat->exportprocess());
     }
+
+    /**
+     * Test that bad multianswer questions are not imported.
+     */
+    public function test_import_broken_multianswer_questions() {
+        $lines = file(__DIR__ . '/fixtures/broken_cloze_questions.xml');
+        $importer = $qformat = new qformat_xml();
+
+        // The importer echoes some errors, so we need to capture and check that.
+        ob_start();
+        $questions = $importer->readquestions($lines);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        // Check that there were some expected errors.
+        $this->assertContains('Error importing question', $output);
+        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
+        $this->assertContains('This type of question requires at least 2 choices', $output);
+        $this->assertContains('The answer must be a number, for example -1.234 or 3e8, or \'*\'.', $output);
+        $this->assertContains('One of the answers should have a score of 100% so it is possible to get full marks for this question.',
+                $output);
+        $this->assertContains('The question text must include at least one embedded answer.', $output);
+
+        // No question  have been imported.
+        $this->assertCount(0, $questions);
+    }
 }

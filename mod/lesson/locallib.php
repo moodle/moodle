@@ -1642,6 +1642,9 @@ class lesson extends lesson_base {
 
         $this->delete_all_overrides();
 
+        grade_update('mod/lesson', $this->properties->course, 'mod', 'lesson', $this->properties->id, 0, null, array('deleted'=>1));
+
+        // We must delete the module record after we delete the grade item.
         $DB->delete_records("lesson", array("id"=>$this->properties->id));
         $DB->delete_records("lesson_pages", array("lessonid"=>$this->properties->id));
         $DB->delete_records("lesson_answers", array("lessonid"=>$this->properties->id));
@@ -1662,7 +1665,6 @@ class lesson extends lesson_base {
         $fs = get_file_storage();
         $fs->delete_area_files($context->id);
 
-        grade_update('mod/lesson', $this->properties->course, 'mod', 'lesson', $this->properties->id, 0, null, array('deleted'=>1));
         return true;
     }
 
@@ -4211,8 +4213,9 @@ abstract class lesson_page extends lesson_base {
                         if (!empty(trim($response))) {
                             $studentresponse = isset($result->responseformat) ?
                                 $this->format_response($response, $context, $result->responseformat, $options) : $response;
-                            $table->data[] = array('<em>'.get_string("response", "lesson").
-                                '</em>: <br/>'.$studentresponse);
+                            $studentresponsecontent = html_writer::div('<em>' . get_string("response", "lesson") .
+                                '</em>: <br/>' . $studentresponse, $class);
+                            $table->data[] = array($studentresponsecontent);
                         } else {
                             $table->data[] = array('');
                         }
@@ -4226,8 +4229,9 @@ abstract class lesson_page extends lesson_base {
                         $studentresponse = isset($result->responseformat) ?
                             $this->format_response($result->response, $context, $result->responseformat,
                                 $result->answerid, $options) : $result->response;
-                        $table->data[] = array('<em>'.get_string("response", "lesson").
-                            '</em>: <br/>'.$studentresponse);
+                        $studentresponsecontent = html_writer::div('<em>' . get_string("response", "lesson") .
+                            '</em>: <br/>' . $studentresponse, $class);
+                        $table->data[] = array($studentresponsecontent);
                     } else {
                         $table->data[] = array('');
                     }

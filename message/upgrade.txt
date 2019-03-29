@@ -1,6 +1,15 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+* The message/index.php page used to support viewing another user's messages (if you had the right capabilities) by
+  altering the URL and adding the parameters 'user1' and 'user2'. There were only some very rare occurrences where you
+  could access a URL generated with these parameters (eg. log report). It was decided to stop supporting this
+  functionality and remove all the legacy code (see MDL-63915).
+  Note - It's still possible to view another user's messages if you have the right capabilities and are able to
+  'log-in as' them.
+
 === 3.6 ===
 
 * The following functions have been finally deprecated and can not be used anymore:

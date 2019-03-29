@@ -57,6 +57,11 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         $elepath = $this->get_pathfor('/feedback_editpdf_annotations/annotation');
         $paths[] = new restore_path_element($elename, $elepath);
 
+        // Rotation details.
+        $elename = $this->get_namefor('pagerotation');
+        $elepath = $this->get_pathfor('/feedback_editpdf_rotation/pagerotation');
+        $paths[] = new restore_path_element($elename, $elepath);
+
         return $paths;
     }
 
@@ -109,4 +114,15 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
 
     }
 
+    /**
+     * Processes one /feedback_editpdf_rotation/pagerotation element
+     * @param mixed $data
+     */
+    public function process_assignfeedback_editpdf_pagerotation($data) {
+        global $DB;
+        $data = (object)$data;
+        $oldgradeid = $data->gradeid;
+        $data->gradeid = $this->get_mappingid('grade', $oldgradeid);
+        $DB->insert_record('assignfeedback_editpdf_rot', $data);
+    }
 }

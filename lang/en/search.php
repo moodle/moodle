@@ -86,6 +86,7 @@ $string['invalidindexerror'] = 'Index directory either contains an invalid index
 $string['ittook'] = 'It took';
 $string['matchingfile'] = 'Matched from file <span class="filename">{$a}</span>';
 $string['matchingfiles'] = 'Matched from files:';
+$string['mycoursesonly'] = 'My courses only';
 $string['next'] = 'Next';
 $string['noindexmessage'] = 'Admin: There appears to be no search index. Please';
 $string['noresults'] = 'No results';
@@ -113,6 +114,7 @@ $string['search'] = 'Search';
 $string['search:message_received'] = 'Messages - received';
 $string['search:message_sent'] = 'Messages - sent';
 $string['search:mycourse'] = 'My courses';
+$string['search:course'] = 'Courses';
 $string['search:section'] = 'Course sections';
 $string['search:user'] = 'Users';
 $string['searcharea'] = 'Search area';

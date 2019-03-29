@@ -130,6 +130,7 @@ $string['couldnotconvertsubmission'] = 'Could not convert assignment submission 
 $string['couldnotcreatecoursemodule'] = 'Could not create course module.';
 $string['couldnotcreatenewassignmentinstance'] = 'Could not create new assignment instance.';
 $string['couldnotfindassignmenttoupgrade'] = 'Could not find old assignment instance to upgrade.';
+$string['crontask'] = 'Background processing for assignment module';
 $string['currentgrade'] = 'Current grade in gradebook';
 $string['currentattempt'] = 'This is attempt {$a}.';
 $string['currentattemptof'] = 'This is attempt {$a->attemptnumber} ( {$a->maxattempts} attempts allowed ).';

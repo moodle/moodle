@@ -1069,6 +1069,23 @@ class core_useragent {
     }
 
     /**
+     * Returns true if the client appears to be the Moodle app (or an app based on the Moodle app code).
+     *
+     * @return bool true if the client is the Moodle app
+     * @since Moodle 3.7
+     */
+    public static function is_moodle_app() {
+        $useragent = self::get_user_agent_string();
+
+        // Make it case insensitive, things can change in the app or desktop app depending on the platform frameworks.
+        if (stripos($useragent, 'MoodleMobile') !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if current browser supports files with give extension as <video> or <audio> source
      *
      * Note, the check here is not 100% accurate!

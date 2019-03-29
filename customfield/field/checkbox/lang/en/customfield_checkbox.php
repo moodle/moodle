@@ -24,7 +24,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['checkedbydefault'] = 'Checked by default';
-$string['errorconfigunique'] = 'Checkbox field can not be defined as unique';
+$string['errorconfigunique'] = 'The checkbox field cannot be defined as unique.';
 $string['pluginname'] = 'Checkbox';
-$string['privacy:metadata'] = 'Checkbox field type plugin does not store any personal data, it uses tables defined in core';
+$string['privacy:metadata'] = 'The Checkbox field type plugin doesn\'t store any personal data; it uses tables defined in core.';
 $string['specificsettings'] = 'Settings for the checkbox field';

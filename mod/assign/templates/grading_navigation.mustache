@@ -30,15 +30,15 @@
 
     This template includes ajax functionality, so it cannot be shown in the template library.
 }}
-
-<div data-region="grading-navigation" class="row-fluid">
+<div class="container-fluid">
+<div data-region="grading-navigation" class="row">
 
 {{!
     There are three chunks, which appear side-by-side at large screen sizes.
     A) Assignment info, which has 3 rows:
 }}
 
-<div data-region="assignment-info" class="span4">
+<div data-region="assignment-info" class="col-md-4">
 
 {{!
     Row 1) course name & link.
@@ -81,17 +81,18 @@
 {{!
     B) Current user name and info.
 }}
-<div data-region="user-info" class="span4" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
+<div data-region="user-info" class="col-md-4" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
     {{> mod_assign/grading_navigation_user_info }}
 </div>
 
 {{!
     C) User selector widget.
 }}
-<div data-region="user-selector" class="span4">
+<div data-region="user-selector" class="col-md-4">
     <div class="alignment">
         {{> mod_assign/grading_navigation_user_selector }}
     </div>
+</div>
 </div>
 </div>
 {{#js}}

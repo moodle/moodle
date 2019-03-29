@@ -76,15 +76,18 @@ class behat_grade extends behat_base {
         $gradeitem = behat_context_helper::escape($gradeitem);
 
         if ($this->running_javascript()) {
-            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'toggle-display')]";
+            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
-                $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
+                $this->execute("behat_action_menu::i_open_the_action_menu_in",
+                        array("//tr[contains(.,$gradeitem)]",
+                                "xpath_element"));
             }
         }
 
         $savechanges = get_string('savechanges', 'grades');
         $edit = behat_context_helper::escape(get_string('edit') . '  ');
-        $linkxpath = "//a[./img[starts-with(@title,$edit) and contains(@title,$gradeitem)]]";
+        $linkxpath = "//a[./*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') " .
+                "and starts-with(@title,$edit) and contains(@title,$gradeitem)]]";
 
         $this->execute("behat_general::i_click_on", array($this->escape($linkxpath), "xpath_element"));
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
@@ -128,16 +131,19 @@ class behat_grade extends behat_base {
         $gradeitem = behat_context_helper::escape($gradeitem);
 
         if ($this->running_javascript()) {
-            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'toggle-display')]";
+            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
-                $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
+                $this->execute("behat_action_menu::i_open_the_action_menu_in",
+                        array("//tr[contains(.,$gradeitem)]",
+                                "xpath_element"));
             }
         }
 
         // Going to edit calculation.
         $savechanges = get_string('savechanges', 'grades');
         $edit = behat_context_helper::escape(get_string('editcalculation', 'grades'));
-        $linkxpath = "//a[./img[starts-with(@title,$edit) and contains(@title,$gradeitem)]]";
+        $linkxpath = "//a[./*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') " .
+                "and starts-with(@title,$edit) and contains(@title,$gradeitem)]]";
         $this->execute("behat_general::i_click_on", array($this->escape($linkxpath), "xpath_element"));
 
         // Mapping names to idnumbers.
@@ -145,11 +151,12 @@ class behat_grade extends behat_base {
         foreach ($datahash as $gradeitem => $idnumber) {
             // This xpath looks for course, categories and items with the provided name.
             // Grrr, we can't equal in categoryitem and courseitem because there is a line jump...
-            $inputxpath ="//input[@class='idnumber'][" .
-                "parent::li[@class='item'][text()='" . $gradeitem . "']" .
-                " or " .
-                "parent::li[@class='categoryitem' or @class='courseitem']/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
-            "]";
+            $inputxpath = "//input[@class='idnumber'][" .
+                    "parent::li[@class='item'][text()='" . $gradeitem . "']" .
+                    " or " .
+                    "parent::li[@class='categoryitem' or @class='courseitem']" .
+                    "/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
+                    "]";
             $this->execute('behat_forms::i_set_the_field_with_xpath_to', array($inputxpath, $idnumber));
         }
 
@@ -174,17 +181,18 @@ class behat_grade extends behat_base {
         $gradeitem = behat_context_helper::escape($gradeitem);
 
         if ($this->running_javascript()) {
-            $xpath = "//tr[contains(.,$gradecategorytotal)]//*[contains(@class,'moodle-actionmenu')]" .
-                "//a[contains(@class,'toggle-display')]";
+            $xpath = "//tr[contains(.,$gradecategorytotal)]//*[contains(@class,'moodle-actionmenu')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
-                $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
+                $xpath = "//tr[contains(.,$gradecategorytotal)]";
+                $this->execute("behat_action_menu::i_open_the_action_menu_in", array($xpath, "xpath_element"));
             }
         }
 
         // Going to edit calculation.
         $savechanges = get_string('savechanges', 'grades');
         $edit = behat_context_helper::escape(get_string('editcalculation', 'grades'));
-        $linkxpath = "//a[./img[starts-with(@title,$edit) and contains(@title,$gradeitem)]]";
+        $linkxpath = "//a[./*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') " .
+                "and starts-with(@title,$edit) and contains(@title,$gradeitem)]]";
         $this->execute("behat_general::i_click_on", array($this->escape($linkxpath), "xpath_element"));
 
         // Mapping names to idnumbers.
@@ -193,11 +201,11 @@ class behat_grade extends behat_base {
             // This xpath looks for course, categories and items with the provided name.
             // Grrr, we can't equal in categoryitem and courseitem because there is a line jump...
             $inputxpath = "//input[@class='idnumber'][" .
-                "parent::li[@class='item'][text()='" . $gradeitem . "']" .
-                " | " .
-                "parent::li[@class='categoryitem' | @class='courseitem']" .
-                "/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
-            "]";
+                    "parent::li[@class='item'][text()='" . $gradeitem . "']" .
+                    " | " .
+                    "parent::li[@class='categoryitem' | @class='courseitem']" .
+                    "/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
+                    "]";
             $this->execute('behat_forms::i_set_the_field_with_xpath_to', array($inputxpath, $idnumber));
         }
 
@@ -221,9 +229,10 @@ class behat_grade extends behat_base {
 
         if ($this->running_javascript()) {
             $gradeitemliteral = behat_context_helper::escape($gradeitem);
-            $xpath = "//tr[contains(.,$gradeitemliteral)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'toggle-display')]";
+            $xpath = "//tr[contains(.,$gradeitemliteral)]//*[contains(@class,'moodle-actionmenu')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
-                $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
+                $xpath = "//tr[contains(.,$gradeitemliteral)]";
+                $this->execute("behat_action_menu::i_open_the_action_menu_in", array($xpath, "xpath_element"));
             }
         }
 
@@ -290,11 +299,10 @@ class behat_grade extends behat_base {
      * @param string $gradepath
      */
     public function i_navigate_to_in_the_course_gradebook($gradepath) {
-        // If we are not on one of the gradebook pages already, follow "Grades" link in the navigation block.
+        // If we are not on one of the gradebook pages already, follow "Grades" link in the navigation drawer.
         $xpath = '//div[contains(@class,\'grade-navigation\')]';
         if (!$this->getSession()->getPage()->findAll('xpath', $xpath)) {
-            $this->execute("behat_general::i_click_on_in_the", array(get_string('grades'), 'link',
-                get_string('pluginname', 'block_navigation'), 'block'));
+            $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', get_string('grades'));
         }
 
         $this->select_in_gradebook_tabs($gradepath);

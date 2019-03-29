@@ -24,7 +24,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__ . '/../behat_test_context_1.php');
+require_once(__DIR__ . '/../../core/behat_test_context_1.php');
 
 /**
  * Theme test context 1
@@ -33,6 +33,6 @@ require_once(__DIR__ . '/../behat_test_context_1.php');
  * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_theme_nofeatures_behat_test_context_1 extends behat_test_context_1 {
+class behat_theme_nofeatures_behat_test_context_2 extends behat_test_context_2 {
 
 }

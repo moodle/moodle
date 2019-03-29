@@ -32,3 +32,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'भाषा';
 $string['next'] = 'अगला';
+$string['reload'] = 'सीमा से अधिक लादना';

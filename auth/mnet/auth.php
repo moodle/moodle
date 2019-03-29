@@ -738,25 +738,6 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
-     * Cron function will be called automatically by cron.php every 5 minutes
-     *
-     * @return void
-     */
-    function cron() {
-        global $DB;
-
-        // run the keepalive client
-        $this->keepalive_client();
-
-        $random100 = rand(0,100);
-        if ($random100 < 10) {     // Approximately 10% of the time.
-            // nuke olden sessions
-            $longtime = time() - (1 * 3600 * 24);
-            $DB->delete_records_select('mnet_session', "expires < ?", array($longtime));
-        }
-    }
-
-    /**
      * Cleanup any remote mnet_sessions, kill the local mnet_session data
      *
      * This is called by require_logout in moodlelib

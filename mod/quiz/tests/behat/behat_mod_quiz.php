@@ -254,15 +254,18 @@ class behat_mod_quiz extends behat_question_base {
         $editquiz = $this->escape(get_string('editquiz', 'quiz'));
         $quizadmin = $this->escape(get_string('pluginadministration', 'quiz'));
         $addaquestion = $this->escape(get_string('addaquestion', 'quiz'));
-        $menuxpath = "//div[contains(@class, ' page-add-actions ')][last()]//a[contains(@class, ' textmenu')]";
-        $itemxpath = "//div[contains(@class, ' page-add-actions ')][last()]//a[contains(@class, ' addquestion ')]";
 
         $this->execute('behat_general::click_link', $quizname);
 
-        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", $editquiz);
+        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
+                $quizadmin . ' > ' . $editquiz);
 
-        $this->execute("behat_general::i_click_on", array($menuxpath, "xpath_element"));
-        $this->execute("behat_general::i_click_on", array($itemxpath, "xpath_element"));
+        if ($this->running_javascript()) {
+            $this->execute("behat_action_menu::i_open_the_action_menu_in", array('.slots', "css_element"));
+            $this->execute("behat_action_menu::i_choose_in_the_open_action_menu", array($addaquestion));
+        } else {
+            $this->execute('behat_general::click_link', $addaquestion);
+        }
 
         $this->finish_adding_question($questiontype, $questiondata);
     }
@@ -296,9 +299,9 @@ class behat_mod_quiz extends behat_question_base {
         }
 
         if ($pageorlast == 'last') {
-            $xpath = "//div[@class = 'last-add-menu']//a[contains(@class, 'textmenu') and contains(., 'Add')]";
+            $xpath = "//div[@class = 'last-add-menu']//a[contains(@data-toggle, 'dropdown') and contains(., 'Add')]";
         } else if (preg_match('~Page (\d+)~', $pageorlast, $matches)) {
-            $xpath = "//li[@id = 'page-{$matches[1]}']//a[contains(@class, 'textmenu') and contains(., 'Add')]";
+            $xpath = "//li[@id = 'page-{$matches[1]}']//a[contains(@data-toggle, 'dropdown') and contains(., 'Add')]";
         } else {
             throw new ExpectationException("The I open the add to quiz menu step must specify either 'Page N' or 'last'.");
         }
@@ -557,7 +560,7 @@ class behat_mod_quiz extends behat_question_base {
         // Split in two checkings to give more feedback in case of exception.
         $exception = new ExpectationException('Question "' . $questionnumber . '" is not in section "' .
                 $sectionheading . '" in the quiz navigation.', $this->getSession());
-        $xpath = "//div[@id = 'mod_quiz_navblock']//*[contains(concat(' ', normalize-space(@class), ' '), ' qnbutton ') and " .
+        $xpath = "//*[@id = 'mod_quiz_navblock']//*[contains(concat(' ', normalize-space(@class), ' '), ' qnbutton ') and " .
                 "contains(., {$questionnumberliteral}) and contains(preceding-sibling::h3[1], {$headingliteral})]";
         $this->find('xpath', $xpath);
     }

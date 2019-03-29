@@ -1,6 +1,18 @@
 This files describes API changes in /search/*,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+* Search areas now have categories and can optionally implement get_category_names method to
+  display search results of the area in the required tab on the search results screen (if this
+  feature is enabled).
+* Added a new call back search_area_categories. Plugins can implement this method in lib.php and
+  return a list of custom search area categories (\core_search\area_category) and associated with
+  them search areas. This will bring additional custom tabs to the search results screen.
+* Added \core_search\manager::clean_up_non_existing_area method to clean up removed or renamed
+  search areas. To support that a new adhoc task core\task\clean_up_deleted_search_area_task
+  added.
+
 === 3.5 ===
 
 * Search areas may now optionally implement the get_contexts_to_reindex function (for modules and

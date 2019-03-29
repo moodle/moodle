@@ -49,6 +49,7 @@ class core_calendar_export_form extends moodleform {
 
         $export = array();
         $export[] = $mform->createElement('radio', 'exportevents', '', get_string('eventsall', 'calendar'), 'all');
+        $export[] = $mform->createElement('radio', 'exportevents', '', get_string('eventsrelatedtocategories', 'calendar'), 'categories');
         $export[] = $mform->createElement('radio', 'exportevents', '', get_string('eventsrelatedtocourses', 'calendar'), 'courses');
         $export[] = $mform->createElement('radio', 'exportevents', '', get_string('eventsrelatedtogroups', 'calendar'), 'groups');
         $export[] = $mform->createElement('radio', 'exportevents', '', get_string('eventspersonal', 'calendar'), 'user');

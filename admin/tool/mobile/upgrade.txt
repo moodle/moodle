@@ -1,6 +1,10 @@
 This files describes changes in tool_mobile code.
 Information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+ * New external function tool_mobile::tool_mobile_call_external_function allows calling multiple external functions and returns all responses.
+
 === 3.5 ===
 
  * External function tool_mobile::tool_mobile_get_plugins_supporting_mobile now returns additional plugins information required by

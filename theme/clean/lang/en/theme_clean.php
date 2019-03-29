@@ -22,11 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['choosereadme'] = '
-<div class="clearfix">
+$string['choosereadme'] = '<div class="clearfix">
 <div class="well">
 <h2>Clean</h2>
-<p><img class=img-polaroid src="clean/pix/screenshot.jpg" /></p>
+<p><img class="img-polaroid "src="clean/pix/screenshot.jpg" /></p>
 </div>
 <div class="well">
 <h3>About</h3>

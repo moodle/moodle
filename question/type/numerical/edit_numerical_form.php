@@ -319,22 +319,7 @@ class qtype_numerical_edit_form extends question_edit_form {
      * @return bool whether this is a valid answer.
      */
     protected function is_valid_answer($answer, $data) {
-        return $answer == '*' || $this->is_valid_number($answer);
-    }
-
-    /**
-     * Validate that a string is a nubmer formatted correctly for the current locale.
-     * @param string $x a string
-     * @return bool whether $x is a number that the numerical question type can interpret.
-     */
-    protected function is_valid_number($x) {
-        if (is_null($this->ap)) {
-            $this->ap = new qtype_numerical_answer_processor(array());
-        }
-
-        list($value, $unit) = $this->ap->apply_units($x);
-
-        return !is_null($value) && !$unit;
+        return $answer == '*' || qtype_numerical::is_valid_number($answer);
     }
 
     /**

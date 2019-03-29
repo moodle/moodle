@@ -42,6 +42,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
     private function get_shortcut($name) {
 
         $shortcuts = array('navigate-previous-button' => 'j',
+            'rotateleft' => 'q',
+            'rotateright' => 'w',
             'navigate-page-select' => 'k',
             'navigate-next-button' => 'l',
             'searchcomments' => 'h',
@@ -161,6 +163,13 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $navigation3 .= $this->render_toolbar_button('comment_expcol', 'expcolcomments', $this->get_shortcut('expcolcomments'));
         $navigation3 = html_writer::div($navigation3, 'navigation-expcol', array('role' => 'navigation'));
 
+        $rotationtools = '';
+        if (!$widget->readonly) {
+            $rotationtools .= $this->render_toolbar_button('rotate_left', 'rotateleft', $this->get_shortcut('rotateleft'));
+            $rotationtools .= $this->render_toolbar_button('rotate_right', 'rotateright', $this->get_shortcut('rotateright'));
+            $rotationtools = html_writer::div($rotationtools, 'toolbar', array('role' => 'toolbar'));
+        }
+
         $toolbargroup = '';
         $clearfix = html_writer::div('', 'clearfix');
         if (!$widget->readonly) {
@@ -193,7 +202,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar4 = html_writer::div($toolbar4, 'toolbar', array('role'=>'toolbar'));
 
             // Add toolbars to toolbar_group in order of display, and float the toolbar_group right.
-            $toolbars = $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4;
+            $toolbars = $rotationtools . $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4;
             $toolbargroup = html_writer::div($toolbars, 'toolbar_group', array('role' => 'toolbar_group'));
         }
 

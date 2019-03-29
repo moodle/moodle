@@ -118,7 +118,7 @@ $string['categoryname'] = 'Category name';
 $string['categorytotal'] = 'Category total';
 $string['categorytotalname'] = 'Category total name';
 $string['categorytotalfull'] = '{$a->category} total';
-$string['combo'] = 'Tabs and Dropdown menu';
+$string['combo'] = 'Tabs and drop-down menu';
 $string['compact'] = 'Compact';
 $string['componentcontrolsvisibility'] = 'Whether this grade item is hidden is controlled by the activity settings.';
 $string['contract'] = 'Contract category';
@@ -153,7 +153,7 @@ $string['displaylettergrade'] = 'Display letter grades';
 $string['displaypercent'] = 'Display percents';
 $string['displaypoints'] = 'Display points';
 $string['displayweighted'] = 'Display weighted grades';
-$string['dropdown'] = 'Dropdown menu';
+$string['dropdown'] = 'Drop-down menu';
 $string['droplow'] = 'Drop the lowest';
 $string['droplow_help'] = 'This setting enables a specified number of the lowest grades to be excluded from the aggregation.';
 $string['droplowestvalue'] = 'Set drop lowest grade value';
@@ -266,9 +266,9 @@ $string['gradedisplay'] = 'Grade display';
 $string['gradedisplaytype'] = 'Grade display type';
 $string['gradedisplaytype_help'] = 'This setting determines how grades are displayed in the grader and user reports.
 
-* Real - Actual grades
-* Percentage
-* Letter - Letters or words are used to represent a range of grades';
+* Letter - Letters or words are used to represent a range of grades, as defined in \'Letters\' in the gradebook setup
+* Percentage - Relative to maximum and minimum grades
+* Real - Actual grades or scale values';
 $string['gradedon'] = 'Graded: {$a}';
 $string['gradeexport'] = 'Grade export';
 $string['gradeexportcolumntype'] = '{$a->name} ({$a->extra})';
@@ -484,7 +484,7 @@ $string['missingitemtypeoreid'] = 'Array key (itemtype or eid) missing from 2nd 
 $string['missingscale'] = 'Scale must be selected';
 $string['mode'] = 'Mode';
 $string['modgrade'] = 'Grade';
-$string['modgrade_help'] = 'Select the type of grading used for this activity. If "scale" is chosen, you can then choose the scale from the "scale" dropdown. If using "point" grading, you can then enter the maximum grade available for this activity.';
+$string['modgrade_help'] = 'Select the type of grading used for this activity. If \'scale\' is chosen, you can then choose the scale from the drop-down menu. If using point grading, you can then enter the maximum grade available for this activity.';
 $string['modgradecantchangegradetype'] = 'You cannot change the type, as grades already exist for this item.';
 $string['modgradecantchangegradetypemsg'] = 'Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades.';
 $string['modgradecantchangegradetyporscalemsg'] = 'Some grades have already been awarded, so the grade type and scale cannot be changed.';
@@ -834,6 +834,7 @@ $string['usergrade'] = 'User {$a->fullname} ({$a->useridnumber}) on item {$a->gr
 $string['userid'] = 'User ID';
 $string['useridnumberwarning'] = 'Users without an ID number are excluded from the export as they cannot be imported';
 $string['usermappingerror'] = 'User mapping error: Could not find user with {$a->field} of "{$a->value}".';
+$string['usermappingerrormultipleusersfound'] = 'User mapping error: Multiple users found with {$a->field} of "{$a->value}". Please use a more unique mapping field.';
 $string['usermappingerrorusernotfound'] = 'User mapping error. Could not find user.';
 $string['usermappingerrorcurrentgroup'] = 'User is not a member of current group.';
 $string['userpreferences'] = 'User preferences';

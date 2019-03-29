@@ -101,4 +101,12 @@ $functions = array(
         'capabilities'  => '',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_scorm_get_scorm_access_information' => array(
+        'classname'     => 'mod_scorm_external',
+        'methodname'    => 'get_scorm_access_information',
+        'description'   => 'Return capabilities information for a given scorm.',
+        'type'          => 'read',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );

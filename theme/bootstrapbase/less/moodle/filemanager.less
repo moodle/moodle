@@ -290,9 +290,18 @@
     overflow: hidden;
     position: absolute;
 }
-.fp-iconview .fp-filename-field:hover {
-    overflow: visible;
-    z-index: 1000;
+.fp-iconview .fp-file:focus,
+.fp-iconview .fp-file:hover {
+    // Undo truncating of text on hover of focus.
+    .fp-filename-field {
+        overflow: visible;
+        z-index: 1000;
+    }
+    .fp-filename {
+        overflow: inherit;
+        white-space: normal;
+        text-overflow: unset;
+    }
 }
 .fp-iconview .fp-filename-field .fp-filename {
     background: #fff;

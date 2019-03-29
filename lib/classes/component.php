@@ -86,6 +86,7 @@ class core_component {
         'Phpml' => 'lib/mlbackend/php/phpml/src/Phpml',
         'PHPMailer\\PHPMailer' => 'lib/phpmailer/src',
         'RedeyeVentures\\GeoPattern' => 'lib/geopattern-php/GeoPattern',
+        'MongoDB' => 'cache/stores/mongodb/MongoDB',
     );
 
     /**
@@ -1141,6 +1142,17 @@ $cache = '.var_export($cache, true).';
      * @return string sha1 hash
      */
     public static function get_all_versions_hash() {
+        return sha1(serialize(self::get_all_versions()));
+    }
+
+    /**
+     * Returns hash of all versions including core and all plugins.
+     *
+     * This is relatively slow and not fully cached, use with care!
+     *
+     * @return array as (string)plugintype_pluginname => (int)version
+     */
+    public static function get_all_versions() : array {
         global $CFG;
 
         self::init();
@@ -1174,7 +1186,7 @@ $cache = '.var_export($cache, true).';
             }
         }
 
-        return sha1(serialize($versions));
+        return $versions;
     }
 
     /**

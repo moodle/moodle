@@ -124,7 +124,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: List display  persistence
     Given I log in as "student1"
-    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     And I click on "List" "link" in the "Course overview" "block"
     And I reload the page
     Then I should see "List" in the "Course overview" "block"
@@ -132,7 +132,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: Cards display  persistence
     Given I log in as "student1"
-    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     And I click on "Card" "link" in the "Course overview" "block"
     And I reload the page
     Then I should see "Card" in the "Course overview" "block"
@@ -140,7 +140,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: Summary display  persistence
     Given I log in as "student1"
-    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     And I click on "Summary" "link" in the "Course overview" "block"
     And I reload the page
     Then I should see "Summary" in the "Course overview" "block"
@@ -206,18 +206,18 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: Show course category in cards display
     Given I log in as "student1"
-    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     When I click on "Card" "link" in the "Course overview" "block"
     Then I should see "Category 1" in the "Course overview" "block"
 
   Scenario: Show course category in list display
     Given I log in as "student1"
-    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     When I click on "List" "link" in the "Course overview" "block"
     Then I should see "Category 1" in the "Course overview" "block"
 
   Scenario: Show course category in summary display
     Given I log in as "student1"
-    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     When I click on "Summary" "link" in the "Course overview" "block"
     Then I should see "Category 1" in the "Course overview" "block"

@@ -67,13 +67,13 @@ class behat_groups extends behat_base {
             $script = "Syn.trigger('change', {}, {{ELEMENT}})";
             $driver->triggerSynScript($select->getXpath(), $script);
         }
-        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+        $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
 
         // Here we don't need to wait for the AJAX response.
         $this->find_button(get_string('adduserstogroup', 'group'))->click();
 
         // Wait for add/remove members page to be loaded.
-        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+        $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
 
         // Getting the option and selecting it.
         $select = $this->find_field('addselect');
@@ -86,7 +86,7 @@ class behat_groups extends behat_base {
         $this->find_button(get_string('add'))->click();
 
         // Wait for the page to load.
-        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+        $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
 
         // Returning to the main groups page.
         $this->find_button(get_string('backtogroups', 'group'))->click();

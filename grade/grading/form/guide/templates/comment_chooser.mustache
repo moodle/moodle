@@ -47,13 +47,11 @@
     }
 }}
 <div class="gradingform_guide_comment_chooser" id="comment_chooser">
-    <ul role="list">
+    <div class="list-group">
         {{#comments}}
-            <li role="listitem">
-                <button id="comment-option-{{criterionId}}-{{id}}" class="btn btn-link" tabindex="0">
-                    {{description}}
-                </button>
-            </li>
+            <button class="list-group-item list-group-item-action" id="comment-option-{{criterionId}}-{{id}}" tabindex="0">
+                {{description}}
+            </button>
         {{/comments}}
-    </ul>
+    </div>
 </div>

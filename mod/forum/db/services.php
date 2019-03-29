@@ -105,4 +105,22 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_forum_get_forum_access_information' => array(
+        'classname'     => 'mod_forum_external',
+        'methodname'    => 'get_forum_access_information',
+        'description'   => 'Return capabilities information for a given forum.',
+        'type'          => 'read',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+
+    'mod_forum_set_subscription_state' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'set_subscription_state',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Set the subscription state',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );

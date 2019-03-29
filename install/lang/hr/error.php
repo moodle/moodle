@@ -42,6 +42,7 @@ $string['cannotsavemd5file'] = 'Nije moguće pohraniti md5 datoteku';
 $string['cannotsavezipfile'] = 'Nije moguće pohraniti ZIP datoteku';
 $string['cannotunzipfile'] = 'Nije moguće otpakirati datoteku';
 $string['componentisuptodate'] = 'Komponenta je dostupna u svojoj najnovijoj inačici.';
+$string['dmlexceptiononinstall'] = '<p>Dogodila se pogreška baze podataka [{$a->errorcode}].<br />{$a->debuginfo}';
 $string['downloadedfilecheckfailed'] = 'Došlo je do pogreške pri provjeri preuzete datoteke';
 $string['invalidmd5'] = 'Neispravna md5 datoteka';
 $string['missingrequiredfield'] = 'Nedostaje neko obvezatno polje';

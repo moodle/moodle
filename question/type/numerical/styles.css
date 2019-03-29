@@ -3,10 +3,6 @@
     display: inline;
 }
 
-.que.numerical .answer input[type="text"] {
-    width: 30%;
-}
-
 /*rtl:ignore*/
 #page-question-type-numerical input[name="unitpenalty"],
 #page-question-type-numerical input[name^="answer"],

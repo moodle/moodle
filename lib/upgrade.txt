@@ -10,6 +10,22 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
 * A new method to allow queueing or rescheduling of an existing scheduled task was added. This allows an existing task
   to be updated or queued as required. This new functionality can be found in \core\task\manager::reschedule_or_queue_adhoc_task.
 * Icons are displayed for screen readers unless they have empty alt text (aria-hidden). Do not provide an icon with alt text immediately beside an element with exactly the same text.
+* admin_settingpage has a new function hide_if(), modeled after the same functionality in the forms library. This allows admin settings to be dynamically hidden based on the values of other settings.
+* The \core_rating provider's get_sql_join function now accepts an optional $innerjoin parameter.
+  It is recommended that privacy providers using this function call rewrite any long query into a number of separate
+  calls to add_from_sql for improved performance, and that the new argument is used.
+  This will allow queries to remain backwards-compatible with older versions of Moodle but will have significantly better performance in version supporting the innerjoin parameter.
+* /message/defaultoutputs.php file and admin_page_defaultmessageoutputs class have been deprecated
+  and all their settings moved to admin/message.php (see MDL-64495). Please use admin_page_managemessageoutputs class instead.
+* A new parameter $lang has been added to mustache_template_source_loader->load_with_dependencies() method
+  so it is possible for Mustache to request string in a specific language.
+* Behat timeout constants behat_base::TIMEOUT, EXTENDED_TIMEOUT, and REDUCED_TIMEOUT have been
+  deprecated. Please instead use the functions behat_base::get_timeout(), get_extended_timeout(),
+  and get_reduced_timeout(). These allow for timeouts to be increased by a setting in config.php.
+* The $draftitemid parameter of file_save_draft_area_files() function now supports the constant IGNORE_FILE_MERGE:
+  When the parameter is set to that constant, the function won't process file merging, keeping the original state of the file area.
+* Introduced new callback for plugin developers '<component>_pre_processor_message_send($procname, $proceventdata)':
+  This will allow any plugin to manipulate messages or notifications before they are sent by a processor (email, mobile...)
 
 === 3.6 ===
 
@@ -625,13 +641,13 @@ the groupid field.
       $OUTPUT->download_dataformat_selector() instead.
   when building Xpath, or pass the unescaped value when using the named selector.
 * Add new file_is_executable(), to consistently check for executables even in Windows (PHP bug #41062).
-* Introduced new hooks for plugin developers.
+* Introduced new callbacks for plugin developers.
     - <component>_pre_course_category_delete($category)
     - <component>_pre_course_delete($course)
     - <component>_pre_course_module_delete($cm)
     - <component>_pre_block_delete($instance)
     - <component>_pre_user_delete($user)
-  These hooks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
+  These callbacks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
   a module (plugins located in the mod folder) called 'xxx' and you wish to interact with the user object before it is
   deleted then the function to create would be mod_xxx_pre_user_delete($user) in mod/xxx/lib.php.
 * pear::Net::GeoIP has been removed.

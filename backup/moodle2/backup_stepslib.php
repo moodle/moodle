@@ -2282,7 +2282,11 @@ class backup_questions_structure_step extends backup_structure_step {
                               FROM {tag} t
                               JOIN {tag_instance} ti ON ti.tagid = t.id
                               WHERE ti.itemid = ?
-                              AND ti.itemtype = 'question'", array(backup::VAR_PARENTID));
+                              AND ti.itemtype = 'question'
+                              AND ti.component = 'core_question'",
+            [
+                backup::VAR_PARENTID
+            ]);
 
         // don't need to annotate ids nor files
         // (already done by {@link backup_annotate_all_question_files}

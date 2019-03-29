@@ -794,6 +794,136 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertFalse($columns['id']->auto_increment);
     }
 
+    public function test_get_preload_columns() {
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, 'lala');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $expected = [
+            'aid' => 'id',
+            'acourse' => 'course',
+            'aname' => 'name',
+        ];
+        $columns = $DB->get_preload_columns($tablename, 'a');
+        $this->assertCount(3, $columns);
+        $this->assertEquals($expected, $columns);
+    }
+
+    /**
+     * Ensure that get_preload_columns_sql works as expected.
+     *
+     * @dataProvider get_preload_columns_sql_provider
+     * @param   array       $fieldlist The list of fields
+     * @param   string      $tablealias The alias to use
+     * @param   string      $expected The string to match
+     */
+    public function test_get_preload_columns_sql(array $fieldlist, string $tablealias, string $expected) {
+        $this->assertEquals($expected, $this->tdb->get_preload_columns_sql($fieldlist, $tablealias));
+    }
+
+    /**
+     * Data provider for get_preload_columns_sql tests.
+     *
+     * @return  array
+     */
+    public function get_preload_columns_sql_provider() : array {
+        return [
+            'single field' => [
+                [
+                    'xid' => 'id',
+                ],
+                'x',
+                'x.id AS xid',
+            ],
+            'multiple fields' => [
+                [
+                    'bananaid' => 'id',
+                    'bananacourse' => 'course',
+                    'bananafoo' => 'foo',
+                ],
+                'banana',
+                'banana.id AS bananaid, banana.course AS bananacourse, banana.foo AS bananafoo',
+            ],
+        ];
+    }
+
+    /**
+     * Ensure that extract_fields_from_object works as expected.
+     *
+     * @dataProvider        extract_fields_from_object_provider
+     * @param   array       $fieldlist The list of fields
+     * @param   stdClass    $in Input values for the test
+     * @param   stdClass    $out The expected output
+     * @param   stdClass    $modified Expected value of $in after it's been modified
+     */
+    public function test_extract_fields_from_object(array $fieldlist, \stdClass $in, \stdClass $out, \stdClass $modified) {
+        $result = $this->tdb->extract_fields_from_object($fieldlist, $in);
+        $this->assertEquals($out, $result);
+        $this->assertEquals($modified, $in);
+    }
+
+    /**
+     * Data provider for extract_fields_from_object tests.
+     *
+     * @return  array
+     */
+    public function extract_fields_from_object_provider() : array {
+        return [
+            'single table' => [
+                [
+                    'sid' => 'id',
+                    'scourse' => 'course',
+                    'sflag' => 'flag',
+                ],
+                (object) [
+                    'sid' => 1,
+                    'scourse' => 42,
+                    'sflag' => 'foo',
+                ],
+                (object) [
+                    'id' => 1,
+                    'course' => 42,
+                    'flag' => 'foo',
+                ],
+                (object) [
+                ],
+            ],
+            'single table amongst others' => [
+                [
+                    'sid' => 'id',
+                    'scourse' => 'course',
+                    'sflag' => 'flag',
+                ],
+                (object) [
+                    'sid' => 1,
+                    'scourse' => 42,
+                    'sflag' => 'foo',
+                    'oid' => 'id',
+                    'ocourse' => 'course',
+                    'oflag' => 'flag',
+                ],
+                (object) [
+                    'id' => 1,
+                    'course' => 42,
+                    'flag' => 'foo',
+                ],
+                (object) [
+                    'oid' => 'id',
+                    'ocourse' => 'course',
+                    'oflag' => 'flag',
+                ],
+            ],
+        ];
+    }
+
     public function test_get_manager() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();

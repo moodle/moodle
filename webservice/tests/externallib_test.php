@@ -39,7 +39,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
     }
 
     public function test_get_site_info() {
-        global $DB, $USER, $CFG;
+        global $DB, $USER, $CFG, $PAGE;
 
         $this->resetAfterTest(true);
 
@@ -49,10 +49,12 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         set_config('userquota', $userquota);
 
         // Set current user
+        set_config('allowuserthemes', 1);
         $user = array();
         $user['username'] = 'johnd';
         $user['firstname'] = 'John';
         $user['lastname'] = 'Doe';
+        $user['theme'] = 'more';
         self::setUser(self::getDataGenerator()->create_user($user));
 
         // Add a web service and token.
@@ -128,6 +130,8 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         } else {
             $this->assertEquals($CFG->calendartype, $siteinfo['usercalendartype']);
         }
+        $this->assertEquals($CFG->calendartype, $siteinfo['sitecalendartype']);
+        $this->assertEquals($user['theme'], $siteinfo['theme']);
 
         // Now as admin.
         $this->setAdminUser();
@@ -156,9 +160,8 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(0, $siteinfo['userquota']);
         $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
-
-        $this->assertEquals(HOMEPAGE_SITE, $siteinfo['userhomepage']);
-
+        $this->assertEmpty($USER->theme);
+        $this->assertEquals($PAGE->theme->name, $siteinfo['theme']);
     }
 
     /**

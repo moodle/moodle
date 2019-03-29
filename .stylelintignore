@@ -4,11 +4,13 @@ theme/bootstrapbase/style/
 theme/clean/style/custom.css
 theme/more/style/custom.css
 theme/boost/style/moodle.css
+theme/classic/style/moodle.css
 node_modules/
 vendor/
 admin/tool/policy/amd/src/jquery-eu-cookie-law-popup.js
 admin/tool/usertours/amd/src/tour.js
 auth/cas/CAS/
+cache/stores/mongodb/MongoDB/
 enrol/lti/ims-blti/
 filter/algebra/AlgParser.pm
 filter/tex/mimetex.*

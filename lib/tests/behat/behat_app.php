@@ -307,7 +307,7 @@ class behat_app extends behat_base {
                         return 'mainpage';
                     }
                     throw new DriverException('Moodle app login URL prompt not found');
-                }, self::EXTENDED_TIMEOUT, 30);
+                }, behat_base::get_extended_timeout(), 30);
 
         // If it's the login page, we automatically fill in the URL and leave it on the user/pass
         // page. If it's the main page, we just leave it there.

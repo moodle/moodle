@@ -30,6 +30,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/admin/tool/mobile/tests/fixtures/output/mobile.php');
+require_once($CFG->dirroot . '/webservice/lib.php');
 
 use tool_mobile\external;
 use tool_mobile\api;
@@ -357,5 +358,148 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         $this->expectException('moodle_exception');
         $result = external::get_content('tool_blahblahblah', 'test_view');
+    }
+
+    public function test_call_external_functions() {
+        global $SESSION;
+
+        $this->resetAfterTest(true);
+
+        $category = self::getDataGenerator()->create_category(array('name' => 'Category 1'));
+        $course = self::getDataGenerator()->create_course([
+            'category' => $category->id,
+            'shortname' => 'c1',
+            'summary' => '<span lang="en" class="multilang">Course summary</span>'
+                . '<span lang="eo" class="multilang">Kurso resumo</span>'
+                . '@@PLUGINFILE@@/filename.txt'
+                . '<!-- Comment stripped when formatting text -->',
+            'summaryformat' => FORMAT_MOODLE
+        ]);
+        $user1 = self::getDataGenerator()->create_user(['username' => 'user1', 'lastaccess' => time()]);
+        $user2 = self::getDataGenerator()->create_user(['username' => 'user2', 'lastaccess' => time()]);
+
+        self::setUser($user1);
+
+        // Setup WS token.
+        $webservicemanager = new \webservice;
+        $service = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
+        $token = external_generate_token_for_current_user($service);
+        $_POST['wstoken'] = $token->token;
+
+        // Workaround for external_api::call_external_function requiring sesskey.
+        $_POST['sesskey'] = sesskey();
+
+        // Call some functions.
+
+        $requests = [
+            [
+                'function' => 'core_course_get_courses_by_field',
+                'arguments' => json_encode(['field' => 'id', 'value' => $course->id])
+            ],
+            [
+                'function' => 'core_user_get_users_by_field',
+                'arguments' => json_encode(['field' => 'id', 'values' => [$user1->id]])
+            ],
+            [
+                'function' => 'core_user_get_user_preferences',
+                'arguments' => json_encode(['name' => 'some_setting', 'userid' => $user2->id])
+            ],
+            [
+                'function' => 'core_course_get_courses_by_field',
+                'arguments' => json_encode(['field' => 'shortname', 'value' => $course->shortname])
+            ],
+        ];
+        $result = external::call_external_functions($requests);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(external::call_external_functions_returns(), $result);
+
+        // Only 3 responses, the 4th request is not executed because the 3rd throws an exception.
+        $this->assertCount(3, $result['responses']);
+
+        $this->assertFalse($result['responses'][0]['error']);
+        $coursedata = external_api::clean_returnvalue(
+            core_course_external::get_courses_by_field_returns(),
+            core_course_external::get_courses_by_field('id', $course->id));
+         $this->assertEquals(json_encode($coursedata), $result['responses'][0]['data']);
+
+        $this->assertFalse($result['responses'][1]['error']);
+        $userdata = external_api::clean_returnvalue(
+            core_user_external::get_users_by_field_returns(),
+            core_user_external::get_users_by_field('id', [$user1->id]));
+        $this->assertEquals(json_encode($userdata), $result['responses'][1]['data']);
+
+        $this->assertTrue($result['responses'][2]['error']);
+        $exception = json_decode($result['responses'][2]['exception'], true);
+        $this->assertEquals('nopermissions', $exception['errorcode']);
+
+        // Call a function not included in the external service.
+
+        $_POST['wstoken'] = $token->token;
+        $functions = $webservicemanager->get_not_associated_external_functions($service->id);
+        $requests = [['function' => current($functions)->name]];
+        $result = external::call_external_functions($requests);
+
+        $this->assertTrue($result['responses'][0]['error']);
+        $exception = json_decode($result['responses'][0]['exception'], true);
+        $this->assertEquals('accessexception', $exception['errorcode']);
+        $this->assertEquals('webservice', $exception['module']);
+
+        // Call a function with different external settings.
+
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        $_POST['wstoken'] = $token->token;
+        $SESSION->lang = 'eo'; // Change default language, so we can test changing it to "en".
+        $requests = [
+            [
+                'function' => 'core_course_get_courses_by_field',
+                'arguments' => json_encode(['field' => 'id', 'value' => $course->id]),
+            ],
+            [
+                'function' => 'core_course_get_courses_by_field',
+                'arguments' => json_encode(['field' => 'id', 'value' => $course->id]),
+                'settingraw' => '1'
+            ],
+            [
+                'function' => 'core_course_get_courses_by_field',
+                'arguments' => json_encode(['field' => 'id', 'value' => $course->id]),
+                'settingraw' => '1',
+                'settingfileurl' => '0'
+            ],
+            [
+                'function' => 'core_course_get_courses_by_field',
+                'arguments' => json_encode(['field' => 'id', 'value' => $course->id]),
+                'settingfilter' => '1',
+                'settinglang' => 'en'
+            ],
+        ];
+        $result = external::call_external_functions($requests);
+
+        $this->assertCount(4, $result['responses']);
+
+        $context = \context_course::instance($course->id);
+        $pluginfile = 'webservice/pluginfile.php';
+
+        $this->assertFalse($result['responses'][0]['error']);
+        $data = json_decode($result['responses'][0]['data']);
+        $expected = file_rewrite_pluginfile_urls($course->summary, $pluginfile, $context->id, 'course', 'summary', null);
+        $expected = format_text($expected, $course->summaryformat, ['para' => false, 'filter' => false]);
+        $this->assertEquals($expected, $data->courses[0]->summary);
+
+        $this->assertFalse($result['responses'][1]['error']);
+        $data = json_decode($result['responses'][1]['data']);
+        $expected = file_rewrite_pluginfile_urls($course->summary, $pluginfile, $context->id, 'course', 'summary', null);
+        $this->assertEquals($expected, $data->courses[0]->summary);
+
+        $this->assertFalse($result['responses'][2]['error']);
+        $data = json_decode($result['responses'][2]['data']);
+        $this->assertEquals($course->summary, $data->courses[0]->summary);
+
+        $this->assertFalse($result['responses'][3]['error']);
+        $data = json_decode($result['responses'][3]['data']);
+        $expected = file_rewrite_pluginfile_urls($course->summary, $pluginfile, $context->id, 'course', 'summary', null);
+        $SESSION->lang = 'en'; // We expect filtered text in english.
+        $expected = format_text($expected, $course->summaryformat, ['para' => false, 'filter' => true]);
+        $this->assertEquals($expected, $data->courses[0]->summary);
     }
 }

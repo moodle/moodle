@@ -33,7 +33,7 @@ Feature: The timeline block allows users to see upcoming activities
 
   Scenario: Next 7 days in date view
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     When I click on "Next 7 days" "link" in the "Timeline" "block"
     Then I should see "Test choice 1 closes" in the "Timeline" "block"
     And I should see "Test feedback 1 closes" in the "Timeline" "block"
@@ -44,7 +44,7 @@ Feature: The timeline block allows users to see upcoming activities
 
   Scenario: Overdue in date view
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     When I click on "Overdue" "link" in the "Timeline" "block"
     Then I should see "Test assign 1 is due" in the "Timeline" "block"
     And I should not see "Test choice 2 closes" in the "Timeline" "block"
@@ -55,7 +55,7 @@ Feature: The timeline block allows users to see upcoming activities
 
   Scenario: All in date view
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     When I click on "All" "link" in the "Timeline" "block"
     Then I should see "Test assign 1 is due" in the "Timeline" "block"
     And I should see "Test feedback 1 closes" in the "Timeline" "block"
@@ -75,7 +75,7 @@ Feature: The timeline block allows users to see upcoming activities
 
   Scenario: All in date view no next
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     And I click on "All" "link" in the "Timeline" "block"
     And I click on "5" "button" in the "Timeline" "block"
     When I click on "25" "link" in the "Timeline" "block"
@@ -89,7 +89,7 @@ Feature: The timeline block allows users to see upcoming activities
 
   Scenario: Persistent All in date view
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     When I click on "All" "link" in the "Timeline" "block"
     And I reload the page
     Then I should see "Test assign 1 is due" in the "Timeline" "block"
@@ -110,7 +110,7 @@ Feature: The timeline block allows users to see upcoming activities
 
   Scenario: Persistent Overdue in date view
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     When I click on "Overdue" "link" in the "Timeline" "block"
     And I reload the page
     Then I should see "Test assign 1 is due" in the "Timeline" "block"

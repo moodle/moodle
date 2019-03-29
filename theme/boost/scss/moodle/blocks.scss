@@ -129,23 +129,31 @@ $card-gutter : $card-deck-margin * 2;
     background-size: cover;
 }
 
-.dashboard-card-deck .dashboard-card {
-    margin-bottom: $card-gutter;
-    flex-basis: auto;
-    width: 100%;
-    flex-grow: 0;
-    flex-shrink: 0;
-    .dashboard-card-img {
-        height: 7rem;
-        background-position: center;
-        background-size: cover;
+.dashboard-card-deck {
+    .dashboard-card {
+        margin-bottom: $card-gutter;
+        flex-basis: auto;
+        width: 100%;
+        flex-grow: 0;
+        flex-shrink: 0;
+        .dashboard-card-img {
+            height: 7rem;
+            background-position: center;
+            background-size: cover;
+        }
+        .dashboard-card-footer {
+            padding: 0.8rem;
+        }
     }
-    .dashboard-card-footer {
-        padding: 0.8rem;
+
+    &.fixed-width-cards {
+        .dashboard-card {
+            width: 300px;
+        }
     }
 }
 
-.dashboard-card-deck {
+.dashboard-card-deck:not(.fixed-width-cards) {
     @media (min-width: 576px) {
         .dashboard-card {
             width: calc(50% - #{$card-gutter});
@@ -169,7 +177,7 @@ $card-gutter : $card-deck-margin * 2;
 }
 
 #region-main.has-blocks {
-    .dashboard-card-deck {
+    .dashboard-card-deck:not(.fixed-width-cards) {
         @media (min-width: 1200px) {
             .dashboard-card {
                 width: calc(33.33% - #{$card-gutter});
@@ -184,7 +192,7 @@ $card-gutter : $card-deck-margin * 2;
 }
 
 body.drawer-open-left {
-    .dashboard-card-deck {
+    .dashboard-card-deck:not(.fixed-width-cards) {
         @media (min-width: 768px) {
             .dashboard-card {
                 width: calc(100% - #{$card-gutter});
@@ -209,7 +217,7 @@ body.drawer-open-left {
 }
 
 body.drawer-open-left #region-main.has-blocks {
-    .dashboard-card-deck {
+    .dashboard-card-deck:not(.fixed-width-cards) {
         @media (min-width: 1200px) {
             .dashboard-card {
                 width: calc(100% - #{$card-gutter});
@@ -230,12 +238,33 @@ body.drawer-open-left #region-main.has-blocks {
 
 @media (min-width: 1200px) {
     #block-region-side-pre {
-        .dashboard-card-deck {
+        .dashboard-card-deck:not(.fixed-width-cards) {
             margin-left: 0;
             margin-right: 0;
             .dashboard-card {
                 width: calc(100% - #{$card-gutter}) !important;
             }
+        }
+    }
+}
+
+.block_recentlyaccessedcourses {
+    .paging-bar-container {
+        margin-top: -2.4rem;
+        justify-content: flex-end;
+    }
+
+    @include media-breakpoint-down(xs) {
+        .paging-bar-container {
+            margin-top: 0;
+        }
+    }
+}
+
+#block-region-side-pre {
+    .block_recentlyaccessedcourses {
+        .paging-bar-container {
+            margin-top: 0;
         }
     }
 }

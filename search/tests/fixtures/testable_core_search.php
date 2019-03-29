@@ -118,4 +118,17 @@ class testable_core_search extends \core_search\manager {
     public static function fake_current_time($faketime = 0.0) {
         static::$phpunitfaketime = $faketime;
     }
+
+    /**
+     * Makes build_limitcourseids method public for testing.
+     *
+     * @param \stdClass $formdata Submitted search form data.
+     *
+     * @return array|bool
+     */
+    public function build_limitcourseids(\stdClass $formdata) {
+        $limitcourseids = parent::build_limitcourseids($formdata);
+
+        return $limitcourseids;
+    }
 }

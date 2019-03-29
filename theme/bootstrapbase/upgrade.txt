@@ -1,6 +1,9 @@
 This file describes API changes in /theme/bootstrapbase
 information provided here is intended especially for theme designers.
 
+=== 3.7 ===
+* Templates and renderers migrated from core.
+
 === 3.0 ===
 * html5shiv updated to 3.7.3
 

@@ -31,7 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'y';
+$string['cliansweryes'] = 'd';
 $string['cliincorrectvalueerror'] = 'Pogreška, netočna vrijednost "{$a->value}" za "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Netočna vrijednost, pokušajte ponovno';
 $string['clitypevalue'] = 'unesite vrijednost';

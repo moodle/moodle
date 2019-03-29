@@ -27,10 +27,10 @@
 }}
 
 <div class="m-b-1 mr-1 d-flex align-items-center">
-    <div class="d-none d-md-inline-block mr-1">{{#str}} sortby, core {{/str}}</div>
     <div class="dropdown">
         <button id="sortingdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:sortingdropdown, block_myoverview {{/str}}">
-            <span data-active-item-text>
+            {{#pix}} t/sort_by {{/pix}}
+            <span class="d-sm-inline-block" data-active-item-text>
                 {{#title}}{{#str}} title, block_myoverview {{/str}}{{/title}}
                 {{#lastaccessed}}{{#str}} lastaccessed, block_myoverview {{/str}}{{/lastaccessed}}
             </span>

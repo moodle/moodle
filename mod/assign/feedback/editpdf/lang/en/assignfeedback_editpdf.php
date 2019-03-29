@@ -107,3 +107,5 @@ $string['white'] = 'White';
 $string['yellow'] = 'Yellow';
 $string['draftchangessaved'] = 'Draft annotations saved';
 $string['preparesubmissionsforannotation'] = 'Prepare submissions for annotation';
+$string['rotateleft'] = 'Rotate 90 degrees to the left';
+$string['rotateright'] = 'Rotate 90 degrees to the right';

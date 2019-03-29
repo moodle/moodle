@@ -123,11 +123,12 @@ function(
     /**
      * Setup the contact page.
      *
+     * @param {string} namespace The route namespace.
      * @param {Object} header Contacts header container element.
      * @param {Object} body Contacts body container element.
      * @return {Object} jQuery promise
      */
-    var show = function(header, body) {
+    var show = function(namespace, header, body) {
         body = $(body);
 
         if (!body.attr('data-contacts-init')) {

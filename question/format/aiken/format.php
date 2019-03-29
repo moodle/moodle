@@ -57,6 +57,10 @@ class qformat_aiken extends qformat_default {
         return true;
     }
 
+    public function provide_export() {
+        return true;
+    }
+
     public function readquestions($lines) {
         $questions = array();
         $question = null;
@@ -150,6 +154,49 @@ class qformat_aiken extends qformat_default {
     public function readquestion($lines) {
         // This is no longer needed but might still be called by default.php.
         return;
+    }
+
+    public function exportpreprocess() {
+        // This format is not able to export categories.
+        $this->setCattofile(false);
+        return true;
+    }
+
+    public function writequestion($question) {
+        $endchar = "\n";
+
+        // Only export multichoice questions.
+        if ($question->qtype != 'multichoice') {
+            return null;
+        }
+
+        // Do not export multichoice multi questions.
+        if (!$question->options->single) {
+            return null;
+        }
+
+        // Aiken format is not able to handle question with more than 26 answers.
+        if (count($question->options->answers) > 26) {
+            return null;
+        }
+
+        // Export the question displaying message.
+        $expout = str_replace("\n", '', question_utils::to_plain_text($question->questiontext,
+                $question->questiontextformat, array('para' => false, 'newlines' => false))) . $endchar;
+        $num = 0;
+        foreach ($question->options->answers as $answer) {
+            $number = chr(ord('A') + $num);
+            $expout .= $number . ') ' . str_replace("\n", '', question_utils::to_plain_text($answer->answer,
+                    $answer->answerformat, array('para' => false, 'newlines' => false))) . $endchar;
+            if ($answer->fraction > .99) {
+                $correctanswer = $number;
+            }
+            $num++;
+        }
+        // Add the correct answer.
+        $expout .= 'ANSWER: ' . $correctanswer;
+
+        return $expout;
     }
 }
 

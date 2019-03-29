@@ -75,4 +75,81 @@ The capital of France is {#5}.
         $this->assertEquals('multichoice', $qs[0]->options->questions[4]->qtype);
         $this->assertEquals('shortanswer', $qs[0]->options->questions[5]->qtype);
     }
+
+    public function test_read_brokencloze_1() {
+        $lines = file(__DIR__ . '/fixtures/broken_multianswer_1.txt');
+        $importer = new qformat_multianswer();
+
+        // The importer echoes some errors, so we need to capture and check that.
+        ob_start();
+        $questions = $importer->readquestions($lines);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        // Check that there were some expected errors.
+        $this->assertContains('Error importing question', $output);
+        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
+        $this->assertContains('This type of question requires at least 2 choices', $output);
+
+        // No question  have been imported.
+        $this->assertCount(0, $questions);
+    }
+
+    public function test_read_brokencloze_2() {
+        $lines = file(__DIR__ . '/fixtures/broken_multianswer_2.txt');
+        $importer = new qformat_multianswer();
+
+        // The importer echoes some errors, so we need to capture and check that.
+        ob_start();
+        $questions = $importer->readquestions($lines);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        // Check that there were some expected errors.
+        $this->assertContains('Error importing question', $output);
+        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
+        $this->assertContains('One of the answers should have a score of 100% so it is possible to get full marks for this question.',
+                $output);
+
+        // No question  have been imported.
+        $this->assertCount(0, $questions);
+    }
+
+    public function test_read_brokencloze_3() {
+        $lines = file(__DIR__ . '/fixtures/broken_multianswer_3.txt');
+        $importer = new qformat_multianswer();
+
+        // The importer echoes some errors, so we need to capture and check that.
+        ob_start();
+        $questions = $importer->readquestions($lines);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        // Check that there were some expected errors.
+        $this->assertContains('Error importing question', $output);
+        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
+        $this->assertContains('The answer must be a number, for example -1.234 or 3e8, or \'*\'.', $output);
+
+        // No question  have been imported.
+        $this->assertCount(0, $questions);
+    }
+
+    public function test_read_brokencloze_4() {
+        $lines = file(__DIR__ . '/fixtures/broken_multianswer_4.txt');
+        $importer = new qformat_multianswer();
+
+        // The importer echoes some errors, so we need to capture and check that.
+        ob_start();
+        $questions = $importer->readquestions($lines);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        // Check that there were some expected errors.
+        $this->assertContains('Error importing question', $output);
+        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
+        $this->assertContains('The question text must include at least one embedded answer.', $output);
+
+        // No question  have been imported.
+        $this->assertCount(0, $questions);
+    }
 }

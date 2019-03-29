@@ -104,8 +104,7 @@ $string['reset_help'] = 'Whether to reset the course after creating/updating it.
 $string['result'] = 'Result';
 $string['restoreafterimport'] = 'Restore after import';
 $string['rowpreviewnum'] = 'Preview rows';
-$string['rowpreviewnum_help'] = 'Number of rows from the CSV file that will be previewed in the next page. This option exists in
-order to limit the next page size.';
+$string['rowpreviewnum_help'] = 'Number of rows from the CSV file that will be previewed on the following page. This option is for limiting the size of the following page.';
 $string['shortnametemplate'] = 'Template to generate a shortname';
 $string['shortnametemplate_help'] = 'The short name of the course is displayed in the navigation. You may use template syntax here (%f = fullname, %i = idnumber), or enter an initial value that is incremented.';
 $string['templatefile'] = 'Restore from this file after upload';

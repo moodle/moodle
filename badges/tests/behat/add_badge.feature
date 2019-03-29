@@ -145,3 +145,41 @@ Feature: Add badges to the system
       | Description | Test Badge Competencies description |
     When I press "Save changes"
     And I should see "Competencies (1)"
+
+  @javascript @_file_upload
+  Scenario: Add a badge from Site badges section
+    Given I press "Customise this page"
+    # TODO MDL-57120 site "Badges" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
+    When I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Site badges" "link" in the "Navigation" "block"
+    Then I should see "Manage badges"
+    And I should see "Add a new badge"
+    # Add a badge.
+    When I press "Add a new badge"
+    And I set the following fields to these values:
+      | Name | Test badge with 'apostrophe' and other friends (<>&@#) 2 |
+      | Version | v1 |
+      | Language | English |
+      | Description | Test badge description |
+      | Image author | http://author.example.com |
+      | Image caption | Test caption image |
+      | issuername | Test Badge Site |
+      | issuercontact | testuser@example.com |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
+    And I press "Create badge"
+    Then I should see "Edit details"
+    And I should see "Test badge with 'apostrophe' and other friends (&@#) 2"
+    And I should see "Endorsement"
+    And I should see "Related badges (0)"
+    And I should see "Competencies (0)"
+    And I should not see "Create badge"
+    And I follow "Manage badges"
+    And I should see "Number of badges available: 1"
+    And I should not see "There are no badges available."
+    # See buttons from the "Site badges" page.
+    And I am on homepage
+    When I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Site badges" "link" in the "Navigation" "block"
+    Then I should see "Manage badges"
+    And I should see "Add a new badge"

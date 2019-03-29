@@ -23,18 +23,20 @@
  */
 
 $string['all'] = 'All';
+$string['allexcepthidden'] = 'All (except hidden)';
 $string['addtofavourites'] = 'Star this course';
 $string['aria:addtofavourites'] = 'Star for';
 $string['aria:allcourses'] = 'All courses';
+$string['aria:allcoursesexcepthidden'] = 'All courses except hidden courses';
 $string['aria:card'] = 'Switch to card view';
 $string['aria:controls'] = 'Course overview controls';
 $string['aria:courseactions'] = 'Actions for current course';
 $string['aria:coursesummary'] = 'Course summary text:';
 $string['aria:courseprogress'] = 'Course progress:';
-$string['aria:displaydropdown'] = 'Display dropdown';
+$string['aria:displaydropdown'] = 'Display drop-down menu';
 $string['aria:favourites'] = 'Show starred courses';
 $string['aria:future'] = 'Show future courses';
-$string['aria:groupingdropdown'] = 'Grouping dropdown';
+$string['aria:groupingdropdown'] = 'Grouping drop-down menu';
 $string['aria:inprogress'] = 'Show in courses in progress';
 $string['aria:lastaccessed'] = 'Sort courses by last accessed date';
 $string['aria:list'] = 'Switch to list view';
@@ -42,17 +44,16 @@ $string['aria:title'] = 'Sort courses by course name';
 $string['aria:past'] = 'Show past courses';
 $string['aria:removefromfavourites'] = 'Remove star for';
 $string['aria:summary'] = 'Switch to summary view';
-$string['aria:sortingdropdown'] = 'Sorting dropdown';
+$string['aria:sortingdropdown'] = 'Sorting drop-down menu';
 $string['card'] = 'Card';
 $string['cards'] = 'Cards';
 $string['courseprogress'] = 'Course progress:';
-$string['complete'] = 'Complete';
+$string['completepercent'] = '{$a}% complete';
 $string['favourites'] = 'Starred';
 $string['future'] = 'Future';
 $string['inprogress'] = 'In progress';
 $string['lastaccessed'] = 'Last accessed';
 $string['list'] = 'List';
-$string['myoverview:addinstance'] = 'Add a new course overview block';
 $string['myoverview:myaddinstance'] = 'Add a new course overview block to Dashboard';
 $string['past'] = 'Past';
 $string['pluginname'] = 'Course overview';
@@ -91,4 +92,5 @@ $string['privacy:metadata:overviewlasttab'] = 'This stores the last tab selected
 $string['viewcourse'] = 'View course';
 
 // Deprecated since Moodle 3.7.
+$string['complete'] = 'complete';
 $string['nocourses'] = 'No courses';

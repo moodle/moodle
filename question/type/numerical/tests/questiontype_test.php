@@ -169,4 +169,13 @@ class qtype_numerical_test extends advanced_testcase {
             }
         }
     }
+
+    public function test_is_valid_number() {
+        $this->assertTrue(qtype_numerical::is_valid_number('1,001'));
+        $this->assertTrue(qtype_numerical::is_valid_number('1.001'));
+        $this->assertTrue(qtype_numerical::is_valid_number('1'));
+        $this->assertTrue(qtype_numerical::is_valid_number('1,e8'));
+        $this->assertFalse(qtype_numerical::is_valid_number('1001 xxx'));
+        $this->assertTrue(qtype_numerical::is_valid_number('1.e8'));
+    }
 }

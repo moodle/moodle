@@ -32,7 +32,6 @@ $string['ariaviewselector'] = 'Sort timeline items';
 $string['ariaviewselectoroption'] = '{$a} sort option';
 $string['duedate'] = 'Due date';
 $string['morecourses'] = 'More courses';
-$string['timeline:addinstance'] = 'Add a new timeline block';
 $string['timeline:myaddinstance'] = 'Add a new timeline block to Dashboard';
 $string['nocoursesinprogress'] = 'No in-progress courses';
 $string['noevents'] = 'No upcoming activities due';
