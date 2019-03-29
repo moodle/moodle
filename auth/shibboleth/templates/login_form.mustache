@@ -68,7 +68,7 @@
             {{^loginname}}{{#str}}auth_shibboleth_login_long, auth_shibboleth{{/str}}{{/loginname}}
         </h2>
         <div class="card-body">
-            <div class="row justify-content-center m-l-1 m-r-1 m-b-1">
+            <div class="row justify-content-center ml-1 mr-1 mb-1">
                 <div class="col-md-5">
                     <form action="{{loginurl}}" method="post" id="login">
                         <div class="form-group">
@@ -79,14 +79,14 @@
                                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
                                 {{/idps}}
                             </select>
-                            <div class="invalid-feedback text-danger m-b-1" {{#isvalid}}hidden{{/isvalid}}>
+                            <div class="invalid-feedback text-danger mb-1" {{#isvalid}}hidden{{/isvalid}}>
                                 {{#str}}auth_shibboleth_errormsg, auth_shibboleth{{/str}}
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block m-b-1" accesskey="s">
+                        <button type="submit" class="btn btn-primary btn-block mb-1" accesskey="s">
                             {{#str}}select, moodle{{/str}}
                         </button>
-                        <p class="form-text text-muted m-t-1 m-b-1">
+                        <p class="form-text text-muted mt-1 mb-1">
                             {{#str}}auth_shib_contact_administrator, auth_shibboleth, {{adminemail}}{{/str}}
                         </p>
                     </form>
@@ -112,8 +112,8 @@
         </div>
     </div>
     {{#showinstructions}}
-    <div class="card m-t-1">
-        <div class="card-body m-l-1 m-r-1 m-b-1">
+    <div class="card mt-1">
+        <div class="card-body ml-1 mr-1 mb-1">
             <h2 class="card-title">{{#str}}firsttime, moodle{{/str}}</h2>
             <p>
                 {{{instructions}}}

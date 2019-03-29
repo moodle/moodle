@@ -73,7 +73,7 @@ class mod_data_renderer extends plugin_renderer_base {
 
         $html .= html_writer::start_tag('div', array('class'=>'overwritesettings'));
         $html .= html_writer::tag('label', get_string('overwritesettings', 'data'), array('for' => 'overwritesettings'));
-        $attrs = array('type' => 'checkbox', 'name' => 'overwritesettings', 'id' => 'overwritesettings', 'class' => 'm-l-1');
+        $attrs = array('type' => 'checkbox', 'name' => 'overwritesettings', 'id' => 'overwritesettings', 'class' => 'ml-1');
         $html .= html_writer::empty_tag('input', $attrs);
         $html .= html_writer::end_tag('div');
         $html .= html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'btn btn-primary', 'value' => $strcontinue));

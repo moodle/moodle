@@ -426,7 +426,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                     'resortcategoriesby',
                     'name',
                     false,
-                    array('aria-label' => get_string('selectcategorysortby'), 'class' => 'm-t-1')
+                    array('aria-label' => get_string('selectcategorysortby'), 'class' => 'mt-1')
                 )
             );
             $form .= html_writer::div(
@@ -445,14 +445,14 @@ class core_course_management_renderer extends plugin_renderer_base {
                     'resortcoursesby',
                     'fullname',
                     false,
-                    array('aria-label' => get_string('selectcoursesortby'), 'class' => 'm-t-1')
+                    array('aria-label' => get_string('selectcoursesortby'), 'class' => 'mt-1')
                 )
             );
             $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'bulksort',
-                'value' => get_string('sort'), 'class' => 'btn btn-secondary m-y-1'));
+                'value' => get_string('sort'), 'class' => 'btn btn-secondary my-1'));
             $form .= html_writer::end_div();
 
-            $html .= html_writer::start_div('detail-pair row yui3-g m-y-1');
+            $html .= html_writer::start_div('detail-pair row yui3-g my-1');
             $html .= html_writer::div(html_writer::span(get_string('sorting')), 'pair-key col-md-3 yui3-u-1-4');
             $html .= html_writer::div($form, 'pair-value col-md-9 yui3-u-3-4');
             $html .= html_writer::end_div();
@@ -468,7 +468,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 'movecategoriesto',
                 '',
                 array('' => 'choosedots'),
-                array('aria-labelledby' => 'moveselectedcategoriesto', 'class' => 'm-r-1')
+                array('aria-labelledby' => 'moveselectedcategoriesto', 'class' => 'mr-1')
             );
             $submit = array('type' => 'submit', 'name' => 'bulkmovecategories', 'value' => get_string('move'),
                 'class' => 'btn btn-secondary');
@@ -764,7 +764,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 'movecoursesto',
                 '',
                 array('' => 'choosedots'),
-                array('aria-labelledby' => 'moveselectedcoursesto', 'class' => 'm-r-1')
+                array('aria-labelledby' => 'moveselectedcoursesto', 'class' => 'mr-1')
             );
             $submit = array('type' => 'submit', 'name' => 'bulkmovecourses', 'value' => get_string('move'),
                 'class' => 'btn btn-secondary');

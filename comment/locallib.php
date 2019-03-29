@@ -158,7 +158,7 @@ class comment_manager {
         $table = new html_table();
         $table->head = array (
             html_writer::checkbox('selectall', '', false, get_string('selectall'), array('id' => 'comment_select_all',
-                'class' => 'm-r-1')),
+                'class' => 'mr-1')),
             get_string('author', 'search'),
             get_string('content'),
             get_string('action')

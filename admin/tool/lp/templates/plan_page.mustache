@@ -32,7 +32,7 @@
         </div>
     </div>
     {{/plan.canbeedited}}
-    <div data-region="plan-summary" class="m-t-1">
+    <div data-region="plan-summary" class="mt-1">
         {{{plan.description}}}
         <dl>
             <dt>{{#str}}status, tool_lp{{/str}}</dt>
@@ -103,12 +103,12 @@
     </div>
     {{#plan.commentarea}}
         {{#canpostorhascomments}}
-            <div data-region="comments" class="m-t-1">
+            <div data-region="comments" class="mt-1">
                 {{>tool_lp/comment_area}}
             </div>
         {{/canpostorhascomments}}
     {{/plan.commentarea}}
-    <div data-region="plan-competencies" class="m-t-1">
+    <div data-region="plan-competencies" class="mt-1">
         <h3>{{#str}}learningplancompetencies, tool_lp{{/str}}</h3>
         <table class="generaltable fullwidth managecompetencies">
             <thead>

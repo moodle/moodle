@@ -205,9 +205,9 @@ class core_calendar_renderer extends plugin_renderer_base {
             $output .= html_writer::tag('div', $event->courselink);
         }
         if (!empty($event->time)) {
-            $output .= html_writer::tag('span', $event->time, array('class' => 'date pull-xs-right m-r-1'));
+            $output .= html_writer::tag('span', $event->time, array('class' => 'date pull-xs-right mr-1'));
         } else {
-            $attrs = array('class' => 'date pull-xs-right m-r-1');
+            $attrs = array('class' => 'date pull-xs-right mr-1');
             $output .= html_writer::tag('span', calendar_time_representation($event->timestart), $attrs);
         }
 
@@ -296,7 +296,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             $label = get_string('listofcourses');
         }
 
-        $select = html_writer::label($label, 'course', false, ['class' => 'm-r-1']);
+        $select = html_writer::label($label, 'course', false, ['class' => 'mr-1']);
         $select .= html_writer::select($courseoptions, 'course', $selected, false, ['class' => 'cal_courses_flt']);
 
         return $select;

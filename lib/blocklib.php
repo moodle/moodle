@@ -1451,13 +1451,13 @@ class block_manager {
 
             if (!$addableblocks) {
                 echo $OUTPUT->box(get_string('noblockstoaddhere'));
-                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('back')), 'm-x-3 m-b-1');
+                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('back')), 'mx-3 mb-1');
             } else {
                 $url = new moodle_url($addpage->url, array('sesskey' => sesskey()));
                 echo $OUTPUT->render_from_template('core/add_block_body',
                     ['blocks' => array_values($addableblocks),
                      'url' => '?' . $url->get_query_string(false)]);
-                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('cancel')), 'm-x-3 m-b-1');
+                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('cancel')), 'mx-3 mb-1');
             }
 
             echo $OUTPUT->footer();

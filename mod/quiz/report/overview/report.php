@@ -145,10 +145,10 @@ class quiz_overview_report extends quiz_attempts_report {
                     echo '<div>';
                     echo html_writer::input_hidden_params($displayurl);
                     echo '<input type="submit" class="btn btn-secondary" name="regradeall" value="'.$regradealllabel.'"/>';
-                    echo '<input type="submit" class="btn btn-secondary m-l-1" name="regradealldry" value="' .
+                    echo '<input type="submit" class="btn btn-secondary ml-1" name="regradealldry" value="' .
                             $regradealldrylabel . '"/>';
                     if ($regradesneeded) {
-                        echo '<input type="submit" class="btn btn-secondary m-l-1" name="regradealldrydo" value="' .
+                        echo '<input type="submit" class="btn btn-secondary ml-1" name="regradealldrydo" value="' .
                                 $regradealldrydolabel . '"/>';
                     }
                     echo '</div>';

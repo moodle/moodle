@@ -439,7 +439,7 @@ class acceptances_table extends \table_sql {
         if ($this->canagreeany) {
             echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => 'accept']);
             echo \html_writer::empty_tag('input', ['type' => 'submit', 'data-action' => 'acceptmodal',
-                'value' => get_string('consentbulk', 'tool_policy'), 'class' => 'btn btn-primary m-t-1']);
+                'value' => get_string('consentbulk', 'tool_policy'), 'class' => 'btn btn-primary mt-1']);
             $PAGE->requires->js_call_amd('tool_policy/acceptmodal', 'getInstance', [\context_system::instance()->id]);
         }
         echo "</form>\n";
