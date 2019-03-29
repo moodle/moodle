@@ -175,9 +175,45 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
     }
 
     /**
-     * Tests that user data is restored when module is restored.
+     * Provider for test_coursemodule_restore_with_userdata() and test_coursemodule_restore_without_userdata()
+     *
+     * Used to verify that recycle bin is immune to various settings. Provides plugin, name, value for
+     * direct usage with set_config()
      */
-    public function test_coursemodule_restore_with_userdata() {
+    public function recycle_bin_settings_provider() {
+        return [
+            'backup/backup_auto_storage moodle' => [[
+                (object)['plugin' => 'backup', 'name' => 'backup_auto_storage', 'value' => 0],
+            ]],
+
+            'backup/backup_auto_storage external' => [[
+                (object)['plugin' => 'backup', 'name' => 'backup_auto_storage', 'value' => 1],
+                (object)['plugin' => 'backup', 'name' => 'backup_auto_destination', 'value' => true],
+            ]],
+
+            'backup/backup_auto_storage mixed' => [[
+                (object)['plugin' => 'backup', 'name' => 'backup_auto_storage', 'value' => 2],
+                (object)['plugin' => 'backup', 'name' => 'backup_auto_destination', 'value' => true],
+            ]],
+        ];
+    }
+
+    /**
+     * Tests that user data is restored when module is restored.
+     *
+     * @dataProvider recycle_bin_settings_provider
+     * @param array $settings array of plugin, name, value stdClass().
+     */
+    public function test_coursemodule_restore_with_userdata($settings) {
+        // Force configuration changes from provider.
+        foreach ($settings as $setting) {
+            // Need to create a directory for backup_auto_destination.
+            if ($setting->plugin === 'backup' && $setting->name === 'backup_auto_destination' && $setting->value === true) {
+                $setting->value = make_request_directory();
+            }
+            set_config($setting->name, $setting->value, $setting->plugin);
+        }
+
         $student = $this->getDataGenerator()->create_and_enrol($this->course, 'student');
         $this->setUser($student);
 
@@ -211,8 +247,20 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
 
     /**
      * Tests that user data is not restored when module is restored.
+     *
+     * @dataProvider recycle_bin_settings_provider
+     * @param array $settings array of plugin, name, value stdClass().
      */
-    public function test_coursemodule_restore_without_userdata() {
+    public function test_coursemodule_restore_without_userdata($settings) {
+        // Force configuration changes from provider.
+        foreach ($settings as $setting) {
+            // Need to create a directory for backup_auto_destination.
+            if ($setting->plugin === 'backup' && $setting->name === 'backup_auto_destination' && $setting->value === true) {
+                $setting->value = make_request_directory();
+            }
+            set_config($setting->name, $setting->value, $setting->plugin);
+        }
+
         $student = $this->getDataGenerator()->create_and_enrol($this->course, 'student');
         $this->setUser($student);
 
