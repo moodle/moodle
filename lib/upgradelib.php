@@ -430,6 +430,12 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.7.
+        '/lib/form/yui/src/showadvanced/js/showadvanced.js',
+        '/lib/tests/output_external_test.php',
+        '/message/amd/src/message_area.js',
+        '/message/templates/message_area.mustache',
+        '/question/yui/src/qbankmanager/build.json',
         // Removed in 3.6.
         '/lib/classes/session/memcache.php',
         '/lib/eventslib.php',
