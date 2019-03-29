@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Form competency for editing.
+ * Form alignment for editing.
  *
  * @package    core
  * @subpackage badges
@@ -27,13 +27,13 @@ require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 /**
- * Form to edit competency alignment.
+ * Form to edit alignment.
  *
  * @copyright  2018 Tung Thai
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
  */
-class competency_alignment_form extends moodleform {
+class alignment_form extends moodleform {
 
     /**
      * Defines the form.
@@ -68,7 +68,7 @@ class competency_alignment_form extends moodleform {
         $this->add_action_buttons();
         if ($action == 'edit' || $alignmentid) {
             $alignment = new stdClass();
-            $alignment = $DB->get_record_select('badge_competencies', 'id = ?', array($alignmentid));
+            $alignment = $DB->get_record_select('badge_alignment', 'id = ?', array($alignmentid));
             $this->set_data($alignment);
             // Freeze all elements if badge is active or locked.
             if ($badge->is_active() || $badge->is_locked()) {

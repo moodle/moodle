@@ -218,6 +218,7 @@ class badge {
      * @return array
      */
     public function get_accepted_criteria() {
+        global $CFG;
         $criteriatypes = array();
 
         if ($this->type == BADGE_TYPE_COURSE) {
@@ -226,7 +227,8 @@ class badge {
                     BADGE_CRITERIA_TYPE_MANUAL,
                     BADGE_CRITERIA_TYPE_COURSE,
                     BADGE_CRITERIA_TYPE_BADGE,
-                    BADGE_CRITERIA_TYPE_ACTIVITY
+                    BADGE_CRITERIA_TYPE_ACTIVITY,
+                    BADGE_CRITERIA_TYPE_COMPETENCY
             );
         } else if ($this->type == BADGE_TYPE_SITE) {
             $criteriatypes = array(
@@ -236,7 +238,14 @@ class badge {
                     BADGE_CRITERIA_TYPE_BADGE,
                     BADGE_CRITERIA_TYPE_PROFILE,
                     BADGE_CRITERIA_TYPE_COHORT,
+                    BADGE_CRITERIA_TYPE_COMPETENCY
             );
+        }
+        $alltypes = badges_list_criteria();
+        foreach ($criteriatypes as $index => $type) {
+            if (!isset($alltypes[$type])) {
+                unset($criteriatypes[$index]);
+            }
         }
 
         return $criteriatypes;
@@ -508,6 +517,7 @@ class badge {
             }
 
             list($extrajoin, $extrawhere, $extraparams) = $crit->get_completed_criteria_sql();
+
             // For site level badges, get all active site users who can earn this badge and haven't got it yet.
             if ($this->type == BADGE_TYPE_SITE) {
                 $sql = "SELECT DISTINCT u.id, bi.badgeid
@@ -714,7 +724,7 @@ class badge {
         $badgecontext = $this->get_context();
         $fs->delete_area_files($badgecontext->id, 'badges', 'badgeimage', $this->id);
 
-        // Delete endorsements, competencies and related badges.
+        // Delete endorsements, alignments and related badges.
         $DB->delete_records('badge_endorsement', array('badgeid' => $this->id));
         $relatedsql = 'badgeid = :badgeid OR relatedbadgeid = :relatedbadgeid';
         $relatedparams = array(
@@ -722,7 +732,7 @@ class badge {
             'relatedbadgeid' => $this->id
         );
         $DB->delete_records_select('badge_related', $relatedsql, $relatedparams);
-        $DB->delete_records('badge_competencies', array('badgeid' => $this->id));
+        $DB->delete_records('badge_alignment', array('badgeid' => $this->id));
 
         // Finally, remove badge itself.
         $DB->delete_records('badge', array('id' => $this->id));
@@ -804,43 +814,55 @@ class badge {
     }
 
     /**
-     * Insert/update competency alignment information of badge.
+     * Insert/update alignment information of badge.
      *
-     * @param stdClass $alignment Data of a competency alignment.
-     * @param int $alignmentid ID competency alignment.
+     * @param stdClass $alignment Data of a alignment.
+     * @param int $alignmentid ID alignment.
      * @return bool|int A status/ID when insert or update data.
      */
     public function save_alignment($alignment, $alignmentid = 0) {
         global $DB;
 
-        $record = $DB->record_exists('badge_competencies', array('id' => $alignmentid));
+        $record = $DB->record_exists('badge_alignment', array('id' => $alignmentid));
         if ($record) {
             $alignment->id = $alignmentid;
-            return $DB->update_record('badge_competencies', $alignment);
+            return $DB->update_record('badge_alignment', $alignment);
         } else {
-            return $DB->insert_record('badge_competencies', $alignment, true);
+            return $DB->insert_record('badge_alignment', $alignment, true);
         }
     }
 
     /**
-     * Delete a competency alignment of badge.
+     * Delete a alignment of badge.
      *
-     * @param int $alignmentid ID competency alignment.
-     * @return bool A status for delete a competency alignment.
+     * @param int $alignmentid ID alignment.
+     * @return bool A status for delete a alignment.
      */
     public function delete_alignment($alignmentid) {
         global $DB;
-        return $DB->delete_records('badge_competencies', array('badgeid' => $this->id, 'id' => $alignmentid));
+        return $DB->delete_records('badge_alignment', array('badgeid' => $this->id, 'id' => $alignmentid));
     }
 
     /**
-     * Get competencies of badge.
+     * Get alignments of badge.
      *
-     * @return array List content competencies.
+     * @return array List content alignments.
+     */
+    public function get_alignments() {
+        global $DB;
+        return $DB->get_records('badge_alignment', array('badgeid' => $this->id));
+    }
+
+    /**
+     * Get alignments of badge.
+     *
+     * @deprecated since Moodle 3.7 see MDL-63876
+     * @return array List content alignments.
      */
     public function get_alignment() {
-        global $DB;
-        return $DB->get_records('badge_competencies', array('badgeid' => $this->id));
+        debugging('Use of get_alignment is deprecated. Call get_alignments instead.', DEBUG_DEVELOPER);
+
+        return $this->get_alignments();
     }
 
     /**
@@ -1531,4 +1553,61 @@ function badges_setup_backpack_js() {
         $PAGE->requires->js(new moodle_url(BADGE_BACKPACKURL . '/issuer.js'), true);
         $PAGE->requires->js('/badges/backpack.js', true);
     }
+}
+
+/**
+ * Return all the enabled criteria types for this site.
+ *
+ * @param boolean $enabled
+ * @return array
+ */
+function badges_list_criteria($enabled = true) {
+    global $CFG;
+
+    $types = array(
+        BADGE_CRITERIA_TYPE_OVERALL    => 'overall',
+        BADGE_CRITERIA_TYPE_ACTIVITY   => 'activity',
+        BADGE_CRITERIA_TYPE_MANUAL     => 'manual',
+        BADGE_CRITERIA_TYPE_SOCIAL     => 'social',
+        BADGE_CRITERIA_TYPE_COURSE     => 'course',
+        BADGE_CRITERIA_TYPE_COURSESET  => 'courseset',
+        BADGE_CRITERIA_TYPE_PROFILE    => 'profile',
+        BADGE_CRITERIA_TYPE_BADGE      => 'badge',
+        BADGE_CRITERIA_TYPE_COHORT     => 'cohort',
+        BADGE_CRITERIA_TYPE_COMPETENCY => 'competency',
+    );
+    if ($enabled) {
+        foreach ($types as $key => $type) {
+            $class = 'award_criteria_' . $type;
+            $file = $CFG->dirroot . '/badges/criteria/' . $class . '.php';
+            if (file_exists($file)) {
+                require_once($file);
+
+                if (!$class::is_enabled()) {
+                    unset($types[$key]);
+                }
+            }
+        }
+    }
+    return $types;
+}
+
+/**
+ * Check if any badge has records for competencies.
+ *
+ * @param array $competencyids Array of competencies ids.
+ * @return boolean Return true if competencies were found in any badge.
+ */
+function badge_award_criteria_competency_has_records_for_competencies($competencyids) {
+    global $DB;
+
+    list($insql, $params) = $DB->get_in_or_equal($competencyids, SQL_PARAMS_NAMED);
+
+    $sql = "SELECT DISTINCT bc.badgeid
+                FROM {badge_criteria} bc
+                JOIN {badge_criteria_param} bcp ON bc.id = bcp.critid
+                WHERE bc.criteriatype = :criteriatype AND bcp.value $insql";
+    $params['criteriatype'] = BADGE_CRITERIA_TYPE_COMPETENCY;
+
+    return $DB->record_exists_sql($sql, $params);
 }

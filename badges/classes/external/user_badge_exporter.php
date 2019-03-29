@@ -30,7 +30,7 @@ use core\external\exporter;
 use renderer_base;
 use moodle_url;
 use core_badges\external\endorsement_exporter;
-use core_badges\external\competency_exporter;
+use core_badges\external\alignment_exporter;
 use core_badges\external\related_info_exporter;
 
 /**
@@ -234,7 +234,7 @@ class user_badge_exporter extends exporter {
         return array(
             'context' => 'context',
             'endorsement' => 'stdClass?',
-            'competencies' => 'stdClass[]',
+            'alignments' => 'stdClass[]',
             'relatedbadges' => 'stdClass[]',
         );
     }
@@ -255,9 +255,9 @@ class user_badge_exporter extends exporter {
                 'description' => 'Badge endorsement',
                 'optional' => true,
             ],
-            'competencies' => [
-                'type' => competency_exporter::read_properties_definition(),
-                'description' => 'Badge competencies (alignment)',
+            'alignments' => [
+                'type' => alignment_exporter::read_properties_definition(),
+                'description' => 'Badge alignments',
                 'multiple' => true,
             ],
             'relatedbadges' => [
@@ -277,13 +277,13 @@ class user_badge_exporter extends exporter {
     protected function get_other_values(renderer_base $output) {
         $context = $this->related['context'];
         $endorsement = $this->related['endorsement'];
-        $competencies = $this->related['competencies'];
+        $alignments = $this->related['alignments'];
         $relatedbadges = $this->related['relatedbadges'];
 
         $values = array(
             'badgeurl' => moodle_url::make_webservice_pluginfile_url($context->id, 'badges', 'badgeimage', $this->data->id, '/',
                 'f1')->out(false),
-            'competencies' => array(),
+            'alignments' => array(),
             'relatedbadges' => array(),
         );
 
@@ -292,10 +292,10 @@ class user_badge_exporter extends exporter {
             $values['endorsement'] = $endorsementexporter->export($output);
         }
 
-        if (!empty($competencies)) {
-            foreach ($competencies as $competency) {
-                $competencyexporter = new competency_exporter($competency, array('context' => $context));
-                $values['competencies'][] = $competencyexporter->export($output);
+        if (!empty($alignments)) {
+            foreach ($alignments as $alignment) {
+                $alignmentexporter = new alignment_exporter($alignment, array('context' => $context));
+                $values['alignments'][] = $alignmentexporter->export($output);
             }
         }
 

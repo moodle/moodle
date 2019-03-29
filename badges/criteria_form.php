@@ -78,7 +78,10 @@ class edit_criteria_form extends moodleform {
         $errors = parent::validation($data, $files);
         $addcourse = $this->_customdata['addcourse'];
 
-        if (!$addcourse && isset($this->_customdata['criteria']->required_param)) {
+        if (!$addcourse &&
+                isset($this->_customdata['criteria']->required_param) &&
+                !isset($this->_customdata['criteria']->self_validation)) {
+
             $required = $this->_customdata['criteria']->required_param;
             $pattern1 = '/^' . $required . '_(\d+)$/';
             $pattern2 = '/^' . $required . '_(\w+)$/';

@@ -222,7 +222,7 @@ class core_badges_renderer extends plugin_renderer_base {
 
         $display .= self::print_badge_endorsement($badge);
         $display .= self::print_badge_related($badge);
-        $display .= self::print_badge_competencies($badge);
+        $display .= self::print_badge_alignments($badge);
 
         return html_writer::div($display, null, array('id' => 'badge-overview'));
     }
@@ -431,12 +431,12 @@ class core_badges_renderer extends plugin_renderer_base {
             $output .= html_writer::alist($items, array(), 'ul');
         }
 
-        $competencies = $badge->get_alignment();
-        if (!empty($competencies)) {
+        $alignments = $badge->get_alignments();
+        if (!empty($alignments)) {
             $output .= $this->heading(get_string('alignment', 'badges'), 3);
             $items = array();
-            foreach ($competencies as $competency) {
-                $items[] = html_writer::link($competency->targeturl, $competency->targetname, array('target' => '_blank'));
+            foreach ($alignments as $alignment) {
+                $items[] = html_writer::link($alignment->targeturl, $alignment->targetname, array('target' => '_blank'));
             }
             $output .= html_writer::alist($items, array(), 'ul');
         }
@@ -748,11 +748,11 @@ class core_badges_renderer extends plugin_renderer_base {
         }
 
         if (has_capability('moodle/badges:configuredetails', $context)) {
-            $competencies = $DB->count_records_sql("SELECT COUNT(bc.id)
-                      FROM {badge_competencies} bc WHERE bc.badgeid = :badgeid", array('badgeid' => $badgeid));
+            $alignments = $DB->count_records_sql("SELECT COUNT(bc.id)
+                      FROM {badge_alignment} bc WHERE bc.badgeid = :badgeid", array('badgeid' => $badgeid));
             $row[] = new tabobject('balignment',
-                new moodle_url('/badges/competency.php', array('id' => $badgeid)),
-                get_string('balignment', 'badges', $competencies)
+                new moodle_url('/badges/alignment.php', array('id' => $badgeid)),
+                get_string('balignment', 'badges', $alignments)
             );
         }
 
@@ -1101,22 +1101,22 @@ class core_badges_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Print list badge competencies.
+     * Print list badge alignments.
      *
      * @param badge $badge Badge objects.
-     * @return string $output List competencies to output.
+     * @return string $output List alignments to output.
      */
-    protected function print_badge_competencies(badge $badge) {
+    protected function print_badge_alignments(badge $badge) {
         $output = '';
         $output .= $this->heading(get_string('alignment', 'badges'), 3);
-        $competencies = $badge->get_alignment();
-        if (!empty($competencies)) {
+        $alignments = $badge->get_alignments();
+        if (!empty($alignments)) {
             $items = array();
-            foreach ($competencies as $competency) {
-                $urlaligment = new moodle_url('competency.php',
-                    array('id' => $badge->id, 'alignmentid' => $competency->id)
+            foreach ($alignments as $alignment) {
+                $urlaligment = new moodle_url('alignment.php',
+                    array('id' => $badge->id, 'alignmentid' => $alignment->id)
                 );
-                $items[] = html_writer::link($urlaligment, $competency->targetname, array('target' => '_blank'));
+                $items[] = html_writer::link($urlaligment, $alignment->targetname, array('target' => '_blank'));
             }
             $output .= html_writer::alist($items, array(), 'ul');
         } else {
@@ -1186,21 +1186,21 @@ class core_badges_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders a table with competencies alignment.
+     * Renders a table with alignment.
      *
-     * @param badge_competencies_alignment $alignment List competencies alignment.
-     * @return string List competencies aligment to output.
+     * @param badge_alignments $alignments List alignments.
+     * @return string List alignment to output.
      */
-    protected function render_badge_competencies_alignment(badge_competencies_alignment $alignment) {
-        $currentbadge = new badge($alignment->currentbadgeid);
-        $paging = new paging_bar($alignment->totalcount, $alignment->page, $alignment->perpage, $this->page->url, 'page');
+    protected function render_badge_alignments(badge_alignments $alignments) {
+        $currentbadge = new badge($alignments->currentbadgeid);
+        $paging = new paging_bar($alignments->totalcount, $alignments->page, $alignments->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
         $table->attributes['class'] = 'generaltable boxaligncenter boxwidthwide';
         $table->head = array('Name', 'URL', '');
 
-        foreach ($alignment->alignments as $item) {
-            $urlaligment = new moodle_url('competency.php',
+        foreach ($alignments->alignments as $item) {
+            $urlaligment = new moodle_url('alignment.php',
                 array(
                     'id' => $currentbadge->id,
                     'alignmentid' => $item->id,
@@ -1212,7 +1212,7 @@ class core_badges_renderer extends plugin_renderer_base {
             );
             if (!$currentbadge->is_active() && !$currentbadge->is_locked()) {
                 $delete = $this->output->action_icon(
-                    new moodle_url('competency_action.php',
+                    new moodle_url('alignment_action.php',
                         array(
                             'id' => $currentbadge->id,
                             'alignmentid' => $item->id,
@@ -1220,7 +1220,7 @@ class core_badges_renderer extends plugin_renderer_base {
                         )
                     ), new pix_icon('t/delete', get_string('delete')));
                 $edit = $this->output->action_icon(
-                    new moodle_url('competency.php',
+                    new moodle_url('alignment.php',
                         array(
                             'id' => $currentbadge->id,
                             'alignmentid' => $item->id,
@@ -1480,13 +1480,13 @@ class badge_related implements renderable {
 }
 
 /**
- * Collection of all competencies.
+ * Collection of all alignments.
  *
  * @copyright  2018 Tung Thai
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
  */
-class badge_competencies_alignment implements renderable
+class badge_alignments implements renderable
 {
     /** @var string how are the data sorted. */
     public $sort = 'name';
@@ -1510,9 +1510,9 @@ class badge_competencies_alignment implements renderable
     public $currentbadgeid = 0;
 
     /**
-     * Initializes the list of competencies to display.
+     * Initializes the list of alignments to display.
      *
-     * @param array $alignments List competencies alignment to render.
+     * @param array $alignments List alignments to render.
      * @param int $currentbadgeid ID current badge.
      */
     public function __construct($alignments, $currentbadgeid) {

@@ -1,5 +1,7 @@
 This files describes API changes in /badges/*,
 information provided here is intended especially for developers.
+=== 3.7 ===
+* Incorrect term "badge competencies" has been refactored to "alignments" everywhere.
 
 === 3.6 ===
 

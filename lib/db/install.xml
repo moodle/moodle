@@ -3200,7 +3200,7 @@
         <KEY NAME="fk_backpackid" TYPE="foreign" FIELDS="backpackid" REFTABLE="badge_backpack" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="badge_competencies" COMMENT="Defines competencies alignment for badges">
+    <TABLE NAME="badge_alignment" COMMENT="Defines alignment for badges">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="badgeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -3212,7 +3212,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="competenciesbadge" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
+        <KEY NAME="alignmentsbadge" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="badge_related" COMMENT="Defines badge related for badges">

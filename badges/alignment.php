@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * List competencies, skills, or standards are targeted by a BadgeClass.
+ * List alignments, skills, or standards are targeted by a BadgeClass.
  *
  * @package    core
  * @subpackage badges
@@ -24,7 +24,7 @@
  */
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
-require_once($CFG->dirroot . '/badges/competency_form.php');
+require_once($CFG->dirroot . '/badges/alignment_form.php');
 
 $badgeid = required_param('id', PARAM_INT);
 $alignmentid = optional_param('alignmentid', 0, PARAM_INT);
@@ -53,7 +53,7 @@ if ($badge->type == BADGE_TYPE_COURSE) {
     navigation_node::override_active_url($navurl, true);
 }
 
-$currenturl = new moodle_url('/badges/competency.php', array('id' => $badge->id));
+$currenturl = new moodle_url('/badges/alignment.php', array('id' => $badge->id));
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
 $PAGE->set_heading($badge->name);
@@ -63,8 +63,8 @@ $PAGE->navbar->add($badge->name);
 $output = $PAGE->get_renderer('core', 'badges');
 $msg = optional_param('msg', '', PARAM_TEXT);
 $emsg = optional_param('emsg', '', PARAM_TEXT);
-$url = new moodle_url('/badges/competency.php', array('id' => $badge->id, 'action' => $action, 'alignmentid' => $alignmentid));
-$mform = new competency_alignment_form($url, array('badge' => $badge, 'action' => $action, 'alignmentid' => $alignmentid));
+$url = new moodle_url('/badges/alignment.php', array('id' => $badge->id, 'action' => $action, 'alignmentid' => $alignmentid));
+$mform = new alignment_form($url, array('badge' => $badge, 'action' => $action, 'alignmentid' => $alignmentid));
 if ($mform->is_cancelled()) {
     redirect($currenturl);
 } else if ($mform->is_submitted() && $mform->is_validated() && ($data = $mform->get_data())) {
@@ -94,12 +94,12 @@ if ($alignmentid || $action == 'add' || $action == 'edit') {
     $mform->display();
 } else if (empty($action)) {
     if (!$badge->is_active() && !$badge->is_locked()) {
-        $urlbutton = new moodle_url('/badges/competency.php', array('id' => $badge->id, 'action' => 'add'));
+        $urlbutton = new moodle_url('/badges/alignment.php', array('id' => $badge->id, 'action' => 'add'));
         echo $OUTPUT->box($OUTPUT->single_button($urlbutton, get_string('addalignment', 'badges')), 'clearfix mdl-align');
     }
-    $alignment = $badge->get_alignment();
-    if (count($alignment) > 0) {
-        $renderrelated = new badge_competencies_alignment($alignment, $badgeid);
+    $alignments = $badge->get_alignments();
+    if (count($alignments) > 0) {
+        $renderrelated = new badge_alignments($alignments, $badgeid);
         echo $output->render($renderrelated);
     } else {
         echo $output->notification(get_string('noalignment', 'badges'));

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains competency class for displaying a badge competency.
+ * Contains alignment class for displaying a badge alignment.
  *
  * @package   core_badges
  * @copyright 2018 Dani Palou <dani@moodle.com>
@@ -29,13 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 use core\external\exporter;
 
 /**
- * Class for displaying a badge competency.
+ * Class for displaying a badge alignment.
  *
  * @package   core_badges
  * @copyright 2018 Dani Palou <dani@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_exporter extends exporter {
+class alignment_exporter extends exporter {
 
     /**
      * Return the list of properties.
@@ -46,7 +46,7 @@ class competency_exporter extends exporter {
         return [
             'id' => [
                 'type' => PARAM_INT,
-                'description' => 'Competency id',
+                'description' => 'Alignment id',
             ],
             'badgeid' => [
                 'type' => PARAM_INT,

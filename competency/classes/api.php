@@ -46,6 +46,9 @@ use required_capability_exception;
  */
 class api {
 
+    /** @var boolean Allow api functions even if competencies are not enabled for the site. */
+    private static $skipenabled = false;
+
     /**
      * Returns whether competencies are enabled.
      *
@@ -56,7 +59,30 @@ class api {
      * @return boolean True when enabled.
      */
     public static function is_enabled() {
-        return get_config('core_competency', 'enabled');
+        return self::$skipenabled || get_config('core_competency', 'enabled');
+    }
+
+    /**
+     * When competencies used to be enabled, we can show the text but do not include links.
+     *
+     * @return boolean True means show links.
+     */
+    public static function show_links() {
+        return isloggedin() && !isguestuser() && get_config('core_competency', 'enabled');
+    }
+
+    /**
+     * Allow calls to competency api functions even if competencies are not currently enabled.
+     */
+    public static function skip_enabled() {
+        self::$skipenabled = true;
+    }
+
+    /**
+     * Restore the checking that competencies are enabled with any api function.
+     */
+    public static function check_enabled() {
+        self::$skipenabled = false;
     }
 
     /**

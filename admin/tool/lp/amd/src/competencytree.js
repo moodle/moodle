@@ -136,18 +136,22 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'too
         /**
          * Initialise the tree.
          *
-         * @param {Number} id The competency id.
+         * @param {Number} id The competency framework id.
          * @param {String} shortname The framework shortname
          * @param {String} search The current search string
          * @param {String} selector The selector for the tree div
          * @param {Boolean} canmanage Can manage the competencies
+         * @param {Number} competencyid The id of the competency to show first
          */
-        init: function(id, shortname, search, selector, canmanage) {
+        init: function(id, shortname, search, selector, canmanage, competencyid) {
             competencyFrameworkId = id;
             competencyFrameworkShortName = shortname;
             competencyFramworkCanManage = canmanage;
             treeSelector = selector;
             loadCompetencies(search).fail(notification.exception);
+            if (competencyid > 0) {
+                currentNodeId = competencyid;
+            }
 
             this.on('selectionchanged', rememberCurrent);
          },
