@@ -394,7 +394,7 @@ abstract class base implements \IteratorAggregate {
         $event->logextra = $logextra;
 
         foreach (self::$fields as $key) {
-            if (!array_key_exists($key, $data)) {
+            if (!array_key_exists($key, $data) && $key != 'companyid') {
                 debugging("Event restore data must contain key $key");
                 $data[$key] = null;
             }
