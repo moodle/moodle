@@ -24,12 +24,15 @@
 
 namespace local_iomad\privacy;
 
-use core_privacy\local\metadata\collection;
-use core_privacy\local\request\approved_contextlist;
-use core_privacy\local\request\contextlist;
-use core_privacy\local\request\deletion_criteria;
-use core_privacy\local\request\helper;
-use core_privacy\local\request\writer;
+use \core_privacy\local\request\deletion_criteria;
+use \core_privacy\local\request\helper;
+use \core_privacy\local\metadata\collection;
+use \core_privacy\local\request\transform;
+use \core_privacy\local\request\contextlist;
+use \core_privacy\local\request\userlist;
+use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\approved_userlist;
+use \core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,19 +43,18 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-        // This plugin stores personal data.
         \core_privacy\local\metadata\provider,
-
-        // This plugin is a core_user_data_provider.
+        \core_privacy\local\request\core_userlist_provider,
         \core_privacy\local\request\plugin\provider {
+
     /**
      * Return the fields which contain personal data.
      *
      * @param collection $items a reference to the collection to use to store the metadata.
      * @return collection the updated collection of metadata items.
      */
-    public static function get_metadata(collection $items) {
-        $items->add_database_table(
+    public static function get_metadata(collection $collection) : collection {
+        $collection->add_database_table(
             'company_users',
             [
                 'companyid' => 'privacy:metadata:company_users:companyid',
@@ -64,7 +66,7 @@ class provider implements
             'privacy:metadata:company_users'
         );
 
-        $items->add_database_table(
+        $collection->add_database_table(
             'companylicense_users',
             [
                 'licenseid' => 'privacy:metadata:companylicense_users:licenseid',
@@ -80,7 +82,7 @@ class provider implements
             'privacy:metadata:companylicense_users'
         );
 
-        return $items;
+        return $collection;
     }
 
     /**
@@ -89,7 +91,7 @@ class provider implements
      * @param int $userid the userid.
      * @return contextlist the list of contexts containing user info for the user.
      */
-    public static function get_contexts_for_userid($userid) {
+    public static function get_contexts_for_userid(int $userid) : contextlist {
         // System context only.
         $sql = "SELECT c.id
                   FROM {context} c
@@ -167,5 +169,49 @@ class provider implements
         $DB->delete_records('company_users', array('userid' => $userid));
         $DB->execute("UPDATE {companylicense_users} SET userid = -1 WHERE userid = :userid",
                       array('userid' => $userid));
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
+        $params = [
+            'userid' => $context->id,
+            'contextuser' => CONTEXT_USER,
+        ];
+
+        $sql = "SELECT cu.userid as userid
+                  FROM {company_users} cu
+                  JOIN {context} ctx
+                       ON ctx.instanceid = cu.userid
+                       AND ctx.contextlevel = :contextuser
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_user) {
+            $DB->delete_records('company_users', array('userid' => $context->id));
+            $DB->execute("UPDATE {companylicense_users} SET userid = -1 WHERE userid = :userid",
+                          array('userid' => $userid));
+        }
     }
 }

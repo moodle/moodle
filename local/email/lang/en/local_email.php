@@ -85,6 +85,18 @@ $string['templateupdatedok'] = 'Template was successfully updated.';
 $string['toother'] = 'Manual To address';
 $string['weekly'] = 'Weekly';
 
+$string['privacy:metadata:local_email:id'] = 'ID of record in local_email table';
+$string['privacy:metadata:local_email:templatename'] = 'Template name of email sent';
+$string['privacy:metadata:local_email:sent'] = 'Unix timestamp of when email was sent';
+$string['privacy:metadata:local_email:subject'] = 'Email subject';
+$string['privacy:metadata:local_email:body'] = 'Email body';
+$string['privacy:metadata:local_email:courseid'] = 'Course ID';
+$string['privacy:metadata:local_email:userid'] = 'Recipient user ID';
+$string['privacy:metadata:local_email:invoiceid'] = 'Iomad eCommerce invoice ID';
+$string['privacy:metadata:local_email:senderid'] = 'Sender user ID';
+$string['privacy:metadata:local_email:headers'] = 'Additional email header';
+$string['privacy:metadata:local_email'] = 'Iomad email information';
+
 /*Email template descriptors*/
 $string['admin_deleted_name'] = 'Manager role removed';
 $string['admin_deleted_name_help'] = 'This email is sent out when a manager role is removed from a user.';

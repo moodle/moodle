@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for local_iomad_settings.
+ * Privacy Subsystem implementation for theme_iomadboost.
  *
- * @package    local_iomad_settings
+ * @package    theme_iomadboost
  * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_iomad_settings\privacy;
+namespace theme_iomadboost\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for local_iomad_settings implementing null_provider.
+ * Privacy Subsystem for theme_iomadboost implementing null_provider.
  *
  * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

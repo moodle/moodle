@@ -24,6 +24,16 @@
 
 namespace local_iomad_track\privacy;
 
+use \core_privacy\local\request\deletion_criteria;
+use \core_privacy\local\request\helper;
+use \core_privacy\local\metadata\collection;
+use \core_privacy\local\request\transform;
+use \core_privacy\local\request\contextlist;
+use \core_privacy\local\request\userlist;
+use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\approved_userlist;
+use \core_privacy\local\request\writer;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -33,33 +43,37 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-        // This plugin stores personal data.
         \core_privacy\local\metadata\provider,
-
-        // This plugin is a core_user_data_provider.
+        \core_privacy\local\request\core_userlist_provider,
         \core_privacy\local\request\plugin\provider {
+
     /**
      * Return the fields which contain personal data.
      *
      * @param collection $items a reference to the collection to use to store the metadata.
      * @return collection the updated collection of metadata items.
      */
-    public static function get_metadata(collection $items) {
-        $items->add_database_table(
+    public static function get_metadata(collection $collection) : collection {
+        $collection->add_database_table(
             'local_iomad_track',
             [
                 'id' => 'privacy:metadata:local_iomad_track:id',
                 'courseid' => 'privacy:metadata:local_iomad_track:courseid',
+                'coursename' => 'privacy:metadata:local_iomad_track:coursename',
                 'userid' => 'privacy:metadata:local_iomad_track:userid',
                 'timecompleted' => 'privacy:metadata:local_iomad_track:timecompleted',
                 'timeenrolled' => 'privacy:metadata:local_iomad_track:timeenrolled',
                 'timestarted' => 'privacy:metadata:local_iomad_track:timestarted',
                 'finalscore' => 'privacy:metadata:local_iomad_track:finalscore',
+                'companyid' => 'privacy:metadata:local_iomad_track:companyid',
+                'licenseid' => 'privacy:metadata:local_iomad_track:licenseid',
+                'licensename' => 'privacy:metadata:local_iomad_track:licensename',
+                'licenseallocated' => 'privacy:metadata:local_iomad_track:licenseallocated',
             ],
             'privacy:metadata:local_iomad_track'
         );
 
-        $items->add_database_table(
+        $collection->add_database_table(
             'local_iomad_track_certs',
             [
                 'id' => 'privacy:metadata:local_iomad_track_certs:id',
@@ -69,7 +83,7 @@ class provider implements
             'privacy:metadata:local_iomad_track_certs'
         );
 
-        return $items;
+        return $collection;
     }
 
     /**
@@ -78,7 +92,7 @@ class provider implements
      * @param int $userid the userid.
      * @return contextlist the list of contexts containing user info for the user.
      */
-    public static function get_contexts_for_userid($userid) {
+    public static function get_contexts_for_userid(int $userid) : contextlist {
         $sql = "SELECT c.id
                   FROM {context} c
                 WHERE contextlevel = :contextlevel";
@@ -171,7 +185,7 @@ class provider implements
         }
 
         $userid = $contextlist->get_user()->id;
-        $DB->delete_records('local_iomad_track');
+        $DB->delete_records('local_iomad_track', array('userid' => $userid));
 
         // Get the certs.
         if ($certs = $DB->get_records('local_iomad_track_certs', array('userid' => $userid))) {
@@ -188,6 +202,65 @@ class provider implements
                 $DB->delete_records('local_iomad_track_certs', array('id' => $cert->id));
             }
             $DB->delete_records('files', array('component' => 'local_iomad_track', 'userid' => $userid));
+        }
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
+        $params = [
+            'userid' => $context->id,
+            'contextuser' => CONTEXT_USER,
+        ];
+
+        $sql = "SELECT lit.userid as userid
+                  FROM {local_iomad_track} lit
+                  JOIN {context} ctx
+                       ON ctx.instanceid = lit.userid
+                       AND ctx.contextlevel = :contextuser
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_user) {
+            $DB->delete_records('local_iomad_track', array('userid' => $context->id));
+
+            // Get the certs.
+            if ($certs = $DB->get_records('local_iomad_track_certs', array('userid' => $context->id))) {
+                // Delete the files.
+                require_once($CFG->libdir . '/filelib.php');
+                foreach ($certs as $cert) {
+                    if ($file = $DB->get_record('files', array('component' => 'local_iomad_track', 'itemid' => $cert->trackid, 'filename' => $cert->filename))) {
+                        $filedir1 = substr($file->contenthash,0,2);
+                        $filedir2 = substr($file->contenthash,2,2);
+                        $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $file->contenthash;
+                        fulldelete($filepath);
+                    }
+
+                    $DB->delete_records('local_iomad_track_certs', array('id' => $cert->id));
+                }
+                $DB->delete_records('files', array('component' => 'local_iomad_track', 'userid' => $context->id));
+            }
         }
     }
 }

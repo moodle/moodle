@@ -22,6 +22,7 @@
  */
 
 $string['pluginname'] = 'Iomad Bootstrap';
+$string['privacy:metadata'] = 'The Iomad Bootstrap theme only shows data stored in other locations.';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
 $string['fullscreen'] = 'Full screen';
