@@ -262,4 +262,22 @@ class award_criteria_competency extends award_criteria {
     public static function is_enabled() {
         return \core_competency\api::is_enabled();
     }
+
+    /**
+     * Check if any badge has records for competencies.
+     *
+     * @param array $competencyids Array of competencies ids.
+     * @return boolean Return true if competencies were found in any badge.
+     */
+    public static function has_records_for_competencies($competencyids) {
+        global $DB;
+        list($insql, $params) = $DB->get_in_or_equal($competencyids, SQL_PARAMS_NAMED);
+        $sql = "SELECT DISTINCT bc.badgeid
+                    FROM {badge_criteria} bc
+                    JOIN {badge_criteria_param} bcp ON bc.id = bcp.critid
+                    WHERE bc.criteriatype = :criteriatype AND value $insql";
+        $params['criteriatype'] = BADGE_CRITERIA_TYPE_COMPETENCY;
+
+        return self::record_exists_sql($sql, $params);
+    }
 }
