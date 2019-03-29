@@ -89,7 +89,7 @@ class core_question_renderer extends plugin_renderer_base {
 
         $output = '';
         $output .= html_writer::start_tag('div', array(
-            'id' => 'q' . $qa->get_slot(),
+            'id' => $qa->get_outer_question_div_unique_id(),
             'class' => implode(' ', array(
                 'que',
                 $qa->get_question()->qtype->name(),
