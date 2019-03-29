@@ -2467,7 +2467,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     $postuser->id = $post->userid;
     echo '<td class="author">';
     echo '<div class="media">';
-    echo '<span class="pull-left">';
+    echo '<span class="float-left">';
     echo $OUTPUT->user_picture($postuser, array('courseid'=>$forum->course));
     echo '</span>';
     // User name

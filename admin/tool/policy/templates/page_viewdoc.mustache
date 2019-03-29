@@ -45,11 +45,11 @@
 
 <a id="top"></a>
 <div class="clearfix">
-    <div class="pull-left">
+    <div class="float-left">
         <h2>{{{policy.name}}}</h2>
     </div>
     {{# numpolicy }}
-        <div class="pull-right">
+        <div class="float-right">
             {{# str }} steppolicies, tool_policy,
                 { "numpolicy": {{# quote }}{{numpolicy}}{{/quote }}, "totalpolicies": {{# quote }}{{totalpolicies}}{{/ quote }} }
             {{/ str }}
@@ -96,7 +96,7 @@
         <a role="button" href="{{declineurl}}" class="btn btn-link">{{#str}} idontagree, tool_policy, {{{policy.name}}} {{/str}}</a>
     {{/declineurl}}
 
-    <div class="pull-right">
+    <div class="float-right">
         <a href="#top">
             {{# str }} backtotop, tool_policy {{/ str }}
             <i class="icon text-primary fa fa-caret-up" title="{{# str }} backtotop, tool_policy {{/ str }}" ></i>

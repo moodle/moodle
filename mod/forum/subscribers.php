@@ -112,7 +112,7 @@ if (has_capability('mod/forum:managesubscriptions', $context) && \mod_forum\subs
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('forum', 'forum').' '.$strsubscribers);
 if (!empty($updatesubscriptionsbutton)) {
-    echo \html_writer::div($updatesubscriptionsbutton, 'pull-right');
+    echo \html_writer::div($updatesubscriptionsbutton, 'float-right');
 }
 if (empty($USER->subscriptionsediting)) {
     $subscribers = \mod_forum\subscriptions::fetch_subscribed_users($forum, $currentgroup, $context);
