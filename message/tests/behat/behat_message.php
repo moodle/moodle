@@ -232,4 +232,21 @@ class behat_message extends behat_base {
             $this->escape($convname).'")]';
         $this->execute('behat_general::i_click_on', array($xpath, 'xpath_element'));
     }
+
+    /**
+     * Open the settings preferences.
+     *
+     * @Given /^I open messaging settings preferences$/
+     */
+    public function i_open_messaging_settings_preferences() {
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+        $this->execute('behat_general::i_click_on',
+            array(
+                '//*[@data-region="message-drawer"]//a[@data-route="view-settings"]',
+                'xpath_element',
+                '',
+                '',
+            )
+        );
+    }
 }
