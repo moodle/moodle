@@ -115,7 +115,7 @@ class category_bin extends base_bin {
             $course->id,
             \backup::FORMAT_MOODLE,
             \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL,
+            \backup::MODE_AUTOMATED,
             $user->id
         );
         $controller->execute_plan();
@@ -233,7 +233,7 @@ class category_bin extends base_bin {
             $tempdir,
             $course->id,
             \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL,
+            \backup::MODE_AUTOMATED,
             $user->id,
             \backup::TARGET_NEW_COURSE
         );
