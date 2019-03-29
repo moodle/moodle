@@ -112,7 +112,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         }
         $output .= html_writer::tag('div',
                 $droparea . $dragitems . $dropzones . $hiddens, array('class' => 'ddarea'));
-        $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
+        $topnode = 'div#' . $qa->get_outer_question_div_unique_id() . ' div.ddarea';
         $params = array('drops' => $question->places,
                         'topnode' => $topnode,
                         'readonly' => $options->readonly);
