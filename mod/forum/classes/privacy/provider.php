@@ -672,7 +672,7 @@ class provider implements
                             p.privatereplyto = 0
                          OR p.privatereplyto = :privatereplyrecipient
                          OR p.userid = :privatereplyauthor
-                         )
+                     )
         ";
 
         $params = [

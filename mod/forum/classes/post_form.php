@@ -149,7 +149,7 @@ class mod_forum_post_form extends moodleform {
         }
 
         if ((empty($post->id) && $canreplyprivately) || (!empty($post) && !empty($post->privatereplyto))) {
-            // Only shwo the option to change private reply settings if this is a new post and the user can reply
+            // Only show the option to change private reply settings if this is a new post and the user can reply
             // privately, or if this is already private reply, in which case the state is shown but is not editable.
             $mform->addElement('checkbox', 'isprivatereply', get_string('privatereply', 'forum'));
             $mform->addHelpButton('isprivatereply', 'privatereply', 'forum');
