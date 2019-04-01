@@ -366,6 +366,7 @@ class core_enrol_external extends external_api {
             $progress = null;
             $completed = null;
             $completionhascriteria = false;
+            $completionusertracked = false;
 
             // Return only private information if the user should be able to see it.
             if ($sameuser || completion_can_view_data($userid, $course)) {
@@ -373,6 +374,7 @@ class core_enrol_external extends external_api {
                     $completion = new completion_info($course);
                     $completed = $completion->is_course_complete($userid);
                     $completionhascriteria = $completion->has_criteria();
+                    $completionusertracked = $completion->is_tracked_user($userid);
                     $progress = \core_completion\progress::get_course_progress_percentage($course, $userid);
                 }
             }
@@ -425,6 +427,7 @@ class core_enrol_external extends external_api {
                 'lang' => clean_param($course->lang, PARAM_LANG),
                 'enablecompletion' => $course->enablecompletion,
                 'completionhascriteria' => $completionhascriteria,
+                'completionusertracked' => $completionusertracked,
                 'category' => $course->category,
                 'progress' => $progress,
                 'completed' => $completed,
@@ -470,6 +473,7 @@ class core_enrol_external extends external_api {
                     'enablecompletion' => new external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
                                                                 VALUE_OPTIONAL),
                     'completionhascriteria' => new external_value(PARAM_BOOL, 'If completion criteria is set.', VALUE_OPTIONAL),
+                    'completionusertracked' => new external_value(PARAM_BOOL, 'If the user is completion tracked.', VALUE_OPTIONAL),
                     'category' => new external_value(PARAM_INT, 'course category id', VALUE_OPTIONAL),
                     'progress' => new external_value(PARAM_FLOAT, 'Progress percentage', VALUE_OPTIONAL),
                     'completed' => new external_value(PARAM_BOOL, 'Whether the course is completed.', VALUE_OPTIONAL),
