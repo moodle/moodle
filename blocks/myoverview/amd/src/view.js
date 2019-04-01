@@ -499,7 +499,7 @@ function(
                         }
 
                         // Set the last page to either the current or next page
-                        if (loadedPages[currentPage].courses.length < pageData.limit) {
+                        if (loadedPages[currentPage].courses.length < pageData.limit || !remainingCourses.length) {
                             lastPage = currentPage;
                             actions.allItemsLoaded(currentPage);
                         } else if (loadedPages[currentPage + 1] != undefined
