@@ -1019,7 +1019,7 @@ function glossary_get_entries($glossaryid, $entrylist, $pivot = "") {
  * @return array
  */
 function glossary_get_entries_search($concept, $courseid) {
-    global $CFG, $DB;
+    global $DB;
 
     //Check if the user is an admin
     $bypassadmin = 1; //This means NO (by default)
@@ -1036,6 +1036,7 @@ function glossary_get_entries_search($concept, $courseid) {
     $conceptlower = core_text::strtolower(trim($concept));
 
     $params = array('courseid1'=>$courseid, 'courseid2'=>$courseid, 'conceptlower'=>$conceptlower, 'concept'=>$concept);
+    $sensitiveconceptsql = $DB->sql_equal('concept', ':concept');
 
     return $DB->get_records_sql("SELECT e.*, g.name as glossaryname, cm.id as cmid, cm.course as courseid
                                    FROM {glossary_entries} e, {glossary} g,
@@ -1047,7 +1048,7 @@ function glossary_get_entries_search($concept, $courseid) {
                                         g.id = cm.instance AND
                                         e.glossaryid = g.id  AND
                                         ( (e.casesensitive != 1 AND LOWER(concept) = :conceptlower) OR
-                                          (e.casesensitive = 1 and concept = :concept)) AND
+                                          (e.casesensitive = 1 and $sensitiveconceptsql)) AND
                                         (g.course = :courseid2 OR g.globalglossary = 1) AND
                                          e.usedynalink != 0 AND
                                          g.usedynalink != 0", $params);
