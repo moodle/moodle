@@ -346,8 +346,6 @@ class model {
                                   $timesplittingid = false, $processor = null) {
         global $USER, $DB;
 
-        \core_analytics\manager::check_can_manage_models();
-
         $indicatorclasses = self::indicator_classes($indicators);
 
         $now = time();
@@ -359,6 +357,10 @@ class model {
         $modelobj->timecreated = $now;
         $modelobj->timemodified = $now;
         $modelobj->usermodified = $USER->id;
+
+        if ($target->based_on_assumptions()) {
+            $modelobj->trained = 1;
+        }
 
         if ($timesplittingid) {
             if (!\core_analytics\manager::is_valid($timesplittingid, '\core_analytics\local\time_splitting\base')) {
@@ -384,10 +386,6 @@ class model {
         $modelobj = $DB->get_record('analytics_models', array('id' => $id), '*', MUST_EXIST);
 
         $model = new static($modelobj);
-
-        if ($model->is_static()) {
-            $model->mark_as_trained();
-        }
 
         return $model;
     }
@@ -1058,8 +1056,6 @@ class model {
      */
     public function enable($timesplittingid = false) {
         global $DB, $USER;
-
-        \core_analytics\manager::check_can_manage_models();
 
         $now = time();
 
