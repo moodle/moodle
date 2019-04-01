@@ -155,7 +155,7 @@ function(
 
         root.on(CustomEvents.events.next, Selectors.post.action, function(e, data) {
             var currentAction = $(e.target);
-            var container = currentAction.closest(Selectors.post.actions_container);
+            var container = currentAction.closest(Selectors.post.actionsContainer);
             var actions = container.find(Selectors.post.action);
             var nextAction = currentAction.next(Selectors.post.action);
 
@@ -173,7 +173,7 @@ function(
 
         root.on(CustomEvents.events.previous, Selectors.post.action, function(e, data) {
             var currentAction = $(e.target);
-            var container = currentAction.closest(Selectors.post.actions_container);
+            var container = currentAction.closest(Selectors.post.actionsContainer);
             var actions = container.find(Selectors.post.action);
             var nextAction = currentAction.prev(Selectors.post.action);
 
@@ -191,7 +191,7 @@ function(
 
         root.on(CustomEvents.events.home, Selectors.post.action, function(e, data) {
             var currentAction = $(e.target);
-            var container = currentAction.closest(Selectors.post.actions_container);
+            var container = currentAction.closest(Selectors.post.actionsContainer);
             var actions = container.find(Selectors.post.action);
             var firstAction = actions.first();
 
@@ -205,7 +205,7 @@ function(
 
         root.on(CustomEvents.events.end, Selectors.post.action, function(e, data) {
             var currentAction = $(e.target);
-            var container = currentAction.closest(Selectors.post.actions_container);
+            var container = currentAction.closest(Selectors.post.actionsContainer);
             var actions = container.find(Selectors.post.action);
             var lastAction = actions.last();
 

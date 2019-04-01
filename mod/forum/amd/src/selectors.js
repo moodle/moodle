@@ -29,7 +29,7 @@ define([], function() {
         post: {
             post: '[data-region="post"]',
             action: '[data-region="post-action"]',
-            actions_container: '[data-region="post-actions-container"]'
+            actionsContainer: '[data-region="post-actions-container"]'
         }
     };
 });
