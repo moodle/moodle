@@ -53,11 +53,13 @@ class helper {
             return $recentitems;
         }
 
-        // Determine sort sql clause.
-        $sort = 'timeaccess DESC';
-
         $paramsql = array('userid' => $userid);
-        $records = $DB->get_records('block_recentlyaccesseditems', $paramsql, $sort);
+        $sql = "SELECT rai.*
+                  FROM {block_recentlyaccesseditems} rai
+                  JOIN {course} c ON c.id = rai.courseid
+                 WHERE userid = :userid
+                 ORDER BY rai.timeaccess DESC";
+        $records = $DB->get_records_sql($sql, $paramsql);
         $order = 0;
 
         // Get array of items by course. Use $order index to keep sql sorted results.
