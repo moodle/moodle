@@ -45,6 +45,8 @@ class question_preview_cleanup_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/engine/lib.php');
 
         // We delete previews that have not been touched for 24 hours.
         $lastmodifiedcutoff = time() - DAYSECS;
