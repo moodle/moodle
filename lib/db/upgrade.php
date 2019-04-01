@@ -2947,5 +2947,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019032900.00);
     }
 
+    if ($oldversion < 2019032900.01) {
+        $sql = "UPDATE {task_scheduled}
+                   SET classname = ?
+                 WHERE component = ?
+                   AND classname = ?";
+        $DB->execute($sql, [
+            '\core\task\question_preview_cleanup_task',
+            'moodle',
+            '\core\task\question_cron_task'
+        ]);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019032900.01);
+    }
+
     return true;
 }
