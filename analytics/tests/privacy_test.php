@@ -86,8 +86,10 @@ class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider
 
         $this->setAdminUser();
 
+        $this->model1->enable();
         $this->model1->train();
         $this->model1->predict();
+        $this->model2->enable();
         $this->model2->train();
         $this->model2->predict();
 

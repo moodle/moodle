@@ -6,6 +6,13 @@ information provided here is intended especially for developers.
 * \core_analytics\regressor::evaluate_regression and \core_analytics\classifier::evaluate_classification
   have been updated to include a new $trainedmodeldir param. This new param will be used to evaluate the
   existing trained model.
+* Plugins and core subsystems can now declare default prediction models by describing them in
+  their db/analytics.php file. Models should not be created manually via the db/install.php
+  file any more.
+* The method \core_analytics\manager::add_builtin_models() has been deprecated. The functionality
+  has been replaced with automatic update of models provided by the core moodle component. There
+  is no need to call this method explicitly any more. Instead, adding new models can be achieved
+  by updating the lib/db/analytics.php file and bumping the core version.
 
 === 3.5 ===
 

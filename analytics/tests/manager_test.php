@@ -150,4 +150,225 @@ class analytics_manager_testcase extends advanced_testcase {
         get_log_manager(true);
     }
 
+    /**
+     * Tests for the {@link \core_analytics\manager::load_default_models_for_component()} implementation.
+     */
+    public function test_load_default_models_for_component() {
+        $this->resetAfterTest();
+
+        // Attempting to load builtin models should always work without throwing exception.
+        \core_analytics\manager::load_default_models_for_component('core');
+
+        // Attempting to load from a core subsystem without its own subsystem directory.
+        $this->assertSame([], \core_analytics\manager::load_default_models_for_component('core_access'));
+
+        // Attempting to load from a non-existing subsystem.
+        $this->assertSame([], \core_analytics\manager::load_default_models_for_component('core_nonexistingsubsystem'));
+
+        // Attempting to load from a non-existing plugin of a known plugin type.
+        $this->assertSame([], \core_analytics\manager::load_default_models_for_component('mod_foobarbazquaz12240996776'));
+
+        // Attempting to load from a non-existing plugin type.
+        $this->assertSame([], \core_analytics\manager::load_default_models_for_component('foo_bar2776327736558'));
+    }
+
+    /**
+     * Tests for the successful execution of the {@link \core_analytics\manager::validate_models_declaration()}.
+     */
+    public function test_validate_models_declaration() {
+        $this->resetAfterTest();
+
+        // This is expected to run without an exception.
+        $models = $this->load_models_from_fixture_file('no_teaching');
+        \core_analytics\manager::validate_models_declaration($models);
+    }
+
+    /**
+     * Tests for the exceptions thrown by {@link \core_analytics\manager::validate_models_declaration()}.
+     *
+     * @dataProvider validate_models_declaration_exceptions_provider
+     * @param array $models Models declaration.
+     * @param string $exception Expected coding exception message.
+     */
+    public function test_validate_models_declaration_exceptions(array $models, string $exception) {
+        $this->resetAfterTest();
+
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage($exception);
+        \core_analytics\manager::validate_models_declaration($models);
+    }
+
+    /**
+     * Data provider for the {@link self::test_validate_models_declaration_exceptions()}.
+     *
+     * @return array of (string)testcase => [(array)models, (string)expected exception message]
+     */
+    public function validate_models_declaration_exceptions_provider() {
+        return [
+            'missing_target' => [
+                $this->load_models_from_fixture_file('missing_target'),
+                'Missing target declaration',
+            ],
+            'invalid_target' => [
+                $this->load_models_from_fixture_file('invalid_target'),
+                'Invalid target classname',
+            ],
+            'missing_indicators' => [
+                $this->load_models_from_fixture_file('missing_indicators'),
+                'Missing indicators declaration',
+            ],
+            'invalid_indicators' => [
+                $this->load_models_from_fixture_file('invalid_indicators'),
+                'Invalid indicator classname',
+            ],
+            'invalid_time_splitting' => [
+                $this->load_models_from_fixture_file('invalid_time_splitting'),
+                'Invalid time splitting classname',
+            ],
+            'invalid_time_splitting_fq' => [
+                $this->load_models_from_fixture_file('invalid_time_splitting_fq'),
+                'Expecting fully qualified time splitting classname',
+            ],
+            'invalid_enabled' => [
+                $this->load_models_from_fixture_file('invalid_enabled'),
+                'Cannot enable a model without time splitting method specified',
+            ],
+        ];
+    }
+
+    /**
+     * Loads models as declared in the given fixture file.
+     *
+     * @param string $filename
+     * @return array
+     */
+    protected function load_models_from_fixture_file(string $filename) {
+        global $CFG;
+
+        $models = null;
+
+        require($CFG->dirroot.'/analytics/tests/fixtures/db_analytics_php/'.$filename.'.php');
+
+        return $models;
+    }
+
+    /**
+     * Test the implementation of the {@link \core_analytics\manager::create_declared_model()}.
+     */
+    public function test_create_declared_model() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminuser();
+
+        $declaration = [
+            'target' => 'test_target_course_level_shortname',
+            'indicators' => [
+                'test_indicator_max',
+                'test_indicator_min',
+                'test_indicator_fullname',
+            ],
+        ];
+
+        $declarationwithtimesplitting = array_merge($declaration, [
+            'timesplitting' => '\core\analytics\time_splitting\no_splitting',
+        ]);
+
+        $declarationwithtimesplittingenabled = array_merge($declarationwithtimesplitting, [
+            'enabled' => true,
+        ]);
+
+        // Check that no such model exists yet.
+        $target = \core_analytics\manager::get_target('test_target_course_level_shortname');
+        $this->assertEquals(0, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $this->assertFalse(\core_analytics\model::exists($target));
+
+        // Check that the model is created.
+        $created = \core_analytics\manager::create_declared_model($declaration);
+        $this->assertTrue($created instanceof \core_analytics\model);
+        $this->assertTrue(\core_analytics\model::exists($target));
+        $this->assertEquals(1, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $modelid = $created->get_id();
+
+        // Check that created models are disabled by default.
+        $existing = new \core_analytics\model($modelid);
+        $this->assertEquals(0, $existing->get_model_obj()->enabled);
+        $this->assertEquals(0, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+
+        // Let the admin enable the model.
+        $existing->enable('\core\analytics\time_splitting\no_splitting');
+        $this->assertEquals(1, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+
+        // Check that further calls create a new model.
+        $repeated = \core_analytics\manager::create_declared_model($declaration);
+        $this->assertTrue($repeated instanceof \core_analytics\model);
+        $this->assertEquals(2, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+
+        // Delete the models.
+        $existing->delete();
+        $repeated->delete();
+        $this->assertEquals(0, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $this->assertFalse(\core_analytics\model::exists($target));
+
+        // Create it again, this time with time splitting method specified.
+        $created = \core_analytics\manager::create_declared_model($declarationwithtimesplitting);
+        $this->assertTrue($created instanceof \core_analytics\model);
+        $this->assertTrue(\core_analytics\model::exists($target));
+        $this->assertEquals(1, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $modelid = $created->get_id();
+
+        // Even if the time splitting method was specified, the model is still not enabled automatically.
+        $existing = new \core_analytics\model($modelid);
+        $this->assertEquals(0, $existing->get_model_obj()->enabled);
+        $this->assertEquals(0, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+        $existing->delete();
+
+        // Let's define the model so that it is enabled by default.
+        $enabled = \core_analytics\manager::create_declared_model($declarationwithtimesplittingenabled);
+        $this->assertTrue($enabled instanceof \core_analytics\model);
+        $this->assertTrue(\core_analytics\model::exists($target));
+        $this->assertEquals(1, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $modelid = $enabled->get_id();
+        $existing = new \core_analytics\model($modelid);
+        $this->assertEquals(1, $existing->get_model_obj()->enabled);
+        $this->assertEquals(1, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+
+        // Let the admin disable the model.
+        $existing->update(0, false, false);
+        $this->assertEquals(0, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+    }
+
+    /**
+     * Test the implementation of the {@link \core_analytics\manager::update_default_models_for_component()}.
+     */
+    public function test_update_default_models_for_component() {
+
+        $this->resetAfterTest();
+        $this->setAdminuser();
+
+        $noteaching = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
+        $dropout = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
+
+        $this->assertTrue(\core_analytics\model::exists($noteaching));
+        $this->assertTrue(\core_analytics\model::exists($dropout));
+
+        foreach (\core_analytics\manager::get_all_models() as $model) {
+            $model->delete();
+        }
+
+        $this->assertFalse(\core_analytics\model::exists($noteaching));
+        $this->assertFalse(\core_analytics\model::exists($dropout));
+
+        $updated = \core_analytics\manager::update_default_models_for_component('moodle');
+
+        $this->assertEquals(2, count($updated));
+        $this->assertTrue(array_pop($updated) instanceof \core_analytics\model);
+        $this->assertTrue(array_pop($updated) instanceof \core_analytics\model);
+        $this->assertTrue(\core_analytics\model::exists($noteaching));
+        $this->assertTrue(\core_analytics\model::exists($dropout));
+
+        $repeated = \core_analytics\manager::update_default_models_for_component('moodle');
+
+        $this->assertSame([], $repeated);
+    }
 }
