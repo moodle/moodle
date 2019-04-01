@@ -341,9 +341,6 @@ YUI.add('moodle-core_filepicker', function(Y) {
         /** initialize table view */
         var initialize_table_view = function() {
             var cols = [
-                {key: "", label: "<input type='checkbox' id='select-all'/>",
-                    allowHTML: true, formatter: formatCheckbox,
-                    sortable: false},
                 {key: "displayname", label: M.util.get_string('name', 'moodle'), allowHTML: true, formatter: formatTitle,
                     sortable: true, sortFn: sortFoldersFirst},
                 {key: "datemodified", label: M.util.get_string('lastmodified', 'moodle'), allowHTML: true, formatter: formatValue,
@@ -353,6 +350,15 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 {key: "mimetype", label: M.util.get_string('type', 'repository'), allowHTML: true,
                     sortable: true, sortFn: sortFoldersFirst}
             ];
+
+            // Enable the selectable checkboxes
+            if (options.disablecheckboxes != undefined && !options.disablecheckboxes) {
+                cols.unshift({
+                    key: "", label: "<input type='checkbox' id='select-all'/>",
+                    allowHTML: true, formatter: formatCheckbox,
+                    sortable: false
+                });
+            }
             scope.tableview = new Y.DataTable({columns: cols, data: fileslist});
             scope.tableview.delegate('click', function (e, tableview) {
                 var record = tableview.getRecord(e.currentTarget.get('id'));
