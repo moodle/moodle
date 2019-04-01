@@ -73,7 +73,7 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @param mixed $includedetailsaction
      * @return \core_analytics\prediction_action[]
      */
-    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false, $isinsightuser = false) {
         global $CFG;
 
         require_once($CFG->dirroot . '/course/lib.php');

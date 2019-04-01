@@ -160,7 +160,7 @@ class insights_generator {
      */
     private function prediction_info(\core_analytics\prediction $prediction) {
 
-        $predictionactions = $this->target->prediction_actions($prediction, true);
+        $predictionactions = $this->target->prediction_actions($prediction, true, true);
 
         $messageactions  = '';
         $messageactionshtml  = '';

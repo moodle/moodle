@@ -152,12 +152,12 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
      * @param mixed $includedetailsaction
      * @return \core_analytics\prediction_action[]
      */
-    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false, $isinsightuser = false) {
         global $CFG, $USER;
 
         $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
 
-        if ($USER->id != $prediction->get_prediction_data()->sampleid) {
+        if (!$isinsightuser && $USER->id != $prediction->get_prediction_data()->sampleid) {
             return $parentactions;
         }
 

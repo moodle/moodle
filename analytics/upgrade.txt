@@ -29,6 +29,8 @@ information provided here is intended especially for developers.
   the notification.
 * The visibility of target's ignored_predicted_classes method must now be public.
 * The visibility of analyser's get_all_samples method must now be public.
+* Target's prediction_actions() has now a 3rd parameter $isinsightuser. This parameter is true
+  when we are listing actions for the user that will receives the insight.
 
 === 3.5 ===
 
