@@ -39,6 +39,7 @@ Feature: Manage contacts
     Then I should see "2" in the "//div[@data-region='view-contacts']//*[@data-region='contact-request-count']" "xpath_element"
     And I click on "Requests" "link_or_button"
     And I click on "Student 1 Would like to contact you" "link"
+    Then I should see "Accept and add to contacts"
     And I click on "Accept and add to contacts" "link_or_button"
     And I log out
     And I log in as "student1"
@@ -61,6 +62,7 @@ Feature: Manage contacts
     Then I should see "1" in the "//div[@data-region='view-contacts']//*[@data-region='contact-request-count']" "xpath_element"
     And I click on "Requests" "link_or_button"
     And I click on "Student 1 Would like to contact you" "link"
+    Then I should see "Accept and add to contacts"
     And I click on "Decline" "link_or_button"
     And I open contact menu
     Then I should see "Add to contacts" in the "//div[@data-region='header-container']" "xpath_element"
