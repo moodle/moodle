@@ -1808,6 +1808,15 @@ function xmldb_local_iomad_upgrade($oldversion) {
 
     if ($oldversion < 2018122700) {
 
+        // Define field notifyperiod to be added to iomad_courses.
+        $table = new xmldb_table('iomad_courses');
+        $field = new xmldb_field('notifyperiod', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'warncompletion');
+
+        // Conditionally launch add field notifyperiod.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
         // Define field expireafter to be added to iomad_courses.
         $table = new xmldb_table('iomad_courses');
         $field = new xmldb_field('expireafter', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'notifyperiod');
