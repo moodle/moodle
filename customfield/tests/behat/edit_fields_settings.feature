@@ -71,7 +71,7 @@ Feature: Teachers can edit course custom fields
       | Field 5               | b            |
     And I log out
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Use images in the custom field description
     When I log in as "admin"
     And I follow "Manage private files"

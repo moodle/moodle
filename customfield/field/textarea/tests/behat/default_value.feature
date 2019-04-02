@@ -1,4 +1,4 @@
-@customfield @customfield_textarea @javascript
+@customfield @customfield_textarea @javascript @_file_upload
 Feature: Default value for the textarea custom field can contain images
   In order to see images on custom fields
   As a manager
