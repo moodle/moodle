@@ -1069,6 +1069,13 @@ class question_attempt {
                     $var = null;
                 }
 
+                if ($var !== null) {
+                    // Ensure that, if set, $var is a string. This is because later, after
+                    // it has been saved to the database and loaded back it will be a string,
+                    // so better if the type is predictably always a string.
+                    $var = (string) $var;
+                }
+
                 return $var;
         }
     }
