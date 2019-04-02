@@ -235,22 +235,27 @@ class models_list implements \renderable, \templatable {
                 $actionsmenu->add($icon);
             }
 
-            // Export training data.
-            if (!$model->is_static() && $model->is_trained()) {
-                $urlparams['action'] = 'exportdata';
-                $url = new \moodle_url('model.php', $urlparams);
-                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/export',
-                    get_string('exporttrainingdata', 'tool_analytics')), get_string('exporttrainingdata', 'tool_analytics'));
-                $actionsmenu->add($icon);
-            }
+            // Export.
+            if (!$model->is_static()) {
 
-            // Export model.
-            if (!$model->is_static() && $model->get_indicators() && !empty($modeldata->timesplitting)) {
-                $urlparams['action'] = 'exportmodel';
-                $url = new \moodle_url('model.php', $urlparams);
-                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/backup',
-                    get_string('exportmodel', 'tool_analytics')), get_string('exportmodel', 'tool_analytics'));
-                $actionsmenu->add($icon);
+                $fullysetup = $model->get_indicators() && !empty($modeldata->timesplitting);
+                $istrained = $model->is_trained();
+
+                if ($fullysetup || $istrained) {
+
+                    $url = new \moodle_url('model.php', $urlparams);
+                    // Clear the previous action param from the URL, we will set it in JS.
+                    $url->remove_params('action');
+
+                    $actionid = 'export-' . $model->get_id();
+                    $PAGE->requires->js_call_amd('tool_analytics/model', 'selectExportOptions',
+                        [$actionid, $istrained]);
+
+                    $icon = new \action_menu_link_secondary($url, new \pix_icon('i/export',
+                        get_string('export', 'tool_analytics')), get_string('export', 'tool_analytics'),
+                        ['data-action-id' => $actionid]);
+                    $actionsmenu->add($icon);
+                }
             }
 
             // Invalid analysables.

@@ -235,8 +235,11 @@ switch ($action) {
         break;
 
     case 'exportmodel':
+
+        $includeweights = optional_param('includeweights', 1, PARAM_INT);
+
         $zipfilename = 'model-' . $model->get_unique_id() . '-' . microtime(false) . '.zip';
-        $zipfilepath = $model->export_model($zipfilename);
+        $zipfilepath = $model->export_model($zipfilename, $includeweights);
         send_temp_file($zipfilepath, $zipfilename);
         break;
 

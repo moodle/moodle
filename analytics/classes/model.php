@@ -1414,14 +1414,15 @@ class model {
      * Exports the model data to a zip file.
      *
      * @param string $zipfilename
+     * @param bool $includeweights Include the model weights if available
      * @return string Zip file path
      */
-    public function export_model(string $zipfilename) : string {
+    public function export_model(string $zipfilename, bool $includeweights = true) : string {
 
         \core_analytics\manager::check_can_manage_models();
 
         $modelconfig = new model_config($this);
-        return $modelconfig->export($zipfilename);
+        return $modelconfig->export($zipfilename, $includeweights);
     }
 
     /**

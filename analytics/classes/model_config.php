@@ -58,9 +58,10 @@ class model_config {
      * Exports a model to a zip using the provided file name.
      *
      * @param string $zipfilename
+     * @param bool $includeweights Include the model weights if available
      * @return string
      */
-    public function export(string $zipfilename) : string {
+    public function export(string $zipfilename, bool $includeweights = true) : string {
 
         if (!$this->model) {
             throw new \coding_exception('No model object provided.');
@@ -84,7 +85,7 @@ class model_config {
         $zipfiles[self::CONFIG_FILE_NAME] = $jsonfilepath;
 
         // ML backend.
-        if ($this->model->is_trained()) {
+        if ($includeweights && $this->model->is_trained()) {
             $processor = $this->model->get_predictions_processor(true);
             $outputdir = $this->model->get_output_dir(array('execution'));
             $mlbackenddir = $processor->export($this->model->get_unique_id(), $outputdir);
