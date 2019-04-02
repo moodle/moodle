@@ -26,5 +26,12 @@ $observers = array(
         'eventname' => 'core\event\user_created',
         'callback' => '\local_report_user_logins\observer::user_created',
         'internal' => false,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'companymanager' => CAP_ALLOW,
+            'companydepartmentmanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        ),
     ),
 );

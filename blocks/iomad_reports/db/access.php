@@ -28,7 +28,12 @@ $capabilities = array(
 
     'block/iomad_reports:view' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'companymanager' => CAP_ALLOW,
+            'companydepartmentmanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        ),
     )
 );
 

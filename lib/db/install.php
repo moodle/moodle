@@ -259,6 +259,17 @@ function xmldb_main_install() {
     $guestrole          = create_role('', 'guest', '', 'guest');
     $userrole           = create_role('', 'user', '', 'user');
     $frontpagerole      = create_role('', 'frontpage', '', 'frontpage');
+    $clientadministratorid = create_role('Client Administrator', 'clientadministrator',
+                                         '(Iomad) Manages site - can create new companies and add managers etc.', 'clientadministrator');
+    $companymanagerid = create_role('Company Manager', 'companymanager',
+                                    '(Iomad) Manages individual companies - can upload users etc.', 'companymanager');
+    $companydepartmentmanagerid = create_role('Company Department Manager', 'companydepartmentmanager',
+                                              'Iomad Manages departments within companies - can upload users etc.', 'companydepartmentmanager');
+    $companycourseeditorid = create_role('Client Course Editor', 'companycourseeditor',
+                                         'Iomad Client Course Editor - can edit course content; add, delete, modify etc..', 'companycourseeditor');
+    $companycoursenoneditorid = create_role('Client Course Access', 'companycoursenoneditor',
+                                            'Iomad Client Course Access - similar to the non-editing teacher role for client admin', 'companycoursenoneditor');
+
 
     // Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
     update_capabilities('moodle');

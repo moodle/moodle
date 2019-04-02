@@ -19,25 +19,11 @@ $capabilities = array(
     'local/report_emails:view' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' => 'moodle/site:viewreports',
-    ),
-
-    'local/report_emails:resend' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'companymanager' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'companydepartmentmanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
         ),
-
-        'clonepermissionsfrom' => 'moodle/site:viewreports',
     )
 );

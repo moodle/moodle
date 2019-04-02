@@ -48,11 +48,21 @@ $capabilities = array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'companymanager' => CAP_ALLOW,
+            'companydepartmentmanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        ),
     ),
 
     'local/iomad_learningpath:manage' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'companymanager' => CAP_ALLOW,
+            'companydepartmentmanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        ),
     ),
 );
