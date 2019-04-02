@@ -680,7 +680,7 @@ class core_user {
         $fields['lastname'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
         $fields['surname'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
         $fields['email'] = array('type' => PARAM_RAW_TRIMMED, 'null' => NULL_NOT_ALLOWED);
-        $fields['emailstop'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
+        $fields['emailstop'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0);
         $fields['icq'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
         $fields['skype'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED);
         $fields['aim'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
