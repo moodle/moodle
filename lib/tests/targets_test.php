@@ -164,7 +164,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
     }
 
     /**
-     * Test valid analysable conditions.
+     * Test the conditions of a valid analysable, both common and specific to this target (course_completion).
      *
      * @dataProvider analysable_provider
      * @param mixed $courseparams Course data
@@ -217,7 +217,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
     }
 
     /**
-     * Test valid sample conditions.
+     * Test the conditions of a valid sample, both common and specific to this target (course_completion).
      *
      * @dataProvider sample_provider
      * @param int $coursestart Course start date
@@ -251,5 +251,94 @@ class core_analytics_targets_testcase extends advanced_testcase {
         $sampleid = reset($sampleids);
 
         $this->assertEquals($isvalid, $target->is_valid_sample($sampleid, $analysable));
+    }
+
+    /**
+     * Setup user, framework, competencies and course competencies.
+     */
+    protected function setup_competencies_environment() {
+        $this->resetAfterTest(true);
+        $now = time();
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $course = $dg->create_course(array('startdate' => $now - WEEKSECS, 'enddate' => $now - DAYSECS));
+        $coursenocompetencies = $dg->create_course(array('startdate' => $now - WEEKSECS, 'enddate' => $now - DAYSECS));
+
+        $u1 = $dg->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($u1->id, $coursenocompetencies->id);
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $cc1 = $lpg->create_course_competency(array('competencyid' => $c1->get('id'), 'courseid' => $course->id,
+            'ruleoutcome' => \core_competency\course_competency::OUTCOME_NONE));
+        $cc2 = $lpg->create_course_competency(array('competencyid' => $c2->get('id'), 'courseid' => $course->id,
+            'ruleoutcome' => \core_competency\course_competency::OUTCOME_EVIDENCE));
+        $cc3 = $lpg->create_course_competency(array('competencyid' => $c3->get('id'), 'courseid' => $course->id,
+            'ruleoutcome' => \core_competency\course_competency::OUTCOME_RECOMMEND));
+        $cc4 = $lpg->create_course_competency(array('competencyid' => $c4->get('id'), 'courseid' => $course->id,
+            'ruleoutcome' => \core_competency\course_competency::OUTCOME_COMPLETE));
+
+        return array(
+            'course' => $course,
+            'coursenocompetencies' => $coursenocompetencies,
+            'user' => $u1,
+            'course_competencies' => array($cc1, $cc2, $cc3, $cc4)
+        );
+    }
+
+     /**
+      * Test the specific conditions of a valid analysable for the course_competencies target.
+      */
+    public function test_core_target_course_competencies_analysable() {
+
+        $data = $this->setup_competencies_environment();
+
+        $analysable = new \core_analytics\course($data['course']);
+        $target = new \core\analytics\target\course_competencies();
+
+        $this->assertTrue($target->is_valid_analysable($analysable));
+
+        $analysable = new \core_analytics\course($data['coursenocompetencies']);
+        $this->assertEquals(get_string('nocompetenciesincourse', 'tool_lp'), $target->is_valid_analysable($analysable));
+    }
+
+    /**
+     * Test the target value calculation.
+     */
+    public function test_core_target_course_competencies_calculate() {
+
+        $data = $this->setup_competencies_environment();
+
+        $target = new \core\analytics\target\course_competencies();
+        $analyser = new \core\analytics\analyser\student_enrolments(1, $target, [], [], []);
+        $analysable = new \core_analytics\course($data['course']);
+
+        $class = new ReflectionClass('\core\analytics\analyser\student_enrolments');
+        $method = $class->getMethod('get_all_samples');
+        $method->setAccessible(true);
+
+        list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
+        $target->add_sample_data($samplesdata);
+        $sampleid = reset($sampleids);
+
+        $class = new ReflectionClass('\core\analytics\target\course_competencies');
+        $method = $class->getMethod('calculate_sample');
+        $method->setAccessible(true);
+
+        // Method calculate_sample() returns 1 when the user has not achieved all the competencies assigned to the course.
+        $this->assertEquals(1, $method->invoke($target, $sampleid, $analysable));
+
+        // Grading of all the competences assigned to the course, in such way that the user achieves them all.
+        foreach ($data['course_competencies'] as $competency) {
+            \core_competency\api::grade_competency_in_course($data['course']->id, $data['user']->id,
+                    $competency->get('competencyid'), 3, 'Unit test');
+        }
+        // Method calculate_sample() returns 0 when the user has achieved all the competencies assigned to the course.
+        $this->assertEquals(0, $method->invoke($target, $sampleid, $analysable));
     }
 }
