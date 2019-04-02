@@ -2988,5 +2988,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019041000.02);
     }
 
+    if ($oldversion < 2019041300.01) {
+        // Add the field 'name' to the 'analytics_models' table.
+        $table = new xmldb_table('analytics_models');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'trained');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2019041300.01);
+    }
+
     return true;
 }
