@@ -84,7 +84,7 @@ class models_list implements \renderable, \templatable {
 
         $data->models = array();
         foreach ($this->models as $model) {
-            $modeldata = $model->export();
+            $modeldata = $model->export($output);
 
             // Check if there is a help icon for the target to show.
             $identifier = $modeldata->target->get_identifier();

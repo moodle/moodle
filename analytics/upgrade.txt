@@ -15,6 +15,7 @@ information provided here is intended especially for developers.
   by updating the lib/db/analytics.php file and bumping the core version.
 * \core_analytics\model::execute_prediction_callbacks now returns an array with both sample's contexts
   and the prediction records.
+* \core_analytics\model::export() now expects the renderer instance as an argument.
 * Time splitting methods:
     * \core_analytics\local\time_splitting\base::append_rangeindex and
       \core_analytics\local\time_splitting\base::infer_sample_info are now marked as final and can not

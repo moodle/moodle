@@ -1438,9 +1438,10 @@ class model {
     /**
      * Exports the model data for displaying it in a template.
      *
+     * @param \renderer_base $output The renderer to use for exporting
      * @return \stdClass
      */
-    public function export() {
+    public function export(\renderer_base $output) {
 
         \core_analytics\manager::check_can_manage_models();
 
