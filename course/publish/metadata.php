@@ -46,7 +46,10 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 
-require_capability('moodle/course:publish', context_course::instance($id));
+$context = context_course::instance($courseid);
+if (empty($CFG->enablecoursepublishing) || !has_capability('moodle/course:publish', $context)) {
+    throw new moodle_exception('nopermission');
+}
 
 // Retrieve hub name and hub url.
 require_sesskey();
