@@ -26,6 +26,8 @@ namespace core\session;
 
 defined('MOODLE_INTERNAL') || die();
 
+use html_writer;
+
 /**
  * Session manager, this is the public Moodle API for sessions.
  *
@@ -55,13 +57,15 @@ class manager {
      * Note: This is intended to be called only from lib/setup.php!
      */
     public static function start() {
-        global $CFG, $DB;
+        global $CFG, $DB, $PERF;
 
         if (isset(self::$sessionactive)) {
             debugging('Session was already started!', DEBUG_DEVELOPER);
             return;
         }
 
+        // Grab the time before session lock starts.
+        $PERF->sessionlock['start'] = microtime(true);
         self::load_handler();
 
         // Init the session handler only if everything initialised properly in lib/setup.php file
@@ -82,6 +86,9 @@ class manager {
                 throw new \core\session\exception(get_string('servererror'));
             }
 
+            // Grab the time when session lock starts.
+            $PERF->sessionlock['gained'] = microtime(true);
+            $PERF->sessionlock['wait'] = $PERF->sessionlock['gained'] - $PERF->sessionlock['start'];
             self::initialise_user_session($isnewsession);
             self::$sessionactive = true; // Set here, so the session can be cleared if the security check fails.
             self::check_security();
@@ -109,6 +116,8 @@ class manager {
      * @return array perf info
      */
     public static function get_performance_info() {
+        global $CFG, $PERF;
+
         if (!session_id()) {
             return array();
         }
@@ -119,8 +128,25 @@ class manager {
 
         $info = array();
         $info['size'] = $size;
-        $info['html'] = "<span class=\"sessionsize\">Session ($handler): $size</span> ";
+        $info['html'] = html_writer::div("Session ($handler): $size", "sessionsize");
         $info['txt'] = "Session ($handler): $size ";
+
+        if (!empty($CFG->debugsessionlock)) {
+            $sessionlock = self::get_session_lock_info();
+            if (!empty($sessionlock['held'])) {
+                // The page displays the footer and the session has been closed.
+                $sessionlocktext = "Session lock held: ".number_format($sessionlock['held'], 3)." secs";
+            } else {
+                // The session hasn't yet been closed and so we assume now with microtime.
+                $sessionlockheld = microtime(true) - $PERF->sessionlock['gained'];
+                $sessionlocktext = "Session lock open: ".number_format($sessionlockheld, 3)." secs";
+            }
+            $info['txt'] .= $sessionlocktext;
+            $info['html'] .= html_writer::div($sessionlocktext, "sessionlockstart");
+            $sessionlockwaittext = "Session lock wait: ".number_format($sessionlock['wait'], 3)." secs";
+            $info['txt'] .= $sessionlockwaittext;
+            $info['html'] .= html_writer::div($sessionlockwaittext, "sessionlockwait");
+        }
 
         return $info;
     }
@@ -530,6 +556,19 @@ class manager {
      * Unblocks the sessions, other scripts may start executing in parallel.
      */
     public static function write_close() {
+        global $PERF;
+
+        if (self::$sessionactive) {
+            // Grab the time when session lock is released.
+            $PERF->sessionlock['released'] = microtime(true);
+            if (!empty($PERF->sessionlock['gained'])) {
+                $PERF->sessionlock['held'] = $PERF->sessionlock['released'] - $PERF->sessionlock['gained'];
+            }
+            $PERF->sessionlock['url'] = me();
+            self::update_recent_session_locks($PERF->sessionlock);
+            self::sessionlock_debugging();
+        }
+
         if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
             // More control over whether session data
             // is persisted or not.
@@ -1023,5 +1062,135 @@ class manager {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Get the recent session locks array.
+     *
+     * @return array Recent session locks array.
+     */
+    public static function get_recent_session_locks() {
+        global $SESSION;
+
+        if (!isset($SESSION->recentsessionlocks)) {
+            // This will hold the pages that blocks other page.
+            $SESSION->recentsessionlocks = array();
+        }
+
+        return $SESSION->recentsessionlocks;
+    }
+
+    /**
+     * Updates the recent session locks.
+     *
+     * This function will store session lock info of all the pages visited.
+     *
+     * @param array $sessionlock Session lock array.
+     */
+    public static function update_recent_session_locks($sessionlock) {
+        global $CFG, $SESSION;
+
+        if (empty($CFG->debugsessionlock)) {
+            return;
+        }
+
+        $SESSION->recentsessionlocks = self::get_recent_session_locks();
+        array_push($SESSION->recentsessionlocks, $sessionlock);
+
+        self::cleanup_recent_session_locks();
+    }
+
+    /**
+     * Reset recent session locks array if there is a 10 seconds time gap.
+     *
+     * @return array Recent session locks array.
+     */
+    public static function cleanup_recent_session_locks() {
+        global $SESSION;
+
+        $locks = self::get_recent_session_locks();
+        if (count($locks) > 2) {
+            for ($i = count($locks) - 1; $i > 0; $i--) {
+                // Calculate the gap between session locks.
+                $gap = $locks[$i]['released'] - $locks[$i - 1]['start'];
+                if ($gap >= 10) {
+                    // Remove previous locks if the gap is 10 seconds or more.
+                    $SESSION->recentsessionlocks = array_slice($locks, $i);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the page that blocks other pages at a specific timestamp.
+     *
+     * Look for a page whose lock was gained before that timestamp, and released after that timestamp.
+     *
+     * @param  float $time Time before session lock starts.
+     * @return array|null
+     */
+    public static function get_locked_page_at($time) {
+        $recentsessionlocks = self::get_recent_session_locks();
+        foreach ($recentsessionlocks as $recentsessionlock) {
+            if ($time >= $recentsessionlock['gained'] &&
+                $time <= $recentsessionlock['released']) {
+                return $recentsessionlock;
+            }
+        }
+    }
+
+    /**
+     * Display the page which blocks other pages.
+     *
+     * @return string
+     */
+    public static function display_blocking_page() {
+        global $PERF;
+
+        $page = self::get_locked_page_at($PERF->sessionlock['start']);
+        $output = "Script ".me()." was blocked for ";
+        $output .= number_format($PERF->sessionlock['wait'], 3);
+        if ($page != null) {
+            $output .= " second(s) by script: ";
+            $output .= $page['url'];
+        } else {
+            $output .= " second(s) by an unknown script.";
+        }
+
+        return $output;
+    }
+
+    /**
+     * Get session lock info of the current page.
+     *
+     * @return array
+     */
+    public static function get_session_lock_info() {
+        global $PERF;
+
+        if (!isset($PERF->sessionlock)) {
+            return null;
+        }
+        return $PERF->sessionlock;
+    }
+
+    /**
+     * Display debugging info about slow and blocked script.
+     */
+    public static function sessionlock_debugging() {
+        global $CFG, $PERF;
+
+        if (!empty($CFG->debugsessionlock)) {
+            if (isset($PERF->sessionlock['held']) && $PERF->sessionlock['held'] > $CFG->debugsessionlock) {
+                debugging("Script ".me()." locked the session for ".number_format($PERF->sessionlock['held'], 3)
+                ." seconds, it should close the session using \core\session\manager::write_close().", DEBUG_NORMAL);
+            }
+
+            if (isset($PERF->sessionlock['wait']) && $PERF->sessionlock['wait'] > $CFG->debugsessionlock) {
+                $output = self::display_blocking_page();
+                debugging($output, DEBUG_DEVELOPER);
+            }
+        }
     }
 }
