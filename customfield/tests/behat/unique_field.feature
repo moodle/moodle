@@ -1,4 +1,4 @@
-@core @core_course @core_customfield
+@core @core_course @core_customfield @javascript
 Feature: Uniqueness The course custom fields can be mandatory or not
   In order to make users required to fill a custom field
   As a manager
@@ -27,7 +27,7 @@ Feature: Uniqueness The course custom fields can be mandatory or not
       | Name        | Test field |
       | Short name  | testfield  |
       | Unique data | Yes        |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
 
   Scenario: A course custom field with unique data must not allow same data in same field in different courses
