@@ -132,7 +132,7 @@ class core_renderer extends \core_renderer {
         if ($this->should_display_main_logo($headinglevel)) {
             $sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
             return html_writer::div(html_writer::empty_tag('img', [
-                'src' => $this->get_logo_url(null, 150), 'alt' => $sitename]), 'logo');
+                'src' => $this->get_logo_url(null, 150), 'alt' => $sitename, 'class' => 'img-fluid']), 'logo');
         }
 
         return parent::context_header($headerinfo, $headinglevel);
