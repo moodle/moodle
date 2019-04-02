@@ -124,6 +124,25 @@ class core_string_manager_standard_testcase extends advanced_testcase {
         $this->assertTrue($stringman->string_exists($matches[1], $matches[2]),
             "String {$string} appearing in one of the lang/en/deprecated.txt files does not exist");
     }
+
+    /**
+     * Test for $CFG->langlist (without installation of additional languages)
+     */
+    public function test_get_list_of_translations() {
+        $this->resetAfterTest();
+        $stringman = get_string_manager();
+
+        $this->assertEquals(['en' => 'English ‎(en)‎'], $stringman->get_list_of_translations());
+
+        set_config('langlist', 'en|En');
+        get_string_manager(true);
+        $stringman = get_string_manager();
+
+        $this->assertEquals(['en' => 'En'], $stringman->get_list_of_translations());
+
+        set_config('langlist', '');
+        get_string_manager(true);
+    }
 }
 
 /**

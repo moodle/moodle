@@ -45,6 +45,8 @@ class core_string_manager_standard implements core_string_manager {
     protected $countgetstring = 0;
     /** @var bool use disk cache */
     protected $translist;
+    /** @var array language aliases to use in the language selector */
+    protected $transaliases = [];
     /** @var cache stores list of available translations */
     protected $menucache;
     /** @var array list of cached deprecated strings */
@@ -56,12 +58,14 @@ class core_string_manager_standard implements core_string_manager {
      * @param string $otherroot location of downloaded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
      * @param array $translist limit list of visible translations
+     * @param array $transaliases aliases to use for the languages in the language selector
      */
-    public function __construct($otherroot, $localroot, $translist) {
+    public function __construct($otherroot, $localroot, $translist, $transaliases = []) {
         $this->otherroot    = $otherroot;
         $this->localroot    = $localroot;
         if ($translist) {
             $this->translist = array_combine($translist, $translist);
+            $this->transaliases = $transaliases;
         } else {
             $this->translist = array();
         }
@@ -521,8 +525,8 @@ class core_string_manager_standard implements core_string_manager {
             }
             // Return only enabled translations.
             foreach ($cachedlist as $langcode => $langname) {
-                if (isset($this->translist[$langcode])) {
-                    $languages[$langcode] = $langname;
+                if (array_key_exists($langcode, $this->translist)) {
+                    $languages[$langcode] = !empty($this->transaliases[$langcode]) ? $this->transaliases[$langcode] : $langname;
                 }
             }
             return $languages;
@@ -572,7 +576,7 @@ class core_string_manager_standard implements core_string_manager {
         $languages = array();
         foreach ($cachedlist as $langcode => $langname) {
             if (isset($this->translist[$langcode])) {
-                $languages[$langcode] = $langname;
+                $languages[$langcode] = !empty($this->transaliases[$langcode]) ? $this->transaliases[$langcode] : $langname;
             }
         }
 
