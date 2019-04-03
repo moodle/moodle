@@ -226,6 +226,14 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_calendar_get_allowed_event_types' => array(
+        'classname' => 'core_calendar_external',
+        'methodname' => 'get_allowed_event_types',
+        'description' => 'Get the type of events a user can create in the given course.',
+        'classpath' => 'calendar/externallib.php',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',
