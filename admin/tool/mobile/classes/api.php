@@ -280,6 +280,15 @@ class api {
             $settings->tool_mobile_apppolicy = get_config('tool_mobile', 'apppolicy');
         }
 
+        if (empty($section) or $section == 'calendar') {
+            $settings->calendartype = $CFG->calendartype;
+            $settings->calendar_site_timeformat = $CFG->calendar_site_timeformat;
+            $settings->calendar_startwday = $CFG->calendar_startwday;
+            $settings->calendar_adminseesall = $CFG->calendar_adminseesall;
+            $settings->calendar_lookahead = $CFG->calendar_lookahead;
+            $settings->calendar_maxevents = $CFG->calendar_maxevents;
+        }
+
         return $settings;
     }
 
