@@ -70,18 +70,21 @@ class user implements \core_analytics\analysable {
      * Use self::instance() instead to get cached copies of the class. Instances obtained
      * through this constructor will not be cached.
      *
-     * Lazy load of the analysable data.
-     *
      * @param int|\stdClass $user User id
+     * @param ?\context $context
      * @return void
      */
-    public function __construct($user) {
+    public function __construct($user, ?\context $context = null) {
 
         if (is_scalar($user)) {
             $this->user = new \stdClass();
             $this->user->id = $user;
         } else {
             $this->user = $user;
+        }
+
+        if (!is_null($context)) {
+            $this->usercontext = $context;
         }
     }
 
@@ -91,9 +94,10 @@ class user implements \core_analytics\analysable {
      * Lazy load of analysable data.
      *
      * @param int|\stdClass $user User object or user id
+     * @param ?\context $context
      * @return \core_analytics\user
      */
-    public static function instance($user) {
+    public static function instance($user, ?\context $context = null) {
 
         $userid = $user;
         if (!is_scalar($userid)) {
@@ -104,7 +108,7 @@ class user implements \core_analytics\analysable {
             return self::$cachedinstance;
         }
 
-        $cachedinstance = new \core_analytics\user($user);
+        $cachedinstance = new \core_analytics\user($user, $context);
         self::$cachedinstance = $cachedinstance;
         self::$cachedid = (int)$userid;
         return self::$cachedinstance;

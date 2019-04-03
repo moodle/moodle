@@ -110,10 +110,34 @@ abstract class base {
      *
      * \core_analytics\local\analyser\by_course and \core_analytics\local\analyser\sitewide are implementing
      * this method returning site courses (by_course) and the whole system (sitewide) as analysables.
-     *
+     * @throws  \coding_exception
      * @return \core_analytics\analysable[] Array of analysable elements using the analysable id as array key.
      */
-    abstract public function get_analysables();
+    public function get_analysables() {
+        // This function should only be called from get_analysables_iterator and we keep it here until php 4.1
+        // for backwards compatibility.
+        throw new \coding_exception('This method is deprecated in favour of get_analysables_iterator.');
+    }
+
+    /**
+     * Returns the list of analysable elements available on the site.
+     *
+     * A relatively complex SQL query should be set so that we take into account which analysable elements
+     * have already been processed and the order in which they have been processed. Helper methods are available
+     * to ease to implementation of get_analysables_iterator: get_iterator_sql and order_sql.
+     *
+     * @param ?string $action 'prediction', 'training' or null if no specific action needed.
+     * @return \Iterator
+     */
+    public function get_analysables_iterator(?string $action = null) {
+
+        debugging('Please overwrite get_analysables_iterator with your own implementation, we only keep this default
+            implementation for backwards compatibility purposes with get_analysables(). note that $action param will
+            be ignored so the analysable elements will be processed using get_analysables order, regardless of the
+            last time they were processed.');
+
+        return new \ArrayIterator($this->get_analysables());
+    }
 
     /**
      * This function returns this analysable list of samples.
@@ -375,5 +399,72 @@ abstract class base {
      */
     public static function one_sample_per_analysable() {
         return false;
+    }
+
+    /**
+     * Get the sql of a default implementaion of the iterator.
+     *
+     * This method only works for analysers that return analysable elements which ids map to a context instance ids.
+     *
+     * @param  string      $tablename    The name of the table
+     * @param  int         $contextlevel The context level of the analysable
+     * @param  string|null $action
+     * @param  string|null $tablealias   The table alias
+     * @return array                     [0] => sql and [1] => params array
+     */
+    protected function get_iterator_sql(string $tablename, int $contextlevel, ?string $action = null, ?string $tablealias = null) {
+
+        if (!$tablealias) {
+            $tablealias = 'analysable';
+        }
+
+        $params = ['contextlevel' => $contextlevel, 'modelid' => $this->get_modelid()];
+        $select = $tablealias . '.*, ' . \context_helper::get_preload_record_columns_sql('ctx');
+
+        // We add the action filter on ON instead of on WHERE because otherwise records are not returned if there are existing
+        // records for another action or model.
+        $usedanalysablesjoin = ' LEFT JOIN {analytics_used_analysables} aua ON ' . $tablealias . '.id = aua.analysableid AND ' .
+            '(aua.modelid = :modelid OR aua.modelid IS NULL)';
+
+        if ($action) {
+            $usedanalysablesjoin .= " AND aua.action = :action";
+            $params = $params + ['action' => $action];
+        }
+
+        // Adding the 1 = 1 just to have the WHERE part so that all further conditions added by callers can be
+        // appended to $sql with and ' AND'.
+        $sql = 'SELECT ' . $select . '
+                  FROM {' . $tablename . '} ' . $tablealias . '
+                  ' . $usedanalysablesjoin . '
+                  JOIN {context} ctx ON (ctx.contextlevel = :contextlevel AND ctx.instanceid = ' . $tablealias . '.id)
+                  WHERE 1 = 1';
+
+        return [$sql, $params];
+    }
+
+    /**
+     * Returns the order by clause.
+     *
+     * @param  string|null $fieldname  The field name
+     * @param  string      $order      'ASC' or 'DESC'
+     * @param  string|null $tablealias The table alias of the field
+     * @return string
+     */
+    protected function order_sql(?string $fieldname = null, string $order = 'ASC', ?string $tablealias = null) {
+
+        if (!$tablealias) {
+            $tablealias = 'analysable';
+        }
+
+        if ($order != 'ASC' && $order != 'DESC') {
+            throw new \coding_exception('The order can only be ASC or DESC');
+        }
+
+        $ordersql = ' ORDER BY (CASE WHEN aua.timeanalysed IS NULL THEN 0 ELSE aua.timeanalysed END) ASC';
+        if ($fieldname) {
+            $ordersql .= ', ' . $tablealias . '.' . $fieldname .' ' . $order;
+        }
+
+        return $ordersql;
     }
 }

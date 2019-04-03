@@ -105,6 +105,19 @@ abstract class base extends \core_analytics\calculable {
     }
 
     /**
+     * Update the last analysis time on analysable processed or always.
+     *
+     * If you overwrite this method to return false the last analysis time
+     * will only be recorded in DB when the element successfully analysed. You can
+     * safely return false for lightweight targets.
+     *
+     * @return bool
+     */
+    public function always_update_analysis_time(): bool {
+        return true;
+    }
+
+    /**
      * Suggested actions for a user.
      *
      * @param \core_analytics\prediction $prediction

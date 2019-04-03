@@ -47,6 +47,14 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Only update last analysis time when analysables are processed.
+     * @return bool
+     */
+    public function always_update_analysis_time(): bool {
+        return false;
+    }
+
+    /**
      * Returns the name.
      *
      * If there is a corresponding '_help' string this will be shown as well.
@@ -100,18 +108,15 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
     }
 
     /**
-     * Discard users without courses.
+     * All users are ok.
      *
      * @param \core_analytics\analysable $analysable
      * @param mixed $fortraining
      * @return true|string
      */
     public function is_valid_analysable(\core_analytics\analysable $analysable, $fortraining = true) {
-        // We can skip this checking if we want to save db reads.
-        $courses = enrol_get_all_users_courses($analysable->get_id(), true, 'id');
-        if (!$courses) {
-            return get_string('nocourses');
-        }
+        // The calendar API used by \core_course\analytics\indicator\activities_due is already checking
+        // if the user has any courses.
         return true;
     }
 

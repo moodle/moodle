@@ -40,8 +40,8 @@ class test_analysis extends \core_analytics\analysis {
      * @return array
      */
     public function process_analysable(\core_analytics\analysable $analysable): array {
-        // A bit more than 1 second.
-        usleep(550000);
+        // Half a second.
+        usleep(500000);
         return parent::process_analysable($analysable);
     }
 }

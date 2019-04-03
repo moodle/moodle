@@ -25,7 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/../../analytics/tests/fixtures/test_target_course_level_shortname.php');
 require_once(__DIR__ . '/../../analytics/tests/fixtures/test_target_shortname.php');
+require_once(__DIR__ . '/fixtures/deprecated_analyser.php');
 require_once(__DIR__ . '/../../lib/enrollib.php');
 
 /**
@@ -119,7 +121,7 @@ class core_analytics_analysers_testcase extends advanced_testcase {
     }
 
     /**
-     * test_site_courses_analyser
+     * test_student_enrolments_analyser
      *
      * @return void
      */
@@ -174,5 +176,97 @@ class core_analytics_analysers_testcase extends advanced_testcase {
         $this->assertEquals($prevsampledata['context'], $samplesdata[$sampleid]['context']);
         $this->assertEquals($prevsampledata['course']->shortname, $samplesdata[$sampleid]['course']->shortname);
         $this->assertEquals($prevsampledata['user']->firstname, $samplesdata[$sampleid]['user']->firstname);
+    }
+
+    /**
+     * test_deprecated_analyser
+     *
+     * @return void
+     */
+    public function test_deprecated_analyser() {
+
+        $target = new test_target_shortname();
+        $analyser = new deprecated_analyser(1, $target, [], [], []);
+
+        $analysables = $analyser->get_analysables_iterator();
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * test_get_analysables_iterator description
+     *
+     * @return null
+     */
+    public function test_get_analysables_iterator() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $courses = array();
+        for ($i = 0; $i < 2; $i++) {
+            $course = $this->getDataGenerator()->create_course();
+            $analysable = new \core_analytics\course($course);
+            $courses[$analysable->get_id()] = $course;
+        }
+
+        // Check that the analysis performs as expected.
+        $modelid = 1;
+        $includetarget = false;
+
+        $target = new test_target_course_level_shortname();
+        $analyser = new \core\analytics\analyser\courses($modelid, $target, [], [], []);
+
+        $result = new \core_analytics\local\analysis\result_array($modelid, $includetarget, []);
+        $analysis = new \core_analytics\analysis($analyser, $includetarget, $result);
+        $analysis->run();
+        $params = array('modelid' => $modelid, 'action' => 'prediction');
+        $this->assertEquals(2, $DB->count_records('analytics_used_analysables', $params));
+
+        // Check that the previous records do not conflict with the includetarget == false ones.
+        $includetarget = true;
+
+        $target = new test_target_course_level_shortname();
+        $analyser = new \core\analytics\analyser\courses($modelid, $target, [], [], []);
+
+        $result = new \core_analytics\local\analysis\result_array($modelid, $includetarget, []);
+        $analysis = new \core_analytics\analysis($analyser, $includetarget, $result);
+        $analysis->run();
+        $params = array('modelid' => $modelid, 'action' => 'prediction');
+        $this->assertEquals(2, $DB->count_records('analytics_used_analysables', $params));
+        $params = array('modelid' => $modelid, 'action' => 'training');
+        $this->assertEquals(2, $DB->count_records('analytics_used_analysables', $params));
+        $params = array('modelid' => $modelid);
+        $this->assertEquals(4, $DB->count_records('analytics_used_analysables', $params));
+
+        // Check that other models' records do not conflict with previous records.
+        $prevmodelid = 1;
+        $modelid = 2;
+        $includetarget = false;
+
+        $target = new test_target_course_level_shortname();
+        $analyser = new \core\analytics\analyser\courses($modelid, $target, [], [], []);
+
+        $result = new \core_analytics\local\analysis\result_array($modelid, $includetarget, []);
+        $analysis = new \core_analytics\analysis($analyser, $includetarget, $result);
+        $analysis->run();
+        $params = array('modelid' => $prevmodelid);
+        $this->assertEquals(4, $DB->count_records('analytics_used_analysables', $params));
+        $params = array('modelid' => $modelid, 'action' => 'prediction');
+        $this->assertEquals(2, $DB->count_records('analytics_used_analysables', $params));
+        $this->assertEquals(6, $DB->count_records('analytics_used_analysables'));
+
+        $includetarget = true;
+
+        $target = new test_target_course_level_shortname();
+        $analyser = new \core\analytics\analyser\courses($modelid, $target, [], [], []);
+
+        $result = new \core_analytics\local\analysis\result_array($modelid, $includetarget, []);
+        $analysis = new \core_analytics\analysis($analyser, $includetarget, $result);
+        $analysis->run();
+        $params = array('modelid' => $prevmodelid);
+        $this->assertEquals(4, $DB->count_records('analytics_used_analysables', $params));
+        $params = array('modelid' => $modelid, 'action' => 'training');
+        $this->assertEquals(2, $DB->count_records('analytics_used_analysables', $params));
+        $this->assertEquals(8, $DB->count_records('analytics_used_analysables'));
     }
 }

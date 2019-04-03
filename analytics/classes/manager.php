@@ -565,14 +565,18 @@ class manager {
         $models = self::get_all_models();
         foreach ($models as $model) {
             $analyser = $model->get_analyser(array('notimesplitting' => true));
-            $analysables = $analyser->get_analysables();
-            if (!$analysables) {
+            $analysables = $analyser->get_analysables_iterator();
+
+            $analysableids = [];
+            foreach ($analysables as $analysable) {
+                if (!$analysable) {
+                    continue;
+                }
+                $analysableids[] = $analysable->get_id();
+            }
+            if (empty($analysableids)) {
                 continue;
             }
-
-            $analysableids = array_map(function($analysable) {
-                return $analysable->get_id();
-            }, $analysables);
 
             list($notinsql, $params) = $DB->get_in_or_equal($analysableids, SQL_PARAMS_NAMED, 'param', false);
             $params['modelid'] = $model->get_id();

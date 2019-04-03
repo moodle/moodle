@@ -307,7 +307,7 @@ class analytics_model_testcase extends advanced_testcase {
         $result = new \core_analytics\local\analysis\result_array(1, false, []);
         $analysis = new test_analysis($analyser, false, $result);
 
-        // Each analysable element takes 0.55 secs, so the max (and likely) number of analysable
+        // Each analysable element takes 0.5 secs minimum (test_analysis), so the max (and likely) number of analysable
         // elements that will be processed is 2.
         $analysis->run();
         $params = array('modelid' => 1, 'action' => 'prediction');
@@ -329,13 +329,16 @@ class analytics_model_testcase extends advanced_testcase {
             $last = $courses[$analysed->analysableid];
         }
 
+        // No time limit now to process the rest.
+        set_config('modeltimelimit', 1000, 'analytics');
+
         $analysis->run();
-        $this->assertGreaterThanOrEqual(5, $DB->count_records('analytics_used_analysables', $params));
+        $this->assertEquals(5, $DB->count_records('analytics_used_analysables', $params));
 
         // New analysable elements are immediately pulled.
         $this->getDataGenerator()->create_course();
         $analysis->run();
-        $this->assertGreaterThanOrEqual(6, $DB->count_records('analytics_used_analysables', $params));
+        $this->assertEquals(6, $DB->count_records('analytics_used_analysables', $params));
 
         // Training and prediction data do not get mixed.
         $result = new \core_analytics\local\analysis\result_array(1, false, []);

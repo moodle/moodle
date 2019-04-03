@@ -38,32 +38,36 @@ class users extends \core_analytics\local\analyser\base {
     /**
      * The site users are the analysable elements returned by this analyser.
      *
-     * @return \core_analytics\analysable[]
+     * @param ?string $action 'prediction', 'training' or null if no specific action needed.
+     * @return \Iterator
      */
-    public function get_analysables() {
+    public function get_analysables_iterator(?string $action = null) {
         global $DB, $CFG;
 
         $siteadmins = explode(',', $CFG->siteadmins);
 
-        $params = ['deleted' => 0, 'confirmed' => 1, 'suspended' => 0];
-        $users = $DB->get_records('user', $params, 'timecreated', 'id');
 
-        $analysables = array();
-        foreach ($users as $user) {
+        list($sql, $params) = $this->get_iterator_sql('user', CONTEXT_USER, $action, 'u');
 
-            if (in_array($user->id, $siteadmins) || isguestuser($user->id)) {
+        $sql .= " AND u.deleted = :deleted AND u.confirmed = :confirmed AND u.suspended = :suspended";
+        $params = $params + ['deleted' => 0, 'confirmed' => 1, 'suspended' => 0];
+
+        $ordersql = $this->order_sql('timecreated', 'ASC', 'u');
+
+        $recordset = $DB->get_recordset_sql($sql, $params);
+        if (!$recordset->valid()) {
+            $this->add_log(get_string('nousersfound'));
+        }
+
+        return new \core\dml\recordset_walk($recordset, function($record) use ($siteadmins) {
+
+            if (in_array($record->id, $siteadmins) || isguestuser($record->id)) {
                 // Skip admins and the guest user.
-                continue;
+                return false;
             }
-            $analysable = \core_analytics\user::instance($user->id);
-            $analysables[$analysable->get_id()] = $analysable;
-        }
-
-        if (empty($analysables)) {
-            $this->log[] = get_string('nousersfound');
-        }
-
-        return $analysables;
+            $context = \context_helper::preload_from_record($record);
+            return \core_analytics\user::instance($record, $context);
+        });
     }
 
     /**

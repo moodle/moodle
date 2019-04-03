@@ -83,15 +83,27 @@ class analysis {
 
         $filesbytimesplitting = array();
 
-        list($analysables, $processedanalysables) = $this->get_sorted_analysables();
+        $alreadyprocessedanalysables = $this->get_processed_analysables();
 
-        $inittime = time();
-        foreach ($analysables as $key => $analysable) {
+        if ($this->includetarget) {
+            $action = 'training';
+        } else {
+            $action = 'prediction';
+        }
+        $analysables = $this->analyser->get_analysables_iterator($action);
+
+        $inittime = microtime(true);
+        foreach ($analysables as $analysable) {
+            $processed = false;
+
+            if (!$analysable) {
+                continue;
+            }
 
             $analysableresults = $this->process_analysable($analysable);
             if ($analysableresults) {
-                $success = $this->result->add_analysable_results($analysableresults);
-                if (!$success) {
+                $processed = $this->result->add_analysable_results($analysableresults);
+                if (!$processed) {
                     $errors = array();
                     foreach ($analysableresults as $timesplittingid => $result) {
                         $str = '';
@@ -110,51 +122,18 @@ class analysis {
             }
 
             // Updated regardless of how well the analysis went.
-            $this->update_analysable_analysed_time($processedanalysables, $analysable->get_id());
+            if ($this->analyser->get_target()->always_update_analysis_time() || $processed) {
+                $this->update_analysable_analysed_time($alreadyprocessedanalysables, $analysable->get_id());
+            }
 
             // Apply time limit.
             if (!$options['evaluation']) {
-                $timespent = time() - $inittime;
+                $timespent = microtime(true) - $inittime;
                 if ($modeltimelimit <= $timespent) {
                     break;
                 }
             }
-
-            unset($analysables[$key]);
         }
-
-        return true;
-    }
-
-    /**
-     * Returns the list of analysables sorted in processing priority order.
-     *
-     * It will first return analysables that have never been analysed before
-     * and it will continue with the ones we have already seen by timeanalysed DESC
-     * order.
-     *
-     * @return array(0 => \core_analytics\analysable[], 1 => \stdClass[])
-     */
-    protected function get_sorted_analysables(): array {
-
-        $analysables = $this->analyser->get_analysables();
-
-        // Get the list of analysables that have been already processed.
-        $processedanalysables = $this->get_processed_analysables();
-
-        // We want to start processing analysables we have not yet processed and later continue
-        // with analysables that we already processed.
-        $unseen = array_diff_key($analysables, $processedanalysables);
-
-        // Var $processed first as we want to respect its timeanalysed DESC order so analysables that
-        // have recently been processed are on the bottom of the stack.
-        $seen = array_intersect_key($processedanalysables, $analysables);
-        array_walk($seen, function(&$value, $analysableid) use ($analysables) {
-            // We replace the analytics_used_analysables record by the analysable object.
-            $value = $analysables[$analysableid];
-        });
-
-        return array($unseen + $seen, $processedanalysables);
     }
 
     /**
@@ -294,7 +273,7 @@ class analysis {
             // Only when processing data for predictions.
             if (!$this->includetarget) {
                 // We also filter out samples and ranges that have already been used for predictions.
-                $this->filter_out_prediction_samples_and_ranges($sampleids, $ranges, $timesplitting);
+                $predictsamplesrecord = $this->filter_out_prediction_samples_and_ranges($sampleids, $ranges, $timesplitting);
             }
 
             if (count($sampleids) === 0) {
@@ -365,7 +344,9 @@ class analysis {
                 if ($this->includetarget) {
                     $this->save_train_samples($sampleids, $timesplitting);
                 } else {
-                    $this->save_prediction_samples($sampleids, $ranges, $timesplitting);
+                    // The variable $predictsamplesrecord will always be set as filter_out_prediction_samples_and_ranges
+                    // will always be called before it (no evaluation mode and no includetarget).
+                    $this->save_prediction_samples($sampleids, $ranges, $timesplitting, $predictsamplesrecord);
                 }
             }
 
@@ -736,21 +717,17 @@ class analysis {
      * @param int[] $sampleids
      * @param array $ranges
      * @param \core_analytics\local\time_splitting\base $timesplitting
-     * @return  null
+     * @return  \stdClass|null The analytics_predict_samples record or null
      */
     protected function filter_out_prediction_samples_and_ranges(array &$sampleids, array &$ranges,
             \core_analytics\local\time_splitting\base $timesplitting) {
-        global $DB;
 
         if (count($ranges) > 1) {
             throw new \coding_exception('$ranges argument should only contain one range');
         }
 
         $rangeindex = key($ranges);
-
-        $params = array('modelid' => $this->analyser->get_modelid(), 'analysableid' => $timesplitting->get_analysable()->get_id(),
-            'timesplitting' => $timesplitting->get_id(), 'rangeindex' => $rangeindex);
-        $predictedrange = $DB->get_record('analytics_predict_samples', $params);
+        $predictedrange = $this->get_predict_samples_record($timesplitting, $rangeindex);
 
         if (!$predictedrange) {
             // Nothing to filter out.
@@ -767,6 +744,18 @@ class analysis {
 
         // Replace the list of samples by the one excluding samples that already got predictions at this range.
         $sampleids = $missingsamples;
+
+        return $predictedrange;
+    }
+
+    private function get_predict_samples_record(\core_analytics\local\time_splitting\base $timesplitting, int $rangeindex) {
+        global $DB;
+
+        $params = array('modelid' => $this->analyser->get_modelid(), 'analysableid' => $timesplitting->get_analysable()->get_id(),
+            'timesplitting' => $timesplitting->get_id(), 'rangeindex' => $rangeindex);
+        $predictedrange = $DB->get_record('analytics_predict_samples', $params);
+
+        return $predictedrange;
     }
 
     /**
@@ -796,10 +785,11 @@ class analysis {
      * @param int[] $sampleids
      * @param array $ranges
      * @param \core_analytics\local\time_splitting\base $timesplitting
+     * @param ?\stdClass $predictsamplesrecord The existing record or null if there is no record yet.
      * @return null
      */
     protected function save_prediction_samples(array $sampleids, array $ranges,
-            \core_analytics\local\time_splitting\base $timesplitting) {
+            \core_analytics\local\time_splitting\base $timesplitting, ?\stdClass $predictsamplesrecord) {
         global $DB;
 
         if (count($ranges) > 1) {
@@ -808,20 +798,18 @@ class analysis {
 
         $rangeindex = key($ranges);
 
-        $params = array('modelid' => $this->analyser->get_modelid(), 'analysableid' => $timesplitting->get_analysable()->get_id(),
-            'timesplitting' => $timesplitting->get_id(), 'rangeindex' => $rangeindex);
-        if ($predictionrange = $DB->get_record('analytics_predict_samples', $params)) {
+        if ($predictsamplesrecord) {
             // Append the new samples used for prediction.
-            $prevsamples = json_decode($predictionrange->sampleids, true);
-            $predictionrange->sampleids = json_encode($prevsamples + $sampleids);
-            $predictionrange->timemodified = time();
-            $DB->update_record('analytics_predict_samples', $predictionrange);
+            $predictsamplesrecord->sampleids = json_encode($predictsamplesrecord->sampleids + $sampleids);
+            $predictsamplesrecord->timemodified = time();
+            $DB->update_record('analytics_predict_samples', $predictsamplesrecord);
         } else {
-            $predictionrange = (object)$params;
-            $predictionrange->sampleids = json_encode($sampleids);
-            $predictionrange->timecreated = time();
-            $predictionrange->timemodified = $predictionrange->timecreated;
-            $DB->insert_record('analytics_predict_samples', $predictionrange);
+            $predictsamplesrecord = (object)['modelid' => $this->analyser->get_modelid(), 'analysableid' => $timesplitting->get_analysable()->get_id(),
+                'timesplitting' => $timesplitting->get_id(), 'rangeindex' => $rangeindex];
+            $predictsamplesrecord->sampleids = json_encode($sampleids);
+            $predictsamplesrecord->timecreated = time();
+            $predictsamplesrecord->timemodified = $predictsamplesrecord->timecreated;
+            $DB->insert_record('analytics_predict_samples', $predictsamplesrecord);
         }
     }
 
