@@ -1352,7 +1352,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
     }
 
     // Capability must exist.
-    if (!during_initial_install() && !$capinfo = get_capability_info($capability)) {
+    if (!$capinfo = get_capability_info($capability)) {
         throw new coding_exception("Capability '{$capability}' was not found! This has to be fixed in code.");
     }
 
@@ -2127,8 +2127,8 @@ function get_default_role_archetype_allows($type, $archetype) {
             'frontpage'      => array(),
             'companymanager'           => array(),
             'companydepartmentmanager' => array(),
-            'companycourseeditor'      => array(),
-            'companycoursenoneditor'   => array(),
+            'companycourseeditor'      => array('companycoursenoneditor', 'student', 'guest'),
+            'companycoursenoneditor'   => array('student', 'guest'),
             'clientadministrator'      => array(),
         ),
         'view' => array(
@@ -2140,6 +2140,11 @@ function get_default_role_archetype_allows($type, $archetype) {
             'guest'          => array(),
             'user'           => array(),
             'frontpage'      => array(),
+            'companymanager'           => array(),
+            'companydepartmentmanager' => array(),
+            'companycourseeditor'      => array(),
+            'companycoursenoneditor'   => array(),
+            'clientadministrator'      => array(),
         ),
     );
 
