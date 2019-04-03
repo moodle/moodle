@@ -26,79 +26,107 @@
     * none
 
     Context variables required for this template:
-    * none
+    * models: array - list of models to display
+        - name: object - data for the inplace editable element template
+        - target: string - name of the target associated with the model
+        - targetclass: string - fully qualified name of the target class
+        - targethelp: object - data for the help tooltip template
+        - enabled: bool - is the model enabled
+        - indicators: array - list of indicators used by the model
+            + name: string - name of the indicator
+            + help: object - data for the help tooltip template
+        - insights: object - data for the single select template
+        - noinsights: string - text to display instead of insights
+    * warnings: array - list of data for notification warning template
+    * infos: array - list of data for notification info template
+    * createmodelurl: string - URL to create a new model
+    * importmodelurl: string - URL to import a model
 
     Example context (json):
     {
         "models": [
             {
+                "name": {
+                    "component": "local_analyticsdemo",
+                    "itemtype": "modelname",
+                    "itemid": 42,
+                    "displayvalue": "Prevent devs at risk",
+                    "value": ""
+                },
                 "target": "Prevent devs at risk",
-                "targethelp": [
-                    {
-                        "title": "Help with something",
-                        "url": "http://example.org/help",
-                        "linktext": "",
-                        "icon":{
-                            "extraclasses": "iconhelp",
-                            "attributes": [
-                                {"name": "src", "value": "../../../pix/help.svg"},
-                                {"name": "alt", "value": "Help icon"}
-                            ]
-                        }
+                "targetclass": "\\local_analyticsdemo\\analytics\\target\\dev_risk",
+                "targethelp": {
+                    "title": "Help with Prevent devs at risk",
+                    "text": "This target blah blah ...",
+                    "url": "http://example.org/help",
+                    "linktext": "",
+                    "icon": {
+                        "extraclasses": "iconhelp",
+                        "attributes": [
+                            {"name": "src", "value": "../../../pix/help.svg"},
+                            {"name": "alt", "value": "Help icon"}
+                        ]
                     }
-                ],
+                },
                 "enabled": 1,
-                "indicators": [{
-                    "name": "Indicator 1",
-                    "help": [{
-                            "title": "Help with something",
+                "indicators": [
+                    {
+                        "name": "Indicator 1",
+                        "help": {
+                            "text": "This indicator blah blah ...",
+                            "title": "Help with Indicator 1",
                             "url": "http://example.org/help",
                             "linktext": "",
-                            "icon":{
+                            "icon": {
                                 "extraclasses": "iconhelp",
                                 "attributes": [
                                     {"name": "src", "value": "../../../pix/help.svg"},
                                     {"name": "alt", "value": "Help icon"}
                                 ]
                             }
-                        }]
+                        }
                     },
                     {
-                    "name": "Indicator 2",
-                    "help": [{
-                            "title": "Help with something",
+                        "name": "Indicator 2",
+                        "help": {
+                            "text": "This indicator blah blah ...",
+                            "title": "Help with Indicator 2",
                             "url": "http://example.org/help",
                             "linktext": "",
-                            "icon":{
+                            "icon": {
                                 "extraclasses": "iconhelp",
                                 "attributes": [
                                     {"name": "src", "value": "../../../pix/help.svg"},
                                     {"name": "alt", "value": "Help icon"}
                                 ]
                             }
-                        }]
-                    }],
-                "timesplitting": "Quarters",
-                "timesplittinghelp": [
-                    {
-                        "title": "Help with something",
-                        "url": "http://example.org/help",
-                        "linktext": "",
-                        "icon":{
-                            "extraclasses": "iconhelp",
-                            "attributes": [
-                                {"name": "src", "value": "../../../pix/help.svg"},
-                                {"name": "alt", "value": "Help icon"}
-                            ]
                         }
                     }
                 ],
+                "timesplitting": "Quarters",
+                "timesplittinghelp": {
+                    "text": "This time splitting methof blah blah ...",
+                    "title": "Help with Quarters",
+                    "url": "http://example.org/help",
+                    "linktext": "",
+                    "icon": {
+                        "extraclasses": "iconhelp",
+                        "attributes": [
+                            {"name": "src", "value": "../../../pix/help.svg"},
+                            {"name": "alt", "value": "Help icon"}
+                        ]
+                    }
+                },
                 "noinsights": "No insights available yet"
             }
         ],
-        "warnings": {
-            "message": "Hey, this is a warning"
-        }
+        "warnings": [
+            {
+                "message": "Be ware, this is just an example!"
+            }
+        ],
+        "createmodelurl": "#",
+        "importmodelurl": "#"
     }
 }}
 
