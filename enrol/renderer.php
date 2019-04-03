@@ -353,7 +353,8 @@ class course_enrolment_table extends html_table implements renderable {
      * @var array
      */
     protected static $sortablefields = array('firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic', 'middlename',
-            'alternatename', 'idnumber', 'email', 'phone1', 'phone2', 'institution', 'department', 'lastaccess', 'lastcourseaccess' );
+            'alternatename', 'username', 'idnumber', 'email', 'phone1', 'phone2',
+            'institution', 'department', 'lastaccess', 'lastcourseaccess');
 
     /**
      * Constructs the table
