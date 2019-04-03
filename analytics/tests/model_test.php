@@ -438,6 +438,63 @@ class analytics_model_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the implementation of {@link \core_analytics\model::inplace_editable_name()}.
+     */
+    public function test_inplace_editable_name() {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $output = new \core_renderer($PAGE, RENDERER_TARGET_GENERAL);
+
+        // Check as a user with permission to edit the name.
+        $this->setAdminUser();
+        $ie = $this->model->inplace_editable_name();
+        $this->assertInstanceOf(\core\output\inplace_editable::class, $ie);
+        $data = $ie->export_for_template($output);
+        $this->assertEquals('core_analytics', $data['component']);
+        $this->assertEquals('modelname', $data['itemtype']);
+
+        // Check as a user without permission to edit the name.
+        $this->setGuestUser();
+        $ie = $this->model->inplace_editable_name();
+        $this->assertInstanceOf(\core\output\inplace_editable::class, $ie);
+        $data = $ie->export_for_template($output);
+        $this->assertArrayHasKey('displayvalue', $data);
+    }
+
+    /**
+     * Test how the models present themselves in the UI and that they can be renamed.
+     */
+    public function test_get_name_and_rename() {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $output = new \core_renderer($PAGE, RENDERER_TARGET_GENERAL);
+
+        // By default, the model exported for template uses its target's name in the name inplace editable element.
+        $this->assertEquals($this->model->get_name(), $this->model->get_target()->get_name());
+        $data = $this->model->export($output);
+        $this->assertEquals($data->name['displayvalue'], $this->model->get_target()->get_name());
+        $this->assertEquals($data->name['value'], '');
+
+        // Rename the model.
+        $this->model->rename('Nějaký pokusný model');
+        $this->assertEquals($this->model->get_name(), 'Nějaký pokusný model');
+        $data = $this->model->export($output);
+        $this->assertEquals($data->name['displayvalue'], 'Nějaký pokusný model');
+        $this->assertEquals($data->name['value'], 'Nějaký pokusný model');
+
+        // Undo the renaming.
+        $this->model->rename('');
+        $this->assertEquals($this->model->get_name(), $this->model->get_target()->get_name());
+        $data = $this->model->export($output);
+        $this->assertEquals($data->name['displayvalue'], $this->model->get_target()->get_name());
+        $this->assertEquals($data->name['value'], '');
+    }
+
+    /**
      * Generates a model log record.
      */
     private function add_fake_log() {

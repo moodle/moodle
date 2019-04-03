@@ -125,7 +125,7 @@ class invalid_analysables implements \renderable, \templatable {
 
         // Prepare the context object.
         $data = new \stdClass();
-        $data->modelname = $this->model->get_target()->get_name();
+        $data->modelname = $this->model->get_name();
 
         if ($this->page > 0) {
             $prev = clone $PAGE->url;

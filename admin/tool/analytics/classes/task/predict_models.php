@@ -65,7 +65,7 @@ class predict_models extends \core\task\scheduled_task {
             \tool_analytics\output\helper::reset_page();
 
             if ($result) {
-                echo $OUTPUT->heading(get_string('modelresults', 'tool_analytics', $model->get_target()->get_name()));
+                echo $OUTPUT->heading(get_string('modelresults', 'tool_analytics', $model->get_name()));
                 $renderer = $PAGE->get_renderer('tool_analytics');
                 echo $renderer->render_get_predictions_results(false, array(), $result, $model->get_analyser()->get_logs());
             }

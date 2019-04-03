@@ -96,6 +96,7 @@ $string['loginfo'] = 'Log extra info';
 $string['missingmoodleversion'] = 'Imported file does not define a moodle version number';
 $string['modelid'] = 'Model ID';
 $string['modelinvalidanalysables'] = 'Invalid analysable elements for "{$a}" model';
+$string['modelname'] = 'Model name';
 $string['modelresults'] = '{$a} results';
 $string['modeltimesplitting'] = 'Time splitting';
 $string['nextpage'] = 'Next page';
