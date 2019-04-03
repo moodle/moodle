@@ -829,65 +829,6 @@ abstract class moodle_database {
     }
 
     /**
-     * Get the SELECT SQL to preload columns for the specified fieldlist and table alias.
-     *
-     * This function is intended to be used in combination with get_preload_columns_sql and extract_from_fields.
-     *
-     * @param   array       $fieldlist The list of fields from get_preload_columns
-     * @param   string      $tablealias The table alias used in the FROM/JOIN field
-     * @return  string      The SQL to use in the SELECT
-     */
-    public function get_preload_columns_sql(array $fieldlist, string $tablealias) : string {
-        return implode(', ', array_map(function($fieldname, $alias) use ($tablealias) {
-            return "{$tablealias}.{$fieldname} AS {$alias}";
-        }, $fieldlist, array_keys($fieldlist)));
-    }
-
-    /**
-     * Extract fields from the specified data.
-     * The fields are removed from the original object.
-     *
-     * This function is intended to be used in combination with get_preload_columns and get_preload_columns_sql.
-     *
-     * @param   array       $fieldlist The list of fields from get_preload_columns
-     * @param   \stdClass   $data The data retrieved from the database with fields to be extracted
-     * @return  string      The SQL to use in the SELECT
-     */
-    public function extract_fields_from_object(array $fieldlist, \stdClass $data) : \stdClass {
-        $newdata = (object) [];
-        foreach ($fieldlist as $alias => $fieldname) {
-            if (property_exists($data, $alias)) {
-                $newdata->$fieldname = $data->$alias;
-                unset($data->$alias);
-            } else {
-                debugging("Field '{$fieldname}' not found", DEBUG_DEVELOPER);
-            }
-        }
-
-        return $newdata;
-    }
-
-    /**
-     * Get the preload columns for the specified table and use the specified prefix in the column alias.
-     *
-     * This function is intended to be used in combination with get_preload_columns_sql and extract_from_fields.
-     *
-     * @param   string      $table
-     * @param   string      $prefix
-     * @return  array       The list of columns in a table. The array key is the column name with an applied prefix.
-     */
-    public function get_preload_columns(string $table, string $prefix) : array {
-        global $DB;
-
-        $fields = [];
-        foreach (array_keys($this->get_columns($table)) as $fieldname) {
-            $fields["{$prefix}{$fieldname}"] = $fieldname;
-        }
-
-        return $fields;
-    }
-
-    /**
      * Converts short table name {tablename} to the real prefixed table name in given sql.
      * @param string $sql The sql to be operated on.
      * @return string The sql with tablenames being prefixed with $CFG->prefix

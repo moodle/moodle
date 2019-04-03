@@ -27,6 +27,7 @@ namespace mod_forum\local\vaults\preprocessors;
 defined('MOODLE_INTERNAL') || die();
 
 use moodle_database;
+use core\dml\table as dml_table;
 
 /**
  * Extract record vault preprocessor.
@@ -38,24 +39,17 @@ use moodle_database;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class extract_record {
-    /** @var moodle_database $db A moodle database */
-    private $db;
-    /** @var string $table The table name where the records were loaded from */
+    /** @var \core\dml\table $table The table object relating to the table that the records were loaded from */
     private $table;
-    /** @var string $alias The table alias used as the record property prefix */
-    private $alias;
 
     /**
      * Constructor.
      *
-     * @param moodle_database $db A moodle database
      * @param string $table The table name where the records were loaded from
      * @param string $alias The table alias used as the record property prefix
      */
-    public function __construct(moodle_database $db, string $table, string $alias) {
-        $this->db = $db;
-        $this->table = $table;
-        $this->alias = $alias;
+    public function __construct(string $table, string $alias) {
+        $this->table = new dml_table($table, $alias, $alias);
     }
 
     /**
@@ -66,11 +60,8 @@ class extract_record {
      * @return stdClass[] The extracted records
      */
     public function execute(array $records) : array {
-        $db = $this->db;
-        $fields = $this->db->get_preload_columns($this->table, $this->alias);
-
-        return array_map(function($record) use ($db, $fields) {
-            return $db->extract_fields_from_object($fields, $record);
+        return array_map(function($record) {
+            return $this->table->extract_from_result($record);
         }, $records);
     }
 }
