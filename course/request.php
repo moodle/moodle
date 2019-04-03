@@ -53,7 +53,7 @@ require_capability('moodle/course:request', $context);
 
 // Set up the form.
 $data = course_request::prepare();
-$requestform = new course_request_form($url, compact('editoroptions'));
+$requestform = new course_request_form($url);
 $requestform->set_data($data);
 
 $strtitle = get_string('courserequest');
