@@ -199,9 +199,7 @@ class redis extends handler {
                 $logstring = "Failed to connect (try {$counter} out of {$maxnumberofretries}) to redis ";
                 $logstring .= "at {$this->host}:{$this->port}, error returned was: {$e->getMessage()}";
 
-                // @codingStandardsIgnoreStart
-                error_log($logstring);
-                // @codingStandardsIgnoreEnd
+                debugging($logstring);
             }
 
             $counter++;
@@ -211,7 +209,9 @@ class redis extends handler {
         }
 
         // We have exhausted our retries, time to give up.
-        return false;
+        if (isset($logstring)) {
+            throw new RedisException($logstring);
+        }
     }
 
     /**
