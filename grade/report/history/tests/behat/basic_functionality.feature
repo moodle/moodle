@@ -61,7 +61,7 @@ Feature: A teacher checks the grade history report in a course
     # Test filtering by student.
     And I press "Select users"
     And I set the field with xpath "//form/input[@class='usp-search-field']" to "Student 1"
-    And I press "Search"
+    And I click on "Search" "button" in the "//div[@class='usp-search']" "xpath_element"
     And I set the field with xpath "//div[@class='usp-checkbox']/input" to "1"
     And I press "Finish selecting users"
     And I press "Submit"
