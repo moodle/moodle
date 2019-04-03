@@ -72,25 +72,6 @@ class tool_generator_testplan_backend extends tool_generator_backend {
     }
 
     /**
-     * Gets the list of courses that can be used used to generate a test.
-     *
-     * @return array The list of options as courseid => name
-     */
-    public static function get_course_options() {
-        $courses = get_courses('all', 'c.sortorder ASC', 'c.id, c.shortname, c.fullname');
-        if (!$courses) {
-            print_error('error_nocourses', 'tool_generator');
-        }
-
-        $options = array();
-        unset($courses[1]);
-        foreach ($courses as $course) {
-            $options[$course->id] = $course->fullname . '(' . $course->shortname . ')';
-        }
-        return $options;
-    }
-
-    /**
      * Getter for moodle-performance-comparison project URL.
      *
      * @return string

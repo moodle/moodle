@@ -1,0 +1,6 @@
+This files describes API changes in core libraries and APIs,
+information provided here is intended especially for developers.
+
+=== 3.7 ===
+
+* Function tool_generator_testplan_backend::get_course_options() is removed, the 'course' form element is used instead.
