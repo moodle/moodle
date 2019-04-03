@@ -464,6 +464,7 @@ $string['privacy:metadata:forum_posts:parent'] = 'The parent post that was repli
 $string['privacy:metadata:forum_posts:subject'] = 'The subject of the forum post.';
 $string['privacy:metadata:forum_posts:totalscore'] = 'The message of the forum post.';
 $string['privacy:metadata:forum_posts:userid'] = 'The ID of the user who authored the forum post.';
+$string['privacy:metadata:forum_posts:privatereplyto'] = 'The ID of the user this reply was sent to.';
 $string['privacy:metadata:forum_queue'] = 'Temporary log of posts that will be mailed in digest form';
 $string['privacy:metadata:forum_queue:discussionid'] = 'Forum discussion ID';
 $string['privacy:metadata:forum_queue:postid'] = 'Forum post ID';

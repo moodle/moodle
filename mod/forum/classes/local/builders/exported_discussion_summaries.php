@@ -81,22 +81,21 @@ class exported_discussion_summaries {
      * @param legacy_data_mapper_factory $legacydatamapperfactory Legacy data mapper factory
      * @param exporter_factory $exporterfactory Exporter factory
      * @param vault_factory $vaultfactory Vault factory
-     * @param rating_manager $ratingmanager Rating manager
+     * @param manager_factory $managerfactory Manager factory
      */
     public function __construct(
         renderer_base $renderer,
         legacy_data_mapper_factory $legacydatamapperfactory,
         exporter_factory $exporterfactory,
         vault_factory $vaultfactory,
-        manager_factory $managerfactory,
-        rating_manager $ratingmanager
+        manager_factory $managerfactory
     ) {
         $this->renderer = $renderer;
         $this->legacydatamapperfactory = $legacydatamapperfactory;
         $this->exporterfactory = $exporterfactory;
         $this->vaultfactory = $vaultfactory;
         $this->managerfactory = $managerfactory;
-        $this->ratingmanager = $ratingmanager;
+        $this->ratingmanager = $managerfactory->get_rating_manager();
     }
 
     /**

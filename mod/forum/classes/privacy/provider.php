@@ -96,6 +96,7 @@ class provider implements
             'subject' => 'privacy:metadata:forum_posts:subject',
             'message' => 'privacy:metadata:forum_posts:message',
             'userid' => 'privacy:metadata:forum_posts:userid',
+            'privatereplyto' => 'privacy:metadata:forum_posts:privatereplyto',
         ], 'privacy:metadata:forum_posts');
 
         // The 'forum_queue' table contains user data, but it is only a temporary cache of other data.

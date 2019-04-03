@@ -105,8 +105,7 @@ class builder {
             $this->legacydatamapperfactory,
             $this->exporterfactory,
             $this->vaultfactory,
-            $this->managerfactory,
-            $this->managerfactory->get_rating_manager()
+            $this->managerfactory
         );
     }
 }

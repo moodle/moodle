@@ -163,17 +163,20 @@ class forum extends db_table_vault {
      * @return forum_entity|null
      */
     public function get_from_post_id(int $id) : ?forum_entity {
-        $db = $this->get_db();
         $alias = $this->get_table_alias();
-        $tablefields = $db->get_preload_columns(self::TABLE, $alias);
-        $coursemodulefields = $db->get_preload_columns('course_modules', 'cm_');
-        $coursefields = $db->get_preload_columns('course', 'c_');
+        $thistable = new dml_table(self::TABLE, $alias, $alias);
+        $coursemoduletable = new dml_table('course_modules', 'cm', 'cm_');
+        $coursetable = new dml_table('course', 'c', 'c_');
+
+        $tablefields = $thistable->get_field_select();
+        $coursemodulefields = $coursemoduletable->get_field_select();
+        $coursefields = $coursetable->get_field_select();
 
         $fields = implode(', ', [
-            $db->get_preload_columns_sql($tablefields, $alias),
+            $tablefields,
             context_helper::get_preload_record_columns_sql('ctx'),
-            $db->get_preload_columns_sql($coursemodulefields, 'cm'),
-            $db->get_preload_columns_sql($coursefields, 'c'),
+            $coursemodulefields,
+            $coursefields,
         ]);
 
         $tables = "{forum_posts} p";

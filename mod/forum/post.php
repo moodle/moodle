@@ -85,7 +85,6 @@ if (!isloggedin() or isguestuser()) {
         }
     }
 
-    $capabilitymanager = $managerfactory->get_capability_manager($forumentity);
     $forum = $forumdatamapper->to_legacy_object($forumentity);
     $modcontext = $forumentity->get_context();
     $course = $forumentity->get_course_record();

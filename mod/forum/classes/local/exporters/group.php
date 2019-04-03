@@ -26,7 +26,6 @@ namespace mod_forum\local\exporters;
 
 defined('MOODLE_INTERNAL') || die();
 
-use mod_forum\local\entities\author as author_entity;
 use core\external\exporter;
 use renderer_base;
 use stdClass;
