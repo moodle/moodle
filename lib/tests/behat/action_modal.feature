@@ -26,13 +26,14 @@ Feature: Close modals by clicking outside them
   @javascript
   Scenario: The popup closes when clicked on dead space - Modal
     Given I log in as "admin"
-    And I am on site homepage
-    And I click on "Calendar" "link"
-    And I click on "New event" "button"
+    And I follow "This month"
+    And I press "New event"
     When I click on "[data-region='modal-container']" "css_element"
     # The modal does not close becaue it contains a form.
     Then ".modal-backdrop" "css_element" should be visible
-    And ".modal-content" "css_element" should be visible
+    # Confirm that the contents of the new calendar event modal are visible.
+    And I should see "New event" in the ".modal-title" "css_element"
+    And I should see "Event title" in the ".modal-body" "css_element"
 
   @javascript
   Scenario: The popup help closes when clicked
