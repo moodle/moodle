@@ -2010,5 +2010,49 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030103, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030104) {
+
+       // Create new Company reporter role.
+        if (!$companyreporter = $DB->get_record( 'role', array( 'shortname' => 'companyreporter') )) {
+            $companyreporterid = create_role( 'Company Report Only', 'companyreporter',
+            '(Iomad) Access to company reports only..', 'companyreporter');
+        } else {
+            $companyreporterid = $companyreporter->id;
+        }
+
+        // If not done already, allow assignment at system context.
+        $levels = get_role_contextlevels( $companyreporterid );
+        if (empty($levels)) {
+            $level = new stdClass;
+            $level->roleid = $companyreporterid;
+            $level->contextlevel = CONTEXT_SYSTEM;
+            $DB->insert_record( 'role_context_levels', $level );
+        }
+
+        update_capabilities('companyreporter');
+
+       // Create new Client reporter role.
+        if (!$clientreporter = $DB->get_record( 'role', array( 'shortname' => 'clientreporter') )) {
+            $clientreporterid = create_role( 'Client Report Only', 'clientreporter',
+            '(Iomad) CLient access to all company reports only..', 'clientreporter');
+        } else {
+            $clientreporterid = $clientreporter->id;
+        }
+
+        // If not done already, allow assignment at system context.
+        $levels = get_role_contextlevels( $clientreporterid );
+        if (empty($levels)) {
+            $level = new stdClass;
+            $level->roleid = $clientreporterid;
+            $level->contextlevel = CONTEXT_SYSTEM;
+            $DB->insert_record( 'role_context_levels', $level );
+        }
+
+        update_capabilities('clientreporter');
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030104, 'local', 'iomad');
+    }
+
     return $result;
 }

@@ -269,6 +269,10 @@ function xmldb_main_install() {
                                          'Iomad Client Course Editor - can edit course content; add, delete, modify etc..', 'companycourseeditor');
     $companycoursenoneditorid = create_role('Client Course Access', 'companycoursenoneditor',
                                             'Iomad Client Course Access - similar to the non-editing teacher role for client admin', 'companycoursenoneditor');
+    $clientreporterid = create_role('Client Repoter Only', 'companyreporter',
+                                            'Iomad Client Report Only  - Similar to the client admin roles but allows for access to the reports only', 'clientreporter');
+    $companyreporter = create_role('Compny Reporter Only', 'companyreporter',
+                                            'Iomad Company Report Only - similar to the company manager role but allows for access to the company reports only', 'companyreporter');
 
 
     // Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
@@ -294,6 +298,13 @@ function xmldb_main_install() {
     set_role_contextlevels($studentrole,        get_default_contextlevels('student'));
     set_role_contextlevels($guestrole,          get_default_contextlevels('guest'));
     set_role_contextlevels($userrole,           get_default_contextlevels('user'));
+    set_role_contextlevels($clientadministratorid,           get_default_contextlevels('clientadministrator'));
+    set_role_contextlevels($companymanagerid,           get_default_contextlevels('companymanager'));
+    set_role_contextlevels($companydepartmentmanagerid,           get_default_contextlevels('companydepartmentmanager'));
+    set_role_contextlevels($companycourseeditorid,           get_default_contextlevels('companycourseeditor'));
+    set_role_contextlevels($companycoursenoneditorid,           get_default_contextlevels('companycoursenoneditor'));
+    set_role_contextlevels($clientreporterid,           get_default_contextlevels('clientreporter'));
+    set_role_contextlevels($companyreporterid,           get_default_contextlevels('companyreporter'));
 
     // Init theme and JS revisions
     set_config('themerev', time());

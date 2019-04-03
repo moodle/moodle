@@ -32,7 +32,9 @@ $capabilities = array(
         'archetypes' => array(
             'companymanager' => CAP_ALLOW,
             'companydepartmentmanager' => CAP_ALLOW,
-            'clientadministrator' => CAP_ALLOW
+            'clientadministrator' => CAP_ALLOW,
+            'clientreporter' => CAP_ALLOW,
+            'companyreporter' => CAP_ALLOW
         ),
     )
 );

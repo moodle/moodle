@@ -268,6 +268,16 @@ class company_user {
         global $DB;
         // This function consists of code copied from uploaduser.php.
 
+        // Did we get passed a user id?
+        if (!is_object($user)) {
+            $userrec = $DB->get_record('user', array('id' => $user));
+            $user = $userrec;
+        }
+        // Did we get passed a single course id?
+        if (is_int($courseids)) {
+            $courseids = array($courseids);
+        }
+
         $today = time();
         $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 
@@ -346,6 +356,16 @@ class company_user {
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $isstudent = false;
+
+        // Did we get passed a user id?
+        if (!is_object($user)) {
+            $userrec = $DB->get_record('user', array('id' => $user));
+            $user = $userrec;
+        }
+        // Did we get passed a single course id?
+        if (is_int($courseids)) {
+            $courseids = array($courseids);
+        }
 
         foreach ($courseids as $courseid) {
             $roles = get_user_roles(context_course::instance($courseid), $user->id, false);

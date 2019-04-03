@@ -142,6 +142,26 @@ $capabilities = array(
         ),
     ),
 
+    'block/iomad_company_admin:assign_company_reporter' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'companymanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_company_admin:view_my_company_email' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'companymanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
     'block/iomad_company_admin:company_add' => array(
 
         'captype' => 'write',
@@ -204,7 +224,8 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
-            'clientadministrator' => CAP_ALLOW
+            'clientadministrator' => CAP_ALLOW,
+            'clientreporter' => CAP_ALLOW
         ),
     ),
 

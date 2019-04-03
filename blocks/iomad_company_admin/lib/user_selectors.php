@@ -717,6 +717,8 @@ class current_department_user_selector extends user_selector_base {
                 $groupname = get_string('companymanagers', 'block_iomad_company_admin');
             } else if ($this->roletype == 3) {
                 $groupname = get_string('curusers', 'block_iomad_company_admin');
+            } else if ($this->roletype == 4) {
+                $groupname = get_string('companyreporters', 'block_iomad_company_admin');
             }
         }
 

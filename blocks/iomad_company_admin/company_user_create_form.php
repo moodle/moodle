@@ -105,64 +105,10 @@ if ($mform->is_cancelled()) {
 
     $systemcontext = context_system::instance();
 
-    $companycourseeditorrole = $DB->get_record('role', array('shortname' => 'companycourseeditor'));
-    $companycoursenoneditorrole = $DB->get_record('role', array('shortname' => 'companycoursenoneditor'));
-
     // Check if we are assigning a different role to the user.
-    if (!empty($data->managertype)) {
-        if ($CFG->iomad_autoenrol_managers) {
-            $data->educator = 1;
-        }
-        if ($data->managertype == 2) {
-            // Assign the department manager role.
-            $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'companydepartmentmanager'));
-            role_assign($departmentmanagerrole->id, $userid, $systemcontext->id);
-        } else if ($data->managertype == 1) {
-            // Assign the user as a company manager.
-            $companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'));
-            // Give them the manager role.
-            role_assign($companymanagerrole->id, $userid, $systemcontext->id);
-        }
+    if (!empty($data->managertype || !empty($data->educator))) {
+        company::upsert_company_user($userid, $companyid, $data->userdepartment, $data->managertype, $data->educator);
     }
-
-    if (!empty($data->educator)) {
-        if ($companycourses = $DB->get_records('company_course', array('companyid' => $companyid))) {
-            foreach ($companycourses as $companycourse) {
-                if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
-                    //if its a licensed course - skip it.
-                    if ($DB->record_exists('iomad_courses', array ('licensed' => 1,
-                                                                   'courseid' => $companycourse->courseid))) {
-                        continue;
-                    }
-                    // If it's not a shared course - assign the editor type role.
-                    if ($DB->record_exists('iomad_courses', array ('shared' => 0,
-                                                                   'courseid' => $companycourse->courseid))) {
-                        company_user::enrol($user,
-                                             array($companycourse->courseid),
-                                             $companycourse->companyid,
-                                             $companycourseeditorrole->id);
-                    } else {
-                         company_user::enrol($user,
-                                             array($companycourse->courseid),
-                                             $companycourse->companyid,
-                                             $companycoursenoneditorrole->id);
-                    }
-                }
-            }
-        }
-    }
-
-    // Create an event for this.
-    $managertypes = $company->get_managertypes();
-    $eventother = array('companyname' => $company->get_name(),
-                        'companyid' => $company->id,
-                        'usertype' => $data->managertype,
-                        'usertypename' => $managertypes[$data->managertype]);
-    $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
-                                                                                  'objectid' => $company->id,
-                                                                                  'userid' => $user->id,
-                                                                                  'other' => $eventother));
-    $event->trigger();
 
     // Assign the user to the default company department.
     $parentnode = company::get_company_parentnode($companyid);

@@ -21,7 +21,8 @@ $capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
-            'clientadministrator' => CAP_ALLOW
+            'clientadministrator' => CAP_ALLOW,
+            'clientreporter' => CAP_ALLOW,
         ),
     )
 );

@@ -178,6 +178,12 @@ class user_edit_form extends \moodleform {
             }
             $managerarray['1'] = get_string('companymanager', 'block_iomad_company_admin');
         }
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $systemcontext)) {
+            if (empty($managearray)) {
+                $managerarray['0'] = get_string('user', 'block_iomad_company_admin');
+            }
+            $managerarray['4'] = get_string('companyreporter', 'block_iomad_company_admin');
+        }
         if (!empty($managerarray)) {
             $mform->addElement('select', 'managertype', get_string('managertype', 'block_iomad_company_admin'), $managerarray, 0);
         } else {
