@@ -846,14 +846,29 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
             throw new Exception('Array key (eid) missing from 3rd param of grade_edit_tree_column_select::get_category_cell($category, $levelclass, $params)');
         }
 
+        // Get toggle group for this master checkbox.
         $togglegroup = $this->get_checkbox_togglegroup($category);
+        // Set label for this master checkbox.
+        $masterlabel = get_string('all');
+        // Use category name if available.
+        if ($category->fullname !== '?') {
+            $masterlabel = format_string($category->fullname);
+            // Limit the displayed category name to prevent the Select column from getting too wide.
+            if (core_text::strlen($masterlabel) > 20) {
+                $masterlabel = get_string('textellipsis', 'core', core_text::substr($masterlabel, 0, 12));
+            }
+        }
+        // Build the master checkbox.
         $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
             'id' => $togglegroup,
             'name' => $togglegroup,
             'value' => 1,
-            'label' => get_string('all'),
-            'selectall' => get_string('all'),
-            'deselectall' => get_string('none'),
+            'classes' => 'itemselect ignoredirty',
+            'label' => $masterlabel,
+            // Consistent label to prevent the select column from resizing.
+            'selectall' => $masterlabel,
+            'deselectall' => $masterlabel,
+            'labelclasses' => 'm-0',
         ]);
 
         $categorycell = parent::get_category_cell($category, $levelclass, $params);
