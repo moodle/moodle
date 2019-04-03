@@ -338,7 +338,8 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
                     $this->assertEquals((bool)$value, $attemptobj->is_finished());
                     break;
                 case 'summarks' :
-                    $this->assertEquals($value, $attemptobj->get_sum_marks(), "Sum of marks of attempt {$result['quizattempt']}.");
+                    $this->assertEquals((float)$value, $attemptobj->get_sum_marks(),
+                        "Sum of marks of attempt {$result['quizattempt']}.");
                     break;
                 case 'quizgrade' :
                     // Check quiz grades.

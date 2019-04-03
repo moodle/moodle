@@ -1134,7 +1134,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $result = mod_assign_external::get_grades(array($instance->id));
         $result = external_api::clean_returnvalue(mod_assign_external::get_grades_returns(), $result);
 
-        $this->assertEquals($result['assignments'][0]['grades'][0]['grade'], '50.0');
+        $this->assertEquals((float)$result['assignments'][0]['grades'][0]['grade'], '50.0');
     }
 
     /**
@@ -1284,13 +1284,13 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
                                          array('userid' => $student1->id, 'assignment' => $instance->id),
                                          '*',
                                          MUST_EXIST);
-        $this->assertEquals($student1grade->grade, '50.0');
+        $this->assertEquals((float)$student1grade->grade, '50.0');
 
         $student2grade = $DB->get_record('assign_grades',
                                          array('userid' => $student2->id, 'assignment' => $instance->id),
                                          '*',
                                          MUST_EXIST);
-        $this->assertEquals($student2grade->grade, '100.0');
+        $this->assertEquals((float)$student2grade->grade, '100.0');
     }
 
     /**

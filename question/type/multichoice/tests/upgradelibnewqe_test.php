@@ -266,7 +266,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
                     'fraction' => 0.9,
                     'timecreated' => 1278604597,
                     'userid' => null,
-                    'data' => array('-comment' => 'Well done!', '-mark' => '0.9', '-maxmark' => '1'),
+                    'data' => array('-comment' => 'Well done!', '-mark' => '0.9', '-maxmark' => 1),
                 ),
             ),
         );
