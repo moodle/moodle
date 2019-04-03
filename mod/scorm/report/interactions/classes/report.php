@@ -643,7 +643,7 @@ class report extends \mod_scorm\report {
             }
             // Show preferences form irrespective of attempts are there to report or not.
             if (!$download) {
-                $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
+                $mform->set_data(compact('pagesize', 'attemptsmode'));
                 $mform->display();
             }
             if ($download == 'Excel' or $download == 'ODS') {
