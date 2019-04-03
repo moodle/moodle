@@ -37,11 +37,14 @@ use \core_privacy\local\request\approved_contextlist;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_privacy\local\legacy_polyfill
  */
 class core_privacy_legacy_polyfill_test extends advanced_testcase {
     /**
      * Test that the null_provider polyfill works and that the static _get_reason can be
      * successfully called.
+     *
+     * @covers ::get_reason
      */
     public function test_null_provider() {
         $this->assertEquals('thisisareason', test_legacy_polyfill_null_provider::get_reason());
@@ -50,6 +53,8 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
     /**
      * Test that the metdata\provider polyfill works and that the static _get_metadata can be
      * successfully called.
+     *
+     * @covers ::get_metadata
      */
     public function test_metadata_provider() {
         $collection = new collection('core_privacy');
@@ -59,6 +64,8 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
     /**
      * Test that the local\request\user_preference_provider polyfill works and that the static
      * _export_user_preferences can be successfully called.
+     *
+     * @covers ::export_user_preferences
      */
     public function test_user_preference_provider() {
         $userid = 417;
@@ -75,6 +82,8 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
     /**
      * Test that the local\request\core_user_preference_provider polyfill works and that the static
      * _get_contexts_for_userid can be successfully called.
+     *
+     * @covers ::get_contexts_for_userid
      */
     public function test_get_contexts_for_userid() {
         $userid = 417;
@@ -94,6 +103,8 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
     /**
      * Test that the local\request\core_user_preference_provider polyfill works and that the static
      * _export_user_data can be successfully called.
+     *
+     * @covers ::export_user_data
      */
     public function test_export_user_data() {
         $contextlist = new approved_contextlist(\core_user::get_user_by_username('admin'), 'core_privacy', [98]);
@@ -110,6 +121,8 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
     /**
      * Test that the local\request\core_user_preference_provider polyfill works and that the static
      * _delete_data_for_all_users_in_context can be successfully called.
+     *
+     * @covers ::delete_data_for_all_users_in_context
      */
     public function test_delete_data_for_all_users_in_context() {
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);
@@ -124,6 +137,8 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
     /**
      * Test that the local\request\core_user_preference_provider polyfill works and that the static
      * _delete_data_for_user can be successfully called.
+     *
+     * @covers ::delete_data_for_user
      */
     public function test_delete_data_for_user() {
         $contextlist = new approved_contextlist(\core_user::get_user_by_username('admin'), 'core_privacy', [98]);
