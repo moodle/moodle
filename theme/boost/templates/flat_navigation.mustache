@@ -59,11 +59,11 @@
 {{# flatnavigation }}
     {{#showdivider}}
 </nav>
-<nav class="list-group m-t-1" aria-label="{{get_collectionlabel}}">
+<nav class="list-group mt-1" aria-label="{{get_collectionlabel}}">
     {{/showdivider}}
     {{#action}}
     <a class="list-group-item list-group-item-action {{#isactive}}active{{/isactive}}" href="{{{action}}}" data-key="{{key}}" data-isexpandable="{{isexpandable}}" data-indent="{{get_indent}}" data-showdivider="{{showdivider}}" data-type="{{type}}" data-nodetype="{{nodetype}}" data-collapse="{{collapse}}" data-forceopen="{{forceopen}}" data-isactive="{{isactive}}" data-hidden="{{hidden}}" data-preceedwithhr="{{preceedwithhr}}" {{#parent.key}}data-parent-key="{{.}}"{{/parent.key}}>
-        <div class="m-l-{{get_indent}}">
+        <div class="ml-{{get_indent}}">
             <div class="media">
             {{#icon.pix}}
                 <span class="media-left">
@@ -77,7 +77,7 @@
     {{/action}}
     {{^action}}
     <div class="list-group-item" data-key="{{key}}" data-isexpandable="{{isexpandable}}" data-indent="{{get_indent}}" data-showdivider="{{showdivider}}" data-type="{{type}}" data-nodetype="{{nodetype}}" data-collapse="{{collapse}}" data-forceopen="{{forceopen}}" data-isactive="{{isactive}}" data-hidden="{{hidden}}" data-preceedwithhr="{{preceedwithhr}}" {{#parent.key}}data-parent-key="{{.}}"{{/parent.key}}>
-        <div class="m-l-{{get_indent}}">
+        <div class="ml-{{get_indent}}">
             <div class="media">
             {{#icon.pix}}
                 <span class="media-left">

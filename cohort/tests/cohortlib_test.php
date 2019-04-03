@@ -671,7 +671,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
 
         $systemctx = context_system::instance();
         $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 1',
-            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'clean'));
+            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'classic'));
 
         $id = cohort_add_cohort($cohort1);
         $this->assertNotEmpty($id);
@@ -690,7 +690,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         set_config('allowcohortthemes', 0);
 
         $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 2',
-            'idnumber' => 'testid2', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'clean'));
+            'idnumber' => 'testid2', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'classic'));
 
         $id = cohort_add_cohort($cohort2);
         $this->assertNotEmpty($id);
@@ -713,14 +713,14 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
 
         $systemctx = context_system::instance();
         $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 1',
-            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'clean'));
+            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'classic'));
         $id = cohort_add_cohort($cohort1);
         $this->assertNotEmpty($id);
 
         // Theme is updated when allowcohortthemes is enabled.
         $cohort1 = $DB->get_record('cohort', array('id' => $id));
         $cohort1->name = 'test cohort 1 updated';
-        $cohort1->theme = 'more';
+        $cohort1->theme = 'classic';
         cohort_update_cohort($cohort1);
         $updatedcohort = $DB->get_record('cohort', array('id' => $id));
         $this->assertEquals($cohort1->contextid, $updatedcohort->contextid);
@@ -732,7 +732,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         // Theme is not updated neither overwritten when allowcohortthemes is disabled.
         set_config('allowcohortthemes', 0);
         $cohort2 = $DB->get_record('cohort', array('id' => $id));
-        $cohort2->theme = 'clean';
+        $cohort2->theme = 'classic';
         cohort_update_cohort($cohort2);
         $updatedcohort = $DB->get_record('cohort', array('id' => $id));
         $this->assertEquals($cohort2->contextid, $updatedcohort->contextid);

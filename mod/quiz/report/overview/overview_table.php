@@ -213,7 +213,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
 
     protected function submit_buttons() {
         if (has_capability('mod/quiz:regrade', $this->context)) {
-            echo '<input type="submit" class="btn btn-secondary m-r-1" name="regrade" value="' .
+            echo '<input type="submit" class="btn btn-secondary mr-1" name="regrade" value="' .
                     get_string('regradeselected', 'quiz_overview') . '"/>';
         }
         parent::submit_buttons();

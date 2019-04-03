@@ -462,11 +462,10 @@ class block_base {
      * Allows the block to load any JS it requires into the page.
      *
      * By default this function simply permits the user to dock the block if it is dockable.
+     *
+     * Left null as of MDL-64506.
      */
     function get_required_javascript() {
-        if ($this->instance_can_be_docked() && !$this->hide_header()) {
-            user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
-        }
     }
 
     /**
@@ -651,10 +650,11 @@ class block_base {
      * Can be overridden by the block to prevent the block from being dockable.
      *
      * @return bool
+     *
+     * Return false as per MDL-64506
      */
     public function instance_can_be_docked() {
-        global $CFG;
-        return (!empty($CFG->allowblockstodock) && $this->page->theme->enable_dock);
+        return false;
     }
 
     /**

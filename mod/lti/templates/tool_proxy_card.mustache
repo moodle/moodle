@@ -55,13 +55,13 @@
         <div class="tool-card-header">
             <div class="tool-card-subheader">
                 <div class="tag
-                            {{#state.pending}}tag-info{{/state.pending}}
-                            {{#state.configured}}tag-success{{/state.configured}}
-                            {{#state.rejected}}tag-important{{/state.rejected}}
-                            {{#state.unknown}}tag-warning{{/state.unknown}}">
+                            {{#state.pending}}badge-info{{/state.pending}}
+                            {{#state.configured}}badge-success{{/state.configured}}
+                            {{#state.rejected}}badge-danger{{/state.rejected}}
+                            {{#state.unknown}}badge-warning{{/state.unknown}}">
                     {{state.text}}
                 </div>
-                <div class="tool-card-actions pull-xs-right">
+                <div class="tool-card-actions float-sm-right">
                     {{#courseid}}
                         <a href="{{{urls.course}}}" title="{{#str}} courselink, mod_lti {{/str}}">{{#pix}} i/course, core, {{#str}} courselink, mod_lti {{/str}}{{/pix}}</a>
                     {{/courseid}}

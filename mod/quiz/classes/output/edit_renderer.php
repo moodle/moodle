@@ -178,7 +178,7 @@ class edit_renderer extends \plugin_renderer_base {
                 'name' => 'maxgrade', 'size' => ($structure->get_decimal_places_for_grades() + 2),
                 'value' => $structure->formatted_quiz_grade(),
                 'class' => 'form-control'));
-        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'btn btn-secondary m-l-1',
+        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'btn btn-secondary ml-1',
                 'name' => 'savechanges', 'value' => get_string('save', 'quiz')));
         $output .= html_writer::end_tag('fieldset');
         $output .= html_writer::end_tag('form');
@@ -201,7 +201,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'repaginate',
             'id'    => 'repaginatecommand',
             'value' => get_string('repaginatecommand', 'quiz'),
-            'class' => 'btn btn-secondary m-b-1',
+            'class' => 'btn btn-secondary mb-1',
             'data-header' => $header,
             'data-form'   => $form,
         );
@@ -226,7 +226,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'selectmultiple',
             'id'    => 'selectmultiplecommand',
             'value' => get_string('selectmultipleitems', 'quiz'),
-            'class' => 'btn btn-secondary m-b-1'
+            'class' => 'btn btn-secondary mb-1'
         );
         if (!$structure->can_be_edited()) {
             $buttonoptions['disabled'] = 'disabled';
@@ -319,7 +319,7 @@ class edit_renderer extends \plugin_renderer_base {
             'type' => 'submit',
             'name' => 'repaginate',
             'value' => get_string('go'),
-            'class' => 'btn btn-secondary m-l-1'
+            'class' => 'btn btn-secondary ml-1'
         );
 
         $formcontent = html_writer::tag('form', html_writer::div(

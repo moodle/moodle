@@ -97,7 +97,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
                         $question->make_html_inline($question->format_text(
                                 $ans->answer, $ans->answerformat,
                                 $qa, 'question', 'answer', $ansid)),
-                        array('for' => $inputattributes['id'], 'class' => 'm-l-1'));
+                        array('for' => $inputattributes['id'], 'class' => 'ml-1'));
 
             // Param $options->suppresschoicefeedback is a hack specific to the
             // oumultiresponse question type. It would be good to refactor to

@@ -36,21 +36,21 @@
     }
 }}
 <div class="container-fluid">
-    <div class="row m-b-2">
+    <div class="row mb-2">
         <div class="col">{{#str}}bulkactivitydetail, core_completion{{/str}}</div>
     </div>
 <form method="post" action="editdefaultcompletion.php" class="mform" id="theform">
-    <div class="row m-b-2">
+    <div class="row mb-2">
         <div class="col">
             <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" disabled/>
         </div>
     </div>
-    <div class="row m-b-1">
-        <div class="col-xs-6 span6">
-            <input type="checkbox" class="mastercheck m-r-1" aria-label="{{#str}}checkall, completion{{/str}}">
+    <div class="row mb-1">
+        <div class="col-xs-6">
+            <input type="checkbox" class="mastercheck mr-1" aria-label="{{#str}}checkall, completion{{/str}}">
             <label class="font-weight-bold">{{#str}}activitieslabel, core_completion{{/str}}</label>
         </div>
-        <div class="col-xs-6 span6">
+        <div class="col-xs-6">
             <label class="font-weight-bold">{{#str}}completion, core_completion{{/str}}</label>
             <span>{{{helpicon}}}</span>
         </div>
@@ -59,24 +59,24 @@
     <div class="modules">
         {{#modules}}
             {{#canmanage}}
-             <div class="m-b-1">
-                <div class="row m-b-1 row-fluid">
-                    <div class="col-xs-6 span6">
+             <div class="mb-1">
+                <div class="row mb-1 row-fluid">
+                    <div class="col-xs-6">
                         <label class="accesshide" for="modtype_{{id}}">{{#str}}select, core_completion{{/str}} {{formattedname}}</label>
-                        <input id="modtype_{{id}}" type="checkbox" class="m-r-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{{formattedname}}}{{/str}}">
+                        <input id="modtype_{{id}}" type="checkbox" class="mr-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{{formattedname}}}{{/str}}">
                         <img class="iconlarge activityicon" src="{{icon}}" alt=" " role="presentation" />
                         <span>{{{formattedname}}}</span>
                     </div>
-                    <div class="activity-completionstatus col-xs-6 span6">
-                        <div class="col-sm-1 span1 p-l-0">
+                    <div class="activity-completionstatus col-xs-6">
+                        <div class="col-sm-1 p-l-0">
                             {{#completionstatus.icon}}
                                 {{{completionstatus.icon}}}
                             {{/completionstatus.icon}}
                             {{^completionstatus.icon}}
-                                <span class="m-r-3"></span>
+                                <span class="mr-3"></span>
                             {{/completionstatus.icon}}
                         </div>
-                        <div class="col-sm-11 span11 p-l-0">
+                        <div class="col-sm-11 p-l-0">
                             <span class="text-muted muted">{{{completionstatus.string}}}</span>
                         </div>
                     </div>

@@ -54,7 +54,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $user['username'] = 'johnd';
         $user['firstname'] = 'John';
         $user['lastname'] = 'Doe';
-        $user['theme'] = 'more';
+        $user['theme'] = 'boost';
         self::setUser(self::getDataGenerator()->create_user($user));
 
         // Add a web service and token.

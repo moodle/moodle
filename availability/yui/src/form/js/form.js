@@ -356,24 +356,24 @@ M.core_availability.List = function(json, root, parentRoot) {
     // Create DIV structure (without kids).
     this.node = Y.Node.create('<div class="availability-list"><h3 class="accesshide"></h3>' +
             '<div class="availability-inner">' +
-            '<div class="availability-header m-b-1"><span>' +
+            '<div class="availability-header mb-1"><span>' +
             M.util.get_string('listheader_sign_before', 'availability') + '</span>' +
             ' <label><span class="accesshide">' + M.util.get_string('label_sign', 'availability') +
-            ' </span><select class="availability-neg custom-select m-x-1"' +
+            ' </span><select class="availability-neg custom-select mx-1"' +
             ' title="' + M.util.get_string('label_sign', 'availability') + '">' +
             '<option value="">' + M.util.get_string('listheader_sign_pos', 'availability') + '</option>' +
             '<option value="!">' + M.util.get_string('listheader_sign_neg', 'availability') + '</option></select></label> ' +
             '<span class="availability-single">' + M.util.get_string('listheader_single', 'availability') + '</span>' +
             '<span class="availability-multi">' + M.util.get_string('listheader_multi_before', 'availability') +
             ' <label><span class="accesshide">' + M.util.get_string('label_multi', 'availability') + ' </span>' +
-            '<select class="availability-op custom-select m-x-1"' +
+            '<select class="availability-op custom-select mx-1"' +
             ' title="' + M.util.get_string('label_multi', 'availability') + '"><option value="&">' +
             M.util.get_string('listheader_multi_and', 'availability') + '</option>' +
             '<option value="|">' + M.util.get_string('listheader_multi_or', 'availability') + '</option></select></label> ' +
             M.util.get_string('listheader_multi_after', 'availability') + '</span></div>' +
             '<div class="availability-children"></div>' +
             '<div class="availability-none"><span class="p-x-1">' + M.util.get_string('none', 'moodle') + '</span></div>' +
-            '<div class="clearfix m-t-1"></div>' +
+            '<div class="clearfix mt-1"></div>' +
             '<div class="availability-button"></div></div><div class="clearfix"></div></div>');
     if (!root) {
         this.node.addClass('availability-childlist d-sm-flex align-items-center');
@@ -408,12 +408,12 @@ M.core_availability.List = function(json, root, parentRoot) {
         noneNode.appendChild(deleteIcon.span);
 
         // Also if it's not the root, none is actually invalid, so add a label.
-        noneNode.appendChild(Y.Node.create('<span class="m-t-1 label label-warning">' +
+        noneNode.appendChild(Y.Node.create('<span class="mt-1 label label-warning">' +
                 M.util.get_string('invalid', 'availability') + '</span>'));
     }
 
     // Create the button and add it.
-    var button = Y.Node.create('<button type="button" class="btn btn-default m-t-1">' +
+    var button = Y.Node.create('<button type="button" class="btn btn-secondary mt-1">' +
             M.util.get_string('addrestriction', 'availability') + '</button>');
     button.on("click", function() {
         this.clickAdd();
@@ -671,7 +671,7 @@ M.core_availability.List.prototype.clickAdd = function() {
     var content = Y.Node.create('<div>' +
             '<ul class="list-unstyled container-fluid"></ul>' +
             '<div class="availability-buttons mdl-align">' +
-            '<button type="button" class="btn btn-default">' + M.util.get_string('cancel', 'moodle') +
+            '<button type="button" class="btn btn-secondary">' + M.util.get_string('cancel', 'moodle') +
             '</button></div></div>');
     var cancel = content.one('button');
 
@@ -687,7 +687,7 @@ M.core_availability.List.prototype.clickAdd = function() {
         // Add entry for plugin.
         li = Y.Node.create('<li class="clearfix row"></li>');
         id = 'availability_addrestriction_' + type;
-        button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-default w-100"' +
+        button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-secondary w-100"' +
                 'id="' + id + '">' + M.util.get_string('title', 'availability_' + type) + '</button></div>');
         button.on('click', this.getAddHandler(type, dialogRef), this);
         li.appendChild(button);
@@ -699,7 +699,7 @@ M.core_availability.List.prototype.clickAdd = function() {
     // Extra entry for lists.
     li = Y.Node.create('<li class="clearfix row"></li>');
     id = 'availability_addrestriction_list_';
-    button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-default w-100"' +
+    button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-secondary w-100"' +
             'id="' + id + '">' + M.util.get_string('condition_group', 'availability') + '</button></div>');
     button.on('click', this.getAddHandler(null, dialogRef), this);
     li.appendChild(button);

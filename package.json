@@ -8,7 +8,6 @@
     "eslint-plugin-promise": "3.5.0",
     "gherkin-lint": "1.1.3",
     "grunt": "1.0.1",
-    "grunt-contrib-less": "1.3.0",
     "grunt-contrib-uglify": "1.0.1",
     "grunt-contrib-watch": "1.0.0",
     "grunt-eslint": "20.1.0",

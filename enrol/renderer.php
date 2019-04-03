@@ -41,7 +41,7 @@ class core_enrol_renderer extends plugin_renderer_base {
                             'value'    => $button->label,
                             'disabled' => $button->disabled ? 'disabled' : null,
                             'title'    => $button->tooltip,
-                            'class'    => 'btn btn-secondary m-y-1');
+                            'class'    => 'btn btn-secondary my-1');
 
         if ($button->actions) {
             $id = html_writer::random_id('single_button');

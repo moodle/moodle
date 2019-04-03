@@ -380,7 +380,7 @@ if ($glossary->intro && $showcommonelements) {
 
 /// Search box
 if ($showcommonelements ) {
-    echo '<form method="post" class="form form-inline m-b-1" action="' . $CFG->wwwroot . '/mod/glossary/view.php">';
+    echo '<form method="post" class="form form-inline mb-1" action="' . $CFG->wwwroot . '/mod/glossary/view.php">';
 
 
     if ($mode == 'search') {
@@ -388,7 +388,7 @@ if ($showcommonelements ) {
     } else {
         echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" class="form-control"/> ';
     }
-    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" class="btn btn-secondary m-r-1"/> ';
+    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" class="btn btn-secondary mr-1"/> ';
     if ($fullsearch || $mode != 'search') {
         $fullsearchchecked = 'checked="checked"';
     } else {
@@ -406,7 +406,7 @@ if ($showcommonelements ) {
 /// Show the add entry button if allowed
 if (has_capability('mod/glossary:write', $context) && $showcommonelements ) {
     echo '<div class="singlebutton glossaryaddentry">';
-    echo "<form class=\"form form-inline m-b-1\" id=\"newentryform\" method=\"get\" action=\"$CFG->wwwroot/mod/glossary/edit.php\">";
+    echo "<form class=\"form form-inline mb-1\" id=\"newentryform\" method=\"get\" action=\"$CFG->wwwroot/mod/glossary/edit.php\">";
     echo '<div>';
     echo "<input type=\"hidden\" name=\"cmid\" value=\"$cm->id\" />";
     echo '<input type="submit" value="'.get_string('addentry', 'glossary').'" class="btn btn-secondary" />';

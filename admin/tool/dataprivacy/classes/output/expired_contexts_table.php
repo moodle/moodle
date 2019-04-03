@@ -131,7 +131,7 @@ class expired_contexts_table extends table_sql {
         }
         $infoicon = new pix_icon('i/info', implode(' / ', array_reverse($contextsinpath)));
         $infoiconhtml = $OUTPUT->render($infoicon);
-        $name = html_writer::span(get_string('nameandparent', 'tool_dataprivacy', $contextdata), 'm-r-1');
+        $name = html_writer::span(get_string('nameandparent', 'tool_dataprivacy', $contextdata), 'mr-1');
 
         return  $name . $infoiconhtml;
     }
@@ -158,7 +158,7 @@ class expired_contexts_table extends table_sql {
             }
             $infoicon = new pix_icon('i/info', implode(', ', $childnames));
             $infoiconhtml = $OUTPUT->render($infoicon);
-            $name = html_writer::span(get_string('nchildren', 'tool_dataprivacy', count($children)), 'm-r-1');
+            $name = html_writer::span(get_string('nchildren', 'tool_dataprivacy', count($children)), 'mr-1');
 
             return  $name . $infoiconhtml;
         }

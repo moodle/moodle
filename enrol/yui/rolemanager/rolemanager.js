@@ -374,7 +374,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             var roles = m.get(ASSIGNABLEROLES);
             for (i in roles) {
                 var buttonid = 'add_assignable_role_' + roles[i].id;
-                var buttonhtml = '<input type="button" class="btn btn-secondary m-r-1" value="' +
+                var buttonhtml = '<input type="button" class="btn btn-secondary mr-1" value="' +
                                  roles[i].name + '" id="' + buttonid + '" />';
                 var button = Y.Node.create(buttonhtml);
                 button.on('click', this.submit, this, roles[i].id);

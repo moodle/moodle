@@ -25,7 +25,7 @@
 }}
 <div data-region="coursecompetenciespage">
     <div data-region="actions" class="clearfix">
-        <div class="pull-xs-left">
+        <div class="float-sm-left">
             {{#canmanagecoursecompetencies}}
                 <button class="btn btn-secondary" disabled>{{#str}}addcoursecompetencies, tool_lp{{/str}}</button>
             {{/canmanagecoursecompetencies}}
@@ -61,8 +61,8 @@
     <tr class="drag-samenode" data-id="{{competency.id}}">
     <td>
         {{#canmanagecoursecompetencies}}
-        <span class="drag-handlecontainer pull-xs-left"></span>
-        <div class="pull-xs-right">
+        <span class="drag-handlecontainer float-sm-left"></span>
+        <div class="float-sm-right">
             <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">
                 {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
             </a>
@@ -78,11 +78,11 @@
             <p>{{{competency.description}}}</p>
         {{/competency}}
         {{#comppath}}
-            <span class="pull-xs-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
+            <span class="float-sm-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
         {{/comppath}}
         {{#usercompetencycourse}}
             {{#grade}}
-            <span class="label {{^proficiency}}label-important{{/proficiency}}">{{gradename}}</span>
+            <span class="badge {{^proficiency}}badge-danger{{/proficiency}}">{{gradename}}</span>
             {{/grade}}
         {{/usercompetencycourse}}
         {{#canmanagecoursecompetencies}}

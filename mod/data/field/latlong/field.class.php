@@ -67,7 +67,7 @@ class data_field_latlong extends data_field_base {
         if ($this->field->required) {
             $str .= $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
         }
-        $classes = 'form-control m-x-1';
+        $classes = 'form-control mx-1';
         $str .= '</label></td><td>';
         $str .= '<input class="' . $classes . '" type="text" name="field_'.$this->field->id.'_0" ';
         $str .= ' id="field_'.$this->field->id.'_0" value="';
@@ -78,7 +78,7 @@ class data_field_latlong extends data_field_base {
         if ($this->field->required) {
             $str .= $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
         }
-        $classes = 'form-control m-x-1';
+        $classes = 'form-control mx-1';
         $str .= '</label></td><td><input class="' . $classes . '" type="text" ';
         $str .= 'name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="';
         $str .= s($long).'" size="10" />°E</td>';
@@ -199,7 +199,7 @@ class data_field_latlong extends data_field_base {
                 }
                 // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
                 //   which allows the "Go" button to refer to the drop-down selector.
-                $str .= '\n</select><input type="button" class="btn m-l-1 btn-secondary" value="' . get_string('go');
+                $str .= '\n</select><input type="button" class="btn ml-1 btn-secondary" value="' . get_string('go');
                 $str .= '" onclick="if(previousSibling.value){self.location=previousSibling.value}"/>';
                 $str .= '</form>';
             } else {

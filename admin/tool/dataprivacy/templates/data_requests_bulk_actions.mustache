@@ -44,8 +44,8 @@
         "perpage" : "<div class='singleselect'></div>"
     }
 }}
-<div class="m-t-1 d-inline-block w-100">
-    <div class="pull-left">
+<div class="mt-1 d-inline-block w-100">
+    <div class="float-left">
         <select id="bulk-action" class="select custom-select">
         {{#options}}
             <option value="{{ value }}">{{ name }}</option>
@@ -53,7 +53,7 @@
         </select>
         <button class="btn btn-primary" id="confirm-bulk-action">{{# str}} confirm {{/ str}}</button>
     </div>
-    <div class="pull-right">
+    <div class="float-right">
         {{{ perpage }}}
     </div>
 </div>

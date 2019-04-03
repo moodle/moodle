@@ -52,10 +52,10 @@
 {{#text}}
 <div class="availabilityinfo {{classes}}">
     {{^isrestricted}}
-    <span class="tag tag-info">{{{text}}}</span>
+    <span class="badge badge-info">{{{text}}}</span>
     {{/isrestricted}}
     {{#isrestricted}}
-    <span class="tag tag-info">{{#str}}restricted, core{{/str}}</span> {{{text}}}
+    <span class="badge badge-info">{{#str}}restricted, core{{/str}}</span> {{{text}}}
     {{/isrestricted}}
 </div>
 {{/text}}

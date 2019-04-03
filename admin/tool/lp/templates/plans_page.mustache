@@ -34,7 +34,7 @@
 }}
 
 <div data-region="plans">
-<div class="pull-left">
+<div class="float-left">
     {{#navigation}}
     {{{.}}}
     {{/navigation}}
@@ -57,10 +57,10 @@
             </td>
              <td>
                {{#isbasedontemplate}}
-               <span class="label label-info">{{#str}}yes{{/str}}</span>
+               <span class="badge badge-info">{{#str}}yes{{/str}}</span>
                {{/isbasedontemplate}}
                {{^isbasedontemplate}}
-               <span class="label">{{#str}}no{{/str}}</span>
+               <span class="badge">{{#str}}no{{/str}}</span>
                {{/isbasedontemplate}}
             </td>
             <td>{{statusname}}</td>
@@ -155,7 +155,7 @@
 {{/plans}}
 
 {{#canreaduserevidence}}
-<div class="pull-left">
+<div class="float-left">
     <a href="{{pluginbaseurl}}/user_evidence_list.php?userid={{userid}}">{{#str}}userevidence, tool_lp{{/str}}</a>
 </div>
 {{/canreaduserevidence}}

@@ -53,9 +53,9 @@
                title="{{name}}"
                aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": "{{name}}", "course": "{{course.fullnamedisplay}}", "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
             ><h6 class="event-name text-truncate mb-0">{{{name}}}</h6></a>
-            <small class="text-muted text-truncate m-b-0">{{{course.fullnamedisplay}}}</small>
+            <small class="text-muted text-truncate mb-0">{{{course.fullnamedisplay}}}</small>
             {{#action.actionable}}
-            <h6 class="m-b-0 pt-2">
+            <h6 class="mb-0 pt-2">
                 <a href="{{{action.url}}}" aria-label="{{{action.name}}}" title="{{{action.name}}}" class="list-group-item-action">{{{action.name}}}</a>
             </h6>
             {{/action.actionable}}

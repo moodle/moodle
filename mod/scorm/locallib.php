@@ -997,12 +997,12 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
         if ($scorm->hidebrowse == 0) {
             print_string('mode', 'scorm');
             echo ': '.html_writer::empty_tag('input', array('type' => 'radio', 'id' => 'b', 'name' => 'mode',
-                    'value' => 'browse', 'class' => 'm-r-1')).
+                    'value' => 'browse', 'class' => 'mr-1')).
                         html_writer::label(get_string('browse', 'scorm'), 'b');
             echo html_writer::empty_tag('input', array('type' => 'radio',
                                                         'id' => 'n', 'name' => 'mode',
                                                         'value' => 'normal', 'checked' => 'checked',
-                                                        'class' => 'm-x-1')).
+                                                        'class' => 'mx-1')).
                     html_writer::label(get_string('normal', 'scorm'), 'n');
 
         } else {

@@ -35,7 +35,7 @@
                 "id": 1,
                 "typename" : "Data export",
                 "comments": "I would like to download all of my daughter's personal data",
-                "statuslabelclass": "label-default",
+                "statuslabelclass": "badge-secondary",
                 "statuslabel": "Pending",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
@@ -47,7 +47,7 @@
                 "id": 2,
                 "typename" : "Data export",
                 "comments": "Give me all of the information you have about me, or else...",
-                "statuslabelclass": "label-warning",
+                "statuslabelclass": "badge-warning",
                 "statuslabel": "Awaiting completion",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
@@ -59,7 +59,7 @@
                 "id": 3,
                 "typename" : "Data deletion",
                 "comments": "Please delete all of my son's personal data.",
-                "statuslabelclass": "label-success",
+                "statuslabelclass": "badge-success",
                 "statuslabel": "Deleted",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
@@ -83,7 +83,7 @@
                 "id": 5,
                 "typename" : "Data export",
                 "comments": "Please let me download my data",
-                "statuslabelclass": "label-info",
+                "statuslabelclass": "badge-info",
                 "statuslabel": "Processing",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
@@ -113,7 +113,7 @@
 {{/httpsite}}
 
 <div data-region="datarequests">
-    <div class="m-t-1 m-b-1">
+    <div class="mt-1 mb-1">
         <a href="{{newdatarequesturl}}" class="btn btn-primary" data-action="new-request">
             {{#str}}newrequest, tool_dataprivacy{{/str}}
         </a>
@@ -140,7 +140,7 @@
                 <td>{{#userdate}} {{timecreated}}, {{#str}} strftimedatetime {{/str}} {{/userdate}}</td>
                 <td><a href="{{requestedbyuser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{requestedbyuser.fullname}}</a></td>
                 <td>
-                    <span class="label {{statuslabelclass}}" title="{{statuslabeltitle}}">{{statuslabel}}</span>
+                    <span class="badge {{statuslabelclass}}" title="{{statuslabeltitle}}">{{statuslabel}}</span>
                 </td>
                 <td>{{comments}}</td>
                 <td>

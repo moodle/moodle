@@ -4195,7 +4195,7 @@ abstract class lesson_page extends lesson_base {
                 $result->feedback .= $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options),
                         'generalbox boxaligncenter p-y-1');
                 $result->feedback .= '<div class="correctanswer generalbox"><em>'
-                        . get_string("youranswer", "lesson").'</em> : <div class="studentanswer m-t-2 m-b-2">';
+                        . get_string("youranswer", "lesson").'</em> : <div class="studentanswer mt-2 mb-2">';
 
                 // Create a table containing the answers and responses.
                 $table = new html_table();

@@ -17,18 +17,12 @@
 {{!
     @template core_form/element-template
 
-    Moodle form element wrapper template.
-
-    The purpose of this template is to wrap a form element.
-
-    Classes required for JS:
-    * none
-
-    Data attributes required for JS:
-    * none
+    Template for the form element wrapper template.
 
     Context variables required for this template:
     * label
+    * required
+    * advanced
     * helpbutton
     * error
     * element
@@ -37,28 +31,46 @@
 
     Example context (json):
     {
-        "label": "Password",
-        "error": "No password set",
+        "label": "Course full name",
+        "required": true,
+        "advanced": false,
+        "error": null,
         "element": {
-            "id": "example_password_unmask",
-            "name": "example"
+            "wrapperid": "fitem_id_fullname",
+            "id": "id_fullname",
+            "name": "fullname"
         }
     }
-
 }}
-<div id="fitem_{{ element.id }}" class="fitem fitem_{{ element.type }}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
-    <div class="fitemtitle">
-      <label for="{{element.id}}">{{{ label }}}</label>
-        {{{ helpbutton }}}
-    </div>
-    <div class="felement {{# error }} error{{/ error }} f{{ element.type }}">
-        {{# error }}
-        <span class="error" tabindex="0" id="id_error_{{ element.name }}">
-            {{{ error }}}
+<div id="{{element.wrapperid}}" class="form-group row {{#error}}has-danger{{/error}} fitem {{#element.emptylabel}}femptylabel{{/element.emptylabel}} {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
+    <div class="col-md-3">
+        <span class="float-sm-right text-nowrap">
+            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">{{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}</abbr>{{/required}}
+            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
+            {{{helpbutton}}}
         </span>
-        {{/ error }}
+        {{^element.staticlabel}}
+        <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+            {{{label}}}
+        </label>
+        {{/element.staticlabel}}
+        {{#element.staticlabel}}
+        <span class="col-form-label d-inline-block {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}">
+            {{{label}}}
+        </span>
+        {{/element.staticlabel}}
+    </div>
+    <div class="col-md-9 form-inline felement" data-fieldtype="{{element.type}}">
         {{$ element }}
             <!-- Element goes here -->
         {{/ element }}
+        <div class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{#error}} style="display: block;"{{/error}}>
+            {{{error}}}
+        </div>
     </div>
 </div>
+{{#js}}
+require(['theme_boost/form-display-errors'], function(module) {
+    module.enhance({{#quote}}{{element.id}}{{/quote}});
+});
+{{/js}}

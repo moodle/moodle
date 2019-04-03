@@ -409,13 +409,13 @@ switch ($mode) {
 
                     // Different colors for all the states of an essay (graded, if sent, not graded)
                     if (!$essayinfo->graded) {
-                        $class = "label label-warning";
+                        $class = "badge badge-warning";
                         $status = get_string('notgraded', 'lesson');
                     } elseif (!$essayinfo->sent) {
-                        $class = "label label-success";
+                        $class = "badge badge-success";
                         $status = get_string('graded', 'lesson');
                     } else {
-                        $class = "label label-success";
+                        $class = "badge badge-success";
                         $status = get_string('sent', 'lesson');
                     }
                     $attributes = array('tabindex' => 0);

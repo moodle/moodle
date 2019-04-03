@@ -649,11 +649,9 @@ $CFG->admin = 'admin';
 //   http://yuilibrary.com/yui/docs/api/classes/config.html#property_logInclude
 //   http://yuilibrary.com/yui/docs/api/classes/config.html#property_logExclude
 // $CFG->yuiloginclude = array(
-//     'moodle-core-dock-loader' => true,
 //     'moodle-course-categoryexpander' => true,
 // );
 // $CFG->yuilogexclude = array(
-//     'moodle-core-dock' => true,
 //     'moodle-core-notification' => true,
 // );
 //

@@ -64,7 +64,7 @@
     </select>
 {{/singlePlan}}
 
-<h3 class="m-t-1">{{#str}}locatecompetency, tool_lp{{/str}}</h3>
+<h3 class="mt-1">{{#str}}locatecompetency, tool_lp{{/str}}</h3>
 
 <form data-region="filtercompetencies" data-planid="{{plan.id}}" class="form-inline">
     <div class="form-group">
@@ -74,7 +74,7 @@
     </div>
 </form>
 
-<ul data-enhance="linktree" style="display: none;" class="m-t-1 competency-tree">
+<ul data-enhance="linktree" style="display: none;" class="mt-1 competency-tree">
     <li><span>{{{plan.name}}}</span>
         <ul>
             {{#competencies}}
@@ -84,7 +84,7 @@
     </li>
 </ul>
 
-<div data-region="link-buttons" class="m-t-1 pull-xs-right">
+<div data-region="link-buttons" class="mt-1 float-sm-right">
     <input type="button" class="btn btn-primary" data-action="add" value="{{#str}}add{{/str}}"/>
     <input type="button" class="btn btn-secondary" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
 </div>

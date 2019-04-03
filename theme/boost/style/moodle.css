@@ -8520,7 +8520,7 @@ a.dimmed_text:visited,
 /* stylelint-disable function-url-scheme-blacklist */
 /* stylelint-enable function-url-scheme-blacklist */
 .tag, .statusok, .statuswarning, .statusserious,
-.statuscritical, .que .correctness, .label, .badge {
+.statuscritical, .que .correctness, .label {
   display: inline-block;
   padding: 0.25rem 0.4em;
   font-size: 75%;
@@ -8531,7 +8531,7 @@ a.dimmed_text:visited,
   white-space: nowrap;
   vertical-align: baseline; }
   .tag:empty, .statusok:empty, .statuswarning:empty, .statusserious:empty,
-  .statuscritical:empty, .que .correctness:empty, .label:empty, .badge:empty {
+  .statuscritical:empty, .que .correctness:empty, .label:empty {
     display: none; }
 
 .form-control-success,
@@ -13388,7 +13388,7 @@ a.ygtvspacer:hover {
 
 .preferences-container .container-fluid {
   padding: 0; }
-  .preferences-container .container-fluid .span6 {
+  .preferences-container .container-fluid .col-md-6 {
     min-height: 20px; }
 
 .preferences-container .align-bottom {
@@ -16629,31 +16629,6 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 .label-important {
   background-color: #d9534f; }
   .label-important[href]:hover, .label-important[href]:focus {
-    background-color: #c9302c; }
-
-.badge {
-  background-color: #868e96; }
-  .badge[href]:hover, .badge[href]:focus {
-    background-color: #6c757d; }
-
-.badge-success {
-  background-color: #5cb85c; }
-  .badge-success[href]:hover, .badge-success[href]:focus {
-    background-color: #449d44; }
-
-.badge-info {
-  background-color: #5bc0de; }
-  .badge-info[href]:hover, .badge-info[href]:focus {
-    background-color: #31b0d5; }
-
-.badge-warning {
-  background-color: #ff7518; }
-  .badge-warning[href]:hover, .badge-warning[href]:focus {
-    background-color: #e45c00; }
-
-.badge-important {
-  background-color: #d9534f; }
-  .badge-important[href]:hover, .badge-important[href]:focus {
     background-color: #c9302c; }
 
 .pull-left {

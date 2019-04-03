@@ -59,7 +59,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 $option->attributes->type = 'radio';
             }
             $option->attributes->id = 'choice_'.$choicecount;
-            $option->attributes->class = 'm-x-1';
+            $option->attributes->class = 'mx-1';
 
             $labeltext = $option->text;
             if (!empty($option->attributes->disabled)) {
@@ -93,7 +93,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
                     $url = new moodle_url('view.php',
                             array('id' => $coursemoduleid, 'action' => 'delchoice', 'sesskey' => sesskey()));
-                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'), array('class' => 'm-l-1'));
+                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'), array('class' => 'ml-1'));
                 }
             } else {
                 $html .= html_writer::tag('label', get_string('havetologin', 'choice'));
@@ -240,12 +240,12 @@ class mod_choice_renderer extends plugin_renderer_base {
                                 $checkboxvalue = $user->id;
                             }
                             $checkbox .= html_writer::checkbox($checkboxname, $checkboxvalue, '', null,
-                                array('id' => $checkboxid, 'class' => 'm-r-1'));
+                                array('id' => $checkboxid, 'class' => 'mr-1'));
                         }
                         $userimage = $this->output->user_picture($user, array('courseid' => $choices->courseid, 'link' => false));
                         $profileurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $choices->courseid));
                         $profilelink = html_writer::link($profileurl, $userimage . $userfullname);
-                        $data .= html_writer::div($checkbox . $profilelink, 'm-b-1');
+                        $data .= html_writer::div($checkbox . $profilelink, 'mb-1');
 
                         $optionusers .= $data;
                     }

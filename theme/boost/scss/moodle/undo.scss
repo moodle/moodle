@@ -117,8 +117,7 @@ body:not(.jsenabled) .dropdown:hover > .dropdown-menu {
     margin-top: -6px; // We need to move it up to counter the arrows as they introduce hover bugs.
 }
 
-// Extends bootstrapbase/less/bootstrap/navbar.less
-// to enable scroll in the language menu.
+// Enable scroll in the language menu.
 body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 .langmenu.open > .dropdown-menu {
     display: block;

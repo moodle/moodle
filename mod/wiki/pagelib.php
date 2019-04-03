@@ -1557,7 +1557,7 @@ class page_wiki_map extends page_wiki {
             $table->data[] = array(html_writer::link($link->out(false), format_string($lpage->title)));
         }
 
-        $table_left = $OUTPUT->container(html_writer::table($table), 'col-md-6 span6');
+        $table_left = $OUTPUT->container(html_writer::table($table), 'col-md-6');
 
         $table = new html_table();
         $table->attributes['class'] = 'wiki_navigation_to table';
@@ -1574,7 +1574,7 @@ class page_wiki_map extends page_wiki {
                 $table->data[] = array(html_writer::link($viewlink->out(false), format_string($lpage->title)));
             }
         }
-        $table_right = $OUTPUT->container(html_writer::table($table), 'col-md-6 span6');
+        $table_right = $OUTPUT->container(html_writer::table($table), 'col-md-6');
         echo $OUTPUT->container($table_left . $table_right, 'wiki_navigation_container row');
     }
 

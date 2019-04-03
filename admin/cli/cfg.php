@@ -83,7 +83,7 @@ Examples:
         Stores the given configuration variable in the shell variable, escaped
         so that it can be safely used as a shell argument.
 
-    # php cfg.php --name=theme --set=clean
+    # php cfg.php --name=theme --set=classic
         Sets the given configuration variable to the given value.
 
     # php cfg.php --name=noemailever --unset

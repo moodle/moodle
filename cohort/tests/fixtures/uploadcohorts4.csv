@@ -2,6 +2,6 @@ name,idnumber,description,category,visible,theme
 cohort name 1,cohortid1,first description,,,boost
 cohort name 2,cohortid2,,,,
 cohort name 3,cohortid3,,Miscellaneous,no,boost
-cohort name 4,cohortid4,,CAT1,yes,clean
+cohort name 4,cohortid4,,CAT1,yes,classic
 cohort name 5,cohortid5,,CAT2,0,
-cohort name 6,cohortid6,,CAT3,1,clean
+cohort name 6,cohortid6,,CAT3,1,classic

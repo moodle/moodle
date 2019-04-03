@@ -41,7 +41,7 @@
         data-region="course-content"
         data-course-id="{{{id}}}">
         <div class="row-fluid">
-            <div class="{{#hasprogress}}col-md-6 span6{{/hasprogress}}{{^hasprogress}}col-md-11 span11{{/hasprogress}} d-flex align-items-center">
+            <div class="{{#hasprogress}}col-md-6{{/hasprogress}}{{^hasprogress}}col-md-11 col-md-11{{/hasprogress}} d-flex align-items-center">
                 <a href="{{viewurl}}" class="coursename">
                     <div class="text-muted muted d-flex" style="flex-flow:wrap;">
                         <span class="sr-only">
@@ -64,11 +64,11 @@
                 </a>
             </div>
             {{#hasprogress}}
-            <div class="col-md-5 span5 pt-1">
+            <div class="col-md-5 pt-1">
                 {{> block_myoverview/progress-bar}}
             </div>
             {{/hasprogress}}
-            <div class="col-md-1 span1 p-0 d-flex">
+            <div class="col-md-1 p-0 d-flex">
                 {{> block_myoverview/course-action-menu }}
             </div>
         </div>

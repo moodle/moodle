@@ -631,7 +631,7 @@ class core_backup_renderer extends plugin_renderer_base {
     public function render_restore_course_search(restore_course_search $component) {
         $url = $component->get_url();
 
-        $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline m-b-1'));
+        $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline mb-1'));
         $output .= html_writer::start_tag('div', array('class' => 'rcs-results w-75'));
 
         $table = new html_table();
@@ -791,7 +791,7 @@ class core_backup_renderer extends plugin_renderer_base {
     public function render_restore_category_search(restore_category_search $component) {
         $url = $component->get_url();
 
-        $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline m-b-1'));
+        $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline mb-1'));
         $output .= html_writer::start_tag('div', array('class' => 'rcs-results w-75'));
 
         $table = new html_table();

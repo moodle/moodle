@@ -612,21 +612,21 @@ class report extends \mod_scorm\report {
                                                                    array('download' => 'ODS') + $displayoptions),
                                                                    get_string('downloadods'),
                                                                    'post',
-                                                                   ['class' => 'm-t-1']);
+                                                                   ['class' => 'mt-1']);
                         echo \html_writer::end_tag('td');
                         echo \html_writer::start_tag('td');
                         echo $OUTPUT->single_button(new \moodle_url($PAGE->url,
                                                                    array('download' => 'Excel') + $displayoptions),
                                                                    get_string('downloadexcel'),
                                                                    'post',
-                                                                   ['class' => 'm-t-1']);
+                                                                   ['class' => 'mt-1']);
                         echo \html_writer::end_tag('td');
                         echo \html_writer::start_tag('td');
                         echo $OUTPUT->single_button(new \moodle_url($PAGE->url,
                                                                    array('download' => 'CSV') + $displayoptions),
                                                                    get_string('downloadtext'),
                                                                    'post',
-                                                                   ['class' => 'm-t-1']);
+                                                                   ['class' => 'mt-1']);
                         echo \html_writer::end_tag('td');
                         echo \html_writer::start_tag('td');
                         echo \html_writer::end_tag('td');

@@ -100,7 +100,7 @@ $table->data = array(
     array('<div class="form-inline"><label class="accesshide" for="input-message">'.get_string('entermessage', 'chat').' </label>'.
           '<span class="form-group"><input type="text" disabled="true" class="form-control" ' .
           'id="input-message" value="Loading..." size="48" /></span>'.
-          '<span class="form-group"><input type="button" id="button-send" class="btn btn-secondary m-x-1" ' .
+          '<span class="form-group"><input type="button" id="button-send" class="btn btn-secondary mx-1" ' .
           'value="'.get_string('send', 'chat').'" /></span> <span class="form-group"><a id="choosetheme" href="###">'.
           get_string('themes').
           ' &raquo; </a></span></div>'));

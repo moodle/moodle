@@ -2886,6 +2886,52 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019032900.01);
+     }
+
+    if ($oldversion < 2019040200.01) {
+        // Removing the themes BSB, Clean, More from core.
+        // If these theme wish to be retained empty this array before upgrade.
+        $themes = array('theme_bootstrapbase' => 'bootstrapbase',
+                'theme_clean' => 'clean', 'theme_more' => 'more');
+        foreach ($themes as $key => $theme) {
+            if (check_dir_exists($CFG->dirroot . '/theme/' . $theme, false)) {
+                // Ignore the themes that have been re-downloaded.
+                unset($themes[$key]);
+            }
+        }
+        // Check we actually have themes to remove.
+        if (count($themes) > 0) {
+            list($insql, $inparams) = $DB->get_in_or_equal($themes, SQL_PARAMS_NAMED);
+
+            // Replace the theme usage.
+            $DB->set_field_select('course', 'theme', 'classic', "theme $insql", $inparams);
+            $DB->set_field_select('course_categories', 'theme', 'classic', "theme $insql", $inparams);
+            $DB->set_field_select('user', 'theme', 'classic', "theme $insql", $inparams);
+            $DB->set_field_select('mnet_host', 'theme', 'classic', "theme $insql", $inparams);
+            $DB->set_field_select('cohort', 'theme', 'classic', "theme $insql", $inparams);
+
+            // Replace the theme configs.
+            if (in_array(get_config('core', 'theme'), $themes)) {
+                set_config('theme', 'classic');
+            }
+            if (in_array(get_config('core', 'thememobile'), $themes)) {
+                set_config('thememobile', 'classic');
+            }
+            if (in_array(get_config('core', 'themelegacy'), $themes)) {
+                set_config('themelegacy', 'classic');
+            }
+            if (in_array(get_config('core', 'themetablet'), $themes)) {
+                set_config('themetablet', 'classic');
+            }
+
+            // Hacky emulation of plugin uninstallation.
+            foreach ($themes as $key => $theme) {
+                unset_all_config_for_plugin($key);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019040200.01);
     }
 
     return true;

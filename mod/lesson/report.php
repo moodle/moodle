@@ -153,7 +153,7 @@ if ($action === 'delete') {
         $checklinks .= '<a id="checknone" href="#">'.get_string('deselectall').'</a>';
         $checklinks .= html_writer::label('action', 'menuaction', false, array('class' => 'accesshide'));
         $options = array('delete' => get_string('deleteselected'));
-        $attributes = array('id' => 'actionid', 'class' => 'custom-select m-l-1');
+        $attributes = array('id' => 'actionid', 'class' => 'custom-select ml-1');
         $checklinks .= html_writer::select($options, 'action', 0, array('' => 'choosedots'), $attributes);
         $PAGE->requires->js_amd_inline("
         require(['jquery'], function($) {

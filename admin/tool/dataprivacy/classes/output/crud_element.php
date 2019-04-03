@@ -49,7 +49,7 @@ abstract class crud_element {
             new \moodle_url('/admin/tool/dataprivacy/dataregistry.php'),
             get_string('back'),
             null,
-            ['class' => 'btn btn-default']
+            ['class' => 'btn btn-primary']
         );
         return [$back];
     }
