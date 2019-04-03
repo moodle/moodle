@@ -67,13 +67,10 @@ $string['errorunknownaction'] = 'Unknown action';
 $string['eventpredictionactionstarted'] = 'Prediction process started';
 $string['eventinsightsviewed'] = 'Insights viewed';
 $string['fixedack'] = 'Acknowledged';
-$string['insightmessagesubject'] = 'New insight for "{$a->contextname}": {$a->insightname}';
+$string['insightmessagesubject'] = 'New insight for "{$a}"';
 $string['insightinfomessage'] = 'The system generated an insight for you: {$a}';
-$string['insightinfomessagehtml'] = 'The system generated an insight for you.<br/><br/><a class="btn btn-primary" href="{$a}">View insight</a>';
-$string['insightinfomessageprediction'] = 'Some suggested actions you could perform:
-
-{$a}';
-$string['insightinfomessagepredictionhtml'] = 'Some suggested actions you could perform:<br/><br/>{$a}';
+$string['insightinfomessagehtml'] = 'The system generated an insight for you.';
+$string['insightinfomessageaction'] = '{$a->text}: {$a->url}';
 $string['invalidtimesplitting'] = 'Model with ID {$a} needs a time-splitting method before it can be used to train.';
 $string['invalidanalysablefortimesplitting'] = 'It cannot be analysed using {$a} time-splitting method.';
 $string['nocourses'] = 'No courses to analyse';

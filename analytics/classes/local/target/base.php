@@ -250,6 +250,8 @@ abstract class base extends \core_analytics\calculable {
     /**
      * The insight notification subject.
      *
+     * This is just a default message, you should overwrite it for a custom insight message.
+     *
      * @param  int $modelid
      * @param  \context $context
      * @return string

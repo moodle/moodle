@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_analytics/insight_info_message_prediction
+
+    HTML message for insights with one single prediction
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+        "actions": [
+            {
+                "url": "https://moodle.org",
+                "text": "Moodle"
+            }, {
+                "url": "https://en.wikipedia.org/wiki/Noodle",
+                "text": "Noodle"
+            }
+        ]
+    }
+}}
+
+{{! Default btn-default styles. These styles are not applied to Moodle's web UI as there is a body:not(.dir-ltr):not(.dir-rtl)}}
+
+<style>
+body:not(.dir-ltr):not(.dir-rtl) .btn-insight {
+    margin-bottom: 1rem!important;
+    margin-right: 1rem!important;
+    color: #212529;
+    background-color: #e9ecef;
+    border-color: #e9ecef
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: .9375rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    text-decoration: none;
+}
+</style>
+
+<br/>
+{{#actions}}
+    <a class="btn btn-default m-r-1 m-b-1 btn-insight" href="{{url}}">{{text}}</a>
+{{/actions}}

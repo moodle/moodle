@@ -71,6 +71,7 @@ class insights_generator {
      * @return  null
      */
     public function generate($samplecontexts, $predictions) {
+        global $OUTPUT;
 
         $analyserclass = $this->target->get_analyser_class();
 
@@ -87,7 +88,8 @@ class insights_generator {
 
                 $insighturl = $this->target->get_insight_context_url($this->modelid, $context);
                 $fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
-                $fullmessagehtml = get_string('insightinfomessagehtml', 'analytics', $insighturl->out());
+
+                $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message', ['url' => $insighturl->out(false)]);
                 $this->notifications($context, $insighturl, $fullmessage, $fullmessagehtml);
             }
         }
@@ -159,11 +161,15 @@ class insights_generator {
      * @return array Three items array with formats [\moodle_url, string, string]
      */
     private function prediction_info(\core_analytics\prediction $prediction) {
+        global $OUTPUT;
 
         $predictionactions = $this->target->prediction_actions($prediction, true, true);
 
-        $messageactions  = '';
-        $messageactionshtml  = '';
+        // For FORMAT_PLAIN.
+        $fullmessageplaintext  = '';
+
+        // For FORMAT_HTML.
+        $messageactions  = [];
         $insighturl = null;
         foreach ($predictionactions as $action) {
             $actionurl = $action->get_url();
@@ -174,20 +180,16 @@ class insights_generator {
                 $actionurl->param('forwardurl', $actiondoneurl->out(false));
             }
 
-            $btnstyle = 'btn-default';
             if (empty($insighturl)) {
                 // We use the primary action url as insight url so we log that the user followed the provided link.
                 $insighturl = $action->get_url();
-                $btnstyle = 'btn-primary';
             }
-            $messageactions .= $action->get_text() . ': ' . $action->get_url()->out(false) . PHP_EOL;
-            $messageactionshtml .= '<a href="' . $action->get_url()->out() . '" class="btn ' . $btnstyle . ' m-r-1 m-b-1">' .
-                $action->get_text() . '</a>';
+            $actiondata = (object)['url' => $action->get_url()->out(false), 'text' => $action->get_text()];
+            $fullmessageplaintext .= get_string('insightinfomessageaction', 'analytics', $actiondata) . PHP_EOL;
+            $messageactions[] = $actiondata;
         }
 
-        $fullmessage = get_string('insightinfomessageprediction', 'analytics', $messageactions);
-        $fullmessagehtml = get_string('insightinfomessagepredictionhtml', 'analytics', $messageactionshtml);
-
-        return [$insighturl, $fullmessage, $fullmessagehtml];
+        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message_prediction', ['actions' => $messageactions]);
+        return [$insighturl, $fullmessageplaintext, $fullmessagehtml];
     }
 }
