@@ -47,7 +47,8 @@ class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit\Framewo
     /**
      * Override constructor to capture value
      */
-    public function __construct($value, float $delta = 0.0, int $maxDepth = 10, bool $canonicalize = false, bool $ignoreCase = false) {
+    public function __construct($value, float $delta = 0.0, int $maxDepth = 10, bool $canonicalize = false,
+                                bool $ignoreCase = false) {
         parent::__construct($value, $delta, $maxDepth, $canonicalize, $ignoreCase);
         $this->capturedvalue = $value;
     }

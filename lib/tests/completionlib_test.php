@@ -76,7 +76,8 @@ class core_completionlib_testcase extends advanced_testcase {
      * @param  boolean $canonicalize
      * @param  boolean $ignoreCase
      */
-    public static function assertEquals($expected, $actual, string $message = '', float $delta = 0, int $maxDepth = 10, bool $canonicalize = false, bool $ignoreCase = false): void {
+    public static function assertEquals($expected, $actual, string $message = '', float $delta = 0, int $maxDepth = 10,
+                                        bool $canonicalize = false, bool $ignoreCase = false): void {
         // Nasty cheating hack: prevent random failures on timemodified field.
         if (is_object($expected) and is_object($actual)) {
             if (property_exists($expected, 'timemodified') and property_exists($actual, 'timemodified')) {
