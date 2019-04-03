@@ -38,12 +38,12 @@
 <div class="d-flex flex-column">
     <div class="d-flex align-items-center">
         <div class="align-self-stretch" >
-            <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back>
+            <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back role="button">
                 {{> core_message/message_drawer_icon_back }}
             </a>
         </div>
         <div class="d-flex text-truncate">
-            <a class="d-flex text-truncate text-decoration-none" href="#" data-action="view-group-info">
+            <a class="d-flex text-truncate text-decoration-none" href="#" data-action="view-group-info" role="button">
                 {{#imageurl}}
                     <img
                         class="rounded-circle"
@@ -56,7 +56,8 @@
                 <div class="w-100 text-truncate ml-2">
                     <div class="d-flex">
                         <strong class="m-0 text-truncate">{{name}}</strong>
-                        <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary" data-region="favourite-icon-container">
+                        <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary"
+                        data-region="favourite-icon-container" aria-label="{{#str}} favourites, core {{/str}}">
                             {{#pix}} i/star-rating, core {{/pix}}
                         </span>
                     </div>
@@ -86,7 +87,7 @@
         <div class="mr-2 icon" aria-hidden="true"></div>
         {{#imageurl}}<div style="width: 38px" aria-hidden="true"></div>{{/imageurl}}
         <!-- End placeholders -->
-        <a class="text-decoration-none line-height-3 ml-2" href="#" data-action="view-group-info">
+        <a class="text-decoration-none line-height-3 ml-2" href="#" data-action="view-group-info" role="button">
             <small class="m-0 text-muted text-truncate">
                 {{#str}} numparticipants, core_message, {{totalmembercount}} {{/str}}
             </small>
