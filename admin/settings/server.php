@@ -354,6 +354,8 @@ $choices = array(new lang_string('never', 'admin'),
                  new lang_string('onlynoreply', 'admin'));
 $temp->add(new admin_setting_configselect('emailfromvia', new lang_string('emailfromvia', 'admin'),
           new lang_string('configemailfromvia', 'admin'), 1, $choices));
+    $temp->add(new admin_setting_configtext('emailsubjectprefix', new lang_string('emailsubjectprefix', 'admin'),
+        new lang_string('configemailsubjectprefix', 'admin'), '', PARAM_RAW));
 
 $ADMIN->add('email', $temp);
 
