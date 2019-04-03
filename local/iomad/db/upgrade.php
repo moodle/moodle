@@ -1997,8 +1997,14 @@ function xmldb_local_iomad_upgrade($oldversion) {
         // Update the existing roles to have the correct archetypes.
         $rolesarray = array('clientadministrator', 'companymanager', 'companydepartmentmanager', 'companycourseeditor', 'companycoursenoneditor');
         foreach ($rolesarray as $role) {
-            $DB->set_field('role', 'archetype', $role, array('shortname' => $role));
+            if ($rolerec = $DB->get_record('role', array('shortname' => $role))) {
+                $DB->set_field('role', 'archetype', $role, array('id' => $rolerec->id));
+                if (!$DB->record_exists('role_context_levels', array('roleid' => $rolerec->id, 'contextlevel' => CONTEXT_SYSTEM))) {
+                    $DB->insert_record('role_context_levels', array('roleid' => $rolerec->id, 'contextlevel' => CONTEXT_SYSTEM));
+                }
+            }
         }
+         
 
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2019030103, 'local', 'iomad');

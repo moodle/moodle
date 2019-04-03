@@ -654,3 +654,16 @@ $string['licensehelp'] = 'On this screen you are able to change the course alloc
 $string['headingcolor'] = 'Heading Colour';
 $string['maincolor'] = 'Main Colour';
 $string['linkcolor'] = 'Link Colour';
+
+// Role stuff
+$string['archetypeclientadministrator_role'] = 'Iomad client administrator';
+$string['clientadministrator_role'] = 'Iomad client administrator';
+$string['archetypecompanymanager_role'] = 'Company manager';
+$string['companymanager_role'] = 'Company manager';
+$string['archetypecompanydepartmentmanager_role'] = 'Company department manager';
+$string['companydepartmentmanager_role'] = 'Company department manager';
+$string['archetypecompanycourseeditor_role'] = 'Company course editing teacher';
+$string['companycourseeditor_role'] = 'Company course editing teacher';
+$string['archetypecompanycoursenoneditor_role'] = 'Company course non editing teacher';
+$string['companycoursenoneditor_role'] = 'Company course non editing teacher';
+
