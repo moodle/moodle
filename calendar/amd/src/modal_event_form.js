@@ -407,7 +407,17 @@ define([
      * @return {object} A promise
      */
     ModalEventForm.prototype.save = function() {
-        var loadingContainer = this.saveButton.find(SELECTORS.LOADING_ICON_CONTAINER);
+        var invalid,
+            loadingContainer = this.saveButton.find(SELECTORS.LOADING_ICON_CONTAINER);
+
+        // Now the change events have run, see if there are any "invalid" form fields.
+        invalid = this.getForm().find('[aria-invalid="true"]');
+
+        // If we found invalid fields, focus on the first one and do not submit via ajax.
+        if (invalid.length) {
+            invalid.first().focus();
+            return;
+        }
 
         loadingContainer.removeClass('hidden');
         this.disableButtons();
@@ -472,6 +482,8 @@ define([
         // Catch the submit event before it is actually processed by the browser and
         // prevent the submission. We'll take it from here.
         this.getModal().on('submit', function(e) {
+            Event.notifyFormSubmitAjax(this.getForm()[0]);
+
             this.save();
 
             // Stop the form from actually submitting and prevent it's

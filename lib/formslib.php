@@ -2421,6 +2421,17 @@ require(["core/event", "jquery"], function(Event, $) {
       return ret;
     }
 
+    var form = $(document.getElementById(\'' . $this->_attributes['id'] . '\')).closest(\'form\');
+    form.on(M.core.event.FORM_SUBMIT_AJAX, function() {
+        try {
+            var myValidator = validate_' . $this->_formName . ';
+        } catch(e) {
+            return true;
+        }
+        if (myValidator) {
+            myValidator();
+        }
+    });
 
     document.getElementById(\'' . $this->_attributes['id'] . '\').addEventListener(\'submit\', function(ev) {
         try {
