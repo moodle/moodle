@@ -170,6 +170,7 @@ class lesson_page_type_shortanswer extends lesson_page {
                 $result->newpageid = $answer->jumpto;
                 $options = new stdClass();
                 $options->para = false;
+                $options->noclean = true;
                 $result->response = format_text($answer->response, $answer->responseformat, $options);
                 $result->answerid = $answer->id;
                 break; // quit answer analysis immediately after a match has been found
