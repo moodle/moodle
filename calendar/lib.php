@@ -2849,7 +2849,7 @@ function calendar_add_icalendar_event($event, $unused = null, $subscriptionid, $
     }
 
     $eventrecord->location = empty($event->properties['LOCATION'][0]->value) ? '' :
-            str_replace('\\', '', $event->properties['LOCATION'][0]->value);
+            trim(str_replace('\\', '', $event->properties['LOCATION'][0]->value));
     $eventrecord->uuid = $event->properties['UID'][0]->value;
     $eventrecord->timemodified = time();
 
