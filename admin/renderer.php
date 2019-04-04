@@ -823,8 +823,7 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     protected function registration_warning($registered) {
 
-        if (!$registered) {
-
+        if (!$registered && site_is_public()) {
             if (has_capability('moodle/site:config', context_system::instance())) {
                 $registerbutton = $this->single_button(new moodle_url('/admin/registration/index.php'),
                     get_string('register', 'admin'));
