@@ -125,7 +125,7 @@ class event_exporter_base extends exporter {
                 'null' => NULL_ALLOWED
             ],
             'location' => [
-                'type' => PARAM_RAW_TRIMMED,
+                'type' => PARAM_RAW,
                 'optional' => true,
                 'default' => null,
                 'null' => NULL_ALLOWED
