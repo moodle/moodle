@@ -1065,6 +1065,56 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertFalse($participant->grantedextension);
     }
 
+    /**
+     * Tests that if a student with no submission who can no longer submit is not a participant.
+     */
+    public function test_get_participant_with_no_submission_no_capability() {
+        global $DB;
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $assign = $this->create_instance($course);
+        $teacher = self::getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = self::getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Remove the students capability to submit.
+        $role = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        assign_capability('mod/assign:submit', CAP_PROHIBIT, $role, $coursecontext);
+
+        $participant = $assign->get_participant($student->id);
+
+        self::assertNull($participant);
+    }
+
+    /**
+     * Tests that if a student that has submitted but can no longer submit is a participant.
+     */
+    public function test_get_participant_with_submission_no_capability() {
+        global $DB;
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $assign = $this->create_instance($course);
+        $teacher = self::getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = self::getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Simulate a submission.
+        $this->add_submission($student, $assign);
+        $this->submit_for_grading($student, $assign);
+
+        // Remove the students capability to submit.
+        $role = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        assign_capability('mod/assign:submit', CAP_PROHIBIT, $role, $coursecontext);
+
+        $participant = $assign->get_participant($student->id);
+
+        self::assertNotNull($participant);
+        self::assertEquals($student->id, $participant->id);
+        self::assertTrue($participant->submitted);
+        self::assertTrue($participant->requiregrading);
+        self::assertFalse($participant->grantedextension);
+    }
+
     public function test_get_participant_with_graded_submission() {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
