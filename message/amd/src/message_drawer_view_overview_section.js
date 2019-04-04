@@ -202,6 +202,12 @@ function(
             return formattedConversation;
         });
 
+        formattedConversations.forEach(function(conversation) {
+            if (new Date().toDateString() == new Date(conversation.lastmessagedate * 1000).toDateString()) {
+                conversation.istoday = true;
+            }
+        });
+
         return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: formattedConversations})
             .then(function(html) {
                 contentContainer.append(html);
@@ -455,6 +461,10 @@ function(
 
         // Cache the conversation.
         loadedConversationsById[conversation.id] = conversation;
+
+        if (new Date().toDateString() == new Date(formattedConversation.lastmessagedate * 1000).toDateString()) {
+            formattedConversation.istoday = true;
+        }
 
         return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: [formattedConversation]})
             .then(function(html) {
