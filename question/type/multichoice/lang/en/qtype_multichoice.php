@@ -37,6 +37,7 @@ $string['answersingleno'] = 'Multiple answers allowed';
 $string['answersingleyes'] = 'One answer only';
 $string['choiceno'] = 'Choice {$a}';
 $string['choices'] = 'Available choices';
+$string['clearchoice'] = 'Clear my choice';
 $string['clozeaid'] = 'Enter missing word';
 $string['correctansweris'] = 'The correct answer is: {$a}';
 $string['correctanswersare'] = 'The correct answers are: {$a}';

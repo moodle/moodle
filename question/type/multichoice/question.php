@@ -176,8 +176,7 @@ class qtype_multichoice_single_question extends qtype_multichoice_base {
     }
 
     public function summarise_response(array $response) {
-        if (!array_key_exists('answer', $response) ||
-                !array_key_exists($response['answer'], $this->order)) {
+        if (!$this->is_complete_response($response)) {
             return null;
         }
         $ansid = $this->order[$response['answer']];
@@ -186,8 +185,7 @@ class qtype_multichoice_single_question extends qtype_multichoice_base {
     }
 
     public function classify_response(array $response) {
-        if (!array_key_exists('answer', $response) ||
-                !array_key_exists($response['answer'], $this->order)) {
+        if (!$this->is_complete_response($response)) {
             return array($this->id => question_classified_response::no_response());
         }
         $choiceid = $this->order[$response['answer']];
@@ -230,11 +228,18 @@ class qtype_multichoice_single_question extends qtype_multichoice_base {
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
+        if (!$this->is_complete_response($prevresponse)) {
+            $prevresponse = [];
+        }
+        if (!$this->is_complete_response($newresponse)) {
+            $newresponse = [];
+        }
         return question_utils::arrays_same_at_key($prevresponse, $newresponse, 'answer');
     }
 
     public function is_complete_response(array $response) {
-        return array_key_exists('answer', $response) && $response['answer'] !== '';
+        return array_key_exists('answer', $response) && $response['answer'] !== ''
+                && (string) $response['answer'] !== '-1';
     }
 
     public function is_gradable_response(array $response) {
