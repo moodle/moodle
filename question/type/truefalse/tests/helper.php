@@ -111,13 +111,13 @@ class qtype_truefalse_test_helper extends question_test_helper {
         $q->options->answers = array();
         $q->options->answers[0] = new stdClass();
         $q->options->answers[0]->answer = 'True';
-        $q->options->answers[0]->fraction = '1.0000000';
+        $q->options->answers[0]->fraction = 1.0;
         $q->options->answers[0]->feedback = 'This is the right answer.';
         $q->options->answers[0]->feedbackformat = FORMAT_HTML;
 
         $q->options->answers[1] = new stdClass();
         $q->options->answers[1]->answer = 'False';
-        $q->options->answers[1]->fraction = '0.0000000';
+        $q->options->answers[1]->fraction = 0.0;
         $q->options->answers[1]->feedback = 'This is the wrong answer.';
         $q->options->answers[1]->feedbackformat = FORMAT_HTML;
 

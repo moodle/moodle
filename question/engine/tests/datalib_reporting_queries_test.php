@@ -146,7 +146,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $state = $states[$this->usageids[0]][$this->allslots[0]];
         $this->assertEquals((object) array(
             'questionid'     => $this->sa->id,
-            'maxmark'        => '5.0000000',
+            'maxmark'        => 5.0,
             'sequencenumber' => 2,
             'state'          => (string) question_state::$gradedright,
         ), $state);
@@ -154,7 +154,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $state = $states[$this->usageids[0]][$this->allslots[1]];
         $this->assertEquals((object) array(
             'questionid'     => $this->essay->id,
-            'maxmark'        => '10.0000000',
+            'maxmark'        => 10.0,
             'sequencenumber' => 2,
             'state'          => (string) question_state::$needsgrading,
         ), $state);
@@ -162,7 +162,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $state = $states[$this->usageids[1]][$this->allslots[0]];
         $this->assertEquals((object) array(
             'questionid'     => $this->sa->id,
-            'maxmark'        => '5.0000000',
+            'maxmark'        => 5.0,
             'sequencenumber' => 2,
             'state'          => (string) question_state::$gradedwrong,
         ), $state);
@@ -170,7 +170,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $state = $states[$this->usageids[1]][$this->allslots[1]];
         $this->assertEquals((object) array(
             'questionid'     => $this->essay->id,
-            'maxmark'        => '10.0000000',
+            'maxmark'        => 10.0,
             'sequencenumber' => 1,
             'state'          => (string) question_state::$gaveup,
         ), $state);
@@ -295,7 +295,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $state = $states[$this->usageids[0]][$this->allslots[0]];
         $this->assertEquals((object) array(
             'questionid'     => $this->sa->id,
-            'maxmark'        => '5.0000000',
+            'maxmark'        => 5.0,
             'sequencenumber' => 2,
             'state'          => (string) question_state::$gradedright,
         ), $state);
@@ -303,7 +303,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $state = $states[$this->usageids[0]][$this->allslots[1]];
         $this->assertEquals((object) array(
             'questionid'     => $this->essay->id,
-            'maxmark'        => '10.0000000',
+            'maxmark'        => 10.0,
             'sequencenumber' => 2,
             'state'          => (string) question_state::$needsgrading,
         ), $state);
@@ -311,7 +311,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $state = $states[$this->usageids[1]][$this->allslots[0]];
         $this->assertEquals((object) array(
             'questionid'     => $this->sa->id,
-            'maxmark'        => '5.0000000',
+            'maxmark'        => 5.0,
             'sequencenumber' => 2,
             'state'          => (string) question_state::$gradedwrong,
         ), $state);
@@ -319,7 +319,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $state = $states[$this->usageids[1]][$this->allslots[1]];
         $this->assertEquals((object) array(
             'questionid'     => $this->essay->id,
-            'maxmark'        => '10.0000000',
+            'maxmark'        => 10.0,
             'sequencenumber' => 1,
             'state'          => (string) question_state::$gaveup,
         ), $state);

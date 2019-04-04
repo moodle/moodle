@@ -2321,7 +2321,7 @@ class core_dml_testcase extends database_driver_testcase {
         $record->id = '1';
         $record->course = '1';
         $record->oneint = null;
-        $record->onenum = '1.00';
+        $record->onenum = 1.0;
         $record->onechar = 'a';
         $record->onetext = 'aaa';
 
