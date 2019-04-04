@@ -96,7 +96,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $visibledropzones = array();
         }
 
-        $topnode = 'div#q'.$qa->get_slot();
+        $topnode = 'div#' . $qa->get_outer_question_div_unique_id();
         $params = array('dropzones' => $visibledropzones,
                         'topnode' => $topnode,
                         'readonly' => $options->readonly);

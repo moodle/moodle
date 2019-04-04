@@ -54,7 +54,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
 
         $params = array(
             'inputids' => $inputids,
-            'topnode' => 'div.que.ddwtos#q' . $qa->get_slot(),
+            'topnode' => 'div.que.ddwtos#' . $qa->get_outer_question_div_unique_id(),
             'readonly' => $options->readonly
         );
 
