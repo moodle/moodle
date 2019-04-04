@@ -14279,6 +14279,16 @@ body.path-question-type {
 .que.multichoice .answer div.r1 .icon.fa-remove {
   text-indent: 0; }
 
+.qtype_multichoice_clearchoice {
+  padding-top: 10px; }
+  .qtype_multichoice_clearchoice label {
+    cursor: pointer;
+    text-decoration: underline;
+    padding-left: 30px; }
+
+.qtype_multichoice_clearchoice input {
+  display: none; }
+
 .formulation input[type="text"],
 .formulation select {
   width: auto;

@@ -26,6 +26,10 @@
     width: 15px;
 }
 
+.qtype_multichoice_clearchoice input {
+    display: none;
+}
+
 /* Editing form. */
 body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] {
     background: #eee;
