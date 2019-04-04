@@ -524,13 +524,10 @@ class registration {
             $markasviewed = true;
         } else {
             $showregistration = !empty($CFG->registrationpending);
-            if ($showregistration) {
-                $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
-                if ($host === 'localhost' || preg_match('|^127\.\d+\.\d+\.\d+$|', $host)) {
-                    // If it's a localhost, don't redirect to registration, it won't work anyway.
-                    $showregistration = false;
-                    $markasviewed = true;
-                }
+            if ($showregistration && !site_is_public()) {
+                // If it's not a public site, don't redirect to registration, it won't work anyway.
+                $showregistration = false;
+                $markasviewed = true;
             }
         }
         if ($markasviewed !== null) {
