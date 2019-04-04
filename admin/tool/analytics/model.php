@@ -172,7 +172,19 @@ switch ($action) {
         $mode = optional_param('mode', false, PARAM_ALPHANUM);
         if ($mode == 'trainedmodel') {
             $options['mode'] = 'trainedmodel';
+        } else {
+
+            // All is the default in core_analytics\model::evaluate() as well.
+            $timesplitting = optional_param('timesplitting', 'all', PARAM_ALPHANUMEXT);
+            if ($timesplitting === 'current') {
+                $options['timesplitting'] = \core_analytics\manager::get_time_splitting($model->get_model_obj()->timesplitting);
+            } else if ($timesplitting !== 'all' && $timesplitting !== 'current') {
+                $options['timesplitting'] = \core_analytics\manager::get_time_splitting(
+                    \tool_analytics\output\helper::option_to_class($timesplitting)
+                );
+            }
         }
+
         $results = $model->evaluate($options);
 
         // We reset the theme and the output as some indicators may be using external functions
