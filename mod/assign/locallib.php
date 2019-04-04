@@ -2091,6 +2091,33 @@ class assign {
     }
 
     /**
+     * Returns array with sql code and parameters returning all ids of users who have submitted an assignment.
+     *
+     * @param int $group The group that the query is for.
+     * @return array list($sql, $params)
+     */
+    protected function get_submitted_sql($group = 0) {
+        // We need to guarentee unique table names.
+        static $i = 0;
+        $i++;
+        $prefix = 'sa' . $i . '_';
+        $params = [
+            "{$prefix}assignment" => (int) $this->get_instance()->id,
+            "{$prefix}status" => ASSIGN_SUBMISSION_STATUS_NEW,
+        ];
+        $capjoin = get_enrolled_with_capabilities_join($this->context, $prefix, '', $group, $this->show_only_active_users());
+        $params += $capjoin->params;
+        $sql = "SELECT {$prefix}s.userid
+                  FROM {assign_submission} {$prefix}s
+                  JOIN {user} {$prefix}u ON {$prefix}u.id = {$prefix}s.userid
+                  $capjoin->joins
+                 WHERE {$prefix}s.assignment = :{$prefix}assignment
+                   AND {$prefix}s.status <> :{$prefix}status
+                   AND $capjoin->wheres";
+        return array($sql, $params);
+    }
+
+    /**
      * Load a list of users enrolled in the current course with the specified permission and group.
      * 0 for no group.
      * Apply any current sort filters from the grading table.
@@ -2112,6 +2139,8 @@ class assign {
         if (!isset($this->participants[$key])) {
             list($esql, $params) = get_enrolled_sql($this->context, 'mod/assign:submit', $currentgroup,
                     $this->show_only_active_users());
+            list($ssql, $sparams) = $this->get_submitted_sql($currentgroup);
+            $params += $sparams;
 
             $fields = 'u.*';
             $orderby = 'u.lastname, u.firstname, u.id';
@@ -2158,7 +2187,7 @@ class assign {
 
             $sql = "SELECT $fields
                       FROM {user} u
-                      JOIN ($esql) je ON je.id = u.id
+                      JOIN ($esql UNION $ssql) je ON je.id = u.id
                            $additionaljoins
                      WHERE u.deleted = 0
                            $additionalfilters
@@ -2216,12 +2245,18 @@ class assign {
             return null;
         }
 
-        if (!is_enrolled($this->context, $participant, 'mod/assign:submit', $this->show_only_active_users())) {
+        if (!is_enrolled($this->context, $participant, '', $this->show_only_active_users())) {
             return null;
         }
 
         $result = $this->get_submission_info_for_participants(array($participant->id => $participant));
-        return $result[$participant->id];
+
+        $submissioninfo = $result[$participant->id];
+        if (!$submissioninfo->submitted && !has_capability('mod/assign:submit', $this->context, $userid)) {
+            return null;
+        }
+
+        return $submissioninfo;
     }
 
     /**
@@ -2310,7 +2345,7 @@ class assign {
         if ($currentgroup === null) {
             $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         }
-        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
+        list($esql, $params) = get_enrolled_sql($this->get_context(), '', $currentgroup, true);
 
         $params['assignid'] = $this->get_instance()->id;
         $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
@@ -2425,7 +2460,7 @@ class assign {
         if ($currentgroup === null) {
             $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         }
-        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
+        list($esql, $params) = get_enrolled_sql($this->get_context(), '', $currentgroup, true);
 
         $params['assignid'] = $this->get_instance()->id;
         $params['assignid2'] = $this->get_instance()->id;
