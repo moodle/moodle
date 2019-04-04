@@ -116,6 +116,9 @@ function(
         var countElement = container.find(SELECTORS.SECTION_TOTAL_COUNT);
         countElement.text(count);
         container.removeClass('hidden');
+        Str.get_string('totalconversations', 'core_message', count).done(function(string) {
+            container.attr('aria-label', string);
+        });
 
         var numPlaceholders = count > 20 ? 20 : count;
         // Array of "true" up to the number of placeholders we want.
@@ -145,6 +148,10 @@ function(
     var renderUnreadCount = function(root, count) {
         var countElement = root.find(SELECTORS.SECTION_UNREAD_COUNT);
         countElement.text(count);
+
+        Str.get_string('unreadconversations', 'core_message', count).done(function(string) {
+            countElement.attr('aria-label', string);
+        });
 
         if (count > 0) {
             countElement.removeClass('hidden');
