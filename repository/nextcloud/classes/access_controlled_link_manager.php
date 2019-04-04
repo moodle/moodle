@@ -26,6 +26,7 @@ namespace repository_nextcloud;
 use context;
 use \core\oauth2\api;
 use \core\notification;
+use repository_exception;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/webdavlib.php');
@@ -452,5 +453,25 @@ class access_controlled_link_manager{
             'shareid' => $shareid,
             'filetarget' => (string) $validfile->file_target
             ];
+    }
+
+    /**
+     * Download a file from the system account for the purpose of offline usage.
+     * @param string $srcpath Name of a file owned by the system account
+     * @param string $targetpath Temporary filename in Moodle
+     * @throws repository_exception The download was unsuccessful, maybe the file does not exist.
+     */
+    public function download_for_offline_usage(string $srcpath, string $targetpath): void {
+        $this->systemwebdavclient->open();
+        $webdavendpoint = issuer_management::parse_endpoint_url('webdav', $this->issuer);
+        $srcpath = ltrim($srcpath, '/');
+        $sourcepath = $webdavendpoint['path'] . $srcpath;
+
+        // Write file into temp location.
+        if (!$this->systemwebdavclient->get_file($sourcepath, $targetpath)) {
+            $this->systemwebdavclient->close();
+            throw new repository_exception('cannotdownload', 'repository');
+        }
+        $this->systemwebdavclient->close();
     }
 }
