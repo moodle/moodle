@@ -20,18 +20,21 @@
     Template for models list.
 
     Classes required for JS:
-    * none
+    * The list od models wrapped within a id="predictionmodelslist" element.
 
     Data attributes required for JS:
-    * none
+    * [data-widget="toggle"] indicates the clickable element for expanding/collapsing
+      the list of indicators used by the given model.
 
     Context variables required for this template:
     * models: array - list of models to display
+        - id: int - model unique identifier
         - name: object - data for the inplace editable element template
         - target: string - name of the target associated with the model
         - targetclass: string - fully qualified name of the target class
         - targethelp: object - data for the help tooltip template
         - enabled: bool - is the model enabled
+        - indicatorsnum: int - number of indicators
         - indicators: array - list of indicators used by the model
             + name: string - name of the indicator
             + help: object - data for the help tooltip template
@@ -46,6 +49,7 @@
     {
         "models": [
             {
+                "id": 11,
                 "name": {
                     "component": "local_analyticsdemo",
                     "itemtype": "modelname",
@@ -69,6 +73,7 @@
                     }
                 },
                 "enabled": 1,
+                "indicatorsnum": 2,
                 "indicators": [
                     {
                         "name": "Indicator 1",
@@ -142,7 +147,7 @@
         <a href="{{createmodelurl}}" class="btn btn-secondary mr-2">{{#str}}createmodel, tool_analytics{{/str}}</a>
         <a href="{{importmodelurl}}" class="btn btn-secondary">{{#str}}importmodel, tool_analytics{{/str}}</a>
     </div>
-    <table class="generaltable fullwidth">
+    <table id="predictionmodelslist" class="generaltable fullwidth">
         <caption>{{#str}}analyticmodels, tool_analytics{{/str}}</caption>
         <thead>
             <tr>
@@ -177,7 +182,15 @@
                     {{/enabled}}
                 </td>
                 <td>
-                    <ul>
+                    <a data-widget="toggle"
+                           title="{{#str}} clicktohideshow {{/str}}"
+                           aria-expanded="false"
+                           aria-controls="indicators-{{id}}"
+                           role="button"
+                           href="">
+                        {{#str}} indicatorsnum, tool_analytics, {{indicatorsnum}} {{/str}}
+                    </a>
+                    <ul class="hidden" id="indicators-{{id}}">
                     {{#indicators}}
                         <li>
                             {{name}}
@@ -221,3 +234,22 @@
         </tbody>
     </table>
 </div>
+{{#js}}
+require(['jquery'], function($) {
+
+    // Toggle the visibility of the indicators list.
+    $('#predictionmodelslist').on('click', '[data-widget="toggle"]', function(e) {
+        e.preventDefault();
+        var toggle = $(e.currentTarget);
+        var listid = toggle.attr('aria-controls');
+
+        $(document.getElementById(listid)).toggle();
+
+        if (toggle.attr('aria-expanded') == 'false') {
+            toggle.attr('aria-expanded', 'true');
+        } else {
+            toggle.attr('aria-expanded', 'false');
+        }
+    });
+});
+{{/js}}

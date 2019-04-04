@@ -120,6 +120,8 @@ class models_list implements \renderable, \templatable {
                 $modeldata->indicators = $indicators;
             }
 
+            $modeldata->indicatorsnum = count($modeldata->indicators);
+
             // Check if there is a help icon for the time splitting method.
             if (!empty($modeldata->timesplitting)) {
                 $identifier = $modeldata->timesplitting->get_identifier();

@@ -81,6 +81,7 @@ $string['importmodel'] = 'Import model';
 $string['indicators'] = 'Indicators';
 $string['indicators_help'] = 'The indicators are what you think will lead to an accurate prediction of the target.';
 $string['indicators_link'] = 'Indicators';
+$string['indicatorsnum'] = 'Number of indicators: {$a}';
 $string['info'] = 'Info';
 $string['ignoreversionmismatches'] = 'Ignore version mismatches';
 $string['ignoreversionmismatchescheckbox'] = 'Ignore the differences between this site version and the original site version.';
