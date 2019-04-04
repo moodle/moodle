@@ -14286,9 +14286,6 @@ body.path-question-type {
     text-decoration: underline;
     padding-left: 30px; }
 
-.qtype_multichoice_clearchoice input {
-  display: none; }
-
 .formulation input[type="text"],
 .formulation select {
   width: auto;
