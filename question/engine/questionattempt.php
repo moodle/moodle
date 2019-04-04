@@ -360,6 +360,17 @@ class question_attempt {
     }
 
     /**
+     * When the question is rendered, this unique id is added to the
+     * outer div of the question. It can be used to uniquely reference
+     * the question from JavaScript.
+     *
+     * @return string id added to the outer <div class="que ..."> when the question is rendered.
+     */
+    public function get_outer_question_div_unique_id() {
+        return 'question-' . $this->usageid . '-' . $this->slot;
+    }
+
+    /**
      * Get one of the steps in this attempt.
      *
      * @param int $i the step number, which counts from 0.

@@ -115,7 +115,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
 
         $PAGE->requires->string_for_js('blank', 'qtype_ddimageortext');
         $PAGE->requires->js_call_amd('qtype_ddimageortext/question', 'init',
-                ['q' . $qa->get_slot(), $options->readonly, $question->places]);
+                [$qa->get_outer_question_div_unique_id(), $options->readonly, $question->places]);
 
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::nonempty_tag('div',
