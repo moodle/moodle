@@ -2125,6 +2125,7 @@ class assign {
      *
      * @param int $currentgroup
      * @param bool $idsonly
+     * @param bool $tablesort
      * @return array List of user records
      */
     public function list_participants($currentgroup, $idsonly, $tablesort = false) {
