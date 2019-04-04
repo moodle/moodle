@@ -96,6 +96,7 @@ class provider implements
             'subject' => 'privacy:metadata:forum_posts:subject',
             'message' => 'privacy:metadata:forum_posts:message',
             'userid' => 'privacy:metadata:forum_posts:userid',
+            'privatereplyto' => 'privacy:metadata:forum_posts:privatereplyto',
         ], 'privacy:metadata:forum_posts');
 
         // The 'forum_queue' table contains user data, but it is only a temporary cache of other data.
@@ -620,6 +621,7 @@ class provider implements
                  WHERE f.id ${foruminsql} AND
                 (
                     p.userid = :postuserid OR
+                    p.privatereplyto = :privatereplyrecipient OR
                     fr.id IS NOT NULL OR
                     {$ratingsql->userwhere}
                 )
@@ -629,6 +631,7 @@ class provider implements
         $params = [
             'postuserid'    => $userid,
             'readuserid'    => $userid,
+            'privatereplyrecipient' => $userid,
         ];
         $params += $forumparams;
         $params += $ratingsql->params;
@@ -666,11 +669,18 @@ class provider implements
                LEFT JOIN {forum_read} fr ON fr.postid = p.id AND fr.userid = :readuserid
             {$ratingsql->join} AND {$ratingsql->userwhere}
                    WHERE d.id = :discussionid
+                     AND (
+                            p.privatereplyto = 0
+                         OR p.privatereplyto = :privatereplyrecipient
+                         OR p.userid = :privatereplyauthor
+                     )
         ";
 
         $params = [
             'discussionid'  => $discussionid,
             'readuserid'    => $userid,
+            'privatereplyrecipient' => $userid,
+            'privatereplyauthor' => $userid,
         ];
         $params += $ratingsql->params;
 
@@ -685,6 +695,7 @@ class provider implements
             $post->hasdata = $post->hasdata || !empty($post->hasratings);
             $post->hasdata = $post->hasdata || $post->readflag;
             $post->hasdata = $post->hasdata || ($post->userid == $USER->id);
+            $post->hasdata = $post->hasdata || ($post->privatereplyto == $USER->id);
 
             if (0 == $post->parent) {
                 $structure->children[$post->id] = $post;
@@ -755,6 +766,10 @@ class provider implements
             'modified' => transform::datetime($post->modified),
             'author_was_you' => transform::yesno($post->userid == $userid),
         ];
+
+        if (!empty($post->privatereplyto)) {
+            $postdata->privatereply = transform::yesno(true);
+        }
 
         $postdata->message = writer::with_context($context)
             ->rewrite_pluginfile_urls($postarea, 'mod_forum', 'post', $post->id, $post->message);

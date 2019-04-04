@@ -304,6 +304,10 @@ class mod_forum_generator extends testing_module_generator {
             $record['deleted'] = 0;
         }
 
+        if (!isset($record['privatereplyto'])) {
+            $record['privatereplyto'] = 0;
+        }
+
         $record = (object) $record;
 
         // Add the post.
@@ -345,5 +349,23 @@ class mod_forum_generator extends testing_module_generator {
             $post = $this->create_post($record);
         }
         return $post;
+    }
+
+    /**
+     * Extracted from exporter/post.php
+     *
+     * Get the HTML to display as a subheading in a post.
+     *
+     * @param stdClass $exportedauthor The exported author object
+     * @param int $timecreated The post time created timestamp if it's to be displayed
+     * @return string
+     */
+    public function get_author_subheading_html(stdClass $exportedauthor, int $timecreated) : string {
+        $fullname = $exportedauthor->fullname;
+        $profileurl = $exportedauthor->urls['profile'] ?? null;
+        $formatteddate = userdate($timecreated, get_string('strftimedaydatetime', 'core_langconfig'));
+        $name = $profileurl ? "<a href=\"{$profileurl}\">{$fullname}</a>" : $fullname;
+        $date = "<time>{$formatteddate}</time>";
+        return get_string('bynameondate', 'mod_forum', ['name' => $name, 'date' => $date]);
     }
 }

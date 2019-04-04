@@ -58,6 +58,11 @@
                         {{{html.authorsubheading}}}
                     </address>
                 {{/isdeleted}}
+                {{#isprivatereply}}
+                    <div class="privatereplyinfo">
+                      {{#str}}postisprivatereply, forum{{/str}}
+                    </div>
+                {{/isprivatereply}}
             </header>
             <div>
                 {{{message}}}

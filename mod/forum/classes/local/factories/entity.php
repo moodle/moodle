@@ -150,7 +150,8 @@ class entity {
             $record->attachment,
             $record->totalscore,
             $record->mailnow,
-            $record->deleted
+            $record->deleted,
+            $record->privatereplyto
         );
     }
 

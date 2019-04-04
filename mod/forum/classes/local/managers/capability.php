@@ -316,7 +316,7 @@ class capability {
     }
 
     /**
-     * Can the user view the post in this discussion?
+     * Can the user view the content of the post in this discussion?
      *
      * @param stdClass $user The user to check
      * @param discussion_entity $discussion The discussion to check
@@ -324,12 +324,47 @@ class capability {
      * @return bool
      */
     public function can_view_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+        if (!$this->can_view_post_shell($user, $post)) {
+            return false;
+        }
+
         $forum = $this->get_forum();
         $forumrecord = $this->get_forum_record();
         $discussionrecord = $this->get_discussion_record($discussion);
         $postrecord = $this->get_post_record($post);
         $coursemodule = $forum->get_course_module_record();
         return forum_user_can_see_post($forumrecord, $discussionrecord, $postrecord, $user, $coursemodule, false);
+    }
+
+    /**
+     * Can the user view the post at all?
+     * In some situations the user can view the shell of a post without being able to view its content.
+     *
+     * @param   stdClass $user The user to check
+     * @param   post_entity $post The post the user wants to view
+     * @return  bool
+     *
+     */
+    public function can_view_post_shell(stdClass $user, post_entity $post) : bool {
+        if (!$post->is_private_reply()) {
+            return true;
+        }
+
+        if ($post->is_private_reply_intended_for_user($user)) {
+            return true;
+        }
+
+        return $this->can_view_any_private_reply($user);
+    }
+
+    /**
+     * Whether the user can view any private reply in the forum.
+     *
+     * @param   stdClass $user The user to check
+     * @return  bool
+     */
+    public function can_view_any_private_reply(stdClass $user) : bool {
+        return has_capability('mod/forum:readprivatereplies', $this->get_context(), $user);
     }
 
     /**
@@ -394,6 +429,11 @@ class capability {
      * @return bool
      */
     public function can_split_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+        if ($post->is_private_reply()) {
+            // It is not possible to create a private discussion.
+            return false;
+        }
+
         return $this->can_split_discussions($user) && $post->has_parent();
     }
 
@@ -406,7 +446,28 @@ class capability {
      * @return bool
      */
     public function can_reply_to_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+        if ($post->is_private_reply()) {
+            // It is not possible to reply to a private reply.
+            return false;
+        }
+
         return $this->can_post_in_discussion($user, $discussion);
+    }
+
+    /**
+     * Can the user reply privately to the specified post?
+     *
+     * @param stdClass $user The user to check
+     * @param post_entity $post The post the user wants to reply to
+     * @return bool
+     */
+    public function can_reply_privately_to_post(stdClass $user, post_entity $post) : bool {
+        if ($post->is_private_reply()) {
+            // You cannot reply privately to a post which is, itself, a private reply.
+            return false;
+        }
+
+        return has_capability('mod/forum:postprivatereply', $this->get_context(), $user);
     }
 
     /**

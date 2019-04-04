@@ -1440,7 +1440,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
     $getuserlastmodified = ($displayformat == 'header');
 
     $discussions = forum_get_discussions($cm, $sort, $fullpost, null, $maxdiscussions, $getuserlastmodified, $page, $perpage);
-    if (!$$discussions) {
+    if (!$discussions) {
         echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';
@@ -1619,4 +1619,35 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
         // Show the paging bar.
         echo $OUTPUT->paging_bar($numdiscussions, $page, $perpage, "view.php?f=$forum->id");
     }
+}
+
+/**
+ * Count the number of replies to the specified post.
+ *
+ * @param object $post
+ * @param bool $children
+ * @return int
+ * @deprecated since Moodle 3.7
+ * @todo MDL-65252 This will be removed in Moodle 4.1
+ */
+function forum_count_replies($post, $children = true) {
+    global $USER;
+    debugging('forum_count_replies has been deprecated. Please use the Post vault instead.', DEBUG_DEVELOPER);
+
+    if (!$children) {
+        return $DB->count_records('forum_posts', array('parent' => $post->id));
+    }
+
+    $entityfactory = mod_forum\local\container::get_entity_factory();
+    $postentity = $entityfactory->get_post_from_stdclass($post);
+
+    $vaultfactory = mod_forum\local\container::get_vault_factory();
+    $postvault = $vaultfactory->get_post_vault();
+
+    return $postvault->get_reply_count_for_post_id_in_discussion_id(
+            $USER,
+            $postentity->get_id(),
+            $postentity->get_discussion_id(),
+            true
+        );
 }

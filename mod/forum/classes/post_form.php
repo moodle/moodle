@@ -93,6 +93,7 @@ class mod_forum_post_form extends moodleform {
         $subscribe = $this->_customdata['subscribe'];
         $edit = $this->_customdata['edit'];
         $thresholdwarning = $this->_customdata['thresholdwarning'];
+        $canreplyprivately = $this->_customdata['canreplyprivately'];
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params later using set_data
 
@@ -145,6 +146,17 @@ class mod_forum_post_form extends moodleform {
 
         if (empty($post->id) && $manageactivities) {
             $mform->addElement('checkbox', 'mailnow', get_string('mailnow', 'forum'));
+        }
+
+        if ((empty($post->id) && $canreplyprivately) || (!empty($post) && !empty($post->privatereplyto))) {
+            // Only show the option to change private reply settings if this is a new post and the user can reply
+            // privately, or if this is already private reply, in which case the state is shown but is not editable.
+            $mform->addElement('checkbox', 'isprivatereply', get_string('privatereply', 'forum'));
+            $mform->addHelpButton('isprivatereply', 'privatereply', 'forum');
+            if (!empty($post->privatereplyto)) {
+                $mform->setDefault('isprivatereply', 1);
+                $mform->freeze('isprivatereply');
+            }
         }
 
         if ($groupmode = groups_get_activity_groupmode($cm, $course)) {

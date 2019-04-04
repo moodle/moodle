@@ -155,4 +155,44 @@ class forum extends db_table_vault {
 
         return $this->transform_db_records_to_entities($records);
     }
+
+    /**
+     * Get the forum entity for the given post id.
+     *
+     * @param int $id The course module id
+     * @return forum_entity|null
+     */
+    public function get_from_post_id(int $id) : ?forum_entity {
+        $alias = $this->get_table_alias();
+        $thistable = new dml_table(self::TABLE, $alias, $alias);
+        $coursemoduletable = new dml_table('course_modules', 'cm', 'cm_');
+        $coursetable = new dml_table('course', 'c', 'c_');
+
+        $tablefields = $thistable->get_field_select();
+        $coursemodulefields = $coursemoduletable->get_field_select();
+        $coursefields = $coursetable->get_field_select();
+
+        $fields = implode(', ', [
+            $tablefields,
+            context_helper::get_preload_record_columns_sql('ctx'),
+            $coursemodulefields,
+            $coursefields,
+        ]);
+
+        $tables = "{forum_posts} p";
+        $tables .= " JOIN {forum_discussions} d ON d.id = p.discussion";
+        $tables .= ' JOIN {' . self::TABLE . "} {$alias} ON {$alias}.id = d.forum";
+        $tables .= " JOIN {modules} m ON m.name = 'forum'";
+        $tables .= " JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = {$alias}.id";
+        $tables .= ' JOIN {context} ctx ON ctx.contextlevel = ' . CONTEXT_MODULE .  ' AND ctx.instanceid = cm.id';
+        $tables .= " JOIN {course} c ON c.id = {$alias}.course";
+
+        $sql = "SELECT {$fields} FROM {$tables} WHERE p.id = :postid";
+        $records = $this->get_db()->get_records_sql($sql, [
+            'postid' => $id,
+        ]);
+
+        $records = $this->transform_db_records_to_entities($records);
+        return count($records) ? array_shift($records) : null;
+    }
 }

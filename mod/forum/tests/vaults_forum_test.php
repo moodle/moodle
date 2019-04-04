@@ -24,32 +24,31 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/generator_trait.php');
+
 /**
  * The forum vault tests.
  *
  * @package    mod_forum
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \mod_forum\local\vaults\forum
  */
 class mod_forum_vaults_forum_testcase extends advanced_testcase {
-    /** @var \mod_forum\local\vaults\discussion */
-    private $vault;
-
-    /**
-     * Set up function for tests.
-     */
-    public function setUp() {
-        $vaultfactory = \mod_forum\local\container::get_vault_factory();
-        $this->vault = $vaultfactory->get_forum_vault();
-    }
+    // Make use of the test generator trait.
+    use mod_forum_tests_generator_trait;
 
     /**
      * Test get_from_id.
+     *
+     * @covers ::get_from_id
+     * @covers ::<!public>
      */
     public function test_get_from_id() {
         $this->resetAfterTest();
 
-        $vault = $this->vault;
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $vault = $vaultfactory->get_forum_vault();
         $datagenerator = $this->getDataGenerator();
         $user = $datagenerator->create_user();
         $course = $datagenerator->create_course();
@@ -62,11 +61,15 @@ class mod_forum_vaults_forum_testcase extends advanced_testcase {
 
     /**
      * Test get_from_course_module_id.
+     *
+     * @covers ::get_from_course_module_id
+     * @covers ::<!public>
      */
     public function test_get_from_course_module_id() {
         $this->resetAfterTest();
 
-        $vault = $this->vault;
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $vault = $vaultfactory->get_forum_vault();
         $datagenerator = $this->getDataGenerator();
         $user = $datagenerator->create_user();
         $course = $datagenerator->create_course();
@@ -85,11 +88,15 @@ class mod_forum_vaults_forum_testcase extends advanced_testcase {
 
     /**
      * Test get_from_course_module_ids.
+     *
+     * @covers ::get_from_course_module_ids
+     * @covers ::<!public>
      */
     public function test_get_from_course_module_ids() {
         $this->resetAfterTest();
 
-        $vault = $this->vault;
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $vault = $vaultfactory->get_forum_vault();
         $datagenerator = $this->getDataGenerator();
         $user = $datagenerator->create_user();
         $course = $datagenerator->create_course();
@@ -116,5 +123,37 @@ class mod_forum_vaults_forum_testcase extends advanced_testcase {
         });
         $this->assertCount(1, $entities);
         $this->assertEquals($forum1->id, $entities[0]->get_id());
+    }
+
+    /**
+     * Test get_from_post_id.
+     *
+     * @covers ::get_from_post_id
+     * @covers ::<!public>
+     */
+    public function test_get_from_post_id() {
+        $this->resetAfterTest();
+
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $vault = $vaultfactory->get_forum_vault();
+
+        $datagenerator = $this->getDataGenerator();
+        $user = $datagenerator->create_user();
+        $course = $datagenerator->create_course();
+        $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
+        [$discussion, $post] = $this->helper_post_to_forum($forum, $user);
+        $reply = $this->helper_reply_to_post($post, $user);
+
+        $otherforum = $datagenerator->create_module('forum', ['course' => $course->id]);
+        [$otherdiscussion, $otherpost] = $this->helper_post_to_forum($otherforum, $user);
+        $otherreply = $this->helper_reply_to_post($otherpost, $user);
+
+        $entity = $vault->get_from_post_id($post->id);
+        $this->assertEquals($forum->id, $entity->get_id());
+
+        $entity = $vault->get_from_post_id($reply->id);
+        $this->assertEquals($forum->id, $entity->get_id());
+
+        $this->assertEmpty($vault->get_from_post_id(-1));
     }
 }
