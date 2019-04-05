@@ -1384,7 +1384,7 @@ function completion_cron_aggregate($method, $data, &$state) {
         } else {
             $state = false;
         }
-    } elseif ($method == COMPLETION_AGGREGATION_ANY) {
+    } else if ($method == COMPLETION_AGGREGATION_ANY) {
         if ($data) {
             $state = true;
         } else if (!$data && $state === null) {
