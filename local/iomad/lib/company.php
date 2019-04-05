@@ -3775,7 +3775,7 @@ echo "H</br>";
         if (empty($licenserecord->program)) {
             $DB->set_field('companylicense', 'humanallocation', $licenserecord->allocation, array('id' => $licenseid));
         } else {
-            $coursecount = $DB->count_records('companylicense_courses', array('licenseid' => $liceneid));
+            $coursecount = $DB->count_records('companylicense_courses', array('licenseid' => $licenseid));
             $DB->set_field('companylicense', 'humanallocation', $licenserecord->allocation / $coursecount, array('id' => $licenserecord->id));
         }
 
