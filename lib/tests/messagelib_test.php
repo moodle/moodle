@@ -836,13 +836,30 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
+        $course = $this->getDataGenerator()->create_course();
+
         // Create some users and a conversation between them.
         $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
         set_config('allowedemaildomains', 'example.com');
-        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
-            [$user1->id, $user2->id, $user3->id], 'Group project discussion');
+
+        // Create a group in the course.
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group1->id, $user1->id);
+        groups_add_member($group1->id, $user2->id);
+        groups_add_member($group1->id, $user3->id);
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id],
+            'Group project discussion',
+            \core_message\api::MESSAGE_CONVERSATION_ENABLED,
+            'core_group',
+            'groups',
+            $group1->id,
+            context_course::instance($course->id)->id
+        );
 
         // Generate the message.
         $message = new \core\message\message();
@@ -868,8 +885,11 @@ class core_messagelib_testcase extends advanced_testcase {
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user3);
 
         // Now, send a message and verify the email processor are hit.
-        $sink = $this->redirectEmails();
         $messageid = message_send($message);
+
+        $sink = $this->redirectEmails();
+        $task = new \message_email\task\send_email_task();
+        $task->execute();
         $emails = $sink->get_messages();
         $this->assertCount(2, $emails);
 
@@ -902,14 +922,29 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
+        $course = $this->getDataGenerator()->create_course();
+
         $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
         set_config('allowedemaildomains', 'example.com');
 
-        // Create a conversation.
-        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
-            [$user1->id, $user2->id, $user3->id], 'Group project discussion');
+        // Create a group in the course.
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group1->id, $user1->id);
+        groups_add_member($group1->id, $user2->id);
+        groups_add_member($group1->id, $user3->id);
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id],
+            'Group project discussion',
+            \core_message\api::MESSAGE_CONVERSATION_ENABLED,
+            'core_group',
+            'groups',
+            $group1->id,
+            context_course::instance($course->id)->id
+        );
 
         // Test basic email redirection.
         $this->assertFileExists("$CFG->dirroot/message/output/email/version.php");
@@ -939,18 +974,18 @@ class core_messagelib_testcase extends advanced_testcase {
 
         $transaction = $DB->start_delegated_transaction();
         $sink = $this->redirectEmails();
-        $messageid = message_send($message);
+        message_send($message);
         $emails = $sink->get_messages();
         $this->assertCount(0, $emails);
-        $savedmessage = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
         $sink->clear();
         $this->assertFalse($DB->record_exists('message_user_actions', array()));
-        $DB->delete_records('messages', array());
         $events = $eventsink->get_events();
         $this->assertCount(0, $events);
         $eventsink->clear();
         $transaction->allow_commit();
         $events = $eventsink->get_events();
+        $task = new \message_email\task\send_email_task();
+        $task->execute();
         $emails = $sink->get_messages();
         $this->assertCount(2, $emails);
         $this->assertCount(1, $events);
