@@ -83,7 +83,7 @@ class behat_course extends behat_base {
 
         // Select Miscellaneous category.
         $this->i_click_on_category_in_the_management_interface(get_string('miscellaneous'));
-        $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categoriesandcoures'));
+        $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categoriesandcourses'));
 
         // Click create new course.
         $this->execute('behat_general::i_click_on_in_the',
