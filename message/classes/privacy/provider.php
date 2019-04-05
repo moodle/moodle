@@ -73,7 +73,8 @@ class provider implements
                 'fullmessageformat' => 'privacy:metadata:messages:fullmessageformat',
                 'fullmessagehtml' => 'privacy:metadata:messages:fullmessagehtml',
                 'smallmessage' => 'privacy:metadata:messages:smallmessage',
-                'timecreated' => 'privacy:metadata:messages:timecreated'
+                'timecreated' => 'privacy:metadata:messages:timecreated',
+                'customdata' => 'privacy:metadata:messages:customdata',
             ],
             'privacy:metadata:messages'
         );
@@ -155,6 +156,7 @@ class provider implements
                 'contexturlname' => 'privacy:metadata:notifications:contexturlname',
                 'timeread' => 'privacy:metadata:notifications:timeread',
                 'timecreated' => 'privacy:metadata:notifications:timecreated',
+                'customdata' => 'privacy:metadata:notifications:customdata',
             ],
             'privacy:metadata:notifications'
         );
@@ -930,7 +932,8 @@ class provider implements
                 'issender' => transform::yesno($issender),
                 'message' => message_format_message_text($message),
                 'timecreated' => transform::datetime($message->timecreated),
-                'timeread' => $timeread
+                'timeread' => $timeread,
+                'customdata' => $message->customdata,
             ];
             if ($conversation->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP && !$issender) {
                 // Only export sender for group conversations when is not the current user.
@@ -1037,7 +1040,8 @@ class provider implements
                 'contexturl' => $notification->contexturl,
                 'contexturlname' => $notification->contexturlname,
                 'timeread' => $timeread,
-                'timecreated' => transform::datetime($notification->timecreated)
+                'timecreated' => transform::datetime($notification->timecreated),
+                'customdata' => $notification->customdata,
             ];
 
             $notificationdata[] = $data;

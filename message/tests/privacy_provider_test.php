@@ -89,6 +89,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertArrayHasKey('fullmessagehtml', $privacyfields);
         $this->assertArrayHasKey('smallmessage', $privacyfields);
         $this->assertArrayHasKey('timecreated', $privacyfields);
+        $this->assertArrayHasKey('customdata', $privacyfields);
         $this->assertEquals('privacy:metadata:messages', $messagestable->get_summary());
 
         $privacyfields = $messageuseractionstable->get_privacy_fields();
@@ -136,6 +137,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertArrayHasKey('contexturlname', $privacyfields);
         $this->assertArrayHasKey('timeread', $privacyfields);
         $this->assertArrayHasKey('timecreated', $privacyfields);
+        $this->assertArrayHasKey('customdata', $privacyfields);
         $this->assertEquals('privacy:metadata:notifications', $notificationstable->get_summary());
     }
 
@@ -2724,6 +2726,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $record->fullmessage = 'A rad message ' . $i;
         $record->smallmessage = 'A rad message ' . $i;
         $record->timecreated = $timecreated;
+        $record->customdata = json_encode(['akey' => 'avalue']);
 
         $i++;
 
@@ -2763,6 +2766,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $record->smallmessage = 'Yo homie, you got some stuff to do, yolo. ' . $i;
         $record->timeread = $timeread;
         $record->timecreated = $timecreated;
+        $record->customdata = json_encode(['akey' => 'avalue']);
 
         $i++;
 
