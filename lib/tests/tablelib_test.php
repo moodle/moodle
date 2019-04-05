@@ -526,7 +526,6 @@ class core_tablelib_testcase extends basic_testcase {
     }
 
     public function test_can_be_reset() {
-
         // Table in its default state (as if seen for the first time), nothing to reset.
         $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
         $table->setup();
@@ -538,21 +537,25 @@ class core_tablelib_testcase extends basic_testcase {
         $table->setup();
         $this->assertFalse($table->can_be_reset());
 
-        // Table explicitly sorted by the default column (reverses the order), can be reset.
+        // Table explicitly sorted by the default column & direction, nothing to reset.
         $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
         $table->sortable(true, 'column1', SORT_DESC);
         $_GET['tsort'] = 'column1';
+        $_GET['tdir'] = SORT_DESC;
         $table->setup();
         unset($_GET['tsort']);
-        $this->assertTrue($table->can_be_reset());
+        unset($_GET['tdir']);
+        $this->assertFalse($table->can_be_reset());
 
-        // Table explicitly sorted twice by the default column (puts back to default order), nothing to reset.
+        // Table explicitly sorted twice by the default column & direction, nothing to reset.
         $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
         $table->sortable(true, 'column1', SORT_DESC);
         $_GET['tsort'] = 'column1';
+        $_GET['tdir'] = SORT_DESC;
         $table->setup();
         $table->setup(); // Set up again to simulate the second page request.
         unset($_GET['tsort']);
+        unset($_GET['tdir']);
         $this->assertFalse($table->can_be_reset());
 
         // Table sorted by other than default column, can be reset.
@@ -561,6 +564,16 @@ class core_tablelib_testcase extends basic_testcase {
         $_GET['tsort'] = 'column2';
         $table->setup();
         unset($_GET['tsort']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table sorted by other than default direction, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column1';
+        $_GET['tdir'] = SORT_ASC;
+        $table->setup();
+        unset($_GET['tsort']);
+        unset($_GET['tdir']);
         $this->assertTrue($table->can_be_reset());
 
         // Table sorted by the default column after another sorting previously selected.
