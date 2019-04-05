@@ -18,7 +18,7 @@
  * Forwards the user to the action they selected.
  *
  * @package    report_insights
- * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright  2019 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

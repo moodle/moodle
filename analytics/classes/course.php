@@ -133,7 +133,7 @@ class course implements \core_analytics\analysable {
      * through this constructor will not be cached.
      *
      * @param int|\stdClass $course Course id or mdl_course record
-     * @param ?\context $context
+     * @param \context|null $context
      * @return void
      */
     public function __construct($course, ?\context $context = null) {
@@ -156,7 +156,7 @@ class course implements \core_analytics\analysable {
      * Lazy load of course data, students and teachers.
      *
      * @param int|\stdClass $course Course object or course id
-     * @param ?\context $context
+     * @param \context|null $context
      * @return \core_analytics\course
      */
     public static function instance($course, ?\context $context = null) {

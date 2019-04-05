@@ -71,7 +71,7 @@ class user implements \core_analytics\analysable {
      * through this constructor will not be cached.
      *
      * @param int|\stdClass $user User id
-     * @param ?\context $context
+     * @param \context|null $context
      * @return void
      */
     public function __construct($user, ?\context $context = null) {
@@ -94,7 +94,7 @@ class user implements \core_analytics\analysable {
      * Lazy load of analysable data.
      *
      * @param int|\stdClass $user User object or user id
-     * @param ?\context $context
+     * @param \context|null $context
      * @return \core_analytics\user
      */
     public static function instance($user, ?\context $context = null) {

@@ -164,12 +164,6 @@ class analysis {
      */
     public function process_analysable(\core_analytics\analysable $analysable): array {
 
-        $options = $this->analyser->get_options();
-
-        // Default returns.
-        $files = array();
-        $message = null;
-
         // Target instances scope is per-analysable (it can't be lower as calculations run once per
         // analysable, not time splitting method nor time range).
         $target = call_user_func(array($this->analyser->get_target(), 'instance'));
@@ -192,7 +186,7 @@ class analysis {
             $cachedresult = $this->result->retrieve_cached_result($timesplitting, $analysable);
             if ($cachedresult) {
                 $result = new \stdClass();
-                $result->result = $previousanalysis;
+                $result->result = $cachedresult;
                 $results[$timesplitting->get_id()] = $result;
                 continue;
             }
@@ -351,8 +345,7 @@ class analysis {
             }
 
             // We need to pass all the analysis data.
-            $formattedresult = $this->result->format_result($data, $target, $timesplitting, $analysable,
-                $this->analyser->get_modelid(), $this->includetarget, $options);
+            $formattedresult = $this->result->format_result($data, $target, $timesplitting, $analysable);
 
         } catch (\Throwable $e) {
             $this->finish_analysable_analysis();
@@ -381,7 +374,7 @@ class analysis {
      * @param array $sampleids
      * @param array $ranges
      * @param \core_analytics\local\target\base $target
-     * @return array|bool
+     * @return array|null
      */
     public function calculate(\core_analytics\local\time_splitting\base $timesplitting, array &$sampleids,
             array $ranges, \core_analytics\local\target\base $target): ?array {
@@ -389,7 +382,7 @@ class analysis {
         $calculatedtarget = null;
         if ($this->includetarget) {
             // We first calculate the target because analysable data may still be invalid or none
-            // of the analysable samples may be valid ($sampleids is also passed by reference).
+            // of the analysable samples may be valid.
             $calculatedtarget = $target->calculate($sampleids, $timesplitting->get_analysable());
 
             // We remove samples we can not calculate their target.
@@ -403,13 +396,13 @@ class analysis {
 
         // No need to continue calculating if the target couldn't be calculated for any sample.
         if (empty($sampleids)) {
-            return false;
+            return null;
         }
 
         $dataset = $this->calculate_indicators($timesplitting, $sampleids, $ranges);
 
         if (empty($dataset)) {
-            return false;
+            return null;
         }
 
         // Now that we have the indicators in place we can add the time range indicators (and target if provided) to each of them.
@@ -552,7 +545,7 @@ class analysis {
      *
      * @param \core_analytics\local\time_splitting\base $timesplitting
      * @param array $dataset
-     * @param ?array $calculatedtarget
+     * @param array|null $calculatedtarget
      * @return null
      */
     protected function fill_dataset(\core_analytics\local\time_splitting\base $timesplitting,
@@ -731,7 +724,7 @@ class analysis {
 
         if (!$predictedrange) {
             // Nothing to filter out.
-            return;
+            return null;
         }
 
         $predictedrange->sampleids = json_decode($predictedrange->sampleids, true);
@@ -739,7 +732,7 @@ class analysis {
         if (count($missingsamples) === 0) {
             // All samples already calculated.
             unset($ranges[$rangeindex]);
-            return;
+            return null;
         }
 
         // Replace the list of samples by the one excluding samples that already got predictions at this range.
@@ -748,6 +741,13 @@ class analysis {
         return $predictedrange;
     }
 
+    /**
+     * Returns a predict samples record.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @param  int                                       $rangeindex
+     * @return \stdClass|false
+     */
     private function get_predict_samples_record(\core_analytics\local\time_splitting\base $timesplitting, int $rangeindex) {
         global $DB;
 
@@ -785,11 +785,11 @@ class analysis {
      * @param int[] $sampleids
      * @param array $ranges
      * @param \core_analytics\local\time_splitting\base $timesplitting
-     * @param ?\stdClass $predictsamplesrecord The existing record or null if there is no record yet.
+     * @param \stdClass|null $predictsamplesrecord The existing record or null if there is no record yet.
      * @return null
      */
     protected function save_prediction_samples(array $sampleids, array $ranges,
-            \core_analytics\local\time_splitting\base $timesplitting, ?\stdClass $predictsamplesrecord) {
+            \core_analytics\local\time_splitting\base $timesplitting, ?\stdClass $predictsamplesrecord = null) {
         global $DB;
 
         if (count($ranges) > 1) {
@@ -804,8 +804,11 @@ class analysis {
             $predictsamplesrecord->timemodified = time();
             $DB->update_record('analytics_predict_samples', $predictsamplesrecord);
         } else {
-            $predictsamplesrecord = (object)['modelid' => $this->analyser->get_modelid(), 'analysableid' => $timesplitting->get_analysable()->get_id(),
-                'timesplitting' => $timesplitting->get_id(), 'rangeindex' => $rangeindex];
+            $predictsamplesrecord = (object)[
+                'modelid' => $this->analyser->get_modelid(),
+                'analysableid' => $timesplitting->get_analysable()->get_id(),
+                'timesplitting' => $timesplitting->get_id(), 'rangeindex' => $rangeindex
+            ];
             $predictsamplesrecord->sampleids = json_encode($sampleids);
             $predictsamplesrecord->timecreated = time();
             $predictsamplesrecord->timemodified = $predictsamplesrecord->timecreated;
@@ -870,12 +873,14 @@ class analysis {
     private static function get_insert_batch_size(): int {
         global $DB;
 
+        $dbconfig = $DB->export_dbconfig();
+
         // 500 is pgsql default so using 1000 is fine, no other db driver uses a hardcoded value.
-        if (empty($DB->dboptions['bulkinsertsize'])) {
+        if (empty($dbconfig) || empty($dbconfig->dboptions) || empty($dbconfig->dboptions['bulkinsertsize'])) {
             return 1000;
         }
 
-        $bulkinsert = $DB->dboptions['bulkinsertsize'];
+        $bulkinsert = $dbconfig->dboptions['bulkinsertsize'];
         if ($bulkinsert < 1000) {
             return $bulkinsert;
         }

@@ -3302,9 +3302,11 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses,
  * @param   string  $view The type of calendar to have displayed
  * @param   bool    $includenavigation Whether to include navigation
  * @param   bool    $skipevents Whether to load the events or not
+ * @param   int     $lookahead Overwrites site and users's lookahead setting.
  * @return  array[array, string]
  */
-function calendar_get_view(\calendar_information $calendar, $view, $includenavigation = true, bool $skipevents = false) {
+function calendar_get_view(\calendar_information $calendar, $view, $includenavigation = true, bool $skipevents = false,
+        ?int $lookahead = null) {
     global $PAGE, $CFG;
 
     $renderer = $PAGE->get_renderer('core_calendar');
@@ -3322,12 +3324,14 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         $date->modify('+1 day');
     } else if ($view === 'upcoming' || $view === 'upcoming_mini') {
         // Number of days in the future that will be used to fetch events.
-        if (isset($CFG->calendar_lookahead)) {
-            $defaultlookahead = intval($CFG->calendar_lookahead);
-        } else {
-            $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
+        if (!$lookahead) {
+            if (isset($CFG->calendar_lookahead)) {
+                $defaultlookahead = intval($CFG->calendar_lookahead);
+            } else {
+                $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
+            }
+            $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
         }
-        $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
 
         // Maximum number of events to be displayed on upcoming view.
         $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;

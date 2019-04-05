@@ -100,22 +100,18 @@ class result_file extends result {
      * @param  \core_analytics\local\target\base         $target
      * @param  \core_analytics\local\time_splitting\base $timesplitting
      * @param  \core_analytics\analysable                $analysable
-     * @param  int                                       $modelid
-     * @param  bool                                      $includetarget
-     * @param  array                                     $options
      * @return mixed A \stored_file in this case
      */
     public function format_result(array $data, \core_analytics\local\target\base $target,
-            \core_analytics\local\time_splitting\base $timesplitting, \core_analytics\analysable $analysable,
-            int $modelid, bool $includetarget, array $options) {
+            \core_analytics\local\time_splitting\base $timesplitting, \core_analytics\analysable $analysable) {
 
-        if (!empty($includetarget)) {
+        if (!empty($this->includetarget)) {
             $filearea = \core_analytics\dataset_manager::LABELLED_FILEAREA;
         } else {
             $filearea = \core_analytics\dataset_manager::UNLABELLED_FILEAREA;
         }
-        $dataset = new \core_analytics\dataset_manager($modelid, $analysable->get_id(),
-            $timesplitting->get_id(), $filearea, $options['evaluation']);
+        $dataset = new \core_analytics\dataset_manager($this->modelid, $analysable->get_id(),
+            $timesplitting->get_id(), $filearea, $this->options['evaluation']);
 
         // Add extra metadata.
         $this->add_model_metadata($data, $timesplitting, $target);

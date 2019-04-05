@@ -38,7 +38,7 @@ abstract class by_course extends base {
     /**
      * Return the list of courses to analyse.
      *
-     * @param ?string $action 'prediction', 'training' or null if no specific action needed.
+     * @param string|null $action 'prediction', 'training' or null if no specific action needed.
      * @return \Iterator
      */
     public function get_analysables_iterator(?string $action = null) {
@@ -65,7 +65,7 @@ abstract class by_course extends base {
 
         if (!$recordset->valid()) {
             $this->add_log(get_string('nocourses', 'analytics'));
-            return [];
+            return new \ArrayIterator([]);
         }
 
         return new \core\dml\recordset_walk($recordset, function($record) {

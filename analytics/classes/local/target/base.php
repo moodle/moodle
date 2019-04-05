@@ -122,9 +122,11 @@ abstract class base extends \core_analytics\calculable {
      *
      * @param \core_analytics\prediction $prediction
      * @param bool $includedetailsaction
+     * @param bool $isinsightuser
      * @return \core_analytics\prediction_action[]
      */
-    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false, $isinsightuser = false) {
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false,
+            $isinsightuser = false) {
         global $PAGE;
 
         $predictionid = $prediction->get_prediction_data()->id;

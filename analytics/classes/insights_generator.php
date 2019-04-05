@@ -66,8 +66,8 @@ class insights_generator {
     /**
      * Generates insight notifications.
      *
-     * @param array                      $samplecontexts    The contexts these predictions belong to
-     * @param \core_analytics\prediction $predictions       The prediction records
+     * @param array                         $samplecontexts    The contexts these predictions belong to
+     * @param \core_analytics\prediction[]  $predictions       The prediction records
      * @return  null
      */
     public function generate($samplecontexts, $predictions) {
@@ -89,7 +89,8 @@ class insights_generator {
                 $insighturl = $this->target->get_insight_context_url($this->modelid, $context);
                 $fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
 
-                $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message', ['url' => $insighturl->out(false)]);
+                $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message',
+                    ['url' => $insighturl->out(false)]);
                 $this->notifications($context, $insighturl, $fullmessage, $fullmessagehtml);
             }
         }
@@ -189,7 +190,8 @@ class insights_generator {
             $messageactions[] = $actiondata;
         }
 
-        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message_prediction', ['actions' => $messageactions]);
+        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message_prediction',
+            ['actions' => $messageactions]);
         return [$insighturl, $fullmessageplaintext, $fullmessagehtml];
     }
 }

@@ -110,7 +110,7 @@ $PAGE->set_heading($insightinfo->contextname);
 if ($model->get_analyser()::one_sample_per_analysable()) {
 
     // Param $perpage to 2 so we can detect if this model's analyser is using one_sample_per_analysable incorrectly.
-    $predictionsdata = $model->get_predictions($context, true, false, 2);
+    $predictionsdata = $model->get_predictions($context, true, 0, 2);
     if ($predictionsdata) {
         list($total, $predictions) = $predictionsdata;
         if ($total > 1) {

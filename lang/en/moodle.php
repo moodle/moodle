@@ -886,7 +886,6 @@ $string['general'] = 'General';
 $string['geolocation'] = 'latitude - longitude';
 $string['gettheselogs'] = 'Get these logs';
 $string['go'] = 'Go';
-$string['gotodashboard'] = 'Go to Dashboard';
 $string['gpl'] = 'Copyright (C) 1999 onwards  Martin Dougiamas  (http://moodle.com)
 
 This program is free software; you can redistribute it and/or modify

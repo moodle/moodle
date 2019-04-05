@@ -954,7 +954,6 @@ class model {
      * Get predictions from a static model.
      *
      * @param array $indicatorcalculations
-     * @param string[] $headers
      * @return \stdClass[]
      */
     protected function get_static_predictions(&$indicatorcalculations) {

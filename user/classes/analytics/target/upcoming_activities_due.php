@@ -121,7 +121,7 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
     }
 
     /**
-     * Only process samples which start date is getting close.
+     * Samples are users and all of them are ok.
      *
      * @param int $sampleid
      * @param \core_analytics\analysable $analysable
@@ -151,13 +151,15 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
     }
 
     /**
-     * Adds a view dashboard action.
+     * Adds a view upcoming events action.
      *
      * @param \core_analytics\prediction $prediction
      * @param mixed $includedetailsaction
+     * @param bool $isinsightuser
      * @return \core_analytics\prediction_action[]
      */
-    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false, $isinsightuser = false) {
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false,
+            $isinsightuser = false) {
         global $CFG, $USER;
 
         $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
@@ -166,10 +168,11 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
             return $parentactions;
         }
 
-        $url = new \moodle_url('/my/index.php');
-        $pix = new \pix_icon('i/dashboard', get_string('gotodashboard'));
+        // We force a lookahead of 30 days so we are sure that the upcoming activities due are shown.
+        $url = new \moodle_url('/calendar/view.php', ['view' => 'upcoming', 'lookahead' => '30']);
+        $pix = new \pix_icon('i/calendar', get_string('upcomingevents', 'calendar'));
         $action = new \core_analytics\prediction_action('viewupcoming', $prediction,
-            $url, $pix, get_string('gotodashboard'));
+            $url, $pix, get_string('upcomingevents', 'calendar'));
 
         return array_merge([$action], $parentactions);
     }

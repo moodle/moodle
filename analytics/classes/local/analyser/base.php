@@ -110,11 +110,15 @@ abstract class base {
      *
      * \core_analytics\local\analyser\by_course and \core_analytics\local\analyser\sitewide are implementing
      * this method returning site courses (by_course) and the whole system (sitewide) as analysables.
+     *
+     * @todo MDL-65284 This will be removed in Moodle 4.1
+     * @deprecated
+     * @see get_analysables_iterator
      * @throws  \coding_exception
      * @return \core_analytics\analysable[] Array of analysable elements using the analysable id as array key.
      */
     public function get_analysables() {
-        // This function should only be called from get_analysables_iterator and we keep it here until php 4.1
+        // This function should only be called from get_analysables_iterator and we keep it here until Moodle 4.1
         // for backwards compatibility.
         throw new \coding_exception('This method is deprecated in favour of get_analysables_iterator.');
     }
@@ -126,7 +130,7 @@ abstract class base {
      * have already been processed and the order in which they have been processed. Helper methods are available
      * to ease to implementation of get_analysables_iterator: get_iterator_sql and order_sql.
      *
-     * @param ?string $action 'prediction', 'training' or null if no specific action needed.
+     * @param string|null $action 'prediction', 'training' or null if no specific action needed.
      * @return \Iterator
      */
     public function get_analysables_iterator(?string $action = null) {
@@ -402,7 +406,7 @@ abstract class base {
     }
 
     /**
-     * Get the sql of a default implementaion of the iterator.
+     * Get the sql of a default implementation of the iterator.
      *
      * This method only works for analysers that return analysable elements which ids map to a context instance ids.
      *

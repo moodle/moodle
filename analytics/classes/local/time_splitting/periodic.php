@@ -43,7 +43,7 @@ abstract class periodic extends base {
     abstract protected function periodicity();
 
     /**
-     * Returns whether the course can be processed by this time splitting method or not.
+     * Returns whether the analysable can be processed by this time splitting method or not.
      *
      * @param \core_analytics\analysable $analysable
      * @return bool
@@ -83,7 +83,7 @@ abstract class periodic extends base {
 
         $nextrange = $this->get_next_range($next);
         if ($this->ready_to_predict($nextrange) && (empty($end) || $next < $end)) {
-            // Add the next one if we we have not reached the analysable end yet.
+            // Add the next one if we have not reached the analysable end yet.
             // It will be used to get predictions.
             $ranges[] = $nextrange;
         }

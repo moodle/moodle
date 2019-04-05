@@ -36,9 +36,9 @@ defined('MOODLE_INTERNAL') || die();
 abstract class sitewide extends base {
 
     /**
-     * Return the list of courses to analyse.
+     * Return the list of analysables to analyse.
      *
-     * @param ?string $action 'prediction', 'training' or null if no specific action needed.
+     * @param string|null $action 'prediction', 'training' or null if no specific action needed.
      * @return \Iterator
      */
     public function get_analysables_iterator(?string $action = null) {

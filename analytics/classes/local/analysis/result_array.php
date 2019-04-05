@@ -73,14 +73,10 @@ class result_array extends result {
      * @param  \core_analytics\local\target\base         $target
      * @param  \core_analytics\local\time_splitting\base $timesplitting
      * @param  \core_analytics\analysable                $analysable
-     * @param  int                                       $modelid
-     * @param  bool                                      $includetarget
-     * @param  array                                     $options
-     * @return mixed A \stored_file in this case
+     * @return mixed The data as it comes
      */
     public function format_result(array $data, \core_analytics\local\target\base $target,
-            \core_analytics\local\time_splitting\base $timesplitting, \core_analytics\analysable $analysable,
-            int $modelid, bool $includetarget, array $options) {
+            \core_analytics\local\time_splitting\base $timesplitting, \core_analytics\analysable $analysable) {
         return $data;
     }
 

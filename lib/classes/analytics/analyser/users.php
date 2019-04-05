@@ -38,14 +38,13 @@ class users extends \core_analytics\local\analyser\base {
     /**
      * The site users are the analysable elements returned by this analyser.
      *
-     * @param ?string $action 'prediction', 'training' or null if no specific action needed.
+     * @param string|null $action 'prediction', 'training' or null if no specific action needed.
      * @return \Iterator
      */
     public function get_analysables_iterator(?string $action = null) {
         global $DB, $CFG;
 
         $siteadmins = explode(',', $CFG->siteadmins);
-
 
         list($sql, $params) = $this->get_iterator_sql('user', CONTEXT_USER, $action, 'u');
 
@@ -57,6 +56,7 @@ class users extends \core_analytics\local\analyser\base {
         $recordset = $DB->get_recordset_sql($sql, $params);
         if (!$recordset->valid()) {
             $this->add_log(get_string('nousersfound'));
+            return new \ArrayIterator([]);
         }
 
         return new \core\dml\recordset_walk($recordset, function($record) use ($siteadmins) {
