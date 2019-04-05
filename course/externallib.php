@@ -328,8 +328,8 @@ class core_course_external extends external_api {
                                 foreach ($contents as $content) {
                                     // Check repository file (only main file).
                                     if (!isset($module['contentsinfo']['repositorytype'])) {
-					    $module['contentsinfo']['repositorytype'] =
-						    isset($content['repositorytype']) ? $content['repositorytype'] : '';
+                                        $module['contentsinfo']['repositorytype'] =
+                                            isset($content['repositorytype']) ? $content['repositorytype'] : '';
                                     }
                                     if (isset($content['filesize'])) {
                                         $module['contentsinfo']['filessize'] += $content['filesize'];
