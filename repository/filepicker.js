@@ -317,12 +317,23 @@ YUI.add('moodle-core_filepicker', function(Y) {
             // TODO add tooltip with o.data['title'] (o.value) or o.data['thumbnail_title']
             return el.getContent();
         }
+
+        /**
+         * Generate slave checkboxes based on toggleall's specification
+         * @param {object} o An object reprsenting the record for the current row.
+         * @return {html} The checkbox html
+         */
         var formatCheckbox = function(o) {
             var el = Y.Node.create('<div/>');
             var checkbox = Y.Node.create('<input/>');
             checkbox.setAttribute('type', 'checkbox')
-                .setAttribute('class', 'mark-for-deletion')
-                .setAttribute('data-fullname', o.data.fullname);
+                .setAttribute('class', 'mark-for-selection')
+                .setAttribute('data-fullname', o.data.fullname)
+                .setAttribute('data-action', 'toggle')
+                .setAttribute('data-toggle', 'slave')
+                .setAttribute('data-togglegroup', 'file-selections')
+                .setAttribute('data-toggle-selectall', 'Select all')
+                .setAttribute('data-toggle-deselectall', 'Deselectall');
 
             el.appendChild(checkbox);
             return el.getContent();
@@ -351,10 +362,20 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     sortable: true, sortFn: sortFoldersFirst}
             ];
 
+            // Generate a checkbox based on toggleall's specification
+            var checkbox = Y.Node.create('<input/>');
+            var div = Y.Node.create('<div/>');
+            checkbox.setAttribute('type', 'checkbox')
+                .setAttribute('class', 'mark-for-selection')
+                .setAttribute('data-action', 'toggle')
+                .setAttribute('data-toggle', 'master')
+                .setAttribute('data-togglegroup', 'file-selections');
+            div.appendChild(checkbox);
+
             // Enable the selectable checkboxes
             if (options.disablecheckboxes != undefined && !options.disablecheckboxes) {
                 cols.unshift({
-                    key: "", label: "<input type='checkbox' id='select-all'/>",
+                    key: "", label: div.getContent(),
                     allowHTML: true, formatter: formatCheckbox,
                     sortable: false
                 });
@@ -370,14 +391,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     Y.bind(callback, this)(e, record.getAttrs());
                 }
             }, 'tr td:not(:first-child)', options.callbackcontext, scope.tableview);
-            scope.tableview.delegate('change', function(e) {
-                e.preventDefault();
-                if (e.target.get('checked')) {
-                    e.container.all('.mark-for-deletion').setAttribute('checked', true);
-                } else {
-                    e.container.all('.mark-for-deletion').removeAttribute('checked');
-                }
-            }, '#select-all', options.callbackcontext, scope.tableview);
+
             if (options.rightclickcallback) {
                 scope.tableview.delegate('contextmenu', function (e, tableview) {
                     var record = tableview.getRecord(e.currentTarget.get('id'));

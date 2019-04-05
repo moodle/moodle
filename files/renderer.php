@@ -121,6 +121,7 @@ class core_files_renderer extends plugin_renderer_base {
             $this->page->requires->js_init_call('M.form_filemanager.set_templates',
                     array($this->filemanager_js_templates()), true, $module);
         }
+        $this->page->requires->js_call_amd('core/checkbox-toggleall', 'init');
         $this->page->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
 
         // non javascript file manager

@@ -185,7 +185,7 @@ class behat_filepicker extends behat_base {
      */
     public function i_mark_for_deletion_from_filemanager($name) {
         $name = behat_context_helper::escape($name);
-        $okbutton = $this->find('css', "input.mark-for-deletion[data-fullname=$name]");
+        $okbutton = $this->find('css', "input.mark-for-selection[data-fullname=$name]");
         $okbutton->click();
     }
 

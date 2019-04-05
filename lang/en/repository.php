@@ -98,6 +98,7 @@ $string['displaytree'] = 'Display folder as file tree';
 $string['download'] = 'Download';
 $string['downloadallfiles'] = 'Download all files';
 $string['downloadfolder'] = 'Download all';
+$string['downloadselected'] = 'Download selected files';
 $string['deleteselected'] = 'Delete selected';
 $string['downloadsucc'] = 'The file has been downloaded successfully';
 $string['draftareanofiles'] = 'Cannot be downloaded because there is no files attached';

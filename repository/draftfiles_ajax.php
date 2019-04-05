@@ -172,36 +172,22 @@ switch ($action) {
             echo json_encode(false);
         }
         die;
+    case 'downloadselected':
+        $selected   = required_param('selected', PARAM_RAW);
+        $selectedfiles = json_decode($selected);
+        $return = repository_download_selected_files($usercontext, 'user', 'draft', $draftid, $selectedfiles);
+        echo (json_encode($return));
+        die;
 
     case 'downloaddir':
         $filepath = required_param('filepath', PARAM_PATH);
 
-        $zipper = get_file_packer('application/zip');
-        $fs = get_file_storage();
-        $area = file_get_draft_area_info($draftid, $filepath);
-        if ($area['filecount'] == 0 && $area['foldercount'] == 0) {
-            echo json_encode(false);
-            die;
-        }
-
-        $stored_file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, '.');
-        if ($filepath === '/') {
-            $filename = get_string('files').'.zip';
-        } else {
-            $filename = explode('/', trim($filepath, '/'));
-            $filename = array_pop($filename) . '.zip';
-        }
-
-        // archive compressed file to an unused draft area
-        $newdraftitemid = file_get_unused_draft_itemid();
-        if ($newfile = $zipper->archive_to_storage(['/' => $stored_file], $usercontext->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
-            $return = new stdClass();
-            $return->fileurl  = moodle_url::make_draftfile_url($newdraftitemid, '/', $filename)->out();
-            $return->filepath = $filepath;
-            echo json_encode($return);
-        } else {
-            echo json_encode(false);
-        }
+        $selectedfile = (object)[
+            'filename' => '',
+            'filepath' => $filepath
+        ];
+        $return = repository_download_selected_files($usercontext, 'user', 'draft', $draftid, [$selectedfile]);
+        echo json_encode($return);
         die;
 
     case 'unzip':
