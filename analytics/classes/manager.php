@@ -287,22 +287,31 @@ class manager {
     }
 
     /**
-     * Returns the default time splitting methods for model evaluation.
+     * Returns the time-splitting methods for model evaluation.
      *
+     * @param  bool $all Return all the time-splitting methods that can potentially be used for evaluation or the default ones.
      * @return \core_analytics\local\time_splitting\base[]
      */
-    public static function get_time_splitting_methods_for_evaluation() {
+    public static function get_time_splitting_methods_for_evaluation(bool $all = false) {
 
-        if ($enabledtimesplittings = get_config('analytics', 'defaulttimesplittingsevaluation')) {
-            $enabledtimesplittings = array_flip(explode(',', $enabledtimesplittings));
+        if ($all === false) {
+            if ($enabledtimesplittings = get_config('analytics', 'defaulttimesplittingsevaluation')) {
+                $enabledtimesplittings = array_flip(explode(',', $enabledtimesplittings));
+            }
         }
 
         $timesplittings = self::get_all_time_splittings();
         foreach ($timesplittings as $key => $timesplitting) {
 
-            // We remove the ones that are not enabled. This also respects the default value (all methods enabled).
-            if (!empty($enabledtimesplittings) && !isset($enabledtimesplittings[$key])) {
+            if (!$timesplitting->valid_for_evaluation()) {
                 unset($timesplittings[$key]);
+            }
+
+            if ($all === false) {
+                // We remove the ones that are not enabled. This also respects the default value (all methods enabled).
+                if (!empty($enabledtimesplittings) && !isset($enabledtimesplittings[$key])) {
+                    unset($timesplittings[$key]);
+                }
             }
         }
         return $timesplittings;

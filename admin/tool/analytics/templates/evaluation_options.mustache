@@ -72,7 +72,6 @@
 {{#js}}
     require(['jquery'], function($) {
         $("input[name='evaluationmode']:radio").change(function() {
-            console.log('asd' + $(this).val());
             if ($(this).val() == 'configuration') {
                 $('#id-evaluation-timesplitting-container').show();
             } else {

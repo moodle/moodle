@@ -276,6 +276,15 @@ abstract class base {
     }
 
     /**
+     * Is this method valid to evaluate prediction models?
+     *
+     * @return bool
+     */
+    public function valid_for_evaluation(): bool {
+        return true;
+    }
+
+    /**
      * Validates the time splitting method ranges.
      *
      * @throws \coding_exception

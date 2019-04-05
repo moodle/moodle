@@ -376,4 +376,31 @@ class analytics_manager_testcase extends advanced_testcase {
 
         $this->assertSame([], $repeated);
     }
+
+    /**
+     * test_get_time_splitting_methods description
+     * @return null
+     */
+    public function test_get_time_splitting_methods() {
+        $this->resetAfterTest(true);
+
+        $all = \core_analytics\manager::get_all_time_splittings();
+        $this->assertArrayHasKey('\core\analytics\time_splitting\upcoming_week', $all);
+        $this->assertArrayHasKey('\core\analytics\time_splitting\quarters', $all);
+
+        $allforevaluation = \core_analytics\manager::get_time_splitting_methods_for_evaluation(true);
+        $this->assertArrayNotHasKey('\core\analytics\time_splitting\upcoming_week', $allforevaluation);
+        $this->assertArrayHasKey('\core\analytics\time_splitting\quarters', $allforevaluation);
+
+        $defaultforevaluation = \core_analytics\manager::get_time_splitting_methods_for_evaluation(false);
+        $this->assertArrayNotHasKey('\core\analytics\time_splitting\upcoming_week', $defaultforevaluation);
+        $this->assertArrayHasKey('\core\analytics\time_splitting\quarters', $defaultforevaluation);
+
+        $sometimesplittings = '\core\analytics\time_splitting\single_range,' .
+            '\core\analytics\time_splitting\tenths';
+        set_config('defaulttimesplittingsevaluation', $sometimesplittings, 'analytics');
+
+        $defaultforevaluation = \core_analytics\manager::get_time_splitting_methods_for_evaluation(false);
+        $this->assertArrayNotHasKey('\core\analytics\time_splitting\quarters', $defaultforevaluation);
+    }
 }

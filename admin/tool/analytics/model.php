@@ -178,7 +178,7 @@ switch ($action) {
             $timesplitting = optional_param('timesplitting', 'all', PARAM_ALPHANUMEXT);
             if ($timesplitting === 'current') {
                 $options['timesplitting'] = \core_analytics\manager::get_time_splitting($model->get_model_obj()->timesplitting);
-            } else if ($timesplitting !== 'all' && $timesplitting !== 'current') {
+            } else if ($timesplitting !== 'all') {
                 $options['timesplitting'] = \core_analytics\manager::get_time_splitting(
                     \tool_analytics\output\helper::option_to_class($timesplitting)
                 );
