@@ -154,6 +154,22 @@ function message_send(\core\message\message $eventdata) {
         $tabledata->smallmessage = $eventdata->smallmessage;
         $tabledata->timecreated = time();
 
+        // The Trusted Content system.
+        // Texts created or uploaded by such users will be marked as trusted and will not be cleaned before display.
+        if (trusttext_active()) {
+            // Individual conversations are always in system context.
+            $messagecontext = \context_system::instance();
+            // We need to know the type of conversation and the contextid if it is a group conversation.
+            if ($conv = $DB->get_record('message_conversations', ['id' => $conversationid], 'id, type, contextid')) {
+                if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP && $conv->contextid) {
+                    $messagecontext = \context::instance_by_id($conv->contextid);
+                }
+            }
+            $tabledata->fullmessagetrust = trusttext_trusted($messagecontext);
+        } else {
+            $tabledata->fullmessagetrust = false;
+        }
+
         if ($messageid = message_handle_phpunit_redirection($eventdata, $table, $tabledata)) {
             return $messageid;
         }
