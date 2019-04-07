@@ -27,6 +27,7 @@ $string['androidappid'] = 'Android app\'s unique identifier';
 $string['androidappid_desc'] = 'This setting may be left as default unless you have a custom Android app.';
 $string['apppolicy'] = 'App policy URL';
 $string['apppolicy_help'] = 'The URL of a policy for app users which is listed on the About page in the app. If the field is left empty, the site policy URL will be used instead.';
+$string['apprequired'] = 'This functionality is only available when accessed via the Moodle mobile or desktop app.';
 $string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked. You need to wait 6 minutes between requests.';
 $string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed for site admins.';
 $string['cachedef_plugininfo'] = 'This stores the list of plugins with mobile addons';

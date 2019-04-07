@@ -4,6 +4,10 @@ Information provided here is intended especially for developers.
 === 3.7 ===
 
  * New external function tool_mobile::tool_mobile_call_external_function allows calling multiple external functions and returns all responses.
+ * External function tool_mobile::get_autologin_key now only works if the request comes from the Moodle mobile or desktop app.
+   This increases confidence that requests did originate from the mobile app, decreasing the likelihood of an XSS attack.
+   If you want to use this functionality, please override the Web Service via the override_webservice_execution callback although
+   this is not recommended or encouraged.
 
 === 3.5 ===
 
