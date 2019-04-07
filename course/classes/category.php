@@ -1494,6 +1494,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      *     - blocklist - id of block (if we are searching for courses containing specific block0
      *     - modulelist - name of module (if we are searching for courses containing specific module
      *     - tagid - id of tag
+     *     - onlywithcompletion - set to true if we only need courses with completion enabled
      * @param array $options display options, same as in get_courses() except 'recursive' is ignored -
      *                       search is always category-independent
      * @param array $requiredcapabilities List of capabilities required to see return course.
@@ -1550,8 +1551,13 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         if (empty($search['blocklist']) && empty($search['modulelist']) && empty($search['tagid'])) {
             // Search courses that have specified words in their names/summaries.
             $searchterms = preg_split('|\s+|', trim($search['search']), 0, PREG_SPLIT_NO_EMPTY);
-
-            $courselist = get_courses_search($searchterms, 'c.sortorder ASC', 0, 9999999, $totalcount, $requiredcapabilities);
+            $searchcond = $searchcondparams = [];
+            if (!empty($search['onlywithcompletion'])) {
+                $searchcond = ['c.enablecompletion = :p1'];
+                $searchcondparams = ['p1' => 1];
+            }
+            $courselist = get_courses_search($searchterms, 'c.sortorder ASC', 0, 9999999, $totalcount,
+                $requiredcapabilities, $searchcond, $searchcondparams);
             self::sort_records($courselist, $sortfields);
             $coursecatcache->set($cachekey, array_keys($courselist));
             $coursecatcache->set($cntcachekey, $totalcount);

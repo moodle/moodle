@@ -665,10 +665,12 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
  * @param int $recordsperpage The number of records per page
  * @param int $totalcount Passed in by reference.
  * @param array $requiredcapabilities Extra list of capabilities used to filter courses
+ * @param array $searchcond additional search conditions, for example ['c.enablecompletion = :p1']
+ * @param array $params named parameters for additional search conditions, for example ['p1' => 1]
  * @return stdClass[] {@link $COURSE} records
  */
 function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$totalcount,
-                            $requiredcapabilities = array()) {
+                            $requiredcapabilities = array(), $searchcond = [], $params = []) {
     global $CFG, $DB;
 
     if ($DB->sql_regex_supported()) {
@@ -676,8 +678,6 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
         $NOTREGEXP = $DB->sql_regex(false);
     }
 
-    $searchcond = array();
-    $params     = array();
     $i = 0;
 
     // Thanks Oracle for your non-ansi concat and type limits in coalesce. MDL-29912

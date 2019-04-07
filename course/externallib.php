@@ -2373,6 +2373,8 @@ class core_course_external extends external_api {
                     'Optional list of required capabilities (used to filter the list)', VALUE_DEFAULT, array()
                 ),
                 'limittoenrolled' => new external_value(PARAM_BOOL, 'limit to enrolled courses', VALUE_DEFAULT, 0),
+                'onlywithcompletion' => new external_value(PARAM_BOOL, 'limit to courses where completion is enabled',
+                    VALUE_DEFAULT, 0),
             )
         );
     }
@@ -2469,6 +2471,7 @@ class core_course_external extends external_api {
      * @param int $perpage          Items per page
      * @param array $requiredcapabilities Optional list of required capabilities (used to filter the list).
      * @param int $limittoenrolled  Limit to only enrolled courses
+     * @param int onlywithcompletion Limit to only courses where completion is enabled
      * @return array of course objects and warnings
      * @since Moodle 3.0
      * @throws moodle_exception
@@ -2478,7 +2481,8 @@ class core_course_external extends external_api {
                                           $page=0,
                                           $perpage=0,
                                           $requiredcapabilities=array(),
-                                          $limittoenrolled=0) {
+                                          $limittoenrolled=0,
+                                          $onlywithcompletion=0) {
         global $CFG;
 
         $warnings = array();
@@ -2488,7 +2492,9 @@ class core_course_external extends external_api {
             'criteriavalue' => $criteriavalue,
             'page'          => $page,
             'perpage'       => $perpage,
-            'requiredcapabilities' => $requiredcapabilities
+            'requiredcapabilities' => $requiredcapabilities,
+            'limittoenrolled' => $limittoenrolled,
+            'onlywithcompletion' => $onlywithcompletion
         );
         $params = self::validate_parameters(self::search_courses_parameters(), $parameters);
         self::validate_context(context_system::instance());
@@ -2514,6 +2520,9 @@ class core_course_external extends external_api {
         // Prepare the search API options.
         $searchcriteria = array();
         $searchcriteria[$params['criterianame']] = $params['criteriavalue'];
+        if ($params['onlywithcompletion']) {
+            $searchcriteria['onlywithcompletion'] = true;
+        }
 
         $options = array();
         if ($params['perpage'] != 0) {
