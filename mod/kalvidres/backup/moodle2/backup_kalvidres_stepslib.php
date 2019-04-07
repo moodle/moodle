@@ -40,6 +40,9 @@ class backup_kalvidres_activity_structure_step extends backup_activity_structure
         // Define sources
         $kalvidres->set_source_table('kalvidres', array('id' => backup::VAR_ACTIVITYID));
 
+        // Define file annotations
+        $kalvidres->annotate_files('mod_kalvidres', 'intro', null); // This files area doesn't have itemid
+
         // Return the root element, wrapped into standard activity structure
         return $this->prepare_activity_structure($kalvidres);
     }
