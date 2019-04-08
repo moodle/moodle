@@ -69,11 +69,18 @@ class behat_message extends behat_base {
 
         $this->execute('behat_general::i_click_on_in_the',
             array(
-                "//button[@data-action='view-contact-profile']
-                [contains(normalize-space(.), '" . $this->escape($userfullname) . "')]",
-                'xpath_element',
-                ".messages-header",
-                "css_element",
+                "//a[@data-action='view-contact']",
+                "xpath_element",
+                "//*[@data-region='message-drawer']//div[@data-region='header-container']",
+                "xpath_element",
+            )
+        );
+        $this->execute('behat_general::i_click_on_in_the',
+            array(
+                $this->escape($userfullname),
+                "link",
+                "//*[@data-region='message-drawer']//*[@data-region='view-contact']",
+                "xpath_element",
             )
         );
 
