@@ -297,11 +297,6 @@ class api {
             throw new moodle_exception('enablewsdescription', 'webservice');
         }
 
-        // Only requests from the Moodle mobile or desktop app. This enhances security to avoid any type of XSS attack.
-        if (!\core_useragent::is_moodle_app()) {
-            throw new moodle_exception('apprequired', 'tool_mobile');
-        }
-
         if (!is_https()) {
             throw new moodle_exception('httpsrequired', 'tool_mobile');
         }
