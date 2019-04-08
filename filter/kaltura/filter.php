@@ -127,8 +127,7 @@ class filter_kaltura extends moodle_text_filter {
         $uri = rtrim($uri, '/');
         $uri = str_replace(array('http://', 'https://', '.', '/'), array('https?://', 'https?://', '\.', '\/'), $uri);
 
-        $search = '/<a\s[^>]*href="(https?:\/\/'.KALTURA_URI_TOKEN.')\/browseandembed\/index\/media\/entryid\/([\d]+_([a-z0-9]+))\/showDescription\/(true|false)\/showTitle\/(true|false)\/';
-        $search .= 'showTags\/(true|false)\/showDuration\/(true|false)\/showOwner\/(true|false)\/showUploadDate\/(true|false)\/(?:embedType\/oldEmbed\/)?playerSize\/([0-9]+)x([0-9]+)\/playerSkin\/([0-9]+)\/"[^>]*>([^>]*)<\/a>/is';
+        $search = '/<a\s[^>]*href="(https?:\/\/'.KALTURA_URI_TOKEN.')\/browseandembed\/index\/media\/entryid\/([\d]+_[a-z0-9]+)(\/([a-zA-Z0-9]+\/[a-zA-Z0-9]+\/)*)"[^>]*>([^>]*)<\/a>/is';
         $newtext = preg_replace_callback($search, 'filter_kaltura_callback', $newtext);
 
         if (empty($newtext) || $newtext === $text) {
@@ -164,9 +163,9 @@ function filter_kaltura_callback($link) {
     $source = '';
 
     // Convert KAF URI anchor tags into iframe markup.
-    if (14 == count($link) && $newurl == $kafuri) {
+    if (6 == count($link) && $newurl == $kafuri) {
         // Get the height and width of the iframe.
-        $properties = explode('||', $link[13]);
+        $properties = explode('||', $link[5]);
 
         $width = $properties[2];
         $height = $properties[3];
@@ -175,9 +174,7 @@ function filter_kaltura_callback($link) {
             return $link[0];
         }
 
-        $source = filter_kaltura::$kafuri.'/browseandembed/index/media/entryid/'.$link[2].'/showDescription/'.$link[4].'/showTitle/'.$link[5];
-        $source .= '/showTags/'.$link[6].'/showDuration/'.$link[7].'/showOwner/'.$link[8].'/showUploadDate/'.$link[9];
-        $source .= '/playerSize/'.$width.'x'.$height.'/playerSkin/'.$link[12];
+        $source = filter_kaltura::$kafuri.'/browseandembed/index/media/entryid/'.$link[2].$link[3];
     }
 
     // Convert v3 anchor tags into iframe markup.
