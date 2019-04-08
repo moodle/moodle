@@ -75,63 +75,82 @@ class insights_generator {
 
         $analyserclass = $this->target->get_analyser_class();
 
+        // We will need to restore it later.
+        $actuallanguage = current_language();
+
         if ($analyserclass::one_sample_per_analysable()) {
+
+            // Iterate through the predictions and the users in each prediction (likely to be just one).
             foreach ($predictions as $prediction) {
 
                 $context = $samplecontexts[$prediction->get_prediction_data()->contextid];
-                list($insighturl, $fullmessage, $fullmessagehtml) = $this->prediction_info($prediction);
-                $this->notifications($context, $insighturl, $fullmessage, $fullmessagehtml);
+
+                $users = $this->target->get_insights_users($context);
+                foreach ($users as $user) {
+
+                    $this->set_notification_language($user);
+                    list($insighturl, $fullmessage, $fullmessagehtml) = $this->prediction_info($prediction);
+                    $this->notification($context, $user, $insighturl, $fullmessage, $fullmessagehtml);
+                }
             }
 
         } else {
+
+            // Iterate through the context and the users in each context.
             foreach ($samplecontexts as $context) {
 
-                $insighturl = $this->target->get_insight_context_url($this->modelid, $context);
-                $fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
+                $users = $this->target->get_insights_users($context);
+                foreach ($users as $user) {
 
-                $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message',
-                    ['url' => $insighturl->out(false)]);
-                $this->notifications($context, $insighturl, $fullmessage, $fullmessagehtml);
+                    $this->set_notification_language($user);
+
+                    $insighturl = $this->target->get_insight_context_url($this->modelid, $context);
+
+                    $fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
+                    $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message',
+                        ['url' => $insighturl->out(false)]
+                    );
+
+                    $this->notification($context, $user, $insighturl, $fullmessage, $fullmessagehtml);
+                }
             }
         }
+
+        force_current_language($actuallanguage);
     }
 
     /**
      * Generates a insight notification for the user.
      *
      * @param  \context    $context
+     * @param  \stdClass   $user
      * @param  \moodle_url $insighturl    The insight URL
      * @param  string      $fullmessage
      * @param  string      $fullmessagehtml
      * @return null
      */
-    private function notifications(\context $context, \moodle_url $insighturl, string $fullmessage, string $fullmessagehtml) {
-        $users = $this->target->get_insights_users($context);
-        foreach ($users as $user) {
+    private function notification(\context $context, \stdClass $user, \moodle_url $insighturl, string $fullmessage, string $fullmessagehtml) {
 
-            $subject = $this->target->get_insight_subject($this->modelid, $context);
+        $message = new \core\message\message();
+        $message->component = 'moodle';
+        $message->name = 'insights';
 
-            $message = new \core\message\message();
-            $message->component = 'moodle';
-            $message->name = 'insights';
+        $message->userfrom = \core_user::get_noreply_user();
+        $message->userto = $user;
 
-            $message->userfrom = \core_user::get_noreply_user();
-            $message->userto = $user;
+        $message->subject = $this->target->get_insight_subject($this->modelid, $context);
 
-            $message->subject = $subject;
+        // Same than the subject.
+        $message->contexturlname = $message->subject;
+        $message->courseid = $this->get_context_courseid($context);
 
-            // Same than the subject.
-            $message->contexturlname = $message->subject;
-            $message->courseid = $this->get_context_courseid($context);
+        $message->fullmessage = $fullmessage;
+        $message->fullmessageformat = FORMAT_PLAIN;
+        $message->fullmessagehtml = $fullmessagehtml;
+        $message->smallmessage = $fullmessage;
+        $message->contexturl = $insighturl->out(false);
 
-            $message->fullmessage = $fullmessage;
-            $message->fullmessageformat = FORMAT_PLAIN;
-            $message->fullmessagehtml = $fullmessagehtml;
-            $message->smallmessage = $fullmessage;
-            $message->contexturl = $insighturl->out(false);
-
-            message_send($message);
-        }
+        message_send($message);
     }
 
     /**
@@ -193,5 +212,25 @@ class insights_generator {
         $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message_prediction',
             ['actions' => $messageactions]);
         return [$insighturl, $fullmessageplaintext, $fullmessagehtml];
+    }
+
+    /**
+     * Sets the session language to the language used by the notification receiver.
+     *
+     * @param  \stdClass $user The user who will receive the message
+     * @return null
+     */
+    private function set_notification_language($user) {
+        global $CFG;
+
+        // Copied from current_language().
+        if (!empty($user->lang)) {
+            $lang = $user->lang;
+        } else if (isset($CFG->lang)) {
+            $lang = $CFG->lang;
+        } else {
+            $lang = 'en';
+        }
+        force_current_language($lang);
     }
 }
