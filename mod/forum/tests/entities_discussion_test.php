@@ -56,7 +56,8 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
             $time,
             0,
             0,
-            false
+            false,
+            0
         );
         $firstpost = new post_entity(
             4,

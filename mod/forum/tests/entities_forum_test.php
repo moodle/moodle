@@ -58,7 +58,8 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
             $time,
             0,
             0,
-            false
+            false,
+            0
         );
 
         $past = time() - 100;

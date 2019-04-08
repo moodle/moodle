@@ -87,7 +87,8 @@ class mod_forum_exporters_discussion_testcase extends advanced_testcase {
             $now,
             0,
             0,
-            false
+            false,
+            0
         );
 
         $exporter = new discussion_exporter($discussion, [

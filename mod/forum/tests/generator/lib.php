@@ -194,7 +194,7 @@ class mod_forum_generator extends testing_module_generator {
         }
 
         if (!isset($record['locked'])) {
-            $record['locked'] = "0";
+            $record['locked'] = 0;
         }
 
         if (isset($record['mailed'])) {

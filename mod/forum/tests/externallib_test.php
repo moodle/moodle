@@ -1423,6 +1423,54 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
     }
 
     /*
+     * Test set_lock_state.
+     */
+    public function test_set_lock_state() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+        $user = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        // First forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->type = 'news';
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $discussion = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // User who is a student.
+        self::setUser($user);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
+
+        // Only a teacher should be able to lock a discussion.
+        $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
+        $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
+        $this->assertFalse($result['userstate']['locked']);
+        $this->assertEquals('0', $result['times']['locked']);
+
+        // Set the lock.
+        self::setAdminUser();
+        $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
+        $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
+        $this->assertTrue($result['userstate']['locked']);
+        $this->assertNotEquals(0, $result['times']['locked']);
+
+        // Unset the lock.
+        $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, time());
+        $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
+        $this->assertFalse($result['userstate']['locked']);
+        $this->assertEquals('0', $result['times']['locked']);
+    }
+
+    /*
      * Test can_add_discussion. A basic test since all the API functions are already covered by unit tests.
      */
     public function test_can_add_discussion() {

@@ -102,6 +102,21 @@ class behat_mod_forum extends behat_base {
     }
 
     /**
+     * Navigates to a particular discussion page
+     *
+     * @Given /^I navigate to post "(?P<post_subject_string>(?:[^"]|\\")*)" in "(?P<forum_name_string>(?:[^"]|\\")*)" forum$/
+     * @param string $postsubject The subject of the post
+     * @param string $forumname The forum name
+     */
+    public function i_navigate_to_post_in_forum($postsubject, $forumname) {
+
+        // Navigate to forum discussion.
+        $this->execute('behat_general::click_link', $this->escape($forumname));
+        $this->execute('behat_general::click_link', $this->escape($postsubject));
+    }
+
+
+    /**
      * Returns the steps list to add a new discussion to a forum.
      *
      * Abstracts add a new topic and add a new discussion, as depending
