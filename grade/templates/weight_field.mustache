@@ -15,7 +15,16 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core_grades/weight_field
+
     Weight field.
+
+    Example context (json):
+    {
+        "itemname": "Awesome test",
+        "id": "2",
+        "value": "100"
+    }
 }}
 <label class="accesshide" for="weight_{{id}}">
     {{#str}}extracreditvalue, grades, {{itemname}}{{/str}}

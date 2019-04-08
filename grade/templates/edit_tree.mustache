@@ -15,7 +15,22 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core_grades/edit_tree
+
     Edit tree.
+
+    Example context (json):
+    {
+        "actionurl": "https://domain.example/grade/edit/tree/index.php?id=4",
+        "sesskey": "fakesesskey",
+        "notification": "",
+        "table": "<table class='generaltable simple setup-grades' id='grade_edit_tree_table'><thead> <tr><th>Name</th><th>Weights</th><th>Max grade</th><th>Actions</th> </tr></thead><tbody></tbody></table>",
+        "showsave": "true",
+        "showbulkmove": "true",
+        "bulkmoveoptions": "{'value' : '1', 'name' : 'Test grade category'}",
+        "value": "1",
+        "name": "Test grade category"
+    }
 }}
 
 <form id="gradetreeform" method="post" action="{{actionurl}}">

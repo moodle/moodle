@@ -15,7 +15,18 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template gradereport_singleview/text_attribute
+
     Text attribute.
+
+    Example context (json):
+    {
+        "name": "Awesome-report",
+        "label": "Text label",
+        "value": "Text information",
+        "tabindex": "1",
+        "disabled": "true"
+    }
 }}
 <label for="{{name}}" class="accesshide">{{label}}</label>
 <input id="{{name}}" name="{{name}}" type="text" value="{{value}}" class="form-control" {{#tabindex}}tabindex="{{.}}"{{/tabindex}} {{#disabled}}disabled{{/disabled}}>
