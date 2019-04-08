@@ -106,6 +106,9 @@ abstract class question_definition {
     /** @var boolean whethre this question has been deleted/hidden in the question bank. */
     public $hidden = 0;
 
+    /** @var string question idnumber. */
+    public $idnumber;
+
     /** @var integer timestamp when this question was created. */
     public $timecreated;
 
