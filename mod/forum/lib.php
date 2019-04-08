@@ -2600,7 +2600,6 @@ function forum_get_lock_discussion_icon($forum, $discussion, $returnurl = null, 
         $returnurl = $PAGE->url->out();
     }
 
-    $o = '';
     $discussionid = $discussion->id;
     $lockstatus = forum_discussion_is_locked($forum, $discussion);
     $subscriptionlink = new moodle_url('/mod/forum/lockdiscussion.php', array(
@@ -2609,10 +2608,6 @@ function forum_get_lock_discussion_icon($forum, $discussion, $returnurl = null, 
         'd' => $discussion->id,
         'returnurl' => $returnurl,
     ));
-
-    if ($includetext) {
-        $o .= $lockstatus ? get_string('locked', 'mod_forum') : get_string('notlocked', 'mod_forum');
-    }
 
     if ($lockstatus) {
         $output = $OUTPUT->pix_icon('t/unlock', get_string('clicktounlockdiscussion', 'forum'), 'core');

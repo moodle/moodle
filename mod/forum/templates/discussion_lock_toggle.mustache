@@ -26,7 +26,7 @@
     * none
 
     Context variables required for this template:
-    * TODO
+    * none
 
     Example context (json):
     {
@@ -39,7 +39,8 @@
         data-action="toggle"
         data-discussionid="{{id}}"
         data-forumid="{{forumid}}"
-        data-state="{{times.locked}}" href="#"
+        data-state="{{times.locked}}"
+        tabindex="-1"
         {{#userstate.locked}}
             title="{{#str}}locked, forum{{/str}}"
         {{/userstate.locked}}

@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Forum repository class to encapsulate all of the AJAX requests thatsubscribe or unsubscribe
+ * Forum repository class to encapsulate all of the AJAX requests that subscribe or unsubscribe
  * can be sent for forum.
  *
  * @module     mod_forum/repository

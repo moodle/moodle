@@ -1512,7 +1512,6 @@ class mod_forum_external extends external_api {
         return \mod_forum\local\exporters\discussion::get_read_structure();
     }
 
-
     /**
      * Set the lock state.
      *
@@ -1541,16 +1540,12 @@ class mod_forum_external extends external_api {
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
         $discussionvault = $vaultfactory->get_discussion_vault();
         $discussion = $discussionvault->get_from_id($params['discussionid']);
-        $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
-        $forumrecord = $legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
 
-        // If the current state doesn't equal the desired state then update the current
+        // If the current state doesn't equal the desired state then update the current.
         // state to the desired state.
         if ($capabilitymanager->can_manage_forum($USER)) {
             $discussion->toggle_locked_state($targetstate);
-            $discussionrecord = $legacydatamapperfactory->get_discussion_data_mapper()->to_legacy_object($discussion);
-            $response = $discussionvault->update_discussion($discussionrecord);
-
+            $response = $discussionvault->update_discussion($discussion);
             $discussion = !$response ? $response : $discussion;
         }
 
