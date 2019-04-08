@@ -44,9 +44,6 @@ class external_backpacks_table extends table_sql {
 
     /**
      * Sets up the table.
-     *
-     * @param string $uniqueid Unique id of table.
-     * @param \core_competency\template $template The template.
      */
     public function __construct() {
         parent::__construct('backpacks');

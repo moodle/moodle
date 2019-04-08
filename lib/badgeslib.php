@@ -809,7 +809,7 @@ function badges_open_badges_backpack_api() {
  * Get a site backpacks by id or url.
  *
  * @param int $id The backpack id.
- * @param string $backpackurl The backpack url.
+ * @param string $backpackapiurl The backpack url.
  * @param string $apiversion Filter by api version - one of OPEN_BADGES_V1 or OPEN_BADGES_V2
  * @return array(stdClass)
  */
@@ -1029,7 +1029,7 @@ function badges_external_delete_mapping($sitebackpackid, $type, $internalid) {
  *
  * @param string $email the email address to send the verification email to.
  * @param int $backpackid the id of the backpack to connect to
- * @param string $password the user entered password to connect to this backpack
+ * @param string $backpackpassword the user entered password to connect to this backpack
  * @return true if the email was sent successfully, false otherwise.
  */
 function badges_send_verification_email($email, $backpackid, $backpackpassword) {

@@ -33,13 +33,14 @@ require_once($CFG->libdir . '/badgeslib.php');
 use renderable;
 
 /**
+ * Link to external resources this badge is aligned with.
  *
  * @copyright  2018 Tung Thai
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
  */
-class badge_alignments implements renderable
-{
+class badge_alignments implements renderable {
+
     /** @var string how are the data sorted. */
     public $sort = 'name';
 

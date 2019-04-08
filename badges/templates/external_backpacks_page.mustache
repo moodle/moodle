@@ -15,10 +15,19 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core_badges/external_backpacks_page
+    
     Manage backpacks.
 
     Context variables required for this template:
     * backpacks - array of objects containing id, backpackurl, enabled, apiversion and sortorder
+    
+    Example context (json):
+    {
+        "backpacks": [
+            {"backpackweburl": "http://localhost/", "sitebackpack": true, "canedit": false}
+        ]
+    }
 }}
 <table class="generaltable fullwidth">
     <caption>{{#str}}listbackpacks, core_badges{{/str}}</caption>
@@ -40,7 +49,6 @@
                     {{#str}}editsettings, core_badges{{/str}}
                 </a>
             {{/canedit}}
-            </td>
             </td>
         </tr>
         {{/backpacks}}

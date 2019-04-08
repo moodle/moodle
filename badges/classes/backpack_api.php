@@ -45,6 +45,10 @@ define('BADGE_EXPIRES_TOKEN', 'expires');
 
 /**
  * Class for communicating with backpacks.
+ *
+ * @package   core_badges
+ * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backpack_api {
 

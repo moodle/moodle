@@ -86,11 +86,12 @@ class core_badges_renderer extends plugin_renderer_base {
                     $action = null;
                     if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
                         $action = new component_action('click', 'addtobackpack', array('assertion' => $assertion->out(false)));
-                        $url = new moodle_url('#');
+                        $addurl = new moodle_url('#');
                     } else {
-                        $url = new moodle_url('/badges/backpack-add.php', array('hash' => $badge->uniquehash));
+                        $addurl = new moodle_url('/badges/backpack-add.php', array('hash' => $badge->uniquehash));
                     }
-                    $push = $this->output->action_icon($url, new pix_icon('t/backpack', get_string('addtobackpack', 'badges')), $action);
+                    $icon = new pix_icon('t/backpack', get_string('addtobackpack', 'badges'));
+                    $push = $this->output->action_icon($addurl, $icon, $action);
                 }
 
                 $download = $this->output->action_icon($url, new pix_icon('t/download', get_string('download')));
@@ -306,7 +307,12 @@ class core_badges_renderer extends plugin_renderer_base {
         return $actions;
     }
 
-    // Outputs issued badge with actions available.
+    /**
+     * Render an issued badge.
+     *
+     * @param \core_badges\output\issued_badge $ibadge
+     * @return string
+     */
     protected function render_issued_badge(\core_badges\output\issued_badge $ibadge) {
         global $USER, $CFG, $DB, $SITE;
         $issued = $ibadge->issued;
@@ -480,7 +486,12 @@ class core_badges_renderer extends plugin_renderer_base {
         return $output;
     }
 
-    // Outputs external badge.
+    /**
+     * Render an external badge.
+     *
+     * @param \core_badges\output\external_badge $ibadge
+     * @return string
+     */
     protected function render_external_badge(\core_badges\output\external_badge $ibadge) {
         $issued = $ibadge->issued;
         $assertion = $issued->assertion;
@@ -579,7 +590,12 @@ class core_badges_renderer extends plugin_renderer_base {
         return $output;
     }
 
-    // Displays the user badges.
+    /**
+     * Render a collection of user badges.
+     *
+     * @param \core_badges\output\badge_user_collection $badges
+     * @return string
+     */
     protected function render_badge_user_collection(\core_badges\output\badge_user_collection $badges) {
         global $CFG, $USER, $SITE, $OUTPUT;
         $backpack = $badges->backpack;
@@ -613,7 +629,8 @@ class core_badges_renderer extends plugin_renderer_base {
             $countmessage = $this->output->box(get_string('badgesearned', 'badges', $badges->totalcount));
 
             $htmllist = $this->print_badges_list($badges->badges, $USER->id);
-            $localhtml .= $backpackconnect . $countmessage . $searchform . $htmlpagingbar . $htmllist . $htmlpagingbar . $downloadall;
+            $localhtml .= $backpackconnect . $countmessage . $searchform;
+            $localhtml .= $htmlpagingbar . $htmllist . $htmlpagingbar . $downloadall;
         } else {
             $localhtml .= $searchform . $this->output->notification(get_string('nobadges', 'badges'));
         }
@@ -656,7 +673,12 @@ class core_badges_renderer extends plugin_renderer_base {
         return $localhtml . $externalhtml;
     }
 
-    // Displays the available badges.
+    /**
+     * Render a collection of badges.
+     *
+     * @param \core_badges\output\badge_collection $badges
+     * @return string
+     */
     protected function render_badge_collection(\core_badges\output\badge_collection $badges) {
         $paging = new paging_bar($badges->totalcount, $badges->page, $badges->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
@@ -699,7 +721,12 @@ class core_badges_renderer extends plugin_renderer_base {
         return $htmlpagingbar . $htmltable . $htmlpagingbar;
     }
 
-    // Outputs table of badges with actions available.
+    /**
+     * Render a table of badges.
+     *
+     * @param \core_badges\output\badge_management $badges
+     * @return string
+     */
     protected function render_badge_management(\core_badges\output\badge_management $badges) {
         $paging = new paging_bar($badges->totalcount, $badges->page, $badges->perpage, $this->page->url, 'page');
 
@@ -708,7 +735,7 @@ class core_badges_renderer extends plugin_renderer_base {
         if (has_capability('moodle/badges:createbadge', $this->page->context)) {
             $n['type'] = $this->page->url->get_param('type');
             $n['id'] = $this->page->url->get_param('id');
-            $btn = $this->output->single_button(new moodle_url('newbadge.php', $n), get_string('newbadge', 'badges')); 
+            $btn = $this->output->single_button(new moodle_url('newbadge.php', $n), get_string('newbadge', 'badges'));
             $htmlnew = $this->output->box($btn);
         }
 
@@ -753,7 +780,14 @@ class core_badges_renderer extends plugin_renderer_base {
         return $htmlnew . $htmlpagingbar . $htmltable . $htmlpagingbar;
     }
 
-    // Prints tabs for badge editing.
+    /**
+     * Prints tabs for badge editing.
+     *
+     * @param integer $badgeid The badgeid to edit.
+     * @param context $context The current context.
+     * @param string $current The currently selected tab.
+     * @return string
+     */
     public function print_badge_tabs($badgeid, $context, $current = 'overview') {
         global $DB;
 
@@ -828,6 +862,8 @@ class core_badges_renderer extends plugin_renderer_base {
 
     /**
      * Prints badge status box.
+     *
+     * @param badge $badge
      * @return Either the status box html as a string or null
      */
     public function print_badge_status_box(badge $badge) {
@@ -947,7 +983,12 @@ class core_badges_renderer extends plugin_renderer_base {
         return $overalldescr . $condition . html_writer::alist($items, array(), 'ul');;
     }
 
-    // Prints criteria actions for badge editing.
+    /**
+     * Prints criteria actions for badge editing.
+     *
+     * @param badge $badge
+     * @return string
+     */
     public function print_criteria_actions(badge $badge) {
         $output = '';
         if (!$badge->is_active() && !$badge->is_locked()) {
@@ -977,8 +1018,13 @@ class core_badges_renderer extends plugin_renderer_base {
         return $output;
     }
 
-    // Renders a table with users who have earned the badge.
-    // Based on stamps collection plugin.
+    /**
+     * Renders a table with users who have earned the badge.
+     * Based on stamps collection plugin.
+     *
+     * @param \core_badges\output\badge_recipients $recipients
+     * @return string
+     */
     protected function render_badge_recipients(\core_badges\output\badge_recipients $recipients) {
         $paging = new paging_bar($recipients->totalcount, $recipients->page, $recipients->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
@@ -1315,4 +1361,3 @@ class core_badges_renderer extends plugin_renderer_base {
         return parent::render_from_template('core_badges/external_backpacks_page', $data);
     }
 }
-

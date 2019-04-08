@@ -37,6 +37,8 @@ use moodleform;
 /**
  * Form to select backpack collections.
  *
+ * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class collections extends moodleform {
 

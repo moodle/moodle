@@ -36,8 +36,15 @@ use moodleform;
 
 /**
  * Form to edit badge message.
+ *
+ * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class message extends moodleform {
+
+    /**
+     * Create the form.
+     */
     public function definition() {
         global $CFG, $OUTPUT;
 
@@ -83,11 +90,5 @@ class message extends moodleform {
 
         $this->add_action_buttons();
         $this->set_data($badge);
-    }
-
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        return $errors;
     }
 }

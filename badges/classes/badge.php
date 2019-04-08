@@ -44,6 +44,8 @@ use stdClass;
 /**
  * Class that represents badge.
  *
+ * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class badge {
     /** @var int Badge id */
@@ -396,6 +398,8 @@ class badge {
     /**
      * Indicates whether badge has already been issued to a user.
      *
+     * @param int $userid User to check
+     * @return boolean
      */
     public function is_issued($userid) {
         global $DB;
@@ -659,7 +663,7 @@ class badge {
     /**
      * Fully deletes the badge or marks it as archived.
      *
-     * @param $archive boolean Achive a badge without actual deleting of any data.
+     * @param boolean $archive Achive a badge without actual deleting of any data.
      */
     public function delete($archive = true) {
         global $DB;

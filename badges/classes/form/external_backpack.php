@@ -36,6 +36,10 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class external_backpack extends \moodleform {
 
+    /**
+     * Create the form.
+     *
+     */
     public function definition() {
         global $CFG;
 

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Display details of an issued badge with criteria and evidence
+ * Optionally award a badge and redirect to the my badges page.
  *
  * @package    core_badges
  * @copyright  2019 Damyon Wiese

@@ -200,6 +200,9 @@ class badgeclass_exporter extends exporter {
 
     /**
      * We map from related data passed as data to this exporter to clean exportable values.
+     *
+     * @param renderer_base $output
+     * @return array
      */
     protected function get_other_values(renderer_base $output) {
         global $DB;
