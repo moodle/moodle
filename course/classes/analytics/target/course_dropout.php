@@ -17,12 +17,12 @@
 /**
  * Drop out course target.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\analytics\target;
+namespace core_course\analytics\target;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,11 +34,11 @@ require_once($CFG->dirroot . '/completion/completion_completion.php');
 /**
  * Drop out course target.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_dropout extends \core\analytics\target\course_enrolments {
+class course_dropout extends course_enrolments {
 
     /**
      * Returns the name.
@@ -48,7 +48,7 @@ class course_dropout extends \core\analytics\target\course_enrolments {
      * @return \lang_string
      */
     public static function get_name() : \lang_string {
-        return new \lang_string('target:coursedropout');
+        return new \lang_string('target:coursedropout', 'course');
     }
 
     /**
@@ -58,8 +58,8 @@ class course_dropout extends \core\analytics\target\course_enrolments {
      */
     protected static function classes_description() {
         return array(
-            get_string('targetlabelstudentdropoutno'),
-            get_string('targetlabelstudentdropoutyes')
+            get_string('targetlabelstudentdropoutno', 'course'),
+            get_string('targetlabelstudentdropoutyes', 'course')
         );
     }
 
@@ -96,7 +96,7 @@ class course_dropout extends \core\analytics\target\course_enrolments {
             // At least a minimum of students activity.
             $nstudents = count($this->students);
             if ($nlogs / $nstudents < 10) {
-                return get_string('nocourseactivity');
+                return get_string('nocourseactivity', 'course');
             }
         }
 

@@ -15,51 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course competencies achievement target.
+ * Course completion target.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\analytics\target;
+namespace core_course\analytics\target;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot . '/lib/completionlib.php');
+require_once($CFG->dirroot . '/completion/completion_completion.php');
+
 /**
- * Course competencies achievement target.
+ * Course completion target.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_competencies extends \core\analytics\target\course_enrolments {
-
-    /**
-     * Number of competencies assigned per course.
-     * @var int[]
-     */
-    protected $coursecompetencies = array();
-
-    /**
-     * Count the competencies in a course.
-     *
-     * Save the value in $coursecompetencies array to prevent new accesses to the database.
-     *
-     * @param int $courseid The course id.
-     * @return int Number of competencies assigned to the course.
-     */
-    protected function get_num_competencies_in_course ($courseid) {
-
-        if (!isset($this->coursecompetencies[$courseid])) {
-            $ccs = \core_competency\api::count_competencies_in_course($courseid);
-            // Save the number of competencies per course to avoid another database access in calculate_sample().
-            $this->coursecompetencies[$courseid] = $ccs;
-        } else {
-            $ccs = $this->coursecompetencies[$courseid];
-        }
-        return $ccs;
-    }
+class course_completion extends course_enrolments {
 
     /**
      * Returns the name.
@@ -69,7 +47,7 @@ class course_competencies extends \core\analytics\target\course_enrolments {
      * @return \lang_string
      */
     public static function get_name() : \lang_string {
-        return new \lang_string('target:coursecompetencies');
+        return new \lang_string('target:coursecompletion', 'course');
     }
 
     /**
@@ -79,8 +57,8 @@ class course_competencies extends \core\analytics\target\course_enrolments {
      */
     protected static function classes_description() {
         return array(
-            get_string('targetlabelstudentcompetenciesno'),
-            get_string('targetlabelstudentcompetenciesyes'),
+            get_string('targetlabelstudentcompletionno', 'course'),
+            get_string('targetlabelstudentcompletionyes', 'course')
         );
     }
 
@@ -98,39 +76,34 @@ class course_competencies extends \core\analytics\target\course_enrolments {
             return $isvalid;
         }
 
-        $ccs = $this->get_num_competencies_in_course($course->get_id());
-
-        if (!$ccs) {
-            return get_string('nocompetenciesincourse', 'tool_lp');
+        // Not a valid target if completion is not enabled or there are not completion criteria defined.
+        $completion = new \completion_info($course->get_course_data());
+        if (!$completion->is_enabled() || !$completion->has_criteria()) {
+            return get_string('completionnotenabledforcourse', 'completion');
         }
 
         return true;
     }
 
     /**
-     * To have the proficiency or not in each of the competencies assigned to the course sets the target value.
+     * Course completion sets the target value.
      *
      * @param int $sampleid
      * @param \core_analytics\analysable $course
      * @param int $starttime
      * @param int $endtime
-     * @return float 0 -> competencies achieved, 1 -> competencies not achieved
+     * @return float 0 -> course not completed, 1 -> course completed
      */
     protected function calculate_sample($sampleid, \core_analytics\analysable $course, $starttime = false, $endtime = false) {
 
         $userenrol = $this->retrieve('user_enrolments', $sampleid);
 
-        $key = $course->get_id();
-        // Number of competencies in the course.
-        $ccs = $this->get_num_competencies_in_course($key);
-        // Number of proficient competencies in the same course for the user.
-        $ucs = \core_competency\api::count_proficient_competencies_in_course_for_user($key, $userenrol->userid);
-
-        // If they are the equals, the user achieved all the competencies assigned to the course.
-        if ($ccs == $ucs) {
+        // We use completion as a success metric.
+        $ccompletion = new \completion_completion(array('userid' => $userenrol->userid, 'course' => $course->get_id()));
+        if ($ccompletion->is_complete()) {
             return 0;
+        } else {
+            return 1;
         }
-
-        return 1;
     }
 }

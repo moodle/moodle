@@ -38,4 +38,9 @@ defined('MOODLE_INTERNAL') || die();
 $renamedclasses = array(
     'course_in_list' => 'core_course_list_element',
     'coursecat' => 'core_course_category',
+    'core\\analytics\\target\\course_dropout' => 'core_course\\analytics\\target\\course_dropout',
+    'core\\analytics\\target\\course_competencies' => 'core_course\\analytics\\target\\course_competencies',
+    'core\\analytics\\target\\course_completion' => 'core_course\\analytics\\target\\course_completion',
+    'core\\analytics\\target\\course_gradetopass' => 'core_course\\analytics\\target\\course_gradetopass',
+    'core\\analytics\\target\\no_teaching' => 'core_course\\analytics\\target\\no_teaching',
 );

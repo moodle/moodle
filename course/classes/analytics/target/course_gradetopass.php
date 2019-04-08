@@ -17,12 +17,12 @@
 /**
  * Getting the minimum grade to pass target.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\analytics\target;
+namespace core_course\analytics\target;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,11 +30,11 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Getting the minimum grade to pass target.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_gradetopass extends \core\analytics\target\course_enrolments {
+class course_gradetopass extends course_enrolments {
 
     /**
      * Courses grades to pass.
@@ -114,7 +114,7 @@ class course_gradetopass extends \core\analytics\target\course_enrolments {
      * @return \lang_string
      */
     public static function get_name() : \lang_string {
-        return new \lang_string('target:coursegradetopass');
+        return new \lang_string('target:coursegradetopass', 'course');
     }
 
     /**
@@ -124,8 +124,8 @@ class course_gradetopass extends \core\analytics\target\course_enrolments {
      */
     protected static function classes_description() {
         return array(
-            get_string('targetlabelstudentgradetopassno'),
-            get_string('targetlabelstudentgradetopassyes')
+            get_string('targetlabelstudentgradetopassno', 'course'),
+            get_string('targetlabelstudentgradetopassyes', 'course')
         );
     }
 
