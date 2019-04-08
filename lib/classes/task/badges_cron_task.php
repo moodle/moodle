@@ -38,14 +38,56 @@ class badges_cron_task extends scheduled_task {
     }
 
     /**
-     * Do the job.
-     * Throw exceptions on errors (the job will be retried).
+     * Reviews criteria and awards badges
+     *
+     * First find all badges that can be earned, then reviews each badge.
+     * (Not sure how efficient this is timewise).
      */
     public function execute() {
-        global $CFG;
-        // Run badges review cron.
-        require_once($CFG->dirroot . '/badges/cron.php');
-        badge_cron();
-    }
+        global $DB, $CFG;
+        if (!empty($CFG->enablebadges)) {
+            require_once($CFG->libdir . '/badgeslib.php');
+            $total = 0;
 
+            $courseparams = array();
+            if (empty($CFG->badges_allowcoursebadges)) {
+                $coursesql = '';
+            } else {
+                $coursesql = ' OR EXISTS (SELECT id FROM {course} WHERE visible = :visible AND startdate < :current) ';
+                $courseparams = array('visible' => true, 'current' => time());
+            }
+
+            $sql = 'SELECT id
+                      FROM {badge}
+                     WHERE (status = :active OR status = :activelocked)
+                       AND (type = :site ' . $coursesql . ')';
+            $badgeparams = [
+                'active' => BADGE_STATUS_ACTIVE,
+                'activelocked' => BADGE_STATUS_ACTIVE_LOCKED,
+                'site' => BADGE_TYPE_SITE
+            ];
+            $params = array_merge($badgeparams, $courseparams);
+            $badges = $DB->get_fieldset_sql($sql, $params);
+
+            mtrace('Started reviewing available badges.');
+            foreach ($badges as $bid) {
+                $badge = new \badge($bid);
+
+                if ($badge->has_criteria()) {
+                    if (debugging()) {
+                        mtrace('Processing badge "' . $badge->name . '"...');
+                    }
+
+                    $issued = $badge->review_all_criteria();
+
+                    if (debugging()) {
+                        mtrace('...badge was issued to ' . $issued . ' users.');
+                    }
+                    $total += $issued;
+                }
+            }
+
+            mtrace('Badges were issued ' . $total . ' time(s).');
+        }
+    }
 }

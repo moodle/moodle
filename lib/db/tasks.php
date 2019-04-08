@@ -276,6 +276,15 @@ $tasks = array(
         'month' => '*'
     ),
     array(
+        'classname' => 'core\task\badges_message_task',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+    array(
         'classname' => 'core\task\file_temp_cleanup_task',
         'blocking' => 0,
         'minute' => '55',

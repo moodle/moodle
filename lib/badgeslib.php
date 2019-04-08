@@ -1611,3 +1611,50 @@ function badge_award_criteria_competency_has_records_for_competencies($competenc
 
     return $DB->record_exists_sql($sql, $params);
 }
+
+/**
+ * Creates single message for all notification and sends it out
+ *
+ * @param object $badge A badge which is notified about.
+ */
+function badge_assemble_notification(stdClass $badge) {
+    global $DB;
+
+    $userfrom = core_user::get_noreply_user();
+    $userfrom->maildisplay = true;
+
+    if ($msgs = $DB->get_records_select('badge_issued', 'issuernotified IS NULL AND badgeid = ?', array($badge->id))) {
+        // Get badge creator.
+        $creator = $DB->get_record('user', array('id' => $badge->creator), '*', MUST_EXIST);
+        $creatorsubject = get_string('creatorsubject', 'badges', $badge->name);
+        $creatormessage = '';
+
+        // Put all messages in one digest.
+        foreach ($msgs as $msg) {
+            $issuedlink = html_writer::link(new moodle_url('/badges/badge.php', array('hash' => $msg->uniquehash)), $badge->name);
+            $recipient = $DB->get_record('user', array('id' => $msg->userid), '*', MUST_EXIST);
+
+            $a = new stdClass();
+            $a->user = fullname($recipient);
+            $a->link = $issuedlink;
+            $creatormessage .= get_string('creatorbody', 'badges', $a);
+            $DB->set_field('badge_issued', 'issuernotified', time(), array('badgeid' => $msg->badgeid, 'userid' => $msg->userid));
+        }
+
+        // Create a message object.
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = SITEID;
+        $eventdata->component         = 'moodle';
+        $eventdata->name              = 'badgecreatornotice';
+        $eventdata->userfrom          = $userfrom;
+        $eventdata->userto            = $creator;
+        $eventdata->notification      = 1;
+        $eventdata->subject           = $creatorsubject;
+        $eventdata->fullmessage       = format_text_email($creatormessage, FORMAT_HTML);
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = $creatormessage;
+        $eventdata->smallmessage      = $creatorsubject;
+
+        message_send($eventdata);
+    }
+}
