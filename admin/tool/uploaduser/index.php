@@ -32,6 +32,8 @@ require_once($CFG->dirroot.'/group/lib.php');
 require_once($CFG->dirroot.'/cohort/lib.php');
 require_once('locallib.php');
 require_once('user_form.php');
+require_once('classes/local/field_value_validators.php');
+use tool_uploaduser\local\field_value_validators;
 
 $iid         = optional_param('iid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
@@ -71,8 +73,6 @@ $struserauthunsupported     = get_string('userauthunsupported', 'error');
 $stremailduplicate          = get_string('useremailduplicate', 'error');
 
 $strinvalidpasswordpolicy   = get_string('invalidpasswordpolicy', 'error');
-$strinvalidtheme            = get_string('invalidtheme', 'error');
-
 $errorstr                   = get_string('error');
 
 $stryes                     = get_string('yes');
@@ -104,7 +104,6 @@ $STD_FIELDS = array('id', 'username', 'email',
 $STD_FIELDS = array_merge($STD_FIELDS, get_all_user_name_fields());
 
 $PRF_FIELDS = array();
-
 if ($proffields = $DB->get_records('user_info_field')) {
     foreach ($proffields as $key => $proffield) {
         $profilefieldname = 'profile_field_'.$proffield->shortname;
@@ -210,8 +209,6 @@ if ($formdata = $mform2->is_cancelled()) {
     // init csv import helper
     $cir->init();
     $linenum = 1; //column header is first line
-
-    $themes = get_list_of_themes();
 
     // init upload progress tracker
     $upt = new uu_progress_tracker();
@@ -360,21 +357,13 @@ if ($formdata = $mform2->is_cancelled()) {
             $upt->track('username', s($user->username), 'normal', false);
         }
 
-        // Validate theme.
-        if (!$CFG->allowuserthemes) {
-            $upt->track('status', get_string('invalidtheme', 'error', 'theme'), 'error');
-            $upt->track('theme', $errorstr, 'error');
-            $userserrors++;
-            continue;
-        }
-
+        // Verify if the theme is valid and allowed to be set.
         if (isset($user->theme)) {
-            if (!isset($themes[$user->theme])) {
-                $user->theme = '';
-                $upt->track('status', get_string('invalidfieldvalue', 'error', 'theme'), 'error');
-                $upt->track('theme', $errorstr, 'error');
-                $userserrors++;
-                continue;
+            list($status, $message) = field_value_validators::validate_theme($user->theme);
+            if ($status !== 'normal' && !empty($message)) {
+                $upt->track('status', $message, $status);
+                // Unset the theme when validation fails.
+                unset($user->theme);
             }
         }
 
@@ -657,6 +646,15 @@ if ($formdata = $mform2->is_cancelled()) {
                     if ($existinguser->suspended) {
                         $dologout = true;
                     }
+                }
+            }
+            // Verify if the theme is valid and allowed to be set.
+            if (isset($existinguser->theme)) {
+                list($status, $message) = field_value_validators::validate_theme($existinguser->theme);
+                if ($status !== 'normal' && !empty($message)) {
+                     $upt->track('status', $message, $status);
+                    // Unset the theme when validation fails.
+                    unset($existinguser->theme);
                 }
             }
 
@@ -1234,6 +1232,14 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     if (isset($rowcols['city'])) {
         $rowcols['city'] = $rowcols['city'];
     }
+
+    if (isset($rowcols['theme'])) {
+        list($status, $message) = field_value_validators::validate_theme($rowcols['theme']);
+        if ($status !== 'normal' && !empty($message)) {
+            $rowcols['status'][] = $message;
+        }
+    }
+
     // Check if rowcols have custom profile field with correct data and update error state.
     $noerror = uu_check_custom_profile_data($rowcols) && $noerror;
     $rowcols['status'] = implode('<br />', $rowcols['status']);
