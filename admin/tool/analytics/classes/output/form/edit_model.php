@@ -74,6 +74,7 @@ class edit_model extends \moodleform {
         );
         $mform->addElement('autocomplete', 'indicators', get_string('indicators', 'tool_analytics'), $indicators, $options);
         $mform->setType('indicators', PARAM_ALPHANUMEXT);
+        $mform->addHelpButton('indicators', 'indicators', 'tool_analytics');
 
         $timesplittings = array('' => '');
         foreach ($this->_customdata['timesplittings'] as $classname => $timesplitting) {

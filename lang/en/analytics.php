@@ -122,5 +122,6 @@ $string['privacy:metadata:analytics:predictionactions:timecreated'] = 'When the 
 $string['processingsitecontents'] = 'Processing site contents';
 $string['successfullyanalysed'] = 'Successfully analysed';
 $string['timesplittingmethod'] = 'Time-splitting method';
-$string['timesplittingmethod_help'] = 'The time-splitting method is what defines when the system will calculate predictions and the portion of activity logs that will be considered for those predictions. E.g. They can divide the course duration in parts and generate a prediction at the end of these parts.';
+$string['timesplittingmethod_help'] = 'The time-splitting method is what defines when the system will calculate predictions and the portion of activity logs that will be considered for those predictions. E.g. they can divide the course duration in parts and generate a prediction at the end of these parts.';
+$string['timesplittingmethod_link'] = 'Time_splitting_methods';
 $string['viewprediction'] = 'View prediction details';
