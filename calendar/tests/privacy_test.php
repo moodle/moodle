@@ -365,12 +365,23 @@ class core_calendar_privacy_testcase extends provider_testcase {
         // Delete all Calendar Events for all Users by Context for Course 2.
         provider::delete_data_for_all_users_in_context($course2context);
 
-        // Verify all Calendar Events for Course 2 were deleted.
-        $events = $DB->get_records('event', array('courseid' => $course2->id));
+        // Verify all Calendar Events for Course 2 context were deleted.
+        $events = $DB->get_records('event', array('courseid' => $course2->id, 'modulename' => '0'));
         $this->assertCount(0, $events);
         // Verify all Calendar Subscriptions for Course 2 were deleted.
         $subscriptions = $DB->get_records('event_subscriptions', array('courseid' => $course2->id));
         $this->assertCount(0, $subscriptions);
+
+        // Verify all Calendar Events for the assignment exists still.
+        $events = $DB->get_records('event', array('modulename' => 'assign'));
+        $this->assertCount(2, $events);
+
+        // Delete all Calendar Events for all Users by Context for the assignment.
+        provider::delete_data_for_all_users_in_context($modulecontext);
+
+        // Verify all Calendar Events for the assignment context were deleted.
+        $events = $DB->get_records('event', array('modulename' => 'assign'));
+        $this->assertCount(0, $events);
     }
 
     /**
