@@ -142,6 +142,7 @@ $functions = array(
         'description' => 'Set the lock state for the discussion',
         'type' => 'write',
         'ajax' => true,
+        'capabilities' => 'moodle/course:manageactivities',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
 );

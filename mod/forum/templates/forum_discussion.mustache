@@ -33,7 +33,13 @@
 <div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
 {{#html}}
     <div class="d-flex flex-wrap flex-row-reverse m-b-1" data-container="discussion-tools" style="text-align: right;">
-        <div class="pl-1">{{{lockdiscussion}}}</div>
+        {{#capabilities.manage}}
+            {{^timelocked}}
+            <div class="pl-1 discussionlock">
+                {{> forum/discussion_lock_toggle }}
+            </div>
+            {{/timelocked}}
+        {{/capabilities.manage}}
         <div class="pl-1">{{{subscribe}}}</div>
     </div>
     {{{neighbourlinks}}}

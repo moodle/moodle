@@ -223,6 +223,7 @@ $string['erroremptymessage'] = 'Post message cannot be empty';
 $string['erroremptysubject'] = 'Post subject cannot be empty.';
 $string['errorenrolmentrequired'] = 'You must be enrolled in this course to access this content';
 $string['errorwhiledelete'] = 'An error occurred while deleting record.';
+$string['errorcannotlock'] = 'You do not have the permission to lock discussions.';
 $string['eventassessableuploaded'] = 'Some content has been posted.';
 $string['everyonecanchoose'] = 'Everyone can choose to be subscribed';
 $string['everyonecannowchoose'] = 'Everyone can now choose to be subscribed';

@@ -234,7 +234,7 @@ class discussion {
     }
 
     /**
-     * Check if this discussion is pinned.
+     * Get the locked time of this discussion.
      *
      * @return bool
      */
@@ -254,11 +254,11 @@ class discussion {
     /**
      * Set the locked timestamp
      *
-     * @param int $timestamp
+     * @param int $timestamp The value we want to store into 'locked'
      */
     public function toggle_locked_state(int $timestamp) {
-        // If it is locked already then unlock else set it to the timestamp.
-        $this->timelocked = ($this->timelocked ? 0 : $timestamp);
+        // Check the current value against what we want the value to be i.e. '$timestamp'.
+        $this->timelocked = ($this->timelocked && $timestamp ? $this->timelocked : $timestamp);
     }
 
     /**

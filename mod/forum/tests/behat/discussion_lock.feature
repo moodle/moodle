@@ -38,7 +38,6 @@ Feature: As a teacher, you can manually lock individual discussions when viewing
     And I follow "Lock"
     Then "a[@title='Lock']" "css_element" should not be visible
     Then "Locked" "link" should be visible
-    And I reload the page
     Then I should see "This discussion has been locked so you can no longer reply to it."
     And I follow "Discussion 2"
     Then I should not see "This discussion has been locked so you can no longer reply to it."

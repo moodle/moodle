@@ -1532,22 +1532,25 @@ class mod_forum_external extends external_api {
         $vaultfactory = mod_forum\local\container::get_vault_factory();
         $forumvault = $vaultfactory->get_forum_vault();
         $forum = $forumvault->get_from_id($params['forumid']);
-        // If the targetstate(currentstate) is not 0 then it should be set to the current time.
-        $targetstate = $targetstate ? 0 : time();
-        self::validate_context($forum->get_context());
 
         $managerfactory = mod_forum\local\container::get_manager_factory();
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
+        if (!$capabilitymanager->can_manage_forum($USER)) {
+            throw new moodle_exception('errorcannotlock', 'forum');
+        }
+
+        // If the targetstate(currentstate) is not 0 then it should be set to the current time.
+        $lockedvalue = $targetstate ? 0 : time();
+        self::validate_context($forum->get_context());
+
         $discussionvault = $vaultfactory->get_discussion_vault();
         $discussion = $discussionvault->get_from_id($params['discussionid']);
 
         // If the current state doesn't equal the desired state then update the current.
         // state to the desired state.
-        if ($capabilitymanager->can_manage_forum($USER)) {
-            $discussion->toggle_locked_state($targetstate);
-            $response = $discussionvault->update_discussion($discussion);
-            $discussion = !$response ? $response : $discussion;
-        }
+        $discussion->toggle_locked_state($lockedvalue);
+        $response = $discussionvault->update_discussion($discussion);
+        $discussion = !$response ? $response : $discussion;
 
         $exporterfactory = mod_forum\local\container::get_exporter_factory();
         $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
@@ -1575,6 +1578,12 @@ class mod_forum_external extends external_api {
      * @return external_description
      */
     public static function set_lock_state_returns() {
-        return \mod_forum\local\exporters\discussion::get_read_structure();
+        return new external_single_structure([
+                'id' => new external_value(PARAM_INT, 'The discussion we are locking.'),
+                'locked' => new external_value(PARAM_BOOL, 'The locked state of the discussion.'),
+                'times' => new external_single_structure([
+                    'locked' => new external_value(PARAM_INT, 'The locked time of the discussion.'),
+                ])
+        ]);
     }
 }

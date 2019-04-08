@@ -1451,22 +1451,24 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
 
         // Only a teacher should be able to lock a discussion.
-        $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
-        $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
-        $this->assertFalse($result['userstate']['locked']);
-        $this->assertEquals('0', $result['times']['locked']);
+        try {
+            $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('errorcannotlock', $e->errorcode);
+        }
 
         // Set the lock.
         self::setAdminUser();
         $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
         $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
-        $this->assertTrue($result['userstate']['locked']);
+        $this->assertTrue($result['locked']);
         $this->assertNotEquals(0, $result['times']['locked']);
 
         // Unset the lock.
         $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, time());
         $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
-        $this->assertFalse($result['userstate']['locked']);
+        $this->assertFalse($result['locked']);
         $this->assertEquals('0', $result['times']['locked']);
     }
 

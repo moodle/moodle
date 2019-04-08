@@ -217,6 +217,11 @@ if (!empty($forum)) {
                     'returnurl' => '/mod/forum/view.php?f=' . $forum->id)),
                     get_string('youneedtoenrol'));
             }
+
+            // The forum has been locked. Just redirect back to the discussion page.
+            if (forum_discussion_is_locked($forum, $discussion)) {
+                redirect(new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
+            }
         }
         print_error('nopostforum', 'forum');
     }

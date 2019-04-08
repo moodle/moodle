@@ -48,11 +48,8 @@ define([
             var state = toggleElement.data('state');
 
             Repository.setDiscussionLockState(forumId, discussionId, state)
-                .then(function(context) {
-                    return Templates.render('mod_forum/discussion_lock_toggle', context);
-                })
-                .then(function(html, js) {
-                    return Templates.replaceNode(toggleElement, html, js);
+                .then(function() {
+                    return location.reload();
                 })
                 .catch(Notification.exception);
 

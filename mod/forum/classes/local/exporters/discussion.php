@@ -64,6 +64,8 @@ class discussion extends exporter {
             'id' => ['type' => PARAM_INT],
             'forumid' => ['type' => PARAM_INT],
             'pinned' => ['type' => PARAM_BOOL],
+            'locked' => ['type' => PARAM_BOOL],
+            'istimelocked' => ['type' => PARAM_BOOL],
             'name' => ['type' => PARAM_TEXT],
             'group' => [
                 'optional' => true,
@@ -94,7 +96,6 @@ class discussion extends exporter {
             'userstate' => [
                 'type' => [
                     'subscribed' => ['type' => PARAM_BOOL],
-                    'locked' => ['type' => PARAM_BOOL],
                 ],
             ],
             'capabilities' => [
@@ -182,6 +183,8 @@ class discussion extends exporter {
             'id' => $discussion->get_id(),
             'forumid' => $forum->get_id(),
             'pinned' => $discussion->is_pinned(),
+            'locked' => $forum->is_discussion_locked($discussion),
+            'istimelocked' => $forum->is_discussion_time_locked($discussion),
             'name' => format_string($discussion->get_name(), true, [
                 'context' => $this->related['context']
             ]),
@@ -192,8 +195,7 @@ class discussion extends exporter {
                 'locked' => $discussion->get_locked()
             ],
             'userstate' => [
-                'subscribed' => \mod_forum\subscriptions::is_subscribed($user->id, $forumrecord, $discussion->get_id()),
-                'locked' => $discussion->is_locked()
+                'subscribed' => \mod_forum\subscriptions::is_subscribed($user->id, $forumrecord, $discussion->get_id())
             ],
             'capabilities' => [
                 'subscribe' => $capabilitymanager->can_subscribe_to_discussion($user, $discussion),

@@ -53,7 +53,7 @@ abstract class db_table_vault {
     public function __construct(
         moodle_database $db,
         entity_factory $entityfactory,
-        $legacyfactory
+        object $legacyfactory
     ) {
         $this->db = $db;
         $this->entityfactory = $entityfactory;
