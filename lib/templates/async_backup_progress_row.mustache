@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/async_backup_progress_row.
+
+    Moodle Asynchronous backup status table row template.
+
+    The purpose of this template is to render status
+    table row updates during an asynchronous backup process.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    *
+
+    Example context (json):
+    {
+        "filename": "backup-moodle2-course-49390-test_course-20190326-1546-nu-nf.mbz",
+        "time": "Tuesday, 26 March 2019, 3:47 PM",
+        "size": "7.2KB",
+        "fileurl": "https://moodle.local/pluginfile.php/7945628/backup/course/backup-moodle2-course-49390-test_course-20190326-1546-nu-nf.mbz?forcedownload=1",
+        "restoreurl": "https://moodle.local/backup/restorefile.php?action=choosebackupfile&filename=backup-moodle2-course-49390-test_course-20190326-1546-nu-nf.mbz&filepath=%2F&component=backup&filearea=course&filecontextid=7945628&contextid=7945628&itemid=0"
+    }
+}}
+<td class="cell c0" style="">{{filename}}</td>
+<td class="cell c1" style="">{{time}}</td>
+<td class="cell c2" style="">{{size}}</td>
+<td class="cell c3" style=""><a href="{{fileurl}}">{{# str }} download, core {{/ str }}</a></td>
+<td class="cell c4" style=""><a href="{{restoreurl}}">{{# str }} restore, core {{/ str }}</a></td>
+<td class="cell c5 lastcol" style="">
+  <span class="action-icon">
+    <i class="icon fa fa-check fa-fw " title="{{# str }} successful, backup {{/ str }}" aria-label="{{# str }} successful, backup {{/ str }}"></i>
+  </span>
+</td>

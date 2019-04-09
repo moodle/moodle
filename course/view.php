@@ -5,6 +5,7 @@
     require_once('../config.php');
     require_once('lib.php');
     require_once($CFG->libdir.'/completionlib.php');
+    require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
     $id          = optional_param('id', 0, PARAM_INT);
     $name        = optional_param('name', '', PARAM_TEXT);
@@ -242,6 +243,10 @@
 
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
+
+if ($USER->editing == 1 && async_helper::is_async_pending($id, 'course', 'backup')) {
+    echo $OUTPUT->notification(get_string('pendingasyncedit', 'backup'), 'warning');
+}
 
     if ($completion->is_enabled()) {
         // This value tracks whether there has been a dynamic change to the page.
