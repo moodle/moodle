@@ -777,11 +777,10 @@ class behat_course extends behat_base {
         // Ensure the destination is valid.
         $sectionxpath = $this->section_exists($sectionnumber);
 
-        $activitynode = $this->get_activity_element('Move', 'icon', $activityname);
-
         // JS enabled.
         if ($this->running_javascript()) {
 
+            $activitynode = $this->get_activity_element('Move', 'icon', $activityname);
             $destinationxpath = $sectionxpath . "/descendant::ul[contains(concat(' ', normalize-space(@class), ' '), ' yui3-dd-drop ')]";
 
             $this->execute("behat_general::i_drag_and_i_drop_it_in",
