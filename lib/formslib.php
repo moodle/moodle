@@ -163,6 +163,8 @@ abstract class moodleform {
      * @param string $target target frame for form submission. You will rarely use this. Don't use
      *               it if you don't need to as the target attribute is deprecated in xhtml strict.
      * @param mixed $attributes you can pass a string of html attributes here or an array.
+     *               Special attribute 'data-random-ids' will randomise generated elements ids. This
+     *               is necessary when there are several forms on the same page.
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
