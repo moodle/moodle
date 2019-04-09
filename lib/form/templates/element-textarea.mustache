@@ -6,7 +6,7 @@
             id="{{element.id}}"
             class="form-control {{#error}}is-invalid{{/error}}"
             {{#error}}
-                autofocus aria-describedby="id_error_{{element.name}}"
+                autofocus aria-describedby="{{element.iderror}}"
             {{/error}}
             {{{element.attributes}}} >{{element.value}}</textarea>
         {{/element.frozen}}

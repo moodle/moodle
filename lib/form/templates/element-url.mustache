@@ -10,7 +10,7 @@
                 value="{{element.value}}"
                 size="{{element.size}}"
                 {{#error}}
-                    autofocus aria-describedby="id_error_{{element.name}}"
+                    autofocus aria-describedby="{{element.iderror}}"
                 {{/error}}
                 {{#element.frozen}}
                     readonly {{#element.hardfrozen}}disabled{{/element.hardfrozen}}

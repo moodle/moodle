@@ -25,7 +25,7 @@
                 {{/element.value}}
                 id="{{element.id}}" {{#element.checked}}checked{{/element.checked}}
                 {{#error}}
-                    autofocus aria-describedby="id_error_{{element.name}}"
+                    autofocus aria-describedby="{{element.iderror}}"
                 {{/error}}
                 {{#element.frozen}}
                     disabled
@@ -43,7 +43,7 @@
                 {{{helpbutton}}}
             </span>
         </div>
-        <div class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{#error}} style="display: block;"{{/error}}>
+        <div class="form-control-feedback invalid-feedback" id="{{element.iderror}}" {{#error}} style="display: block;"{{/error}}>
             {{{error}}}
         </div>
     </div>

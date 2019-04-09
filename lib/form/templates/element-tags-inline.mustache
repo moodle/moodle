@@ -6,7 +6,7 @@
             id="{{element.id}}"
             {{#element.multiple}}multiple{{/element.multiple}}
             {{#error}}
-                autofocus aria-describedby="id_error_{{element.name}}"
+                autofocus aria-describedby="{{element.iderror}}"
             {{/error}}
             {{{element.attributes}}} >
             {{#element.options}}
