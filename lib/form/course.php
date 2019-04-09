@@ -64,8 +64,7 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
      *
      * @param string $elementname Element name
      * @param mixed $elementlabel Label(s) for an element
-     * @param array $options Options to control the element's display
-     *                       Valid options are:
+     * @param mixed $attributes Array of typical HTML attributes plus additional options, such as:
      *                       'multiple' - boolean multi select
      *                       'exclude' - array or int, list of course ids to never show
      *                       'requiredcapabilities' - array of capabilities. Uses ANY to combine them.
@@ -73,46 +72,44 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
      *                       'includefrontpage' - boolean Enables the frontpage to be selected.
      *                       'onlywithcompletion' - only courses where completion is enabled
      */
-    public function __construct($elementname = null, $elementlabel = null, $options = array()) {
-        if (isset($options['multiple'])) {
-            $this->multiple = $options['multiple'];
+    public function __construct($elementname = null, $elementlabel = null, $attributes = array()) {
+        if (!is_array($attributes)) {
+            $attributes = [];
         }
-        if (isset($options['exclude'])) {
-            $this->exclude = $options['exclude'];
+        if (isset($attributes['multiple'])) {
+            $this->multiple = $attributes['multiple'];
+        }
+        if (isset($attributes['exclude'])) {
+            $this->exclude = $attributes['exclude'];
             if (!is_array($this->exclude)) {
                 $this->exclude = array($this->exclude);
             }
+            unset($attributes['exclude']);
         }
-        if (isset($options['requiredcapabilities'])) {
-            $this->requiredcapabilities = $options['requiredcapabilities'];
+        if (isset($attributes['requiredcapabilities'])) {
+            $this->requiredcapabilities = $attributes['requiredcapabilities'];
+            unset($attributes['requiredcapabilities']);
         }
-        if (isset($options['limittoenrolled'])) {
-            $this->limittoenrolled = $options['limittoenrolled'];
+        if (isset($attributes['limittoenrolled'])) {
+            $this->limittoenrolled = $attributes['limittoenrolled'];
+            unset($attributes['limittoenrolled']);
         }
 
-        $validattributes = array(
+        $attributes += array(
             'ajax' => 'core/form-course-selector',
             'data-requiredcapabilities' => implode(',', $this->requiredcapabilities),
             'data-exclude' => implode(',', $this->exclude),
             'data-limittoenrolled' => (int)$this->limittoenrolled
         );
-        if ($this->multiple) {
-            $validattributes['multiple'] = 'multiple';
-        }
-        if (isset($options['noselectionstring'])) {
-            $validattributes['noselectionstring'] = $options['noselectionstring'];
-        }
-        if (isset($options['placeholder'])) {
-            $validattributes['placeholder'] = $options['placeholder'];
-        }
-        if (!empty($options['includefrontpage'])) {
-            $validattributes['data-includefrontpage'] = SITEID;
+        if (!empty($attributes['includefrontpage'])) {
+            $attributes['data-includefrontpage'] = SITEID;
+            unset($attributes['includefrontpage']);
         }
         if (!empty($options['onlywithcompletion'])) {
             $validattributes['data-onlywithcompletion'] = 1;
         }
 
-        parent::__construct($elementname, $elementlabel, array(), $validattributes);
+        parent::__construct($elementname, $elementlabel, array(), $attributes);
     }
 
     /**
