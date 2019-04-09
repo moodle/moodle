@@ -931,7 +931,7 @@ class database_manager {
         $schema = new xmldb_structure('export');
         $schema->setVersion($CFG->version);
 
-        foreach ($this->get_install_xml_file_list() as $filename)  {
+        foreach ($this->get_install_xml_files() as $filename) {
             $xmldb_file = new xmldb_file($filename);
             if (!$xmldb_file->loadXMLStructure()) {
                 continue;
