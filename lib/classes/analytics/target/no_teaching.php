@@ -56,13 +56,26 @@ class no_teaching extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Overwritten to show a simpler language string.
+     *
+     * @param  int $modelid
+     * @param  \context $context
+     * @return string
+     */
+    public function get_insight_subject(int $modelid, \context $context) {
+        return get_string('noteachingupcomingcourses');
+    }
+
+    /**
      * prediction_actions
      *
      * @param \core_analytics\prediction $prediction
      * @param mixed $includedetailsaction
+     * @param bool $isinsightuser
      * @return \core_analytics\prediction_action[]
      */
-    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false,
+            $isinsightuser = false) {
         global $CFG;
 
         require_once($CFG->dirroot . '/course/lib.php');
@@ -104,16 +117,6 @@ class no_teaching extends \core_analytics\local\target\binary {
     }
 
     /**
-     * Returns the predicted classes that will be ignored.
-     *
-     * @return array
-     */
-    protected function ignored_predicted_classes() {
-        // No need to list the course if there is teaching activity.
-        return array(0);
-    }
-
-    /**
      * get_analyser_class
      *
      * @return string
@@ -148,9 +151,10 @@ class no_teaching extends \core_analytics\local\target\binary {
 
         $now = time();
 
-        // No courses without start date, no finished courses nor predictions before start - 1 week.
+        // No courses without start date, no finished courses, no predictions before start - 1 week nor
+        // predictions for courses that started more than 1 week ago.
         if (!$course->startdate || (!empty($course->enddate) && $course->enddate < $now) ||
-                $course->startdate - WEEKSECS > $now) {
+                $course->startdate - WEEKSECS > $now || $course->startdate + WEEKSECS < $now) {
             return false;
         }
         return true;

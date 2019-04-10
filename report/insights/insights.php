@@ -106,6 +106,22 @@ if (!$model->uses_insights()) {
 $PAGE->set_title($insightinfo->insightname);
 $PAGE->set_heading($insightinfo->contextname);
 
+// Some models generate one single prediction per context. We can directly show the prediction details in this case.
+if ($model->get_analyser()::one_sample_per_analysable()) {
+
+    // Param $perpage to 2 so we can detect if this model's analyser is using one_sample_per_analysable incorrectly.
+    $predictionsdata = $model->get_predictions($context, true, 0, 2);
+    if ($predictionsdata) {
+        list($total, $predictions) = $predictionsdata;
+        if ($total > 1) {
+            throw new \coding_exception('This model\'s analyser processed more than one sample for a single analysable element.' .
+                'Therefore, the analyser\'s one_sample_per_analysable() method should return false.');
+        }
+        $prediction = reset($predictions);
+        $redirecturl = new \moodle_url('/report/insights/prediction.php', ['id' => $prediction->get_prediction_data()->id]);
+        redirect($redirecturl);
+    }
+}
 echo $OUTPUT->header();
 
 $renderable = new \report_insights\output\insights_list($model, $context, $othermodels, $page, $perpage);

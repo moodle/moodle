@@ -45,6 +45,15 @@ class courses extends \core_analytics\local\analyser\by_course {
     }
 
     /**
+     * Just one sample per analysable.
+     *
+     * @return bool
+     */
+    public static function one_sample_per_analysable() {
+        return true;
+    }
+
+    /**
      * Returns the analysable of a sample
      *
      * @param int $sampleid
@@ -79,7 +88,7 @@ class courses extends \core_analytics\local\analyser\by_course {
      * @param \core_analytics\analysable $course
      * @return array
      */
-    protected function get_all_samples(\core_analytics\analysable $course) {
+    public function get_all_samples(\core_analytics\analysable $course) {
 
         $context = \context_course::instance($course->get_id());
 

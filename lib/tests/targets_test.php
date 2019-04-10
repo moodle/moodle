@@ -28,6 +28,10 @@ global $CFG;
 
 require_once($CFG->dirroot . '/completion/criteria/completion_criteria.php');
 require_once($CFG->dirroot . '/completion/criteria/completion_criteria_activity.php');
+require_once($CFG->dirroot . '/lib/grade/grade_item.php');
+require_once($CFG->dirroot . '/lib/grade/grade_grade.php');
+require_once($CFG->dirroot . '/lib/grade/grade_category.php');
+require_once($CFG->dirroot . '/lib/grade/constants.php');
 
 /**
  * Unit tests for core targets.
@@ -340,5 +344,99 @@ class core_analytics_targets_testcase extends advanced_testcase {
         }
         // Method calculate_sample() returns 0 when the user has achieved all the competencies assigned to the course.
         $this->assertEquals(0, $method->invoke($target, $sampleid, $analysable));
+    }
+
+    /**
+     * Test the specific conditions of a valid analysable for the course_gradetopass target.
+     */
+    public function test_core_target_course_gradetopass_analysable() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $now = time();
+
+        $dg = $this->getDataGenerator();
+
+        // Course without grade to pass set.
+        $course1 = $dg->create_course(array('startdate' => $now - WEEKSECS, 'enddate' => $now - DAYSECS));
+        $student1 = $dg->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $dg->enrol_user($student1->id, $course1->id, $studentrole->id);
+
+        $analysable = new \core_analytics\course($course1);
+        $target = new \core\analytics\target\course_gradetopass();
+        $this->assertEquals(get_string('gradetopassnotset', 'course'), $target->is_valid_analysable($analysable));
+
+        // Set grade to pass.
+        $courseitem = grade_item::fetch_course_item($course1->id);
+        $courseitem->gradepass = 50;
+        $DB->update_record('grade_items', $courseitem);
+        // Since the grade to pass value is cached in the target, a new one it is instanciated.
+        $target = new \core\analytics\target\course_gradetopass();
+        $this->assertTrue($target->is_valid_analysable($analysable));
+
+    }
+
+    /**
+     * Test the target value calculation of the course_gradetopass target.
+     */
+    public function test_core_target_course_gradetopass_calculate() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $dg = $this->getDataGenerator();
+        $course1 = $dg->create_course();
+        // Set grade to pass.
+        $student1 = $dg->create_user();
+        $student2 = $dg->create_user();
+        $student3 = $dg->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $dg->enrol_user($student1->id, $course1->id, $studentrole->id);
+        $dg->enrol_user($student2->id, $course1->id, $studentrole->id);
+        $dg->enrol_user($student3->id, $course1->id, $studentrole->id);
+
+        $courseitem = grade_item::fetch_course_item($course1->id);
+        // Student1 fails.
+        $courseitem->update_final_grade($student1->id, 30);
+        // Student2 pass.
+        $courseitem->update_final_grade($student2->id, 60);
+        // Student 3 has no grade.
+
+        $courseitem->gradepass = 50;
+        $DB->update_record('grade_items', $courseitem);
+
+        $target = new \core\analytics\target\course_gradetopass();
+        $analyser = new \core\analytics\analyser\student_enrolments(1, $target, [], [], []);
+        $analysable = new \core_analytics\course($course1);
+
+        $class = new ReflectionClass('\core\analytics\analyser\student_enrolments');
+        $method = $class->getMethod('get_all_samples');
+        $method->setAccessible(true);
+
+        list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
+        $target->add_sample_data($samplesdata);
+
+        // Users in array $sampleids are sorted by user id, so student1 is the first sample.
+        $sampleid = reset($sampleids);
+
+        $class = new ReflectionClass('\core\analytics\target\course_gradetopass');
+        $method = $class->getMethod('calculate_sample');
+        $method->setAccessible(true);
+
+        // Method calculate_sample() returns 1 when the user has not successfully graded to pass the course.
+        $this->assertEquals(1, $method->invoke($target, $sampleid, $analysable));
+
+        // Student2.
+        $sampleid = next($sampleids);
+
+        // Method calculate_sample() returns 0 when the user has successfully graded to pass the course.
+        $this->assertEquals(0, $method->invoke($target, $sampleid, $analysable));
+
+        // Student3.
+        $sampleid = next($sampleids);
+
+        // Method calculate_sample() returns 1 when the user has not been graded.
+        $this->assertEquals(1, $method->invoke($target, $sampleid, $analysable));
     }
 }

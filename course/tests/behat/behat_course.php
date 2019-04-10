@@ -306,7 +306,7 @@ class behat_course extends behat_base {
 
         // Click on highlight topic link.
         $this->execute('behat_general::i_click_on_in_the',
-            array(get_string('markthistopic'), "link", $this->escape($xpath), "xpath_element")
+            array(get_string('highlight'), "link", $this->escape($xpath), "xpath_element")
         );
     }
 
@@ -328,7 +328,7 @@ class behat_course extends behat_base {
 
         // Click on un-highlight topic link.
         $this->execute('behat_general::i_click_on_in_the',
-            array(get_string('markedthistopic'), "link", $this->escape($xpath), "xpath_element")
+            array(get_string('highlightoff'), "link", $this->escape($xpath), "xpath_element")
         );
     }
 
@@ -446,7 +446,7 @@ class behat_course extends behat_base {
         $xpath = $this->section_exists($sectionnumber);
 
         // The important checking, we can not check the img.
-        $this->execute('behat_general::should_exist_in_the', ['This topic is highlighted as the current topic', 'icon', $xpath, 'xpath_element']);
+        $this->execute('behat_general::should_exist_in_the', ['Remove highlight', 'link', $xpath, 'xpath_element']);
     }
 
     /**
@@ -777,11 +777,10 @@ class behat_course extends behat_base {
         // Ensure the destination is valid.
         $sectionxpath = $this->section_exists($sectionnumber);
 
-        $activitynode = $this->get_activity_element('Move', 'icon', $activityname);
-
         // JS enabled.
         if ($this->running_javascript()) {
 
+            $activitynode = $this->get_activity_element('Move', 'icon', $activityname);
             $destinationxpath = $sectionxpath . "/descendant::ul[contains(concat(' ', normalize-space(@class), ' '), ' yui3-dd-drop ')]";
 
             $this->execute("behat_general::i_drag_and_i_drop_it_in",
@@ -1186,9 +1185,9 @@ class behat_course extends behat_base {
 
         // Checking the show button alt text and show icon.
         $showtext = get_string('showfromothers', $courseformat);
-        $linkxpath = $xpath . "/descendant::a[@title=" . behat_context_helper::escape($showtext) . "]";
+        $linkxpath = $xpath . "//a[*[contains(text(), " . behat_context_helper::escape($showtext) . ")]]";
 
-        $exception = new ElementNotFoundException($this->getSession(), 'Show section link ');
+        $exception = new ElementNotFoundException($this->getSession(), 'Show section link');
 
         // Returing the link so both Non-JS and JS browsers can interact with it.
         return $this->find('xpath', $linkxpath, $exception);

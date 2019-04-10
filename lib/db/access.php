@@ -2469,4 +2469,12 @@ $capabilities = array(
             'user' => CAP_ALLOW,
         ],
     ],
+
+    'moodle/analytics:listowninsights' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
+    ),
 );

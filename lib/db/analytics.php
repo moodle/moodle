@@ -89,4 +89,11 @@ $models = [
         'timesplitting' => '\core\analytics\time_splitting\single_range',
         'enabled' => true,
     ],
+    [
+        'target' => '\core_user\analytics\target\upcoming_activities_due',
+        'indicators' => [
+            '\core_course\analytics\indicator\activities_due',
+        ],
+        'timesplitting' => '\core\analytics\time_splitting\upcoming_week',
+    ],
 ];

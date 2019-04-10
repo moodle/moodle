@@ -75,7 +75,8 @@
 
 <h2 class="mb-2">{{#str}}insightprediction, report_insights, {{insightname}} {{/str}}</h2>
 <table class="generaltable insights-list">
-    <caption>
+    {{#showpredicionheading}}
+        <caption>
             {{#str}}prediction, report_insights{{/str}}:
             <span class="{{#style}}table-{{style}}{{/style}}">
                 {{#outcomeicon}}
@@ -84,6 +85,7 @@
                 {{predictiondisplayvalue}}
             </span>
         </caption>
+    {{/showpredicionheading}}
     <thead>
         <tr>
             <th scope="col">{{#str}}name{{/str}}</th>

@@ -24,6 +24,7 @@
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
 $id = required_param('id', PARAM_INT); // Course ID.
 $delete = optional_param('delete', '', PARAM_ALPHANUM); // Confirmation hash.
@@ -74,16 +75,26 @@ if ($delete === md5($course->timemodified)) {
 }
 
 $strdeletecheck = get_string("deletecheck", "", $courseshortname);
-$strdeletecoursecheck = get_string("deletecoursecheck");
-$message = "{$strdeletecoursecheck}<br /><br />{$coursefullname} ({$courseshortname})";
-
-$continueurl = new moodle_url('/course/delete.php', array('id' => $course->id, 'delete' => md5($course->timemodified)));
-$continuebutton = new single_button($continueurl, get_string('delete'), 'post');
 
 $PAGE->navbar->add($strdeletecheck);
 $PAGE->set_title("$SITE->shortname: $strdeletecheck");
 $PAGE->set_heading($SITE->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->confirm($message, $continuebutton, $categoryurl);
+
+// Only let user delete this course if there is not an async backup in progress.
+if (!async_helper::is_async_pending($id, 'course', 'backup')) {
+    $strdeletecoursecheck = get_string("deletecoursecheck");
+    $message = "{$strdeletecoursecheck}<br /><br />{$coursefullname} ({$courseshortname})";
+
+    $continueurl = new moodle_url('/course/delete.php', array('id' => $course->id, 'delete' => md5($course->timemodified)));
+    $continuebutton = new single_button($continueurl, get_string('delete'), 'post');
+    echo $OUTPUT->confirm($message, $continuebutton, $categoryurl);
+} else {
+    // Async backup is pending, don't let user delete course.
+    echo $OUTPUT->notification(get_string('pendingasyncerror', 'backup'), 'error');
+    echo $OUTPUT->container(get_string('pendingasyncdeletedetail', 'backup'));
+    echo $OUTPUT->continue_button($categoryurl);
+}
+
 echo $OUTPUT->footer();
 exit;

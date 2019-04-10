@@ -156,8 +156,6 @@ switch ($action) {
     case 'evaluate':
         confirm_sesskey();
 
-        echo $OUTPUT->header();
-
         if ($model->is_static()) {
             throw new moodle_exception('errornostaticevaluate', 'tool_analytics');
         }
@@ -176,14 +174,18 @@ switch ($action) {
             $options['mode'] = 'trainedmodel';
         }
         $results = $model->evaluate($options);
+
+        // We reset the theme and the output as some indicators may be using external functions
+        // which reset $PAGE.
+        \tool_analytics\output\helper::reset_page();
+        echo $OUTPUT->header();
+
         $renderer = $PAGE->get_renderer('tool_analytics');
         echo $renderer->render_evaluate_results($results, $model->get_analyser()->get_logs());
         break;
 
     case 'getpredictions':
         confirm_sesskey();
-
-        echo $OUTPUT->header();
 
         if ($onlycli) {
             throw new moodle_exception('erroronlycli', 'tool_analytics');
@@ -201,6 +203,11 @@ switch ($action) {
             $predictresults = false;
             $predictlogs = array();
         }
+
+        // We reset the theme and the output as some indicators may be using external functions
+        // which reset $PAGE.
+        \tool_analytics\output\helper::reset_page();
+        echo $OUTPUT->header();
 
         $renderer = $PAGE->get_renderer('tool_analytics');
         echo $renderer->render_get_predictions_results($trainresults, $trainlogs, $predictresults, $predictlogs);

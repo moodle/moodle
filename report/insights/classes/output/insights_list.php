@@ -87,8 +87,20 @@ class insights_list implements \renderable, \templatable {
     public function export_for_template(\renderer_base $output) {
         global $PAGE;
 
+        $target = $this->model->get_target();
+
         $data = new \stdClass();
-        $data->insightname = format_string($this->model->get_target()->get_name());
+        $data->insightname = format_string($target->get_name());
+
+        $data->showpredictionheading = true;
+        if (!$target->is_linear()) {
+            $nclasses = count($target::get_classes());
+            $nignoredclasses = count($target->ignored_predicted_classes());
+            if ($nclasses - $nignoredclasses <= 1) {
+                // Hide the prediction heading if there is only 1 class displayed. Otherwise it is redundant with the insight name.
+                $data->showpredictionheading = false;
+            }
+        }
 
         $total = 0;
 
@@ -112,9 +124,9 @@ class insights_list implements \renderable, \templatable {
                     // Only need to fill this data once.
                     if (!isset($predictionvalues[$predictedvalue])) {
                         $preddata = array();
-                        $preddata['predictiondisplayvalue'] = $this->model->get_target()->get_display_value($predictedvalue);
+                        $preddata['predictiondisplayvalue'] = $target->get_display_value($predictedvalue);
                         list($preddata['style'], $preddata['outcomeicon']) =
-                            insight::get_calculation_display($this->model->get_target(), floatval($predictedvalue), $output);
+                            insight::get_calculation_display($target, floatval($predictedvalue), $output);
                         $predictionvalues[$predictedvalue] = $preddata;
                     }
 
@@ -123,7 +135,7 @@ class insights_list implements \renderable, \templatable {
                 }
 
                 // Order predicted values.
-                if ($this->model->get_target()->is_linear()) {
+                if ($target->is_linear()) {
                     // During regression what we will be interested on most of the time is in low values so let's show them first.
                     ksort($predictionvalues);
                 } else {

@@ -1755,7 +1755,7 @@ class core_plugin_manager {
             ),
 
             'dataformat' => array(
-                'html', 'csv', 'json', 'excel', 'ods',
+                'html', 'csv', 'json', 'excel', 'ods', 'pdf',
             ),
 
             'datapreset' => array(

@@ -87,15 +87,17 @@
 {{{ pagingbar }}}
 {{#predictions}}
     <table class="generaltable insights-list">
-        <caption>
-            {{#str}}prediction, report_insights{{/str}}:
-            <span class="{{#style}}table-{{style}}{{/style}}">
-                {{#outcomeicon}}
-                    {{> core/pix_icon}}
-                {{/outcomeicon}}
-                {{predictiondisplayvalue}}
-            </span>
-        </caption>
+        {{#showpredicionheading}}
+            <caption>
+                {{#str}}prediction, report_insights{{/str}}:
+                <span class="{{#style}}table-{{style}}{{/style}}">
+                    {{#outcomeicon}}
+                        {{> core/pix_icon}}
+                    {{/outcomeicon}}
+                    {{predictiondisplayvalue}}
+                </span>
+            </caption>
+        {{/showpredicionheading}}
         <thead>
             <tr>
                 <th scope="col">{{#str}}name{{/str}}</th>

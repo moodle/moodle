@@ -60,6 +60,10 @@ class predict_models extends \core\task\scheduled_task {
 
         foreach ($models as $model) {
             $result = $model->predict();
+
+            // Reset the page as some indicators may call external functions that overwrite the page context.
+            \tool_analytics\output\helper::reset_page();
+
             if ($result) {
                 echo $OUTPUT->heading(get_string('modelresults', 'tool_analytics', $model->get_target()->get_name()));
                 $renderer = $PAGE->get_renderer('tool_analytics');

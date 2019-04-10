@@ -80,10 +80,23 @@ class manager {
      *
      * @throws \required_capability_exception
      * @param \context $context
+     * @param  bool $return The method returns a bool if true.
      * @return void
      */
-    public static function check_can_list_insights(\context $context) {
-        require_capability('moodle/analytics:listinsights', $context);
+    public static function check_can_list_insights(\context $context, bool $return = false) {
+        global $USER;
+
+        if ($context->contextlevel === CONTEXT_USER && $context->instanceid == $USER->id) {
+            $capability = 'moodle/analytics:listowninsights';
+        } else {
+            $capability = 'moodle/analytics:listinsights';
+        }
+
+        if ($return) {
+            return has_capability($capability, $context);
+        } else {
+            require_capability($capability, $context);
+        }
     }
 
     /**
@@ -552,14 +565,18 @@ class manager {
         $models = self::get_all_models();
         foreach ($models as $model) {
             $analyser = $model->get_analyser(array('notimesplitting' => true));
-            $analysables = $analyser->get_analysables();
-            if (!$analysables) {
+            $analysables = $analyser->get_analysables_iterator();
+
+            $analysableids = [];
+            foreach ($analysables as $analysable) {
+                if (!$analysable) {
+                    continue;
+                }
+                $analysableids[] = $analysable->get_id();
+            }
+            if (empty($analysableids)) {
                 continue;
             }
-
-            $analysableids = array_map(function($analysable) {
-                return $analysable->get_id();
-            }, $analysables);
 
             list($notinsql, $params) = $DB->get_in_or_equal($analysableids, SQL_PARAMS_NAMED, 'param', false);
             $params['modelid'] = $model->get_id();

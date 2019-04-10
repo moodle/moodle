@@ -111,7 +111,7 @@ class student_enrolments extends \core_analytics\local\analyser\by_course {
      * @param \core_analytics\analysable $course
      * @return array
      */
-    protected function get_all_samples(\core_analytics\analysable $course) {
+    public function get_all_samples(\core_analytics\analysable $course) {
 
         $enrolments = enrol_get_course_users($course->get_id());
 

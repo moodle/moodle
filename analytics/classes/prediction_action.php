@@ -41,6 +41,11 @@ class prediction_action {
     protected $actionname = null;
 
     /**
+     * @var \moodle_url
+     */
+    protected $url = null;
+
+    /**
      * @var \action_menu_link
      */
     protected $actionlink = null;
@@ -50,7 +55,7 @@ class prediction_action {
      *
      * @param string $actionname They should match a-zA-Z_0-9-, as we apply a PARAM_ALPHANUMEXT filter
      * @param \core_analytics\prediction $prediction
-     * @param \moodle_url $actionurl
+     * @param \moodle_url $actionurl The final URL where the user should be forwarded.
      * @param \pix_icon $icon Link icon
      * @param string $text Link text
      * @param bool $primary Primary button or secondary.
@@ -61,16 +66,17 @@ class prediction_action {
                                 $text, $primary = false, $attributes = array()) {
 
         $this->actionname = $actionname;
+        $this->text = $text;
 
         // We want to track how effective are our suggested actions, we pass users through a script that will log these actions.
         $params = array('action' => $this->actionname, 'predictionid' => $prediction->get_prediction_data()->id,
             'forwardurl' => $actionurl->out(false));
-        $url = new \moodle_url('/report/insights/action.php', $params);
+        $this->url = new \moodle_url('/report/insights/action.php', $params);
 
         if ($primary === false) {
-            $this->actionlink = new \action_menu_link_secondary($url, $icon, $text, $attributes);
+            $this->actionlink = new \action_menu_link_secondary($this->url, $icon, $this->text, $attributes);
         } else {
-            $this->actionlink = new \action_menu_link_primary($url, $icon, $text, $attributes);
+            $this->actionlink = new \action_menu_link_primary($this->url, $icon, $this->text, $attributes);
         }
     }
 
@@ -84,11 +90,28 @@ class prediction_action {
     }
 
     /**
+     * Returns the url to the action.
+     *
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return $this->url;
+    }
+
+    /**
      * Returns the link to the action.
      *
      * @return \action_menu_link
      */
     public function get_action_link() {
         return $this->actionlink;
+    }
+
+    /**
+     * Returns the action text.
+     * @return string
+     */
+    public function get_text() {
+        return $this->text;
     }
 }

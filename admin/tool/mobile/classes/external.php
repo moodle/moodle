@@ -262,6 +262,8 @@ class external extends external_api {
     /**
      * Creates an auto-login key for the current user. Is created only in https sites and is restricted by time and ip address.
      *
+     * Please note that it only works if the request comes from the Moodle mobile or desktop app.
+     *
      * @param string $privatetoken the user private token for validating the request
      * @return array with the settings and warnings
      * @since  Moodle 3.2
@@ -284,6 +286,12 @@ class external extends external_api {
             }
         }
 
+        // Only requests from the Moodle mobile or desktop app. This enhances security to avoid any type of XSS attack.
+        // This code goes intentionally here and not inside the check_autologin_prerequisites() function because it
+        // is used by other PHP scripts that can be opened in any browser.
+        if (!\core_useragent::is_moodle_app()) {
+            throw new moodle_exception('apprequired', 'tool_mobile');
+        }
         api::check_autologin_prerequisites($USER->id);
 
         if (isset($_GET['privatetoken']) or empty($privatetoken)) {

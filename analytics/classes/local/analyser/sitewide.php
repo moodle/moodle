@@ -36,12 +36,13 @@ defined('MOODLE_INTERNAL') || die();
 abstract class sitewide extends base {
 
     /**
-     * Returns one single analysable element, the site.
+     * Return the list of analysables to analyse.
      *
-     * @return \core_analytics\analysable[]
+     * @param string|null $action 'prediction', 'training' or null if no specific action needed.
+     * @return \Iterator
      */
-    public function get_analysables() {
-        $analysable = new \core_analytics\site();
-        return array(SYSCONTEXTID => $analysable);
+    public function get_analysables_iterator(?string $action = null) {
+        // We can safely ignore $action as we have 1 single analysable element in this analyser.
+        return new \ArrayIterator([new \core_analytics\site()]);
     }
 }

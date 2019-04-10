@@ -29,10 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Any element analysers can analyse.
  *
- * Analysers get_analysers method return all analysable elements in the site;
- * it is important that analysable elements implement lazy loading to avoid
- * big memory footprints. See \core_analytics\course example.
- *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -306,12 +306,6 @@ class model {
             }
         }
 
-        if (!empty($options['evaluation'])) {
-            foreach ($timesplittings as $timesplitting) {
-                $timesplitting->set_evaluating(true);
-            }
-        }
-
         $classname = $target->get_analyser_class();
         if (!class_exists($classname)) {
             throw new \coding_exception($classname . ' class does not exists');
@@ -541,7 +535,7 @@ class model {
             $this->get_analyser()->add_log(get_string('noevaluationbasedassumptions', 'analytics'));
             $result = new \stdClass();
             $result->status = self::NO_DATASET;
-            return array($this->get_time_splitting()->get_id() => $result);
+            return array($result);
         }
 
         $options['evaluation'] = true;
@@ -736,50 +730,67 @@ class model {
         // Before get_unlabelled_data call so we get an early exception if it is not writable.
         $outputdir = $this->get_output_dir(array('execution'));
 
-        // Before get_unlabelled_data call so we get an early exception if it is not ready.
         if (!$this->is_static()) {
+            // Predictions using a machine learning backend.
+
+            // Before get_unlabelled_data call so we get an early exception if it is not ready.
             $predictor = $this->get_predictions_processor();
-        }
 
-        $samplesdata = $this->get_analyser()->get_unlabelled_data();
+            $samplesdata = $this->get_analyser()->get_unlabelled_data();
 
-        // Get the prediction samples file.
-        if (empty($samplesdata) || empty($samplesdata[$this->model->timesplitting])) {
+            // Get the prediction samples file.
+            if (empty($samplesdata) || empty($samplesdata[$this->model->timesplitting])) {
 
-            $result = new \stdClass();
-            $result->status = self::NO_DATASET;
-            $result->info = $this->get_analyser()->get_logs();
-            return $result;
-        }
-        $samplesfile = $samplesdata[$this->model->timesplitting];
+                $result = new \stdClass();
+                $result->status = self::NO_DATASET;
+                $result->info = $this->get_analyser()->get_logs();
+                return $result;
+            }
+            $samplesfile = $samplesdata[$this->model->timesplitting];
 
-        // We need to throw an exception if we are trying to predict stuff that was already predicted.
-        $params = array('modelid' => $this->model->id, 'action' => 'predicted', 'fileid' => $samplesfile->get_id());
-        if ($predicted = $DB->get_record('analytics_used_files', $params)) {
-            throw new \moodle_exception('erroralreadypredict', 'analytics', '', $samplesfile->get_id());
-        }
+            // We need to throw an exception if we are trying to predict stuff that was already predicted.
+            $params = array('modelid' => $this->model->id, 'action' => 'predicted', 'fileid' => $samplesfile->get_id());
+            if ($predicted = $DB->get_record('analytics_used_files', $params)) {
+                throw new \moodle_exception('erroralreadypredict', 'analytics', '', $samplesfile->get_id());
+            }
 
-        $indicatorcalculations = \core_analytics\dataset_manager::get_structured_data($samplesfile);
+            $indicatorcalculations = \core_analytics\dataset_manager::get_structured_data($samplesfile);
 
-        // Prepare the results object.
-        $result = new \stdClass();
-
-        if ($this->is_static()) {
-            // Prediction based on assumptions.
-            $result->status = self::OK;
-            $result->info = [];
-            $result->predictions = $this->get_static_predictions($indicatorcalculations);
-
-        } else {
             // Estimation and classification processes run on the machine learning backend side.
             if ($this->get_target()->is_linear()) {
                 $predictorresult = $predictor->estimate($this->get_unique_id(), $samplesfile, $outputdir);
             } else {
                 $predictorresult = $predictor->classify($this->get_unique_id(), $samplesfile, $outputdir);
             }
+
+            // Prepare the results object.
+            $result = new \stdClass();
             $result->status = $predictorresult->status;
             $result->info = $predictorresult->info;
             $result->predictions = $this->format_predictor_predictions($predictorresult);
+
+        } else {
+            // Predictions based on assumptions.
+
+            $indicatorcalculations = $this->get_analyser()->get_static_data();
+            // Get the prediction samples file.
+            if (empty($indicatorcalculations) || empty($indicatorcalculations[$this->model->timesplitting])) {
+
+                $result = new \stdClass();
+                $result->status = self::NO_DATASET;
+                $result->info = $this->get_analyser()->get_logs();
+                return $result;
+            }
+
+            // Same as reset($indicatorcalculations) as models based on assumptions only analyse 1 single
+            // time-splitting method.
+            $indicatorcalculations = $indicatorcalculations[$this->model->timesplitting];
+
+            // Prepare the results object.
+            $result = new \stdClass();
+            $result->status = self::OK;
+            $result->info = [];
+            $result->predictions = $this->get_static_predictions($indicatorcalculations);
         }
 
         if ($result->status !== self::OK) {
@@ -787,14 +798,17 @@ class model {
         }
 
         if ($result->predictions) {
-            $samplecontexts = $this->execute_prediction_callbacks($result->predictions, $indicatorcalculations);
+            list($samplecontexts, $predictionrecords) = $this->execute_prediction_callbacks($result->predictions,
+                $indicatorcalculations);
         }
 
         if (!empty($samplecontexts) && $this->uses_insights()) {
-            $this->trigger_insights($samplecontexts);
+            $this->trigger_insights($samplecontexts, $predictionrecords);
         }
 
-        $this->flag_file_as_used($samplesfile, 'predicted');
+        if (!$this->is_static()) {
+            $this->flag_file_as_used($samplesfile, 'predicted');
+        }
 
         return $result;
     }
@@ -855,7 +869,7 @@ class model {
      * @param array $indicatorcalculations
      * @return array
      */
-    protected function execute_prediction_callbacks($predictions, $indicatorcalculations) {
+    protected function execute_prediction_callbacks(&$predictions, $indicatorcalculations) {
 
         // Here we will store all predictions' contexts, this will be used to limit which users will see those predictions.
         $samplecontexts = array();
@@ -865,7 +879,6 @@ class model {
 
             // The unique sample id contains both the sampleid and the rangeindex.
             list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
-
             if ($this->get_target()->triggers_callback($prediction->prediction, $prediction->predictionscore)) {
 
                 // Prepare the record to store the predicted values.
@@ -887,19 +900,38 @@ class model {
             $this->save_predictions($records);
         }
 
-        return $samplecontexts;
+        return [$samplecontexts, $records];
     }
 
     /**
      * Generates insights and updates the cache.
      *
      * @param \context[] $samplecontexts
+     * @param  \stdClass[] $predictionrecords
      * @return void
      */
-    protected function trigger_insights($samplecontexts) {
+    protected function trigger_insights($samplecontexts, $predictionrecords) {
 
         // Notify the target that all predictions have been processed.
-        $this->get_target()->generate_insight_notifications($this->model->id, $samplecontexts);
+        if ($this->get_analyser()::one_sample_per_analysable()) {
+
+            // We need to do something unusual here. self::save_predictions uses the bulk-insert function (insert_records()) for
+            // performance reasons and that function does not return us the inserted ids. We need to retrieve them from
+            // the database, and we need to do it using one single database query (for performance reasons as well).
+            $predictionrecords = $this->add_prediction_ids($predictionrecords);
+
+            // Get \core_analytics\prediction objects also fetching the samplesdata. This costs us
+            // 1 db read, but we have to pay it if we want that our insights include links to the
+            // suggested actions.
+            $predictions = array_map(function($predictionobj) {
+                $prediction = new \core_analytics\prediction($predictionobj, $this->prediction_sample_data($predictionobj));
+                return $prediction;
+            }, $predictionrecords);
+        } else {
+            $predictions = [];
+        }
+
+        $this->get_target()->generate_insight_notifications($this->model->id, $samplecontexts, $predictions);
 
         // Update cache.
         $cache = \cache::make('core', 'contextwithinsights');
@@ -926,12 +958,23 @@ class model {
      */
     protected function get_static_predictions(&$indicatorcalculations) {
 
+        $headers = array_shift($indicatorcalculations);
+
+        // Get rid of the sampleid header.
+        array_shift($headers);
+
         // Group samples by analysable for \core_analytics\local\target::calculate.
         $analysables = array();
         // List all sampleids together.
         $sampleids = array();
 
         foreach ($indicatorcalculations as $uniquesampleid => $indicators) {
+
+            // Get rid of the sampleid column.
+            unset($indicators[0]);
+            $indicators = array_combine($headers, $indicators);
+            $indicatorcalculations[$uniquesampleid] = $indicators;
+
             list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
 
             $analysable = $this->get_analyser()->get_sample_analysable($sampleid);
@@ -946,6 +989,7 @@ class model {
                     'sampleids' => array()
                 ];
             }
+
             // Using the sampleid as a key so we can easily merge indicators data later.
             $analysables[$analysableclass][$rangeindex]->indicatorsdata[$sampleid] = $indicators;
             // We could use indicatorsdata keys but the amount of redundant data is not that big and leaves code below cleaner.
@@ -969,16 +1013,20 @@ class model {
                 $this->get_target()->add_sample_data($data->indicatorsdata);
 
                 // Append new elements (we can not get duplicates because sample-analysable relation is N-1).
-                $range = $this->get_time_splitting()->get_range_by_index($rangeindex);
+                $timesplitting = $this->get_time_splitting();
+                $timesplitting->set_analysable($data->analysable);
+                $range = $timesplitting->get_range_by_index($rangeindex);
+
                 $this->get_target()->filter_out_invalid_samples($data->sampleids, $data->analysable, false);
                 $calculations = $this->get_target()->calculate($data->sampleids, $data->analysable, $range['start'], $range['end']);
 
                 // Missing $indicatorcalculations values in $calculations are caused by is_valid_sample. We need to remove
                 // these $uniquesampleid from $indicatorcalculations because otherwise they will be stored as calculated
                 // by self::save_prediction.
-                $indicatorcalculations = array_filter($indicatorcalculations, function($indicators, $uniquesampleid) use ($calculations) {
-                    list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
-                    if (!isset($calculations[$sampleid])) {
+                $indicatorcalculations = array_filter($indicatorcalculations, function($indicators, $uniquesampleid)
+                        use ($calculations, $rangeindex) {
+                    list($sampleid, $indicatorsrangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
+                    if ($rangeindex == $indicatorsrangeindex && !isset($calculations[$sampleid])) {
                         return false;
                     }
                     return true;
@@ -1640,6 +1688,44 @@ class model {
         $this->model->timemodified = time();
         $this->model->usermodified = $USER->id;
         $DB->update_record('analytics_models', $this->model);
+    }
+
+    /**
+     * Adds the id from {analytics_predictions} db table to the prediction \stdClass objects.
+     *
+     * @param  \stdClass[] $predictionrecords
+     * @return \stdClass[] The prediction records including their ids in {analytics_predictions} db table.
+     */
+    private function add_prediction_ids($predictionrecords) {
+        global $DB;
+
+        $firstprediction = reset($predictionrecords);
+
+        $contextids = array_map(function($predictionobj) {
+            return $predictionobj->contextid;
+        }, $predictionrecords);
+        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
+
+        // We select the fields that will allow us to map ids to $predictionrecords. Given that we already filter by modelid
+        // we have enough with sampleid and rangeindex. The reason is that the sampleid relation to a site is N - 1.
+        $fields = 'id, sampleid, rangeindex';
+
+        // We include the contextid and the timecreated filter to reduce the number of records in $dbpredictions. We can not
+        // add as many OR conditions as records in $predictionrecords.
+        $sql = "SELECT $fields
+                  FROM {analytics_predictions}
+                 WHERE modelid = :modelid
+                       AND contextid $contextsql
+                       AND timecreated >= :firsttimecreated";
+        $params = $contextparams + ['modelid' => $this->model->id, 'firsttimecreated' => $firstprediction->timecreated];
+        $dbpredictions = $DB->get_recordset_sql($sql, $params);
+        foreach ($dbpredictions as $id => $dbprediction) {
+            // The append_rangeindex implementation is the same regardless of the time splitting method in use.
+            $uniqueid = $this->get_time_splitting()->append_rangeindex($dbprediction->sampleid, $dbprediction->rangeindex);
+            $predictionrecords[$uniqueid]->id = $dbprediction->id;
+        }
+
+        return $predictionrecords;
     }
 
     /**

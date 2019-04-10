@@ -51,6 +51,17 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Overwritten to show a simpler language string.
+     *
+     * @param  int $modelid
+     * @param  \context $context
+     * @return string
+     */
+    public function get_insight_subject(int $modelid, \context $context) {
+        return get_string('studentsatriskincourse', 'moodle', $context->get_context_name(false));
+    }
+
+    /**
      * Discards courses that are not yet ready to be used for training or prediction.
      *
      * @param \core_analytics\analysable $course
@@ -142,9 +153,11 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
      *
      * @param \core_analytics\prediction $prediction
      * @param bool $includedetailsaction
+     * @param bool $isinsightuser
      * @return \core_analytics\prediction_action[]
      */
-    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false,
+            $isinsightuser = false) {
         global $USER;
 
         $actions = array();
