@@ -117,9 +117,14 @@ if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion &
 }
 
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$result->newpageid));
+
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$result->maxattemptsreached) {
-    // Button to continue the lesson (the page to go is configured by the teacher).
-    echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'));
+    // If both the "Yes, I'd like to try again" and "No, I just want to go on  to the next question" point to the same
+    // page then don't show the "No, I just want to go on to the next question" button. It's confusing.
+    if ($page->id != $result->newpageid) {
+        // Button to continue the lesson (the page to go is configured by the teacher).
+        echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'));
+    }
 } else {
     // Normal continue button
     echo $OUTPUT->single_button($url, get_string('continue', 'lesson'));

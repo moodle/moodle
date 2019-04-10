@@ -137,6 +137,8 @@ if ($edit) {
         }
         $answerscount++;
     }
+    // Let the lesson pages make updates if required.
+    $data = $editpage->update_form_data($data);
 
     $mform->set_data($data);
     $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/lesson/edit.php', array('id'=>$id)));

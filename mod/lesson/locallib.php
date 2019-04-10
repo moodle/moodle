@@ -61,6 +61,9 @@ define("LESSON_MAX_EVENT_LENGTH", "432000");
 /** Answer format is HTML */
 define("LESSON_ANSWER_HTML", "HTML");
 
+/** Placeholder answer for all other answers. */
+define("LESSON_OTHER_ANSWERS", "@#wronganswer#@");
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other lesson functions go here.  Each of them must have a name that
 /// starts with lesson_
@@ -4456,7 +4459,7 @@ abstract class lesson_page extends lesson_base {
                 $DB->insert_record("lesson_answers", $answer);
             }
         } else {
-            for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
+            for ($i = 0; $i < count($properties->answer_editor); $i++) {
                 if (!array_key_exists($i, $this->answers)) {
                     $this->answers[$i] = new stdClass;
                     $this->answers[$i]->lessonid = $this->lesson->id;
@@ -4575,7 +4578,7 @@ abstract class lesson_page extends lesson_base {
 
         $answers = array();
 
-        for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
+        for ($i = 0; $i < ($this->lesson->maxanswers + 1); $i++) {
             $answer = clone($newanswer);
 
             if (isset($properties->answer_editor[$i])) {
@@ -4610,8 +4613,6 @@ abstract class lesson_page extends lesson_base {
                             $properties->answer_editor[$i]);
                 }
                 $answers[$answer->id] = new lesson_page_answer($answer);
-            } else {
-                break;
             }
         }
 
@@ -4900,6 +4901,17 @@ abstract class lesson_page extends lesson_base {
         $fs = get_file_storage();
         return $fs->get_area_files($this->lesson->context->id, 'mod_lesson', 'page_contents', $this->properties->id,
                                     'itemid, filepath, filename', $includedirs, $updatedsince);
+    }
+
+    /**
+     * Make updates to the form data if required.
+     *
+     * @since Moodle 3.7
+     * @param stdClass $data The form data to update.
+     * @return stdClass The updated fom data.
+     */
+    public function update_form_data(stdClass $data) : stdClass {
+        return $data;
     }
 }
 
