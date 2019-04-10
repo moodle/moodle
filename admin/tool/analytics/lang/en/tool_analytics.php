@@ -24,6 +24,7 @@
 
 $string['accuracy'] = 'Accuracy';
 $string['allpredictions'] = 'All predictions';
+$string['alltimesplittingmethods'] = 'All time-splitting methods';
 $string['analysingsitedata'] = 'Analysing the site';
 $string['analyticmodels'] = 'Analytics models';
 $string['bettercli'] = 'Evaluating models and generating predictions may involve heavy processing. It is recommended to run these actions from the command line.';
@@ -36,6 +37,7 @@ $string['clienablemodel'] = 'You can enable the model by selecting a time-splitt
 $string['clievaluationandpredictions'] = 'A scheduled task iterates through enabled models and gets predictions. Models evaluation via the web interface is disabled. You can allow these processes to be executed manually via the web interface by disabling the <a href="{$a}">\'onlycli\'</a> analytics setting.';
 $string['clievaluationandpredictionsnoadmin'] = 'A scheduled task iterates through enabled models and gets predictions. Models evaluation via the web interface is disabled. It may be enabled by a site administrator.';
 $string['createmodel'] = 'Create model';
+$string['currenttimesplitting'] = 'Current time-splitting method';
 $string['delete'] = 'Delete';
 $string['deletemodelconfirmation'] = 'Are you sure you want to delete "{$a}"? These changes can not be reverted.';
 $string['disabled'] = 'Disabled';
@@ -111,6 +113,7 @@ $string['predictionprocessfinished'] = 'Prediction process finished';
 $string['previouspage'] = 'Previous page';
 $string['samestartdate'] = 'Current start date is good';
 $string['sameenddate'] = 'Current end date is good';
+$string['selecttimesplittingforevaluation'] = 'Select the time-splitting method you want to use to evaluate the model configuration.';
 $string['target'] = 'Target';
 $string['target_help'] = 'The target is what the model will predict.';
 $string['target_link'] = 'Targets';

@@ -45,7 +45,7 @@ class helper {
         // Form field is PARAM_ALPHANUMEXT and we are sending fully qualified class names
         // as option names, but replacing the backslash for a string that is really unlikely
         // to ever be part of a class name.
-        return str_replace('\\', '2015102400ouuu', $class);
+        return str_replace('\\', '__', $class);
     }
 
     /**
@@ -56,7 +56,7 @@ class helper {
      */
     public static function option_to_class($option) {
         // Really unlikely but yeah, I'm a bad booyyy.
-        return str_replace('2015102400ouuu', '\\', $option);
+        return str_replace('__', '\\', $option);
     }
 
     /**

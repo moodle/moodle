@@ -59,4 +59,13 @@ abstract class upcoming_periodic extends periodic {
     public function cache_indicator_calculations(): bool {
         return false;
     }
+
+    /**
+     * Overriden as these time-splitting methods are based on future dates.
+     *
+     * @return bool
+     */
+    public function valid_for_evaluation(): bool {
+        return false;
+    }
 }

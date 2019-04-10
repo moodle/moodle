@@ -448,8 +448,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
-        $sometimesplittings = '\core\analytics\time_splitting\weekly,' .
-            '\core\analytics\time_splitting\single_range,' .
+        $sometimesplittings = '\core\analytics\time_splitting\single_range,' .
             '\core\analytics\time_splitting\quarters';
         set_config('defaulttimesplittingsevaluation', $sometimesplittings, 'analytics');
 
@@ -620,8 +619,6 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                 'modelquality' => 'random',
                 'ncourses' => 50,
                 'expectedresults' => array(
-                    // The course duration is too much to be processed by in weekly basis.
-                    '\core\analytics\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
                     '\core\analytics\time_splitting\single_range' => \core_analytics\model::LOW_SCORE,
                     '\core\analytics\time_splitting\quarters' => \core_analytics\model::LOW_SCORE,
                 )
@@ -630,8 +627,6 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                 'modelquality' => 'perfect',
                 'ncourses' => 50,
                 'expectedresults' => array(
-                    // The course duration is too much to be processed by in weekly basis.
-                    '\core\analytics\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
                     '\core\analytics\time_splitting\single_range' => \core_analytics\model::OK,
                     '\core\analytics\time_splitting\quarters' => \core_analytics\model::OK,
                 )

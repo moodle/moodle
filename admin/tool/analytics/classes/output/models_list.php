@@ -71,6 +71,17 @@ class models_list implements \renderable, \templatable {
             $onlycli = 1;
         }
 
+        // Evaluation options.
+        $timesplittingmethods = [
+            ['id' => 'all', 'text' => get_string('alltimesplittingmethods', 'tool_analytics')],
+        ];
+        foreach (\core_analytics\manager::get_time_splitting_methods_for_evaluation(true) as $timesplitting) {
+            $timesplittingmethods[] = [
+                'id' => \tool_analytics\output\helper::class_to_option($timesplitting->get_id()),
+                'text' => $timesplitting->get_name()->out(),
+            ];
+        }
+
         $data->models = array();
         foreach ($this->models as $model) {
             $modeldata = $model->export();
@@ -192,7 +203,15 @@ class models_list implements \renderable, \templatable {
                 $trainedonlyexternally = !$model->trained_locally() && $model->is_trained();
 
                 $actionid = 'evaluate-' . $model->get_id();
-                $PAGE->requires->js_call_amd('tool_analytics/model', 'selectEvaluationMode', [$actionid, $trainedonlyexternally]);
+
+                // Include the current time-splitting method as the default selection method the model already have one.
+                if ($model->get_model_obj()->timesplitting) {
+                    $currenttimesplitting = ['id' => 'current', 'text' => get_string('currenttimesplitting', 'tool_analytics')];
+                    array_unshift($timesplittingmethods, $currenttimesplitting);
+                }
+
+                $evaluateparams = [$actionid, $trainedonlyexternally, $timesplittingmethods];
+                $PAGE->requires->js_call_amd('tool_analytics/model', 'selectEvaluationOptions', $evaluateparams);
                 $urlparams['action'] = 'evaluate';
                 $url = new \moodle_url('model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/calc', get_string('evaluate', 'tool_analytics')),

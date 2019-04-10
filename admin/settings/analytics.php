@@ -75,7 +75,7 @@ if ($hassiteconfig) {
             $defaultreader, $options));
 
         // Enable/disable time splitting methods.
-        $alltimesplittings = \core_analytics\manager::get_all_time_splittings();
+        $alltimesplittings = \core_analytics\manager::get_time_splitting_methods_for_evaluation(true);
 
         $timesplittingoptions = array();
         $timesplittingdefaults = array('\core\analytics\time_splitting\quarters_accum',
