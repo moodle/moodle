@@ -459,6 +459,24 @@ class post extends exporter {
     }
 
     /**
+     * This method returns the parameters for the post's message to
+     * use with the function external_format_text().
+     *
+     * @return array
+     */
+    protected function get_format_parameters_for_message() {
+        return [
+            'component' => 'mod_forum',
+            'filearea' => 'post',
+            'itemid' => $this->post->get_id(),
+            'options' => [
+                'para' => false,
+                'trusted' => $this->post->is_message_trusted()
+            ]
+        ];
+    }
+
+    /**
      * Get the message text from a post.
      *
      * @param post_entity $post The post
@@ -467,15 +485,7 @@ class post extends exporter {
     private function get_message(post_entity $post) : string {
         global $CFG;
 
-        $context = $this->related['context'];
-        $message = file_rewrite_pluginfile_urls(
-            $post->get_message(),
-            'pluginfile.php',
-            $context->id,
-            'mod_forum',
-            'post',
-            $post->get_id()
-        );
+        $message = $post->get_message();
 
         if (!empty($CFG->enableplagiarism)) {
             require_once($CFG->libdir . '/plagiarismlib.php');
@@ -488,16 +498,6 @@ class post extends exporter {
                 'forum' => $forum->get_id()
             ]);
         }
-
-        $message = format_text(
-            $message,
-            $post->get_message_format(),
-            (object) [
-                'para' => false,
-                'trusted' => $post->is_message_trusted(),
-                'context' => $context
-            ]
-        );
 
         return $message;
     }
