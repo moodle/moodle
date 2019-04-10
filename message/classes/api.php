@@ -3309,6 +3309,9 @@ class api {
     public static function delete_all_conversation_data(int $conversationid) {
         global $DB;
 
+        $conv = $DB->get_record('message_conversations', ['id' => $conversationid], 'id, contextid');
+        $convcontext = !empty($conv->contextid) ? \context::instance_by_id($conv->contextid) : null;
+
         $DB->delete_records('message_conversations', ['id' => $conversationid]);
         $DB->delete_records('message_conversation_members', ['conversationid' => $conversationid]);
         $DB->delete_records('message_conversation_actions', ['conversationid' => $conversationid]);
@@ -3323,5 +3326,9 @@ class api {
             // Delete the messages now.
             $DB->delete_records('messages', ['conversationid' => $conversationid]);
         }
+
+        // Delete all favourite records for all users relating to this conversation.
+        $service = \core_favourites\service_factory::get_service_for_component('core_message');
+        $service->delete_favourites_by_type('message_conversations', $convcontext);
     }
 }
