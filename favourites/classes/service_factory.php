@@ -45,5 +45,15 @@ class service_factory {
     public static function get_service_for_user_context(\context_user $context) : local\service\user_favourite_service {
         return new local\service\user_favourite_service($context, new local\repository\favourite_repository());
     }
+
+    /**
+     * Returns a basic service object providing operations for favourites belonging to a given component.
+     *
+     * @param string $component frankenstyle component name.
+     * @return local\service\component_favourite_service the service object.
+     */
+    public static function get_service_for_component(string $component) : local\service\component_favourite_service {
+        return new local\service\component_favourite_service($component, new local\repository\favourite_repository());
+    }
 }
 
