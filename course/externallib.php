@@ -261,8 +261,8 @@ class core_course_external extends external_api {
                         $module['id'] = $cm->id;
                         $module['name'] = external_format_string($cm->name, $modcontext->id);
                         $module['instance'] = $cm->instance;
-                        $module['modname'] = $cm->modname;
-                        $module['modplural'] = $cm->modplural;
+                        $module['modname'] = (string) $cm->modname;
+                        $module['modplural'] = (string) $cm->modplural;
                         $module['modicon'] = $cm->get_icon_url()->out(false);
                         $module['indent'] = $cm->indent;
                         $module['onclick'] = $cm->onclick;

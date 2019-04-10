@@ -559,12 +559,10 @@ function get_module_types_names($plural = false) {
         if ($allmods = $DB->get_records("modules")) {
             foreach ($allmods as $mod) {
                 if (file_exists("$CFG->dirroot/mod/$mod->name/lib.php") && $mod->visible) {
-                    $modnames[0][$mod->name] = get_string("modulename", "$mod->name");
-                    $modnames[1][$mod->name] = get_string("modulenameplural", "$mod->name");
+                    $modnames[0][$mod->name] = get_string("modulename", "$mod->name", null, true);
+                    $modnames[1][$mod->name] = get_string("modulenameplural", "$mod->name", null, true);
                 }
             }
-            core_collator::asort($modnames[0]);
-            core_collator::asort($modnames[1]);
         }
     }
     return $modnames[(int)$plural];
