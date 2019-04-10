@@ -26,60 +26,60 @@ Feature: An incorrect response to an answer with multiple attempts show appropri
       | Maximum number of attempts | 2 |
     And I press "Save and display"
 
-    Scenario: A student answering incorrectly to a question will see an option to move to the next question if set up.
-      Given I follow "Add a question page"
-      And I set the field "Select a question type" to "Numerical"
-      And I press "Add a question page"
-      And I set the following fields to these values:
-        | Page title | Numerical question |
-        | Page contents | What is 1 + 2? |
-        | id_answer_editor_0 | 3 |
-        | id_jumpto_0 | Next page |
-        | id_answer_editor_1 | 2 |
-        | id_jumpto_1 | Next page |
-      And I press "Save page"
-      And I select "Add a content page" from the "qtype" singleselect
-      And I set the following fields to these values:
-        | Page title | Just move on page |
-        | Page contents | You are here to move on |
-        | id_answer_editor_0 | End this lesson |
-        | id_jumpto_0 | End of lesson |
-      And I press "Save page"
-      And I log out
-      And I log in as "student1"
-      And I am on "Course 1" course homepage
-      And I follow "Test lesson name"
-      When I set the field "Your answer" to "2"
-      And I press "Submit"
-      And I should see "That's the wrong answer"
-      And I should see "No, I just want to go on to the next question"
-      And I press "No, I just want to go on to the next question"
-      Then I should see "You are here to move on"
+  Scenario: A student answering incorrectly to a question will see an option to move to the next question if set up.
+    Given I follow "Add a question page"
+    And I set the field "Select a question type" to "Numerical"
+    And I press "Add a question page"
+    And I set the following fields to these values:
+      | Page title | Numerical question |
+      | Page contents | What is 1 + 2? |
+      | id_answer_editor_0 | 3 |
+      | id_jumpto_0 | Next page |
+      | id_answer_editor_1 | 2 |
+      | id_jumpto_1 | Next page |
+    And I press "Save page"
+    And I select "Add a content page" from the "qtype" singleselect
+    And I set the following fields to these values:
+      | Page title | Just move on page |
+      | Page contents | You are here to move on |
+      | id_answer_editor_0 | End this lesson |
+      | id_jumpto_0 | End of lesson |
+    And I press "Save page"
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test lesson name"
+    When I set the field "Your answer" to "2"
+    And I press "Submit"
+    And I should see "That's the wrong answer"
+    And I should see "No, I just want to go on to the next question"
+    And I press "No, I just want to go on to the next question"
+    Then I should see "You are here to move on"
 
-    Scenario: A student answering incorrectly to a question will only see an option to try again if there is no matching wrong response.
-      Given I follow "Add a question page"
-      And I set the field "Select a question type" to "Numerical"
-      And I press "Add a question page"
-      And I set the following fields to these values:
-        | Page title | Numerical question |
-        | Page contents | What is 1 + 2? |
-        | id_answer_editor_0 | 3 |
-        | id_jumpto_0 | Next page |
-      And I press "Save page"
-      And I select "Add a content page" from the "qtype" singleselect
-      And I set the following fields to these values:
-        | Page title | Just move on page |
-        | Page contents | You are here to move on |
-        | id_answer_editor_0 | End this lesson |
-        | id_jumpto_0 | End of lesson |
-      And I press "Save page"
-      And I log out
-      And I log in as "student1"
-      And I am on "Course 1" course homepage
-      And I follow "Test lesson name"
-      When I set the field "Your answer" to "2"
-      And I press "Submit"
-      And I should see "That's the wrong answer"
-      Then I should not see "No, I just want to go on to the next question"
-      And I press "Yes, I'd like to try again"
-      And I should see "What is 1 + 2?"
+  Scenario: A student answering incorrectly to a question will only see an option to try again if there is no matching wrong response.
+    Given I follow "Add a question page"
+    And I set the field "Select a question type" to "Numerical"
+    And I press "Add a question page"
+    And I set the following fields to these values:
+      | Page title | Numerical question |
+      | Page contents | What is 1 + 2? |
+      | id_answer_editor_0 | 3 |
+      | id_jumpto_0 | Next page |
+    And I press "Save page"
+    And I select "Add a content page" from the "qtype" singleselect
+    And I set the following fields to these values:
+      | Page title | Just move on page |
+      | Page contents | You are here to move on |
+      | id_answer_editor_0 | End this lesson |
+      | id_jumpto_0 | End of lesson |
+    And I press "Save page"
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test lesson name"
+    When I set the field "Your answer" to "2"
+    And I press "Submit"
+    And I should see "That's the wrong answer"
+    Then I should not see "No, I just want to go on to the next question"
+    And I press "Yes, I'd like to try again"
+    And I should see "What is 1 + 2?"
