@@ -204,7 +204,7 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
             // Normally this is cleaned as a side effect of it not being a valid option,
             // but in this case we need to detect and skip it manually.
             if ($value === '_qf__force_multiselect_submission' || $value === null) {
-                $value = '';
+                $value = $this->getMultiple() ? [] : '';
             }
             return $this->_prepareValue($value, $assoc);
         } else {
