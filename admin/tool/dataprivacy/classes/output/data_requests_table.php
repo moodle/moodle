@@ -116,9 +116,17 @@ class data_requests_table extends table_sql {
      *
      * @param stdClass $data The row data.
      * @return string
+     * @throws \moodle_exception
+     * @throws coding_exception
      */
     public function col_select($data) {
         if ($data->status == \tool_dataprivacy\api::DATAREQUEST_STATUS_AWAITING_APPROVAL) {
+            if ($data->type == \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE
+                && !api::can_create_data_deletion_request_for_other()) {
+                // Don't show checkbox if request's type is delete and user don't have permission.
+                return false;
+            }
+
             $stringdata = [
                 'username' => $data->foruser->fullname,
                 'requesttype' => \core_text::strtolower($data->typenameshort)
@@ -206,6 +214,7 @@ class data_requests_table extends table_sql {
 
         $requestid = $data->id;
         $status = $data->status;
+        $persistent = $this->datarequests[$requestid];
 
         // Prepare actions.
         $actions = [];
@@ -232,6 +241,11 @@ class data_requests_table extends table_sql {
                 }
                 break;
             case api::DATAREQUEST_STATUS_AWAITING_APPROVAL:
+                // Only show "Approve" and "Deny" button for deletion request if current user has permission.
+                if ($persistent->get('type') == api::DATAREQUEST_TYPE_DELETE &&
+                    !api::can_create_data_deletion_request_for_other()) {
+                    break;
+                }
                 // Approve.
                 $actiondata['data-action'] = 'approve';
                 $actiontext = get_string('approverequest', 'tool_dataprivacy');
@@ -253,9 +267,11 @@ class data_requests_table extends table_sql {
         }
 
         if ($this->manage) {
-            $persistent = $this->datarequests[$requestid];
             $canreset = $persistent->is_active() || empty($this->ongoingrequests[$data->foruser->id]->{$data->type});
             $canreset = $canreset && $persistent->is_resettable();
+            // Prevent re-submmit deletion request if current user don't have permission.
+            $canreset = $canreset && ($persistent->get('type') != api::DATAREQUEST_TYPE_DELETE ||
+                    api::can_create_data_deletion_request_for_other());
             if ($canreset) {
                 $reseturl = new moodle_url('/admin/tool/dataprivacy/resubmitrequest.php', [
                         'requestid' => $requestid,

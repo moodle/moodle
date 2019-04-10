@@ -614,6 +614,12 @@ class api {
             throw new moodle_exception('errorrequestnotwaitingforapproval', 'tool_dataprivacy');
         }
 
+        // Check if current user has permission to approve delete data request.
+        if ($request->get('type') == self::DATAREQUEST_TYPE_DELETE && !self::can_create_data_deletion_request_for_other()) {
+            throw new required_capability_exception(context_system::instance(),
+                'tool/dataprivacy:requestdeleteforotheruser', 'nopermissions', '');
+        }
+
         // Update the status and the DPO.
         $result = self::update_request_status($requestid, self::DATAREQUEST_STATUS_APPROVED, $USER->id);
 
@@ -651,6 +657,12 @@ class api {
         $request = new data_request($requestid);
         if ($request->get('status') != self::DATAREQUEST_STATUS_AWAITING_APPROVAL) {
             throw new moodle_exception('errorrequestnotwaitingforapproval', 'tool_dataprivacy');
+        }
+
+        // Check if current user has permission to reject delete data request.
+        if ($request->get('type') == self::DATAREQUEST_TYPE_DELETE && !self::can_create_data_deletion_request_for_other()) {
+            throw new required_capability_exception(context_system::instance(),
+                'tool/dataprivacy:requestdeleteforotheruser', 'nopermissions', '');
         }
 
         // Update the status and the DPO.
@@ -750,6 +762,48 @@ class api {
         require_capability('tool/dataprivacy:makedatarequestsforchildren', $usercontext, $requester);
 
         return true;
+    }
+
+    /**
+     * Check if user has permisson to create data deletion request for themselves.
+     *
+     * @param int|null $userid ID of the user.
+     * @return bool
+     * @throws coding_exception
+     */
+    public static function can_create_data_deletion_request_for_self(int $userid = null): bool {
+        global $USER;
+        $userid = $userid ?: $USER->id;
+        return has_capability('tool/dataprivacy:requestdelete', \context_user::instance($userid), $userid);
+    }
+
+    /**
+     * Check if user has permission to create data deletion request for another user.
+     *
+     * @param int|null $userid ID of the user.
+     * @return bool
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public static function can_create_data_deletion_request_for_other(int $userid = null): bool {
+        global $USER;
+        $userid = $userid ?: $USER->id;
+        return has_capability('tool/dataprivacy:requestdeleteforotheruser', context_system::instance(), $userid);
+    }
+
+    /**
+     * Check if parent can create data deletion request for their children.
+     *
+     * @param int $userid ID of a user being requested.
+     * @param int|null $requesterid ID of a user making request.
+     * @return bool
+     * @throws coding_exception
+     */
+    public static function can_create_data_deletion_request_for_children(int $userid, int $requesterid = null): bool {
+        global $USER;
+        $requesterid = $requesterid ?: $USER->id;
+        return has_capability('tool/dataprivacy:makedatadeletionrequestsforchildren', \context_user::instance($userid),
+            $requesterid);
     }
 
     /**

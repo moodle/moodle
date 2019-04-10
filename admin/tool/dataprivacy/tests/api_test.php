@@ -2109,4 +2109,90 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
 
         return $request;
     }
+
+    /**
+     * Test user cannot create data deletion request for themselves if they don't have
+     * "tool/dataprivacy:requestdelete" capability.
+     *
+     * @throws coding_exception
+     */
+    public function test_can_create_data_deletion_request_for_self_no() {
+        $this->resetAfterTest();
+        $userid = $this->getDataGenerator()->create_user()->id;
+        $roleid = $this->getDataGenerator()->create_role();
+        assign_capability('tool/dataprivacy:requestdelete', CAP_PROHIBIT, $roleid, context_user::instance($userid));
+        role_assign($roleid, $userid, context_user::instance($userid));
+        $this->setUser($userid);
+        $this->assertFalse(api::can_create_data_deletion_request_for_self());
+    }
+
+    /**
+     * Test user can create data deletion request for themselves if they have
+     * "tool/dataprivacy:requestdelete" capability.
+     *
+     * @throws coding_exception
+     */
+    public function test_can_create_data_deletion_request_for_self_yes() {
+        $this->resetAfterTest();
+        $userid = $this->getDataGenerator()->create_user()->id;
+        $this->setUser($userid);
+        $this->assertTrue(api::can_create_data_deletion_request_for_self());
+    }
+
+    /**
+     * Test user cannot create data deletion request for another user if they
+     * don't have "tool/dataprivacy:requestdeleteforotheruser" capability.
+     *
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public function test_can_create_data_deletion_request_for_other_no() {
+        $this->resetAfterTest();
+        $userid = $this->getDataGenerator()->create_user()->id;
+        $this->setUser($userid);
+        $this->assertFalse(api::can_create_data_deletion_request_for_other());
+    }
+
+    /**
+     * Test user can create data deletion request for another user if they
+     * don't have "tool/dataprivacy:requestdeleteforotheruser" capability.
+     *
+     * @throws coding_exception
+     */
+    public function test_can_create_data_deletion_request_for_other_yes() {
+        $this->resetAfterTest();
+        $userid = $this->getDataGenerator()->create_user()->id;
+        $roleid = $this->getDataGenerator()->create_role();
+        $contextsystem = context_system::instance();
+        assign_capability('tool/dataprivacy:requestdeleteforotheruser', CAP_ALLOW, $roleid, $contextsystem);
+        role_assign($roleid, $userid, $contextsystem);
+        $this->setUser($userid);
+        $this->assertTrue(api::can_create_data_deletion_request_for_other($userid));
+    }
+
+    /**
+     * Check parents can create data deletion request for their children but not others.
+     *
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public function test_can_create_data_deletion_request_for_children() {
+        $this->resetAfterTest();
+
+        $parent = $this->getDataGenerator()->create_user();
+        $child = $this->getDataGenerator()->create_user();
+        $otheruser = $this->getDataGenerator()->create_user();
+
+        $contextsystem = \context_system::instance();
+        $parentrole = $this->getDataGenerator()->create_role();
+        assign_capability('tool/dataprivacy:makedatarequestsforchildren', CAP_ALLOW,
+            $parentrole, $contextsystem);
+        assign_capability('tool/dataprivacy:makedatadeletionrequestsforchildren', CAP_ALLOW,
+            $parentrole, $contextsystem);
+        role_assign($parentrole, $parent->id, \context_user::instance($child->id));
+
+        $this->setUser($parent);
+        $this->assertTrue(api::can_create_data_deletion_request_for_children($child->id));
+        $this->assertFalse(api::can_create_data_deletion_request_for_children($otheruser->id));
+    }
 }

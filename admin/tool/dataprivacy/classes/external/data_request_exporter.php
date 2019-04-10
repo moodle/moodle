@@ -170,6 +170,10 @@ class data_request_exporter extends persistent_exporter {
                 $values['canreview'] = true;
                 // Whether the DPO can approve or deny the request.
                 $values['approvedeny'] = in_array($requesttype, [api::DATAREQUEST_TYPE_EXPORT, api::DATAREQUEST_TYPE_DELETE]);
+                // If the request's type is delete, check if user have permission to approve/deny it.
+                if ($requesttype == api::DATAREQUEST_TYPE_DELETE) {
+                    $values['approvedeny'] = api::can_create_data_deletion_request_for_other();
+                }
                 break;
             case api::DATAREQUEST_STATUS_APPROVED:
                 $values['statuslabelclass'] = 'badge-info';

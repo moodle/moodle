@@ -77,8 +77,9 @@ function tool_dataprivacy_myprofile_navigation(tree $tree, $user, $iscurrentuser
 
         // Check if the user has an ongoing data deletion request.
         $hasdeleterequest = \tool_dataprivacy\api::has_ongoing_request($user->id, \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE);
-        // Show data deletion link only if the user doesn't have an ongoing data deletion request.
-        if (!$hasdeleterequest) {
+        // Show data deletion link only if the user doesn't have an ongoing data deletion request and has permission
+        // to create data deletion request.
+        if (!$hasdeleterequest && \tool_dataprivacy\api::can_create_data_deletion_request_for_self()) {
             $deleteparams = ['type' => \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE];
             $deleteurl = new moodle_url('/admin/tool/dataprivacy/createdatarequest.php', $deleteparams);
             $deletenode = new core_user\output\myprofile\node('privacyandpolicies', 'requestdatadeletion',
