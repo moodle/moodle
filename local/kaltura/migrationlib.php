@@ -1238,7 +1238,9 @@ function local_kaltura_migrate_video_presentation_entries($kafcategory, $cachedc
 function local_kaltura_build_source_url($entryid, $height, $width, $uiconfid) {
     $newheight = empty($height) ? KALTURA_MIGRATION_DEFAULT_HEIGHT : $height;
     $newwidth = empty($width) ? KALTURA_MIGRATION_DEFAULT_WIDTH : $width;
-    $url = 'http://'.KALTURA_URI_TOKEN."/browseandembed/index/media/entryid/{$entryid}/showDescription/true/showTitle/true/showTags/true/showDuration/true/showOwner/";
+    $kafuri = local_kaltura_get_config()->kaf_uri;
+    $kafuri = local_kaltura_format_uri($kafuri);
+    $url = 'http://'.$kafuri."/browseandembed/index/media/entryid/{$entryid}/showDescription/true/showTitle/true/showTags/true/showDuration/true/showOwner/";
     $url .= "true/showUploadDate/false/playerSize/{$newwidth}x{$newheight}/playerSkin/{$uiconfid}/";
     return $url;
 }

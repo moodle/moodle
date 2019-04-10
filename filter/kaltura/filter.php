@@ -123,11 +123,11 @@ class filter_kaltura extends moodle_text_filter {
         $newtext = preg_replace_callback($oldsearch, 'filter_kaltura_callback', $newtext);
 
         // Search for newer versoin of Kaltura embedded anchor tag format.
-        $uri = self::$kafuri;
-        $uri = rtrim($uri, '/');
-        $uri = str_replace(array('http://', 'https://', '.', '/'), array('https?://', 'https?://', '\.', '\/'), $uri);
+        $kafuri = self::$kafuri;
+        $kafuri = rtrim($kafuri, '/');
+        $kafuri = str_replace(array('http://', 'https://', '.', '/'), array('https?://', 'https?://', '\.', '\/'), $kafuri);
 
-        $search = '/<a\s[^>]*href="(https?:\/\/'.KALTURA_URI_TOKEN.')\/browseandembed\/index\/media\/entryid\/([\d]+_[a-z0-9]+)(\/([a-zA-Z0-9]+\/[a-zA-Z0-9]+\/)*)"[^>]*>([^>]*)<\/a>/is';
+        $search = $search = '/<a\s[^>]*href="(((https?:\/\/'.KALTURA_URI_TOKEN.')|('.$kafuri.')))\/browseandembed\/index\/media\/entryid\/([\d]+_[a-z0-9]+)(\/([a-zA-Z0-9]+\/[a-zA-Z0-9]+\/)*)"[^>]*>([^>]*)<\/a>/is';
         $newtext = preg_replace_callback($search, 'filter_kaltura_callback', $newtext);
 
         if (empty($newtext) || $newtext === $text) {
@@ -146,26 +146,14 @@ class filter_kaltura extends moodle_text_filter {
  * @return string Kaltura embed video markup.
  */
 function filter_kaltura_callback($link) {
-    $newurl = $link[1];
-    if (!empty($newurl)) {
-        // Check to see if token is being used in url and replace with kaf_uri.
-        $parts = parse_url($link[1]);
-        if (!empty($parts['host']) && KALTURA_URI_TOKEN == $parts['host']) {
-            $newurl = filter_kaltura::$kafuri;
-        }
-    }
-
-    $newurl = preg_replace('#https?://#','',$newurl);
-    $kafuri = preg_replace('#https?://#', '', filter_kaltura::$kafuri);
-
     $width = filter_kaltura::$defaultwidth;
     $height = filter_kaltura::$defaultheight;
     $source = '';
 
     // Convert KAF URI anchor tags into iframe markup.
-    if (6 == count($link) && $newurl == $kafuri) {
+    if (9 == count($link)) {
         // Get the height and width of the iframe.
-        $properties = explode('||', $link[5]);
+        $properties = explode('||', $link[8]);
 
         $width = $properties[2];
         $height = $properties[3];
@@ -174,7 +162,7 @@ function filter_kaltura_callback($link) {
             return $link[0];
         }
 
-        $source = filter_kaltura::$kafuri.'/browseandembed/index/media/entryid/'.$link[2].$link[3];
+        $source = filter_kaltura::$kafuri . '/browseandembed/index/media/entryid/' . $link[5] . $link[6];
     }
 
     // Convert v3 anchor tags into iframe markup.
