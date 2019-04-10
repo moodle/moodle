@@ -21,6 +21,7 @@
 
     Context variables required for this template:
     * id - Element id,
+    * nameraw - Raw Element name without '[]'
     * name - Element name,
     * label -  Element label,
     * multiple - multi select?,
@@ -49,6 +50,7 @@
     {
         "element": {
             "id": "id_maildisplay",
+            "nameraw": "maildisplay",
             "name": "maildisplay",
             "label": null,
             "multiple": null,
@@ -92,6 +94,9 @@
 {{< core_form/element-template }}
     {{$element}}
         {{^element.frozen}}
+        {{#element.multiple}}
+            <input type="hidden" name="{{element.nameraw}}" value="_qf__force_multiselect_submission">
+        {{/element.multiple}}
         <select class="{{^element.multiple}}custom-select{{/element.multiple}}
                        {{#element.multiple}}form-control{{/element.multiple}}
                        {{#error}}is-invalid{{/error}}"
