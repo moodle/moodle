@@ -71,6 +71,7 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
      *                       'requiredcapabilities' - array of capabilities. Uses ANY to combine them.
      *                       'limittoenrolled' - boolean Limits to enrolled courses.
      *                       'includefrontpage' - boolean Enables the frontpage to be selected.
+     *                       'onlywithcompletion' - only courses where completion is enabled
      */
     public function __construct($elementname = null, $elementlabel = null, $options = array()) {
         if (isset($options['multiple'])) {
@@ -106,6 +107,9 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
         }
         if (!empty($options['includefrontpage'])) {
             $validattributes['data-includefrontpage'] = SITEID;
+        }
+        if (!empty($options['onlywithcompletion'])) {
+            $validattributes['data-onlywithcompletion'] = 1;
         }
 
         parent::__construct($elementname, $elementlabel, array(), $validattributes);
@@ -146,12 +150,13 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
                 WHERE c.id ". $whereclause." ORDER BY c.sortorder";
         $list = $DB->get_records_sql($sql, array('contextcourse' => CONTEXT_COURSE) + $params);
 
+        $mycourses = enrol_get_my_courses(null, null, 0, array_keys($list));
         $coursestoselect = array();
         foreach ($list as $course) {
             context_helper::preload_from_record($course);
             $context = context_course::instance($course->id);
             // Make sure we can see the course.
-            if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $context)) {
+            if (!array_key_exists($course->id, $mycourses) && !core_course_category::can_view_course_info($course)) {
                 continue;
             }
             $label = format_string(get_course_display_name_for_list($course), true, ['context' => $context]);

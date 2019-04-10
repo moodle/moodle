@@ -1870,7 +1870,7 @@ class core_course_external extends external_api {
             if (!isset($excludedcats[$category->id])) {
 
                 // Final check to see if the category is visible to the user.
-                if ($category->visible or has_capability('moodle/category:viewhiddencategories', $context)) {
+                if (core_course_category::can_view_category($category)) {
 
                     $categoryinfo = array();
                     $categoryinfo['id'] = $category->id;
@@ -2373,6 +2373,8 @@ class core_course_external extends external_api {
                     'Optional list of required capabilities (used to filter the list)', VALUE_DEFAULT, array()
                 ),
                 'limittoenrolled' => new external_value(PARAM_BOOL, 'limit to enrolled courses', VALUE_DEFAULT, 0),
+                'onlywithcompletion' => new external_value(PARAM_BOOL, 'limit to courses where completion is enabled',
+                    VALUE_DEFAULT, 0),
             )
         );
     }
@@ -2469,6 +2471,7 @@ class core_course_external extends external_api {
      * @param int $perpage          Items per page
      * @param array $requiredcapabilities Optional list of required capabilities (used to filter the list).
      * @param int $limittoenrolled  Limit to only enrolled courses
+     * @param int onlywithcompletion Limit to only courses where completion is enabled
      * @return array of course objects and warnings
      * @since Moodle 3.0
      * @throws moodle_exception
@@ -2478,7 +2481,8 @@ class core_course_external extends external_api {
                                           $page=0,
                                           $perpage=0,
                                           $requiredcapabilities=array(),
-                                          $limittoenrolled=0) {
+                                          $limittoenrolled=0,
+                                          $onlywithcompletion=0) {
         global $CFG;
 
         $warnings = array();
@@ -2488,7 +2492,9 @@ class core_course_external extends external_api {
             'criteriavalue' => $criteriavalue,
             'page'          => $page,
             'perpage'       => $perpage,
-            'requiredcapabilities' => $requiredcapabilities
+            'requiredcapabilities' => $requiredcapabilities,
+            'limittoenrolled' => $limittoenrolled,
+            'onlywithcompletion' => $onlywithcompletion
         );
         $params = self::validate_parameters(self::search_courses_parameters(), $parameters);
         self::validate_context(context_system::instance());
@@ -2514,6 +2520,9 @@ class core_course_external extends external_api {
         // Prepare the search API options.
         $searchcriteria = array();
         $searchcriteria[$params['criterianame']] = $params['criteriavalue'];
+        if ($params['onlywithcompletion']) {
+            $searchcriteria['onlywithcompletion'] = true;
+        }
 
         $options = array();
         if ($params['perpage'] != 0) {
@@ -3235,14 +3244,18 @@ class core_course_external extends external_api {
             }
             // Get the public course information, even if we are not enrolled.
             $courseinlist = new core_course_list_element($course);
-            $coursesdata[$course->id] = self::get_course_public_information($courseinlist, $context);
 
             // Now, check if we have access to the course.
             try {
                 self::validate_context($context);
             } catch (Exception $e) {
+                // User can not access the course, check if they can see the public information about the course and return it.
+                if (core_course_category::can_view_course_info($course)) {
+                    $coursesdata[$course->id] = self::get_course_public_information($courseinlist, $context);
+                }
                 continue;
             }
+            $coursesdata[$course->id] = self::get_course_public_information($courseinlist, $context);
             // Return information for any user that can access the course.
             $coursefields = array('format', 'showgrades', 'newsitems', 'startdate', 'enddate', 'maxbytes', 'showreports', 'visible',
                 'groupmode', 'groupmodeforce', 'defaultgroupingid', 'enablecompletion', 'completionnotify', 'lang', 'theme',

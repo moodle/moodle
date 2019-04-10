@@ -135,8 +135,7 @@ class customfield extends \core_search\base {
         if (!$course) {
             return \core_search\manager::ACCESS_DELETED;
         }
-        $coursecontext = \context_course::instance($course->id);
-        if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+        if (\core_course_category::can_view_course_info($course)) {
             return \core_search\manager::ACCESS_GRANTED;
         }
         return \core_search\manager::ACCESS_DENIED;

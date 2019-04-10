@@ -762,7 +762,7 @@ function print_course_request_buttons($context) {
         echo $OUTPUT->single_button(new moodle_url('/course/request.php'), get_string('requestcourse'), 'get');
     }
     /// Print a button to manage pending requests
-    if ($context->contextlevel == CONTEXT_SYSTEM && has_capability('moodle/site:approvecourse', $context)) {
+    if (has_capability('moodle/site:approvecourse', $context)) {
         $disabled = !$DB->record_exists('course_request', array());
         echo $OUTPUT->single_button(new moodle_url('/course/pending.php'), get_string('coursespending'), 'get', array('disabled' => $disabled));
     }

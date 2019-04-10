@@ -720,7 +720,7 @@ class manager {
                     (!$limitcontextids || in_array($coursecontext->id, $limitcontextids))) {
                 // Add the course contexts the user can view.
                 foreach ($areasbylevel[CONTEXT_COURSE] as $areaid => $searchclass) {
-                    if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                    if (!empty($mycourses[$course->id]) || \core_course_category::can_view_course_info($course)) {
                         $areascontexts[$areaid][$coursecontext->id] = $coursecontext->id;
                     }
                 }

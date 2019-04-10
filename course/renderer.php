@@ -1582,35 +1582,38 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_category($category) {
         global $CFG;
-        $coursecat = core_course_category::get(is_object($category) ? $category->id : $category);
+        $usertop = core_course_category::user_top();
+        if (empty($category)) {
+            $coursecat = $usertop;
+        } else if (is_object($category) && $category instanceof core_course_category) {
+            $coursecat = $category;
+        } else {
+            $coursecat = core_course_category::get(is_object($category) ? $category->id : $category);
+        }
         $site = get_site();
         $output = '';
 
-        if (can_edit_in_category($coursecat->id)) {
+        if ($coursecat->can_create_course() || $coursecat->has_manage_capability()) {
             // Add 'Manage' button if user has permissions to edit this category.
             $managebutton = $this->single_button(new moodle_url('/course/management.php',
                 array('categoryid' => $coursecat->id)), get_string('managecourses'), 'get');
             $this->page->set_button($managebutton);
         }
-        if (!$coursecat->id) {
-            if (core_course_category::count_all() == 1) {
-                // There exists only one category in the system, do not display link to it
-                $coursecat = core_course_category::get_default();
-                $strfulllistofcourses = get_string('fulllistofcourses');
-                $this->page->set_title("$site->shortname: $strfulllistofcourses");
-            } else {
-                $strcategories = get_string('categories');
-                $this->page->set_title("$site->shortname: $strcategories");
-            }
+
+        if (core_course_category::is_simple_site()) {
+            // There is only one category in the system, do not display link to it.
+            $strfulllistofcourses = get_string('fulllistofcourses');
+            $this->page->set_title("$site->shortname: $strfulllistofcourses");
+        } else if (!$coursecat->id || !$coursecat->is_uservisible()) {
+            $strcategories = get_string('categories');
+            $this->page->set_title("$site->shortname: $strcategories");
         } else {
-            $title = $site->shortname;
-            if (core_course_category::count_all() > 1) {
-                $title .= ": ". $coursecat->get_formatted_name();
-            }
-            $this->page->set_title($title);
+            $strfulllistofcourses = get_string('fulllistofcourses');
+            $this->page->set_title("$site->shortname: $strfulllistofcourses");
 
             // Print the category selector
-            if (core_course_category::count_all() > 1) {
+            $categorieslist = core_course_category::make_categories_list();
+            if (count($categorieslist) > 1) {
                 $output .= html_writer::start_tag('div', array('class' => 'categorypicker'));
                 $select = new single_select(new moodle_url('/course/index.php'), 'categoryid',
                         core_course_category::make_categories_list(), $coursecat->id, null, 'switchcategory');
@@ -1644,13 +1647,13 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $coursedisplayoptions['limit'] = $perpage;
         $catdisplayoptions['limit'] = $perpage;
-        if ($browse === 'courses' || !$coursecat->has_children()) {
+        if ($browse === 'courses' || !$coursecat->get_children_count()) {
             $coursedisplayoptions['offset'] = $page * $perpage;
             $coursedisplayoptions['paginationurl'] = new moodle_url($baseurl, array('browse' => 'courses'));
             $catdisplayoptions['nodisplay'] = true;
             $catdisplayoptions['viewmoreurl'] = new moodle_url($baseurl, array('browse' => 'categories'));
             $catdisplayoptions['viewmoretext'] = new lang_string('viewallsubcategories');
-        } else if ($browse === 'categories' || !$coursecat->has_courses()) {
+        } else if ($browse === 'categories' || !$coursecat->get_courses_count()) {
             $coursedisplayoptions['nodisplay'] = true;
             $catdisplayoptions['offset'] = $page * $perpage;
             $catdisplayoptions['paginationurl'] = new moodle_url($baseurl, array('browse' => 'categories'));
@@ -1670,24 +1673,23 @@ class core_course_renderer extends plugin_renderer_base {
 
         // Add action buttons
         $output .= $this->container_start('buttons');
-        $context = get_category_or_system_context($coursecat->id);
-        if (has_capability('moodle/course:create', $context)) {
-            // Print link to create a new course, for the 1st available category.
-            if ($coursecat->id) {
-                $url = new moodle_url('/course/edit.php', array('category' => $coursecat->id, 'returnto' => 'category'));
-            } else {
-                $url = new moodle_url('/course/edit.php', array('category' => $CFG->defaultrequestcategory, 'returnto' => 'topcat'));
+        if ($coursecat->is_uservisible()) {
+            $context = get_category_or_system_context($coursecat->id);
+            if (has_capability('moodle/course:create', $context)) {
+                // Print link to create a new course, for the 1st available category.
+                if ($coursecat->id) {
+                    $url = new moodle_url('/course/edit.php', array('category' => $coursecat->id, 'returnto' => 'category'));
+                } else {
+                    $url = new moodle_url('/course/edit.php',
+                        array('category' => $CFG->defaultrequestcategory, 'returnto' => 'topcat'));
+                }
+                $output .= $this->single_button($url, get_string('addnewcourse'), 'get');
             }
-            $output .= $this->single_button($url, get_string('addnewcourse'), 'get');
-        }
-        ob_start();
-        if (core_course_category::count_all() == 1) {
-            print_course_request_buttons(context_system::instance());
-        } else {
+            ob_start();
             print_course_request_buttons($context);
+            $output .= ob_get_contents();
+            ob_end_clean();
         }
-        $output .= ob_get_contents();
-        ob_end_clean();
         $output .= $this->container_end();
 
         return $output;
@@ -1828,7 +1830,7 @@ class core_course_renderer extends plugin_renderer_base {
         if (empty($displayoptions)) {
             $displayoptions = array();
         }
-        $showcategories = core_course_category::count_all() > 1;
+        $showcategories = !core_course_category::is_simple_site();
         $displayoptions += array('limit' => $CFG->coursesperpage, 'offset' => 0);
         $chelper = new coursecat_helper();
         $searchcriteria = array('tagid' => $tagid, 'ctx' => $ctx, 'rec' => $rec);
@@ -1950,15 +1952,15 @@ class core_course_renderer extends plugin_renderer_base {
         if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
 
             $chelper = new coursecat_helper();
+            $totalcount = count($courses);
             if (count($courses) > $CFG->frontpagecourselimit) {
                 // There are more enrolled courses than we can display, display link to 'My courses'.
-                $totalcount = count($courses);
                 $courses = array_slice($courses, 0, $CFG->frontpagecourselimit, true);
                 $chelper->set_courses_display_options(array(
                         'viewmoreurl' => new moodle_url('/my/'),
                         'viewmoretext' => new lang_string('mycourses')
                     ));
-            } else {
+            } else if (core_course_category::top()->is_uservisible()) {
                 // All enrolled courses are displayed, display link to 'All courses' if there are more courses in system.
                 $chelper->set_courses_display_options(array(
                         'viewmoreurl' => new moodle_url('/course/index.php'),
@@ -2007,8 +2009,8 @@ class core_course_renderer extends plugin_renderer_base {
                     'viewmoretext' => new lang_string('fulllistofcourses')));
 
         $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
-        $courses = core_course_category::get(0)->get_courses($chelper->get_courses_display_options());
-        $totalcount = core_course_category::get(0)->get_courses_count($chelper->get_courses_display_options());
+        $courses = core_course_category::top()->get_courses($chelper->get_courses_display_options());
+        $totalcount = core_course_category::top()->get_courses_count($chelper->get_courses_display_options());
         if (!$totalcount && !$this->page->user_is_editing() && has_capability('moodle/course:create', context_system::instance())) {
             // Print link to create a new course, for the 1st available category.
             return $this->add_new_course_button();
@@ -2038,6 +2040,11 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function frontpage_combo_list() {
         global $CFG;
+        // TODO MDL-10965 improve.
+        $tree = core_course_category::top();
+        if (!$tree->get_children_count()) {
+            return '';
+        }
         $chelper = new coursecat_helper();
         $chelper->set_subcat_depth($CFG->maxcategorydepth)->
             set_categories_display_options(array(
@@ -2051,7 +2058,7 @@ class core_course_renderer extends plugin_renderer_base {
                         array('browse' => 'courses', 'page' => 1))
             ))->
             set_attributes(array('class' => 'frontpage-category-combo'));
-        return $this->coursecat_tree($chelper, core_course_category::get(0));
+        return $this->coursecat_tree($chelper, $tree);
     }
 
     /**
@@ -2061,6 +2068,11 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function frontpage_categories_list() {
         global $CFG;
+        // TODO MDL-10965 improve.
+        $tree = core_course_category::top();
+        if (!$tree->get_children_count()) {
+            return '';
+        }
         $chelper = new coursecat_helper();
         $chelper->set_subcat_depth($CFG->maxcategorydepth)->
                 set_show_courses(self::COURSECAT_SHOW_COURSES_COUNT)->
@@ -2070,7 +2082,7 @@ class core_course_renderer extends plugin_renderer_base {
                             array('browse' => 'categories', 'page' => 1))
                 ))->
                 set_attributes(array('class' => 'frontpage-category-names'));
-        return $this->coursecat_tree($chelper, core_course_category::get(0));
+        return $this->coursecat_tree($chelper, $tree);
     }
 
     /**
@@ -2379,6 +2391,9 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function frontpage_part($skipdivid, $contentsdivid, $header, $contents) {
+        if (strval($contents) === '') {
+            return '';
+        }
         $output = html_writer::link('#' . $skipdivid,
             get_string('skipa', 'access', core_text::strtolower(strip_tags($header))),
             array('class' => 'skip-block skip'));
@@ -2438,10 +2453,8 @@ class core_course_renderer extends plugin_renderer_base {
 
                 case FRONTPAGEALLCOURSELIST:
                     $availablecourseshtml = $this->frontpage_available_courses();
-                    if (!empty($availablecourseshtml)) {
-                        $output .= $this->frontpage_part('skipavailablecourses', 'frontpage-available-course-list',
-                            get_string('availablecourses'), $availablecourseshtml);
-                    }
+                    $output .= $this->frontpage_part('skipavailablecourses', 'frontpage-available-course-list',
+                        get_string('availablecourses'), $availablecourseshtml);
                     break;
 
                 case FRONTPAGECATEGORYNAMES:
@@ -2705,7 +2718,7 @@ class coursecat_helper {
      * @return string|null
      */
     public function get_category_formatted_description($coursecat, $options = null) {
-        if ($coursecat->id && !empty($coursecat->description)) {
+        if ($coursecat->id && $coursecat->is_uservisible() && !empty($coursecat->description)) {
             if (!isset($coursecat->descriptionformat)) {
                 $descriptionformat = FORMAT_MOODLE;
             } else {

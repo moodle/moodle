@@ -733,6 +733,16 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/category:update'
     ),
 
+    'moodle/course:browse' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'guest' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
+        )
+    ),
+
     'moodle/category:viewhiddencategories' => array(
 
         'captype' => 'read',
