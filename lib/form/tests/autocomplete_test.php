@@ -49,7 +49,7 @@ class core_form_autocomplete_testcase extends basic_testcase {
         $submission = array('testel' => 2);
         $this->assertEquals($element->exportValue($submission), 2);
         $submission = array('testel' => 3);
-        $this->assertNull($element->exportValue($submission));
+        $this->assertEquals('', $element->exportValue($submission));
 
         // A select with multiple values validates the data.
         $options = array('1' => 'One', 2 => 'Two');
@@ -61,6 +61,18 @@ class core_form_autocomplete_testcase extends basic_testcase {
         $element = new MoodleQuickForm_autocomplete('testel', null, array(), array('multiple'=>'multiple', 'ajax'=>'anything'));
         $submission = array('testel' => array(2, 3));
         $this->assertEquals($element->exportValue($submission), array(2, 3));
+
+        // A select with single value without anything selected.
+        $options = array('1' => 'One', 2 => 'Two');
+        $element = new MoodleQuickForm_autocomplete('testel', null, $options);
+        $submission = array();
+        $this->assertEquals('', $element->exportValue($submission));
+
+        // A select with multiple values without anything selected.
+        $options = array('1' => 'One', 2 => 'Two');
+        $element = new MoodleQuickForm_autocomplete('testel', null, $options, array('multiple' => 'multiple'));
+        $submission = array();
+        $this->assertEquals([], $element->exportValue($submission));
     }
 
 }

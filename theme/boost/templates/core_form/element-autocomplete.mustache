@@ -1,6 +1,9 @@
 {{< core_form/element-template }}
     {{$element}}
         {{^element.frozen}}
+        {{#element.multiple}}
+            <input type="hidden" name="{{element.nameraw}}" value="_qf__force_multiselect_submission">
+        {{/element.multiple}}
         <select class="custom-select {{#error}}is-invalid{{/error}}" name="{{element.name}}"
             id="{{element.id}}"
             {{#element.multiple}}multiple{{/element.multiple}}
