@@ -103,21 +103,19 @@ switch ($action) {
     case 'delete':
         confirm_sesskey();
 
-        $model->delete();
+        if (!$model->is_static()) {
+            $model->delete();
+        }
         redirect($returnurl);
         break;
 
     case 'edit':
         confirm_sesskey();
 
-        if ($model->is_static()) {
-            echo $OUTPUT->header();
-            throw new moodle_exception('errornostaticedit', 'tool_analytics');
-        }
-
         $customdata = array(
             'id' => $model->get_id(),
             'trainedmodel' => $model->is_trained(),
+            'staticmodel' => $model->is_static(),
             'indicators' => $model->get_potential_indicators(),
             'timesplittings' => \core_analytics\manager::get_all_time_splittings(),
             'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors()
@@ -129,14 +127,22 @@ switch ($action) {
 
         } else if ($data = $mform->get_data()) {
 
-            // Converting option names to class names.
-            $indicators = array();
-            foreach ($data->indicators as $indicator) {
-                $indicatorclass = \tool_analytics\output\helper::option_to_class($indicator);
-                $indicators[] = \core_analytics\manager::get_indicator($indicatorclass);
-            }
             $timesplitting = \tool_analytics\output\helper::option_to_class($data->timesplitting);
-            $predictionsprocessor = \tool_analytics\output\helper::option_to_class($data->predictionsprocessor);
+
+            if (!$model->is_static()) {
+                // Converting option names to class names.
+                $indicators = array();
+                foreach ($data->indicators as $indicator) {
+                    $indicatorclass = \tool_analytics\output\helper::option_to_class($indicator);
+                    $indicators[] = \core_analytics\manager::get_indicator($indicatorclass);
+                }
+                $predictionsprocessor = \tool_analytics\output\helper::option_to_class($data->predictionsprocessor);
+            } else {
+                // These fields can not be modified.
+                $indicators = false;
+                $predictionsprocessor = false;
+            }
+
             $model->update($data->enabled, $indicators, $timesplitting, $predictionsprocessor);
             redirect($returnurl);
         }
