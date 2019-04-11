@@ -232,7 +232,7 @@ function profiling_stop() {
     }
 
     // If we only profiled because it was potentially slow then...
-    if ($CFG->profilepotentialslowpage) {
+    if (!empty($CFG->profilepotentialslowpage)) {
         $duration = microtime(true) - $CFG->profilepotentialslowpage;
         if ($duration < $CFG->profilingslow) {
             // Wasn't slow enough.
