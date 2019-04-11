@@ -310,15 +310,15 @@ if ($action === 'delete') {
         $table->attributes['class'] = 'generaltable';
         unset($table->data);
         if ($page->grayout) { // set the color of text
-            $fontstart = "<span class=\"dimmed\">";
-            $fontend = "</font>";
+            $fontstart = html_writer::start_tag('span', array('class' => 'dimmed_text'));
+            $fontend = html_writer::end_tag('span');
             $fontstart2 = $fontstart;
             $fontend2 = $fontend;
         } else {
-            $fontstart = "";
-            $fontend = "";
-            $fontstart2 = "";
-            $fontend2 = "";
+            $fontstart = '';
+            $fontend = '';
+            $fontstart2 = '';
+            $fontend2 = '';
         }
 
         $table->head = array($fontstart2.$page->qtype.": ".format_string($page->title).$fontend2, $fontstart2.get_string("classstats", "lesson").$fontend2);
