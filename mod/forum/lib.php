@@ -86,6 +86,8 @@ define('FORUM_DISCUSSION_UNPINNED', 0);
 function forum_add_instance($forum, $mform = null) {
     global $CFG, $DB;
 
+    require_once($CFG->dirroot.'/mod/forum/locallib.php');
+
     $forum->timemodified = time();
 
     if (empty($forum->assessed)) {
@@ -127,6 +129,7 @@ function forum_add_instance($forum, $mform = null) {
         }
     }
 
+    forum_update_calendar($forum, $forum->coursemodule);
     forum_grade_item_update($forum);
 
     $completiontimeexpected = !empty($forum->completionexpected) ? $forum->completionexpected : null;
@@ -162,7 +165,9 @@ function forum_instance_created($context, $forum) {
  * @return bool success
  */
 function forum_update_instance($forum, $mform) {
-    global $DB, $OUTPUT, $USER;
+    global $CFG, $DB, $OUTPUT, $USER;
+
+    require_once($CFG->dirroot.'/mod/forum/locallib.php');
 
     $forum->timemodified = time();
     $forum->id           = $forum->instance;
@@ -249,6 +254,7 @@ function forum_update_instance($forum, $mform) {
         }
     }
 
+    forum_update_calendar($forum, $forum->coursemodule);
     forum_grade_item_update($forum);
 
     $completiontimeexpected = !empty($forum->completionexpected) ? $forum->completionexpected : null;
@@ -3697,6 +3703,12 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
         $context = context_module::instance($cm->id);
     }
 
+    if (forum_is_cutoff_date_reached($forum)) {
+        if (!has_capability('mod/forum:canoverridecutoff', $context)) {
+            return false;
+        }
+    }
+
     if ($currentgroup === null) {
         $currentgroup = groups_get_activity_group($cm);
     }
@@ -3788,6 +3800,12 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
 
     if (!$context) {
         $context = context_module::instance($cm->id);
+    }
+
+    if (forum_is_cutoff_date_reached($forum)) {
+        if (!has_capability('mod/forum:canoverridecutoff', $context)) {
+            return false;
+        }
     }
 
     // Check whether the discussion is locked.
@@ -6300,6 +6318,46 @@ function mod_forum_inplace_editable($itemtype, $itemid, $newvalue) {
 }
 
 /**
+ * Determine whether the specified forum's cutoff date is reached.
+ *
+ * @param stdClass $forum The forum
+ * @return bool
+ */
+function forum_is_cutoff_date_reached($forum) {
+    $entityfactory = \mod_forum\local\container::get_entity_factory();
+    $coursemoduleinfo = get_fast_modinfo($forum->course);
+    $cminfo = $coursemoduleinfo->instances['forum'][$forum->id];
+    $forumentity = $entityfactory->get_forum_from_stdclass(
+            $forum,
+            context_module::instance($cminfo->id),
+            $cminfo->get_course_module_record(),
+            $cminfo->get_course()
+    );
+
+    return $forumentity->is_cutoff_date_reached();
+}
+
+/**
+ * Determine whether the specified forum's due date is reached.
+ *
+ * @param stdClass $forum The forum
+ * @return bool
+ */
+function forum_is_due_date_reached($forum) {
+    $entityfactory = \mod_forum\local\container::get_entity_factory();
+    $coursemoduleinfo = get_fast_modinfo($forum->course);
+    $cminfo = $coursemoduleinfo->instances['forum'][$forum->id];
+    $forumentity = $entityfactory->get_forum_from_stdclass(
+            $forum,
+            context_module::instance($cminfo->id),
+            $cminfo->get_course_module_record(),
+            $cminfo->get_course()
+    );
+
+    return $forumentity->is_due_date_reached();
+}
+
+/**
  * Determine whether the specified discussion is time-locked.
  *
  * @param   stdClass    $forum          The forum that the discussion belongs to
@@ -6590,4 +6648,99 @@ function forum_user_can_reply_privately(\context_module $context, \stdClass $par
     }
 
     return has_capability('mod/forum:postprivatereply', $context);
+}
+
+/**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The date must be after this date'],
+ *     [1506741172, 'The date must be before this date']
+ * ]
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass $forum The module instance to get the range from
+ * @return array Returns an array with min and max date.
+ */
+function mod_forum_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $forum) {
+    global $CFG;
+
+    require_once($CFG->dirroot . '/mod/forum/locallib.php');
+
+    $mindate = null;
+    $maxdate = null;
+
+    if ($event->eventtype == FORUM_EVENT_TYPE_DUE) {
+        if (!empty($forum->cutoffdate)) {
+            $maxdate = [
+                $forum->cutoffdate,
+                get_string('cutoffdatevalidation', 'forum'),
+            ];
+        }
+    }
+
+    return [$mindate, $maxdate];
+}
+
+/**
+ * This function will update the forum module according to the
+ * event that has been modified.
+ *
+ * It will set the timeclose value of the forum instance
+ * according to the type of event provided.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ * @param stdClass $forum The module instance to get the range from
+ */
+function mod_forum_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $forum) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mod/forum/locallib.php');
+
+    if ($event->eventtype != FORUM_EVENT_TYPE_DUE) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+
+    // Something weird going on. The event is for a different module so
+    // we should ignore it.
+    if ($modulename != 'forum') {
+        return;
+    }
+
+    if ($forum->id != $instanceid) {
+        return;
+    }
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    if ($event->eventtype == FORUM_EVENT_TYPE_DUE) {
+        if ($forum->duedate != $event->timestart) {
+            $forum->duedate = $event->timestart;
+            $forum->timemodified = time();
+            // Persist the instance changes.
+            $DB->update_record('forum', $forum);
+            $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+            $event->trigger();
+        }
+    }
 }

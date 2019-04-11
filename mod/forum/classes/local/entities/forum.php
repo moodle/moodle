@@ -99,6 +99,10 @@ class forum {
     private $displaywordcounts;
     /** @var bool $lockdiscussionafter Timestamp after which discussions should be locked */
     private $lockdiscussionafter;
+    /** @var int $duedate Timestamp that represents the due date for forum posts */
+    private $duedate;
+    /** @var int $cutoffdate Timestamp after which forum posts will no longer be accepted */
+    private $cutoffdate;
 
     /**
      * Constructor
@@ -132,6 +136,8 @@ class forum {
      * @param int $completionposts Completion posts
      * @param bool $displaywordcount Should display word counts in posts
      * @param int $lockdiscussionafter Timestamp after which discussions should be locked
+     * @param int $duedate Timestamp that represents the due date for forum posts
+     * @param int $cutoffdate Timestamp after which forum posts will no longer be accepted
      */
     public function __construct(
         context $context,
@@ -162,7 +168,9 @@ class forum {
         int $completionreplies,
         int $completionposts,
         bool $displaywordcount,
-        int $lockdiscussionafter
+        int $lockdiscussionafter,
+        int $duedate,
+        int $cutoffdate
     ) {
         $this->context = $context;
         $this->coursemodule = $coursemodule;
@@ -193,6 +201,8 @@ class forum {
         $this->completionposts = $completionposts;
         $this->displaywordcount = $displaywordcount;
         $this->lockdiscussionafter = $lockdiscussionafter;
+        $this->duedate = $duedate;
+        $this->cutoffdate = $cutoffdate;
     }
 
     /**
@@ -545,5 +555,67 @@ class forum {
         }
 
         return (($discussion->get_time_modified() + $this->get_lock_discussions_after()) < time());
+    }
+
+    /**
+     * Get the cutoff date.
+     *
+     * @return int
+     */
+    public function get_cutoff_date() : int {
+        return $this->cutoffdate;
+    }
+
+    /**
+     * Does the forum have a cutoff date?
+     *
+     * @return bool
+     */
+    public function has_cutoff_date() : bool {
+        return !empty($this->get_cutoff_date());
+    }
+
+    /**
+     * Is the cutoff date for the forum reached?
+     *
+     * @return bool
+     */
+    public function is_cutoff_date_reached() : bool {
+        if ($this->has_cutoff_date() && ($this->get_cutoff_date() < time())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the due date.
+     *
+     * @return int
+     */
+    public function get_due_date() : int {
+        return $this->duedate;
+    }
+
+    /**
+     * Does the forum have a due date?
+     *
+     * @return bool
+     */
+    public function has_due_date() : bool {
+        return !empty($this->get_due_date());
+    }
+
+    /**
+     * Is the due date for the forum reached?
+     *
+     * @return bool
+     */
+    public function is_due_date_reached() : bool {
+        if ($this->has_due_date() && ($this->get_due_date() < time())) {
+            return true;
+        }
+
+        return false;
     }
 }

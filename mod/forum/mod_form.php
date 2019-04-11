@@ -54,6 +54,16 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addHelpButton('type', 'forumtype', 'forum');
         $mform->setDefault('type', 'general');
 
+        $mform->addElement('header', 'availability', get_string('availability', 'forum'));
+
+        $name = get_string('duedate', 'forum');
+        $mform->addElement('date_time_selector', 'duedate', $name, array('optional' => true));
+        $mform->addHelpButton('duedate', 'duedate', 'forum');
+
+        $name = get_string('cutoffdate', 'forum');
+        $mform->addElement('date_time_selector', 'cutoffdate', $name, array('optional' => true));
+        $mform->addHelpButton('cutoffdate', 'cutoffdate', 'forum');
+
         // Attachments and word count.
         $mform->addElement('header', 'attachmentswordcounthdr', get_string('attachmentswordcount', 'forum'));
 
@@ -227,6 +237,18 @@ class mod_forum_mod_form extends moodleform_mod {
             $type->setPersistantFreeze(true);
         }
 
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if ($data['duedate'] && $data['cutoffdate']) {
+            if ($data['duedate'] > $data['cutoffdate']) {
+                $errors['cutoffdate'] = get_string('cutoffdatevalidation', 'forum');
+            }
+        }
+
+        return $errors;
     }
 
     function data_preprocessing(&$default_values) {

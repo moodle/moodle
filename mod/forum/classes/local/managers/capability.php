@@ -110,6 +110,12 @@ class capability {
             return false;
         }
 
+        if ($this->forum->is_cutoff_date_reached()) {
+            if (!has_capability('mod/forum:canoverridecutoff', $this->get_context())) {
+                return false;
+            }
+        }
+
         switch ($this->forum->get_type()) {
             case 'news':
                 $capability = 'mod/forum:addnews';

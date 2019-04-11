@@ -62,6 +62,14 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
 
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
+        if (!isset($data->duedate)) {
+            $data->duedate = 0;
+        }
+        $data->duedate = $this->apply_date_offset($data->duedate);
+        if (!isset($data->cutoffdate)) {
+            $data->cutoffdate = 0;
+        }
+        $data->cutoffdate = $this->apply_date_offset($data->cutoffdate);
         $data->assesstimestart = $this->apply_date_offset($data->assesstimestart);
         $data->assesstimefinish = $this->apply_date_offset($data->assesstimefinish);
         if ($data->scale < 0) { // scale found, get mapping
