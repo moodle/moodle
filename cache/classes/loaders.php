@@ -1284,6 +1284,13 @@ class cache implements cache_loader {
             return -1;
         }
     }
+
+    /**
+     * Subclasses may support purging cache of all data belonging to the
+     * current user.
+     */
+    public function purge_current_user() {
+    }
 }
 
 /**
