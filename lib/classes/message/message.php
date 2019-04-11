@@ -122,6 +122,9 @@ class message {
     /** @var  int The time the message was created.*/
     private $timecreated;
 
+     /** @var boolean Mark trust content. */
+    private $fullmessagetrust;
+
     /** @var array a list of properties that is allowed for each message. */
     private $properties = array(
         'courseid',
@@ -144,7 +147,8 @@ class message {
         'savedmessageid',
         'attachment',
         'attachname',
-        'timecreated'
+        'timecreated',
+        'fullmessagetrust'
         );
 
     /** @var array property to store any additional message processor specific content */

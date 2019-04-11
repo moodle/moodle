@@ -2973,5 +2973,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019040600.04);
     }
 
+    if ($oldversion < 2019041000.02) {
+
+        // Define field fullmessagetrust to be added to messages.
+        $table = new xmldb_table('messages');
+        $field = new xmldb_field('fullmessagetrust', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'timecreated');
+
+        // Conditionally launch add field fullmessagetrust.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019041000.02);
+    }
+
     return true;
 }

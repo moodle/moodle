@@ -58,7 +58,8 @@ class helper {
         $hash = self::get_conversation_hash([$userid, $otheruserid]);
 
         $sql = "SELECT m.id, m.useridfrom, m.subject, m.fullmessage, m.fullmessagehtml,
-                       m.fullmessageformat, m.smallmessage, m.timecreated, muaread.timecreated AS timeread
+                       m.fullmessageformat, m.fullmessagetrust, m.smallmessage, m.timecreated,
+                       mc.contextid, muaread.timecreated AS timeread
                   FROM {message_conversations} mc
             INNER JOIN {messages} m
                     ON m.conversationid = mc.id
@@ -131,7 +132,8 @@ class helper {
         global $DB;
 
         $sql = "SELECT m.id, m.useridfrom, m.subject, m.fullmessage, m.fullmessagehtml,
-                       m.fullmessageformat, m.smallmessage, m.timecreated, muaread.timecreated AS timeread
+                       m.fullmessageformat, m.fullmessagetrust, m.smallmessage, m.timecreated,
+                       mc.contextid, muaread.timecreated AS timeread
                   FROM {message_conversations} mc
             INNER JOIN {messages} m
                     ON m.conversationid = mc.id

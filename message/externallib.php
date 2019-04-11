@@ -94,7 +94,8 @@ class core_message_external extends external_api {
                 $message['textformat']);
             $createdmessage->text = message_format_message_text((object) [
                 'smallmessage' => $createdmessage->text,
-                'fullmessageformat' => external_validate_format($message['textformat'])
+                'fullmessageformat' => external_validate_format($message['textformat']),
+                'fullmessagetrust' => $createdmessage->fullmessagetrust
             ]);
             $messages[] = $createdmessage;
         }
@@ -203,10 +204,6 @@ class core_message_external extends external_api {
             }
             if ($success) {
                 $resultmsg['msgid'] = $success;
-                $resultmsg['text'] = message_format_message_text((object) [
-                    'smallmessage' => $message['text'],
-                    'fullmessageformat' => external_validate_format($message['textformat'])
-                ]);
                 $resultmsg['timecreated'] = time();
                 $messageids[] = $success;
             } else {
@@ -221,11 +218,21 @@ class core_message_external extends external_api {
         }
 
         if (!empty($messageids)) {
-            $messagerecords = $DB->get_records_list('messages', 'id', $messageids, '', 'id, conversationid');
+            $messagerecords = $DB->get_records_list(
+                'messages',
+                'id',
+                $messageids,
+                '',
+                'id, conversationid, smallmessage, fullmessageformat, fullmessagetrust');
             $resultmessages = array_map(function($resultmessage) use ($messagerecords, $USER) {
                 $id = $resultmessage['msgid'];
                 $resultmessage['conversationid'] = isset($messagerecords[$id]) ? $messagerecords[$id]->conversationid : null;
                 $resultmessage['useridfrom'] = $USER->id;
+                $resultmessage['text'] = message_format_message_text((object) [
+                    'smallmessage' => $messagerecords[$id]->smallmessage,
+                    'fullmessageformat' => external_validate_format($messagerecords[$id]->fullmessageformat),
+                    'fullmessagetrust' => $messagerecords[$id]->fullmessagetrust
+                ]);
                 return $resultmessage;
             }, $resultmessages);
         }

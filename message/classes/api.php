@@ -549,8 +549,8 @@ class api {
         $typesql = !is_null($type) ? " AND mc.type = :convtype " : "";
 
         $sql = "SELECT m.id as messageid, mc.id as id, mc.name as conversationname, mc.type as conversationtype, m.useridfrom,
-                       m.smallmessage, m.fullmessage, m.fullmessageformat, m.fullmessagehtml, m.timecreated, mc.component,
-                       mc.itemtype, mc.itemid, mc.contextid, mca.action as ismuted
+                       m.smallmessage, m.fullmessage, m.fullmessageformat, m.fullmessagetrust, m.fullmessagehtml, m.timecreated,
+                       mc.component, mc.itemtype, mc.itemid, mc.contextid, mca.action as ismuted
                   FROM {message_conversations} mc
             INNER JOIN {message_conversation_members} mcm
                     ON (mcm.conversationid = mc.id AND mcm.userid = :userid3)
@@ -1917,12 +1917,14 @@ class api {
         $eventdata->notification    = 0;
         $messageid = message_send($eventdata);
 
-        $messagerecord = $DB->get_record('messages', ['id' => $messageid], 'id, useridfrom, fullmessage, timecreated');
+        $messagerecord = $DB->get_record('messages', ['id' => $messageid], 'id, useridfrom, fullmessage,
+                timecreated, fullmessagetrust');
         $message = (object) [
             'id' => $messagerecord->id,
             'useridfrom' => $messagerecord->useridfrom,
             'text' => $messagerecord->fullmessage,
-            'timecreated' => $messagerecord->timecreated
+            'timecreated' => $messagerecord->timecreated,
+            'fullmessagetrust' => $messagerecord->fullmessagetrust
         ];
         return $message;
     }
