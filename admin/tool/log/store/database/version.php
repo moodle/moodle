@@ -17,7 +17,7 @@
 /**
  * External database log store.
  *
- * @package    logstore_standard
+ * @package    logstore_database
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

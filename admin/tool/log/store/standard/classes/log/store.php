@@ -113,25 +113,6 @@ class store implements \tool_log\log\writer, \core\log\sql_internal_table_reader
     }
 
     /**
-     * Function decodes the other field into an array using either PHP serialisation or JSON.
-     *
-     * Note that this does not rely on the config setting, it supports both formats, so you can
-     * use it for data before/after making a change to the config setting.
-     *
-     * The return value is usually an array but it can also be null or a boolean or something.
-     *
-     * @param string $other Other value
-     * @return mixed Decoded value
-     */
-    public static function decode_other(string $other) {
-        if ($other === 'N;' || preg_match('~^.:~', $other)) {
-            return unserialize($other);
-        } else {
-            return json_decode($other, true);
-        }
-    }
-
-    /**
      * Returns an event from the log data.
      *
      * @param stdClass $data Log data

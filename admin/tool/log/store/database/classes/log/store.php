@@ -226,7 +226,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         $extra = array('origin' => $data->origin, 'ip' => $data->ip, 'realuserid' => $data->realuserid);
         $data = (array)$data;
         $id = $data['id'];
-        $data['other'] = \logstore_standard\log\store::decode_other($data['other']);
+        $data['other'] = self::decode_other($data['other']);
         if ($data['other'] === false) {
             $data['other'] = array();
         }
