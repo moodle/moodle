@@ -152,7 +152,7 @@ class file_lock_factory implements lock_factory {
             // Will block on windows. So sad.
             $wouldblock = false;
             $locked = flock($filehandle, LOCK_EX | LOCK_NB, $wouldblock);
-            if (!$locked && $wouldblock) {
+            if (!$locked && $wouldblock && $timeout > 0) {
                 usleep(rand(10000, 250000)); // Sleep between 10 and 250 milliseconds.
             }
             // Try until the giveup time.
