@@ -474,6 +474,7 @@ $string['privacy:metadata:overrides:password'] = 'The password to access the les
 $string['privacy:metadata:overrides'] = 'A record of overrides per lesson';
 $string['privacy:metadata:userpref:lessonview'] = 'The preferred display mode when editing lessons';
 $string['privacy:path:essayresponses'] = 'Essay responses';
+$string['privacy:path:essayanswers'] = 'Essay answers';
 $string['privacy:path:pages'] = 'Pages';
 $string['processerror'] = 'Error occurred during processing!';
 $string['progressbar'] = 'Progress bar';

@@ -445,6 +445,7 @@ class provider implements
 
         $fs = get_file_storage();
         $fs->delete_area_files($context->id, 'mod_lesson', 'essay_responses');
+        $fs->delete_area_files($context->id, 'mod_lesson', 'essay_answers');
     }
 
     /**
@@ -485,6 +486,7 @@ class provider implements
             $cmid = $lessonidstocmids[$record->lessonid];
             $context = context_module::instance($cmid);
             $fs->delete_area_files($context->id, 'mod_lesson', 'essay_responses', $record->id);
+            $fs->delete_area_files($context->id, 'mod_lesson', 'essay_answers', $record->id);
         }
         $recordset->close();
 
@@ -522,6 +524,7 @@ class provider implements
         $recordset = $DB->get_recordset_select('lesson_attempts', $sql, $params, '', 'id, lessonid');
         foreach ($recordset as $record) {
             $fs->delete_area_files($context->id, 'mod_lesson', 'essay_responses', $record->id);
+            $fs->delete_area_files($context->id, 'mod_lesson', 'essay_answers', $record->id);
         }
         $recordset->close();
 
@@ -616,7 +619,21 @@ class provider implements
             if ($data->page_qtype == LESSON_PAGE_ESSAY) {
                 // Essay questions serialise data in the answer field.
                 $info = \lesson_page_type_essay::extract_useranswer($answer);
-                $answer = format_text($info->answer, $info->answerformat, $options);
+                $answerfilespath = [get_string('privacy:path:essayanswers', 'mod_lesson'), $data->attempt_id];
+                $answer = format_text(
+                    writer::with_context($context)->rewrite_pluginfile_urls(
+                        $answerfilespath,
+                        'mod_lesson',
+                        'essay_answers',
+                        $data->attempt_id,
+                        $info->answer
+                    ),
+                    $info->answerformat,
+                    $options
+                );
+                writer::with_context($context)->export_area_files($answerfilespath, 'mod_lesson',
+                    'essay_answers', $data->page_id);
+
                 if ($info->response !== null) {
                     // We export the files in a subfolder to avoid conflicting files, and tell the user
                     // where those files were exported. That is because we are not using a subfolder for
@@ -636,6 +653,7 @@ class provider implements
                     );
                     writer::with_context($context)->export_area_files($responsefilespath, 'mod_lesson',
                         'essay_responses', $data->page_id);
+
                 }
 
             } else if ($data->page_qtype == LESSON_PAGE_MULTICHOICE && $data->page_qoption) {

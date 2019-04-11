@@ -197,6 +197,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $answer->annotate_files('mod_lesson', 'page_answers', 'id');
         $answer->annotate_files('mod_lesson', 'page_responses', 'id');
         $attempt->annotate_files('mod_lesson', 'essay_responses', 'id');
+        $attempt->annotate_files('mod_lesson', 'essay_answers', 'id');
 
         // Prepare and return the structure we have just created for the lesson module.
         return $this->prepare_activity_structure($lesson);

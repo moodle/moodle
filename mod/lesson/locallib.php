@@ -3923,6 +3923,7 @@ abstract class lesson_page extends lesson_base {
         if ($attempts = $DB->get_records('lesson_attempts', array("pageid" => $this->properties->id))) {
             foreach ($attempts as $attempt) {
                 $fs->delete_area_files($context->id, 'mod_lesson', 'essay_responses', $attempt->id);
+                $fs->delete_area_files($context->id, 'mod_lesson', 'essay_answers', $attempt->id);
             }
         }
 

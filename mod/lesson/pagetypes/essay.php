@@ -91,7 +91,7 @@ class lesson_page_type_essay extends lesson_page {
         }
 
         $data = file_prepare_standard_editor($data, 'answer', $options['editoroptions'],
-            $context, 'mod_lesson', 'essay_responses');
+            $context, 'mod_lesson', 'essay_answers');
         $mform->set_data($data);
 
         // Trigger an event question viewed.
@@ -147,7 +147,7 @@ class lesson_page_type_essay extends lesson_page {
             );
 
             $formdata = file_postupdate_standard_editor($formdata, 'answer', $editoroptions,
-                $editoroptions['context'], 'mod_lesson', 'essay_responses', $attempt->id);
+                $editoroptions['context'], 'mod_lesson', 'essay_answers', $attempt->id);
 
             // Update the student response to have the modified link.
             $useranswer = unserialize($attempt->useranswer);
@@ -174,7 +174,7 @@ class lesson_page_type_essay extends lesson_page {
      */
     public function format_answer($answer, $context, $answerformat, $options = []) {
         $answer = file_rewrite_pluginfile_urls($answer, 'pluginfile.php', $context->id,
-            'mod_lesson', 'essay_responses', $options->attemptid);
+            'mod_lesson', 'essay_answers', $options->attemptid);
         return parent::format_answer($answer, $context, $answerformat, $options);
     }
 
@@ -303,7 +303,7 @@ class lesson_page_type_essay extends lesson_page {
             if ($useranswer != null) {
                 $essayinfo = self::extract_useranswer($useranswer->useranswer);
                 $essayinfo->answer = file_rewrite_pluginfile_urls($essayinfo->answer, 'pluginfile.php',
-                    $context->id, 'mod_lesson', 'essay_responses', $useranswer->id);
+                    $context->id, 'mod_lesson', 'essay_answers', $useranswer->id);
 
                 if ($essayinfo->response == null) {
                     $answerdata->response = get_string("nocommentyet", "lesson");
@@ -426,7 +426,7 @@ class lesson_display_answer_form_essay extends moodleform {
             $mform->setType('answer', PARAM_RAW);
             $mform->addElement('html', $OUTPUT->container(get_string('youranswer', 'lesson'), 'youranswer'));
             $useranswer = file_rewrite_pluginfile_urls($useranswer, 'pluginfile.php', $editoroptions['context']->id,
-                'mod_lesson', 'essay_responses', $this->_customdata['attemptid']);
+                'mod_lesson', 'essay_answers', $this->_customdata['attemptid']);
             $mform->addElement('html', $OUTPUT->container($useranswer, 'reviewessay'));
             $this->add_action_buttons(null, get_string("nextpage", "lesson"));
         } else {
