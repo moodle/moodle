@@ -494,6 +494,10 @@ class core_course_external extends external_api {
                                                   'userid' => new external_value(PARAM_INT, 'User who added this content to moodle'),
                                                   'author' => new external_value(PARAM_TEXT, 'Content owner'),
                                                   'license' => new external_value(PARAM_TEXT, 'Content license'),
+                                                  'tags' => new external_multiple_structure(
+                                                       \core_tag\external\tag_item_exporter::get_read_structure(), 'Tags',
+                                                            VALUE_OPTIONAL
+                                                   ),
                                               )
                                           ), VALUE_DEFAULT, array()
                                       ),

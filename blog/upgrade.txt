@@ -1,3 +1,9 @@
+This files describes API changes in /blog/* ,
+information provided here is intended especially for developers.
+
+=== 3.7 ===
+  * External function get_entries now returns an additional field "tags" returning the post tags.
+
 === 2.7 ===
 
 * blog_entry->add_associations() does not accept any params.

@@ -1525,6 +1525,7 @@ $functions = array(
         'description' => 'Gets tag index page for one tag and one tag area',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_tag_get_tags' => array(
         'classname' => 'core_tag_external',
@@ -1539,6 +1540,34 @@ $functions = array(
         'description' => 'Updates tags',
         'type' => 'write',
         'ajax' => true,
+    ),
+    'core_tag_get_tagindex_per_area' => array(
+        'classname' => 'core_tag_external',
+        'methodname' => 'get_tagindex_per_area',
+        'description' => 'Gets tag index page per different areas.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_tag_get_tag_areas' => array(
+        'classname' => 'core_tag_external',
+        'methodname' => 'get_tag_areas',
+        'description' => 'Retrieves existing tag areas.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_tag_get_tag_collections' => array(
+        'classname' => 'core_tag_external',
+        'methodname' => 'get_tag_collections',
+        'description' => 'Retrieves existing tag collections.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_tag_get_tag_cloud' => array(
+        'classname' => 'core_tag_external',
+        'methodname' => 'get_tag_cloud',
+        'description' => 'Retrieves a tag cloud for the given collection and/or query search.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_update_inplace_editable' => array(
         'classname' => 'core_external',

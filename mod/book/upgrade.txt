@@ -1,5 +1,9 @@
 This files describes API changes in the book code.
 
+=== 3.7 ===
+
+* book_export_contents() callback now returns tags information for every chapter.
+
 === 3.1 ===
 
 * The following functions, previously used (exclusively) by upgrade steps are not available

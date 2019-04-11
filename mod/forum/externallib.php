@@ -421,6 +421,8 @@ class mod_forum_external extends external_api {
             if (!empty($messageinlinefiles)) {
                 $post->messageinlinefiles = $messageinlinefiles;
             }
+            // Post tags.
+            $post->tags = \core_tag\external\util::get_item_tags('mod_forum', 'forum_posts', $post->id);
 
             $posts[] = $post;
         }
@@ -467,6 +469,9 @@ class mod_forum_external extends external_api {
                                 'userpictureurl' => new external_value(PARAM_URL, 'Post author picture.', VALUE_OPTIONAL),
                                 'deleted' => new external_value(PARAM_BOOL, 'This post has been removed.'),
                                 'isprivatereply' => new external_value(PARAM_BOOL, 'The post is a private reply'),
+                                'tags' => new external_multiple_structure(
+                                    \core_tag\external\tag_item_exporter::get_read_structure(), 'Tags', VALUE_OPTIONAL
+                                ),
                             ), 'post'
                         )
                     ),
