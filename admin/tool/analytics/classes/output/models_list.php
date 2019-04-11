@@ -204,13 +204,14 @@ class models_list implements \renderable, \templatable {
 
                 $actionid = 'evaluate-' . $model->get_id();
 
+                $modeltimesplittingmethods = $timesplittingmethods;
                 // Include the current time-splitting method as the default selection method the model already have one.
                 if ($model->get_model_obj()->timesplitting) {
                     $currenttimesplitting = ['id' => 'current', 'text' => get_string('currenttimesplitting', 'tool_analytics')];
-                    array_unshift($timesplittingmethods, $currenttimesplitting);
+                    array_unshift($modeltimesplittingmethods, $currenttimesplitting);
                 }
 
-                $evaluateparams = [$actionid, $trainedonlyexternally, $timesplittingmethods];
+                $evaluateparams = [$actionid, $trainedonlyexternally, $modeltimesplittingmethods];
                 $PAGE->requires->js_call_amd('tool_analytics/model', 'selectEvaluationOptions', $evaluateparams);
                 $urlparams['action'] = 'evaluate';
                 $url = new \moodle_url('model.php', $urlparams);
