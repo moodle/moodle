@@ -56,6 +56,9 @@ class discussion_summaries extends exporter {
     /** @var array The latest post in each discussion */
     private $latestpostids;
 
+    /** @var int[] The context ids for the first and latest post authors (indexed by author id) */
+    private $postauthorcontextids;
+
     /**
      * Constructor.
      *
@@ -65,6 +68,7 @@ class discussion_summaries extends exporter {
      * @param int[] $discussionreplycount Discussion reply counts indexed by dicussion id
      * @param int[] $discussionunreadcount Discussion unread counts indexed by dicussion id
      * @param int[] $latestpostids List of latest post ids indexed by discussion id
+     * @param int[] $postauthorcontextids The context ids for the first and latest post authors (indexed by author id)
      * @param array $related The related
      */
     public function __construct(
@@ -74,6 +78,7 @@ class discussion_summaries extends exporter {
         array $discussionreplycount,
         array $discussionunreadcount,
         array $latestpostids,
+        array $postauthorcontextids,
         array $related = []
     ) {
         $this->discussions = $discussions;
@@ -82,6 +87,7 @@ class discussion_summaries extends exporter {
         $this->discussionreplycount = $discussionreplycount;
         $this->discussionunreadcount = $discussionunreadcount;
         $this->latestpostids = $latestpostids;
+        $this->postauthorcontextids = $postauthorcontextids;
         return parent::__construct([], $related);
     }
 
@@ -126,6 +132,8 @@ class discussion_summaries extends exporter {
                     $replycount,
                     $unreadcount,
                     $latestpostid,
+                    $this->postauthorcontextids[$discussion->get_first_post_author()->get_id()],
+                    $this->postauthorcontextids[$discussion->get_latest_post_author()->get_id()],
                     $related
                 );
             $exporteddiscussions[] = $exporter->export($output);

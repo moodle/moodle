@@ -333,6 +333,7 @@ class post extends exporter {
         $forum = $this->related['forum'];
         $discussion = $this->related['discussion'];
         $author = $this->related['author'];
+        $authorcontextid = $this->related['authorcontextid'];
         $user = $this->related['user'];
         $readreceiptcollection = $this->related['readreceiptcollection'];
         $rating = $this->related['rating'];
@@ -368,7 +369,13 @@ class post extends exporter {
         $markasunreadurl = $cancontrolreadstatus ? $urlfactory->get_mark_post_as_unread_url_from_post($post) : null;
         $discussurl = $canview ? $urlfactory->get_discussion_view_url_from_post($post) : null;
 
-        $authorexporter = new author_exporter($author, $authorgroups, ($canview && !$isdeleted), $this->related);
+        $authorexporter = new author_exporter(
+            $author,
+            $authorcontextid,
+            $authorgroups,
+            ($canview && !$isdeleted),
+            $this->related
+        );
         $exportedauthor = $authorexporter->export($output);
         // Only bother loading the content if the user can see it.
         $loadcontent = $canview && !$isdeleted;
@@ -448,6 +455,7 @@ class post extends exporter {
             'forum' => 'mod_forum\local\entities\forum',
             'discussion' => 'mod_forum\local\entities\discussion',
             'author' => 'mod_forum\local\entities\author',
+            'authorcontextid' => 'int?',
             'user' => 'stdClass',
             'context' => 'context',
             'authorgroups' => 'stdClass[]',

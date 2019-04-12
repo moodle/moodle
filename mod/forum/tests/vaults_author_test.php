@@ -46,4 +46,38 @@ class mod_forum_vaults_author_testcase extends advanced_testcase {
 
         $this->assertEquals($user->id, $author->get_id());
     }
+
+    /**
+     * Test get_context_ids_for_author_ids.
+     */
+    public function test_get_context_ids_for_author_ids() {
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $userid1 = $user1->id;
+        $userid2 = $user2->id;
+        $userid3 = $user3->id;
+        $fakeuserid = $user3->id + 1000;
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $authorvault = $vaultfactory->get_author_vault();
+        $user1context = context_user::instance($user1->id);
+        $user2context = context_user::instance($user2->id);
+        $user3context = context_user::instance($user3->id);
+        $user1contextid = $user1context->id;
+        $user2contextid = $user2context->id;
+        $user3contextid = $user3context->id;
+        $fakeusercontextid = null;
+        $userids = [$userid1, $userid2, $userid3, $fakeuserid];
+
+        $expected = [
+            $userid1 => $user1contextid,
+            $userid2 => $user2contextid,
+            $userid3 => $user3contextid,
+            $fakeuserid => $fakeusercontextid
+        ];
+
+        $this->assertEquals($expected, $authorvault->get_context_ids_for_author_ids($userids));
+    }
 }

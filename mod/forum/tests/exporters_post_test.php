@@ -118,6 +118,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
         $discussion = $entityfactory->get_discussion_from_stdclass($discussion);
         $post = $entityfactory->get_post_from_stdclass($post);
         $author = $entityfactory->get_author_from_stdclass($user);
+        $authorcontext = context_user::instance($author->get_id());
 
         $exporter = new post_exporter($post, [
             'legacydatamapperfactory' => \mod_forum\local\container::get_legacy_data_mapper_factory(),
@@ -127,6 +128,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
             'forum' => $forum,
             'discussion' => $discussion,
             'author' => $author,
+            'authorcontextid' => $authorcontext->id,
             'user' => $user,
             'context' => $context,
             'authorgroups' => [],
@@ -246,6 +248,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
         $discussion = $entityfactory->get_discussion_from_stdclass($discussion);
         $post = $entityfactory->get_post_from_stdclass($post);
         $author = $entityfactory->get_author_from_stdclass($user);
+        $authorcontext = context_user::instance($author->get_id());
 
         $exporter = new post_exporter($post, [
             'legacydatamapperfactory' => \mod_forum\local\container::get_legacy_data_mapper_factory(),
@@ -255,6 +258,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
             'forum' => $forum,
             'discussion' => $discussion,
             'author' => $author,
+            'authorcontextid' => $authorcontext->id,
             'user' => $user,
             'context' => $context,
             'authorgroups' => [],
@@ -352,6 +356,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
         $discussion = $entityfactory->get_discussion_from_stdclass($discussion);
         $post = $entityfactory->get_post_from_stdclass($post);
         $author = $entityfactory->get_author_from_stdclass($user);
+        $authorcontext = context_user::instance($author->get_id());
 
         $exporter = new post_exporter($post, [
             'legacydatamapperfactory' => \mod_forum\local\container::get_legacy_data_mapper_factory(),
@@ -361,6 +366,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
             'forum' => $forum,
             'discussion' => $discussion,
             'author' => $author,
+            'authorcontextid' => $authorcontext->id,
             'user' => $user,
             'context' => $context,
             'authorgroups' => [],

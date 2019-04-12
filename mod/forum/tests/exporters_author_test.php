@@ -60,7 +60,7 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
             'test@example.com'
         );
 
-        $exporter = new author_exporter($author, [], true, [
+        $exporter = new author_exporter($author, 1, [], true, [
             'urlfactory' => \mod_forum\local\container::get_url_factory(),
             'context' => $context
         ]);
@@ -100,7 +100,7 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
 
         $group = $datagenerator->create_group(['courseid' => $course->id]);
 
-        $exporter = new author_exporter($author, [$group], true, [
+        $exporter = new author_exporter($author, 1, [$group], true, [
             'urlfactory' => \mod_forum\local\container::get_url_factory(),
             'context' => $context
         ]);
@@ -137,7 +137,7 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
 
         $group = $datagenerator->create_group(['courseid' => $course->id]);
 
-        $exporter = new author_exporter($author, [$group], false, [
+        $exporter = new author_exporter($author, 1, [$group], false, [
             'urlfactory' => \mod_forum\local\container::get_url_factory(),
             'context' => $context
         ]);
