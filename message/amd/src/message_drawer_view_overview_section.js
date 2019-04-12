@@ -158,6 +158,26 @@ function(
     };
 
     /**
+     * Reformat the conversations to a common standard because this is linked directly to the ajax response and via
+     * an event publish which operate on the same fields but in a different format
+     * @param conversations
+     */
+    var formatConversationsForRender = function(conversations) {
+        // Convert the conversation to the standard stored and then cache the conversation.
+        return conversations.map(function(conversation) {
+            return Object.keys(conversation).reduce(function(carry, key){
+                if ($.isArray(conversation[key])) {
+                    carry[key.toLowerCase()] = formatConversationsForRender(conversation[key]);
+                } else {
+                    carry[key.toLowerCase()] = conversation[key];
+                }
+
+                return carry;
+            }, {});
+        }, []);
+    };
+
+    /**
      * Render the messages in the overview page.
      *
      * @param {Object} contentContainer Conversations content container.
@@ -165,7 +185,8 @@ function(
      * @param {Number} userId Logged in user id.
      * @return {Object} jQuery promise.
      */
-    var render = function(contentContainer, conversations, userId) {
+    var render = function(conversations, userId) {
+        conversations = formatConversationsForRender(conversations);
         var formattedConversations = conversations.map(function(conversation) {
 
             var lastMessage = conversation.messages.length ? conversation.messages[conversation.messages.length - 1] : null;
@@ -207,12 +228,7 @@ function(
             return formattedConversation;
         });
 
-        return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: formattedConversations})
-            .then(function(html) {
-                contentContainer.append(html);
-                return html;
-            })
-            .catch(Notification.exception);
+        return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: formattedConversations});
     };
 
     /**
@@ -360,51 +376,6 @@ function(
     };
 
     /**
-     * Update the last message from / to a contact.
-     *
-     * @param  {Object} element Conversation element.
-     * @param  {Object} conversation The conversation.
-     * @return {Object} jQuery promise
-     */
-    var updateLastMessage = function(element, conversation) {
-        var message = conversation.messages[conversation.messages.length - 1];
-        var senderString = '';
-        var senderStringRequest;
-        if (message.fromLoggedInUser) {
-            senderStringRequest = {key: 'you', component: 'core_message'};
-        } else {
-            senderStringRequest = {key: 'sender', component: 'core_message', param: message.userFrom.fullname};
-        }
-
-        var stringRequests = [
-            senderStringRequest,
-            {key: 'strftimetime24', component: 'core_langconfig'},
-        ];
-        return Str.get_strings(stringRequests)
-            .then(function(strings) {
-                senderString = strings[0];
-                return UserDate.get([{timestamp: message.timeCreated, format: strings[1]}]);
-            })
-            .then(function(dates) {
-                return dates[0];
-            })
-            .then(function(dateString) {
-                element.find(SELECTORS.LAST_MESSAGE_DATE).text(dateString).removeClass('hidden');
-
-                // No need to show sender string for private conversations and where the last message didn't come from you.
-                if (!message.fromLoggedInUser &&
-                        conversation.type === MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
-                    senderString = '';
-                }
-
-                // Now load the last message.
-                var lastMessage = senderString + " <span class='text-muted'>" + $(message.text).text() + "</span>";
-
-                return element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
-            });
-    };
-
-    /**
      * Create an render new conversation element in the list of conversations.
      *
      * @param  {Object} root Overview messages container element.
@@ -428,6 +399,7 @@ function(
 
         if (lastMessage) {
             text = $(lastMessage.text).text() || lastMessage.text;
+            conversation.messages[messageCount - 1].useridfrom = lastMessage.userFrom.id;
         }
 
         var formattedConversation = {
@@ -440,8 +412,8 @@ function(
             imageurl: conversation.imageUrl,
         };
 
-        // Cache the conversation.
-        loadedConversationsById[conversation.id] = conversation;
+        // Convert the conversation to the standard stored and then cache the conversation.
+        loadedConversationsById[conversation.id] = formatConversationsForRender([conversation])[0];
 
         return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: [formattedConversation]})
             .then(function(html) {
@@ -505,7 +477,12 @@ function(
 
         root.on('show.bs.collapse', function() {
             setExpanded(root);
-            LazyLoadList.show(listRoot, loadCallback, render);
+            LazyLoadList.show(listRoot, loadCallback, function(contentContainer, conversations, userId) {
+                return render(conversations, userId).then(function(html) {
+                    contentContainer.append(html);
+                    return html;
+                });
+            });
         });
 
         root.on('hidden.bs.collapse', function() {
@@ -538,7 +515,14 @@ function(
             var conversationId = conversation.id;
             var element = getConversationElement(root, conversationId);
             if (element.length) {
-                updateLastMessage(element, conversation);
+                var contentContainer = LazyLoadList.getContentContainer(root);
+                render([conversation], conversation.loggedInUserId)
+                    .then(function(html) {
+                            contentContainer.prepend(html);
+                            element.remove();
+                            return html;
+                        })
+                    .catch(Notification.exception);
             } else {
                 createNewConversation(root, conversation);
             }
@@ -546,6 +530,7 @@ function(
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_DELETED, function(conversationId) {
             var conversationElement = getConversationElement(root, conversationId);
+            delete loadedConversationsById[conversationId];
             if (conversationElement.length) {
                 deleteConversation(root, conversationElement);
             }
@@ -618,7 +603,12 @@ function(
             if (isVisible(root)) {
                 setExpanded(root);
                 var listRoot = LazyLoadList.getRoot(root);
-                LazyLoadList.show(listRoot, loadCallback, render);
+                LazyLoadList.show(listRoot, loadCallback, function(contentContainer, conversations, userId) {
+                    return render(conversations, userId).then(function(html) {
+                        contentContainer.append(html);
+                        return html;
+                    });
+                });
             }
 
             // This is given to us by the calling code because the total counts for all sections
