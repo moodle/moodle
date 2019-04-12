@@ -391,4 +391,13 @@ $definitions = array(
         'simplekeys' => true,
         'simpledata' => true,
     ),
+
+    // Cache the list of portfolio instances for the logged in user
+    // in the portfolio_add_button constructor to avoid loading the
+    // same data multiple times.
+    'portfolio_add_button_portfolio_instances' => [
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+        'staticacceleration' => true
+    ],
 );
