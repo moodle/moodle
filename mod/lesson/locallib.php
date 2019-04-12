@@ -4141,6 +4141,16 @@ abstract class lesson_page extends lesson_base {
                         // Increase the number of attempts made.
                         $nattempts++;
                     }
+                } else {
+                    // When reviewing the lesson, the existing attemptid is also needed for the filearea options.
+                    $params = [
+                        'lessonid' => $attempt->lessonid,
+                        'pageid' => $attempt->pageid,
+                        'userid' => $attempt->userid,
+                        'answerid' => $attempt->answerid,
+                        'retry' => $attempt->retry
+                    ];
+                    $attempt->id = $DB->get_field('lesson_attempts', 'id', $params);
                 }
                 // "number of attempts remaining" message if $this->lesson->maxattempts > 1
                 // displaying of message(s) is at the end of page for more ergonomic display
