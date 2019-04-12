@@ -100,7 +100,7 @@ foreach ($lessons as $lesson) {
     } else if ($deadline > $timenow) {
         $due = userdate($deadline);
     } else {
-        $due = html_writer::tag('span', userdate($deadline), array('class' => '.text-danger'));
+        $due = html_writer::tag('span', userdate($deadline), array('class' => 'text-danger'));
     }
 
     if ($usesections) {
