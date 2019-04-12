@@ -47,9 +47,6 @@ class structure {
      */
     protected $questions = array();
 
-    /** @var \stdClass[] quiz_slots.id => the quiz_slots rows for this quiz, agumented by sectionid. */
-    protected $slots = array();
-
     /** @var \stdClass[] quiz_slots.slot => the quiz_slots rows for this quiz, agumented by sectionid. */
     protected $slotsinorder = array();
 
@@ -314,7 +311,7 @@ class structure {
      * @return \stdClass[] the slots in this quiz.
      */
     public function get_slots() {
-        return $this->slots;
+        return array_column($this->slotsinorder, null, 'id');
     }
 
     /**
@@ -409,12 +406,16 @@ class structure {
      * Get a slot by it's id. Throws an exception if it is missing.
      * @param int $slotid the slot id.
      * @return \stdClass the requested quiz_slots row.
+     * @throws \coding_exception
      */
     public function get_slot_by_id($slotid) {
-        if (!array_key_exists($slotid, $this->slots)) {
-            throw new \coding_exception('The \'slotid\' could not be found.');
+        foreach ($this->slotsinorder as $slot) {
+            if ($slot->id == $slotid) {
+                return $slot;
+            }
         }
-        return $this->slots[$slotid];
+
+        throw new \coding_exception('The \'slotid\' could not be found.');
     }
 
     /**
@@ -425,13 +426,10 @@ class structure {
      * @throws \coding_exception
      */
     public function get_slot_by_number($slotnumber) {
-        foreach ($this->slots as $slot) {
-            if ($slot->slot == $slotnumber) {
-                return $slot;
-            }
+        if (!array_key_exists($slotnumber, $this->slotsinorder)) {
+            throw new \coding_exception('The \'slotnumber\' could not be found.');
         }
-
-        throw new \coding_exception('The \'slotnumber\' could not be found.');
+        return $this->slotsinorder[$slotnumber];
     }
 
     /**
@@ -617,7 +615,6 @@ class structure {
         $slots = $this->populate_missing_questions($slots);
 
         $this->questions = array();
-        $this->slots = array();
         $this->slotsinorder = array();
         foreach ($slots as $slotdata) {
             $this->questions[$slotdata->questionid] = $slotdata;
@@ -631,7 +628,6 @@ class structure {
             $slot->maxmark = $slotdata->maxmark;
             $slot->requireprevious = $slotdata->requireprevious;
 
-            $this->slots[$slot->id] = $slot;
             $this->slotsinorder[$slot->slot] = $slot;
         }
 
@@ -692,7 +688,7 @@ class structure {
      */
     protected function populate_question_numbers() {
         $number = 1;
-        foreach ($this->slots as $slot) {
+        foreach ($this->slotsinorder as $slot) {
             if ($this->questions[$slot->questionid]->length == 0) {
                 $slot->displayednumber = get_string('infoshort', 'quiz');
             } else {
@@ -720,7 +716,7 @@ class structure {
 
         $this->check_can_be_edited();
 
-        $movingslot = $this->slots[$idmove];
+        $movingslot = $this->get_slot_by_id($idmove);
         if (empty($movingslot)) {
             throw new \moodle_exception('Bad slot ID ' . $idmove);
         }
@@ -730,7 +726,7 @@ class structure {
         if (empty($idmoveafter)) {
             $moveafterslotnumber = 0;
         } else {
-            $moveafterslotnumber = (int) $this->slots[$idmoveafter]->slot;
+            $moveafterslotnumber = (int) $this->get_slot_by_id($idmoveafter)->slot;
         }
 
         // If the action came in as moving a slot to itself, normalise this to
@@ -1066,7 +1062,7 @@ class structure {
      * Set up this class with the slot tags for each of the slots.
      */
     protected function populate_slot_tags() {
-        $slotids = array_keys($this->slots);
+        $slotids = array_column($this->slotsinorder, 'id');
         $this->slottags = quiz_retrieve_tags_for_slot_ids($slotids);
     }
 
