@@ -919,8 +919,15 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $expected = array($e1->id, $e2->id);
         $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
         $this->assertEquals($expected, $actual, '', 0.0, 10, true);
-        $this->assertEquals('Cats', $return['entries'][0]['tags'][0]['rawname']);
-        $this->assertEquals('Dogs', $return['entries'][0]['tags'][1]['rawname']);
+        // Compare rawnames of all expected tags, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array('Cats', 'Dogs'); // Only $e1 has 2 tags.
+        $actual = array(); // Accumulate all tags returned.
+        foreach ($return['entries'] as $entry) {
+            foreach ($entry['tags'] as $tag) {
+                $actual[] = $tag['rawname'];
+            }
+        }
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
 
         // Search alias.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => false));
