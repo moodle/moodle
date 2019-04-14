@@ -339,7 +339,7 @@ function local_kaltura_strip_querystring($endpoint, $params) {
  */
 function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $editor = null) {
     global $CFG, $USER;
-    
+
     if(is_null($editor))
     {
         $editor = 'tinymce';
@@ -389,6 +389,7 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
     // Add custom parameters
     $requestparams['custom_publishdata'] = local_kaltura_get_kaf_publishing_data();
     $requestparams['custom_publishdata_encoded'] = '1';
+    $requestparams['custom_moodle_plugin_version'] = local_kaltura_get_config()->version;
 
     // Specific settings for video presentation requests.
     if (isset($ltirequest['custom_disable_add_new'])) {
