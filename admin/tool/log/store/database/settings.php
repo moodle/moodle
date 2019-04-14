@@ -59,6 +59,10 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configtext('logstore_database/buffersize', get_string('buffersize',
         'logstore_database'), get_string('buffersize_help', 'logstore_database'), 50));
 
+    $settings->add(new admin_setting_configcheckbox('logstore_database/jsonformat',
+            new lang_string('jsonformat', 'logstore_database'),
+            new lang_string('jsonformat_desc', 'logstore_database'), 1));
+
     // Filters.
     $settings->add(new admin_setting_heading('filters', get_string('filters', 'logstore_database'), get_string('filters_help',
         'logstore_database')));
