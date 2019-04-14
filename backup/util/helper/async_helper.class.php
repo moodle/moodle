@@ -208,10 +208,13 @@ class async_helper  {
      * @return boolean $asyncpedning Is there a pending async operation.
      */
     public static function is_async_pending($id, $type, $operation) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
         $asyncpending = false;
 
         // Only check for pending async operations if async mode is enabled.
+        require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
+        require_once($CFG->dirroot . '/backup/backup.class.php');
+
         if (self::is_async_enabled()) {
             $select = 'userid = ? AND itemid = ? AND type = ? AND operation = ? AND execution = ? AND status < ? AND status > ?';
             $params = array(
