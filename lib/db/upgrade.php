@@ -2988,5 +2988,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019041000.02);
     }
 
+    if ($oldversion < 2019041300.01) {
+        $sql = "UPDATE {capabilities}
+                   SET name = ?,
+                       contextlevel = ?
+                 WHERE name = ?";
+        $DB->execute($sql, ['moodle/category:viewcourselist', CONTEXT_COURSECAT, 'moodle/course:browse']);
+
+        $sql = "UPDATE {role_capabilities}
+                   SET capability = ?
+                 WHERE capability = ?";
+        $DB->execute($sql, ['moodle/category:viewcourselist', 'moodle/course:browse']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019041300.01);
+    }
     return true;
 }

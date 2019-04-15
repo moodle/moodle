@@ -2,7 +2,8 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.7 ===
-
+* The 'moodle/course:browse' has been renamed to a more accurate name 'moodle/category:viewcourselist'.
+  Also the context level of that capability has changed from course to course category context.
 * Nodes in the navigation api can have labels for each group. See set/get_collectionlabel().
 * The method core_user::is_real_user() now returns false for userid = 0 parameter
 * 'mform1' dependencies (in themes, js...) will stop working because a randomly generated string has been added to the id

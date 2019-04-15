@@ -98,6 +98,7 @@ $string['calendar:managegroupentries'] = 'Manage group calendar entries';
 $string['calendar:manageownentries'] = 'Manage own calendar entries';
 $string['capabilities'] = 'Capabilities';
 $string['capability'] = 'Capability';
+$string['category:viewcourselist'] = 'View list of courses you are not enrolled in';
 $string['category:create'] = 'Create categories';
 $string['category:delete'] = 'Delete categories';
 $string['category:manage'] = 'Manage categories';
@@ -154,7 +155,6 @@ $string['confirmunassignyes'] = 'Remove';
 $string['confirmunassignno'] = 'Cancel';
 $string['context'] = 'Context';
 $string['course:activityvisibility'] = 'Hide/show activities';
-$string['course:browse'] = 'View list of courses where user is not enrolled';
 $string['course:bulkmessaging'] = 'Send a message to many people';
 $string['course:create'] = 'Create courses';
 $string['course:creategroupconversations'] = 'Create group conversations';
@@ -495,3 +495,6 @@ $string['privacy:metadata:role_capabilities:tableexplanation'] = 'The capabiliti
 $string['privacy:metadata:role_capabilities:timemodified'] = 'The date when the capability was created or modified.';
 $string['privacy:metadata:role_cohortroles'] = 'Roles to cohort';
 $string['course:togglecompletion'] = 'Manually mark activities as complete';
+
+// Deprecated since Moodle 3.7
+$string['course:browse'] = 'View list of courses where user is not enrolled';
