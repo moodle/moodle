@@ -1073,6 +1073,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'locked' => false,
                 'canreply' => false,
                 'canlock' => false,
+                'starred' => false,
+                'canfavourite' => true,
             );
 
         // Call the external function passing forum id.
@@ -1092,6 +1094,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $userpicture->size = 1; // Size f1.
         $expectedreturn['discussions'][0]['usermodifiedpictureurl'] = $userpicture->get_url($PAGE)->out(false);
 
+        $this->assertEquals($expectedreturn, $discussions);
+
+        // Test the starring functionality return
+        $t = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
+        $expectedreturn['discussions'][0]['starred'] = true;
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
         $this->assertEquals($expectedreturn, $discussions);
 
         // Call without required view discussion capability.

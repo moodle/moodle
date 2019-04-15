@@ -592,6 +592,9 @@ class mod_forum_external extends external_api {
             $canlock = has_capability('moodle/course:manageactivities', $modcontext, $USER);
             $replies = forum_count_discussion_replies($forumid, $sort, -1, $page, $perpage, $canseeprivatereplies);
 
+            $usercontext = context_user::instance($USER->id);
+            $ufservice = core_favourites\service_factory::get_service_for_user_context($usercontext);
+            $canfavourite = has_capability('mod/forum:cantogglefavourite', $modcontext, $USER);
             foreach ($alldiscussions as $discussion) {
 
                 // This function checks for qanda forums.
@@ -640,7 +643,10 @@ class mod_forum_external extends external_api {
 
                 $discussion->locked = forum_discussion_is_locked($forum, $discussion);
                 $discussion->canlock = $canlock;
+                $discussion->starred = $ufservice->favourite_exists('mod_forum', 'discussions',
+                    $discussionrec->id, $modcontext);
                 $discussion->canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
+                $discussion->canfavourite = $canfavourite;
 
                 if (forum_is_author_hidden($discussion, $forum)) {
                     $discussion->userid = null;
@@ -730,8 +736,10 @@ class mod_forum_external extends external_api {
                                 'numunread' => new external_value(PARAM_INT, 'The number of unread discussions.'),
                                 'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned'),
                                 'locked' => new external_value(PARAM_BOOL, 'Is the discussion locked'),
+                                'starred' => new external_value(PARAM_BOOL, 'Is the discussion starred'),
                                 'canreply' => new external_value(PARAM_BOOL, 'Can the user reply to the discussion'),
                                 'canlock' => new external_value(PARAM_BOOL, 'Can the user lock the discussion'),
+                                'canfavourite' => new external_value(PARAM_BOOL, 'Can the user star the discussion'),
                             ), 'post'
                         )
                     ),
