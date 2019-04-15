@@ -86,7 +86,7 @@ class helper {
         if ($analyticmodels = $PAGE->settingsnav->find('analyticmodels', \navigation_node::TYPE_SETTING)) {
             $PAGE->navbar->add($analyticmodels->get_content(), $analyticmodels->action());
         }
-        $PAGE->navbar->add($title, $url);
+        $PAGE->navbar->add($title);
 
         $PAGE->set_pagelayout('report');
         $PAGE->set_title($title);
