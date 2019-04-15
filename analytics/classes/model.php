@@ -1438,14 +1438,18 @@ class model {
     /**
      * Exports the model data for displaying it in a template.
      *
+     * @param \renderer_base $output The renderer to use for exporting
      * @return \stdClass
      */
-    public function export() {
+    public function export(\renderer_base $output) {
 
         \core_analytics\manager::check_can_manage_models();
 
         $data = clone $this->model;
+
+        $data->name = $this->inplace_editable_name()->export_for_template($output);
         $data->target = $this->get_target()->get_name();
+        $data->targetclass = $this->get_target()->get_id();
 
         if ($timesplitting = $this->get_time_splitting()) {
             $data->timesplitting = $timesplitting->get_name();
@@ -1688,6 +1692,54 @@ class model {
         $this->model->timemodified = time();
         $this->model->usermodified = $USER->id;
         $DB->update_record('analytics_models', $this->model);
+    }
+
+    /**
+     * Returns the name of the model.
+     *
+     * By default, models use their target's name as their own name. They can have their explicit name, too. In which
+     * case, the explicit name is used instead of the default one.
+     *
+     * @return string|lang_string
+     */
+    public function get_name() {
+
+        if (trim($this->model->name) === '') {
+            return $this->get_target()->get_name();
+
+        } else {
+            return $this->model->name;
+        }
+    }
+
+    /**
+     * Renames the model to the given name.
+     *
+     * When given an empty string, the model falls back to using the associated target's name as its name.
+     *
+     * @param string $name The new name for the model, empty string for using the default name.
+     */
+    public function rename(string $name) {
+        global $DB, $USER;
+
+        $this->model->name = $name;
+        $this->model->timemodified = time();
+        $this->model->usermodified = $USER->id;
+
+        $DB->update_record('analytics_models', $this->model);
+    }
+
+    /**
+     * Returns an inplace editable element with the model's name.
+     *
+     * @return \core\output\inplace_editable
+     */
+    public function inplace_editable_name() {
+
+        $displayname = format_string($this->get_name());
+
+        return new \core\output\inplace_editable('core_analytics', 'modelname', $this->model->id,
+            has_capability('moodle/analytics:managemodels', \context_system::instance()), $displayname, $this->model->name);
     }
 
     /**

@@ -48,7 +48,7 @@ class clihelper {
         foreach ($models as $model) {
             $modelid = $model->get_id();
             $isenabled = $model->is_enabled() ? get_string('enabled', 'tool_analytics') : get_string('disabled', 'tool_analytics');
-            $name = $model->get_target()->get_name();
+            $name = $model->get_name();
             echo str_pad($modelid, 15, ' ') . ' ' . str_pad($name, 50, ' ') . ' ' . str_pad($isenabled, 15, ' ') . "\n";
         }
     }
