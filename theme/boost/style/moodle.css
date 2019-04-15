@@ -12551,7 +12551,9 @@ span.editinstructions {
   height: 60px;
   /* fixed header height*/
   margin-top: -60px;
-  /* negative fixed header height */ }
+  /* negative fixed header height */
+  width: 1px;
+  pointer-events: none; }
 
 .pagelayout-embedded :target {
   padding-top: initial;
