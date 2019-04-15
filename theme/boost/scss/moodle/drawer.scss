@@ -11,6 +11,8 @@ $drawer-offscreen-gutter: 20px !default;
     display: block;
     height: ($fixed-header-y + 10px); /* fixed header height*/
     margin-top: -($fixed-header-y + 10px); /* negative fixed header height */
+    width: 1px;
+    pointer-events: none;
 }
 
 .pagelayout-embedded :target {
