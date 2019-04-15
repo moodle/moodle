@@ -684,6 +684,43 @@ class manager {
     }
 
     /**
+     * Return the list of all the models declared anywhere in this Moodle installation.
+     *
+     * Models defined by the core and core subsystems come first, followed by those provided by plugins.
+     *
+     * @return array indexed by the frankenstyle component
+     */
+    public static function load_default_models_for_all_components(): array {
+
+        $tmp = [];
+
+        foreach (\core_component::get_component_list() as $type => $components) {
+            foreach (array_keys($components) as $component) {
+                if ($loaded = static::load_default_models_for_component($component)) {
+                    $tmp[$type][$component] = $loaded;
+                }
+            }
+        }
+
+        $result = [];
+
+        if ($loaded = static::load_default_models_for_component('core')) {
+            $result['core'] = $loaded;
+        }
+
+        if (!empty($tmp['core'])) {
+            $result += $tmp['core'];
+            unset($tmp['core']);
+        }
+
+        foreach ($tmp as $components) {
+            $result += $components;
+        }
+
+        return $result;
+    }
+
+    /**
      * Validate the declaration of prediction models according the syntax expected in the component's db folder.
      *
      * The expected structure looks like this:
@@ -747,14 +784,7 @@ class manager {
      */
     public static function create_declared_model(array $definition): \core_analytics\model {
 
-        $target = static::get_target($definition['target']);
-
-        $indicators = [];
-
-        foreach ($definition['indicators'] as $indicatorname) {
-            $indicator = static::get_indicator($indicatorname);
-            $indicators[$indicator->get_id()] = $indicator;
-        }
+        list($target, $indicators) = static::get_declared_target_and_indicators_instances($definition);
 
         if (isset($definition['timesplitting'])) {
             $timesplitting = $definition['timesplitting'];
@@ -769,5 +799,35 @@ class manager {
         }
 
         return $created;
+    }
+
+    /**
+     * Returns a string uniquely representing the given model declaration.
+     *
+     * @param array $model Model declaration
+     * @return string complying with PARAM_ALPHANUM rules and starting with an 'id' prefix
+     */
+    public static function model_declaration_identifier(array $model) : string {
+        return 'id'.sha1(serialize($model));
+    }
+
+    /**
+     * Given a model definition, return actual target and indicators instances.
+     *
+     * @param array $definition See {@link self::validate_models_declaration()} for the syntax.
+     * @return array [0] => target instance, [1] => array of indicators instances
+     */
+    public static function get_declared_target_and_indicators_instances(array $definition): array {
+
+        $target = static::get_target($definition['target']);
+
+        $indicators = [];
+
+        foreach ($definition['indicators'] as $indicatorname) {
+            $indicator = static::get_indicator($indicatorname);
+            $indicators[$indicator->get_id()] = $indicator;
+        }
+
+        return [$target, $indicators];
     }
 }
