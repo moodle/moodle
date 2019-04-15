@@ -12165,7 +12165,8 @@ span.editinstructions {
   padding: 0;
   margin: 0; }
 
-.coursebox .moreinfo {
+.coursebox .moreinfo,
+.coursebox .enrolmenticons {
   padding: 3px 0;
   float: right; }
 
