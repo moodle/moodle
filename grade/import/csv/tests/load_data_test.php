@@ -252,6 +252,9 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
             'Fetch by email' => [
                 'email', 's1@example.com', true
             ],
+            'Fetch by email, different case' => [
+                'email', 'S1@EXAMPLE.COM', true
+            ],
             'Fetch data using a non-existent email' => [
                 'email', 's2@example.com', false
             ],
@@ -266,6 +269,9 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
             ],
             'Fetch data using a valid username' => [
                 'username', 's1', true
+            ],
+            'Fetch data using a valid username, different case' => [
+                'username', 'S1', true
             ],
             'Fetch data using an invalid username' => [
                 'username', 's2', false
