@@ -326,11 +326,11 @@ class restore_controller extends base_controller {
         // Basic/initial prevention against time/memory limits
         core_php_time_limit::raise(1 * 60 * 60); // 1 hour for 1 course initially granted
         raise_memory_limit(MEMORY_EXTRA);
-        // If this is not a course restore, inform the plan we are not
+        // If this is not a course restore or single activity restore (e.g. duplicate), inform the plan we are not
         // including all the activities for sure. This will affect any
         // task/step executed conditionally to stop processing information
         // for section and activity restore. MDL-28180.
-        if ($this->get_type() !== backup::TYPE_1COURSE) {
+        if ($this->get_type() !== backup::TYPE_1COURSE && $this->get_type() !== backup::TYPE_1ACTIVITY) {
             $this->log('notifying plan about excluded activities by type', backup::LOG_DEBUG);
             $this->plan->set_excluding_activities();
         }
