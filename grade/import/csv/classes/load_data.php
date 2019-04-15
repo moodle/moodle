@@ -225,8 +225,23 @@ class gradeimport_csv_load_data {
         $errorkey = false;
         // The user may use the incorrect field to match the user. This could result in an exception.
         try {
+            $field = $userfields['field'];
+            // Fields that can be queried in a case-insensitive manner.
+            $caseinsensitivefields = [
+                'email',
+                'username',
+            ];
+            // Build query predicate.
+            if (in_array($field, $caseinsensitivefields)) {
+                // Case-insensitive.
+                $select = $DB->sql_equal($field, ':' . $field, false);
+            } else {
+                // Exact-value.
+                $select = "{$field} = :{$field}";
+            }
+
             // Make sure the record exists and that there's only one matching record found.
-            $user = $DB->get_record('user', array($userfields['field'] => $value), '*', MUST_EXIST);
+            $user = $DB->get_record_select('user', $select, array($userfields['field'] => $value), '*', MUST_EXIST);
         } catch (dml_missing_record_exception $missingex) {
             $errorkey = 'usermappingerror';
         } catch (dml_multiple_records_exception $multiex) {
