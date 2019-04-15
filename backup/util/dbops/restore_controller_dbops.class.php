@@ -183,6 +183,18 @@ abstract class restore_controller_dbops extends restore_dbops {
             );
             self::apply_admin_config_defaults($controller, $settings, true);
         }
+        if ($controller->get_mode() == backup::MODE_IMPORT &&
+                (!$controller->get_interactive()) &&
+                $controller->get_type() == backup::TYPE_1ACTIVITY) {
+            // This is duplicate - there is no concept of defaults - these settings must be on.
+            $settings = array(
+                    'activities',
+                    'blocks',
+                    'filters',
+                    'questionbank'
+            );
+            self::force_enable_settings($controller, $settings);
+        };
 
         // Add some dependencies.
         $plan = $controller->get_plan();
@@ -231,6 +243,30 @@ abstract class restore_controller_dbops extends restore_dbops {
         }
 
         return $value;
+    }
+
+    /**
+     * Turn these settings on. No defaults from admin settings.
+     *
+     * @param restore_controller $controller
+     * @param array $settings a map from admin config names to setting names (Config name => Setting name)
+     */
+    private static function force_enable_settings(restore_controller $controller, array $settings) {
+        $plan = $controller->get_plan();
+        foreach ($settings as $config => $settingname) {
+            $value = true;
+            if ($plan->setting_exists($settingname)) {
+                $setting = $plan->get_setting($settingname);
+                // We do not allow this setting to be locked for a duplicate function.
+                if ($setting->get_status() !== base_setting::NOT_LOCKED) {
+                    $setting->set_status(base_setting::NOT_LOCKED);
+                }
+                $setting->set_value($value);
+                $setting->set_status(base_setting::LOCKED_BY_CONFIG);
+            } else {
+                $controller->log('Unknown setting: ' . $settingname, BACKUP::LOG_DEBUG);
+            }
+        }
     }
 
     /**
