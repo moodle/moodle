@@ -90,7 +90,8 @@ function(
         return {
             display: courseRegion.attr('data-display'),
             grouping: courseRegion.attr('data-grouping'),
-            sort: courseRegion.attr('data-sort')
+            sort: courseRegion.attr('data-sort'),
+            displaycategories: courseRegion.attr('data-displaycategories'),
         };
     };
 
@@ -370,9 +371,17 @@ function(
             currentTemplate = TEMPLATES.COURSES_SUMMARY;
         }
 
+        // Delete the course category if it is not to be displayed
+        if (filters.displaycategories != 'on') {
+            coursesData.courses = coursesData.courses.map(function(course) {
+                delete course.coursecategory;
+                return course;
+            });
+        }
+
         if (coursesData.courses.length) {
             return Templates.render(currentTemplate, {
-                courses: coursesData.courses
+                courses: coursesData.courses,
             });
         } else {
             var nocoursesimg = root.find(Selectors.courseView.region).attr('data-nocoursesimg');
