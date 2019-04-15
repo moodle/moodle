@@ -140,7 +140,13 @@ class filter_mathjaxloader extends moodle_text_filter {
         if ($hasextra) {
             // If custom dilimeters are used, wrap whole text to prevent autolinking.
             $text = '<span class="nolink">' . $text . '</span>';
-        } else {
+        } else if (preg_match('/\\\\[[(]/', $text) || preg_match('/\$\$/', $text)) {
+            // Only parse the text if there are mathjax symbols in it. The recognized
+            // math environments are \[ \] and $$ $$ for display mathematics and \( \)
+            // for inline mathematics.
+            // Note: 2 separate regexes seems to perform better here than using a single
+            // regex with groupings.
+
             // Wrap display and inline math environments in nolink spans.
             // Do not wrap nested environments, i.e., if inline math is nested
             // inside display math, only the outer display math is wrapped in
