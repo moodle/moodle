@@ -182,24 +182,18 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $post3 = $this->helper_reply_to_post($post1, $user);
         [$discussion2, $post4] = $this->helper_post_to_forum($forum, $user);
 
-        $entities = array_values($this->vault->get_from_discussion_ids($user, [$discussion1->id], false));
-        usort($entities, function($a, $b) {
-            return $a <=> $b;
-        });
+        $entities = $this->vault->get_from_discussion_ids($user, [$discussion1->id], false);
         $this->assertCount(3, $entities);
-        $this->assertEquals($post1->id, $entities[0]->get_id());
-        $this->assertEquals($post2->id, $entities[1]->get_id());
-        $this->assertEquals($post3->id, $entities[2]->get_id());
+        $this->assertArrayHasKey($post1->id, $entities); // Order is not guaranteed, so just verify element existence.
+        $this->assertArrayHasKey($post2->id, $entities);
+        $this->assertArrayHasKey($post3->id, $entities);
 
-        $entities = array_values($this->vault->get_from_discussion_ids($user, [$discussion1->id, $discussion2->id], false));
-        usort($entities, function($a, $b) {
-            return $a <=> $b;
-        });
+        $entities = $this->vault->get_from_discussion_ids($user, [$discussion1->id, $discussion2->id], false);
         $this->assertCount(4, $entities);
-        $this->assertEquals($post1->id, $entities[0]->get_id());
-        $this->assertEquals($post2->id, $entities[1]->get_id());
-        $this->assertEquals($post3->id, $entities[2]->get_id());
-        $this->assertEquals($post4->id, $entities[3]->get_id());
+        $this->assertArrayHasKey($post1->id, $entities); // Order is not guaranteed, so just verify element existence.
+        $this->assertArrayHasKey($post2->id, $entities);
+        $this->assertArrayHasKey($post3->id, $entities);
+        $this->assertArrayHasKey($post4->id, $entities);
     }
 
     /**
@@ -226,33 +220,31 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         [$otherdiscussion, $otherpost] = $this->helper_post_to_forum($forum, $teacher);
 
         // The user is the author.
-        $entities = array_values($this->vault->get_from_discussion_ids($teacher, [$discussion->id, $otherdiscussion->id], true));
+        $entities = $this->vault->get_from_discussion_ids($teacher, [$discussion->id, $otherdiscussion->id], true);
         $this->assertCount(3, $entities);
-        $this->assertEquals($post->id, $entities[0]->get_id());
-        $this->assertEquals($reply->id, $entities[1]->get_id());
-        $this->assertEquals($otherpost->id, $entities[2]->get_id());
+        $this->assertArrayHasKey($post->id, $entities); // Order is not guaranteed, so just verify element existence.
+        $this->assertArrayHasKey($reply->id, $entities);
+        $this->assertArrayHasKey($otherpost->id, $entities);
 
         // The user is the intended recipient.
-        $entities = array_values($this->vault->get_from_discussion_ids($student, [$discussion->id, $otherdiscussion->id], false));
+        $entities = $this->vault->get_from_discussion_ids($student, [$discussion->id, $otherdiscussion->id], false);
         $this->assertCount(3, $entities);
-        $this->assertEquals($post->id, $entities[0]->get_id());
-        $this->assertEquals($reply->id, $entities[1]->get_id());
-        $this->assertEquals($otherpost->id, $entities[2]->get_id());
+        $this->assertArrayHasKey($post->id, $entities); // Order is not guaranteed, so just verify element existence.
+        $this->assertArrayHasKey($reply->id, $entities);
+        $this->assertArrayHasKey($otherpost->id, $entities);
 
         // The user is another teacher..
-        $entities = array_values(
-            $this->vault->get_from_discussion_ids($otherteacher, [$discussion->id, $otherdiscussion->id], true));
+        $entities = $this->vault->get_from_discussion_ids($otherteacher, [$discussion->id, $otherdiscussion->id], true);
         $this->assertCount(3, $entities);
-        $this->assertEquals($post->id, $entities[0]->get_id());
-        $this->assertEquals($reply->id, $entities[1]->get_id());
-        $this->assertEquals($otherpost->id, $entities[2]->get_id());
+        $this->assertArrayHasKey($post->id, $entities); // Order is not guaranteed, so just verify element existence.
+        $this->assertArrayHasKey($reply->id, $entities);
+        $this->assertArrayHasKey($otherpost->id, $entities);
 
         // The user is a different student.
-        $entities = array_values(
-            $this->vault->get_from_discussion_ids($otherstudent, [$discussion->id, $otherdiscussion->id], false));
+        $entities = $this->vault->get_from_discussion_ids($otherstudent, [$discussion->id, $otherdiscussion->id], false);
         $this->assertCount(2, $entities);
-        $this->assertEquals($post->id, $entities[0]->get_id());
-        $this->assertEquals($otherpost->id, $entities[1]->get_id());
+        $this->assertArrayHasKey($post->id, $entities); // Order is not guaranteed, so just verify element existence.
+        $this->assertArrayHasKey($otherpost->id, $entities);
     }
 
     /**
