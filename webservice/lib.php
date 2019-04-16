@@ -48,6 +48,14 @@ define('WEBSERVICE_AUTHMETHOD_SESSION_TOKEN', 2);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class webservice {
+    /**
+     * Only update token last access once per this many seconds. (This constant controls update of
+     * the external tokens last access field. There is a similar define LASTACCESS_UPDATE_SECS
+     * which controls update of the web site last access fields.)
+     *
+     * @var int
+     */
+    const TOKEN_LASTACCESS_UPDATE_SECS = 60;
 
     /**
      * Authenticate user (used by download/upload file scripts)
@@ -209,9 +217,30 @@ class webservice {
         }
 
         // log token access
-        $DB->set_field('external_tokens', 'lastaccess', time(), array('id' => $token->id));
+        self::update_token_lastaccess($token);
 
         return array('user' => $user, 'token' => $token, 'service' => $service);
+    }
+
+    /**
+     * Updates the last access time for a token.
+     *
+     * @param \stdClass $token Token object (must include id, lastaccess fields)
+     * @param int $time Time of access (0 = use current time)
+     * @throws dml_exception If database error
+     */
+    public static function update_token_lastaccess($token, int $time = 0) {
+        global $DB;
+
+        if (!$time) {
+            $time = time();
+        }
+
+        // Only update the field if it is a different time from previous request,
+        // so as not to waste database effort.
+        if ($time >= $token->lastaccess + self::TOKEN_LASTACCESS_UPDATE_SECS) {
+            $DB->set_field('external_tokens', 'lastaccess', $time, array('id' => $token->id));
+        }
     }
 
     /**
@@ -1109,7 +1138,7 @@ abstract class webservice_server implements webservice_server_interface {
         $user = $DB->get_record('user', array('id'=>$token->userid), '*', MUST_EXIST);
 
         // log token access
-        $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
+        webservice::update_token_lastaccess($token);
 
         return $user;
 
