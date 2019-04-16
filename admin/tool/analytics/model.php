@@ -103,9 +103,7 @@ switch ($action) {
     case 'delete':
         confirm_sesskey();
 
-        if (!$model->is_static()) {
-            $model->delete();
-        }
+        $model->delete();
         redirect($returnurl);
         break;
 
