@@ -45,9 +45,9 @@
         aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
     >
         {{#isfirstunread}}<a id="unread" aria-hidden="true"></a>{{/isfirstunread}}
-        <div style="width: 45px;">
-            {{^isdeleted}}
-                {{#author}}
+        {{^isdeleted}}
+            {{#author}}
+                <div style="width: 45px;">
                     {{#urls.profileimage}}
                         <img
                             class="rounded-circle w-100"
@@ -57,15 +57,17 @@
                         >
                     {{/urls.profileimage}}
                     {{#groups}}
-                        <img
-                            class="rounded-circle w-100"
-                            src="{{{urls.image}}}"
-                            alt="{{#str}} pictureof, core, {{name}} {{/str}}"
-                        >
+                        {{#urls.image}}
+                            <img
+                                class="rounded-circle w-100"
+                                src="{{{.}}}"
+                                alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                            >
+                        {{/urls.image}}
                     {{/groups}}
-                {{/author}}
-            {{/isdeleted}}
-        </div>
+                </div>
+            {{/author}}
+        {{/isdeleted}}
 
         <div class="d-flex flex-column ml-2 w-100">
             <header id="post-header-{{id}}" class="mb-2 header row">
@@ -75,7 +77,12 @@
                 <h3 class="h6 font-weight-bold mb-0">{{$subject}}{{{subject}}}{{/subject}}</h3>
                 {{^isdeleted}}
                     <address tabindex="-1">
-                        {{{html.authorsubheading}}}
+                        {{#html.authorsubheading}}{{{.}}}{{/html.authorsubheading}}
+                        {{^html.authorsubheading}}
+                            <time>
+                                {{#userdate}} {{timecreated}}, {{#str}} strftimedaydatetime, core_langconfig {{/str}} {{/userdate}}
+                            </time>
+                        {{/html.authorsubheading}}
                     </address>
                 {{/isdeleted}}
                 {{#isprivatereply}}
@@ -159,6 +166,7 @@
                                         href="{{{urls.view}}}"
                                         class="btn btn-link"
                                         title="{{#str}} permanentlinktopost, mod_forum {{/str}}"
+                                        role="menuitem"
                                     >
                                         {{#str}} permalink, mod_forum {{/str}}
                                     </a>
@@ -169,6 +177,7 @@
                                             data-region="post-action"
                                             href="{{{urls.markasread}}}"
                                             class="btn btn-link"
+                                            role="menuitem"
                                         >
                                             {{#str}} markread, mod_forum {{/str}}
                                         </a>
@@ -178,6 +187,7 @@
                                             data-region="post-action"
                                             href="{{{urls.markasunread}}}"
                                             class="btn btn-link"
+                                            role="menuitem"
                                         >
                                             {{#str}} markunread, mod_forum {{/str}}
                                         </a>
@@ -189,6 +199,7 @@
                                         href="{{{.}}}"
                                         class="btn btn-link"
                                         title="{{#str}} permanentlinktoparentpost, mod_forum {{/str}}"
+                                        role="menuitem"
                                     >
                                         {{#str}} parent, mod_forum {{/str}}
                                     </a>
@@ -198,6 +209,7 @@
                                         data-region="post-action"
                                         href="{{{urls.edit}}}"
                                         class="btn btn-link"
+                                        role="menuitem"
                                     >
                                         {{#str}} edit, mod_forum {{/str}}
                                     </a>
@@ -207,6 +219,7 @@
                                         data-region="post-action"
                                         href="{{{urls.split}}}"
                                         class="btn btn-link"
+                                        role="menuitem"
                                     >
                                         {{#str}} prune, mod_forum {{/str}}
                                     </a>
@@ -216,6 +229,7 @@
                                         data-region="post-action"
                                         href="{{{urls.delete}}}"
                                         class="btn btn-link"
+                                        role="menuitem"
                                     >
                                         {{#str}} delete, mod_forum {{/str}}
                                     </a>
@@ -226,6 +240,7 @@
                                             data-region="post-action"
                                             href="{{{urls.reply}}}"
                                             class="btn btn-link"
+                                            role="menuitem"
                                         >
                                             {{#str}} reply, mod_forum {{/str}}
                                         </a>
@@ -236,6 +251,7 @@
                                         data-region="post-action"
                                         href="{{{urls.export}}}"
                                         class="btn btn-link"
+                                        role="menuitem"
                                     >
                                         {{#str}} addtoportfolio, core_portfolio {{/str}}
                                     </a>

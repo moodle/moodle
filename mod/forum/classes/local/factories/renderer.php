@@ -193,6 +193,7 @@ class renderer {
                         if ($forum->get_type() == 'single' && !$exportedpost->hasparent) {
                             // Remove the author from any posts that don't have a parent.
                             unset($exportedpost->author);
+                            unset($exportedpost->html['authorsubheading']);
                         }
 
                         $exportedpost->firstpost = false;
@@ -221,7 +222,13 @@ class renderer {
                             // Set the parent author name on the replies. This is used for screen
                             // readers to help them identify the structure of the discussion.
                             $sortedreplies = array_map(function($reply) use ($post) {
-                                $reply->parentauthorname = $post->author->fullname;
+                                if (isset($post->author)) {
+                                    $reply->parentauthorname = $post->author->fullname;
+                                } else {
+                                    // The only time the author won't be set is for a single discussion
+                                    // forum. See above for where it gets unset.
+                                    $reply->parentauthorname = get_string('firstpost', 'mod_forum');
+                                }
                                 return $reply;
                             }, $sortedreplies);
                             $post->replies = $sortedreplies;
