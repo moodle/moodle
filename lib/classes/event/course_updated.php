@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  *      - string shortname: (optional) shortname of course.
  *      - string fullname: (optional) fullname of course.
+ *      - string updatedfields: (optional) array of course table fields edited in this event, ['fieldname' => 'newvalue']
  * }
  *
  * @package    core

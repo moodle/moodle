@@ -1801,6 +1801,39 @@ class core_course_courselib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that triggering a course_updated event logs changes.
+     */
+    public function test_course_updated_event_with_changes() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course((object)['visible' => 1]);
+
+        $editedcourse = $DB->get_record('course', ['id' => $course->id]);
+        $editedcourse->visible = 0;
+
+        // Update course and catch course_updated event.
+        $sink = $this->redirectEvents();
+        update_course($editedcourse);
+        $events = $sink->get_events();
+        $sink->close();
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\core\event\course_updated', $event);
+        $otherdata = [
+            'shortname' => $course->shortname,
+            'fullname' => $course->fullname,
+            'updatedfields' => [
+                'visible' => 0
+            ]
+        ];
+        $this->assertEquals($otherdata, $event->other);
+
+    }
+
+    /**
      * Test that triggering a course_deleted event works as expected.
      */
     public function test_course_deleted_event() {
