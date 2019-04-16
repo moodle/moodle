@@ -322,7 +322,7 @@ function(
      * @return {Object} patch
      */
     var buildHeaderPatchTypeSelf = function(state, newState) {
-        var shouldRenderHeader = (state.name === null);
+        var shouldRenderHeader = (state.name === null && newState.name !== null);
 
         if (shouldRenderHeader) {
             return {
@@ -1150,7 +1150,11 @@ function(
      * @return {bool}
      */
     var buildSelfConversationMessage = function(state, newState) {
-        return (newState.type == Constants.CONVERSATION_TYPES.SELF);
+        if (state.type != newState.type) {
+            return (newState.type == Constants.CONVERSATION_TYPES.SELF);
+        }
+
+        return null;
     };
 
     /**

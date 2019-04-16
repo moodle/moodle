@@ -102,19 +102,10 @@ define([], function() {
         SELF: 3
     };
 
-    // Categories displayed in the message drawer. Some methods (such as filterCountsByType) are expecting their value
-    // will be the same as the defined in the CONVERSATION_TYPES, except for the favourite.
-    var CONVERSATION_CATEGORY_TYPES = {
-        PRIVATE: 1,
-        PUBLIC: 2,
-        FAVOURITE: null
-    };
-
     return {
         SELECTORS: SELECTORS,
         TEMPLATES: TEMPLATES,
         CONVERSATION_TYPES: CONVERSATION_TYPES,
-        CONVERSATION_CATEGORY_TYPES: CONVERSATION_CATEGORY_TYPES,
         NEWEST_MESSAGES_FIRST: true,
         LOAD_MESSAGE_LIMIT: 100,
         INITIAL_NEW_MESSAGE_POLL_TIMEOUT: 1000

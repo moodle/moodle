@@ -233,12 +233,34 @@ function(
     /**
      * Build the callback to load conversations.
      *
-     * @param  {Number} type The conversation type.
+     * @param  {Array|null} types The conversation types for this section.
      * @param  {bool} includeFavourites Include/exclude favourites.
      * @param  {Number} offset Result offset
      * @return {Function}
      */
-    var getLoadCallback = function(type, includeFavourites, offset) {
+    var getLoadCallback = function(types, includeFavourites, offset) {
+        // Note: This function is a bit messy because we've added the concept of loading
+        // multiple conversations types (e.g. private + self) at once but haven't properly
+        // updated the web service to accept an array of types. Instead we've added a new
+        // parameter for the self type which means we can only ever load self + other type.
+        // This should be improved to make it more extensible in the future. Adding new params
+        // for each type isn't very scalable.
+        var type = null;
+        // Include self conversations in the results by default.
+        var includeSelfConversations = true;
+        if (types && types.length) {
+            // Just get the conversation types that aren't "self" for now.
+            var nonSelfConversationTypes = types.filter(function(candidate) {
+                return candidate != MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF;
+            });
+            // If we're specifically asking for a list of types that doesn't include the self
+            // conversations then we don't need to include them.
+            includeSelfConversations = types.length != nonSelfConversationTypes.length;
+            // As mentioned above the webservice is currently limited to loading one type at a
+            // time (plus self conversations) so let's hope we never change this.
+            type = nonSelfConversationTypes[0];
+        }
+
         return function(root, userId) {
             return MessageRepository.getConversations(
                     userId,
@@ -246,7 +268,7 @@ function(
                     LOAD_LIMIT + 1,
                     offset,
                     includeFavourites,
-                    true // Always merge self-conversations with private conversations, to display them together.
+                    includeSelfConversations
                 )
                 .then(function(response) {
                     var conversations = response.conversations;
@@ -531,11 +553,27 @@ function(
      * @param {String} namespace Unique identifier for the Routes
      * @param {Object} root The section container element.
      * @param {Function} loadCallback The callback to load items.
-     * @param {Number} type The conversation type for this section
+     * @param {Array|null} type The conversation types for this section
      * @param {bool} includeFavourites If this section includes favourites
      */
-    var registerEventListeners = function(namespace, root, loadCallback, type, includeFavourites) {
+    var registerEventListeners = function(namespace, root, loadCallback, types, includeFavourites) {
         var listRoot = LazyLoadList.getRoot(root);
+        var conversationBelongsToThisSection = function(conversation) {
+            // Make sure the type is an int so that the index of check matches correctly.
+            var conversationType = parseInt(conversation.type, 10);
+            if (
+                // If the conversation type isn't one this section cares about then we can ignore it.
+                (types && types.indexOf(conversationType) < 0) ||
+                // If this is the favourites section and the conversation isn't a favourite then ignore it.
+                (includeFavourites && !conversation.isFavourite) ||
+                // If this section doesn't include favourites and the conversation is a favourite then ignore it.
+                (!includeFavourites && conversation.isFavourite)
+            ) {
+                return false;
+            }
+
+            return true;
+        };
 
         // Set the minimum height of the section to the height of the toggle. This
         // smooths out the collapse animation.
@@ -583,16 +621,7 @@ function(
         });
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, function(conversation) {
-            // Self-conversations could be displayed as private conversations when they are not starred. So we need to exclude
-            // them from the following check to make sure last messages are updated properly for them.
-            if (
-                (type && conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF &&
-                type != MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE && !conversation.isFavourite) ||
-                (type && conversation.type != MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF &&
-                type != conversation.type) ||
-                (includeFavourites && !conversation.isFavourite) ||
-                (!includeFavourites && conversation.isFavourite)
-            ) {
+            if (!conversationBelongsToThisSection(conversation)) {
                 return;
             }
 
@@ -621,16 +650,12 @@ function(
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_SET_FAVOURITE, function(conversation) {
             var conversationElement = null;
-            if (includeFavourites && (!type || type == conversation.type)) {
+            if (conversationBelongsToThisSection(conversation)) {
                 conversationElement = getConversationElement(root, conversation.id);
                 if (!conversationElement.length) {
                     createNewConversation(root, conversation);
                 }
-            } else if (type == conversation.type ||
-                    (type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE &&
-                     conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF)) {
-                // Self-conversations are displayed in the private conversations section, so they should be removed from
-                // there when they are favourited.
+            } else {
                 conversationElement = getConversationElement(root, conversation.id);
                 if (conversationElement.length) {
                     deleteConversation(root, conversationElement);
@@ -640,19 +665,15 @@ function(
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_UNSET_FAVOURITE, function(conversation) {
             var conversationElement = null;
-            if (includeFavourites) {
-                conversationElement = getConversationElement(root, conversation.id);
-                if (conversationElement.length) {
-                    deleteConversation(root, conversationElement);
-                }
-            } else if (type == conversation.type ||
-                    (type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE &&
-                     conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF)) {
-                // Self-conversations are displayed in the private conversations section, so they should be added
-                // there when they are unfavourited.
+            if (conversationBelongsToThisSection(conversation)) {
                 conversationElement = getConversationElement(root, conversation.id);
                 if (!conversationElement.length) {
                     createNewConversation(root, conversation);
+                }
+            } else {
+                conversationElement = getConversationElement(root, conversation.id);
+                if (conversationElement.length) {
+                    deleteConversation(root, conversationElement);
                 }
             }
         });
@@ -675,17 +696,17 @@ function(
      * @param {Object} header The header container element.
      * @param {Object} body The section container element.
      * @param {Object} footer The footer container element.
-     * @param {Number} type The conversation type for this section
+     * @param {Array} types The conversation types that show in this section
      * @param {bool} includeFavourites If this section includes favourites
      * @param {Object} totalCountPromise Resolves wth the total conversations count
      * @param {Object} unreadCountPromise Resolves wth the unread conversations count
      */
-    var show = function(namespace, header, body, footer, type, includeFavourites, totalCountPromise, unreadCountPromise) {
+    var show = function(namespace, header, body, footer, types, includeFavourites, totalCountPromise, unreadCountPromise) {
         var root = $(body);
 
         if (!root.attr('data-init')) {
-            var loadCallback = getLoadCallback(type, includeFavourites, 0);
-            registerEventListeners(namespace, root, loadCallback, type, includeFavourites);
+            var loadCallback = getLoadCallback(types, includeFavourites, 0);
+            registerEventListeners(namespace, root, loadCallback, types, includeFavourites);
 
             if (isVisible(root)) {
                 setExpanded(root);

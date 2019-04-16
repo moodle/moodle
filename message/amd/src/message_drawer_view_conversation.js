@@ -120,7 +120,7 @@ function(
      * @return {Number} Userid.
      */
     var getOtherUserId = function() {
-        if (!viewState || (viewState.type != CONVERSATION_TYPES.PRIVATE && viewState.type != CONVERSATION_TYPES.SELF)) {
+        if (!viewState || viewState.type == CONVERSATION_TYPES.PUBLIC) {
             return null;
         }
 
@@ -149,7 +149,7 @@ function(
             if (!carry) {
                 var state = stateCache[id].state;
 
-                if (state.type == CONVERSATION_TYPES.PRIVATE || state.type == CONVERSATION_TYPES.SELF) {
+                if (state.type != CONVERSATION_TYPES.PUBLIC) {
                     if (userId in state.members) {
                         // We've found a cached conversation for this user!
                         carry = state.id;
@@ -274,6 +274,9 @@ function(
      */
     var loadEmptyPrivateConversation = function(loggedInUserProfile, otherUserId) {
         var loggedInUserId = loggedInUserProfile.id;
+        // If the other user id is the same as the logged in user then this is a self
+        // conversation.
+        var conversationType = loggedInUserId == otherUserId ? CONVERSATION_TYPES.SELF : CONVERSATION_TYPES.PRIVATE;
         var newState = StateManager.setLoadingMembers(viewState, true);
         newState = StateManager.setLoadingMessages(newState, true);
         return render(newState)
@@ -288,57 +291,16 @@ function(
                 }
             })
             .then(function(profile) {
-                var newState = StateManager.addMembers(viewState, [profile, loggedInUserProfile]);
+                // If the conversation is a self conversation then the profile loaded is the
+                // logged in user so only add that to the members array.
+                var members = conversationType == CONVERSATION_TYPES.SELF ? [profile] : [profile, loggedInUserProfile];
+                var newState = StateManager.addMembers(viewState, members);
                 newState = StateManager.setLoadingMembers(newState, false);
                 newState = StateManager.setLoadingMessages(newState, false);
                 newState = StateManager.setName(newState, profile.fullname);
-                newState = StateManager.setType(newState, CONVERSATION_TYPES.PRIVATE);
+                newState = StateManager.setType(newState, conversationType);
                 newState = StateManager.setImageUrl(newState, profile.profileimageurl);
-                newState = StateManager.setTotalMemberCount(newState, 2);
-                return render(newState)
-                    .then(function() {
-                        return profile;
-                    });
-            })
-            .catch(function(error) {
-                var newState = StateManager.setLoadingMembers(viewState, false);
-                render(newState);
-                Notification.exception(error);
-            });
-    };
-
-    /**
-     * Load up an empty self-conversation for the logged in user.
-     * Sets all of the conversation details based on the current user.
-     *
-     * A conversation isn't created until the user sends the first message.
-     *
-     * @param  {Object} loggedInUserProfile The logged in user profile.
-     * @return {Object} Profile returned from repository.
-     */
-    var loadEmptySelfConversation = function(loggedInUserProfile) {
-        var loggedInUserId = loggedInUserProfile.id;
-        var newState = StateManager.setLoadingMembers(viewState, true);
-        newState = StateManager.setLoadingMessages(newState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.getMemberInfo(loggedInUserId, [loggedInUserId], true, true);
-            })
-            .then(function(profiles) {
-                if (profiles.length) {
-                    return profiles[0];
-                } else {
-                    throw new Error('Unable to load other user profile');
-                }
-            })
-            .then(function(profile) {
-                var newState = StateManager.addMembers(viewState, [profile, loggedInUserProfile]);
-                newState = StateManager.setLoadingMembers(newState, false);
-                newState = StateManager.setLoadingMessages(newState, false);
-                newState = StateManager.setName(newState, profile.fullname);
-                newState = StateManager.setType(newState, CONVERSATION_TYPES.SELF);
-                newState = StateManager.setImageUrl(newState, profile.profileimageurl);
-                newState = StateManager.setTotalMemberCount(newState, 1);
+                newState = StateManager.setTotalMemberCount(newState, members.length);
                 return render(newState)
                     .then(function() {
                         return profile;
@@ -373,7 +335,8 @@ function(
 
         var name = conversation.name;
         var imageUrl = conversation.imageurl;
-        if (conversation.type == CONVERSATION_TYPES.PRIVATE || conversation.type == CONVERSATION_TYPES.SELF) {
+
+        if (conversation.type != CONVERSATION_TYPES.PUBLIC) {
             name = name || otherUser ? otherUser.fullname : '';
             imageUrl = imageUrl || otherUser ? otherUser.profileimageurl : '';
         }
@@ -1076,8 +1039,7 @@ function(
         var newConversationId = null;
         return render(newState)
             .then(function() {
-                if (!conversationId &&
-                    (viewState.type == CONVERSATION_TYPES.PRIVATE || viewState.type == CONVERSATION_TYPES.SELF)) {
+                if (!conversationId && (viewState.type != CONVERSATION_TYPES.PUBLIC)) {
                     // If it's a new private conversation then we need to use the old
                     // web service function to create the conversation.
                     var otherUserId = getOtherUserId();
@@ -1539,50 +1501,39 @@ function(
     var resetNoConversation = function(body, loggedInUserProfile, otherUserId) {
         // Always reset the state back to the initial state so that the
         // state manager and patcher can work correctly.
-        if (loggedInUserProfile.id != otherUserId) {
-            // This is a private conversation between two users.
-            return resetState(body, null, loggedInUserProfile)
-                .then(function() {
+        return resetState(body, null, loggedInUserProfile)
+            .then(function() {
+                if (loggedInUserProfile.id != otherUserId) {
+                    // Private conversation between two different users.
                     return Repository.getConversationBetweenUsers(
-                            loggedInUserProfile.id,
-                            otherUserId,
-                            true,
-                            true,
-                            0,
-                            0,
-                            LOAD_MESSAGE_LIMIT,
-                            0,
-                            NEWEST_FIRST
-                        )
-                        .then(function(conversation) {
-                            // Looks like we have a conversation after all! Let's use that.
-                            return resetByConversation(body, conversation, loggedInUserProfile);
-                        })
-                        .catch(function() {
-                            // Can't find a conversation. Oh well. Just load up a blank one.
-                            return loadEmptyPrivateConversation(loggedInUserProfile, otherUserId);
-                        });
-                });
-        } else {
-            // This is a self-conversation.
-            return resetState(body, null, loggedInUserProfile)
-                .then(function() {
+                        loggedInUserProfile.id,
+                        otherUserId,
+                        true,
+                        true,
+                        0,
+                        0,
+                        LOAD_MESSAGE_LIMIT,
+                        0,
+                        NEWEST_FIRST
+                    );
+                } else {
+                    // Self conversation.
                     return Repository.getSelfConversation(
-                            loggedInUserProfile.id,
-                            LOAD_MESSAGE_LIMIT,
-                            0,
-                            NEWEST_FIRST
-                        )
-                        .then(function(conversation) {
-                            // Looks like we have a conversation after all! Let's use that.
-                            return resetByConversation(body, conversation, loggedInUserProfile);
-                        })
-                        .catch(function() {
-                            // Can't find a conversation. Oh well. Just load up a blank one.
-                            return loadEmptySelfConversation(loggedInUserProfile);
-                        });
-                });
-        }
+                        loggedInUserProfile.id,
+                        LOAD_MESSAGE_LIMIT,
+                        0,
+                        NEWEST_FIRST
+                    );
+                }
+            })
+            .then(function(conversation) {
+                // Looks like we have a conversation after all! Let's use that.
+                return resetByConversation(body, conversation, loggedInUserProfile);
+            })
+            .catch(function() {
+                // Can't find a conversation. Oh well. Just load up a blank one.
+                return loadEmptyPrivateConversation(loggedInUserProfile, otherUserId);
+            });
     };
 
     /**
