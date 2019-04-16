@@ -187,15 +187,18 @@ class renderer {
             function($exportedposts, $forums) use ($displaymode, $readonly, $exportedpostssorter) {
                 $forum = array_shift($forums);
                 $seenfirstunread = false;
+                $postcount = count($exportedposts);
                 $exportedposts = array_map(
                     function($exportedpost) use ($forum, $readonly, $seenfirstunread) {
                         if ($forum->get_type() == 'single' && !$exportedpost->hasparent) {
                             // Remove the author from any posts that don't have a parent.
                             unset($exportedpost->author);
+                            unset($exportedpost->html['authorsubheading']);
                         }
 
                         $exportedpost->firstpost = false;
                         $exportedpost->readonly = $readonly;
+                        $exportedpost->hasreplycount = false;
                         $exportedpost->hasreplies = false;
                         $exportedpost->replies = [];
 
@@ -215,7 +218,20 @@ class renderer {
                     $sortintoreplies = function($nestedposts) use (&$sortintoreplies) {
                         return array_map(function($postdata) use (&$sortintoreplies) {
                             [$post, $replies] = $postdata;
-                            $post->replies = $sortintoreplies($replies);
+                            $sortedreplies = $sortintoreplies($replies);
+                            // Set the parent author name on the replies. This is used for screen
+                            // readers to help them identify the structure of the discussion.
+                            $sortedreplies = array_map(function($reply) use ($post) {
+                                if (isset($post->author)) {
+                                    $reply->parentauthorname = $post->author->fullname;
+                                } else {
+                                    // The only time the author won't be set is for a single discussion
+                                    // forum. See above for where it gets unset.
+                                    $reply->parentauthorname = get_string('firstpost', 'mod_forum');
+                                }
+                                return $reply;
+                            }, $sortedreplies);
+                            $post->replies = $sortedreplies;
                             $post->hasreplies = !empty($post->replies);
                             return $post;
                         }, $nestedposts);
@@ -232,6 +248,8 @@ class renderer {
                 if (!empty($exportedposts)) {
                     // Need to identify the first post so that we can use it in behat tests.
                     $exportedposts[0]->firstpost = true;
+                    $exportedposts[0]->hasreplycount = true;
+                    $exportedposts[0]->replycount = $postcount - 1;
                 }
 
                 return $exportedposts;

@@ -30,6 +30,7 @@
     }
 }}
 
+<div id="discussion-container-{{uniqid}}">
 {{#html}}
     {{{subscribe}}}
     {{{neighbourlinks}}}
@@ -49,3 +50,10 @@
 {{{html.posts}}}
 
 {{#html.neighbourlinks}}{{{.}}}{{/html.neighbourlinks}}
+</div>
+{{#js}}
+require(['jquery', 'mod_forum/discussion'], function($, Discussion) {
+    var root = $('#discussion-container-{{uniqid}}');
+    Discussion.init(root);
+});
+{{/js}}
