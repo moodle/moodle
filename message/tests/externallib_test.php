@@ -4149,6 +4149,31 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Tests get_conversation_messages for retrieving messages as another user not in the conversation.
+     */
+    public function test_get_conversation_messages_as_user_not_in_conversation() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user(); // Not in group.
+
+        // Create group conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id]
+        );
+
+        // The person asking for the messages for a conversation he does not belong to.
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectExceptionMessage('User is not part of conversation.');
+        core_message_external::get_conversation_messages($user3->id, $conversation->id);
+    }
+
+    /**
      * Tests get_conversation_messages for retrieving messages with messaging disabled.
      */
     public function test_get_conversation_messages_messaging_disabled() {

@@ -2446,13 +2446,13 @@ class core_message_external extends external_api {
      * @param  int $limitnum Return a subset comprising this many records in total (optional, required if $limitfrom is set).
      * @param  bool $newest True for getting first newest messages, false otherwise.
      * @param  int  $timefrom The time from the conversation messages to get.
-     * @return stdClass The messages and members who have sent some of these messages.
+     * @return array The messages and members who have sent some of these messages.
      * @throws moodle_exception
      * @since 3.6
      */
     public static function get_conversation_messages(int $currentuserid, int $convid, int $limitfrom = 0, int $limitnum = 0,
                                                          bool $newest = false, int $timefrom = 0) {
-        global $CFG, $PAGE, $USER;
+        global $CFG, $USER;
 
         // Check if messaging is enabled.
         if (empty($CFG->messaging)) {
@@ -2474,6 +2474,11 @@ class core_message_external extends external_api {
 
         if (($USER->id != $params['currentuserid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        // Check that the user belongs to the conversation.
+        if (!\core_message\api::is_user_in_conversation($params['currentuserid'], $params['convid'])) {
+            throw new moodle_exception('User is not part of conversation.');
         }
 
         $sort = $newest ? 'timecreated DESC' : 'timecreated ASC';
