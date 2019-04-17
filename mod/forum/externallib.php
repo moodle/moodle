@@ -916,7 +916,7 @@ class mod_forum_external extends external_api {
      * @throws moodle_exception
      */
     public static function add_discussion_post($postid, $subject, $message, $options = array()) {
-        global $DB, $CFG, $USER;
+        global $CFG, $USER;
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
         // Get all the factories that are required.
@@ -1044,17 +1044,28 @@ class mod_forum_external extends external_api {
             throw new moodle_exception('couldnotadd', 'forum');
         }
 
-
         $builderfactory = \mod_forum\local\container::get_builder_factory();
         $exportedpostsbuilder = $builderfactory->get_exported_posts_builder();
         $postentity = $entityfactory->get_post_from_stdClass($post);
         $exportedposts = $exportedpostsbuilder->build($USER, [$forum], [$discussion], [$postentity]);
         $exportedpost = $exportedposts[0];
 
+        $message = [];
+        $message[] = [
+            'type' => 'success',
+            'message' => get_string("postaddedsuccess", "forum")
+        ];
+
+        $message[] = [
+            'type' => 'success',
+            'message' => get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime))
+        ];
+
         $result = array();
         $result['postid'] = $postid;
         $result['warnings'] = $warnings;
         $result['post'] = $exportedpost;
+        $result['messages'] = $message;
         return $result;
     }
 
@@ -1069,7 +1080,15 @@ class mod_forum_external extends external_api {
             array(
                 'postid' => new external_value(PARAM_INT, 'new post id'),
                 'warnings' => new external_warnings(),
-                'post' => post_exporter::get_read_structure()
+                'post' => post_exporter::get_read_structure(),
+                'messages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'type' => new external_value(PARAM_TEXT, "The classification to be used in the client side", VALUE_REQUIRED),
+                            'message' => new external_value(PARAM_TEXT,'untranslated english message to explain the warning', VALUE_REQUIRED)
+                        ), 'Messages'), 'list of warnings', VALUE_OPTIONAL
+                ),
+                //'alertmessage' => new external_value(PARAM_RAW, 'Success message to be displayed to the user.'),
             )
         );
     }

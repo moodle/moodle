@@ -35,6 +35,7 @@ define([], function() {
             actionsContainer: '[data-region="post-actions-container"]',
             forumCoreContent: "[data-region-content='forum-post-core']",
             forumContent: "[data-content='forum-post']",
+            forumSubject: "[data-region-content='forum-post-core-subject']",
             inpageReplyLink: "[data-action='collapsible-link']",
             inpageReplyContent: "[data-content='inpage-reply-content']",
             inpageReplyForm: "form[data-content='inpage-reply-form']",

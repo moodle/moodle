@@ -43,11 +43,13 @@ define([
         root.on('click', Selectors.post.inpageReplyLink, function(e) {
             e.preventDefault();
             var currentTarget = $(e.currentTarget).parents(Selectors.post.forumCoreContent);
+            var currentSubject = currentTarget.find(Selectors.post.forumSubject);
             var currentRoot = $(e.currentTarget).parents(Selectors.post.forumContent);
             var context = {
                 postid: $(currentRoot).data('post-id'),
-                reply_url: $(e.currentTarget).attr('href'),
-                sesskey: M.cfg.sesskey
+                "reply_url": $(e.currentTarget).attr('href'),
+                sesskey: M.cfg.sesskey,
+                parentsubject: currentSubject.html()
             };
 
             if (!currentRoot.find(Selectors.post.inpageReplyContent).length) {
@@ -56,7 +58,7 @@ define([
                         return Templates.appendNodeContents(currentTarget, html, js);
                     })
                     .then(function() {
-                        currentRoot.find(Selectors.post.inpageReplyContent).toggle().find('textarea').focus();
+                        return currentRoot.find(Selectors.post.inpageReplyContent).toggle().find('textarea').focus();
                     })
                     .fail(Notification.exception);
             } else {

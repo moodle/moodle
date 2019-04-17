@@ -50,55 +50,69 @@ define([
         root.on('click', Selectors.post.inpageSubmitBtn, function(e) {
             e.preventDefault();
             var form = $(e.currentTarget).parents(Selectors.post.inpageReplyForm).get(0);
-            var message = form.elements.post.value;
+            var message = form.elements.post.value.trim();
             var postid = form.elements.reply.value;
             var subject = form.elements.subject.value;
             var currentRoot = $(e.currentTarget).parents(Selectors.post.forumContent);
             var mode = parseInt(root.find(Selectors.post.modeSelect).get(0).value);
             var newid;
 
-            Repository.addDiscussionPost(postid, subject, message)
-                .then(function(context) {
-                    var post = context.post;
-                    newid = post.id;
-                    switch (mode) {
-                        case DISPLAYCONSTANTS.THREADED:
-                            return Templates.render('mod_forum/forum_discussion_threaded_post', post);
-                        case DISPLAYCONSTANTS.NESTED:
-                            return Templates.render('mod_forum/forum_discussion_nested_post', post);
-                        default:
-                            return Templates.render('mod_forum/forum_discussion_post', post);
-                    }
-                })
-                .then(function(html, js) {
-                    var repliesnode;
+            if (message.length) {
+                Repository.addDiscussionPost(postid, subject, message)
+                    .then(function(context) {
+                        var message = context.messages.reduce(function(carry, message) {
+                            if (message.type == 'success') {
+                                carry += '<p>' + message.message + '</p>';
+                            }
+                            return carry;
+                        }, '');
+                        Notification.addNotification({
+                            message: message,
+                            type: "success"
+                        });
 
-                    // Try and get the replies-container which can either be a sibling OR parent if it's flat
-                    if (mode == DISPLAYCONSTANTS.FLAT_OLDEST_FIRST || mode == DISPLAYCONSTANTS.FLAT_NEWEST_FIRST) {
-                        repliesnode = currentRoot.parents(Selectors.post.repliesContainer).children().get(0);
-                    }
+                        return context;
+                    })
+                    .then(function(context) {
+                        form.reset();
+                        var post = context.post;
+                        newid = post.id;
+                        switch (mode) {
+                            case DISPLAYCONSTANTS.THREADED:
+                                return Templates.render('mod_forum/forum_discussion_threaded_post', post);
+                            case DISPLAYCONSTANTS.NESTED:
+                                return Templates.render('mod_forum/forum_discussion_nested_post', post);
+                            default:
+                                return Templates.render('mod_forum/forum_discussion_post', post);
+                        }
+                    })
+                    .then(function(html, js) {
+                        var repliesnode;
 
-                    if (repliesnode == undefined) {
-                        repliesnode = currentRoot.siblings(Selectors.post.repliesContainer).children().get(0);
-                    }
+                        // Try and get the replies-container which can either be a sibling OR parent if it's flat
+                        if (mode == DISPLAYCONSTANTS.FLAT_OLDEST_FIRST || mode == DISPLAYCONSTANTS.FLAT_NEWEST_FIRST) {
+                            repliesnode = currentRoot.parents(Selectors.post.repliesContainer).children().get(0);
+                        }
 
-                    if (mode == DISPLAYCONSTANTS.FLAT_NEWEST_FIRST) {
-                        return Templates.prependNodeContents(repliesnode, html, js);
-                    } else {
-                        return Templates.appendNodeContents(repliesnode, html, js);
-                    }
-                })
-                .then(function() {
-                    return currentRoot.find(Selectors.post.inpageReplyContent).hide();
-                })
-                .then(function() {
-                    var target = "[data-target='" + newid + "-target']";
-                    if ($(target).length) {
-                        $('body').animate({scrollTop: $(target).offset().top - 60});
-                    }
-                    return;
-                })
-                .fail(Notification.exception);
+                        if (repliesnode == undefined) {
+                            repliesnode = currentRoot.siblings(Selectors.post.repliesContainer).children().get(0);
+                        }
+
+                        if (mode == DISPLAYCONSTANTS.FLAT_NEWEST_FIRST) {
+                            return Templates.prependNodeContents(repliesnode, html, js);
+                        } else {
+                            return Templates.appendNodeContents(repliesnode, html, js);
+                        }
+                    })
+                    .then(function() {
+                        return currentRoot.find(Selectors.post.inpageReplyContent).hide();
+                    })
+                    .then(function() {
+                        location.href = "#p" + newid;
+                        return;
+                    })
+                    .fail(Notification.exception);
+            }
         });
     };
 

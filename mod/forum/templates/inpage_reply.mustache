@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum_post_email_htmlemail
+    @template mod_forum/inpage_reply
 
     Template which defines a forum post for sending in a single-post HTML email.
 
@@ -27,6 +27,10 @@
 
     Example context (json):
     {
+        "postid": 0,
+        "reply_url": "",
+        "sesskey": "",
+        "parentsubject": ""
     }
 }}
 <div class="row" data-content="inpage-reply-content" style="display: none;">
@@ -36,7 +40,7 @@
                 <span>
                     <textarea rows="5" name="post" title="post" class="w-100" placeholder="{{#str}} replyplaceholder, forum {{/str}}"></textarea>
                 </span>
-                <input type="hidden" name="subject" value="Re: Post reply"/>
+                <input type="hidden" name="subject" value="{{#str}} inpagereplysubject, forum, {{parentsubject}} {{/str}}"/>
                 <input type="hidden" name="reply" value="{{postid}}"/>
                 <input type="hidden" name="sesskey" value="{{sesskey}}"/>
             </div>
@@ -48,7 +52,7 @@
                     {{#str}} cancel, core {{/str}}
                 </button>
                 <button title="{{#str}} advanced, forum {{/str}}" data-action="forum-advanced-reply" class="btn btn-link float-right" type="submit">
-                    {{#str}} advanced, forum {{/str}}
+                    {{#str}} advanced, core {{/str}}
                 </button>
             </div>
         </form>

@@ -71,10 +71,7 @@ class behat_mod_forum extends behat_base {
     public function i_reply_post_from_forum_with($postsubject, $forumname, TableNode $table) {
 
         // Navigate to forum.
-        $this->execute('behat_general::click_link', $this->escape($forumname));
-        $this->execute('behat_general::click_link', $this->escape($postsubject));
-        $this->execute('behat_general::click_link', get_string('reply', 'forum'));
-        $this->execute('behat_general::click_link', get_string('advanced', 'forum'));
+        $this->goto_main_post_reply($postsubject);
 
         // Fill form and post.
         $this->execute('behat_forms::i_set_the_following_fields_to_these_values', $table);
@@ -126,4 +123,20 @@ class behat_mod_forum extends behat_base {
         $this->execute('behat_general::i_wait_to_be_redirected');
     }
 
+    /**
+     * Go to the default reply to post page.
+     * This is used instead of navigating through 4-5 different steps and to solve issues where JS would be required to click
+     * on the advanced button
+     *
+     * @param $postsubject
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    protected function goto_main_post_reply($postsubject) {
+        global $DB;
+        $post = $DB->get_record("forum_posts", array("subject" => $postsubject), 'id', MUST_EXIST);
+        $url = new moodle_url('/mod/forum/post.php', ['reply' => $post->id]);
+        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+    }
 }
