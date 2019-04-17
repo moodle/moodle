@@ -374,6 +374,10 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(json_encode($value)));
     }
 
+    public function test_decode_other_with_wrongly_encoded_contents() {
+        $this->assertSame(null, \logstore_standard\log\store::decode_other(null));
+    }
+
     /**
      * List of possible values for 'other' field.
      *

@@ -73,7 +73,7 @@ trait reader {
      * @param string $other Other value
      * @return mixed Decoded value
      */
-    public static function decode_other(string $other) {
+    public static function decode_other(?string $other) {
         if ($other === 'N;' || preg_match('~^.:~', $other)) {
             return unserialize($other);
         } else {
