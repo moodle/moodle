@@ -41,6 +41,7 @@ is disabled).
 * New optional parameter $throwexception for \get_complete_user_data(). If true, an exception will be thrown when there's no
   matching record found or when there are multiple records found for the given field value. If false, it will simply return false.
   Defaults to false when not set.
+* Exposed submit button to allow custom styling (via customclassoverride variable) which can override btn-primary/btn-secondary classes
 
 === 3.6 ===
 

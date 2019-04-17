@@ -203,8 +203,6 @@ class discussion_list {
      * @return string The rendered html
      */
     private function get_discussion_form(stdClass $user, \cm_info $cm, ?int $groupid) {
-        global $PAGE;
-
         $forum = $this->forum;
         $forumrecord = $this->legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
         $modcontext = \context_module::instance($cm->id);
@@ -221,7 +219,7 @@ class discussion_list {
             'messagetrust' => 0,
             'groupid' => $groupid,
         ];
-        $thresholdwarning = forum_check_throttling($forum, $cm);
+        $thresholdwarning = forum_check_throttling($forumrecord, $cm);
 
         $formparams = array(
             'course' => $forum->get_course_record(),
@@ -237,6 +235,7 @@ class discussion_list {
             'edit' => 0
         );
         $mformpost = new \mod_forum_post_form('post.php', $formparams, 'post', '', array('id' => 'mformforum'));
+        $discussionsubscribe = \mod_forum\subscriptions::get_user_default_subscription($forumrecord, $coursecontext, $cm, null);
 
         $params = array('reply' => 0, 'forum' => $forumrecord->id, 'edit' => 0) +
             (isset($post->groupid) ? array('groupid' => $post->groupid) : array()) +
@@ -244,7 +243,8 @@ class discussion_list {
                 'userid' => $post->userid,
                 'parent' => $post->parent,
                 'discussion' => $post->discussion,
-                'course' => $forum->get_course_id()
+                'course' => $forum->get_course_id(),
+                'discussionsubscribe' => $discussionsubscribe
             );
         $mformpost->set_data($params);
 
