@@ -276,12 +276,16 @@ function(
         registerEventListeners(uniqueId, root, alwaysVisible);
         if (alwaysVisible) {
             show(uniqueId, root);
+            // Are we sending to a specific user?
             if (sendToUser) {
+                // Check if a conversation already exists, if not, create one.
                 if (conversationId) {
                     Router.go(uniqueId, Routes.VIEW_CONVERSATION, conversationId);
                 } else {
                     Router.go(uniqueId, Routes.VIEW_CONVERSATION, null, 'create', sendToUser);
                 }
+            } else if (conversationId) { // We aren't sending to a specific user, but to a group conversation.
+                Router.go(uniqueId, Routes.VIEW_CONVERSATION, conversationId);
             }
         }
     };

@@ -1,0 +1,123 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template email_message/email_digest_html
+
+    Template which defines a forum post for sending in a single-post HTML email.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+        "conversations": [
+            {
+                "groupname": "Blue Students",
+                "coursename": "Math 101",
+                "numberofunreadmessages": "2",
+                "messages": [
+                    {
+                        "userfullname": "Chris Cross",
+                        "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla neque nunc, bibendum ac vestibulum sit amet, scelerisque luctus sem. Maecenas ultricies hendrerit augue, ac venenatis odio volutpat nec",
+                        "timesent": "10:12"
+                    },
+                    {
+                        "userfullname": "Irene Ipsum",
+                        "message": "Etiam a tristique risus. Pellentesque id tellus eget elit dictum varius id sed sapien",
+                        "timesent": "10:14"
+                    }
+                ],
+                "viewallmessageslink": "http://example.com"
+            }
+        ]
+    }
+}}
+<head>
+    <style>
+        .table {
+            color: #373a3c;
+            border: 1px solid #dee2e6;
+            border-collapse: collapse;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .table th {
+            text-align: left;
+            font-weight: normal;
+            background-color: #F2F2F2;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px;
+        }
+        .table td {
+            padding: 10px;
+            vertical-align: top;
+        }
+        .badge {
+            background-color: #1177d1;
+            color: #ffffff;
+            padding: 2px;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            text-align: center;
+        }
+        .nowrap {
+            white-space: nowrap;
+        }
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+
+{{#conversations}}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                <strong>{{ groupname }}</strong><br>
+                {{ coursename }}
+            </th>
+            <th class="nowrap">
+                <span class="badge">{{ numberofunreadmessages }}</span> {{#str}} emaildigestunreadmessages, message_email {{/str}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+            {{#messages}}
+            <tr>
+                <td>
+                    <strong>{{{ userfullname }}}</strong>
+                    <p>{{{ message }}}</p>
+                </td>
+                <td class="text-right">
+                    {{ timesent }}
+                </td>
+            </tr>
+            {{/messages}}
+            <tr>
+                <td colspan="2">
+                    {{{viewallmessageslink}}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{{/conversations}}

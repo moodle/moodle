@@ -77,6 +77,9 @@ class message {
     /** @var int The conversation id where userfrom is sending this message. */
     private $convid;
 
+    /** @var int The conversation type, eg. \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL */
+    private $conversationtype;
+
     /** @var object|int The user who is receiving from which is sending this message. */
     private $userto;
 
@@ -133,6 +136,7 @@ class message {
         'name',
         'userfrom',
         'convid',
+        'conversationtype',
         'userto',
         'subject',
         'fullmessage',

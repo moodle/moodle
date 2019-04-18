@@ -114,6 +114,7 @@ class manager {
         if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF) {
             return $savemessage->id;
         }
+        $localisedeventdata->conversationtype = $conv->type;
 
         // We treat individual conversations the same as any direct message with 'userfrom' and 'userto' specified.
         // We know the other user, so set the 'userto' field so that the event code will get access to this field.
@@ -206,10 +207,9 @@ class manager {
             }
 
             // Fill in the array of processors to be used based on default and user preferences.
-            // This applies only to individual conversations. Messages to group conversations ignore processors.
             // Do not process muted conversations.
             $processorlist = [];
-            if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL && !$recipient->ismuted) {
+            if (!$recipient->ismuted) {
                 foreach ($processors as $processor) {
                     // Skip adding processors for internal user, if processor doesn't support sending message to internal user.
                     if (!$usertoisrealuser && !$processor->object->can_send_to_any_users()) {

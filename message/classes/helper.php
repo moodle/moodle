@@ -764,6 +764,9 @@ class helper {
 
         if ($sendtouser) {
             $templatecontext['sendtouser'] = $sendtouser;
+        }
+
+        if ($conversationid) {
             $templatecontext['conversationid'] = $conversationid;
         }
 

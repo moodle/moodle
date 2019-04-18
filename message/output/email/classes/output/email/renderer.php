@@ -15,15 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Email processor version information
+ * Email digest as html renderer.
  *
  * @package    message_email
- * @copyright  2008 Luis Rodrigues
+ * @copyright  2019 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace message_email\output\email;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019032500;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2018112800;        // Requires this Moodle version
-$plugin->component = 'message_email';  // Full name of the plugin (used for diagnostics)
+/**
+ * Email digest as html renderer.
+ *
+ * @package    message_email
+ * @copyright  2019 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class renderer extends \message_email\output\renderer {
+
+    /**
+     * The template name for this renderer.
+     *
+     * @return string
+     */
+    public function get_template_name() {
+        return 'email_digest_html';
+    }
+}

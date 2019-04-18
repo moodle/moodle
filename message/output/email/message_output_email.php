@@ -37,7 +37,7 @@ class message_output_email extends message_output {
      * @param object $eventdata the event data submitted by the message sender plus $eventdata->savedmessageid
      */
     function send_message($eventdata) {
-        global $CFG;
+        global $CFG, $DB;
 
         // skip any messaging suspended and deleted users
         if ($eventdata->userto->auth === 'nologin' or $eventdata->userto->suspended or $eventdata->userto->deleted) {
@@ -90,8 +90,25 @@ class message_output_email extends message_output {
             }
         }
 
-        $result = email_to_user($recipient, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage,
-                                $eventdata->fullmessagehtml, $attachment, $attachname, true, $replyto, $replytoname);
+        // We email messages from private conversations straight away, but for group we add them to a table to be sent later.
+        $emailuser = true;
+        if (!$eventdata->notification) {
+            if ($eventdata->conversationtype == \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP) {
+                $emailuser = false;
+            }
+        }
+
+        if ($emailuser) {
+            $result = email_to_user($recipient, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage,
+                $eventdata->fullmessagehtml, $attachment, $attachname, true, $replyto, $replytoname);
+        } else {
+            $messagetosend = new stdClass();
+            $messagetosend->useridfrom = $eventdata->userfrom->id;
+            $messagetosend->useridto = $recipient->id;
+            $messagetosend->conversationid = $eventdata->convid;
+            $messagetosend->messageid = $eventdata->savedmessageid;
+            $result = $DB->insert_record('message_email_messages', $messagetosend, false);
+        }
 
         // Remove an attachment file if any.
         if (!empty($attachment) && file_exists($attachment)) {
