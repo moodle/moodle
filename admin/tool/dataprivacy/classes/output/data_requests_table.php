@@ -190,7 +190,7 @@ class data_requests_table extends table_sql {
      * @return mixed
      */
     public function col_status($data) {
-        return html_writer::span($data->statuslabel, 'label ' . $data->statuslabelclass);
+        return html_writer::span($data->statuslabel, 'badge ' . $data->statuslabelclass);
     }
 
     /**
