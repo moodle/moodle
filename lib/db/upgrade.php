@@ -3134,7 +3134,7 @@ function xmldb_main_upgrade($oldversion) {
                   FROM {user} u
                   WHERE u.id NOT IN (SELECT mcm.userid
                                      FROM {message_conversation_members} mcm
-                                     INNER JOIN mdl_message_conversations mc
+                                     INNER JOIN {message_conversations} mc
                                              ON mc.id = mcm.conversationid AND mc.type = ?
                                     )";
         $useridsrs = $DB->get_recordset_sql($sql, [\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF]);
