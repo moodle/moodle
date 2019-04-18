@@ -1062,7 +1062,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 if ($isstandard = $plugin->is_standard()) {
                     $row->attributes['class'] .= ' standard';
-                    $sourcelabel = html_writer::span(get_string('sourcestd', 'core_plugin'), 'sourcetext label');
+                    $sourcelabel = html_writer::span(get_string('sourcestd', 'core_plugin'), 'sourcetext badge badge-secondary');
                 } else {
                     $row->attributes['class'] .= ' extension';
                     $sourcelabel = html_writer::span(get_string('sourceext', 'core_plugin'), 'sourcetext badge badge-info');
@@ -1074,7 +1074,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 $statuscode = $plugin->get_status();
                 $row->attributes['class'] .= ' status-' . $statuscode;
-                $statusclass = 'statustext label ';
+                $statusclass = 'statustext badge ';
                 switch ($statuscode) {
                     case core_plugin_manager::PLUGIN_STATUS_NEW:
                         $statusclass .= $dependenciesok ? 'badge-success' : 'badge-warning';
@@ -2025,7 +2025,7 @@ class core_admin_renderer extends plugin_renderer_base {
                     $messagetype = 'ok';
                     $statusclass = 'badge-success';
                 }
-                $status = html_writer::span($status, 'label ' . $statusclass);
+                $status = html_writer::span($status, 'badge ' . $statusclass);
                 // Here we'll store all the feedback found
                 $feedbacktext = '';
                 // Append the feedback if there is some
