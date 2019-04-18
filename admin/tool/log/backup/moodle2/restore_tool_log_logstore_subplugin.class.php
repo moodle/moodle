@@ -42,10 +42,11 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
      * discard or save every log entry.
      *
      * @param array $data log entry.
+     * @param bool $jsonformat If true, uses JSON format for the 'other' field
      * @return object|null $dataobject A data object with values for one or more fields in the record,
      *  or null if we are not going to process the log.
      */
-    protected function process_log($data) {
+    protected function process_log($data, bool $jsonformat = false) {
         $data = (object) $data;
 
         // Complete the information that does not come from backup.
@@ -87,7 +88,7 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
         // There is no need to roll dates. Logs are supposed to be immutable. See MDL-44961.
 
         // Revert other to its original php way.
-        $data->other = unserialize(base64_decode($data->other));
+        $data->other = \tool_log\helper\reader::decode_other(base64_decode($data->other));
 
         // Arrived here, we have both 'objectid' and 'other' to be converted. This is the tricky part.
         // Both are pointing to other records id, but the sources are not identified in the
@@ -137,13 +138,18 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
                         }
                     }
                 }
-                // Now we want to serialize it so we can store it in the DB.
-                $data->other = serialize($data->other);
             } else {
                 $message = "Event class not found: \"$eventclass\". Skipping log record.";
                 $this->log($message, backup::LOG_DEBUG);
                 return; // No such class, can not restore.
             }
+        }
+
+        // Serialize 'other' field so we can store it in the DB.
+        if ($jsonformat) {
+            $data->other = json_encode($data->other);
+        } else {
+            $data->other = serialize($data->other);
         }
 
         return $data;
