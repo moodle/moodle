@@ -137,14 +137,14 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
                         }
                     }
                 }
-                // Now we want to serialize it so we can store it in the DB.
-                $data->other = serialize($data->other);
             } else {
                 $message = "Event class not found: \"$eventclass\". Skipping log record.";
                 $this->log($message, backup::LOG_DEBUG);
                 return; // No such class, can not restore.
             }
         }
+        // Now we want to serialize it so we can store it in the DB.
+        $data->other = serialize($data->other);
 
         return $data;
     }
