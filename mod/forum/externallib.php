@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
 
+use mod_forum\local\exporters\post as post_exporter;
+
 class mod_forum_external extends external_api {
 
     /**
@@ -914,8 +916,18 @@ class mod_forum_external extends external_api {
      * @throws moodle_exception
      */
     public static function add_discussion_post($postid, $subject, $message, $options = array()) {
-        global $DB, $CFG, $USER;
+        global $CFG, $USER;
         require_once($CFG->dirroot . "/mod/forum/lib.php");
+
+        // Get all the factories that are required.
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $entityfactory = mod_forum\local\container::get_entity_factory();
+        $datamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $discussiondatamapper = $datamapperfactory->get_discussion_data_mapper();
+        $forumdatamapper = $datamapperfactory->get_forum_data_mapper();
 
         $params = self::validate_parameters(self::add_discussion_post_parameters(),
             array(
@@ -932,14 +944,18 @@ class mod_forum_external extends external_api {
             throw new moodle_exception('invalidparentpostid', 'forum');
         }
 
-        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
+        if (!$discussion = $discussionvault->get_from_id($parent->discussion)) {
             throw new moodle_exception('notpartofdiscussion', 'forum');
         }
 
         // Request and permission validation.
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
+        $forum = $forumvault->get_from_id($discussion->get_forum_id());
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+        $course = $forum->get_course_record();
+        $cm = $forum->get_course_module_record();
 
+        $discussionrecord = $discussiondatamapper->to_legacy_object($discussion);
+        $forumrecord = $forumdatamapper->to_legacy_object($forum);
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
@@ -975,16 +991,16 @@ class mod_forum_external extends external_api {
             $options[$name] = $value;
         }
 
-        if (!forum_user_can_post($forum, $discussion, $USER, $cm, $course, $context)) {
+        if (!$capabilitymanager->can_post_in_discussion($USER, $discussion)) {
             throw new moodle_exception('nopostforum', 'forum');
         }
 
-        $thresholdwarning = forum_check_throttling($forum, $cm);
+        $thresholdwarning = forum_check_throttling($forumrecord, $cm);
         forum_check_blocking_threshold($thresholdwarning);
 
         // Create the post.
         $post = new stdClass();
-        $post->discussion = $discussion->id;
+        $post->discussion = $discussion->get_id();
         $post->parent = $parent->id;
         $post->subject = $params['subject'];
         $post->message = $params['message'];
@@ -1004,33 +1020,52 @@ class mod_forum_external extends external_api {
                 'context' => $context,
                 'objectid' => $post->id,
                 'other' => array(
-                    'discussionid' => $discussion->id,
-                    'forumid' => $forum->id,
-                    'forumtype' => $forum->type,
+                    'discussionid' => $discussion->get_id(),
+                    'forumid' => $forum->get_id(),
+                    'forumtype' => $forum->get_type(),
                 )
             );
             $event = \mod_forum\event\post_created::create($params);
             $event->add_record_snapshot('forum_posts', $post);
-            $event->add_record_snapshot('forum_discussions', $discussion);
+            $event->add_record_snapshot('forum_discussions', $discussionrecord);
             $event->trigger();
 
             // Update completion state.
             $completion = new completion_info($course);
             if ($completion->is_enabled($cm) &&
-                    ($forum->completionreplies || $forum->completionposts)) {
+                    ($forum->get_completion_replies() || $forum->get_completion_posts())) {
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
 
             $settings = new stdClass();
             $settings->discussionsubscribe = $options['discussionsubscribe'];
-            forum_post_subscription($settings, $forum, $discussion);
+            forum_post_subscription($settings, $forumrecord, $discussionrecord);
         } else {
             throw new moodle_exception('couldnotadd', 'forum');
         }
 
+        $builderfactory = \mod_forum\local\container::get_builder_factory();
+        $exportedpostsbuilder = $builderfactory->get_exported_posts_builder();
+        $postentity = $entityfactory->get_post_from_stdClass($post);
+        $exportedposts = $exportedpostsbuilder->build($USER, [$forum], [$discussion], [$postentity]);
+        $exportedpost = $exportedposts[0];
+
+        $message = [];
+        $message[] = [
+            'type' => 'success',
+            'message' => get_string("postaddedsuccess", "forum")
+        ];
+
+        $message[] = [
+            'type' => 'success',
+            'message' => get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime))
+        ];
+
         $result = array();
         $result['postid'] = $postid;
         $result['warnings'] = $warnings;
+        $result['post'] = $exportedpost;
+        $result['messages'] = $message;
         return $result;
     }
 
@@ -1044,7 +1079,16 @@ class mod_forum_external extends external_api {
         return new external_single_structure(
             array(
                 'postid' => new external_value(PARAM_INT, 'new post id'),
-                'warnings' => new external_warnings()
+                'warnings' => new external_warnings(),
+                'post' => post_exporter::get_read_structure(),
+                'messages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'type' => new external_value(PARAM_TEXT, "The classification to be used in the client side", VALUE_REQUIRED),
+                            'message' => new external_value(PARAM_TEXT,'untranslated english message to explain the warning', VALUE_REQUIRED)
+                        ), 'Messages'), 'list of warnings', VALUE_OPTIONAL
+                ),
+                //'alertmessage' => new external_value(PARAM_RAW, 'Success message to be displayed to the user.'),
             )
         );
     }

@@ -34,15 +34,16 @@
     class="relativelink mb-2"
     data-post-id="{{id}}"
     data-region="post"
+    data-target="{{id}}-target"
     tabindex="-1"
     aria-labelledby="post-header-{{id}}"
     aria-describedby="post-content-{{id}}"
 >
-
     <!-- The firstpost and starter classes below aren't used for anything other than to identify the first post in behat -->
     <div
         class="d-flex border p-2 mb-2 forumpost {{#unread}}unread{{/unread}} {{#firstpost}}firstpost starter{{/firstpost}}"
         aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
+        data-post-id="{{id}}" data-content="forum-post"
     >
         {{#isfirstunread}}<a id="unread" aria-hidden="true"></a>{{/isfirstunread}}
         {{^isdeleted}}
@@ -69,12 +70,12 @@
             {{/author}}
         {{/isdeleted}}
 
-        <div class="d-flex flex-column ml-2 w-100">
-            <header id="post-header-{{id}}" class="mb-2 header row">
+        <div class="d-flex flex-column ml-2 w-100"  data-region-content="forum-post-core">
+            <header  class="mb-2 header row">
                 {{#parentauthorname}}
                     <span class="sr-only">{{#str}} inreplyto, mod_forum, {{.}} {{/str}}</span>
                 {{/parentauthorname}}
-                <h3 class="h6 font-weight-bold mb-0">{{$subject}}{{{subject}}}{{/subject}}</h3>
+                <h3 class="h6 font-weight-bold mb-0" data-region-content="forum-post-core-subject">{{$subject}}{{{subject}}}{{/subject}}</h3>
                 {{^isdeleted}}
                     <address tabindex="-1">
                         {{#html.authorsubheading}}{{{.}}}{{/html.authorsubheading}}
@@ -241,6 +242,9 @@
                                             href="{{{urls.reply}}}"
                                             class="btn btn-link"
                                             role="menuitem"
+                                            data-post-id="{{id}}"
+                                            data-action="collapsible-link"
+                                            title="{{#str}} reply, mod_forum {{/str}}"
                                         >
                                             {{#str}} reply, mod_forum {{/str}}
                                         </a>
@@ -266,13 +270,15 @@
         </div>
     </div>
 
+    <div data-region="replies-container">
     {{$replies}}
+        <div>
         {{#hasreplies}}
-            <div>
-                {{#replies}}
-                    {{> mod_forum/forum_discussion_post }}
-                {{/replies}}
-            </div>
+            {{#replies}}
+                {{> mod_forum/forum_discussion_post }}
+            {{/replies}}
         {{/hasreplies}}
+        </div>
     {{/replies}}
+    </div>
 </article>

@@ -34,6 +34,8 @@ $prune   = optional_param('prune', 0, PARAM_INT);
 $name    = optional_param('name', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $groupid = optional_param('groupid', null, PARAM_INT);
+$subject = optional_param('subject', '', PARAM_TEXT);
+$prefilledpost = optional_param('post', '', PARAM_TEXT);
 
 $PAGE->set_url('/mod/forum/post.php', array(
     'reply' => $reply,
@@ -163,9 +165,9 @@ if (!empty($forum)) {
     $post->forum         = $forum->id;
     $post->discussion    = 0;           // Ie discussion # not defined yet.
     $post->parent        = 0;
-    $post->subject       = '';
+    $post->subject       = $subject;
     $post->userid        = $USER->id;
-    $post->message       = '';
+    $post->message       = $prefilledpost;
     $post->messageformat = editors_get_preferred_format();
     $post->messagetrust  = 0;
     $post->groupid = $groupid;
@@ -249,10 +251,10 @@ if (!empty($forum)) {
     $post->forum       = $forum->id;
     $post->discussion  = $parent->discussion;
     $post->parent      = $parent->id;
-    $post->subject     = $parent->subject;
+    $post->subject     = $subject ? $subject : $parent->subject;
     $post->userid      = $USER->id;
-    $post->message     = '';
     $post->parentpostauthor = $parent->userid;
+    $post->message     = $prefilledpost;
     $canreplyprivately = $capabilitymanager->can_reply_privately_to_post($USER, $parententity);
 
     $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;

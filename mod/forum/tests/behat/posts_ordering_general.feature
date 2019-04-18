@@ -63,11 +63,8 @@ Feature: New discussions and discussions with recently added replies are display
     And I am on "Course 1" course homepage
     And I follow "Course general forum"
     And I follow "Forum post 1"
-    And I click on "Reply" "link" in the "//div[@aria-label='Forum post 1 by Student 1']" "xpath_element"
-    And I set the following fields to these values:
+    And I reply "Forum post 1" post from "Course general forum" forum with:
       | Message | Reply to the first post |
-    And I press "Post to forum"
-    And I wait to be redirected
     And I am on "Course 1" course homepage
     And I follow "Course general forum"
     #

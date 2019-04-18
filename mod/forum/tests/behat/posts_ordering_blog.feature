@@ -62,11 +62,8 @@ Feature: Blog posts are always displayed in reverse chronological order
     And I am on "Course 1" course homepage
     And I follow "Course blog forum"
     And I click on "Discuss this topic" "link" in the "//div[@aria-label='Blog post 1 by Student 1']" "xpath_element"
-    And I click on "Reply" "link" in the "//div[@aria-label='Blog post 1 by Student 1']" "xpath_element"
-    And I set the following fields to these values:
+    And I reply "Blog post 1" post from "Course blog forum" forum with:
       | Message | Reply to the first post |
-    And I press "Post to forum"
-    And I wait to be redirected
     And I am on "Course 1" course homepage
     And I follow "Course blog forum"
     #
