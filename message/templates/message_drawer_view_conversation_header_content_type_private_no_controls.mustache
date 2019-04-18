@@ -36,11 +36,13 @@
 }}
 
 <div class="d-flex align-items-center">
-    <div class="align-self-stretch" >
-        <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back role="button">
-            {{> core_message/message_drawer_icon_back }}
-        </a>
-    </div>
+    {{#showrouteback}}
+        <div class="align-self-stretch" >
+            <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back role="button">
+                {{> core_message/message_drawer_icon_back }}
+            </a>
+        </div>
+    {{/showrouteback}}
     <div class="d-flex text-truncate">
         {{#imageurl}}
             <div class="d-flex align-items-center">

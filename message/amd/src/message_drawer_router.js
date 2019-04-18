@@ -80,6 +80,9 @@ function(
      */
     var changeRoute = function(namespace, newRoute) {
         var newConfig;
+
+        // Check of the Route change call is made from an element in the app panel.
+        var fromPanel = [].slice.call(arguments).includes('frompanel');
         // Get the rest of the arguments, if any.
         var args = [].slice.call(arguments, 2);
         var renderPromise = $.Deferred().resolve().promise();
@@ -99,13 +102,24 @@ function(
                 }
 
                 element.removeClass('previous');
+                element.attr('data-from-panel', false);
 
                 if (isMatch) {
+                    if (fromPanel) {
+                        // Set this attribute to let the conversation renderer know not to show a back button.
+                        element.attr('data-from-panel', true);
+                    }
                     element.removeClass('hidden');
                     element.attr('aria-hidden', false);
                 } else {
-                    element.addClass('hidden');
-                    element.attr('aria-hidden', true);
+                    // For the message index page elements in the left panel should not be hidden.
+                    if (!element.attr('data-in-panel')) {
+                        element.addClass('hidden');
+                        element.attr('aria-hidden', true);
+                    } else if (newRoute == 'view-search' || newRoute == 'view-overview') {
+                        element.addClass('hidden');
+                        element.attr('aria-hidden', true);
+                    }
                 }
             });
         });
@@ -163,7 +177,8 @@ function(
      */
     var go = function(namespace) {
         var currentFocusElement = $(document.activeElement);
-        var record = changeRoute.apply(null, arguments);
+
+        var record = changeRoute.apply(namespace, arguments);
         var inHistory = false;
 
         if (!history[namespace]) {
@@ -222,7 +237,6 @@ function(
                                 if (typeof element !== 'object' || !element) {
                                     return;
                                 }
-
                                 // Update the aria label for the back button.
                                 element.find(SELECTORS.ROUTES_BACK).attr('aria-label', label);
                             });

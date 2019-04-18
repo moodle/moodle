@@ -525,8 +525,9 @@ function(
      * @param {Function} loadCallback The callback to load items.
      * @param {Number} type The conversation type for this section
      * @param {bool} includeFavourites If this section includes favourites
+     * @param {String} fromPanel Routing argument to send if the section is loaded in message index left panel.
      */
-    var registerEventListeners = function(namespace, root, loadCallback, type, includeFavourites) {
+    var registerEventListeners = function(namespace, root, loadCallback, type, includeFavourites, fromPanel) {
         var listRoot = LazyLoadList.getRoot(root);
 
         // Set the minimum height of the section to the height of the toggle. This
@@ -641,7 +642,7 @@ function(
             var conversationElement = $(e.target).closest(SELECTORS.CONVERSATION);
             var conversationId = conversationElement.attr('data-conversation-id');
             var conversation = loadedConversationsById[conversationId];
-            MessageDrawerRouter.go(namespace, MessageDrawerRoutes.VIEW_CONVERSATION, conversation);
+            MessageDrawerRouter.go(namespace, MessageDrawerRoutes.VIEW_CONVERSATION, conversation, fromPanel);
 
             data.originalEvent.preventDefault();
         });
@@ -658,13 +659,15 @@ function(
      * @param {bool} includeFavourites If this section includes favourites
      * @param {Object} totalCountPromise Resolves wth the total conversations count
      * @param {Object} unreadCountPromise Resolves wth the unread conversations count
+     * @param {bool} fromPanel shown in message app panel.
      */
-    var show = function(namespace, header, body, footer, type, includeFavourites, totalCountPromise, unreadCountPromise) {
+    var show = function(namespace, header, body, footer, type, includeFavourites, totalCountPromise, unreadCountPromise,
+        fromPanel) {
         var root = $(body);
 
         if (!root.attr('data-init')) {
             var loadCallback = getLoadCallback(type, includeFavourites, 0);
-            registerEventListeners(namespace, root, loadCallback, type, includeFavourites);
+            registerEventListeners(namespace, root, loadCallback, type, includeFavourites, fromPanel);
 
             if (isVisible(root)) {
                 setExpanded(root);

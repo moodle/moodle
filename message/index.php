@@ -59,7 +59,7 @@ if ($userid) {
 }
 $PAGE->set_url($url);
 $PAGE->set_context(context_user::instance($USER->id));
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('mydashboard');
 
 $strmessages = get_string('messages', 'message');
 
@@ -86,6 +86,5 @@ if (!get_user_preferences('core_message_migrate_data', false)) {
         \core\output\notification::NOTIFY_WARNING);
     echo $OUTPUT->render($notify);
 }
-echo $OUTPUT->heading(get_string('messages', 'message'));
 echo \core_message\helper::render_messaging_widget(false, $userid, $conversationid);
 echo $OUTPUT->footer();
