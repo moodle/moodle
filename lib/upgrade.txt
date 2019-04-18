@@ -39,6 +39,9 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   - Finally, the self-conversations for all remaining users without them will be created and starred.
 Besides, from now, a self-conversation will be created and starred by default to all the new users (even when $CFG->messaging
 is disabled).
+* New optional parameter $throwexception for \get_complete_user_data(). If true, an exception will be thrown when there's no
+  matching record found or when there are multiple records found for the given field value. If false, it will simply return false.
+  Defaults to false when not set.
 
 === 3.6 ===
 
@@ -654,13 +657,13 @@ the groupid field.
       $OUTPUT->download_dataformat_selector() instead.
   when building Xpath, or pass the unescaped value when using the named selector.
 * Add new file_is_executable(), to consistently check for executables even in Windows (PHP bug #41062).
-* Introduced new callbacks for plugin developers.
+* Introduced new hooks for plugin developers.
     - <component>_pre_course_category_delete($category)
     - <component>_pre_course_delete($course)
     - <component>_pre_course_module_delete($cm)
     - <component>_pre_block_delete($instance)
     - <component>_pre_user_delete($user)
-  These callbacks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
+  These hooks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
   a module (plugins located in the mod folder) called 'xxx' and you wish to interact with the user object before it is
   deleted then the function to create would be mod_xxx_pre_user_delete($user) in mod/xxx/lib.php.
 * pear::Net::GeoIP has been removed.
