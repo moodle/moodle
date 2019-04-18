@@ -109,6 +109,12 @@ class manager {
         // Get conversation type and name. We'll use this to determine which message subject to generate, depending on type.
         $conv = $DB->get_record('message_conversations', ['id' => $eventdata->convid], 'id, type, name');
 
+        // For now Self conversations are not processed because users are aware of the messages sent by themselves, so we
+        // can return early.
+        if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF) {
+            return $savemessage->id;
+        }
+
         // We treat individual conversations the same as any direct message with 'userfrom' and 'userto' specified.
         // We know the other user, so set the 'userto' field so that the event code will get access to this field.
         // If this was a legacy caller (eventdata->userto is set), then use that instead, as we want to use the fields specified

@@ -4090,11 +4090,7 @@ EOD;
                 $imagedata = $this->user_picture($user, array('size' => 100));
 
                 // Check to see if we should be displaying a message button.
-                if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
-                    $iscontact = \core_message\api::is_contact($USER->id, $user->id);
-                    $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
-                    $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
-                    $contactimage = $iscontact ? 'removecontact' : 'addcontact';
+                if (!empty($CFG->messaging) && has_capability('moodle/site:sendmessage', $context)) {
                     $userbuttons = array(
                         'messages' => array(
                             'buttontype' => 'message',
@@ -4103,21 +4099,28 @@ EOD;
                             'image' => 'message',
                             'linkattributes' => \core_message\helper::messageuser_link_params($user->id),
                             'page' => $this->page
-                        ),
-                        'togglecontact' => array(
-                            'buttontype' => 'togglecontact',
-                            'title' => get_string($contacttitle, 'message'),
-                            'url' => new moodle_url('/message/index.php', array(
-                                    'user1' => $USER->id,
-                                    'user2' => $user->id,
-                                    $contacturlaction => $user->id,
-                                    'sesskey' => sesskey())
-                            ),
-                            'image' => $contactimage,
-                            'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
-                            'page' => $this->page
-                        ),
+                        )
                     );
+
+                    if ($USER->id != $user->id) {
+                        $iscontact = \core_message\api::is_contact($USER->id, $user->id);
+                        $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
+                        $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
+                        $contactimage = $iscontact ? 'removecontact' : 'addcontact';
+                        $userbuttons['togglecontact'] = array(
+                                'buttontype' => 'togglecontact',
+                                'title' => get_string($contacttitle, 'message'),
+                                'url' => new moodle_url('/message/index.php', array(
+                                        'user1' => $USER->id,
+                                        'user2' => $user->id,
+                                        $contacturlaction => $user->id,
+                                        'sesskey' => sesskey())
+                                ),
+                                'image' => $contactimage,
+                                'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
+                                'page' => $this->page
+                            );
+                    }
 
                     $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
                 }

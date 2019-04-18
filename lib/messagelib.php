@@ -118,18 +118,30 @@ function message_send(\core\message\message $eventdata) {
             return false;
         }
 
-        if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
-                                                                                  $eventdata->userto->id])) {
-            $conversation = \core_message\api::create_conversation(
-                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-                [
-                    $eventdata->userfrom->id,
-                    $eventdata->userto->id
-                ]
-            );
+        if ($eventdata->userfrom->id == $eventdata->userto->id) {
+            // It's a self conversation.
+            $conversation = \core_message\api::get_self_conversation($eventdata->userfrom->id);
+            if (empty($conversation)) {
+                $conversation = \core_message\api::create_conversation(
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
+                    [$eventdata->userfrom->id]
+                );
+            }
+        } else {
+            if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
+                                                                                      $eventdata->userto->id])) {
+                // It's a private conversation between users.
+                $conversation = \core_message\api::create_conversation(
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                    [
+                        $eventdata->userfrom->id,
+                        $eventdata->userto->id
+                    ]
+                );
+            }
         }
         // We either have found a conversation, or created one.
-        $conversationid = $conversationid ? $conversationid : $conversation->id;
+        $conversationid = !empty($conversationid) ? $conversationid : $conversation->id;
         $eventdata->convid = $conversationid;
     }
 
