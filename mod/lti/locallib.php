@@ -496,7 +496,7 @@ function lti_get_jwt_claim_mapping() {
  * Return the launch data required for opening the external tool.
  *
  * @param  stdClass $instance the external tool activity settings
- * @param  string $nonce
+ * @param  string $nonce  the nonce value to use (applies to LTI 1.3 only)
  * @return array the endpoint URL and parameters (including the signature)
  * @since  Moodle 3.0
  */
@@ -666,7 +666,11 @@ function lti_get_launch_data($instance, $nonce = '') {
     }
 
     if ((!empty($key) && !empty($secret)) || ($ltiversion === LTI_VERSION_1P3)) {
-        $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret, $typeid, $nonce);
+        if ($ltiversion !== LTI_VERSION_1P3) {
+            $parms = lti_sign_parameters($requestparams, $endpoint, 'POST', $key, $secret);
+        } else {
+            $parms = lti_sign_jwt($requestparams, $endpoint, $key, $typeid, $nonce);
+        }
 
         $endpointurl = new \moodle_url($endpoint);
         $endpointparams = $endpointurl->params();
@@ -926,6 +930,8 @@ function lti_build_request_lti2($tool, $params) {
  * @param string    $messagetype    The request message type. Defaults to basic-lti-launch-request if empty.
  *
  * @return array                    Request details
+ * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
+ * @see lti_build_standard_message()
  */
 function lti_build_standard_request($instance, $orgid, $islti2, $messagetype = 'basic-lti-launch-request') {
     if (!$islti2) {
@@ -1057,7 +1063,7 @@ function lti_build_custom_parameters($toolproxy, $tool, $instance, $params, $cus
 function lti_build_content_item_selection_request($id, $course, moodle_url $returnurl, $title = '', $text = '', $mediatypes = [],
                                                   $presentationtargets = [], $autocreate = false, $multiple = false,
                                                   $unsigned = false, $canconfirm = false, $copyadvice = false, $nonce = '') {
-    global $PAGE, $USER;
+    global $USER;
 
     $tool = lti_get_type($id);
     // Validate parameters.
@@ -1157,7 +1163,7 @@ function lti_build_content_item_selection_request($id, $course, moodle_url $retu
         $services = lti_get_services();
         foreach ($services as $service) {
             $serviceparameters = $service->get_launch_parameters('ContentItemSelectionRequest',
-                    $PAGE->course->id, $USER->id , $id);
+                    $course->id, $USER->id , $id);
             foreach ($serviceparameters as $paramkey => $paramvalue) {
                 $requestparams['custom_' . $paramkey] = lti_parse_custom_parameter($toolproxy, $tool, $requestparams, $paramvalue,
                     $islti2);
@@ -1207,7 +1213,11 @@ function lti_build_content_item_selection_request($id, $course, moodle_url $retu
     $requestparams['content_item_return_url'] = $returnurl->out(false);
     $requestparams['title'] = $title;
     $requestparams['text'] = $text;
-    $signedparams = lti_sign_parameters($requestparams, $toolurlout, 'POST', $key, $secret, $id, $nonce);
+    if (!$islti13) {
+        $signedparams = lti_sign_parameters($requestparams, $toolurlout, 'POST', $key, $secret);
+    } else {
+        $signedparams = lti_sign_jwt($requestparams, $toolurlout, $key, $id, $nonce);
+    }
     $toolurlparams = $toolurl->params();
 
     // Strip querystring params in endpoint url from $signedparams to avoid duplication.
@@ -1259,12 +1269,10 @@ function lti_verify_oauth_signature($typeid, $consumerkey) {
     $typeconfig = lti_get_type_config($typeid);
 
     if (isset($tool->toolproxyid)) {
-        $islti2 = true;
         $toolproxy = lti_get_tool_proxy($tool->toolproxyid);
         $key = $toolproxy->guid;
         $secret = $toolproxy->secret;
     } else {
-        $islti2 = false;
         $toolproxy = null;
         if (!empty($typeconfig['resourcekey'])) {
             $key = $typeconfig['resourcekey'];
@@ -1306,6 +1314,11 @@ function lti_verify_oauth_signature($typeid, $consumerkey) {
  *
  * @return stdClass Tool type
  * @throws moodle_exception
+ * @throws UnexpectedValueException     Provided JWT was invalid
+ * @throws SignatureInvalidException    Provided JWT was invalid because the signature verification failed
+ * @throws BeforeValidException         Provided JWT is trying to be used before it's eligible as defined by 'nbf'
+ * @throws BeforeValidException         Provided JWT is trying to be used before it's been created as defined by 'iat'
+ * @throws ExpiredException             Provided JWT has since expired, as defined by the 'exp' claim
  */
 function lti_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
     $tool = lti_get_type($typeid);
@@ -1313,22 +1326,15 @@ function lti_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
     if (!$tool) {
         throw new moodle_exception('errortooltypenotfound', 'mod_lti');
     }
-    $typeconfig = lti_get_type_config($typeid);
-
     if (isset($tool->toolproxyid)) {
         throw new moodle_exception('JWT security not supported with LTI 2');
-    } else {
-        if (!empty($tool->clientid)) {
-            $key = $tool->clientid;
-        } else {
-            $key = '';
-        }
-        if (!empty($typeconfig['publickey'])) {
-            $publickey = $typeconfig['publickey'];
-        } else {
-            $publickey = '';
-        }
     }
+
+    $typeconfig = lti_get_type_config($typeid);
+
+    $key = $tool->clientid ?? '';
+    $publickey = $typeconfig['publickey'] ?? '';
+
     if ($consumerkey !== $key) {
         throw new moodle_exception('errorincorrectconsumerkey', 'mod_lti');
     }
@@ -1336,11 +1342,7 @@ function lti_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
         throw new moodle_exception('No public key configured');
     }
 
-    try {
-        $jwt = JWT::decode($jwtparam, $publickey, array('RS256'));
-    } catch (Exception $e) {
-        throw new moodle_exception($e->getMessage());
-    }
+    JWT::decode($jwtparam, $publickey, array('RS256'));
 
     return $tool;
 }
@@ -1349,7 +1351,7 @@ function lti_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
  * Processes the tool provider's response to the ContentItemSelectionRequest and builds the configuration data from the
  * selected content item. This configuration data can be then used when adding a tool into the course.
  *
- * @param stdClass $tool The tool type.
+ * @param int $typeid The tool type ID.
  * @param string $messagetype The value for the lti_message_type parameter.
  * @param string $ltiversion The value for the lti_version parameter.
  * @param string $consumerkey The consumer key.
@@ -1358,7 +1360,12 @@ function lti_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
  * @throws moodle_exception
  * @throws lti\OAuthException
  */
-function lti_tool_configuration_from_content_item($tool, $messagetype, $ltiversion, $consumerkey, $contentitemsjson) {
+function lti_tool_configuration_from_content_item($typeid, $messagetype, $ltiversion, $consumerkey, $contentitemsjson) {
+    $tool = lti_get_type($typeid);
+    // Validate parameters.
+    if (!$tool) {
+        throw new moodle_exception('errortooltypenotfound', 'mod_lti');
+    }
     // Check lti_message_type. Show debugging if it's not set to ContentItemSelection.
     // No need to throw exceptions for now since lti_message_type does not seem to be used in this processing at the moment.
     if ($messagetype !== 'ContentItemSelection') {
@@ -1473,6 +1480,7 @@ function lti_tool_configuration_from_content_item($tool, $messagetype, $ltiversi
  * Converts the new Deep-Linking format for Content-Items to the old format.
  *
  * @param string $param JSON string representing new Deep-Linking format
+ * @return string  JSON representation of content-items
  */
 function lti_convert_content_items($param) {
     $items = array();
@@ -2984,24 +2992,39 @@ function lti_set_tool_settings($settings, $toolproxyid, $courseid = null, $insta
  * @param string $oauthconsumersecret
  * @return array|null
  */
-function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oauthconsumersecret, $typeid = 0, $nonce = '') {
+function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oauthconsumersecret) {
 
     $parms = $oldparms;
 
     $testtoken = '';
 
-    if ($parms['lti_version'] !== LTI_VERSION_1P3) {
-        // TODO: Switch to core oauthlib once implemented - MDL-30149.
-        $hmacmethod = new lti\OAuthSignatureMethod_HMAC_SHA1();
-        $testconsumer = new lti\OAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
-        $accreq = lti\OAuthRequest::from_consumer_and_token($testconsumer, $testtoken, $method, $endpoint, $parms);
-        $accreq->sign_request($hmacmethod, $testconsumer, $testtoken);
+    // TODO: Switch to core oauthlib once implemented - MDL-30149.
+    $hmacmethod = new lti\OAuthSignatureMethod_HMAC_SHA1();
+    $testconsumer = new lti\OAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
+    $accreq = lti\OAuthRequest::from_consumer_and_token($testconsumer, $testtoken, $method, $endpoint, $parms);
+    $accreq->sign_request($hmacmethod, $testconsumer, $testtoken);
 
-        $newparms = $accreq->get_parameters();
-    } else {
-        $newparms = array();
-        $newparms['id_token'] = lti_convert_to_jwt($parms, $endpoint, $oauthconsumerkey, $typeid, $nonce);
-    }
+    $newparms = $accreq->get_parameters();
+
+    return $newparms;
+}
+
+/**
+ * Signs the petition to launch the external tool using JWT
+ *
+ * @param array  $oldparms     Parameters to be passed for signing
+ * @param string $endpoint     url of the external tool
+ * @param string $oauthconsumerkey
+ * @param string $typeid       ID of LTI tool type
+ * @param string $nonce        Nonce value to use
+ * @return array|null
+ */
+function lti_sign_jwt($oldparms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce = '') {
+
+    $parms = $oldparms;
+
+    $newparms = array();
+    $newparms['id_token'] = lti_convert_to_jwt($parms, $endpoint, $oauthconsumerkey, $typeid, $nonce);
 
     return $newparms;
 }
@@ -3098,11 +3121,12 @@ function lti_convert_to_jwt($parms, $endpoint, $oauthconsumerkey, $typeid, $nonc
  * @param int    $typeid
  * @param string $jwtparam   JWT parameter
  *
- * @return stdClass  Tool type
+ * @return array  containing tool type and the array of parameters
  * @throws moodle_exception
  */
 function lti_convert_from_jwt($typeid, $jwtparam) {
 
+    $params = array();
     $parts = explode('.', $jwtparam);
     $ok = (count($parts) === 3);
     if ($ok) {
@@ -3112,75 +3136,59 @@ function lti_convert_from_jwt($typeid, $jwtparam) {
     }
     if ($ok) {
         $tool = lti_verify_jwt_signature($typeid, $claims['iss'], $jwtparam);
-    }
-    $params = array();
-    $params['oauth_consumer_key'] = $claims['iss'];
-    foreach (lti_get_jwt_claim_mapping() as $key => $mapping) {
-        $claim = LTI_JWT_CLAIM_PREFIX;
-        if (!empty($mapping['suffix'])) {
-            $claim .= "-{$mapping['suffix']}";
-        }
-        $claim .= '/claim/';
-        if (is_null($mapping['group'])) {
-            $claim = $mapping['claim'];
-        } else if (empty($mapping['group'])) {
-            $claim .= $mapping['claim'];
-        } else {
-            $claim .= $mapping['group'];
-        }
-        if (isset($claims[$claim])) {
-            $value = null;
-            if (empty($mapping['group'])) {
-                $value = $claims[$claim];
-            } else {
-                $group = $claims[$claim];
-                if (!is_array($group)) {
-                    $ok = false;
-                    $error = "'{$claim}' should be an array";
-                } else if (array_key_exists($mapping['claim'],
-                        $group)) {
-                    $value = $group[$mapping['claim']];
-                }
+        $params['oauth_consumer_key'] = $claims['iss'];
+        foreach (lti_get_jwt_claim_mapping() as $key => $mapping) {
+            $claim = LTI_JWT_CLAIM_PREFIX;
+            if (!empty($mapping['suffix'])) {
+                $claim .= "-{$mapping['suffix']}";
             }
-            if (!empty($value) && $mapping['isarray']) {
-                if (!is_array($value)) {
-                    $ok = false;
-                    $error = "'{$value}' should be an array";
-                } else if (is_array($value[0])) {
-                    $value = json_encode($value);
+            $claim .= '/claim/';
+            if (is_null($mapping['group'])) {
+                $claim = $mapping['claim'];
+            } else if (empty($mapping['group'])) {
+                $claim .= $mapping['claim'];
+            } else {
+                $claim .= $mapping['group'];
+            }
+            if (isset($claims[$claim])) {
+                $value = null;
+                if (empty($mapping['group'])) {
+                    $value = $claims[$claim];
                 } else {
-                    $value = implode(',', $value);
+                    $group = $claims[$claim];
+                    if (is_array($group) && array_key_exists($mapping['claim'], $group)) {
+                        $value = $group[$mapping['claim']];
+                    }
+                }
+                if (!empty($value) && $mapping['isarray']) {
+                    if (is_array($value)) {
+                        if (is_array($value[0])) {
+                          $value = json_encode($value);
+                        } else {
+                          $value = implode(',', $value);
+                        }
+                    }
+                }
+                if (!is_null($value) && is_string($value) && (strlen($value) > 0)) {
+                    $params[$key] = $value;
                 }
             }
-            if (!is_null($value) && is_string($value) && (strlen($value) > 0)) {
-                $params[$key] = $value;
-            }
-        }
-    }
-    if ($ok) {
-        $claim = LTI_JWT_CLAIM_PREFIX . '/claim/custom';
-        if (isset($claims[$claim])) {
-            $custom = $claims[$claim];
-            if (!is_array($custom)) {
-                $ok = false;
-                $error = "'{$custom}' should be an array";
-            } else {
-                foreach ($custom as $key => $value) {
-                    $params["custom_{$key}"] = $value;
+            $claim = LTI_JWT_CLAIM_PREFIX . '/claim/custom';
+            if (isset($claims[$claim])) {
+                $custom = $claims[$claim];
+                if (is_array($custom)) {
+                    foreach ($custom as $key => $value) {
+                        $params["custom_{$key}"] = $value;
+                    }
                 }
             }
-        }
-    }
-    if ($ok) {
-        $claim = LTI_JWT_CLAIM_PREFIX . '/claim/ext';
-        if (isset($claims[$claim])) {
-            $ext = $claims[$claim];
-            if (!is_array($ext)) {
-                $ok = false;
-                $error = "'{$ext}' should be an array";
-            } else {
-                foreach ($ext as $key => $value) {
-                    $params["ext_{$key}"] = $value;
+            $claim = LTI_JWT_CLAIM_PREFIX . '/claim/ext';
+            if (isset($claims[$claim])) {
+                $ext = $claims[$claim];
+                if (is_array($ext)) {
+                    foreach ($ext as $key => $value) {
+                        $params["ext_{$key}"] = $value;
+                    }
                 }
             }
         }
@@ -3273,8 +3281,8 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
  * @param string         $text      Description of content item
  * @return string
  */
-function lti_initiatelogin($courseid, $id, $instance, $config, $messagetype = 'basic-lti-launch-request', $title = '', $text = '') {
-    global $SESSION, $USER, $COURSE;
+function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = 'basic-lti-launch-request', $title = '', $text = '') {
+    global $SESSION, $USER;
 
     if (!empty($instance)) {
         $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $config->lti_toolurl;
@@ -3287,7 +3295,7 @@ function lti_initiatelogin($courseid, $id, $instance, $config, $messagetype = 'b
     $endpoint = trim($endpoint);
 
     // If SSL is forced make sure https is on the normal launch URL.
-    if (isset($typeconfig['forcessl']) && ($typeconfig['forcessl'] == '1')) {
+    if (isset($config->lti_forcessl) && ($config->lti_forcessl == '1')) {
         $endpoint = lti_ensure_url_is_https($endpoint);
     } else if (!strstr($endpoint, '://')) {
         $endpoint = 'http://' . $endpoint;

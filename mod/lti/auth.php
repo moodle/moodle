@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file returns an array of available public keys
+ * This file responds to a login authentication request
  *
  * @package    mod_lti
  * @copyright  2019 Stephen Vickers
@@ -37,7 +37,7 @@ $nonce = optional_param('nonce', '', PARAM_TEXT);
 $prompt = optional_param('prompt', '', PARAM_TEXT);
 
 $ok = !empty($scope) && !empty($responsetype) && !empty($clientid) &&
-      !empty($redirecturi) && !empty($loginhint) && !empty($scope) &&
+      !empty($redirecturi) && !empty($loginhint) &&
       !empty($nonce) && !empty($SESSION->lti_message_hint);
 
 if (!$ok) {
@@ -84,7 +84,9 @@ if ($ok) {
             $desc = 'Invalid response_mode';
         }
     } else {
-        $responsemode = 'query';
+        $ok = false;
+        $error = 'invalid_request';
+        $desc = 'Missing response_mode';
     }
 }
 if ($ok && !empty($prompt) && ($prompt !== 'none')) {
@@ -132,24 +134,19 @@ if (isset($state)) {
     $params['state'] = $state;
 }
 unset($SESSION->lti_message_hint);
-if ($responsemode !== 'query') {
-    $r = '<form action="' . $redirecturi . "\" name=\"ltiAuthForm\" id=\"ltiAuthForm\" " .
-         "method=\"post\" enctype=\"application/x-www-form-urlencoded\">\n";
-    if (!empty($params)) {
-        foreach ($params as $key => $value) {
-            $key = htmlspecialchars($key);
-            $value = htmlspecialchars($value);
-            $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
-        }
+$r = '<form action="' . $redirecturi . "\" name=\"ltiAuthForm\" id=\"ltiAuthForm\" " .
+     "method=\"post\" enctype=\"application/x-www-form-urlencoded\">\n";
+if (!empty($params)) {
+    foreach ($params as $key => $value) {
+        $key = htmlspecialchars($key);
+        $value = htmlspecialchars($value);
+        $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
     }
-    $r .= "</form>\n";
-    $r .= "<script type=\"text/javascript\">\n" .
-        "//<![CDATA[\n" .
-        "document.ltiAuthForm.submit();\n" .
-        "//]]>\n" .
-        "</script>\n";
-    echo $r;
-} else {
-    $url = new \moodle_url(redirecturi, $params);
-    redirect($url->out(false));
 }
+$r .= "</form>\n";
+$r .= "<script type=\"text/javascript\">\n" .
+    "//<![CDATA[\n" .
+    "document.ltiAuthForm.submit();\n" .
+    "//]]>\n" .
+    "</script>\n";
+echo $r;

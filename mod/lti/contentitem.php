@@ -35,7 +35,7 @@ $text = optional_param('text', '', PARAM_RAW);
 $config = lti_get_type_type_config($id);
 if ($config->lti_ltiversion === LTI_VERSION_1P3) {
     if (!isset($SESSION->lti_initiatelogin_status)) {
-        echo lti_initiatelogin($courseid, 0, null, $config, 'ContentItemSelectionRequest', $title, $text);
+        echo lti_initiate_login($courseid, 0, null, $config, 'ContentItemSelectionRequest', $title, $text);
         exit;
     } else {
         unset($SESSION->lti_initiatelogin_status);

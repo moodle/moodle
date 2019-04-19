@@ -33,12 +33,12 @@ $jwt = optional_param('JWT', '', PARAM_RAW);
 
 if (!empty($jwt)) {
     list($tool, $params) = lti_convert_from_jwt($id, $jwt);
-    $consumerkey = isset($params['oauth_consumer_key']) ? $params['oauth_consumer_key'] : '';
-    $messagetype = isset($params['lti_message_type']) ? $params['lti_message_type'] : '';
-    $version = isset($params['lti_version']) ? $params['lti_version'] : '';
-    $items = isset($params['content_items']) ? $params['content_items'] : '';
-    $errormsg = isset($params['lti_errormsg']) ? $params['lti_errormsg'] : '';
-    $msg = isset($params['lti_msg']) ? $params['lti_msg'] : '';
+    $consumerkey = $params['oauth_consumer_key'] ?? '';
+    $messagetype = $params['lti_message_type'] ?? '';
+    $version = $params['lti_version'] ?? '';
+    $items = $params['content_items'] ?? '';
+    $errormsg = $params['lti_errormsg'] ?? '';
+    $msg = $params['lti_msg'] ?? '';
 } else {
     $consumerkey = required_param('oauth_consumer_key', PARAM_RAW);
     $messagetype = required_param('lti_message_type', PARAM_TEXT);
@@ -60,7 +60,7 @@ $redirecturl = null;
 $returndata = null;
 if (empty($errormsg) && !empty($items)) {
     try {
-        $returndata = lti_tool_configuration_from_content_item($tool, $messagetype, $version, $consumerkey, $items);
+        $returndata = lti_tool_configuration_from_content_item($id, $messagetype, $version, $consumerkey, $items);
     } catch (moodle_exception $e) {
         $errormsg = $e->getMessage();
     }

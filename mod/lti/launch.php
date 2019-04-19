@@ -61,7 +61,7 @@ if ($typeid) {
     $config = lti_get_type_type_config($typeid);
     if ($config->lti_ltiversion === LTI_VERSION_1P3) {
         if (!isset($SESSION->lti_initiatelogin_status)) {
-            echo lti_initiatelogin($cm->course, $id, $lti, $config);
+            echo lti_initiate_login($cm->course, $id, $lti, $config);
             exit;
         } else {
             unset($SESSION->lti_initiatelogin_status);

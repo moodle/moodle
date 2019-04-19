@@ -44,7 +44,8 @@ require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
  * @param int $typeid LTI type ID.
  * @param string[] $scopes  Array of scopes which give permission for the current request.
  *
- * @return string|int|boolean  The OAuth consumer key, the LTI type ID for the validated bearer token, otherwise false.
+ * @return string|int|boolean  The OAuth consumer key, the LTI type ID for the validated bearer token,
+                               true for requests not requiring a scope, otherwise false.
  */
 function get_oauth_key_from_headers($typeid = null, $scopes = null) {
     global $DB;

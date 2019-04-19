@@ -375,11 +375,7 @@ abstract class service_base {
                 $key = $this->toolproxy->guid;
                 $secret = $this->toolproxy->secret;
             } else {
-                if ($this->type->ltiversion === LTI_VERSION_1P3) {
-                    $key = $this->type->clientid;  // Should not be needed as access tokens are used.
-                } else {
-                    $key = $this->typeconfig['resourcekey'];
-                }
+                $key = $this->typeconfig['resourcekey'];
                 $secret = $this->typeconfig['password'];
             }
             if (!$this->is_unsigned() && ($key == $consumerkey)) {
