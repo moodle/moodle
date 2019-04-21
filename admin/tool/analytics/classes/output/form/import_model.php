@@ -26,6 +26,8 @@ namespace tool_analytics\output\form;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir.'/formslib.php');
+
 /**
  * Model upload form.
  *
