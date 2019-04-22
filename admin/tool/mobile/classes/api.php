@@ -360,6 +360,7 @@ class api {
                 $coursemodules['$mmCourseDelegate_mmaMod' . ucfirst($mod->name)] = $mod->displayname;
             }
         }
+        asort($coursemodules);
 
         $remoteaddonslist = array();
         $mobileplugins = self::get_plugins_supporting_mobile();
@@ -380,6 +381,22 @@ class api {
             'recentlyaccessedcourses' => 'CoreBlockDelegate_AddonBlockRecentlyAccessedCourses',
             'starredcourses' => 'CoreBlockDelegate_AddonBlockStarredCourses',
             'recentlyaccesseditems' => 'CoreBlockDelegate_AddonBlockRecentlyAccessedItems',
+            'badges' => 'CoreBlockDelegate_AddonBlockBadges',
+            'blog_menu' => 'CoreBlockDelegate_AddonBlockBlogMenu',
+            'blog_recent' => 'CoreBlockDelegate_AddonBlockBlogRecent',
+            'blog_tags' => 'CoreBlockDelegate_AddonBlockBlogTags',
+            'calendar_month' => 'CoreBlockDelegate_AddonBlockCalendarMonth',
+            'calendar_upcoming' => 'CoreBlockDelegate_AddonBlockCalendarUpcoming',
+            'comments' => 'CoreBlockDelegate_AddonBlockComments',
+            'completionstatus' => 'CoreBlockDelegate_AddonBlockCompletionStatus',
+            'feedback' => 'CoreBlockDelegate_AddonBlockFeedback',
+            'glossary_random' => 'CoreBlockDelegate_AddonBlockGlossaryRandom',
+            'html' => 'CoreBlockDelegate_AddonBlockHtml',
+            'lp' => 'CoreBlockDelegate_AddonBlockLp',
+            'news_items' => 'CoreBlockDelegate_AddonBlockNewsItems',
+            'online_users' => 'CoreBlockDelegate_AddonBlockOnlineUsers',
+            'selfcompletion' => 'CoreBlockDelegate_AddonBlockSelfCompletion',
+            'tags' => 'CoreBlockDelegate_AddonBlockTags',
         );
 
         foreach ($availableblocks as $block) {
@@ -387,23 +404,35 @@ class api {
                 $courseblocks[$appsupportedblocks[$block->name]] = $block->displayname;
             }
         }
+        asort($courseblocks);
 
         $features = array(
-            'NoDelegate_CoreOffline' => new lang_string('offlineuse', 'tool_mobile'),
-            '$mmLoginEmailSignup' => new lang_string('startsignup'),
+            "$general" => array(
+                'NoDelegate_CoreOffline' => new lang_string('offlineuse', 'tool_mobile'),
+                'NoDelegate_SiteBlocks' => new lang_string('blocks'),
+                'NoDelegate_CoreComments' => new lang_string('comments'),
+                'NoDelegate_CoreRating' => new lang_string('ratings', 'rating'),
+                'NoDelegate_CoreTag' => new lang_string('tags'),
+                '$mmLoginEmailSignup' => new lang_string('startsignup'),
+                'NoDelegate_ResponsiveMainMenuItems' => new lang_string('responsivemainmenuitems', 'tool_mobile'),
+            ),
             "$mainmenu" => array(
-                '$mmSideMenuDelegate_mmCourses' => new lang_string('mycourses'),
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),
-                '$mmSideMenuDelegate_mmaGrades' => new lang_string('grades', 'grades'),
-                '$mmSideMenuDelegate_mmaCompetency' => new lang_string('myplans', 'tool_lp'),
+                '$mmSideMenuDelegate_mmCourses' => new lang_string('mycourses'),
+                'CoreMainMenuDelegate_CoreCoursesDashboard' => new lang_string('myhome'),
+                '$mmSideMenuDelegate_mmaCalendar' => new lang_string('calendar', 'calendar'),
                 '$mmSideMenuDelegate_mmaNotifications' => new lang_string('notifications', 'message'),
                 '$mmSideMenuDelegate_mmaMessages' => new lang_string('messages', 'message'),
-                '$mmSideMenuDelegate_mmaCalendar' => new lang_string('calendar', 'calendar'),
+                '$mmSideMenuDelegate_mmaGrades' => new lang_string('grades', 'grades'),
+                '$mmSideMenuDelegate_mmaCompetency' => new lang_string('myplans', 'tool_lp'),
+                'CoreMainMenuDelegate_AddonBlog' => new lang_string('blog', 'blog'),
                 '$mmSideMenuDelegate_mmaFiles' => new lang_string('files'),
                 '$mmSideMenuDelegate_website' => new lang_string('webpage'),
                 '$mmSideMenuDelegate_help' => new lang_string('help'),
             ),
             "$course" => array(
+                'NoDelegate_CourseBlocks' => new lang_string('blocks'),
+                'CoreCourseOptionsDelegate_AddonBlog' => new lang_string('blog', 'blog'),
                 '$mmCoursesDelegate_search' => new lang_string('search'),
                 '$mmCoursesDelegate_mmaCompetency' => new lang_string('competencies', 'competency'),
                 '$mmCoursesDelegate_mmaParticipants' => new lang_string('participants'),
@@ -414,6 +443,7 @@ class api {
                 'NoDelegate_CoreCoursesDownload' => new lang_string('downloadcourses', 'tool_mobile'),
             ),
             "$user" => array(
+                'CoreCourseOptionsDelegate_AddonBlog' => new lang_string('blog', 'blog'),
                 '$mmUserDelegate_mmaBadges' => new lang_string('badges', 'badges'),
                 '$mmUserDelegate_mmaCompetency:learningPlan' => new lang_string('competencies', 'competency'),
                 '$mmUserDelegate_mmaCourseCompletion:viewCompletion' => new lang_string('coursecompletion', 'completion'),

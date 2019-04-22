@@ -98,3 +98,4 @@ $string['typeoflogin_desc'] = 'If the site uses a SSO authentication method, the
 $string['getmoodleonyourmobile'] = 'Get the mobile app';
 $string['privacy:metadata:preference:tool_mobile_autologin_request_last'] = 'The date of the last auto-login key request. Between each request 6 minutes are required.';
 $string['privacy:metadata:core_userkey'] = 'User\'s keys used to create auto-login key for the current user.';
+$string['responsivemainmenuitems'] = 'Responsive menu items';
