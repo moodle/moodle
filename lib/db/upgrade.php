@@ -3184,28 +3184,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019041800.01);
     }
 
-    if ($oldversion < 2019041900.00) {
+    if ($oldversion < 2019042000.00) {
 
-        $params = [
-            'target' => '\core\analytics\target\no_teaching',
+        // Let's update all (old core) targets to their new (core_course) locations.
+        $targets = [
+            '\core\analytics\target\course_competencies' => '\core_course\analytics\target\course_competencies',
+            '\core\analytics\target\course_completion' => '\core_course\analytics\target\course_completion',
+            '\core\analytics\target\course_dropout' => '\core_course\analytics\target\course_dropout',
+            '\core\analytics\target\course_gradetopass' => '\core_course\analytics\target\course_gradetopass',
+            '\core\analytics\target\no_teaching' => '\core_course\analytics\target\no_teaching',
         ];
-        $models = $DB->get_records('analytics_models', $params);
-        foreach ($models as $model) {
-            $model->target = '\core_course\analytics\target\no_teaching';
-            $DB->update_record('analytics_models', $model);
-        }
 
-        $params = [
-            'target' => '\core\analytics\target\course_dropout',
-        ];
-        $models = $DB->get_records('analytics_models', $params);
-        foreach ($models as $model) {
-            $model->target = '\core_course\analytics\target\course_dropout';
-            $DB->update_record('analytics_models', $model);
+        foreach ($targets as $oldclass => $newclass) {
+            $DB->set_field('analytics_models', 'target', $newclass, ['target' => $oldclass]);
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2019041900.00);
+        upgrade_main_savepoint(true, 2019042000.00);
     }
 
     return true;
