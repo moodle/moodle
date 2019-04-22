@@ -125,3 +125,5 @@ $string['privacy:passwordresetpath'] = 'Password resets';
 $string['privacy:profileimagespath'] = 'Profile images';
 $string['privacy:privatefilespath'] = 'Private files';
 $string['privacy:sessionpath'] = 'Session data';
+$string['target:upcomingactivitiesdue'] = 'Upcoming activities due';
+$string['target:upcomingactivitiesdue_help'] = 'This target generates reminders for upcoming activities due.';
