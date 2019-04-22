@@ -9,6 +9,8 @@ information provided here is intended especially for developers.
   - totalusers: Number users matching the search. (This element only exists if the function is called with $returnexactcount param set to true).
 * enrolledusercount is now optional in the return value of get_users_courses() for performance reasons. This is controlled with the new
   optional returnusercount parameter (default true).
+* External function core_enrol_external::get_users_courses now returns a new field "completionusertracked" that indicates if the
+  given user is being tracked for completion.
 
 === 3.6 ===
 
