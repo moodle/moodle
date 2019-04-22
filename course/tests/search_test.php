@@ -609,8 +609,10 @@ class course_search_testcase extends advanced_testcase {
     public function test_get_category_names() {
         $coursessearcharea = \core_search\manager::get_search_area($this->coursesareaid);
         $sectionsearcharea = \core_search\manager::get_search_area($this->sectionareaid);
+        $customfieldssearcharea = \core_search\manager::get_search_area($this->customfieldareaid);
 
         $this->assertEquals(['core-courses'], $coursessearcharea->get_category_names());
         $this->assertEquals(['core-course-content'], $sectionsearcharea->get_category_names());
+        $this->assertEquals(['core-course-content', 'core-courses'], $customfieldssearcharea->get_category_names());
     }
 }
