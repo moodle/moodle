@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $models = [
     [
-        'target' => '\core\analytics\target\no_teaching',
+        'target' => '\core_course\analytics\target\no_teaching',
         'indicators' => [
             '\core_course\analytics\indicator\no_teacher',
             '\core_course\analytics\indicator\no_student',

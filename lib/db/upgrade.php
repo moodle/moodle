@@ -3184,5 +3184,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019041800.01);
     }
 
+    if ($oldversion < 2019041900.00) {
+
+        $params = [
+            'target' => '\core\analytics\target\no_teaching',
+        ];
+        $models = $DB->get_records('analytics_models', $params);
+        foreach ($models as $model) {
+            $model->target = '\core_course\analytics\target\no_teaching';
+            $DB->update_record('analytics_models', $model);
+        }
+
+        $params = [
+            'target' => '\core\analytics\target\course_dropout',
+        ];
+        $models = $DB->get_records('analytics_models', $params);
+        foreach ($models as $model) {
+            $model->target = '\core_course\analytics\target\course_dropout';
+            $DB->update_record('analytics_models', $model);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019041900.00);
+    }
+
     return true;
 }

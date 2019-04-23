@@ -360,8 +360,8 @@ class analytics_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminuser();
 
-        $noteaching = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
-        $dropout = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
+        $noteaching = \core_analytics\manager::get_target('\core_course\analytics\target\no_teaching');
+        $dropout = \core_analytics\manager::get_target('\core_course\analytics\target\course_dropout');
         $upcomingactivities = \core_analytics\manager::get_target('\core_user\analytics\target\upcoming_activities_due');
 
         $this->assertTrue(\core_analytics\model::exists($noteaching));

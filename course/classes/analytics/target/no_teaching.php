@@ -17,19 +17,19 @@
 /**
  * No teaching target.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\analytics\target;
+namespace core_course\analytics\target;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * No teaching target.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -52,7 +52,7 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @return \lang_string
      */
     public static function get_name() : \lang_string {
-        return new \lang_string('target:noteachingactivity');
+        return new \lang_string('target:noteachingactivity', 'course');
     }
 
     /**
@@ -111,8 +111,8 @@ class no_teaching extends \core_analytics\local\target\binary {
      */
     protected static function classes_description() {
         return array(
-            get_string('targetlabelteachingyes'),
-            get_string('targetlabelteachingno'),
+            get_string('targetlabelteachingyes', 'course'),
+            get_string('targetlabelteachingno', 'course'),
         );
     }
 

@@ -17,19 +17,19 @@
 /**
  * Base class for targets whose analysable is a course using user enrolments as samples.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\analytics\target;
+namespace core_course\analytics\target;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Base class for targets whose analysable is a course using user enrolments as samples.
  *
- * @package   core
+ * @package   core_course
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,7 +58,7 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
      * @return string
      */
     public function get_insight_subject(int $modelid, \context $context) {
-        return get_string('studentsatriskincourse', 'moodle', $context->get_context_name(false));
+        return get_string('studentsatriskincourse', 'course', $context->get_context_name(false));
     }
 
     /**
@@ -71,41 +71,41 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
     public function is_valid_analysable(\core_analytics\analysable $course, $fortraining = true) {
 
         if (!$course->was_started()) {
-            return get_string('coursenotyetstarted');
+            return get_string('coursenotyetstarted', 'course');
         }
 
         if (!$this->students = $course->get_students()) {
-            return get_string('nocoursestudents');
+            return get_string('nocoursestudents', 'course');
         }
 
         if (!course_format_uses_sections($course->get_course_data()->format)) {
             // We can not split activities in time ranges.
-            return get_string('nocoursesections');
+            return get_string('nocoursesections', 'course');
         }
 
         if ($course->get_end() == 0) {
             // We require time end to be set.
-            return get_string('nocourseendtime');
+            return get_string('nocourseendtime', 'course');
         }
 
         if ($course->get_end() < $course->get_start()) {
-            return get_string('errorendbeforestart', 'analytics');
+            return get_string('errorendbeforestart', 'course');
         }
 
         // A course that lasts longer than 1 year probably have wrong start or end dates.
         if ($course->get_end() - $course->get_start() > (YEARSECS + (WEEKSECS * 4))) {
-            return get_string('coursetoolong', 'analytics');
+            return get_string('coursetoolong', 'course');
         }
 
         // Finished courses can not be used to get predictions.
         if (!$fortraining && $course->is_finished()) {
-            return get_string('coursealreadyfinished');
+            return get_string('coursealreadyfinished', 'course');
         }
 
         if ($fortraining) {
             // Ongoing courses data can not be used to train.
             if (!$course->is_finished()) {
-                return get_string('coursenotyetfinished');
+                return get_string('coursenotyetfinished', 'course');
             }
         }
 

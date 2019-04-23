@@ -71,7 +71,7 @@ class analytics_model_testcase extends advanced_testcase {
     public function test_create() {
         $this->resetAfterTest(true);
 
-        $target = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
+        $target = \core_analytics\manager::get_target('\core_course\analytics\target\course_dropout');
         $indicators = array(
             \core_analytics\manager::get_indicator('\core\analytics\indicator\any_write_action'),
             \core_analytics\manager::get_indicator('\core\analytics\indicator\read_actions')
@@ -272,7 +272,7 @@ class analytics_model_testcase extends advanced_testcase {
     public function test_exists() {
         $this->resetAfterTest(true);
 
-        $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
+        $target = \core_analytics\manager::get_target('\core_course\analytics\target\no_teaching');
         $this->assertTrue(\core_analytics\model::exists($target));
 
         foreach (\core_analytics\manager::get_all_models() as $model) {

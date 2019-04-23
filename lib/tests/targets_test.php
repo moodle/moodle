@@ -60,7 +60,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
                     'enablecompletion' => 1,
                     'startdate' => mktime(0, 0, 0, 10, 24, $year + 1)
                 ],
-                'isvalid' => get_string('coursenotyetstarted')
+                'isvalid' => get_string('coursenotyetstarted', 'course')
             ],
             'coursenostudents' => [
                 'params' => [
@@ -68,7 +68,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
                     'startdate' => mktime(0, 0, 0, 10, 24, $year - 2),
                     'enddate' => mktime(0, 0, 0, 10, 24, $year - 1)
                 ],
-                'isvalid' => get_string('nocoursestudents')
+                'isvalid' => get_string('nocoursestudents', 'course')
             ],
             'coursenosections' => [
                 'params' => [
@@ -76,7 +76,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
                     'format' => 'social',
                     'students' => true
                 ],
-                'isvalid' => get_string('nocoursesections')
+                'isvalid' => get_string('nocoursesections', 'course')
             ],
             'coursenoendtime' => [
                 'params' => [
@@ -85,7 +85,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
                     'enddate' => 0,
                     'students' => true
                 ],
-                'isvalid' => get_string('nocourseendtime')
+                'isvalid' => get_string('nocourseendtime', 'course')
             ],
             'courseendbeforestart' => [
                 'params' => [
@@ -93,7 +93,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
                     'enddate' => mktime(0, 0, 0, 10, 23, $year - 2),
                     'students' => true
                 ],
-                'isvalid' => get_string('errorendbeforestart', 'analytics')
+                'isvalid' => get_string('errorendbeforestart', 'course')
             ],
             'coursetoolong' => [
                 'params' => [
@@ -102,7 +102,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
                     'enddate' => mktime(0, 0, 0, 10, 23, $year),
                     'students' => true
                 ],
-                'isvalid' => get_string('coursetoolong', 'analytics')
+                'isvalid' => get_string('coursetoolong', 'course')
             ],
             'coursealreadyfinished' => [
                 'params' => [
@@ -111,7 +111,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
                     'enddate' => mktime(0, 0, 0, 10, 23, $year - 1),
                     'students' => true
                 ],
-                'isvalid' => get_string('coursealreadyfinished'),
+                'isvalid' => get_string('coursealreadyfinished', 'course'),
                 'fortraining' => false
             ],
             'coursenotyetfinished' => [
@@ -121,7 +121,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
                     'enddate' => mktime(0, 0, 0, $month + 2, 23, $year),
                     'students' => true
                 ],
-                'isvalid' => get_string('coursenotyetfinished')
+                'isvalid' => get_string('coursenotyetfinished', 'course')
             ],
             'coursenocompletion' => [
                 'params' => [
@@ -207,7 +207,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
             $criterion->update_config($criteriadata);
         }
 
-        $target = new \core\analytics\target\course_completion();
+        $target = new \core_course\analytics\target\course_completion();
 
         // Test valid analysables.
 
@@ -242,7 +242,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course($courserecord);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, null, 'manual', $timestart, $timeend);
 
-        $target = new \core\analytics\target\course_completion();
+        $target = new \core_course\analytics\target\course_completion();
         $analyser = new \core\analytics\analyser\student_enrolments(1, $target, [], [], []);
         $analysable = new \core_analytics\course($course);
 
@@ -303,7 +303,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
         $data = $this->setup_competencies_environment();
 
         $analysable = new \core_analytics\course($data['course']);
-        $target = new \core\analytics\target\course_competencies();
+        $target = new \core_course\analytics\target\course_competencies();
 
         $this->assertTrue($target->is_valid_analysable($analysable));
 
@@ -318,7 +318,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
 
         $data = $this->setup_competencies_environment();
 
-        $target = new \core\analytics\target\course_competencies();
+        $target = new \core_course\analytics\target\course_competencies();
         $analyser = new \core\analytics\analyser\student_enrolments(1, $target, [], [], []);
         $analysable = new \core_analytics\course($data['course']);
 
@@ -330,7 +330,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
         $target->add_sample_data($samplesdata);
         $sampleid = reset($sampleids);
 
-        $class = new ReflectionClass('\core\analytics\target\course_competencies');
+        $class = new ReflectionClass('\core_course\analytics\target\course_competencies');
         $method = $class->getMethod('calculate_sample');
         $method->setAccessible(true);
 
@@ -364,7 +364,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
         $dg->enrol_user($student1->id, $course1->id, $studentrole->id);
 
         $analysable = new \core_analytics\course($course1);
-        $target = new \core\analytics\target\course_gradetopass();
+        $target = new \core_course\analytics\target\course_gradetopass();
         $this->assertEquals(get_string('gradetopassnotset', 'course'), $target->is_valid_analysable($analysable));
 
         // Set grade to pass.
@@ -372,7 +372,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
         $courseitem->gradepass = 50;
         $DB->update_record('grade_items', $courseitem);
         // Since the grade to pass value is cached in the target, a new one it is instanciated.
-        $target = new \core\analytics\target\course_gradetopass();
+        $target = new \core_course\analytics\target\course_gradetopass();
         $this->assertTrue($target->is_valid_analysable($analysable));
 
     }
@@ -416,7 +416,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
         $courseitem->gradepass = 50;
         $DB->update_record('grade_items', $courseitem);
 
-        $target = new \core\analytics\target\course_gradetopass();
+        $target = new \core_course\analytics\target\course_gradetopass();
         $analyser = new \core\analytics\analyser\student_enrolments(1, $target, [], [], []);
         $analysable = new \core_analytics\course($course1);
 
@@ -427,7 +427,7 @@ class core_analytics_targets_testcase extends advanced_testcase {
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
 
-        $class = new ReflectionClass('\core\analytics\target\course_gradetopass');
+        $class = new ReflectionClass('\core_course\analytics\target\course_gradetopass');
         $method = $class->getMethod('calculate_sample');
         $method->setAccessible(true);
 

@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $models = [
     [
-        'target' => '\core\analytics\target\course_dropout',
+        'target' => '\core_course\analytics\target\course_dropout',
         'indicators' => [
             '\core\analytics\indicator\any_access_after_end',
             '\core\analytics\indicator\any_access_before_start',
@@ -81,7 +81,7 @@ $models = [
         ],
     ],
     [
-        'target' => '\core\analytics\target\no_teaching',
+        'target' => '\core_course\analytics\target\no_teaching',
         'indicators' => [
             '\core_course\analytics\indicator\no_teacher',
             '\core_course\analytics\indicator\no_student',
