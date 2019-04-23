@@ -95,7 +95,9 @@
     </div>
     <div class="d-flex">
         <!-- These are just placeholder elements to align the text below correctly with the name text above -->
-        <div class="mr-2 icon" aria-hidden="true"></div>
+        {{#showrouteback}}
+            <div class="mr-2 icon" aria-hidden="true"></div>
+        {{/showrouteback}}
         {{#imageurl}}<div style="width: 38px" aria-hidden="true"></div>{{/imageurl}}
         <!-- End placeholders -->
         <a class="text-decoration-none line-height-3 ml-2" href="#" data-action="view-group-info" role="button">
