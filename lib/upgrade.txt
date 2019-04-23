@@ -2,8 +2,6 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.7 ===
-* The 'moodle/course:browse' has been renamed to a more accurate name 'moodle/category:viewcourselist'.
-  Also the context level of that capability has changed from course to course category context.
 * Nodes in the navigation api can have labels for each group. See set/get_collectionlabel().
 * The method core_user::is_real_user() now returns false for userid = 0 parameter
 * 'mform1' dependencies (in themes, js...) will stop working because a randomly generated string has been added to the id
@@ -27,7 +25,7 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   When the parameter is set to that constant, the function won't process file merging, keeping the original state of the file area.
 * Introduced new callback for plugin developers '<component>_pre_processor_message_send($procname, $proceventdata)':
   This will allow any plugin to manipulate messages or notifications before they are sent by a processor (email, mobile...)
-* New capability 'moodle/course:browse' in category context that controls whether user is able to browse list of courses
+* New capability 'moodle/category:viewcourselist' in category context that controls whether user is able to browse list of courses
   in this category. To work with list of courses use API methods in core_course_category and also 'course' form element.
 * It is possible to pass additional conditions to get_courses_search();
   core_course_category::search_courses() now allows to search only among courses with completion enabled.

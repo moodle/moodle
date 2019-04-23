@@ -495,6 +495,3 @@ $string['privacy:metadata:role_capabilities:tableexplanation'] = 'The capabiliti
 $string['privacy:metadata:role_capabilities:timemodified'] = 'The date when the capability was created or modified.';
 $string['privacy:metadata:role_cohortroles'] = 'Roles to cohort';
 $string['course:togglecompletion'] = 'Manually mark activities as complete';
-
-// Deprecated since Moodle 3.7
-$string['course:browse'] = 'View list of courses where user is not enrolled';

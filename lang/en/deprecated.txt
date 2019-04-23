@@ -153,4 +153,3 @@ hidedockpanel,core_block
 undockall,core_block
 undockblock,core_block
 undockitem,core_block
-course:browse,core_role
