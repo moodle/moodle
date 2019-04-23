@@ -900,7 +900,9 @@ class structure {
 
     /**
      * Remove a slot from a quiz
+     *
      * @param int $slotnumber The number of the slot to be deleted.
+     * @throws \coding_exception
      */
     public function remove_slot($slotnumber) {
         global $DB;
@@ -923,6 +925,9 @@ class structure {
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {
             $DB->set_field('quiz_slots', 'slot', $i - 1,
                     array('quizid' => $this->get_quizid(), 'slot' => $i));
+            $this->slotsinorder[$i]->slot = $i - 1;
+            $this->slotsinorder[$i - 1] = $this->slotsinorder[$i];
+            unset($this->slotsinorder[$i]);
         }
 
         $qtype = $DB->get_field('question', 'qtype', array('id' => $slot->questionid));
@@ -932,6 +937,13 @@ class structure {
         }
 
         quiz_update_section_firstslots($this->get_quizid(), -1, $slotnumber);
+        foreach ($this->sections as $key => $section) {
+            if ($section->firstslot > $slotnumber) {
+                $this->sections[$key]->firstslot--;
+            }
+        }
+        $this->populate_slots_with_sections();
+        $this->populate_question_numbers();
         unset($this->questions[$slot->questionid]);
 
         $this->refresh_page_numbers_and_update_db();
