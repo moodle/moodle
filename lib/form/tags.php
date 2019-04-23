@@ -261,7 +261,6 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
             $url = new moodle_url('/tag/manage.php', array('tc' => $this->get_tag_collection()));
             $context['managestandardtagsurl'] = $url->out(false);
         }
-        $context['nameraw'] = $this->getName();
 
         return $context;
     }
