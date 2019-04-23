@@ -103,7 +103,7 @@ class basicoutcomes extends \mod_lti\local\ltiservice\service_base {
         if (isset($tool->{$this->get_component_id()})) {
             if ($tool->{$this->get_component_id()} == parent::SERVICE_ENABLED) {
                 if ($messagetype === 'basic-lti-launch-request') {
-                    $launchparameters['lis_outcomes_service_url'] = '$BasicOutcome.url';
+                    $launchparameters['lis_outcome_service_url'] = '$BasicOutcome.url';
                     $launchparameters['lis_result_sourcedid'] = '$BasicOutcome.sourcedId';
                 }
             }
