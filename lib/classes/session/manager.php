@@ -1109,12 +1109,18 @@ class manager {
         global $SESSION;
 
         $locks = self::get_recent_session_locks();
+
+        $maximumstoredhistory = 50;
+        if (count($locks) > $maximumstoredhistory) {
+            $locks = array_slice($locks, -$maximumstoredhistory);
+        }
+
         if (count($locks) > 2) {
             for ($i = count($locks) - 1; $i > 0; $i--) {
                 // Calculate the gap between session locks.
                 $gap = $locks[$i]['released'] - $locks[$i - 1]['start'];
-                if ($gap >= 10) {
-                    // Remove previous locks if the gap is 10 seconds or more.
+                if ($gap >= 1) {
+                    // Remove previous locks if the gap is 1 second or more.
                     $SESSION->recentsessionlocks = array_slice($locks, $i);
                     break;
                 }
