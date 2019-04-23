@@ -284,7 +284,7 @@ class discussion {
      *
      * @return string
      */
-    private function get_move_discussion_html() : string {
+    private function get_move_discussion_html() : ?string {
         global $DB;
 
         $forum = $this->forum;
