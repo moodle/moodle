@@ -303,10 +303,6 @@ class provider_testcase extends advanced_testcase {
             $tablelist = $structure->getTables();
 
             foreach ($tablelist as $table) {
-                if ($table->getName() === 'role_sortorder') {
-                    // TODO MDL-62459 this table is not used anywhere. Remove the table and this statement.
-                    continue;
-                }
                 if ($fields = $this->get_userid_fields($table)) {
                     $tables[$table->getName()] = '  - ' . $table->getName() . ' (' . join(', ', $fields) . ')';
                 }
