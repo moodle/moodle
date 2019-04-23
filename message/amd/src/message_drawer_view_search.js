@@ -988,10 +988,11 @@ function(
     /**
      * String describing this page used for aria-labels.
      *
+     * @param {string} namespace The route namespace.
      * @param {Object} header Contacts header container element.
      * @return {Object} jQuery promise
      */
-    var description = function(header) {
+    var description = function(namespace, header) {
         if (typeof header !== 'object') {
             return Str.get_string('messagedrawerviewsearch', 'core_message');
         }
