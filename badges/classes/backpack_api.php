@@ -94,14 +94,17 @@ class backpack_api {
         $this->isuserbackpack = false;
         $this->backpackid = $sitebackpack->id;
         if (!empty($userbackpack)) {
+            if ($userbackpack->externalbackpackid != $sitebackpack->id) {
+                throw new coding_exception('Incorrect backpack');
+            }
             $this->isuserbackpack = true;
-            $this->backpackapiurl = $userbackpack->backpackurl;
-            $this->backpackapiversion = $userbackpack->apiversion;
             $this->password = $userbackpack->password;
             $this->email = $userbackpack->email;
         }
 
         $this->define_mappings();
+        // Clear the last authentication error.
+        backpack_api_mapping::set_authentication_error('');
     }
 
     /**
@@ -630,6 +633,15 @@ class backpack_api {
         } else {
             return $data->entityId;
         }
+    }
+
+    /**
+     * Get the last error message returned during an authentication request.
+     *
+     * @return string
+     */
+    public function get_authentication_error() {
+        return backpack_api_mapping::get_authentication_error();
     }
 
     /**

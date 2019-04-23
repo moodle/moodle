@@ -55,15 +55,20 @@ $badgescache = cache::make('core', 'externalbadges');
 
 if ($disconnect && $backpack) {
     require_sesskey();
-    $sitebackpack = badges_get_site_backpack(0, $backpack->backpackurl);
+    $sitebackpack = badges_get_site_backpack($backpack->externalbackpackid);
     // If backpack is connected, need to select collections.
     $bp = new \core_badges\backpack_api($sitebackpack, $backpack);
     $bp->disconnect_backpack($USER->id, $backpack->id);
     redirect(new moodle_url('/badges/mybackpack.php'));
 }
+$warning = '';
 if ($backpack) {
 
-    $sitebackpack = badges_get_site_backpack(0, $backpack->backpackurl);
+    $sitebackpack = badges_get_site_backpack($backpack->externalbackpackid);
+
+    if ($sitebackpack->id != $CFG->badges_site_backpack) {
+        $warning = $OUTPUT->notification(get_string('backpackneedsupdate', 'badges'), 'warning');
+    }
 
     // If backpack is connected, need to select collections.
     $bp = new \core_badges\backpack_api($sitebackpack, $backpack);
@@ -119,6 +124,7 @@ if ($backpack) {
         // 1. After clicking 'Connect to backpack'. We'll have $data->email.
         // 2. After clicking 'Resend verification email'. We'll have $data->email.
         // 3. After clicking 'Connect using a different email' to cancel the verification process. We'll have $data->revertbutton.
+
         if (isset($data->revertbutton)) {
             badges_disconnect_user_backpack($USER->id);
             redirect(new moodle_url('/badges/mybackpack.php'));
@@ -137,5 +143,6 @@ if ($backpack) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
+echo $warning;
 $form->display();
 echo $OUTPUT->footer();

@@ -61,6 +61,8 @@ class collections extends moodleform {
         }
 
         $backpack = get_backpack_settings($USER->id);
+        $sitebackpack = badges_get_site_backpack($backpack->backpackid);
+
         $mform->addElement('header', 'backpackheader', get_string('backpackconnection', 'badges'));
         $mform->addHelpButton('backpackheader', 'backpackconnection', 'badges');
         $mform->addElement('static', 'url', get_string('url'), $backpackweburl);
@@ -74,11 +76,18 @@ class collections extends moodleform {
         $mform->addElement('header', 'collectionheader', get_string('backpackimport', 'badges'));
         $mform->addHelpButton('collectionheader', 'backpackimport', 'badges');
 
+        $hasgroups = false;
         if (!empty($groups)) {
-            $mform->addElement('static', 'selectgroup', '', get_string('selectgroup_start', 'badges'));
             foreach ($groups as $group) {
                 // Assertions or badges.
                 $count = 0;
+
+                if ($sitebackpack->apiversion == OPEN_BADGES_V2) {
+                    if (empty($group->published)) {
+                        // Only public collections.
+                        continue;
+                    }
+                }
                 if (!empty($group->assertions)) {
                     $count = count($group->assertions);
                 }
@@ -88,6 +97,10 @@ class collections extends moodleform {
                 if (!empty($group->groupId)) {
                     $group->entityId = $group->groupId;
                 }
+                if (!$hasgroups) {
+                    $mform->addElement('static', 'selectgroup', '', get_string('selectgroup_start', 'badges'));
+                }
+                $hasgroups = true;
                 $name = $group->name . ' (' . $count . ')';
                 $mform->addElement(
                     'advcheckbox',
@@ -102,7 +115,8 @@ class collections extends moodleform {
                 }
             }
             $mform->addElement('static', 'selectgroup', '', get_string('selectgroup_end', 'badges', $backpackweburl));
-        } else {
+        }
+        if (!$hasgroups) {
             $mform->addElement('static', 'selectgroup', '', $nogroups);
         }
 

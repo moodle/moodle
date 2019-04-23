@@ -3342,11 +3342,7 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Add default backpacks.
-        require_once($CFG->libdir.'/badgeslib.php'); // Core Upgrade-related functions for badges only.
-        badges_install_default_backpacks();
-
-         // Define table badge_external_identifier to be created.
+        // Define table badge_external_identifier to be created.
         $table = new xmldb_table('badge_external_identifier');
 
         // Adding fields to table badge_external_identifier.
@@ -3365,6 +3361,40 @@ function xmldb_main_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
+
+        // Define field externalbackpackid to be added to badge_backpack.
+        $table = new xmldb_table('badge_backpack');
+        $field = new xmldb_field('externalbackpackid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'password');
+
+        // Conditionally launch add field externalbackpackid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define key externalbackpack (foreign) to be added to badge_backpack.
+        $key = new xmldb_key('externalbackpack', XMLDB_KEY_FOREIGN, ['externalbackpackid'], 'badge_external_backpack', ['id']);
+
+        // Launch add key externalbackpack.
+        $dbman->add_key($table, $key);
+
+        $field = new xmldb_field('apiversion');
+
+        // Conditionally launch drop field apiversion.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        $field = new xmldb_field('backpackurl');
+
+        // Conditionally launch drop field backpackurl.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Add default backpacks.
+        require_once($CFG->libdir.'/badgeslib.php'); // Core Upgrade-related functions for badges only.
+        badges_install_default_backpacks();
+
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019050100.01);
     }

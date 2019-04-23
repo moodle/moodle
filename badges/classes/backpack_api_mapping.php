@@ -76,6 +76,9 @@ class backpack_api_mapping {
     /** @var boolean Differentiate the function that can be called on a user backpack or a site backpack. */
     private $isuserbackpack;
 
+    /** @var string Error string from authentication request. */
+    private static $authenticationerror = '';
+
     /**
      * Create a mapping.
      *
@@ -121,6 +124,24 @@ class backpack_api_mapping {
         }
         $prefix .= $type . '_token';
         return $prefix;
+    }
+
+    /**
+     * Remember the error message in a static variable.
+     *
+     * @param string $msg The message.
+     */
+    public static function set_authentication_error($msg) {
+        self::$authenticationerror = $msg;
+    }
+
+    /**
+     * Get the last authentication error in this request.
+     *
+     * @return string
+     */
+    public static function get_authentication_error() {
+        return self::$authenticationerror;
     }
 
     /**
@@ -209,7 +230,7 @@ class backpack_api_mapping {
      *
      * @param string $response The request response.
      * @param integer $backpackid The backpack id.
-     * @return boolean
+     * @return mixed
      */
     private function convert_email_response($response, $backpackid) {
         global $SESSION;
@@ -223,6 +244,9 @@ class backpack_api_mapping {
             $SESSION->$useridkey = $response->userId;
             $SESSION->$backpackidkey = $backpackid;
             return $response->userId;
+        }
+        if (!empty($response->error)) {
+            self::set_authentication_error($response->error);
         }
         return false;
     }
@@ -273,6 +297,8 @@ class backpack_api_mapping {
             $SESSION->$refreshkey = $response->refresh_token;
             $SESSION->$backpackidkey = $backpackid;
             return -1;
+        } else if (isset($response->error_description)) {
+            self::set_authentication_error($response->error_description);
         }
         return $response;
     }
@@ -334,7 +360,6 @@ class backpack_api_mapping {
             $response = $curl->post($url, $post, $options);
         }
         $response = json_decode($response);
-
         if (isset($response->result)) {
             $response = $response->result;
         }

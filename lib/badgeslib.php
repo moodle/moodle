@@ -98,9 +98,13 @@ define('BADGE_MESSAGE_MONTHLY', 4);
  */
 define('BADGE_BACKPACKAPIURL', 'https://backpack.openbadges.org');
 define('BADGE_BACKPACKWEBURL', 'https://backpack.openbadges.org');
-define('BADGE_BACKPACKURL', 'https://backpack.openbadges.org');
 define('BADGRIO_BACKPACKAPIURL', 'https://api.badgr.io/v2');
 define('BADGRIO_BACKPACKWEBURL', 'https://badgr.io');
+
+/*
+ * @deprecated since 3.7. Use the urls in the badge_external_backpack table instead.
+ */
+define('BADGE_BACKPACKURL', 'https://backpack.openbadges.org');
 
 /*
  * Open Badges specifications.
@@ -554,7 +558,7 @@ function get_backpack_settings($userid, $refresh = false) {
     // Get badges through curl request to the backpack.
     $record = $DB->get_record('badge_backpack', array('userid' => $userid));
     if ($record) {
-        $sitebackpack = badges_get_site_backpack(0, $record->backpackurl);
+        $sitebackpack = badges_get_site_backpack($record->externalbackpackid);
         $backpack = new \core_badges\backpack_api($sitebackpack, $record);
         $out = new stdClass();
         $out->backpackid = $sitebackpack->id;
@@ -649,6 +653,7 @@ function badges_check_backpack_accessibility() {
         'HEADER' => 0,
         'CONNECTTIMEOUT' => 2,
     );
+    // BADGE_BACKPACKURL and the "baker" API is deprecated and should never be used in future.
     $location = BADGE_BACKPACKURL . '/baker';
     $out = $curl->get($location, array('assertion' => $fakeassertion->out(false)), $options);
 
@@ -718,7 +723,9 @@ function badges_setup_backpack_js() {
     if (!empty($CFG->badges_allowexternalbackpack)) {
         if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
             $PAGE->requires->string_for_js('error:backpackproblem', 'badges');
+            // The issuer.js API is deprecated and should not be used in future.
             $PAGE->requires->js(new moodle_url(BADGE_BACKPACKURL . '/issuer.js'), true);
+            // The backpack.js file is deprecated and should not be used in future.
             $PAGE->requires->js('/badges/backpack.js', true);
         }
     }
@@ -809,25 +816,12 @@ function badges_open_badges_backpack_api() {
  * Get a site backpacks by id or url.
  *
  * @param int $id The backpack id.
- * @param string $backpackapiurl The backpack url.
- * @param string $apiversion Filter by api version - one of OPEN_BADGES_V1 or OPEN_BADGES_V2
  * @return array(stdClass)
  */
-function badges_get_site_backpack($id, $backpackapiurl = '', $apiversion = '') {
+function badges_get_site_backpack($id) {
     global $DB;
 
-    $filters = array();
-    if (!empty($id)) {
-        $filters['id'] = $id;
-    }
-    if (!empty($backpackapiurl)) {
-        $filters['backpackapiurl'] = $backpackapiurl;
-    }
-    if (!empty($apiversion)) {
-        $filters['apiversion'] = $apiversion;
-    }
-
-    return $DB->get_record('badge_external_backpack', $filters);
+    return $DB->get_record('badge_external_backpack', ['id' => $id]);
 }
 
 /**
@@ -885,6 +879,9 @@ function badges_install_default_backpacks() {
     }
     set_config('badges_site_backpack', $bpid);
 
+    // All existing backpacks default to V1.
+    $DB->set_field('badge_backpack', 'externalbackpackid', $bpid);
+
     $record = new stdClass();
     $record->backpackapiurl = BADGRIO_BACKPACKAPIURL;
     $record->backpackweburl = BADGRIO_BACKPACKWEBURL;
@@ -909,7 +906,7 @@ function badges_get_default_issuer() {
     $issuer = array();
     $issuerurl = new moodle_url('/badges/issuer.php');
     $issuer['name'] = $CFG->badges_defaultissuername;
-    $issuer['url'] = $issuerurl;
+    $issuer['url'] = $issuerurl->out(false);
     $issuer['email'] = $CFG->badges_defaultissuercontact;
     $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
     $issuer['id'] = $issuerurl->out(false);

@@ -327,7 +327,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $output = '';
         $output .= html_writer::start_tag('div', array('id' => 'badge'));
         $output .= html_writer::start_tag('div', array('id' => 'badge-image'));
-        $output .= html_writer::empty_tag('img', array('src' => $badgeimage, 'alt' => $badge->name));
+        $output .= html_writer::empty_tag('img', array('src' => $badgeimage, 'alt' => $badge->name, 'width' => '100'));
         if ($expiration < $now) {
             $output .= $this->output->pix_icon('i/expired',
             get_string('expireddate', 'badges', userdate($issued['expires'])),
@@ -506,7 +506,7 @@ class core_badges_renderer extends plugin_renderer_base {
         if (isset($issued->imageUrl)) {
             $issued->image = $issued->imageUrl;
         }
-        $output .= html_writer::empty_tag('img', array('src' => $issued->image));
+        $output .= html_writer::empty_tag('img', array('src' => $issued->image, 'width' => '100'));
         if (isset($assertion->expires)) {
             $expiration = !strtotime($assertion->expires) ? s($assertion->expires) : strtotime($assertion->expires);
             if ($expiration < $today) {

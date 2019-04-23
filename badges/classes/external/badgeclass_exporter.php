@@ -89,7 +89,7 @@ class badgeclass_exporter extends exporter {
      * @return array A list of properties to move from $data to $related.
      */
     public static function pick_related() {
-        return ['alignments[]', 'criteria'];
+        return ['alignment[]', 'criteria'];
     }
 
     /**
@@ -170,7 +170,7 @@ class badgeclass_exporter extends exporter {
     protected static function define_related() {
         return array(
             'context' => 'context',
-            'alignments' => 'stdClass[]?',
+            'alignment' => 'stdClass[]?',
             'criteria' => 'stdClass?',
         );
     }
@@ -182,7 +182,7 @@ class badgeclass_exporter extends exporter {
      */
     protected static function define_other_properties() {
         return array(
-            'alignments' => array(
+            'alignment' => array(
                 'type' => alignment_exporter::read_properties_definition(),
                 'optional' => true,
                 'multiple' => true
@@ -208,13 +208,13 @@ class badgeclass_exporter extends exporter {
         global $DB;
         $result = [];
 
-        if (array_key_exists('alignments', $this->related) && $this->related['alignments'] !== null) {
-            $alignments = [];
-            foreach ($this->related['alignments'] as $alignment) {
+        if (array_key_exists('alignment', $this->related) && $this->related['alignment'] !== null) {
+            $alignment = [];
+            foreach ($this->related['alignment'] as $alignment) {
                 $exporter = new alignment_exporter($alignment, $this->related);
                 $alignments[] = $exporter->export($output);
             }
-            $result['alignments'] = $alignments;
+            $result['alignment'] = $alignments;
         }
         if (array_key_exists('criteria', $this->related) && $this->related['criteria'] !== null) {
             if (property_exists($this->related['criteria'], 'id') && $this->related['criteria']->id !== null) {

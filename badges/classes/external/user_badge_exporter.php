@@ -234,7 +234,7 @@ class user_badge_exporter extends exporter {
         return array(
             'context' => 'context',
             'endorsement' => 'stdClass?',
-            'alignments' => 'stdClass[]',
+            'alignment' => 'stdClass[]',
             'relatedbadges' => 'stdClass[]',
         );
     }
@@ -255,7 +255,7 @@ class user_badge_exporter extends exporter {
                 'description' => 'Badge endorsement',
                 'optional' => true,
             ],
-            'alignments' => [
+            'alignment' => [
                 'type' => alignment_exporter::read_properties_definition(),
                 'description' => 'Badge alignments',
                 'multiple' => true,
@@ -277,13 +277,13 @@ class user_badge_exporter extends exporter {
     protected function get_other_values(renderer_base $output) {
         $context = $this->related['context'];
         $endorsement = $this->related['endorsement'];
-        $alignments = $this->related['alignments'];
+        $alignments = $this->related['alignment'];
         $relatedbadges = $this->related['relatedbadges'];
 
         $values = array(
             'badgeurl' => moodle_url::make_webservice_pluginfile_url($context->id, 'badges', 'badgeimage', $this->data->id, '/',
                 'f1')->out(false),
-            'alignments' => array(),
+            'alignment' => array(),
             'relatedbadges' => array(),
         );
 
@@ -295,7 +295,7 @@ class user_badge_exporter extends exporter {
         if (!empty($alignments)) {
             foreach ($alignments as $alignment) {
                 $alignmentexporter = new alignment_exporter($alignment, array('context' => $context));
-                $values['alignments'][] = $alignmentexporter->export($output);
+                $values['alignment'][] = $alignmentexporter->export($output);
             }
         }
 

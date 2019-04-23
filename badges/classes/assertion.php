@@ -126,7 +126,7 @@ class core_badges_assertion {
         if ($this->_data) {
             $hash = $this->_data->uniquehash;
             $email = empty($this->_data->backpackemail) ? $this->_data->email : $this->_data->backpackemail;
-            $assertionurl = new moodle_url('/badges/assertion.php', array('b' => $hash));
+            $assertionurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'obversion' => $this->_obversion));
             $classurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'action' => 1));
 
             // Required.
@@ -179,7 +179,7 @@ class core_badges_assertion {
             $class['name'] = $this->_data->name;
             $class['description'] = $this->_data->description;
             $storage = get_file_storage();
-            $imagefile = $storage->get_file($context->id, 'badges', 'badgeimage', $this->_data->id, '/', 'f1.png');
+            $imagefile = $storage->get_file($context->id, 'badges', 'badgeimage', $this->_data->id, '/', 'f3.png');
             if ($imagefile) {
                 $imagedata = base64_encode($imagefile->get_content());
             } else {
@@ -214,13 +214,17 @@ class core_badges_assertion {
         $issuer = array();
         if ($this->_data) {
             // Required.
-            $issuer['name'] = $this->_data->issuername;
-            $issuer['url'] = $this->_data->issuerurl;
-            // Optional.
-            if (!empty($this->_data->issuercontact)) {
-                $issuer['email'] = $this->_data->issuercontact;
+            if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
+                $issuer['name'] = $this->_data->issuername;
+                $issuer['url'] = $this->_data->issuerurl;
+                // Optional.
+                if (!empty($this->_data->issuercontact)) {
+                    $issuer['email'] = $this->_data->issuercontact;
+                } else {
+                    $issuer['email'] = $CFG->badges_defaultissuercontact;
+                }
             } else {
-                $issuer['email'] = $CFG->badges_defaultissuercontact;
+                $issuer = badges_get_default_issuer();
             }
         }
         $this->embed_data_badge_version2($issuer, OPEN_BADGES_V2_TYPE_ISSUER);

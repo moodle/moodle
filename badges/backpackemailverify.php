@@ -42,10 +42,9 @@ if (!is_null($storedsecret)) {
         $backpack = badges_get_site_backpack($backpackid);
 
         $data = new stdClass();
-        $data->backpackurl = $backpack->backpackapiurl;
-        $data->apiversion = $backpack->apiversion;
         $data->email = $storedemail;
         $data->password = $password;
+        $data->externalbackpackid = $backpackid;
         $bp = new \core_badges\backpack_api($backpack, $data);
 
         // Make sure we have all the required information before trying to save the connection.
@@ -58,8 +57,7 @@ if (!is_null($storedsecret)) {
         $obj = new stdClass();
         $obj->userid = $USER->id;
         $obj->email = $data->email;
-        $obj->backpackurl = $backpack->backpackapiurl;
-        $obj->apiversion = $backpack->apiversion;
+        $obj->externalbackpackid = $backpackid;
         $obj->backpackuid = $backpackuid;
         $obj->autosync = 0;
         $obj->password = $password;

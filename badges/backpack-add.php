@@ -48,8 +48,8 @@ if (!empty($issuedbadge->recipient->id)) {
     $badgeid = $issuedbadge->badgeid;
     $badge = new badge($badgeid);
     $backpack = $DB->get_record('badge_backpack', array('userid' => $USER->id));
-    $sitebackpack = badges_get_site_backpack(0, $backpack->backpackurl);
-    $assertion = new core_badges_assertion($id, $backpack->apiversion);
+    $sitebackpack = badges_get_site_backpack($backpack->externalbackpackid);
+    $assertion = new core_badges_assertion($id, $sitebackpack->apiversion);
     $api = new \core_badges\backpack_api($sitebackpack);
     $api->authenticate();
 

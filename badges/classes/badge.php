@@ -150,6 +150,14 @@ class badge {
             }
         }
 
+        if (badges_open_badges_backpack_api() != OPEN_BADGES_V1) {
+            // For Open Badges 2 we need to use a single site issuer with no exceptions.
+            $issuer = badges_get_default_issuer();
+            $this->issuername = $issuer['name'];
+            $this->issuercontact = $issuer['email'];
+            $this->issuerurl = $issuer['url'];
+        }
+
         $this->criteria = self::get_criteria();
     }
 
@@ -926,7 +934,7 @@ class badge {
         $issuer['url'] = $this->issuerurl;
         $issuer['email'] = $this->issuercontact;
         $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
-        $issuer['id'] = $issuerurl->out(false);
+        $issuer['id'] = $this->issuerurl;
         $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
         return $issuer;
     }
