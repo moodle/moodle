@@ -239,7 +239,7 @@ class discussion {
     }
 
     /**
-     * Check if the discussion has started yet.
+     * Check if the discussion has started yet. DEFAULTS: true if not set
      *
      * @return bool
      */
@@ -249,13 +249,13 @@ class discussion {
     }
 
     /**
-     * Check if the discussion has ended.
+     * Check if the discussion has ended. DEFAULTS: false if not set
      *
      * @return bool
      */
     public function has_ended() : bool {
         $endtime = $this->get_time_end();
-        return !empty($endtime) && $endtime >= time();
+        return !empty($endtime) && $endtime < time();
     }
 
     /**
