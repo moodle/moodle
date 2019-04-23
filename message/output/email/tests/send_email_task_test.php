@@ -91,30 +91,45 @@ class core_message_send_email_task_testcase extends advanced_testcase {
             foreach ($conversations as $conversation) {
                 $conversationid = $conversation->id;
 
-                $message = new \core\message\message();
-                $message->courseid = 1;
-                $message->component = 'moodle';
-                $message->name = 'instantmessage';
-                $message->userfrom = $user1;
-                $message->convid = $conversationid;
-                $message->subject = 'message subject';
-                $message->fullmessage = 'message body';
-                $message->fullmessageformat = FORMAT_MARKDOWN;
-                $message->fullmessagehtml = '<p>message body</p>';
-                $message->smallmessage = 'small message';
-                $message->notification = '0';
+                // Let's send 5 messages.
+                for ($i = 1; $i <= 5; $i++) {
+                    $message = new \core\message\message();
+                    $message->courseid = 1;
+                    $message->component = 'moodle';
+                    $message->name = 'instantmessage';
+                    $message->userfrom = $user1;
+                    $message->convid = $conversationid;
+                    $message->subject = 'message subject';
+                    $message->fullmessage = 'message body';
+                    $message->fullmessageformat = FORMAT_MARKDOWN;
+                    $message->fullmessagehtml = '<p>message body</p>';
+                    $message->smallmessage = 'small message';
+                    $message->notification = '0';
 
-                message_send($message);
+                    message_send($message);
+                }
             }
         }
 
-        $this->assertEquals(2, $DB->count_records('message_email_messages'));
+        $this->assertEquals(10, $DB->count_records('message_email_messages'));
 
-        // Only 1 email is sent as the 2 messages are included in it at a digest.
+        // Only 1 email is sent as the messages are included in it at a digest.
         $sink = $this->redirectEmails();
         $task = new \message_email\task\send_email_task();
         $task->execute();
         $this->assertEquals(1, $sink->count());
+
+        // Confirm it contains the correct data.
+        $emails = $sink->get_messages();
+        $email = reset($emails);
+        $this->assertSame(get_string('emaildigestsubject', 'message_email'), $email->subject);
+        $this->assertSame($user2->email, $email->to);
+        $this->assertNotEmpty($email->header);
+        $emailbody = quoted_printable_decode($email->body);
+        $this->assertContains('Group 1', $emailbody);
+        $this->assertContains('Group 2', $emailbody);
+        // 5 unread messages per conversation, this will be listed twice.
+        $this->assertRegExp("/<span\b[^>]*>5<\/span> Unread message\w+/", $emailbody);
 
         // Confirm table was emptied after task was run.
         $this->assertEquals(0, $DB->count_records('message_email_messages'));
