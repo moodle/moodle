@@ -894,6 +894,85 @@ class block_iomad_company_admin_external extends external_api {
     }
 
     /**
+     * block_iomad_company_admin_get_department_users
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_department_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'departmentids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'Department id'), 'List of department IDs', VALUE_DEFAULT, array()
+                )
+            )
+        );
+        //return new external_function_parameters(new external_value(PARAM_INT, 'Course id'), 'Course ID', VALUE_DEFAULT, 0);
+    }
+
+    /**
+     * block_iomad_company_admin_get_department_users
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function get_department_users($departmentids = array()) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::get_department_users_parameters(), $departmentids);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:edit_users', $context);
+
+        // Get course records
+        if (empty($departmentids)) {
+            return array();
+        } else {
+            $departmentinfo = array();
+            foreach ($departmentids as $departmentid) {
+                $departmentusers = $DB->get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email, cu.companyid, cu.departmentid
+                                                         FROM {user} u
+                                                         JOIN {company_users} cu ON
+                                                         (u.id = cu.userid)
+                                                         WHERE cu.departmentid = :departmentid",
+                                                         array('departmentid' => $departmeentid));
+                $departmentinfo[$departmentid] = (array) $departmentusers;
+            }
+        }
+
+        return $departmentinfo;
+    }
+
+   /**
+     * block_iomad_company_admin_get_department_users
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_department_users_returns() {
+        return new external_single_structure(
+                array('users' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'id' => new external_value(PARAM_INT, 'User ID'),
+                                'firstname' => new external_value(PARAM_TEXT, 'User firstname'),
+                                'lastname' => new external_value(PARAM_TEXT, 'User lastname'),
+                                'email' => new external_value(PARAM_TEXT, 'User email address'),
+                                'companyid' => new external_value(PARAM_INT, 'Company ID'),
+                                'departmentid' => new external_value(PARAM_INT, 'Department ID'),
+                                )
+                            )
+                       ),
+                      'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
+                    )
+                );
+    }
+
+    /**
      * block_iomad_company_admin_assign_courses
      *
      * Implement assign_courses
