@@ -304,7 +304,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
         if (count($children) > 1) {
             // User has access to more than one category on the top level. Return the top as "user top category".
-            // In this case user actually may not have capability 'moodle/course:browse' on the top level.
+            // In this case user actually may not have capability 'moodle/category:viewcourselist' on the top level.
             return self::top();
         }
         // User can not access any categories on the top level.
@@ -653,13 +653,13 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      */
     public static function can_view_category($category, $user = null) {
         if (!$category->id) {
-            return has_capability('moodle/course:browse', context_system::instance(), $user);
+            return has_capability('moodle/category:viewcourselist', context_system::instance(), $user);
         }
         $context = context_coursecat::instance($category->id);
         if (!$category->visible && !has_capability('moodle/category:viewhiddencategories', $context, $user)) {
             return false;
         }
-        return has_capability('moodle/course:browse', $context, $user);
+        return has_capability('moodle/category:viewcourselist', $context, $user);
     }
 
     /**
@@ -682,7 +682,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
         $categorycontext = isset($course->category) ? context_coursecat::instance($course->category) :
             context_course::instance($course->id)->get_parent_context();
-        return has_capability('moodle/course:browse', $categorycontext, $user);
+        return has_capability('moodle/category:viewcourselist', $categorycontext, $user);
     }
 
     /**
@@ -1088,7 +1088,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @param array $params
      * @param array $options may indicate that summary needs to be retrieved
      * @param bool $checkvisibility if true, capability 'moodle/course:viewhiddencourses' will be checked
-     *     on not visible courses and 'moodle/course:browse' on all courses
+     *     on not visible courses and 'moodle/category:viewcourselist' on all courses
      * @return array array of stdClass objects
      */
     protected static function get_course_records($whereclause, $params, $options, $checkvisibility = false) {
