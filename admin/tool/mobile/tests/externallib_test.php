@@ -177,6 +177,12 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'tool_mobile_disabledfeatures', 'value' => ''),
             array('name' => 'tool_mobile_custommenuitems', 'value' => ''),
             array('name' => 'tool_mobile_apppolicy', 'value' => ''),
+            array('name' => 'calendartype', 'value' => $CFG->calendartype),
+            array('name' => 'calendar_site_timeformat', 'value' => $CFG->calendar_site_timeformat),
+            array('name' => 'calendar_startwday', 'value' => $CFG->calendar_startwday),
+            array('name' => 'calendar_adminseesall', 'value' => $CFG->calendar_adminseesall),
+            array('name' => 'calendar_lookahead', 'value' => $CFG->calendar_lookahead),
+            array('name' => 'calendar_maxevents', 'value' => $CFG->calendar_maxevents),
         );
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
