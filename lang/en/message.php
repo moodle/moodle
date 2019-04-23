@@ -112,6 +112,7 @@ $string['messages'] = 'Messages';
 $string['messagesselected:'] = 'Messages selected:';
 $string['messagingdatahasnotbeenmigrated'] = 'Your messages are temporarily unavailable due to upgrades in the messaging infrastructure. Please wait for them to be migrated.';
 $string['muteconversation'] = 'Mute';
+$string['mutedconversation'] = 'Muted conversation';
 $string['newonlymsg'] = 'Show only new';
 $string['newmessage'] = 'New message';
 $string['newmessagesearch'] = 'Select or search for a contact to send a new message.';
