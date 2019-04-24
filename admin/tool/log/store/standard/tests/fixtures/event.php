@@ -44,4 +44,14 @@ class unittest_executed extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/somepath/somefile.php', array('id' => $this->data['other']['sample']));
     }
+
+    /**
+     * The 'other' fields for this event do not need to mapped during backup and restore as they
+     * only contain test values, not IDs for anything on the course.
+     *
+     * @return array Empty array
+     */
+    public static function get_other_mapping(): array {
+        return [];
+    }
 }

@@ -93,7 +93,7 @@ class restore_logstore_database_subplugin extends restore_tool_log_logstore_subp
             return;
         }
 
-        $data = $this->process_log($data);
+        $data = $this->process_log($data, get_config('logstore_database', 'jsonformat'));
 
         if ($data) {
             self::$extdb->insert_record(self::$extdbtablename, $data);
