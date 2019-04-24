@@ -7492,6 +7492,11 @@ button.bg-dark:focus {
   left: 0;
   z-index: 1030; }
 
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1020; }
+
 .sr-only {
   position: absolute;
   width: 1px;
