@@ -166,7 +166,7 @@ class MoodleQuickForm_select extends HTML_QuickForm_select implements templatabl
     */
     function exportValue(&$submitValues, $assoc = false)
     {
-        $emptyvalue = $this->getMultiple() ? [] : '';
+        $emptyvalue = $this->getMultiple() ? [] : null;
         if (empty($this->_options)) {
             return $this->_prepareValue($emptyvalue, $assoc);
         }
