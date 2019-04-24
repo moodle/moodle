@@ -97,6 +97,9 @@ Feature: Access to full profiles of users
       | Force group mode | Yes |
     And I press "Save and display"
     And I log out
+    And the following "message contacts" exist:
+      | user     | contact |
+      | student1 | student2 |
     When I log in as "student1"
     And I view the "Student 2" contact in the message area
     And I should not see "First access to site"
