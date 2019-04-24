@@ -41,7 +41,10 @@ define([], function() {
             inpageReplyForm: "form[data-content='inpage-reply-form']",
             inpageSubmitBtn: "[data-action='forum-inpage-submit']",
             repliesContainer: "[data-region='replies-container']",
-            modeSelect: "select[name='mode']",
+            modeSelect: "select[name='mode']"
+        },
+        lock: {
+            toggle: "[data-action='toggle'][data-type='lock-toggle']",
         }
     };
 });

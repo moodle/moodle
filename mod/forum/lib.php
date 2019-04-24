@@ -1822,8 +1822,9 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
         $updatedsincesql = 'AND d.timemodified > ?';
         $params[] = $updatedsince;
     }
-    $discussionfields = "d.id as discussionid, d.course, d.forum, d.name, d.firstpost, d.groupid, d.assessed," .
-    " d.timemodified, d.usermodified, d.timestart, d.timeend, d.pinned";
+
+    $discussionfields = "d.id as discussionid, d.course, d.forum, d.name, d.firstpost, d.userid, d.groupid, d.assessed," .
+    " d.timemodified, d.usermodified, d.timestart, d.timeend, d.pinned, d.timelocked";
 
     $allnames = get_all_user_name_fields(true, 'u');
     $sql = "SELECT $postdata, $discussionfields,

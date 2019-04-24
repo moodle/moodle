@@ -51,7 +51,7 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $discussion = new backup_nested_element('discussion', array('id'), array(
             'name', 'firstpost', 'userid', 'groupid',
             'assessed', 'timemodified', 'usermodified', 'timestart',
-            'timeend', 'pinned'));
+            'timeend', 'pinned', 'timelocked'));
 
         $posts = new backup_nested_element('posts');
 

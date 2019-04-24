@@ -193,6 +193,10 @@ class mod_forum_generator extends testing_module_generator {
             $record['pinned'] = FORUM_DISCUSSION_UNPINNED;
         }
 
+        if (!isset($record['timelocked'])) {
+            $record['timelocked'] = 0;
+        }
+
         if (isset($record['mailed'])) {
             $mailed = $record['mailed'];
         }

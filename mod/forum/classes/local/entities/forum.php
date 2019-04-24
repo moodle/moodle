@@ -539,12 +539,12 @@ class forum {
     }
 
     /**
-     * Is the discussion locked?
+     * Check whether the discussion is locked based on forum's time based locking criteria
      *
-     * @param discussion_entity $discussion The discussion to check
+     * @param discussion_entity $discussion
      * @return bool
      */
-    public function is_discussion_locked(discussion_entity $discussion) : bool {
+    public function is_discussion_time_locked(discussion_entity $discussion) : bool {
         if (!$this->has_lock_discussions_after()) {
             return false;
         }
@@ -617,5 +617,19 @@ class forum {
         }
 
         return false;
+    }
+
+    /**
+     * Is the discussion locked? - Takes into account both discussion settings AND forum's criteria
+     *
+     * @param discussion_entity $discussion The discussion to check
+     * @return bool
+     */
+    public function is_discussion_locked(discussion_entity $discussion) : bool {
+        if ($discussion->is_locked()) {
+            return true;
+        }
+
+        return $this->is_discussion_time_locked($discussion);
     }
 }

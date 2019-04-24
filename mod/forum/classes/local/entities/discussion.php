@@ -61,6 +61,8 @@ class discussion {
     private $timeend;
     /** @var bool $pinned Is the discussion pinned? */
     private $pinned;
+    /** @var int $locked The timestamp of when the discussion was locked */
+    private $timelocked;
 
     /**
      * Constructor.
@@ -78,6 +80,7 @@ class discussion {
      * @param int $timestart Start time for the discussion
      * @param int $timeend End time for the discussion
      * @param bool $pinned Is the discussion pinned?
+     * @param int $locked Time this discussion was locked
      */
     public function __construct(
         int $id,
@@ -92,7 +95,8 @@ class discussion {
         int $usermodified,
         int $timestart,
         int $timeend,
-        bool $pinned
+        bool $pinned,
+        int $locked
     ) {
         $this->id = $id;
         $this->courseid = $courseid;
@@ -107,6 +111,7 @@ class discussion {
         $this->timestart = $timestart;
         $this->timeend = $timeend;
         $this->pinned = $pinned;
+        $this->timelocked = $locked;
     }
 
     /**
@@ -226,6 +231,34 @@ class discussion {
      */
     public function is_pinned() : bool {
         return $this->pinned;
+    }
+
+    /**
+     * Get the locked time of this discussion.
+     *
+     * @return bool
+     */
+    public function get_locked() : int {
+        return $this->timelocked;
+    }
+
+    /**
+     * Is this discussion locked based on it's locked attribute
+     *
+     * @return bool
+     */
+    public function is_locked() : bool {
+        return ($this->timelocked ? true : false);
+    }
+
+    /**
+     * Set the locked timestamp
+     *
+     * @param int $timestamp The value we want to store into 'locked'
+     */
+    public function toggle_locked_state(int $timestamp) {
+        // Check the current value against what we want the value to be i.e. '$timestamp'.
+        $this->timelocked = ($this->timelocked && $timestamp ? $this->timelocked : $timestamp);
     }
 
     /**

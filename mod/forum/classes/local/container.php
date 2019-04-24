@@ -98,7 +98,8 @@ class container {
         return new vault_factory(
             $DB,
             self::get_entity_factory(),
-            get_file_storage()
+            get_file_storage(),
+            self::get_legacy_data_mapper_factory()
         );
     }
 

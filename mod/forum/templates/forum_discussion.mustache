@@ -32,7 +32,16 @@
 
 <div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
 {{#html}}
-    {{{subscribe}}}
+    <div class="d-flex flex-wrap flex-row-reverse m-b-1" data-container="discussion-tools" style="text-align: right;">
+        {{#capabilities.manage}}
+            {{^timelocked}}
+            <div class="pl-1 discussionlock">
+                {{> forum/discussion_lock_toggle }}
+            </div>
+            {{/timelocked}}
+        {{/capabilities.manage}}
+        <div class="pl-1">{{{subscribe}}}</div>
+    </div>
     {{{neighbourlinks}}}
 
     <div class="d-flex flex-wrap mb-1">
@@ -52,10 +61,11 @@
 {{#html.neighbourlinks}}{{{.}}}{{/html.neighbourlinks}}
 </div>
 {{#js}}
-require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list'], function($, Discussion, PostsList) {
+require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lock_toggle'], function($, Discussion, PostsList, LockToggle) {
     var root = $("[data-content='forum-discussion']");
     Discussion.init(root);
     PostsList.init(root);
-    var root = $('#discussion-container-{{uniqid}}');
+    var root = $('[data-container="discussion-tools"]');
+    LockToggle.init(root);
 });
 {{/js}}

@@ -301,13 +301,15 @@ span.unread {
     background: url([[pix:mod_forum|t/unsubscribed]]) no-repeat -9999px -9999px;
 }
 
-.path-mod-forum .discussionsubscription {
+.path-mod-forum .discussionsubscription,
+.path-mod-forum .discussionlock {
     margin-top: -10px;
     text-align: right;
     margin-bottom: 10px;
 }
 
-.path-mod-forum .discussionsubscription > a > img {
+.path-mod-forum .discussionsubscription > a > img,
+.path-mod-forum .discussionlock > a > img {
     width: 12px;
     padding: 0 4px;
 }

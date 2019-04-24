@@ -985,6 +985,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'pinned' => FORUM_DISCUSSION_UNPINNED,
                 'locked' => false,
                 'canreply' => false,
+                'canlock' => false,
             );
 
         // Call the external function passing forum id.
@@ -1025,6 +1026,11 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
+
+        $this->setAdminUser();
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $this->assertTrue($discussions['discussions'][0]['canlock']);
     }
 
     /**
@@ -1420,6 +1426,56 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($group->id, $discussions['discussions'][1]['groupid']);
         $this->assertEquals($group->id, $discussions['discussions'][2]['groupid']);
 
+    }
+
+    /*
+     * Test set_lock_state.
+     */
+    public function test_set_lock_state() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+        $user = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        // First forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->type = 'news';
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $discussion = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // User who is a student.
+        self::setUser($user);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
+
+        // Only a teacher should be able to lock a discussion.
+        try {
+            $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('errorcannotlock', $e->errorcode);
+        }
+
+        // Set the lock.
+        self::setAdminUser();
+        $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
+        $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
+        $this->assertTrue($result['locked']);
+        $this->assertNotEquals(0, $result['times']['locked']);
+
+        // Unset the lock.
+        $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, time());
+        $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
+        $this->assertFalse($result['locked']);
+        $this->assertEquals('0', $result['times']['locked']);
     }
 
     /*

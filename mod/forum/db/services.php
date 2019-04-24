@@ -134,4 +134,15 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+
+    'mod_forum_set_lock_state' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'set_lock_state',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Set the lock state for the discussion',
+        'type' => 'write',
+        'ajax' => true,
+        'capabilities' => 'moodle/course:manageactivities',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );

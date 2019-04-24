@@ -588,6 +588,7 @@ class mod_forum_external extends external_api {
             }
             // The forum function returns the replies for all the discussions in a given forum.
             $canseeprivatereplies = has_capability('mod/forum:readprivatereplies', $modcontext);
+            $canlock = has_capability('moodle/course:manageactivities', $modcontext, $USER);
             $replies = forum_count_discussion_replies($forumid, $sort, -1, $page, $perpage, $canseeprivatereplies);
 
             foreach ($alldiscussions as $discussion) {
@@ -637,6 +638,7 @@ class mod_forum_external extends external_api {
                 }
 
                 $discussion->locked = forum_discussion_is_locked($forum, $discussion);
+                $discussion->canlock = $canlock;
                 $discussion->canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
 
                 if (forum_is_author_hidden($discussion, $forum)) {
@@ -728,6 +730,7 @@ class mod_forum_external extends external_api {
                                 'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned'),
                                 'locked' => new external_value(PARAM_BOOL, 'Is the discussion locked'),
                                 'canreply' => new external_value(PARAM_BOOL, 'Can the user reply to the discussion'),
+                                'canlock' => new external_value(PARAM_BOOL, 'Can the user lock the discussion'),
                             ), 'post'
                         )
                     ),
@@ -1227,6 +1230,7 @@ class mod_forum_external extends external_api {
         $discussion->name = $discussion->subject;
         $discussion->timestart = 0;
         $discussion->timeend = 0;
+        $discussion->timelocked = 0;
         $discussion->attachments = $options['attachmentsid'];
 
         if (has_capability('mod/forum:pindiscussions', $context) && $options['discussionpinned']) {
@@ -1509,5 +1513,80 @@ class mod_forum_external extends external_api {
      */
     public static function set_subscription_state_returns() {
         return \mod_forum\local\exporters\discussion::get_read_structure();
+    }
+
+    /**
+     * Set the lock state.
+     *
+     * @param   int     $forumid
+     * @param   int     $discussionid
+     * @param   string    $targetstate
+     * @return  \stdClass
+     */
+    public static function set_lock_state($forumid, $discussionid, $targetstate) {
+        global $DB, $PAGE, $USER;
+
+        $params = self::validate_parameters(self::set_lock_state_parameters(), [
+            'forumid' => $forumid,
+            'discussionid' => $discussionid,
+            'targetstate' => $targetstate
+        ]);
+
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $forum = $forumvault->get_from_id($params['forumid']);
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+        if (!$capabilitymanager->can_manage_forum($USER)) {
+            throw new moodle_exception('errorcannotlock', 'forum');
+        }
+
+        // If the targetstate(currentstate) is not 0 then it should be set to the current time.
+        $lockedvalue = $targetstate ? 0 : time();
+        self::validate_context($forum->get_context());
+
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+
+        // If the current state doesn't equal the desired state then update the current.
+        // state to the desired state.
+        $discussion->toggle_locked_state($lockedvalue);
+        $response = $discussionvault->update_discussion($discussion);
+        $discussion = !$response ? $response : $discussion;
+
+        $exporterfactory = mod_forum\local\container::get_exporter_factory();
+        $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
+        return $exporter->export($PAGE->get_renderer('mod_forum'));
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function set_lock_state_parameters() {
+        return new external_function_parameters(
+            [
+                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in'),
+                'discussionid' => new external_value(PARAM_INT, 'The discussion to lock / unlock'),
+                'targetstate' => new external_value(PARAM_INT, 'The timestamp for the lock state')
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function set_lock_state_returns() {
+        return new external_single_structure([
+                'id' => new external_value(PARAM_INT, 'The discussion we are locking.'),
+                'locked' => new external_value(PARAM_BOOL, 'The locked state of the discussion.'),
+                'times' => new external_single_structure([
+                    'locked' => new external_value(PARAM_INT, 'The locked time of the discussion.'),
+                ])
+        ]);
     }
 }

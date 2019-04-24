@@ -49,6 +49,8 @@ use moodle_database;
 class vault {
     /** @var entity_factory $entityfactory Entity factory */
     private $entityfactory;
+    /** @var legacy_data_mapper $legacymapper Entity factory */
+    private $legacymapper;
     /** @var moodle_database $db A moodle database */
     private $db;
     /** @var file_storage $filestorage A file storage instance */
@@ -60,11 +62,14 @@ class vault {
      * @param moodle_database $db A moodle database
      * @param entity_factory $entityfactory Entity factory
      * @param file_storage $filestorage A file storage instance
+     * @param legacy_data_mapper $legacyfactory Datamapper
      */
-    public function __construct(moodle_database $db, entity_factory $entityfactory, file_storage $filestorage) {
+    public function __construct(moodle_database $db, entity_factory $entityfactory,
+        file_storage $filestorage, legacy_data_mapper $legacyfactory) {
         $this->db = $db;
         $this->entityfactory = $entityfactory;
         $this->filestorage = $filestorage;
+        $this->legacymapper = $legacyfactory;
     }
 
     /**
@@ -75,7 +80,8 @@ class vault {
     public function get_forum_vault() : forum_vault {
         return new forum_vault(
             $this->db,
-            $this->entityfactory
+            $this->entityfactory,
+            $this->legacymapper->get_legacy_data_mapper_for_vault('forum')
         );
     }
 
@@ -87,7 +93,8 @@ class vault {
     public function get_discussion_vault() : discussion_vault {
         return new discussion_vault(
             $this->db,
-            $this->entityfactory
+            $this->entityfactory,
+            $this->legacymapper->get_legacy_data_mapper_for_vault('discussion')
         );
     }
 
@@ -99,7 +106,8 @@ class vault {
     public function get_discussions_in_forum_vault() : discussion_list_vault {
         return new discussion_list_vault(
             $this->db,
-            $this->entityfactory
+            $this->entityfactory,
+            $this->legacymapper->get_legacy_data_mapper_for_vault('discussion')
         );
     }
 
@@ -111,7 +119,8 @@ class vault {
     public function get_post_vault() : post_vault {
         return new post_vault(
             $this->db,
-            $this->entityfactory
+            $this->entityfactory,
+            $this->legacymapper->get_legacy_data_mapper_for_vault('post')
         );
     }
 
@@ -123,7 +132,8 @@ class vault {
     public function get_author_vault() : author_vault {
         return new author_vault(
             $this->db,
-            $this->entityfactory
+            $this->entityfactory,
+            $this->legacymapper->get_legacy_data_mapper_for_vault('author')
         );
     }
 
@@ -135,7 +145,8 @@ class vault {
     public function get_post_read_receipt_collection_vault() : post_read_receipt_collection_vault {
         return new post_read_receipt_collection_vault(
             $this->db,
-            $this->entityfactory
+            $this->entityfactory,
+            $this->legacymapper->get_legacy_data_mapper_for_vault('post')
         );
     }
 
