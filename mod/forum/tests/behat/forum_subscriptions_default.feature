@@ -30,12 +30,14 @@ Feature: A user can control their default discussion subscription settings
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
     When I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     Then "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     And "input[name=discussionsubscribe]:not([checked=checked])" "css_element" should exist
 
   Scenario: Replying to an existing discussion in an optional forum follows user preferences
@@ -73,12 +75,14 @@ Feature: A user can control their default discussion subscription settings
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
     When I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     Then "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     And "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
 
   Scenario: Replying to an existing discussion in an automatic forum follows forum subscription

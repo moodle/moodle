@@ -49,14 +49,28 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
     protected $primary;
 
     /**
+     * Any class apart from 'btn' would be overridden with this content.
+     *
+     * By default, submit buttons will utilize the btn-primary OR btn-secondary classes. However there are cases where we
+     * require a submit button with different stylings (e.g. btn-link). In these cases, $customclassoverride will override
+     * the defaults mentioned previously and utilize the provided class(es).
+     *
+     * @var string $customclassoverride Custom class override for the input element
+     */
+    protected $customclassoverride;
+
+    /**
      * constructor
      *
      * @param string $elementName (optional) name of the field
      * @param string $value (optional) field label
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array
      * @param bool|null $primary Is this button a primary button?
+     * @param array $options Options to further customise the submit button. Currently accepted options are:
+     *                  customclassoverride String The CSS class to use for the button instead of the standard
+     *                                             btn-primary and btn-secondary classes.
      */
-    public function __construct($elementName=null, $value=null, $attributes=null, $primary = null) {
+    public function __construct($elementName=null, $value=null, $attributes=null, $primary = null, $options = []) {
         parent::__construct($elementName, $value, $attributes);
 
         // Fallback to legacy behaviour if no value specified.
@@ -65,6 +79,8 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
         } else {
             $this->primary = $primary;
         }
+
+        $this->customclassoverride = $options['customclassoverride'] ?? false;
     }
 
     /**
@@ -130,6 +146,10 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
         $context = $this->export_for_template_base($output);
         if (!$this->primary) {
             $context['secondary'] = true;
+        }
+
+        if ($this->customclassoverride) {
+            $context['customclassoverride'] = $this->customclassoverride;
         }
         return $context;
     }
