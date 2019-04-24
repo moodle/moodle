@@ -3005,6 +3005,8 @@ function xmldb_main_upgrade($oldversion) {
         // the convhash and star them.
         $sql = "SELECT mcm.conversationid, mcm.userid, MAX(mcm.id) as maxid
                   FROM {message_conversation_members} mcm
+            INNER JOIN {user} u ON mcm.userid = u.id
+                 WHERE u.deleted = 0
               GROUP BY mcm.conversationid, mcm.userid
                 HAVING COUNT(*) > 1";
         $selfconversationsrs = $DB->get_recordset_sql($sql);
@@ -3025,10 +3027,11 @@ function xmldb_main_upgrade($oldversion) {
             $userctx = \context_user::instance($selfconversation->userid);
             $favouriterecord->contextid = $userctx->id;
             $favouriterecord->userid = $selfconversation->userid;
-            $favouriterecord->timecreated = time();
-            $favouriterecord->timemodified = $favouriterecord->timecreated;
-
-            $DB->insert_record('favourite', $favouriterecord);
+            if (!$DB->record_exists('favourite', (array)$favouriterecord)) {
+                $favouriterecord->timecreated = time();
+                $favouriterecord->timemodified = $favouriterecord->timecreated;
+                $DB->insert_record('favourite', $favouriterecord);
+            }
 
             // Set the self-conversation member with maxid to remove it later.
             $maxids[] = $selfconversation->maxid;
@@ -3046,8 +3049,11 @@ function xmldb_main_upgrade($oldversion) {
 
         // On the messaging legacy tables, self-conversations are only present in the 'message_read' table, so we don't need to
         // check the content in the 'message' table.
-        $select = 'useridfrom = useridto AND notification = 0';
-        $legacyselfmessagesrs = $DB->get_recordset_select('message_read', $select);
+        $sql = "SELECT mr.*
+                  FROM {message_read} mr
+            INNER JOIN {user} u ON mr.useridfrom = u.id
+                 WHERE mr.useridfrom = mr.useridto AND mr.notification = 0 AND u.deleted = 0";
+        $legacyselfmessagesrs = $DB->get_recordset_sql($sql);
         foreach ($legacyselfmessagesrs as $message) {
             // Get the self-conversation or create and star it if doesn't exist.
             $conditions = [
@@ -3082,10 +3088,11 @@ function xmldb_main_upgrade($oldversion) {
                 $userctx = \context_user::instance($message->useridfrom);
                 $favouriterecord->contextid = $userctx->id;
                 $favouriterecord->userid = $message->useridfrom;
-                $favouriterecord->timecreated = time();
-                $favouriterecord->timemodified = $favouriterecord->timecreated;
-
-                $DB->insert_record('favourite', $favouriterecord);
+                if (!$DB->record_exists('favourite', (array)$favouriterecord)) {
+                    $favouriterecord->timecreated = time();
+                    $favouriterecord->timemodified = $favouriterecord->timecreated;
+                    $DB->insert_record('favourite', $favouriterecord);
+                }
             }
 
             // Create the object we will be inserting into the database.
@@ -3132,7 +3139,7 @@ function xmldb_main_upgrade($oldversion) {
         // Get all the users without a self-conversation.
         $sql = "SELECT u.id
                   FROM {user} u
-                  WHERE u.id NOT IN (SELECT mcm.userid
+                  WHERE u.deleted = 0 AND u.id NOT IN (SELECT mcm.userid
                                      FROM {message_conversation_members} mcm
                                      INNER JOIN {message_conversations} mc
                                              ON mc.id = mcm.conversationid AND mc.type = ?
