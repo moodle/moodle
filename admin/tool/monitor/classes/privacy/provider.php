@@ -114,29 +114,16 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!is_a($context, \context_user::class)) {
+        if (!$context instanceof \context_user) {
             return;
         }
 
-        $params = [
-            'contextid' => $context->id,
-            'contextuser' => CONTEXT_USER,
-        ];
+        $params = ['userid' => $context->instanceid];
 
-        $sql = "SELECT mr.userid
-                  FROM {context} ctx
-                  JOIN {tool_monitor_rules} mr ON ctx.instanceid = mr.userid
-                       AND ctx.contextlevel = :contextuser
-                 WHERE ctx.id = :contextid";
-
+        $sql = "SELECT userid FROM {tool_monitor_rules} WHERE userid = :userid";
         $userlist->add_from_sql('userid', $sql, $params);
 
-        $sql = "SELECT ms.userid
-                  FROM {context} ctx
-             LEFT JOIN {tool_monitor_subscriptions} ms ON ctx.instanceid = ms.userid
-                       AND ctx.contextlevel = :contextuser
-                 WHERE ctx.id = :contextid";
-
+        $sql = "SELECT userid FROM {tool_monitor_subscriptions} WHERE userid = :userid";
         $userlist->add_from_sql('userid', $sql, $params);
     }
 
