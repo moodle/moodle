@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/filter/algebra/filter.php');
 /**
  * Unit tests for filter_algebra.
  *
- * Note that this only tests some of the filter logic. It does not acutally test
+ * Note that this only tests some of the filter logic. It does not actually test
  * the normal case of the filter working, because I cannot make it work on my
  * test server, and if it does not work here, it probably does not also work
  * for other people. A failing test will be irritating noise.
