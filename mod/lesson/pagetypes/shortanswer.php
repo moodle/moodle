@@ -141,9 +141,9 @@ class lesson_page_type_shortanswer extends lesson_page {
                     $ignorecase = 'i';
                 }
             } else {
-                $expectedanswer = str_replace('*', '#####', $expectedanswer);
+                $expectedanswer = str_replace('*', '%@@%@@%', $expectedanswer);
                 $expectedanswer = preg_quote($expectedanswer, '/');
-                $expectedanswer = str_replace('#####', '.*', $expectedanswer);
+                $expectedanswer = str_replace('%@@%@@%', '.*', $expectedanswer);
             }
             // see if user typed in any of the correct answers
             if ((!$this->lesson->custom && $this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) or ($this->lesson->custom && $answer->score > 0) ) {
