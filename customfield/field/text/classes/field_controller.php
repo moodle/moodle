@@ -105,14 +105,16 @@ class field_controller extends \core_customfield\field_controller {
             $errors['configdata[displaysize]'] = get_string('errorconfigdisplaysize', 'customfield_text');
         }
 
-        $link = $data['configdata']['link'];
-        if (strlen($link)) {
-            require_once($CFG->dirroot . '/lib/validateurlsyntax.php');
-            if (strpos($link, '$$') === false) {
-                $errors['configdata[link]'] = get_string('errorconfiglinkplaceholder', 'customfield_text');
-            } else if (!validateUrlSyntax(str_replace('$$', 'XYZ', $link), 's+H?S?F-E-u-P-a?I?p?f?q?r?')) {
-                // This validation is more strict than PARAM_URL - it requires the protocol and it must be either http or https.
-                $errors['configdata[link]'] = get_string('errorconfigdisplaysize', 'customfield_text');
+        if (isset($data['configdata']['link'])) {
+            $link = $data['configdata']['link'];
+            if (strlen($link)) {
+                require_once($CFG->dirroot . '/lib/validateurlsyntax.php');
+                if (strpos($link, '$$') === false) {
+                    $errors['configdata[link]'] = get_string('errorconfiglinkplaceholder', 'customfield_text');
+                } else if (!validateUrlSyntax(str_replace('$$', 'XYZ', $link), 's+H?S?F-E-u-P-a?I?p?f?q?r?')) {
+                    // This validation is more strict than PARAM_URL - it requires the protocol and it must be either http or https.
+                    $errors['configdata[link]'] = get_string('errorconfigdisplaysize', 'customfield_text');
+                }
             }
         }
 
