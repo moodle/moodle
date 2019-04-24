@@ -77,47 +77,50 @@
         </a>
     </div>
     <div class="ml-auto dropdown">
-        <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button id="conversation-actions-menu-button" class="btn btn-link btn-icon icon-size-3" type="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+        aria-label="{{#str}} conversationactions, core_message {{/str}}" aria-controls="conversation-actions-menu">
             {{#pix}} i/moremenu, core {{/pix}}
         </button>
-        <ul class="dropdown-menu pull-right">
+        <ul id="conversation-actions-menu" class="dropdown-menu pull-right" role="menu"
+        aria-labelledby="conversation-actions-menu-button">
             <li data-action="view-contact">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" role="menuitem">
                     {{#str}} info, core_message {{/str}}
                 </a>
             </li>
             <li class="{{#isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" data-action="confirm-favourite">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" role="menuitem">
                     {{#str}} addtofavourites, core_message {{/str}}
                 </a>
             </li>
             <li class="{{^isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" data-action="confirm-unfavourite">
-                <a class="dropdown-item " href="#">
+                <a class="dropdown-item " href="#" role="menuitem">
                     {{#str}} removefromfavourites, core_message {{/str}}
                 </a>
             </li>
             <li class="{{#isblocked}}hidden{{/isblocked}}" data-action="request-block">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" role="menuitem">
                     {{#str}} blockuser, core_message {{/str}}
                 </a>
             </li>
             <li class="{{^isblocked}}hidden{{/isblocked}}" data-action="request-unblock">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" role="menuitem">
                     {{#str}} unblockuser, core_message {{/str}}
                 </a>
             </li>
             <li data-action="request-delete-conversation">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" role="menuitem">
                     {{#str}} deleteconversation, core_message {{/str}}
                 </a>
             </li>
             <li class="{{#iscontact}}hidden{{/iscontact}}" data-action="request-add-contact">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" role="menuitem">
                     {{#str}} addtoyourcontacts, core_message {{/str}}
                 </a>
             </li>
             <li class="{{^iscontact}}hidden{{/iscontact}}" data-action="request-remove-contact">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" role="menuitem">
                     {{#str}} removefromyourcontacts, core_message {{/str}}
                 </a>
             </li>
