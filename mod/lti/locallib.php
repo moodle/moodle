@@ -3838,14 +3838,17 @@ function get_tool_type_state_info(stdClass $type) {
  * @return array An array with configuration details
  */
 function get_tool_type_config($type) {
-    global $CFG;
-
     $platformid = get_config('mod_lti', 'platformid');
     $clientid = $type->clientid;
     $deploymentid = $type->id;
-    $publickeyseturl = "{$CFG->wwwroot}/mod/lti/certs.php";
-    $accesstokenurl = "{$CFG->wwwroot}/mod/lti/token.php";
-    $authrequesturl = "{$CFG->wwwroot}/mod/lti/auth.php";
+    $publickeyseturl = new moodle_url('/mod/lti/certs.php');
+    $publickeyseturl = $publickeyseturl->out();
+
+    $accesstokenurl = new moodle_url('/mod/lti/token.php');
+    $accesstokenurl = $accesstokenurl->out();
+
+    $authrequesturl = new moodle_url('/mod/lti/auth.php');
+    $authrequesturl = $authrequesturl->out();
 
     return array(
         'platformid' => $platformid,
