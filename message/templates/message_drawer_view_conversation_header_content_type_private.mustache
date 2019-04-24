@@ -63,7 +63,8 @@
                     aria-label="{{#str}} favourites, core {{/str}}">
                         {{#pix}} i/star-rating, core {{/pix}}
                     </span>
-                    <span class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary" data-region="muted-icon-container">
+                    <span class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary" data-region="muted-icon-container"
+                    aria-label="{{#str}} mutedconversation, core_message {{/str}}">
                         {{#pix}} i/muted, core {{/pix}}
                     </span>
                 </div>
@@ -77,38 +78,44 @@
         </a>
     </div>
     <div class="ml-auto dropdown">
-        <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button id="conversation-actions-menu-button" class="btn btn-link btn-icon icon-size-3" type="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+        aria-label="{{#str}} conversationactions, core_message {{/str}}" aria-controls="conversation-actions-menu">
             {{#pix}} i/moremenu, core {{/pix}}
         </button>
-        <div class="dropdown-menu float-right">
-            <a class="dropdown-item" href="#" data-action="view-contact">
+        <div id="conversation-actions-menu" class="dropdown-menu float-right" role="menu"
+        aria-labelledby="conversation-actions-menu-button">
+            <a class="dropdown-item" href="#" data-action="view-contact" role="menuitem">
                 {{#str}} info, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" href="#" data-action="confirm-favourite">
+            <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" href="#"
+            data-action="confirm-favourite" role="menuitem">
                 {{#str}} addtofavourites, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" href="#" data-action="confirm-unfavourite">
+            <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" href="#"
+            data-action="confirm-unfavourite" role="menuitem">
                 {{#str}} removefromfavourites, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{#isblocked}}hidden{{/isblocked}}" href="#" data-action="request-block">
+            <a class="dropdown-item {{#isblocked}}hidden{{/isblocked}}" href="#" data-action="request-block" role="menuitem">
                 {{#str}} blockuser, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{^isblocked}}hidden{{/isblocked}}" href="#" data-action="request-unblock">
+            <a class="dropdown-item {{^isblocked}}hidden{{/isblocked}}" href="#" data-action="request-unblock" role="menuitem">
                 {{#str}} unblockuser, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{#ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-mute">
+            <a class="dropdown-item {{#ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-mute" role="menuitem">
                 {{#str}} muteconversation, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{^ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-unmute">
+            <a class="dropdown-item {{^ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-unmute" role="menuitem">
                 {{#str}} unmuteconversation, core_message {{/str}}
             </a>
-            <a class="dropdown-item" href="#" data-action="request-delete-conversation">
+            <a class="dropdown-item" href="#" data-action="request-delete-conversation" role="menuitem">
                 {{#str}} deleteconversation, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{#iscontact}}hidden{{/iscontact}}" href="#" data-action="request-add-contact">
+            <a class="dropdown-item {{#iscontact}}hidden{{/iscontact}}" href="#" data-action="request-add-contact" role="menuitem">
                 {{#str}} addtoyourcontacts, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{^iscontact}}hidden{{/iscontact}}" href="#" data-action="request-remove-contact">
+            <a class="dropdown-item {{^iscontact}}hidden{{/iscontact}}" href="#" data-action="request-remove-contact"
+            role="menuitem">
                 {{#str}} removefromyourcontacts, core_message {{/str}}
             </a>
         </div>

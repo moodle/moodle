@@ -62,7 +62,8 @@
                         data-region="favourite-icon-container" aria-label="{{#str}} favourites, core {{/str}}">
                             {{#pix}} i/star-rating, core {{/pix}}
                         </span>
-                        <span class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary" data-region="muted-icon-container">
+                        <span class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary" data-region="muted-icon-container"
+                        aria-label="{{#str}} mutedconversation, core_message {{/str}}">
                             {{#pix}} i/muted, core {{/pix}}
                         </span>
                     </div>
@@ -71,23 +72,30 @@
             </a>
         </div>
         <div class="ml-auto dropdown">
-            <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button id="conversation-actions-menu-button" class="btn btn-link btn-icon icon-size-3" type="button"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+            aria-label="{{#str}} conversationactions, core_message {{/str}}" aria-controls="conversation-actions-menu">
                 {{#pix}} i/moremenu, core {{/pix}}
             </button>
-            <div class="dropdown-menu float-right">
-                <a class="dropdown-item" href="#" data-action="view-group-info">
+            <div id="conversation-actions-menu" class="dropdown-menu float-right" role="menu"
+            aria-labelledby="conversation-actions-menu-button">
+                <a class="dropdown-item" href="#" data-action="view-group-info" role="menuitem">
                     {{#str}} groupinfo, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-favourite">
+                <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-favourite"
+                role="menuitem">
                     {{#str}} addtofavourites, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-unfavourite">
+                <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-unfavourite"
+                role="menuitem">
                     {{#str}} removefromfavourites, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{#ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-mute">
+                <a class="dropdown-item {{#ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-mute"
+                role="menuitem">
                     {{#str}} muteconversation, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{^ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-unmute">
+                <a class="dropdown-item {{^ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-unmute"
+                role="menuitem">
                     {{#str}} unmuteconversation, core_message {{/str}}
                 </a>
             </div>
