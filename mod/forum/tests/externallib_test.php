@@ -985,6 +985,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'pinned' => FORUM_DISCUSSION_UNPINNED,
                 'locked' => false,
                 'canreply' => false,
+                'canlock' => false,
             );
 
         // Call the external function passing forum id.
@@ -1025,6 +1026,11 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
+
+        $this->setAdminUser();
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $this->assertTrue($discussions['discussions'][0]['canlock']);
     }
 
     /**
