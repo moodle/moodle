@@ -319,9 +319,10 @@ class completion_info {
      * @return string HTML code for help icon, or blank if not needed
      */
     public function display_help_icon() {
-        global $PAGE, $OUTPUT;
+        global $PAGE, $OUTPUT, $USER;
         $result = '';
-        if ($this->is_enabled() && !$PAGE->user_is_editing() && isloggedin() && !isguestuser()) {
+        if ($this->is_enabled() && !$PAGE->user_is_editing() && $this->is_tracked_user($USER->id) && isloggedin() &&
+                !isguestuser()) {
             $result .= html_writer::tag('div', get_string('yourprogress','completion') .
                     $OUTPUT->help_icon('completionicons', 'completion'), array('id' => 'completionprogressid',
                     'class' => 'completionprogress'));
