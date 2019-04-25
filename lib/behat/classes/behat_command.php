@@ -40,7 +40,7 @@ class behat_command {
     /**
      * Docs url
      */
-    const DOCS_URL = 'http://docs.moodle.org/dev/Acceptance_testing';
+    const DOCS_URL = 'https://docs.moodle.org/dev/Running_acceptance_test';
 
     /**
      * Ensures the behat dir exists in moodledata
@@ -265,7 +265,7 @@ class behat_command {
             // We continue execution after this.
             $clibehaterrorstr = "Ensure you set \$CFG->behat_* vars in config.php " .
                 "and you ran admin/tool/behat/cli/init.php.\n" .
-                "More info in " . self::DOCS_URL . "#Installation\n\n";
+                "More info in " . self::DOCS_URL;
 
             echo 'Error: ' . $msg . "\n\n" . $clibehaterrorstr;
         }

@@ -162,11 +162,10 @@ class tool_behat_renderer extends plugin_renderer_base {
         $html .= $this->output->heading($title);
 
         // Info.
-        $installurl = behat_command::DOCS_URL . '#Installation';
-        $installlink = html_writer::tag('a', $installurl, array('href' => $installurl, 'target' => '_blank'));
-        $writetestsurl = behat_command::DOCS_URL . '#Writing_features';
+        $installlink = html_writer::tag('a', $installurl, array('href' => behat_command::DOCS_URL, 'target' => '_blank'));
+        $writetestsurl = 'https://docs.moodle.org/dev/Writing acceptance tests';
         $writetestslink = html_writer::tag('a', $writetestsurl, array('href' => $writetestsurl, 'target' => '_blank'));
-        $writestepsurl = behat_command::DOCS_URL . '#Adding_steps_definitions';
+        $writestepsurl = 'https://docs.moodle.org/dev/Writing_new_acceptance_test_step_definitions';
         $writestepslink = html_writer::tag('a', $writestepsurl, array('href' => $writestepsurl, 'target' => '_blank'));
         $infos = array(
             get_string('installinfo', 'tool_behat', $installlink),
