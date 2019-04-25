@@ -221,12 +221,9 @@ abstract class service_base {
      * Returns the configuration options for this service.
      *
      * @param \MoodleQuickForm $mform Moodle quickform object definition
-     * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
-     * @see service_base::get_configuration_elements()
      */
     public function get_configuration_options(&$mform) {
-        debugging('get_configuration_options() has been deprecated, ' .
-                  'please use service_base::get_configuration_elements() instead.', DEBUG_DEVELOPER);
+
     }
 
     /**
@@ -235,17 +232,7 @@ abstract class service_base {
      * @return array  Names list of the parameters that the service will be saving in the configuration
      */
     public function get_configuration_parameter_names() {
-        debugging('get_configuration_options() has been deprecated, ' .
-                  'please use service_base::get_configuration_elements() instead.', DEBUG_DEVELOPER);
-        return array();
-    }
-
-    /**
-     * Create form element for gradebook sync add/edit page.
-     *
-     * @return array of \HTML_QuickForm_element Form elements
-     */
-    public function get_configuration_elements() {
+        debugging('get_configuration_parameter_names() has been deprecated.', DEBUG_DEVELOPER);
         return array();
     }
 

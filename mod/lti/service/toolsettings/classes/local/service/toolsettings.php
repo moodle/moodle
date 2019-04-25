@@ -156,20 +156,21 @@ class toolsettings extends \mod_lti\local\ltiservice\service_base {
     }
 
     /**
-     * Create form element for membership add/edit page.
+     * Adds form elements for membership add/edit page.
      *
-     * @return array of \HTML_QuickForm_element Form elements
+     * @param \MoodleQuickForm $mform
      */
-    public function get_configuration_elements() {
-        $elements = array();
+    public function get_configuration_options(&$mform) {
+        $elementname = $this->get_component_id();
         $options = [
             get_string('notallow', $this->get_component_id()),
             get_string('allow', $this->get_component_id())
         ];
-        $elements[''] = new \MoodleQuickForm_select($this->get_component_id(), get_string($this->get_component_id(),
-            $this->get_component_id()), $options);
 
-        return $elements;
+        $mform->addElement('select', $elementname, get_string($elementname, $this->get_component_id()), $options);
+        $mform->setType($elementname, 'int');
+        $mform->setDefault($elementname, 0);
+        $mform->addHelpButton($elementname, $elementname, $this->get_component_id());
     }
 
     /**

@@ -227,7 +227,8 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->addHelpButton('lti_secureicon', 'secure_icon_url', 'lti');
 
         if (!$istool) {
-            $this->get_lti_services($mform);
+            // Display the lti advantage services.
+            $this->get_lti_advantage_services($mform);
         }
 
         if (!$istool) {
@@ -328,52 +329,14 @@ class mod_lti_edit_types_form extends moodleform {
      * Generates the lti advantage extra configuration adding it to the mform
      *
      * @param MoodleQuickForm $mform
-     * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
-     * @see mod_lti_edit_types_form::get_lti_services()
      */
     public function get_lti_advantage_services(&$mform) {
-        debugging('get_lti_advantage_services() has been deprecated, ' .
-                  'please use mod_lti_edit_types_form::get_lti_services() instead.', DEBUG_DEVELOPER);
         // For each service add the label and get the array of configuration.
         $services = lti_get_services();
         $mform->addElement('header', 'services', get_string('services', 'lti'));
         foreach ($services as $service) {
             /** @var \mod_lti\local\ltiservice\service_base $service */
             $service->get_configuration_options($mform);
-        }
-    }
-
-    /**
-     * Generates the lti services extra configuration adding it to the mform
-     *
-     * @param MoodleQuickForm $mform
-     */
-    public function get_lti_services(&$mform) {
-        $services = lti_get_services();
-        $mform->addElement('header', 'services', get_string('services', 'lti'));
-        foreach ($services as $service) {
-            $elements = $service->get_configuration_elements();
-            if (!empty($elements)) {
-                foreach ($elements as $name => $element) {
-                    $id = $service->get_component_id();
-                    if (!empty($name)) {
-                        $id = "{$id}_{$name}";
-                    }
-                    $element->setName($id);
-                    $mform->addelement($element);
-                    $type = PARAM_TEXT;
-                    if ($element instanceof \MoodleQuickForm_select) {
-                        if (is_int($element->_options[0]['attr']['value'])) {
-                            $type = PARAM_INT;
-                        }
-                    }
-                    $mform->setType($id, $type);
-                    $mform->setDefault($id, 0);
-                    if (empty($name)) {
-                        $mform->addHelpButton($id, $id, $id);
-                    }
-                }
-            }
         }
     }
 }

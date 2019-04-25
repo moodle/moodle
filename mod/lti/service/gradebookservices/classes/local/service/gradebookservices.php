@@ -116,41 +116,21 @@ class gradebookservices extends service_base {
      * Adds form elements for gradebook sync add/edit page.
      *
      * @param \MoodleQuickForm $mform Moodle quickform object definition
-     * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
-     * @see gradebookservices::get_configuration_elements()
      */
     public function get_configuration_options(&$mform) {
-        debugging('get_configuration_options() has been deprecated, ' .
-                  'please use service_base::get_configuration_elements() instead.', DEBUG_DEVELOPER);
+
         $selectelementname = 'ltiservice_gradesynchronization';
         $identifier = 'grade_synchronization';
-        $options = [
-            $this->get_string('nevergs'),
-            $this->get_string('partialgs'),
-            $this->get_string('alwaysgs')
-        ];
-        $mform->addElement('select', $selectelementname, $this->get_string($identifier), $options);
-        $mform->setType($selectelementname, 'int');
-        $mform->setDefault($selectelementname, 0);
-        $mform->addHelpButton($selectelementname, $identifier, self::SERVICE_NAME);
-    }
-
-    /**
-     * Create form element for gradebook sync add/edit page.
-     *
-     * @return array of \HTML_QuickForm_element Form elements
-     */
-    public function get_configuration_elements() {
-        $elements = array();
         $options = [
             get_string('nevergs', $this->get_component_id()),
             get_string('partialgs', $this->get_component_id()),
             get_string('alwaysgs', $this->get_component_id())
         ];
-        $elements[''] = new \MoodleQuickForm_select($this->get_component_id(), get_string($this->get_component_id(),
-            $this->get_component_id()), $options);
 
-        return $elements;
+        $mform->addElement('select', $selectelementname, get_string($identifier, $this->get_component_id()), $options);
+        $mform->setType($selectelementname, 'int');
+        $mform->setDefault($selectelementname, 0);
+        $mform->addHelpButton($selectelementname, $identifier, $this->get_component_id());
     }
 
     /**
@@ -173,9 +153,9 @@ class gradebookservices extends service_base {
         $this->set_type(lti_get_type($typeid));
         $this->set_typeconfig(lti_get_type_config($typeid));
         // Only inject parameters if the service is enabled for this tool.
-        if (isset($this->get_typeconfig()[$this->get_component_id()])) {
-            if ($this->get_typeconfig()[$this->get_component_id()] == self::GRADEBOOKSERVICES_READ ||
-                $this->get_typeconfig()[$this->get_component_id()] == self::GRADEBOOKSERVICES_FULL) {
+        if (isset($this->get_typeconfig()['ltiservice_gradesynchronization'])) {
+            if ($this->get_typeconfig()['ltiservice_gradesynchronization'] == self::GRADEBOOKSERVICES_READ ||
+                $this->get_typeconfig()['ltiservice_gradesynchronization'] == self::GRADEBOOKSERVICES_FULL) {
                 // Check for used in context is only needed because there is no explicit site tool - course relation.
                 if ($this->is_allowed_in_context($typeid, $courseid)) {
                     if (is_null($modlti)) {

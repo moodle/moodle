@@ -2522,10 +2522,8 @@ function lti_get_type_type_config($id) {
     }
 
     // Get the parameters from the LTI services.
-    $services = lti_get_services();
-    foreach ($services as $service) {
-        $name = $service->get_component_id();
-        if (isset($config[$name])) {
+    foreach ($config as $name => $value) {
+        if (strpos($name, 'ltiservice_') === 0) {
             $type->{$name} = $config[$name];
         }
     }

@@ -206,14 +206,6 @@ function xmldb_lti_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019031302) {
-        $DB->set_field('lti_types_config', 'name', 'ltiservice_memberships', array('name' => 'memberships'));
-        $DB->set_field('lti_types_config', 'name', 'ltiservice_gradebookservices', array('name' => 'gradesynchronization'));
-
-        // Lti savepoint reached.
-        upgrade_mod_savepoint(true, 2019031302, 'lti');
-    }
-
-    if ($oldversion < 2019031303) {
         // Define field typeid to be added to lti_tool_settings.
         $table = new xmldb_table('lti_tool_settings');
         $field = new xmldb_field('typeid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'toolproxyid');
@@ -231,7 +223,7 @@ function xmldb_lti_upgrade($oldversion) {
         $dbman->add_key($table, $key);
 
         // Lti savepoint reached.
-        upgrade_mod_savepoint(true, 2019031303, 'lti');
+        upgrade_mod_savepoint(true, 2019031302, 'lti');
     }
 
     return true;
