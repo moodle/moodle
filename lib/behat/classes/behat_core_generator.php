@@ -212,6 +212,11 @@ class behat_core_generator extends behat_generator_base {
                 'datagenerator' => 'analytics_model',
                 'required' => ['target', 'indicators', 'timesplitting', 'enabled'],
             ],
+            'user preferences' => [
+                'datagenerator' => 'user_preferences',
+                'required' => array('user', 'preference', 'value'),
+                'switchids' => array('user' => 'userid')
+            ],
         ];
     }
 
@@ -800,5 +805,15 @@ class behat_core_generator extends behat_generator_base {
      */
     protected function process_analytics_model($data) {
         \core_analytics\manager::create_declared_model($data);
+    }
+
+    /**
+     * Set a preference value for user
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_user_preferences(array $data) {
+        set_user_preference($data['preference'], $data['value'], $data['userid']);
     }
 }
