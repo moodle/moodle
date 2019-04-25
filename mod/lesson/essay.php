@@ -224,6 +224,7 @@ switch ($mode) {
             print_error('cannotfindanswer', 'lesson');
         }
 
+        $userpicture = new user_picture($USER);
         foreach ($attempts as $attempt) {
             $essayinfo = lesson_page_type_essay::extract_useranswer($attempt->useranswer);
             if ($essayinfo->graded && !$essayinfo->sent) {
@@ -261,6 +262,9 @@ switch ($mode) {
                 $message  = get_string('essayemailmessage2', 'lesson', $a);
                 $plaintext = format_text_email($message, FORMAT_HTML);
 
+                $smallmessage = get_string('essayemailmessagesmall', 'lesson', $a);
+                $smallmessage = format_text_email($smallmessage, FORMAT_HTML);
+
                 // Subject
                 $subject = get_string('essayemailsubject', 'lesson');
 
@@ -276,8 +280,15 @@ switch ($mode) {
                 $eventdata->fullmessage      = $plaintext;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $message;
-                $eventdata->smallmessage     = '';
-                $eventdata->contexturl       = $contexturl;
+                $eventdata->smallmessage     = $smallmessage;
+                $eventdata->contexturl       = $contexturl->out(false);
+                $userpicture->includetoken   = $attempt->userid; // Generate an out-of-session token for the destinatary.
+                $eventdata->customdata       = [
+                    'cmid' => $cm->id,
+                    'instance' => $lesson->id,
+                    'retake' => $lesson->id,
+                    'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),
+                ];
 
                 // Required for messaging framework
                 $eventdata->component = 'mod_lesson';

@@ -470,7 +470,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
  * @param   array   $options
  *          bool    $options.forcehttps Force the user of https
  *          bool    $options.reverse Reverse the behaviour of the function
- *          bool    $options.includetoken Use a token for authentication
+ *          mixed   $options.includetoken Use a token for authentication. True for current user, int value for other user id.
  *          string  The processed text.
  */
 function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, array $options=null) {
@@ -483,7 +483,8 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
 
     $baseurl = "{$CFG->wwwroot}/{$file}";
     if (!empty($options['includetoken'])) {
-        $token = get_user_key('core_files', $USER->id);
+        $userid = $options['includetoken'] === true ? $USER->id : $options['includetoken'];
+        $token = get_user_key('core_files', $userid);
         $finalfile = basename($file);
         $tokenfile = "token{$finalfile}";
         $file = substr($file, 0, strlen($file) - strlen($finalfile)) . $tokenfile;

@@ -290,12 +290,28 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
     }
 
     public function test_badge_awards() {
+        global $DB;
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.
         $badge = new badge($this->badgeid);
         $user1 = $this->getDataGenerator()->create_user();
 
-        $badge->issue($user1->id, true);
+        $sink = $this->redirectMessages();
+
+        $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
+        set_user_preference('message_provider_moodle_badgerecipientnotice_loggedoff', 'email', $user1);
+
+        $badge->issue($user1->id, false);
+        $this->assertDebuggingCalled(); // Expect debugging while baking a badge via phpunit.
         $this->assertTrue($badge->is_issued($user1->id));
+
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(1, $messages);
+        $message = array_pop($messages);
+        // Check we have the expected data.
+        $customdata = json_decode($message->customdata);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('hash', $customdata);
 
         $user2 = $this->getDataGenerator()->create_user();
         $badge->issue($user2->id, true);

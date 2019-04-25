@@ -113,7 +113,7 @@ class core_outputcomponents_testcase extends advanced_testcase {
     }
 
     public function test_get_url() {
-        global $DB, $CFG;
+        global $DB, $CFG, $USER;
 
         $this->resetAfterTest();
 
@@ -218,6 +218,18 @@ class core_outputcomponents_testcase extends advanced_testcase {
         // Uploaded image takes precedence before gravatar.
         $up1 = new user_picture($user1);
         $this->assertSame($CFG->wwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/boost/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+
+        // Uploaded image with token-based access for current user.
+        $up1 = new user_picture($user1);
+        $up1->includetoken = true;
+        $token = get_user_key('core_files', $USER->id);
+        $this->assertSame($CFG->wwwroot.'/tokenpluginfile.php/'.$token.'/'.$context1->id.'/user/icon/boost/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+
+        // Uploaded image with token-based access for other user.
+        $up1 = new user_picture($user1);
+        $up1->includetoken = $user2->id;
+        $token = get_user_key('core_files', $user2->id);
+        $this->assertSame($CFG->wwwroot.'/tokenpluginfile.php/'.$token.'/'.$context1->id.'/user/icon/boost/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         // Https version.
         $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);

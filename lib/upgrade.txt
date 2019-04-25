@@ -42,6 +42,12 @@ is disabled).
   matching record found or when there are multiple records found for the given field value. If false, it will simply return false.
   Defaults to false when not set.
 * Exposed submit button to allow custom styling (via customclassoverride variable) which can override btn-primary/btn-secondary classes
+* `$includetoken` parameter type has been changed. Now supports:
+   boolean: False indicates to not include the token, true indicates to generate a token for the current user ($USER).
+   integer: Indicates to generate a token for the user whose id is the integer value.
+* The following functions have been updated to support the new usage:
+    - make_pluginfile_url
+    - file_rewrite_pluginfile_urls
 
 === 3.6 ===
 

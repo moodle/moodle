@@ -1496,4 +1496,47 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($recipient, [$post]);
         $this->send_notifications_and_assert($editor, [$post]);
     }
+
+    /**
+     * Test notification comes with customdata.
+     */
+    public function test_notification_customdata() {
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        list($author) = $this->helper_create_users($course, 1);
+        list($commenter) = $this->helper_create_users($course, 1);
+
+        $strre = get_string('re', 'forum');
+
+        // New posts should not have Re: in the subject.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'commenter' => (object) [
+                'userid' => $commenter->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($author, [$post]);
+        $this->send_notifications_and_assert($commenter, [$post]);
+        $messages = $this->messagesink->get_messages();
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertEquals($forum->id, $customdata->instance);
+        $this->assertEquals($forum->cmid, $customdata->cmid);
+        $this->assertEquals($post->id, $customdata->postid);
+        $this->assertEquals($discussion->id, $customdata->discussionid);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(1, (array) $customdata->actionbuttons);
+    }
 }

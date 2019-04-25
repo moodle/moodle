@@ -325,7 +325,7 @@ function message_format_contexturl($message) {
  * @return int|false the ID of the new message or false
  */
 function message_post_message($userfrom, $userto, $message, $format) {
-    global $SITE, $CFG, $USER;
+    global $PAGE;
 
     $eventdata = new \core\message\message();
     $eventdata->courseid         = 1;
@@ -351,6 +351,18 @@ function message_post_message($userfrom, $userto, $message, $format) {
     $eventdata->smallmessage     = $message;//store the message unfiltered. Clean up on output.
     $eventdata->timecreated     = time();
     $eventdata->notification    = 0;
+    // User image.
+    $userpicture = new user_picture($userfrom);
+    $userpicture->includetoken = $userto->id; // Generate an out-of-session token for the user receiving the message.
+    $eventdata->customdata = [
+        'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),
+        'actionbuttons' => [
+            'send' => get_string_manager()->get_string('send', 'message', null, $eventdata->userto->lang),
+        ],
+        'placeholders' => [
+            'send' => get_string_manager()->get_string('writeamessage', 'message', null, $eventdata->userto->lang),
+        ],
+    ];
     return message_send($eventdata);
 }
 

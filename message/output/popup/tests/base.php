@@ -49,6 +49,7 @@ trait message_popup_test_helper {
         $record->fullmessage = $message;
         $record->smallmessage = $message;
         $record->timecreated = $timecreated ? $timecreated : time();
+        $record->customdata  = json_encode(['datakey' => 'data']);
 
         $id = $DB->insert_record('notifications', $record);
 

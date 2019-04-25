@@ -204,6 +204,7 @@ $string['eolstudentoutoftime'] = 'Attention:  You ran out of time for this lesso
 $string['eolstudentoutoftimenoanswers'] = 'You did not answer any questions.  You have received a 0 for this lesson.';
 $string['essay'] = 'Essay';
 $string['essayemailmessage2'] = '<p>Essay prompt: {$a->question}</p><p>Your response: <em>{$a->response}</em></p><p>Grader\'s comments: <em>{$a->comment}</em></p><p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the {$a->lesson} lesson has been changed to {$a->newgrade}&#37;.</p>';
+$string['essayemailmessagesmall'] = '<p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the {$a->lesson} lesson has been changed to {$a->newgrade}&#37;.</p>';
 $string['essayemailsubject'] = 'Grade available for lesson question';
 $string['essayresponses'] = 'Essay responses';
 $string['essays'] = 'Essays';

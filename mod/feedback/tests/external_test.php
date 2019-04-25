@@ -54,7 +54,8 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
 
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
-        $this->feedback = $this->getDataGenerator()->create_module('feedback', array('course' => $this->course->id));
+        $this->feedback = $this->getDataGenerator()->create_module('feedback',
+            array('course' => $this->course->id, 'email_notification' => 1));
         $this->context = context_module::instance($this->feedback->cmid);
         $this->cm = get_coursemodule_from_instance('feedback', $this->feedback->id);
 
@@ -518,6 +519,7 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(7, $tmpitems);   // 2 from the first page + 5 from the second page.
 
         // And finally, save everything! We are going to modify one previous recorded value.
+        $messagessink = $this->redirectMessages();
         $data[2]['value'] = 2; // 2 is value of the option 'b'.
         $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
         $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata);
@@ -540,6 +542,15 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         }
         $completed = $DB->get_record('feedback_completed', []);
         $this->assertEquals(0, $completed->courseid);
+
+        // Test notifications sent.
+        $messages = $messagessink->get_messages();
+        $messagessink->close();
+        // Test customdata.
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertEquals($this->feedback->id, $customdata->instance);
+        $this->assertEquals($this->feedback->cmid, $customdata->cmid);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
     }
 
     /**

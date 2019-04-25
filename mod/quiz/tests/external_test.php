@@ -95,6 +95,10 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         // Users enrolments.
         $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        // Allow student to receive messages.
+        $coursecontext = context_course::instance($this->course->id);
+        assign_capability('mod/quiz:emailnotifysubmission', CAP_ALLOW, $this->teacherrole->id, $coursecontext, true);
+
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
     }
@@ -1184,9 +1188,21 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue($result['questions'][1]['flagged']);
 
         // Finish the attempt.
+        $sink = $this->redirectMessages();
         $result = mod_quiz_external::process_attempt($attempt->id, array(), true);
         $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::FINISHED, $result['state']);
+        $messages = $sink->get_messages();
+        $message = reset($messages);
+        $sink->close();
+        // Test customdata.
+        if (!empty($message->customdata)) {
+            $customdata = json_decode($message->customdata);
+            $this->assertEquals($quizobj->get_quizid(), $customdata->instance);
+            $this->assertEquals($quizobj->get_cmid(), $customdata->cmid);
+            $this->assertEquals($attempt->id, $customdata->attemptid);
+            $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        }
 
         // Start new attempt.
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());

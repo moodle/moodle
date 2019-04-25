@@ -1150,6 +1150,19 @@ EOF;
 
         // Compare the final text is the same that the original.
         $this->assertEquals($originaltext, $finaltext);
+
+        // Now indicates a user different than $USER.
+        $user = $this->getDataGenerator()->create_user();
+        $options = ['includetoken' => $user->id];
+
+        // Rewrite the content. This will generate a new token.
+        $finaltext = file_rewrite_pluginfile_urls(
+                $originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        $token = get_user_key('core_files', $user->id);
+        $expectedurl = new \moodle_url("/tokenpluginfile.php/{$token}/{$syscontext->id}/user/private/0/image.png");
+        $expectedtext = "Fake test with an image <img src=\"{$expectedurl}\">";
+        $this->assertEquals($expectedtext, $finaltext);
     }
 
     /**

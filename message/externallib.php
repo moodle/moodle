@@ -3208,7 +3208,12 @@ class core_message_external extends external_api {
                             'timecreated' => new external_value(PARAM_INT, 'Time created'),
                             'timeread' => new external_value(PARAM_INT, 'Time read'),
                             'usertofullname' => new external_value(PARAM_TEXT, 'User to full name'),
-                            'userfromfullname' => new external_value(PARAM_TEXT, 'User from full name')
+                            'userfromfullname' => new external_value(PARAM_TEXT, 'User from full name'),
+                            'component' => new external_value(PARAM_TEXT, 'The component that generated the notification',
+                                VALUE_OPTIONAL),
+                            'eventtype' => new external_value(PARAM_TEXT, 'The type of notification', VALUE_OPTIONAL),
+                            'customdata' => new external_value(PARAM_RAW, 'Custom data to be passed to the message processor.
+                                The data here is serialised using json_encode().', VALUE_OPTIONAL),
                         ), 'message'
                     )
                 ),

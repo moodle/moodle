@@ -72,7 +72,7 @@ class api {
                        n.subject, n.fullmessage, n.fullmessageformat,
                        n.fullmessagehtml, n.smallmessage, n.contexturl,
                        n.contexturlname, n.timecreated, n.component,
-                       n.eventtype, n.timeread
+                       n.eventtype, n.timeread, n.customdata
                   FROM {notifications} n
                  WHERE n.id IN (SELECT notificationid FROM {message_popup_notifications})
                    AND n.useridto = ?

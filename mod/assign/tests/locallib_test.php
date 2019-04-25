@@ -1490,6 +1490,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     public function test_cron() {
+        global $PAGE;
         $this->resetAfterTest();
 
         // First run cron so there are no messages waiting to be sent (from other tests).
@@ -1519,6 +1520,15 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertEquals(1, count($messages));
         $this->assertEquals(1, $messages[0]->notification);
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
+        // Test customdata.
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertEquals($assign->get_course_module()->id, $customdata->cmid);
+        $this->assertEquals($assign->get_instance()->id, $customdata->instance);
+        $this->assertEquals('feedbackavailable', $customdata->messagetype);
+        $userpicture = new user_picture($teacher);
+        $this->assertEquals($userpicture->get_url($PAGE)->out(false), $customdata->notificationiconurl);
+        $this->assertEquals(0, $customdata->uniqueidforuser);   // Not used in this case.
+        $this->assertFalse($customdata->blindmarking);
     }
 
     public function test_cron_without_notifications() {

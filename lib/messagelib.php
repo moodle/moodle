@@ -165,6 +165,7 @@ function message_send(\core\message\message $eventdata) {
         $tabledata->fullmessagehtml = $eventdata->fullmessagehtml;
         $tabledata->smallmessage = $eventdata->smallmessage;
         $tabledata->timecreated = time();
+        $tabledata->customdata = $eventdata->customdata;
 
         // The Trusted Content system.
         // Texts created or uploaded by such users will be marked as trusted and will not be cleaned before display.
@@ -267,6 +268,7 @@ function message_send(\core\message\message $eventdata) {
     $tabledata->eventtype = $eventdata->name;
     $tabledata->component = $eventdata->component;
     $tabledata->timecreated = time();
+    $tabledata->customdata = $eventdata->customdata;
     if (!empty($eventdata->contexturl)) {
         $tabledata->contexturl = (string)$eventdata->contexturl;
     } else {

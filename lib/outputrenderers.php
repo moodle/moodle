@@ -2434,7 +2434,7 @@ class core_renderer extends renderer_base {
      *     - class = image class attribute (default 'userpicture')
      *     - visibletoscreenreaders=true (whether to be visible to screen readers)
      *     - includefullname=false (whether to include the user's full name together with the user picture)
-     *     - includetoken = false
+     *     - includetoken = false (whether to use a token for authentication. True for current user, int value for other user id)
      * @return string HTML fragment
      */
     public function user_picture(stdClass $user, array $options = null) {

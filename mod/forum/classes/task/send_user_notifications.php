@@ -273,7 +273,7 @@ class send_user_notifications extends \core\task\adhoc_task {
      * @param   \context    $context
      */
     protected function send_post($course, $forum, $discussion, $post, $cm, $context) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $author = $this->get_post_author($post->userid, $course, $forum, $cm, $context);
         if (empty($author)) {
@@ -351,6 +351,19 @@ class send_user_notifications extends \core\task\adhoc_task {
         $contexturl = new \moodle_url('/mod/forum/discuss.php', ['d' => $discussion->id], "p{$post->id}");
         $eventdata->contexturl = $contexturl->out();
         $eventdata->contexturlname = $discussion->name;
+        // User image.
+        $userpicture = new \user_picture($author);
+        $userpicture->includetoken = $this->recipient->id; // Generate an out-of-session token for the user receiving the message.
+        $eventdata->customdata = [
+            'cmid' => $cm->id,
+            'instance' => $forum->id,
+            'discussionid' => $discussion->id,
+            'postid' => $post->id,
+            'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),
+            'actionbuttons' => [
+                'reply' => get_string_manager()->get_string('reply', 'forum', null, $eventdata->userto->lang),
+            ],
+        ];
 
         return message_send($eventdata);
     }
