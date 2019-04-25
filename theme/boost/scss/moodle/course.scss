@@ -42,6 +42,13 @@
     margin: 0;
 }
 
+body:not(.editing)  .sitetopic ul.section {
+    padding-left: 0;
+    .label .mod-indent-outer {
+        padding-left: 0;
+    }
+}
+
 .course-content ul.section {
     margin: $spacer;
 }

@@ -101,6 +101,10 @@ $theme-colors: map-merge((
 .block {
     background-color: $gray-100;
 }
+
+#page-my-index {
+    background-color: $white;
+}
 // Reset the default styling back to the bootstrap defaults for
 // the secondary outline button because gray-200 is much too light
 // for an outline button.

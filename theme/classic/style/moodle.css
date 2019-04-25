@@ -9030,6 +9030,7 @@ input[disabled] {
   overflow-x: auto;
   overflow-y: visible;
   border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
   padding: 1.25rem;
   background-color: #fff; }
 
@@ -11945,6 +11946,11 @@ table.calendartable caption {
 
 .sitetopic ul.section {
   margin: 0; }
+
+body:not(.editing) .sitetopic ul.section {
+  padding-left: 0; }
+  body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
+    padding-left: 0; }
 
 .course-content ul.section {
   margin: 1rem; }
@@ -16980,6 +16986,9 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 
 .block {
   background-color: #f8f9fa; }
+
+#page-my-index {
+  background-color: #fff; }
 
 .btn-outline-secondary {
   color: #868e96;

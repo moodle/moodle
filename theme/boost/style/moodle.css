@@ -11705,6 +11705,11 @@ table.calendartable caption {
 .sitetopic ul.section {
   margin: 0; }
 
+body:not(.editing) .sitetopic ul.section {
+  padding-left: 0; }
+  body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
+    padding-left: 0; }
+
 .course-content ul.section {
   margin: 1rem; }
 
