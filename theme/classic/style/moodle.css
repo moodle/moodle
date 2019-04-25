@@ -10808,6 +10808,8 @@ div.editor_atto_toolbar button .icon {
     width: 64px;
     height: 64px;
     font-size: 64px; }
+  .icon.movetarget {
+    width: 80px; }
 
 .navbar-dark a .icon {
   color: rgba(255, 255, 255, 0.5) !important;
@@ -12281,10 +12283,6 @@ li.section.hidden span.commands a.editing_show {
 .single-section h3.sectionname {
   text-align: center;
   clear: both; }
-
-.section img.movetarget {
-  height: 16px;
-  width: 80px; }
 
 input.titleeditor {
   width: 330px;
