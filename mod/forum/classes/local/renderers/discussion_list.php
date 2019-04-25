@@ -234,7 +234,8 @@ class discussion_list {
             'inpagereply' => true,
             'edit' => 0
         );
-        $mformpost = new \mod_forum_post_form('post.php', $formparams, 'post', '', array('id' => 'mformforum'));
+        $posturl = new \moodle_url('/mod/forum/post.php');
+        $mformpost = new \mod_forum_post_form($posturl, $formparams, 'post', '', array('id' => 'mformforum'));
         $discussionsubscribe = \mod_forum\subscriptions::get_user_default_subscription($forumrecord, $coursecontext, $cm, null);
 
         $params = array('reply' => 0, 'forum' => $forumrecord->id, 'edit' => 0) +
