@@ -179,7 +179,7 @@ class behat_util extends testing_util {
 
             behat_error (BEHAT_EXITCODE_REQUIREMENT, $CFG->behat_wwwroot . ' is not available, ensure you specified ' .
                 'correct url and that the server is set up and started.' . PHP_EOL . ' More info in ' .
-                behat_command::DOCS_URL . '#Running_tests' . PHP_EOL);
+                behat_command::DOCS_URL . PHP_EOL);
         }
 
         // Check if cli version is same as web version.
