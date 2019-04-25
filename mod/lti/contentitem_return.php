@@ -32,7 +32,7 @@ $courseid = required_param('course', PARAM_INT);
 $jwt = optional_param('JWT', '', PARAM_RAW);
 
 if (!empty($jwt)) {
-    list($tool, $params) = lti_convert_from_jwt($id, $jwt);
+    $params = lti_convert_from_jwt($id, $jwt);
     $consumerkey = $params['oauth_consumer_key'] ?? '';
     $messagetype = $params['lti_message_type'] ?? '';
     $version = $params['lti_version'] ?? '';
@@ -46,7 +46,7 @@ if (!empty($jwt)) {
     $items = optional_param('content_items', '', PARAM_RAW);
     $errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
     $msg = optional_param('lti_msg', '', PARAM_TEXT);
-    $tool = lti_verify_oauth_signature($id, $consumerkey);
+    lti_verify_oauth_signature($id, $consumerkey);
 }
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);

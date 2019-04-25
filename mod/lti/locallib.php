@@ -3119,7 +3119,7 @@ function lti_convert_to_jwt($parms, $endpoint, $oauthconsumerkey, $typeid, $nonc
  * @param int    $typeid
  * @param string $jwtparam   JWT parameter
  *
- * @return array  containing tool type and the array of parameters
+ * @return array  message parameters
  * @throws moodle_exception
  */
 function lti_convert_from_jwt($typeid, $jwtparam) {
@@ -3133,7 +3133,7 @@ function lti_convert_from_jwt($typeid, $jwtparam) {
         $ok = !is_null($claims) && !empty($claims['iss']);
     }
     if ($ok) {
-        $tool = lti_verify_jwt_signature($typeid, $claims['iss'], $jwtparam);
+        lti_verify_jwt_signature($typeid, $claims['iss'], $jwtparam);
         $params['oauth_consumer_key'] = $claims['iss'];
         foreach (lti_get_jwt_claim_mapping() as $key => $mapping) {
             $claim = LTI_JWT_CLAIM_PREFIX;
@@ -3198,7 +3198,7 @@ function lti_convert_from_jwt($typeid, $jwtparam) {
     if (isset($params['lti_message_type']) && array_key_exists($params['lti_message_type'], $messagetypemapping)) {
         $params['lti_message_type'] = $messagetypemapping[$params['lti_message_type']];
     }
-    return array($tool, $params);
+    return $params;
 }
 
 /**
