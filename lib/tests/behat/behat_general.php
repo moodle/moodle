@@ -1280,7 +1280,6 @@ class behat_general extends behat_base {
 
     /**
      * Checks that the provided value exist in table.
-     * More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
      * First row may contain column headers or numeric indexes of the columns
      * (syntax -1- is also considered to be column index). Column indexes are
@@ -1309,8 +1308,7 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Checks that the provided value exist in table.
-     * More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     * Checks that the provided values do not exist in a table.
      *
      * @Then /^the following should not exist in the "(?P<table_string>[^"]*)" table:$/
      * @throws ExpectationException

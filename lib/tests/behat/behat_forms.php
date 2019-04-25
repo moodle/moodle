@@ -71,7 +71,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Fills a form with field/value data. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     * Fills a form with field/value data.
      *
      * @Given /^I set the following fields to these values:$/
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -253,7 +253,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Checks, the field matches the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     * Checks, the field matches the value.
      *
      * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" matches value "(?P<field_value_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -277,7 +277,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Checks, the field does not match the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     * Checks, the field does not match the value.
      *
      * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" does not match value "(?P<field_value_string>(?:[^"]|\\")*)"$/
      * @throws ExpectationException
@@ -352,7 +352,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Checks, the provided field/value matches. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     * Checks, the provided field/value matches.
      *
      * @Then /^the following fields match these values:$/
      * @throws ExpectationException
@@ -372,7 +372,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Checks that the provided field/value pairs don't match. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     * Checks that the provided field/value pairs don't match.
      *
      * @Then /^the following fields do not match these values:$/
      * @throws ExpectationException
