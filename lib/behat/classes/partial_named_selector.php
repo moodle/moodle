@@ -168,7 +168,7 @@ XPATH
         //div[@data-region='empty-message-container' and not(contains(@class, 'hidden')) and contains(., %locator%)]
 XPATH
     , 'group_message_tab' => <<<XPATH
-        .//*[@data-region='message-drawer']//button[@data-toggle='collapse']//*[text()[contains(., %locator%)]]/..
+        .//*[@data-region='message-drawer']//button[@data-toggle='collapse' and contains(string(), %locator%)]
 XPATH
         , 'icon' => <<<XPATH
 .//*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') and ( contains(normalize-space(@title), %locator%))]
