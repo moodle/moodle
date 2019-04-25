@@ -95,4 +95,27 @@ class mod_quiz_generator extends testing_module_generator {
 
         return parent::create_instance($record, (array)$options);
     }
+
+    /**
+     * Create a quiz override (either user or group).
+     *
+     * @param array $data must specify quizid, and one of userid or groupid.
+     */
+    public function create_override(array $data): void {
+        global $DB;
+
+        if (!isset($data['quiz'])) {
+            throw new coding_exception('Must specify quiz (id) when creating a quiz override.');
+        }
+
+        if (!isset($data['userid']) && !isset($data['groupid'])) {
+            throw new coding_exception('Must specify one of userid or groupid when creating a quiz override.');
+        }
+
+        if (isset($data['userid']) && isset($data['groupid'])) {
+            throw new coding_exception('Cannot specify both userid and groupid when creating a quiz override.');
+        }
+
+        $DB->insert_record('quiz_overrides', (object) $data);
+    }
 }
