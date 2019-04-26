@@ -34,11 +34,11 @@
 {{#html}}
     <div class="d-flex flex-wrap flex-row-reverse m-b-1" data-container="discussion-tools" style="text-align: right;">
         {{#capabilities.manage}}
-            {{^timelocked}}
+            {{^istimelocked}}
             <div class="pl-1 discussionlock">
                 {{> forum/discussion_lock_toggle }}
             </div>
-            {{/timelocked}}
+            {{/istimelocked}}
         {{/capabilities.manage}}
         <div class="pl-1">{{{subscribe}}}</div>
     </div>
