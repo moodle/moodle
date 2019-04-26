@@ -67,7 +67,7 @@ class tag_area_exporter extends exporter {
                 'description' => 'The tag collection this are belongs to.',
             ],
             'callback' => [
-                'type' => PARAM_ALPHANUMEXT,
+                'type' => PARAM_RAW,
                 'description' => 'Component callback for processing tags.',
                 'null' => NULL_ALLOWED,
             ],
