@@ -142,6 +142,10 @@ class exported_discussion {
      * @return bool Whether or not the user has favourited the discussion
      */
     public function is_favourited(discussion_entity $discussion, \context_module $forumcontext, \stdClass $user) {
+        if (!isloggedin()) {
+            return false;
+        }
+
         $usercontext = \context_user::instance($user->id);
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
         return $ufservice->favourite_exists('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);

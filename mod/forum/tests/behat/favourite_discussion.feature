@@ -32,10 +32,10 @@ Feature: A student can favourite a discussion via the forum settings menu
       | Message | Discussion contents 1, third message |
     And I wait until the page is ready
     And I open the action menu in "[data-container='discussion-tools']" "css_element"
-    And I click on "Star this discussion" "link"
+    And I click on "[title='Star this discussion']" "css_element"
     And I wait "3" seconds
     And I open the action menu in "[data-container='discussion-tools']" "css_element"
-    Then I should see "Unstar this discussion"
+    And I click on "[title='Unstar this discussion']" "css_element"
 
   Scenario: Student can favourite a discussion from the discussion list
     Given I reply "Discussion 1" post from "Test forum name" forum with:
@@ -43,6 +43,6 @@ Feature: A student can favourite a discussion via the forum settings menu
       | Message | Discussion contents 1, third message |
     And I follow "Test forum name"
     And I click on "Discussion 1" action menu
-    And I click on "Star this discussion" "link"
+    And I click on "[title='Star this discussion']" "css_element"
     And I click on "Discussion 1" action menu
-    Then I should see "Unstar this discussion"
+    And I click on "[title='Unstar this discussion']" "css_element"

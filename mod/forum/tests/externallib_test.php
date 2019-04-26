@@ -219,6 +219,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $response = mod_forum_external::toggle_favourite_state($discussion1->id, 0);
         $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
         $this->assertFalse($response['userstate']['favourited']);
+
+        $this->setUser(0);
+        try {
+            $response = mod_forum_external::toggle_favourite_state($discussion1->id, 0);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
     }
 
     /**
@@ -1096,7 +1103,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals($expectedreturn, $discussions);
 
-        // Test the starring functionality return
+        // Test the starring functionality return.
         $t = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
         $expectedreturn['discussions'][0]['starred'] = true;
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);

@@ -251,6 +251,7 @@ $string['forum:addquestion'] = 'Add question';
 $string['forum:allowforcesubscribe'] = 'Allow force subscribe';
 $string['forum:canoverridecutoff'] = 'Post to forums after their cut-off date';
 $string['forum:canoverridediscussionlock'] = 'Reply to locked discussions';
+$string['forum:cantogglefavourite'] = 'Can toggle favourites.';
 $string['forumauthorhidden'] = 'Author (hidden)';
 $string['forumblockingalmosttoomanyposts'] = 'You are approaching the posting threshold. You have posted {$a->numposts} times in the last {$a->blockperiod} and the limit is {$a->blockafter} posts.';
 $string['forumbodyhidden'] = 'This post cannot be viewed by you, probably because you have not posted in the discussion, the maximum editing time hasn\'t passed yet, the discussion has not started or the discussion has expired.';

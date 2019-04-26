@@ -75,7 +75,8 @@ abstract class db_table_vault {
      * @param object|null $user The user object
      * @return string
      */
-    abstract protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, \stdClass $user = null) : string;
+    abstract protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null,
+        \stdClass $user = null) : string;
 
     /**
      * Convert the DB records into entities. The list of records will have been

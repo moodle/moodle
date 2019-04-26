@@ -157,12 +157,15 @@ class exported_discussion_summaries {
      * @return int[] A list of favourited itemids
      */
     private function get_favourites(stdClass $user) : array {
-        $usercontext = \context_user::instance($user->id);
-        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
-        $favourites = $ufservice->find_favourites_by_type('mod_forum', 'discussions');
         $ids = [];
-        foreach ($favourites as $favourite) {
-            $ids[] = $favourite->itemid;
+
+        if (isloggedin()) {
+            $usercontext = \context_user::instance($user->id);
+            $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+            $favourites = $ufservice->find_favourites_by_type('mod_forum', 'discussions');
+            foreach ($favourites as $favourite) {
+                $ids[] = $favourite->itemid;
+            }
         }
 
         return $ids;

@@ -70,7 +70,7 @@ require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lo
         var root = $("[data-content='forum-discussion']");
         Discussion.init(root);
         PostsList.init(root);
-        var root = $('[data-container="discussion-tools"]');
+        root = $('[data-container="discussion-tools"]');
         LockToggle.init(root);
         FavouriteToggle.init(root);
         Pin.init(root);

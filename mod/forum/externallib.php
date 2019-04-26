@@ -592,8 +592,10 @@ class mod_forum_external extends external_api {
             $canlock = has_capability('moodle/course:manageactivities', $modcontext, $USER);
             $replies = forum_count_discussion_replies($forumid, $sort, -1, $page, $perpage, $canseeprivatereplies);
 
-            $usercontext = context_user::instance($USER->id);
-            $ufservice = core_favourites\service_factory::get_service_for_user_context($usercontext);
+            if (isloggedin()) {
+                $usercontext = context_user::instance($USER->id);
+                $ufservice = core_favourites\service_factory::get_service_for_user_context($usercontext);
+            }
             $canfavourite = has_capability('mod/forum:cantogglefavourite', $modcontext, $USER);
             foreach ($alldiscussions as $discussion) {
 
@@ -643,8 +645,8 @@ class mod_forum_external extends external_api {
 
                 $discussion->locked = forum_discussion_is_locked($forum, $discussion);
                 $discussion->canlock = $canlock;
-                $discussion->starred = $ufservice->favourite_exists('mod_forum', 'discussions',
-                    $discussionrec->id, $modcontext);
+                $discussion->starred = !empty($ufservice) ? $ufservice->favourite_exists('mod_forum', 'discussions',
+                    $discussionrec->id, $modcontext) : false;
                 $discussion->canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
                 $discussion->canfavourite = $canfavourite;
 
@@ -1128,8 +1130,6 @@ class mod_forum_external extends external_api {
         $forumvault = $vaultfactory->get_forum_vault();
         $forum = $forumvault->get_from_id($discussion->get_forum_id());
         $forumcontext = $forum->get_context();
-        $usercontext = context_user::instance($USER->id);
-
         self::validate_context($forumcontext);
 
         $managerfactory = mod_forum\local\container::get_manager_factory();
@@ -1139,7 +1139,7 @@ class mod_forum_external extends external_api {
         if (!$capabilitymanager->can_favourite_discussion($USER, $discussion)) {
             throw new moodle_exception('cannotfavourite', 'forum');
         }
-
+        $usercontext = context_user::instance($USER->id);
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
         $isfavourited = $ufservice->favourite_exists('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);
 

@@ -40,7 +40,7 @@ define([
             var subscriptionState = toggleElement.data('targetstate');
             Repository.setFavouriteDiscussionState(forumId, discussionId, subscriptionState)
                 .then(function() {
-                    location.reload();
+                    return location.reload();
                 })
                 .catch(Notification.exception);
         });
@@ -53,7 +53,7 @@ define([
             var state = toggleElement.data('targetstate');
             Repository.setPinDiscussionState(forumId, discussionId, state)
                 .then(function() {
-                    location.reload();
+                    return location.reload();
                 })
                 .catch(Notification.exception);
         });
