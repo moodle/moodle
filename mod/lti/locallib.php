@@ -3008,36 +3008,16 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
 }
 
 /**
- * Signs the petition to launch the external tool using JWT
+ * Converts the message paramters to their equivalent JWT claim and signs the payload to launch the external tool using JWT
  *
- * @param array  $oldparms     Parameters to be passed for signing
+ * @param array  $parms        Parameters to be passed for signing
  * @param string $endpoint     url of the external tool
  * @param string $oauthconsumerkey
  * @param string $typeid       ID of LTI tool type
  * @param string $nonce        Nonce value to use
  * @return array|null
  */
-function lti_sign_jwt($oldparms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce = '') {
-
-    $parms = $oldparms;
-
-    $newparms = array();
-    $newparms['id_token'] = lti_convert_to_jwt($parms, $endpoint, $oauthconsumerkey, $typeid, $nonce);
-
-    return $newparms;
-}
-
-/**
- * Converts the message paramters to their equivalent JWT claim and signs the payload to launch the external tool using JWT
- *
- * @param array  $parms     Parameters to be passed for signing
- * @param string $endpoint     url of the external tool
- * @param string $oauthconsumerkey
- * @param int    $typeid
- * @param string $nonce
- * @return string
- */
-function lti_convert_to_jwt($parms, $endpoint, $oauthconsumerkey, $typeid, $nonce) {
+function lti_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce = '') {
 
     if (empty($typeid)) {
         $typeid = 0;
@@ -3109,7 +3089,6 @@ function lti_convert_to_jwt($parms, $endpoint, $oauthconsumerkey, $typeid, $nonc
     $privatekey = get_config('mod_lti', 'privatekey');
     $kid = get_config('mod_lti', 'kid');
     $jwt = JWT::encode($payload, $privatekey, 'RS256', $kid);
-    return $jwt;
 
 }
 
