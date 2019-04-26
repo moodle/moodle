@@ -90,8 +90,8 @@ class behat_message extends behat_base {
         );
         $this->execute('behat_general::i_click_on_in_the',
             array(
-                $this->escape($userfullname),
-                "link",
+                "//img[@title='Picture of ". $this->escape($userfullname) . "']",
+                "xpath_element",
                 "//*[@data-region='message-drawer']//*[@data-region='view-contact']",
                 "xpath_element",
             )
