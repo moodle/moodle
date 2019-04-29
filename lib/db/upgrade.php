@@ -3128,11 +3128,12 @@ function xmldb_main_upgrade($oldversion) {
             $mua->timecreated = $message->timeread;
 
             $DB->insert_record('message_user_actions', $mua);
+
+            // The self-conversation message has been migrated. Delete the record from the legacy table as soon as possible
+            // to avoid migrate it twice.
+            $DB->delete_records('message_read', ['id' => $message->id]);
         }
         $legacyselfmessagesrs->close();
-
-        // We can now delete the records from legacy table because the self-conversations have been migrated from the legacy tables.
-        $DB->delete_records_select('message_read', $select);
 
         // STEP 3. For existing users without self-conversations, create and star it.
 
