@@ -159,23 +159,36 @@ function(
     };
 
     /**
-     * Reformat the conversations to a common standard because this is linked directly to the ajax response and via
-     * an event publish which operate on the same fields but in a different format
-     * @param conversations
+     * Create a formatted conversation object from the the one we get from events. The new object
+     * will be in a format that matches what we receive from the server.
+     *
+     * @param {Object} conversation
+     * @return {Object} formatted conversation.
      */
-    var formatConversationsForRender = function(conversations) {
-        // Convert the conversation to the standard stored and then cache the conversation.
-        return conversations.map(function(conversation) {
-            return Object.keys(conversation).reduce(function(carry, key){
-                if ($.isArray(conversation[key])) {
-                    carry[key.toLowerCase()] = formatConversationsForRender(conversation[key]);
+    var formatConversationFromEvent = function(conversation) {
+        // Recursively lowercase all of the keys for an object.
+        var recursivelyLowercaseKeys = function(object) {
+            return Object.keys(object).reduce(function(carry, key) {
+                if ($.isArray(object[key])) {
+                    carry[key.toLowerCase()] = object[key].map(recursivelyLowercaseKeys);
                 } else {
-                    carry[key.toLowerCase()] = conversation[key];
+                    carry[key.toLowerCase()] = object[key];
                 }
 
                 return carry;
             }, {});
-        }, []);
+        };
+
+        // Recursively lowercase all of the keys for the conversation.
+        var formatted = recursivelyLowercaseKeys(conversation);
+
+        // Make sure all messages have the useridfrom property set.
+        formatted.messages = formatted.messages.map(function(message) {
+            message.useridfrom = message.userfrom.id;
+            return message;
+        });
+
+        return formatted;
     };
 
     /**
@@ -187,7 +200,6 @@ function(
      * @return {Object} jQuery promise.
      */
     var render = function(conversations, userId) {
-        conversations = formatConversationsForRender(conversations);
         var formattedConversations = conversations.map(function(conversation) {
 
             var lastMessage = conversation.messages.length ? conversation.messages[conversation.messages.length - 1] : null;
@@ -227,7 +239,7 @@ function(
 
             if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PUBLIC) {
                 formattedConversation.lastsendername = conversation.members.reduce(function(carry, member) {
-                    if (!carry && member.id == lastMessage.useridfrom) {
+                    if (!carry && lastMessage && member.id == lastMessage.useridfrom) {
                         carry = member.fullname;
                     }
                     return carry;
@@ -436,11 +448,11 @@ function(
      *
      * @param  {Object} root Overview messages container element.
      * @param  {Object} conversation The conversation.
+     * @param  {Number} userId The logged in user id.
      * @return {Object} jQuery promise
      */
-    var createNewConversation = function(root, conversation) {
+    var createNewConversationFromEvent = function(root, conversation, userId) {
         var existingConversations = root.find(SELECTORS.CONVERSATION);
-        var text = '';
 
         if (!existingConversations.length) {
             // If we didn't have any conversations then we need to show
@@ -450,32 +462,10 @@ function(
             LazyLoadList.hideEmptyMessage(listRoot);
         }
 
-        var messageCount = conversation.messages.length;
-        var lastMessage = messageCount ? conversation.messages[messageCount - 1] : null;
+        // Cache the conversation.
+        loadedConversationsById[conversation.id] = conversation;
 
-        if (lastMessage) {
-            text = $(lastMessage.text).text() || lastMessage.text;
-            conversation.messages[messageCount - 1].useridfrom = lastMessage.userFrom.id;
-        }
-
-        var formattedConversation = {
-            id: conversation.id,
-            name: conversation.name,
-            subname: conversation.subname,
-            lastmessagedate: lastMessage ? lastMessage.timeCreated : null,
-            sentfromcurrentuser: lastMessage ? lastMessage.fromLoggedInUser : null,
-            lastmessage: text,
-            imageurl: conversation.imageUrl,
-        };
-
-        // Convert the conversation to the standard stored and then cache the conversation.
-        loadedConversationsById[conversation.id] = formatConversationsForRender([conversation])[0];
-
-        if (new Date().toDateString() == new Date(formattedConversation.lastmessagedate * 1000).toDateString()) {
-            formattedConversation.istoday = true;
-        }
-
-        return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: [formattedConversation]})
+        return render([conversation], userId)
             .then(function(html) {
                 var contentContainer = LazyLoadList.getContentContainer(root);
                 return contentContainer.prepend(html);
@@ -556,10 +546,12 @@ function(
         root.on('show.bs.collapse', function() {
             setExpanded(root);
             LazyLoadList.show(listRoot, loadCallback, function(contentContainer, conversations, userId) {
-                return render(conversations, userId).then(function(html) {
-                    contentContainer.append(html);
-                    return html;
-                });
+                return render(conversations, userId)
+                    .then(function(html) {
+                        contentContainer.append(html);
+                        return html;
+                    })
+                    .catch(Notification.exception);
             });
         });
 
@@ -603,11 +595,13 @@ function(
                 return;
             }
 
+            var loggedInUserId = conversation.loggedInUserId;
             var conversationId = conversation.id;
             var element = getConversationElement(root, conversationId);
+            conversation = formatConversationFromEvent(conversation);
             if (element.length) {
                 var contentContainer = LazyLoadList.getContentContainer(root);
-                render([conversation], conversation.loggedInUserId)
+                render([conversation], loggedInUserId)
                     .then(function(html) {
                             contentContainer.prepend(html);
                             element.remove();
@@ -615,7 +609,7 @@ function(
                         })
                     .catch(Notification.exception);
             } else {
-                createNewConversation(root, conversation);
+                createNewConversationFromEvent(root, conversation, loggedInUserId);
             }
         });
 
@@ -639,7 +633,11 @@ function(
             if (conversationBelongsToThisSection(conversation)) {
                 conversationElement = getConversationElement(root, conversation.id);
                 if (!conversationElement.length) {
-                    createNewConversation(root, conversation);
+                    createNewConversationFromEvent(
+                        root,
+                        formatConversationFromEvent(conversation),
+                        conversation.loggedInUserId
+                    );
                 }
             } else {
                 conversationElement = getConversationElement(root, conversation.id);
@@ -654,7 +652,11 @@ function(
             if (conversationBelongsToThisSection(conversation)) {
                 conversationElement = getConversationElement(root, conversation.id);
                 if (!conversationElement.length) {
-                    createNewConversation(root, conversation);
+                    createNewConversationFromEvent(
+                        root,
+                        formatConversationFromEvent(conversation),
+                        conversation.loggedInUserId
+                    );
                 }
             } else {
                 conversationElement = getConversationElement(root, conversation.id);
@@ -700,10 +702,12 @@ function(
                 setExpanded(root);
                 var listRoot = LazyLoadList.getRoot(root);
                 LazyLoadList.show(listRoot, loadCallback, function(contentContainer, conversations, userId) {
-                    return render(conversations, userId).then(function(html) {
-                        contentContainer.append(html);
-                        return html;
-                    });
+                    return render(conversations, userId)
+                        .then(function(html) {
+                            contentContainer.append(html);
+                            return html;
+                        })
+                        .catch(Notification.exception);
                 });
             }
 
