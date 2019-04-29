@@ -173,7 +173,9 @@ class discussion_list {
             'settings' => [
                 'excludetext' => true,
                 'togglemoreicon' => true
-            ]
+            ],
+            'totaldiscussioncount' => $alldiscussionscount,
+            'visiblediscussioncount' => count($discussions)
         ];
 
         if (!$discussions) {

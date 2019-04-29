@@ -336,3 +336,11 @@ span.unread {
 .privatereplyinfo {
     font-size: 80%;
 }
+
+/* This style is copied directly from the Bootstrap reboot file which adds button outline */
+/* stylelint-disable declaration-block-no-duplicate-properties */
+.post-actions .btn:focus {
+    outline: 1px dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+/* stylelint-enable declaration-block-no-duplicate-properties */

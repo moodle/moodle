@@ -35,7 +35,7 @@
     data-post-id="{{id}}"
     data-region="post"
     data-target="{{id}}-target"
-    tabindex="-1"
+    tabindex="0"
     aria-labelledby="post-header-{{id}}"
     aria-describedby="post-content-{{id}}"
 >
@@ -167,7 +167,7 @@
                             {{$actions}}
                                 {{^readonly}}
                                     <div
-                                        class="d-flex align-self-end justify-content-end flex-wrap ml-auto"
+                                        class="post-actions d-flex align-self-end justify-content-end flex-wrap ml-auto"
                                         data-region="post-actions-container"
                                         role="menubar"
                                         aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
@@ -180,7 +180,7 @@
                                                     href="{{{urls.view}}}"
                                                     class="btn btn-link"
                                                     title="{{#str}} permanentlinktopost, mod_forum {{/str}}"
-                                                    role="menuitem"
+                                                    aria-label="{{#str}} permanentlinktopost, mod_forum {{/str}}"
                                                 >
                                                     {{#str}} permalink, mod_forum {{/str}}
                                                 </a>
@@ -191,7 +191,6 @@
                                                         data-region="post-action"
                                                         href="{{{urls.markasread}}}"
                                                         class="btn btn-link"
-                                                        role="menuitem"
                                                     >
                                                         {{#str}} markread, mod_forum {{/str}}
                                                     </a>
@@ -201,7 +200,6 @@
                                                         data-region="post-action"
                                                         href="{{{urls.markasunread}}}"
                                                         class="btn btn-link"
-                                                        role="menuitem"
                                                     >
                                                         {{#str}} markunread, mod_forum {{/str}}
                                                     </a>
@@ -213,7 +211,7 @@
                                                     href="{{{.}}}"
                                                     class="btn btn-link"
                                                     title="{{#str}} permanentlinktoparentpost, mod_forum {{/str}}"
-                                                    role="menuitem"
+                                                    aria-label="{{#str}} permanentlinktoparentpost, mod_forum {{/str}}"
                                                 >
                                                     {{#str}} parent, mod_forum {{/str}}
                                                 </a>
@@ -223,7 +221,6 @@
                                                     data-region="post-action"
                                                     href="{{{urls.edit}}}"
                                                     class="btn btn-link"
-                                                    role="menuitem"
                                                 >
                                                     {{#str}} edit, mod_forum {{/str}}
                                                 </a>
@@ -233,7 +230,6 @@
                                                     data-region="post-action"
                                                     href="{{{urls.split}}}"
                                                     class="btn btn-link"
-                                                    role="menuitem"
                                                 >
                                                     {{#str}} prune, mod_forum {{/str}}
                                                 </a>
@@ -243,7 +239,6 @@
                                                     data-region="post-action"
                                                     href="{{{urls.delete}}}"
                                                     class="btn btn-link"
-                                                    role="menuitem"
                                                 >
                                                     {{#str}} delete, mod_forum {{/str}}
                                                 </a>
@@ -254,7 +249,6 @@
                                                         data-region="post-action"
                                                         href="{{{urls.reply}}}"
                                                         class="btn btn-link"
-                                                        role="menuitem"
                                                         data-post-id="{{id}}"
                                                         data-action="collapsible-link"
                                                         data-can-reply-privately="{{canreplyprivately}}"
@@ -269,7 +263,6 @@
                                                     data-region="post-action"
                                                     href="{{{urls.export}}}"
                                                     class="btn btn-link"
-                                                    role="menuitem"
                                                 >
                                                     {{#str}} addtoportfolio, core_portfolio {{/str}}
                                                 </a>

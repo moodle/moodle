@@ -101,6 +101,17 @@ function(
     };
 
     /**
+     * Check if the element is inside the in page reply section.
+     *
+     * @param {Object} element The element to check
+     * @return {Boolean}
+     */
+    var isElementInInPageReplySection = function(element) {
+        var inPageReply = $(element).closest(Selectors.post.inpageReplyContent);
+        return inPageReply.length ? true : false;
+    };
+
+    /**
      * Initialise the keyboard accessibility controls for the discussion.
      *
      * @param {Object} root The discussion root element
@@ -125,32 +136,64 @@ function(
             CustomEvents.events.end,
         ]);
 
-        root.on(CustomEvents.events.up, function() {
-            var focusPost = $(document.activeElement).closest(Selectors.post.post);
+        root.on(CustomEvents.events.up, function(e, data) {
+            var activeElement = document.activeElement;
+
+            if (isElementInInPageReplySection(activeElement)) {
+                // Focus is currently inside the in page reply section so don't move focus
+                // to another post.
+                return;
+            }
+
+            var focusPost = $(activeElement).closest(Selectors.post.post);
 
             if (focusPost.length) {
                 focusPreviousPost(focusPost);
             } else {
                 root.find(Selectors.post.post).first().focus();
             }
+
+            data.originalEvent.preventDefault();
         });
 
-        root.on(CustomEvents.events.down, function() {
-            var focusPost = $(document.activeElement).closest(Selectors.post.post);
+        root.on(CustomEvents.events.down, function(e, data) {
+            var activeElement = document.activeElement;
+
+            if (isElementInInPageReplySection(activeElement)) {
+                // Focus is currently inside the in page reply section so don't move focus
+                // to another post.
+                return;
+            }
+
+            var focusPost = $(activeElement).closest(Selectors.post.post);
 
             if (focusPost.length) {
                 focusNextPost(focusPost);
             } else {
                 root.find(Selectors.post.post).first().focus();
             }
+
+            data.originalEvent.preventDefault();
         });
 
-        root.on(CustomEvents.events.home, function() {
+        root.on(CustomEvents.events.home, function(e, data) {
+            if (isElementInInPageReplySection(document.activeElement)) {
+                // Focus is currently inside the in page reply section so don't move focus
+                // to another post.
+                return;
+            }
             root.find(Selectors.post.post).first().focus();
+            data.originalEvent.preventDefault();
         });
 
-        root.on(CustomEvents.events.end, function() {
+        root.on(CustomEvents.events.end, function(e, data) {
+            if (isElementInInPageReplySection(document.activeElement)) {
+                // Focus is currently inside the in page reply section so don't move focus
+                // to another post.
+                return;
+            }
             root.find(Selectors.post.post).last().focus();
+            data.originalEvent.preventDefault();
         });
 
         root.on(CustomEvents.events.next, Selectors.post.action, function(e, data) {
