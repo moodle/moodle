@@ -97,7 +97,7 @@ if ($alignmentid || $action == 'add' || $action == 'edit') {
         $urlbutton = new moodle_url('/badges/competency.php', array('id' => $badge->id, 'action' => 'add'));
         echo $OUTPUT->box($OUTPUT->single_button($urlbutton, get_string('addalignment', 'badges')), 'clearfix mdl-align');
     }
-    $alignment = $badge->get_alignment();
+    $alignment = $badge->get_alignments();
     if (count($alignment) > 0) {
         $renderrelated = new badge_competencies_alignment($alignment, $badgeid);
         echo $output->render($renderrelated);

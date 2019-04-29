@@ -813,7 +813,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $competency2 = clone $competency1;
         $newid1 = $badge->save_alignment($competency1);
         $newid2 = $badge->save_alignment($competency2);
-        $competencies1 = $badge->get_alignment();
+        $competencies1 = $badge->get_alignments();
         $this->assertCount(2, $competencies1);
 
         $this->assertEquals($competency1->badgeid, $competencies1[$newid1]->badgeid);
@@ -826,12 +826,12 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         // Update competency aligment.
         $competencies1[$newid1]->targetname = 'CCSS.ELA-Literacy.RST.11-12.3 update';
         $badge->save_alignment($competencies1[$newid1], $competencies1[$newid1]->id);
-        $competencies2 = $badge->get_alignment();
+        $competencies2 = $badge->get_alignments();
         $this->assertEquals($competencies1[$newid1]->id, $competencies2[$newid1]->id);
         $this->assertEquals($competencies1[$newid1]->targetname, $competencies2[$newid1]->targetname);
 
         // Delete competency alignment.
         $badge->delete_alignment($competencies1[$newid2]->id);
-        $this->assertCount(1, $badge->get_alignment());
+        $this->assertCount(1, $badge->get_alignments());
     }
 }
