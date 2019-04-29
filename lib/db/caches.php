@@ -384,4 +384,11 @@ $definitions = array(
         'simpledata' => true,
         'ttl' => 1800
     ),
+
+    // Caches the first time we analysed models' analysables.
+    'modelfirstanalyses' => array(
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ),
 );

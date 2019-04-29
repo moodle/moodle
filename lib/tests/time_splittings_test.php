@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../analytics/tests/fixtures/test_timesplitting_seconds.php');
+require_once(__DIR__ . '/../../analytics/tests/fixtures/test_timesplitting_upcoming_seconds.php');
 require_once(__DIR__ . '/../../analytics/tests/fixtures/test_timesplitting_weekly.php');
 require_once(__DIR__ . '/../../lib/enrollib.php');
 
@@ -212,21 +213,6 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
         $range = reset($ranges);
         $this->assertEquals(51, key($ranges));
 
-        $upcomingweek = new \core\analytics\time_splitting\upcoming_week();
-        $upcomingweek->set_analysable($this->analysable);
-        $this->assertCount(1, $upcomingweek->get_distinct_ranges());
-
-        $ranges = $upcomingweek->get_all_ranges();
-        $this->assertEquals(53, count($ranges));
-        $this->assertEquals($this->course->startdate, $ranges[0]['start']);
-        $this->assertEquals($this->course->startdate, $ranges[0]['time']);
-
-        $this->assertCount(count($ranges), $upcomingweek->get_training_ranges());
-
-        $ranges = $upcomingweek->get_most_recent_prediction_range();
-        $range = reset($ranges);
-        $this->assertEquals(52, key($ranges));
-
         // We now use an ongoing course.
 
         $onemonthago = new DateTime('-30 days');
@@ -251,20 +237,34 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
         $this->assertLessThan(time(), $range['start']);
         $this->assertLessThan(time(), $range['end']);
 
+        $starttime = time();
+
         $upcomingweek = new \core\analytics\time_splitting\upcoming_week();
         $upcomingweek->set_analysable($ongoinganalysable);
         $this->assertCount(1, $upcomingweek->get_distinct_ranges());
 
         $ranges = $upcomingweek->get_all_ranges();
-        $this->assertEquals(5, count($ranges));
-        $this->assertCount(4, $upcomingweek->get_training_ranges());
-
-        $ranges = $upcomingweek->get_most_recent_prediction_range();
+        $this->assertEquals(1, count($ranges));
         $range = reset($ranges);
-        $this->assertEquals(4, key($ranges));
         $this->assertLessThan(time(), $range['time']);
         $this->assertLessThan(time(), $range['start']);
         $this->assertGreaterThan(time(), $range['end']);
+
+        $this->assertCount(0, $upcomingweek->get_training_ranges());
+
+        $ranges = $upcomingweek->get_most_recent_prediction_range();
+        $range = reset($ranges);
+        $this->assertEquals(0, key($ranges));
+        $this->assertLessThan(time(), $range['time']);
+        $this->assertLessThan(time(), $range['start']);
+        // We substract 1 because upcoming_periodic also has that -1 so that predictions
+        // get executed once the first time range is set.
+        $this->assertGreaterThanOrEqual($starttime - 1, $range['time']);
+        $this->assertGreaterThanOrEqual($starttime - 1, $range['start']);
+        $this->assertGreaterThan(time(), $range['end']);
+
+        $this->assertNotEmpty($upcomingweek->get_range_by_index(0));
+        $this->assertFalse($upcomingweek->get_range_by_index(1));
 
         // We now check how new ranges get added as time passes.
 
@@ -277,6 +277,29 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
         $analysable = new \core_analytics\course($course);
 
         $seconds = new test_timesplitting_seconds();
+        $seconds->set_analysable($analysable);
+
+        // Store the ranges we just obtained.
+        $nranges = count($seconds->get_all_ranges());
+        $ntrainingranges = count($seconds->get_training_ranges());
+        $mostrecentrange = $seconds->get_most_recent_prediction_range();
+        $mostrecentrange = reset($mostrecentrange);
+
+        // We wait for the next range to be added.
+        usleep(1000000);
+
+        // We set the analysable again so the time ranges are recalculated.
+        $seconds->set_analysable($analysable);
+
+        $nnewranges = $seconds->get_all_ranges();
+        $nnewtrainingranges = $seconds->get_training_ranges();
+        $newmostrecentrange = $seconds->get_most_recent_prediction_range();
+        $newmostrecentrange = reset($newmostrecentrange);
+        $this->assertGreaterThan($nranges, $nnewranges);
+        $this->assertGreaterThan($ntrainingranges, $nnewtrainingranges);
+        $this->assertGreaterThan($mostrecentrange['time'], $newmostrecentrange['time']);
+
+        $seconds = new test_timesplitting_upcoming_seconds();
         $seconds->set_analysable($analysable);
 
         // Store the ranges we just obtained.

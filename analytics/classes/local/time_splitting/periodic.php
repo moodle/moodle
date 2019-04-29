@@ -64,12 +64,12 @@ abstract class periodic extends base {
 
         $periodicity = $this->periodicity();
 
-        $now = new \DateTimeImmutable('now', \core_date::get_server_timezone_object());
-
         if ($this->analysable->get_end()) {
             $end = (new \DateTimeImmutable())->setTimestamp($this->analysable->get_end());
         }
-        $next = (new \DateTimeImmutable())->setTimestamp($this->analysable->get_start());
+        $next = (new \DateTimeImmutable())->setTimestamp($this->get_first_start());
+
+        $now = new \DateTimeImmutable('now', \core_date::get_server_timezone_object());
 
         $ranges = [];
         while ($next < $now &&
@@ -139,5 +139,14 @@ abstract class periodic extends base {
             'end' => $end,
             'time' => $end
         ];
+    }
+
+    /**
+     * Get the start of the first time range.
+     *
+     * @return int A timestamp.
+     */
+    protected function get_first_start() {
+        return $this->analysable->get_start();
     }
 }
