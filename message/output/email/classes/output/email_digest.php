@@ -83,6 +83,8 @@ class email_digest implements \renderable, \templatable {
      * @return \stdClass The data ready for use in a mustache template
      */
     public function export_for_template(\renderer_base $renderer) {
+        global $PAGE;
+
         // Prepare the data we are going to send to the template.
         $data = new \stdClass();
         $data->conversations = [];
@@ -97,9 +99,22 @@ class email_digest implements \renderable, \templatable {
 
             $viewallmessageslink = new \moodle_url('/message/index.php', ['convid' => $conversation->id]);
 
+            $group = new \stdClass();
+            $group->id = $conversation->groupid;
+            $group->picture = $conversation->picture;
+            $group->hidepicture = $conversation->hidepicture;
+            $group->courseid = $conversation->courseid;
+            $grouppictureurl = $renderer->image_url('g/g1')->out(false); // Default image.
+            if ($url = get_group_picture_url($group, $group->courseid, false, true)) {
+                $grouppictureurl = $url->out(false);
+            }
+
+            $coursecontext = \context_course::instance($conversation->courseid);
+
             $conversationformatted = new \stdClass();
-            $conversationformatted->groupname = $conversation->name;
-            $conversationformatted->coursename = $conversation->coursename;
+            $conversationformatted->groupname = format_string($conversation->name, true, ['context' => $coursecontext]);
+            $conversationformatted->grouppictureurl = $grouppictureurl;
+            $conversationformatted->coursename = format_string($conversation->coursename, true, ['context' => $coursecontext]);
             $conversationformatted->numberofunreadmessages = count($messages);
             $conversationformatted->messages = [];
             $conversationformatted->viewallmessageslink = \html_writer::link($viewallmessageslink,
@@ -110,8 +125,17 @@ class email_digest implements \renderable, \templatable {
             foreach ($messages as $message) {
                 $user = new \stdClass();
                 username_load_fields_from_object($user, $message);
+                $user->picture = $message->picture;
+                $user->imagealt = $message->imagealt;
+                $user->email = $message->email;
                 $user->id = $message->useridfrom;
+
+                $userpicture = new \user_picture($user);
+                $userpicture->includetoken = true;
+                $userpictureurl = $userpicture->get_url($PAGE)->out(false);
+
                 $messageformatted = new \stdClass();
+                $messageformatted->userpictureurl = $userpictureurl;
                 $messageformatted->userfullname = fullname($user);
                 $messageformatted->message = message_format_message_text($message);
 
