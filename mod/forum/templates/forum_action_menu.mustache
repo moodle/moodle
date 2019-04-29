@@ -59,5 +59,12 @@
             {{> mod_forum/discussion_pin_toggle}}
         </div>
         {{/capabilities.pin}}
+        {{#capabilities.manage}}
+        {{^istimelocked}}
+        <div class="dropdown-item" role="menuitem">
+            {{> forum/discussion_lock_toggle }}
+        </div>
+        {{/istimelocked}}
+        {{/capabilities.manage}}
     </div>
 </div>

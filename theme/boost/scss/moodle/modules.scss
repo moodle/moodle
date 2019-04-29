@@ -69,7 +69,6 @@ select {
 
         thead .header th,
         tbody .discussion td {
-            &.discussionlock,
             &.discussionsubscription {
                 width: 16px;
                 padding-left: 0.5em;
@@ -84,14 +83,12 @@ select {
             }
 
             .discussionsubscription,
-            .discussionlock,
             .replies {
                 text-align: center;
             }
 
             .topic,
             .discussionsubscription,
-            .discussionlock,
             .topic.starter,
             .replies,
             .lastpost {

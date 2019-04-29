@@ -23,11 +23,17 @@
  */
 define([
     'jquery',
+    'core/templates',
+    'core/str',
+    'core/notification',
     'mod_forum/subscription_toggle',
     'mod_forum/selectors',
     'mod_forum/repository',
 ], function(
     $,
+    Templates,
+    String,
+    Notification,
     SubscriptionToggle,
     Selectors,
     Repository
@@ -56,6 +62,34 @@ define([
                     return location.reload();
                 })
                 .catch(Notification.exception);
+        });
+
+        root.on('click', Selectors.lock.toggle, function(e) {
+            var toggleElement = $(this);
+            var forumId = toggleElement.data('forumid');
+            var discussionId = toggleElement.data('discussionid');
+            var state = toggleElement.data('state');
+
+            Repository.setDiscussionLockState(forumId, discussionId, state)
+                .then(function(context) {
+                    context.forumid = forumId;
+                    return Templates.render('mod_forum/discussion_lock_toggle', context);
+                })
+                .then(function(html, js) {
+                    return Templates.replaceNode(toggleElement, html, js);
+                })
+                .then(function() {
+                    return String.get_string('lockupdated', 'forum')
+                        .done(function(s) {
+                            return Notification.addNotification({
+                                message: s,
+                                type: "info"
+                            });
+                        });
+                })
+                .catch(Notification.exception);
+
+            e.preventDefault();
         });
     };
 

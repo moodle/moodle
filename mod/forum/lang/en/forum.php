@@ -325,6 +325,7 @@ $string['lockdiscussionafter_help'] = 'Discussions may be automatically locked a
 Users with the capability to reply to locked discussions can unlock a discussion by replying to it.';
 $string['longpost'] = 'Long post';
 $string['locked'] = 'Locked';
+$string['lockupdated'] = 'The lock option has been updated.';
 $string['mailnow'] = 'Send forum post notifications with no editing-time delay';
 $string['manydiscussions'] = 'Discussions per page';
 $string['managesubscriptionsoff'] = 'Finish managing subscriptions';

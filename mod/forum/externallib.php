@@ -1643,6 +1643,36 @@ class mod_forum_external extends external_api {
     }
 
     /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function set_lock_state_parameters() {
+        return new external_function_parameters(
+            [
+                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in'),
+                'discussionid' => new external_value(PARAM_INT, 'The discussion to lock / unlock'),
+                'targetstate' => new external_value(PARAM_INT, 'The timestamp for the lock state')
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function set_lock_state_returns() {
+        return new external_single_structure([
+            'id' => new external_value(PARAM_INT, 'The discussion we are locking.'),
+            'locked' => new external_value(PARAM_BOOL, 'The locked state of the discussion.'),
+            'times' => new external_single_structure([
+                'locked' => new external_value(PARAM_INT, 'The locked time of the discussion.'),
+            ])
+        ]);
+    }
+
+    /**
      * Set the pin state.
      *
      * @param   int     $discussionid
@@ -1672,27 +1702,11 @@ class mod_forum_external extends external_api {
         }
 
         $discussion->set_pinned($targetstate);
-        $discussionrecord = $legacydatamapperfactory->get_discussion_data_mapper()->to_legacy_object($discussion);
-        $discussionvault->update_discussion($discussionrecord);
+        $discussionvault->update_discussion($discussion);
 
         $exporterfactory = mod_forum\local\container::get_exporter_factory();
         $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
         return $exporter->export($PAGE->get_renderer('mod_forum'));
-    }
-
-    /**
-     * Returns description of method parameters.
-     *
-     * @return external_function_parameters
-     */
-    public static function set_lock_state_parameters() {
-        return new external_function_parameters(
-            [
-                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in'),
-                'discussionid' => new external_value(PARAM_INT, 'The discussion to lock / unlock'),
-                'targetstate' => new external_value(PARAM_INT, 'The timestamp for the lock state')
-            ]
-        );
     }
 
     /**
@@ -1709,21 +1723,6 @@ class mod_forum_external extends external_api {
                     null, NULL_NOT_ALLOWED),
             ]
         );
-    }
-
-    /**
-     * Returns description of method result value.
-     *
-     * @return external_description
-     */
-    public static function set_lock_state_returns() {
-        return new external_single_structure([
-            'id' => new external_value(PARAM_INT, 'The discussion we are locking.'),
-            'locked' => new external_value(PARAM_BOOL, 'The locked state of the discussion.'),
-            'times' => new external_single_structure([
-                'locked' => new external_value(PARAM_INT, 'The locked time of the discussion.'),
-            ])
-        ]);
     }
 
     /**

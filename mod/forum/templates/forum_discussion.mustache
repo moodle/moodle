@@ -33,13 +33,7 @@
 <div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
 {{#html}}
     <div class="d-flex flex-wrap flex-row-reverse m-b-1 text-right" data-container="discussion-tools">
-        {{#capabilities.manage}}
-        {{^istimelocked}}
-        <div class="pl-1 discussionlock">
-            {{> forum/discussion_lock_toggle }}
-        </div>
-        {{/istimelocked}}
-        {{/capabilities.manage}}
+
         <div class="pl-1">
             <div class="discussion-settings-menu">
                 {{> mod_forum/forum_action_menu}}

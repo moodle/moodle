@@ -35,12 +35,12 @@
     }
 }}
 <a
-    class="iconsmall"
+    class="btn btn-link"
     data-type="lock-toggle"
     data-action="toggle"
     data-discussionid="{{id}}"
     data-forumid="{{forumid}}"
-    data-state="{{locked}}"
+    data-state="{{times.locked}}"
     href="#"
     {{#locked}}
         title="{{#str}}clicktounlockdiscussion, forum{{/str}}"
@@ -50,9 +50,9 @@
     {{/locked}}
 >
     {{#locked}}
-        {{#pix}}t/unlock, core, {{#str}}clicktounlockdiscussion, forum{{/str}}{{/pix}}{{#str}}locked, forum{{/str}}
+        {{#str}}locked, forum{{/str}}
     {{/locked}}
     {{^locked}}
-        {{#pix}}t/lock, core, {{#str}}clicktolockdiscussion, forum{{/str}}{{/pix}}{{#str}}notlocked, forum{{/str}}
+        {{#str}}notlocked, forum{{/str}}
     {{/locked}}
 </a>
