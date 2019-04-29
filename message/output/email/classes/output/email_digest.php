@@ -109,10 +109,12 @@ class email_digest implements \renderable, \templatable {
                 $grouppictureurl = $url->out(false);
             }
 
+            $coursecontext = \context_course::instance($conversation->courseid);
+
             $conversationformatted = new \stdClass();
-            $conversationformatted->groupname = $conversation->name;
+            $conversationformatted->groupname = format_string($conversation->name, true, ['context' => $coursecontext]);
             $conversationformatted->grouppictureurl = $grouppictureurl;
-            $conversationformatted->coursename = $conversation->coursename;
+            $conversationformatted->coursename = format_string($conversation->coursename, true, ['context' => $coursecontext]);
             $conversationformatted->numberofunreadmessages = count($messages);
             $conversationformatted->messages = [];
             $conversationformatted->viewallmessageslink = \html_writer::link($viewallmessageslink,
