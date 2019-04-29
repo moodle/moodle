@@ -25,10 +25,52 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
+
+    $settings = new admin_settingpage('analyticssite', new lang_string('analyticssiteinfo', 'analytics'));
+    $ADMIN->add('analytics', $settings);
+
+    if ($ADMIN->fulltree) {
+        $modeinstructions = [
+            'facetoface' => get_string('modeinstructionfacetoface', 'analytics'),
+            'blendedhybrid' => get_string('modeinstructionblendedhybrid', 'analytics'),
+            'fullyonline' => get_string('modeinstructionfullyonline', 'analytics'),
+        ];
+        $settings->add(new admin_setting_configmultiselect('analytics/modeinstruction', get_string('modeinstruction', 'analytics'),
+            '', [], $modeinstructions));
+
+        $settings->add(new admin_setting_configtext_with_maxlength('analytics/percentonline',
+            get_string('percentonline', 'analytics'),
+            get_string('percentonline_help', 'analytics'), '', PARAM_INT, 3, 3));
+
+        $typeinstitutions = [
+            'typeinstitutionacademic' => get_string('typeinstitutionacademic', 'analytics'),
+            'typeinstitutiontraining' => get_string('typeinstitutiontraining', 'analytics'),
+            'typeinstitutionngo' => get_string('typeinstitutionngo', 'analytics'),
+        ];
+        $settings->add(new admin_setting_configmultiselect('analytics/typeinstitution', get_string('typeinstitution', 'analytics'),
+            '', [], $typeinstitutions));
+
+        $levelinstitutions = [
+            'levelinstitutionisced0' => get_string('levelinstitutionisced0', 'analytics'),
+            'levelinstitutionisced1' => get_string('levelinstitutionisced1', 'analytics'),
+            'levelinstitutionisced2' => get_string('levelinstitutionisced2', 'analytics'),
+            'levelinstitutionisced3' => get_string('levelinstitutionisced3', 'analytics'),
+            'levelinstitutionisced4' => get_string('levelinstitutionisced4', 'analytics'),
+            'levelinstitutionisced5' => get_string('levelinstitutionisced5', 'analytics'),
+            'levelinstitutionisced6' => get_string('levelinstitutionisced6', 'analytics'),
+            'levelinstitutionisced7' => get_string('levelinstitutionisced7', 'analytics'),
+            'levelinstitutionisced8' => get_string('levelinstitutionisced8', 'analytics'),
+        ];
+        $settings->add(new admin_setting_configmultiselect('analytics/levelinstitution',
+            get_string('levelinstitution', 'analytics'), '', [], $levelinstitutions));
+    }
+
     $settings = new admin_settingpage('analyticssettings', new lang_string('analyticssettings', 'analytics'));
     $ADMIN->add('analytics', $settings);
 
     if ($ADMIN->fulltree) {
+
+
         // Select the site prediction's processor.
         $predictionprocessors = \core_analytics\manager::get_all_prediction_processors();
         $predictors = array();
