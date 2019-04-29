@@ -32,4 +32,4 @@ $string['mindate'] = 'Minimum value';
 $string['mindateaftermax'] = 'The minimum value cannot be bigger than the maximum value.';
 $string['pluginname'] = 'Date and time';
 $string['privacy:metadata'] = 'The Date and time field type plugin doesn\'t store any personal data; it uses tables defined in core.';
-$string['specificsettings'] = 'Settings for the date and time field';
+$string['specificsettings'] = 'Date and time field settings';

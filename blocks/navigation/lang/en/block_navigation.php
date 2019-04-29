@@ -27,7 +27,7 @@
 $string['everything'] = 'Everything';
 $string['courses'] = 'Categories and courses';
 $string['coursestructures'] = 'Categories, courses, and course structures';
-$string['courseactivities'] = 'Categories, courses, and course Activities';
+$string['courseactivities'] = 'Categories, courses, and course activities';
 $string['enabledockdesc'] = 'Allow the user to dock this block';
 $string['expansionlimit'] = 'Generate navigation for the following';
 $string['linkcategoriesdesc'] = 'Display categories as links';
