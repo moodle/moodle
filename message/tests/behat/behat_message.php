@@ -109,18 +109,7 @@ class behat_message extends behat_base {
     public function i_select_user_in_messaging($userfullname) {
         $this->i_open_messaging();
 
-        $this->execute('behat_general::i_click_on', [get_string('search', 'core'), 'field']);
-
-        $this->execute('behat_forms::i_set_the_field_with_xpath_to',
-            [
-                "//*[@data-region='message-drawer']//input[@data-region='search-input']",
-                $this->escape($userfullname)
-            ]
-        );
-
-        $this->execute('behat_general::i_click_on', ['[data-action="search"]', 'css_element']);
-
-        $this->execute('behat_general::wait_until_the_page_is_ready');
+        $this->i_search_for_string_in_messaging($userfullname);
 
         // Need to limit the click to the search results because the 'view-contact-profile' elements
         // can occur in two separate divs on the page.
@@ -132,6 +121,27 @@ class behat_message extends behat_base {
                 "css_element",
             ]
         );
+
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+    }
+
+    /**
+     * Search for a string using the messaging search.
+     *
+     * @Given /^I search for "(?P<string>(?:[^"]|\\")*)" in messaging$/
+     * @param string $string the search string.
+     */
+    public function i_search_for_string_in_messaging($string) {
+        $this->execute('behat_general::i_click_on', [get_string('search', 'core'), 'field']);
+
+        $this->execute('behat_forms::i_set_the_field_with_xpath_to',
+            [
+                "//*[@data-region='message-drawer']//input[@data-region='search-input']",
+                $this->escape($string)
+            ]
+        );
+
+        $this->execute('behat_general::i_click_on', ['[data-action="search"]', 'css_element']);
 
         $this->execute('behat_general::wait_until_the_page_is_ready');
     }
