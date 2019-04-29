@@ -3270,5 +3270,35 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019042300.03);
     }
 
+    if ($oldversion < 2019042700.01) {
+
+        // Define field firstanalysis to be added to analytics_used_analysables.
+        $table = new xmldb_table('analytics_used_analysables');
+
+        // Declaring it as null initially (although it is NOT NULL).
+        $field = new xmldb_field('firstanalysis', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'analysableid');
+
+        // Conditionally launch add field firstanalysis.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            // Set existing values to the current timeanalysed value.
+            $recordset = $DB->get_recordset('analytics_used_analysables');
+            foreach ($recordset as $record) {
+                $record->firstanalysis = $record->timeanalysed;
+                $DB->update_record('analytics_used_analysables', $record);
+            }
+            $recordset->close();
+
+            // Now make the field 'NOT NULL'.
+            $field = new xmldb_field('firstanalysis', XMLDB_TYPE_INTEGER, '10',
+                null, XMLDB_NOTNULL, null, null, 'analysableid');
+            $dbman->change_field_notnull($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019042700.01);
+    }
+
     return true;
 }

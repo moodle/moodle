@@ -68,4 +68,26 @@ abstract class upcoming_periodic extends periodic {
     public function valid_for_evaluation(): bool {
         return false;
     }
+
+    /**
+     * Get the start of the first time range.
+     *
+     * Overwriten to start generating predictions about upcoming stuff from time().
+     *
+     * @return int A timestamp.
+     */
+    protected function get_first_start() {
+        global $DB;
+
+        $cache = \cache::make('core', 'modelfirstanalyses');
+
+        $key = $this->modelid . '_' . $this->analysable->get_id();
+        $firstanalysis = $cache->get($key);
+        if (!empty($firstanalysis)) {
+            return $firstanalysis;
+        }
+
+        // This analysable has not yet been analysed, the start is therefore now (-1 so ready_to_predict can be executed).
+        return time() - 1;
+    }
 }

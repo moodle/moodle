@@ -67,6 +67,9 @@ class analysis {
         $this->analyser = $analyser;
         $this->includetarget = $includetarget;
         $this->result = $result;
+
+        // We cache the first time analysables were analysed because time-splitting methods can depend on these info.
+        self::fill_firstanalyses_cache($this->analyser->get_modelid());
     }
 
     /**
@@ -81,16 +84,14 @@ class analysis {
         // Time limit control.
         $modeltimelimit = intval(get_config('analytics', 'modeltimelimit'));
 
-        $filesbytimesplitting = array();
-
-        $alreadyprocessedanalysables = $this->get_processed_analysables();
-
         if ($this->includetarget) {
             $action = 'training';
         } else {
             $action = 'prediction';
         }
         $analysables = $this->analyser->get_analysables_iterator($action);
+
+        $processedanalysables = $this->get_processed_analysables();
 
         $inittime = microtime(true);
         foreach ($analysables as $analysable) {
@@ -121,13 +122,16 @@ class analysis {
                 }
             }
 
-            // Updated regardless of how well the analysis went.
-            if ($this->analyser->get_target()->always_update_analysis_time() || $processed) {
-                $this->update_analysable_analysed_time($alreadyprocessedanalysables, $analysable->get_id());
-            }
-
-            // Apply time limit.
             if (!$options['evaluation']) {
+
+                if (empty($processedanalysables[$analysable->get_id()]) ||
+                        $this->analyser->get_target()->always_update_analysis_time() || $processed) {
+                    // We store the list of processed analysables even if the target does not always_update_analysis_time(),
+                    // what always_update_analysis_time controls is the update of the data.
+                    $this->update_analysable_analysed_time($processedanalysables, $analysable->get_id());
+                }
+
+                // Apply time limit.
                 $timespent = microtime(true) - $inittime;
                 if ($modeltimelimit <= $timespent) {
                     break;
@@ -150,7 +154,7 @@ class analysis {
 
         // Weird select fields ordering for performance (analysableid key matching, analysableid is also unique by modelid).
         return $DB->get_records_select('analytics_used_analysables', $select,
-            $params, 'timeanalysed DESC', 'analysableid, modelid, action, timeanalysed, id AS primarykey');
+            $params, 'timeanalysed DESC', 'analysableid, modelid, action, firstanalysis, timeanalysed, id AS primarykey');
     }
 
     /**
@@ -590,13 +594,16 @@ class analysis {
     protected function update_analysable_analysed_time(array $processedanalysables, int $analysableid) {
         global $DB;
 
+        $now = time();
+
         if (!empty($processedanalysables[$analysableid])) {
             $obj = $processedanalysables[$analysableid];
 
             $obj->id = $obj->primarykey;
             unset($obj->primarykey);
 
-            $obj->timeanalysed = time();
+            $obj->timeanalysed = $now;
+
             $DB->update_record('analytics_used_analysables', $obj);
 
         } else {
@@ -605,10 +612,54 @@ class analysis {
             $obj->modelid = $this->analyser->get_modelid();
             $obj->action = ($this->includetarget) ? 'training' : 'prediction';
             $obj->analysableid = $analysableid;
-            $obj->timeanalysed = time();
+            $obj->firstanalysis = $now;
+            $obj->timeanalysed = $now;
 
-            $DB->insert_record('analytics_used_analysables', $obj);
+            $obj->primarykey = $DB->insert_record('analytics_used_analysables', $obj);
+
+            // Update the cache just in case it is used in the same request.
+            $key = $this->analyser->get_modelid() . '_' . $analysableid;
+            $cache = \cache::make('core', 'modelfirstanalyses');
+            $cache->set($key, $now);
         }
+    }
+
+    /**
+     * Fills a cache containing the first time each analysable in the provided model was analysed.
+     *
+     * @param int $modelid
+     * @param int|null $analysableid
+     * @return null
+     */
+    public static function fill_firstanalyses_cache(int $modelid, ?int $analysableid = null) {
+        global $DB;
+
+        // Using composed keys instead of cache $identifiers because of MDL-65358.
+        $primarykey = $DB->sql_concat($modelid, "'_'", 'analysableid');
+        $sql = "SELECT $primarykey AS id, MIN(firstanalysis) AS firstanalysis
+                  FROM {analytics_used_analysables} aua
+                 WHERE modelid = :modelid";
+        $params = ['modelid' => $modelid];
+
+        if ($analysableid) {
+            $sql .= " AND analysableid = :analysableid";
+            $params['analysableid'] = $analysableid;
+        }
+
+        $sql .= " GROUP BY modelid, analysableid ORDER BY analysableid";
+
+        $firstanalyses = $DB->get_records_sql($sql, $params);
+        if ($firstanalyses) {
+            $cache = \cache::make('core', 'modelfirstanalyses');
+
+            $firstanalyses = array_map(function($record) {
+                return $record->firstanalysis;
+            }, $firstanalyses);
+
+            $cache->set_many($firstanalyses);
+        }
+
+        return $firstanalyses;
     }
 
     /**
