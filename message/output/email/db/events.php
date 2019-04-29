@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Email processor version information
+ * This file defines what events we wish to observe and the method responsible for handling the event.
  *
  * @package    message_email
- * @copyright  2008 Luis Rodrigues
+ * @copyright  2019 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019042900;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2018112800;        // Requires this Moodle version
-$plugin->component = 'message_email';  // Full name of the plugin (used for diagnostics)
+$observers = [
+    [
+        'eventname' => '\core\event\message_viewed',
+        'callback' => '\message_email\event_observers::message_viewed',
+    ],
+];
