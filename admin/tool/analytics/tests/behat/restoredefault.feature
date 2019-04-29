@@ -65,7 +65,7 @@ Feature: Restoring default models
     And I should see "Analytics models"
     And I should see "No teaching"
     When I click on "Restore default models" "link"
-    Then I should see "All default models provided by the Moodle core and installed plugins have been already created. No new models were found, there is nothing to restore."
+    Then I should see "All default models provided by core and installed plugins have been created. No new models were found; there is nothing to restore."
     And I click on "Back" "link"
     And I should see "Analytics models"
 

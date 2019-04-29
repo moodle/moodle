@@ -13,7 +13,7 @@ Feature: Managers can manage course custom fields text
 
   Scenario: Create a custom course text field
     When I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
@@ -23,7 +23,7 @@ Feature: Managers can manage course custom fields text
 
   Scenario: Edit a custom course text field
     When I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
@@ -40,7 +40,7 @@ Feature: Managers can manage course custom fields text
   @javascript
   Scenario: Delete a custom course text field
     When I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
@@ -64,7 +64,7 @@ Feature: Managers can manage course custom fields text
       | teacher1 | C1     | editingteacher |
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | See more on website       |
       | Short name | testfield                 |
@@ -94,11 +94,11 @@ Feature: Managers can manage course custom fields text
       | teacher1 | C1     | editingteacher |
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
-      | Maximum length | 3          |
+      | Maximum number of characters | 3          |
     And I press "Save changes"
     And I log out
     Then I log in as "teacher1"
@@ -107,7 +107,7 @@ Feature: Managers can manage course custom fields text
     And I set the following fields to these values:
       | Test field | 1234 |
     And I press "Save and display"
-    Then I should see "This field maximum length is 3"
+    Then I should see "The maximum number of characters allowed in this field is 3."
 
   Scenario: A text field with a default value must be shown on listing but allow empty values that will not be shown
     Given the following "users" exist:
@@ -121,7 +121,7 @@ Feature: Managers can manage course custom fields text
       | teacher1 | C1     | editingteacher |
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name          | Test field  |
       | Short name    | testfield   |
