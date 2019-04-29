@@ -32,28 +32,30 @@
     {
     }
 }}
-{{#capabilities.subscribe}}
+{{#capabilities.favourite}}
     <a
-        href="{{{urls.subscribe}}}"
-        class="py-3 btn btn-link"
-        data-type="subscription-toggle"
+        class="btn btn-link"
+        data-type="favorite-toggle"
         data-action="toggle"
         data-discussionid="{{id}}"
         data-forumid="{{forumid}}"
-        {{#userstate.subscribed}}
-            title="{{#str}}clicktounsubscribe, mod_forum{{/str}}"
+        tabindex="-1"
+        {{#userstate.favourited}}
             data-targetstate="0"
-        {{/userstate.subscribed}}
-        {{^userstate.subscribed}}
-            title="{{#str}}clicktosubscribe, mod_forum{{/str}}"
+            title="{{#str}}removefromfavourites, mod_forum{{/str}}"
+        {{/userstate.favourited}}
+        {{^userstate.favourited}}
             data-targetstate="1"
-        {{/userstate.subscribed}}
+            title="{{#str}}addtofavourites, mod_forum{{/str}}"
+        {{/userstate.favourited}}
     >
-        {{#userstate.subscribed}}
-            {{#pix}}t/subscribed, mod_forum, {{#str}}clicktounsubscribe, mod_forum{{/str}}{{/pix}}
-        {{/userstate.subscribed}}
-        {{^userstate.subscribed}}
-            {{#pix}}t/unsubscribed, mod_forum, {{#str}}clicktosubscribe, mod_forum{{/str}}{{/pix}}
-        {{/userstate.subscribed}}
+        {{$favouritecontent}}
+            {{#userstate.favourited}}
+                {{#str}}removefromfavourites, mod_forum{{/str}}
+            {{/userstate.favourited}}
+            {{^userstate.favourited}}
+                {{#str}}addtofavourites, mod_forum{{/str}}
+            {{/userstate.favourited}}
+        {{/favouritecontent}}
     </a>
-{{/capabilities.subscribe}}
+{{/capabilities.favourite}}

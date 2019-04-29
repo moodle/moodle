@@ -127,7 +127,7 @@ class exported_discussion_summaries {
         $latestposts = $postvault->get_latest_post_id_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
 
         $unreadcounts = [];
-
+        $favourites = $this->get_favourites($user);
         $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
         $forumrecord = $forumdatamapper->to_legacy_object($forum);
 
@@ -143,10 +143,32 @@ class exported_discussion_summaries {
             $groupsbyauthorid,
             $replycounts,
             $unreadcounts,
-            $latestposts
+            $latestposts,
+            $favourites
         );
 
         return (array) $summaryexporter->export($this->renderer);
+    }
+
+    /**
+     * Get a list of all favourited discussions.
+     *
+     * @param stdClass $user The user we are getting favourites for
+     * @return int[] A list of favourited itemids
+     */
+    private function get_favourites(stdClass $user) : array {
+        $ids = [];
+
+        if (isloggedin()) {
+            $usercontext = \context_user::instance($user->id);
+            $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+            $favourites = $ufservice->find_favourites_by_type('mod_forum', 'discussions');
+            foreach ($favourites as $favourite) {
+                $ids[] = $favourite->itemid;
+            }
+        }
+
+        return $ids;
     }
 
     /**

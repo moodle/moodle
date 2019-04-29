@@ -32,14 +32,13 @@
 
 <div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
 {{#html}}
-    <div class="d-flex flex-wrap flex-row-reverse m-b-1" data-container="discussion-tools" style="text-align: right;">
-        {{#capabilities.manage}}
-            {{^istimelocked}}
-            <div class="pl-1 discussionlock">
-                {{> forum/discussion_lock_toggle }}
+    <div class="d-flex flex-wrap flex-row-reverse m-b-1 text-right" data-container="discussion-tools">
+
+        <div class="pl-1">
+            <div class="discussion-settings-menu">
+                {{> mod_forum/forum_action_menu}}
             </div>
-            {{/istimelocked}}
-        {{/capabilities.manage}}
+        </div>
         <div class="pl-1">{{{subscribe}}}</div>
     </div>
     {{{neighbourlinks}}}
@@ -48,7 +47,6 @@
         <div>{{{exportdiscussion}}}</div>
         <div class="{{#exportdiscussion}}ml-2{{/exportdiscussion}}">{{{modeselectorform}}}</div>
         <div class="ml-2">{{{movediscussion}}}</div>
-        <div class="ml-2">{{{pindiscussion}}}</div>
     </div>
 {{/html}}
 
@@ -61,11 +59,14 @@
 {{#html.neighbourlinks}}{{{.}}}{{/html.neighbourlinks}}
 </div>
 {{#js}}
-require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lock_toggle'], function($, Discussion, PostsList, LockToggle) {
-    var root = $("[data-content='forum-discussion']");
-    Discussion.init(root);
-    PostsList.init(root);
-    var root = $('[data-container="discussion-tools"]');
-    LockToggle.init(root);
+require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lock_toggle', 'mod_forum/favourite_toggle', 'mod_forum/pin_toggle'],
+    function($, Discussion, PostsList, LockToggle, FavouriteToggle, Pin) {
+        var root = $("[data-content='forum-discussion']");
+        Discussion.init(root);
+        PostsList.init(root);
+        root = $('[data-container="discussion-tools"]');
+        LockToggle.init(root);
+        FavouriteToggle.init(root);
+        Pin.init(root);
 });
 {{/js}}

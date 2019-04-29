@@ -47,7 +47,8 @@ class core_exporter_testcase extends advanced_testcase {
             'context' => null,
             'aint' => 5,
             'astring' => 'valid string',
-            'abool' => false
+            'abool' => false,
+            'ints' => []
         );
         $this->invalidrelated = array(
             'simplestdClass' => 'a string',
@@ -55,7 +56,8 @@ class core_exporter_testcase extends advanced_testcase {
             'context' => null,
             'aint' => false,
             'astring' => 4,
-            'abool' => 'not a boolean'
+            'abool' => 'not a boolean',
+            'ints' => null
         );
 
         $this->validdata = array('stringA' => 'A string', 'stringAformat' => FORMAT_HTML, 'intB' => 4);
@@ -116,6 +118,23 @@ class core_exporter_testcase extends advanced_testcase {
         $output = $PAGE->get_renderer('core');
 
         $result = $exporter->export($output);
+    }
+
+    public function test_invalid_related_all_cases() {
+        global $PAGE;
+
+        foreach ($this->invalidrelated as $key => $value) {
+            $data = $this->validrelated;
+            $data[$key] = $value;
+
+            try {
+                $exporter = new core_testable_exporter($this->validdata, $data);
+                $output = $PAGE->get_renderer('core');
+                $result = $exporter->export($output);
+            } catch (coding_exception $e) {
+                $this->assertNotFalse(strpos($e->getMessage(), $key));
+            }
+        }
     }
 
     public function test_valid_data_and_related() {
@@ -196,7 +215,7 @@ class core_testable_exporter extends \core\external\exporter {
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the course.
         return array('simplestdClass' => 'stdClass', 'arrayofstdClass' => 'stdClass[]', 'context' => 'context?',
-            'astring' => 'string', 'abool' => 'bool', 'aint' => 'int');
+            'astring' => 'string', 'abool' => 'bool', 'aint' => 'int', 'ints' => 'int[]');
     }
 
     protected function get_other_values(renderer_base $output) {

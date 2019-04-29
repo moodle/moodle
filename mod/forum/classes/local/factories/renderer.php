@@ -138,7 +138,15 @@ class renderer {
             $ratingmanager,
             $this->entityfactory->get_exported_posts_sorter(),
             $baseurl,
-            $notifications
+            $notifications,
+            function($discussion, $user, $forum) {
+                $exportbuilder = $this->builderfactory->get_exported_discussion_builder();
+                return $exportedposts = $exportbuilder->build(
+                    $user,
+                    $forum,
+                    $discussion
+                );
+            }
         );
     }
 

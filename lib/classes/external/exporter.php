@@ -79,14 +79,16 @@ abstract class exporter {
             }
 
             $missingdataerr = 'Exporter class is missing required related data: (' . get_called_class() . ') ';
+            $scalartypes = ['string', 'int', 'bool', 'float'];
+            $scalarcheck = 'is_' . $classname;
 
-            if ($nullallowed && array_key_exists($key, $related) && $related[$key] === null) {
-                $this->related[$key] = $related[$key];
+            if ($nullallowed && (!array_key_exists($key, $related) || $related[$key] === null)) {
+                $this->related[$key] = null;
 
             } else if ($isarray) {
                 if (array_key_exists($key, $related) && is_array($related[$key])) {
                     foreach ($related[$key] as $index => $value) {
-                        if (!$value instanceof $classname) {
+                        if (!$value instanceof $classname && !$scalarcheck($value)) {
                             throw new coding_exception($missingdataerr . $key . ' => ' . $classname . '[]');
                         }
                     }
@@ -96,8 +98,6 @@ abstract class exporter {
                 }
 
             } else {
-                $scalartypes = ['string', 'int', 'bool', 'float'];
-                $scalarcheck = 'is_' . $classname;
                 if (array_key_exists($key, $related) &&
                         ((in_array($classname, $scalartypes) && $scalarcheck($related[$key])) ||
                         ($related[$key] instanceof $classname))) {

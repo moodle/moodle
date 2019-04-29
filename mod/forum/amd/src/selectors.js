@@ -26,9 +26,6 @@ define([], function() {
         subscription: {
             toggle: "[data-type='subscription-toggle'][data-action='toggle']",
         },
-        pin: {
-            toggle: ".pindiscussion [data-action='toggle']",
-        },
         post: {
             post: '[data-region="post"]',
             action: '[data-region="post-action"]',
@@ -45,6 +42,12 @@ define([], function() {
         },
         lock: {
             toggle: "[data-action='toggle'][data-type='lock-toggle']",
-        }
+        },
+        favourite: {
+            toggle: "[data-type='favorite-toggle'][data-action='toggle']",
+        },
+        pin: {
+            toggle: "[data-type='pin-toggle'][data-action='toggle']",
+        },
     };
 });

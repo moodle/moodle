@@ -457,4 +457,19 @@ class url {
             'd' => $discussion->get_id()
         ]);
     }
+
+    /**
+     * Generate the pinned discussion link
+     *
+     * @param discussion_entity $discussion
+     * @return moodle_url
+     * @throws \moodle_exception
+     */
+    public function get_pin_discussion_url_from_discussion(discussion_entity $discussion) : moodle_url {
+        return new moodle_url('discuss.php', [
+            'sesskey' => sesskey(),
+            'd' => $discussion->get_id(),
+            'pin' => $discussion->is_pinned() ? FORUM_DISCUSSION_UNPINNED : FORUM_DISCUSSION_PINNED
+        ]);
+    }
 }

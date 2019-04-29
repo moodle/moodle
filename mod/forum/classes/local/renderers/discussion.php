@@ -90,6 +90,8 @@ class discussion {
     private $notifications;
     /** @var sorter_entity $exportedpostsorter Sorter for the exported posts */
     private $exportedpostsorter;
+    /** @var callable $postprocessfortemplate Function to process exported posts before template rendering */
+    private $postprocessfortemplate;
 
     /**
      * Constructor.
@@ -123,7 +125,8 @@ class discussion {
         rating_manager $ratingmanager,
         sorter_entity $exportedpostsorter,
         moodle_url $baseurl,
-        array $notifications = []
+        array $notifications = [],
+        callable $postprocessfortemplate = null
     ) {
         $this->forum = $forum;
         $this->discussion = $discussion;
@@ -140,6 +143,7 @@ class discussion {
         $this->notifications = $notifications;
 
         $this->exportedpostsorter = $exportedpostsorter;
+        $this->postprocessfortemplate = $postprocessfortemplate;
 
         $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
         $this->forumrecord = $forumdatamapper->to_legacy_object($forum);
@@ -173,7 +177,12 @@ class discussion {
 
         $posts = array_merge([$firstpost], array_values($replies));
 
-        $exporteddiscussion = $this->get_exported_discussion($user);
+        if ($this->postprocessfortemplate !== null) {
+            $exporteddiscussion = ($this->postprocessfortemplate) ($this->discussion, $user, $this->forum);
+        } else {
+            $exporteddiscussion = $this->get_exported_discussion($user);
+        }
+
         $exporteddiscussion = array_merge($exporteddiscussion, [
             'notifications' => $this->get_notifications($user),
             'html' => [
@@ -195,10 +204,6 @@ class discussion {
 
         if ($capabilities['move']) {
             $exporteddiscussion['html']['movediscussion'] = $this->get_move_discussion_html();
-        }
-
-        if ($capabilities['pin']) {
-            $exporteddiscussion['html']['pindiscussion'] = $this->get_pin_discussion_html();
         }
 
         return $this->renderer->render_from_template('mod_forum/forum_discussion', $exporteddiscussion);
@@ -323,30 +328,6 @@ class discussion {
         }
 
         return null;
-    }
-
-    /**
-     * Get the HTML to render the pin discussion button.
-     *
-     * @return string
-     */
-    private function get_pin_discussion_html() : string {
-        $discussion = $this->discussion;
-
-        if ($discussion->is_pinned()) {
-            $pinlink = FORUM_DISCUSSION_UNPINNED;
-            $pintext = get_string('discussionunpin', 'forum');
-        } else {
-            $pinlink = FORUM_DISCUSSION_PINNED;
-            $pintext = get_string('discussionpin', 'forum');
-        }
-
-        $button = new single_button(
-            new moodle_url('discuss.php', ['pin' => $pinlink, 'd' => $discussion->get_id()]),
-            $pintext,
-            'post'
-        );
-        return $this->renderer->render($button);
     }
 
     /**

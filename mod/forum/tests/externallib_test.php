@@ -181,6 +181,100 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test the toggle favourite state
+     */
+    public function test_mod_forum_toggle_favourite_state() {
+        global $USER, $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a user.
+        $user = self::getDataGenerator()->create_user(array('trackforums' => 1));
+
+        // Set to the user.
+        self::setUser($user);
+
+        // Create courses to add the modules.
+        $course1 = self::getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+        $forum1->introfiles = [];
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user->id;
+        $record->forum = $forum1->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $response = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
+        $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
+        $this->assertTrue($response['userstate']['favourited']);
+
+        $response = mod_forum_external::toggle_favourite_state($discussion1->id, 0);
+        $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
+        $this->assertFalse($response['userstate']['favourited']);
+
+        $this->setUser(0);
+        try {
+            $response = mod_forum_external::toggle_favourite_state($discussion1->id, 0);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+    }
+
+    /**
+     * Test the toggle pin state
+     */
+    public function test_mod_forum_set_pin_state() {
+        $this->resetAfterTest(true);
+
+        // Create a user.
+        $user = self::getDataGenerator()->create_user(array('trackforums' => 1));
+
+        // Set to the user.
+        self::setUser($user);
+
+        // Create courses to add the modules.
+        $course1 = self::getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+        $forum1->introfiles = [];
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user->id;
+        $record->forum = $forum1->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        try {
+            $response = mod_forum_external::set_pin_state($discussion1->id, 1);
+        } catch (Exception $e) {
+            $this->assertEquals('cannotpindiscussions', $e->errorcode);
+        }
+
+        self::setAdminUser();
+        $response = mod_forum_external::set_pin_state($discussion1->id, 1);
+        $response = external_api::clean_returnvalue(mod_forum_external::set_pin_state_returns(), $response);
+        $this->assertTrue($response['pinned']);
+
+        $response = mod_forum_external::set_pin_state($discussion1->id, 0);
+        $response = external_api::clean_returnvalue(mod_forum_external::set_pin_state_returns(), $response);
+        $this->assertFalse($response['pinned']);
+    }
+
+    /**
      * Test get forum posts
      */
     public function test_mod_forum_get_forum_discussion_posts() {
@@ -986,6 +1080,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'locked' => false,
                 'canreply' => false,
                 'canlock' => false,
+                'starred' => false,
+                'canfavourite' => true,
             );
 
         // Call the external function passing forum id.
@@ -1005,6 +1101,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $userpicture->size = 1; // Size f1.
         $expectedreturn['discussions'][0]['usermodifiedpictureurl'] = $userpicture->get_url($PAGE)->out(false);
 
+        $this->assertEquals($expectedreturn, $discussions);
+
+        // Test the starring functionality return.
+        $t = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
+        $expectedreturn['discussions'][0]['starred'] = true;
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
         $this->assertEquals($expectedreturn, $discussions);
 
         // Call without required view discussion capability.
@@ -1667,7 +1770,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Check default values for capabilities.
         $enabledcaps = array('canviewdiscussion', 'canstartdiscussion', 'canreplypost', 'canviewrating', 'cancreateattachment',
-            'canexportownpost', 'candeleteownpost', 'canallowforcesubscribe');
+            'canexportownpost', 'cancantogglefavourite', 'candeleteownpost', 'canallowforcesubscribe');
 
         unset($result['warnings']);
         foreach ($result as $capname => $capvalue) {

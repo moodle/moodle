@@ -122,7 +122,8 @@ class exporter {
         stdClass $user,
         forum_entity $forum,
         discussion_entity $discussion,
-        array $groupsbyid = []
+        array $groupsbyid = [],
+        array $favouriteids = []
     ) : discussion_exporter {
         return new discussion_exporter($discussion, [
             'context' => $forum->get_context(),
@@ -132,7 +133,8 @@ class exporter {
             'user' => $user,
             'legacydatamapperfactory' => $this->legacydatamapperfactory,
             'latestpostid' => null,
-            'groupsbyid' => $groupsbyid
+            'groupsbyid' => $groupsbyid,
+            'favouriteids' => $favouriteids
         ]);
     }
 
@@ -166,7 +168,8 @@ class exporter {
         array $groupsbyauthorid = [],
         array $discussionreplycount = [],
         array $discussionunreadcount = [],
-        array $latestpostid = []
+        array $latestpostid = [],
+        array $favourites = []
     ) : discussion_summaries_exporter {
         return new discussion_summaries_exporter(
             $discussions,
@@ -182,6 +185,7 @@ class exporter {
                 'capabilitymanager' => $this->managerfactory->get_capability_manager($forum),
                 'urlfactory' => $this->urlfactory,
                 'user' => $user,
+                'favouriteids' => $favourites
             ]
         );
     }

@@ -52,7 +52,25 @@ define(['core/ajax'], function(Ajax) {
                 subject: subject
             }
         };
+        return Ajax.call([request])[0];
+    };
 
+    /**
+     * Set the favourite state for a discussion in a forum.
+     *
+     * @param {number} forumId ID of the forum the discussion belongs to
+     * @param {number} discussionId ID of the discussion with the subscription state
+     * @param {null|date} targetState Set the favourite state. True == favourited; false == unfavourited.
+     * @return {object} jQuery promise
+     */
+    var setFavouriteDiscussionState = function(forumId, discussionId, targetState) {
+        var request = {
+            methodname: 'mod_forum_toggle_favourite_state',
+            args: {
+                discussionid: discussionId,
+                targetstate: targetState
+            }
+        };
         return Ajax.call([request])[0];
     };
 
@@ -62,7 +80,25 @@ define(['core/ajax'], function(Ajax) {
             args: {
                 forumid: forumId,
                 discussionid: discussionId,
-                targetstate: targetState
+                targetstate: targetState}
+        };
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * Set the pinned state for the discussion provided.
+     *
+     * @param {number} forumid
+     * @param {number} discussionid
+     * @param {boolean} targetstate
+     * @return {*|Promise}
+     */
+    var setPinDiscussionState = function(forumid, discussionid, targetstate) {
+        var request = {
+            methodname: 'mod_forum_set_pin_state',
+            args: {
+                discussionid: discussionid,
+                targetstate: targetstate
             }
         };
         return Ajax.call([request])[0];
@@ -71,6 +107,8 @@ define(['core/ajax'], function(Ajax) {
     return {
         setDiscussionSubscriptionState: setDiscussionSubscriptionState,
         addDiscussionPost: addDiscussionPost,
-        setDiscussionLockState: setDiscussionLockState
+        setDiscussionLockState: setDiscussionLockState,
+        setFavouriteDiscussionState: setFavouriteDiscussionState,
+        setPinDiscussionState: setPinDiscussionState
     };
 });

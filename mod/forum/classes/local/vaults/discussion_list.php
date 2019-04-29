@@ -75,15 +75,32 @@ class discussion_list extends db_table_vault {
     }
 
     /**
+     * Get the favourite table alias
+     *
+     * @return string
+     */
+    protected function get_favourite_alias() : string {
+        return 'favalias';
+    }
+
+    /**
      * Build the SQL to be used in get_records_sql.
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
+     * @param string|null $joinsql Additional join conditions for the sql
+     * @param stdClass|null $user User we are performing this query for
+     *
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null, stdClass $user = null) : string {
         $alias = $this->get_table_alias();
         $db = $this->get_db();
+
+        list($favsql, $favparams) = $this->get_favourite_sql($user);
+        foreach ($favparams as $key => $param) {
+            $favsql = str_replace(":$key", "'$param'", $favsql);
+        }
 
         // Fetch:
         // - Discussion
@@ -106,6 +123,7 @@ class discussion_list extends db_table_vault {
         $tables .= ' JOIN {user} fa ON fa.id = ' . $alias . '.userid';
         $tables .= ' JOIN {user} la ON la.id = ' . $alias . '.usermodified';
         $tables .= ' JOIN ' . $posttable->get_from_sql() . ' ON fp.id = ' . $alias . '.firstpost';
+        $tables .= isset($favsql) ? $favsql : '';
 
         $selectsql = 'SELECT ' . $fields . ' FROM ' . $tables;
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
@@ -178,7 +196,7 @@ class discussion_list extends db_table_vault {
      *
      * @param int|null $sortmethod
      */
-    public function get_sort_order(?int $sortmethod) : string {
+    public function get_sort_order(?int $sortmethod, $includefavourites = true) : string {
         global $CFG;
 
         $alias = $this->get_table_alias();
@@ -187,7 +205,6 @@ class discussion_list extends db_table_vault {
             $keyfield = "fp.created";
             $direction = "DESC";
         } else {
-            // TODO consider user favourites...
             $keyfield = "{$alias}.timemodified";
             $direction = "DESC";
 
@@ -200,7 +217,9 @@ class discussion_list extends db_table_vault {
             }
         }
 
-        return "{$alias}.pinned DESC, {$keyfield} {$direction}, {$alias}.id DESC";
+        $favouritesort = ($includefavourites ? ", {$this->get_favourite_alias()}.id DESC" : "");
+
+        return "{$alias}.pinned DESC $favouritesort , {$keyfield} {$direction}";
     }
 
     /**
@@ -249,7 +268,8 @@ class discussion_list extends db_table_vault {
         ?int $includepostsforuser,
         ?int $sortorder,
         int $limit,
-        int $offset
+        int $offset,
+        stdClass $user
     ) {
         $alias = $this->get_table_alias();
         $wheresql = "{$alias}.forum = :forumid";
@@ -263,7 +283,7 @@ class discussion_list extends db_table_vault {
             'forumid' => $forumid,
         ]);
 
-        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder));
+        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder, isloggedin()), $user);
         $records = $this->get_db()->get_records_sql($sql, $params, $offset, $limit);
 
         return $this->transform_db_records_to_entities($records);
@@ -289,7 +309,8 @@ class discussion_list extends db_table_vault {
         ?int $includepostsforuser,
         ?int $sortorder,
         int $limit,
-        int $offset
+        int $offset,
+        stdClass $user
     ) {
         $alias = $this->get_table_alias();
 
@@ -313,7 +334,7 @@ class discussion_list extends db_table_vault {
             'allgroupsid' => -1,
         ]);
 
-        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder));
+        $sql = $this->generate_get_records_sql($wheresql, $this->get_sort_order($sortorder, isloggedin()), $user);
         $records = $this->get_db()->get_records_sql($sql, $params, $offset, $limit);
 
         return $this->transform_db_records_to_entities($records);
@@ -389,5 +410,26 @@ class discussion_list extends db_table_vault {
         ]);
 
         return $this->get_db()->count_records_sql($this->generate_count_records_sql($wheresql), $params);
+    }
+
+    /**
+     * Get the standard favouriting sql.
+     *
+     * @param stdClass $user The user we are getting the sql for
+     * @return [$sql, $params] An array comprising of the sql and any associated params
+     */
+    private function get_favourite_sql(?stdClass $user): array {
+        $favsql = "";
+        $favparams = [];
+
+        if ($user && isloggedin()) {
+            $usercontext = \context_user::instance($user->id);
+            $alias = $this->get_table_alias();
+            $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+            list($favsql, $favparams) = $ufservice->get_join_sql_by_type('mod_forum', 'discussions',
+                $this->get_favourite_alias(), "$alias.id");
+        }
+
+        return [$favsql, $favparams];
     }
 }

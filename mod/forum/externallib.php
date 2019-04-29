@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once("$CFG->libdir/externallib.php");
 
 use mod_forum\local\exporters\post as post_exporter;
+use mod_forum\local\exporters\discussion as discussion_exporter;
 
 class mod_forum_external extends external_api {
 
@@ -591,6 +592,11 @@ class mod_forum_external extends external_api {
             $canlock = has_capability('moodle/course:manageactivities', $modcontext, $USER);
             $replies = forum_count_discussion_replies($forumid, $sort, -1, $page, $perpage, $canseeprivatereplies);
 
+            if (isloggedin()) {
+                $usercontext = context_user::instance($USER->id);
+                $ufservice = core_favourites\service_factory::get_service_for_user_context($usercontext);
+            }
+            $canfavourite = has_capability('mod/forum:cantogglefavourite', $modcontext, $USER);
             foreach ($alldiscussions as $discussion) {
 
                 // This function checks for qanda forums.
@@ -639,7 +645,10 @@ class mod_forum_external extends external_api {
 
                 $discussion->locked = forum_discussion_is_locked($forum, $discussion);
                 $discussion->canlock = $canlock;
+                $discussion->starred = !empty($ufservice) ? $ufservice->favourite_exists('mod_forum', 'discussions',
+                    $discussionrec->id, $modcontext) : false;
                 $discussion->canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
+                $discussion->canfavourite = $canfavourite;
 
                 if (forum_is_author_hidden($discussion, $forum)) {
                     $discussion->userid = null;
@@ -729,8 +738,10 @@ class mod_forum_external extends external_api {
                                 'numunread' => new external_value(PARAM_INT, 'The number of unread discussions.'),
                                 'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned'),
                                 'locked' => new external_value(PARAM_BOOL, 'Is the discussion locked'),
+                                'starred' => new external_value(PARAM_BOOL, 'Is the discussion starred'),
                                 'canreply' => new external_value(PARAM_BOOL, 'Can the user reply to the discussion'),
                                 'canlock' => new external_value(PARAM_BOOL, 'Can the user lock the discussion'),
+                                'canfavourite' => new external_value(PARAM_BOOL, 'Can the user star the discussion'),
                             ), 'post'
                         )
                     ),
@@ -1093,6 +1104,78 @@ class mod_forum_external extends external_api {
                 ),
                 //'alertmessage' => new external_value(PARAM_RAW, 'Success message to be displayed to the user.'),
             )
+        );
+    }
+
+    /**
+     * Toggle the favouriting value for the discussion provided
+     *
+     * @param int $discussionid The discussion we need to favourite
+     * @param bool $targetstate The state of the favourite value
+     * @return array The exported discussion
+     */
+    public static function toggle_favourite_state($discussionid, $targetstate) {
+        global $DB, $PAGE, $USER;
+
+        $params = self::validate_parameters(self::toggle_favourite_state_parameters(), [
+            'discussionid' => $discussionid,
+            'targetstate' => $targetstate
+        ]);
+
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        // Get the discussion vault and the corresponding discussion entity.
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+
+        $forumvault = $vaultfactory->get_forum_vault();
+        $forum = $forumvault->get_from_id($discussion->get_forum_id());
+        $forumcontext = $forum->get_context();
+        self::validate_context($forumcontext);
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+
+        // Does the user have the ability to favourite the discussion?
+        if (!$capabilitymanager->can_favourite_discussion($USER, $discussion)) {
+            throw new moodle_exception('cannotfavourite', 'forum');
+        }
+        $usercontext = context_user::instance($USER->id);
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        $isfavourited = $ufservice->favourite_exists('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);
+
+        $favouritefunction = $targetstate ? 'create_favourite' : 'delete_favourite';
+        if ($isfavourited != (bool) $params['targetstate']) {
+            $ufservice->{$favouritefunction}('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);
+        }
+
+        $exporterfactory = mod_forum\local\container::get_exporter_factory();
+        $builder = mod_forum\local\container::get_builder_factory()->get_exported_discussion_builder();
+        $favourited = ($builder->is_favourited($discussion, $forumcontext, $USER) ? [$discussion->get_id()] : []);
+        $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion, [], $favourited);
+        return $exporter->export($PAGE->get_renderer('mod_forum'));
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function toggle_favourite_state_returns() {
+        return discussion_exporter::get_read_structure();
+    }
+
+    /**
+     * Defines the parameters for the toggle_favourite_state method
+     *
+     * @return external_function_parameters
+     */
+    public static function toggle_favourite_state_parameters() {
+        return new external_function_parameters(
+            [
+                'discussionid' => new external_value(PARAM_INT, 'The discussion to subscribe or unsubscribe'),
+                'targetstate' => new external_value(PARAM_BOOL, 'The target state')
+            ]
         );
     }
 
@@ -1512,7 +1595,7 @@ class mod_forum_external extends external_api {
      * @return external_description
      */
     public static function set_subscription_state_returns() {
-        return \mod_forum\local\exporters\discussion::get_read_structure();
+        return discussion_exporter::get_read_structure();
     }
 
     /**
@@ -1554,7 +1637,6 @@ class mod_forum_external extends external_api {
         $discussion->toggle_locked_state($lockedvalue);
         $response = $discussionvault->update_discussion($discussion);
         $discussion = !$response ? $response : $discussion;
-
         $exporterfactory = mod_forum\local\container::get_exporter_factory();
         $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
         return $exporter->export($PAGE->get_renderer('mod_forum'));
@@ -1582,11 +1664,73 @@ class mod_forum_external extends external_api {
      */
     public static function set_lock_state_returns() {
         return new external_single_structure([
-                'id' => new external_value(PARAM_INT, 'The discussion we are locking.'),
-                'locked' => new external_value(PARAM_BOOL, 'The locked state of the discussion.'),
-                'times' => new external_single_structure([
-                    'locked' => new external_value(PARAM_INT, 'The locked time of the discussion.'),
-                ])
+            'id' => new external_value(PARAM_INT, 'The discussion we are locking.'),
+            'locked' => new external_value(PARAM_BOOL, 'The locked state of the discussion.'),
+            'times' => new external_single_structure([
+                'locked' => new external_value(PARAM_INT, 'The locked time of the discussion.'),
+            ])
         ]);
+    }
+
+    /**
+     * Set the pin state.
+     *
+     * @param   int     $discussionid
+     * @param   bool    $targetstate
+     * @return  \stdClass
+     */
+    public static function set_pin_state($discussionid, $targetstate) {
+        global $PAGE, $USER;
+        $params = self::validate_parameters(self::set_pin_state_parameters(), [
+            'discussionid' => $discussionid,
+            'targetstate' => $targetstate,
+        ]);
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+        $forum = $forumvault->get_from_id($discussion->get_forum_id());
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+
+        self::validate_context($forum->get_context());
+
+        $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+        if (!$capabilitymanager->can_pin_discussions($USER)) {
+            // Nothing to do. We won't actually output any content here though.
+            throw new \moodle_exception('cannotpindiscussions', 'mod_forum');
+        }
+
+        $discussion->set_pinned($targetstate);
+        $discussionvault->update_discussion($discussion);
+
+        $exporterfactory = mod_forum\local\container::get_exporter_factory();
+        $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
+        return $exporter->export($PAGE->get_renderer('mod_forum'));
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function set_pin_state_parameters() {
+        return new external_function_parameters(
+            [
+                'discussionid' => new external_value(PARAM_INT, 'The discussion to pin or unpin', VALUE_REQUIRED,
+                    null, NULL_NOT_ALLOWED),
+                'targetstate' => new external_value(PARAM_INT, 'The target state', VALUE_REQUIRED,
+                    null, NULL_NOT_ALLOWED),
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_single_structure
+     */
+    public static function set_pin_state_returns() {
+        return discussion_exporter::get_read_structure();
     }
 }

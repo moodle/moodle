@@ -322,6 +322,18 @@ class capability {
     }
 
     /**
+     * Can the user favourite the discussion
+     *
+     * @param stdClass $user The user to check
+     * @param discussion_entity $discussion The discussion to check
+     * @return bool
+     */
+    public function can_favourite_discussion(stdClass $user, discussion_entity $discussion) : bool {
+        $context = $this->get_context();
+        return has_capability('mod/forum:cantogglefavourite', $context, $user);
+    }
+
+    /**
      * Can the user view the content of the post in this discussion?
      *
      * @param stdClass $user The user to check

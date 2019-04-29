@@ -145,4 +145,23 @@ $functions = array(
         'capabilities' => 'moodle/course:manageactivities',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+
+    'mod_forum_toggle_favourite_state' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'toggle_favourite_state',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Toggle the favourite state',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'mod_forum_set_pin_state' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'set_pin_state',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Set the pin state',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );
