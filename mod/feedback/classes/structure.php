@@ -47,6 +47,8 @@ class mod_feedback_structure {
     protected $allitems;
     /** @var array */
     protected $allcourses;
+    /** @var int */
+    protected $userid;
 
     /**
      * Constructor
@@ -57,8 +59,11 @@ class mod_feedback_structure {
      *     (at least one of $feedback or $cm is required)
      * @param int $courseid current course (for site feedbacks only)
      * @param int $templateid template id if this class represents the template structure
+     * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
      */
-    public function __construct($feedback, $cm, $courseid = 0, $templateid = null) {
+    public function __construct($feedback, $cm, $courseid = 0, $templateid = null, $userid = 0) {
+        global $USER;
+
         if ((empty($feedback->id) || empty($feedback->course)) && (empty($cm->instance) || empty($cm->course))) {
             throw new coding_exception('Either $feedback or $cm must be passed to constructor');
         }
@@ -67,6 +72,12 @@ class mod_feedback_structure {
             get_fast_modinfo($this->feedback->course)->instances['feedback'][$this->feedback->id];
         $this->templateid = $templateid;
         $this->courseid = ($this->feedback->course == SITEID) ? $courseid : 0;
+
+        if (empty($userid)) {
+            $this->userid = $USER->id;
+        } else {
+            $this->userid = $userid;
+        }
 
         if (!$feedback) {
             // If feedback object was not specified, populate object with fields required for the most of methods.
@@ -201,17 +212,19 @@ class mod_feedback_structure {
      * @return bool
      */
     public function can_view_analysis() {
+        global $USER;
+
         $context = context_module::instance($this->cm->id);
-        if (has_capability('mod/feedback:viewreports', $context)) {
+        if (has_capability('mod/feedback:viewreports', $context, $this->userid)) {
             return true;
         }
 
         if (intval($this->get_feedback()->publish_stats) != 1 ||
-                !has_capability('mod/feedback:viewanalysepage', $context)) {
+                !has_capability('mod/feedback:viewanalysepage', $context, $this->userid)) {
             return false;
         }
 
-        if (!isloggedin() || isguestuser()) {
+        if ((!isloggedin() && $USER->id == $this->userid) || isguestuser($this->userid)) {
             // There is no tracking for the guests, assume that they can view analysis if condition above is satisfied.
             return $this->feedback->course == SITEID;
         }
@@ -228,13 +241,13 @@ class mod_feedback_structure {
      * @return bool true if the feedback already is submitted otherwise false
      */
     public function is_already_submitted($anycourseid = false) {
-        global $USER, $DB;
+        global $DB, $USER;
 
-        if (!isloggedin() || isguestuser()) {
+        if ((!isloggedin() && $USER->id == $this->userid) || isguestuser($this->userid)) {
             return false;
         }
 
-        $params = array('userid' => $USER->id, 'feedback' => $this->feedback->id);
+        $params = array('userid' => $this->userid, 'feedback' => $this->feedback->id);
         if (!$anycourseid && $this->courseid) {
             $params['courseid'] = $this->courseid;
         }
@@ -341,7 +354,8 @@ class mod_feedback_structure {
         $this->allcourses = array();
         foreach ($list as $course) {
             context_helper::preload_from_record($course);
-            if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
+            if (!$course->visible &&
+                !has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id), $this->userid)) {
                 // Do not return courses that current user can not see.
                 continue;
             }

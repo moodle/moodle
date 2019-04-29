@@ -61,12 +61,16 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @param int $completedid id in the table feedback_completed, may be omitted if userid is specified
      *     but it is highly recommended because the same user may have multiple responses to the same feedback
      *     for different courses
-     * @param int $userid id of the user - if specified only non-anonymous replies will be returned. If not
-     *     specified only anonymous replies will be returned and the $completedid is mandatory.
+     * @param int $nonanonymouseuserid - Return only anonymous results or specified user's results.
+     *     If null only anonymous replies will be returned and the $completedid is mandatory.
+     *     If specified only non-anonymous replies of $nonanonymouseuserid will be returned.
+     * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
      */
-    public function __construct($feedback, $cm, $courseid, $iscompleted = false, $completedid = null, $userid = null) {
+    public function __construct($feedback, $cm, $courseid, $iscompleted = false, $completedid = null,
+                                $nonanonymouseuserid = null, $userid = 0) {
         global $DB;
-        parent::__construct($feedback, $cm, $courseid, 0);
+
+        parent::__construct($feedback, $cm, $courseid, 0, $userid);
         // Make sure courseid is always set for site feedback.
         if ($this->feedback->course == SITEID && !$this->courseid) {
             $this->courseid = SITEID;
@@ -75,17 +79,17 @@ class mod_feedback_completion extends mod_feedback_structure {
             // Retrieve information about the completion.
             $this->iscompleted = true;
             $params = array('feedback' => $this->feedback->id);
-            if (!$userid && !$completedid) {
-                throw new coding_exception('Either $completedid or $userid must be specified for completed feedbacks');
+            if (!$nonanonymouseuserid && !$completedid) {
+                throw new coding_exception('Either $completedid or $nonanonymouseuserid must be specified for completed feedbacks');
             }
             if ($completedid) {
                 $params['id'] = $completedid;
             }
-            if ($userid) {
+            if ($nonanonymouseuserid) {
                 // We must respect the anonymousity of the reply that the user saw when they were completing the feedback,
                 // not the current state that may have been changed later by the teacher.
                 $params['anonymous_response'] = FEEDBACK_ANONYMOUS_NO;
-                $params['userid'] = $userid;
+                $params['userid'] = $nonanonymouseuserid;
             }
             $this->completed = $DB->get_record('feedback_completed', $params, '*', MUST_EXIST);
             $this->courseid = $this->completed->courseid;
@@ -126,14 +130,14 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @return stdClass|false record from feedback_completedtmp or false if not found
      */
     public function get_current_completed_tmp() {
-        global $USER, $DB;
+        global $DB, $USER;
         if ($this->completedtmp === null) {
             $params = array('feedback' => $this->get_feedback()->id);
             if ($courseid = $this->get_courseid()) {
                 $params['courseid'] = $courseid;
             }
-            if (isloggedin() && !isguestuser()) {
-                $params['userid'] = $USER->id;
+            if ((isloggedin() || $USER->id != $this->userid) && !isguestuser($this->userid)) {
+                $params['userid'] = $this->userid;
             } else {
                 $params['guestid'] = sesskey();
             }
@@ -437,13 +441,13 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @return stdClass record from feedback_completedtmp or false if not found
      */
     protected function create_current_completed_tmp() {
-        global $USER, $DB;
+        global $DB, $USER;
         $record = (object)['feedback' => $this->feedback->id];
         if ($this->get_courseid()) {
             $record->courseid = $this->get_courseid();
         }
-        if (isloggedin() && !isguestuser()) {
-            $record->userid = $USER->id;
+        if ((isloggedin() || $USER->id != $this->userid) && !isguestuser($this->userid)) {
+            $record->userid = $this->userid;
         } else {
             $record->guestid = sesskey();
         }
@@ -535,7 +539,7 @@ class mod_feedback_completion extends mod_feedback_structure {
      * It is also responsible for sending email notifications when applicable.
      */
     public function save_response() {
-        global $USER, $SESSION, $DB;
+        global $SESSION, $DB, $USER;
 
         $feedbackcompleted = $this->find_last_completed();
         $feedbackcompletedtmp = $this->get_current_completed_tmp();
@@ -552,7 +556,7 @@ class mod_feedback_completion extends mod_feedback_structure {
 
         // Send email.
         if ($this->feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
-            feedback_send_email($this->cm, $this->feedback, $this->cm->get_course(), $USER, $this->completed);
+            feedback_send_email($this->cm, $this->feedback, $this->cm->get_course(), $this->userid, $this->completed);
         } else {
             feedback_send_email_anonym($this->cm, $this->feedback, $this->cm->get_course());
         }
@@ -561,9 +565,9 @@ class mod_feedback_completion extends mod_feedback_structure {
 
         // Update completion state.
         $completion = new completion_info($this->cm->get_course());
-        if (isloggedin() && !isguestuser() && $completion->is_enabled($this->cm) &&
+        if ((isloggedin() || $USER->id != $this->userid) && $completion->is_enabled($this->cm) &&
                 $this->cm->completion == COMPLETION_TRACKING_AUTOMATIC && $this->feedback->completionsubmit) {
-            $completion->update_state($this->cm, COMPLETION_COMPLETE);
+            $completion->update_state($this->cm, COMPLETION_COMPLETE, $this->userid);
         }
     }
 
@@ -586,8 +590,8 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @return stdClass record from feedback_completed or false if not found
      */
     public function find_last_completed() {
-        global $USER, $DB;
-        if (!isloggedin() || isguestuser()) {
+        global $DB, $USER;
+        if ((!isloggedin() && $USER->id == $this->userid) || isguestuser($this->userid)) {
             // Not possible to retrieve completed feedback for guests.
             return false;
         }
@@ -595,7 +599,10 @@ class mod_feedback_completion extends mod_feedback_structure {
             // Not possible to retrieve completed anonymous feedback.
             return false;
         }
-        $params = array('feedback' => $this->feedback->id, 'userid' => $USER->id, 'anonymous_response' => FEEDBACK_ANONYMOUS_NO);
+        $params = array('feedback' => $this->feedback->id,
+            'userid' => $this->userid,
+            'anonymous_response' => FEEDBACK_ANONYMOUS_NO
+        );
         if ($this->get_courseid()) {
             $params['courseid'] = $this->get_courseid();
         }
@@ -604,7 +611,7 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
-     * Checks if current user has capability to submit the feedback
+     * Checks if user has capability to submit the feedback
      *
      * There is an exception for fully anonymous feedbacks when guests can complete
      * feedback without the proper capability.
@@ -616,17 +623,17 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @return bool
      */
     public function can_complete() {
-        global $CFG;
+        global $CFG, $USER;
 
         $context = context_module::instance($this->cm->id);
-        if (has_capability('mod/feedback:complete', $context)) {
+        if (has_capability('mod/feedback:complete', $context, $this->userid)) {
             return true;
         }
 
         if (!empty($CFG->feedback_allowfullanonymous)
                     AND $this->feedback->course == SITEID
                     AND $this->feedback->anonymous == FEEDBACK_ANONYMOUS_YES
-                    AND (!isloggedin() OR isguestuser())) {
+                    AND ((!isloggedin() && $USER->id == $this->userid) || isguestuser($this->userid))) {
             // Guests are allowed to complete fully anonymous feedback without having 'mod/feedback:complete' capability.
             return true;
         }
@@ -670,7 +677,7 @@ class mod_feedback_completion extends mod_feedback_structure {
         require_once($CFG->libdir . '/completionlib.php');
 
         $completion = new completion_info($this->cm->get_course());
-        $completion->set_module_viewed($this->cm);
+        $completion->set_module_viewed($this->cm, $this->userid);
     }
 
     /**
