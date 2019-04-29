@@ -30,16 +30,19 @@
         "conversations": [
             {
                 "groupname": "Blue Students",
+                "grouppictureurl": "http://example.com/image.jpg",
                 "coursename": "Math 101",
                 "numberofunreadmessages": "2",
                 "messages": [
                     {
                         "userfullname": "Chris Cross",
+                        "userpictureurl": "http://example.com/image.jpg",
                         "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla neque nunc, bibendum ac vestibulum sit amet, scelerisque luctus sem. Maecenas ultricies hendrerit augue, ac venenatis odio volutpat nec",
                         "timesent": "10:12"
                     },
                     {
                         "userfullname": "Irene Ipsum",
+                        "userpictureurl": "http://example.com/image.jpg",
                         "message": "Etiam a tristique risus. Pellentesque id tellus eget elit dictum varius id sed sapien",
                         "timesent": "10:14"
                     }
@@ -93,6 +96,9 @@
         <thead>
         <tr>
             <th>
+                <img src="{{{ grouppictureurl }}}" class="round" width="40px" height="40px"/>
+            </th>
+            <th>
                 <strong>{{ groupname }}</strong><br>
                 {{ coursename }}
             </th>
@@ -104,6 +110,9 @@
         <tbody>
             {{#messages}}
             <tr>
+                <td>
+                    <img src="{{{ userpictureurl }}}" class="round" width="30px" height="30px">
+                </td>
                 <td>
                     <strong>{{{ userfullname }}}</strong>
                     <p>{{{ message }}}</p>
