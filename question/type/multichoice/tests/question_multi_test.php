@@ -133,6 +133,17 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
         $this->assertEquals('B; C', $summary);
     }
 
+    public function test_summarise_response_clearchoice() {
+        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc->shuffleanswers = false;
+        $mc->start_attempt(new question_attempt_step(), 1);
+
+        $summary = $mc->summarise_response($mc->prepare_simulated_post_data(array('clearchoice' => -1)),
+            test_question_maker::get_a_qa($mc));
+
+        $this->assertNull($summary);
+    }
+
     public function test_classify_response() {
         $mc = test_question_maker::make_a_multichoice_multi_question();
         $mc->start_attempt(new question_attempt_step(), 1);

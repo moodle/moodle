@@ -70,3 +70,15 @@ Feature: Preview a Multiple choice question
     And I should see "Well done!"
     And I should see "The correct answer is: One"
     And I switch to the main window
+
+  @javascript @_switch_window
+  Scenario: Preview a multiple choice question (single response) and clear a previous selected option.
+    When I click on "Preview" "link" in the "Multi-choice-002" "table_row"
+    And I switch to "questionpreview" window
+    And I set the field "How questions behave" to "Immediate feedback"
+    And I press "Start again with these options"
+    And I click on "One" "radio"
+    Then I should see "Clear my choice"
+    And I click on "Clear my choice" "text"
+    And I should not see "Clear my choice"
+    And I switch to the main window
