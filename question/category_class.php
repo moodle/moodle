@@ -76,8 +76,35 @@ class question_category_list extends moodle_list {
         $topcategory = question_get_top_category($item->item->contextid, true);
         return $topcategory->id;
     }
-}
 
+    /**
+     * process any actions.
+     *
+     * @param integer $left id of item to move left
+     * @param integer $right id of item to move right
+     * @param integer $moveup id of item to move up
+     * @param integer $movedown id of item to move down
+     * @return void
+     * @throws coding_exception
+     */
+    public function process_actions($left, $right, $moveup, $movedown) {
+        $category = new stdClass();
+        if (!empty($left)) {
+            // Moved Left (In to another category).
+            $category->id = $left;
+            $category->contextid = $this->context->id;
+            $event = \core\event\question_category_moved::create_from_question_category_instance($category);
+            $event->trigger();
+        } else if (!empty($right)) {
+            // Moved Right (Out of the current category).
+            $category->id = $right;
+            $category->contextid = $this->context->id;
+            $event = \core\event\question_category_moved::create_from_question_category_instance($category);
+            $event->trigger();
+        }
+        parent::process_actions($left, $right, $moveup, $movedown);
+    }
+}
 
 /**
  * An item in a list of question categories.
@@ -375,6 +402,12 @@ class question_category_object {
 
         /// Finally delete the category itself
         $DB->delete_records("question_categories", array("id" => $category->id));
+
+        // Log the deletion of this category.
+        $event = \core\event\question_category_deleted::create_from_question_category_instance($category);
+        $event->add_record_snapshot('question_categories', $category);
+        $event->trigger();
+
     }
 
     public function move_questions_and_delete_category($oldcat, $newcat){
@@ -442,11 +475,10 @@ class question_category_object {
         $categoryid = $DB->insert_record("question_categories", $cat);
 
         // Log the creation of this category.
-        $params = array(
-            'objectid' => $categoryid,
-            'contextid' => $contextid
-        );
-        $event = \core\event\question_category_created::create($params);
+        $category = new stdClass();
+        $category->id = $categoryid;
+        $category->contextid = $contextid;
+        $event = \core\event\question_category_created::create_from_question_category_instance($category);
         $event->trigger();
 
         if ($return) {
@@ -458,9 +490,18 @@ class question_category_object {
 
     /**
      * Updates an existing category with given params
+     *
+     * @param int $updateid
+     * @param int $newparent
+     * @param string $newname
+     * @param string $newinfo
+     * @param int $newinfoformat
+     * @param int $idnumber
+     * @param bool $redirect
+     * @return int
      */
     public function update_category($updateid, $newparent, $newname, $newinfo, $newinfoformat = FORMAT_HTML,
-            $idnumber = null) {
+            $idnumber = null, $redirect = true) {
         global $CFG, $DB;
         if (empty($newname)) {
             print_error('categorynamecantbeblank', 'question');
@@ -519,6 +560,10 @@ class question_category_object {
         }
         $DB->update_record('question_categories', $cat);
 
+        // Log the update of this category.
+        $event = \core\event\question_category_updated::create_from_question_category_instance($cat);
+        $event->trigger();
+
         // If the category name has changed, rename any random questions in that category.
         if ($oldcat->name != $cat->name) {
             $where = "qtype = 'random' AND category = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
@@ -538,6 +583,8 @@ class question_category_object {
 
         // Cat param depends on the context id, so update it.
         $this->pageurl->param('cat', $updateid . ',' . $tocontextid);
-        redirect($this->pageurl);
+        if ($redirect) {
+            redirect($this->pageurl); // Always redirect after successful action.
+        }
     }
 }

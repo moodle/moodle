@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question category created event.
+ * Question deleted event.
  *
  * @package    core
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,21 +27,27 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Question category created event class.
+ * Question deleted event class.
+ *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int categoryid: The ID of the category where the question resides
+ * }
  *
  * @package    core
- * @since      Moodle 2.7
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @since      Moodle 3.7
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_category_created extends question_category_base {
+class question_deleted extends question_base {
 
     /**
      * Init method.
      */
     protected function init() {
         parent::init();
-        $this->data['crud'] = 'c';
+        $this->data['crud'] = 'd';
     }
 
     /**
@@ -50,7 +56,7 @@ class question_category_created extends question_category_base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventquestioncategorycreated', 'question');
+        return get_string('eventquestiondeleted', 'question');
     }
 
     /**
@@ -59,21 +65,18 @@ class question_category_created extends question_category_base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created the question category with id '$this->objectid'.";
+        return "The user with id '$this->userid' deleted the question with id '$this->objectid'" .
+                " from the category with the id '" . $this->other['categoryid'] . "'.";
     }
 
     /**
-     * Return the legacy event log data.
+     * Returns relevant URL.
+     * This is needed to override the function in question_base
      *
-     * @return array|null
+     * @return \moodle_url
      */
-    protected function get_legacy_logdata() {
-        if ($this->contextlevel == CONTEXT_MODULE) {
-            return array($this->courseid, 'quiz', 'addcategory', 'view.php?id=' . $this->contextinstanceid,
-                $this->objectid, $this->contextinstanceid);
-        }
-        // This is not related to individual quiz at all.
+    public function get_url() {
+        // No URL for delete.
         return null;
     }
-
 }

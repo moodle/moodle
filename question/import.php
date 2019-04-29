@@ -129,6 +129,14 @@ if ($form = $import_form->get_data()) {
         print_error('cannotimport', '', $thispageurl->out());
     }
 
+    // Log the import into this category.
+    $eventparams = [
+            'contextid' => $qformat->category->contextid,
+            'other' => ['format' => $form->format, 'categoryid' => $qformat->category->id],
+    ];
+    $event = \core\event\questions_imported::create($eventparams);
+    $event->trigger();
+
     $params = $thispageurl->params() + array(
         'category' => $qformat->category->id . ',' . $qformat->category->contextid);
     echo $OUTPUT->continue_button(new moodle_url('edit.php', $params));

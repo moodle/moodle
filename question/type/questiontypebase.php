@@ -364,12 +364,14 @@ class question_type {
         }
 
         // If the question is new, create it.
+        $newquestion = false;
         if (empty($question->id)) {
             // Set the unique code.
             $question->stamp = make_unique_id_code();
             $question->createdby = $USER->id;
             $question->timecreated = time();
             $question->id = $DB->insert_record('question', $question);
+            $newquestion = true;
         }
 
         // Now, whether we are updating a existing question, or creating a new
@@ -390,6 +392,16 @@ class question_type {
                     $this->fileoptions, $question->generalfeedback);
         }
         $DB->update_record('question', $question);
+
+        if ($newquestion) {
+            // Log the creation of this question.
+            $event = \core\event\question_created::create_from_question_instance($question, $context);
+            $event->trigger();
+        } else {
+            // Log the update of this question.
+            $event = \core\event\question_updated::create_from_question_instance($question, $context);
+            $event->trigger();
+        }
 
         // Now to save all the answers and type-specific options.
         $form->id = $question->id;

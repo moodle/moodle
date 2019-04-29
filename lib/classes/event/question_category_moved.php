@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question category created event.
+ * Question category moved event.
  *
  * @package    core
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,21 +27,21 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Question category created event class.
+ * Question category moved event class.
  *
  * @package    core
- * @since      Moodle 2.7
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @since      Moodle 3.7
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_category_created extends question_category_base {
+class question_category_moved extends question_category_base {
 
     /**
      * Init method.
      */
     protected function init() {
         parent::init();
-        $this->data['crud'] = 'c';
+        $this->data['crud'] = 'u';
     }
 
     /**
@@ -50,7 +50,7 @@ class question_category_created extends question_category_base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventquestioncategorycreated', 'question');
+        return get_string('eventquestioncategorymoved', 'question');
     }
 
     /**
@@ -59,21 +59,7 @@ class question_category_created extends question_category_base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created the question category with id '$this->objectid'.";
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        if ($this->contextlevel == CONTEXT_MODULE) {
-            return array($this->courseid, 'quiz', 'addcategory', 'view.php?id=' . $this->contextinstanceid,
-                $this->objectid, $this->contextinstanceid);
-        }
-        // This is not related to individual quiz at all.
-        return null;
+        return "The user with id '$this->userid' moved the question category with id '$this->objectid'.";
     }
 
 }
