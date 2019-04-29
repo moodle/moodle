@@ -3009,13 +3009,27 @@ function feedback_check_updates_since(cm_info $cm, $from, $filter = array()) {
  *
  * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
  * @return \core_calendar\local\event\entities\action_interface|null
  */
 function mod_feedback_core_calendar_provide_event_action(calendar_event $event,
-                                                         \core_calendar\action_factory $factory) {
+                                                         \core_calendar\action_factory $factory,
+                                                         int $userid = 0) {
 
-    $cm = get_fast_modinfo($event->courseid)->instances['feedback'][$event->instance];
-    $feedbackcompletion = new mod_feedback_completion(null, $cm, 0);
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['feedback'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
+    $feedbackcompletion = new mod_feedback_completion(null, $cm, 0, false, null, null, $userid);
 
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
         // Feedback is already closed, do not display it even if it was never submitted.
@@ -3030,7 +3044,7 @@ function mod_feedback_core_calendar_provide_event_action(calendar_event $event,
     // The feedback is actionable if it does not have timeopen or timeopen is in the past.
     $actionable = $feedbackcompletion->is_open();
 
-    if ($actionable && $feedbackcompletion->is_already_submitted()) {
+    if ($actionable && $feedbackcompletion->is_already_submitted(false)) {
         // There is no need to display anything if the user has already submitted the feedback.
         return null;
     }

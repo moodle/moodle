@@ -174,7 +174,7 @@ class test_legacy_polyfill_gradingform_provider implements
      * This method is used to export any user data this sub-plugin has using the object to get the context and userid.
      *
      * @deprecated Since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface.
-     * @todo MDL-63137 remove this method.
+     * @todo MDL-63167 remove this method.
      *
      * @param context $context Context owner of the data.
      * @param stdClass $definition Grading definition entry to export.
@@ -190,7 +190,7 @@ class test_legacy_polyfill_gradingform_provider implements
      * Any call to this method should delete all user data for the context defined.
      *
      * @deprecated Since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface.
-     * @todo MDL-63137 remove this method.
+     * @todo MDL-63167 remove this method.
      *
      * @param context $context Context owner of the data.
      */
@@ -202,7 +202,7 @@ class test_legacy_polyfill_gradingform_provider implements
      * A call to this method should delete user data (where practicle) from the userid and context.
      *
      * @deprecated Since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface.
-     * @todo MDL-63137 remove this method.
+     * @todo MDL-63167 remove this method.
      *
      * @param int $userid The user whose information is to be deleted.
      * @param context $context Context owner of the data.

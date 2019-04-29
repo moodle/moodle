@@ -524,22 +524,18 @@ class mod_feedback_privacy_testcase extends provider_testcase {
      * @return void
      */
     protected function create_submission_with_answers($feedback, $user, $answers, $submissioncount = 1) {
-        global $DB, $USER;
-        $origuser = $USER;
-        $this->setUser($user);
+        global $DB;
 
         $modinfo = get_fast_modinfo($feedback->course);
         $cm = $modinfo->get_cm($feedback->cmid);
 
-        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $feedback->course);
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $feedback->course, false, null, null, $user->id);
         $feedbackcompletion->save_response_tmp((object) $answers);
         $feedbackcompletion->save_response();
         $this->assertEquals($submissioncount, $DB->count_records('feedback_completed', ['feedback' => $feedback->id,
             'userid' => $user->id]));
         $this->assertEquals(count($answers), $DB->count_records('feedback_value', [
             'completed' => $feedbackcompletion->get_completed()->id]));
-
-        $this->setUser($origuser);
     }
 
     /**
@@ -551,19 +547,15 @@ class mod_feedback_privacy_testcase extends provider_testcase {
      * @return void
      */
     protected function create_tmp_submission_with_answers($feedback, $user, $answers) {
-        global $DB, $USER;
-        $origuser = $USER;
-        $this->setUser($user);
+        global $DB;
 
         $modinfo = get_fast_modinfo($feedback->course);
         $cm = $modinfo->get_cm($feedback->cmid);
 
-        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $feedback->course);
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $feedback->course, false, null, null, $user->id);
         $feedbackcompletion->save_response_tmp((object) $answers);
         $this->assertEquals(1, $DB->count_records('feedback_completedtmp', ['feedback' => $feedback->id, 'userid' => $user->id]));
         $this->assertEquals(2, $DB->count_records('feedback_valuetmp', [
             'completed' => $feedbackcompletion->get_current_completed_tmp()->id]));
-
-        $this->setUser($origuser);
     }
 }
