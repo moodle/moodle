@@ -60,7 +60,8 @@ class mod_forum_exporters_forum_testcase extends advanced_testcase {
             'urlfactory' => \mod_forum\local\container::get_url_factory(),
             'capabilitymanager' => (\mod_forum\local\container::get_manager_factory())->get_capability_manager($forum),
             'user' => $user,
-            'currentgroup' => null
+            'currentgroup' => null,
+            'vaultfactory' => \mod_forum\local\container::get_vault_factory()
         ]);
 
         $exportedforum = $exporter->export($renderer);

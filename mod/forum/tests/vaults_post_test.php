@@ -799,4 +799,69 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
 
         $this->assertEquals([], $this->vault->get_latest_post_id_for_discussion_ids($user, [], false));
     }
+
+    /**
+     * Test get_first_post_for_discussion_ids.
+     *
+     * @covers ::get_first_post_for_discussion_ids
+     * @covers ::<!public>
+     */
+    public function test_get_first_post_for_discussion_ids() {
+        $this->resetAfterTest();
+
+        $datagenerator = $this->getDataGenerator();
+        $user = $datagenerator->create_user();
+        $course = $datagenerator->create_course();
+        $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
+        [$discussion1, $post1] = $this->helper_post_to_forum($forum, $user);
+        $post2 = $this->helper_reply_to_post($post1, $user);
+        $post3 = $this->helper_reply_to_post($post1, $user);
+        $post4 = $this->helper_reply_to_post($post2, $user);
+        [$discussion2, $post5] = $this->helper_post_to_forum($forum, $user);
+        $post6 = $this->helper_reply_to_post($post5, $user);
+        [$discussion3, $post7] = $this->helper_post_to_forum($forum, $user);
+
+        $firstposts = $this->vault->get_first_post_for_discussion_ids([$discussion1->id]);
+        $this->assertCount(1, $firstposts);
+        $this->assertEquals($post1->id, reset($firstposts)->id);
+
+        $firstposts = $this->vault->get_first_post_for_discussion_ids([$discussion1->id, $discussion2->id]);
+        $this->assertCount(2, $firstposts);
+        $this->assertEquals($post1->id, $firstposts[$post1->id]->id);
+        $this->assertEquals($post5->id, $firstposts[$post5->id]->id);
+
+        $firstposts = $this->vault->get_first_post_for_discussion_ids([$discussion1->id, $discussion2->id, $discussion3->id]);
+        $this->assertCount(3, $firstposts);
+        $this->assertEquals($post1->id, $firstposts[$post1->id]->id);
+        $this->assertEquals($post5->id, $firstposts[$post5->id]->id);
+        $this->assertEquals($post7->id, $firstposts[$post7->id]->id);
+
+        $firstposts = $this->vault->get_first_post_for_discussion_ids([
+            $discussion1->id,
+            $discussion2->id,
+            $discussion3->id,
+            $discussion3->id + 1000
+        ]);
+        $this->assertCount(3, $firstposts);
+        $this->assertEquals($post1->id, $firstposts[$post1->id]->id);
+        $this->assertEquals($post5->id, $firstposts[$post5->id]->id);
+        $this->assertEquals($post7->id, $firstposts[$post7->id]->id);
+    }
+
+    /**
+     * Test get_first_post_for_discussion_ids when no discussion ids were provided.
+     *
+     * @covers ::get_first_post_for_discussion_ids
+     * @covers ::<!public>
+     */
+    public function test_get_first_post_for_discussion_ids_empty() {
+        $this->resetAfterTest();
+
+        $datagenerator = $this->getDataGenerator();
+        $user = $datagenerator->create_user();
+        $course = $datagenerator->create_course();
+        $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
+
+        $this->assertEquals([], $this->vault->get_first_post_for_discussion_ids([]));
+    }
 }
