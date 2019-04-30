@@ -2556,7 +2556,7 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
         return;
     }
 
-    if (is_int($user)) {
+    if (!is_object($user)) {
         $user = $DB->get_record('user', array('id' => $user));
     }
 
