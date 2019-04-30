@@ -14281,7 +14281,7 @@ body.path-question-type {
 
 .qtype_multichoice_clearchoice {
   padding-top: 10px; }
-  .qtype_multichoice_clearchoice label {
+  .qtype_multichoice_clearchoice a {
     cursor: pointer;
     text-decoration: underline;
     padding-left: 30px; }
