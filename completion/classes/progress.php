@@ -60,6 +60,10 @@ class progress {
             return null;
         }
 
+        if (!$completion->is_tracked_user($userid)) {
+            return null;
+        }
+
         // Before we check how many modules have been completed see if the course has.
         if ($completion->is_course_complete($userid)) {
             return 100;
