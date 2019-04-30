@@ -473,7 +473,7 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
 
     /**
      * Determines whether a user attribute may be used as part of LTI membership
-     * @param object            $toolconfig      Tool config
+     * @param array             $toolconfig      Tool config
      * @param object            $instanceconfig  Tool instance config
      * @param array             $fields          Set of fields to return if allowed or not
      * @return array Verification which associates an attribute with a boolean (allowed or not)

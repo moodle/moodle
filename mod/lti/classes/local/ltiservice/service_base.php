@@ -62,7 +62,7 @@ abstract class service_base {
     private $toolproxy;
     /** @var stdClass LTI type object for the current service request. */
     private $type;
-    /** @var stdClass LTI type config object for the current service request. */
+    /** @var array LTI type config array for the current service request. */
     private $typeconfig;
     /** @var array Instances of the resources associated with this service. */
     protected $resources;
@@ -176,9 +176,9 @@ abstract class service_base {
     }
 
     /**
-     * Get the type config object.
+     * Get the type config array.
      *
-     * @return stdClass
+     * @return array|null
      */
     public function get_typeconfig() {
 
@@ -189,9 +189,9 @@ abstract class service_base {
     /**
      * Set the LTI type config object.
      *
-     * @param object $typeconfig The LTI type config for this service request
+     * @param array $typeconfig The LTI type config for this service request
      *
-     * @var stdClass
+     * @var array
      */
     public function set_typeconfig($typeconfig) {
 
