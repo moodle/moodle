@@ -30,6 +30,7 @@ $vaultfactory = mod_forum\local\container::get_vault_factory();
 $forumvault = $vaultfactory->get_forum_vault();
 $discussionvault = $vaultfactory->get_discussion_vault();
 $postvault = $vaultfactory->get_post_vault();
+$discussionlistvault = $vaultfactory->get_discussions_in_forum_vault();
 
 $cmid = optional_param('id', 0, PARAM_INT);
 $forumid = optional_param('f', 0, PARAM_INT);
@@ -134,6 +135,12 @@ if ($mode) {
 
 $displaymode = get_user_preferences('forum_displaymode', $CFG->forum_displaymode);
 
+if ($sortorder) {
+    set_user_preference('forum_discussionlistsortorder', $sortorder);
+}
+
+$sortorder = get_user_preferences('forum_discussionlistsortorder', $discussionlistvault::SORTORDER_LASTPOST_DESC);
+
 // Fetch the current groupid.
 $groupid = groups_get_activity_group($cm, true) ?: null;
 $rendererfactory = mod_forum\local\container::get_renderer_factory();
@@ -141,7 +148,7 @@ switch ($forum->get_type()) {
     case 'single':
         $discussion = $discussionvault->get_last_discussion_in_forum($forum);
         $discussioncount = $discussionvault->get_count_discussions_in_forum($forum);
-        $hasmultiplediscussions = $discussioncount > 1 ? true : false;
+        $hasmultiplediscussions = $discussioncount > 1;
         $discussionsrenderer = $rendererfactory->get_single_discussion_list_renderer($forum, $discussion,
             $hasmultiplediscussions, $displaymode);
         $post = $postvault->get_from_id($discussion->get_first_post_id());
@@ -156,9 +163,9 @@ switch ($forum->get_type()) {
         break;
     case 'blog':
         $discussionsrenderer = $rendererfactory->get_blog_discussion_list_renderer($forum);
-        $discussionlistvault = $vaultfactory->get_discussions_in_forum_vault();
         // Blog forums always show discussions newest first.
-        echo $discussionsrenderer->render($USER, $cm, $groupid, $discussionlistvault::SORTORDER_CREATED_DESC, $pageno, $pagesize);
+        echo $discussionsrenderer->render($USER, $cm, $groupid, $discussionlistvault::SORTORDER_CREATED_DESC,
+            $pageno, $pagesize);
         break;
     default:
         $discussionsrenderer = $rendererfactory->get_discussion_list_renderer($forum);

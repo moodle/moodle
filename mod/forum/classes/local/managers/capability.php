@@ -328,9 +328,25 @@ class capability {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function can_favourite_discussion(stdClass $user, discussion_entity $discussion) : bool {
+    public function can_favourite_discussion(stdClass $user, discussion_entity $discussion) : bool
+    {
         $context = $this->get_context();
         return has_capability('mod/forum:cantogglefavourite', $context, $user);
+    }
+
+    /**
+     * Can the user view the content of a discussion?
+     *
+     * @param stdClass $user The user to check
+     * @param discussion_entity $discussion The discussion to check
+     * @return bool
+     */
+    public function can_view_discussion(stdClass $user, discussion_entity $discussion) : bool {
+        $forumrecord = $this->get_forum_record();
+        $discussionrecord = $this->get_discussion_record($discussion);
+        $context = $this->get_context();
+
+        return forum_user_can_see_discussion($forumrecord, $discussionrecord, $context, $user);
     }
 
     /**

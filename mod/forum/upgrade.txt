@@ -11,6 +11,9 @@ information provided here is intended especially for developers.
     the Post vault.
   * External function get_forums_by_courses now returns two additional fields "duedate" and "cutoffdate" containing the due date and the cutoff date for posting to the forums respectively.
   * External function get_forum_discussion_posts now returns an additional field "tags" returning the post tags.
+  * New external function mod_forum_external::get_forum_discussions returns a list of forum discussions optionally sorted and paginated.
+  * External function mod_forum_external::get_forum_discussions_paginated has been deprecated.
+    Use mod_forum_external::get_forum_discussions instead.
 
 === 3.6 ===
 

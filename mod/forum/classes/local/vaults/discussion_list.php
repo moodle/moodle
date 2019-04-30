@@ -59,11 +59,17 @@ class discussion_list extends db_table_vault {
     public const PAGESIZE_DEFAULT = 100;
 
     /** Sort by newest first */
-    public const SORTORDER_NEWEST_FIRST = 1;
+    public const SORTORDER_LASTPOST_DESC = 1;
     /** Sort by oldest first */
-    public const SORTORDER_OLDEST_FIRST = 2;
+    public const SORTORDER_LASTPOST_ASC = 2;
     /** Sort by created desc */
     public const SORTORDER_CREATED_DESC = 3;
+    /** Sort by created asc */
+    public const SORTORDER_CREATED_ASC = 4;
+    /** Sort by number of replies desc */
+    public const SORTORDER_REPLIES_DESC = 5;
+    /** Sort by number of replies desc */
+    public const SORTORDER_REPLIES_ASC = 6;
 
     /**
      * Get the table alias.
@@ -119,11 +125,28 @@ class discussion_list extends db_table_vault {
             $latestuserfields,
         ]);
 
+        $sortkeys = [
+            $this->get_sort_order(self::SORTORDER_REPLIES_DESC),
+            $this->get_sort_order(self::SORTORDER_REPLIES_ASC)
+        ];
+        $issortbyreplies = in_array($sortsql, $sortkeys);
+
         $tables = $thistable->get_from_sql();
         $tables .= ' JOIN {user} fa ON fa.id = ' . $alias . '.userid';
         $tables .= ' JOIN {user} la ON la.id = ' . $alias . '.usermodified';
         $tables .= ' JOIN ' . $posttable->get_from_sql() . ' ON fp.id = ' . $alias . '.firstpost';
         $tables .= isset($favsql) ? $favsql : '';
+
+        if ($issortbyreplies) {
+            // Join the discussion replies.
+            $tables .= ' JOIN (
+                            SELECT rd.id, COUNT(rp.id) as replycount
+                            FROM {forum_discussions} rd
+                            LEFT JOIN {forum_posts} rp
+                                ON rp.discussion = rd.id AND rp.id != rd.firstpost
+                            GROUP BY rd.id
+                         ) r ON d.id = r.id';
+        }
 
         $selectsql = 'SELECT ' . $fields . ' FROM ' . $tables;
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
@@ -192,30 +215,63 @@ class discussion_list extends db_table_vault {
     }
 
     /**
+     * Get the field to sort by.
+     *
+     * @param int|null $sortmethod
+     * @return string
+     */
+    protected function get_keyfield(?int $sortmethod) : string {
+        switch ($sortmethod) {
+            case self::SORTORDER_CREATED_DESC:
+            case self::SORTORDER_CREATED_ASC:
+                return 'fp.created';
+            case self::SORTORDER_REPLIES_DESC:
+            case self::SORTORDER_REPLIES_ASC:
+                return 'replycount';
+            default:
+                global $CFG;
+                $alias = $this->get_table_alias();
+                $field = "{$alias}.timemodified";
+                if (!empty($CFG->forum_enabletimedposts)) {
+                    return "CASE WHEN {$field} < {$alias}.timestart THEN {$alias}.timestart ELSE {$field} END";
+                }
+                return $field;
+        }
+    }
+
+    /**
+     * Get the sort direction.
+     *
+     * @param int|null $sortmethod
+     * @return string
+     */
+    protected function get_sort_direction(?int $sortmethod) : string {
+        switch ($sortmethod) {
+            case self::SORTORDER_LASTPOST_ASC:
+            case self::SORTORDER_CREATED_ASC:
+            case self::SORTORDER_REPLIES_ASC:
+                return "ASC";
+            case self::SORTORDER_LASTPOST_DESC:
+            case self::SORTORDER_CREATED_DESC:
+            case self::SORTORDER_REPLIES_DESC:
+                return "DESC";
+            default:
+                return "DESC";
+        }
+    }
+
+    /**
      * Get the sort order SQL for a sort method.
      *
      * @param int|null $sortmethod
+     * @return string
      */
     public function get_sort_order(?int $sortmethod, $includefavourites = true) : string {
-        global $CFG;
 
         $alias = $this->get_table_alias();
-
-        if ($sortmethod == self::SORTORDER_CREATED_DESC) {
-            $keyfield = "fp.created";
-            $direction = "DESC";
-        } else {
-            $keyfield = "{$alias}.timemodified";
-            $direction = "DESC";
-
-            if ($sortmethod == self::SORTORDER_OLDEST_FIRST) {
-                $direction = "ASC";
-            }
-
-            if (!empty($CFG->forum_enabletimedposts)) {
-                $keyfield = "CASE WHEN {$keyfield} < {$alias}.timestart THEN {$alias}.timestart ELSE {$keyfield} END";
-            }
-        }
+        // TODO consider user favourites...
+        $keyfield = $this->get_keyfield($sortmethod);
+        $direction = $this->get_sort_direction($sortmethod);
 
         $favouritesort = '';
         if ($includefavourites) {

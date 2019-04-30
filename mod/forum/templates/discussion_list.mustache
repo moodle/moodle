@@ -68,7 +68,20 @@
                             <th scope="col" class="group">{{#str}}group{{/str}}</th>
                         {{/forum.state.groupmode}}
                         {{#forum.capabilities.viewdiscussions}}
-                            <th scope="col" class="text-center">{{#str}}replies, mod_forum{{/str}}</th>
+                            <th scope="col" class="text-center">
+                                {{#state.sortorder.isrepliesdesc}}
+                                    <a href="{{{forum.urls.sortrepliesasc}}}" aria-label="{{#str}}discussionlistsortbyrepliesasc, mod_forum{{/str}}">{{#str}}replies, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
+                                {{/state.sortorder.isrepliesdesc}}
+                                {{#state.sortorder.isrepliesasc}}
+                                    <a href="{{{forum.urls.sortrepliesdesc}}}" aria-label="{{#str}}discussionlistsortbyrepliesdesc, mod_forum{{/str}}">{{#str}}replies, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/uplong, core, {{#str}}asc, core{{/str}}{{/pix}}</span>
+                                {{/state.sortorder.isrepliesasc}}
+                                {{^state.sortorder.isrepliesdesc}}
+                                    {{^state.sortorder.isrepliesasc}}
+                                        <a href="{{{forum.urls.sortrepliesdesc}}}" aria-label="{{#str}}discussionlistsortbyrepliesdesc, mod_forum{{/str}}">{{#str}}replies, mod_forum{{/str}}</a>
+                                    {{/state.sortorder.isrepliesasc}}
+                                {{/state.sortorder.isrepliesdesc}}
+                            </th>
+
                             {{#forum.userstate.tracked}}
                             <th scope="col" class="text-center">
                                 {{#str}}unread, mod_forum{{/str}}
@@ -76,7 +89,32 @@
                             </th>
                             {{/forum.userstate.tracked}}
                         {{/forum.capabilities.viewdiscussions}}
-                        <th scope="col" class="lastpost">{{#str}}lastpost, mod_forum{{/str}}</th>
+                        <th scope="col" class="lastpost">
+                            {{#state.sortorder.islastpostdesc}}
+                                <a href="{{{forum.urls.sortlastpostasc}}}" aria-label="{{#str}}discussionlistsortbylastpostasc, mod_forum{{/str}}">{{#str}}lastpost, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.islastpostdesc}}
+                            {{#state.sortorder.islastpostasc}}
+                                <a href="{{{forum.urls.sortlastpostdesc}}}" aria-label="{{#str}}discussionlistsortbylastpostdesc, mod_forum{{/str}}">{{#str}}lastpost, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/uplong, core, {{#str}}asc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.islastpostasc}}
+                            {{^state.sortorder.islastpostdesc}}
+                                {{^state.sortorder.islastpostasc}}
+                                    <a href="{{{forum.urls.sortlastpostdesc}}}" aria-label="{{#str}}discussionlistsortbylastpostdesc, mod_forum{{/str}}">{{#str}}lastpost, mod_forum{{/str}}</a>
+                                {{/state.sortorder.islastpostasc}}
+                            {{/state.sortorder.islastpostdesc}}
+                        </th>
+                        <th scope="col" class="created">
+                            {{#state.sortorder.iscreateddesc}}
+                                <a href="{{{forum.urls.sortcreatedasc}}}" aria-label="{{#str}}discussionlistsortbycreatedasc, mod_forum{{/str}}">{{#str}}created, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.iscreateddesc}}
+                            {{#state.sortorder.iscreatedasc}}
+                                <a href="{{{forum.urls.sortcreateddesc}}}" aria-label="{{#str}}discussionlistsortbycreateddesc, mod_forum{{/str}}">{{#str}}created, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/uplong, core, {{#str}}asc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.iscreatedasc}}
+                            {{^state.sortorder.iscreateddesc}}
+                                {{^state.sortorder.iscreatedasc}}
+                                    <a href="{{{forum.urls.sortcreateddesc}}}" aria-label="{{#str}}discussionlistsortbycreateddesc, mod_forum{{/str}}">{{#str}}created, mod_forum{{/str}}</a>
+                                {{/state.sortorder.iscreatedasc}}
+                            {{/state.sortorder.iscreateddesc}}
+                        </th>
                         <th scope="col">&nbsp;</th>
                         {{#forum.capabilities.subscribe}}
                             <th scope="col" class="discussionsubscription"></th>
@@ -194,6 +232,9 @@
                                         </div>
                                     </div>
                                 {{/latestpostid}}
+                            </td>
+                            <td scope="col" class="text-left align-middle">
+                                {{#userdate}}{{discussion.times.created}}, {{#str}}strftimerecentfull{{/str}}{{/userdate}}
                             </td>
                             <td scope="col" class="timed p-0 text-center align-middle">
                                 {{#discussion.timed.istimed}}

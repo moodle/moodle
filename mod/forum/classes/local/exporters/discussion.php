@@ -67,6 +67,7 @@ class discussion extends exporter {
             'locked' => ['type' => PARAM_BOOL],
             'istimelocked' => ['type' => PARAM_BOOL],
             'name' => ['type' => PARAM_TEXT],
+            'firstpostid' => ['type' => PARAM_INT],
             'group' => [
                 'optional' => true,
                 'type' => [
@@ -195,6 +196,7 @@ class discussion extends exporter {
             'name' => format_string($discussion->get_name(), true, [
                 'context' => $this->related['context']
             ]),
+            'firstpostid' => $discussion->get_first_post_id(),
             'times' => [
                 'modified' => $discussion->get_time_modified(),
                 'start' => $discussion->get_time_start(),

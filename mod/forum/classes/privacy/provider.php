@@ -140,6 +140,8 @@ class provider implements
         $items->add_user_preference('autosubscribe', 'privacy:metadata:preference:autosubscribe');
         $items->add_user_preference('trackforums', 'privacy:metadata:preference:trackforums');
         $items->add_user_preference('markasreadonnotification', 'privacy:metadata:preference:markasreadonnotification');
+        $items->add_user_preference('forum_discussionlistsortorder',
+            'privacy:metadata:preference:forum_discussionlistsortorder');
 
         return $items;
     }
@@ -407,7 +409,41 @@ class provider implements
             writer::export_user_preference('mod_forum', 'markasreadonnotification', $markasreadonnotification,
                     $markasreadonnotificationdescription);
         }
+
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $discussionlistvault = $vaultfactory->get_discussions_in_forum_vault();
+        $discussionlistsortorder = get_user_preferences('forum_discussionlistsortorder',
+            $discussionlistvault::SORTORDER_LASTPOST_DESC);
+        switch ($discussionlistsortorder) {
+            case $discussionlistvault::SORTORDER_LASTPOST_DESC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbylastpostdesc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_LASTPOST_ASC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbylastpostasc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_CREATED_DESC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbycreateddesc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_CREATED_ASC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbycreatedasc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_REPLIES_DESC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbyrepliesdesc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_REPLIES_ASC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbyrepliesasc',
+                    'mod_forum');
+                break;
+        }
+        writer::export_user_preference('mod_forum', 'forum_discussionlistsortorder',
+            $discussionlistsortorder, $discussionlistsortorderdescription);
     }
+
 
     /**
      * Export all user data for the specified user, in the specified contexts.
