@@ -26,4 +26,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Text area';
 $string['privacy:metadata'] = 'The Text area field type plugin doesn\'t store any personal data; it uses tables defined in core.';
-$string['specificsettings'] = 'Settings for the text area field';
+$string['specificsettings'] = 'Text area field settings';

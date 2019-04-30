@@ -208,7 +208,7 @@ You can also choose to display the courses in a list, with summary information, 
 
 // 3.6 Messaging tour.
 $string['tour4_title_messaging'] = 'New messaging interface';
-$string['tour4_content_messaging'] = 'Moodle 3.6 provides a new interface to messaging, ability for group messaging within a course, along with better control over who can message you.';
+$string['tour4_content_messaging'] = 'New messaging features include group messaging within a course and better control over who can message you.';
 $string['tour4_title_icon'] = 'Messaging';
 $string['tour4_content_icon'] = 'You can access your messages from any page using this icon.
 

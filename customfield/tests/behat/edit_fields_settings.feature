@@ -101,7 +101,7 @@ Feature: Teachers can edit course custom fields
     When I log in as "admin"
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
     And I press "Save changes"

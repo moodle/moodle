@@ -23,7 +23,7 @@
  */
 
 $string['configplugin'] = 'Dropbox configuration';
-$string['crontask'] = 'Background processing for dropbox repository';
+$string['crontask'] = 'Background processing for Dropbox repository';
 $string['notitle'] = 'notitle';
 $string['remember'] = 'Remember me';
 $string['pluginname'] = 'Dropbox';

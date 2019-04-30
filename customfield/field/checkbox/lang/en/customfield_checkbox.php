@@ -27,4 +27,4 @@ $string['checkedbydefault'] = 'Checked by default';
 $string['errorconfigunique'] = 'The checkbox field cannot be defined as unique.';
 $string['pluginname'] = 'Checkbox';
 $string['privacy:metadata'] = 'The Checkbox field type plugin doesn\'t store any personal data; it uses tables defined in core.';
-$string['specificsettings'] = 'Settings for the checkbox field';
+$string['specificsettings'] = 'Checkbox field settings';

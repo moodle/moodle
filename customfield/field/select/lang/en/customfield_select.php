@@ -30,4 +30,4 @@ $string['invalidoption'] = 'Invalid option selected';
 $string['menuoptions'] = 'Menu options (one per line)';
 $string['pluginname'] = 'Dropdown menu';
 $string['privacy:metadata'] = 'The Dropdown menu field type plugin doesn\'t store any personal data; it uses tables defined in core.';
-$string['specificsettings'] = 'Settings for the dropdown menu field';
+$string['specificsettings'] = 'Dropdown menu field settings';

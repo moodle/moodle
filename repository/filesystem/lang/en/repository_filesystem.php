@@ -25,7 +25,7 @@
 
 $string['blockedpath'] = 'Blocked root path';
 $string['configplugin'] = 'Configuration for file system repository';
-$string['crontask'] = 'Background processing for filesystem repository';
+$string['crontask'] = 'Background processing for file system repository';
 $string['donotusesysdir'] = 'Don\'t use system directory as repository, including';
 $string['filesystem:view'] = 'View file system repository';
 $string['information'] = 'These folders are within the <b>{$a}</b> directory.';
