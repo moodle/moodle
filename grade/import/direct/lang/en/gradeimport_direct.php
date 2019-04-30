@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['direct:view'] = 'Import grades from CSV';
+$string['direct:view'] = 'Import grades from spreadsheet';
 $string['pluginname'] = 'Paste from spreadsheet';
 $string['privacy:metadata'] = 'The import grades from copied spreadsheed plugin does not store any personal data.';
 $string['userdata'] = 'Help copying data into this form.';

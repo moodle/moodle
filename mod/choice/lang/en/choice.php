@@ -62,6 +62,8 @@ $string['choiceoptions_help'] = 'Here is where you specify the options that part
 You can fill in any number of these. If you leave some of the options blank, they will not be displayed. If you need more than 8 options, click the "Add 3 fields to form" button.';
 $string['limitanswers_help'] = 'This option allows you to limit the number of participants that can select each choice option. When the limit is reached then no-one else can select that option.
 
+Please note that if you use this activity in group mode, then the limit is per group. For example, if the limit is set to 5, then 5 members of each group can select the option. If there are 3 groups, this would mean that up to 5 x 3 = 15 participants could select the option.
+
 If limits are disabled then any number of participants can select each of the options.';
 $string['choice:readresponses'] = 'View responses';
 $string['choicesaved'] = 'Your choice has been saved';
