@@ -217,7 +217,19 @@ class discussion_list extends db_table_vault {
             }
         }
 
-        $favouritesort = ($includefavourites ? ", {$this->get_favourite_alias()}.id DESC" : "");
+        $favouritesort = '';
+        if ($includefavourites) {
+            $favalias = $this->get_favourite_alias();
+            // Since we're joining on the favourite table any discussion that isn't favourited will have
+            // null in the favourite columns. Nulls behave differently in the sorting for different databases.
+            // We can ensure consistency between databases by explicitly deprioritising any null favourite field
+            // using a case statement.
+            $favouritesort = ", CASE WHEN {$favalias}.id IS NULL THEN 0 ELSE 1 END DESC";
+            // After the null favourite fields are deprioritised and appear below the favourited discussions we
+            // need to order the favourited discussions by id so that the most recently favourited discussions
+            // appear at the top of the list.
+            $favouritesort .= ", {$favalias}.id DESC";
+        }
 
         return "{$alias}.pinned DESC $favouritesort , {$keyfield} {$direction}";
     }
