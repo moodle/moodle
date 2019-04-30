@@ -1370,3 +1370,26 @@ class completion_info {
             $CFG->wwwroot.'/course/view.php?id='.$this->course->id,null,$error);
     }
 }
+
+/**
+ * Aggregate criteria status's as per configured aggregation method.
+ *
+ * @param int $method COMPLETION_AGGREGATION_* constant.
+ * @param bool $data Criteria completion status.
+ * @param bool|null $state Aggregation state.
+ */
+function completion_cron_aggregate($method, $data, &$state) {
+    if ($method == COMPLETION_AGGREGATION_ALL) {
+        if ($data && $state !== false) {
+            $state = true;
+        } else {
+            $state = false;
+        }
+    } else if ($method == COMPLETION_AGGREGATION_ANY) {
+        if ($data) {
+            $state = true;
+        } else if (!$data && $state === null) {
+            $state = false;
+        }
+    }
+}

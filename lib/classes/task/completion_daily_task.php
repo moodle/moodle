@@ -44,13 +44,97 @@ class completion_daily_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        global $CFG;
+        global $CFG, $DB;
 
         if ($CFG->enablecompletion) {
-            // Daily Completion cron.
-            require_once($CFG->dirroot.'/completion/cron.php');
-            completion_cron_mark_started();
+            require_once($CFG->libdir . "/completionlib.php");
+
+            if (debugging()) {
+                mtrace('Marking users as started');
+            }
+
+            // This causes it to default to everyone (if there is no student role).
+            $sqlroles = '';
+            if (!empty($CFG->gradebookroles)) {
+                $sqlroles = ' AND ra.roleid IN (' . $CFG->gradebookroles.')';
+            }
+
+            // It's purpose is to locate all the active participants of a course with course completion enabled.
+            // We also only want the users with no course_completions record as this functions job is to create
+            // the missing ones :)
+            // We want to record the user's enrolment start time for the course. This gets tricky because there can be
+            // multiple enrolment plugins active in a course, hence the possibility of multiple records for each
+            // couse/user in the results.
+            $sql = "SELECT c.id AS course, u.id AS userid, crc.id AS completionid, ue.timestart AS timeenrolled,
+                           ue.timecreated
+                      FROM {user} u
+                INNER JOIN {user_enrolments} ue ON ue.userid = u.id
+                INNER JOIN {enrol} e ON e.id = ue.enrolid
+                INNER JOIN {course} c ON c.id = e.courseid
+                INNER JOIN {role_assignments} ra ON ra.userid = u.id
+                 LEFT JOIN {course_completions} crc ON crc.course = c.id AND crc.userid = u.id
+                     WHERE c.enablecompletion = 1
+                       AND crc.timeenrolled IS NULL
+                       AND ue.status = 0
+                       AND e.status = 0
+                       AND u.deleted = 0
+                       AND ue.timestart < ?
+                       AND (ue.timeend > ? OR ue.timeend = 0)
+                       $sqlroles
+                  ORDER BY course, userid";
+            $now = time();
+            $rs = $DB->get_recordset_sql($sql, [$now, $now, $now, $now]);
+
+            // Check if result is empty.
+            if (!$rs->valid()) {
+                // Not going to iterate (but exit), close rs.
+                $rs->close();
+                return;
+            }
+
+            // We are essentially doing a group by in the code here (as I can't find a decent way of doing it
+            // in the sql). Since there can be multiple enrolment plugins for each course, we can have multiple rows
+            // for each participant in the query result. This isn't really a problem until you combine it with the fact
+            // that the enrolment plugins can save the enrol start time in either timestart or timeenrolled.
+            // The purpose of the loop is to find the earliest enrolment start time for each participant in each course.
+            $prev = null;
+            while ($rs->valid() || $prev) {
+                $current = $rs->current();
+                if (!isset($current->course)) {
+                    $current = false;
+                } else {
+                    // Not all enrol plugins fill out timestart correctly, so use whichever is non-zero.
+                    $current->timeenrolled = max($current->timecreated, $current->timeenrolled);
+                }
+
+                // If we are at the last record, or we aren't at the first and the record is for a diff user/course.
+                if ($prev && (!$rs->valid() ||
+                        ($current->course != $prev->course || $current->userid != $prev->userid))) {
+
+                    $completion = new \completion_completion();
+                    $completion->userid = $prev->userid;
+                    $completion->course = $prev->course;
+                    $completion->timeenrolled = (string) $prev->timeenrolled;
+                    $completion->timestarted = 0;
+                    $completion->reaggregate = time();
+                    if ($prev->completionid) {
+                        $completion->id = $prev->completionid;
+                    }
+                    $completion->mark_enrolled();
+
+                    if (debugging()) {
+                        mtrace('Marked started user ' . $prev->userid . ' in course ' . $prev->course);
+                    }
+                } else if ($prev && $current) {
+                    // Else, if this record is for the same user/course use oldest timeenrolled.
+                    $current->timeenrolled = min($current->timeenrolled, $prev->timeenrolled);
+                }
+                // Move current record to previous.
+                $prev = $current;
+                // Move to next record.
+                $rs->next();
+            }
+            $rs->close();
         }
     }
-
 }
