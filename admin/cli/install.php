@@ -710,7 +710,7 @@ if ($interactive) {
     cli_separator();
     cli_heading(get_string('cliadminemail', 'install'));
     $prompt = get_string('clitypevaluedefault', 'admin', $options['adminemail']);
-    $options['adminemail'] = cli_input($prompt);
+    $options['adminemail'] = cli_input($prompt, $options['adminemail']);
 }
 
 // Validate that the address provided was an e-mail address.
