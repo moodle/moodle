@@ -1549,6 +1549,36 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Get the course pattern datauri to show on a course card.
+     *
+     * The datauri is an encoded svg that can be passed as a url.
+     * @param int $id Id to use when generating the pattern
+     * @return string datauri
+     */
+    public function get_generated_image_for_id($id) {
+        $color = $this->get_generated_color_for_id($id);
+        $pattern = new \core_geopattern();
+        $pattern->setColor($color);
+        $pattern->patternbyid($id);
+        return $pattern->datauri();
+    }
+
+    /**
+     * Get the course color to show on a course card.
+     *
+     * @param int $id Id to use when generating the color.
+     * @return string hex color code.
+     */
+    public function get_generated_color_for_id($id) {
+        // The colour palette is hardcoded for now. It would make sense to combine it with theme settings.
+        $basecolors = ['#81ecec', '#74b9ff', '#a29bfe', '#dfe6e9', '#00b894',
+            '#0984e3', '#b2bec3', '#fdcb6e', '#fd79a8', '#6c5ce7'];
+
+        $color = $basecolors[$id % 10];
+        return $color;
+    }
+
+    /**
      * Returns lang menu or '', this method also checks forcing of languages in courses.
      *
      * This function calls {@link core_renderer::render_single_select()} to actually display the language menu.
