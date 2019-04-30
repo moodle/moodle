@@ -1139,6 +1139,16 @@ abstract class moodleform {
                             $params = array_merge(array($realelementname), $params);
                             call_user_func_array(array(&$mform, 'disabledIf'), $params);
                             break;
+                        case 'hideif' :
+                            foreach ($namecloned as $num => $name){
+                                if ($params[0] == $name){
+                                    $params[0] = $params[0]."[$i]";
+                                    break;
+                                }
+                            }
+                            $params = array_merge(array($realelementname), $params);
+                            call_user_func_array(array(&$mform, 'hideIf'), $params);
+                            break;
                         case 'rule' :
                             if (is_string($params)){
                                 $params = array(null, $params, null, 'client');

@@ -153,7 +153,7 @@ class mod_forum_mod_form extends moodleform_mod {
             $choices[50] = '50';
             $mform->addElement('select', 'rssarticles', get_string('rssarticles'), $choices);
             $mform->addHelpButton('rssarticles', 'rssarticles', 'forum');
-            $mform->disabledIf('rssarticles', 'rsstype', 'eq', '0');
+            $mform->hideIf('rssarticles', 'rsstype', 'eq', '0');
             if (isset($CFG->forum_rssarticles)) {
                 $mform->setDefault('rssarticles', $CFG->forum_rssarticles);
             }
@@ -194,14 +194,14 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->setDefault('blockafter', '0');
         $mform->addRule('blockafter', null, 'numeric', null, 'client');
         $mform->addHelpButton('blockafter', 'blockafter', 'forum');
-        $mform->disabledIf('blockafter', 'blockperiod', 'eq', 0);
+        $mform->hideIf('blockafter', 'blockperiod', 'eq', 0);
 
         $mform->addElement('text', 'warnafter', get_string('warnafter', 'forum'));
         $mform->setType('warnafter', PARAM_INT);
         $mform->setDefault('warnafter', '0');
         $mform->addRule('warnafter', null, 'numeric', null, 'client');
         $mform->addHelpButton('warnafter', 'warnafter', 'forum');
-        $mform->disabledIf('warnafter', 'blockperiod', 'eq', 0);
+        $mform->hideIf('warnafter', 'blockperiod', 'eq', 0);
 
         $coursecontext = context_course::instance($COURSE->id);
         plagiarism_get_form_elements_module($mform, $coursecontext, 'mod_forum');

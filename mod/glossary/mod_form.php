@@ -130,7 +130,7 @@ class mod_glossary_mod_form extends moodleform_mod {
             $choices[50] = '50';
             $mform->addElement('select', 'rssarticles', get_string('rssarticles'), $choices);
             $mform->addHelpButton('rssarticles', 'rssarticles', 'glossary');
-            $mform->disabledIf('rssarticles', 'rsstype', 'eq', 0);
+            $mform->hideIf('rssarticles', 'rsstype', 'eq', 0);
         }
 
 //-------------------------------------------------------------------------------
