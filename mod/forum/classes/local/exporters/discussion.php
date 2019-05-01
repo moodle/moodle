@@ -213,7 +213,7 @@ class discussion extends exporter {
                 'pin' => $capabilitymanager->can_pin_discussion($user, $discussion),
                 'post' => $capabilitymanager->can_post_in_discussion($user, $discussion),
                 'manage' => $capabilitymanager->can_manage_forum($user),
-                'favourite' => $capabilitymanager->can_favourite_discussion($user, $discussion) // Defaulting to true until we get capabilities sorted
+                'favourite' => $capabilitymanager->can_favourite_discussion($user) // Defaulting to true until we get capabilities sorted
             ],
             'urls' => [
                 'view' => $urlfactory->get_discussion_view_url_from_discussion($discussion)->out(false),

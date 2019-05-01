@@ -325,11 +325,9 @@ class capability {
      * Can the user favourite the discussion
      *
      * @param stdClass $user The user to check
-     * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function can_favourite_discussion(stdClass $user, discussion_entity $discussion) : bool
-    {
+    public function can_favourite_discussion(stdClass $user) : bool {
         $context = $this->get_context();
         return has_capability('mod/forum:cantogglefavourite', $context, $user);
     }

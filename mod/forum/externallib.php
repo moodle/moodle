@@ -1407,7 +1407,7 @@ class mod_forum_external extends external_api {
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
         // Does the user have the ability to favourite the discussion?
-        if (!$capabilitymanager->can_favourite_discussion($USER, $discussion)) {
+        if (!$capabilitymanager->can_favourite_discussion($USER)) {
             throw new moodle_exception('cannotfavourite', 'forum');
         }
         $usercontext = context_user::instance($USER->id);

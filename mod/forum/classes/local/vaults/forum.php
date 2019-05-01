@@ -61,10 +61,10 @@ class forum extends db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
-     * @param \stdClass|null $user The user object
+     * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, \stdClass $user = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null) : string {
         $db = $this->get_db();
         $alias = $this->get_table_alias();
 
