@@ -729,7 +729,7 @@ class mod_forum_external extends external_api {
                                 'usermodifiedfullname' => new external_value(PARAM_TEXT, 'Post modifier full name'),
                                 'userpictureurl' => new external_value(PARAM_URL, 'Post author picture.'),
                                 'usermodifiedpictureurl' => new external_value(PARAM_URL, 'Post modifier picture.'),
-                                'numreplies' => new external_value(PARAM_TEXT, 'The number of replies in the discussion'),
+                                'numreplies' => new external_value(PARAM_INT, 'The number of replies in the discussion'),
                                 'numunread' => new external_value(PARAM_INT, 'The number of unread discussions.'),
                                 'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned'),
                                 'locked' => new external_value(PARAM_BOOL, 'Is the discussion locked'),

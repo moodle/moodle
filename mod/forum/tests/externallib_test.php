@@ -1052,36 +1052,34 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $expecteddiscussions = array(
                 'id' => $discussion1->firstpost,
                 'name' => $discussion1->name,
-                'groupid' => $discussion1->groupid,
+                'groupid' => (int) $discussion1->groupid,
                 'timemodified' => $discussion1reply3->created,
-                'usermodified' => $discussion1reply3->userid,
-                'timestart' => $discussion1->timestart,
-                'timeend' => $discussion1->timeend,
+                'usermodified' => (int) $discussion1reply3->userid,
+                'timestart' => (int) $discussion1->timestart,
+                'timeend' => (int) $discussion1->timeend,
                 'discussion' => $discussion1->id,
                 'parent' => 0,
-                'userid' => $discussion1->userid,
-                'created' => $post1->created,
-                'modified' => $post1->modified,
-                'mailed' => $post1->mailed,
+                'userid' => (int) $discussion1->userid,
+                'created' => (int) $post1->created,
+                'modified' => (int) $post1->modified,
+                'mailed' => (int) $post1->mailed,
                 'subject' => $post1->subject,
                 'message' => $post1->message,
-                'messageformat' => $post1->messageformat,
-                'messagetrust' => $post1->messagetrust,
+                'messageformat' => (int) $post1->messageformat,
+                'messagetrust' => (int) $post1->messagetrust,
                 'attachment' => $post1->attachment,
-                'totalscore' => $post1->totalscore,
-                'mailnow' => $post1->mailnow,
+                'totalscore' => (int) $post1->totalscore,
+                'mailnow' => (int) $post1->mailnow,
                 'userfullname' => fullname($user1),
                 'usermodifiedfullname' => fullname($user4),
                 'userpictureurl' => '',
                 'usermodifiedpictureurl' => '',
                 'numreplies' => 3,
                 'numunread' => 0,
-                'pinned' => FORUM_DISCUSSION_UNPINNED,
+                'pinned' => (bool) FORUM_DISCUSSION_UNPINNED,
                 'locked' => false,
                 'canreply' => false,
-                'canlock' => false,
-                'starred' => false,
-                'canfavourite' => true,
+                'canlock' => false
             );
 
         // Call the external function passing forum id.
@@ -1101,13 +1099,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $userpicture->size = 1; // Size f1.
         $expectedreturn['discussions'][0]['usermodifiedpictureurl'] = $userpicture->get_url($PAGE)->out(false);
 
-        $this->assertEquals($expectedreturn, $discussions);
-
-        // Test the starring functionality return.
-        $t = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
-        $expectedreturn['discussions'][0]['starred'] = true;
-        $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
         $this->assertEquals($expectedreturn, $discussions);
 
         // Call without required view discussion capability.
@@ -1291,6 +1282,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'locked' => false,
             'canreply' => false,
             'canlock' => false,
+            'starred' => false,
+            'canfavourite' => true
         );
 
         // Call the external function passing forum id.
@@ -1310,6 +1303,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $userpicture->size = 2; // Size f2.
         $expectedreturn['discussions'][0]['usermodifiedpictureurl'] = $userpicture->get_url($PAGE)->out(false);
 
+        $this->assertEquals($expectedreturn, $discussions);
+
+        // Test the starring functionality return.
+        $t = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
+        $expectedreturn['discussions'][0]['starred'] = true;
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         $this->assertEquals($expectedreturn, $discussions);
 
         // Call without required view discussion capability.
