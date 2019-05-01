@@ -18583,6 +18583,15 @@ p.arrow_button {
 .path-grade-edit-tree .setup-grades td.column-name {
   padding-left: 24px; }
 
+.path-grade-edit-tree .setup-grades td.movehere {
+  padding: 0; }
+
+.path-grade-edit-tree .setup-grades td.movehere a.movehere {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  border: 2px dashed #1177d1; }
+
 .path-grade-edit-tree .setup-grades .category input[type="text"],
 .path-grade-edit-tree .setup-grades .category .column-range,
 .path-grade-edit-tree .setup-grades .categoryitem,

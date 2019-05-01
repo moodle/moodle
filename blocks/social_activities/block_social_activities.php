@@ -83,7 +83,6 @@ class block_social_activities extends block_list {
         $section = $modinfo->get_section_info(0);
 
         if ($ismoving) {
-            $strmovehere = get_string('movehere');
             $strmovefull = strip_tags(get_string('movefull', '', "'$USER->activitycopyname'"));
             $strcancel= get_string('cancel');
         } else {
@@ -92,7 +91,8 @@ class block_social_activities extends block_list {
 
         if ($ismoving) {
             $this->content->icons[] = '&nbsp;' . $OUTPUT->pix_icon('t/move', get_string('move'));
-            $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.sesskey().'">'.$strcancel.'</a>)';
+            $cancelurl = new moodle_url('/course/mod.php', array('cancelcopy' => 'true', 'sesskey' => sesskey()));
+            $this->content->items[] = $USER->activitycopyname . '&nbsp;(<a href="' . $cancelurl . '">' . $strcancel . '</a>)';
         }
 
         if (!empty($modinfo->sections[0])) {
@@ -123,8 +123,9 @@ class block_social_activities extends block_list {
                         if ($mod->id == $USER->activitycopy) {
                             continue;
                         }
-                        $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
-                            '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->image_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
+                        $movingurl = new moodle_url('/course/mod.php', array('moveto' => $mod->id, 'sesskey' => sesskey()));
+                        $this->content->items[] = html_writer::link($movingurl, '', array('title' => $strmovefull,
+                            'class' => 'movehere'));
                         $this->content->icons[] = '';
                     }
                     if (!$mod->url) {
@@ -140,8 +141,8 @@ class block_social_activities extends block_list {
         }
 
         if ($ismoving) {
-            $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.sesskey().'">'.
-                                      '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->image_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
+            $movingurl = new moodle_url('/course/mod.php', array('movetosection' => $section->id, 'sesskey' => sesskey()));
+            $this->content->items[] = html_writer::link($movingurl, '', array('title' => $strmovefull, 'class' => 'movehere'));
             $this->content->icons[] = '';
         }
 
