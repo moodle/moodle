@@ -11603,8 +11603,10 @@ table.calendartable caption {
 .day-popover-content:empty + .day-popover-alternate {
   display: block; }
 
-.summary-modal-container .description-content > p {
-  margin: 0; }
+.summary-modal-container .description-content {
+  overflow-wrap: break-word; }
+  .summary-modal-container .description-content > p {
+    margin: 0; }
 
 /* course.less */
 /* COURSE CONTENT */
