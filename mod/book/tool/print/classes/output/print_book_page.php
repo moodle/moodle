@@ -79,7 +79,8 @@ class print_book_page implements renderable, templatable {
         $data->printdialoglink = $output->render_print_book_dialog_link();
         $data->booktitle = $OUTPUT->heading(format_string($this->book->name, true,
                 array('context' => $context)), 1);
-        $data->bookintro = format_text($this->book->intro, $this->book->introformat,
+        $introtext = file_rewrite_pluginfile_urls($this->book->intro, 'pluginfile.php', $context->id, 'mod_book', 'intro', null);
+        $data->bookintro = format_text($introtext, $this->book->introformat,
                 array('noclean' => true, 'context' => $context));
         $data->sitelink = \html_writer::link(new moodle_url($CFG->wwwroot),
                 format_string($SITE->fullname, true, array('context' => $context)));

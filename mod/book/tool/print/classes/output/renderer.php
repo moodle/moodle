@@ -200,7 +200,9 @@ class renderer extends plugin_renderer_base {
             }
         }
 
-        $bookchapter .= format_text($chapter->content, $chapter->contentformat, array('noclean' => true, 'context' => $context));
+        $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id,
+            'mod_book', 'chapter', $chapter->id);
+        $bookchapter .= format_text($chaptertext, $chapter->contentformat, array('noclean' => true, 'context' => $context));
         $bookchapter .= html_writer::end_div();
 
         return array($bookchapter, $chaptervisible);
