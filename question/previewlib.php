@@ -52,9 +52,8 @@ class preview_options_form extends moodleform {
                 get_string('howquestionsbehave', 'question'), $behaviours);
         $mform->addHelpButton('behaviour', 'howquestionsbehave', 'question');
 
-        $mform->addElement('text', 'maxmark', get_string('markedoutof', 'question'),
+        $mform->addElement('float', 'maxmark', get_string('markedoutof', 'question'),
                 array('size' => '5'));
-        $mform->setType('maxmark', PARAM_FLOAT);
 
         if ($this->_customdata['maxvariant'] > 1) {
             $variants = range(1, $this->_customdata['maxvariant']);
@@ -152,7 +151,7 @@ class question_preview_options extends question_display_options {
     protected function get_field_types() {
         return array(
             'behaviour' => PARAM_ALPHA,
-            'maxmark' => PARAM_FLOAT,
+            'maxmark' => PARAM_LOCALISEDFLOAT,
             'variant' => PARAM_INT,
             'correctness' => PARAM_BOOL,
             'marks' => PARAM_INT,

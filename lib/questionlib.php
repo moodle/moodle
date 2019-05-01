@@ -806,7 +806,7 @@ function question_preview_url($questionid, $preferredbehaviour = null,
     }
 
     if (!is_null($maxmark)) {
-        $params['maxmark'] = $maxmark;
+        $params['maxmark'] = format_float($maxmark, strlen($maxmark), true, true);
     }
 
     if (!is_null($displayoptions)) {

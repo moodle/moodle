@@ -48,6 +48,7 @@ is disabled).
 * The following functions have been updated to support the new usage:
     - make_pluginfile_url
     - file_rewrite_pluginfile_urls
+* New mform element 'float' handles localised floating point numbers.
 
 === 3.6 ===
 

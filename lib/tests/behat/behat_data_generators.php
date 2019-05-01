@@ -208,6 +208,10 @@ class behat_data_generators extends behat_base {
             'required' => array('user', 'contact'),
             'switchids' => array('user' => 'userid', 'contact' => 'contactid')
         ),
+        'language customisations' => array(
+            'datagenerator' => 'customlang',
+            'required' => array('component', 'stringid', 'value'),
+        ),
     );
 
     /**
@@ -413,6 +417,61 @@ class behat_data_generators extends behat_base {
         // cause problems since the relevant key names are different.
         // $options is not used in most blocks I have seen, but where it is, it is necessary.
         $this->datagenerator->create_block($data['blockname'], $data, $data);
+    }
+
+    /**
+     * Creates language customisation.
+     *
+     * @throws Exception
+     * @throws dml_exception
+     * @param array $data
+     * @return void
+     */
+    protected function process_customlang($data) {
+        global $CFG, $DB, $USER;
+
+        require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/customlang/locallib.php');
+        require_once($CFG->libdir . '/adminlib.php');
+
+        if (empty($data['component'])) {
+            throw new Exception('\'customlang\' requires the field \'component\' type to be specified');
+        }
+
+        if (empty($data['stringid'])) {
+            throw new Exception('\'customlang\' requires the field \'stringid\' to be specified');
+        }
+
+        if (!isset($data['value'])) {
+            throw new Exception('\'customlang\' requires the field \'value\' to be specified');
+        }
+
+        $now = time();
+
+        tool_customlang_utils::checkout($USER->lang);
+
+        $record = $DB->get_record_sql("SELECT s.*
+                                         FROM {tool_customlang} s
+                                         JOIN {tool_customlang_components} c ON s.componentid = c.id
+                                        WHERE c.name = ? AND s.lang = ? AND s.stringid = ?",
+                array($data['component'], $USER->lang, $data['stringid']));
+
+        if (empty($data['value']) && !is_null($record->local)) {
+            $record->local = null;
+            $record->modified = 1;
+            $record->outdated = 0;
+            $record->timecustomized = null;
+            $DB->update_record('tool_customlang', $record);
+            tool_customlang_utils::checkin($USER->lang);
+        }
+
+        if (!empty($data['value']) && $data['value'] != $record->local) {
+            $record->local = $data['value'];
+            $record->modified = 1;
+            $record->outdated = 0;
+            $record->timecustomized = $now;
+            $DB->update_record('tool_customlang', $record);
+            tool_customlang_utils::checkin($USER->lang);
+        }
     }
 
     /**
