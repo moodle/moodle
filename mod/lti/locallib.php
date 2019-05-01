@@ -3614,7 +3614,7 @@ function lti_get_service_by_resource_id($services, $resourceid) {
  * Initializes an array with the scopes for services supported by the LTI module
  *
  * @param object $type  LTI tool type
- * @param object $typeconfig  LTI tool type configuration
+ * @param array  $typeconfig  LTI tool type configuration
  *
  * @return array List of scopes
  */
