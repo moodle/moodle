@@ -36,7 +36,7 @@ function atto_emoticon_strings_for_js() {
 
     // Load the strings required by the emotes.
     $manager = get_emoticon_manager();
-    foreach ($manager->get_emoticons() as $emote) {
+    foreach ($manager->get_emoticons(true) as $emote) {
         $PAGE->requires->string_for_js($emote->altidentifier, $emote->altcomponent);
     }
 }
@@ -49,6 +49,6 @@ function atto_emoticon_strings_for_js() {
 function atto_emoticon_params_for_js($elementid, $options, $fpoptions) {
     $manager = get_emoticon_manager();
     return array(
-        'emoticons' => $manager->get_emoticons()
+        'emoticons' => $manager->get_emoticons(true)
     );
 }
