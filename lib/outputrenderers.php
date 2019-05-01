@@ -4593,8 +4593,7 @@ EOD;
                     // The id will be something like 'fgroup_id_NAME'. E.g. fgroup_id_mygroup.
                     $elementcontext['wrapperid'] = $elementcontext['id'];
 
-                    // Ensure group elements pass through the group name as the element name so the id_error_{{element.name}} is
-                    // properly set in the template.
+                    // Ensure group elements pass through the group name as the element name.
                     $elementcontext['name'] = $elementcontext['groupname'];
                 } else {
                     // Non grouped element.

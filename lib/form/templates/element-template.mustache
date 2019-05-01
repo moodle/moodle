@@ -64,7 +64,7 @@
         {{$ element }}
             <!-- Element goes here -->
         {{/ element }}
-        <div class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{#error}} style="display: block;"{{/error}}>
+        <div class="form-control-feedback invalid-feedback" id="{{element.iderror}}" {{#error}} style="display: block;"{{/error}}>
             {{{error}}}
         </div>
     </div>
