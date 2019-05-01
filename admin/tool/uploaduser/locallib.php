@@ -183,6 +183,7 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
     $processed = array();
     foreach ($columns as $key=>$unused) {
         $field = $columns[$key];
+        $field = trim($field);
         $lcfield = core_text::strtolower($field);
         if (in_array($field, $stdfields) or in_array($lcfield, $stdfields)) {
             // standard fields are only lowercase
