@@ -85,7 +85,7 @@ class helper {
         } else {
             $name = $record->eventname;
             $description = "Unknown event ({$name})";
-            $other = unserialize($record->other);
+            $other = \tool_log\helper\reader::decode_other($record->other);
         }
 
         $realuserid = $record->realuserid;
