@@ -28,7 +28,6 @@ require_once($CFG->dirroot.'/cohort/upload_form.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
 $contextid = optional_param('contextid', 0, PARAM_INT);
-$returnurl = optional_param('returnurl', '', PARAM_URL);
 
 require_login();
 
@@ -56,13 +55,9 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
     navigation_node::override_active_url(new moodle_url('/cohort/index.php', array()));
 }
 
-$uploadform = new cohort_upload_form(null, array('contextid' => $context->id, 'returnurl' => $returnurl));
+$uploadform = new cohort_upload_form(null, array('contextid' => $context->id));
 
-if ($returnurl) {
-    $returnurl = new moodle_url($returnurl);
-} else {
-    $returnurl = new moodle_url('/cohort/index.php', array('contextid' => $context->id));
-}
+$returnurl = new moodle_url('/cohort/index.php', array('contextid' => $context->id));
 
 if ($uploadform->is_cancelled()) {
     redirect($returnurl);
