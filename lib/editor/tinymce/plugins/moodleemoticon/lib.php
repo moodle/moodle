@@ -52,7 +52,7 @@ class tinymce_moodleemoticon extends editor_tinymce_plugin {
 
         // Extra params specifically for emoticon plugin.
         $manager = get_emoticon_manager();
-        $emoticons = $manager->get_emoticons();
+        $emoticons = $manager->get_emoticons(true);
         $imgs = array();
         // See the TinyMCE plugin moodleemoticon for how the emoticon index is (ab)used.
         $index = 0;
