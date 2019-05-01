@@ -145,7 +145,7 @@ class send_failed_login_notifications_task extends scheduled_task {
             $a->time = userdate($log->timecreated);
             if (empty($log->username)) {
                 // Entries with no valid username. We get attempted username from the event's other field.
-                $other = unserialize($log->other);
+                $other = \tool_log\helper\reader::decode_other($log->other);
                 $a->info = empty($other['username']) ? '' : $other['username'];
                 $a->name = get_string('unknownuser');
             } else {
