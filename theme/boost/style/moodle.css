@@ -9840,6 +9840,17 @@ div.dropdown-item:focus-within {
   margin: 0;
   padding: 0; }
 
+.movehere {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  border: 2px dashed #343a40;
+  margin: 4px 0; }
+
+.editing .course-content .hidden.sectionname {
+  visibility: hidden;
+  display: initial; }
+
 .inline,
 .inline-list li {
   display: inline; }
@@ -11874,8 +11885,6 @@ input[disabled] {
     width: 64px;
     height: 64px;
     font-size: 64px; }
-  .icon.movetarget {
-    width: 80px; }
 
 .navbar-dark a .icon {
   color: rgba(255, 255, 255, 0.5) !important;
@@ -18358,7 +18367,7 @@ p.arrow_button {
   display: block;
   width: 100%;
   height: 2rem;
-  border: 2px dashed #1177d1; }
+  border: 2px dashed #343a40; }
 
 .path-grade-edit-tree .setup-grades .category input[type="text"],
 .path-grade-edit-tree .setup-grades .category .column-range,
