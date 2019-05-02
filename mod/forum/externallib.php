@@ -830,6 +830,9 @@ class mod_forum_external extends external_api {
 
         $forumvault = $vaultfactory->get_forum_vault();
         $forum = $forumvault->get_from_id($forumid);
+        if (!$forum) {
+            throw new \moodle_exception("Unable to find forum with id {$forumid}");
+        }
         $forumdatamapper = $legacydatamapperfactory->get_forum_data_mapper();
         $forumrecord = $forumdatamapper->to_legacy_object($forum);
 
