@@ -5,6 +5,7 @@ Feature: Manage preferences
   I need to be able to update my messaging preferences
 
   Background:
+    # Note: This course is using separate groups mode.
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
@@ -14,14 +15,20 @@ Feature: Manage preferences
       | student2 | Student   | 2        | student2@example.com |
       | student3 | Student   | 3        | student3@example.com |
       | student4 | Student   | 4        | student4@example.com |
+      | student5 | Student   | 5        | student5@example.com |
     And the following "course enrolments" exist:
       | user     | course | role |
       | student1 | C1     | student |
       | student2 | C1     | student |
       | student3 | C1     | student |
+      | student4 | C1     | student |
     And the following "groups" exist:
       | name    | course | idnumber | enablemessaging |
       | Group 1 | C1     | G1       | 1               |
+    And the following "group members" exist:
+      | user | group |
+      | student1 | G1 |
+      | student4 | G1 |
     And the following "message contacts" exist:
       | user     | contact |
       | student1 | student2 |
@@ -29,7 +36,8 @@ Feature: Manage preferences
       | messaging | 1 |
       | messagingallusers | 1 |
 
-  Scenario: Allow send me a message whe you are a contact and the prefrence is my contacts only
+  # Recipient has 'My contacts only' set.
+  Scenario: Allow sending a message when you are a contact
     Given I log in as "student1"
     And I open messaging
     And I open messaging settings preferences
@@ -40,7 +48,20 @@ Feature: Manage preferences
     And I send "Hi!" message to "Student 1" user
     And I should see "Hi!" in the "//*[@data-region='message-drawer']//div[@data-region='content-message-container']" "xpath_element"
 
-  Scenario: Not allowed to send a message if you are not contact to the sender or you are not in the same course
+  # Recipient has 'My contacts and anyone in my courses' set.
+  Scenario: Disallow sending a message if you are neither contacts with the recipient nor do you share a course
+    Given I log in as "student1"
+    And I open messaging
+    And I open messaging settings preferences
+    When I click on "//label[text()[contains(.,'My contacts and anyone in my courses')]]" "xpath_element"
+    And I log out
+    Then I log in as "student5"
+    And I open messaging
+    And I search for "Student 1" in messaging
+    And I should see "No results"
+
+  # Recipient has 'My contacts and anyone in my courses' set.
+  Scenario: Allow sending a message if you share a group in a shared course
     Given I log in as "student1"
     And I open messaging
     And I open messaging settings preferences
@@ -48,10 +69,11 @@ Feature: Manage preferences
     And I log out
     Then I log in as "student4"
     And I open messaging
-    And I select "Student 1" user in messaging
-    And I should see "You are unable to message this user" in the "//*[@data-region='content-messages-footer-unable-to-message']" "xpath_element"
+    And I send "Hi!" message to "Student 1" user
+    And I should see "Hi!" in the "//*[@data-region='message-drawer']//div[@data-region='content-message-container']" "xpath_element"
 
-  Scenario: Allow send me a message whe you are a contact and the prefrence is my contacts only
+  # Recipient has 'My contacts and anyone in my courses' set.
+  Scenario: Disallow sending a message if you are neither a contact, nor are in the same group in a shared course
     Given I log in as "student1"
     And I open messaging
     And I open messaging settings preferences
@@ -59,21 +81,22 @@ Feature: Manage preferences
     And I log out
     Then I log in as "student3"
     And I open messaging
-    And I send "Hi!" message to "Student 1" user
-    And I should see "Hi!" in the "//*[@data-region='message-drawer']//div[@data-region='content-message-container']" "xpath_element"
+    And I search for "Student 1" in messaging
+    And I should see "No results"
 
-  Scenario: Allowed to send a message if you are not contact to the sender and  you are not in the same course
+  # Recipient has 'Anyone on the site' set. Only users whose profiles are visible can be found via the search.
+  Scenario: Disallow sending a message if you are neither a contact nor do you share a course with the user.
     Given I log in as "student1"
     And I open messaging
     And I open messaging settings preferences
     When I click on "//label[text()[contains(.,'Anyone on the site')]]" "xpath_element"
     And I log out
-    Then I log in as "student4"
+    Then I log in as "student5"
     And I open messaging
-    And I send "Hi!" message to "Student 1" user
-    And I should see "Hi!" in the "//*[@data-region='message-drawer']//div[@data-region='content-message-container']" "xpath_element"
+    And I search for "Student 1" in messaging
+    And I should see "No results"
 
-  Scenario: Allow send a message using Enter button
+  Scenario: Sending a message when 'User enter to send' is enabled
     Given I log in as "student1"
     And I open messaging
     And I select "Student 2" user in messaging
@@ -81,7 +104,7 @@ Feature: Manage preferences
     And I press key "13" in "//textarea[@data-region='send-message-txt']" "xpath_element"
     Then I should see "Hi!" in the "//*[@data-region='message-drawer']//div[@data-region='content-message-container']" "xpath_element"
 
-  Scenario: No allow to send a messade using Enter button
+  Scenario: Sending a message after 'Use enter to send' is disabled
     Given I log in as "student1"
     And I open messaging
     And I open messaging settings preferences
