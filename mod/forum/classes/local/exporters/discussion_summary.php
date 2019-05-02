@@ -129,6 +129,7 @@ class discussion_summary extends exporter {
         $capabilitymanager = $this->related['capabilitymanager'];
         $forum = $this->related['forum'];
         $user = $this->related['user'];
+        $latestpostauthor = $this->related['latestauthor'];
         $discussion = $this->summary->get_discussion();
 
         $related = (array) (object) $this->related;
@@ -154,7 +155,7 @@ class discussion_summary extends exporter {
         );
 
         $latestpostauthor = new author(
-            $this->summary->get_latest_post_author(),
+            $latestpostauthor ?? $this->summary->get_latest_post_author(),
             $this->latestpostauthorcontextid,
             [],
             $capabilitymanager->can_view_post(
@@ -189,7 +190,8 @@ class discussion_summary extends exporter {
             'capabilitymanager' => 'mod_forum\local\managers\capability',
             'urlfactory' => 'mod_forum\local\factories\url',
             'user' => 'stdClass',
-            'favouriteids' => 'int[]?'
+            'favouriteids' => 'int[]?',
+            'latestauthor' => 'mod_forum\local\entities\author?'
         ];
     }
 }

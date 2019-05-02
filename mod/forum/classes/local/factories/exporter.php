@@ -176,7 +176,8 @@ class exporter {
         array $discussionunreadcount = [],
         array $latestpostids = [],
         array $postauthorcontextids = [],
-        array $favourites = []
+        array $favourites = [],
+        array $latestauthors = []
     ) : discussion_summaries_exporter {
         return new discussion_summaries_exporter(
             $discussions,
@@ -193,7 +194,8 @@ class exporter {
                 'capabilitymanager' => $this->managerfactory->get_capability_manager($forum),
                 'urlfactory' => $this->urlfactory,
                 'user' => $user,
-                'favouriteids' => $favourites
+                'favouriteids' => $favourites,
+                'latestauthors' => $latestauthors
             ]
         );
     }
