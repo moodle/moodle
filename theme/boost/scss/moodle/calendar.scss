@@ -432,6 +432,7 @@ table.calendartable caption {
 }
 
 .description-content {
+    overflow-wrap: break-word;
     > p {
         margin: 0;
     }

@@ -11662,8 +11662,10 @@ table.calendartable caption {
 .location-content {
   overflow-wrap: break-word; }
 
-.description-content > p {
-  margin: 0; }
+.description-content {
+  overflow-wrap: break-word; }
+  .description-content > p {
+    margin: 0; }
 
 /* course.less */
 /* COURSE CONTENT */
