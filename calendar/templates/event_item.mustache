@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template calendar/event_item
+    @template core_calendar/event_item
 
     Calendar event item.
 
@@ -29,19 +29,35 @@
 
     Example context (json):
     {
+        "id": 1,
+        "name": "Sample event name",
+        "normalisedeventtype": "course",
+        "course": {
+            "id": 1
+        },
+        "canedit": true,
+        "candelete": true,
+        "isactionevent": true,
+        "icon": {
+            "key": "i/courseevent",
+            "component": "core",
+            "alttext": "Some course event"
+        },
+        "editurl": "#",
+        "url": "#"
     }
 }}
 <div{{!
     }} data-type="event"{{!
     }} data-course-id="{{course.id}}"{{!
     }} data-event-id="{{id}}"{{!
-    }} class="event"{{!
-    }} data-eventtype-{{calendareventtype}}="1"{{!
+    }} class="event m-t-1"{{!
+    }} data-eventtype-{{normalisedeventtype}}="1"{{!
     }} data-event-title="{{name}}"{{!
     }} data-event-count="{{eventcount}}"{{!
     }}>
-    <div class="card">
-        <div class="box card-header clearfix p-y-1">
+    <div class="card rounded">
+        <div class="box card-header clearfix calendar_event_{{normalisedeventtype}}">
             <div class="commands float-sm-right">
                 {{#canedit}}
                     {{#candelete}}
@@ -59,23 +75,15 @@
             {{#icon}}<div class="d-inline-block mt-1 align-top">{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}</div>{{/icon}}
             <div class="d-inline-block">
                 <h3 class="name d-inline-block">{{{name}}}</h3>
-                <span class="date float-sm-right mr-1">{{{formattedtime}}}</span>
-                <div class="location">{{#location}}{{{location}}}{{/location}}</div>
             </div>
         </div>
-        <div class="description card-block calendar_event_{{eventtype}}">
-            <p>{{{description}}}</p>
-            {{#iscourseevent}}
-                <div><a href="{{url}}">{{course.fullname}}</a></div>
-            {{/iscourseevent}}
-            {{> core_calendar/event_subscription}}
-            {{#isactionevent}}
-                <a href="{{url}}">{{#str}} gotoactivity, core_calendar {{/str}}</a>
-            {{/isactionevent}}
-            {{#groupname}}
-                <div><a href="{{url}}">{{{course.fullname}}}</a></div>
-                <div>{{{groupname}}}</div>
-            {{/groupname}}
+        <div class="description card-body">
+            {{> core_calendar/event_details }}
         </div>
+        {{#isactionevent}}
+            <div class="card-footer text-right bg-transparent">
+                <a href="{{url}}" class="card-link">{{#str}} gotoactivity, core_calendar {{/str}}</a>
+            </div>
+        {{/isactionevent}}
     </div>
 </div>
