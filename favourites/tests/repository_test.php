@@ -212,8 +212,8 @@ class favourite_repository_testcase extends advanced_testcase {
 
         $favouritesrepo = new favourite_repository($user1context);
 
-        // Verify that for an empty repository, find_all returns an empty array.
-        $this->assertEquals([], $favouritesrepo->find_all());
+        // Verify that only two self-conversations are found.
+        $this->assertCount(2, $favouritesrepo->find_all());
 
         // Save a favourite for 2 courses, in different areas.
         $favourite = new favourite(
@@ -233,9 +233,9 @@ class favourite_repository_testcase extends advanced_testcase {
         $favouritesrepo->add($favourite);
         $favouritesrepo->add($favourite2);
 
-        // Verify that find_all returns both of our favourites.
+        // Verify that find_all returns both of our favourites + two self-conversations.
         $favourites = $favouritesrepo->find_all();
-        $this->assertCount(2, $favourites);
+        $this->assertCount(4, $favourites);
         foreach ($favourites as $fav) {
             $this->assertInstanceOf(favourite::class, $fav);
             $this->assertObjectHasAttribute('id', $fav);
@@ -251,11 +251,11 @@ class favourite_repository_testcase extends advanced_testcase {
 
         $favouritesrepo = new favourite_repository($user1context);
 
-        // Verify that for an empty repository, find_all with any combination of page options returns an empty array.
-        $this->assertEquals([], $favouritesrepo->find_all(0, 0));
-        $this->assertEquals([], $favouritesrepo->find_all(0, 10));
-        $this->assertEquals([], $favouritesrepo->find_all(1, 0));
-        $this->assertEquals([], $favouritesrepo->find_all(1, 10));
+        // Verify that for an empty repository, find_all with any combination of page options returns only self-conversations.
+        $this->assertCount(2, $favouritesrepo->find_all(0, 0));
+        $this->assertCount(2, $favouritesrepo->find_all(0, 10));
+        $this->assertCount(1, $favouritesrepo->find_all(1, 0));
+        $this->assertCount(1, $favouritesrepo->find_all(1, 10));
 
         // Save 10 arbitrary favourites to the repo.
         foreach (range(1, 10) as $i) {
@@ -269,19 +269,19 @@ class favourite_repository_testcase extends advanced_testcase {
             $favouritesrepo->add($favourite);
         }
 
-        // Verify we have 10 favourites.
-        $this->assertEquals(10, $favouritesrepo->count());
+        // Verify we have 10 favourites + 2 self-conversations.
+        $this->assertEquals(12, $favouritesrepo->count());
 
-        // Verify we can fetch the first page of 5 records.
-        $favourites = $favouritesrepo->find_all(0, 5);
-        $this->assertCount(5, $favourites);
+        // Verify we can fetch the first page of 5 records+ 2 self-conversations.
+        $favourites = $favouritesrepo->find_all(0, 6);
+        $this->assertCount(6, $favourites);
 
         // Verify we can fetch the second page.
-        $favourites = $favouritesrepo->find_all(5, 5);
-        $this->assertCount(5, $favourites);
+        $favourites = $favouritesrepo->find_all(6, 6);
+        $this->assertCount(6, $favourites);
 
         // Verify the third page request ends with an empty array.
-        $favourites = $favouritesrepo->find_all(10, 5);
+        $favourites = $favouritesrepo->find_all(12, 6);
         $this->assertCount(0, $favourites);
     }
 
@@ -321,11 +321,11 @@ class favourite_repository_testcase extends advanced_testcase {
 
         $favouritesrepo = new favourite_repository($user1context);
 
-        // Verify that for an empty repository, find_all with any combination of page options returns an empty array.
-        $this->assertEquals([], $favouritesrepo->find_by([], 0, 0));
-        $this->assertEquals([], $favouritesrepo->find_by([], 0, 10));
-        $this->assertEquals([], $favouritesrepo->find_by([], 1, 0));
-        $this->assertEquals([], $favouritesrepo->find_by([], 1, 10));
+        // Verify that by default, find_all with any combination of page options returns only self-conversations.
+        $this->assertCount(2, $favouritesrepo->find_by([], 0, 0));
+        $this->assertCount(2, $favouritesrepo->find_by([], 0, 10));
+        $this->assertCount(1, $favouritesrepo->find_by([], 1, 0));
+        $this->assertCount(1, $favouritesrepo->find_by([], 1, 10));
 
         // Save 10 arbitrary favourites to the repo.
         foreach (range(1, 10) as $i) {
@@ -339,12 +339,12 @@ class favourite_repository_testcase extends advanced_testcase {
             $favouritesrepo->add($favourite);
         }
 
-        // Verify we have 10 favourites.
-        $this->assertEquals(10, $favouritesrepo->count());
+        // Verify we have 10 favourites + 2 self-conversations.
+        $this->assertEquals(12, $favouritesrepo->count());
 
-        // Verify a request for a page, when no criteria match, results in an empty array.
+        // Verify a request for a page, when no criteria match, results in 2 self-conversations array.
         $favourites = $favouritesrepo->find_by(['component' => 'core_message'], 0, 5);
-        $this->assertCount(0, $favourites);
+        $this->assertCount(2, $favourites);
 
         // Verify we can fetch a the first page of 5 records.
         $favourites = $favouritesrepo->find_by(['component' => 'core_course'], 0, 5);
@@ -546,8 +546,8 @@ class favourite_repository_testcase extends advanced_testcase {
         $favourite1 = $favouritesrepo->add($favourite);
         $favourite2 = $favouritesrepo->add($favourite2);
 
-        // Verify we have 2 items in the repo.
-        $this->assertEquals(2, $favouritesrepo->count());
+        // Verify we have 2 items in the repo + 2 self-conversations.
+        $this->assertEquals(4, $favouritesrepo->count());
 
         // Try to delete by a non-existent area, and confirm it doesn't remove anything.
         $favouritesrepo->delete_by(
@@ -557,7 +557,7 @@ class favourite_repository_testcase extends advanced_testcase {
                 'itemtype' => 'donaldduck'
             ]
         );
-        $this->assertEquals(2, $favouritesrepo->count());
+        $this->assertEquals(4, $favouritesrepo->count());
 
         // Try to delete by a non-existent area, and confirm it doesn't remove anything.
         $favouritesrepo->delete_by(
@@ -567,7 +567,7 @@ class favourite_repository_testcase extends advanced_testcase {
                 'itemtype' => 'cat'
             ]
         );
-        $this->assertEquals(2, $favouritesrepo->count());
+        $this->assertEquals(4, $favouritesrepo->count());
 
         // Delete by area, and confirm we have one record left, from the 'core_course/anothertype' area.
         $favouritesrepo->delete_by(
@@ -577,7 +577,7 @@ class favourite_repository_testcase extends advanced_testcase {
                 'itemtype' => 'course'
             ]
         );
-        $this->assertEquals(1, $favouritesrepo->count());
+        $this->assertEquals(3, $favouritesrepo->count());
         $this->assertFalse($favouritesrepo->exists($favourite1->id));
         $this->assertTrue($favouritesrepo->exists($favourite2->id));
     }

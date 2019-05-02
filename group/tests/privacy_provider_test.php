@@ -714,12 +714,15 @@ class core_group_privacy_provider_testcase extends provider_testcase {
         $coursecontext1 = context_course::instance($course1->id);
         $coursecontext2 = context_course::instance($course2->id);
 
-        // User1 is member of some groups in course1 and course2.
+        // User1 is member of some groups in course1 and course2 + self-conversation.
         $contextlist = provider::get_contexts_for_userid($user1->id);
-        $this->assertCount(2, $contextlist);
+        $contextids = $contextlist->get_contextids();
+        // First user context is the one related to self-conversation. Let's test group contexts.
+        array_pop($contextids);
+        $this->assertCount(3, $contextlist);
         $this->assertEquals(
                 [$coursecontext1->id, $coursecontext2->id],
-                $contextlist->get_contextids(),
+                $contextids,
                 '', 0.0, 10, true);
     }
 
@@ -757,7 +760,7 @@ class core_group_privacy_provider_testcase extends provider_testcase {
         // User is member of some groups in course1 and course2,
         // but only the membership in course1 is directly managed by core_group.
         $contextlist = provider::get_contexts_for_userid($user->id);
-        $this->assertEquals([$coursecontext1->id], $contextlist->get_contextids());
+        $this->assertEquals($coursecontext1->id, $contextlist->get_contextids()[0]);
     }
 
     /**

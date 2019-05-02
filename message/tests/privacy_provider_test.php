@@ -211,6 +211,12 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
+
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $this->assertCount(1, $contextlist);
+
+        $this->remove_user_self_conversation($user->id);
+
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertEmpty($contextlist);
     }
@@ -224,6 +230,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
+
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
 
         // Test nothing is found before group conversations is created or message is sent.
         $contextlist = provider::get_contexts_for_userid($user1->id);
@@ -266,6 +277,12 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
+
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+        $this->remove_user_self_conversation($user4->id);
 
         // Test nothing is found before group conversations is created or message is sent.
         $contextlist = provider::get_contexts_for_userid($user1->id);
@@ -359,6 +376,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+
         // Test nothing is found before notification is created.
         $contextlist = provider::get_contexts_for_userid($user1->id);
         $this->assertCount(0, $contextlist);
@@ -392,6 +413,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
 
         // Test nothing is found before contact is created.
         $contextlist = provider::get_contexts_for_userid($user1->id);
@@ -427,6 +452,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+
         // Test nothing is found before request is created.
         $contextlist = provider::get_contexts_for_userid($user1->id);
         $this->assertCount(0, $contextlist);
@@ -460,6 +489,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
 
         // Test nothing is found before user is blocked.
         $contextlist = provider::get_contexts_for_userid($user1->id);
@@ -498,6 +531,12 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
 
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+        $this->remove_user_self_conversation($user4->id);
+
         \core_message\api::add_contact($user1->id, $user2->id);
         \core_message\api::add_contact($user1->id, $user3->id);
         \core_message\api::add_contact($user1->id, $user4->id);
@@ -534,6 +573,12 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
+
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+        $this->remove_user_self_conversation($user4->id);
 
         \core_message\api::create_contact_request($user1->id, $user2->id);
         \core_message\api::create_contact_request($user3->id, $user1->id);
@@ -574,6 +619,12 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
 
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+        $this->remove_user_self_conversation($user4->id);
+
         \core_message\api::block_user($user1->id, $user2->id);
         \core_message\api::block_user($user1->id, $user3->id);
         \core_message\api::block_user($user1->id, $user4->id);
@@ -610,6 +661,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
+
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
 
         $now = time();
 
@@ -718,6 +774,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user3 = $this->getDataGenerator()->create_user();
         $user1context = \context_user::instance($user1->id);
 
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
         $coursecontext1 = \context_course::instance($course1->id);
@@ -814,6 +875,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
 
+        // Remove user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+
         $now = time();
         $timeread = $now - DAYSECS;
 
@@ -906,8 +972,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 2 user actions - one for reading the message, one for deleting.
         $this->assertEquals(2, $DB->count_records('message_user_actions'));
 
-        // There should be 4 conversation members.
-        $this->assertEquals(4, $DB->count_records('message_conversation_members'));
+        // There should be 4 conversation members + 5 self-conversations.
+        $this->assertEquals(9, $DB->count_records('message_conversation_members'));
 
         // There should be 5 notifications (3 from create_notification and 2 from create_contact_request).
         $this->assertEquals(5, $DB->count_records('notifications'));
@@ -943,8 +1009,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // And it is not for user1.
         $this->assertEquals(0, $DB->count_records('message_user_actions', ['userid' => $user1->id]));
 
-        // Confirm there are only 3 conversation members left.
-        $this->assertEquals(3, $DB->count_records('message_conversation_members'));
+        // Confirm there are only 3 conversation members left + 4 self-conversations.
+        $this->assertEquals(7, $DB->count_records('message_conversation_members'));
         // And user1 is not in any conversation.
         $this->assertEquals(0, $DB->count_records('message_conversation_members', ['userid' => $user1->id]));
 
@@ -953,6 +1019,18 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // And it is not related to user1.
         $this->assertEquals(0,
                 $DB->count_records_select('notifications', 'useridfrom = ? OR useridto = ? ', [$user1->id, $user1->id]));
+
+        // Delete user self-conversations.
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+        $this->remove_user_self_conversation($user4->id);
+        $this->remove_user_self_conversation($user5->id);
+
+        // Confirm there are only 3 conversation members left.
+        $this->assertEquals(3, $DB->count_records('message_conversation_members'));
+        // And user1 is not in any conversation.
+        $this->assertEquals(0, $DB->count_records('message_conversation_members', ['userid' => $user1->id]));
+
     }
 
     /**
@@ -1013,8 +1091,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be two user actions - one for reading the message, one for deleting.
         $this->assertEquals(2, $DB->count_records('message_user_actions'));
 
-        // There should be two conversation members.
-        $this->assertEquals(2, $DB->count_records('message_conversation_members'));
+        // There should be two conversation members + 6 self-conversations.
+        $this->assertEquals(8, $DB->count_records('message_conversation_members'));
 
         // There should be 5 notifications (3 from create_notification and 2 from create_contact_request).
         $this->assertEquals(5, $DB->count_records('notifications'));
@@ -1054,7 +1132,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $this->assertCount(0, $muas);
 
-        $this->assertCount(1, $mcms);
+        $this->assertCount(6, $mcms);
         $mcm = reset($mcms);
         $this->assertEquals($user2->id, $mcm->userid);
 
@@ -1074,6 +1152,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $user = $this->getDataGenerator()->create_user();
         $usercontext = context_user::instance($user->id);
+        $this->remove_user_self_conversation($user->id);
 
         $userlist = new \core_privacy\local\request\userlist($usercontext, 'core_message');
         \core_message\privacy\provider::get_users_in_context($userlist);
@@ -1092,6 +1171,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $user1context = context_user::instance($user1->id);
         $user2context = context_user::instance($user2->id);
+
+        // Delete user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
 
         // Test nothing is found before message is sent.
         $userlist = new \core_privacy\local\request\userlist($user1context, 'core_message');
@@ -1130,6 +1213,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1context = context_user::instance($user1->id);
         $user2context = context_user::instance($user2->id);
 
+        // Delete user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+
         // Test nothing is found before notification is created.
         $userlist = new \core_privacy\local\request\userlist($user1context, 'core_message');
         \core_message\privacy\provider::get_users_in_context($userlist);
@@ -1166,6 +1253,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $user1context = context_user::instance($user1->id);
         $user2context = context_user::instance($user2->id);
+
+        // Delete user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
 
         // Test nothing is found before contact is created.
         $userlist = new \core_privacy\local\request\userlist($user1context, 'core_message');
@@ -1204,6 +1295,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1context = context_user::instance($user1->id);
         $user2context = context_user::instance($user2->id);
 
+        // Delete user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+
         // Test nothing is found before request is created.
         $userlist = new \core_privacy\local\request\userlist($user1context, 'core_message');
         \core_message\privacy\provider::get_users_in_context($userlist);
@@ -1240,6 +1335,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $user1context = context_user::instance($user1->id);
         $user2context = context_user::instance($user2->id);
+
+        // Delete user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
 
         // Test nothing is found before user is blocked.
         $userlist = new \core_privacy\local\request\userlist($user1context, 'core_message');
@@ -1324,8 +1423,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be two user actions - one for reading the message, one for deleting.
         $this->assertEquals(2, $DB->count_records('message_user_actions'));
 
-        // There should be two conversation members.
-        $this->assertEquals(2, $DB->count_records('message_conversation_members'));
+        // There should be two conversation members + 6 self-conversations.
+        $this->assertEquals(8, $DB->count_records('message_conversation_members'));
 
         // There should be three notifications + two for the contact requests.
         $this->assertEquals(5, $DB->count_records('notifications'));
@@ -1367,7 +1466,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $this->assertCount(0, $muas);
 
-        $this->assertCount(1, $mcms);
+        $this->assertCount(6, $mcms);
         $mcm = reset($mcms);
         $this->assertEquals($user2->id, $mcm->userid);
 
@@ -1392,6 +1491,12 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
+
+        // Delete user self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+        $this->remove_user_self_conversation($user4->id);
 
         // Test nothing is found before group conversations is created or message is sent.
         $contextlist = new contextlist();
@@ -1871,17 +1976,17 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 3 muted conversations.
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
-        // There should be 4 conversations - 2 individual + 2 group.
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
+        // There should be 4 conversations - 2 individual + 2 group + 5 self-conversations.
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
 
-        // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group.
-        $this->assertEquals(9, $DB->count_records('message_conversation_members'));
+        // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group + 5 self-conversations.
+        $this->assertEquals(14 , $DB->count_records('message_conversation_members'));
 
         // There should be 5 notifications (3 from create_notification and 2 from create_contact_request).
         $this->assertEquals(5, $DB->count_records('notifications'));
 
-        // There should be 3 favourite conversations.
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        // There should be 3 favourite conversations + 5 self-conversations.
+        $this->assertEquals(8, $DB->count_records('favourite'));
 
         // Delete conversations for all users in course1.
         provider::delete_conversations_for_all_users($coursecontext1, $component, $itemtype);
@@ -1918,16 +2023,16 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         }, $useractions);
         $this->assertNotContains($gm3, $useractions);
 
-        // There should be 3 conversations - 2 individual + 1 group (course2).
-        $this->assertEquals(3, $DB->count_records('message_conversations'));
+        // There should be 3 conversations - 2 individual + 1 group (course2) + 5 self-conversations.
+        $this->assertEquals(8, $DB->count_records('message_conversations'));
         $conversations = $DB->get_records('message_conversations');
         $this->assertArrayNotHasKey($conversation1->id, $conversations);
 
-        // There should be 6 conversation members - (2 + 2) individual + 2 group.
-        $this->assertEquals(6, $DB->count_records('message_conversation_members'));
+        // There should be 6 conversation members - (2 + 2) individual + 2 group + 5 self-conversations.
+        $this->assertEquals(11, $DB->count_records('message_conversation_members'));
 
-        // There should be 1 favourite conversation - the individual one.
-        $this->assertEquals(1, $DB->count_records('favourite'));
+        // There should be 1 favourite conversation - the individual one + 5 self-conversations.
+        $this->assertEquals(6, $DB->count_records('favourite'));
     }
 
     /**
@@ -2055,17 +2160,17 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 3 muted conversations.
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
-        // There should be 4 conversations - 2 individual + 2 group.
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
+        // There should be 4 conversations - 2 individual + 2 group + 5 self-conversations.
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
 
-        // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group.
-        $this->assertEquals(9, $DB->count_records('message_conversation_members'));
+        // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group + 5 self-conversations.
+        $this->assertEquals(14, $DB->count_records('message_conversation_members'));
 
         // There should be 5 notifications (3 from create_notification and 2 from create_contact_request).
         $this->assertEquals(5, $DB->count_records('notifications'));
 
-        // There should be 3 favourite conversations.
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        // There should be 3 favourite conversations + 5 self-conversations.
+        $this->assertEquals(8, $DB->count_records('favourite'));
 
         // Delete group conversations for all users in system context.
         provider::delete_conversations_for_all_users($systemcontext, $component, $itemtype);
@@ -2077,10 +2182,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(8, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
-        $this->assertEquals(9, $DB->count_records('message_conversation_members'));
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
+        $this->assertEquals(14, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        $this->assertEquals(8, $DB->count_records('favourite'));
 
         // Delete individual conversations for all users in system context.
         provider::delete_conversations_for_all_users($systemcontext, '', '');
@@ -2092,10 +2197,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(8, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
-        $this->assertEquals(9, $DB->count_records('message_conversation_members'));
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
+        $this->assertEquals(14, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        $this->assertEquals(8, $DB->count_records('favourite'));
     }
 
     /**
@@ -2224,17 +2329,17 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 3 muted conversations.
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
-        // There should be 4 conversations - 2 individual + 2 group.
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
+        // There should be 4 conversations - 2 individual + 2 group + 5 self-conversations.
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
 
-        // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group.
-        $this->assertEquals(9, $DB->count_records('message_conversation_members'));
+        // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group + 5 self-conversations.
+        $this->assertEquals(14, $DB->count_records('message_conversation_members'));
 
         // There should be 5 notifications (3 from create_notification and 2 from create_contact_request).
         $this->assertEquals(5, $DB->count_records('notifications'));
 
-        // There should be 3 favourite conversations.
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        // There should be 3 favourite conversations + 5 self-conversations.
+        $this->assertEquals(8, $DB->count_records('favourite'));
 
         // Delete group conversations for all users in user context.
         provider::delete_conversations_for_all_users($user1context, $component, $itemtype);
@@ -2246,10 +2351,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(8, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
-        $this->assertEquals(9, $DB->count_records('message_conversation_members'));
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
+        $this->assertEquals(14, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        $this->assertEquals(8, $DB->count_records('favourite'));
 
         // Delete individual conversations for all users in user context.
         provider::delete_conversations_for_all_users($user1context, '', '');
@@ -2261,10 +2366,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(8, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
-        $this->assertEquals(9, $DB->count_records('message_conversation_members'));
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
+        $this->assertEquals(14, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        $this->assertEquals(8, $DB->count_records('favourite'));
     }
 
     /**
@@ -2384,19 +2489,19 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 3 users muting a conversation.
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
-        // There should be 3 conversations - 2 private + 1 group.
-        $this->assertEquals(3, $DB->count_records('message_conversations'));
+        // There should be 3 conversations - 2 private + 1 group + 5 self-conversations.
+        $this->assertEquals(8, $DB->count_records('message_conversations'));
 
-        // There should be 7 conversation members - 2 + 2 private conversations + 3 group conversation.
-        $this->assertEquals(7, $DB->count_records('message_conversation_members'));
+        // There should be 7 conversation members - 2 + 2 private conversations + 3 group conversation + 5 self-conversations.
+        $this->assertEquals(12, $DB->count_records('message_conversation_members'));
         $members = $DB->get_records('message_conversation_members', ['conversationid' => $conversation1->id]);
         $members = array_map(function($member) {
                 return $member->userid;
         }, $members);
         $this->assertContains($user1->id, $members);
 
-        // There should be three favourite conversations.
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        // There should be three favourite conversations + 5 self-conversations.
+        $this->assertEquals(8, $DB->count_records('favourite'));
 
         // Delete group conversations for user1 in course1 and course2.
         $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist($user1, 'core_message',
@@ -2434,16 +2539,23 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         }, $useractions);
         $this->assertNotContains($gm3, $useractions);
 
-        // There should be still 3 conversations - 2 private + 1 group.
-        $this->assertEquals(3, $DB->count_records('message_conversations'));
+        // There should be still 3 conversations - 2 private + 1 group + 5 self-conversations.
+        $this->assertEquals(8, $DB->count_records('message_conversations'));
 
-        // There should be 6 conversation members - 2 + 2 private conversations + 2 group conversation.
-        $this->assertEquals(6, $DB->count_records('message_conversation_members'));
+        // There should be 6 conversation members - 2 + 2 private conversations + 2 group conversation + 5 self-conversations.
+        $this->assertEquals(11, $DB->count_records('message_conversation_members'));
         $members = $DB->get_records('message_conversation_members', ['conversationid' => $conversation1->id]);
         $members = array_map(function($member) {
                 return $member->userid;
         }, $members);
         $this->assertNotContains($user1->id, $members);
+
+        // Unset favourite self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+        $this->remove_user_self_conversation($user4->id);
+        $this->remove_user_self_conversation($user5->id);
 
         // There should be 2 favourite conversations - 2 group.
         $this->assertEquals(2, $DB->count_records('favourite'));
@@ -2578,11 +2690,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 3 muted conversation.
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
-        // There should be 3 conversations - 2 private + 2 group.
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
+        // There should be 3 conversations - 2 private + 2 group + 5 self-conversations.
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
 
-        // There should be 8 conversation members - (2 + 2) private + 4 group.
-        $this->assertEquals(8, $DB->count_records('message_conversation_members'));
+        // There should be 8 conversation members - (2 + 2) private + 4 group + 5 self-conversations.
+        $this->assertEquals(13, $DB->count_records('message_conversation_members'));
         $members = $DB->get_records('message_conversation_members', ['conversationid' => $conversation1->id]);
         $members = array_map(function($member) {
                 return $member->userid;
@@ -2590,8 +2702,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertContains($user1->id, $members);
         $this->assertContains($user4->id, $members);
 
-        // There should be 3 favourite conversations.
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        // There should be 3 favourite conversations + 5 self-conversations.
+        $this->assertEquals(8, $DB->count_records('favourite'));
 
         // Delete group conversations for user1 and user2 in course2 context.
         $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext2, 'core_message',
@@ -2606,9 +2718,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(6, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
-        $this->assertEquals(8, $DB->count_records('message_conversation_members'));
-        $this->assertEquals(3, $DB->count_records('favourite'));
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
+        $this->assertEquals(13, $DB->count_records('message_conversation_members'));
+        $this->assertEquals(8, $DB->count_records('favourite'));
 
         // Delete group conversations for user4 in course1 context.
         $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'core_message',
@@ -2623,10 +2735,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(6, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
-        $this->assertEquals(3, $DB->count_records('favourite'));
-        // There should be 7 conversation members - (2 + 2) private + 3 group.
-        $this->assertEquals(7, $DB->count_records('message_conversation_members'));
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
+        $this->assertEquals(8, $DB->count_records('favourite'));
+        // There should be 7 conversation members - (2 + 2) private + 3 group + 5 self-conversations.
+        $this->assertEquals(12, $DB->count_records('message_conversation_members'));
 
         // Delete group conversations for user1 and user2 in course1 context.
         $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'core_message',
@@ -2664,17 +2776,24 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 1 muted conversation.
         $this->assertEquals(1, $DB->count_records('message_conversation_actions'));
 
-        // There should be still 4 conversations - 2 private + 2 group.
-        $this->assertEquals(4, $DB->count_records('message_conversations'));
+        // There should be still 4 conversations - 2 private + 2 group + 5 self-conversations.
+        $this->assertEquals(9, $DB->count_records('message_conversations'));
 
-        // There should be 5 conversation members - (2 + 2) private + 1 group.
-        $this->assertEquals(5, $DB->count_records('message_conversation_members'));
+        // There should be 5 conversation members - (2 + 2) private + 1 group + 5 self-conversations.
+        $this->assertEquals(10, $DB->count_records('message_conversation_members'));
         $members = $DB->get_records('message_conversation_members', ['conversationid' => $conversation1->id]);
         $members = array_map(function($member) {
                 return $member->userid;
         }, $members);
         $this->assertNotContains($user1->id, $members);
         $this->assertNotContains($user2->id, $members);
+
+        // Unset favourite self-conversations.
+        $this->remove_user_self_conversation($user1->id);
+        $this->remove_user_self_conversation($user2->id);
+        $this->remove_user_self_conversation($user3->id);
+        $this->remove_user_self_conversation($user4->id);
+        $this->remove_user_self_conversation($user5->id);
 
         // There should be 2 favourite conversations - user1 individual + user3 group.
         $this->assertEquals(2, $DB->count_records('favourite'));
@@ -2793,5 +2912,18 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
      */
     protected static function sort_contacts($a, $b) {
         return $a->contact > $b->contact;
+    }
+
+    /**
+     * Function to unset favourite and delete all conversation data for a user's self-conversation.
+     *
+     * @param int $userid The user id
+     * @return  void
+     * @throws moodle_exception
+     */
+    protected static function remove_user_self_conversation(int $userid) {
+        $selfconversation = \core_message\api::get_self_conversation($userid);
+        \core_message\api::unset_favourite_conversation($selfconversation->id, $userid);
+        \core_message\api::delete_all_conversation_data($selfconversation->id);
     }
 }
