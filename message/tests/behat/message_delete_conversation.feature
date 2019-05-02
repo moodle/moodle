@@ -9,6 +9,13 @@ Feature: Message delete conversations
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |
+    And the following "courses" exist:
+      | name | shortname |
+      | course1 | C1 |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | student1 | C1 | student |
+      | student2 | C1 | student |
     And the following config values are set as admin:
       | messaging         | 1 |
       | messagingallusers | 1 |
@@ -52,7 +59,7 @@ Feature: Message delete conversations
     And I should see "Hi!" in the "Student 2" "group_message_conversation"
     And I should see "##today##j F##" in the "Student 2" "group_message_conversation"
 
-  Scenario: Delete a stared conversation
+  Scenario: Delete a starred conversation
     Given the following "favourite conversations" exist:
       | user     | contact  |
       | student1 | student2 |
@@ -77,7 +84,7 @@ Feature: Message delete conversations
     And I should see "What do you need?" in the "Student 1" "group_message_conversation"
     And I should see "##today##j F##" in the "Student 1" "group_message_conversation"
 
-  Scenario: Cancel deleting a stared conversation
+  Scenario: Cancel deleting a starred conversation
     Given the following "favourite conversations" exist:
       | user     | contact  |
       | student1 | student2 |
@@ -95,7 +102,7 @@ Feature: Message delete conversations
     And I should see "Hi!" in the "Student 2" "group_message_conversation"
     And I should see "##today##j F##" in the "Student 2" "group_message_conversation"
 
-  Scenario: Check a deleted stared conversation is still stared
+  Scenario: Check a deleted starred conversation is still starred
     Given the following "favourite conversations" exist:
       | user     | contact  |
       | student1 | student2 |

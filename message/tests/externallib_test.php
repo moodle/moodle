@@ -2387,11 +2387,12 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      * profile.
      */
     public function test_message_search_users_messagingallusers_disabled() {
+        global $DB;
         $this->resetAfterTest();
 
         // Create some users.
         $users = [];
-        foreach (range(1, 7) as $i) {
+        foreach (range(1, 8) as $i) {
             $user = new stdClass();
             $user->firstname = ($i == 4) ? 'User' : 'User search'; // Ensure the fourth user won't match the search term.
             $user->lastname = $i;
@@ -2401,6 +2402,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Enrol a few users in the same course, but leave them as non-contacts.
         $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
         $this->setAdminUser();
         $this->getDataGenerator()->enrol_user($users[1]->id, $course1->id);
         $this->getDataGenerator()->enrol_user($users[6]->id, $course1->id);
@@ -2410,6 +2413,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         \core_message\api::add_contact($users[1]->id, $users[2]->id);
         \core_message\api::add_contact($users[3]->id, $users[1]->id);
         \core_message\api::add_contact($users[1]->id, $users[4]->id);
+
+        // Enrol a user as a teacher in the course, and make the teacher role a course contact role.
+        $this->getDataGenerator()->enrol_user($users[8]->id, $course2->id, 'editingteacher');
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        set_config('coursecontact', $teacherrole->id);
 
         // Create individual conversations between some users, one contact and one non-contact.
         \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -2452,7 +2460,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $contacts[1]['conversations']);
 
         // Check that we retrieved the correct non-contacts.
-        // When site wide messaging is disabled, we expect to see only those users whose profiles we can view.
+        // When site wide messaging is disabled, we expect to see only those users who we share a course with and whose profiles
+        // are visible in that course. This excludes users like course contacts.
         $this->assertCount(2, $noncontacts);
         $this->assertEquals($users[6]->id, $noncontacts[0]['id']);
         $this->assertEquals($users[7]->id, $noncontacts[1]['id']);
@@ -2472,11 +2481,12 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      * can view their respective profile.
      */
     public function test_message_search_users_messagingallusers_enabled() {
+        global $DB;
         $this->resetAfterTest();
 
         // Create some users.
         $users = [];
-        foreach (range(1, 8) as $i) {
+        foreach (range(1, 9) as $i) {
             $user = new stdClass();
             $user->firstname = ($i == 4) ? 'User' : 'User search'; // Ensure the fourth user won't match the search term.
             $user->lastname = $i;
@@ -2486,6 +2496,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Enrol a few users in the same course, but leave them as non-contacts.
         $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
         $this->setAdminUser();
         $this->getDataGenerator()->enrol_user($users[1]->id, $course1->id);
         $this->getDataGenerator()->enrol_user($users[6]->id, $course1->id);
@@ -2495,6 +2507,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         \core_message\api::add_contact($users[1]->id, $users[2]->id);
         \core_message\api::add_contact($users[3]->id, $users[1]->id);
         \core_message\api::add_contact($users[1]->id, $users[4]->id);
+
+        // Enrol a user as a teacher in the course, and make the teacher role a course contact role.
+        $this->getDataGenerator()->enrol_user($users[9]->id, $course2->id, 'editingteacher');
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        set_config('coursecontact', $teacherrole->id);
 
         // Create individual conversations between some users, one contact and one non-contact.
         \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -2537,24 +2554,19 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $contacts[1]['conversations']);
 
         // Check that we retrieved the correct non-contacts.
-        // If site wide messaging is enabled, we expect to be able to search for any users.
-        $this->assertCount(4, $noncontacts);
-        $this->assertEquals($users[5]->id, $noncontacts[0]['id']);
-        $this->assertEquals($users[6]->id, $noncontacts[1]['id']);
-        $this->assertEquals($users[7]->id, $noncontacts[2]['id']);
-        $this->assertEquals($users[8]->id, $noncontacts[3]['id']);
+        // If site wide messaging is enabled, we expect to be able to search for any users whose profiles we can view.
+        // In this case, as a student, that's the course contact for course2 and those noncontacts sharing a course with user1.
+        $this->assertCount(3, $noncontacts);
+        $this->assertEquals($users[6]->id, $noncontacts[0]['id']);
+        $this->assertEquals($users[7]->id, $noncontacts[1]['id']);
+        $this->assertEquals($users[9]->id, $noncontacts[2]['id']);
 
         // Verify the correct conversations were returned for the non-contacts.
-        $this->assertCount(0, $noncontacts[0]['conversations']);
-
+        $this->assertCount(1, $noncontacts[0]['conversations']);
         $this->assertCount(1, $noncontacts[1]['conversations']);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $noncontacts[1]['conversations'][0]['type']);
-
-        $this->assertCount(1, $noncontacts[2]['conversations']);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[2]['conversations'][0]['type']);
-
-        $this->assertCount(1, $noncontacts[3]['conversations']);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[3]['conversations'][0]['type']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $noncontacts[0]['conversations'][0]['type']);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[1]['conversations'][0]['type']);
+        $this->assertCount(0, $noncontacts[2]['conversations']);
     }
 
     /**
@@ -2710,12 +2722,10 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($users[3]->id, $contacts[1]['id']);
 
         // Check that we retrieved the correct non-contacts.
-        // Site-wide messaging is disabled, but since we can see all users, we expect to be able to search for any users.
-        $this->assertCount(4, $noncontacts);
-        $this->assertEquals($users[5]->id, $noncontacts[0]['id']);
-        $this->assertEquals($users[6]->id, $noncontacts[1]['id']);
-        $this->assertEquals($users[7]->id, $noncontacts[2]['id']);
-        $this->assertEquals($users[8]->id, $noncontacts[3]['id']);
+        // Site-wide messaging is disabled, so we expect to be able to search for any users whose profile we can view.
+        $this->assertCount(2, $noncontacts);
+        $this->assertEquals($users[6]->id, $noncontacts[0]['id']);
+        $this->assertEquals($users[7]->id, $noncontacts[1]['id']);
     }
 
     /**
