@@ -768,14 +768,14 @@ if ($mformpost->is_cancelled()) {
     } else {
         redirect($urlfactory->get_discussion_view_url_from_discussion($discussionentity));
     }
-} else if ($mformpost->is_submitted() && !$mformpost->no_submit_button_pressed()) {
+} else if ($mformpost->is_submitted() && !$mformpost->no_submit_button_pressed() && $fromform = $mformpost->get_data()) {
 
     if (empty($SESSION->fromurl)) {
         $errordestination = $urlfactory->get_forum_view_url_from_forum($forumentity);
     } else {
         $errordestination = $SESSION->fromurl;
     }
-    $fromform = $mformpost->get_data();
+
     $fromform->itemid        = $fromform->message['itemid'];
     $fromform->messageformat = $fromform->message['format'];
     $fromform->message       = $fromform->message['text'];
