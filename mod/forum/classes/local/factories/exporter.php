@@ -33,6 +33,7 @@ use mod_forum\local\entities\post_read_receipt_collection as post_read_receipt_c
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\manager as manager_factory;
 use mod_forum\local\factories\url as url_factory;
+use mod_forum\local\factories\vault as vault_factory;
 use mod_forum\local\exporters\forum as forum_exporter;
 use mod_forum\local\exporters\discussion as discussion_exporter;
 use mod_forum\local\exporters\discussion_summaries as discussion_summaries_exporter;
@@ -61,21 +62,23 @@ class exporter {
     /** @var url_factory The factory to create urls */
     private $urlfactory;
 
+    /** @var vault_factory The vault factory */
+    private $vaultfactory;
+
     /**
      * Constructor for the exporter factory.
      *
      * @param legacy_data_mapper_factory $legacydatamapperfactory The factory to fetch a legacy data mapper instance
      * @param manager_factory $managerfactory The factory fo fetch a manager instance
      * @param url_factory $urlfactory The factory to create urls
+     * @param vault_factory $vaultfactory The vault factory
      */
-    public function __construct(
-        legacy_data_mapper_factory $legacydatamapperfactory,
-        manager_factory $managerfactory,
-        url_factory $urlfactory
-    ) {
+    public function __construct(legacy_data_mapper_factory $legacydatamapperfactory, manager_factory $managerfactory,
+            url_factory $urlfactory, vault_factory $vaultfactory) {
         $this->legacydatamapperfactory = $legacydatamapperfactory;
         $this->managerfactory = $managerfactory;
         $this->urlfactory = $urlfactory;
+        $this->vaultfactory = $vaultfactory;
     }
 
     /**
@@ -97,6 +100,7 @@ class exporter {
             'urlfactory' => $this->urlfactory,
             'user' => $user,
             'currentgroup' => $currentgroup,
+            'vaultfactory' => $this->vaultfactory,
         ]);
     }
 

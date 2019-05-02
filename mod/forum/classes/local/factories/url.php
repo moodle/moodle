@@ -95,10 +95,13 @@ class url {
      *
      * @param forum_entity $forum The forum entity
      * @param int|null $pageno The page number
+     * @param int|null $sortorder The sorting order
      * @return moodle_url
      */
-    public function get_forum_view_url_from_forum(forum_entity $forum, ?int $pageno = null) : moodle_url {
-        return $this->get_forum_view_url_from_course_module_id($forum->get_course_module_record()->id, $pageno);
+    public function get_forum_view_url_from_forum(forum_entity $forum, ?int $pageno = null,
+            ?int $sortorder = null) : moodle_url {
+
+        return $this->get_forum_view_url_from_course_module_id($forum->get_course_module_record()->id, $pageno, $sortorder);
     }
 
     /**
@@ -106,15 +109,22 @@ class url {
      *
      * @param int $coursemoduleid The course module id
      * @param int|null $pageno The page number
+     * @param int|null $sortorder The sorting order
      * @return moodle_url
      */
-    public function get_forum_view_url_from_course_module_id(int $coursemoduleid, ?int $pageno = null) : moodle_url {
+    public function get_forum_view_url_from_course_module_id(int $coursemoduleid, ?int $pageno = null,
+            ?int $sortorder = null) : moodle_url {
+
         $url = new moodle_url('/mod/forum/view.php', [
             'id' => $coursemoduleid,
         ]);
 
         if (null !== $pageno) {
-            $url->param('page', $pageno);
+            $url->param('p', $pageno);
+        }
+
+        if (null !== $sortorder) {
+            $url->param('o', $sortorder);
         }
 
         return $url;

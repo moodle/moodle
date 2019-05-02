@@ -1052,36 +1052,34 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $expecteddiscussions = array(
                 'id' => $discussion1->firstpost,
                 'name' => $discussion1->name,
-                'groupid' => $discussion1->groupid,
+                'groupid' => (int) $discussion1->groupid,
                 'timemodified' => $discussion1reply3->created,
-                'usermodified' => $discussion1reply3->userid,
-                'timestart' => $discussion1->timestart,
-                'timeend' => $discussion1->timeend,
+                'usermodified' => (int) $discussion1reply3->userid,
+                'timestart' => (int) $discussion1->timestart,
+                'timeend' => (int) $discussion1->timeend,
                 'discussion' => $discussion1->id,
                 'parent' => 0,
-                'userid' => $discussion1->userid,
-                'created' => $post1->created,
-                'modified' => $post1->modified,
-                'mailed' => $post1->mailed,
+                'userid' => (int) $discussion1->userid,
+                'created' => (int) $post1->created,
+                'modified' => (int) $post1->modified,
+                'mailed' => (int) $post1->mailed,
                 'subject' => $post1->subject,
                 'message' => $post1->message,
-                'messageformat' => $post1->messageformat,
-                'messagetrust' => $post1->messagetrust,
+                'messageformat' => (int) $post1->messageformat,
+                'messagetrust' => (int) $post1->messagetrust,
                 'attachment' => $post1->attachment,
-                'totalscore' => $post1->totalscore,
-                'mailnow' => $post1->mailnow,
+                'totalscore' => (int) $post1->totalscore,
+                'mailnow' => (int) $post1->mailnow,
                 'userfullname' => fullname($user1),
                 'usermodifiedfullname' => fullname($user4),
                 'userpictureurl' => '',
                 'usermodifiedpictureurl' => '',
                 'numreplies' => 3,
                 'numunread' => 0,
-                'pinned' => FORUM_DISCUSSION_UNPINNED,
+                'pinned' => (bool) FORUM_DISCUSSION_UNPINNED,
                 'locked' => false,
                 'canreply' => false,
-                'canlock' => false,
-                'starred' => false,
-                'canfavourite' => true,
+                'canlock' => false
             );
 
         // Call the external function passing forum id.
@@ -1101,13 +1099,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $userpicture->size = 1; // Size f1.
         $expectedreturn['discussions'][0]['usermodifiedpictureurl'] = $userpicture->get_url($PAGE)->out(false);
 
-        $this->assertEquals($expectedreturn, $discussions);
-
-        // Test the starring functionality return.
-        $t = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
-        $expectedreturn['discussions'][0]['starred'] = true;
-        $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
         $this->assertEquals($expectedreturn, $discussions);
 
         // Call without required view discussion capability.
@@ -1178,6 +1169,359 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
 
+    }
+
+    /**
+     * Test get forum discussions
+     */
+    public function test_mod_forum_get_forum_discussions() {
+        global $CFG, $DB, $PAGE;
+
+        $this->resetAfterTest(true);
+
+        // Set the CFG variable to allow track forums.
+        $CFG->forum_trackreadposts = true;
+
+        // Create a user who can track forums.
+        $record = new stdClass();
+        $record->trackforums = true;
+        $user1 = self::getDataGenerator()->create_user($record);
+        // Create a bunch of other users to post.
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Set the first created user to the test user.
+        self::setUser($user1);
+
+        // Create courses to add the modules.
+        $course1 = self::getDataGenerator()->create_course();
+
+        // First forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add three replies to the discussion 1 from different users.
+        $record = new stdClass();
+        $record->discussion = $discussion1->id;
+        $record->parent = $discussion1->firstpost;
+        $record->userid = $user2->id;
+        $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $record->parent = $discussion1reply1->id;
+        $record->userid = $user3->id;
+        $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $record->userid = $user4->id;
+        $discussion1reply3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        // Enrol the user in the first course.
+        $enrol = enrol_get_plugin('manual');
+
+        // We don't use the dataGenerator as we need to get the $instance2 to unenrol later.
+        $enrolinstances = enrol_get_instances($course1->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance1 = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance1, $user1->id);
+
+        // Delete one user.
+        delete_user($user4);
+
+        // Assign capabilities to view discussions for forum 1.
+        $cm = get_coursemodule_from_id('forum', $forum1->cmid, 0, false, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+        $newrole = create_role('Role 2', 'role2', 'Role 2 description');
+        $this->assignUserCapability('mod/forum:viewdiscussion', $context->id, $newrole);
+
+        // Create what we expect to be returned when querying the forums.
+
+        $post1 = $DB->get_record('forum_posts', array('id' => $discussion1->firstpost), '*', MUST_EXIST);
+
+        // User pictures are initially empty, we should get the links once the external function is called.
+        $expecteddiscussions = array(
+            'id' => $discussion1->firstpost,
+            'name' => $discussion1->name,
+            'groupid' => (int) $discussion1->groupid,
+            'timemodified' => (int) $discussion1reply3->created,
+            'usermodified' => (int) $discussion1reply3->userid,
+            'timestart' => (int) $discussion1->timestart,
+            'timeend' => (int) $discussion1->timeend,
+            'discussion' => (int) $discussion1->id,
+            'parent' => 0,
+            'userid' => (int) $discussion1->userid,
+            'created' => (int) $post1->created,
+            'modified' => (int) $post1->modified,
+            'mailed' => (int) $post1->mailed,
+            'subject' => $post1->subject,
+            'message' => $post1->message,
+            'messageformat' => (int) $post1->messageformat,
+            'messagetrust' => (int) $post1->messagetrust,
+            'attachment' => $post1->attachment,
+            'totalscore' => (int) $post1->totalscore,
+            'mailnow' => (int) $post1->mailnow,
+            'userfullname' => fullname($user1),
+            'usermodifiedfullname' => fullname($user4),
+            'userpictureurl' => '',
+            'usermodifiedpictureurl' => '',
+            'numreplies' => 3,
+            'numunread' => 0,
+            'pinned' => (bool) FORUM_DISCUSSION_UNPINNED,
+            'locked' => false,
+            'canreply' => false,
+            'canlock' => false,
+            'starred' => false,
+            'canfavourite' => true
+        );
+
+        // Call the external function passing forum id.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $expectedreturn = array(
+            'discussions' => array($expecteddiscussions),
+            'warnings' => array()
+        );
+
+        // Wait the theme to be loaded (the external_api call does that) to generate the user profiles.
+        $userpicture = new user_picture($user1);
+        $userpicture->size = 2; // Size f2.
+        $expectedreturn['discussions'][0]['userpictureurl'] = $userpicture->get_url($PAGE)->out(false);
+
+        $userpicture = new user_picture($user4);
+        $userpicture->size = 2; // Size f2.
+        $expectedreturn['discussions'][0]['usermodifiedpictureurl'] = $userpicture->get_url($PAGE)->out(false);
+
+        $this->assertEquals($expectedreturn, $discussions);
+
+        // Test the starring functionality return.
+        $t = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
+        $expectedreturn['discussions'][0]['starred'] = true;
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $this->assertEquals($expectedreturn, $discussions);
+
+        // Call without required view discussion capability.
+        $this->unassignUserCapability('mod/forum:viewdiscussion', $context->id, $newrole);
+        try {
+            mod_forum_external::get_forum_discussions($forum1->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('noviewdiscussionspermission', $e->errorcode);
+        }
+
+        // Unenrol user from second course.
+        $enrol->unenrol_user($instance1, $user1->id);
+
+        // Call for the second course we unenrolled the user from, make sure exception thrown.
+        try {
+            mod_forum_external::get_forum_discussions($forum1->id);
+            $this->fail('Exception expected due to being unenrolled from the course.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        $this->setAdminUser();
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $this->assertTrue($discussions['discussions'][0]['canlock']);
+    }
+
+    /**
+     * Test the sorting in get forum discussions
+     */
+    public function test_mod_forum_get_forum_discussions_sorting() {
+        global $CFG, $DB, $PAGE;
+
+        $this->resetAfterTest(true);
+
+        // Set the CFG variable to allow track forums.
+        $CFG->forum_trackreadposts = true;
+
+        // Create a user who can track forums.
+        $record = new stdClass();
+        $record->trackforums = true;
+        $user1 = self::getDataGenerator()->create_user($record);
+        // Create a bunch of other users to post.
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Set the first created user to the test user.
+        self::setUser($user1);
+
+        // Create courses to add the modules.
+        $course1 = self::getDataGenerator()->create_course();
+
+        // Enrol the user in the first course.
+        $enrol = enrol_get_plugin('manual');
+
+        // We don't use the dataGenerator as we need to get the $instance2 to unenrol later.
+        $enrolinstances = enrol_get_instances($course1->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance1 = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance1, $user1->id);
+
+        // First forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+
+        // Assign capabilities to view discussions for forum 1.
+        $cm = get_coursemodule_from_id('forum', $forum1->cmid, 0, false, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+        $newrole = create_role('Role 2', 'role2', 'Role 2 description');
+        $this->assignUserCapability('mod/forum:viewdiscussion', $context->id, $newrole);
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        sleep(1);
+
+        // Add three replies to the discussion 1 from different users.
+        $record = new stdClass();
+        $record->discussion = $discussion1->id;
+        $record->parent = $discussion1->firstpost;
+        $record->userid = $user2->id;
+        $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        sleep(1);
+
+        $record->parent = $discussion1reply1->id;
+        $record->userid = $user3->id;
+        $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        sleep(1);
+
+        $record->userid = $user4->id;
+        $discussion1reply3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        sleep(1);
+
+        // Create discussion2.
+        $record2 = new stdClass();
+        $record2->course = $course1->id;
+        $record2->userid = $user1->id;
+        $record2->forum = $forum1->id;
+        $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record2);
+        sleep(1);
+
+        // Add one reply to the discussion 2.
+        $record2 = new stdClass();
+        $record2->discussion = $discussion2->id;
+        $record2->parent = $discussion2->firstpost;
+        $record2->userid = $user2->id;
+        $discussion2reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record2);
+        sleep(1);
+
+        // Create discussion 3.
+        $record3 = new stdClass();
+        $record3->course = $course1->id;
+        $record3->userid = $user1->id;
+        $record3->forum = $forum1->id;
+        $discussion3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record3);
+        sleep(1);
+
+        // Add two replies to the discussion 3.
+        $record3 = new stdClass();
+        $record3->discussion = $discussion3->id;
+        $record3->parent = $discussion3->firstpost;
+        $record3->userid = $user2->id;
+        $discussion3reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record3);
+        sleep(1);
+
+        $record3->parent = $discussion3reply1->id;
+        $record3->userid = $user3->id;
+        $discussion3reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record3);
+
+        // Call the external function passing forum id.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        // Discussions should be ordered by last post date in descending order by default.
+        $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion3->id);
+        $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion2->id);
+        $this->assertEquals($discussions['discussions'][2]['discussion'], $discussion1->id);
+
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $discussionlistvault = $vaultfactory->get_discussions_in_forum_vault();
+
+        // Call the external function passing forum id and sort order parameter.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_LASTPOST_ASC);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        // Discussions should be ordered by last post date in ascending order.
+        $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion1->id);
+        $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion2->id);
+        $this->assertEquals($discussions['discussions'][2]['discussion'], $discussion3->id);
+
+        // Call the external function passing forum id and sort order parameter.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_CREATED_DESC);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        // Discussions should be ordered by discussion creation date in descending order.
+        $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion3->id);
+        $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion2->id);
+        $this->assertEquals($discussions['discussions'][2]['discussion'], $discussion1->id);
+
+        // Call the external function passing forum id and sort order parameter.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_CREATED_ASC);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        // Discussions should be ordered by discussion creation date in ascending order.
+        $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion1->id);
+        $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion2->id);
+        $this->assertEquals($discussions['discussions'][2]['discussion'], $discussion3->id);
+
+        // Call the external function passing forum id and sort order parameter.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_REPLIES_DESC);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        // Discussions should be ordered by the number of replies in descending order.
+        $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion1->id);
+        $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion3->id);
+        $this->assertEquals($discussions['discussions'][2]['discussion'], $discussion2->id);
+
+        // Call the external function passing forum id and sort order parameter.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_REPLIES_ASC);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        // Discussions should be ordered by the number of replies in ascending order.
+        $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion2->id);
+        $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion3->id);
+        $this->assertEquals($discussions['discussions'][2]['discussion'], $discussion1->id);
+
+        // Pin discussion2.
+        $DB->update_record('forum_discussions',
+            (object) array('id' => $discussion2->id, 'pinned' => FORUM_DISCUSSION_PINNED));
+
+        // Call the external function passing forum id.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        // Discussions should be ordered by last post date in descending order by default.
+        // Pinned discussions should be at the top of the list.
+        $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion2->id);
+        $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion3->id);
+        $this->assertEquals($discussions['discussions'][2]['discussion'], $discussion1->id);
+
+        // Call the external function passing forum id and sort order parameter.
+        $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_LASTPOST_ASC);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        // Discussions should be ordered by last post date in ascending order.
+        // Pinned discussions should be at the top of the list.
+        $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion2->id);
+        $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion1->id);
+        $this->assertEquals($discussions['discussions'][2]['discussion'], $discussion3->id);
     }
 
     /**

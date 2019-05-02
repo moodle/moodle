@@ -349,6 +349,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/dock_to_block' => 'fa-chevron-left',
             'core:t/download' => 'fa-download',
             'core:t/down' => 'fa-arrow-down',
+            'core:t/downlong' => 'fa-long-arrow-down',
             'core:t/dropdown' => 'fa-cog',
             'core:t/editinline' => 'fa-pencil',
             'core:t/edit_menu' => 'fa-cog',
@@ -402,6 +403,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/unlocked' => 'fa-unlock-alt',
             'core:t/unlock' => 'fa-lock',
             'core:t/up' => 'fa-arrow-up',
+            'core:t/uplong' => 'fa-long-arrow-up',
             'core:t/user' => 'fa-user',
             'core:t/viewdetails' => 'fa-list',
         ];

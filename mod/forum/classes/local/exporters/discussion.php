@@ -67,6 +67,7 @@ class discussion extends exporter {
             'locked' => ['type' => PARAM_BOOL],
             'istimelocked' => ['type' => PARAM_BOOL],
             'name' => ['type' => PARAM_TEXT],
+            'firstpostid' => ['type' => PARAM_INT],
             'group' => [
                 'optional' => true,
                 'type' => [
@@ -195,6 +196,7 @@ class discussion extends exporter {
             'name' => format_string($discussion->get_name(), true, [
                 'context' => $this->related['context']
             ]),
+            'firstpostid' => $discussion->get_first_post_id(),
             'times' => [
                 'modified' => $discussion->get_time_modified(),
                 'start' => $discussion->get_time_start(),
@@ -211,7 +213,7 @@ class discussion extends exporter {
                 'pin' => $capabilitymanager->can_pin_discussion($user, $discussion),
                 'post' => $capabilitymanager->can_post_in_discussion($user, $discussion),
                 'manage' => $capabilitymanager->can_manage_forum($user),
-                'favourite' => $capabilitymanager->can_favourite_discussion($user, $discussion) // Defaulting to true until we get capabilities sorted
+                'favourite' => $capabilitymanager->can_favourite_discussion($user) // Defaulting to true until we get capabilities sorted
             ],
             'urls' => [
                 'view' => $urlfactory->get_discussion_view_url_from_discussion($discussion)->out(false),

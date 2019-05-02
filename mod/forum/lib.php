@@ -6746,3 +6746,143 @@ function mod_forum_core_calendar_event_timestart_updated(\calendar_event $event,
         }
     }
 }
+
+/**
+ * Fetch the data used to display the discussions on the current page.
+ *
+ * @param   \mod_forum\local\entities\forum  $forum The forum entity
+ * @param   stdClass                         $user The user to render for
+ * @param   int[]|null                       $groupid The group to render
+ * @param   int|null                         $sortorder The sort order to use when selecting the discussions in the list
+ * @param   int|null                         $pageno The zero-indexed page number to use
+ * @param   int|null                         $pagesize The number of discussions to show on the page
+ * @return  stdClass                         The data to use for display
+ */
+function get_discussions(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid, ?int $sortorder,
+        ?int $pageno = 0, ?int $pagesize = 0) {
+
+    $vaultfactory = mod_forum\local\container::get_vault_factory();
+    $discussionvault = $vaultfactory->get_discussions_in_forum_vault();
+    $managerfactory = mod_forum\local\container::get_manager_factory();
+    $capabilitymanager = $managerfactory->get_capability_manager($forum);
+
+    $groupids = get_groups_from_groupid($forum, $user, $groupid);
+
+    if (null === $groupids) {
+        return $discussions = $discussionvault->get_from_forum_id(
+            $forum->get_id(),
+            $capabilitymanager->can_view_hidden_posts($user),
+            $user->id,
+            $sortorder,
+            $pagesize,
+            $pageno * $pagesize);
+    } else {
+        return $discussions = $discussionvault->get_from_forum_id_and_group_id(
+            $forum->get_id(),
+            $groupids,
+            $capabilitymanager->can_view_hidden_posts($user),
+            $user->id,
+            $sortorder,
+            $pagesize,
+            $pageno * $pagesize);
+    }
+}
+
+/**
+ * Get a count of all discussions in a forum.
+ *
+ * @param   \mod_forum\local\entities\forum  $forum The forum entity
+ * @param   stdClass                         $user The user to render for
+ * @param   int                              $groupid The group to render
+ * @return  int                              The number of discussions in a forum
+ */
+function get_count_all_discussions(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid) {
+
+    $managerfactory = mod_forum\local\container::get_manager_factory();
+    $capabilitymanager = $managerfactory->get_capability_manager($forum);
+    $vaultfactory = mod_forum\local\container::get_vault_factory();
+    $discussionvault = $vaultfactory->get_discussions_in_forum_vault();
+
+    $groupids = get_groups_from_groupid($forum, $user, $groupid);
+
+    if (null === $groupids) {
+        return $discussionvault->get_total_discussion_count_from_forum_id(
+            $forum->get_id(),
+            $capabilitymanager->can_view_hidden_posts($user),
+            $user->id);
+    } else {
+        return $discussionvault->get_total_discussion_count_from_forum_id_and_group_id(
+            $forum->get_id(),
+            $groupids,
+            $capabilitymanager->can_view_hidden_posts($user),
+            $user->id);
+    }
+}
+
+/**
+ * Get the list of groups to show based on the current user and requested groupid.
+ *
+ * @param   \mod_forum\local\entities\forum  $forum The forum entity
+ * @param   stdClass                         $user The user viewing
+ * @param   int                              $groupid The groupid requested
+ * @return  array                            The list of groups to show
+ */
+function get_groups_from_groupid(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid) : ?array {
+
+    $effectivegroupmode = $forum->get_effective_group_mode();
+    if (empty($effectivegroupmode)) {
+        // This forum is not in a group mode. Show all posts always.
+        return null;
+    }
+
+    if (null == $groupid) {
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+        // No group was specified.
+        $showallgroups = (VISIBLEGROUPS == $effectivegroupmode);
+        $showallgroups = $showallgroups || $capabilitymanager->can_access_all_groups($user);
+        if ($showallgroups) {
+            // Return null to show all groups.
+            return null;
+        } else {
+            // No group was specified. Only show the users current groups.
+            return array_keys(
+                groups_get_all_groups(
+                    $forum->get_course_id(),
+                    $user->id,
+                    $forum->get_course_module_record()->groupingid
+                )
+            );
+        }
+    } else {
+        // A group was specified. Just show that group.
+        return [$groupid];
+    }
+}
+
+/**
+ * Return a list of all the user preferences used by mod_forum.
+ *
+ * @return array
+ */
+function mod_forum_user_preferences() {
+    $vaultfactory = \mod_forum\local\container::get_vault_factory();
+    $discussionlistvault = $vaultfactory->get_discussions_in_forum_vault();
+
+    $preferences = array();
+    $preferences['forum_discussionlistsortorder'] = array(
+        'null' => NULL_NOT_ALLOWED,
+        'default' => $discussionlistvault::SORTORDER_LASTPOST_DESC,
+        'type' => PARAM_INT,
+        'choices' => array(
+            $discussionlistvault::SORTORDER_LASTPOST_DESC,
+            $discussionlistvault::SORTORDER_LASTPOST_ASC,
+            $discussionlistvault::SORTORDER_CREATED_DESC,
+            $discussionlistvault::SORTORDER_CREATED_ASC,
+            $discussionlistvault::SORTORDER_REPLIES_DESC,
+            $discussionlistvault::SORTORDER_REPLIES_ASC
+        )
+    );
+
+    return $preferences;
+}

@@ -63,10 +63,10 @@ class post extends db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
-     * @param \stdClass|null $user The user object
+     * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, stdClass $user = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null) : string {
         $table = self::TABLE;
         $alias = $this->get_table_alias();
         $fields = $alias . '.*';
@@ -413,5 +413,32 @@ class post extends db_table_vault {
             'where' => $privatewhere,
             'params' => $params,
         ];
+    }
+
+    /**
+     * Get a mapping of the first post in each discussion based on post creation time.
+     *
+     * @param   int[]        $discussionids The list of discussions to fetch counts for
+     * @return  stdClass[]   The post object of the first post for each discussions returned in an associative array
+     */
+    public function get_first_post_for_discussion_ids(array $discussionids) : array {
+
+        if (empty($discussionids)) {
+            return [];
+        }
+
+        list($insql, $params) = $this->get_db()->get_in_or_equal($discussionids, SQL_PARAMS_NAMED);
+
+        $sql = "
+            SELECT p.*
+              FROM {" . self::TABLE . "} p
+              JOIN (
+                SELECT mp.discussion, MIN(mp.created) AS created
+                  FROM {" . self::TABLE . "} mp
+                 WHERE mp.discussion {$insql}
+              GROUP BY mp.discussion
+              ) lp ON lp.discussion = p.discussion AND lp.created = p.created";
+
+        return $this->get_db()->get_records_sql($sql, $params);
     }
 }
