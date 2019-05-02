@@ -31,7 +31,7 @@
     {
         "id": 1,
         "name": "Sample event name",
-        "calendareventtype": "course",
+        "normalisedeventtype": "course",
         "course": {
             "id": 1
         },
@@ -52,12 +52,12 @@
     }} data-course-id="{{course.id}}"{{!
     }} data-event-id="{{id}}"{{!
     }} class="event m-t-1"{{!
-    }} data-eventtype-{{calendareventtype}}="1"{{!
+    }} data-eventtype-{{normalisedeventtype}}="1"{{!
     }} data-event-title="{{name}}"{{!
     }} data-event-count="{{eventcount}}"{{!
     }}>
     <div class="card rounded">
-        <div class="box card-header clearfix calendar_event_{{calendareventtype}}">
+        <div class="box card-header clearfix calendar_event_{{normalisedeventtype}}">
             <div class="commands float-sm-right">
                 {{#canedit}}
                     {{#candelete}}

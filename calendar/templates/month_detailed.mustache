@@ -87,7 +87,7 @@
                                         {{/underway}}
                                         {{^underway}}
                                             <li data-region="event-item"
-                                                data-eventtype-{{calendareventtype}}="1"
+                                                data-eventtype-{{normalisedeventtype}}="1"
                                                 {{#draggable}}
                                                     draggable="true"
                                                     data-drag-type="move"
@@ -106,7 +106,7 @@
                                                 {{/draggable}}>
 
                                                 <a data-action="view-event" data-event-id="{{id}}" href="{{url}}" title="{{name}}">
-                                                    <span class="badge badge-circle calendar_event_{{calendareventtype}}">
+                                                    <span class="badge badge-circle calendar_event_{{normalisedeventtype}}">
                                                         &nbsp;
                                                     </span>
                                                     {{> core_calendar/event_icon}}

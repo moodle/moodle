@@ -55,7 +55,6 @@ class event_exporter extends event_exporter_base {
             'type' => event_action_exporter::read_properties_definition(),
             'optional' => true,
         ];
-        $values['calendareventtype'] = ['type' => PARAM_TEXT];
         return $values;
     }
 
@@ -73,7 +72,6 @@ class event_exporter extends event_exporter_base {
 
         $event = $this->event;
         $context = $this->related['context'];
-        $values['calendareventtype'] = $event->get_type();
         if ($moduleproxy = $event->get_course_module()) {
             $modulename = $moduleproxy->get('modname');
             $moduleid = $moduleproxy->get('id');
@@ -83,8 +81,6 @@ class event_exporter extends event_exporter_base {
             $params = array('update' => $moduleid, 'return' => true, 'sesskey' => sesskey());
             $editurl = new \moodle_url('/course/mod.php', $params);
             $values['editurl'] = $editurl->out(false);
-            // Activity events are normalised to "look" like course events.
-            $values['calendareventtype'] = 'course';
         } else if ($event->get_type() == 'category') {
             $url = $event->get_category()->get_proxied_instance()->get_view_link();
         } else if ($event->get_type() == 'course') {
