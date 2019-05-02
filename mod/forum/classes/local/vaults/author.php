@@ -99,4 +99,22 @@ class author extends db_table_vault {
         $authorids = array_keys($authorids);
         return $this->get_from_ids($authorids);
     }
+
+    /**
+     * Get the context ids for a set of author ids. The results are indexed
+     * by the author id.
+     *
+     * @param int[] $authorids The list of author ids to fetch.
+     * @return int[] Results indexed by author id.
+     */
+    public function get_context_ids_for_author_ids(array $authorids) : array {
+        $db = $this->get_db();
+        [$insql, $params] = $db->get_in_or_equal($authorids);
+        $sql = "SELECT instanceid, id FROM {context} WHERE contextlevel = ? AND instanceid {$insql}";
+        $records = $db->get_records_sql($sql, array_merge([CONTEXT_USER], $params));
+        return array_reduce($authorids, function($carry, $id) use ($records) {
+            $carry[$id] = isset($records[$id]) ? (int) $records[$id]->id : null;
+            return $carry;
+        }, []);
+    }
 }

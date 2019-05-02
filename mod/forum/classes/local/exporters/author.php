@@ -42,6 +42,8 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
 class author extends exporter {
     /** @var author_entity $author Author entity */
     private $author;
+    /** @var int $authorcontextid The context id for the author entity */
+    private $authorcontextid;
     /** @var array $authorgroups List of groups that the author belongs to */
     private $authorgroups;
     /** @var bool $canview Should the author be anonymised? */
@@ -51,12 +53,20 @@ class author extends exporter {
      * Constructor.
      *
      * @param author_entity $author The author entity to export
+     * @param int $authorcontextid The context id for the author entity to export
      * @param stdClass[] $authorgroups The list of groups that the author belongs to
      * @param bool $canview Can the requesting user view this author or should it be anonymised?
      * @param array $related The related data for the export.
      */
-    public function __construct(author_entity $author, array $authorgroups = [], bool $canview = true, array $related = []) {
+    public function __construct(
+        author_entity $author,
+        int $authorcontextid,
+        array $authorgroups = [],
+        bool $canview = true,
+        array $related = []
+    ) {
         $this->author = $author;
+        $this->authorcontextid = $authorcontextid;
         $this->authorgroups = $authorgroups;
         $this->canview = $canview;
         return parent::__construct([], $related);
@@ -128,6 +138,7 @@ class author extends exporter {
      */
     protected function get_other_values(renderer_base $output) {
         $author = $this->author;
+        $authorcontextid = $this->authorcontextid;
         $urlfactory = $this->related['urlfactory'];
 
         if ($this->canview) {
@@ -148,7 +159,7 @@ class author extends exporter {
                 'groups' => $groups,
                 'urls' => [
                     'profile' => ($urlfactory->get_author_profile_url($author))->out(false),
-                    'profileimage' => ($urlfactory->get_author_profile_image_url($author))->out(false)
+                    'profileimage' => ($urlfactory->get_author_profile_image_url($author, $authorcontextid))->out(false)
                 ]
             ];
         } else {

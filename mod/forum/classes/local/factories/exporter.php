@@ -152,12 +152,14 @@ class exporter {
      *
      * @param   stdClass        $user The user viewing the forum
      * @param   forum_entity    $forum The forum being viewed
-     * @param   discussion_entity[] $discussions The set of discussions to be shown
+     * @param   discussion_summary_entity[] $discussions The set of discussion summaries to export
      * @param   stdClass[]      $groupsbyauthorid The set of groups in an associative array for each author
      * @param   stdClass[]      $groupsbyid The set of groups in the forum in an associative array for each group
      * @param   int[]           $discussionreplycount The number of replies for each discussion
      * @param   int[]           $discussionunreadcount The number of unread posts for each discussion
      * @param   int[]           $latestpostids The latest post id for each discussion
+     * @param   int[]           $postauthorcontextids The context ids for the first and last post authors (indexed by author id)
+     * @param   int[]           $favourites The list of discussion ids that have been favourited
      * @return  discussion_summaries_exporter
      */
     public function get_discussion_summaries_exporter(
@@ -168,7 +170,8 @@ class exporter {
         array $groupsbyauthorid = [],
         array $discussionreplycount = [],
         array $discussionunreadcount = [],
-        array $latestpostid = [],
+        array $latestpostids = [],
+        array $postauthorcontextids = [],
         array $favourites = []
     ) : discussion_summaries_exporter {
         return new discussion_summaries_exporter(
@@ -177,7 +180,8 @@ class exporter {
             $groupsbyauthorid,
             $discussionreplycount,
             $discussionunreadcount,
-            $latestpostid,
+            $latestpostids,
+            $postauthorcontextids,
             [
                 'legacydatamapperfactory' => $this->legacydatamapperfactory,
                 'context' => $forum->get_context(),
@@ -207,6 +211,7 @@ class exporter {
      * @param   discussion_entity $discussion The discussion that the post is in
      * @param   post_entity[]   $posts The set of posts to be exported
      * @param   author_entity[] $authorsbyid List of authors indexed by author id
+     * @param   int[]           $authorcontextids List of authors context ids indexed by author id
      * @param   array           $attachmentsbypostid List of attachments for each post indexed by post id
      * @param   array           $groupsbyauthorid List of groups for the post authors indexed by author id
      * @param   post_read_receipt_collection_entity|null $readreceiptcollection Details of read receipts for each post
@@ -221,6 +226,7 @@ class exporter {
         discussion_entity $discussion,
         array $posts,
         array $authorsbyid = [],
+        array $authorcontextids = [],
         array $attachmentsbypostid = [],
         array $groupsbyauthorid = [],
         post_read_receipt_collection_entity $readreceiptcollection = null,
@@ -228,16 +234,25 @@ class exporter {
         array $ratingbypostid = [],
         bool $includehtml = false
     ) : posts_exporter {
-        return new posts_exporter($posts, $authorsbyid, $attachmentsbypostid, $groupsbyauthorid, $tagsbypostid, $ratingbypostid, [
-            'capabilitymanager' => $this->managerfactory->get_capability_manager($forum),
-            'urlfactory' => $this->urlfactory,
-            'forum' => $forum,
-            'discussion' => $discussion,
-            'user' => $user,
-            'context' => $forum->get_context(),
-            'readreceiptcollection' => $readreceiptcollection,
-            'includehtml' => $includehtml
-        ]);
+        return new posts_exporter(
+            $posts,
+            $authorsbyid,
+            $authorcontextids,
+            $attachmentsbypostid,
+            $groupsbyauthorid,
+            $tagsbypostid,
+            $ratingbypostid,
+            [
+                'capabilitymanager' => $this->managerfactory->get_capability_manager($forum),
+                'urlfactory' => $this->urlfactory,
+                'forum' => $forum,
+                'discussion' => $discussion,
+                'user' => $user,
+                'context' => $forum->get_context(),
+                'readreceiptcollection' => $readreceiptcollection,
+                'includehtml' => $includehtml
+            ]
+        );
     }
 
     /**

@@ -393,16 +393,19 @@ class url {
     }
 
     /**
-     * Get the url to view the author's profile image.
+     * Get the url to view the author's profile image. The author's context id should be
+     * provided to prevent the code from needing to load it.
      *
      * @param author_entity $author The author
+     * @param int|null $authorcontextid The author context id
      * @return moodle_url
      */
-    public function get_author_profile_image_url(author_entity $author) : moodle_url {
+    public function get_author_profile_image_url(author_entity $author, int $authorcontextid = null) : moodle_url {
         global $PAGE;
 
         $datamapper = $this->legacydatamapperfactory->get_author_data_mapper();
         $record = $datamapper->to_legacy_object($author);
+        $record->contextid = $authorcontextid;
         $userpicture = new user_picture($record);
         $userpicture->size = 2;
 
