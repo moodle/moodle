@@ -1407,6 +1407,16 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_delete_message_for_all_users' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'delete_message_for_all_users',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Deletes a message for all users.',
+        'type' => 'write',
+        'capabilities' => 'moodle/site:deleteanymessage',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_notes_create_notes' => array(
         'classname' => 'core_notes_external',
         'methodname' => 'create_notes',
