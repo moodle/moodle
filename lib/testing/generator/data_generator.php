@@ -270,6 +270,13 @@ EOD;
 
         if (!$record['deleted']) {
             context_user::instance($userid);
+
+            // All new not deleted users must have a favourite self-conversation.
+            $selfconversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
+                [$userid]
+            );
+            \core_message\api::set_favourite_conversation($selfconversation->id, $userid);
         }
 
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
