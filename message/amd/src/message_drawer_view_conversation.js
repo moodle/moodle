@@ -350,6 +350,7 @@ function(
         newState = StateManager.setIsFavourite(newState, conversation.isfavourite);
         newState = StateManager.setIsMuted(newState, conversation.ismuted);
         newState = StateManager.addMessages(newState, conversation.messages);
+        newState = StateManager.setCanDeleteMessagesForAllUsers(newState, conversation.candeletemessagesforallusers);
         return newState;
     };
 
@@ -886,6 +887,10 @@ function(
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
         return render(newState)
             .then(function() {
+                if (newState.deleteMessagesForAllUsers) {
+                    return Repository.deleteMessagesForAllUsers(viewState.loggedInUserId, messageIds);
+                }
+
                 return Repository.deleteMessages(viewState.loggedInUserId, messageIds);
             })
             .then(function() {
@@ -893,6 +898,7 @@ function(
                 newState = StateManager.removePendingDeleteMessagesById(newState, messageIds);
                 newState = StateManager.removeSelectedMessagesById(newState, messageIds);
                 newState = StateManager.setLoadingConfirmAction(newState, false);
+                newState = StateManager.setDeleteMessagesForAllUsers(newState, false);
 
                 var prevLastMessage = viewState.messages[viewState.messages.length - 1];
                 var newLastMessage = newState.messages.length ? newState.messages[newState.messages.length - 1] : null;
@@ -959,6 +965,7 @@ function(
         newState = StateManager.removePendingBlockUsersById(newState, [userId]);
         newState = StateManager.removePendingDeleteMessagesById(newState, pendingDeleteMessageIds);
         newState = StateManager.setPendingDeleteConversation(newState, false);
+        newState = StateManager.setDeleteMessagesForAllUsers(newState, false);
         return render(newState);
     };
 
@@ -1037,6 +1044,7 @@ function(
         isSendingMessage = true;
         var newState = StateManager.setSendingMessage(viewState, true);
         var newConversationId = null;
+        var newCanDeleteMessagesForAllUsers = false;
         return render(newState)
             .then(function() {
                 if (!conversationId && (viewState.type != CONVERSATION_TYPES.PUBLIC)) {
@@ -1046,6 +1054,7 @@ function(
                     return Repository.sendMessageToUser(otherUserId, text)
                         .then(function(message) {
                             newConversationId = parseInt(message.conversationid, 10);
+                            newCanDeleteMessagesForAllUsers = message.candeletemessagesforallusers;
                             return message;
                         });
                 } else {
@@ -1064,6 +1073,7 @@ function(
                     conversation.id = newConversationId;
                     resetMessagePollTimer(newConversationId);
                     PubSub.publish(MessageDrawerEvents.CONVERSATION_CREATED, conversation);
+                    newState = StateManager.setCanDeleteMessagesForAllUsers(newState, newCanDeleteMessagesForAllUsers);
                 }
 
                 return render(newState)
@@ -1299,6 +1309,18 @@ function(
     };
 
     /**
+     * Handle clicking on the checkbox that toggles deleting messages for
+     * all users.
+     *
+     * @param {Object} e Element this event handler is called on.
+     */
+    var handleDeleteMessagesForAllUsersToggle = function(e) {
+        var newValue = $(e.target).prop('checked');
+        var newState = StateManager.setDeleteMessagesForAllUsers(viewState, newValue);
+        render(newState);
+    };
+
+    /**
      * Show the view contact page.
      *
      * @param {String} namespace Unique identifier for the Routes
@@ -1358,7 +1380,8 @@ function(
             [SELECTORS.ACTION_REQUEST_ADD_CONTACT, generateConfirmActionHandler(requestAddContact)],
             [SELECTORS.ACTION_ACCEPT_CONTACT_REQUEST, generateConfirmActionHandler(acceptContactRequest)],
             [SELECTORS.ACTION_DECLINE_CONTACT_REQUEST, generateConfirmActionHandler(declineContactRequest)],
-            [SELECTORS.MESSAGE, handleSelectMessage]
+            [SELECTORS.MESSAGE, handleSelectMessage],
+            [SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE, handleDeleteMessagesForAllUsersToggle]
         ];
         var footerActivateHandlers = [
             [SELECTORS.SEND_MESSAGE_BUTTON, handleSendMessage],
