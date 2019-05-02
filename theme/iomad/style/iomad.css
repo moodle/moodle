@@ -104,3 +104,8 @@ div.block_iomad_company_admin div.iomadlink_container {
     top: 0px;
     opacity: 100;
 }
+
+/* My courses block */
+#mycourses_available_view, #mycourses_inprogress_view, #mycourses_completed_view {
+    opacity: 1;
+}
