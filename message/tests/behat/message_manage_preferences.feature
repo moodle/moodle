@@ -95,4 +95,3 @@ Feature: Manage preferences
     And I open messaging
     And I search for "Student 1" in messaging
     And I should see "No results"
-
