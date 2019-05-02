@@ -5915,6 +5915,9 @@ img.iconsmall {
 .calendarwrapper {
   position: relative;
 }
+.summary-modal-container .description-content {
+  overflow-wrap: break-word;
+}
 .summary-modal-container .description-content > p {
   margin: 0;
 }
