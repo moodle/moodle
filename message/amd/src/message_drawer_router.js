@@ -81,8 +81,10 @@ function(
     var changeRoute = function(namespace, newRoute) {
         var newConfig;
 
-        // Check of the Route change call is made from an element in the app panel.
-        var fromPanel = [].slice.call(arguments).includes('frompanel');
+        // Check if the Route change call is made from an element in the app panel.
+        var fromPanel = [].slice.call(arguments).some(function(arg) {
+            return arg == 'frompanel';
+        });
         // Get the rest of the arguments, if any.
         var args = [].slice.call(arguments, 2);
         var renderPromise = $.Deferred().resolve().promise();
