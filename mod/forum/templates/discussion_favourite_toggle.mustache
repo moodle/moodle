@@ -34,12 +34,14 @@
 }}
 {{#capabilities.favourite}}
     <a
-        class="btn btn-link"
+        class="{{$classes}}dropdown-item menu-action{{/classes}}"
+        role="{{$role}}menuitem{{/role}}"
         data-type="favorite-toggle"
         data-action="toggle"
         data-discussionid="{{id}}"
         data-forumid="{{forumid}}"
         tabindex="-1"
+        href=""
         {{#userstate.favourited}}
             data-targetstate="0"
             title="{{#str}}removefromfavourites, mod_forum{{/str}}"
@@ -49,13 +51,15 @@
             title="{{#str}}addtofavourites, mod_forum{{/str}}"
         {{/userstate.favourited}}
     >
-        {{$favouritecontent}}
-            {{#userstate.favourited}}
-                {{#str}}removefromfavourites, mod_forum{{/str}}
-            {{/userstate.favourited}}
-            {{^userstate.favourited}}
-                {{#str}}addtofavourites, mod_forum{{/str}}
-            {{/userstate.favourited}}
-        {{/favouritecontent}}
+        <span class="menu-action-text">
+            {{$favouritecontent}}
+                {{#userstate.favourited}}
+                    {{#str}}removefromfavourites, mod_forum{{/str}}
+                {{/userstate.favourited}}
+                {{^userstate.favourited}}
+                    {{#str}}addtofavourites, mod_forum{{/str}}
+                {{/userstate.favourited}}
+            {{/favouritecontent}}
+        </span>
     </a>
 {{/capabilities.favourite}}
