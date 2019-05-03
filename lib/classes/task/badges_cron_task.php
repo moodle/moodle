@@ -53,14 +53,15 @@ class badges_cron_task extends scheduled_task {
             if (empty($CFG->badges_allowcoursebadges)) {
                 $coursesql = '';
             } else {
-                $coursesql = ' OR EXISTS (SELECT id FROM {course} WHERE visible = :visible AND startdate < :current) ';
+                $coursesql = ' OR EXISTS (SELECT c.id FROM {course} c WHERE c.visible = :visible AND c.startdate < :current'
+                        . '     AND c.id = b.courseid) ';
                 $courseparams = array('visible' => true, 'current' => time());
             }
 
-            $sql = 'SELECT id
-                      FROM {badge}
-                     WHERE (status = :active OR status = :activelocked)
-                       AND (type = :site ' . $coursesql . ')';
+            $sql = 'SELECT b.id
+                      FROM {badge} b
+                     WHERE (b.status = :active OR b.status = :activelocked)
+                       AND (b.type = :site ' . $coursesql . ')';
             $badgeparams = [
                 'active' => BADGE_STATUS_ACTIVE,
                 'activelocked' => BADGE_STATUS_ACTIVE_LOCKED,
