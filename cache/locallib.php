@@ -738,7 +738,9 @@ abstract class cache_administration_helper extends cache_helper {
 
     /**
      * Returns an array of information about plugins, everything a renderer needs.
-     * @return array
+     *
+     * @return array for each store, an array containing various information about each store.
+     *     See the code below for details
      */
     public static function get_store_plugin_summaries() {
         $return = array();
@@ -779,7 +781,9 @@ abstract class cache_administration_helper extends cache_helper {
 
     /**
      * Returns an array about the definitions. All the information a renderer needs.
-     * @return array
+     *
+     * @return array for each store, an array containing various information about each store.
+     *     See the code below for details
      */
     public static function get_definition_summaries() {
         $factory = cache_factory::instance();
@@ -845,10 +849,14 @@ abstract class cache_administration_helper extends cache_helper {
 
     /**
      * Returns all of the actions that can be performed on a definition.
-     * @param context $context
-     * @return array
+     *
+     * @param context $context the system context.
+     * @param array $definitionsummary information about this cache, from the array returned by
+     *      cache_administration_helper::get_definition_summaries(). Currently only 'sharingoptions'
+     *      element is used.
+     * @return array of actions. Each action is an array with two elements, 'text' and 'url'.
      */
-    public static function get_definition_actions(context $context, array $definition) {
+    public static function get_definition_actions(context $context, array $definitionsummary) {
         if (has_capability('moodle/site:config', $context)) {
             $actions = array();
             // Edit mappings.
@@ -857,7 +865,7 @@ abstract class cache_administration_helper extends cache_helper {
                 'url' => new moodle_url('/cache/admin.php', array('action' => 'editdefinitionmapping', 'sesskey' => sesskey()))
             );
             // Edit sharing.
-            if (count($definition['sharingoptions']) > 1) {
+            if (count($definitionsummary['sharingoptions']) > 1) {
                 $actions[] = array(
                     'text' => get_string('editsharing', 'cache'),
                     'url' => new moodle_url('/cache/admin.php', array('action' => 'editdefinitionsharing', 'sesskey' => sesskey()))
@@ -877,8 +885,9 @@ abstract class cache_administration_helper extends cache_helper {
      * Returns all of the actions that can be performed on a store.
      *
      * @param string $name The name of the store
-     * @param array $storedetails
-     * @return array
+     * @param array $storedetails information about this store, from the array returned by
+     *      cache_administration_helper::get_store_instance_summaries().
+     * @return array of actions. Each action is an array with two elements, 'text' and 'url'.
      */
     public static function get_store_instance_actions($name, array $storedetails) {
         $actions = array();
@@ -902,11 +911,12 @@ abstract class cache_administration_helper extends cache_helper {
         return $actions;
     }
 
-
     /**
      * Returns all of the actions that can be performed on a plugin.
      *
      * @param string $name The name of the plugin
+     * @param array $plugindetails information about this store, from the array returned by
+     *      cache_administration_helper::get_store_plugin_summaries().
      * @param array $plugindetails
      * @return array
      */
