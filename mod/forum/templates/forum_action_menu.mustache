@@ -44,26 +44,20 @@
         {{/settings.excludetext}}
 
     </button>
-    <div class="dropdown-menu dropdown-menu-right"
+    <div class="dropdown-menu dropdown-menu-right menu"
          aria-labelledby="forum-action-menu-{{id}}-menu"
          data-rel="menu-content"
          role="menu"
          id="forum-action-menu-{{id}}-menu">
         {{#capabilities.favourite}}
-        <div class="dropdown-item" role="menuitem">
             {{> mod_forum/discussion_favourite_toggle}}
-        </div>
         {{/capabilities.favourite}}
         {{#capabilities.pin}}
-        <div class="dropdown-item" role="menuitem">
             {{> mod_forum/discussion_pin_toggle}}
-        </div>
         {{/capabilities.pin}}
         {{#capabilities.manage}}
         {{^istimelocked}}
-        <div class="dropdown-item" role="menuitem">
             {{> forum/discussion_lock_toggle }}
-        </div>
         {{/istimelocked}}
         {{/capabilities.manage}}
     </div>

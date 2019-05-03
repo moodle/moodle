@@ -34,7 +34,8 @@
 }}
 {{#capabilities.pin}}
     <a
-        class="btn btn-link"
+        class="dropdown-item menu-action"
+        role="menuitem"
         data-type="pin-toggle"
         data-action="toggle"
         data-discussionid="{{id}}"
@@ -50,11 +51,13 @@
             title="{{#str}}pindiscussion, mod_forum{{/str}}"
         {{/pinned}}
     >
-        {{#pinned}}
-            {{#str}}unpindiscussion, mod_forum{{/str}}
-        {{/pinned}}
-        {{^pinned}}
-            {{#str}}pindiscussion, mod_forum{{/str}}
-        {{/pinned}}
+        <span class="menu-action-text">
+            {{#pinned}}
+                {{#str}}unpindiscussion, mod_forum{{/str}}
+            {{/pinned}}
+            {{^pinned}}
+                {{#str}}pindiscussion, mod_forum{{/str}}
+            {{/pinned}}
+        </span>
     </a>
 {{/capabilities.pin}}

@@ -35,7 +35,8 @@
     }
 }}
 <a
-    class="btn btn-link"
+    class="dropdown-item menu-action"
+    role="menuitem"
     data-type="lock-toggle"
     data-action="toggle"
     data-discussionid="{{id}}"
@@ -49,10 +50,12 @@
         title="{{#str}}clicktolockdiscussion, forum{{/str}}"
     {{/locked}}
 >
-    {{#locked}}
-        {{#str}}locked, forum{{/str}}
-    {{/locked}}
-    {{^locked}}
-        {{#str}}notlocked, forum{{/str}}
-    {{/locked}}
+    <span class="menu-action-text">
+        {{#locked}}
+            {{#str}}unlockdiscussion, forum{{/str}}
+        {{/locked}}
+        {{^locked}}
+            {{#str}}lockdiscussion, forum{{/str}}
+        {{/locked}}
+    </span>
 </a>

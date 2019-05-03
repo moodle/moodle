@@ -325,6 +325,7 @@ $string['lockdiscussionafter_help'] = 'Discussions may be automatically locked a
 Users with the capability to reply to locked discussions can unlock a discussion by replying to it.';
 $string['longpost'] = 'Long post';
 $string['locked'] = 'Locked';
+$string['lockdiscussion'] = 'Lock this discussion';
 $string['lockupdated'] = 'The lock option has been updated.';
 $string['mailnow'] = 'Send forum post notifications with no editing-time delay';
 $string['manydiscussions'] = 'Discussions per page';
@@ -634,6 +635,7 @@ $string['trackingtype_help'] = 'Read tracking enables participants to easily che
 If set to optional, participants can choose whether to turn tracking on or off via a link in the administration block. (Users must also enable forum tracking in their forum preferences.)
 
 If \'Allow forced read tracking\' is enabled in the site administration, then a further option is available - forced. This means that tracking is always on, regardless of users\' forum preferences.';
+$string['unlockdiscussion'] = 'Unlock this discussion';
 $string['unread'] = 'Unread';
 $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';

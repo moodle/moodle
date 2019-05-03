@@ -30,6 +30,8 @@
     }
 }}
 {{< mod_forum/discussion_favourite_toggle }}
+    {{$classes}}btn btn-link{{/classes}}
+    {{$role}}{{/role}}
     {{$favouritecontent}}
         {{#userstate.favourited}}
             {{#pix}}t/star, mod_forum, {{#str}}removefromfavourites, mod_forum{{/str}}{{/pix}}
