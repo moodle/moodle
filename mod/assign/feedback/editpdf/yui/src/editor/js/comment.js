@@ -204,7 +204,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         });
 
         drawingregion.append(container);
-        container.setStyle('position', 'absolute');
+        container.setStyle('position', 'relative');
         container.setX(position.x);
         container.setY(position.y);
         drawable.store_position(container, position.x, position.y);
