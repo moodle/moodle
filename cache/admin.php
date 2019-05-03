@@ -208,8 +208,8 @@ if (!empty($action) && confirm_sesskey()) {
             break;
 
         case 'purgedefinition': // Purge a specific definition.
-            $definition = required_param('definition', PARAM_SAFEPATH);
-            list($component, $area) = explode('/', $definition, 2);
+            $id = required_param('definition', PARAM_SAFEPATH);
+            list($component, $area) = explode('/', $id, 2);
             $factory = cache_factory::instance();
             $definition = $factory->create_definition($component, $area);
             if ($definition->has_required_identifiers()) {
@@ -219,14 +219,27 @@ if (!empty($action) && confirm_sesskey()) {
                 // Alrighty we can purge just the data belonging to this definition.
                 cache_helper::purge_by_definition($component, $area);
             }
-            redirect($PAGE->url, get_string('purgedefinitionsuccess', 'cache'), 5);
+
+            $message = get_string('purgexdefinitionsuccess', 'cache', [
+                        'name' => $definition->get_name(),
+                        'component' => $component,
+                        'area' => $area,
+                    ]);
+            $purgeagainlink = html_writer::link(new moodle_url('/cache/admin.php', [
+                    'action' => 'purgedefinition', 'sesskey' => sesskey(), 'definition' => $id]),
+                    get_string('purgeagain', 'cache'));
+            redirect($PAGE->url, $message . ' ' . $purgeagainlink, 5);
             break;
 
         case 'purgestore':
         case 'purge': // Purge a store cache.
             $store = required_param('store', PARAM_TEXT);
             cache_helper::purge_store($store);
-            redirect($PAGE->url, get_string('purgestoresuccess', 'cache'), 5);
+            $message = get_string('purgexstoresuccess', 'cache', ['store' => $store]);
+            $purgeagainlink = html_writer::link(new moodle_url('/cache/admin.php', [
+                    'action' => 'purgestore', 'sesskey' => sesskey(), 'store' => $store]),
+                    get_string('purgeagain', 'cache'));
+            redirect($PAGE->url, $message . ' ' . $purgeagainlink, 5);
             break;
 
         case 'newlockinstance':
