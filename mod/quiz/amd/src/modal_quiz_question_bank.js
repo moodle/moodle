@@ -47,6 +47,7 @@ function(
         PREVIEW_CONTAINER: 'td.previewaction',
         SEARCH_OPTIONS: '#advancedsearch',
         DISPLAY_OPTIONS: '#displayoptions',
+        ADD_QUESTIONS_FORM: 'form[action="edit.php"]',
     };
 
     /**
@@ -257,6 +258,18 @@ function(
 
         // Set up the event handlers for all of the display options.
         this.registerDisplayOptionListeners();
+
+        this.getModal().on('submit', SELECTORS.ADD_QUESTIONS_FORM, function(e) {
+            // If the user clicks on the "Add selected questions to the quiz" button to add some questions to the page
+            // then we need to intercept the submit in order to include the correct "add on page id" before the form is
+            // submitted.
+            var formElement = $(e.currentTarget);
+
+            $('<input />').attr('type', 'hidden')
+                .attr('name', "addonpage")
+                .attr('value', this.getAddOnPageId())
+                .appendTo(formElement);
+        }.bind(this));
 
         this.getModal().on('click', SELECTORS.ANCHOR, function(e) {
             var anchorElement = $(e.currentTarget);
