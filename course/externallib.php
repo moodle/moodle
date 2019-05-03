@@ -2463,6 +2463,20 @@ class core_course_external extends external_api {
         $coursereturns['contacts']          = $coursecontacts;
         $coursereturns['enrollmentmethods'] = $enroltypes;
         $coursereturns['sortorder']         = $course->sortorder;
+
+        $handler = core_course\customfield\course_handler::create();
+        if ($customfields = $handler->export_instance_data($course->id)) {
+            $coursereturns['customfields'] = [];
+            foreach ($customfields as $data) {
+                $coursereturns['customfields'][] = [
+                    'type' => $data->get_type(),
+                    'value' => $data->get_value(),
+                    'name' => $data->get_name(),
+                    'shortname' => $data->get_shortname()
+                ];
+            }
+        }
+
         return $coursereturns;
     }
 
