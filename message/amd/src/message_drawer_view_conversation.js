@@ -243,13 +243,13 @@ function(
             messages: state.messages.map(function(message) {
                 return $.extend({}, message);
             }),
-            members: Object.keys(state.members).reduce(function(carry, id) {
-                carry[id] = $.extend({}, state.members[id]);
-                carry[id].contactrequests = state.members[id].contactrequests.map(function(request) {
+            members: Object.keys(state.members).map(function(id) {
+                var formattedMember = $.extend({}, state.members[id]);
+                formattedMember.contactrequests = state.members[id].contactrequests.map(function(request) {
                     return $.extend({}, request);
                 });
-                return carry;
-            }, {})
+                return formattedMember;
+            })
         };
     };
 
