@@ -35,12 +35,12 @@ Feature: As a teacher, you can manually lock individual discussions when viewing
     And I am on "Course 1" course homepage
     And I navigate to post "Discussion 1" in "Test forum name" forum
     And I press "Settings"
-    Then "Lock" "link" should be visible
-    And I follow "Lock"
+    Then "Lock this discussion" "link" should be visible
+    And I follow "Lock this discussion"
     Then I should see "This discussion has been locked so you can no longer reply to it."
     And I press "Settings"
-    Then "a[@title='Lock']" "css_element" should not be visible
-    Then "Locked" "link" should be visible
+    Then "Lock this discussion" "link" should not be visible
+    Then "Unlock this discussion" "link" should be visible
     And I press "Settings"
     And I follow "Discussion 2"
     Then I should not see "This discussion has been locked so you can no longer reply to it."
