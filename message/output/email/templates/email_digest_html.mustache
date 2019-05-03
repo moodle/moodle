@@ -58,15 +58,26 @@
             color: #373a3c;
             border: 1px solid #dee2e6;
             border-collapse: collapse;
-            font-size: 15px;
+            font-size: 14px;
             margin-bottom: 20px;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         }
         .table th {
-            text-align: left;
             font-weight: normal;
             background-color: #F2F2F2;
             border-bottom: 1px solid #dee2e6;
             padding: 10px;
+            vertical-align: top;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .float-right {
+            float: right;
         }
         .table td {
             padding: 10px;
@@ -81,12 +92,27 @@
             height: 15px;
             display: inline-block;
             text-align: center;
+            font-size: 13px;
+            line-height: 15px;
+        }
+        .linkcolor a {
+            color: #1177d1;
+        }
+        .round {
+            border-radius: 50%;
+        }
+        .message p {
+            margin-top: 0;
+            padding-right: 40px;
         }
         .nowrap {
             white-space: nowrap;
         }
-        .text-right {
-            text-align: right;
+        .gray-light {
+            color: #868e96;
+        }
+        .text-small {
+            font-size: 13px;
         }
     </style>
 </head>
@@ -95,35 +121,33 @@
     <table class="table">
         <thead>
         <tr>
-            <th>
+            <th width="40px">
                 <img src="{{{ grouppictureurl }}}" class="round" width="40px" height="40px"/>
             </th>
-            <th>
+            <th class="text-left">
                 <strong>{{ groupname }}</strong><br>
                 {{ coursename }}
             </th>
-            <th class="nowrap">
-                <span class="badge">{{ numberofunreadmessages }}</span> {{#str}} emaildigestunreadmessages, message_email {{/str}}
+            <th class="nowrap text-right">
+                <span class="badge">{{ numberofunreadmessages }}</span> <span class="gray-light">{{#str}} emaildigestunreadmessages, message_email {{/str}}</span>
             </th>
         </tr>
         </thead>
         <tbody>
             {{#messages}}
             <tr>
-                <td>
+                <td width="40px" style="text-align: center;">
                     <img src="{{{ userpictureurl }}}" class="round" width="30px" height="30px">
                 </td>
-                <td>
+                <td colspan="2" class="message">
                     <strong>{{{ userfullname }}}</strong>
-                    <p>{{{ message }}}</p>
-                </td>
-                <td class="text-right">
-                    {{ timesent }}
+                    <span class="float-right gray-light text-small">{{ timesent }}</span>
+                    {{{ message }}}
                 </td>
             </tr>
             {{/messages}}
             <tr>
-                <td colspan="2">
+                <td colspan="3" class="linkcolor">
                     {{{viewallmessageslink}}}
                 </td>
             </tr>
