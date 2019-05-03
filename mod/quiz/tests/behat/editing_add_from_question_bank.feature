@@ -1,4 +1,4 @@
-@core @core_question
+@mod @mod_quiz @javascript
 Feature: Adding questions to a quiz from the question bank
   In order to re-use questions
   As a teacher
@@ -47,3 +47,25 @@ Feature: Adding questions to a quiz from the question bank
     And I press key "13" in the field "Filter by tags..."
     Then I should see "question 1 name" in the "categoryquestions" "table"
     And I should not see "question 2 name" in the "categoryquestions" "table"
+
+  Scenario: Questions are added in the right place with multiple sections
+    Given the following "questions" exist:
+      | questioncategory | qtype | name            | questiontext    |
+      | Test questions   | essay | question 3 name | question 3 text |
+    And quiz "Quiz 1" contains the following questions:
+      | question         | page |
+      | question 1 name | 1    |
+      | question 2 name | 2    |
+    And quiz "Quiz 1" contains the following sections:
+      | heading   | firstslot | shuffle |
+      | Section 1 | 1         | 0       |
+      | Section 2 | 2         | 0       |
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 1"
+    When I navigate to "Edit quiz" in current page administration
+    And I open the "Page 1" add to quiz menu
+    And I follow "from question bank"
+    And I set the field with xpath "//tr[contains(normalize-space(.), 'question 3 name')]//input[@type='checkbox']" to "1"
+    And I click on "Add selected questions to the quiz" "button"
+    Then I should see "question 3 name" on quiz page "1"
+    And I should see "question 1 name" before "question 3 name" on the edit quiz page
