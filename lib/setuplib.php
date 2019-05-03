@@ -1809,6 +1809,60 @@ function make_localcache_directory($directory, $exceptiononerror = true) {
 }
 
 /**
+ * Webserver access user logging
+ */
+function set_access_log_user() {
+    global $USER, $CFG;
+    if ($USER && isset($USER->username)) {
+        $logmethod = '';
+        $logvalue = 0;
+        if (!empty($CFG->apacheloguser) && function_exists('apache_note')) {
+            $logmethod = 'apache';
+            $logvalue = $CFG->apacheloguser;
+        }
+        if (!empty($CFG->headerloguser)) {
+            $logmethod = 'header';
+            $logvalue = $CFG->headerloguser;
+        }
+        if (!empty($logmethod)) {
+            $loguserid = $USER->id;
+            $logusername = clean_filename($USER->username);
+            $logname = '';
+            if (isset($USER->firstname)) {
+                // We can assume both will be set
+                // - even if to empty.
+                $logname = clean_filename($USER->firstname . " " . $USER->lastname);
+            }
+            if (\core\session\manager::is_loggedinas()) {
+                $realuser = \core\session\manager::get_realuser();
+                $logusername = clean_filename($realuser->username." as ".$logusername);
+                $logname = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$logname);
+                $loguserid = clean_filename($realuser->id." as ".$loguserid);
+            }
+            switch ($logvalue) {
+                case 3:
+                    $logname = $logusername;
+                    break;
+                case 2:
+                    $logname = $logname;
+                    break;
+                case 1:
+                default:
+                    $logname = $loguserid;
+                    break;
+            }
+            if ($logmethod == 'apache') {
+                apache_note('MOODLEUSER', $logname);
+            }
+
+            if ($logmethod == 'header') {
+                header("X-MOODLEUSER: $logname");
+            }
+        }
+    }
+}
+
+/**
  * This class solves the problem of how to initialise $OUTPUT.
  *
  * The problem is caused be two factors
