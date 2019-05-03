@@ -2703,6 +2703,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
                         $modinfo = get_fast_modinfo($course);
                         $cm = $modinfo->get_cm($cm->id);
                     }
+                    set_access_log_user();
                     break;
                 }
             }
