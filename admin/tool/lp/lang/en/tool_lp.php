@@ -107,6 +107,7 @@ $string['editthisuserevidence'] = 'Edit this evidence';
 $string['edituserevidence'] = 'Edit evidence';
 $string['evidence'] = 'Evidence';
 $string['findcourses'] = 'Find courses';
+$string['filterbyactivity'] = 'Filter competencies by resource or activity';
 $string['frameworkcannotbedeleted'] = 'The competency framework \'{$a}\' cannot be deleted';
 $string['hidden'] = 'Hidden';
 $string['hiddenhint'] = '(hidden)';

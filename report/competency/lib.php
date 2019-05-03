@@ -44,3 +44,22 @@ function report_competency_extend_navigation_course($navigation, $course, $conte
         $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }
+
+/**
+ * This function extends the navigation with the report items
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param cminfo $cm The course module.
+ */
+function report_competency_extend_navigation_module($navigation, $cm) {
+    if (!get_config('core_competency', 'enabled')) {
+        return;
+    }
+
+    if (has_any_capability(array('moodle/competency:usercompetencyview', 'moodle/competency:coursecompetencymanage'),
+            context_course::instance($cm->course))) {
+        $url = new moodle_url('/report/competency/index.php', array('id' => $cm->course, 'mod' => $cm->id));
+        $name = get_string('pluginname', 'report_competency');
+        $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null);
+    }
+}
