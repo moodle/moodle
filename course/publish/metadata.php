@@ -46,7 +46,7 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 
-$context = context_course::instance($courseid);
+$context = context_course::instance($course->id);
 if (empty($CFG->enablecoursepublishing) || !has_capability('moodle/course:publish', $context)) {
     throw new moodle_exception('nopermission');
 }
