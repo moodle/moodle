@@ -821,7 +821,7 @@ if ($mformpost->is_cancelled()) {
         }
 
         // When editing first post/discussion.
-        if ($postentity->has_parent()) {
+        if (!$postentity->has_parent()) {
             if ($capabilitymanager->can_pin_discussions($USER)) {
                 // Can change pinned if we have capability.
                 $fromform->pinned = !empty($fromform->pinned) ? FORUM_DISCUSSION_PINNED : FORUM_DISCUSSION_UNPINNED;
@@ -961,12 +961,11 @@ if ($mformpost->is_cancelled()) {
         if ($forum->type == 'news' && !$fromform->parent) {
             $newstopic = true;
         }
-        $discussion->timestart = $fromform->timestart;
-        $discussion->timeend = $fromform->timeend;
-        $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
 
         if (!empty($fromform->pinned) && $capabilitymanager->can_pin_discussions($USER)) {
             $discussion->pinned = FORUM_DISCUSSION_PINNED;
+        } else {
+            $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
         }
 
         $allowedgroups = array();
