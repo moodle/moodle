@@ -43,8 +43,11 @@ require_once(__DIR__ . '/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_testcase extends advanced_testcase {
+    /** @var question_definition a question that can be used in the tests. */
     private $question;
+    /** @var int fake question_usage id used in some tests. */
     private $usageid;
+    /** @var question_attempt a question attempt that can be used in the tests. */
     private $qa;
 
     protected function setUp() {
