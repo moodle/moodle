@@ -19,7 +19,7 @@
     "stylelint": "8.0.0",
     "stylelint-checkstyle-formatter": "0.1.0",
     "stylelint-csstree-validator": "1.1.1",
-    "xmldom": "0.1.22",
+    "xmldom": "^0.1.22",
     "xpath": "0.0.23"
   },
   "engines": {

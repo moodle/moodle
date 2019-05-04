@@ -52,12 +52,13 @@ $courses = $companypaths->get_courselist($id);
 $categories = $companypaths->get_categories($id);
 $companypaths->check_group($id);
 $groups = $companypaths->get_display_courselist($id);
+$programlicenses = $companypaths->get_programlicenses($id);
 
 // Javascript initialise
 $PAGE->requires->js_call_amd('local_iomad_learningpath/courselist', 'init', [$companyid, $id]);
 
 // Get renderer for page (and pass data).
-$courselist_page = new local_iomad_learningpath\output\courselist_page($context, $path, $groups, $categories);
+$courselist_page = new local_iomad_learningpath\output\courselist_page($context, $path, $groups, $categories, $programlicenses);
 
 echo $OUTPUT->header();
 

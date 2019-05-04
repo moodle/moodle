@@ -633,7 +633,7 @@ class company {
 
         $sql = " SELECT u.id, u.id AS mid
                 FROM
-	                {company_users} cu
+                    {company_users} cu
                     INNER JOIN {user} u ON (cu.userid = u.id)
                 WHERE u.deleted = 0
                       AND cu.managertype = 0";
@@ -659,7 +659,7 @@ class company {
 
         $sql = " SELECT u.id, u.id AS mid
                 FROM
-	                {company_users} cu
+                    {company_users} cu
                     INNER JOIN {user} u ON (cu.userid = u.id)
                 WHERE u.deleted = 0
                 AND cu.companyid = :companyid";
@@ -912,9 +912,7 @@ class company {
 
             // Deal with any management role changes.
             if ($managertype != 0) {
-echo "C</br>";
                 if ($managertype == 1) {
-echo "D</br>";
                     // Give them the department manager role.
                     role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
                     role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
@@ -945,7 +943,6 @@ echo "D</br>";
                         }
                     }
                 } else if ($managertype == 2) {
-echo "E</br>";
                     // Give them the department manager role.
                     role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
                     role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
@@ -965,7 +962,6 @@ echo "E</br>";
                         }
                     }
                 } else if ($managertype == 3 && !$CFG->iomad_autoenrol_managers) {
-echo "F</br>";
                     // Deal with company course roles.
                     if ($CFG->iomad_autoenrol_managers && $companycourses = $DB->get_records('company_course',
                          array('companyid' => $companyid))) {
@@ -999,7 +995,6 @@ echo "F</br>";
                         }
                     }
                 } else if ($managertype == 4 ) {
-echo "G</br>";
                     // Give them the department manager role.
                     role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
                     role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
@@ -1020,7 +1015,6 @@ echo "G</br>";
                     }
                 }
                 if ($managertype == 1 || $user->managertype == 1) {
-echo "H</br>";
                     // Deal with child companies.
                     foreach ($company->get_child_companies_recursive() as $childcompany) {
                         // get the top level department of the child company.
@@ -2346,6 +2340,58 @@ echo "H</br>";
         return array('0' => get_string('noselection', 'form')) + $retgroups;
     }
 
+    /**
+     * Check if a user can use a license to access a course..
+     *
+     * Parameters -
+     *              $licenseid = int;
+     *              $courseid = int;
+     *              $userid = int;
+     *
+     **/
+    public static function license_ok_to_use($licenseid, $courseid, $userid) {
+        global $DB, $CFG;
+
+        // Check if the course is associated to any learning path.
+        if (!$DB->get_records('iomad_learningpathcourse', array('courseid' => $courseid))) {
+            return true;
+        }
+
+        // Check if the license is associated to a learning path.
+        if (!$learningpath = $DB->get_record_sql("SELECT lp.* FROM {iomad_learningpath} lp
+                                                  JOIN {iomad_learningpathuser} lpu ON (lp.id = lpu.pathid)
+                                                  WHERE lp.licenseid = :licenseid
+                                                  AND lpu.userid = :userid",
+                                                  array('licenseid' => $licenseid, 'userid' => $userid))) {
+            return true;
+        }
+
+        // Check if the group is sequenced.
+        if (!$groupinfo = $DB->get_record_sql("SELECT lpc.* FROM {iomad_learninpathcourse}
+                                 JOIN {iomad_learningpathgroup} lpg ON (lpc.groupid = lpg.id)
+                                 WHERE lpc.courseid = :courseid
+                                 AND lpc.path = :path
+                                 AND lpg.sequence = 1",
+                                 array('courseid' => $courseid, 'path' => $learningpath->id))) {
+            return true;
+        }
+
+        // Check if the user has met all the conditions.
+        $groupcourses = $DB->get_records('iomad_learningpathcourse', array('groupid' => $groupinfo->groupid), 'sequence ASC');
+        foreach ($groupcourses as $groupcourse) {
+            // Is this the next course?
+            if ($groupcourse->courseid == $courseid) {
+                return true;
+            }
+            // If not, is it completed?
+            if ($DB->get_record('local_iomad_track', array('userid' => $userid, 'courseid' => $courseid, 'licenseid' => $licenseid, 'timecompleted' => null))) {
+                return false;
+            }
+        }
+        // Default return true.
+        return true;
+    }
+
     // Shared course stuff.
 
     /**
@@ -3643,53 +3689,55 @@ echo "H</br>";
 
         // Is this an immediate license?
         if (!empty($licenserecord->instant)) {
-            if ($instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'license'))) {
-                // Enrol the user on the course.
-                $enrol = enrol_get_plugin('license');
+            if (self::license_ok_to_use($licenseid, $courseid, $userid)) {
+                if ($instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'license'))) {
+                    // Enrol the user on the course.
+                    $enrol = enrol_get_plugin('license');
 
-                // Enrol the user in the course.
-                // Is the license available yet?
-                if (!empty($licenserecord->startdate) && $licenserecord->startdate > time()) {
-                    // If not set up the enrolment from when it is.
-                    $timestart = $licenserecord->startdate;
-                } else {
-                    // Otherwise start it now.
-                    $timestart = time();
-                }
-
-                if ($licenserecord->type == 0 || $licenserecord->type == 2) {
-                    // Set the timeend to be time start + the valid length for the license in days.
-                    $timeend = $timestart + ($licenserecord->validlength * 24 * 60 * 60 );
-                } else {
-                    // Set the timeend to be when the license runs out.
-                    $timeend = $licenserecord->expirydate;
-                }
-
-                if ($licenserecord->type < 2) {
-                    $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
-                } else {
-                    // Educator role.
-                    if ($DB->get_record('iomad_courses', array('courseid' => $course->id, 'shared' => 0))) {
-                        // Not shared.
-                        $role = $DB->get_record('role', array('shortname' => 'companycourseeditor'));
+                    // Enrol the user in the course.
+                    // Is the license available yet?
+                    if (!empty($licenserecord->startdate) && $licenserecord->startdate > time()) {
+                        // If not set up the enrolment from when it is.
+                        $timestart = $licenserecord->startdate;
                     } else {
-                        // Shared.
-                        $role = $DB->get_record('role', array('shortname' => 'companycoursenoneditor'));
+                        // Otherwise start it now.
+                        $timestart = time();
                     }
-                    $enrol->enrol_user($instance, $user->id, $role->id, $timestart, $timeend);
-                }
 
-                // Get the userlicense record.
-                $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
+                    if ($licenserecord->type == 0 || $licenserecord->type == 2) {
+                        // Set the timeend to be time start + the valid length for the license in days.
+                        $timeend = $timestart + ($licenserecord->validlength * 24 * 60 * 60 );
+                    } else {
+                        // Set the timeend to be when the license runs out.
+                        $timeend = $licenserecord->expirydate;
+                    }
 
-                // Add the user to the appropriate course group.
-                if (!empty($course->groupmode)) {
+                    if ($licenserecord->type < 2) {
+                        $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
+                    } else {
+                        // Educator role.
+                        if ($DB->get_record('iomad_courses', array('courseid' => $course->id, 'shared' => 0))) {
+                            // Not shared.
+                            $role = $DB->get_record('role', array('shortname' => 'companycourseeditor'));
+                        } else {
+                            // Shared.
+                            $role = $DB->get_record('role', array('shortname' => 'companycoursenoneditor'));
+                        }
+                        $enrol->enrol_user($instance, $user->id, $role->id, $timestart, $timeend);
+                    }
+
+                    // Get the userlicense record.
                     $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
-                    self::add_user_to_shared_course($instance->courseid, $user->id, $licenserecord->companyid, $userlicense->groupid);
-                }
 
-                // Update the userlicense record to mark it as in use.
-                $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
+                    // Add the user to the appropriate course group.
+                    if (!empty($course->groupmode)) {
+                        $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
+                        self::add_user_to_shared_course($instance->courseid, $user->id, $licenserecord->companyid, $userlicense->groupid);
+                    }
+
+                    // Update the userlicense record to mark it as in use.
+                    $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
+                }
             }
         }
 

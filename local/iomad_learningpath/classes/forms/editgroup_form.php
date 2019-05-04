@@ -53,6 +53,7 @@ class editgroup_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
         $mform->addHelpButton('name', 'groupname', 'local_iomad_learningpath');
         $mform->addRule('name', get_string('required'), 'required');
+        $mform->addElement('selectyesno', 'sequence', get_string('sequential', 'local_iomad_learningpath'));
 
         // Buttons
         $this->add_action_buttons();

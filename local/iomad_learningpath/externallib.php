@@ -100,6 +100,7 @@ class local_iomad_learningpath_external extends external_api {
                 'pathid' => new external_value(PARAM_INT, 'ID of (target) learning path'),
                 'filter' => new external_value(PARAM_TEXT, 'Filter course list returned', VALUE_DEFAULT, ''),
                 'category' => new external_value(PARAM_INT, 'Show only courses in this category (and children)', VALUE_DEFAULT, 0),
+                'program' => new external_value(PARAM_INT, 'Show only courses assigned to this program license', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -129,12 +130,12 @@ class local_iomad_learningpath_external extends external_api {
      * @param array $excludeids
      * @throws invalid_parameter_exception
      */
-    public static function getprospectivecourses($pathid, $filter = '', $category = 0) {
+    public static function getprospectivecourses($pathid, $filter = '', $category = 0, $program = 0) {
         global $DB;
 
         // Validate params
         $params = self::validate_parameters(self::getprospectivecourses_parameters(),
-            ['pathid' => $pathid, 'filter' => $filter, 'category' => $category]);
+            ['pathid' => $pathid, 'filter' => $filter, 'category' => $category, 'program' => $program]);
 
         // Find learning path and company
         $path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']], '*', MUST_EXIST);
@@ -146,9 +147,14 @@ class local_iomad_learningpath_external extends external_api {
         self::validate_context($context);
         iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
 
-        // Get full list of prospective courses
+        // Set up the company path object.
         $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
-        $courses = $companypaths->get_prospective_courses($params['pathid'], $params['filter'], $params['category']);
+
+        // Update the path licenseid.
+        $companypaths->assign_license_to_plan($pathid, $program);
+
+        // Get full list of prospective courses
+        $courses = $companypaths->get_prospective_courses($params['pathid'], $params['filter'], $params['category'], $params['program']);
 
         // Just the bits we need
         $pcs = [];

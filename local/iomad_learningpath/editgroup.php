@@ -74,6 +74,7 @@ if ($form->is_cancelled()) {
 
 } else if ($data = $form->get_data()) {
     $group->name = $data->name;
+    $group->sequence = $data->sequence;
     if ($id == 0) {
         $id = $DB->insert_record('iomad_learningpathgroup', $group);
     } else {

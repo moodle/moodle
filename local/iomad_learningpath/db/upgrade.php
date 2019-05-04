@@ -77,5 +77,20 @@ function xmldb_local_iomad_learningpath_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018043001, 'local', 'iomad_learningpath');
     }
 
+    if ($oldversion < 2019040500) {
+
+        // Define field licenseid to be added to iomad_learningpath.
+        $table = new xmldb_table('iomad_learningpath');
+        $field = new xmldb_field('licenseid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'timeupdated');
+
+        // Conditionally launch add field licenseid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad_learningpath savepoint reached.
+        upgrade_plugin_savepoint(true, 2019040500, 'local', 'iomad_learningpath');
+    }
+
     return $result;
 }

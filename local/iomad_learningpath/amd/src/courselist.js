@@ -39,6 +39,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                     wwwroot: mdlcfg.wwwroot,
                     prospective: true
                 };
+//window.alert("template prospective list()");
+
                 templates.render('local_iomad_learningpath/prospectivelist', context)
                     .done(function(html) {
                         $('#prospectivelist').append(html);
@@ -55,18 +57,26 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
 
                 var filter = $('#coursefilter').val();
                 var category = $('#category').val();
+                var program = $('#program').val();
+
+//window.alert("course_list()");
+//window.alert(program);
+
 
                 // Ajax stuff to get list
                 // call the web service
                 ajax.call([{
                     methodname: 'local_iomad_learningpath_getprospectivecourses',
-                    args: {pathid: pathid, filter: filter, category: category},
+                    args: {pathid: pathid, filter: filter, category: category, program: program},
                     done: function(courses) {
+/*window.alert("apply_filter()");
+window.alert(program);
+*/
                         apply_filter(courses);
                     },
                     fail: notification.exception,
                 }]);
-
+//window.alert("course_list() complete");
             }
 
 
@@ -74,6 +84,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
              * Bind events for course_list function
              */
             $(window).on('load', course_list());
+            $('#program').on('change', function() {
+                course_list();
+                pathcourse_list();
+            });
             $('#coursefilter').on('input', function() {
                 course_list();
             });
@@ -119,6 +133,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                     wwwroot: mdlcfg.wwwroot,
                     prospective: false
                 };
+//window.alert("template apply pathcourses");
+
                 templates.render('local_iomad_learningpath/pathcourselist', context)
                     .done(function(html) {
                         $(pcl).append(html);
@@ -133,6 +149,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
              */
             function pathcourse_list() {
 
+//window.alert("pathcourse_list()");
+
                 // Ajax stuff to get list
                 // call the web service
                 $(".pathcourselist").each(function() {
@@ -142,6 +160,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                         methodname: 'local_iomad_learningpath_getcourses',
                         args: {pathid: pathid, groupid: groupid},
                         done: function(courses) {
+//window.alert("apply_pathcourses()");
                             apply_pathcourses(pcl, courses);
                         },
                         fail: notification.exception,

@@ -211,5 +211,3 @@ function mycourses_get_my_archive($dateto = 0) {
 
     return $mycompletions;
 }
-
-

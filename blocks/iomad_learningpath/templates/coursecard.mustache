@@ -1,10 +1,14 @@
-
     <div class="card">
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-8">
                 <div class="card-block p-b-0">
-                    <p class="coursetitle m-b-0"><strong>{{ fullname }}</strong></p>
+                    {{# available}}
+                        <p class="coursetitle m-b-0"><strong>{{ fullname }}</strong></p>
+                    {{/ available}}
+                    {{^ available}}
+                        <p class="coursetitle m-b-0"><dimmed>{{ fullname }}</dimmed></p>
+                    {{/ available}}
                 </div>
             </div>
         </div>
@@ -12,7 +16,9 @@
             <div class="col-md-4 my-auto">
                 <div class="card-block">
                     <img class="img-responsive my-auto" src="{{{ imageurl }}}" />
-                    <p class="card-text p-t-1"><a href="{{ link }}" class="btn btn-primary" data-id="{{ id }}">{{# str }}entercourse, block_iomad_learningpath{{/ str }}</a></p>
+                    {{# available}}
+                        <p class="card-text p-t-1"><a href="{{ link }}" class="btn btn-primary" data-id="{{ id }}">{{# str }}entercourse, block_iomad_learningpath{{/ str }}</a></p>
+                    {{/ available}}
                 </div>
             </div>
             <div class="col-md-8 px-3">
@@ -25,7 +31,12 @@
                         </div>
                     {{/ hasprogress }}
                     {{^ hasprogress }}
-                        <div class="alert alert-warning">{{# str }}nocompletion, block_iomad_learningpath{{/ str }}</div>
+                        {{# available}}
+                            <div class="alert alert-warning">{{# str }}nocompletion, block_iomad_learningpath{{/ str }}</div>
+                        {{/ available}}
+                        {{^ available}}
+                            <p class="card-text p-t-1 alert alert-warning">{{# str }}coursedepends, block_iomad_learningpath, {{ prerequisite }}{{/ str }}</p>
+                        {{/ available}}
                     {{/ hasprogress }} 
                 </div>
             </div>

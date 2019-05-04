@@ -219,6 +219,11 @@ class enrol_license_plugin extends enrol_plugin {
             return $OUTPUT->notification(get_string('licensenotyetvalid', 'enrol_license', date($CFG->iomad_date_format, $license->startdate)));
         }
 
+        // Check if the user is using a learning path for the license.
+        if (!company::license_ok_to_use($license-id, $instance->courseid, $USER->id)) {
+            return $OUTPUT->notification(get_string('coursenotavailableyet', 'enrol_license', date($CFG->iomad_date_format, $license->startdate)));
+        }
+
         require_once("$CFG->dirroot/enrol/license/locallib.php");
         require_once("$CFG->dirroot/group/lib.php");
 

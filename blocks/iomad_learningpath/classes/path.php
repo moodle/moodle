@@ -42,7 +42,7 @@ class path {
      * @param int $pathid
      * @return [array, int/null]
      */
-    public function get_courselist($pathid, $groupid) {
+    public function get_courselist($pathid, $groupid, $sequenced = false) {
         global $DB;
 
         // Calculate overall progress for group
@@ -56,6 +56,9 @@ class path {
             ORDER BY lpc.sequence';
         $courses = $DB->get_records_sql($sql, ['pathid' => $pathid, 'groupid' => $groupid]);
 
+        // Handle sequencing if required.
+        $first = true;
+
         // Spot of processing
         foreach ($courses as $course) {
             $course->link = new \moodle_url('/course/view.php', ['id' => $course->courseid]);
@@ -65,11 +68,30 @@ class path {
             $course->hasprogress = $progress !== null;
             $course->progresspercent = $course->hasprogress ? $progress : 0;
 
+            // Deal with sequencing if we have to.
+            if ($first || !$sequenced) {
+                $course->available = true;
+            }
+            if ($sequenced && !$first) {
+                if (!empty($previouscourse->hasprogress) && $previouscourse->progresspercent == 100) {
+                    $course->available = true;
+                } else {
+                    $course->available = false;
+                    $course->prerequisite = $previouscourse->fullname;
+                }
+            }
+
             // Count progress for any courses that actually have some.
             // Ones that don't will be ignored.
             if ($course->hasprogress) {
                 $cumulativeprogress += $course->progresspercent;
                 $completioncoursecount++;
+            }
+
+            // Stash the previous course in case we need it.
+            if ($sequenced) {
+                $previouscourse = clone($course);
+                $first = false;
             }
         }
 
@@ -97,7 +119,7 @@ class path {
 
         $groups = $DB->get_records('iomad_learningpathgroup', ['learningpath' => $pathid]);
         foreach ($groups as $group) {
-            list($courses, $progress) = $this->get_courselist($pathid, $group->id);
+            list($courses, $progress) = $this->get_courselist($pathid, $group->id, $group->sequence);
             $group->progress = $progress !== null ? $progress : 0;
             $group->courses = array_values($courses);
             if ($progress !== null) {
