@@ -55,10 +55,10 @@ class discussion_summary extends exporter {
     /** @var int The latest post id in the discussion */
     private $latestpostid;
 
-    /** @var int The context id for the author of the first post */
+    /** @var int|null The context id for the author of the first post */
     private $firstpostauthorcontextid;
 
-    /** @var int The context id for the author of the latest post */
+    /** @var int|null The context id for the author of the latest post */
     private $latestpostauthorcontextid;
 
     /**
@@ -70,8 +70,8 @@ class discussion_summary extends exporter {
      * @param int $replycount The number of replies to the discussion
      * @param int $unreadcount number of unread posts if the user is tracking these
      * @param int $latestpostid The latest post id in the discussion
-     * @param int $firstpostauthorcontextid The context id for the author of the first post
-     * @param int $latestpostauthorcontextid The context id for the author of the latest post
+     * @param int|null $firstpostauthorcontextid The context id for the author of the first post
+     * @param int|null $latestpostauthorcontextid The context id for the author of the latest post
      * @param array $related The related objects
      */
     public function __construct(
@@ -81,8 +81,8 @@ class discussion_summary extends exporter {
         int $replycount,
         int $unreadcount,
         int $latestpostid,
-        int $firstpostauthorcontextid,
-        int $latestpostauthorcontextid,
+        ?int $firstpostauthorcontextid,
+        ?int $latestpostauthorcontextid,
         array $related = []
     ) {
         $this->summary = $summary;

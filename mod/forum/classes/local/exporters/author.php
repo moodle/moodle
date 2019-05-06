@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
 class author extends exporter {
     /** @var author_entity $author Author entity */
     private $author;
-    /** @var int $authorcontextid The context id for the author entity */
+    /** @var int|null $authorcontextid The context id for the author entity */
     private $authorcontextid;
     /** @var array $authorgroups List of groups that the author belongs to */
     private $authorgroups;
@@ -53,14 +53,14 @@ class author extends exporter {
      * Constructor.
      *
      * @param author_entity $author The author entity to export
-     * @param int $authorcontextid The context id for the author entity to export
+     * @param int|null $authorcontextid The context id for the author entity to export (null if the user doesn't have one)
      * @param stdClass[] $authorgroups The list of groups that the author belongs to
      * @param bool $canview Can the requesting user view this author or should it be anonymised?
      * @param array $related The related data for the export.
      */
     public function __construct(
         author_entity $author,
-        int $authorcontextid,
+        ?int $authorcontextid,
         array $authorgroups = [],
         bool $canview = true,
         array $related = []
