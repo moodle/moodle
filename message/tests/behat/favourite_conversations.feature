@@ -29,34 +29,36 @@ Feature: Star and unstar conversations
   Scenario: Star a group conversation
     Given I log in as "student1"
     Then I open messaging
+    And I open the "Group" conversations list
     And "Group 1" "group_message" should exist
     And I select "Group 1" conversation in messaging
     And I open contact menu
     And I click on "Star" "link" in the "//div[@data-region='header-container']" "xpath_element"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
-    And I should see "Group 1" in the "//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I should see "Group 1" in the "favourites" "group_message_list_area"
     And I open the "Group" conversations list
-    And I should not see "Group 1" in the "//div[@data-region='view-overview-group-messages']" "xpath_element"
+    And I should not see "Group 1" in the "group-messages" "group_message_list_area"
 
   Scenario: Unstar a group conversation
     Given I log in as "student1"
     Then I open messaging
+    And I open the "Group" conversations list
     And "Group 1" "group_message" should exist
     And I select "Group 1" conversation in messaging
     And I open contact menu
     And I click on "Star" "link" in the "//div[@data-region='header-container']" "xpath_element"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
-    And I should see "Group 1" in the "//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I should see "Group 1" in the "favourites" "group_message_list_area"
     And I select "Group 1" conversation in messaging
     And I open contact menu
     And I click on "Unstar" "link" in the "//div[@data-region='header-container']" "xpath_element"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
-    And I should not see "Group 1" in the "//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I should not see "Group 1" in the "favourites" "group_message_list_area"
     And I open the "Group" conversations list
-    And I should see "Group 1" in the "//div[@data-region='view-overview-group-messages']" "xpath_element"
+    And I should see "Group 1" in the "group-messages" "group_message_list_area"
 
   Scenario: Star a private conversation
     Given the following "private messages" exist:
@@ -71,9 +73,9 @@ Feature: Star and unstar conversations
     And I click on "Star" "link" in the "//div[@data-region='header-container']" "xpath_element"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
-    And I should see "Student 2" in the "//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I should see "Student 2" in the "favourites" "group_message_list_area"
     And I open the "Private" conversations list
-    And I should not see "Student 2" in the "//div[@data-region='view-overview-messages']" "xpath_element"
+    And I should not see "Student 2" in the "messages" "group_message_list_area"
 
   Scenario: Unstar a private conversation
     Given the following "private messages" exist:
@@ -84,12 +86,12 @@ Feature: Star and unstar conversations
       | student1 | student2 |
     Then I log in as "student1"
     And I open messaging
-    And I should see "Student 2" in the "//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I should see "Student 2" in the "favourites" "group_message_list_area"
     And I select "Student 2" conversation in messaging
     And I open contact menu
     And I click on "Unstar" "link" in the "//div[@data-region='header-container']" "xpath_element"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
-    And I should not see "Group 1" in the "//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I should not see "Group 1" in the "favourites" "group_message_list_area"
     And I open the "Private" conversations list
-    And I should see "Student 2" in the "//div[@data-region='view-overview-messages']" "xpath_element"
+    And I should see "Student 2" in the "messages" "group_message_list_area"

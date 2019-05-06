@@ -116,8 +116,8 @@ Feature: Message delete conversations
     And I should not see "Delete"
     And I should not see "Hi!" in the "Student 2" "group_message_conversation"
     And I go back in "view-conversation" message drawer
-    And I should not see "Student 2" in the "//*[@data-region='message-drawer']//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I should not see "Student 2" in the "favourites" "group_message_list_area"
     And I send "Hi!" message to "Student 2" user
     And I go back in "view-conversation" message drawer
     And I go back in "view-search" message drawer
-    And I should see "Student 2" in the "//*[@data-region='message-drawer']//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I should see "Student 2" in the "favourites" "group_message_list_area"
