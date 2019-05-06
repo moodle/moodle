@@ -721,6 +721,24 @@ class mod_quiz_structure_testcase extends advanced_testcase {
     }
 
     /**
+     * Unit test to make sue it is not possible to remove all slots in a section at once.
+     *
+     * @expectedException coding_exception
+     */
+    public function test_cannot_remove_all_slots_in_a_section() {
+        $quizobj = $this->create_test_quiz(array(
+            array('TF1', 1, 'truefalse'),
+            array('TF2', 1, 'truefalse'),
+            'Heading 2',
+            array('TF3', 2, 'truefalse'),
+        ));
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        $structure->remove_slot(1);
+        $structure->remove_slot(2);
+    }
+
+    /**
      * @expectedException coding_exception
      */
     public function test_cannot_remove_last_slot_in_a_section() {
