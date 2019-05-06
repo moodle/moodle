@@ -577,17 +577,13 @@ class block_base {
      * @return boolean
      */
     function user_can_addto($page) {
-        global $USER;
-
         // List of formats this block supports.
         $formats = $this->applicable_formats();
 
         // The blocks in My Moodle are a special case and use a different capability.
-        if (!empty($USER->id)
-            && $page->context->contextlevel == CONTEXT_USER // Page belongs to a user
-            && $page->context->instanceid == $USER->id // Page belongs to this user
-            && $page->pagetype == 'my-index') { // Ensure we are on the My Moodle page
+        $mypagetypes = my_page_type_list($page->pagetype); // Get list of possible my page types.
 
+        if (array_key_exists($page->pagetype, $mypagetypes)) { // Ensure we are on a page with a my page type.
             // If the block cannot be displayed on /my it is ok if the myaddinstance capability is not defined.
             // Is 'my' explicitly forbidden?
             // If 'all' has not been allowed, has 'my' been explicitly allowed?
