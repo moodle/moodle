@@ -3056,5 +3056,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018120303.05);
     }
 
+    if ($oldversion < 2018120303.16) {
+        // Delete all stale favourite records which were left behind when a course was deleted.
+        $select = 'id IN (
+            SELECT fav.id as id
+              FROM {favourite} fav
+         LEFT JOIN {context} ctx ON (ctx.id = fav.contextid)
+             WHERE fav.component = :component
+               AND fav.itemtype = :itemtype
+               AND ctx.id IS NULL
+               )';
+        $params = ['component' => 'core_message', 'itemtype' => 'message_conversations'];
+        $DB->delete_records_select('favourite', $select, $params);
+
+        upgrade_main_savepoint(true, 2018120303.16);
+    }
+
     return true;
 }

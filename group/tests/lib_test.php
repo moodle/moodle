@@ -372,6 +372,10 @@ class core_group_lib_testcase extends advanced_testcase {
         $g2m3 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation2->id);
         $g2m4 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation2->id);
 
+        // Favourite the conversation for several of the users.
+        \core_message\api::set_favourite_conversation($groupconversation1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($groupconversation1->id, $user2->id);
+
         // Delete a few messages.
         \core_message\api::delete_message($user1->id, $g1m1);
         \core_message\api::delete_message($user1->id, $g1m2);
@@ -407,6 +411,14 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m2]));
         $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m3]));
         $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m4]));
+
+        // Confirm favourites were deleted for both users.
+        $user1service = \core_favourites\service_factory::get_service_for_user_context(context_user::instance($user1->id));
+        $this->assertFalse($user1service->favourite_exists('core_message', 'message_conversations', $groupconversation1->id,
+            $coursecontext1));
+        $user2service = \core_favourites\service_factory::get_service_for_user_context(context_user::instance($user1->id));
+        $this->assertFalse($user2service->favourite_exists('core_message', 'message_conversations', $groupconversation1->id,
+            $coursecontext1));
     }
 
     public function test_groups_delete_group_members() {
