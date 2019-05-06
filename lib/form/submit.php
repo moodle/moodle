@@ -112,7 +112,7 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
                     $onClick = $this->getAttribute('onclick');
                     $skip = 'skipClientValidation = true;';
                     $onClick = ($onClick !== null)?$skip.' '.$onClick:$skip;
-                    $this->updateAttributes(array('onclick'=>$onClick));
+                    $this->updateAttributes(array('data-skip-validation' => 1, 'data-no-submit' => 1, 'onclick' => $onClick));
                 }
                 return true;
                 break;
