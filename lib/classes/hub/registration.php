@@ -40,11 +40,11 @@ use html_writer;
  */
 class registration {
 
-    /** @var Fields used in a site registration form.
+    /** @var array Fields used in a site registration form.
      * IMPORTANT: any new fields with non-empty defaults have to be added to CONFIRM_NEW_FIELDS */
-    const FORM_FIELDS = ['name', 'description', 'contactname', 'contactemail', 'contactphone', 'imageurl', 'privacy', 'street',
-        'regioncode', 'countrycode', 'geolocation', 'contactable', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
-        'language', 'policyagreed'];
+    const FORM_FIELDS = ['policyagreed', 'language', 'countrycode', 'privacy',
+        'contactemail', 'contactable', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
+        'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode', 'geolocation', 'street'];
 
     /** @var List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
      * If site was already registered, admin will be promted to confirm new registration data manually. Until registration is manually confirmed,
@@ -397,8 +397,7 @@ class registration {
             self::$registration = null;
         }
 
-        $params = self::get_site_info();
-        $params['token'] = $hub->token;
+        $params = ['token' => $hub->token] + self::get_site_info();
 
         $SESSION->registrationredirect = $returnurl;
         redirect(new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/siteregistration.php', $params));
