@@ -188,6 +188,7 @@ class course_summary_exporter extends \core\external\exporter {
      * The datauri is an encoded svg that can be passed as a url.
      * @param object $course
      * @return string datauri
+     * @deprecated 3.7
      */
     public static function get_course_pattern($course) {
         global $OUTPUT;
@@ -211,6 +212,7 @@ class course_summary_exporter extends \core\external\exporter {
      *
      * @param int $courseid
      * @return string hex color code.
+     * @deprecated 3.7
      */
     public static function coursecolor($courseid) {
         global $OUTPUT;
