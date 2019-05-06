@@ -159,6 +159,9 @@ class core_message_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:sendmessage', $context);
 
+        // Ensure the current user is allowed to delete message for everyone.
+        $candeletemessagesforallusers = has_capability('moodle/site:deleteanymessage', $context);
+
         $params = self::validate_parameters(self::send_instant_messages_parameters(), array('messages' => $messages));
 
         //retrieve all tousers of the messages
@@ -205,6 +208,7 @@ class core_message_external extends external_api {
             if ($success) {
                 $resultmsg['msgid'] = $success;
                 $resultmsg['timecreated'] = time();
+                $resultmsg['candeletemessagesforallusers'] = $candeletemessagesforallusers;
                 $messageids[] = $success;
             } else {
                 // WARNINGS: for backward compatibility we return this errormessage.
@@ -257,6 +261,8 @@ class core_message_external extends external_api {
                     'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message', VALUE_OPTIONAL),
                     'conversationid' => new external_value(PARAM_INT, 'The conversation id for this message', VALUE_OPTIONAL),
                     'useridfrom' => new external_value(PARAM_INT, 'The user id who sent the message', VALUE_OPTIONAL),
+                    'candeletemessagesforallusers' => new external_value(PARAM_BOOL,
+                        'If the user can delete messages in the conversation for all users', VALUE_DEFAULT, false),
                 )
             )
         );
@@ -1260,6 +1266,8 @@ class core_message_external extends external_api {
                 'messages' => new external_multiple_structure(
                     self::get_conversation_message_structure()
                 ),
+                'candeletemessagesforallusers' => new external_value(PARAM_BOOL,
+                    'If the user can delete messages in the conversation for all users', VALUE_DEFAULT, false),
             )
         );
     }
@@ -4805,5 +4813,69 @@ class core_message_external extends external_api {
                 ),
             ]
         );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since 3.7
+     */
+    public static function delete_message_for_all_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'messageid' => new external_value(PARAM_INT, 'The message id'),
+                'userid' => new external_value(PARAM_INT, 'The user id of who we want to delete the message for all users')
+            )
+        );
+    }
+    /**
+     * Deletes a message for all users
+     *
+     * @param  int $messageid the message id
+     * @param  int $userid the user id of who we want to delete the message for all users
+     * @return external_description
+     * @throws moodle_exception
+     * @since 3.7
+     */
+    public static function delete_message_for_all_users(int $messageid, int $userid) {
+        global $CFG;
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Validate params.
+        $params = array(
+            'messageid' => $messageid,
+            'userid' => $userid
+        );
+        $params = self::validate_parameters(self::delete_message_for_all_users_parameters(), $params);
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        // Checks if a user can delete a message for all users.
+        if (core_message\api::can_delete_message_for_all_users($user->id, $params['messageid'])) {
+            \core_message\api::delete_message_for_all_users($params['messageid']);
+        } else {
+            throw new moodle_exception('You do not have permission to delete this message for everyone.');
+        }
+
+        return [];
+    }
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since 3.7
+     */
+    public static function delete_message_for_all_users_returns() {
+        return new external_warnings();
     }
 }

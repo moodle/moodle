@@ -61,6 +61,8 @@ define([], function() {
         CONTENT_MESSAGES_FOOTER_REQUIRE_UNBLOCK_CONTAINER: '[data-region="content-messages-footer-require-unblock-container"]',
         CONTENT_MESSAGES_FOOTER_UNABLE_TO_MESSAGE_CONTAINER: '[data-region="content-messages-footer-unable-to-message"]',
         DAY_MESSAGES_CONTAINER: '[data-region="day-messages-container"]',
+        DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE: '[data-region="delete-messages-for-all-users-toggle"]',
+        DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER: '[data-region="delete-messages-for-all-users-toggle-container"]',
         FAVOURITE_ICON_CONTAINER: '[data-region="favourite-icon-container"]',
         FOOTER_CONTAINER: '[data-region="content-messages-footer-container"]',
         HEADER: '[data-region="header-content"]',

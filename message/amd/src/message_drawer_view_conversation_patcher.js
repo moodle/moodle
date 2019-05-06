@@ -562,13 +562,22 @@ function(
      *
      * @param  {Object} state The current state.
      * @param  {Object} newState The new state.
-     * @return {int|Null} The conversation type of the messages to be deleted.
+     * @return {Object|Null} The conversation type and if the user can delete  the messages for all users.
      */
     var buildConfirmDeleteSelectedMessages = function(state, newState) {
-        if (newState.pendingDeleteMessageIds.length) {
-            return newState.type;
-        } else if (state.pendingDeleteMessageIds.length) {
-            return false;
+        var oldPendingCount = state.pendingDeleteMessageIds.length;
+        var newPendingCount = newState.pendingDeleteMessageIds.length;
+
+        if (newPendingCount && !oldPendingCount) {
+            return {
+                show: true,
+                type: newState.type,
+                canDeleteMessagesForAllUsers: newState.canDeleteMessagesForAllUsers
+            };
+        } else if (oldPendingCount && !newPendingCount) {
+            return {
+                show: false
+            };
         }
 
         return null;

@@ -431,7 +431,8 @@ define(
                         text: result.text,
                         timecreated: result.timecreated,
                         useridfrom: result.useridfrom,
-                        conversationid: result.conversationid
+                        conversationid: result.conversationid,
+                        candeletemessagesforallusers: result.candeletemessagesforallusers
                     };
                 });
             });
@@ -534,6 +535,25 @@ define(
         return $.when.apply(null, Ajax.call(messageIds.map(function(messageId) {
             return {
                 methodname: 'core_message_delete_message',
+                args: {
+                    messageid: messageId,
+                    userid: userId
+                }
+            };
+        })));
+    };
+
+    /**
+     * Delete a list of messages for all users.
+     *
+     * @param {int} userId The user to delete messages for
+     * @param {int[]} messageIds List of message ids to delete
+     * @return {object} jQuery promise
+     */
+    var deleteMessagesForAllUsers = function(userId, messageIds) {
+        return $.when.apply(null, Ajax.call(messageIds.map(function(messageId) {
+            return {
+                methodname: 'core_message_delete_message_for_all_users',
                 args: {
                     messageid: messageId,
                     userid: userId
@@ -1138,6 +1158,7 @@ define(
         savePreferences: savePreferences,
         getPreferences: getPreferences,
         deleteMessages: deleteMessages,
+        deleteMessagesForAllUsers: deleteMessagesForAllUsers,
         deleteConversation: deleteConversation,
         getContactRequests: getContactRequests,
         acceptContactRequest: acceptContactRequest,

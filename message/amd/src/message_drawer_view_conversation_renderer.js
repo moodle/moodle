@@ -1026,6 +1026,7 @@ function(
         var text = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_TEXT);
         var dialogueHeader = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_HEADER);
 
+        hideCheckDeleteDialogue(body);
         hideConfirmDialogueContainer(body);
         hideConfirmDialogueContainer(footer);
         hideConfirmDialogueContainer(header);
@@ -1143,20 +1144,25 @@ function(
      * @param {Object} header The header container element.
      * @param {Object} body The body container element.
      * @param {Object} footer The footer container element.
-     * @param {int|Null} type The messages conversation type to be removed.
+     * @param {Object} data If the dialogue should show and checkbox shows to delete message for all users.
      * @return {Object} jQuery promise
      */
-    var renderConfirmDeleteSelectedMessages = function(header, body, footer, type) {
+    var renderConfirmDeleteSelectedMessages = function(header, body, footer, data) {
         var showmessage = null;
-        if (type == CONVERSATION_TYPES.SELF) {
+        if (data.type == CONVERSATION_TYPES.SELF) {
             // Message displayed to self-conversations is slighly different.
             showmessage = 'deleteselectedmessagesconfirmselfconversation';
-        } else if (type) {
+        } else {
             // This other message should be displayed.
-            showmessage = 'deleteselectedmessagesconfirm';
+            if (data.canDeleteMessagesForAllUsers) {
+                showCheckDeleteDialogue(body);
+                showmessage = 'deleteforeveryoneselectedmessagesconfirm';
+            } else {
+                showmessage = 'deleteselectedmessagesconfirm';
+            }
         }
 
-        if (showmessage) {
+        if (data.show) {
             return Str.get_string(showmessage, 'core_message')
                 .then(function(string) {
                     return showConfirmDialogue(
@@ -1235,6 +1241,30 @@ function(
         } else {
             return hideConfirmDialogue(header, body, footer);
         }
+    };
+
+    /**
+     * Show the checkbox to allow delete message for all.
+     *
+     * @param {Object} body The body container element.
+     */
+    var showCheckDeleteDialogue = function(body) {
+        var dialogue = getConfirmDialogueContainer(body);
+        var checkboxRegion = dialogue.find(SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER);
+        checkboxRegion.removeClass('hidden');
+    };
+
+    /**
+     * Hide the checkbox to allow delete message for all.
+     *
+     * @param {Object} body The body container element.
+     */
+    var hideCheckDeleteDialogue = function(body) {
+        var dialogue = getConfirmDialogueContainer(body);
+        var checkboxRegion = dialogue.find(SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER);
+        var checkbox = dialogue.find(SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE);
+        checkbox.prop('checked', false);
+        checkboxRegion.addClass('hidden');
     };
 
     /**

@@ -6968,6 +6968,177 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Tests the user can delete message for all users as a teacher.
+     */
+    public function test_can_delete_message_for_all_users_teacher() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create fake data to test it.
+        list($teacher, $student1, $student2, $convgroup, $convindividual) = $this->create_delete_message_test_data();
+
+        // Allow Teacher can delete messages for all.
+        $editingteacher = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        assign_capability('moodle/site:deleteanymessage', CAP_ALLOW, $editingteacher->id, context_system::instance());
+
+        // Set as the first user.
+        $this->setUser($teacher);
+
+        // Send a message to private conversation and in a group conversation.
+        $messageidind = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convindividual->id);
+        $messageidgrp = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convgroup->id);
+
+        // Teacher cannot delete message for everyone in a private conversation.
+        $this->assertFalse(\core_message\api::can_delete_message_for_all_users($teacher->id, $messageidind));
+
+        // Teacher can delete message for everyone in a group conversation.
+        $this->assertTrue(\core_message\api::can_delete_message_for_all_users($teacher->id, $messageidgrp));
+    }
+
+    /**
+     * Tests the user can delete message for all users as a student.
+     */
+    public function test_can_delete_message_for_all_users_student() {
+        $this->resetAfterTest(true);
+
+        // Create fake data to test it.
+        list($teacher, $student1, $student2, $convgroup, $convindividual) = $this->create_delete_message_test_data();
+
+        // Set as the first user.
+        $this->setUser($student1);
+
+        // Send a message to private conversation and in a group conversation.
+        $messageidind = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convindividual->id);
+        $messageidgrp = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convgroup->id);
+
+        // Student1 cannot delete message for everyone in a private conversation.
+        $this->assertFalse(\core_message\api::can_delete_message_for_all_users($student1->id, $messageidind));
+
+        // Student1 cannot delete message for everyone in a group conversation.
+        $this->assertFalse(\core_message\api::can_delete_message_for_all_users($student1->id, $messageidgrp));
+    }
+
+    /**
+     * Tests tdelete message for all users in group conversation.
+     */
+    public function test_delete_message_for_all_users_group_conversation() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create fake data to test it.
+        list($teacher, $student1, $student2, $convgroup, $convindividual) = $this->create_delete_message_test_data();
+
+        // Send 3 messages to a group conversation.
+        $mgid1 = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convgroup->id);
+        $mgid2 = \core_message\tests\helper::send_fake_message_to_conversation($student1, $convgroup->id);
+        $mgid3 = \core_message\tests\helper::send_fake_message_to_conversation($student2, $convgroup->id);
+
+        // Delete message 1 for all users.
+        \core_message\api::delete_message_for_all_users($mgid1);
+
+        // Get the messages to check if the message 1 was deleted for teacher.
+        $convmessages1 = \core_message\api::get_conversation_messages($teacher->id, $convgroup->id);
+        // Only has to remains 2 messages.
+        $this->assertCount(2, $convmessages1['messages']);
+        // Check if no one of the two messages is message 1.
+        foreach ($convmessages1['messages'] as $message) {
+            $this->assertNotEquals($mgid1, $message->id);
+        }
+
+        // Get the messages to check if the message 1 was deleted for student1.
+        $convmessages2 = \core_message\api::get_conversation_messages($student1->id, $convgroup->id);
+        // Only has to remains 2 messages.
+        $this->assertCount(2, $convmessages2['messages']);
+        // Check if no one of the two messages is message 1.
+        foreach ($convmessages2['messages'] as $message) {
+            $this->assertNotEquals($mgid1, $message->id);
+        }
+
+        // Get the messages to check if the message 1 was deleted for student2.
+        $convmessages3 = \core_message\api::get_conversation_messages($student2->id, $convgroup->id);
+        // Only has to remains 2 messages.
+        $this->assertCount(2, $convmessages3['messages']);
+        // Check if no one of the two messages is message 1.
+        foreach ($convmessages3['messages'] as $message) {
+            $this->assertNotEquals($mgid1, $message->id);
+        }
+    }
+
+    /**
+     * Tests delete message for all users in private conversation.
+     */
+    public function test_delete_message_for_all_users_individual_conversation() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create fake data to test it.
+        list($teacher, $student1, $student2, $convgroup, $convindividual) = $this->create_delete_message_test_data();
+
+        // Send 2 messages in a individual conversation.
+        $mid1 = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convindividual->id);
+        $mid2 = \core_message\tests\helper::send_fake_message_to_conversation($student1, $convindividual->id);
+
+        // Delete the first message for all users.
+        \core_message\api::delete_message_for_all_users($mid1);
+
+        // Get the messages to check if the message 1 was deleted for teacher.
+        $convmessages1 = \core_message\api::get_conversation_messages($teacher->id, $convindividual->id);
+        // Only has to remains 1 messages for teacher.
+        $this->assertCount(1, $convmessages1['messages']);
+        // Check the one messages remains not is the first message.
+        $this->assertNotEquals($mid1, $convmessages1['messages'][0]->id);
+
+        // Get the messages to check if the message 1 was deleted for student1.
+        $convmessages2 = \core_message\api::get_conversation_messages($student1->id, $convindividual->id);
+        // Only has to remains 1 messages for student1.
+        $this->assertCount(1, $convmessages2['messages']);
+        // Check the one messages remains not is the first message.
+        $this->assertNotEquals($mid1, $convmessages2['messages'][0]->id);
+    }
+
+    /**
+     * Helper to seed the database with initial state with data.
+     */
+    protected function create_delete_message_test_data() {
+        // Create some users.
+        $teacher = self::getDataGenerator()->create_user();
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
+
+        // Create a course and enrol the users.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student');
+
+        // Create a group and added the users into.
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group1->id, $teacher->id);
+        groups_add_member($group1->id, $student1->id);
+        groups_add_member($group1->id, $student2->id);
+
+        // Create a group conversation linked with the course.
+        $convgroup = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$teacher->id, $student1->id, $student2->id],
+            'Group test delete for everyone', \core_message\api::MESSAGE_CONVERSATION_ENABLED,
+            'core_group',
+            'groups',
+            $group1->id,
+            context_course::instance($course->id)->id
+        );
+
+        // Create and individual conversation.
+        $convindividual = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$teacher->id, $student1->id]
+        );
+
+        return [$teacher, $student1, $student2, $convgroup, $convindividual];
+    }
+
+    /**
      * Comparison function for sorting contacts.
      *
      * @param stdClass $a
