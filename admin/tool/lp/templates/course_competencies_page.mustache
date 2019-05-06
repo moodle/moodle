@@ -130,7 +130,12 @@
 </table>
 {{^competencies}}
 <p class="alert alert-info">
-    {{#str}}nocompetenciesincourse, tool_lp{{/str}}
+    {{#moduleid}}
+        {{#str}}nocompetenciesinactivity, tool_lp{{/str}}
+    {{/moduleid}}
+    {{^moduleid}}
+        {{#str}}nocompetenciesincourse, tool_lp{{/str}}
+    {{/moduleid}}
 </p>
 {{/competencies}}
 </div>
