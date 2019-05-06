@@ -285,7 +285,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
     delete_multiple_action: function(ev) {
         var problemsection = this.find_sections_that_would_become_empty();
 
-        if (problemsection) {
+        if (typeof problemsection !== 'undefined') {
             var alert = new M.core.alert({
                 title: M.util.get_string('cannotremoveslots', 'quiz'),
                 message: M.util.get_string('cannotremoveallsectionslots', 'quiz', problemsection)
