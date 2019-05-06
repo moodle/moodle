@@ -33,10 +33,13 @@ define([], function() {
             forumCoreContent: "[data-region-content='forum-post-core']",
             forumContent: "[data-content='forum-post']",
             forumSubject: "[data-region-content='forum-post-core-subject']",
+            inpageReplyButton: "button",
             inpageReplyLink: "[data-action='collapsible-link']",
             inpageReplyContent: "[data-content='inpage-reply-content']",
             inpageReplyForm: "form[data-content='inpage-reply-form']",
             inpageSubmitBtn: "[data-action='forum-inpage-submit']",
+            inpageSubmitBtnText: "[data-region='submit-text']",
+            loadingIconContainer: "[data-region='loading-icon-container']",
             repliesContainer: "[data-region='replies-container']",
             modeSelect: "select[name='mode']"
         },

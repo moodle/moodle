@@ -46,12 +46,13 @@
             </div>
             <div class="row">
                 <button class="btn btn-primary" title="{{#str}} submit, core {{/str}}" data-action="forum-inpage-submit">
-                    {{#str}} submit, core {{/str}}
+                    <span data-region="submit-text">{{#str}} submit, core {{/str}}</span>
+                    <span data-region="loading-icon-container" class="hidden">{{> core/loading }}</span>
                 </button>
                 <button class="btn btn-secondary" title="{{#str}} cancel, core {{/str}}" data-action="collapsible-link">
                     {{#str}} cancel, core {{/str}}
                 </button>
-                <button title="{{#str}} advanced, forum {{/str}}" data-action="forum-advanced-reply" class="btn btn-link float-right" type="submit">
+                <button title="{{#str}} advanced, core {{/str}}" data-action="forum-advanced-reply" class="btn btn-link float-right" type="submit">
                     {{#str}} advanced, core {{/str}}
                 </button>
             </div>
