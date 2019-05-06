@@ -1272,8 +1272,9 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         global $USER;
 
         $this->resetAfterTest(true);
-
         $this->setAdminUser();
+        $timenow = time();
+
         $course = self::getDataGenerator()->create_course();
 
         $record = new stdClass();
@@ -1281,7 +1282,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // One resource with one file.
         $resource1 = self::getDataGenerator()->create_module('resource', $record);
 
-        $timenow = time();
         // More type of files.
         $record->files = file_get_unused_draft_itemid();
         $usercontext = context_user::instance($USER->id);
