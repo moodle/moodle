@@ -95,7 +95,7 @@ if ($totalcount) {
         echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
     }
 
-    $badges             = new badge_collection($records);
+    $badges             = new \core_badges\output\badge_collection($records);
     $badges->sort       = $sortby;
     $badges->dir        = $sorthow;
     $badges->page       = $page;

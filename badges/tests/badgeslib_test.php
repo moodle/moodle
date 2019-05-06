@@ -136,20 +136,21 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         // Format JSON-LD for Openbadge specification version 2.0.
         $this->assertion2 = new stdClass();
         $this->assertion2->badge = '{"recipient":{"identity":"%s","type":"email","hashed":true,"salt":"%s"},' .
-            '"badge":{"name":"%s","description":"%s","image":{"id":"%s","author":"%s","caption":"%s"},' .
+            '"badge":{"name":"%s","description":"%s","image":"%s",' .
             '"criteria":{"id":"%s","narrative":"%s"},"issuer":{"name":"%s","url":"%s","email":"%s",' .
             '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"Issuer"},' .
             '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"BadgeClass","version":"%s",' .
-            '"@language":"%s","related":[{"id":"%s","version":"%s","@language":"%s"}],"endorsement":"%s",' .
-            '"alignment":[{"targetName":"%s","targetUrl":"%s","targetDescription":"%s","targetFramework":"%s",' .
+            '"@language":"en","related":[{"id":"%s","version":"%s","@language":"%s"}],"endorsement":"%s",' .
+            '"alignments":[{"targetName":"%s","targetUrl":"%s","targetDescription":"%s","targetFramework":"%s",' .
             '"targetCode":"%s"}]},"verify":{"type":"hosted","url":"%s"},"issuedOn":"%s","evidence":"%s",' .
             '"@context":"https:\/\/w3id.org\/openbadges\/v2","type":"Assertion","id":"%s"}';
-        $this->assertion2->class = '{"name":"%s","description":"%s","image":{"id":"%s","author":"%s","caption":"%s"},' .
+
+        $this->assertion2->class = '{"name":"%s","description":"%s","image":"%s",' .
             '"criteria":{"id":"%s","narrative":"%s"},"issuer":{"name":"%s","url":"%s","email":"%s",' .
             '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"Issuer"},' .
             '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"BadgeClass","version":"%s",' .
             '"@language":"%s","related":[{"id":"%s","version":"%s","@language":"%s"}],"endorsement":"%s",' .
-            '"alignment":[{"targetName":"%s","targetUrl":"%s","targetDescription":"%s","targetFramework":"%s",' .
+            '"alignments":[{"targetName":"%s","targetUrl":"%s","targetDescription":"%s","targetFramework":"%s",' .
             '"targetCode":"%s"}]}';
         $this->assertion2->issuer = '{"name":"%s","url":"%s","email":"%s",' .
             '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"Issuer"}';

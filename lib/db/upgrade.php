@@ -3323,5 +3323,103 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019050300.01);
     }
 
+    if ($oldversion < 2019050600.00) {
+
+        // Define field apiversion to be added to badge_backpack.
+        $table = new xmldb_table('badge_backpack');
+        $field = new xmldb_field('apiversion', XMLDB_TYPE_CHAR, '12', null, XMLDB_NOTNULL, null, '1.0', 'password');
+
+        // Conditionally launch add field apiversion.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define table badge_external_backpack to be created.
+        $table = new xmldb_table('badge_external_backpack');
+
+        // Adding fields to table badge_external_backpack.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('backpackapiurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('backpackweburl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('apiversion', XMLDB_TYPE_CHAR, '12', null, XMLDB_NOTNULL, null, '1.0');
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('password', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+
+        // Adding keys to table badge_external_backpack.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('backpackapiurlkey', XMLDB_KEY_UNIQUE, ['backpackapiurl']);
+        $table->add_key('backpackweburlkey', XMLDB_KEY_UNIQUE, ['backpackweburl']);
+
+        // Conditionally launch create table for badge_external_backpack.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define field entityid to be added to badge_external.
+        $table = new xmldb_table('badge_external');
+        $field = new xmldb_field('entityid', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'collectionid');
+
+        // Conditionally launch add field entityid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define table badge_external_identifier to be created.
+        $table = new xmldb_table('badge_external_identifier');
+
+        // Adding fields to table badge_external_identifier.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('sitebackpackid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('internalid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('externalid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('type', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table badge_external_identifier.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('fk_backpackid', XMLDB_KEY_FOREIGN, ['sitebackpackid'], 'badge_backpack', ['id']);
+        $table->add_key('backpack-internal-external', XMLDB_KEY_UNIQUE, ['sitebackpackid', 'internalid', 'externalid', 'type']);
+
+        // Conditionally launch create table for badge_external_identifier.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define field externalbackpackid to be added to badge_backpack.
+        $table = new xmldb_table('badge_backpack');
+        $field = new xmldb_field('externalbackpackid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'password');
+
+        // Conditionally launch add field externalbackpackid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define key externalbackpack (foreign) to be added to badge_backpack.
+        $key = new xmldb_key('externalbackpack', XMLDB_KEY_FOREIGN, ['externalbackpackid'], 'badge_external_backpack', ['id']);
+
+        // Launch add key externalbackpack.
+        $dbman->add_key($table, $key);
+
+        $field = new xmldb_field('apiversion');
+
+        // Conditionally launch drop field apiversion.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        $field = new xmldb_field('backpackurl');
+
+        // Conditionally launch drop field backpackurl.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Add default backpacks.
+        require_once($CFG->libdir.'/badgeslib.php'); // Core Upgrade-related functions for badges only.
+        badges_install_default_backpacks();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019050600.00);
+    }
+
     return true;
 }

@@ -95,7 +95,7 @@ if (is_null($action)) {
     }
     if ($badge->has_related()) {
         $badgerelated = $badge->get_related_badges();
-        $renderrelated = new badge_related($badgerelated, $badgeid);
+        $renderrelated = new \core_badges\output\badge_related($badgerelated, $badgeid);
         echo $output->render($renderrelated);
     } else {
         echo $output->notification(get_string('norelated', 'badges'));

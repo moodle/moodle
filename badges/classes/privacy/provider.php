@@ -92,7 +92,7 @@ class provider implements
         $collection->add_database_table('badge_backpack', [
             'userid' => 'privacy:metadata:backpack:userid',
             'email' => 'privacy:metadata:backpack:email',
-            'backpackurl' => 'privacy:metadata:backpack:backpackurl',
+            'externalbackpackid' => 'privacy:metadata:backpack:externalbackpackid',
             'backpackuid' => 'privacy:metadata:backpack:backpackuid',
             // The columns autosync and password are not used.
         ], 'privacy:metadata:backpack');
@@ -575,7 +575,7 @@ class provider implements
             foreach ($recordset as $record) {
                 $data[] = [
                     'email' => $record->email,
-                    'url' => $record->backpackurl,
+                    'externalbackpackid' => $record->externalbackpackid,
                     'uid' => $record->backpackuid
                 ];
             }

@@ -176,7 +176,7 @@ class core_badges_external extends external_api {
             $related = array(
                 'context' => $context,
                 'endorsement' => $endorsement ? $endorsement : null,
-                'alignments' => $alignments,
+                'alignment' => $alignments,
                 'relatedbadges' => $relatedbadges,
             );
 

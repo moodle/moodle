@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20190412" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20190501" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3167,14 +3167,15 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="backpackurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="backpackuid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="autosync" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="externalbackpackid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="externalbackpack" TYPE="foreign" FIELDS="externalbackpackid" REFTABLE="badge_external_backpack" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="badge_external" COMMENT="Setting for external badges display">
@@ -3182,10 +3183,25 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="backpackid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of a backpack"/>
         <FIELD NAME="collectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Badge collection id in the backpack"/>
+        <FIELD NAME="entityid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_backpackid" TYPE="foreign" FIELDS="backpackid" REFTABLE="badge_backpack" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="badge_external_identifier" COMMENT="Setting for external badges mappings">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="sitebackpackid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of a site backpack"/>
+        <FIELD NAME="internalid" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="externalid" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_backpackid" TYPE="foreign" FIELDS="sitebackpackid" REFTABLE="badge_backpack" REFFIELDS="id"/>
+        <KEY NAME="backpack-internal-external" TYPE="unique" FIELDS="sitebackpackid, internalid, externalid, type"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="badge_alignment" COMMENT="Defines alignment for badges">
@@ -3214,6 +3230,21 @@
         <KEY NAME="badgeid" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
         <KEY NAME="relatedbadgeid" TYPE="foreign" FIELDS="relatedbadgeid" REFTABLE="badge" REFFIELDS="id"/>
         <KEY NAME="badgeid-relatedbadgeid" TYPE="unique" FIELDS="badgeid, relatedbadgeid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="badge_external_backpack" COMMENT="Defines settings for site level backpacks that a user can connect to.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="backpackapiurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="backpackweburl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="apiversion" TYPE="char" LENGTH="12" NOTNULL="true" DEFAULT="1.0" SEQUENCE="false"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Password to login into external backpack and issue badges."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="backpackapiurlkey" TYPE="unique" FIELDS="backpackapiurl"/>
+        <KEY NAME="backpackweburlkey" TYPE="unique" FIELDS="backpackweburl"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="user_devices" COMMENT="This table stores user's mobile devices information in order to send PUSH notifications">

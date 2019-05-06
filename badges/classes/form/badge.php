@@ -24,17 +24,21 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
+namespace core_badges\form;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->libdir . '/filelib.php');
 
+use moodleform;
+
 /**
  * Form to edit badge details.
  *
  */
-class edit_details_form extends moodleform {
+class badge extends moodleform {
 
     /**
      * Defines the form
@@ -90,20 +94,42 @@ class edit_details_form extends moodleform {
 
         $mform->addElement('header', 'issuerdetails', get_string('issuerdetails', 'badges'));
 
-        $mform->addElement('text', 'issuername', get_string('name'), array('size' => '70'));
-        $mform->setType('issuername', PARAM_NOTAGS);
-        $mform->addRule('issuername', null, 'required');
-        if (isset($CFG->badges_defaultissuername)) {
-            $mform->setDefault('issuername', $CFG->badges_defaultissuername);
-        }
-        $mform->addHelpButton('issuername', 'issuername', 'badges');
+        if (badges_open_badges_backpack_api() != OPEN_BADGES_V2) {
+            $mform->addElement('text', 'issuername', get_string('name'), array('size' => '70'));
+            $mform->setType('issuername', PARAM_NOTAGS);
+            $mform->addRule('issuername', null, 'required');
+            if (isset($CFG->badges_defaultissuername)) {
+                $mform->setDefault('issuername', $CFG->badges_defaultissuername);
+            }
+            $mform->addHelpButton('issuername', 'issuername', 'badges');
 
-        $mform->addElement('text', 'issuercontact', get_string('contact', 'badges'), array('size' => '70'));
-        if (isset($CFG->badges_defaultissuercontact)) {
-            $mform->setDefault('issuercontact', $CFG->badges_defaultissuercontact);
+            $mform->addElement('text', 'issuercontact', get_string('contact', 'badges'), array('size' => '70'));
+            if (isset($CFG->badges_defaultissuercontact)) {
+                $mform->setDefault('issuercontact', $CFG->badges_defaultissuercontact);
+            }
+            $mform->setType('issuercontact', PARAM_RAW);
+            $mform->addHelpButton('issuercontact', 'contact', 'badges');
+            // Set issuer URL.
+            // Have to parse URL because badge issuer origin cannot be a subfolder in wwwroot.
+            $url = parse_url($CFG->wwwroot);
+            $mform->addElement('hidden', 'issuerurl', $url['scheme'] . '://' . $url['host']);
+            $mform->setType('issuerurl', PARAM_URL);
+
+        } else {
+            $name = $CFG->badges_defaultissuername;
+            $mform->addElement('static', 'issuernamelabel', get_string('name'), $name);
+            $mform->addElement('hidden', 'issuername', $name);
+            $mform->setType('issuername', PARAM_NOTAGS);
+
+            $contact = $CFG->badges_defaultissuercontact;
+            $mform->addElement('static', 'issuercontactlabel', get_string('contact', 'badges'), $contact);
+            $mform->addElement('hidden', 'issuercontact', $contact);
+            $mform->setType('issuercontact', PARAM_RAW);
+
+            $url = parse_url($CFG->wwwroot);
+            $mform->addElement('hidden', 'issuerurl', $url['scheme'] . '://' . $url['host']);
+            $mform->setType('issuerurl', PARAM_URL);
         }
-        $mform->setType('issuercontact', PARAM_RAW);
-        $mform->addHelpButton('issuercontact', 'contact', 'badges');
 
         $mform->addElement('header', 'issuancedetails', get_string('issuancedetails', 'badges'));
 
@@ -126,12 +152,6 @@ class edit_details_form extends moodleform {
         $mform->disabledIf('expiredate[year]', 'expiry', 'neq', 1);
         $mform->disabledIf('expireperiod[number]', 'expiry', 'neq', 2);
         $mform->disabledIf('expireperiod[timeunit]', 'expiry', 'neq', 2);
-
-        // Set issuer URL.
-        // Have to parse URL because badge issuer origin cannot be a subfolder in wwwroot.
-        $url = parse_url($CFG->wwwroot);
-        $mform->addElement('hidden', 'issuerurl', $url['scheme'] . '://' . $url['host']);
-        $mform->setType('issuerurl', PARAM_URL);
 
         $mform->addElement('hidden', 'action', $action);
         $mform->setType('action', PARAM_TEXT);
@@ -182,8 +202,10 @@ class edit_details_form extends moodleform {
         global $DB;
         $errors = parent::validation($data, $files);
 
-        if (!empty($data['issuercontact']) && !validate_email($data['issuercontact'])) {
-            $errors['issuercontact'] = get_string('invalidemail');
+        if (badges_open_badges_backpack_api() != OPEN_BADGES_V2) {
+            if (!empty($data['issuercontact']) && !validate_email($data['issuercontact'])) {
+                $errors['issuercontact'] = get_string('invalidemail');
+            }
         }
 
         if ($data['expiry'] == 2 && $data['expireperiod'] <= 0) {
@@ -219,61 +241,3 @@ class edit_details_form extends moodleform {
     }
 }
 
-/**
- * Form to edit badge message.
- *
- */
-class edit_message_form extends moodleform {
-    public function definition() {
-        global $CFG, $OUTPUT;
-
-        $mform = $this->_form;
-        $badge = $this->_customdata['badge'];
-        $action = $this->_customdata['action'];
-        $editoroptions = $this->_customdata['editoroptions'];
-
-        // Add hidden fields.
-        $mform->addElement('hidden', 'id', $badge->id);
-        $mform->setType('id', PARAM_INT);
-
-        $mform->addElement('hidden', 'action', $action);
-        $mform->setType('action', PARAM_TEXT);
-
-        $mform->addElement('header', 'badgemessage', get_string('configuremessage', 'badges'));
-        $mform->addHelpButton('badgemessage', 'variablesubstitution', 'badges');
-
-        $mform->addElement('text', 'messagesubject', get_string('subject', 'badges'), array('size' => '70'));
-        $mform->setType('messagesubject', PARAM_TEXT);
-        $mform->addRule('messagesubject', null, 'required');
-        $mform->addRule('messagesubject', get_string('maximumchars', '', 255), 'maxlength', 255);
-
-        $mform->addElement('editor', 'message_editor', get_string('message', 'badges'), null, $editoroptions);
-        $mform->setType('message_editor', PARAM_RAW);
-        $mform->addRule('message_editor', null, 'required');
-
-        $mform->addElement('advcheckbox', 'attachment', get_string('attachment', 'badges'), '', null, array(0, 1));
-        $mform->addHelpButton('attachment', 'attachment', 'badges');
-        if (empty($CFG->allowattachments)) {
-            $mform->freeze('attachment');
-        }
-
-        $options = array(
-                BADGE_MESSAGE_NEVER   => get_string('never'),
-                BADGE_MESSAGE_ALWAYS  => get_string('notifyevery', 'badges'),
-                BADGE_MESSAGE_DAILY   => get_string('notifydaily', 'badges'),
-                BADGE_MESSAGE_WEEKLY  => get_string('notifyweekly', 'badges'),
-                BADGE_MESSAGE_MONTHLY => get_string('notifymonthly', 'badges'),
-                );
-        $mform->addElement('select', 'notification', get_string('notification', 'badges'), $options);
-        $mform->addHelpButton('notification', 'notification', 'badges');
-
-        $this->add_action_buttons();
-        $this->set_data($badge);
-    }
-
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        return $errors;
-    }
-}

@@ -167,7 +167,7 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
             $endorsement = $badgeinstance->get_endorsement();
             $alignments = $badgeinstance->get_alignments();
             $relatedbadges = $badgeinstance->get_related_badges();
-            $badge->alignments = array();
+            $badge->alignment = array();
             $badge->relatedbadges = array();
 
             if ($endorsement) {
@@ -177,11 +177,13 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
             if (!empty($alignments)) {
                 foreach ($alignments as $alignment) {
                     // Students cannot see some fields of the alignments.
+                    unset($alignment->targetname);
+                    unset($alignment->targeturl);
                     unset($alignment->targetdescription);
                     unset($alignment->targetframework);
                     unset($alignment->targetcode);
 
-                    $badge->alignments[] = (array) $alignment;
+                    $badge->alignment[] = (array) $alignment;
                 }
             }
 
@@ -232,7 +234,7 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
                 $this->assertTrue(isset($badge['message']));
 
                 // Check that we have permissions to see all the data in alignments and related badges.
-                foreach ($badge['alignments'] as $alignment) {
+                foreach ($badge['alignment'] as $alignment) {
                     $this->assertTrue(isset($alignment['targetdescription']));
                 }
 

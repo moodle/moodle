@@ -99,7 +99,7 @@ if ($alignmentid || $action == 'add' || $action == 'edit') {
     }
     $alignments = $badge->get_alignments();
     if (count($alignments) > 0) {
-        $renderrelated = new badge_alignments($alignments, $badgeid);
+        $renderrelated = new \core_badges\output\badge_alignments($alignments, $badgeid);
         echo $output->render($renderrelated);
     } else {
         echo $output->notification(get_string('noalignment', 'badges'));

@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use \core_badges\badge;
 /**
  * Event observer for badges.
  */

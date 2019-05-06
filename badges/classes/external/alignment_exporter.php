@@ -47,32 +47,36 @@ class alignment_exporter extends exporter {
             'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Alignment id',
+                'optional' => true,
             ],
             'badgeid' => [
                 'type' => PARAM_INT,
                 'description' => 'Badge id',
+                'optional' => true,
             ],
-            'targetname' => [
+            'targetName' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Target name',
+                'optional' => true,
             ],
-            'targeturl' => [
+            'targetUrl' => [
                 'type' => PARAM_URL,
                 'description' => 'Target URL',
+                'optional' => true,
             ],
-            'targetdescription' => [
+            'targetDescription' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Target description',
                 'null' => NULL_ALLOWED,
                 'optional' => true,
             ],
-            'targetframework' => [
+            'targetFramework' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Target framework',
                 'null' => NULL_ALLOWED,
                 'optional' => true,
             ],
-            'targetcode' => [
+            'targetCode' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Target code',
                 'null' => NULL_ALLOWED,

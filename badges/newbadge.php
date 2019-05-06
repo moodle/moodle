@@ -26,7 +26,6 @@
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
-require_once($CFG->dirroot . '/badges/edit_form.php');
 
 $type = required_param('type', PARAM_INT);
 $courseid = optional_param('id', 0, PARAM_INT);
@@ -62,13 +61,12 @@ if (($type == BADGE_TYPE_COURSE) && ($course = $DB->get_record('course', array('
 
 require_capability('moodle/badges:createbadge', $PAGE->context);
 
-$PAGE->requires->js('/badges/backpack.js');
-$PAGE->requires->js_init_call('check_site_access', null, false);
+badges_local_backpack_js(true);
 
 $fordb = new stdClass();
 $fordb->id = null;
 
-$form = new edit_details_form($PAGE->url, array('action' => 'new'));
+$form = new \core_badges\form\badge($PAGE->url, array('action' => 'new'));
 
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/badges/index.php', array('type' => $type, 'id' => $courseid)));
@@ -88,9 +86,18 @@ if ($form->is_cancelled()) {
     $fordb->timemodified = $now;
     $fordb->usercreated = $USER->id;
     $fordb->usermodified = $USER->id;
-    $fordb->issuername = $data->issuername;
-    $fordb->issuerurl = $data->issuerurl;
-    $fordb->issuercontact = $data->issuercontact;
+
+    if (badges_open_badges_backpack_api() != OPEN_BADGES_V2) {
+        $fordb->issuername = $data->issuername;
+        $fordb->issuerurl = $data->issuerurl;
+        $fordb->issuercontact = $data->issuercontact;
+    } else {
+        $url = parse_url($CFG->wwwroot);
+        $fordb->issuerurl = $url['scheme'] . '://' . $url['host'];
+        $fordb->issuername = $CFG->badges_defaultissuername;
+        $fordb->issuercontact = $CFG->badges_defaultissuercontact;
+    }
+
     $fordb->expiredate = ($data->expiry == 1) ? $data->expiredate : null;
     $fordb->expireperiod = ($data->expiry == 2) ? $data->expireperiod : null;
     $fordb->type = $type;
