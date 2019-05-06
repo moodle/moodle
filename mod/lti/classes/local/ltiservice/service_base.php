@@ -230,6 +230,7 @@ abstract class service_base {
      * Return an array with the names of the parameters that the service will be saving in the configuration
      *
      * @return array  Names list of the parameters that the service will be saving in the configuration
+     * @deprecated since Moodle 3.7 - please do not use this function any more.
      */
     public function get_configuration_parameter_names() {
         debugging('get_configuration_parameter_names() has been deprecated.', DEBUG_DEVELOPER);

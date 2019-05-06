@@ -12,10 +12,8 @@ This files describes API changes in the lti code.
     - mod_lti\local\ltiservice\service_base->check_tool()
     - mod_lti\local\ltiservice\resource_base->check_tool()
     - mod_lti_edit_types_form->get_lti_services()
-* Deprecated functions to prevent name clashes with service-related parameters:
+* Deprecated unused function:
     - mod_lti\local\ltiservice\service_base->get_configuration_parameter_names()
-    - mod_lti\local\ltiservice\service_base->get_configuration_options()
-    - ltiservice_gradebookservices\local\service\gradebookservices\get_configuration_options()
 * Deprecated functions to simplify implementation of LTI scopes for accessing services:
     - mod_lti\local\ltiservice\resource_base->get_permissions()
     - ltiservice_gradebookservices\local\resources\lineitem\get_permissions()
