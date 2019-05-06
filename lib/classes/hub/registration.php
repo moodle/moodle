@@ -82,7 +82,7 @@ class registration {
         global $DB;
 
         if (self::$registration === null) {
-            self::$registration = $DB->get_record('registration_hubs', ['huburl' => HUB_MOODLEORGHUBURL]);
+            self::$registration = $DB->get_record('registration_hubs', ['huburl' => HUB_MOODLEORGHUBURL]) ?: null;
         }
 
         if (self::$registration && (bool)self::$registration->confirmed == (bool)$confirmed) {
