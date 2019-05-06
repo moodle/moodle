@@ -3303,16 +3303,22 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2019050300.01) {
         // Delete all stale favourite records which were left behind when a course was deleted.
-        $select = 'id IN (
-            SELECT fav.id as id
-              FROM {favourite} fav
-         LEFT JOIN {context} ctx ON (ctx.id = fav.contextid)
-             WHERE fav.component = :component
-               AND fav.itemtype = :itemtype
-               AND ctx.id IS NULL
-               )';
         $params = ['component' => 'core_message', 'itemtype' => 'message_conversations'];
-        $DB->delete_records_select('favourite', $select, $params);
+        $sql = "SELECT fav.id as id
+                  FROM {favourite} fav
+             LEFT JOIN {context} ctx ON (ctx.id = fav.contextid)
+                 WHERE fav.component = :component
+                       AND fav.itemtype = :itemtype
+                       AND ctx.id IS NULL";
+
+        if ($records = $DB->get_fieldset_sql($sql, $params)) {
+            // Just for safety, delete by chunks.
+            $chunks = array_chunk($records, 1000);
+            foreach ($chunks as $chunk) {
+                list($insql, $inparams) = $DB->get_in_or_equal($chunk);
+                $DB->delete_records_select('favourite', "id $insql", $inparams);
+            }
+        }
 
         upgrade_main_savepoint(true, 2019050300.01);
     }
