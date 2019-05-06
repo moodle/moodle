@@ -117,6 +117,8 @@ class badgeclass_exporter extends exporter {
         $mapped->description = $data->description;
         if (isset($data->openBadgeId)) {
             $mapped->hostedUrl = $data->openBadgeId;
+        } else {
+            $mapped->hostedUrl = $data->id;
         }
 
         return $mapped;

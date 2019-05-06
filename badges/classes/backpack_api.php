@@ -36,6 +36,7 @@ use core_badges\external\issuer_exporter;
 use core_badges\external\badgeclass_exporter;
 use curl;
 use stdClass;
+use context_system;
 
 define('BADGE_ACCESS_TOKEN', 'access');
 define('BADGE_USER_ID_TOKEN', 'user_id');
@@ -137,30 +138,12 @@ class backpack_api {
                     false,                                      // Auth required.
                 ];
                 $mapping[] = [
-                    'issuer',                                   // Action.
-                    '[URL]/issuers/[PARAM2]',                   // URL
-                    [],                                         // Post params.
-                    '',                                         // Request exporter.
-                    'core_badges\external\issuer_exporter',     // Response exporter.
-                    false,                                      // Multiple.
-                    'get',                                      // Method.
-                    true,                                       // JSON Encoded.
-                    true                                        // Auth required.
-                ];
-                $mapping[] = [
-                    'badgeclass',                               // Action.
-                    '[URL]/badgeclasses/[PARAM2]',              // URL
-                    [],                                         // Post params.
-                    '',                                         // Request exporter.
-                    'core_badges\external\badgeclass_exporter', // Response exporter.
-                    false,                                      // Multiple.
-                    'get',                                      // Method.
-                    true,                                       // JSON Encoded.
-                    true                                        // Auth required.
-                ];
-                $mapping[] = [
                     'assertion',                                // Action.
-                    '[URL]/backpack/assertions/[PARAM2]',       // URL
+                    // Badgr.io does not return the public information about a badge
+                    // if the issuer is associated with another user. We need to pass
+                    // the expand parameters which are not in any specification to get
+                    // additional information about the assertion in a single request.
+                    '[URL]/backpack/assertions/[PARAM2]?expand=badgeclass&expand=issuer',
                     [],                                         // Post params.
                     '',                                         // Request exporter.
                     'core_badges\external\assertion_exporter',  // Response exporter.
@@ -222,7 +205,7 @@ class backpack_api {
                 ];
                 $mapping[] = [
                     'assertions',                               // Action.
-                    '[URL]/badgeclasses/[PARAM2]/assertions',    // URL
+                    '[URL]/badgeclasses/[PARAM2]/assertions',   // URL
                     '[PARAM]',                                  // Post params.
                     'core_badges\external\assertion_exporter', // Request exporter.
                     'core_badges\external\assertion_exporter', // Response exporter.
@@ -410,21 +393,6 @@ class backpack_api {
     }
 
     /**
-     * Get a badge class.
-     *
-     * @param string $entityid The id of the badge class.
-     * @return mixed
-     */
-    public function get_badgeclass($entityid) {
-        // V2 Only.
-        if ($this->backpackapiversion == OPEN_BADGES_V1) {
-            throw new coding_exception('Not supported in this backpack API');
-        }
-
-        return $this->curl_request('badgeclass', null, $entityid);
-    }
-
-    /**
      * Create a badgeclass assertion.
      *
      * @param string $entityid The id of the badge class.
@@ -503,22 +471,6 @@ class backpack_api {
         }
 
         return $this->curl_request('issuers', null, null, $data);
-    }
-
-    /**
-     * Get an issuer by id
-     *
-     * @param string $entityid the id of the issuer.
-     * @return mixed
-     */
-    public function get_issuer($entityid) {
-        // V2 Only.
-        if ($this->backpackapiversion == OPEN_BADGES_V1) {
-            throw new coding_exception('Not supported in this backpack API');
-        }
-
-        $result = $this->curl_request('issuer', null, $entityid);
-        return $result;
     }
 
     /**
@@ -652,6 +604,8 @@ class backpack_api {
      * @return stdClass[]
      */
     public function get_badges($collection, $expanded = false) {
+        global $PAGE;
+
         if ($this->authenticate()) {
             if ($this->backpackapiversion == OPEN_BADGES_V1) {
                 if (empty($collection->collectionid)) {
@@ -671,18 +625,28 @@ class backpack_api {
                 $badges = $badges[0];
                 if ($expanded) {
                     $publicassertions = [];
+                    $context = context_system::instance();
+                    $output = $PAGE->get_renderer('core', 'badges');
                     foreach ($badges->assertions as $assertion) {
                         $remoteassertion = $this->get_assertion($assertion);
-                        $remotebadge = $this->get_badgeclass($remoteassertion->badgeclass);
+                        // Remote badge was fetched nested in the assertion.
+                        $remotebadge = $remoteassertion->badgeclass;
                         if (!$remotebadge) {
                             continue;
                         }
-                        $remoteissuer = $this->get_issuer($remotebadge->issuer);
+                        $apidata = badgeclass_exporter::map_external_data($remotebadge, $this->backpackapiversion);
+                        $exporterinstance = new badgeclass_exporter($apidata, ['context' => $context]);
+                        $remotebadge = $exporterinstance->export($output);
+
+                        $remoteissuer = $remotebadge->issuer;
+                        $apidata = issuer_exporter::map_external_data($remoteissuer, $this->backpackapiversion);
+                        $exporterinstance = new issuer_exporter($apidata, ['context' => $context]);
+                        $remoteissuer = $exporterinstance->export($output);
+
                         $badgeclone = clone $remotebadge;
                         $badgeclone->issuer = $remoteissuer;
                         $remoteassertion->badge = $badgeclone;
                         $remotebadge->assertion = $remoteassertion;
-
                         $publicassertions[] = $remotebadge;
                     }
                     $badges = $publicassertions;

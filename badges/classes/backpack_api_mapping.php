@@ -354,6 +354,7 @@ class backpack_api_mapping {
         $options = $this->get_curl_options();
 
         $post = $this->get_post_params($email, $password, $postparam);
+
         if ($this->method == 'get') {
             $response = $curl->get($url, $post, $options);
         } else if ($this->method == 'post') {
