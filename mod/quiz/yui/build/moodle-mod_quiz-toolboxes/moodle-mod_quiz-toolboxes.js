@@ -64,6 +64,7 @@ var CSS = {
         NUMQUESTIONS: '.numberofquestions',
         PAGECONTENT: 'div#page-content',
         PAGELI: 'li.page',
+        SECTIONLI: 'li.section',
         SECTIONUL: 'ul.section',
         SECTIONFORM: '.instancesectioncontainer form',
         SECTIONINPUT: 'input[name=section]',
@@ -337,7 +338,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         Y.one(SELECTOR.SELECTMULTIPLEDELETEBUTTON).setAttribute('disabled', 'disabled');
 
         // Assign the delete method to the delete multiple button.
-        Y.delegate('click', this.delete_multiple_with_confirmation, BODY, SELECTOR.SELECTMULTIPLEDELETEBUTTON, this);
+        Y.delegate('click', this.delete_multiple_action, BODY, SELECTOR.SELECTMULTIPLEDELETEBUTTON, this);
 
         // Enable the delete all button only when at least one slot is selected.
         Y.delegate('click', this.toggle_select_all_buttons_enabled, BODY, SELECTOR.SELECTMULTIPLECHECKBOX, this);
@@ -439,7 +440,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {EventFacade} ev The event that was fired.
      * @param {Node} button The button that triggered this action.
      * @param {Node} activity The activity node that this action will be performed on.
-     * @chainable
      */
     delete_with_confirmation: function(ev, button, activity) {
         // Prevent the default button action.
@@ -482,12 +482,61 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
     },
 
     /**
+     * Finds the section that would become empty if we remove the selected slots.
+     *
+     * @protected
+     * @method find_sections_that_would_become_empty
+     * @returns {String} The name of the first section found
+     */
+    find_sections_that_would_become_empty: function() {
+        var section;
+        var sectionnodes = Y.all(SELECTOR.SECTIONLI);
+
+        if (sectionnodes.size() > 1) {
+            sectionnodes.some(function(node) {
+                var sectionname = node.one(SELECTOR.INSTANCESECTION).getContent();
+                var checked = node.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':checked');
+                var unchecked = node.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':not(:checked)');
+
+                if (!checked.isEmpty() && unchecked.isEmpty()) {
+                    section = sectionname;
+                }
+
+                return section;
+            });
+        }
+
+        return section;
+    },
+
+    /**
+     * Takes care of what needs to happen when the user clicks on the delete multiple button.
+     *
+     * @protected
+     * @method delete_multiple_action
+     * @param {EventFacade} ev The event that was fired.
+     */
+    delete_multiple_action: function(ev) {
+        var problemsection = this.find_sections_that_would_become_empty();
+
+        if (typeof problemsection !== 'undefined') {
+            var alert = new M.core.alert({
+                title: M.util.get_string('cannotremoveslots', 'quiz'),
+                message: M.util.get_string('cannotremoveallsectionslots', 'quiz', problemsection)
+            });
+
+            alert.show();
+        } else {
+            this.delete_multiple_with_confirmation(ev);
+        }
+    },
+
+    /**
      * Deletes the given activities or resources after confirmation.
      *
      * @protected
      * @method delete_multiple_with_confirmation
      * @param {EventFacade} ev The event that was fired.
-     * @chainable
      */
     delete_multiple_with_confirmation: function(ev) {
         ev.preventDefault();
