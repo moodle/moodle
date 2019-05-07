@@ -180,9 +180,9 @@ class component_favourite_service_testcase extends advanced_testcase {
     }
 
     /**
-     * Test confirming the deletion of favourites by type, but with no optional context filter provided.
+     * Test confirming the deletion of favourites by type and item, but with no optional context filter provided.
      */
-    public function test_delete_favourites_by_type() {
+    public function test_delete_favourites_by_type_and_item() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Get a user_favourite_service for each user.
@@ -207,8 +207,11 @@ class component_favourite_service_testcase extends advanced_testcase {
         // Get a component_favourite_service to perform the type based deletion.
         $service = new \core_favourites\local\service\component_favourite_service('core_course', $repo);
 
-        // Delete all 'course' type favourites (for all users at ANY context).
-        $service->delete_favourites_by_type('course');
+        // Delete all 'course' type favourites (for all users who have favourited course1).
+        $service->delete_favourites_by_type_and_item('course', $course1context->instanceid);
+
+        // Delete all 'course' type favourites (for all users who have favourited course2).
+        $service->delete_favourites_by_type_and_item('course', $course2context->instanceid);
 
         // Verify the favourites don't exist.
         $this->assertFalse($repo->exists($fav1->id));
@@ -221,13 +224,13 @@ class component_favourite_service_testcase extends advanced_testcase {
         $this->assertTrue($repo->exists($fav6->id));
 
         // Try to delete favourites for a type which we know doesn't exist. Verify no exception.
-        $this->assertNull($service->delete_favourites_by_type('course'));
+        $this->assertNull($service->delete_favourites_by_type_and_item('course', $course1context->instanceid));
     }
 
     /**
-     * Test confirming the deletion of favourites by type and with the optional context filter provided.
+     * Test confirming the deletion of favourites by type and item and with the optional context filter provided.
      */
-    public function test_delete_favourites_by_type_with_context() {
+    public function test_delete_favourites_by_type_and_item_with_context() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Get a user_favourite_service for each user.
@@ -249,11 +252,17 @@ class component_favourite_service_testcase extends advanced_testcase {
         $fav5 = $user2service->create_favourite('core_user', 'course', $course1context->instanceid, $course1context);
         $fav6 = $user2service->create_favourite('core_course', 'whatnow', $course1context->instanceid, $course1context);
 
+        // Favourite the courses again, but this time in another context.
+        $fav7 = $user1service->create_favourite('core_course', 'course', $course1context->instanceid, context_system::instance());
+        $fav8 = $user2service->create_favourite('core_course', 'course', $course1context->instanceid, context_system::instance());
+        $fav9 = $user1service->create_favourite('core_course', 'course', $course2context->instanceid, context_system::instance());
+        $fav10 = $user2service->create_favourite('core_course', 'course', $course2context->instanceid, context_system::instance());
+
         // Get a component_favourite_service to perform the type based deletion.
         $service = new \core_favourites\local\service\component_favourite_service('core_course', $repo);
 
         // Delete all 'course' type favourites (for all users at ONLY the course 1 context).
-        $service->delete_favourites_by_type('course', $course1context);
+        $service->delete_favourites_by_type_and_item('course', $course1context->instanceid, $course1context);
 
         // Verify the favourites for course 1 context don't exist.
         $this->assertFalse($repo->exists($fav1->id));
@@ -267,7 +276,13 @@ class component_favourite_service_testcase extends advanced_testcase {
         $this->assertTrue($repo->exists($fav5->id));
         $this->assertTrue($repo->exists($fav6->id));
 
+        // Verify the course favourite at the system context are unaffected.
+        $this->assertTrue($repo->exists($fav7->id));
+        $this->assertTrue($repo->exists($fav8->id));
+        $this->assertTrue($repo->exists($fav9->id));
+        $this->assertTrue($repo->exists($fav10->id));
+
         // Try to delete favourites for a type which we know doesn't exist. Verify no exception.
-        $this->assertNull($service->delete_favourites_by_type('course', $course1context));
+        $this->assertNull($service->delete_favourites_by_type_and_item('course', $course1context->instanceid, $course1context));
     }
 }

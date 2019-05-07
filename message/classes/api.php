@@ -3338,7 +3338,7 @@ class api {
 
         // Delete all favourite records for all users relating to this conversation.
         $service = \core_favourites\service_factory::get_service_for_component('core_message');
-        $service->delete_favourites_by_type('message_conversations', $convcontext);
+        $service->delete_favourites_by_type_and_item('message_conversations', $conversationid, $convcontext);
     }
 
     /**
