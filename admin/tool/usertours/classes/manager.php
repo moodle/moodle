@@ -79,6 +79,11 @@ class manager {
     const ACTION_VIEWTOUR = 'viewtour';
 
     /**
+     * @var ACTION_DUPLICATETOUR     The action to duplicate the tour.
+     */
+    const ACTION_DUPLICATETOUR = 'duplicatetour';
+
+    /**
      * @var ACTION_NEWSTEP The action to create a new step.
      */
     const ACTION_NEWSTEP = 'newstep';
@@ -161,6 +166,10 @@ class manager {
 
             case self::ACTION_VIEWTOUR:
                 $this->view_tour(required_param('id', PARAM_INT));
+                break;
+
+            case self::ACTION_DUPLICATETOUR:
+                $this->duplicate_tour(required_param('id', PARAM_INT));
                 break;
 
             case self::ACTION_HIDETOUR:
@@ -484,6 +493,39 @@ class manager {
         $PAGE->requires->js_call_amd('tool_usertours/managesteps', 'setup');
 
         $this->footer();
+    }
+
+    /**
+     * Duplicate an existing tour.
+     *
+     * @param   int         $tourid     The ID of the tour to duplicate.
+     */
+    protected function duplicate_tour($tourid) {
+        $tour = helper::get_tour($tourid);
+
+        $export = $tour->to_record();
+        // Remove the id.
+        unset($export->id);
+
+        // Set the version.
+        $export->version = get_config('tool_usertours', 'version');
+
+        $export->name = get_string('duplicatetour_name', 'tool_usertours', $export->name);
+
+        // Step export.
+        $export->steps = [];
+        foreach ($tour->get_steps() as $step) {
+            $record = $step->to_record();
+            unset($record->id);
+            unset($record->tourid);
+
+            $export->steps[] = $record;
+        }
+
+        $exportstring = json_encode($export);
+        $newtour = self::import_tour_from_json($exportstring);
+
+        redirect($newtour->get_view_link());
     }
 
     /**
