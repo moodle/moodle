@@ -2811,7 +2811,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
             $users[$i] = $user;
         }
 
-        // Enrol the first 9 users in the same course, but leave them as non-contacts.
+        // Enrol the first 8 users in the same course, but leave them as non-contacts.
         $this->setAdminUser();
         $course1 = $this->getDataGenerator()->create_course();
         foreach (range(1, 8) as $i) {

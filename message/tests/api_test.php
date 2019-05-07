@@ -1766,10 +1766,12 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Now, get ONLY favourite conversations (including self-conversation).
         $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, true);
         $this->assertCount(2, $conversations);
-        $self = array_pop($conversations);
         foreach ($conversations as $conv) {
-            $this->assertTrue($conv->isfavourite);
-            $this->assertEquals($ic2->id, $conv->id);
+            if ($conv->type != \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF) {
+                $this->assertTrue($conv->isfavourite);
+                $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $conv->type);
+                $this->assertEquals($ic2->id, $conv->id);
+            }
         }
 
         // Now, try ONLY favourites of type 'group'.
