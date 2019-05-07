@@ -257,13 +257,16 @@
                                 </div>
                                 {{/discussion.timed.istimed}}
                             </td>
-                            <td scope="col" class="p-0 align-middle">
+                            <td scope="col" class="p-0 align-middle" data-container="discussion-summary-actions">
                                 {{#discussion}}
-                                    <div class="d-flex flex-wrap">
-                                        <div class="p1-1">
+                                    <div class="d-flex flex-wrap justify-content-end pr-4">
+                                        <div class="pt-1 mt-2  {{^discussion.locked}}hidden{{/discussion.locked}}" data-region="locked-icon">
+                                            <span class="btn" >{{#pix}}i/lock, core, {{#str}}locked, forum{{/str}}{{/pix}}</span>
+                                        </div>
+                                        <div>
                                             {{> mod_forum/discussion_subscription_toggle}}
                                         </div>
-                                        <div class="p1-1 m-t-1" data-container='discussion-tools'>
+                                        <div class="mt-3" data-container='discussion-tools'>
                                             {{> mod_forum/forum_action_menu}}
                                         </div>
                                     </div>
