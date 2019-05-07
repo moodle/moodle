@@ -575,9 +575,10 @@ function groups_delete_group($grouporid) {
 
         // Delete all favourite records for all users relating to this conversation.
         // Whilst not ideal, we can't use the component service as it doesn't exist here, so must do this manually.
-        $params = ['component' => 'core_message', 'itemtype' => 'message_conversations', 'contextid' => $conversation->contextid];
-        $DB->delete_records_select('favourite', ' component = :component AND itemtype = :itemtype AND contextid = :contextid',
-            $params);
+        $params = ['component' => 'core_message', 'itemtype' => 'message_conversations', 'itemid' => $conversation->id,
+            'contextid' => $conversation->contextid];
+        $select = ' component = :component AND itemtype = :itemtype AND itemid = :itemid AND contextid = :contextid';
+        $DB->delete_records_select('favourite', $select, $params);
     }
 
     //group itself last
