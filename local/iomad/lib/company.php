@@ -3398,6 +3398,12 @@ class company {
         $user->company = $company->name;
 
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
+            if (empty($user->company)) {
+                if ($company = self::by_userid($userid)) {
+                    $user->company = $company->get_name();
+                }
+            }
+
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             iomad_commerce::update_user($user);
