@@ -1467,8 +1467,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(0, $muas);
 
         $this->assertCount(6, $mcms);
-        $mcm = reset($mcms);
-        $this->assertEquals($user2->id, $mcm->userid);
+        $memberids = array_map(function($convmember) {
+                return $convmember->userid;
+        }, $mcms);
+        $this->assertContains($user2->id, $memberids);
 
         $this->assertCount(2, $notifications);
         ksort($notifications);
