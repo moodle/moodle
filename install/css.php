@@ -60,7 +60,6 @@ textarea, .uneditable-input {
 }
 
 #installdiv {
-    width: 800px;
     margin-left:auto;
     margin-right:auto;
     padding: 5px;
