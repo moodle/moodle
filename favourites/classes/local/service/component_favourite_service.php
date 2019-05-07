@@ -61,15 +61,17 @@ class component_favourite_service {
 
 
     /**
-     * Delete a collection of favourites by type, and optionally for a given context.
+     * Delete a collection of favourites by type and item, and optionally for a given context.
      *
-     * E.g. delete all favourites of type 'message_conversations' and for a specific CONTEXT_COURSE context.
+     * E.g. delete all favourites of type 'message_conversations' for the conversation '11' and in the CONTEXT_COURSE context.
      *
      * @param string $itemtype the type of the favourited items.
+     * @param int $itemid the id of the item to which the favourites relate
      * @param \context $context the context of the items which were favourited.
      */
-    public function delete_favourites_by_type(string $itemtype, \context $context = null) {
-        $criteria = ['component' => $this->component, 'itemtype' => $itemtype] + ($context ? ['contextid' => $context->id] : []);
+    public function delete_favourites_by_type_and_item(string $itemtype, int $itemid, \context $context = null) {
+        $criteria = ['component' => $this->component, 'itemtype' => $itemtype, 'itemid' => $itemid] +
+            ($context ? ['contextid' => $context->id] : []);
         $this->repo->delete_by($criteria);
     }
 }
