@@ -758,7 +758,38 @@ if ($mform->is_cancelled()) {
                     profile_save_data($existinguser);
 
                     \core\event\user_updated::create_from_userid($existinguser->id)->trigger();
+     
+                    // Is the company department valid?
+                    if (!empty($existinguser->department)) {
+                        if (!$department = $DB->get_record('department', array('company' => $company->id,
+                                                                               'shortname' => $existinguser->department))) {
+                            $upt->track('department', get_string('invaliddepartment', 'block_iomad_company_admin'), 'error');
+                            $upt->track('status', $strusernotaddederror, 'error');
+                            $line[] = get_string('invaliddepartment', 'block_iomad_company_admin');
+                            $errornum++;
+                            $userserrors++;
+                            $erroredusers[] = $line;
+                            continue;
+                        }
+                        // Make sure the user can manage this department.
+                        if (!company::can_manage_department($department->id)) {
+                            $upt->track('department', get_string('invaliddepartment', 'block_iomad_company_admin'), 'error');
+                            $upt->track('status', $strusernotaddederror, 'error');
+                            $line[] = get_string('invaliddepartment', 'block_iomad_company_admin');
+                            $errornum++;
+                            $userserrors++;
+                            $erroredusers[] = $line;
+                            continue;
+                        }
 
+                        if ($userdep = $DB->get_record('company_users', array('userid' => $existinguser->id, 'companyid' => $company->id))) {
+                            $userdep->departmentid = $department->id;
+                            $DB->update_record('company_users', $userdep);
+                        } else {
+                            // Add the user to the company
+                            $company->assign_user_to_company($existinguser->id, $department->id);
+                        }
+                    }
                 }
 
                 if ($bulk == 2 or $bulk == 3) {
