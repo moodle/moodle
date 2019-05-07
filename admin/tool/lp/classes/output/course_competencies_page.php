@@ -113,6 +113,7 @@ class course_competencies_page implements renderable, templatable {
         $data->courseid = $this->courseid;
         $data->pagecontextid = $this->context->id;
         $data->competencies = array();
+        $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
 
         $gradable = is_enrolled($this->context, $USER, 'moodle/competency:coursecompetencygradable');
         if ($gradable) {
