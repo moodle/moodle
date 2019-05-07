@@ -314,6 +314,7 @@ class async_helper  {
             $filename = $bc->get_plan()->get_setting('filename')->get_value();
             $timecreated = $backup->timecreated;
             $status = $renderer->get_status_display($bc->get_status(), $bc->get_backupid());
+            $bc->destroy();
 
             $tablerow = array($filename, userdate($timecreated), '-', '-', '-', $status);
             $tabledata[] = $tablerow;
