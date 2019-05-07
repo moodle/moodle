@@ -30,7 +30,8 @@ class iomad_commerce {
         if (empty($user->company)) {
             $user->company = 'Registered';
         }
-        $payload = array('username' => $user->username,
+        $payload = array('userid' => $user->id,
+                         'username' => $user->username,
                          'firstname' => $user->firstname,
                          'lastname' => $user->lastname,
                          'email' => $user->email,
@@ -44,13 +45,20 @@ class iomad_commerce {
         $response = self::docall($call, $payload);
     }
 
-    public static function assign_user($user, $companyname) {
+    public static function assign_user($user, $companyname = "") {
 
         $call = 'updateUser';
         if (empty($user->manager)) {
             $user->manager = 'no';
         }
-        $payload = array('username' => $user->username,
+        if (empty($companyname) && !empty($user->company)) {
+            $companyname = $user->company;
+        }
+        if (empty($companyname)) {
+            $companyname = 'Registered';
+        }
+        $payload = array('userid' => $user->id,
+                         'username' => $user->username,
                          'firstname' => $user->firstname,
                          'lastname' => $user->lastname,
                          'email' => $user->email,
