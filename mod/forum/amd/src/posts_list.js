@@ -42,6 +42,16 @@ define([
     var registerEventListeners = function(root) {
         root.on('click', Selectors.post.inpageReplyLink, function(e) {
             e.preventDefault();
+            // After adding a reply a url hash is being generated that scrolls (points) to the newly added reply.
+            // The hash being present causes this scrolling behavior to the particular reply to persists even when
+            // another, non-related in-page replay link is being clicked which ultimately causes a bad user experience.
+            // A particular solution for this problem would be changing the browser's history state when a url hash is
+            // present.
+            if (window.location.hash) {
+                // Remove the fragment identifier from the url.
+                var url = window.location.href.split('#')[0];
+                history.pushState({}, document.title, url);
+            }
             var currentTarget = $(e.currentTarget).parents(Selectors.post.forumCoreContent);
             var currentSubject = currentTarget.find(Selectors.post.forumSubject);
             var currentRoot = $(e.currentTarget).parents(Selectors.post.forumContent);
@@ -58,12 +68,12 @@ define([
                         return Templates.appendNodeContents(currentTarget, html, js);
                     })
                     .then(function() {
-                        return currentRoot.find(Selectors.post.inpageReplyContent).toggle().find('textarea').focus();
+                        return currentRoot.find(Selectors.post.inpageReplyContent).slideToggle(300).find('textarea').focus();
                     })
                     .fail(Notification.exception);
             } else {
                 var form = currentRoot.find(Selectors.post.inpageReplyContent);
-                form.toggle();
+                form.slideToggle(300);
                 if (form.is(':visible')) {
                     form.find('textarea').focus();
                 }
