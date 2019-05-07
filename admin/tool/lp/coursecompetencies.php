@@ -25,7 +25,7 @@
 require_once(__DIR__ . '/../../../config.php');
 
 $id = required_param('courseid', PARAM_INT);
-$currentmodule = optional_param('mod', null, PARAM_INT);
+$currentmodule = optional_param('mod', 0, PARAM_INT);
 if ($currentmodule > 0) {
     $cm = get_coursemodule_from_id('', $currentmodule, 0, false, MUST_EXIST);
 }
