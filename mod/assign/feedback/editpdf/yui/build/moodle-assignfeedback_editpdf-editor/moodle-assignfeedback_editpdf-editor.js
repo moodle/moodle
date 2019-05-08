@@ -1574,8 +1574,9 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
 
         position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node = Y.Node.create('<div/>');
+        // If these are absolutely positioned, they escape their scroll container.
         node.setStyles({
-            'position': 'absolute',
+            'position': 'relative',
             'display': 'inline-block',
             'backgroundImage': 'url(' + this.editor.get_stamp_image_url(this.path) + ')',
             'width': (this.endx - this.x),
@@ -2585,7 +2586,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         });
 
         drawingregion.append(container);
-        container.setStyle('position', 'absolute');
+        container.setStyle('position', 'relative');
         container.setX(position.x);
         container.setY(position.y);
         drawable.store_position(container, position.x, position.y);
