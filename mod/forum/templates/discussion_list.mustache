@@ -142,22 +142,18 @@
                             </td>
                             <td scope="col" class="author align-middle">
                                 {{#firstpostauthor}}
-                                    <a href="{{urls.profile}}">
-                                        <div class="d-flex flex-row">
-                                            <div class="align-middle p-0">
-                                                <a href="{{urls.profile}}">
-                                                    <img {{!
-                                                        }} class="h-auto rounded-circle userpicture" {{!
-                                                        }} src="{{urls.profileimage}}" {{!
-                                                        }} alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}" {{!
-                                                        }}>
-                                                </a>
-                                            </div>
-                                            <div class="align-middle p-2">
-                                                <a href="{{urls.profile}}">{{fullname}}</a>
-                                            </div>
+                                    <div class="d-flex flex-row">
+                                        <div class="align-middle p-0">
+                                            <img
+                                                class="h-auto rounded-circle userpicture"
+                                                src="{{urls.profileimage}}"
+                                                alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
+                                            >
                                         </div>
-                                    </a>
+                                        <div class="align-middle p-2">
+                                            {{fullname}}
+                                        </div>
+                                    </div>
                                 {{/firstpostauthor}}
                             </td>
                             {{#forum.state.groupmode}}
