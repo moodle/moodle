@@ -502,8 +502,8 @@ $string['selectgroup_end'] = 'Only public collections are shown, <a href="{$a}">
 $string['selectgroup_start'] = 'Select collections from your backpack to display on this site:';
 $string['selecting'] = 'With selected badges...';
 $string['setup'] = 'Set up connection';
-$string['sitebackpack'] = 'Site backpack';
-$string['sitebackpack_help'] = 'The external backpack to allow users to share their badges with. Changing this setting after users have connected their backpacks will require each user to update their backpack settings.';
+$string['sitebackpack'] = 'Active external backpack';
+$string['sitebackpack_help'] = 'An external backpack allows users to share their badges. Only one external backpack can be selected for the site. Changing this setting after users have connected their backpacks will require each user to disconnect and reconnect from their backpack settings page.';
 $string['sitebadges'] = 'Site badges';
 $string['sitebadges_help'] = 'Site badges can only be awarded to users for site-related activities. These include completing a set of courses or parts of user profiles. Site badges can also be issued manually by one user to another.
 
