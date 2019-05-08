@@ -901,11 +901,14 @@ function badges_install_default_backpacks() {
  * @return array
  */
 function badges_get_default_issuer() {
-    global $CFG;
+    global $CFG, $SITE;
 
     $issuer = array();
     $issuerurl = new moodle_url('/badges/issuer.php');
     $issuer['name'] = $CFG->badges_defaultissuername;
+    if (empty($issuer['name'])) {
+        $issuer['name'] = $SITE->fullname ? $SITE->fullname : $SITE->shortname;
+    }
     $issuer['url'] = $issuerurl->out(false);
     $issuer['email'] = $CFG->badges_defaultissuercontact;
     $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
