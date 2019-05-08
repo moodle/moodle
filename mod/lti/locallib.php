@@ -3144,9 +3144,9 @@ function lti_convert_from_jwt($typeid, $jwtparam) {
                 if (!empty($value) && $mapping['isarray']) {
                     if (is_array($value)) {
                         if (is_array($value[0])) {
-                          $value = json_encode($value);
+                            $value = json_encode($value);
                         } else {
-                          $value = implode(',', $value);
+                            $value = implode(',', $value);
                         }
                     }
                 }
@@ -3262,7 +3262,8 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
  * @param string         $text      Description of content item
  * @return string
  */
-function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = 'basic-lti-launch-request', $title = '', $text = '') {
+function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = 'basic-lti-launch-request', $title = '',
+        $text = '') {
     global $SESSION, $USER;
 
     if (!empty($instance)) {

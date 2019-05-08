@@ -1188,13 +1188,13 @@ MwIDAQAB
         $objgraph->title = 'Test title';
         $objgraph->text = 'Test text';
         $objgraph->frame = [];
-        $objgraph->$strtype = 'LtiLinkItem';
+        $objgraph->{$strtype} = 'LtiLinkItem';
         $objgraph->mediaType = 'application\/vnd.ims.lti.v1.ltilink';
 
         $expected = new stdClass();
-        $expected->$strcontext = 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem';
-        $expected->$strgraph = [];
-        $expected->$strgraph[] = $objgraph;
+        $expected->{$strcontext} = 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem';
+        $expected->{$strgraph} = [];
+        $expected->{$strgraph}[] = $objgraph;
 
         $this->assertEquals($expected, $jsondecode);
     }
