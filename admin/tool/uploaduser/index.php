@@ -648,15 +648,6 @@ if ($formdata = $mform2->is_cancelled()) {
                     }
                 }
             }
-            // Verify if the theme is valid and allowed to be set.
-            if (isset($existinguser->theme)) {
-                list($status, $message) = field_value_validators::validate_theme($existinguser->theme);
-                if ($status !== 'normal' && !empty($message)) {
-                     $upt->track('status', $message, $status);
-                    // Unset the theme when validation fails.
-                    unset($existinguser->theme);
-                }
-            }
 
             // changing of passwords is a special case
             // do not force password changes for external auth plugins!
