@@ -292,7 +292,8 @@ class lesson_page_type_essay extends lesson_page {
         return true;
     }
     public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
-        global $PAGE;
+        global $PAGE, $DB;
+
         $formattextdefoptions = new stdClass();
         $formattextdefoptions->noclean = true;
         $formattextdefoptions->para = false;
@@ -300,6 +301,7 @@ class lesson_page_type_essay extends lesson_page {
         $answers = $this->get_answers();
         $context = context_module::instance($PAGE->cm->id);
         foreach ($answers as $answer) {
+            $hasattempts = $DB->record_exists('lesson_attempts', ['answerid' => $answer->id]);
             if ($useranswer != null) {
                 $essayinfo = self::extract_useranswer($useranswer->useranswer);
                 $essayinfo->answer = file_rewrite_pluginfile_urls($essayinfo->answer, 'pluginfile.php',
@@ -322,7 +324,7 @@ class lesson_page_type_essay extends lesson_page {
                 }
                 if ($essayinfo->graded) {
                     if ($this->lesson->custom) {
-                        $answerdata->score = get_string("pointsearned", "lesson").": ".$essayinfo->score;
+                        $answerdata->score = get_string("pointsearned", "lesson").": " . $essayinfo->score;
                     } elseif ($essayinfo->score) {
                         $answerdata->score = get_string("receivedcredit", "lesson");
                     } else {
@@ -333,17 +335,23 @@ class lesson_page_type_essay extends lesson_page {
                 }
             } else {
                 $essayinfo = new stdClass();
-                $essayinfo->answer = get_string("didnotanswerquestion", "lesson");
+                if ($hasattempts && has_capability('mod/lesson:grade', $answerpage->context)) {
+                    $essayinfo->answer = html_writer::link(new moodle_url("/mod/lesson/essay.php",
+                        ['id' => $PAGE->cm->id]), get_string("viewessayanswers", "lesson"));
+                } else {
+                    $essayinfo->answer = "";
+                }
                 $essayinfo->answerformat = null;
             }
 
+            // The essay question has been graded.
             if (isset($pagestats[$this->properties->id])) {
                 $avescore = $pagestats[$this->properties->id]->totalscore / $pagestats[$this->properties->id]->total;
                 $avescore = round($avescore, 2);
                 $avescore = get_string("averagescore", "lesson").": ". $avescore ;
             } else {
-                // dont think this should ever be reached....
-                $avescore = get_string("nooneansweredthisquestion", "lesson");
+                $avescore = $hasattempts ? get_string("essaynotgradedyet", "lesson") :
+                        get_string("nooneansweredthisquestion", "lesson");
             }
             // This is the student's answer so it should be cleaned.
             $answerdata->answers[] = array(format_text($essayinfo->answer, $essayinfo->answerformat,
