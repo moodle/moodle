@@ -1167,3 +1167,36 @@ function badge_assemble_notification(stdClass $badge) {
         message_send($eventdata);
     }
 }
+
+/**
+ * Attempt to authenticate with the site backpack credentials and return an error
+ * if the authentication fails.
+ *
+ * @return string
+ */
+function badges_verify_site_backpack() {
+    global $OUTPUT, $CFG;
+
+    if (empty($CFG->badges_allowexternalbackpack)) {
+        return '';
+    }
+
+    $backpack = badges_get_site_backpack($CFG->badges_site_backpack);
+
+    if (empty($backpack->apiversion) || ($backpack->apiversion == OPEN_BADGES_V2)) {
+        $backpackapi = new \core_badges\backpack_api($backpack);
+
+        $result = $backpackapi->authenticate();
+        if ($result === false || !empty($result->error)) {
+            $warning = $backpackapi->get_authentication_error();
+
+            $params = ['id' => $backpack->id, 'action' => 'edit'];
+            $backpackurl = (new moodle_url('/badges/backpacks.php', $params))->out(false);
+
+            $message = get_string('sitebackpackwarning', 'badges', ['url' => $backpackurl, 'warning' => $warning]);
+            $icon = $OUTPUT->pix_icon('i/warning', get_string('warning', 'moodle'));
+            return $OUTPUT->container($icon . $message, 'text-error');
+        }
+    }
+    return '';
+}

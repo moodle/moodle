@@ -503,7 +503,9 @@ $string['selectgroup_start'] = 'Select collections from your backpack to display
 $string['selecting'] = 'With selected badges...';
 $string['setup'] = 'Set up connection';
 $string['sitebackpack'] = 'Active external backpack';
-$string['sitebackpack_help'] = 'An external backpack allows users to share their badges. Only one external backpack can be selected for the site. Changing this setting after users have connected their backpacks will require each user to disconnect and reconnect from their backpack settings page.';
+$string['sitebackpack_help'] = 'An external backpack allows users to share their badges. Only one external backpack can be active for the site. Changing this setting after users have connected their backpacks will require each user to disconnect and reconnect from their backpack settings page.';
+$string['sitebackpackverify'] = 'Backpack connection';
+$string['sitebackpackwarning'] = 'Could not connect to backpack. <br/><br/>Check that the "Badge issuer email address" admin setting is the valid email for an account on the backpack website. <br/><br/>Check that the "Badge issuer password" on the <a href="{$a->url}">site backpack settings page</a>, is the correct password for the account on the backpack website. <br/><br/>The backpack returned: "{$a->warning}"';
 $string['sitebadges'] = 'Site badges';
 $string['sitebadges_help'] = 'Site badges can only be awarded to users for site-related activities. These include completing a set of courses or parts of user profiles. Site badges can also be issued manually by one user to another.
 
