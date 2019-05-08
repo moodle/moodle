@@ -61,6 +61,8 @@
 function xmldb_lti_upgrade($oldversion) {
     global $CFG, $DB;
 
+    $dbman = $DB->get_manager();
+
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -125,6 +127,104 @@ function xmldb_lti_upgrade($oldversion) {
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
 
-    return true;
+    if ($oldversion < 2019031300) {
+        // Define table lti_access_tokens to be updated.
+        $table = new xmldb_table('lti_types');
 
+        // Define field ltiversion to be added to lti_types.
+        $field = new xmldb_field('ltiversion', XMLDB_TYPE_CHAR, 10, null, XMLDB_NOTNULL, null, null, 'coursevisible');
+
+        // Conditionally launch add field ltiversion.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $DB->set_field_select('lti_types', 'ltiversion', 'LTI-1p0', 'toolproxyid IS NULL');
+            $DB->set_field_select('lti_types', 'ltiversion', 'LTI-2p0', 'toolproxyid IS NOT NULL');
+        }
+
+        // Define field clientid to be added to lti_types.
+        $field = new xmldb_field('clientid', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'ltiversion');
+
+        // Conditionally launch add field clientid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index clientid (unique) to be added to lti_types.
+        $index = new xmldb_index('clientid', XMLDB_INDEX_UNIQUE, array('clientid'));
+
+        // Conditionally launch add index clientid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Add platform ID configuration setting.
+        set_config('platformid', $CFG->wwwroot, 'mod_lti');
+
+        // Create the private key.
+        $kid = bin2hex(openssl_random_pseudo_bytes(10));
+        set_config('kid', $kid, 'mod_lti');
+        $config = array(
+            "digest_alg" => "sha256",
+            "private_key_bits" => 2048,
+            "private_key_type" => OPENSSL_KEYTYPE_RSA,
+        );
+        $res = openssl_pkey_new($config);
+        openssl_pkey_export($res, $privatekey);
+        set_config('privatekey', $privatekey, 'mod_lti');
+
+        // Lti savepoint reached.
+        upgrade_mod_savepoint(true, 2019031300, 'lti');
+    }
+
+    if ($oldversion < 2019031301) {
+        // Define table lti_access_tokens to be created.
+        $table = new xmldb_table('lti_access_tokens');
+
+        // Adding fields to table lti_access_tokens.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('typeid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('scope', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('token', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('validuntil', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table lti_access_tokens.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('typeid', XMLDB_KEY_FOREIGN, array('typeid'), 'lti_types', array('id'));
+
+        // Add an index.
+        $table->add_index('token', XMLDB_INDEX_UNIQUE, array('token'));
+
+        // Conditionally launch create table for lti_access_tokens.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Lti savepoint reached.
+        upgrade_mod_savepoint(true, 2019031301, 'lti');
+    }
+
+    if ($oldversion < 2019031302) {
+        // Define field typeid to be added to lti_tool_settings.
+        $table = new xmldb_table('lti_tool_settings');
+        $field = new xmldb_field('typeid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'toolproxyid');
+
+        // Conditionally launch add field typeid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define key typeid (foreign) to be added to lti_tool_settings.
+        $table = new xmldb_table('lti_tool_settings');
+        $key = new xmldb_key('typeid', XMLDB_KEY_FOREIGN, ['typeid'], 'lti_types', ['id']);
+
+        // Launch add key typeid.
+        $dbman->add_key($table, $key);
+
+        // Lti savepoint reached.
+        upgrade_mod_savepoint(true, 2019031302, 'lti');
+    }
+
+    return true;
 }

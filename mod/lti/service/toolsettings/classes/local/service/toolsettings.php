@@ -38,6 +38,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class toolsettings extends \mod_lti\local\ltiservice\service_base {
 
+    /** Scope for managing tool settings */
+    const SCOPE_TOOL_SETTINGS = 'https://purl.imsglobal.org/spec/lti-ts/scope/toolsetting';
+
     /**
      * Class constructor.
      */
@@ -64,6 +67,24 @@ class toolsettings extends \mod_lti\local\ltiservice\service_base {
         }
 
         return $this->resources;
+
+    }
+
+    /**
+     * Get the scope(s) permitted for the tool relevant to this service.
+     *
+     * @return array
+     */
+    public function get_permitted_scopes() {
+
+        $scopes = array();
+        $ok = !empty($this->get_type());
+        if ($ok && isset($this->get_typeconfig()[$this->get_component_id()]) &&
+            ($this->get_typeconfig()[$this->get_component_id()] == parent::SERVICE_ENABLED)) {
+            $scopes[] = self::SCOPE_TOOL_SETTINGS;
+        }
+
+        return $scopes;
 
     }
 
@@ -111,11 +132,10 @@ class toolsettings extends \mod_lti\local\ltiservice\service_base {
             if (!$simpleformat) {
                 $json .= "    {\n      \"@type\":\"{$type}\",\n";
                 $json .= "      \"@id\":\"{$resource->get_endpoint()}\",\n";
-                $json .= "      \"custom\":{\n";
-                $json .= "        \"@id\":\"{$resource->get_endpoint()}/custom\"";
+                $json .= "      \"custom\":{";
                 $indent = '      ';
             }
-            $isfirst = $simpleformat;
+            $isfirst = true;
             if (!empty($settings)) {
                 foreach ($settings as $key => $value) {
                     if (!$isfirst) {
@@ -133,6 +153,55 @@ class toolsettings extends \mod_lti\local\ltiservice\service_base {
 
         return $json;
 
+    }
+
+    /**
+     * Adds form elements for membership add/edit page.
+     *
+     * @param \MoodleQuickForm $mform
+     */
+    public function get_configuration_options(&$mform) {
+        $elementname = $this->get_component_id();
+        $options = [
+            get_string('notallow', $this->get_component_id()),
+            get_string('allow', $this->get_component_id())
+        ];
+
+        $mform->addElement('select', $elementname, get_string($elementname, $this->get_component_id()), $options);
+        $mform->setType($elementname, 'int');
+        $mform->setDefault($elementname, 0);
+        $mform->addHelpButton($elementname, $elementname, $this->get_component_id());
+    }
+
+    /**
+     * Return an array of key/values to add to the launch parameters.
+     *
+     * @param string $messagetype 'basic-lti-launch-request' or 'ContentItemSelectionRequest'.
+     * @param string $courseid The course id.
+     * @param string $user The user id.
+     * @param string $typeid The tool lti type id.
+     * @param string $modlti The id of the lti activity.
+     *
+     * The type is passed to check the configuration
+     * and not return parameters for services not used.
+     *
+     * @return array of key/value pairs to add as launch parameters.
+     */
+    public function get_launch_parameters($messagetype, $courseid, $user, $typeid, $modlti = null) {
+        global $COURSE;
+
+        $launchparameters = array();
+        $tool = lti_get_type_type_config($typeid);
+        if (isset($tool->{$this->get_component_id()})) {
+            if ($tool->{$this->get_component_id()} == self::SERVICE_ENABLED && $this->is_used_in_context($typeid, $courseid)) {
+                $launchparameters['system_setting_url'] = '$ToolProxy.custom.url';
+                $launchparameters['context_setting_url'] = '$ToolProxyBinding.custom.url';
+                if ($messagetype === 'basic-lti-launch-request') {
+                    $launchparameters['link_setting_url'] = '$LtiLink.custom.url';
+                }
+            }
+        }
+        return $launchparameters;
     }
 
 }

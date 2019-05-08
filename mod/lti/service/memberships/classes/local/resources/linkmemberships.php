@@ -79,6 +79,10 @@ class linkmemberships extends resource_base {
             $limitfrom = 0;
         }
 
+        if (!$this->check_tool(null, $response->get_request_data(), memberships::SCOPE_MEMBERSHIPS_READ)) {
+            $response->set_code(403);
+            return;
+        }
         if (empty($linkid)) {
             $response->set_code(404);
             return;
@@ -86,19 +90,6 @@ class linkmemberships extends resource_base {
         if (!($lti = $DB->get_record('lti', array('id' => $linkid), 'id,course,typeid,servicesalt', IGNORE_MISSING))) {
             $response->set_code(404);
             return;
-        }
-        $tool = $DB->get_record('lti_types', array('id' => $lti->typeid));
-        if ($tool->toolproxyid == 0) { // We wil use the same permission for this and contextmembers.
-            if (!$this->check_type($lti->typeid, $lti->course, 'ToolProxyBinding.memberships.url:get', null)) {
-                $response->set_code(403);
-                return;
-            }
-        } else {
-            $toolproxy = $DB->get_record('lti_tool_proxies', array('id' => $tool->toolproxyid));
-            if (!$this->check_tool_proxy($toolproxy->guid, $response->get_request_data())) {
-                $response->set_code(403);
-                return;
-            }
         }
         if (!($course = $DB->get_record('course', array('id' => $lti->course), 'id', IGNORE_MISSING))) {
             $response->set_code(404);
@@ -115,7 +106,8 @@ class linkmemberships extends resource_base {
         if ($info->is_available_for_all()) {
             $info = null;
         }
-        $json = memberships::get_users_json($this, $context, $lti->course, $tool, $role, $limitfrom, $limitnum, $lti, $info);
+        $json = $this->get_service()->get_members_json($this, $context, $lti->course, $role,
+                                                       $limitfrom, $limitnum, $lti, $info, $response);
 
         $response->set_content_type($this->formats[0]);
         $response->set_body($json);

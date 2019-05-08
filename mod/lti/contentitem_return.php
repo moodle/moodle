@@ -28,12 +28,26 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 $id = required_param('id', PARAM_INT);
 $courseid = required_param('course', PARAM_INT);
-$messagetype = required_param('lti_message_type', PARAM_TEXT);
-$version = required_param('lti_version', PARAM_TEXT);
-$consumerkey = required_param('oauth_consumer_key', PARAM_RAW);
-$items = optional_param('content_items', '', PARAM_RAW);
-$errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
-$msg = optional_param('lti_msg', '', PARAM_TEXT);
+
+$jwt = optional_param('JWT', '', PARAM_RAW);
+
+if (!empty($jwt)) {
+    $params = lti_convert_from_jwt($id, $jwt);
+    $consumerkey = $params['oauth_consumer_key'] ?? '';
+    $messagetype = $params['lti_message_type'] ?? '';
+    $version = $params['lti_version'] ?? '';
+    $items = $params['content_items'] ?? '';
+    $errormsg = $params['lti_errormsg'] ?? '';
+    $msg = $params['lti_msg'] ?? '';
+} else {
+    $consumerkey = required_param('oauth_consumer_key', PARAM_RAW);
+    $messagetype = required_param('lti_message_type', PARAM_TEXT);
+    $version = required_param('lti_version', PARAM_TEXT);
+    $items = optional_param('content_items', '', PARAM_RAW);
+    $errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
+    $msg = optional_param('lti_msg', '', PARAM_TEXT);
+    lti_verify_oauth_signature($id, $consumerkey);
+}
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 require_login($course);

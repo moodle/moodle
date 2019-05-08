@@ -112,7 +112,7 @@ class mod_lti_mod_form extends moodleform_mod {
                 $toolproxy[] = $type->id;
                 $attributes = array( 'globalTool' => 1, 'toolproxy' => 1);
                 $enabledcapabilities = explode("\n", $type->enabledcapability);
-                if (!in_array('Result.autocreate', $enabledcapabilities)) {
+                if (!in_array('Result.autocreate', $enabledcapabilities) || in_array('BasicOutcome.url', $enabledcapabilities)) {
                     $attributes['nogrades'] = 1;
                 }
                 if (!in_array('Person.name.full', $enabledcapabilities) && !in_array('Person.name.family', $enabledcapabilities) &&

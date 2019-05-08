@@ -68,11 +68,13 @@ class mod_lti_edit_types_form extends moodleform {
      * Define this form.
      */
     public function definition() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $mform    =& $this->_form;
 
-        $istool = $this->_customdata && $this->_customdata->istool;
+        $istool = $this->_customdata && isset($this->_customdata->istool) && $this->_customdata->istool;
+        $typeid = $this->_customdata->id ?? '';
+        $clientid = $this->_customdata->clientid ?? '';
 
         // Add basiclti elements.
         $mform->addElement('header', 'setup', get_string('tool_settings', 'lti'));
@@ -96,14 +98,54 @@ class mod_lti_edit_types_form extends moodleform {
         }
 
         if (!$istool) {
+            $options = array(
+                LTI_VERSION_1 => get_string('oauthsecurity', 'lti'),
+                LTI_VERSION_1P3 => get_string('jwtsecurity', 'lti'),
+            );
+            $mform->addElement('select', 'lti_ltiversion', get_string('ltiversion', 'lti'), $options);
+            $mform->setType('lti_ltiversion', PARAM_TEXT);
+            $mform->addHelpButton('lti_ltiversion', 'ltiversion', 'lti');
+            $mform->setDefault('lti_ltiversion', LTI_VERSION_1);
+
             $mform->addElement('text', 'lti_resourcekey', get_string('resourcekey_admin', 'lti'));
             $mform->setType('lti_resourcekey', PARAM_TEXT);
             $mform->addHelpButton('lti_resourcekey', 'resourcekey_admin', 'lti');
+            $mform->hideIf('lti_resourcekey', 'lti_ltiversion', 'eq', LTI_VERSION_1P3);
             $mform->setForceLtr('lti_resourcekey');
 
             $mform->addElement('passwordunmask', 'lti_password', get_string('password_admin', 'lti'));
             $mform->setType('lti_password', PARAM_TEXT);
             $mform->addHelpButton('lti_password', 'password_admin', 'lti');
+            $mform->hideIf('lti_password', 'lti_ltiversion', 'eq', LTI_VERSION_1P3);
+
+            if (!empty($typeid)) {
+                $mform->addElement('text', 'lti_clientid_disabled', get_string('clientidadmin', 'lti'));
+                $mform->setType('lti_clientid_disabled', PARAM_TEXT);
+                $mform->addHelpButton('lti_clientid_disabled', 'clientidadmin', 'lti');
+                $mform->hideIf('lti_clientid_disabled', 'lti_ltiversion', 'neq', LTI_VERSION_1P3);
+                $mform->disabledIf('lti_clientid_disabled', null);
+                $mform->setForceLtr('lti_clientid_disabled');
+                $mform->addElement('hidden', 'lti_clientid');
+                $mform->setType('lti_clientid', PARAM_TEXT);
+            }
+
+            $mform->addElement('textarea', 'lti_publickey', get_string('publickey', 'lti'), array('rows' => 8, 'cols' => 60));
+            $mform->setType('lti_publickey', PARAM_TEXT);
+            $mform->addHelpButton('lti_publickey', 'publickey', 'lti');
+            $mform->hideIf('lti_publickey', 'lti_ltiversion', 'neq', LTI_VERSION_1P3);
+            $mform->setForceLtr('lti_publickey');
+
+            $mform->addElement('text', 'lti_initiatelogin', get_string('initiatelogin', 'lti'), array('size' => '64'));
+            $mform->setType('lti_initiatelogin', PARAM_URL);
+            $mform->addHelpButton('lti_initiatelogin', 'initiatelogin', 'lti');
+            $mform->hideIf('lti_initiatelogin', 'lti_ltiversion', 'neq', LTI_VERSION_1P3);
+
+            $mform->addElement('textarea', 'lti_redirectionuris', get_string('redirectionuris', 'lti'),
+                array('rows' => 3, 'cols' => 60));
+            $mform->setType('lti_redirectionuris', PARAM_TEXT);
+            $mform->addHelpButton('lti_redirectionuris', 'redirectionuris', 'lti');
+            $mform->hideIf('lti_redirectionuris', 'lti_ltiversion', 'neq', LTI_VERSION_1P3);
+            $mform->setForceLtr('lti_redirectionuris');
         }
 
         if ($istool) {
