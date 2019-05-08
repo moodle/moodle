@@ -97,8 +97,8 @@ class gradebookservices extends service_base {
 
         $scopes = array();
         $ok = !empty($this->get_type());
-        if ($ok && isset($this->get_typeconfig()[$this->get_component_id()])) {
-            if (!empty($setting = $this->get_typeconfig()[$this->get_component_id()])) {
+        if ($ok && isset($this->get_typeconfig()['ltiservice_gradesynchronization'])) {
+            if (!empty($setting = $this->get_typeconfig()['ltiservice_gradesynchronization'])) {
                 $scopes[] = self::SCOPE_GRADEBOOKSERVICES_LINEITEM_READ;
                 $scopes[] = self::SCOPE_GRADEBOOKSERVICES_RESULT_READ;
                 $scopes[] = self::SCOPE_GRADEBOOKSERVICES_SCORE;
