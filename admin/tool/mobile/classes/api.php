@@ -99,7 +99,7 @@ class api {
                     $lang = array();
                     if (!empty($addoninfo['lang'])) {
                         $stringmanager = get_string_manager();
-                        $langs = $stringmanager->get_list_of_translations();
+                        $langs = $stringmanager->get_list_of_translations(true);
                         foreach ($langs as $langid => $langname) {
                             foreach ($addoninfo['lang'] as $stringinfo) {
                                 $lang[$langid][$stringinfo[0]] =
