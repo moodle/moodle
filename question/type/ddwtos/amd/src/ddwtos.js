@@ -176,18 +176,55 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         // Then place the once that should be placed.
         root.find('input.placeinput').each(function(i, inputNode) {
             var input = $(inputNode),
-                choice = input.val();
+                choice = input.val(),
+                place = thisQ.getPlace(input);
+
+            // Record the last known position of the drop.
+            var drop = root.find('.drop.place' + place),
+                dropPosition = drop.offset();
+            drop.data('prev-top', dropPosition.top).data('prev-left', dropPosition.left);
+
             if (choice === '0') {
                 // No item in this place.
                 return;
             }
 
-            var place = thisQ.getPlace(input);
             thisQ.getUnplacedChoice(thisQ.getGroup(input), choice)
                 .removeClass('unplaced')
                 .addClass('placed inplace' + place)
                 .offset(root.find('.drop.place' + place).offset());
         });
+    };
+
+    /**
+     * Check to see if a drop target has moved. If so, refresh the layout.
+     */
+    DragDropToTextQuestion.prototype.fixLayoutIfDropsMoved = function() {
+        var thisQ = this,
+            root = this.getRoot(),
+            didMove = false;
+
+        root.find('input.placeinput').each(function(i, inputNode) {
+            var place = thisQ.getPlace($(inputNode)),
+                drop = root.find('.drop.place' + place),
+                dropPosition = drop.offset(),
+                prevTop = drop.data('prev-top'),
+                prevLeft = drop.data('prev-left');
+            if (prevLeft === undefined || prevTop === undefined) {
+                // Question is not set up yet. Nothing to do.
+                return;
+            }
+            if (prevTop === dropPosition.top && prevLeft === dropPosition.left) {
+                // Things have not moved.
+                return;
+            }
+            didMove = true;
+        });
+
+        if (didMove) {
+            // We need to reposition things.
+            this.positionDrags();
+        }
     };
 
     /**
@@ -607,6 +644,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                     questionManager.handleKeyPress);
 
             $(window).on('resize', questionManager.handleWindowResize);
+            setTimeout(questionManager.fixLayoutIfThingsMoved, 100);
         },
 
         /**
@@ -641,6 +679,24 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                     questionManager.questions[containerId].positionDrags();
                 }
             }
+        },
+
+        /**
+         * Sometimes, despite our best efforts, things change in a way that cannot
+         * be specifically caught (e.g. dock expanding or collapsing in Boost).
+         * Therefore, we need to periodically check everything is in the right position.
+         */
+        fixLayoutIfThingsMoved: function() {
+            for (var containerId in questionManager.questions) {
+                if (questionManager.questions.hasOwnProperty(containerId)) {
+                    questionManager.questions[containerId].fixLayoutIfDropsMoved();
+                }
+            }
+
+            // We use setTimeout after finishing work, rather than setInterval,
+            // in case positioning things is slow. We want 100 ms gap
+            // between executions, not what setInterval does.
+            setTimeout(questionManager.fixLayoutIfThingsMoved, 100);
         },
 
         /**
