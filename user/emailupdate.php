@@ -60,21 +60,31 @@ if (empty($preferences['newemailattemptsleft'])) {
     $user->email = $preferences['newemail'];
 
     // Detect duplicate before saving.
-    if ($DB->get_record('user', array('email' => $user->email))) {
-        redirect(new moodle_url('/user/view.php', ['id' => $user->id]), get_string('emailnowexists', 'auth'));
-    } else {
-        // Update user email.
-        $authplugin = get_auth_plugin($user->auth);
-        $authplugin->user_update($olduser, $user);
-        user_update_user($user, false);
-        $a->email = $user->email;
-        redirect(
-                new moodle_url('/user/view.php', ['id' => $user->id]),
-                get_string('emailupdatesuccess', 'auth', $a),
-                null,
-                \core\output\notification::NOTIFY_SUCCESS
-            );
+    if (empty($CFG->allowaccountssameemail)) {
+        // Make a case-insensitive query for the given email address.
+        $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
+        $params = array(
+            'email' => $user->email,
+            'mnethostid' => $CFG->mnet_localhost_id,
+            'userid' => $user->id
+        );
+        // If there are other user(s) that already have the same email, cancel and redirect.
+        if ($DB->record_exists_select('user', $select, $params)) {
+            redirect(new moodle_url('/user/view.php', ['id' => $user->id]), get_string('emailnowexists', 'auth'));
+        }
     }
+
+    // Update user email.
+    $authplugin = get_auth_plugin($user->auth);
+    $authplugin->user_update($olduser, $user);
+    user_update_user($user, false);
+    $a->email = $user->email;
+    redirect(
+        new moodle_url('/user/view.php', ['id' => $user->id]),
+        get_string('emailupdatesuccess', 'auth', $a),
+        null,
+        \core\output\notification::NOTIFY_SUCCESS
+    );
 
 } else {
     $preferences['newemailattemptsleft']--;
