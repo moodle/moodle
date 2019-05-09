@@ -901,11 +901,14 @@ function badges_install_default_backpacks() {
  * @return array
  */
 function badges_get_default_issuer() {
-    global $CFG;
+    global $CFG, $SITE;
 
     $issuer = array();
     $issuerurl = new moodle_url('/badges/issuer.php');
     $issuer['name'] = $CFG->badges_defaultissuername;
+    if (empty($issuer['name'])) {
+        $issuer['name'] = $SITE->fullname ? $SITE->fullname : $SITE->shortname;
+    }
     $issuer['url'] = $issuerurl->out(false);
     $issuer['email'] = $CFG->badges_defaultissuercontact;
     $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
@@ -1166,4 +1169,42 @@ function badge_assemble_notification(stdClass $badge) {
 
         message_send($eventdata);
     }
+}
+
+/**
+ * Attempt to authenticate with the site backpack credentials and return an error
+ * if the authentication fails. If external backpacks are not enabled, this will
+ * not perform any test.
+ *
+ * @return string
+ */
+function badges_verify_site_backpack() {
+    global $OUTPUT, $CFG;
+
+    if (empty($CFG->badges_allowexternalbackpack)) {
+        return '';
+    }
+
+    $backpack = badges_get_site_backpack($CFG->badges_site_backpack);
+
+    if (empty($backpack->apiversion) || ($backpack->apiversion == OPEN_BADGES_V2)) {
+        $backpackapi = new \core_badges\backpack_api($backpack);
+
+        // Clear any cached access tokens in the session.
+        $backpackapi->clear_system_user_session();
+
+        // Now attempt a login with these credentials.
+        $result = $backpackapi->authenticate();
+        if ($result === false || !empty($result->error)) {
+            $warning = $backpackapi->get_authentication_error();
+
+            $params = ['id' => $backpack->id, 'action' => 'edit'];
+            $backpackurl = (new moodle_url('/badges/backpacks.php', $params))->out(false);
+
+            $message = get_string('sitebackpackwarning', 'badges', ['url' => $backpackurl, 'warning' => $warning]);
+            $icon = $OUTPUT->pix_icon('i/warning', get_string('warning', 'moodle'));
+            return $OUTPUT->container($icon . $message, 'text-error');
+        }
+    }
+    return '';
 }
