@@ -4,6 +4,7 @@
     Example context (json):
     {
         "id": "block0",
+        "class": "block block_html",
         "showskiplink": true,
         "type": "html",
         "ariarole": "complementary",
@@ -20,7 +21,7 @@
 
 {{! Start Block Container }}
 <section id="{{id}}"
-     class="{{#hidden}}hidden{{/hidden}} block block_{{type}} {{#hascontrols}}block_with_controls{{/hascontrols}} card mb-3"
+     class="{{#hidden}}hidden{{/hidden}} {{class}} {{#hascontrols}}block_with_controls{{/hascontrols}} card mb-3"
      role="{{ariarole}}"
      data-block="{{type}}"
      {{#arialabel}}
