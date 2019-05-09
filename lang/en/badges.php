@@ -58,10 +58,8 @@ $string['allmethodmanual'] = 'All of the selected roles award the badge';
 $string['allmethodprofile'] = 'All of the selected profile fields have been completed';
 $string['allowcoursebadges'] = 'Enable course badges';
 $string['allowcoursebadges_desc'] = 'Allow badges to be created and awarded in the course context.';
-$string['allowexternalbackpack'] = 'Enable connection to external backpacks';
-$string['allowexternalbackpack_desc'] = 'Allow users to set up connections and display badges from their external backpack providers.
-
-Note: It is recommended to leave this option disabled if the website cannot be accessed from the Internet (e.g. because of the firewall).';
+$string['allowexternalbackpack'] = 'External backpack connection';
+$string['allowexternalbackpack_desc'] = 'If enabled, users can connect to an external backpack and share their badges from this site. Users may also choose to display any public badge collections from their external backpack on their profile page on this site. It is recommended to leave this option disabled if your site is not accessible from the Internet.';
 $string['any'] = 'Any';
 $string['anymethod'] = 'Any of the selected conditions is met';
 $string['anymethodactivity'] = 'Any of the selected activities is complete';
@@ -503,7 +501,7 @@ $string['selectgroup_start'] = 'Select collections from your backpack to display
 $string['selecting'] = 'With selected badges...';
 $string['setup'] = 'Set up connection';
 $string['sitebackpack'] = 'Active external backpack';
-$string['sitebackpack_help'] = 'An external backpack allows users to share their badges. Only one external backpack can be active for the site. Changing this setting after users have connected their backpacks will require each user to disconnect and reconnect from their backpack settings page.';
+$string['sitebackpack_help'] = 'The external backpack that users can connect to from this site. Note that changing this setting after users have connected their backpacks will require each user to go to their backpack settings page and disconnect then reconnect.';
 $string['sitebackpackverify'] = 'Backpack connection';
 $string['sitebackpackwarning'] = 'Could not connect to backpack. <br/><br/>Check that the "Badge issuer email address" admin setting is the valid email for an account on the backpack website. <br/><br/>Check that the "Badge issuer password" on the <a href="{$a->url}">site backpack settings page</a>, is the correct password for the account on the backpack website. <br/><br/>The backpack returned: "{$a->warning}"';
 $string['sitebadges'] = 'Site badges';
