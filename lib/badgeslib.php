@@ -1173,7 +1173,8 @@ function badge_assemble_notification(stdClass $badge) {
 
 /**
  * Attempt to authenticate with the site backpack credentials and return an error
- * if the authentication fails.
+ * if the authentication fails. If external backpacks are not enabled, this will
+ * not perform any test.
  *
  * @return string
  */
@@ -1189,6 +1190,10 @@ function badges_verify_site_backpack() {
     if (empty($backpack->apiversion) || ($backpack->apiversion == OPEN_BADGES_V2)) {
         $backpackapi = new \core_badges\backpack_api($backpack);
 
+        // Clear any cached access tokens in the session.
+        $backpackapi->clear_system_user_session();
+
+        // Now attempt a login with these credentials.
         $result = $backpackapi->authenticate();
         if ($result === false || !empty($result->error)) {
             $warning = $backpackapi->get_authentication_error();

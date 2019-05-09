@@ -474,6 +474,21 @@ class backpack_api {
     }
 
     /**
+     * Delete any user access tokens in the session so we will attempt to get new ones.
+     *
+     * @return void
+     */
+    public function clear_system_user_session() {
+        global $SESSION;
+
+        $useridkey = $this->get_token_key(BADGE_USER_ID_TOKEN);
+        unset($SESSION->$useridkey);
+
+        $expireskey = $this->get_token_key(BADGE_EXPIRES_TOKEN);
+        unset($SESSION->$expireskey);
+    }
+
+    /**
      * Authenticate using the stored email and password and save the valid access tokens.
      *
      * @return integer The id of the authenticated user.
