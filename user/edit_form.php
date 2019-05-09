@@ -210,10 +210,18 @@ class user_edit_form extends moodleform {
             // Mail not confirmed yet.
         } else if (!validate_email($usernew->email)) {
             $errors['email'] = get_string('invalidemail');
-        } else if (($usernew->email !== $user->email)
-                and empty($CFG->allowaccountssameemail)
-                and $DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
-            $errors['email'] = get_string('emailexists');
+        } else if (($usernew->email !== $user->email) && empty($CFG->allowaccountssameemail)) {
+            // Make a case-insensitive query for the given email address.
+            $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
+            $params = array(
+                'email' => $usernew->email,
+                'mnethostid' => $CFG->mnet_localhost_id,
+                'userid' => $usernew->id
+            );
+            // If there are other user(s) that already have the same email, show an error.
+            if ($DB->record_exists_select('user', $select, $params)) {
+                $errors['email'] = get_string('emailexists');
+            }
         }
 
         if (isset($usernew->email) and $usernew->email === $user->email and over_bounce_threshold($user)) {
