@@ -28,11 +28,6 @@ defined('MOODLE_INTERNAL') || die();
  * Stub for database installation.
  */
 function xmldb_lti_install() {
-    global $CFG;
-
-    // Add platform ID configuration setting.
-    set_config('platformid', $CFG->wwwroot, 'mod_lti');
-
     // Create the private key.
     $kid = bin2hex(openssl_random_pseudo_bytes(10));
     set_config('kid', $kid, 'mod_lti');

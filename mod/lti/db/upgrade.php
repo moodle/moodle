@@ -157,9 +157,6 @@ function xmldb_lti_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        // Add platform ID configuration setting.
-        set_config('platformid', $CFG->wwwroot, 'mod_lti');
-
         // Create the private key.
         $kid = bin2hex(openssl_random_pseudo_bytes(10));
         set_config('kid', $kid, 'mod_lti');
