@@ -121,8 +121,13 @@ EOF;
                 window.opener.M.mod_lti.editor.addToolType({$json});
 EOF;
         }
+        echo html_writer::script($script . $closewindow);
+    } else if ($form->is_cancelled()) {
+        echo html_writer::script($closewindow);
+    } else {
+        echo $OUTPUT->heading(get_string('toolsetup', 'lti'));
+        $form->display();
     }
-    echo html_writer::script($script . $closewindow);
 }
 
 echo $OUTPUT->footer();

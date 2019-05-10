@@ -59,7 +59,7 @@
  * @return boolean
  */
 function xmldb_lti_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
 
@@ -157,17 +157,12 @@ function xmldb_lti_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        // Create the private key.
-        $kid = bin2hex(openssl_random_pseudo_bytes(10));
-        set_config('kid', $kid, 'mod_lti');
-        $config = array(
-            "digest_alg" => "sha256",
-            "private_key_bits" => 2048,
-            "private_key_type" => OPENSSL_KEYTYPE_RSA,
-        );
-        $res = openssl_pkey_new($config);
-        openssl_pkey_export($res, $privatekey);
-        set_config('privatekey', $privatekey, 'mod_lti');
+        require_once($CFG->dirroot . '/mod/lti/upgradelib.php');
+
+        $warning = mod_lti_verify_private_key();
+        if (!empty($warning)) {
+            echo $OUTPUT->notification($warning, 'notifyproblem');
+        }
 
         // Lti savepoint reached.
         upgrade_mod_savepoint(true, 2019031300, 'lti');

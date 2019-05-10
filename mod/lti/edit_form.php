@@ -339,4 +339,28 @@ class mod_lti_edit_types_form extends moodleform {
             $service->get_configuration_options($mform);
         }
     }
+
+    /**
+     * Validate the form data before we allow them to save the tool type.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array Error messages
+     */
+    public function validation($data, $files) {
+        global $CFG;
+
+        $errors = parent::validation($data, $files);
+
+        if ($data['lti_ltiversion'] == LTI_VERSION_1P3) {
+            require_once($CFG->dirroot . '/mod/lti/upgradelib.php');
+
+            $warning = mod_lti_verify_private_key();
+            if (!empty($warning)) {
+                $errors['lti_ltiversion'] = $warning;
+                return $errors;
+            }
+        }
+        return $errors;
+    }
 }
