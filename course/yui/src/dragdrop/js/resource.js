@@ -116,6 +116,11 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
     drag_start: function(e) {
         // Get our drag object
         var drag = e.target;
+        if (drag.get('dragNode') === drag.get('node')) {
+            // We do not want to modify the contents of the real node.
+            // They will be the same during a keyboard drag and drop.
+            return;
+        }
         drag.get('dragNode').setContent(drag.get('node').get('innerHTML'));
         drag.get('dragNode').all('img.iconsmall').setStyle('vertical-align', 'baseline');
     },
