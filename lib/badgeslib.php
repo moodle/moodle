@@ -1195,7 +1195,7 @@ function badges_verify_site_backpack() {
 
         // Now attempt a login with these credentials.
         $result = $backpackapi->authenticate();
-        if ($result === false || !empty($result->error)) {
+        if (empty($result) || !empty($result->error)) {
             $warning = $backpackapi->get_authentication_error();
 
             $params = ['id' => $backpack->id, 'action' => 'edit'];
