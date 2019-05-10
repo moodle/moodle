@@ -36,11 +36,7 @@ $string['auth_ldap_contexts_key'] = 'Contexts';
 $string['auth_ldap_create_context'] = 'If you enable user creation with email confirmation, specify the context where users are created. This context should be different from other users to prevent security issues. You don\'t need to add this context to ldap_context-variable, Moodle will search for users from this context automatically.<br /><b>Note!</b> You have to modify the method user_create() in file auth/ldap/auth.php to make user creation work';
 $string['auth_ldap_create_context_key'] = 'Context for new users';
 $string['auth_ldap_create_error'] = 'Error creating user in LDAP.';
-$string['auth_ldapdescription'] = 'This method provides authentication against an external LDAP server.
-                                  If the given username and password are valid, Moodle creates a new user
-                                  entry in its database. This module can read user attributes from LDAP and prefill
-                                  wanted fields in Moodle.  For following logins only the username and
-                                  password are checked.';
+$string['auth_ldapdescription'] = 'This method provides authentication against an external LDAP server. If the given username and password are valid, Moodle creates a new user entry in its database. This plugin can read user attributes from LDAP and prefill wanted fields in Moodle. For following logins only the username and password are checked.';
 $string['auth_ldap_expiration_desc'] = 'Select \'{$a->no}\' to disable expired password checking or \'{$a->ldapserver}\' to read the password expiry time directly from the LDAP server.';
 $string['auth_ldap_expiration_key'] = 'Expiry';
 $string['auth_ldap_expiration_warning_desc'] = 'Number of days before password expiry warning is issued.';

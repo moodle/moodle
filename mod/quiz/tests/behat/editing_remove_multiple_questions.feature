@@ -237,4 +237,4 @@ Feature: Edit quiz page - remove multiple questions
     And I click on "selectquestion-3" "checkbox"
     And I click on "Delete selected" "button"
 
-    Then I should see "Can not remove questions"
+    Then I should see "Cannot remove questions"
