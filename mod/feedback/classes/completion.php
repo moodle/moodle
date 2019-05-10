@@ -151,7 +151,10 @@ class mod_feedback_completion extends mod_feedback_structure {
      *
      * @param stdClass $item
      * @return bool whether user can see item or not,
-     *     null if dependency is broken or dependent question is not answered.
+     *     true if there is no dependency or dependency is met,
+     *     false if dependent question is visible or broken
+     *        and further it is either not answered or the dependency is not met,
+     *     null if dependency is broken.
      */
     protected function can_see_item($item) {
         if (empty($item->dependitem)) {
@@ -169,6 +172,10 @@ class mod_feedback_completion extends mod_feedback_structure {
             $value = $this->get_values_tmp($ditem);
         }
         if ($value === null) {
+            // Cyclic dependencies are no problem here, since they will throw an dependency error above.
+            if ($this->can_see_item($ditem) === false) {
+                return false;
+            }
             return null;
         }
         return $itemobj->compare_value($ditem, $value, $item->dependvalue) ? true : false;
