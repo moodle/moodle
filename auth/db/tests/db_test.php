@@ -99,6 +99,13 @@ class auth_db_testcase extends advanced_testcase {
             case 'mssql':
                 set_config('type', 'mssqlnative', 'auth_db');
                 set_config('sybasequoting', '1', 'auth_db');
+
+                // The native sqlsrv driver uses a comma as separator between host and port.
+                $dbhost = $CFG->dbhost;
+                if (!empty($dboptions['dbport'])) {
+                    $dbhost .= ',' . $dboptions['dbport'];
+                }
+                set_config('host', $dbhost, 'auth_db');
                 break;
 
             default:
