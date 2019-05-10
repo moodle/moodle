@@ -124,10 +124,16 @@ class exported_discussion_summaries {
         $groupsbyauthorid = $this->get_author_groups_from_posts($posts, $forum);
 
         $replycounts = $postvault->get_reply_count_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
-        $latestposts = $postvault->get_latest_post_id_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
-        $postauthorids = array_unique(array_reduce($discussions, function($carry, $summary) {
+        $latestposts = $postvault->get_latest_posts_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
+        $latestauthors = $this->get_latest_posts_authors($latestposts);
+        $latestpostsids = array_map(function($post) {
+            return $post->get_id();
+        }, $latestposts);
+
+        $postauthorids = array_unique(array_reduce($discussions, function($carry, $summary) use ($latestposts){
             $firstpostauthorid = $summary->get_first_post_author()->get_id();
-            $lastpostauthorid = $summary->get_latest_post_author()->get_id();
+            $discussion = $summary->get_discussion();
+            $lastpostauthorid = $latestposts[$discussion->get_id()]->get_author_id();
             return array_merge($carry, [$firstpostauthorid, $lastpostauthorid]);
         }, []));
         $postauthorcontextids = $this->get_author_context_ids($postauthorids);
@@ -149,16 +155,18 @@ class exported_discussion_summaries {
             $groupsbyauthorid,
             $replycounts,
             $unreadcounts,
-            $latestposts,
+            $latestpostsids,
             $postauthorcontextids,
-            $favourites
+            $favourites,
+            $latestauthors
         );
 
         $exportedposts = (array) $summaryexporter->export($this->renderer);
         $firstposts = $postvault->get_first_post_for_discussion_ids($discussionids);
 
-        array_walk($exportedposts['summaries'], function($summary) use ($firstposts) {
+        array_walk($exportedposts['summaries'], function($summary) use ($firstposts, $latestposts) {
             $summary->discussion->times['created'] = (int) $firstposts[$summary->discussion->firstpostid]->created;
+            $summary->discussion->times['modified'] = (int) $latestposts[$summary->discussion->id]->get_time_created();
         });
 
         // Pass the current, preferred sort order for the discussions list.
@@ -199,6 +207,23 @@ class exported_discussion_summaries {
         }
 
         return $ids;
+    }
+
+    /**
+     * Returns a mapped array of discussionid to the authors of the latest post
+     *
+     * @param array $latestposts Mapped array of discussion to latest posts.
+     * @return array Array of authors mapped to the discussion
+     */
+    private function get_latest_posts_authors($latestposts) {
+        $authors = $this->vaultfactory->get_author_vault()->get_authors_for_posts($latestposts);
+
+        $mappedauthors = array_reduce($latestposts, function($carry, $item) use ($authors) {
+            $carry[$item->get_discussion_id()] = $authors[$item->get_author_id()];
+
+            return $carry;
+        }, []);
+        return $mappedauthors;
     }
 
     /**

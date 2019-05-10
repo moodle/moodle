@@ -119,12 +119,15 @@ class discussion_summaries extends exporter {
     protected function get_other_values(renderer_base $output) {
         $exporteddiscussions = [];
         $related = $this->related;
+        $latestauthors = $this->related['latestauthors'];
 
         foreach ($this->discussions as $discussion) {
             $discussionid = $discussion->get_discussion()->get_id();
             $replycount = isset($this->discussionreplycount[$discussionid]) ? $this->discussionreplycount[$discussionid] : 0;
             $unreadcount = isset($this->discussionunreadcount[$discussionid]) ? $this->discussionunreadcount[$discussionid] : 0;
             $latestpostid = isset($this->latestpostids[$discussionid]) ? $this->latestpostids[$discussionid] : 0;
+            $latestauthor = $latestauthors[$discussionid] ?? null;
+            $related['latestauthor'] = $latestauthor;
             $exporter = new discussion_summary(
                     $discussion,
                     $this->groupsbyid,
@@ -133,7 +136,7 @@ class discussion_summaries extends exporter {
                     $unreadcount,
                     $latestpostid,
                     $this->postauthorcontextids[$discussion->get_first_post_author()->get_id()],
-                    $this->postauthorcontextids[$discussion->get_latest_post_author()->get_id()],
+                    $this->postauthorcontextids[$latestauthor->get_id()],
                     $related
                 );
             $exporteddiscussions[] = $exporter->export($output);
@@ -160,7 +163,8 @@ class discussion_summaries extends exporter {
             'capabilitymanager' => 'mod_forum\local\managers\capability',
             'urlfactory' => 'mod_forum\local\factories\url',
             'user' => 'stdClass',
-            'favouriteids' => 'int[]?'
+            'favouriteids' => 'int[]?',
+            'latestauthors' => 'mod_forum\local\entities\author[]?'
         ];
     }
 }
