@@ -44,9 +44,10 @@ Editing a shape starts with a click on the shape in the preview to show the edit
 
 For polygons only, holding the control button (command button on a Mac) while clicking on a vertex handle will add a new vertex to the polygon. Please keep a polygon shape as simple as possible, without crossing lines.
 
-For information the three shapes use coordinates in this way:<br />
-* Circle: centre_x, centre_y; radius<br />for example: <code>80,100;50</code><br />
-* Rectangle: top_left_x, top_left_y; width, height<br />for example: <code>20,60;80,40</code><br />
+For information the three shapes use coordinates in this way:
+
+* Circle: centre_x, centre_y; radius<br />for example: <code>80,100;50</code>
+* Rectangle: top_left_x, top_left_y; width, height<br />for example: <code>20,60;80,40</code>
 * Polygon: x1, y1; x2, y2; ...; xn, yn<br />for example: <code>20,60;100,60;20,100</code>
 
 Selecting a Marker text will add that text to the shape in the preview.';

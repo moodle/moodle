@@ -99,7 +99,7 @@ $string['backpackbadgessummary'] = 'You have {$a->totalbadges} badge(s) displaye
 $string['backpackbadgessettings'] = 'Change backpack settings';
 $string['backpackcannotsendverification'] = 'Cannot send verification email';
 $string['backpackconnection'] = 'Backpack connection';
-$string['backpackconnection_help'] = 'This page allows you to set up connection to an external backpack provider. Connecting to a backpack lets you display external badges within this site and push badges earned here to your backpack.';
+$string['backpackconnection_help'] = 'Connecting to a backpack enables you to share your badges from this site, and display public badge collections from your backpack on your profile page on this site.';
 $string['backpackconnectioncancelattempt'] = 'Connect using a different email address';
 $string['backpackconnectionconnect'] = 'Connect to backpack';
 $string['backpackconnectionresendemail'] = 'Resend verification email';
@@ -131,7 +131,7 @@ $string['backpackimport_help'] = 'After the backpack connection is successfully 
 In this area, you can select collections of badges from your backpack that you would like to display in your profile.';
 $string['backpacksettings'] = 'Backpack settings';
 $string['backpackapiurl'] = 'Backpack API URL';
-$string['backpackweburl'] = 'Backpack Website URL';
+$string['backpackweburl'] = 'Backpack URL';
 $string['badges'] = 'Badges';
 $string['badgedetails'] = 'Badge details';
 $string['badgeimage'] = 'Image';
@@ -263,7 +263,7 @@ $string['deactivatesuccess'] = 'Access to the badges was successfully disabled.'
 $string['defaultissuercontact'] = 'Badge issuer email address';
 $string['defaultissuercontact_desc'] = 'An email address associated with the badge issuer. For an Open Badges v2.0 backpack, this is used for authentication when publishing badges to a backpack.';
 $string['defaultissuerpassword'] = 'Badge issuer password';
-$string['defaultissuerpassword_help'] = 'When publishing Badges to a Backpack using Open Badges v2.0, the "Badge issuer email address" and "Badge issuer password" must correspond to an account on the Backpack site that is used to issue Badges representing this site.';
+$string['defaultissuerpassword_help'] = 'An account is required on the backpack site with email address as specified in the badge issuer email address setting in Site administration / Badges / Badges settings. The password for the account should be entered here.';
 $string['defaultissuername'] = 'Badge issuer name';
 $string['defaultissuername_desc'] = 'Name of the issuing agent or authority.';
 $string['delbadge'] = 'Would you like to delete badge \'{$a}\' and remove all existing issued badges?';
@@ -305,7 +305,7 @@ $string['error:noactivities'] = 'There are no activities with completion criteri
 $string['error:nocohorts'] = 'No cohorts';
 $string['error:nocourses'] = 'Course completion is not enabled for any of the courses in this site, so none can be displayed. Course completion may be enabled in the course settings.';
 $string['error:nogroupssummary'] = '<p>There are no public collections of badges available in your backpack. </p>';
-$string['error:nogroupslink'] = '<p>Only public collections are shown, <a href="{$a}" target="_blank" rel="nofollow">visit your backpack</a> to create some public collections.</p>';
+$string['error:nogroupslink'] = '<p>Only public collections are shown. <a href="{$a}" target="_blank" rel="nofollow">Visit your backpack</a> to create some public collections.</p>';
 $string['error:nopermissiontoview'] = 'You have no permissions to view badge recipients';
 $string['error:nosuchbadge'] = 'Badge with id {$a} does not exist.';
 $string['error:nosuchcohort'] = 'Warning: This cohort is no longer available.';
@@ -496,7 +496,7 @@ $string['reviewconfirm'] = '<p>This will make your badge visible to users and al
 $string['save'] = 'Save';
 $string['searchname'] = 'Search by name';
 $string['selectaward'] = 'Please select the role you would like to use to award this badge: ';
-$string['selectgroup_end'] = 'Only public collections are shown, <a href="{$a}">visit your backpack</a> to create more public collections.';
+$string['selectgroup_end'] = 'Only public collections are shown. <a href="{$a}">Visit your backpack</a> to create more public collections.';
 $string['selectgroup_start'] = 'Select collections from your backpack to display on this site:';
 $string['selecting'] = 'With selected badges...';
 $string['setup'] = 'Set up connection';
@@ -570,6 +570,6 @@ $string['signinwithyouremail'] = 'Sign in with your email';
 $string['error:invalidbadgeurl'] = 'Invalid issuer URL format. The URL should have a prefix http:// or https://.';
 $string['backpackbadges'] = 'You have {$a->totalbadges} badge(s) displayed from {$a->totalcollections} collection(s). <a href="mybackpack.php">Change backpack settings</a>.';
 $string['error:nogroups'] = '<p>There are no public collections of badges available in your backpack. </p>
-<p>Only public collections are shown, <a href="http://backpack.openbadges.org">visit your backpack</a> to create some public collections.</p>';
+<p>Only public collections are shown. <a href="http://backpack.openbadges.org">Visit your backpack</a> to create some public collections.</p>';
 $string['nobackpackbadges'] = 'There are no badges in the collections you have selected. <a href="mybackpack.php">Add more collections</a>.';
 $string['nobackpackcollections'] = 'No badge collections have been selected. <a href="mybackpack.php">Add collections</a>.';
