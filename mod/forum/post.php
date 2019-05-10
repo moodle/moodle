@@ -35,6 +35,8 @@ $name    = optional_param('name', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $groupid = optional_param('groupid', null, PARAM_INT);
 $subject = optional_param('subject', '', PARAM_TEXT);
+
+// Values posted via the inpage reply form.
 $prefilledpost = optional_param('post', '', PARAM_TEXT);
 $prefilledpostformat = optional_param('postformat', FORMAT_MOODLE, PARAM_INT);
 $prefilledprivatereply = optional_param('privatereply', false, PARAM_BOOL);
@@ -780,12 +782,20 @@ $mformpost->set_data(
 
 // If we are being redirected via a no_submit_button press OR if the message is being prefilled.
 // then set the initial 'dirty' state.
+// - A prefilled post will exist when being redirected from the inpage reply form.
+// - A no_submit_button press occurs when being redirected from the inpage add new discussion post form.
 $dirty = $prefilledpost ? true : false;
 if ($mformpost->no_submit_button_pressed()) {
     $data = $mformpost->get_submitted_data();
 
     // If a no submit button has been pressed but the default values haven't been then reset the form change.
-    $dirty = (!trim($data->message['text']) && !trim($data->subject)) ? false : true;
+    if (!$dirty && !empty(trim($data->message['text']))) {
+        $dirty = true;
+    }
+
+    if (!$dirty && !empty(trim($data->message['message']))) {
+        $dirty = true;
+    }
 }
 $mformpost->set_initial_dirty_state($dirty);
 

@@ -3002,7 +3002,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
                     'M.core_formchangechecker.init',
                     array(array(
                         'formid' => $formid,
-                        'initialdirtystate' => $form->is_dirty()
+                        'initialdirtystate' => $form->is_dirty(),
                     ))
             );
             $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
