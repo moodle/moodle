@@ -176,6 +176,11 @@ class award_criteria_competency extends award_criteria {
             $existing = \core_competency\user_competency_course::get_multiple($userid, $badge->courseid, $competencyids);
         }
 
+        if ($this->method == BADGE_CRITERIA_AGGREGATION_ALL) {
+            // Any vs all conditions are reversed when no criteria let us finish early.
+            $overall = true;
+        }
+
         foreach ($this->params as $param) {
             $proficiency = false;
             foreach ($existing as $usercompetency) {
