@@ -30,8 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Kieli';
-$string['moodlelogo'] = 'Moodlen logo';
-$string['next'] = 'Seuraava';
-$string['previous'] = 'Edellinen';
-$string['reload'] = 'Lataa uudelleen';
+$string['parentlanguage'] = 'es';
+$string['thislanguage'] = 'Español para la Empresa';
