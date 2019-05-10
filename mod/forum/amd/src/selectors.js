@@ -26,6 +26,9 @@ define([], function() {
         subscription: {
             toggle: "[data-type='subscription-toggle'][data-action='toggle']",
         },
+        summary: {
+            actions: "[data-container='discussion-summary-actions']"
+        },
         post: {
             post: '[data-region="post"]',
             action: '[data-region="post-action"]',
@@ -45,6 +48,7 @@ define([], function() {
         },
         lock: {
             toggle: "[data-action='toggle'][data-type='lock-toggle']",
+            icon: "[data-region='locked-icon']"
         },
         favourite: {
             toggle: "[data-type='favorite-toggle'][data-action='toggle']",

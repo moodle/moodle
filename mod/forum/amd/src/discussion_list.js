@@ -72,6 +72,15 @@ define([
 
             Repository.setDiscussionLockState(forumId, discussionId, state)
                 .then(function(context) {
+                    var icon = toggleElement.parents(Selectors.summary.actions).find(Selectors.lock.icon);
+                    if (context.locked) {
+                        icon.removeClass('hidden');
+                    } else {
+                        icon.addClass('hidden');
+                    }
+                    return context;
+                })
+                .then(function(context) {
                     context.forumid = forumId;
                     return Templates.render('mod_forum/discussion_lock_toggle', context);
                 })
