@@ -87,6 +87,7 @@ class core_component {
         'PHPMailer\\PHPMailer' => 'lib/phpmailer/src',
         'RedeyeVentures\\GeoPattern' => 'lib/geopattern-php/GeoPattern',
         'MongoDB' => 'cache/stores/mongodb/MongoDB',
+        'Firebase\\JWT' => 'lib/php-jwt/src',
     );
 
     /**
