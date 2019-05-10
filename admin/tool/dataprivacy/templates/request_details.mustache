@@ -67,7 +67,8 @@
             <a href="mailto:{{foruser.email}}">{{foruser.email}}</a>
             <div class="clearfix mt-1 mb-1">
             <span class="float-left mr-1">
-                <strong>{{#str}}daterequesteddetail, tool_dataprivacy{{/str}}</strong> {{#userdate}} {{timecreated}}, {{#str}} strftimedatetime {{/str}} {{/userdate}}
+                <strong>{{#str}}daterequesteddetail, tool_dataprivacy{{/str}}</strong>
+                {{#userdate}} {{timecreated}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}
             </span>
                 <span class="float-left mr-1">
                 <strong>{{#str}}statusdetail, tool_dataprivacy{{/str}}</strong>
