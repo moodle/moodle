@@ -26,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018121400;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2018112800;        // Requires this Moodle version
+$plugin->version   = 2019052000;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2019051100;        // Requires this Moodle version
 $plugin->component = 'auth_cas';        // Full name of the plugin (used for diagnostics)
 
-$plugin->dependencies = array('auth_ldap' => 2018112800);
+$plugin->dependencies = array('auth_ldap' => 2019051100);

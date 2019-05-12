@@ -23,6 +23,6 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2019022600;
-$plugin->requires  = 2018112800;
+$plugin->version = 2019052000;
+$plugin->requires  = 2019051100;
 $plugin->component = 'block_starredcourses';

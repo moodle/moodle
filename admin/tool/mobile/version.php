@@ -23,9 +23,9 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2019021101; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018112800; // Requires this Moodle version.
+$plugin->version   = 2019052000; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2019051100; // Requires this Moodle version.
 $plugin->component = 'tool_mobile'; // Full name of the plugin (used for diagnostics).
 $plugin->dependencies = array(
-    'webservice_rest' => 2018112800
+    'webservice_rest' => 2019051100
 );

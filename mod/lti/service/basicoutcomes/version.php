@@ -26,6 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2019030500;
-$plugin->requires  = 2018112800;
+$plugin->version   = 2019052000;
+$plugin->requires  = 2019051100;
 $plugin->component = 'ltiservice_basicoutcomes';
