@@ -25,10 +25,13 @@
     Data attributes required for JS:
     * [data-widget="toggle"] indicates the clickable element for expanding/collapsing
       the list of indicators used by the given model.
+    * [data-model-name="..."] should be provided by an element wrapping the model's actions menu
+      and contain the plain text name of the model.
 
     Context variables required for this template:
     * models: array - list of models to display
         - id: int - model unique identifier
+        - modelname: string - name of the model
         - name: object - data for the inplace editable element template
         - target: string - name of the target associated with the model
         - targetclass: string - fully qualified name of the target class
@@ -50,6 +53,7 @@
         "models": [
             {
                 "id": 11,
+                "modelname": "Prevent devs at risk",
                 "name": {
                     "component": "local_analyticsdemo",
                     "itemtype": "modelname",
@@ -162,7 +166,7 @@
         </thead>
         <tbody>
         {{#models}}
-            <tr>
+            <tr data-model-name="{{modelname}}">
                 <td>
                     {{#name}}
                         <span class="model-name">{{>core/inplace_editable}}</span>

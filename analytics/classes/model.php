@@ -1447,6 +1447,7 @@ class model {
 
         $data = clone $this->model;
 
+        $data->modelname = format_string($this->get_name());
         $data->name = $this->inplace_editable_name()->export_for_template($output);
         $data->target = $this->get_target()->get_name();
         $data->targetclass = $this->get_target()->get_id();
