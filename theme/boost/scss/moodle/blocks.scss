@@ -256,3 +256,7 @@ $doughnut-fill-colour: $brand-warning;
         margin-right: 2px;
     }
 }
+
+.block.invisibleblock .card-title {
+    color: $text-muted;
+}
