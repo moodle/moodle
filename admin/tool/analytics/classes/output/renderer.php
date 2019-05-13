@@ -229,4 +229,26 @@ class renderer extends plugin_renderer_base {
         $data = $invalidanalysables->export_for_template($this);
         return parent::render_from_template('tool_analytics/invalid_analysables', $data);
     }
+
+    /**
+     * Renders an analytics disabled notification.
+     *
+     * @return string HTML
+     */
+    public function render_analytics_disabled() {
+        global $OUTPUT, $PAGE, $FULLME;
+
+        $PAGE->set_url($FULLME);
+        $PAGE->set_title(get_string('pluginname', 'tool_analytics'));
+        $PAGE->set_heading(get_string('pluginname', 'tool_analytics'));
+
+        $output = $OUTPUT->header();
+        $output .= $OUTPUT->notification(get_string('analyticsdisabled', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= \html_writer::tag('a', get_string('continue'), ['class' => 'btn btn-primary',
+            'href' => (new \moodle_url('/'))->out()]);
+        $output .= $OUTPUT->footer();
+
+        return $output;
+    }
+
 }

@@ -30,6 +30,13 @@ $actionvisiblename = required_param('actionvisiblename', PARAM_NOTAGS);
 
 $PAGE->set_pagelayout('popup');
 $PAGE->set_context(\context_system::instance());
+
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    $renderer = $PAGE->get_renderer('report_insights');
+    echo $renderer->render_analytics_disabled();
+    exit(0);
+}
+
 $PAGE->set_title(get_site()->fullname);
 $PAGE->set_url(new \moodle_url('/report/insights/done.php'));
 

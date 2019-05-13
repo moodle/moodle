@@ -33,6 +33,13 @@ require_login();
 $model = new \core_analytics\model($id);
 \core_analytics\manager::check_can_manage_models();
 
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    $PAGE->set_context(\context_system::instance());
+    $renderer = $PAGE->get_renderer('tool_analytics');
+    echo $renderer->render_analytics_disabled();
+    exit(0);
+}
+
 $returnurl = new \moodle_url('/admin/tool/analytics/index.php');
 $params = array('id' => $id, 'action' => $action);
 $url = new \moodle_url('/admin/tool/analytics/model.php', $params);

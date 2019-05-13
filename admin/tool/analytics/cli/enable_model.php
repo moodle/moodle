@@ -57,6 +57,11 @@ if ($options['help']) {
     exit(0);
 }
 
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    echo get_string('analyticsdisabled', 'analytics') . PHP_EOL;
+    exit(0);
+}
+
 if ($options['list'] || $options['modelid'] === false) {
     \tool_analytics\clihelper::list_models();
     exit(0);

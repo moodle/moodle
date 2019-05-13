@@ -27,6 +27,13 @@ require_once(__DIR__ . '/../../../config.php');
 require_login();
 \core_analytics\manager::check_can_manage_models();
 
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    $PAGE->set_context(\context_system::instance());
+    $renderer = $PAGE->get_renderer('tool_analytics');
+    echo $renderer->render_analytics_disabled();
+    exit(0);
+}
+
 $confirmed = optional_param('confirmed', false, PARAM_BOOL);
 $restoreids = optional_param_array('restoreid', [], PARAM_ALPHANUM);
 

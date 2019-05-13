@@ -26,6 +26,7 @@ $string['analysablenotused'] = 'Analysable {$a->analysableid} not used: {$a->err
 $string['analysablenotvalidfortarget'] = 'Analysable {$a->analysableid} is not valid for this target: {$a->result}';
 $string['analysisinprogress'] = 'Still being analysed by a previous execution';
 $string['analytics'] = 'Analytics';
+$string['analyticsdisabled'] = 'Analytics is disabled. You can enable it in "Site administration > Advanced features".';
 $string['analyticslogstore'] = 'Log store used for analytics';
 $string['analyticslogstore_help'] = 'The log store that will be used by the analytics API to read users\' activity.';
 $string['analyticssettings'] = 'Analytics settings';

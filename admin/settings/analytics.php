@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
+if ($hassiteconfig && \core_analytics\manager::is_analytics_enabled()) {
 
     $settings = new admin_settingpage('analyticssite', new lang_string('analyticssiteinfo', 'analytics'));
     $ADMIN->add('analytics', $settings);

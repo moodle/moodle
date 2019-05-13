@@ -100,6 +100,22 @@ class manager {
     }
 
     /**
+     * Is analytics enabled globally?
+     *
+     * return bool
+     */
+    public static function is_analytics_enabled(): bool {
+        global $CFG;
+
+        if (isset($CFG->enableanalytics)) {
+            return $CFG->enableanalytics;
+        }
+
+        // Enabled by default.
+        return true;
+    }
+
+    /**
      * Returns all system models that match the provided filters.
      *
      * @param bool $enabled

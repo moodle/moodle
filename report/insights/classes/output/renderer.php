@@ -121,4 +121,25 @@ class renderer extends plugin_renderer_base {
 
         return $output;
     }
+
+    /**
+     * Renders an analytics disabled notification.
+     *
+     * @return string HTML
+     */
+    public function render_analytics_disabled() {
+        global $OUTPUT, $PAGE, $FULLME;
+
+        $PAGE->set_url($FULLME);
+        $PAGE->set_title(get_string('pluginname', 'report_insights'));
+        $PAGE->set_heading(get_string('pluginname', 'report_insights'));
+
+        $output = $OUTPUT->header();
+        $output .= $OUTPUT->notification(get_string('analyticsdisabled', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= \html_writer::tag('a', get_string('continue'), ['class' => 'btn btn-primary',
+            'href' => (new \moodle_url('/'))->out()]);
+        $output .= $OUTPUT->footer();
+
+        return $output;
+    }
 }
