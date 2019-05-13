@@ -16,6 +16,8 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         this.groups = [CSS.SECTIONDRAGGABLE];
         this.samenodeclass = M.course.format.get_sectionwrapperclass();
         this.parentnodeclass = M.course.format.get_containerclass();
+        // Detect the direction of travel.
+        this.detectkeyboarddirection = true;
 
         // Check if we are in single section mode
         if (Y.Node.one('.' + CSS.JUMPMENU)) {
