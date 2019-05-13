@@ -25,6 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018120300;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2018112800;        // Requires this Moodle version
+$plugin->version   = 2019052000;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2019051100;        // Requires this Moodle version
 $plugin->component = 'gradeexport_xls'; // Full name of the plugin (used for diagnostics)

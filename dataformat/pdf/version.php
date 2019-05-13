@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019040100;
-$plugin->requires  = 2018112800;  // Requires this Moodle version.
+$plugin->version   = 2019052000;
+$plugin->requires  = 2019051100;  // Requires this Moodle version.
 $plugin->component = 'dataformat_pdf';
