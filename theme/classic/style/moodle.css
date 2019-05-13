@@ -11655,6 +11655,9 @@ div.editor_atto_toolbar button .icon {
   .block_settings .block_tree p.hasicon .icon {
     margin-right: 2px; }
 
+.block.invisibleblock .card-title {
+  color: #868e96; }
+
 .navbar {
   max-height: 50px; }
 

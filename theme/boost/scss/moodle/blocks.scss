@@ -328,3 +328,7 @@ body.drawer-open-left #region-main.has-blocks {
         margin-right: 2px;
     }
 }
+
+.block.invisibleblock .card-title {
+    color: $text-muted;
+}
