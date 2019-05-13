@@ -21,7 +21,8 @@
  * @copyright  2018 Toni Barbera
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates', 'core/sortable_list'], function(
+define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates', 'core/sortable_list', 'core/inplace_editable'],
+    function(
         $, Str, Notification, Ajax, Templates, SortableList) {
 
     /**
@@ -48,7 +49,7 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
                 ])[1].then(function(response) {
                     return Templates.render('core_customfield/list', response);
                 }).then(function(html, js) {
-                    Templates.replaceNodeContents($('[data-region="list-page"]'), html, js);
+                    Templates.replaceNode($('[data-region="list-page"]'), html, js);
                     return null;
                 }).fail(Notification.exception);
             });
@@ -77,7 +78,7 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
         promises[1].then(function(response) {
             return Templates.render('core_customfield/list', response);
         }).then(function(html, js) {
-            Templates.replaceNodeContents($('[data-region="list-page"]'), html, js);
+            Templates.replaceNode($('[data-region="list-page"]'), html, js);
             window.location.href = '#category-' + categoryid;
             return null;
         }).fail(Notification.exception);
@@ -113,7 +114,7 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
 
             // Sort category.
             var sortCat = new SortableList(
-                '#customfield_catlist .categorieslist',
+                $('#customfield_catlist .categorieslist'),
                 {moveHandlerSelector: '.movecategory [data-drag-type=move]'}
             );
 
@@ -140,7 +141,7 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
 
             // Sort fields.
             var sort = new SortableList(
-                '#customfield_catlist .fieldslist tbody',
+                $('#customfield_catlist .fieldslist tbody'),
                 {moveHandlerSelector: '.movefield [data-drag-type=move]'}
             );
 
