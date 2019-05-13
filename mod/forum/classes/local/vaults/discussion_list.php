@@ -137,9 +137,9 @@ class discussion_list extends db_table_vault {
         $issortbyreplies = in_array($sortsql, $sortkeys);
 
         $tables = $thistable->get_from_sql();
-        $tables .= ' JOIN {user} fa ON fa.id = ' . $alias . '.userid';
-        $tables .= ' JOIN {user} la ON la.id = ' . $alias . '.usermodified';
         $tables .= ' JOIN ' . $posttable->get_from_sql() . ' ON fp.id = ' . $alias . '.firstpost';
+        $tables .= ' JOIN {user} fa ON fa.id = fp.userid';
+        $tables .= ' JOIN {user} la ON la.id = ' . $alias . '.usermodified';
         $tables .= $favsql;
 
         if ($issortbyreplies) {
