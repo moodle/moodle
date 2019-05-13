@@ -408,16 +408,21 @@ class url {
      *
      * @param author_entity $author The author
      * @param int|null $authorcontextid The author context id
+     * @param int $size The size of the image to return
      * @return moodle_url
      */
-    public function get_author_profile_image_url(author_entity $author, int $authorcontextid = null) : moodle_url {
+    public function get_author_profile_image_url(
+        author_entity $author,
+        int $authorcontextid = null,
+        int $size = 100
+    ) : moodle_url {
         global $PAGE;
 
         $datamapper = $this->legacydatamapperfactory->get_author_data_mapper();
         $record = $datamapper->to_legacy_object($author);
         $record->contextid = $authorcontextid;
         $userpicture = new user_picture($record);
-        $userpicture->size = 2;
+        $userpicture->size = $size;
 
         return $userpicture->get_url($PAGE);
     }

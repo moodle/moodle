@@ -952,12 +952,12 @@ class mod_forum_external extends external_api {
 
                 } else {
                     $discussionobject->userfullname = $firstpostauthor->get_full_name();
-                    $discussionobject->userpictureurl = $urlfactory->get_author_profile_image_url($firstpostauthor)
+                    $discussionobject->userpictureurl = $urlfactory->get_author_profile_image_url($firstpostauthor, null, 2)
                         ->out(false);
 
                     $discussionobject->usermodifiedfullname = $latestpostauthor->get_full_name();
-                    $discussionobject->usermodifiedpictureurl = $urlfactory->get_author_profile_image_url($latestpostauthor)
-                        ->out(false);
+                    $discussionobject->usermodifiedpictureurl = $urlfactory->get_author_profile_image_url(
+                        $latestpostauthor, null, 2)->out(false);
                 }
 
                 $discussions[] = (array) $discussionobject;
