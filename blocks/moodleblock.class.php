@@ -232,7 +232,7 @@ class block_base {
                 $bc->footer = $this->content->footer;
             }
         } else {
-            $bc->add_class('invisible');
+            $bc->add_class('invisibleblock');
         }
 
         if (!$this->hide_header()) {
