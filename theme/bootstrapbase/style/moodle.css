@@ -16002,7 +16002,7 @@ body {
   border-width: 2px;
   border-style: dashed;
 }
-.block.invisible .header h2 {
+.block.invisibleblock .header h2 {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
