@@ -26,7 +26,7 @@
  *
  * @module report_insights/actions
  */
-define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
+define(['jquery', 'core/ajax', 'core/notification', 'core/url'], function($, Ajax, Notification, Url) {
 
     return {
 
@@ -34,9 +34,11 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
          * Attach on click handlers to hide predictions.
          *
          * @param {Number} predictionId The prediction id.
+         * @param {Number} contextId The context in which the prediction was made.
+         * @param {Number} modelId The model id model with which the prediction was made.
          * @access public
          */
-        init: function(predictionId) {
+        init: function(predictionId, contextId, modelId) {
 
             // Select the prediction with the provided id ensuring that an external function is set as method name.
             $('a[data-prediction-methodname][data-prediction-id=' + predictionId + ']').on('click', function(e) {
@@ -57,11 +59,13 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
 
                         // Move back if no remaining predictions.
                         if ($('.insights-list tr').length < 2) {
-                            if (document.referrer) {
-                                window.location.assign(document.referrer);
-                            } else {
-                                window.location.reload(true);
-                            }
+                            var params = {
+                                contextid: contextId,
+                                modelid: modelId
+                            };
+
+                            var queryparams = $.param(params);
+                            window.location.assign(Url.relativeUrl("report/insights/insights.php?" + queryparams));
                         }
                     }).fail(Notification.exception);
                 }
