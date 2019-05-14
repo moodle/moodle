@@ -1349,6 +1349,30 @@ class model {
     }
 
     /**
+     * Returns the actions executed by users on the predictions.
+     *
+     * @param  \context|null $context
+     * @return \moodle_recordset
+     */
+    public function get_prediction_actions(?\context $context): \moodle_recordset {
+        global $DB;
+
+        $sql = "SELECT apa.id, apa.predictionid, apa.userid, apa.actionname, apa.timecreated,
+                       ap.contextid, ap.sampleid, ap.rangeindex, ap.prediction, ap.predictionscore
+                  FROM {analytics_prediction_actions} apa
+                  JOIN {analytics_predictions} ap ON ap.id = apa.predictionid
+                 WHERE ap.modelid = :modelid";
+        $params = ['modelid' => $this->model->id];
+
+        if ($context) {
+            $sql .= " AND ap.contextid = :contextid";
+            $params['contextid'] = $context->id;
+        }
+
+        return $DB->get_recordset_sql($sql, $params);
+    }
+
+    /**
      * Returns the sample data of a prediction.
      *
      * @param \stdClass $predictionobj
