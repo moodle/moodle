@@ -130,8 +130,10 @@ abstract class base extends \core_analytics\calculable {
         global $PAGE;
 
         $predictionid = $prediction->get_prediction_data()->id;
+        $contextid = $prediction->get_prediction_data()->contextid;
+        $modelid = $prediction->get_prediction_data()->modelid;
 
-        $PAGE->requires->js_call_amd('report_insights/actions', 'init', array($predictionid));
+        $PAGE->requires->js_call_amd('report_insights/actions', 'init', array($predictionid, $contextid, $modelid));
 
         $actions = array();
 
