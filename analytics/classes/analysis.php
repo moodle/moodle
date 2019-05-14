@@ -216,6 +216,7 @@ class analysis {
 
         $result = new \stdClass();
 
+        $timesplitting->set_modelid($this->analyser->get_modelid());
         if (!$timesplitting->is_valid_analysable($analysable)) {
             $result->status = \core_analytics\model::ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD;
             $result->message = get_string('invalidanalysablefortimesplitting', 'analytics',
