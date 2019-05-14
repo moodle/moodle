@@ -1854,7 +1854,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
                 // Delete the course from the license.
                 $DB->delete_records('companylicense_courses', array('id' => $courselicense->id));
                 // Does the license have any courses left?
-                if ($DB->get_records('companylicense_courses', array('licensid' => $courselicense->licenseid))) {
+                if ($DB->get_records('companylicense_courses', array('licenseid' => $courselicense->licenseid))) {
                     company::update_license_usage($courselicense->licenseid);
                 } else {
                     // Delete the license.  It no longer is valid.
@@ -2004,7 +2004,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
                 }
             }
         }
-         
+
 
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2019030103, 'local', 'iomad');
