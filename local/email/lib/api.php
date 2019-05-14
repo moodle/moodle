@@ -269,6 +269,7 @@ class EmailTemplate {
                 $email->body = $this->body() . get_string('signatureseparator', 'local_email') . $this->signature();
             } else {
                 $email->body = $this->body();
+                $this->template->signature = '';
             }
             $email->varsreplaced = 1;
             $email->userid = $this->user->id;
@@ -293,6 +294,8 @@ class EmailTemplate {
                         $email->customheaders[] = "To:".$touserrec->email;
                     }
                 }
+            } else {
+                $this->template->emailto = '';
             }
             if (!empty($this->template->emailtoother)) {
                 $tootherusers = explode(',', $this->template->emailtoother);
@@ -301,6 +304,8 @@ class EmailTemplate {
                         $email->customheaders[] = "To:".$tootheruser;
                     }
                 }
+            } else {
+                $this->template->emailtoother = '';
             }
 
             // Deal with CC users
@@ -311,6 +316,8 @@ class EmailTemplate {
                         $email->customheaders[] = "Cc:".$ccuserrec->email;
                     }
                 }
+            } else {
+                $this->template->emailcc = '';
             }
             if (!empty($this->template->emailccother)) {
                 $ccotherusers = explode(',', $this->template->emailccother);
@@ -319,6 +326,8 @@ class EmailTemplate {
                         $email->customheaders[] = "Cc:".$ccotheruser;
                     }
                 }
+            } else {
+                $this->template->emailccother = '';
             }
 
             // Deal with reply user
@@ -326,9 +335,13 @@ class EmailTemplate {
                 if ($replytouserrec = $DB->get_record('user', array('id' => $this->template->emailreplyto, 'deleted' => 0, 'suspended' => 0))) {
                     $email->customheaders[] = "reply-to:".$replytouserrec->email;
                 }
+            } else {
+                $this->template->emailreplyto = '';
             }
             if (!empty($this->template->emailreplytoother) && validate_email($this->template->emailreplytoother)) {
                 $email->customheaders[] = "reply-to:".$this->template->emailreplytoother;
+            } else {
+                $this->template->emailreplytoother = '';
             }
 
             if ($this->course) {
@@ -342,6 +355,46 @@ class EmailTemplate {
             }
             if ($this->sender) {
                 $email->senderid = $this->sender->id;
+            }
+
+            if (empty($this->template->disabled)) {
+                $this->template->disabled = 0;
+            }
+
+            if (empty($this->template->disabledmanager)) {
+                $this->template->disabledmanager = 0;
+            }
+
+            if (empty($this->template->disabledsupervisor)) {
+                $this->template->disabledsupervisor = 0;
+            }
+
+            if (empty($this->template->repeatperiod)) {
+                $this->template->repeatperiod = 0;
+            }
+
+            if (empty($this->template->repeatvalue)) {
+                $this->template->repeatvalue = 0;
+            }
+
+            if (empty($this->template->repeatday)) {
+                $this->template->repeatday = 0;
+            }
+
+            if (empty($this->template->emailfrom)) {
+                $this->template->emailfrom = '';
+            }
+
+            if (empty($this->template->emailfromother)) {
+                $this->template->emailfromother = '';
+            }
+
+            if (empty($this->template->emailfromothername)) {
+                $this->template->emailfromothername = '';
+            }
+
+            if (empty($this->template->name)) {
+                $this->template->name = $email->templatename;
             }
             $email->customheaders['template'] = $this->template;
             $email->headers = serialize($email->customheaders);
@@ -390,7 +443,7 @@ class EmailTemplate {
                     $supportuser->customheaders['From'] = $template->replytoother;
                     $supportuser->customheaders['Reply-to'] = $template->replytoother;
                 }
-                if (!empty($template->emailfromother && validate_email($template->emailfromother) )) {
+                if (!empty($template->emailfromother) && validate_email($template->emailfromother) ) {
                     $supportuser->email = $template->emailfromother;
                     $supportuser->customheaders['From'] = $template->emailfromother;
                 }
@@ -493,11 +546,11 @@ class EmailTemplate {
             }
 
             // is this a user template?
-            if (strpos($template->name, 'user')) {
+            if (self::is_user_template($email->templatename)) {
                 // Do we send to managers as well?
-                if (!empty($template->disabledmanager)) {
+                if (empty($template->disabledmanager)) {
                     // Get the users managers.
-                    if ($managers = company::get_my_managers($userid, 1)) {
+                    if ($managers = company::get_my_managers($email->userid, 1)) {
                         foreach ($managers as $manager) {
                             if ($managerrec = $DB->get_record('user', array('deleted' => 0, 'suspended' => 0, 'id' => $manager->userid))) {
                                 if (!self::email_direct($managerrec->email,
@@ -510,13 +563,14 @@ class EmailTemplate {
                                 }
                             }
                         }
+} else {
                     }
                 }
 
                 // Do we send to external supervisors as well?
-                if (!empty($template->disabledsupervisor)) {
+                if (empty($template->disabledsupervisor)) {
                     // Get the users supervisors.
-                    if ($supervisors = company::get_usersupervisor($userid)) {
+                    if ($supervisors = company::get_usersupervisor($email->userid)) {
                         foreach ($supervisors as $supervisor) {
                             if (!self::email_direct($supervisor,
                                                     $supportuser,
@@ -634,19 +688,21 @@ class EmailTemplate {
         }
 
         if (empty($this->attachment)) {
-            return self::email_direct($user->email,
-                                 $supportuser,
-                                 $email->subject,
-                                 html_to_text($email->body),
-                                 $email->body);
+            self::email_direct($user->email,
+                               $supportuser,
+                                $email->subject,
+                                html_to_text($email->body),
+                                $email->body);
         } else {
-            return self::email_direct($user->email,
-                                 $supportuser,
-                                 $email->subject,
-                                 html_to_text($email->body),
-                                 $email->body,
-                                 $this->attachment);
+            self::email_direct($user->email,
+                                $supportuser,
+                                $email->subject,
+                                html_to_text($email->body),
+                                $email->body,
+                                $this->attachment);
         }
+
+        $this->email_supervisor;
     }
 
     /**
@@ -658,7 +714,7 @@ class EmailTemplate {
         global $USER, $CFG;
 
         // Do we send this template?
-        if (!$this->template_enabled()) {
+        if (!$this->template_enabled(2)) {
             return true;
         }
 
@@ -715,6 +771,7 @@ class EmailTemplate {
                     $mail->Subject = substr($subject, 0, 900);
                 } else {
                     $mail->Subject = substr('[DIVERTED ' . $supervisoremail . '] ' . $subject, 0, 900);
+                    $supervisoremail = $CFG->divertallemailsto;
                 }
 
                 // Set word wrap.
@@ -985,7 +1042,7 @@ class EmailTemplate {
      * Checks if the template is enabled for this company.
      *
      **/
-    private function template_enabled() {
+    private function template_enabled($type = 0) {
         global $DB;
 
         // Is this template enabled for the company.
@@ -993,14 +1050,14 @@ class EmailTemplate {
             return false;
         }
 
-        if (strpos('supervisor', $this->templatename) !== false) {
+        if ($type == 2 || strpos('supervisor', $this->templatename) !== false) {
             // Is this template enabled for the supervisor.
             if ($DB->get_records('email_templates', array('templatename' => $this->templatename, 'companyid' => $this->company->id, 'disabledsupervisor' =>1))) {
                 return false;
             }
         }
 
-        if (strpos('manager', $this->templatename) !== false) {
+        if ($type == 3 || strpos('manager', $this->templatename) !== false) {
             // Is this template enabled for the supervisor.
             if ($DB->get_records('email_templates', array('templatename' => $this->templatename, 'companyid' => $this->company->id, 'disabledmanager' =>1))) {
                 return false;
@@ -1009,5 +1066,36 @@ class EmailTemplate {
 
         // Default return true.
         return true;
+    }
+
+    /**
+     * Checks if this is a user template or not.
+     *
+     **/
+    private static function is_user_template($templatename) {
+
+        $usertemplates = array( 'completion_course_user' => 'completion_course_user',
+                                'course_not_started_warning' => 'course_not_started_warning',
+                                'completion_warn_user' => 'completion_warn_user',
+                                'expiry_warn_user' => 'expiry_warn_user',
+                                'license_allocated' => 'license_allocated',
+                                'license_removed' => 'license_removed',
+                                'password_update' => 'password_update',
+                                'user_added_to_course' => 'user_added_to_course',
+                                'user_create' => 'user_create',
+                                'user_deleted' => 'user_deleted',
+                                'user_programcompleted' => 'user_programcompleted',
+                                'user_promoted' => 'user_promoted',
+                                'user_removed_from_event' => 'user_removed_from_event',
+                                'user_reset' => 'user_reset',
+                                'user_signed_up_for_event' => 'user_signed_up_for_event',
+                                'user_suspended' => 'user_suspended',
+                                'user_unsuspended' => 'user_unsuspended');
+
+        if (!empty($usertemplates[$templatename])) {
+            return true;
+        }
+
+        return false;
     }
 }

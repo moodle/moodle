@@ -241,7 +241,7 @@ function email_reports_cron() {
                                     "<td>" . $manageruser->lastname . "</td>" .
                                     "<td>" . $manageruser->email . "</td>" .
                                     "<td>" . $manageruser->departmentname . "</td>" .
-                                    "<td>" . $manageruser->fullname . "</td>" .
+                                    "<td>" . $manageruser->coursename . "</td>" .
                                     "<td>" . date($CFG->iomad_date_format, $manageruser->timeenrolled) . "</td></tr>";
                     }
                     $summary .= "</table>";
@@ -260,17 +260,25 @@ function email_reports_cron() {
     $dbman->drop_table($table);
 
     // Deal with courses where users have not yet started.
-    $warnnotstartusers = $DB->get_records_sql("SELECT lit.* FROM {local_iomad_track} lit
-                                               JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid AND ic.timestarted !=0)
-                                               WHERE lit.timestarted = 0
-                                               AND lit.timeenrolled < (:time - ic.warnnotstarted * 60 * 60 * 24)",
-                                               array('time' => time()));
-    foreach ($warnnotstartedusers as $notstarteduser) {
-        if ($userrec = $DB->get_record('user', array('id' => $notstarteduser->userid, 'suspend' => 0, 'deleted' => 0))) {
-            if ($courserec = $DB->get_record('course', array('id' => $notstarteduser->courseid))) {
-                if ($companyrec = $DB->get_record('company', array('id' => $notstarteduser->companyid))) {
-                    // Passed all checks, send the email.
-                    EmailTemplate::send('course_not_started_warning', array('user' => $userrec, 'course' => $courserec, 'company' => $companyrec));
+    $warnnotstartedcourses = $DB->get_records_sql("SELECT * FROM {iomad_courses}
+                                                   WHERE warnnotstarted != 0");
+    foreach ($warnnotstartedcourses as $warnnotstartedcourse) {
+        $warnnotstartedusers = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+                                                   WHERE timestarted = 0
+                                                   AND courseid = :courseid
+                                                   AND timeenrolled < :time",
+                                                   array('time' => time() - $warnnotstartedcourse->warnnotstarted * 60 * 60 *24, 'courseid' => $warnnotstartedcourse->courseid));
+        foreach ($warnnotstartedusers as $notstarteduser) {
+            if ($userrec = $DB->get_record('user', array('id' => $notstarteduser->userid, 'suspended' => 0, 'deleted' => 0))) {
+                if ($courserec = $DB->get_record('course', array('id' => $notstarteduser->courseid))) {
+                    if ($companyrec = $DB->get_record('company', array('id' => $notstarteduser->companyid))) {
+                        // Passed all checks, send the email.
+                        EmailTemplate::send('course_not_started_warning', array('user' => $userrec, 'course' => $courserec, 'company' => $companyrec));
+
+                        // Send the supervisor email too.
+                        mtrace("Sending not started warning email to $userrec->email supervisor");
+                        company::send_supervisor_not_started_warning_email($userrec, $courserec);
+                    }
                 }
             }
         }
@@ -507,7 +515,7 @@ function email_reports_cron() {
                                         "<td>" . $manageruser->lastname . "</td>" .
                                         "<td>" . $manageruser->email . "</td>" .
                                         "<td>" . $manageruser->departmentname . "</td>" .
-                                        "<td>" . $manageruser->fullname . "</td>" .
+                                        "<td>" . $manageruser->coursename . "</td>" .
                                         "<td>" . $datestring . "</td></tr>";
                         }
                         $summary .= "</table>";
