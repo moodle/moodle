@@ -216,6 +216,11 @@
     margin: 5px 0;
 }
 
+.discussion-list .userpicture {
+    height: 35px;
+    width: 35px;
+}
+
 /** Styles for search.php */
 #page-mod-forum-search .introcontent {
     padding: 15px;
