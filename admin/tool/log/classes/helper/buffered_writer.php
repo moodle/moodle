@@ -43,6 +43,9 @@ trait buffered_writer {
     /** @var int $count Counter. */
     protected $count = 0;
 
+    /** @var bool If true, writes JSON instead of PHP serialized data for 'other' field */
+    protected $jsonformat = false;
+
     /**
      * Should the event be ignored (== not logged)?
      * @param \core\event\base $event
@@ -69,7 +72,11 @@ trait buffered_writer {
         // at the same time this lowers memory use because
         // snapshots and custom objects may be garbage collected.
         $entry = $event->get_data();
-        $entry['other'] = serialize($entry['other']);
+        if ($this->jsonformat) {
+            $entry['other'] = json_encode($entry['other']);
+        } else {
+            $entry['other'] = serialize($entry['other']);
+        }
         $entry['origin'] = $PAGE->requestorigin;
         $entry['ip'] = $PAGE->requestip;
         $entry['realuserid'] = \core\session\manager::is_loggedinas() ? $GLOBALS['USER']->realuser : null;

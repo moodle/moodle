@@ -100,10 +100,10 @@ abstract class question_behaviour {
      * options using {@link adjust_display_options()} and then calls
      * {@link core_question_renderer::question()} to do the work.
      * @param question_display_options $options controls what should and should not be displayed.
-     * @param unknown_type $number the question number to display.
+     * @param string|null $number the question number to display.
      * @param core_question_renderer $qoutput the question renderer that will coordinate everything.
      * @param qtype_renderer $qtoutput the question type renderer that will be helping.
-     * @return HTML fragment.
+     * @return string HTML fragment.
      */
     public function render(question_display_options $options, $number,
             core_question_renderer $qoutput, qtype_renderer $qtoutput) {

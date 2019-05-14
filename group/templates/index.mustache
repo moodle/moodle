@@ -78,7 +78,7 @@
 <form id="groupeditform" action="index.php" method="post">
     <div class="container-fluid groupmanagementtable">
         <div class="row row-fluid rtl-compatible">
-            <div class="col-md-6 span6 m-b-1">
+            <div class="col-md-6 mb-1">
                 <input type="hidden" name="id" value="{{courseid}}">
                 <div class="form-group">
                     <label for="groups">
@@ -92,25 +92,25 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <input type="submit" name="act_updatemembers" id="updatemembers" value="{{#str}}showmembersforgroup, group{{/str}}" class="btn btn-default" />
+                    <input type="submit" name="act_updatemembers" id="updatemembers" value="{{#str}}showmembersforgroup, group{{/str}}" class="btn btn-secondary" />
                 </div>
                 <div class="form-group">
-                    <input type="submit" name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="{{#str}}editgroupsettings, group{{/str}}" {{#editgroupsettingsdisabled}}disabled="disabled"{{/editgroupsettingsdisabled}} class="btn btn-default" />
+                    <input type="submit" name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="{{#str}}editgroupsettings, group{{/str}}" {{#editgroupsettingsdisabled}}disabled="disabled"{{/editgroupsettingsdisabled}} class="btn btn-secondary" />
                 </div>
                 <div class="form-group">
-                    <input type="submit" name="act_deletegroup" id="deletegroup" value="{{#str}}deleteselectedgroup, group{{/str}}" {{#deletegroupdisabled}}disabled="disabled"{{/deletegroupdisabled}} class="btn btn-default" />
+                    <input type="submit" name="act_deletegroup" id="deletegroup" value="{{#str}}deleteselectedgroup, group{{/str}}" {{#deletegroupdisabled}}disabled="disabled"{{/deletegroupdisabled}} class="btn btn-secondary" />
                 </div>
                 <div class="form-group">
-                    <input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="{{#str}}creategroup, group{{/str}}" class="btn btn-default" />
+                    <input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="{{#str}}creategroup, group{{/str}}" class="btn btn-secondary" />
                 </div>
                 <div class="form-group">
-                    <input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="{{#str}}autocreategroups, group{{/str}}" class="btn btn-default" />
+                    <input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="{{#str}}autocreategroups, group{{/str}}" class="btn btn-secondary" />
                 </div>
                 <div class="form-group">
-                    <input type="submit" name="act_showimportgroups" id="showimportgroups" value="{{#str}}importgroups, group{{/str}}" class="btn btn-default" />
+                    <input type="submit" name="act_showimportgroups" id="showimportgroups" value="{{#str}}importgroups, group{{/str}}" class="btn btn-secondary" />
                 </div>
             </div>
-            <div class="col-md-6 span6 m-b-1">
+            <div class="col-md-6 mb-1">
                 <div class="form-group">
                     <label for="members">
                         <span id="memberslabel">{{#str}}membersofselectedgroup, group{{/str}}</span>
@@ -127,7 +127,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="{{#str}}adduserstogroup, group{{/str}}" class="btn btn-default" {{#addmembersdisabled}}disabled="disabled"{{/addmembersdisabled}} name="act_showaddmembersform" id="showaddmembersform"/>
+                    <input type="submit" value="{{#str}}adduserstogroup, group{{/str}}" class="btn btn-secondary" {{#addmembersdisabled}}disabled="disabled"{{/addmembersdisabled}} name="act_showaddmembersform" id="showaddmembersform"/>
                 </div>
             </div>
         </div>

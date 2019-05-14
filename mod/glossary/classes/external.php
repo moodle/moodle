@@ -101,6 +101,9 @@ class mod_glossary_external extends external_api {
             'casesensitive' => new external_value(PARAM_BOOL, 'When true, the matching is case sensitive'),
             'fullmatch' => new external_value(PARAM_BOOL, 'When true, the matching is done on full words only'),
             'approved' => new external_value(PARAM_BOOL, 'Whether the entry was approved'),
+            'tags' => new external_multiple_structure(
+                \core_tag\external\tag_item_exporter::get_read_structure(), 'Tags', VALUE_OPTIONAL
+            ),
         );
 
         if ($includecat) {
@@ -149,6 +152,8 @@ class mod_glossary_external extends external_api {
         if (!empty($definitioninlinefiles)) {
             $entry->definitioninlinefiles = $definitioninlinefiles;
         }
+
+        $entry->tags = \core_tag\external\util::get_item_tags('mod_glossary', 'glossary_entries', $entry->id);
     }
 
     /**

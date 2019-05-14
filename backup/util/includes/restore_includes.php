@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/backup/util/interfaces/executable.class.php');
 require_once($CFG->dirroot . '/backup/util/interfaces/processable.class.php');
 require_once($CFG->dirroot . '/backup/backup.class.php');
 require_once($CFG->dirroot . '/backup/util/structure/restore_path_element.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/async_helper.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/backup_anonymizer_helper.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/backup_file_manager.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_prechecks_helper.class.php');

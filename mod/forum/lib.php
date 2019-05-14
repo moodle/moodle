@@ -86,6 +86,8 @@ define('FORUM_DISCUSSION_UNPINNED', 0);
 function forum_add_instance($forum, $mform = null) {
     global $CFG, $DB;
 
+    require_once($CFG->dirroot.'/mod/forum/locallib.php');
+
     $forum->timemodified = time();
 
     if (empty($forum->assessed)) {
@@ -127,6 +129,7 @@ function forum_add_instance($forum, $mform = null) {
         }
     }
 
+    forum_update_calendar($forum, $forum->coursemodule);
     forum_grade_item_update($forum);
 
     $completiontimeexpected = !empty($forum->completionexpected) ? $forum->completionexpected : null;
@@ -162,7 +165,9 @@ function forum_instance_created($context, $forum) {
  * @return bool success
  */
 function forum_update_instance($forum, $mform) {
-    global $DB, $OUTPUT, $USER;
+    global $CFG, $DB, $OUTPUT, $USER;
+
+    require_once($CFG->dirroot.'/mod/forum/locallib.php');
 
     $forum->timemodified = time();
     $forum->id           = $forum->instance;
@@ -249,6 +254,7 @@ function forum_update_instance($forum, $mform) {
         }
     }
 
+    forum_update_calendar($forum, $forum->coursemodule);
     forum_grade_item_update($forum);
 
     $completiontimeexpected = !empty($forum->completionexpected) ? $forum->completionexpected : null;
@@ -813,6 +819,10 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
             }
         }
 
+        if (!forum_post_is_visible_privately($post, $cm)) {
+            continue;
+        }
+
         // Check that the user can see the discussion.
         if (forum_is_user_group_discussion($cm, $post->groupid)) {
             $printposts[] = $post;
@@ -1038,15 +1048,12 @@ function forum_get_post_full($postid) {
 /**
  * Gets all posts in discussion including top parent.
  *
- * @global object
- * @global object
- * @global object
- * @param int $discussionid
- * @param string $sort
- * @param bool $tracking does user track the forum?
- * @return array of posts
+ * @param   int     $discussionid   The Discussion to fetch.
+ * @param   string  $sort           The sorting to apply.
+ * @param   bool    $tracking       Whether the user tracks this forum.
+ * @return  array                   The posts in the discussion.
  */
-function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {
+function forum_get_all_discussion_posts($discussionid, $sort, $tracking = false) {
     global $CFG, $DB, $USER;
 
     $tr_sel  = "";
@@ -1525,17 +1532,17 @@ function forum_get_firstpost_from_discussion($discussionid) {
 /**
  * Returns an array of counts of replies to each discussion
  *
- * @global object
- * @global object
- * @param int $forumid
- * @param string $forumsort
- * @param int $limit
- * @param int $page
- * @param int $perpage
- * @return array
+ * @param   int     $forumid
+ * @param   string  $forumsort
+ * @param   int     $limit
+ * @param   int     $page
+ * @param   int     $perpage
+ * @param   boolean $canseeprivatereplies   Whether the current user can see private replies.
+ * @return  array
  */
-function forum_count_discussion_replies($forumid, $forumsort="", $limit=-1, $page=-1, $perpage=0) {
-    global $CFG, $DB;
+function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, $page = -1, $perpage = 0,
+                                        $canseeprivatereplies = false) {
+    global $CFG, $DB, $USER;
 
     if ($limit > 0) {
         $limitfrom = 0;
@@ -1559,21 +1566,33 @@ function forum_count_discussion_replies($forumid, $forumsort="", $limit=-1, $pag
         $groupby = str_replace('asc', '', $groupby);
     }
 
+    $params = ['forumid' => $forumid];
+
+    if (!$canseeprivatereplies) {
+        $privatewhere = ' AND (p.privatereplyto = :currentuser1 OR p.userid = :currentuser2 OR p.privatereplyto = 0)';
+        $params['currentuser1'] = $USER->id;
+        $params['currentuser2'] = $USER->id;
+    } else {
+        $privatewhere = '';
+    }
+
     if (($limitfrom == 0 and $limitnum == 0) or $forumsort == "") {
         $sql = "SELECT p.discussion, COUNT(p.id) AS replies, MAX(p.id) AS lastpostid
                   FROM {forum_posts} p
                        JOIN {forum_discussions} d ON p.discussion = d.id
-                 WHERE p.parent > 0 AND d.forum = ?
+                 WHERE p.parent > 0 AND d.forum = :forumid
+                       $privatewhere
               GROUP BY p.discussion";
-        return $DB->get_records_sql($sql, array($forumid));
+        return $DB->get_records_sql($sql, $params);
 
     } else {
         $sql = "SELECT p.discussion, (COUNT(p.id) - 1) AS replies, MAX(p.id) AS lastpostid
                   FROM {forum_posts} p
                        JOIN {forum_discussions} d ON p.discussion = d.id
-                 WHERE d.forum = ?
+                 WHERE d.forum = :forumid
+                       $privatewhere
               GROUP BY p.discussion $groupby $orderby";
-        return $DB->get_records_sql($sql, array($forumid), $limitfrom, $limitnum);
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
 }
 
@@ -1803,8 +1822,9 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
         $updatedsincesql = 'AND d.timemodified > ?';
         $params[] = $updatedsince;
     }
+
     $discussionfields = "d.id as discussionid, d.course, d.forum, d.name, d.firstpost, d.groupid, d.assessed," .
-    " d.timemodified, d.usermodified, d.timestart, d.timeend, d.pinned";
+    " d.timemodified, d.usermodified, d.timestart, d.timeend, d.pinned, d.timelocked";
 
     $allnames = get_all_user_name_fields(true, 'u');
     $sql = "SELECT $postdata, $discussionfields,
@@ -2467,7 +2487,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     $postuser->id = $post->userid;
     echo '<td class="author">';
     echo '<div class="media">';
-    echo '<span class="pull-left">';
+    echo '<span class="float-left">';
     echo $OUTPUT->user_picture($postuser, array('courseid'=>$forum->course));
     echo '</span>';
     // User name
@@ -3093,10 +3113,25 @@ function forum_add_new_post($post, $mform, $unused = null) {
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
     $cm         = get_coursemodule_from_instance('forum', $forum->id);
     $context    = context_module::instance($cm->id);
+    $privatereplyto = 0;
+
+    // Check whether private replies should be enabled for this post.
+    if ($post->parent) {
+        $parent = $DB->get_record('forum_posts', array('id' => $post->parent));
+
+        if (!empty($parent->privatereplyto)) {
+            throw new \coding_exception('It should not be possible to reply to a private reply');
+        }
+
+        if (!empty($post->isprivatereply) && forum_user_can_reply_privately($context, $parent)) {
+            $privatereplyto = $parent->userid;
+        }
+    }
 
     $post->created    = $post->modified = time();
     $post->mailed     = FORUM_MAILED_PENDING;
     $post->userid     = $USER->id;
+    $post->privatereplyto = $privatereplyto;
     $post->attachment = "";
     if (!isset($post->totalscore)) {
         $post->totalscore = 0;
@@ -3223,6 +3258,7 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     $post = new stdClass();
     $post->discussion    = 0;
     $post->parent        = 0;
+    $post->privatereplyto = 0;
     $post->userid        = $userid;
     $post->created       = $timenow;
     $post->modified      = $timenow;
@@ -3450,30 +3486,6 @@ function forum_trigger_content_uploaded_event($post, $cm, $name) {
 }
 
 /**
- * @global object
- * @param object $post
- * @param bool $children
- * @return int
- */
-function forum_count_replies($post, $children=true) {
-    global $DB;
-    $count = 0;
-
-    if ($children) {
-        if ($childposts = $DB->get_records('forum_posts', array('parent' => $post->id))) {
-           foreach ($childposts as $childpost) {
-               $count ++;                   // For this child
-               $count += forum_count_replies($childpost, true);
-           }
-        }
-    } else {
-        $count += $DB->count_records('forum_posts', array('parent' => $post->id));
-    }
-
-    return $count;
-}
-
-/**
  * Given a new post, subscribes or unsubscribes as appropriate.
  * Returns some text which describes what happened.
  *
@@ -3692,6 +3704,12 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
         $context = context_module::instance($cm->id);
     }
 
+    if (forum_is_cutoff_date_reached($forum)) {
+        if (!has_capability('mod/forum:canoverridecutoff', $context)) {
+            return false;
+        }
+    }
+
     if ($currentgroup === null) {
         $currentgroup = groups_get_activity_group($cm);
     }
@@ -3783,6 +3801,12 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
 
     if (!$context) {
         $context = context_module::instance($cm->id);
+    }
+
+    if (forum_is_cutoff_date_reached($forum)) {
+        if (!has_capability('mod/forum:canoverridecutoff', $context)) {
+            return false;
+        }
     }
 
     // Check whether the discussion is locked.
@@ -3986,6 +4010,10 @@ function forum_user_can_see_post($forum, $discussion, $post, $user = null, $cm =
     $canviewdiscussion = (isset($cm->cache) && !empty($cm->cache->caps['mod/forum:viewdiscussion']))
         || has_capability('mod/forum:viewdiscussion', $modcontext, $user->id);
     if (!$canviewdiscussion && !has_all_capabilities(array('moodle/user:viewdetails', 'moodle/user:readuserposts'), context_user::instance($post->userid))) {
+        return false;
+    }
+
+    if (!forum_post_is_visible_privately($post, $cm)) {
         return false;
     }
 
@@ -6291,6 +6319,46 @@ function mod_forum_inplace_editable($itemtype, $itemid, $newvalue) {
 }
 
 /**
+ * Determine whether the specified forum's cutoff date is reached.
+ *
+ * @param stdClass $forum The forum
+ * @return bool
+ */
+function forum_is_cutoff_date_reached($forum) {
+    $entityfactory = \mod_forum\local\container::get_entity_factory();
+    $coursemoduleinfo = get_fast_modinfo($forum->course);
+    $cminfo = $coursemoduleinfo->instances['forum'][$forum->id];
+    $forumentity = $entityfactory->get_forum_from_stdclass(
+            $forum,
+            context_module::instance($cminfo->id),
+            $cminfo->get_course_module_record(),
+            $cminfo->get_course()
+    );
+
+    return $forumentity->is_cutoff_date_reached();
+}
+
+/**
+ * Determine whether the specified forum's due date is reached.
+ *
+ * @param stdClass $forum The forum
+ * @return bool
+ */
+function forum_is_due_date_reached($forum) {
+    $entityfactory = \mod_forum\local\container::get_entity_factory();
+    $coursemoduleinfo = get_fast_modinfo($forum->course);
+    $cminfo = $coursemoduleinfo->instances['forum'][$forum->id];
+    $forumentity = $entityfactory->get_forum_from_stdclass(
+            $forum,
+            context_module::instance($cminfo->id),
+            $cminfo->get_course_module_record(),
+            $cminfo->get_course()
+    );
+
+    return $forumentity->is_due_date_reached();
+}
+
+/**
  * Determine whether the specified discussion is time-locked.
  *
  * @param   stdClass    $forum          The forum that the discussion belongs to
@@ -6369,6 +6437,7 @@ function mod_forum_get_fontawesome_icon_map() {
         'mod_forum:t/selected' => 'fa-check',
         'mod_forum:t/subscribed' => 'fa-envelope-o',
         'mod_forum:t/unsubscribed' => 'fa-envelope-open-o',
+        'mod_forum:t/star' => 'fa-star',
     ];
 }
 
@@ -6540,4 +6609,280 @@ function mod_forum_get_completion_active_rule_descriptions($cm) {
         }
     }
     return $descriptions;
+}
+
+/**
+ * Check whether the forum post is a private reply visible to this user.
+ *
+ * @param   stdClass    $post   The post to check.
+ * @param   cm_info     $cm     The context module instance.
+ * @return  bool                Whether the post is visible in terms of private reply configuration.
+ */
+function forum_post_is_visible_privately($post, $cm) {
+    global $USER;
+
+    if (!empty($post->privatereplyto)) {
+        // Allow the user to see the private reply if:
+        // * they hold the permission;
+        // * they are the author; or
+        // * they are the intended recipient.
+        $cansee = false;
+        $cansee = $cansee || ($post->userid == $USER->id);
+        $cansee = $cansee || ($post->privatereplyto == $USER->id);
+        $cansee = $cansee || has_capability('mod/forum:readprivatereplies', context_module::instance($cm->id));
+        return $cansee;
+    }
+
+    return true;
+}
+
+/**
+ * Check whether the user can reply privately to the parent post.
+ *
+ * @param   \context_module $context
+ * @param   \stdClass   $parent
+ * @return  bool
+ */
+function forum_user_can_reply_privately(\context_module $context, \stdClass $parent) : bool {
+    if ($parent->privatereplyto) {
+        // You cannot reply privately to a post which is, itself, a private reply.
+        return false;
+    }
+
+    return has_capability('mod/forum:postprivatereply', $context);
+}
+
+/**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The date must be after this date'],
+ *     [1506741172, 'The date must be before this date']
+ * ]
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass $forum The module instance to get the range from
+ * @return array Returns an array with min and max date.
+ */
+function mod_forum_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $forum) {
+    global $CFG;
+
+    require_once($CFG->dirroot . '/mod/forum/locallib.php');
+
+    $mindate = null;
+    $maxdate = null;
+
+    if ($event->eventtype == FORUM_EVENT_TYPE_DUE) {
+        if (!empty($forum->cutoffdate)) {
+            $maxdate = [
+                $forum->cutoffdate,
+                get_string('cutoffdatevalidation', 'forum'),
+            ];
+        }
+    }
+
+    return [$mindate, $maxdate];
+}
+
+/**
+ * This function will update the forum module according to the
+ * event that has been modified.
+ *
+ * It will set the timeclose value of the forum instance
+ * according to the type of event provided.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ * @param stdClass $forum The module instance to get the range from
+ */
+function mod_forum_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $forum) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mod/forum/locallib.php');
+
+    if ($event->eventtype != FORUM_EVENT_TYPE_DUE) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+
+    // Something weird going on. The event is for a different module so
+    // we should ignore it.
+    if ($modulename != 'forum') {
+        return;
+    }
+
+    if ($forum->id != $instanceid) {
+        return;
+    }
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    if ($event->eventtype == FORUM_EVENT_TYPE_DUE) {
+        if ($forum->duedate != $event->timestart) {
+            $forum->duedate = $event->timestart;
+            $forum->timemodified = time();
+            // Persist the instance changes.
+            $DB->update_record('forum', $forum);
+            $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+            $event->trigger();
+        }
+    }
+}
+
+/**
+ * Fetch the data used to display the discussions on the current page.
+ *
+ * @param   \mod_forum\local\entities\forum  $forum The forum entity
+ * @param   stdClass                         $user The user to render for
+ * @param   int[]|null                       $groupid The group to render
+ * @param   int|null                         $sortorder The sort order to use when selecting the discussions in the list
+ * @param   int|null                         $pageno The zero-indexed page number to use
+ * @param   int|null                         $pagesize The number of discussions to show on the page
+ * @return  stdClass                         The data to use for display
+ */
+function get_discussions(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid, ?int $sortorder,
+        ?int $pageno = 0, ?int $pagesize = 0) {
+
+    $vaultfactory = mod_forum\local\container::get_vault_factory();
+    $discussionvault = $vaultfactory->get_discussions_in_forum_vault();
+    $managerfactory = mod_forum\local\container::get_manager_factory();
+    $capabilitymanager = $managerfactory->get_capability_manager($forum);
+
+    $groupids = get_groups_from_groupid($forum, $user, $groupid);
+
+    if (null === $groupids) {
+        return $discussions = $discussionvault->get_from_forum_id(
+            $forum->get_id(),
+            $capabilitymanager->can_view_hidden_posts($user),
+            $user->id,
+            $sortorder,
+            $pagesize,
+            $pageno * $pagesize);
+    } else {
+        return $discussions = $discussionvault->get_from_forum_id_and_group_id(
+            $forum->get_id(),
+            $groupids,
+            $capabilitymanager->can_view_hidden_posts($user),
+            $user->id,
+            $sortorder,
+            $pagesize,
+            $pageno * $pagesize);
+    }
+}
+
+/**
+ * Get a count of all discussions in a forum.
+ *
+ * @param   \mod_forum\local\entities\forum  $forum The forum entity
+ * @param   stdClass                         $user The user to render for
+ * @param   int                              $groupid The group to render
+ * @return  int                              The number of discussions in a forum
+ */
+function get_count_all_discussions(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid) {
+
+    $managerfactory = mod_forum\local\container::get_manager_factory();
+    $capabilitymanager = $managerfactory->get_capability_manager($forum);
+    $vaultfactory = mod_forum\local\container::get_vault_factory();
+    $discussionvault = $vaultfactory->get_discussions_in_forum_vault();
+
+    $groupids = get_groups_from_groupid($forum, $user, $groupid);
+
+    if (null === $groupids) {
+        return $discussionvault->get_total_discussion_count_from_forum_id(
+            $forum->get_id(),
+            $capabilitymanager->can_view_hidden_posts($user),
+            $user->id);
+    } else {
+        return $discussionvault->get_total_discussion_count_from_forum_id_and_group_id(
+            $forum->get_id(),
+            $groupids,
+            $capabilitymanager->can_view_hidden_posts($user),
+            $user->id);
+    }
+}
+
+/**
+ * Get the list of groups to show based on the current user and requested groupid.
+ *
+ * @param   \mod_forum\local\entities\forum  $forum The forum entity
+ * @param   stdClass                         $user The user viewing
+ * @param   int                              $groupid The groupid requested
+ * @return  array                            The list of groups to show
+ */
+function get_groups_from_groupid(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid) : ?array {
+
+    $effectivegroupmode = $forum->get_effective_group_mode();
+    if (empty($effectivegroupmode)) {
+        // This forum is not in a group mode. Show all posts always.
+        return null;
+    }
+
+    if (null == $groupid) {
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+        // No group was specified.
+        $showallgroups = (VISIBLEGROUPS == $effectivegroupmode);
+        $showallgroups = $showallgroups || $capabilitymanager->can_access_all_groups($user);
+        if ($showallgroups) {
+            // Return null to show all groups.
+            return null;
+        } else {
+            // No group was specified. Only show the users current groups.
+            return array_keys(
+                groups_get_all_groups(
+                    $forum->get_course_id(),
+                    $user->id,
+                    $forum->get_course_module_record()->groupingid
+                )
+            );
+        }
+    } else {
+        // A group was specified. Just show that group.
+        return [$groupid];
+    }
+}
+
+/**
+ * Return a list of all the user preferences used by mod_forum.
+ *
+ * @return array
+ */
+function mod_forum_user_preferences() {
+    $vaultfactory = \mod_forum\local\container::get_vault_factory();
+    $discussionlistvault = $vaultfactory->get_discussions_in_forum_vault();
+
+    $preferences = array();
+    $preferences['forum_discussionlistsortorder'] = array(
+        'null' => NULL_NOT_ALLOWED,
+        'default' => $discussionlistvault::SORTORDER_LASTPOST_DESC,
+        'type' => PARAM_INT,
+        'choices' => array(
+            $discussionlistvault::SORTORDER_LASTPOST_DESC,
+            $discussionlistvault::SORTORDER_LASTPOST_ASC,
+            $discussionlistvault::SORTORDER_CREATED_DESC,
+            $discussionlistvault::SORTORDER_CREATED_ASC,
+            $discussionlistvault::SORTORDER_REPLIES_DESC,
+            $discussionlistvault::SORTORDER_REPLIES_ASC
+        )
+    );
+
+    return $preferences;
 }

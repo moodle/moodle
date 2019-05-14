@@ -156,24 +156,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * Initialise action menu for the element (section or module)
          *
          * @param {String} elementid CSS id attribute of the element
-         * @param {Boolean} openmenu whether to open menu - this can be used when re-initiating menu after indent action was pressed
          */
-        var initActionMenu = function(elementid, openmenu) {
+        var initActionMenu = function(elementid) {
             // Initialise action menu in the new activity.
             Y.use('moodle-course-coursebase', function() {
                 M.course.coursebase.invoke_function('setup_for_resource', '#' + elementid);
             });
             if (M.core.actionmenu && M.core.actionmenu.newDOMNode) {
                 M.core.actionmenu.newDOMNode(Y.one('#' + elementid));
-            }
-            // Open action menu if the original element had data-keepopen.
-            if (openmenu) {
-                // We must use YUI click simulate here so the toggle works in Clean theme. This toggle is not
-                // needed in Boost because we use standard bootstrapbase action menu.
-                var toggle = Y.one('#' + elementid + ' ' + SELECTOR.MENU).one(SELECTOR.TOGGLE);
-                if (toggle && toggle.simulate) {
-                    toggle.simulate('click');
-                }
             }
         };
 
@@ -227,8 +217,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {JQuery} target the element (menu item) that was clicked
          */
         var editModule = function(moduleElement, cmid, target) {
-            var keepopen = target.attr('data-keepopen'),
-                    action = target.attr('data-action');
+            var action = target.attr('data-action');
             var spinner = addActivitySpinner(moduleElement);
             var promises = ajax.call([{
                 methodname: 'core_course_edit_module',
@@ -248,7 +237,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                     moduleElement.replaceWith(data);
                     // Initialise action menu for activity(ies) added as a result of this.
                     $('<div>' + data + '</div>').find(SELECTOR.ACTIVITYLI).each(function(index) {
-                        initActionMenu($(this).attr('id'), keepopen);
+                        initActionMenu($(this).attr('id'));
                         if (index === 0) {
                             focusActionItem($(this).attr('id'), action);
                             elementToFocus = null;
@@ -352,30 +341,21 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {String} image new image name ("i/show", "i/hide", etc.)
          * @param {String} stringname new string for the action menu item
          * @param {String} stringcomponent
-         * @param {String} titlestr string for "title" attribute (if different from stringname)
-         * @param {String} titlecomponent
+         * @param {String} titlestr not used
+         * @param {String} titlecomponent not used
          * @param {String} newaction new value for data-action attribute of the link
          * @return {Promise} promise which is resolved when the replacement has completed
          */
         var replaceActionItem = function(actionitem, image, stringname,
                                            stringcomponent, titlestr, titlecomponent, newaction) {
 
-
             var stringRequests = [{key: stringname, component: stringcomponent}];
-            if (titlestr) {
-                stringRequests.push({key: titlestr, component: titlecomponent});
-            }
+            // Do not provide an icon with duplicate, different text to the menu item.
 
             return str.get_strings(stringRequests).then(function(strings) {
                 actionitem.find('span.menu-action-text').html(strings[0]);
-                actionitem.attr('title', strings[0]);
 
-                var title = '';
-                if (titlestr) {
-                    title = strings[1];
-                    actionitem.attr('title', title);
-                }
-                return templates.renderPix(image, 'core', title);
+                return templates.renderPix(image, 'core');
             }).then(function(pixhtml) {
                 actionitem.find('.icon').replaceWith(pixhtml);
                 actionitem.attr('data-action', newaction);
@@ -451,7 +431,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 // Find the existing element with the same id and replace its contents with new html.
                 $(SELECTOR.ACTIVITYLI + '#' + id).replaceWith(activityHTML);
                 // Initialise action menu.
-                initActionMenu(id, false);
+                initActionMenu(id);
             });
         };
 

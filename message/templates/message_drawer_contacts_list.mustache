@@ -41,14 +41,21 @@
         data-route="view-conversation"
         {{#conversationid}}
             data-route-param-1="{{.}}"
+            {{#frompanel}}
+                data-route-param-2="frompanel"
+            {{/frompanel}}
         {{/conversationid}}
         {{^conversationid}}
             data-route-param-1="false"
             data-route-param-2="create"
             data-route-param-3="{{id}}"
+            {{#frompanel}}
+                data-route-param-4="frompanel"
+            {{/frompanel}}
         {{/conversationid}}
         data-contact-user-id="{{id}}"
         data-region="contact"
+        role="button"
     >
         <img
             class="rounded-circle"
@@ -60,7 +67,7 @@
         {{#showonlinestatus}}
             <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
         {{/showonlinestatus}}
-        <h6 class="ml-2 font-weight-bold" data-region="searchable">{{fullname}}</h6>
+        <h6 class="ml-2 font-weight-bold">{{#highlight}}{{{highlight}}}{{/highlight}}{{^highlight}}{{fullname}}{{/highlight}}</h6>
         <div
             class="ml-auto align-self-end {{^isblocked}}hidden{{/isblocked}}"
             data-region="block-icon-container"

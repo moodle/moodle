@@ -40,9 +40,19 @@ $id = optional_param('id', 0, PARAM_INT);
 // We no longer support viewing another user's messaging area (that can be achieved
 // via the 'Log-in as' feature). The 'user2' value takes preference over 'id'.
 $userid = optional_param('user2', $id, PARAM_INT);
+$conversationid = optional_param('convid', null, PARAM_INT);
 
 if (!core_user::is_real_user($userid)) {
     $userid = null;
+}
+// You can specify either a user, or a conversation, not both.
+if ($userid) {
+    $conversationid = \core_message\api::get_conversation_between_users([$USER->id, $userid]);
+} else if ($conversationid) {
+    // Check that the user belongs to the conversation.
+    if (!\core_message\api::is_user_in_conversation($USER->id, $conversationid)) {
+        $conversationid = null;
+    }
 }
 
 if ($userid) {
@@ -59,7 +69,7 @@ if ($userid) {
 }
 $PAGE->set_url($url);
 $PAGE->set_context(context_user::instance($USER->id));
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('mydashboard');
 
 $strmessages = get_string('messages', 'message');
 
@@ -73,12 +83,6 @@ $usernode->remove();
 $settings = $PAGE->settingsnav->find('messages', null);
 $settings->make_active();
 
-// Check if there is an existing conversation with the supplied user (if there is one).
-$conversationid = null;
-if ($userid) {
-    $conversationid = \core_message\api::get_conversation_between_users([$USER->id, $userid]);
-}
-
 echo $OUTPUT->header();
 // Display a message if the messages have not been migrated yet.
 if (!get_user_preferences('core_message_migrate_data', false)) {
@@ -86,6 +90,5 @@ if (!get_user_preferences('core_message_migrate_data', false)) {
         \core\output\notification::NOTIFY_WARNING);
     echo $OUTPUT->render($notify);
 }
-echo $OUTPUT->heading(get_string('messages', 'message'));
 echo \core_message\helper::render_messaging_widget(false, $userid, $conversationid);
 echo $OUTPUT->footer();

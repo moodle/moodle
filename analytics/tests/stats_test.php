@@ -51,11 +51,11 @@ class analytics_stats_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        // By default, sites have {@link \core\analytics\target\no_teaching} enabled.
+        // By default, sites have {@link \core_course\analytics\target\no_teaching} enabled.
         $this->assertEquals(1, \core_analytics\stats::enabled_models());
 
         $model = \core_analytics\model::create(
-            \core_analytics\manager::get_target('\core\analytics\target\course_dropout'),
+            \core_analytics\manager::get_target('\core_course\analytics\target\course_dropout'),
             [
                 \core_analytics\manager::get_indicator('\core\analytics\indicator\any_write_action'),
             ]

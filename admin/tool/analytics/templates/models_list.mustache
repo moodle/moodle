@@ -20,85 +20,118 @@
     Template for models list.
 
     Classes required for JS:
-    * none
+    * The list od models wrapped within a id="predictionmodelslist" element.
 
     Data attributes required for JS:
-    * none
+    * [data-widget="toggle"] indicates the clickable element for expanding/collapsing
+      the list of indicators used by the given model.
 
     Context variables required for this template:
-    * none
+    * models: array - list of models to display
+        - id: int - model unique identifier
+        - name: object - data for the inplace editable element template
+        - target: string - name of the target associated with the model
+        - targetclass: string - fully qualified name of the target class
+        - targethelp: object - data for the help tooltip template
+        - enabled: bool - is the model enabled
+        - indicatorsnum: int - number of indicators
+        - indicators: array - list of indicators used by the model
+            + name: string - name of the indicator
+            + help: object - data for the help tooltip template
+        - insights: object - data for the single select template
+        - noinsights: string - text to display instead of insights
+    * warnings: array - list of data for notification warning template
+    * infos: array - list of data for notification info template
+    * createmodelurl: string - URL to create a new model
+    * importmodelurl: string - URL to import a model
 
     Example context (json):
     {
         "models": [
             {
+                "id": 11,
+                "name": {
+                    "component": "local_analyticsdemo",
+                    "itemtype": "modelname",
+                    "itemid": 42,
+                    "displayvalue": "Prevent devs at risk",
+                    "value": ""
+                },
                 "target": "Prevent devs at risk",
-                "targethelp": [
-                    {
-                        "title": "Help with something",
-                        "url": "http://example.org/help",
-                        "linktext": "",
-                        "icon":{
-                            "extraclasses": "iconhelp",
-                            "attributes": [
-                                {"name": "src", "value": "../../../pix/help.svg"},
-                                {"name": "alt", "value": "Help icon"}
-                            ]
-                        }
+                "targetclass": "\\local_analyticsdemo\\analytics\\target\\dev_risk",
+                "targethelp": {
+                    "title": "Help with Prevent devs at risk",
+                    "text": "This target blah blah ...",
+                    "url": "http://example.org/help",
+                    "linktext": "",
+                    "icon": {
+                        "extraclasses": "iconhelp",
+                        "attributes": [
+                            {"name": "src", "value": "../../../pix/help.svg"},
+                            {"name": "alt", "value": "Help icon"}
+                        ]
                     }
-                ],
+                },
                 "enabled": 1,
-                "indicators": [{
-                    "name": "Indicator 1",
-                    "help": [{
-                            "title": "Help with something",
+                "indicatorsnum": 2,
+                "indicators": [
+                    {
+                        "name": "Indicator 1",
+                        "help": {
+                            "text": "This indicator blah blah ...",
+                            "title": "Help with Indicator 1",
                             "url": "http://example.org/help",
                             "linktext": "",
-                            "icon":{
+                            "icon": {
                                 "extraclasses": "iconhelp",
                                 "attributes": [
                                     {"name": "src", "value": "../../../pix/help.svg"},
                                     {"name": "alt", "value": "Help icon"}
                                 ]
                             }
-                        }]
+                        }
                     },
                     {
-                    "name": "Indicator 2",
-                    "help": [{
-                            "title": "Help with something",
+                        "name": "Indicator 2",
+                        "help": {
+                            "text": "This indicator blah blah ...",
+                            "title": "Help with Indicator 2",
                             "url": "http://example.org/help",
                             "linktext": "",
-                            "icon":{
+                            "icon": {
                                 "extraclasses": "iconhelp",
                                 "attributes": [
                                     {"name": "src", "value": "../../../pix/help.svg"},
                                     {"name": "alt", "value": "Help icon"}
                                 ]
                             }
-                        }]
-                    }],
-                "timesplitting": "Quarters",
-                "timesplittinghelp": [
-                    {
-                        "title": "Help with something",
-                        "url": "http://example.org/help",
-                        "linktext": "",
-                        "icon":{
-                            "extraclasses": "iconhelp",
-                            "attributes": [
-                                {"name": "src", "value": "../../../pix/help.svg"},
-                                {"name": "alt", "value": "Help icon"}
-                            ]
                         }
                     }
                 ],
+                "timesplitting": "Quarters",
+                "timesplittinghelp": {
+                    "text": "This time splitting methof blah blah ...",
+                    "title": "Help with Quarters",
+                    "url": "http://example.org/help",
+                    "linktext": "",
+                    "icon": {
+                        "extraclasses": "iconhelp",
+                        "attributes": [
+                            {"name": "src", "value": "../../../pix/help.svg"},
+                            {"name": "alt", "value": "Help icon"}
+                        ]
+                    }
+                },
                 "noinsights": "No insights available yet"
             }
         ],
-        "warnings": {
-            "message": "Hey, this is a warning"
-        }
+        "warnings": [
+            {
+                "message": "Be ware, this is just an example!"
+            }
+        ],
+        "createmodelurl": "#",
+        "importmodelurl": "#"
     }
 }}
 
@@ -111,14 +144,15 @@
 
 <div class="box">
     <div class="top-nav d-flex">
-        <a href="{{createmodelurl}}" class="btn btn-default mr-2">{{#str}}createmodel, tool_analytics{{/str}}</a>
-        <a href="{{importmodelurl}}" class="btn btn-default">{{#str}}importmodel, tool_analytics{{/str}}</a>
+        {{#newmodelmenu}}
+        {{>core/action_menu}}
+        {{/newmodelmenu}}
     </div>
-    <table class="generaltable fullwidth">
+    <table id="predictionmodelslist" class="generaltable fullwidth">
         <caption>{{#str}}analyticmodels, tool_analytics{{/str}}</caption>
         <thead>
             <tr>
-                <th scope="col">{{#str}}target, tool_analytics{{/str}}</th>
+                <th scope="col">{{#str}}modelname, tool_analytics{{/str}}</th>
                 <th scope="col">{{#str}}enabled, tool_analytics{{/str}}</th>
                 <th scope="col">{{#str}}indicators, tool_analytics{{/str}}</th>
                 <th scope="col">{{#str}}modeltimesplitting, tool_analytics{{/str}}</th>
@@ -130,10 +164,15 @@
         {{#models}}
             <tr>
                 <td>
-                    <span class="target-name">{{target}}</span>
-                    {{#targethelp}}
-                        {{>core/help_icon}}
-                    {{/targethelp}}
+                    {{#name}}
+                        <span class="model-name">{{>core/inplace_editable}}</span>
+                    {{/name}}
+                    <div>
+                        <small class="target-class">{{targetclass}}</small>
+                        {{#targethelp}}
+                            {{>core/help_icon}}
+                        {{/targethelp}}
+                    </div>
                 </td>
                 <td>
                     {{#enabled}}
@@ -144,7 +183,15 @@
                     {{/enabled}}
                 </td>
                 <td>
-                    <ul>
+                    <a data-widget="toggle"
+                           title="{{#str}} clicktohideshow {{/str}}"
+                           aria-expanded="false"
+                           aria-controls="indicators-{{id}}"
+                           role="button"
+                           href="">
+                        {{#str}} indicatorsnum, tool_analytics, {{indicatorsnum}} {{/str}}
+                    </a>
+                    <ul class="hidden" id="indicators-{{id}}">
                     {{#indicators}}
                         <li>
                             {{name}}
@@ -188,3 +235,22 @@
         </tbody>
     </table>
 </div>
+{{#js}}
+require(['jquery'], function($) {
+
+    // Toggle the visibility of the indicators list.
+    $('#predictionmodelslist').on('click', '[data-widget="toggle"]', function(e) {
+        e.preventDefault();
+        var toggle = $(e.currentTarget);
+        var listid = toggle.attr('aria-controls');
+
+        $(document.getElementById(listid)).toggle();
+
+        if (toggle.attr('aria-expanded') == 'false') {
+            toggle.attr('aria-expanded', 'true');
+        } else {
+            toggle.attr('aria-expanded', 'false');
+        }
+    });
+});
+{{/js}}

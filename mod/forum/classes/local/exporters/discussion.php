@@ -64,7 +64,10 @@ class discussion extends exporter {
             'id' => ['type' => PARAM_INT],
             'forumid' => ['type' => PARAM_INT],
             'pinned' => ['type' => PARAM_BOOL],
+            'locked' => ['type' => PARAM_BOOL],
+            'istimelocked' => ['type' => PARAM_BOOL],
             'name' => ['type' => PARAM_TEXT],
+            'firstpostid' => ['type' => PARAM_INT],
             'group' => [
                 'optional' => true,
                 'type' => [
@@ -88,11 +91,13 @@ class discussion extends exporter {
                     'modified' => ['type' => PARAM_INT],
                     'start' => ['type' => PARAM_INT],
                     'end' => ['type' => PARAM_INT],
+                    'locked' => ['type' => PARAM_INT],
                 ],
             ],
             'userstate' => [
                 'type' => [
                     'subscribed' => ['type' => PARAM_BOOL],
+                    'favourited' => ['type' => PARAM_BOOL],
                 ],
             ],
             'capabilities' => [
@@ -100,7 +105,9 @@ class discussion extends exporter {
                     'subscribe' => ['type' => PARAM_BOOL],
                     'move' => ['type' => PARAM_BOOL],
                     'pin' => ['type' => PARAM_BOOL],
-                    'post' => ['type' => PARAM_BOOL]
+                    'post' => ['type' => PARAM_BOOL],
+                    'manage' => ['type' => PARAM_BOOL],
+                    'favourite' => ['type' => PARAM_BOOL]
                 ]
             ],
             'urls' => [
@@ -115,7 +122,11 @@ class discussion extends exporter {
                         'type' => PARAM_URL,
                     ],
                     'markasread' => ['type' => PARAM_URL],
-                    'subscribe' => ['type' => PARAM_URL]
+                    'subscribe' => ['type' => PARAM_URL],
+                    'pin' => [
+                        'optional' => true,
+                        'type' => PARAM_URL,
+                    ],
                 ],
             ],
             'timed' => [
@@ -147,6 +158,7 @@ class discussion extends exporter {
 
         $capabilitymanager = $this->related['capabilitymanager'];
         $urlfactory = $this->related['urlfactory'];
+        $favouriteids = isset($this->related['favouriteids']) ? $this->related['favouriteids'] : [];
 
         $forum = $this->related['forum'];
         $forumrecord = $this->get_forum_record();
@@ -179,22 +191,29 @@ class discussion extends exporter {
             'id' => $discussion->get_id(),
             'forumid' => $forum->get_id(),
             'pinned' => $discussion->is_pinned(),
+            'locked' => $forum->is_discussion_locked($discussion),
+            'istimelocked' => $forum->is_discussion_time_locked($discussion),
             'name' => format_string($discussion->get_name(), true, [
                 'context' => $this->related['context']
             ]),
+            'firstpostid' => $discussion->get_first_post_id(),
             'times' => [
                 'modified' => $discussion->get_time_modified(),
                 'start' => $discussion->get_time_start(),
                 'end' => $discussion->get_time_end(),
+                'locked' => $discussion->get_locked()
             ],
             'userstate' => [
                 'subscribed' => \mod_forum\subscriptions::is_subscribed($user->id, $forumrecord, $discussion->get_id()),
+                'favourited' => in_array($discussion->get_id(), $favouriteids) ? true : false,
             ],
             'capabilities' => [
                 'subscribe' => $capabilitymanager->can_subscribe_to_discussion($user, $discussion),
                 'move' => $capabilitymanager->can_move_discussion($user, $discussion),
                 'pin' => $capabilitymanager->can_pin_discussion($user, $discussion),
-                'post' => $capabilitymanager->can_post_in_discussion($user, $discussion)
+                'post' => $capabilitymanager->can_post_in_discussion($user, $discussion),
+                'manage' => $capabilitymanager->can_manage_forum($user),
+                'favourite' => $capabilitymanager->can_favourite_discussion($user) // Defaulting to true until we get capabilities sorted
             ],
             'urls' => [
                 'view' => $urlfactory->get_discussion_view_url_from_discussion($discussion)->out(false),
@@ -209,6 +228,10 @@ class discussion extends exporter {
                     $discussion,
                     $this->related['latestpostid']
                 )->out(false);
+        }
+
+        if ($capabilitymanager->can_pin_discussions($user)) {
+            $data['urls']['pin'] = $urlfactory->get_pin_discussion_url_from_discussion($discussion)->out(false);
         }
 
         if ($groupdata) {
@@ -247,7 +270,8 @@ class discussion extends exporter {
             'urlfactory' => 'mod_forum\local\factories\url',
             'user' => 'stdClass',
             'groupsbyid' => 'stdClass[]',
-            'latestpostid' => 'int?'
+            'latestpostid' => 'int?',
+            'favouriteids' => 'int[]?'
         ];
     }
 }

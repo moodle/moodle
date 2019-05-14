@@ -99,10 +99,17 @@ $output = $PAGE->get_renderer('core', 'badges');
 $badges = badges_get_user_badges($USER->id);
 
 echo $OUTPUT->header();
+$success = optional_param('success', '', PARAM_ALPHA);
+$warning = optional_param('warning', '', PARAM_ALPHA);
+if (!empty($success)) {
+    echo $OUTPUT->notification(get_string($success, 'core_badges'), 'notifysuccess');
+} else if (!empty($warning)) {
+    echo $OUTPUT->notification(get_string($warning, 'core_badges'), 'warning');
+}
 $totalcount = count($badges);
 $records = badges_get_user_badges($USER->id, null, $page, BADGE_PERPAGE, $search);
 
-$userbadges             = new badge_user_collection($records, $USER->id);
+$userbadges             = new \core_badges\output\badge_user_collection($records, $USER->id);
 $userbadges->sort       = 'dateissued';
 $userbadges->dir        = 'DESC';
 $userbadges->page       = $page;

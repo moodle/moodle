@@ -1,5 +1,11 @@
 This files describes API changes in /admin/*.
 
+=== 3.7 ===
+
+* Admin setting "Allow blocks to use the dock" (allowblockstodock) has been removed & stings deprecated.
+  Docking of blocks is no longer supported within the core themes (Boost, Classic).
+  Please see MDL-64506 for further details.
+
 === 3.3 ===
 
 * The admin settings admin_setting_configselect and admin_setting_configmultiselect now support the optgroup tag.

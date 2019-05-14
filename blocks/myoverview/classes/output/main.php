@@ -67,6 +67,13 @@ class main implements renderable, templatable {
     private $paging;
 
     /**
+     * Store the display categories config setting
+     *
+     * @var boolean
+     */
+    private $displaycategories;
+
+    /**
      * main constructor.
      * Initialize the user preferences
      *
@@ -79,6 +86,12 @@ class main implements renderable, templatable {
         $this->sort = $sort ? $sort : BLOCK_MYOVERVIEW_SORTING_TITLE;
         $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
         $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;
+        $config = get_config('block_myoverview');
+        if (!$config->displaycategories) {
+            $this->displaycategories = BLOCK_MYOVERVIEW_DISPLAY_CATEGORIES_OFF;
+        } else {
+            $this->displaycategories = BLOCK_MYOVERVIEW_DISPLAY_CATEGORIES_ON;
+        }
     }
 
     /**
@@ -110,7 +123,8 @@ class main implements renderable, templatable {
             'grouping' => $this->grouping,
             'sort' => $this->sort == BLOCK_MYOVERVIEW_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc',
             'view' => $this->view,
-            'paging' => $this->paging
+            'paging' => $this->paging,
+            'displaycategories' => $this->displaycategories,
         ];
 
         $preferences = $this->get_preferences_as_booleans();

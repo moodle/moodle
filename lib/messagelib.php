@@ -118,18 +118,30 @@ function message_send(\core\message\message $eventdata) {
             return false;
         }
 
-        if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
-                                                                                  $eventdata->userto->id])) {
-            $conversation = \core_message\api::create_conversation(
-                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-                [
-                    $eventdata->userfrom->id,
-                    $eventdata->userto->id
-                ]
-            );
+        if ($eventdata->userfrom->id == $eventdata->userto->id) {
+            // It's a self conversation.
+            $conversation = \core_message\api::get_self_conversation($eventdata->userfrom->id);
+            if (empty($conversation)) {
+                $conversation = \core_message\api::create_conversation(
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
+                    [$eventdata->userfrom->id]
+                );
+            }
+        } else {
+            if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
+                                                                                      $eventdata->userto->id])) {
+                // It's a private conversation between users.
+                $conversation = \core_message\api::create_conversation(
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                    [
+                        $eventdata->userfrom->id,
+                        $eventdata->userto->id
+                    ]
+                );
+            }
         }
         // We either have found a conversation, or created one.
-        $conversationid = $conversationid ? $conversationid : $conversation->id;
+        $conversationid = !empty($conversationid) ? $conversationid : $conversation->id;
         $eventdata->convid = $conversationid;
     }
 
@@ -153,6 +165,23 @@ function message_send(\core\message\message $eventdata) {
         $tabledata->fullmessagehtml = $eventdata->fullmessagehtml;
         $tabledata->smallmessage = $eventdata->smallmessage;
         $tabledata->timecreated = time();
+        $tabledata->customdata = $eventdata->customdata;
+
+        // The Trusted Content system.
+        // Texts created or uploaded by such users will be marked as trusted and will not be cleaned before display.
+        if (trusttext_active()) {
+            // Individual conversations are always in system context.
+            $messagecontext = \context_system::instance();
+            // We need to know the type of conversation and the contextid if it is a group conversation.
+            if ($conv = $DB->get_record('message_conversations', ['id' => $conversationid], 'id, type, contextid')) {
+                if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP && $conv->contextid) {
+                    $messagecontext = \context::instance_by_id($conv->contextid);
+                }
+            }
+            $tabledata->fullmessagetrust = trusttext_trusted($messagecontext);
+        } else {
+            $tabledata->fullmessagetrust = false;
+        }
 
         if ($messageid = message_handle_phpunit_redirection($eventdata, $table, $tabledata)) {
             return $messageid;
@@ -239,6 +268,7 @@ function message_send(\core\message\message $eventdata) {
     $tabledata->eventtype = $eventdata->name;
     $tabledata->component = $eventdata->component;
     $tabledata->timecreated = time();
+    $tabledata->customdata = $eventdata->customdata;
     if (!empty($eventdata->contexturl)) {
         $tabledata->contexturl = (string)$eventdata->contexturl;
     } else {

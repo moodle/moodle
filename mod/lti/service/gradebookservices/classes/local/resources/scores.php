@@ -80,96 +80,82 @@ class scores extends resource_base {
         $container = empty($contenttype) || ($contenttype === $this->formats[0]);
         // We will receive typeid when working with LTI 1.x, if not the we are in LTI 2.
         $typeid = optional_param('type_id', null, PARAM_ALPHANUM);
-        if (is_null($typeid)) {
-            if (!$this->check_tool_proxy(null, $response->get_request_data())) {
-                $response->set_code(403);
-                return;
+
+        $scope = gradebookservices::SCOPE_GRADEBOOKSERVICES_SCORE;
+
+        try {
+            if (!$this->check_tool($typeid, $response->get_request_data(), array($scope))) {
+                throw new \Exception(null, 401);
             }
-        } else {
+            $typeid = $this->get_service()->get_type()->id;
+            if (empty($contextid) || !($container ^ ($response->get_request_method() === self::HTTP_POST)) ||
+                    (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
+                throw new \Exception('No context or unsupported content type', 400);
+            }
+            if (!($course = $DB->get_record('course', array('id' => $contextid), 'id', IGNORE_MISSING))) {
+                throw new \Exception("Not Found: Course {$contextid} doesn't exist", 404);
+            }
+            if (!$this->get_service()->is_allowed_in_context($typeid, $course->id)) {
+                throw new \Exception('Not allowed in context', 403);
+            }
+            if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
+                throw new \Exception("Not Found: Grade item {$itemid} doesn't exist", 404);
+            }
+            $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
+            if ($item === false) {
+                throw new \Exception('Line item does not exist', 404);
+            }
+            $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lineitem($itemid);
+            $ltilinkid = null;
+            if (isset($item->iteminstance)) {
+                $ltilinkid = $item->iteminstance;
+            } else if ($gbs && isset($gbs->ltilinkid)) {
+                $ltilinkid = $gbs->ltilinkid;
+            }
+            if ($ltilinkid != null) {
+                if (is_null($typeid)) {
+                    if (isset($item->iteminstance) && (!gradebookservices::check_lti_id($ltilinkid, $item->courseid,
+                            $this->get_service()->get_tool_proxy()->id))) {
+                        $response->set_code(403);
+                        $response->set_reason("Invalid LTI id supplied.");
+                        return;
+                    }
+                } else {
+                    if (isset($item->iteminstance) && (!gradebookservices::check_lti_1x_id($ltilinkid, $item->courseid,
+                            $typeid))) {
+                        $response->set_code(403);
+                        $response->set_reason("Invalid LTI id supplied.");
+                        return;
+                    }
+                }
+            }
+            $json = '[]';
+            require_once($CFG->libdir.'/gradelib.php');
             switch ($response->get_request_method()) {
                 case 'GET':
                     $response->set_code(405);
                     $response->set_reason("GET requests are not allowed.");
-                    return;
+                    break;
                 case 'POST':
-                    if (!$this->check_type($typeid, $contextid, 'Score.collection:post', $response->get_request_data())) {
-                        $response->set_code(401);
-                        $response->set_reason("This resource does not support POST requests.");
-                        return;
+                    try {
+                        $json = $this->get_json_for_post_request($response, $response->get_request_data(), $item, $contextid,
+                            $typeid);
+                        $response->set_content_type($this->formats[1]);
+                    } catch (\Exception $e) {
+                        $response->set_code($e->getCode());
+                        $response->set_reason($e->getMessage());
                     }
                     break;
                 default:  // Should not be possible.
                     $response->set_code(405);
+                    $response->set_reason("Invalid request method specified.");
                     return;
             }
+            $response->set_body($json);
+        } catch (\Exception $e) {
+            $response->set_code($e->getCode());
+            $response->set_reason($e->getMessage());
         }
-        if (empty($contextid) || !($container ^ ($response->get_request_method() === 'POST')) ||
-                (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
-            $response->set_code(400);
-            return;
-        }
-        if (!$DB->record_exists('course', array('id' => $contextid))) {
-            $response->set_code(404);
-            $response->set_reason("Not Found: Course $contextid doesn't exist.");
-            return;
-        }
-        if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
-            $response->set_code(404);
-            $response->set_reason("Not Found: Grade item $itemid doesn't exist.");
-            return;
-        }
-        $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
-        if ($item === false) {
-            $response->set_code(403);
-            $response->set_reason("Line item does not exist.");
-            return;
-        }
-        $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lineitem($itemid);
-        $ltilinkid = null;
-        if (isset($item->iteminstance)) {
-            $ltilinkid = $item->iteminstance;
-        } else if ($gbs && isset($gbs->ltilinkid)) {
-            $ltilinkid = $gbs->ltilinkid;
-        }
-        if ($ltilinkid != null) {
-            if (is_null($typeid)) {
-                if (isset($item->iteminstance) && (!gradebookservices::check_lti_id($ltilinkid, $item->courseid,
-                        $this->get_service()->get_tool_proxy()->id))) {
-                    $response->set_code(403);
-                    $response->set_reason("Invalid LTI id supplied.");
-                    return;
-                }
-            } else {
-                if (isset($item->iteminstance) && (!gradebookservices::check_lti_1x_id($ltilinkid, $item->courseid,
-                        $typeid))) {
-                    $response->set_code(403);
-                    $response->set_reason("Invalid LTI id supplied.");
-                    return;
-                }
-            }
-        }
-        $json = '[]';
-        require_once($CFG->libdir.'/gradelib.php');
-        switch ($response->get_request_method()) {
-            case 'GET':
-                $response->set_code(405);
-                $response->set_reason("GET requests are not allowed.");
-                break;
-            case 'POST':
-                try {
-                    $json = $this->get_json_for_post_request($response, $response->get_request_data(), $item, $contextid, $typeid);
-                    $response->set_content_type($this->formats[1]);
-                } catch (\Exception $e) {
-                    $response->set_code($e->getCode());
-                    $response->set_reason($e->getMessage());
-                }
-                break;
-            default:  // Should not be possible.
-                $response->set_code(405);
-                $response->set_reason("Invalid request method specified.");
-                return;
-        }
-        $response->set_body($json);
     }
 
     /**
@@ -193,10 +179,11 @@ class scores extends resource_base {
                 !isset($score->timestamp) ||
                 isset($score->timestamp) && !gradebookservices::validate_iso8601_date($score->timestamp) ||
                 (isset($score->scoreGiven) && !is_numeric($score->scoreGiven)) ||
+                (isset($score->scoreGiven) && !isset($score->scoreMaximum)) ||
                 (isset($score->scoreMaximum) && !is_numeric($score->scoreMaximum)) ||
                 (!gradebookservices::is_user_gradable_in_course($contextid, $score->userId))
                 ) {
-            throw new \Exception('Incorrect score received' . $score, 400);
+            throw new \Exception('Incorrect score received' . $body, 400);
         }
         $score->timemodified = intval($score->timestamp);
 
@@ -216,25 +203,7 @@ class scores extends resource_base {
                 $score->scoreGiven = null;
             }
         }
-        gradebookservices::save_score($item, $score, $score->userId, $typeid);
-    }
-
-    /**
-     * get permissions from the config of the tool for that resource
-     *
-     * @param int $typeid
-     *
-     * @return array with the permissions related to this resource by the $lti_type or null if none.
-     */
-    public function get_permissions($typeid) {
-        $tool = lti_get_type_type_config($typeid);
-        if ($tool->ltiservice_gradesynchronization == '1') {
-            return array('Score.collection:post');
-        } else if ($tool->ltiservice_gradesynchronization == '2') {
-            return array('Score.collection:post');
-        } else {
-            return array();
-        }
+        $this->get_service()->save_grade_item($item, $score, $score->userId);
     }
 
     /**

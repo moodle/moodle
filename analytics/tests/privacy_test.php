@@ -34,7 +34,6 @@ require_once(__DIR__ . '/fixtures/test_indicator_max.php');
 require_once(__DIR__ . '/fixtures/test_indicator_min.php');
 require_once(__DIR__ . '/fixtures/test_target_site_users.php');
 require_once(__DIR__ . '/fixtures/test_target_course_users.php');
-require_once(__DIR__ . '/fixtures/test_analyser.php');
 
 /**
  * Unit tests for privacy.
@@ -86,8 +85,10 @@ class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider
 
         $this->setAdminUser();
 
+        $this->model1->enable();
         $this->model1->train();
         $this->model1->predict();
+        $this->model2->enable();
         $this->model2->train();
         $this->model2->predict();
 

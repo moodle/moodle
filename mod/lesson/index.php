@@ -88,15 +88,11 @@ if ($usesections) {
 // Get all deadlines.
 $deadlines = lesson_get_user_deadline($course->id);
 foreach ($lessons as $lesson) {
-    if (!$lesson->visible) {
-        //Show dimmed if the mod is hidden
-        $link = "<a class=\"dimmed\" href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name,true)."</a>";
-    } else {
-        //Show normal if the mod is visible
-        $link = "<a href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name,true)."</a>";
-    }
     $cm = get_coursemodule_from_instance('lesson', $lesson->id);
     $context = context_module::instance($cm->id);
+
+    $class = $lesson->visible ? null : array('class' => 'dimmed'); // Hidden modules are dimmed.
+    $link = html_writer::link(new moodle_url('view.php', array('id' => $cm->id)), format_string($lesson->name, true), $class);
 
     $deadline = $deadlines[$lesson->id]->userdeadline;
     if ($deadline == 0) {
@@ -104,7 +100,7 @@ foreach ($lessons as $lesson) {
     } else if ($deadline > $timenow) {
         $due = userdate($deadline);
     } else {
-        $due = "<font color=\"red\">" . userdate($deadline) . "</font>";
+        $due = html_writer::tag('span', userdate($deadline), array('class' => 'text-danger'));
     }
 
     if ($usesections) {

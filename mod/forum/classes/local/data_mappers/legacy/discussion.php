@@ -57,7 +57,8 @@ class discussion {
                 'usermodified' => $discussion->get_user_modified(),
                 'timestart' => $discussion->get_time_start(),
                 'timeend' => $discussion->get_time_end(),
-                'pinned' => $discussion->is_pinned()
+                'pinned' => $discussion->is_pinned(),
+                'timelocked' => $discussion->get_locked()
             ];
         }, $discussions);
     }

@@ -29,6 +29,7 @@ use external_util;
 use external_files;
 use renderer_base;
 use context_system;
+use core_tag\external\tag_item_exporter;
 
 /**
  * Class for exporting a blog post (entry).
@@ -171,6 +172,12 @@ class post_exporter extends exporter {
                 'multiple' => true,
                 'optional' => true
             ),
+            'tags' => array(
+                'type' => tag_item_exporter::read_properties_definition(),
+                'description' => 'Tags.',
+                'multiple' => true,
+                'optional' => true,
+            ),
         );
     }
 
@@ -179,6 +186,12 @@ class post_exporter extends exporter {
 
         $values['summaryfiles'] = external_util::get_area_files($context->id, 'blog', 'post', $this->data->id);
         $values['attachmentfiles'] = external_util::get_area_files($context->id, 'blog', 'attachment', $this->data->id);
+        if ($this->data->module == 'blog_external') {
+            // For external blogs, the content field has the external blog id.
+            $values['tags'] = \core_tag\external\util::get_item_tags('core', 'blog_external', $this->data->content);
+        } else {
+            $values['tags'] = \core_tag\external\util::get_item_tags('core', 'post', $this->data->id);
+        }
 
         return $values;
     }

@@ -611,6 +611,7 @@ function book_export_contents($cm, $baseurl) {
         $chapterindexfile['userid']       = null;
         $chapterindexfile['author']       = null;
         $chapterindexfile['license']      = null;
+        $chapterindexfile['tags']         = \core_tag\external\util::get_item_tags('mod_book', 'book_chapters', $chapter->id);
         $contents[] = $chapterindexfile;
 
         // Chapter files (images usually).

@@ -15,15 +15,17 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Weight override field.
+    Weight field.
 }}
-<label class="accesshide" for="weightoverride_{{id}}">
-    {{#str}}overrideweightofa, grades, {{itemname}}{{/str}}
-</label>
-<input type="hidden" name="weightoverride_{{id}}" value="0">
-<input type="checkbox" name="weightoverride_{{id}}" id="weightoverride_{{id}}" value="1" class="weightoverride" {{#checked}}checked{{/checked}}>
+<div class="form-inline">
+    <label class="accesshide" for="weightoverride_{{id}}">
+        {{#str}}overrideweightofa, grades, {{itemname}}{{/str}}
+    </label>
+    <input type="hidden" name="weightoverride_{{id}}" value="0">
+    <input type="checkbox" name="weightoverride_{{id}}" id="weightoverride_{{id}}" value="1" class="weightoverride" {{#checked}}checked{{/checked}}>
 
-<label class="accesshide" for="weight_{{id}}">
-    {{#str}}weightofa, grades, {{itemname}}{{/str}}
-</label>
-<input type="text" name="weight_{{id}}" id="weight_{{id}}" value="{{value}}" size="6" {{#disabled}}disabled{{/disabled}}>
+    <label class="accesshide" for="weight_{{id}}">
+        {{#str}}weightofa, grades, {{itemname}}{{/str}}
+    </label>
+    <input type="text" name="weight_{{id}}" id="weight_{{id}}" value="{{value}}" size="4" {{#disabled}}disabled{{/disabled}} class="form-control">
+</div>

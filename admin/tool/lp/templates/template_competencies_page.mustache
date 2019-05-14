@@ -27,12 +27,12 @@
     <div>{{{template.description}}}</div>
     {{#canmanagetemplatecompetencies}}
     <div data-region="actions" class="clearfix">
-        <div class="pull-left">
+        <div class="float-left">
             <button disabled class="btn btn-secondary">{{#str}}addtemplatecompetencies, tool_lp{{/str}}</button>
         </div>
     </div>
     {{/canmanagetemplatecompetencies}}
-    <h3 class="m-t-1">{{#str}}templatecompetencies, tool_lp{{/str}}</h3>
+    <h3 class="mt-1">{{#str}}templatecompetencies, tool_lp{{/str}}</h3>
     {{#statistics}}
         {{> tool_lp/template_statistics }}
     {{/statistics}}
@@ -41,10 +41,10 @@
             <div class="drag-parentnode">
                 {{#competencies}}
                 <div class="drag-samenode" data-id="{{competency.id}}">
-                    <div class="well">
+                    <div class="card">
                         {{#canmanagetemplatecompetencies}}
-                        <span class="drag-handlecontainer pull-left"></span>
-                        <div class="pull-xs-right">
+                        <span class="drag-handlecontainer float-left"></span>
+                        <div class="float-sm-right">
                             <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                         </div>
                         {{/canmanagetemplatecompetencies}}
@@ -60,7 +60,7 @@
                         </ul>
                         {{/hascourses}}
                         {{^hascourses}}
-                        <span class="label label-info">{{#str}}nolinkedcourses, tool_lp{{/str}}</span>
+                        <span class="badge badge-info">{{#str}}nolinkedcourses, tool_lp{{/str}}</span>
                         {{/hascourses}}
                     </div>
                 </div>

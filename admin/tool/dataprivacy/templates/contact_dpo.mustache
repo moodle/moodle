@@ -36,18 +36,18 @@
     }
 }}
 <div class="container">
-    <div class="row m-b-2">
-        <label class="col-md-3 span3 col-form-label">{{#str}}replyto, tool_dataprivacy{{/str}}</label>
-        <div class="col-md-9 span9 col-form-label">{{replytoemail}}</div>
+    <div class="row mb-2">
+        <label class="col-md-3 col-form-label">{{#str}}replyto, tool_dataprivacy{{/str}}</label>
+        <div class="col-md-9 col-form-label">{{replytoemail}}</div>
     </div>
     <div class="row" data-region="messageinput">
-        <label for="message" class="col-md-3 span3 col-form-label">
+        <label for="message" class="col-md-3 col-form-label">
             {{#str}}message, tool_dataprivacy{{/str}}
-            <span class="pull-xs-right text-nowrap">
+            <span class="float-sm-right text-nowrap">
             <abbr class="initialism text-danger" title="{{#str}}required{{/str}}">{{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}</abbr>
         </span>
         </label>
-        <div class="col-md-9 span9">
+        <div class="col-md-9">
             <textarea class="form-control" id="message" cols="60" rows="8"></textarea>
             <div class="form-control-feedback" id="id_error_message" hidden="hidden">
                 {{#str}}required, moodle{{/str}}

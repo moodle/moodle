@@ -45,13 +45,14 @@ class edit_model extends \moodleform {
 
         $mform = $this->_form;
 
-        if ($this->_customdata['trainedmodel']) {
+        if ($this->_customdata['trainedmodel'] && $this->_customdata['staticmodel'] === false) {
             $message = get_string('edittrainedwarning', 'tool_analytics');
             $mform->addElement('html', $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING));
         }
 
         $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'tool_analytics'));
 
+        // Target.
         if (!empty($this->_customdata['targets'])) {
             $targets = array('' => '');
             foreach ($this->_customdata['targets'] as $classname => $target) {
@@ -64,41 +65,48 @@ class edit_model extends \moodleform {
             $mform->addRule('target', get_string('required'), 'required', null, 'client');
         }
 
-        $indicators = array();
-        foreach ($this->_customdata['indicators'] as $classname => $indicator) {
-            $optionname = \tool_analytics\output\helper::class_to_option($classname);
-            $indicators[$optionname] = $indicator->get_name();
+        // Indicators.
+        if (!$this->_customdata['staticmodel']) {
+            $indicators = array();
+            foreach ($this->_customdata['indicators'] as $classname => $indicator) {
+                $optionname = \tool_analytics\output\helper::class_to_option($classname);
+                $indicators[$optionname] = $indicator->get_name();
+            }
+            $options = array(
+                'multiple' => true
+            );
+            $mform->addElement('autocomplete', 'indicators', get_string('indicators', 'tool_analytics'), $indicators, $options);
+            $mform->setType('indicators', PARAM_ALPHANUMEXT);
+            $mform->addHelpButton('indicators', 'indicators', 'tool_analytics');
         }
-        $options = array(
-            'multiple' => true
-        );
-        $mform->addElement('autocomplete', 'indicators', get_string('indicators', 'tool_analytics'), $indicators, $options);
-        $mform->setType('indicators', PARAM_ALPHANUMEXT);
 
+        // Time-splitting methods.
         $timesplittings = array('' => '');
         foreach ($this->_customdata['timesplittings'] as $classname => $timesplitting) {
             $optionname = \tool_analytics\output\helper::class_to_option($classname);
             $timesplittings[$optionname] = $timesplitting->get_name();
         }
-
         $mform->addElement('select', 'timesplitting', get_string('timesplittingmethod', 'analytics'), $timesplittings);
         $mform->addHelpButton('timesplitting', 'timesplittingmethod', 'analytics');
 
-        $defaultprocessor = \core_analytics\manager::get_predictions_processor_name(
-            \core_analytics\manager::get_predictions_processor()
-        );
-        $predictionprocessors = ['' => get_string('defaultpredictoroption', 'analytics', $defaultprocessor)];
-        foreach ($this->_customdata['predictionprocessors'] as $classname => $predictionsprocessor) {
-            if ($predictionsprocessor->is_ready() !== true) {
-                continue;
+        // Predictions processor.
+        if (!$this->_customdata['staticmodel']) {
+            $defaultprocessor = \core_analytics\manager::get_predictions_processor_name(
+                \core_analytics\manager::get_predictions_processor()
+            );
+            $predictionprocessors = ['' => get_string('defaultpredictoroption', 'analytics', $defaultprocessor)];
+            foreach ($this->_customdata['predictionprocessors'] as $classname => $predictionsprocessor) {
+                if ($predictionsprocessor->is_ready() !== true) {
+                    continue;
+                }
+                $optionname = \tool_analytics\output\helper::class_to_option($classname);
+                $predictionprocessors[$optionname] = \core_analytics\manager::get_predictions_processor_name($predictionsprocessor);
             }
-            $optionname = \tool_analytics\output\helper::class_to_option($classname);
-            $predictionprocessors[$optionname] = \core_analytics\manager::get_predictions_processor_name($predictionsprocessor);
-        }
 
-        $mform->addElement('select', 'predictionsprocessor', get_string('predictionsprocessor', 'analytics'),
-            $predictionprocessors);
-        $mform->addHelpButton('predictionsprocessor', 'predictionsprocessor', 'analytics');
+            $mform->addElement('select', 'predictionsprocessor', get_string('predictionsprocessor', 'analytics'),
+                $predictionprocessors);
+            $mform->addHelpButton('predictionsprocessor', 'predictionsprocessor', 'analytics');
+        }
 
         if (!empty($this->_customdata['id'])) {
             $mform->addElement('hidden', 'id', $this->_customdata['id']);
@@ -129,13 +137,15 @@ class edit_model extends \moodleform {
             }
         }
 
-        if (empty($data['indicators'])) {
-            $errors['indicators'] = get_string('errornoindicators', 'analytics');
-        } else {
-            foreach ($data['indicators'] as $indicator) {
-                $realindicatorname = \tool_analytics\output\helper::option_to_class($indicator);
-                if (\core_analytics\manager::is_valid($realindicatorname, '\core_analytics\local\indicator\base') === false) {
-                    $errors['indicators'] = get_string('errorinvalidindicator', 'analytics', $realindicatorname);
+        if (!$this->_customdata['staticmodel']) {
+            if (empty($data['indicators'])) {
+                $errors['indicators'] = get_string('errornoindicators', 'analytics');
+            } else {
+                foreach ($data['indicators'] as $indicator) {
+                    $realindicatorname = \tool_analytics\output\helper::option_to_class($indicator);
+                    if (\core_analytics\manager::is_valid($realindicatorname, '\core_analytics\local\indicator\base') === false) {
+                        $errors['indicators'] = get_string('errorinvalidindicator', 'analytics', $realindicatorname);
+                    }
                 }
             }
         }

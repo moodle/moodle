@@ -48,6 +48,7 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     And I am on "Course 1" course homepage
     And I follow "Standard forum name"
     When I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     Then the "Group" select box should contain "All participants"
     And the "Group" select box should contain "Group A"
     And the "Group" select box should contain "Group B"
@@ -60,6 +61,7 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     And I follow "Standard forum name"
     And I select "Group A" from the "Visible groups" singleselect
     When I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     Then I should see "Post a copy to all groups"
     And I set the following fields to these values:
       | Subject | Teacher 1 -> Group B  |
@@ -90,6 +92,7 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     And I follow "Standard forum name"
     And I select "Group A" from the "Visible groups" singleselect
     When I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     Then I should see "Post a copy to all groups"
     And I set the following fields to these values:
       | Subject | Teacher 1 -> Group C  |
@@ -119,6 +122,7 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     And I am on "Course 1" course homepage
     And I follow "Standard forum name"
     When I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     And I set the following fields to these values:
       | Subject                   | Teacher 1 -> Post to all  |
       | Message                   | Teacher 1 -> Post to all  |
@@ -156,6 +160,7 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     When I follow "Standard forum name"
     Then I should see "Group A"
     And I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     And I should see "Group A"
     And I should not see "Group B"
     And I should not see "Group C"
@@ -174,6 +179,7 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     When I follow "Standard forum name"
     And I select "Group A" from the "Visible groups" singleselect
     And I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     And the "Group" select box should not contain "All participants"
     And the "Group" select box should contain "Group A"
     And the "Group" select box should contain "Group B"
@@ -194,6 +200,7 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     # Now try posting in Group A (starting at Group B)
     And I select "Group B" from the "Visible groups" singleselect
     And I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     And the "Group" select box should not contain "All participants"
     And the "Group" select box should contain "Group A"
     And the "Group" select box should contain "Group B"

@@ -1490,6 +1490,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     public function test_cron() {
+        global $PAGE;
         $this->resetAfterTest();
 
         // First run cron so there are no messages waiting to be sent (from other tests).
@@ -1519,6 +1520,15 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertEquals(1, count($messages));
         $this->assertEquals(1, $messages[0]->notification);
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
+        // Test customdata.
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertEquals($assign->get_course_module()->id, $customdata->cmid);
+        $this->assertEquals($assign->get_instance()->id, $customdata->instance);
+        $this->assertEquals('feedbackavailable', $customdata->messagetype);
+        $userpicture = new user_picture($teacher);
+        $this->assertEquals($userpicture->get_url($PAGE)->out(false), $customdata->notificationiconurl);
+        $this->assertEquals(0, $customdata->uniqueidforuser);   // Not used in this case.
+        $this->assertFalse($customdata->blindmarking);
     }
 
     public function test_cron_without_notifications() {
@@ -1678,16 +1688,9 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         assign::cron();
 
         $events = $sink->get_events();
-        // Notification has been marked as read, so now first event should be a 'notification_viewed' one. For student.
         $event = reset($events);
-        $this->assertInstanceOf('\core\event\notification_viewed', $event);
-        $this->assertEquals($student->id, $event->userid);
-
-        // And next event should be the 'notification_sent' one. For teacher.
-        $event = $events[1];
         $this->assertInstanceOf('\core\event\notification_sent', $event);
         $this->assertEquals($assign->get_course()->id, $event->other['courseid']);
-        $this->assertEquals($teacher->id, $event->userid);
         $sink->close();
     }
 
@@ -3647,7 +3650,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $result = $assign->testable_process_save_quick_grades($data);
         $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
         $grade = $assign->get_user_grade($student->id, false);
-        $this->assertEquals('60.0', $grade->grade);
+        $this->assertEquals(60.0, $grade->grade);
 
         // Attempt to grade with a past attempts grade info.
         $assign->testable_process_add_attempt($student->id);
@@ -3671,7 +3674,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $result = $assign->testable_process_save_quick_grades($data);
         $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
         $grade = $assign->get_user_grade($student->id, false);
-        $this->assertEquals('40.0', $grade->grade);
+        $this->assertEquals(40.0, $grade->grade);
 
         // Catch grade update conflicts.
         // Save old data for later.
@@ -3685,13 +3688,13 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $result = $assign->testable_process_save_quick_grades($data);
         $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
         $grade = $assign->get_user_grade($student->id, false);
-        $this->assertEquals('30.0', $grade->grade);
+        $this->assertEquals(30.0, $grade->grade);
 
         // Now update using 'old' data. Should fail.
         $result = $assign->testable_process_save_quick_grades($pastdata);
         $this->assertContains(get_string('errorrecordmodified', 'assign'), $result);
         $grade = $assign->get_user_grade($student->id, false);
-        $this->assertEquals('30.0', $grade->grade);
+        $this->assertEquals(30.0, $grade->grade);
     }
 
     /**

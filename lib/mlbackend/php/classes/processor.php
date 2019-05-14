@@ -291,10 +291,14 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
 
         // We need at least 2 samples belonging to each target.
         $counts = array_count_values($targets);
+        $ntargets = count(explode(',', $metadata['targetclasses']));
         foreach ($counts as $count) {
             if ($count < 2) {
                 $notenoughdata = true;
             }
+        }
+        if ($ntargets > count($counts)) {
+            $notenoughdata = true;
         }
         if (!empty($notenoughdata)) {
             $resultobj = new \stdClass();

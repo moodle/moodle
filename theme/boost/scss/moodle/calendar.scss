@@ -427,14 +427,13 @@ table.calendartable caption {
     }
 }
 
-.summary-modal-container {
-    .description-content {
-        > p {
-            margin: 0;
-        }
-    }
+.location-content {
+    overflow-wrap: break-word;
+}
 
-    .location-content {
-        overflow-wrap: break-word;
+.description-content {
+    overflow-wrap: break-word;
+    > p {
+        margin: 0;
     }
 }

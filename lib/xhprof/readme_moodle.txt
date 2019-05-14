@@ -39,3 +39,5 @@ TODO:
 20130621 - MDL-39733 - Eloy Lafuente (stronk7): Export & import of profiling runs
 20160721 - MDL-55292 - Russell Smith (mr-russ): Add support for tideways profiler collection for PHP7
 20171002 - MDL-60313 - Marina Glancy (marinaglancy): Upgrade to 0.9.4 release; patched for PHP7.2
+20190314 - MDL-64543 - Brendan Heywood (brendanheywood): Add support for conditional slow profiling
+

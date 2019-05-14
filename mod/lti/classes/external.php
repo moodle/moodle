@@ -53,11 +53,17 @@ class mod_lti_external extends external_api {
                 'id' => new external_value(PARAM_INT, 'Tool type id'),
                 'name' => new external_value(PARAM_NOTAGS, 'Tool type name'),
                 'description' => new external_value(PARAM_NOTAGS, 'Tool type description'),
+                'platformid' => new external_value(PARAM_TEXT, 'Platform ID'),
+                'clientid' => new external_value(PARAM_TEXT, 'Client ID'),
+                'deploymentid' => new external_value(PARAM_INT, 'Deployment ID'),
                 'urls' => new external_single_structure(
                     array(
                         'icon' => new external_value(PARAM_URL, 'Tool type icon URL'),
                         'edit' => new external_value(PARAM_URL, 'Tool type edit URL'),
                         'course' => new external_value(PARAM_URL, 'Tool type edit URL', VALUE_OPTIONAL),
+                        'publickeyset' => new external_value(PARAM_URL, 'Public Keyset URL'),
+                        'accesstoken' => new external_value(PARAM_URL, 'Access Token URL'),
+                        'authrequest' => new external_value(PARAM_URL, 'Authorisation Request URL'),
                     )
                 ),
                 'state' => new external_single_structure(

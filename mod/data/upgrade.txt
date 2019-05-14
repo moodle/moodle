@@ -1,6 +1,9 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+* External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.
+
 === 3.4 ===
 * External function mod_data_external::search_entries() now returns the maxcount field: Total count of records that the user could
     see in the database (if all the search criterias were removed).

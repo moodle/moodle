@@ -25,8 +25,8 @@
  */
 define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragment',
         'core/ajax', 'core/str', 'mod_assign/grading_form_change_checker',
-        'mod_assign/grading_events'],
-       function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents) {
+        'mod_assign/grading_events', 'core/event'],
+       function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents, Event) {
 
     /**
      * GradingPanel class.
@@ -89,11 +89,6 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
      * @method _saveFormState
      */
     GradingPanel.prototype._saveFormState = function() {
-        // Grrrrr! TinyMCE you know what you did.
-        if (typeof window.tinyMCE !== 'undefined') {
-            window.tinyMCE.triggerSave();
-        }
-
         // Copy data from notify students checkbox which was moved out of the form.
         var checked = $('[data-region="grading-actions-form"] [name="sendstudentnotifications"]').prop("checked");
         $('.gradeform [name="sendstudentnotifications"]').val(checked);
@@ -116,6 +111,9 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
 
         // We call this, so other modules can update the form with the latest state.
         form.trigger('save-form-state');
+
+        // Tell all form fields we are about to submit the form.
+        Event.notifyFormSubmitAjax(form[0]);
 
         // Now we get all the current values from the form.
         var data = form.serialize();

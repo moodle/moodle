@@ -41,6 +41,7 @@ Feature: Teacher can modify choices of the students
     And I should see "Your choice has been saved"
     And I log out
     And I log in as "teacher1"
+    And I change window size to "large"
     And I am on "Course 1" course homepage
     And I follow "Choice name"
     And I navigate to "View 1 responses" in current page administration
@@ -67,6 +68,7 @@ Feature: Teacher can modify choices of the students
     And I should see "Your choice has been saved"
     And I log out
     And I log in as "teacher1"
+    And I change window size to "large"
     And I am on "Course 1" course homepage
     And I follow "Choice name"
     And I navigate to "View 1 responses" in current page administration
@@ -98,6 +100,7 @@ Feature: Teacher can modify choices of the students
     And I should see "Your choice has been saved"
     And I log out
     And I log in as "teacher1"
+    And I change window size to "large"
     And I am on "Course 1" course homepage
     And I follow "Choice name"
     And I navigate to "View 1 responses" in current page administration
@@ -121,6 +124,7 @@ Feature: Teacher can modify choices of the students
     And I should see "Your choice has been saved"
     And I log out
     And I log in as "teacher1"
+    And I change window size to "large"
     And I am on "Course 1" course homepage
     And I follow "Choice name"
     And I navigate to "Edit settings" in current page administration

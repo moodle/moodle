@@ -1654,9 +1654,10 @@ class core_plugin_manager {
             'repository' => array('alfresco'),
             'tinymce' => array('dragmath'),
             'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport', 'assignmentupgrade'),
-            'theme' => array('afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'boxxie', 'brick', 'canvas',
-                'formal_white', 'formfactor', 'fusion', 'leatherbound', 'magazine', 'mymobile', 'nimble', 'nonzero',
-                'overlay', 'serenity', 'sky_high', 'splash', 'standard', 'standardold'),
+            'theme' => array('bootstrapbase', 'clean', 'more', 'afterburner', 'anomaly', 'arialist', 'base',
+                'binarius', 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor', 'fusion', 'leatherbound',
+                'magazine', 'mymobile', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
+                'standard', 'standardold'),
             'webservice' => array('amf'),
         );
 
@@ -1754,7 +1755,7 @@ class core_plugin_manager {
             ),
 
             'dataformat' => array(
-                'html', 'csv', 'json', 'excel', 'ods',
+                'html', 'csv', 'json', 'excel', 'ods', 'pdf',
             ),
 
             'datapreset' => array(
@@ -1809,7 +1810,7 @@ class core_plugin_manager {
             ),
 
             'ltiservice' => array(
-                'gradebookservices', 'memberships', 'profile', 'toolproxy', 'toolsettings'
+                'gradebookservices', 'memberships', 'profile', 'toolproxy', 'toolsettings', 'basicoutcomes'
             ),
 
             'mlbackend' => array(
@@ -1905,7 +1906,7 @@ class core_plugin_manager {
             ),
 
             'theme' => array(
-                'boost', 'classic', 'bootstrapbase', 'clean', 'more'
+                'boost', 'classic'
             ),
 
             'tool' => array(

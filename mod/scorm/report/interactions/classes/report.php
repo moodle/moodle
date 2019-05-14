@@ -612,21 +612,21 @@ class report extends \mod_scorm\report {
                                                                    array('download' => 'ODS') + $displayoptions),
                                                                    get_string('downloadods'),
                                                                    'post',
-                                                                   ['class' => 'm-t-1']);
+                                                                   ['class' => 'mt-1']);
                         echo \html_writer::end_tag('td');
                         echo \html_writer::start_tag('td');
                         echo $OUTPUT->single_button(new \moodle_url($PAGE->url,
                                                                    array('download' => 'Excel') + $displayoptions),
                                                                    get_string('downloadexcel'),
                                                                    'post',
-                                                                   ['class' => 'm-t-1']);
+                                                                   ['class' => 'mt-1']);
                         echo \html_writer::end_tag('td');
                         echo \html_writer::start_tag('td');
                         echo $OUTPUT->single_button(new \moodle_url($PAGE->url,
                                                                    array('download' => 'CSV') + $displayoptions),
                                                                    get_string('downloadtext'),
                                                                    'post',
-                                                                   ['class' => 'm-t-1']);
+                                                                   ['class' => 'mt-1']);
                         echo \html_writer::end_tag('td');
                         echo \html_writer::start_tag('td');
                         echo \html_writer::end_tag('td');
@@ -643,7 +643,7 @@ class report extends \mod_scorm\report {
             }
             // Show preferences form irrespective of attempts are there to report or not.
             if (!$download) {
-                $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
+                $mform->set_data(compact('pagesize', 'attemptsmode'));
                 $mform->display();
             }
             if ($download == 'Excel' or $download == 'ODS') {

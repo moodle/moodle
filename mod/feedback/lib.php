@@ -2550,13 +2550,13 @@ function feedback_print_numeric_option_list() {
  * @return void
  */
 function feedback_send_email($cm, $feedback, $course, $user, $completed = null) {
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE;
 
     if ($feedback->email_notification == 0) {  // No need to do anything
         return;
     }
 
-    if (is_int($user)) {
+    if (!is_object($user)) {
         $user = $DB->get_record('user', array('id' => $user));
     }
 
@@ -2617,6 +2617,10 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
                 $posthtml = '';
             }
 
+            $customdata = [
+                'cmid' => $cm->id,
+                'instance' => $feedback->id,
+            ];
             if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
                 $eventdata = new \core\message\message();
                 $eventdata->courseid         = $course->id;
@@ -2632,6 +2636,11 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
                 $eventdata->courseid         = $course->id;
                 $eventdata->contexturl       = $info->url;
                 $eventdata->contexturlname   = $info->feedback;
+                // User image.
+                $userpicture = new user_picture($user);
+                $userpicture->includetoken = $teacher->id; // Generate an out-of-session token for the user receiving the message.
+                $customdata['notificationiconurl'] = $userpicture->get_url($PAGE)->out(false);
+                $eventdata->customdata = $customdata;
                 message_send($eventdata);
             } else {
                 $eventdata = new \core\message\message();
@@ -2648,6 +2657,9 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
                 $eventdata->courseid         = $course->id;
                 $eventdata->contexturl       = $info->url;
                 $eventdata->contexturlname   = $info->feedback;
+                // Feedback icon if can be easily reachable.
+                $customdata['notificationiconurl'] = ($cm instanceof cm_info) ? $cm->get_icon_url()->out() : '';
+                $eventdata->customdata = $customdata;
                 message_send($eventdata);
             }
         }
@@ -2710,6 +2722,12 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $eventdata->courseid         = $course->id;
             $eventdata->contexturl       = $info->url;
             $eventdata->contexturlname   = $info->feedback;
+            $eventdata->customdata       = [
+                'cmid' => $cm->id,
+                'instance' => $feedback->id,
+                'notificationiconurl' => ($cm instanceof cm_info) ? $cm->get_icon_url()->out() : '',  // Performance wise.
+            ];
+
             message_send($eventdata);
         }
     }
@@ -2991,13 +3009,27 @@ function feedback_check_updates_since(cm_info $cm, $from, $filter = array()) {
  *
  * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
  * @return \core_calendar\local\event\entities\action_interface|null
  */
 function mod_feedback_core_calendar_provide_event_action(calendar_event $event,
-                                                         \core_calendar\action_factory $factory) {
+                                                         \core_calendar\action_factory $factory,
+                                                         int $userid = 0) {
 
-    $cm = get_fast_modinfo($event->courseid)->instances['feedback'][$event->instance];
-    $feedbackcompletion = new mod_feedback_completion(null, $cm, 0);
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['feedback'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
+    $feedbackcompletion = new mod_feedback_completion(null, $cm, 0, false, null, null, $userid);
 
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
         // Feedback is already closed, do not display it even if it was never submitted.
@@ -3012,7 +3044,7 @@ function mod_feedback_core_calendar_provide_event_action(calendar_event $event,
     // The feedback is actionable if it does not have timeopen or timeopen is in the past.
     $actionable = $feedbackcompletion->is_open();
 
-    if ($actionable && $feedbackcompletion->is_already_submitted()) {
+    if ($actionable && $feedbackcompletion->is_already_submitted(false)) {
         // There is no need to display anything if the user has already submitted the feedback.
         return null;
     }

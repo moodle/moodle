@@ -83,6 +83,12 @@ class forum extends exporter {
                     'create' => ['type' => PARAM_URL],
                     'markasread' => ['type' => PARAM_URL],
                     'view' => ['type' => PARAM_URL],
+                    'sortrepliesasc' => ['type' => PARAM_URL],
+                    'sortrepliesdesc' => ['type' => PARAM_URL],
+                    'sortlastpostasc' => ['type' => PARAM_URL],
+                    'sortlastpostdesc' => ['type' => PARAM_URL],
+                    'sortcreatedasc' => ['type' => PARAM_URL],
+                    'sortcreateddesc' => ['type' => PARAM_URL],
                 ],
             ],
         ];
@@ -99,6 +105,8 @@ class forum extends exporter {
         $urlfactory = $this->related['urlfactory'];
         $user = $this->related['user'];
         $currentgroup = $this->related['currentgroup'];
+        $vaultfactory = $this->related['vaultfactory'];
+        $discussionvault = $vaultfactory->get_discussions_in_forum_vault();
 
         return [
             'id' => $this->forum->get_id(),
@@ -117,6 +125,18 @@ class forum extends exporter {
                 'create' => $urlfactory->get_discussion_create_url($this->forum)->out(false),
                 'markasread' => $urlfactory->get_mark_all_discussions_as_read_url($this->forum)->out(false),
                 'view' => $urlfactory->get_forum_view_url_from_forum($this->forum)->out(false),
+                'sortrepliesasc' => $urlfactory->get_forum_view_url_from_forum($this->forum, null,
+                    $discussionvault::SORTORDER_REPLIES_ASC)->out(false),
+                'sortrepliesdesc' => $urlfactory->get_forum_view_url_from_forum($this->forum, null,
+                    $discussionvault::SORTORDER_REPLIES_DESC)->out(false),
+                'sortlastpostasc' => $urlfactory->get_forum_view_url_from_forum($this->forum, null,
+                    $discussionvault::SORTORDER_LASTPOST_ASC)->out(false),
+                'sortlastpostdesc' => $urlfactory->get_forum_view_url_from_forum($this->forum, null,
+                    $discussionvault::SORTORDER_LASTPOST_DESC)->out(false),
+                'sortcreatedasc' => $urlfactory->get_forum_view_url_from_forum($this->forum, null,
+                    $discussionvault::SORTORDER_CREATED_ASC)->out(false),
+                'sortcreateddesc' => $urlfactory->get_forum_view_url_from_forum($this->forum, null,
+                    $discussionvault::SORTORDER_CREATED_DESC)->out(false)
             ],
         ];
     }
@@ -133,6 +153,7 @@ class forum extends exporter {
             'urlfactory' => 'mod_forum\local\factories\url',
             'user' => 'stdClass',
             'currentgroup' => 'int?',
+            'vaultfactory' => 'mod_forum\local\factories\vault'
         ];
     }
 

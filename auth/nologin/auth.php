@@ -103,6 +103,33 @@ class auth_plugin_nologin extends auth_plugin_base {
     function can_be_manually_set() {
         return true;
     }
+
+    /**
+     * Returns information on how the specified user can change their password.
+     * User accounts with authentication type set to nologin are disabled accounts.
+     * They cannot change their password.
+     *
+     * @param stdClass $user A user object
+     * @return string[] An array of strings with keys subject and message
+     */
+    public function get_password_change_info(stdClass $user) : array {
+        $site = get_site();
+
+        $data = new stdClass();
+        $data->firstname = $user->firstname;
+        $data->lastname  = $user->lastname;
+        $data->username  = $user->username;
+        $data->sitename  = format_string($site->fullname);
+        $data->admin     = generate_email_signoff();
+
+        $message = get_string('emailpasswordchangeinfodisabled', '', $data);
+        $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
+
+        return [
+            'subject' => $subject,
+            'message' => $message
+        ];
+    }
 }
 
 

@@ -54,6 +54,7 @@ require_once($CFG->dirroot . '/backup/util/structure/backup_nested_element.class
 require_once($CFG->dirroot . '/backup/util/structure/backup_optigroup.class.php');
 require_once($CFG->dirroot . '/backup/util/structure/backup_optigroup_element.class.php');
 require_once($CFG->dirroot . '/backup/util/structure/backup_structure_processor.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/async_helper.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/backup_helper.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/backup_general_helper.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/backup_null_iterator.class.php');

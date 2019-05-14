@@ -35,10 +35,15 @@ use \core_privacy\local\request\userlist;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_privacy\local\request\approved_userlist
  */
 class approved_userlist_test extends advanced_testcase {
     /**
      * The approved userlist should not be modifiable once set.
+     *
+     * @covers ::__construct
+     * @covers \core_privacy\local\request\approved_userlist<extended>
+     * @covers ::<!public>
      */
     public function test_default_values_set() {
         $this->resetAfterTest();
@@ -68,6 +73,11 @@ class approved_userlist_test extends advanced_testcase {
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @covers ::create_from_userlist
+     * @covers \core_privacy\local\request\approved_userlist<extended>
+     * @covers ::<!public>
+     */
     public function test_create_from_userlist() {
         $this->resetAfterTest();
 

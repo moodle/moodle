@@ -174,12 +174,11 @@ if ($hassiteconfig
         // Options include fields from the user table that might be helpful to
         // distinguish when adding or listing users ('I want to add the John
         // Smith from Science faculty').
-        // Username is not included as an option because in some sites, it might
-        // be a security problem to reveal usernames even to trusted staff.
         // Custom user profile fields are not currently supported.
         $temp->add(new admin_setting_configmulticheckbox('showuseridentity',
                 new lang_string('showuseridentity', 'admin'),
                 new lang_string('showuseridentity_desc', 'admin'), array('email' => 1), array(
+                    'username'    => new lang_string('username'),
                     'idnumber'    => new lang_string('idnumber'),
                     'email'       => new lang_string('email'),
                     'phone1'      => new lang_string('phone1'),

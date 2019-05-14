@@ -336,50 +336,20 @@ class manager {
 
         static::$allsearchareas = array();
         static::$enabledsearchareas = array();
+        $searchclasses = \core_component::get_component_classes_in_namespace(null, 'search');
 
-        $plugintypes = \core_component::get_plugin_types();
-        foreach ($plugintypes as $plugintype => $unused) {
-            $plugins = \core_component::get_plugin_list($plugintype);
-            foreach ($plugins as $pluginname => $pluginfullpath) {
-
-                $componentname = $plugintype . '_' . $pluginname;
-                $searchclasses = \core_component::get_component_classes_in_namespace($componentname, 'search');
-                foreach ($searchclasses as $classname => $classpath) {
-                    $areaname = substr(strrchr($classname, '\\'), 1);
-
-                    if (!static::is_search_area($classname)) {
-                        continue;
-                    }
-
-                    $areaid = static::generate_areaid($componentname, $areaname);
-                    $searchclass = new $classname();
-
-                    static::$allsearchareas[$areaid] = $searchclass;
-                    if ($searchclass->is_enabled()) {
-                        static::$enabledsearchareas[$areaid] = $searchclass;
-                    }
-                }
+        foreach ($searchclasses as $classname => $classpath) {
+            $areaname = substr(strrchr($classname, '\\'), 1);
+            $componentname = strstr($classname, '\\', 1);
+            if (!static::is_search_area($classname)) {
+                continue;
             }
-        }
 
-        $subsystems = \core_component::get_core_subsystems();
-        foreach ($subsystems as $subsystemname => $subsystempath) {
-            $componentname = 'core_' . $subsystemname;
-            $searchclasses = \core_component::get_component_classes_in_namespace($componentname, 'search');
-
-            foreach ($searchclasses as $classname => $classpath) {
-                $areaname = substr(strrchr($classname, '\\'), 1);
-
-                if (!static::is_search_area($classname)) {
-                    continue;
-                }
-
-                $areaid = static::generate_areaid($componentname, $areaname);
-                $searchclass = new $classname();
-                static::$allsearchareas[$areaid] = $searchclass;
-                if ($searchclass->is_enabled()) {
-                    static::$enabledsearchareas[$areaid] = $searchclass;
-                }
+            $areaid = static::generate_areaid($componentname, $areaname);
+            $searchclass = new $classname();
+            static::$allsearchareas[$areaid] = $searchclass;
+            if ($searchclass->is_enabled()) {
+                static::$enabledsearchareas[$areaid] = $searchclass;
             }
         }
 
@@ -720,7 +690,7 @@ class manager {
                     (!$limitcontextids || in_array($coursecontext->id, $limitcontextids))) {
                 // Add the course contexts the user can view.
                 foreach ($areasbylevel[CONTEXT_COURSE] as $areaid => $searchclass) {
-                    if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                    if (!empty($mycourses[$course->id]) || \core_course_category::can_view_course_info($course)) {
                         $areascontexts[$areaid][$coursecontext->id] = $coursecontext->id;
                     }
                 }

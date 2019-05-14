@@ -60,7 +60,9 @@ $alert-border-width:                0 !default;
 
 $card-group-margin: .25rem;
 
-$theme-colors: (
+// stylelint-disable
+$theme-colors: () !default;
+$theme-colors: map-merge((
     primary: $primary,
     secondary: $gray-200,
     success: $success,
@@ -69,7 +71,8 @@ $theme-colors: (
     danger: $danger,
     light: $gray-100,
     dark: $gray-800
-);
+), $theme-colors);
+// stylelint-enable
 
 // Import FontAwesome.
 @import "fontawesome";
@@ -97,6 +100,10 @@ $theme-colors: (
 
 .block {
     background-color: $gray-100;
+}
+
+#page-my-index {
+    background-color: $white;
 }
 // Reset the default styling back to the bootstrap defaults for
 // the secondary outline button because gray-200 is much too light

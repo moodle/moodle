@@ -59,6 +59,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('profilingallowme', new lang_string('profilingallowme', 'admin'), new lang_string('profilingallowme_help', 'admin'), false));
     // Allow PROFILEALL/PROFILEALLSTOP GPC.
     $temp->add(new admin_setting_configcheckbox('profilingallowall', new lang_string('profilingallowall', 'admin'), new lang_string('profilingallowall_help', 'admin'), false));
+    $temp->add(new admin_setting_configtext('profilingslow', new lang_string('profilingslow', 'admin'),
+        new lang_string('profilingslow_help', 'admin'), 0, PARAM_FLOAT));
     // TODO: Allow to skip PHP functions (XHPROF_FLAGS_NO_BUILTINS)
     // TODO: Allow to skip call_user functions (ignored_functions array)
     // Specify the life time (in minutes) of profiling runs.

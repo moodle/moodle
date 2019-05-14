@@ -864,7 +864,7 @@ class core_renderer extends renderer_base {
         }
         if (!empty($CFG->debugvalidators)) {
             // NOTE: this is not a nice hack, $PAGE->url is not always accurate and $FULLME neither, it is not a bug if it fails. --skodak
-            $output .= '<div class="validators"><ul class="list-unstyled m-l-1">
+            $output .= '<div class="validators"><ul class="list-unstyled ml-1">
               <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=' . urlencode(qualified_me()) . '">Validate HTML</a></li>
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=' . urlencode(qualified_me()) . '">Section 508 Check</a></li>
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=' . urlencode(qualified_me()) . '">WCAG 1 (2,3) Check</a></li>
@@ -1164,13 +1164,13 @@ class core_renderer extends renderer_base {
             // Special case for site home page - please do not remove
             return '<div class="sitelink">' .
                    '<a title="Moodle" href="http://moodle.org/">' .
-                   '<img src="' . $this->image_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
+                   '<img src="' . $this->image_url('moodlelogo_grayhat') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
 
         } else if (!empty($CFG->target_release) && $CFG->target_release != $CFG->release) {
             // Special case for during install/upgrade.
             return '<div class="sitelink">'.
                    '<a title="Moodle" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">' .
-                   '<img src="' . $this->image_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
+                   '<img src="' . $this->image_url('moodlelogo_grayhat') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
 
         } else if ($this->page->course->id == $SITE->id || strpos($this->page->pagetype, 'course-view') === 0) {
             return '<div class="homelink"><a href="' . $CFG->wwwroot . '/">' .
@@ -1549,6 +1549,36 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Get the course pattern datauri to show on a course card.
+     *
+     * The datauri is an encoded svg that can be passed as a url.
+     * @param int $id Id to use when generating the pattern
+     * @return string datauri
+     */
+    public function get_generated_image_for_id($id) {
+        $color = $this->get_generated_color_for_id($id);
+        $pattern = new \core_geopattern();
+        $pattern->setColor($color);
+        $pattern->patternbyid($id);
+        return $pattern->datauri();
+    }
+
+    /**
+     * Get the course color to show on a course card.
+     *
+     * @param int $id Id to use when generating the color.
+     * @return string hex color code.
+     */
+    public function get_generated_color_for_id($id) {
+        // The colour palette is hardcoded for now. It would make sense to combine it with theme settings.
+        $basecolors = ['#81ecec', '#74b9ff', '#a29bfe', '#dfe6e9', '#00b894',
+            '#0984e3', '#b2bec3', '#fdcb6e', '#fd79a8', '#6c5ce7'];
+
+        $color = $basecolors[$id % 10];
+        return $color;
+    }
+
+    /**
      * Returns lang menu or '', this method also checks forcing of languages in courses.
      *
      * This function calls {@link core_renderer::render_single_select()} to actually display the language menu.
@@ -1717,6 +1747,7 @@ class core_renderer extends renderer_base {
         $context->showskiplink = !empty($context->skiptitle);
         $context->arialabel = $bc->arialabel;
         $context->ariarole = !empty($bc->attributes['role']) ? $bc->attributes['role'] : 'complementary';
+        $context->class = $bc->attributes['class'];
         $context->type = $bc->attributes['data-block'];
         $context->title = $bc->title;
         $context->content = $bc->content;
@@ -2434,7 +2465,7 @@ class core_renderer extends renderer_base {
      *     - class = image class attribute (default 'userpicture')
      *     - visibletoscreenreaders=true (whether to be visible to screen readers)
      *     - includefullname=false (whether to include the user's full name together with the user picture)
-     *     - includetoken = false
+     *     - includetoken = false (whether to use a token for authentication. True for current user, int value for other user id)
      * @return string HTML fragment
      */
     public function user_picture(stdClass $user, array $options = null) {
@@ -4027,7 +4058,7 @@ EOD;
      */
     public function render_preferences_group(preferences_group $renderable) {
         $html = '';
-        $html .= html_writer::start_tag('div', array('class' => 'span4 preferences-group'));
+        $html .= html_writer::start_tag('div', array('class' => 'col-sm-4 preferences-group'));
         $html .= $this->heading($renderable->title, 3);
         $html .= html_writer::start_tag('ul');
         foreach ($renderable->nodes as $node) {
@@ -4053,7 +4084,7 @@ EOD;
         if ($this->should_display_main_logo($headinglevel)) {
             $sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
             return html_writer::div(html_writer::empty_tag('img', [
-                    'src' => $this->get_logo_url(null, 150), 'alt' => $sitename]), 'logo');
+                    'src' => $this->get_logo_url(null, 150), 'alt' => $sitename, 'class' => 'img-fluid']), 'logo');
         }
 
         // Make sure to use the heading if it has been set.
@@ -4090,11 +4121,7 @@ EOD;
                 $imagedata = $this->user_picture($user, array('size' => 100));
 
                 // Check to see if we should be displaying a message button.
-                if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
-                    $iscontact = \core_message\api::is_contact($USER->id, $user->id);
-                    $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
-                    $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
-                    $contactimage = $iscontact ? 'removecontact' : 'addcontact';
+                if (!empty($CFG->messaging) && has_capability('moodle/site:sendmessage', $context)) {
                     $userbuttons = array(
                         'messages' => array(
                             'buttontype' => 'message',
@@ -4103,21 +4130,28 @@ EOD;
                             'image' => 'message',
                             'linkattributes' => \core_message\helper::messageuser_link_params($user->id),
                             'page' => $this->page
-                        ),
-                        'togglecontact' => array(
-                            'buttontype' => 'togglecontact',
-                            'title' => get_string($contacttitle, 'message'),
-                            'url' => new moodle_url('/message/index.php', array(
-                                    'user1' => $USER->id,
-                                    'user2' => $user->id,
-                                    $contacturlaction => $user->id,
-                                    'sesskey' => sesskey())
-                            ),
-                            'image' => $contactimage,
-                            'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
-                            'page' => $this->page
-                        ),
+                        )
                     );
+
+                    if ($USER->id != $user->id) {
+                        $iscontact = \core_message\api::is_contact($USER->id, $user->id);
+                        $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
+                        $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
+                        $contactimage = $iscontact ? 'removecontact' : 'addcontact';
+                        $userbuttons['togglecontact'] = array(
+                                'buttontype' => 'togglecontact',
+                                'title' => get_string($contacttitle, 'message'),
+                                'url' => new moodle_url('/message/index.php', array(
+                                        'user1' => $USER->id,
+                                        'user2' => $user->id,
+                                        $contacturlaction => $user->id,
+                                        'sesskey' => sesskey())
+                                ),
+                                'image' => $contactimage,
+                                'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
+                                'page' => $this->page
+                            );
+                    }
 
                     $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
                 }
@@ -4590,8 +4624,7 @@ EOD;
                     // The id will be something like 'fgroup_id_NAME'. E.g. fgroup_id_mygroup.
                     $elementcontext['wrapperid'] = $elementcontext['id'];
 
-                    // Ensure group elements pass through the group name as the element name so the id_error_{{element.name}} is
-                    // properly set in the template.
+                    // Ensure group elements pass through the group name as the element name.
                     $elementcontext['name'] = $elementcontext['groupname'];
                 } else {
                     // Non grouped element.

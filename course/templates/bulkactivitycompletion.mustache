@@ -39,21 +39,21 @@
     }
 }}
 <div class="container-fluid">
-    <div class="row m-b-2">
+    <div class="row mb-2">
         <div class="col">{{#str}}bulkactivitydetail, core_completion{{/str}}</div>
     </div>
 <form method="post" action="editbulkcompletion.php" class="mform" id="theform">
-    <div class="row m-b-2">
+    <div class="row mb-2">
         <div class="col">
             <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" disabled/>
         </div>
     </div>
-    <div class="row m-b-1">
-        <div class="col-xs-6 span6">
-            <input type="checkbox" class="mastercheck m-r-1" aria-label="{{#str}}checkall, completion{{/str}}">
+    <div class="row mb-1">
+        <div class="col-xs-6">
+            <input type="checkbox" class="mastercheck mr-1" aria-label="{{#str}}checkall, completion{{/str}}">
             <label class="font-weight-bold">{{#str}}activitieslabel, core_completion{{/str}}</label>
         </div>
-        <div class="col-xs-6 span6">
+        <div class="col-xs-6">
             <label class="font-weight-bold">{{#str}}completion, core_completion{{/str}}</label>
             <span>{{{helpicon}}}</span>
         </div>
@@ -61,10 +61,10 @@
     <hr class="row">
     <div class="topics">
         {{#sections}}
-                <div class="m-b-1">
-                    <div class="row m-b-1 row-fluid">
+                <div class="mb-1">
+                    <div class="row mb-1 row-fluid">
                         <div class="col-sm-12">
-                            <input type="checkbox" data-section-master="{{sectionnumber}}" class="m-r-1" aria-label="{{#str}}checkallsection, completion, {{{name}}}{{/str}}">
+                            <input type="checkbox" data-section-master="{{sectionnumber}}" class="mr-1" aria-label="{{#str}}checkallsection, completion, {{{name}}}{{/str}}">
                             <h3 class="d-inline-block">{{{name}}}</h3>
                         </div>
                     </div>

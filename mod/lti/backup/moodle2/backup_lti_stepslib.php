@@ -99,6 +99,8 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             'state',
             'course',
             'coursevisible',
+            'ltiversion',
+            'clientid',
             'toolproxyid',
             'enabledcapability',
             'parameter',

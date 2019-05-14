@@ -56,10 +56,8 @@ class dataset_manager_testcase extends advanced_testcase {
     public function test_create_dataset() {
 
         $dataset1 = new \core_analytics\dataset_manager(1, 1, 'whatever', \core_analytics\dataset_manager::LABELLED_FILEAREA, false);
-        $dataset1->init_process();
         $dataset1data = array_merge($this->sharedtoprows, array(array('yeah', 'yeah', 'yeah')));
         $f1 = $dataset1->store($dataset1data);
-        $dataset1->close_process();
 
         $f1contents = $f1->get_content();
         $this->assertContains('yeah', $f1contents);
@@ -76,16 +74,12 @@ class dataset_manager_testcase extends advanced_testcase {
     public function test_merge_datasets() {
 
         $dataset1 = new \core_analytics\dataset_manager(1, 1, 'whatever', \core_analytics\dataset_manager::LABELLED_FILEAREA, false);
-        $dataset1->init_process();
         $dataset1data = array_merge($this->sharedtoprows, array(array('yeah', 'yeah', 'yeah')));
         $f1 = $dataset1->store($dataset1data);
-        $dataset1->close_process();
 
         $dataset2 = new \core_analytics\dataset_manager(1, 2, 'whatever', \core_analytics\dataset_manager::LABELLED_FILEAREA, false);
-        $dataset2->init_process();
         $dataset2data = array_merge($this->sharedtoprows, array(array('no', 'no', 'no')));
         $f2 = $dataset2->store($dataset2data);
-        $dataset2->close_process();
 
         $files = array($f1, $f2);
         $merged = \core_analytics\dataset_manager::merge_datasets($files, 1, 'whatever',
@@ -123,10 +117,8 @@ class dataset_manager_testcase extends advanced_testcase {
         // merged into training and prediction files).
         $analysabledataset = new \core_analytics\dataset_manager($fakemodelid, 1, 'whatever',
             \core_analytics\dataset_manager::LABELLED_FILEAREA, false);
-        $analysabledataset->init_process();
         $analysabledatasetdata = array_merge($this->sharedtoprows, array(array('yeah', 'yeah', 'yeah')));
         $file = $analysabledataset->store($analysabledatasetdata);
-        $analysabledataset->close_process();
 
         // Evaluation files ignored.
         $evaluationdataset = \core_analytics\dataset_manager::merge_datasets(array($file), $fakemodelid,

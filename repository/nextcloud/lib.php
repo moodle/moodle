@@ -427,11 +427,25 @@ class repository_nextcloud extends repository {
             throw new \repository_nextcloud\request_exception(array('instance' => $repositoryname, 'errormessage' => $details));
         }
 
+        // Download for offline usage. This is strictly read-only, so the file need not be shared.
+        if (!empty($options['offline'])) {
+            // Download from system account and provide the file to the user.
+            $linkmanager = new \repository_nextcloud\access_controlled_link_manager($this->ocsclient,
+                $this->get_system_oauth_client(), $this->get_system_ocs_client(), $this->issuer, $repositoryname);
+
+            // Create temp path, then download into it.
+            $filename = basename($reference->link);
+            $tmppath = make_request_directory() . '/' . $filename;
+            $linkmanager->download_for_offline_usage($reference->link, $tmppath);
+
+            // Output the obtained file to the user and remove it from disk.
+            send_temp_file($tmppath, $filename);
+
+            // That's all.
+            return;
+        }
+
         if (!$this->client->is_logged_in()) {
-            if (!empty($options['offline'])) {
-                // Right now, we can't download referenced files for offline if the client is not authenticated.
-                send_file_not_found();  // Use this function because it enforces a 404 error.
-            }
             $this->print_login_popup(['style' => 'margin-top: 250px'], $options['embed']);
             return;
         }

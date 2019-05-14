@@ -1190,15 +1190,13 @@ table#categoryquestions {
     display: none;
 }
 
-#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading,
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading a,
 #page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading form,
-#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading .instancesectioncontainer,
-#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading .instanceshufflequestions,
-#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading .instancesectioncontainer h3 {
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading .instanceshufflequestions {
     display: none;
 }
 
-#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .edit-toolbar .m-b-1 {
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .edit-toolbar .mb-1 {
     display: none;
 }
 

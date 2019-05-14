@@ -71,6 +71,43 @@ class lesson_page_type_numerical extends lesson_page {
         $event->trigger();
         return $mform->display();
     }
+
+    /**
+     * Creates answers for this page type.
+     *
+     * @param  object $properties The answer properties.
+     */
+    public function create_answers($properties) {
+        if (isset($properties->enableotheranswers) && $properties->enableotheranswers) {
+            $properties->response_editor = array_values($properties->response_editor);
+            $properties->jumpto = array_values($properties->jumpto);
+            $properties->score = array_values($properties->score);
+            $wrongresponse = end($properties->response_editor);
+            $wrongkey = key($properties->response_editor);
+            $properties->answer_editor[$wrongkey] = LESSON_OTHER_ANSWERS;
+        }
+        parent::create_answers($properties);
+    }
+
+    /**
+     * Update the answers for this page type.
+     *
+     * @param  object $properties The answer properties.
+     * @param  context $context The context for this module.
+     * @param  int $maxbytes The maximum bytes for any uploades.
+     */
+    public function update($properties, $context = null, $maxbytes = null) {
+        if ($properties->enableotheranswers) {
+            $properties->response_editor = array_values($properties->response_editor);
+            $properties->jumpto = array_values($properties->jumpto);
+            $properties->score = array_values($properties->score);
+            $wrongresponse = end($properties->response_editor);
+            $wrongkey = key($properties->response_editor);
+            $properties->answer_editor[$wrongkey] = LESSON_OTHER_ANSWERS;
+        }
+        parent::update($properties, $context, $maxbytes);
+    }
+
     public function check_answer() {
         global $CFG;
         $result = parent::check_answer();
@@ -123,6 +160,22 @@ class lesson_page_type_numerical extends lesson_page {
                 }
                 $result->answerid = $answer->id;
                 return $result;
+            }
+        }
+        // We could check here to see if we have a wrong answer jump to use.
+        if ($result->answerid == 0) {
+            // Use the all other answers jump details if it is set up.
+            $lastanswer = end($answers);
+            // Double check that this is the @#wronganswer#@ answer.
+            if (strpos($lastanswer->answer, LESSON_OTHER_ANSWERS) !== false) {
+                $otheranswers = end($answers);
+                $result->newpageid = $otheranswers->jumpto;
+                $result->response = format_text($otheranswers->response, $otheranswers->responseformat, $formattextdefoptions);
+                // Does this also need to do the jumpto_is_correct?
+                if ($this->lesson->custom) {
+                    $result->correctanswer = ($otheranswers->score > 0);
+                }
+                $result->answerid = $otheranswers->id;
             }
         }
         return $result;
@@ -259,6 +312,35 @@ class lesson_page_type_numerical extends lesson_page {
         }
         return $answerpage;
     }
+
+    /**
+     * Make updates to the form data if required. In this case to put the all other answer data into the write section of the form.
+     *
+     * @param stdClass $data The form data to update.
+     * @return stdClass The updated fom data.
+     */
+    public function update_form_data(stdClass $data) : stdClass {
+        $answercount = count($this->get_answers());
+        // Check for other answer entry.
+        $lastanswer = $data->{'answer_editor[' . ($answercount - 1) . ']'};
+        if (strpos($lastanswer, LESSON_OTHER_ANSWERS) !== false) {
+            $data->{'answer_editor[' . ($this->lesson->maxanswers + 1) . ']'} =
+                    $data->{'answer_editor[' . ($answercount - 1) . ']'};
+            $data->{'response_editor[' . ($this->lesson->maxanswers + 1) . ']'} =
+                    $data->{'response_editor[' . ($answercount - 1) . ']'};
+            $data->{'jumpto[' . ($this->lesson->maxanswers + 1) . ']'} = $data->{'jumpto[' . ($answercount - 1) . ']'};
+            $data->{'score[' . ($this->lesson->maxanswers + 1) . ']'} = $data->{'score[' . ($answercount - 1) . ']'};
+            $data->enableotheranswers = true;
+
+            // Unset the old values.
+            unset($data->{'answer_editor[' . ($answercount - 1) . ']'});
+            unset($data->{'response_editor[' . ($answercount - 1) . ']'});
+            unset($data->{'jumpto['. ($answercount - 1) . ']'});
+            unset($data->{'score[' . ($answercount - 1) . ']'});
+        }
+
+        return $data;
+    }
 }
 
 class lesson_add_page_form_numerical extends lesson_add_page_form_base {
@@ -269,13 +351,21 @@ class lesson_add_page_form_numerical extends lesson_add_page_form_base {
     protected $responseformat = LESSON_ANSWER_HTML;
 
     public function custom_definition() {
-        for ($i = 0; $i < $this->_customdata['lesson']->maxanswers; $i++) {
+        $answercount = $this->_customdata['lesson']->maxanswers;
+        for ($i = 0; $i < $answercount; $i++) {
             $this->_form->addElement('header', 'answertitle'.$i, get_string('answer').' '.($i+1));
             $this->add_answer($i, null, ($i < 1));
             $this->add_response($i);
             $this->add_jumpto($i, null, ($i == 0 ? LESSON_NEXTPAGE : LESSON_THISPAGE));
             $this->add_score($i, null, ($i===0)?1:0);
         }
+        // Wrong answer jump.
+        $this->_form->addElement('header', 'wronganswer', get_string('allotheranswers', 'lesson'));
+        $newcount = $answercount + 1;
+        $this->_form->addElement('advcheckbox', 'enableotheranswers', get_string('enabled', 'lesson'));
+        $this->add_response($newcount);
+        $this->add_jumpto($newcount, get_string('allotheranswersjump', 'lesson'), LESSON_NEXTPAGE);
+        $this->add_score($newcount, get_string('allotheranswersscore', 'lesson'), 0);
     }
 }
 

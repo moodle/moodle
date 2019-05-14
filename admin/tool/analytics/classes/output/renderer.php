@@ -81,7 +81,7 @@ class renderer extends plugin_renderer_base {
         foreach ($results as $timesplittingid => $result) {
 
             if (!CLI_SCRIPT) {
-                $output .= $OUTPUT->box_start('generalbox m-b-3');
+                $output .= $OUTPUT->box_start('generalbox mb-3');
             }
 
             // Check that the array key is a string, not all results depend on time splitting methods (e.g. general errors).
@@ -177,7 +177,7 @@ class renderer extends plugin_renderer_base {
         }
 
         if ($predictresults || (!empty($predictlogs) && debugging())) {
-            $output .= $OUTPUT->heading(get_string('predictionresults', 'tool_analytics'), 3, 'main m-t-3');
+            $output .= $OUTPUT->heading(get_string('predictionresults', 'tool_analytics'), 3, 'main mt-3');
         }
 
         if ($predictresults) {

@@ -176,7 +176,7 @@ class behat_hooks extends behat_base {
 
         if (!behat_util::is_test_mode_enabled()) {
             throw new behat_stop_exception('Behat only can run if test mode is enabled. More info in ' .
-                behat_command::DOCS_URL . '#Running_tests');
+                behat_command::DOCS_URL);
         }
 
         // Reset all data, before checking for check_server_status.
@@ -303,7 +303,7 @@ class behat_hooks extends behat_base {
             throw new behat_stop_exception('Behat only can modify the test database and the test dataroot!');
         }
 
-        $moreinfo = 'More info in ' . behat_command::DOCS_URL . '#Running_tests';
+        $moreinfo = 'More info in ' . behat_command::DOCS_URL;
         $driverexceptionmsg = 'Selenium server is not running, you need to start it to run tests that involve Javascript. ' . $moreinfo;
         try {
             $session = $this->getSession();

@@ -78,7 +78,9 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         // Execute it sending the standard error to $output.
         $result = exec($cmd . ' 2>&1', $output, $exitcode);
 
-        if ($result === self::REQUIRED_PIP_PACKAGE_VERSION) {
+        $vercheck = self::check_pip_package_version($result);
+
+        if ($vercheck === 0) {
             return true;
         }
 
@@ -87,8 +89,17 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         if ($result) {
-            $a = (object)array('installed' => $result, 'required' => self::REQUIRED_PIP_PACKAGE_VERSION);
-            return get_string('packageinstalledshouldbe', 'mlbackend_python', $a);
+            $a = [
+                'installed' => $result,
+                'required' => self::REQUIRED_PIP_PACKAGE_VERSION,
+            ];
+
+            if ($vercheck < 0) {
+                return get_string('packageinstalledshouldbe', 'mlbackend_python', $a);
+
+            } else if ($vercheck > 0) {
+                return get_string('packageinstalledtoohigh', 'mlbackend_python', $a);
+            }
         }
 
         return get_string('pythonpackagenotinstalled', 'mlbackend_python', $cmd);
@@ -394,5 +405,40 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         // From moodle filesystem to the local file system.
         // This is not ideal, but there is no read access to moodle filesystem files.
         return $file->copy_content_to_temp('core_analytics');
+    }
+
+    /**
+     * Check that the given package version can be used and return the error status.
+     *
+     * When evaluating the version, we assume the sematic versioning scheme as described at
+     * https://semver.org/.
+     *
+     * @param string $actual The actual Python package version
+     * @param string $required The required version of the package
+     * @return int -1 = actual version is too low, 1 = actual version too high, 0 = actual version is ok
+     */
+    public static function check_pip_package_version($actual, $required = self::REQUIRED_PIP_PACKAGE_VERSION) {
+
+        if (empty($actual)) {
+            return -1;
+        }
+
+        if (version_compare($actual, $required, '<')) {
+            return -1;
+        }
+
+        $parts = explode('.', $required);
+        $requiredapiver = reset($parts);
+
+        $parts = explode('.', $actual);
+        $actualapiver = reset($parts);
+
+        if ($requiredapiver > 0 || $actualapiver > 1) {
+            if (version_compare($actual, $requiredapiver + 1, '>=')) {
+                return 1;
+            }
+        }
+
+        return 0;
     }
 }

@@ -203,7 +203,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $ctx = context_module::instance($g1->cmid);
         $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
 
-        $e1a = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Bob', 'userid' => 2));
+        $e1a = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Bob', 'userid' => 2, 'tags' => array('Cats', 'Dogs')));
         $e1b = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Jane', 'userid' => 2));
         $e1c = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Alice', 'userid' => $u1->id));
         $e1d = $gg->create_content($g1, array('approved' => 0, 'concept' => '0-day', 'userid' => $u1->id));
@@ -218,6 +218,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(3, $return['count']);
         $this->assertEquals($e1c->id, $return['entries'][0]['id']);
         $this->assertEquals($e1a->id, $return['entries'][1]['id']);
+        $this->assertEquals('Cats', $return['entries'][1]['tags'][0]['rawname']);
+        $this->assertEquals('Dogs', $return['entries'][1]['tags'][1]['rawname']);
         $this->assertEquals($e1b->id, $return['entries'][2]['id']);
 
         // An admin user requesting all the entries.
@@ -311,7 +313,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         $now = time();
         $e1a = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Bob', 'userid' => $u1->id,
-            'timecreated' => 1, 'timemodified' => $now + 3600));
+            'timecreated' => 1, 'timemodified' => $now + 3600, 'tags' => array('Cats', 'Dogs')));
         $e1b = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Jane', 'userid' => $u1->id,
             'timecreated' => $now + 3600, 'timemodified' => 1));
         $e1c = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Alice', 'userid' => $u1->id,
@@ -328,6 +330,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
         $this->assertEquals($e1a->id, $return['entries'][0]['id']);
+        $this->assertEquals('Cats', $return['entries'][0]['tags'][0]['rawname']);
+        $this->assertEquals('Dogs', $return['entries'][0]['tags'][1]['rawname']);
         $this->assertEquals($e1c->id, $return['entries'][1]['id']);
         $this->assertEquals($e1b->id, $return['entries'][2]['id']);
 
@@ -425,7 +429,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $u1 = $this->getDataGenerator()->create_user();
         $ctx = context_module::instance($g1->cmid);
 
-        $e1a1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        $e1a1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id, 'tags' => array('Cats', 'Dogs')));
         $e1a2 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
         $e1a3 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
         $e1b1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
@@ -448,6 +452,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
         $this->assertEquals($e1a1->id, $return['entries'][0]['id']);
+        $this->assertEquals('Cats', $return['entries'][0]['tags'][0]['rawname']);
+        $this->assertEquals('Dogs', $return['entries'][0]['tags'][1]['rawname']);
         $this->assertEquals($e1a2->id, $return['entries'][1]['id']);
         $this->assertEquals($e1a3->id, $return['entries'][2]['id']);
 
@@ -562,7 +568,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $e1a2 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
         $e1a3 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
         $e1b1 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u2->id));
-        $e1b2 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u2->id));
+        $e1b2 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u2->id, 'tags' => array('Cats', 'Dogs')));
         $e1c1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u3->id));
         $e1d1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u4->id));
         $e2a = $gg->create_content($g2, array('approved' => 1, 'userid' => $u1->id));
@@ -575,6 +581,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(4, $return['entries']);
         $this->assertEquals(4, $return['count']);
         $this->assertEquals($e1b2->id, $return['entries'][0]['id']);
+        $this->assertEquals('Cats', $return['entries'][0]['tags'][0]['rawname']);
+        $this->assertEquals('Dogs', $return['entries'][0]['tags'][1]['rawname']);
         $this->assertEquals($e1a1->id, $return['entries'][1]['id']);
         $this->assertEquals($e1a2->id, $return['entries'][2]['id']);
         $this->assertEquals($e1a3->id, $return['entries'][3]['id']);
@@ -780,7 +788,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         $e1 = $gg->create_content($g1, array('approved' => 1, 'concept' => 'House', 'timecreated' => time() + 3600));
         $e2 = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Mouse', 'timemodified' => 1));
-        $e3 = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Hero'));
+        $e3 = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Hero', 'tags' => array('Cats', 'Dogs')));
         $e4 = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Toulouse'));
         $e5 = $gg->create_content($g1, array('approved' => 1, 'definition' => 'Heroes', 'concept' => 'Abcd'));
         $e6 = $gg->create_content($g1, array('approved' => 0, 'definition' => 'When used for Heroes'));
@@ -798,6 +806,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(1, $return['count']);
         $this->assertEquals($e3->id, $return['entries'][0]['id']);
+        $this->assertEquals('Cats', $return['entries'][0]['tags'][0]['rawname']);
+        $this->assertEquals('Dogs', $return['entries'][0]['tags'][1]['rawname']);
 
         // Enabling full search.
         $query = 'hero';
@@ -893,7 +903,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         $this->setAdminUser();
 
-        $e1 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1, 'concept' => 'cat'));
+        $e1 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1, 'concept' => 'cat',
+            'tags' => array('Cats', 'Dogs')));
         $e2 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1), array('cat', 'dog'));
         $e3 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1), array('dog'));
         $e4 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 0, 'concept' => 'dog'));
@@ -907,6 +918,15 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array($e1->id, $e2->id);
         $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        // Compare rawnames of all expected tags, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array('Cats', 'Dogs'); // Only $e1 has 2 tags.
+        $actual = array(); // Accumulate all tags returned.
+        foreach ($return['entries'] as $entry) {
+            foreach ($entry['tags'] as $tag) {
+                $actual[] = $tag['rawname'];
+            }
+        }
         $this->assertEquals($expected, $actual, '', 0.0, 10, true);
 
         // Search alias.
@@ -1063,7 +1083,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $ctx = context_module::instance($g1->cmid);
         $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
 
-        $e1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        $e1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id, 'tags' => array('Cats', 'Dogs')));
         // Add a fake inline image to the entry.
         $filename = 'shouldbeanimage.jpg';
         $filerecordinline = array(
@@ -1085,6 +1105,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $return = mod_glossary_external::get_entry_by_id($e1->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
         $this->assertEquals($e1->id, $return['entry']['id']);
+        $this->assertEquals('Cats', $return['entry']['tags'][0]['rawname']);
+        $this->assertEquals('Dogs', $return['entry']['tags'][1]['rawname']);
         $this->assertEquals($filename, $return['entry']['definitioninlinefiles'][0]['filename']);
 
         $return = mod_glossary_external::get_entry_by_id($e2->id);

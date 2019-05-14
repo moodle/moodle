@@ -49,6 +49,19 @@ class behat_message extends behat_base {
     }
 
     /**
+     * Open the messaging conversation list.
+     *
+     * @Given /^I open the "(?P<tab_string>(?:[^"]|\\")*)" conversations list/
+     * @param string $tab
+     */
+    public function i_open_the_conversations_list(string $tab) {
+        $this->execute('behat_general::i_click_on', [
+            $this->escape($tab),
+            'group_message_tab'
+        ]);
+    }
+
+    /**
      * Open the messaging UI.
      *
      * @Given /^I open messaging information$/
@@ -69,11 +82,18 @@ class behat_message extends behat_base {
 
         $this->execute('behat_general::i_click_on_in_the',
             array(
-                "//button[@data-action='view-contact-profile']
-                [contains(normalize-space(.), '" . $this->escape($userfullname) . "')]",
-                'xpath_element',
-                ".messages-header",
-                "css_element",
+                "//a[@data-action='view-contact']",
+                "xpath_element",
+                "//*[@data-region='message-drawer']//div[@data-region='header-container']",
+                "xpath_element",
+            )
+        );
+        $this->execute('behat_general::i_click_on_in_the',
+            array(
+                "//img[@title='Picture of ". $this->escape($userfullname) . "']",
+                "xpath_element",
+                "//*[@data-region='message-drawer']//*[@data-region='view-contact']",
+                "xpath_element",
             )
         );
 
@@ -89,18 +109,7 @@ class behat_message extends behat_base {
     public function i_select_user_in_messaging($userfullname) {
         $this->i_open_messaging();
 
-        $this->execute('behat_general::i_click_on', [get_string('search', 'core'), 'field']);
-
-        $this->execute('behat_forms::i_set_the_field_with_xpath_to',
-            [
-                "//*[@data-region='message-drawer']//input[@data-region='search-input']",
-                $this->escape($userfullname)
-            ]
-        );
-
-        $this->execute('behat_general::i_click_on', ['[data-action="search"]', 'css_element']);
-
-        $this->execute('behat_general::wait_until_the_page_is_ready');
+        $this->i_search_for_string_in_messaging($userfullname);
 
         // Need to limit the click to the search results because the 'view-contact-profile' elements
         // can occur in two separate divs on the page.
@@ -112,6 +121,27 @@ class behat_message extends behat_base {
                 "css_element",
             ]
         );
+
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+    }
+
+    /**
+     * Search for a string using the messaging search.
+     *
+     * @Given /^I search for "(?P<string>(?:[^"]|\\")*)" in messaging$/
+     * @param string $string the search string.
+     */
+    public function i_search_for_string_in_messaging($string) {
+        $this->execute('behat_general::i_click_on', [get_string('search', 'core'), 'field']);
+
+        $this->execute('behat_forms::i_set_the_field_with_xpath_to',
+            [
+                "//*[@data-region='message-drawer']//input[@data-region='search-input']",
+                $this->escape($string)
+            ]
+        );
+
+        $this->execute('behat_general::i_click_on', ['[data-action="search"]', 'css_element']);
 
         $this->execute('behat_general::wait_until_the_page_is_ready');
     }
@@ -153,7 +183,7 @@ class behat_message extends behat_base {
             array("//textarea[@data-region='send-message-txt']", $this->escape($messagecontent))
         );
 
-        $this->execute("behat_forms::press_button", get_string('send', 'message'));
+        $this->execute("behat_forms::press_button", get_string('sendmessage', 'message'));
     }
 
     /**
@@ -201,6 +231,38 @@ class behat_message extends behat_base {
                 'css_element',
                 '[data-region="message-drawer"] [data-region="header-container"]',
                 'css_element',
+            )
+        );
+    }
+
+    /**
+     * Select a user in a specific messaging UI conversations list.
+     *
+     * @Given /^I select "(?P<conv_name_string>(?:[^"]|\\")*)" conversation in the "(?P<list_name_string>(?:[^"]|\\")*)" conversations list$/
+     * @param string $convname
+     * @param string $listname
+     */
+    public function i_select_conversation_in_the_conversations_list(string $convname, string $listname) {
+        $xpath = '//*[@data-region="message-drawer"]//div[@data-region="view-overview-'.
+            $this->escape($listname).
+            '"]//*[@data-conversation-id]//img[contains(@alt,"'.
+            $this->escape($convname).'")]';
+        $this->execute('behat_general::i_click_on', array($xpath, 'xpath_element'));
+    }
+
+    /**
+     * Open the settings preferences.
+     *
+     * @Given /^I open messaging settings preferences$/
+     */
+    public function i_open_messaging_settings_preferences() {
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+        $this->execute('behat_general::i_click_on',
+            array(
+                '//*[@data-region="message-drawer"]//a[@data-route="view-settings"]',
+                'xpath_element',
+                '',
+                '',
             )
         );
     }

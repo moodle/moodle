@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,7 +16,14 @@
 
 /**
  * Library of functions for forum outside of the core api
+ *
+ * @package   mod_forum
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+// Event types.
+define('FORUM_EVENT_TYPE_DUE', 'due');
 
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
@@ -699,4 +705,51 @@ function mod_forum_get_tagged_posts($tag, $exclusivemode = false, $fromctx = 0, 
         return new core_tag\output\tagindex($tag, 'mod_forum', 'forum_posts', $content,
             $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
     }
+}
+
+/**
+ * Update the calendar entries for this forum activity.
+ *
+ * @param stdClass $forum the row from the database table forum.
+ * @param int $cmid The coursemodule id
+ * @return bool
+ */
+function forum_update_calendar($forum, $cmid) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot.'/calendar/lib.php');
+
+    $event = new stdClass();
+
+    if (!empty($forum->duedate)) {
+        $event->name = get_string('calendardue', 'forum', $forum->name);
+        $event->description = format_module_intro('forum', $forum, $cmid);
+        $event->courseid = $forum->course;
+        $event->modulename = 'forum';
+        $event->instance = $forum->id;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = FORUM_EVENT_TYPE_DUE;
+        $event->timestart = $forum->duedate;
+        $event->timesort = $forum->duedate;
+        $event->visible = instance_is_visible('forum', $forum);
+    }
+
+    $event->id = $DB->get_field('event', 'id',
+            array('modulename' => 'forum', 'instance' => $forum->id, 'eventtype' => FORUM_EVENT_TYPE_DUE));
+
+    if ($event->id) {
+        $calendarevent = calendar_event::load($event->id);
+        if (!empty($forum->duedate)) {
+            // Calendar event exists so update it.
+            $calendarevent->update($event);
+        } else {
+            // Calendar event is no longer needed.
+            $calendarevent->delete();
+        }
+    } else if (!empty($forum->duedate)) {
+        // Event doesn't exist so create one.
+        calendar_event::create($event);
+    }
+
+    return true;
 }

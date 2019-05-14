@@ -35,6 +35,8 @@ use mod_forum\local\managers\capability as capability_manager;
  * @package    mod_forum
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \mod_forum\local\managers\capability
+ * @covers ::<!public>
  */
 class mod_forum_managers_capability_testcase extends advanced_testcase {
     // Make use of the test generator trait.
@@ -157,6 +159,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_subscribe_to_forum.
+     *
+     * @covers ::can_subscribe_to_forum
      */
     public function test_can_subscribe_to_forum() {
         $this->resetAfterTest();
@@ -171,6 +175,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_create_discussions.
+     *
+     * @covers ::can_create_discussions
      */
     public function test_can_create_discussions() {
         $this->resetAfterTest();
@@ -238,6 +244,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_access_all_groups.
+     *
+     * @covers ::can_access_all_groups
      */
     public function test_can_access_all_groups() {
         $this->resetAfterTest();
@@ -255,6 +263,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_access_group.
+     *
+     * @covers ::can_access_group
      */
     public function test_can_access_group() {
         $this->resetAfterTest();
@@ -277,6 +287,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_view_discussions.
+     *
+     * @covers ::can_view_discussions
      */
     public function test_can_view_discussions() {
         $this->resetAfterTest();
@@ -294,6 +306,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_move_discussions.
+     *
+     * @covers ::can_move_discussions
      */
     public function test_can_move_discussions() {
         $this->resetAfterTest();
@@ -316,6 +330,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_pin_discussions.
+     *
+     * @covers ::can_pin_discussions
      */
     public function test_can_pin_discussions() {
         $this->resetAfterTest();
@@ -333,6 +349,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_split_discussions.
+     *
+     * @covers ::can_split_discussions
      */
     public function test_can_split_discussions() {
         $this->resetAfterTest();
@@ -355,6 +373,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_export_discussions.
+     *
+     * @covers ::can_export_discussions
      */
     public function test_can_export_discussions() {
         global $CFG;
@@ -378,6 +398,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_manually_control_post_read_status.
+     *
+     * @covers ::can_manually_control_post_read_status
      */
     public function test_can_manually_control_post_read_status() {
         global $CFG, $DB;
@@ -405,6 +427,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test must_post_before_viewing_discussion.
+     *
+     * @covers ::must_post_before_viewing_discussion
      */
     public function test_must_post_before_viewing_discussion() {
         $this->resetAfterTest();
@@ -434,6 +458,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_subscribe_to_discussion.
+     *
+     * @covers ::can_subscribe_to_discussion
      */
     public function test_can_subscribe_to_discussion() {
         $this->resetAfterTest();
@@ -449,6 +475,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_move_discussion.
+     *
+     * @covers ::can_move_discussion
      */
     public function test_can_move_discussion() {
         $this->resetAfterTest();
@@ -472,6 +500,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_pin_discussion.
+     *
+     * @covers ::can_pin_discussion
      */
     public function test_can_pin_discussion() {
         $this->resetAfterTest();
@@ -490,6 +520,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_post_in_discussion.
+     *
+     * @covers ::can_post_in_discussion
      */
     public function test_can_post_in_discussion() {
         $this->resetAfterTest();
@@ -594,6 +626,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_edit_post.
+     *
+     * @covers ::can_edit_post
      */
     public function test_can_edit_post() {
         global $CFG;
@@ -676,6 +710,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_delete_post.
+     *
+     * @covers ::can_delete_post
      */
     public function test_can_delete_post() {
         global $CFG;
@@ -740,6 +776,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_split_post.
+     *
+     * @covers ::can_split_post
      */
     public function test_can_split_post() {
         $this->resetAfterTest();
@@ -777,10 +815,20 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
         // Can't split a single discussion forum.
         $this->assertFalse($capabilitymanager->can_split_post($user, $discussion, $post));
+
+        // Make the post a private reply.
+        $post = $this->entityfactory->get_post_from_stdclass(
+            (object) array_merge((array) $this->postrecord, ['parent' => 5, 'privatereplyto' => $user->id])
+        );
+
+        // Can't split at a private reply.
+        $this->assertFalse($capabilitymanager->can_split_post($user, $discussion, $post));
     }
 
     /**
      * Test can_reply_to_post.
+     *
+     * @covers ::can_reply_to_post
      */
     public function test_can_reply_to_post() {
         $this->resetAfterTest();
@@ -882,10 +930,111 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
         $this->getDataGenerator()->create_group_member(['userid' => $user->id, 'groupid' => $group->id]);
 
         $this->assertTrue($capabilitymanager->can_reply_to_post($user, $discussion, $post));
+
+        // Make the post a private reply.
+        $post = $this->entityfactory->get_post_from_stdclass(
+            (object) array_merge((array) $this->postrecord, ['parent' => 5, 'privatereplyto' => $user->id])
+        );
+
+        // Can't reply to a a private reply.
+        $this->assertFalse($capabilitymanager->can_reply_to_post($user, $discussion, $post));
+    }
+
+    /**
+     * Ensure that can_reply_privately_to_post works as expected.
+     *
+     * @covers ::can_reply_privately_to_post
+     */
+    public function test_can_reply_privately_to_post() {
+        $this->resetAfterTest();
+
+        $forum = $this->create_forum();
+        $discussion = $this->discussion;
+        $user = $this->user;
+        $post = $this->post;
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+
+        // Without the capability, and with a standard post, it is not possible to reply privately.
+        $this->prevent_capability('mod/forum:postprivatereply');
+        $this->assertFalse($capabilitymanager->can_reply_privately_to_post($this->user, $post));
+
+        // With the capability, and a standard post, it is possible to reply privately.
+        $this->give_capability('mod/forum:postprivatereply');
+        $this->assertTrue($capabilitymanager->can_reply_privately_to_post($this->user, $post));
+
+        // Make the post a private reply.
+        $post = $this->entityfactory->get_post_from_stdclass(
+            (object) array_merge((array) $this->postrecord, ['parent' => 5, 'privatereplyto' => $user->id])
+        );
+
+        // Can't ever reply to a a private reply.
+        $this->assertFalse($capabilitymanager->can_reply_privately_to_post($user, $post));
+    }
+
+    /**
+     * Ensure that can_view_post works as expected.
+     *
+     * @covers ::can_view_post
+     */
+    public function test_can_view_post() {
+        $this->resetAfterTest();
+
+        $forum = $this->create_forum();
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+
+        $user = $this->user;
+        $otheruser = $this->getDataGenerator()->create_user();
+
+        $discussion = $this->discussion;
+        $post = $this->post;
+
+        $privatepost = $this->entityfactory->get_post_from_stdclass(
+            (object) array_merge((array) $this->postrecord, ['parent' => $post->get_id(), 'privatereplyto' => $otheruser->id])
+        );
+
+        $this->prevent_capability('mod/forum:readprivatereplies');
+        $this->assertFalse($capabilitymanager->can_view_post($user, $discussion, $privatepost));
+    }
+
+    /**
+     * Ensure that can_view_post_shell considers private replies correctly.
+     *
+     * @covers ::can_view_post_shell
+     */
+    public function test_can_view_post_shell() {
+        $this->resetAfterTest();
+
+        $forum = $this->create_forum();
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+
+        $user = $this->user;
+        $otheruser = $this->getDataGenerator()->create_user();
+
+        $discussion = $this->discussion;
+        $post = $this->post;
+        $privatepost = $this->entityfactory->get_post_from_stdclass(
+            (object) array_merge((array) $this->postrecord, ['parent' => $post->get_id(), 'privatereplyto' => $otheruser->id])
+        );
+        $privateposttome = $this->entityfactory->get_post_from_stdclass(
+            (object) array_merge((array) $this->postrecord, ['parent' => $post->get_id(), 'privatereplyto' => $user->id])
+        );
+
+        // Can always view public replies, and those to me.
+        $this->prevent_capability('mod/forum:readprivatereplies');
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $post));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privateposttome));
+        $this->assertFalse($capabilitymanager->can_view_post_shell($this->user, $privatepost));
+
+        $this->give_capability('mod/forum:readprivatereplies');
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $post));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privateposttome));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepost));
     }
 
     /**
      * Test can_export_post.
+     *
+     * @covers ::can_export_post
      */
     public function test_can_export_post() {
         global $CFG;
@@ -922,6 +1071,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_view_participants.
+     *
+     * @covers ::can_view_participants
      */
     public function test_can_view_participants() {
         $this->resetAfterTest();
@@ -961,6 +1112,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_view_hidden_posts.
+     *
+     * @covers ::can_view_hidden_posts
      */
     public function test_can_view_hidden_posts() {
         $this->resetAfterTest();
@@ -978,6 +1131,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_manage_forum.
+     *
+     * @covers ::can_manage_forum
      */
     public function test_can_manage_forum() {
         $this->resetAfterTest();
@@ -995,6 +1150,8 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
     /**
      * Test can_manage_tags.
+     *
+     * @covers ::can_manage_tags
      */
     public function test_can_manage_tags() {
         global $DB;
@@ -1011,5 +1168,22 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
         assign_capability('moodle/tag:manage', CAP_ALLOW, $roleid, $context->id, true);
         $this->assertTrue($capabilitymanager->can_manage_tags($user));
+    }
+
+    /**
+     * Ensure that the can_view_any_private_reply works as expected.
+     *
+     * @covers ::can_view_any_private_reply
+     */
+    public function test_can_view_any_private_reply() {
+        $this->resetAfterTest();
+
+        $forum = $this->create_forum();
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+
+        $this->give_capability('mod/forum:readprivatereplies');
+        $this->assertTrue($capabilitymanager->can_view_any_private_reply($this->user));
+        $this->prevent_capability('mod/forum:readprivatereplies');
+        $this->assertFalse($capabilitymanager->can_view_any_private_reply($this->user));
     }
 }

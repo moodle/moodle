@@ -315,8 +315,8 @@ class mod_assign_privacy_testcase extends provider_testcase {
         $this->assertEquals(1, $writer->get_data(['attempt 1', 'submission'])->attemptnumber);
         $this->assertEquals(2, $writer->get_data(['attempt 2', 'submission'])->attemptnumber);
         // Check grades.
-        $this->assertEquals($grade1, $writer->get_data(['attempt 1', 'grade'])->grade);
-        $this->assertEquals($grade2, $writer->get_data(['attempt 2', 'grade'])->grade);
+        $this->assertEquals((float)$grade1, $writer->get_data(['attempt 1', 'grade'])->grade);
+        $this->assertEquals((float)$grade2, $writer->get_data(['attempt 2', 'grade'])->grade);
         // Check feedback.
         $this->assertContains($teachercommenttext, $writer->get_data(['attempt 1', 'Feedback comments'])->commenttext);
         $this->assertContains($teachercommenttext2, $writer->get_data(['attempt 2', 'Feedback comments'])->commenttext);
@@ -425,11 +425,11 @@ class mod_assign_privacy_testcase extends provider_testcase {
 
         // Check for student grades given.
         $student1grade = $writer->get_data(['studentsubmissions', $user1->id, 'attempt 1', 'grade']);
-        $this->assertEquals($grade1, $student1grade->grade);
+        $this->assertEquals((float)$grade1, $student1grade->grade);
         $student2grade1 = $writer->get_data(['studentsubmissions', $user2->id, 'attempt 1', 'grade']);
-        $this->assertEquals($grade2, $student2grade1->grade);
+        $this->assertEquals((float)$grade2, $student2grade1->grade);
         $student2grade2 = $writer->get_data(['studentsubmissions', $user2->id, 'attempt 2', 'grade']);
-        $this->assertEquals($grade3, $student2grade2->grade);
+        $this->assertEquals((float)$grade3, $student2grade2->grade);
         // Check for feedback given to students.
         $this->assertContains($teachercommenttext, $writer->get_data(['studentsubmissions', $user1->id, 'attempt 1',
                 'Feedback comments'])->commenttext);

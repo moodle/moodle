@@ -135,8 +135,7 @@ class customfield extends \core_search\base {
         if (!$course) {
             return \core_search\manager::ACCESS_DELETED;
         }
-        $coursecontext = \context_course::instance($course->id);
-        if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+        if (\core_course_category::can_view_course_info($course)) {
             return \core_search\manager::ACCESS_GRANTED;
         }
         return \core_search\manager::ACCESS_DENIED;
@@ -181,5 +180,17 @@ class customfield extends \core_search\base {
      */
     public function get_doc_icon(\core_search\document $doc) : \core_search\document_icon {
         return new \core_search\document_icon('i/customfield');
+    }
+
+    /**
+     * Returns a list of category names associated with the area.
+     *
+     * @return array
+     */
+    public function get_category_names() {
+        return [
+            \core_search\manager::SEARCH_AREA_CATEGORY_COURSE_CONTENT,
+            \core_search\manager::SEARCH_AREA_CATEGORY_COURSES
+        ];
     }
 }

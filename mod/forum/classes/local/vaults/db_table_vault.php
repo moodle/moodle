@@ -40,19 +40,24 @@ abstract class db_table_vault {
     private $db;
     /** @var entity_factory $entityfactory Entity factory */
     private $entityfactory;
+    /** @var object $legacyfactory Entity->legacy factory */
+    private $legacyfactory;
 
     /**
      * Constructor.
      *
      * @param moodle_database $db A moodle database
      * @param entity_factory $entityfactory Entity factory
+     * @param object $legacyfactory Legacy factory
      */
     public function __construct(
         moodle_database $db,
-        entity_factory $entityfactory
+        entity_factory $entityfactory,
+        $legacyfactory
     ) {
         $this->db = $db;
         $this->entityfactory = $entityfactory;
+        $this->legacyfactory = $legacyfactory;
     }
 
     /**
@@ -67,9 +72,11 @@ abstract class db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
+     * @param object|null $user The user object
      * @return string
      */
-    abstract protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null) : string;
+    abstract protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null,
+        ?int $userid = null) : string;
 
     /**
      * Convert the DB records into entities. The list of records will have been
@@ -114,6 +121,15 @@ abstract class db_table_vault {
      */
     protected function get_entity_factory() : entity_factory {
         return $this->entityfactory;
+    }
+
+    /**
+     * Get the legacy factory
+     *
+     * @return object
+     */
+    protected function get_legacy_factory() {
+        return $this->legacyfactory;
     }
 
     /**

@@ -38,6 +38,9 @@ class store implements \tool_log\log\writer, \core\log\sql_internal_table_reader
         $this->helper_setup($manager);
         // Log everything before setting is saved for the first time.
         $this->logguests = $this->get_config('logguests', 1);
+        // JSON writing defaults to false (table format compatibility with older versions).
+        // Note: This variable is defined in the buffered_writer trait.
+        $this->jsonformat = (bool)$this->get_config('jsonformat', false);
     }
 
     /**
@@ -120,7 +123,7 @@ class store implements \tool_log\log\writer, \core\log\sql_internal_table_reader
         $extra = array('origin' => $data->origin, 'ip' => $data->ip, 'realuserid' => $data->realuserid);
         $data = (array)$data;
         $id = $data['id'];
-        $data['other'] = unserialize($data['other']);
+        $data['other'] = self::decode_other($data['other']);
         if ($data['other'] === false) {
             $data['other'] = array();
         }

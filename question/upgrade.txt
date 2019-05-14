@@ -11,6 +11,10 @@ The exportprocess function of the qformat_default class doesn't output a blank l
 if the result of the writequestion function is null. This permit to qformat plugins
 to ignore some questions without the need to overwrite this function.
 
+* The question_preview_cron() has been deleted. Please use \core\task\question_cron_task::execute().
+* The question_usage_statistics_cron() has been deleted. Please use \core\task\question_cron_task::execute().
+* The method question_bank::cron() has been deleted, please use question related scheduled tasks.
+
 === 3.5 ===
 
 1) The question format exportprocess function now adds a

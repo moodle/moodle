@@ -64,7 +64,9 @@
                         aria-selected="false"
                     >
                         {{#str}} requests {{/str}}
-                        <span class="badge bg-primary ml-2 {{^contactrequestcount}}hidden{{/contactrequestcount}}" data-region="contact-request-count">
+                        <span class="badge bg-primary ml-2 {{^contactrequestcount}}hidden{{/contactrequestcount}}"
+                        data-region="contact-request-count"
+                        aria-label="{{#str}} pendingcontactrequests, core_message, {{contactrequestcount}} {{/str}}">
                             {{contactrequestcount}}
                         </span>
                     </a>

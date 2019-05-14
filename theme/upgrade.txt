@@ -7,6 +7,7 @@ information provided here is intended especially for theme designer.
 * Renderers that were overridden by Boost are now in Bootstrapbase
 * Core templates in Boost have now moved into core
 * Templates that were overridden by boost are now located in Bootstrapbase
+* Themes bootstrapbase, clean & more have now been removed.
 
 === 3.6 ===
 

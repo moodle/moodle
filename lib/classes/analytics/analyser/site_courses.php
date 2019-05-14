@@ -79,7 +79,7 @@ class site_courses extends \core_analytics\local\analyser\sitewide {
      * @param \core_analytics\analysable $site
      * @return array
      */
-    protected function get_all_samples(\core_analytics\analysable $site) {
+    public function get_all_samples(\core_analytics\analysable $site) {
         global $DB;
 
         // Getting courses from DB instead of from the site as these samples

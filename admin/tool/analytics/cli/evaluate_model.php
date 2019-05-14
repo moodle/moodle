@@ -111,6 +111,9 @@ $analyseroptions = array(
 // Evaluate its suitability to predict accurately.
 $results = $model->evaluate($analyseroptions);
 
+// Reset the page as some indicators may call external functions that overwrite the page context.
+\tool_analytics\output\helper::reset_page();
+
 $renderer = $PAGE->get_renderer('tool_analytics');
 echo $renderer->render_evaluate_results($results, $model->get_analyser()->get_logs());
 

@@ -76,6 +76,26 @@ function(
     };
 
     /**
+     * Get the self-conversation message container element.
+     *
+     * @param  {Object} body Conversation body container element.
+     * @return {Object} The messages container element.
+     */
+    var getSelfConversationMessageContainer = function(body) {
+        return body.find(SELECTORS.SELF_CONVERSATION_MESSAGE_CONTAINER);
+    };
+
+    /**
+     * Hide the self-conversation message container element.
+     *
+     * @param  {Object} body Conversation body container element.
+     * @return {Object} The messages container element.
+     */
+    var hideSelfConversationMessageContainer = function(body) {
+        return getSelfConversationMessageContainer(body).addClass('hidden');
+    };
+
+    /**
      * Get the contact request sent container element.
      *
      * @param  {Object} body Conversation body container element.
@@ -780,9 +800,11 @@ function(
     var renderHeader = function(header, body, footer, data) {
         var headerContainer = getHeaderContent(header);
         var template = TEMPLATES.HEADER_PUBLIC;
-
+        data.context.showrouteback = (header.attr('data-from-panel') === "false");
         if (data.type == CONVERSATION_TYPES.PRIVATE) {
             template = data.showControls ? TEMPLATES.HEADER_PRIVATE : TEMPLATES.HEADER_PRIVATE_NO_CONTROLS;
+        } else if (data.type == CONVERSATION_TYPES.SELF) {
+            template = TEMPLATES.HEADER_SELF;
         }
 
         return Templates.render(template, data.context)
@@ -1004,6 +1026,7 @@ function(
         var text = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_TEXT);
         var dialogueHeader = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_HEADER);
 
+        hideCheckDeleteDialogue(body);
         hideConfirmDialogueContainer(body);
         hideConfirmDialogueContainer(footer);
         hideConfirmDialogueContainer(header);
@@ -1121,12 +1144,26 @@ function(
      * @param {Object} header The header container element.
      * @param {Object} body The body container element.
      * @param {Object} footer The footer container element.
-     * @param {Bool} show If the dialogue should show.
+     * @param {Object} data If the dialogue should show and checkbox shows to delete message for all users.
      * @return {Object} jQuery promise
      */
-    var renderConfirmDeleteSelectedMessages = function(header, body, footer, show) {
-        if (show) {
-            return Str.get_string('deleteselectedmessagesconfirm', 'core_message')
+    var renderConfirmDeleteSelectedMessages = function(header, body, footer, data) {
+        var showmessage = null;
+        if (data.type == CONVERSATION_TYPES.SELF) {
+            // Message displayed to self-conversations is slighly different.
+            showmessage = 'deleteselectedmessagesconfirmselfconversation';
+        } else {
+            // This other message should be displayed.
+            if (data.canDeleteMessagesForAllUsers) {
+                showCheckDeleteDialogue(body);
+                showmessage = 'deleteforeveryoneselectedmessagesconfirm';
+            } else {
+                showmessage = 'deleteselectedmessagesconfirm';
+            }
+        }
+
+        if (data.show) {
+            return Str.get_string(showmessage, 'core_message')
                 .then(function(string) {
                     return showConfirmDialogue(
                         header,
@@ -1150,12 +1187,21 @@ function(
      * @param {Object} header The header container element.
      * @param {Object} body The body container element.
      * @param {Object} footer The footer container element.
-     * @param {Bool} show If the dialogue should show
+     * @param {int|Null} type The conversation type to be removed.
      * @return {Object} jQuery promise
      */
-    var renderConfirmDeleteConversation = function(header, body, footer, show) {
-        if (show) {
-            return Str.get_string('deleteallconfirm', 'core_message')
+    var renderConfirmDeleteConversation = function(header, body, footer, type) {
+        var showmessage = null;
+        if (type == CONVERSATION_TYPES.SELF) {
+            // Message displayed to self-conversations is slighly different.
+            showmessage = 'deleteallselfconfirm';
+        } else if (type) {
+            // This other message should be displayed.
+            showmessage = 'deleteallconfirm';
+        }
+
+        if (showmessage) {
+            return Str.get_string(showmessage, 'core_message')
                 .then(function(string) {
                     return showConfirmDialogue(
                         header,
@@ -1195,6 +1241,30 @@ function(
         } else {
             return hideConfirmDialogue(header, body, footer);
         }
+    };
+
+    /**
+     * Show the checkbox to allow delete message for all.
+     *
+     * @param {Object} body The body container element.
+     */
+    var showCheckDeleteDialogue = function(body) {
+        var dialogue = getConfirmDialogueContainer(body);
+        var checkboxRegion = dialogue.find(SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER);
+        checkboxRegion.removeClass('hidden');
+    };
+
+    /**
+     * Hide the checkbox to allow delete message for all.
+     *
+     * @param {Object} body The body container element.
+     */
+    var hideCheckDeleteDialogue = function(body) {
+        var dialogue = getConfirmDialogueContainer(body);
+        var checkboxRegion = dialogue.find(SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER);
+        var checkbox = dialogue.find(SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE);
+        checkbox.prop('checked', false);
+        checkboxRegion.addClass('hidden');
     };
 
     /**
@@ -1438,6 +1508,25 @@ function(
     };
 
     /**
+     * Show or hide the self-conversation message.
+     *
+     * @param {Object} header The header container element.
+     * @param {Object} body The body container element.
+     * @param {Object} footer The footer container element.
+     * @param {Object} displayMessage should the message be displayed?.
+     * @return {Object|true} jQuery promise
+     */
+    var renderSelfConversationMessage = function(header, body, footer, displayMessage) {
+        var container = getSelfConversationMessageContainer(body);
+        if (displayMessage) {
+            container.removeClass('hidden');
+        } else {
+            container.addClass('hidden');
+        }
+        return true;
+    };
+
+    /**
      * Show or hide the require add contact panel.
      *
      * @param {Object} header The header container element.
@@ -1472,6 +1561,7 @@ function(
     var renderReset = function(header, body, footer) {
         hideConfirmDialogue(header, body, footer);
         hideContactRequestSentContainer(body);
+        hideSelfConversationMessageContainer(body);
         hideAllHeaderElements(header);
         showHeaderPlaceholder(header);
         hideAllFooterElements(footer);
@@ -1499,6 +1589,7 @@ function(
                 confirmDeleteConversation: renderConfirmDeleteConversation,
                 confirmContactRequest: renderConfirmContactRequest,
                 requireAddContact: renderRequireAddContact,
+                selfConversationMessage: renderSelfConversationMessage,
                 contactRequestSent: renderContactRequestSent
             },
             {

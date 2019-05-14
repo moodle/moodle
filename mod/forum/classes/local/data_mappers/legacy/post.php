@@ -59,7 +59,8 @@ class post {
                 'attachment' => $post->has_attachments(),
                 'totalscore' => $post->get_total_score(),
                 'mailnow' => $post->should_mail_now(),
-                'deleted' => $post->is_deleted()
+                'deleted' => $post->is_deleted(),
+                'privatereplyto' => $post->get_private_reply_recipient_id(),
             ];
         }, $posts);
     }

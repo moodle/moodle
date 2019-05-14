@@ -75,8 +75,7 @@ class enrol_guest_external extends external_api {
         $enrolinstance = $DB->get_record('enrol', array('id' => $params['instanceid']), '*', MUST_EXIST);
 
         $course = $DB->get_record('course', array('id' => $enrolinstance->courseid), '*', MUST_EXIST);
-        $context = context_course::instance($course->id);
-        if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
+        if (!core_course_category::can_view_course_info($course) && !can_access_course($course)) {
             throw new moodle_exception('coursehidden');
         }
 

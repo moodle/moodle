@@ -43,12 +43,66 @@ Feature: Create conversations for course's groups
   Scenario: Group conversations are restricted to members
     Given I log in as "teacher1"
     Then I open messaging
+    And I open the "Group" conversations list
     And "Group 1" "group_message" should exist
     And "Group 2" "group_message" should exist
     And "Group 3" "group_message" should not exist
     And I log out
     And I log in as "student1"
     And I open messaging
+    And I open the "Group" conversations list
     And "Group 1" "group_message" should exist
     And "Group 2" "group_message" should not exist
     And "Group 3" "group_message" should not exist
+
+  Scenario: View group conversation's participants numbers
+    Given I log in as "teacher1"
+    Then I open messaging
+    And I open the "Group" conversations list
+    And I select "Group 1" conversation in messaging
+    And I should see "5 participants" in the "Group 1" "group_message_header"
+    And I go back in "view-conversation" message drawer
+    And I select "Group 2" conversation in messaging
+    And I should see "1 participants" in the "Group 2" "group_message_header"
+
+  Scenario: View group conversation's participants list
+    Given I log in as "teacher1"
+    Then I open messaging
+    And I open the "Group" conversations list
+    # Check Group 1 participants list.
+    And I select "Group 1" conversation in messaging
+    And I open messaging information
+    And "Teacher 1" "group_message_member" should not exist
+    And "Student 0" "group_message_member" should exist
+    And "Student 1" "group_message_member" should exist
+    And "Student 2" "group_message_member" should exist
+    And "Student 3" "group_message_member" should exist
+    And "Student 4" "group_message_member" should not exist
+    And I go back in "group-info-content-container" message drawer
+    And I go back in "view-conversation" message drawer
+    # Check Group 2 participants list.
+    And I select "Group 2" conversation in messaging
+    And I open messaging information
+    And "Teacher 1" "group_message_member" should not exist
+    And "No participants" "group_message_member" should exist
+    And "Student 4" "group_message_member" should not exist
+
+  Scenario: Check group conversation members are synced when a new group member is added
+    Given I log in as "teacher1"
+    Then I am on "Course 1" course homepage
+    And I navigate to "Users > Groups" in current page administration
+    And I add "Student 4 (student4@example.com)" user to "Group 1" group members
+    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
+    And I open messaging
+    And I open the "Group" conversations list
+    And I select "Group 1" conversation in messaging
+    And I should see "6 participants" in the "Group 1" "group_message_header"
+    And I open messaging information
+    And "Student 4" "group_message_member" should exist
+    And I go back in "group-info-content-container" message drawer
+    And I go back in "view-conversation" message drawer
+    And I select "Group 2" conversation in messaging
+    And I should see "2 participants" in the "Group 2" "group_message_header"
+    And I open messaging information
+    And "No participants" "group_message_member" should not exist
+    And "Student 4" "group_message_member" should exist

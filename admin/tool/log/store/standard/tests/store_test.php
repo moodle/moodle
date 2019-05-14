@@ -33,10 +33,20 @@ class logstore_standard_store_testcase extends advanced_testcase {
      */
     private $wedisabledgc = false;
 
-    public function test_log_writing() {
+    /**
+     * Tests log writing.
+     *
+     * @param bool $jsonformat True to test with JSON format
+     * @dataProvider test_log_writing_provider
+     * @throws moodle_exception
+     */
+    public function test_log_writing(bool $jsonformat) {
         global $DB;
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.
+
+        // Apply JSON format system setting.
+        set_config('jsonformat', $jsonformat ? 1 : 0, 'logstore_standard');
 
         $this->setAdminUser();
         $user1 = $this->getDataGenerator()->create_user();
@@ -82,7 +92,11 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         $log1 = reset($logs);
         unset($log1->id);
-        $log1->other = unserialize($log1->other);
+        if ($jsonformat) {
+            $log1->other = json_decode($log1->other, true);
+        } else {
+            $log1->other = unserialize($log1->other);
+        }
         $log1 = (array)$log1;
         $data = $event1->get_data();
         $data['origin'] = 'cli';
@@ -112,7 +126,11 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         $log3 = array_shift($logs);
         unset($log3->id);
-        $log3->other = unserialize($log3->other);
+        if ($jsonformat) {
+            $log3->other = json_decode($log3->other, true);
+        } else {
+            $log3->other = unserialize($log3->other);
+        }
         $log3 = (array)$log3;
         $data = $event2->get_data();
         $data['origin'] = 'restore';
@@ -198,6 +216,19 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
+    }
+
+    /**
+     * Returns different JSON format settings so the test can be run with JSON format either on or
+     * off.
+     *
+     * @return [bool] Array of true/false
+     */
+    public static function test_log_writing_provider(): array {
+        return [
+            [false],
+            [true]
+        ];
     }
 
     /**
@@ -330,6 +361,170 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $clean->execute();
 
         $this->assertEquals(1, $DB->count_records('logstore_standard_log'));
+    }
+
+    /**
+     * Tests the decode_other function can cope with both JSON and PHP serialized format.
+     *
+     * @param mixed $value Value to encode and decode
+     * @dataProvider test_decode_other_provider
+     */
+    public function test_decode_other($value) {
+        $this->assertEquals($value, \logstore_standard\log\store::decode_other(serialize($value)));
+        $this->assertEquals($value, \logstore_standard\log\store::decode_other(json_encode($value)));
+    }
+
+    public function test_decode_other_with_wrongly_encoded_contents() {
+        $this->assertSame(null, \logstore_standard\log\store::decode_other(null));
+    }
+
+    /**
+     * List of possible values for 'other' field.
+     *
+     * I took these types from our logs based on the different first character of PHP serialized
+     * data - my query found only these types. The normal case is an array.
+     *
+     * @return array Array of parameters
+     */
+    public function test_decode_other_provider(): array {
+        return [
+            [['info' => 'd2819896', 'logurl' => 'discuss.php?d=2819896']],
+            [null],
+            ['just a string'],
+            [32768]
+        ];
+    }
+
+    /**
+     * Checks that backup and restore of log data works correctly.
+     *
+     * @param bool $jsonformat True to test with JSON format
+     * @dataProvider test_log_writing_provider
+     * @throws moodle_exception
+     */
+    public function test_backup_restore(bool $jsonformat) {
+        global $DB;
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+
+        // Enable logging plugin.
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        set_config('buffersize', 0, 'logstore_standard');
+        $manager = get_log_manager(true);
+
+        // User must be enrolled in course.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+        $this->setUser($user);
+
+        // Apply JSON format system setting.
+        set_config('jsonformat', $jsonformat ? 1 : 0, 'logstore_standard');
+
+        // Create some log data in a course - one with other data, one without.
+        \logstore_standard\event\unittest_executed::create([
+                'context' => context_course::instance($course->id),
+                'other' => ['sample' => 5, 'xx' => 10]])->trigger();
+        $this->waitForSecond();
+        \logstore_standard\event\unittest_executed::create([
+                'context' => context_course::instance($course->id)])->trigger();
+
+        $records = array_values($DB->get_records('logstore_standard_log',
+                ['courseid' => $course->id, 'target' => 'unittest'], 'timecreated'));
+        $this->assertCount(2, $records);
+
+        // Work out expected 'other' values based on JSON format.
+        $expected0 = [
+            false => 'a:2:{s:6:"sample";i:5;s:2:"xx";i:10;}',
+            true => '{"sample":5,"xx":10}'
+        ];
+        $expected1 = [
+            false => 'N;',
+            true => 'null'
+        ];
+
+        // Backup the course twice, including log data.
+        $this->setAdminUser();
+        $backupid1 = $this->backup($course);
+        $backupid2 = $this->backup($course);
+
+        // Restore it with same jsonformat.
+        $newcourseid = $this->restore($backupid1, $course, '_A');
+
+        // Check entries are correctly encoded.
+        $records = array_values($DB->get_records('logstore_standard_log',
+                ['courseid' => $newcourseid, 'target' => 'unittest'], 'timecreated'));
+        $this->assertCount(2, $records);
+        $this->assertEquals($expected0[$jsonformat], $records[0]->other);
+        $this->assertEquals($expected1[$jsonformat], $records[1]->other);
+
+        // Change JSON format to opposite value and restore again.
+        set_config('jsonformat', $jsonformat ? 0 : 1, 'logstore_standard');
+        $newcourseid = $this->restore($backupid2, $course, '_B');
+
+        // Check entries are correctly encoded in other format.
+        $records = array_values($DB->get_records('logstore_standard_log',
+                ['courseid' => $newcourseid, 'target' => 'unittest'], 'timecreated'));
+        $this->assertEquals($expected0[!$jsonformat], $records[0]->other);
+        $this->assertEquals($expected1[!$jsonformat], $records[1]->other);
+    }
+
+    /**
+     * Backs a course up to temp directory.
+     *
+     * @param stdClass $course Course object to backup
+     * @return string ID of backup
+     */
+    protected function backup($course): string {
+        global $USER, $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+
+        // Turn off file logging, otherwise it can't delete the file (Windows).
+        $CFG->backup_file_logger_level = backup::LOG_NONE;
+
+        // Do backup with default settings. MODE_IMPORT means it will just
+        // create the directory and not zip it.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
+                backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
+                $USER->id);
+        $bc->get_plan()->get_setting('users')->set_status(backup_setting::NOT_LOCKED);
+        $bc->get_plan()->get_setting('users')->set_value(true);
+        $bc->get_plan()->get_setting('logs')->set_value(true);
+        $backupid = $bc->get_backupid();
+
+        $bc->execute_plan();
+        $bc->destroy();
+        return $backupid;
+    }
+
+    /**
+     * Restores a course from temp directory.
+     *
+     * @param string $backupid Backup id
+     * @param \stdClass $course Original course object
+     * @param string $suffix Suffix to add after original course shortname and fullname
+     * @return int New course id
+     * @throws restore_controller_exception
+     */
+    protected function restore(string $backupid, $course, string $suffix): int {
+        global $USER, $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        // Do restore to new course with default settings.
+        $newcourseid = restore_dbops::create_new_course(
+                $course->fullname . $suffix, $course->shortname . $suffix, $course->category);
+        $rc = new restore_controller($backupid, $newcourseid,
+                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
+                backup::TARGET_NEW_COURSE);
+        $rc->get_plan()->get_setting('logs')->set_value(true);
+        $rc->get_plan()->get_setting('users')->set_value(true);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        return $newcourseid;
     }
 
     /**

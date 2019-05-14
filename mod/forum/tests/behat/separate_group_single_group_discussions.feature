@@ -59,12 +59,14 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
     And I am on "Course 1" course homepage
     And I follow "Multiple groups forum"
     When I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     Then the "Group" select box should contain "All participants"
     And the "Group" select box should contain "G1G1"
     And the "Group" select box should contain "G1G2"
     And I am on "Course 1" course homepage
     And I follow "Single groups forum"
     And I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     And the "Group" select box should contain "All participants"
     And the "Group" select box should contain "G2G1"
     And I should not see "Post a copy to all groups"
@@ -74,11 +76,13 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
     And I am on "Course 1" course homepage
     And I follow "Multiple groups forum"
     When I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     Then the "Group" select box should not contain "All participants"
     And the "Group" select box should contain "G1G1"
     And the "Group" select box should contain "G1G2"
     And I am on "Course 1" course homepage
     And I follow "Single groups forum"
     And I click on "Add a new discussion topic" "link"
+    And I click on "Advanced" "button"
     And I should see "G2G1"
     And "Group" "select" should not exist

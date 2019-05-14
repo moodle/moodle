@@ -126,6 +126,10 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
         \core\event\user_created::create_from_userid($newuserid)->trigger();
     }
 
+    // All new users must have a starred self-conversation.
+    $selfconversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF, [$newuserid]);
+    \core_message\api::set_favourite_conversation($selfconversation->id, $newuserid);
+
     // Purge the associated caches for the current user only.
     $presignupcache = \cache::make('core', 'presignup');
     $presignupcache->purge_current_user();
@@ -606,9 +610,6 @@ function user_get_user_details_courses($user) {
     global $USER;
     $userdetails = null;
 
-    // Get the courses that the user is enrolled in (only active).
-    $courses = enrol_get_users_courses($user->id, true);
-
     $systemprofile = false;
     if (can_view_user_details_cap($user) || ($user->id == $USER->id) || has_coursecontact_role($user->id)) {
         $systemprofile = true;
@@ -619,8 +620,10 @@ function user_get_user_details_courses($user) {
         $userdetails = user_get_user_details($user, null);
     } else {
         // Try through course profile.
+        // Get the courses that the user is enrolled in (only active).
+        $courses = enrol_get_users_courses($user->id, true);
         foreach ($courses as $course) {
-            if (can_view_user_details_cap($user, $course) || ($user->id == $USER->id) || has_coursecontact_role($user->id)) {
+            if (user_can_view_profile($user, $course)) {
                 $userdetails = user_get_user_details($user, $course);
             }
         }

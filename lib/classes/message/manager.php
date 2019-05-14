@@ -109,6 +109,13 @@ class manager {
         // Get conversation type and name. We'll use this to determine which message subject to generate, depending on type.
         $conv = $DB->get_record('message_conversations', ['id' => $eventdata->convid], 'id, type, name');
 
+        // For now Self conversations are not processed because users are aware of the messages sent by themselves, so we
+        // can return early.
+        if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF) {
+            return $savemessage->id;
+        }
+        $localisedeventdata->conversationtype = $conv->type;
+
         // We treat individual conversations the same as any direct message with 'userfrom' and 'userto' specified.
         // We know the other user, so set the 'userto' field so that the event code will get access to this field.
         // If this was a legacy caller (eventdata->userto is set), then use that instead, as we want to use the fields specified
@@ -162,6 +169,14 @@ class manager {
 
             // Spoof the userto based on the current member id.
             $localisedeventdata->userto = $recipient;
+            // Check if the notification is including images that will need a user token to be displayed outside Moodle.
+            if (!empty($localisedeventdata->customdata)) {
+                $customdata = json_decode($localisedeventdata->customdata);
+                if (is_object($customdata) && !empty($customdata->notificationiconurl)) {
+                    $customdata->tokenpluginfile = get_user_key('core_files', $localisedeventdata->userto->id);
+                    $localisedeventdata->customdata = $customdata; // Message class will JSON encode again.
+                }
+            }
 
             $s = new \stdClass();
             $s->sitename = format_string($SITE->shortname, true, array('context' => \context_course::instance(SITEID)));
@@ -200,10 +215,9 @@ class manager {
             }
 
             // Fill in the array of processors to be used based on default and user preferences.
-            // This applies only to individual conversations. Messages to group conversations ignore processors.
             // Do not process muted conversations.
             $processorlist = [];
-            if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL && !$recipient->ismuted) {
+            if (!$recipient->ismuted) {
                 foreach ($processors as $processor) {
                     // Skip adding processors for internal user, if processor doesn't support sending message to internal user.
                     if (!$usertoisrealuser && !$processor->object->can_send_to_any_users()) {

@@ -147,7 +147,7 @@ class report_log_renderer extends plugin_renderer_base {
                 'id' => $selectedcourseid, 'date' => $reportlog->date, 'modid' => $reportlog->modid,
                 'showusers' => 1, 'showcourses' => $reportlog->showcourses));
             $a->url = $a->url->out(false);
-            echo html_writer::start_span('m-x-1');
+            echo html_writer::start_span('mx-1');
             print_string('logtoomanyusers', 'moodle', $a);
             echo html_writer::end_span();
         }

@@ -558,23 +558,23 @@ class core_formslib_testcase extends advanced_testcase {
         global $CFG;
         $this->resetAfterTest(true);
 
-        $CFG->theme = 'clean';
+        $CFG->theme = 'classic';
         $form = new formslib_multiple_modgrade_form();
         ob_start();
         $form->display();
         $html = ob_get_clean();
 
-        $this->assertTag(array('id' => 'fgroup_id_grade1'), $html);
+        $this->assertTag(array('id' => 'fitem_fgroup_id_grade1'), $html);
         $this->assertTag(array('id' => 'id_grade1_modgrade_type'), $html);
         $this->assertTag(array('id' => 'id_grade1_modgrade_point'), $html);
         $this->assertTag(array('id' => 'id_grade1_modgrade_scale'), $html);
 
-        $this->assertTag(array('id' => 'fgroup_id_grade2'), $html);
+        $this->assertTag(array('id' => 'fitem_fgroup_id_grade2'), $html);
         $this->assertTag(array('id' => 'id_grade2_modgrade_type'), $html);
         $this->assertTag(array('id' => 'id_grade2_modgrade_point'), $html);
         $this->assertTag(array('id' => 'id_grade2_modgrade_scale'), $html);
 
-        $this->assertTag(array('id' => 'fgroup_id_grade_3'), $html);
+        $this->assertTag(array('id' => 'fitem_fgroup_id_grade_3'), $html);
         $this->assertTag(array('id' => 'id_grade_3_modgrade_type'), $html);
         $this->assertTag(array('id' => 'id_grade_3_modgrade_point'), $html);
         $this->assertTag(array('id' => 'id_grade_3_modgrade_scale'), $html);
@@ -586,7 +586,7 @@ class core_formslib_testcase extends advanced_testcase {
     public function test_persistantrreeze_element() {
         global $CFG;
         $this->resetAfterTest(true);
-        $CFG->theme = 'clean';
+        $CFG->theme = 'classic';
 
         $form = new formslib_persistantrreeze_element();
         ob_start();
@@ -595,15 +595,12 @@ class core_formslib_testcase extends advanced_testcase {
 
         // Test advcheckbox id's.
         $this->assertTag(array('id' => 'id_advcheckboxpersistant'), $html);
-        $this->assertTag(array('id' => 'id_advcheckboxpersistant_persistant'), $html);
         $this->assertTag(array('id' => 'id_advcheckboxnotpersistant'), $html);
         $this->assertNotTag(array('id' => 'id_advcheckboxnotpersistant_persistant'), $html);
         $this->assertTag(array('id' => 'id_advcheckboxfrozen'), $html);
-        $this->assertTag(array('id' => 'id_advcheckboxfrozen_persistant'), $html);
 
         // Check text element id's.
         $this->assertTag(array('id' => 'id_textpersistant'), $html);
-        $this->assertTag(array('id' => 'id_textpersistant_persistant'), $html);
         $this->assertTag(array('id' => 'id_textnotpersistant'), $html);
         $this->assertNotTag(array('id' => 'id_textnotpersistant_persistant'), $html);
         $this->assertTag(array('id' => 'id_textfrozen'), $html);

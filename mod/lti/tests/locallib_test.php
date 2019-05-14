@@ -68,23 +68,26 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $tool = new stdClass();
         $tool->enabledcapability = '';
         $tool->parameter = '';
+        $tool->ltiversion = 'LTI-1p0';
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), "x=1\ny=2", false),
             array('custom_x' => '1', 'custom_y' => '2'));
 
         // Check params with caps.
-        $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), "X=1", false),
+        $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), "X=1", true),
             array('custom_x' => '1', 'custom_X' => '1'));
 
         // Removed repeat of previous test with a semicolon separator.
 
-        $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), 'Review:Chapter=1.2.56', false),
-            array('custom_review_chapter' => '1.2.56', 'custom_Review_Chapter' => '1.2.56'));
+        $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), 'Review:Chapter=1.2.56', true),
+            array(
+                'custom_review_chapter' => '1.2.56',
+                'custom_Review:Chapter' => '1.2.56'));
 
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(),
-            'Complex!@#$^*(){}[]KEY=Complex!@#$^*;(){}[]½Value', false),
+            'Complex!@#$^*(){}[]KEY=Complex!@#$^*;(){}[]½Value', true),
             array(
                 'custom_complex____________key' => 'Complex!@#$^*;(){}[]½Value',
-                'custom_Complex____________KEY' => 'Complex!@#$^*;(){}[]½Value'));
+                'custom_Complex!@#$^*(){}[]KEY' => 'Complex!@#$^*;(){}[]½Value'));
 
         // Test custom parameter that returns $USER property.
         $user = $this->getDataGenerator()->create_user(array('middlename' => 'SOMETHING'));
@@ -369,7 +372,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $url = $result->url;
         $this->assertEquals($typeconfig['toolurl'], $url);
         $this->assertEquals('ContentItemSelectionRequest', $params['lti_message_type']);
-        $this->assertEquals(LTI_VERSION_2, $params['lti_version']);
+        $this->assertEquals(LTI_VERSION_1, $params['lti_version']);
         $this->assertEquals('application/vnd.ims.lti.v1.ltilink', $params['accept_media_types']);
         $this->assertEquals('frame,iframe,window', $params['accept_presentation_document_targets']);
         $this->assertEquals($returnurl->out(false), $params['content_item_return_url']);
@@ -599,5 +602,785 @@ class mod_lti_locallib_testcase extends advanced_testcase {
     public function test_lti_get_best_tool_by_url($url, $expected, $tools) {
         $actual = lti_get_best_tool_by_url($url, $tools, null);
         $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * Test lti_get_jwt_message_type_mapping().
+     */
+    public function test_lti_get_jwt_message_type_mapping() {
+        $mapping = [
+            'basic-lti-launch-request' => 'LtiResourceLinkRequest',
+            'ContentItemSelectionRequest' => 'LtiDeepLinkingRequest',
+            'LtiDeepLinkingResponse' => 'ContentItemSelection',
+        ];
+
+        $this->assertEquals($mapping, lti_get_jwt_message_type_mapping());
+    }
+
+    /**
+     * Test lti_get_jwt_claim_mapping()
+     */
+    public function test_lti_get_jwt_claim_mapping() {
+        $mapping = [
+            'accept_copy_advice' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'accept_copy_advice',
+                'isarray' => false
+            ],
+            'accept_media_types' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'accept_media_types',
+                'isarray' => true
+            ],
+            'accept_multiple' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'accept_multiple',
+                'isarray' => false
+            ],
+            'accept_presentation_document_targets' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'accept_presentation_document_targets',
+                'isarray' => true
+            ],
+            'accept_types' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'accept_types',
+                'isarray' => true
+            ],
+            'accept_unsigned' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'accept_unsigned',
+                'isarray' => false
+            ],
+            'auto_create' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'auto_create',
+                'isarray' => false
+            ],
+            'can_confirm' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'can_confirm',
+                'isarray' => false
+            ],
+            'content_item_return_url' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'deep_link_return_url',
+                'isarray' => false
+            ],
+            'content_items' => [
+                'suffix' => 'dl',
+                'group' => '',
+                'claim' => 'content_items',
+                'isarray' => true
+            ],
+            'data' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'data',
+                'isarray' => false
+            ],
+            'text' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'text',
+                'isarray' => false
+            ],
+            'title' => [
+                'suffix' => 'dl',
+                'group' => 'deep_linking_settings',
+                'claim' => 'title',
+                'isarray' => false
+            ],
+            'lti_msg' => [
+                'suffix' => 'dl',
+                'group' => '',
+                'claim' => 'msg',
+                'isarray' => false
+            ],
+            'lti_log' => [
+                'suffix' => 'dl',
+                'group' => '',
+                'claim' => 'log',
+                'isarray' => false
+            ],
+            'lti_errormsg' => [
+                'suffix' => 'dl',
+                'group' => '',
+                'claim' => 'errormsg',
+                'isarray' => false
+            ],
+            'lti_errorlog' => [
+                'suffix' => 'dl',
+                'group' => '',
+                'claim' => 'errorlog',
+                'isarray' => false
+            ],
+            'context_id' => [
+                'suffix' => '',
+                'group' => 'context',
+                'claim' => 'id',
+                'isarray' => false
+            ],
+            'context_label' => [
+                'suffix' => '',
+                'group' => 'context',
+                'claim' => 'label',
+                'isarray' => false
+            ],
+            'context_title' => [
+                'suffix' => '',
+                'group' => 'context',
+                'claim' => 'title',
+                'isarray' => false
+            ],
+            'context_type' => [
+                'suffix' => '',
+                'group' => 'context',
+                'claim' => 'type',
+                'isarray' => true
+            ],
+            'lis_course_offering_sourcedid' => [
+                'suffix' => '',
+                'group' => 'lis',
+                'claim' => 'course_offering_sourcedid',
+                'isarray' => false
+            ],
+            'lis_course_section_sourcedid' => [
+                'suffix' => '',
+                'group' => 'lis',
+                'claim' => 'course_section_sourcedid',
+                'isarray' => false
+            ],
+            'launch_presentation_css_url' => [
+                'suffix' => '',
+                'group' => 'launch_presentation',
+                'claim' => 'css_url',
+                'isarray' => false
+            ],
+            'launch_presentation_document_target' => [
+                'suffix' => '',
+                'group' => 'launch_presentation',
+                'claim' => 'document_target',
+                'isarray' => false
+            ],
+            'launch_presentation_height' => [
+                'suffix' => '',
+                'group' => 'launch_presentation',
+                'claim' => 'height',
+                'isarray' => false
+            ],
+            'launch_presentation_locale' => [
+                'suffix' => '',
+                'group' => 'launch_presentation',
+                'claim' => 'locale',
+                'isarray' => false
+            ],
+            'launch_presentation_return_url' => [
+                'suffix' => '',
+                'group' => 'launch_presentation',
+                'claim' => 'return_url',
+                'isarray' => false
+            ],
+            'launch_presentation_width' => [
+                'suffix' => '',
+                'group' => 'launch_presentation',
+                'claim' => 'width',
+                'isarray' => false
+            ],
+            'lis_person_contact_email_primary' => [
+                'suffix' => '',
+                'group' => null,
+                'claim' => 'email',
+                'isarray' => false
+            ],
+            'lis_person_name_family' => [
+                'suffix' => '',
+                'group' => null,
+                'claim' => 'family_name',
+                'isarray' => false
+            ],
+            'lis_person_name_full' => [
+                'suffix' => '',
+                'group' => null,
+                'claim' => 'name',
+                'isarray' => false
+            ],
+            'lis_person_name_given' => [
+                'suffix' => '',
+                'group' => null,
+                'claim' => 'given_name',
+                'isarray' => false
+            ],
+            'lis_person_sourcedid' => [
+                'suffix' => '',
+                'group' => 'lis',
+                'claim' => 'person_sourcedid',
+                'isarray' => false
+            ],
+            'user_id' => [
+                'suffix' => '',
+                'group' => null,
+                'claim' => 'sub',
+                'isarray' => false
+            ],
+            'user_image' => [
+                'suffix' => '',
+                'group' => null,
+                'claim' => 'picture',
+                'isarray' => false
+            ],
+            'roles' => [
+                'suffix' => '',
+                'group' => '',
+                'claim' => 'roles',
+                'isarray' => true
+            ],
+            'role_scope_mentor' => [
+                'suffix' => '',
+                'group' => '',
+                'claim' => 'role_scope_mentor',
+                'isarray' => false
+            ],
+            'deployment_id' => [
+                'suffix' => '',
+                'group' => '',
+                'claim' => 'deployment_id',
+                'isarray' => false
+            ],
+            'lti_message_type' => [
+                'suffix' => '',
+                'group' => '',
+                'claim' => 'message_type',
+                'isarray' => false
+            ],
+            'lti_version' => [
+                'suffix' => '',
+                'group' => '',
+                'claim' => 'version',
+                'isarray' => false
+            ],
+            'resource_link_description' => [
+                'suffix' => '',
+                'group' => 'resource_link',
+                'claim' => 'description',
+                'isarray' => false
+            ],
+            'resource_link_id' => [
+                'suffix' => '',
+                'group' => 'resource_link',
+                'claim' => 'id',
+                'isarray' => false
+            ],
+            'resource_link_title' => [
+                'suffix' => '',
+                'group' => 'resource_link',
+                'claim' => 'title',
+                'isarray' => false
+            ],
+            'tool_consumer_info_product_family_code' => [
+                'suffix' => '',
+                'group' => 'tool_platform',
+                'claim' => 'family_code',
+                'isarray' => false
+            ],
+            'tool_consumer_info_version' => [
+                'suffix' => '',
+                'group' => 'tool_platform',
+                'claim' => 'version',
+                'isarray' => false
+            ],
+            'tool_consumer_instance_contact_email' => [
+                'suffix' => '',
+                'group' => 'tool_platform',
+                'claim' => 'contact_email',
+                'isarray' => false
+            ],
+            'tool_consumer_instance_description' => [
+                'suffix' => '',
+                'group' => 'tool_platform',
+                'claim' => 'description',
+                'isarray' => false
+            ],
+            'tool_consumer_instance_guid' => [
+                'suffix' => '',
+                'group' => 'tool_platform',
+                'claim' => 'guid',
+                'isarray' => false
+            ],
+            'tool_consumer_instance_name' => [
+                'suffix' => '',
+                'group' => 'tool_platform',
+                'claim' => 'name',
+                'isarray' => false
+            ],
+            'tool_consumer_instance_url' => [
+                'suffix' => '',
+                'group' => 'tool_platform',
+                'claim' => 'url',
+                'isarray' => false
+            ],
+            'custom_context_memberships_url' => [
+                'suffix' => 'nrps',
+                'group' => 'namesroleservice',
+                'claim' => 'context_memberships_url',
+                'isarray' => false
+            ],
+            'custom_context_memberships_versions' => [
+                'suffix' => 'nrps',
+                'group' => 'namesroleservice',
+                'claim' => 'service_versions',
+                'isarray' => true
+            ],
+            'custom_gradebookservices_scope' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'scope',
+                'isarray' => true
+            ],
+            'custom_lineitems_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'lineitems',
+                'isarray' => false
+            ],
+            'custom_lineitem_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'lineitem',
+                'isarray' => false
+            ],
+            'custom_results_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'results',
+                'isarray' => false
+            ],
+            'custom_result_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'result',
+                'isarray' => false
+            ],
+            'custom_scores_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'scores',
+                'isarray' => false
+            ],
+            'custom_score_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'score',
+                'isarray' => false
+            ],
+            'lis_outcome_service_url' => [
+                'suffix' => 'bos',
+                'group' => 'basicoutcomesservice',
+                'claim' => 'lis_outcome_service_url',
+                'isarray' => false
+            ],
+            'lis_result_sourcedid' => [
+                'suffix' => 'bos',
+                'group' => 'basicoutcomesservice',
+                'claim' => 'lis_result_sourcedid',
+                'isarray' => false
+            ],
+        ];
+
+        $this->assertEquals($mapping, lti_get_jwt_claim_mapping());
+    }
+
+    /**
+     * Test lti_build_standard_message().
+     */
+    public function test_lti_build_standard_message_institution_name_set() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->mod_lti_institution_name = 'some institution name lols';
+
+        $course   = $this->getDataGenerator()->create_course();
+        $instance = $this->getDataGenerator()->create_module('lti',
+            [
+                'course' => $course->id,
+            ]
+        );
+
+        $message = lti_build_standard_message($instance, '2', LTI_VERSION_1);
+
+        $this->assertEquals('moodle-2', $message['ext_lms']);
+        $this->assertEquals('moodle', $message['tool_consumer_info_product_family_code']);
+        $this->assertEquals(LTI_VERSION_1, $message['lti_version']);
+        $this->assertEquals('basic-lti-launch-request', $message['lti_message_type']);
+        $this->assertEquals('2', $message['tool_consumer_instance_guid']);
+        $this->assertEquals('some institution name lols', $message['tool_consumer_instance_name']);
+        $this->assertEquals('PHPUnit test site', $message['tool_consumer_instance_description']);
+    }
+
+    /**
+     * Test lti_build_standard_message().
+     */
+    public function test_lti_build_standard_message_institution_name_not_set() {
+        $this->resetAfterTest();
+
+        $course   = $this->getDataGenerator()->create_course();
+        $instance = $this->getDataGenerator()->create_module('lti',
+            [
+                'course' => $course->id,
+            ]
+        );
+
+        $message = lti_build_standard_message($instance, '2', LTI_VERSION_2);
+
+        $this->assertEquals('moodle-2', $message['ext_lms']);
+        $this->assertEquals('moodle', $message['tool_consumer_info_product_family_code']);
+        $this->assertEquals(LTI_VERSION_2, $message['lti_version']);
+        $this->assertEquals('basic-lti-launch-request', $message['lti_message_type']);
+        $this->assertEquals('2', $message['tool_consumer_instance_guid']);
+        $this->assertEquals('phpunit', $message['tool_consumer_instance_name']);
+        $this->assertEquals('PHPUnit test site', $message['tool_consumer_instance_description']);
+    }
+
+    /**
+     * Test lti_verify_jwt_signature().
+     */
+    public function test_lti_verify_jwt_signature() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $config = new stdClass();
+        $config->lti_publickey = '-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv
+vkTtwlvBsaJq7S5wA+kzeVOVpVWwkWdVha4s38XM/pa/yr47av7+z3VTmvDRyAHc
+aT92whREFpLv9cj5lTeJSibyr/Mrm/YtjCZVWgaOYIhwrXwKLqPr/11inWsAkfIy
+tvHWTxZYEcXLgAXFuUuaS3uF9gEiNQwzGTU1v0FqkqTBr4B8nW3HCN47XUu0t8Y0
+e+lf4s4OxQawWD79J9/5d3Ry0vbV3Am1FtGJiJvOwRsIfVChDpYStTcHTCMqtvWb
+V6L11BWkpzGXSW4Hv43qa+GSYOD2QU68Mb59oSk2OB+BtOLpJofmbGEGgvmwyCI9
+MwIDAQAB
+-----END PUBLIC KEY-----';
+
+        $typeid = lti_add_type($type, $config);
+
+        lti_verify_jwt_signature($typeid, '', 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4g' .
+            'RG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.POstGetfAytaZS82wHcjoTyoqhMyxXiWdR7Nn7A29DNSl0EiXLdwJ6xC6AfgZWF1bOs' .
+            'S_TuYI3OG85AmiExREkrS6tDfTQ2B3WXlrr-wp5AokiRbz3_oB4OxG-W9KcEEbDRcZc0nH3L7LzYptiy1PtAylQGxHTWZXtGz4ht0bAecBgmpdgXMgu' .
+            'EIcoqPJ1n3pIWk_dUZegpqx0Lka21H6XxUTxiy8OcaarA8zdnPUnV6AmNP3ecFawIFYdvJB_cm-GvpCSbr8G8y_Mllj8f4x9nBH8pQux89_6gUY618iY' .
+            'v7tuPWBFfEbLxtF2pZS6YC1aSfLQxeNe8djT9YjpvRZA');
+    }
+
+    /**
+     * Test lti_verify_jwt_signature().
+     */
+    public function test_lti_verify_jwt_signature_with_lti2() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool proxy.
+        $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->toolproxyid = $proxy->id;
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $data = new stdClass();
+        $data->lti_contentitem = true;
+
+        $typeid = lti_add_type($type, $data);
+
+        $this->expectExceptionMessage('JWT security not supported with LTI 2');
+        lti_verify_jwt_signature($typeid, '', '');
+    }
+
+    /**
+     * Test lti_verify_jwt_signature().
+     */
+    public function test_lti_verify_jwt_signature_no_consumer_key() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->clientid = 'consumerkey';
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $config = new stdClass();
+        $typeid = lti_add_type($type, $config);
+
+        $this->expectExceptionMessage(get_string('errorincorrectconsumerkey', 'mod_lti'));
+        lti_verify_jwt_signature($typeid, '', '');
+    }
+
+    /**
+     * Test lti_verify_jwt_signature().
+     */
+    public function test_lti_verify_jwt_signature_no_public_key() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->clientid = 'consumerkey';
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $config = new stdClass();
+        $typeid = lti_add_type($type, $config);
+
+        $this->expectExceptionMessage('No public key configured');
+        lti_verify_jwt_signature($typeid, 'consumerkey', '');
+    }
+
+    /**
+     * Test lti_convert_content_items().
+     */
+    public function test_lti_convert_content_items() {
+        $contentitems = [];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launch',
+            'title' => 'Test title',
+            'text' => 'Test text',
+            'frame' => []
+        ];
+
+        $contentitems = json_encode($contentitems);
+
+        $json = lti_convert_content_items($contentitems);
+
+        $jsondecode = json_decode($json);
+
+        $strcontext = '@context';
+        $strgraph = '@graph';
+        $strtype = '@type';
+
+        $objgraph = new stdClass();
+        $objgraph->url = 'http://example.com/messages/launch';
+        $objgraph->title = 'Test title';
+        $objgraph->text = 'Test text';
+        $objgraph->frame = [];
+        $objgraph->{$strtype} = 'LtiLinkItem';
+        $objgraph->mediaType = 'application\/vnd.ims.lti.v1.ltilink';
+
+        $expected = new stdClass();
+        $expected->{$strcontext} = 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem';
+        $expected->{$strgraph} = [];
+        $expected->{$strgraph}[] = $objgraph;
+
+        $this->assertEquals($expected, $jsondecode);
+    }
+
+    /**
+     * Test lti_sign_jwt().
+     */
+    public function test_lti_sign_jwt() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->clientid = 'consumerkey';
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $config = new stdClass();
+        $typeid = lti_add_type($type, $config);
+
+        $params = [];
+        $params['roles'] = 'urn:lti:role:ims/lis/testrole,' .
+            'urn:lti:instrole:ims/lis/testinstrole,' .
+            'urn:lti:sysrole:ims/lis/testsysrole,' .
+            'hi';
+        $params['accept_copy_advice'] = [
+            'suffix' => 'dl',
+            'group' => 'deep_linking_settings',
+            'claim' => 'accept_copy_advice',
+            'isarray' => false
+        ];
+        $params['lis_result_sourcedid'] = [
+            'suffix' => 'bos',
+            'group' => 'basicoutcomesservice',
+            'claim' => 'lis_result_sourcedid',
+            'isarray' => false
+        ];
+        $endpoint = 'https://www.example.com/moodle';
+        $oauthconsumerkey = 'consumerkey';
+        $nonce = '';
+
+        $jwt = lti_sign_jwt($params, $endpoint, $oauthconsumerkey, $typeid, $nonce);
+
+        $this->assertArrayHasKey('id_token', $jwt);
+        $this->assertNotEmpty($jwt['id_token']);
+    }
+
+    /**
+     * Test lti_convert_from_jwt()
+     */
+    public function test_lti_convert_from_jwt() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->clientid = 'sso.example.com';
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $config = new stdClass();
+        $config->lti_publickey = '-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv
+vkTtwlvBsaJq7S5wA+kzeVOVpVWwkWdVha4s38XM/pa/yr47av7+z3VTmvDRyAHc
+aT92whREFpLv9cj5lTeJSibyr/Mrm/YtjCZVWgaOYIhwrXwKLqPr/11inWsAkfIy
+tvHWTxZYEcXLgAXFuUuaS3uF9gEiNQwzGTU1v0FqkqTBr4B8nW3HCN47XUu0t8Y0
+e+lf4s4OxQawWD79J9/5d3Ry0vbV3Am1FtGJiJvOwRsIfVChDpYStTcHTCMqtvWb
+V6L11BWkpzGXSW4Hv43qa+GSYOD2QU68Mb59oSk2OB+BtOLpJofmbGEGgvmwyCI9
+MwIDAQAB
+-----END PUBLIC KEY-----';
+
+        $typeid = lti_add_type($type, $config);
+
+        $params = lti_convert_from_jwt($typeid, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwib' .
+            'mFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwiaXNzIjoic3NvLmV4YW1wbGUuY29tIn0.XURVvEb5ueAvFsn-S9EB' .
+            'BSfKbsgUzfRQqmJ6evlrYdx7sXWoZXw1nYjaLTg-mawvBr7MVvrdG9qh6oN8OfkQ7bfMwiz4tjBMJ4B4q_sig5BDYIKwMNjZL5GGCBs89FQrgqZBhxw' .
+            '3exTjPBEn69__w40o0AhCsBohPMh0ZsAyHug5dhm8vIuOP667repUJzM8uKCD6L4bEL6vQE8EwU6WQOmfJ2SDmRs-1pFkiaFd6hmPn6AVX7ETtzQmlT' .
+            'X-nXe9weQjU1lH4AQG2Yfnn-7lS94bt6E76Zt-XndP3IY7W48EpnRfUK9Ff1fZlomT4MPahdNP1eP8gT2iMz7vYpCfmA');
+
+        $this->assertEquals('sso.example.com', $params['oauth_consumer_key']);
+        $this->assertEquals('John Doe', $params['lis_person_name_full']);
+    }
+
+    /**
+     * Test lti_get_permitted_service_scopes().
+     */
+    public function test_lti_get_permitted_service_scopes() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $typeconfig = new stdClass();
+        $typeconfig->lti_acceptgrades = true;
+
+        $typeid = lti_add_type($type, $typeconfig);
+
+        $tool = lti_get_type($typeid);
+
+        $config = lti_get_type_config($typeid);
+        $permittedscopes = lti_get_permitted_service_scopes($tool, $config);
+
+        $expected = [
+            'https://purl.imsglobal.org/spec/lti-bo/scope/basicoutcome'
+        ];
+        $this->assertEquals($expected, $permittedscopes);
+    }
+
+    /**
+     * Test get_tool_type_config().
+     */
+    public function test_get_tool_type_config() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->clientid = "Test client ID";
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $config = new stdClass();
+
+        $typeid = lti_add_type($type, $config);
+
+        $type = lti_get_type($typeid);
+
+        $typeconfig = get_tool_type_config($type);
+
+        $this->assertEquals('https://www.example.com/moodle', $typeconfig['platformid']);
+        $this->assertEquals($type->clientid, $typeconfig['clientid']);
+        $this->assertEquals($typeid, $typeconfig['deploymentid']);
+        $this->assertEquals('https://www.example.com/moodle/mod/lti/certs.php', $typeconfig['publickeyseturl']);
+        $this->assertEquals('https://www.example.com/moodle/mod/lti/token.php', $typeconfig['accesstokenurl']);
+        $this->assertEquals('https://www.example.com/moodle/mod/lti/auth.php', $typeconfig['authrequesturl']);
+    }
+
+    /**
+     * Test lti_new_access_token().
+     */
+    public function test_lti_new_access_token() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->clientid = "Test client ID";
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $config = new stdClass();
+
+        $typeid = lti_add_type($type, $config);
+
+        $scopes = ['lti_some_scope', 'lti_another_scope'];
+
+        lti_new_access_token($typeid, $scopes);
+
+        $token = $DB->get_records('lti_access_tokens');
+        $this->assertEquals(1, count($token));
+
+        $token = reset($token);
+
+        $this->assertEquals($typeid, $token->typeid);
+        $this->assertEquals(json_encode(array_values($scopes)), $token->scope);
+        $this->assertEquals($token->timecreated + LTI_ACCESS_TOKEN_LIFE, $token->validuntil);
+        $this->assertNull($token->lastaccess);
     }
 }

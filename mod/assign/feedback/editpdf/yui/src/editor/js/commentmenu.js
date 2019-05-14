@@ -98,6 +98,7 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
                                                '<img src="' + M.util.image_url('t/delete', 'core') + '" ' +
                                                'alt="' + M.util.get_string('deletecomment', 'assignfeedback_editpdf') + '"/>' +
                                                '</a>');
+            linkitem.setAttribute('title', quickcomment.rawtext);
             listitem.append(linkitem);
             listitem.append(deletelinkitem);
 

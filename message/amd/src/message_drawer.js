@@ -53,6 +53,8 @@ function(
 ) {
 
     var SELECTORS = {
+        PANEL_BODY_CONTAINER: '[data-region="panel-body-container"]',
+        PANEL_HEADER_CONTAINER: '[data-region="panel-header-container"]',
         VIEW_CONTACT: '[data-region="view-contact"]',
         VIEW_CONTACTS: '[data-region="view-contacts"]',
         VIEW_CONVERSATION: '[data-region="view-conversation"]',
@@ -77,10 +79,16 @@ function(
      * @return {array} elements Found route container objects.
     */
     var getParametersForRoute = function(namespace, root, selector) {
-        var candidates = root.children();
-        var header = candidates.filter(SELECTORS.HEADER_CONTAINER).find(selector);
-        var body = candidates.filter(SELECTORS.BODY_CONTAINER).find(selector);
-        var footer = candidates.filter(SELECTORS.FOOTER_CONTAINER).find(selector);
+
+        var header = root.find(SELECTORS.HEADER_CONTAINER).find(selector);
+        if (!header.length) {
+            header = root.find(SELECTORS.PANEL_HEADER_CONTAINER).find(selector);
+        }
+        var body = root.find(SELECTORS.BODY_CONTAINER).find(selector);
+        if (!body.length) {
+            body = root.find(SELECTORS.PANEL_BODY_CONTAINER).find(selector);
+        }
+        var footer = root.find(SELECTORS.FOOTER_CONTAINER).find(selector);
 
         return [
             namespace,
@@ -193,6 +201,7 @@ function(
             var params = paramAttributes.map(function(attribute) {
                 return attribute.nodeValue;
             });
+
             var routeParams = [namespace, route].concat(params);
 
             Router.go.apply(null, routeParams);
@@ -267,12 +276,16 @@ function(
         registerEventListeners(uniqueId, root, alwaysVisible);
         if (alwaysVisible) {
             show(uniqueId, root);
+            // Are we sending to a specific user?
             if (sendToUser) {
+                // Check if a conversation already exists, if not, create one.
                 if (conversationId) {
                     Router.go(uniqueId, Routes.VIEW_CONVERSATION, conversationId);
                 } else {
                     Router.go(uniqueId, Routes.VIEW_CONVERSATION, null, 'create', sendToUser);
                 }
+            } else if (conversationId) { // We aren't sending to a specific user, but to a group conversation.
+                Router.go(uniqueId, Routes.VIEW_CONVERSATION, conversationId);
             }
         }
     };

@@ -1,0 +1,40 @@
+{{!
+@template theme_boost/core_form/element-radio-online
+
+   Example context (json):
+   {
+    "element": {
+        "id": "id_test_radio0",
+        "name": "test_radio_button"
+      }
+   }
+
+}}
+<label class="form-check-inline form-check-label {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+{{^element.hardfrozen}}{{#element.frozen}}{{#element.checked}}
+    <input type="hidden" name="{{element.name}}" value="{{element.value}}">
+{{/element.checked}}{{/element.frozen}}{{/element.hardfrozen}}
+<input type="radio" class="form-check-input " {{^element.frozen}}name="{{element.name}}"{{/element.frozen}}
+    id="{{element.id}}" value="{{element.value}}"
+    {{#element.checked}}checked{{/element.checked}}
+    {{#element.frozen}}disabled{{/element.frozen}}
+    {{#error}}
+        autofocus aria-describedby="{{element.iderror}}"
+    {{/error}}
+    {{{element.attributes}}} >
+    {{{label}}}
+</label>
+{{#text}}
+    <em>{{{.}}}</em>
+{{/text}}
+{{{helpbutton}}}
+<span class="form-control-feedback invalid-feedback" id="{{element.iderror}}" {{#error}} style="display: block;"{{/error}}>
+    {{{error}}}
+</span>
+{{^element.frozen}}
+{{#js}}
+require(['theme_boost/form-display-errors'], function(module) {
+    module.enhance({{#quote}}{{element.id}}{{/quote}});
+});
+{{/js}}
+{{/element.frozen}}

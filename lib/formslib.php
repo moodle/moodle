@@ -163,6 +163,8 @@ abstract class moodleform {
      * @param string $target target frame for form submission. You will rarely use this. Don't use
      *               it if you don't need to as the target attribute is deprecated in xhtml strict.
      * @param mixed $attributes you can pass a string of html attributes here or an array.
+     *               Special attribute 'data-random-ids' will randomise generated elements ids. This
+     *               is necessary when there are several forms on the same page.
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
@@ -196,7 +198,7 @@ abstract class moodleform {
         $this->_formname = $this->get_form_identifier();
         $this->_ajaxformdata = $ajaxformdata;
 
-        $this->_form = new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
+        $this->_form = new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes, $ajaxformdata);
         if (!$editable){
             $this->_form->hardFreeze();
         }
@@ -501,7 +503,7 @@ abstract class moodleform {
             return false;
         }
         foreach ($mform->_noSubmitButtons as $nosubmitbutton){
-            if (optional_param($nosubmitbutton, 0, PARAM_RAW)){
+            if ($this->optional_param($nosubmitbutton, 0, PARAM_RAW)) {
                 $nosubmit = true;
                 break;
             }
@@ -509,6 +511,21 @@ abstract class moodleform {
         return $nosubmit;
     }
 
+    /**
+     * Checks if a parameter was passed in the previous form submission
+     *
+     * @param string $name the name of the page parameter we want
+     * @param mixed  $default the default value to return if nothing is found
+     * @param string $type expected type of parameter
+     * @return mixed
+     */
+    public function optional_param($name, $default, $type) {
+        if (isset($this->_ajaxformdata[$name])) {
+            return clean_param($this->_ajaxformdata[$name], $type);
+        } else {
+            return optional_param($name, $default, $type);
+        }
+    }
 
     /**
      * Check that form data is valid.
@@ -614,7 +631,7 @@ abstract class moodleform {
         $mform =& $this->_form;
         if ($mform->isSubmitted()){
             foreach ($mform->_cancelButtons as $cancelbutton){
-                if (optional_param($cancelbutton, 0, PARAM_RAW)){
+                if ($this->optional_param($cancelbutton, 0, PARAM_RAW)) {
                     return true;
                 }
             }
@@ -1083,8 +1100,8 @@ abstract class moodleform {
         } else {
             $addstring = str_ireplace('{no}', $addfieldsno, $addstring);
         }
-        $repeats = optional_param($repeathiddenname, $repeats, PARAM_INT);
-        $addfields = optional_param($addfieldsname, '', PARAM_TEXT);
+        $repeats = $this->optional_param($repeathiddenname, $repeats, PARAM_INT);
+        $addfields = $this->optional_param($addfieldsname, '', PARAM_TEXT);
         if (!empty($addfields)){
             $repeats += $addfieldsno;
         }
@@ -1138,6 +1155,16 @@ abstract class moodleform {
                             }
                             $params = array_merge(array($realelementname), $params);
                             call_user_func_array(array(&$mform, 'disabledIf'), $params);
+                            break;
+                        case 'hideif' :
+                            foreach ($namecloned as $num => $name){
+                                if ($params[0] == $name){
+                                    $params[0] = $params[0]."[$i]";
+                                    break;
+                                }
+                            }
+                            $params = array_merge(array($realelementname), $params);
+                            call_user_func_array(array(&$mform, 'hideIf'), $params);
                             break;
                         case 'rule' :
                             if (is_string($params)){
@@ -1193,8 +1220,8 @@ abstract class moodleform {
         }
 
         $mform = $this->_form;
-        $selectvalue = optional_param($checkboxcontrollerparam, null, PARAM_INT);
-        $contollerbutton = optional_param($checkboxcontrollername, null, PARAM_ALPHAEXT);
+        $selectvalue = $this->optional_param($checkboxcontrollerparam, null, PARAM_INT);
+        $contollerbutton = $this->optional_param($checkboxcontrollername, null, PARAM_ALPHAEXT);
 
         $newselectvalue = $selectvalue;
         if (is_null($selectvalue)) {
@@ -1490,6 +1517,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     var $_pageparams = '';
 
+    /** @var array $_ajaxformdata submitted form data when using mforms with ajax */
+    protected $_ajaxformdata;
+
     /**
      * Whether the form contains any client-side validation or not.
      * @var bool
@@ -1515,8 +1545,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @param string|moodle_url $action Form's action
      * @param string $target (optional)Form's target defaults to none
      * @param mixed $attributes (optional)Extra attributes for <form> tag
+     * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
-    public function __construct($formName, $method, $action, $target='', $attributes=null) {
+    public function __construct($formName, $method, $action, $target = '', $attributes = null, $ajaxformdata = null) {
         global $CFG, $OUTPUT;
 
         static $formcounter = 1;
@@ -1541,6 +1572,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $this->updateAttributes($attributes);
 
         // This is custom stuff for Moodle :
+        $this->_ajaxformdata = $ajaxformdata;
         $oldclass=   $this->getAttribute('class');
         if (!empty($oldclass)){
             $this->updateAttributes(array('class'=>$oldclass.' mform'));
@@ -1581,6 +1613,22 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     /**
+     * Checks if a parameter was passed in the previous form submission
+     *
+     * @param string $name the name of the page parameter we want
+     * @param mixed  $default the default value to return if nothing is found
+     * @param string $type expected type of parameter
+     * @return mixed
+     */
+    public function optional_param($name, $default, $type) {
+        if (isset($this->_ajaxformdata[$name])) {
+            return clean_param($this->_ajaxformdata[$name], $type);
+        } else {
+            return optional_param($name, $default, $type);
+        }
+    }
+
+    /**
      * Use this method to indicate that the fieldset should be shown as expanded.
      * The method is applicable to header elements only.
      *
@@ -1605,7 +1653,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }
         if ($this->getElementType('mform_isexpanded_' . $headerid) === false) {
             // See if the form has been submitted already.
-            $formexpanded = optional_param('mform_isexpanded_' . $headerid, -1, PARAM_INT);
+            $formexpanded = $this->optional_param('mform_isexpanded_' . $headerid, -1, PARAM_INT);
             if (!$ignoreuserstate && $formexpanded != -1) {
                 // Override expanded state with the form variable.
                 $expanded = $formexpanded;
@@ -1629,7 +1677,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         // Add extra hidden element to store advanced items state for each section.
         if ($this->getElementType('mform_showmore_' . $headerid) === false) {
             // See if we the form has been submitted already.
-            $formshowmore = optional_param('mform_showmore_' . $headerid, -1, PARAM_INT);
+            $formshowmore = $this->optional_param('mform_showmore_' . $headerid, -1, PARAM_INT);
             if (!$showmore && $formshowmore != -1) {
                 // Override showmore state with the form variable.
                 $showmore = $formshowmore;
@@ -2421,6 +2469,17 @@ require(["core/event", "jquery"], function(Event, $) {
       return ret;
     }
 
+    var form = $(document.getElementById(\'' . $this->_attributes['id'] . '\')).closest(\'form\');
+    form.on(M.core.event.FORM_SUBMIT_AJAX, function() {
+        try {
+            var myValidator = validate_' . $this->_formName . ';
+        } catch(e) {
+            return true;
+        }
+        if (myValidator) {
+            myValidator();
+        }
+    });
 
     document.getElementById(\'' . $this->_attributes['id'] . '\').addEventListener(\'submit\', function(ev) {
         try {
@@ -3230,6 +3289,7 @@ MoodleQuickForm::registerElementType('editor', "$CFG->libdir/form/editor.php", '
 MoodleQuickForm::registerElementType('filemanager', "$CFG->libdir/form/filemanager.php", 'MoodleQuickForm_filemanager');
 MoodleQuickForm::registerElementType('filepicker', "$CFG->libdir/form/filepicker.php", 'MoodleQuickForm_filepicker');
 MoodleQuickForm::registerElementType('filetypes', "$CFG->libdir/form/filetypes.php", 'MoodleQuickForm_filetypes');
+MoodleQuickForm::registerElementType('float', "$CFG->libdir/form/float.php", 'MoodleQuickForm_float');
 MoodleQuickForm::registerElementType('grading', "$CFG->libdir/form/grading.php", 'MoodleQuickForm_grading');
 MoodleQuickForm::registerElementType('group', "$CFG->libdir/form/group.php", 'MoodleQuickForm_group');
 MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", 'MoodleQuickForm_header');

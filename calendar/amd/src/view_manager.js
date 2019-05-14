@@ -340,35 +340,13 @@ define([
         };
 
         /**
-         * Convert the given event type into one of either user, site,
-         * group, category, or course.
-         *
-         * @param {String} eventType The calendar event type
-         * @return {String}
-         */
-        var normaliseEventType = function(eventType) {
-            switch (eventType) {
-                case 'user':
-                    return 'user';
-                case 'site':
-                    return 'site';
-                case 'group':
-                    return 'group';
-                case 'category':
-                    return 'category';
-                default:
-                    return 'course';
-            }
-        };
-
-        /**
          * Get the CSS class to apply for the given event type.
          *
          * @param {String} eventType The calendar event type
          * @return {String}
          */
         var getEventTypeClassFromType = function(eventType) {
-            return 'calendar_event_' + normaliseEventType(eventType);
+            return 'calendar_event_' + eventType;
         };
 
         /**
@@ -385,12 +363,9 @@ define([
                     throw new Error('Error encountered while trying to fetch calendar event with ID: ' + eventId);
                 }
                 var eventData = getEventResponse.event;
-                typeClass = getEventTypeClassFromType(eventData.eventtype);
+                typeClass = getEventTypeClassFromType(eventData.normalisedeventtype);
 
-                return getEventType(eventData.eventtype).then(function(eventType) {
-                    eventData.eventtype = eventType;
-                    return eventData;
-                });
+                return eventData;
             }).then(function(eventData) {
                 // Build the modal parameters from the event data.
                 var modalParams = {
@@ -420,19 +395,6 @@ define([
                 modal.show();
 
             }).fail(Notification.exception);
-        };
-
-        /**
-         * Get the event type lang string.
-         *
-         * @param {String} eventType The event type.
-         * @return {promise} The lang string promise.
-         */
-        var getEventType = function(eventType) {
-            var lang = 'type' + normaliseEventType(eventType);
-            return Str.get_string(lang, 'core_calendar').then(function(langStr) {
-                return langStr;
-            });
         };
 
         return {

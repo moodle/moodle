@@ -39,5 +39,12 @@ function xmldb_logstore_database_upgrade($oldversion) {
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019032800) {
+        // For existing installations, set the new jsonformat option to off (no behaviour change).
+        // New installations default to on.
+        set_config('jsonformat', 0, 'logstore_database');
+        upgrade_plugin_savepoint(true, 2019032800, 'logstore', 'database');
+    }
+
     return true;
 }

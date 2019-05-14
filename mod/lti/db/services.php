@@ -24,6 +24,8 @@
  * @since      Moodle 3.0
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 $functions = array(
 
     'mod_lti_get_tool_launch_data' => array(

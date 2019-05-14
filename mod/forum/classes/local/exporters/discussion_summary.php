@@ -55,6 +55,12 @@ class discussion_summary extends exporter {
     /** @var int The latest post id in the discussion */
     private $latestpostid;
 
+    /** @var int|null The context id for the author of the first post */
+    private $firstpostauthorcontextid;
+
+    /** @var int|null The context id for the author of the latest post */
+    private $latestpostauthorcontextid;
+
     /**
      * Constructor.
      *
@@ -64,6 +70,8 @@ class discussion_summary extends exporter {
      * @param int $replycount The number of replies to the discussion
      * @param int $unreadcount number of unread posts if the user is tracking these
      * @param int $latestpostid The latest post id in the discussion
+     * @param int|null $firstpostauthorcontextid The context id for the author of the first post
+     * @param int|null $latestpostauthorcontextid The context id for the author of the latest post
      * @param array $related The related objects
      */
     public function __construct(
@@ -73,6 +81,8 @@ class discussion_summary extends exporter {
         int $replycount,
         int $unreadcount,
         int $latestpostid,
+        ?int $firstpostauthorcontextid,
+        ?int $latestpostauthorcontextid,
         array $related = []
     ) {
         $this->summary = $summary;
@@ -81,6 +91,8 @@ class discussion_summary extends exporter {
         $this->replycount = $replycount;
         $this->unreadcount = $unreadcount;
         $this->latestpostid = $latestpostid;
+        $this->firstpostauthorcontextid = $firstpostauthorcontextid;
+        $this->latestpostauthorcontextid = $latestpostauthorcontextid;
         return parent::__construct([], $related);
     }
 
@@ -117,6 +129,7 @@ class discussion_summary extends exporter {
         $capabilitymanager = $this->related['capabilitymanager'];
         $forum = $this->related['forum'];
         $user = $this->related['user'];
+        $latestpostauthor = $this->related['latestauthor'];
         $discussion = $this->summary->get_discussion();
 
         $related = (array) (object) $this->related;
@@ -131,6 +144,7 @@ class discussion_summary extends exporter {
 
         $firstpostauthor = new author(
             $this->summary->get_first_post_author(),
+            $this->firstpostauthorcontextid,
             $this->groupsbyauthorid[$this->summary->get_first_post_author()->get_id()],
             $capabilitymanager->can_view_post(
                 $user,
@@ -141,7 +155,8 @@ class discussion_summary extends exporter {
         );
 
         $latestpostauthor = new author(
-            $this->summary->get_latest_post_author(),
+            $latestpostauthor ?? $this->summary->get_latest_post_author(),
+            $this->latestpostauthorcontextid,
             [],
             $capabilitymanager->can_view_post(
                 $user,
@@ -175,6 +190,8 @@ class discussion_summary extends exporter {
             'capabilitymanager' => 'mod_forum\local\managers\capability',
             'urlfactory' => 'mod_forum\local\factories\url',
             'user' => 'stdClass',
+            'favouriteids' => 'int[]?',
+            'latestauthor' => 'mod_forum\local\entities\author?'
         ];
     }
 }

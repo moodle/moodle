@@ -38,9 +38,9 @@
     </h2>
     {{#canmanage}}
     <div data-region="actions" class="clearfix">
-        <div class="pull-left">
+        <div class="float-left">
             {{#userhasplan}}
-                <button class="btn btn-secondary m-b-1" data-action="link-competency">{{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}</button>
+                <button class="btn btn-secondary mb-1" data-action="link-competency">{{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}</button>
             {{/userhasplan}}
         </div>
     </div>
@@ -85,7 +85,7 @@
                     </td>
                     {{#userevidence.canmanage}}
                         <td>
-                            <div class="pull-left">
+                            <div class="float-left">
                                 <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                             </div>
                         </td>

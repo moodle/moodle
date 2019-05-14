@@ -37,13 +37,15 @@
 
 <div class="d-flex flex-column">
     <div class="d-flex align-items-center">
-        <div class="align-self-stretch" >
-            <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back>
-                {{> core_message/message_drawer_icon_back }}
-            </a>
-        </div>
+        {{#showrouteback}}
+            <div class="align-self-stretch" >
+                <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back role="button">
+                    {{> core_message/message_drawer_icon_back }}
+                </a>
+            </div>
+        {{/showrouteback}}
         <div class="d-flex text-truncate">
-            <a class="d-flex text-truncate text-decoration-none" href="#" data-action="view-group-info">
+            <a class="d-flex text-truncate text-decoration-none" href="#" data-action="view-group-info" role="button">
                 {{#imageurl}}
                     <img
                         class="rounded-circle"
@@ -56,10 +58,12 @@
                 <div class="w-100 text-truncate ml-2">
                     <div class="d-flex">
                         <strong class="m-0 text-truncate">{{name}}</strong>
-                        <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary" data-region="favourite-icon-container">
+                        <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary"
+                        data-region="favourite-icon-container" aria-label="{{#str}} favourites, core {{/str}}">
                             {{#pix}} i/star-rating, core {{/pix}}
                         </span>
-                        <span class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary" data-region="muted-icon-container">
+                        <span class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary" data-region="muted-icon-container"
+                        aria-label="{{#str}} mutedconversation, core_message {{/str}}">
                             {{#pix}} i/muted, core {{/pix}}
                         </span>
                     </div>
@@ -68,23 +72,30 @@
             </a>
         </div>
         <div class="ml-auto dropdown">
-            <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button id="conversation-actions-menu-button" class="btn btn-link btn-icon icon-size-3" type="button"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+            aria-label="{{#str}} conversationactions, core_message {{/str}}" aria-controls="conversation-actions-menu">
                 {{#pix}} i/moremenu, core {{/pix}}
             </button>
-            <div class="dropdown-menu pull-right">
-                <a class="dropdown-item" href="#" data-action="view-group-info">
+            <div id="conversation-actions-menu" class="dropdown-menu float-right" role="menu"
+            aria-labelledby="conversation-actions-menu-button">
+                <a class="dropdown-item" href="#" data-action="view-group-info" role="menuitem">
                     {{#str}} groupinfo, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-favourite">
+                <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-favourite"
+                role="menuitem">
                     {{#str}} addtofavourites, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-unfavourite">
+                <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-unfavourite"
+                role="menuitem">
                     {{#str}} removefromfavourites, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{#ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-mute">
+                <a class="dropdown-item {{#ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-mute"
+                role="menuitem">
                     {{#str}} muteconversation, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{^ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-unmute">
+                <a class="dropdown-item {{^ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-unmute"
+                role="menuitem">
                     {{#str}} unmuteconversation, core_message {{/str}}
                 </a>
             </div>
@@ -92,10 +103,12 @@
     </div>
     <div class="d-flex">
         <!-- These are just placeholder elements to align the text below correctly with the name text above -->
-        <div class="mr-2 icon" aria-hidden="true"></div>
+        {{#showrouteback}}
+            <div class="mr-2 icon" aria-hidden="true"></div>
+        {{/showrouteback}}
         {{#imageurl}}<div style="width: 38px" aria-hidden="true"></div>{{/imageurl}}
         <!-- End placeholders -->
-        <a class="text-decoration-none line-height-3 ml-2" href="#" data-action="view-group-info">
+        <a class="text-decoration-none line-height-3 ml-2" href="#" data-action="view-group-info" role="button">
             <small class="m-0 text-muted text-truncate">
                 {{#str}} numparticipants, core_message, {{totalmembercount}} {{/str}}
             </small>

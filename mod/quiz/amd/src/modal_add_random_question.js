@@ -194,7 +194,7 @@ function(
      */
     ModalAddRandomQuestion.prototype.moveFormElementIntoTab = function(formElement, tabElement) {
         var submitButtons = formElement.find(SELECTORS.SUBMIT_BUTTON_ELEMENT);
-        var footer = $('<div class="modal-footer m-t-1" data-region="footer"></div>');
+        var footer = $('<div class="modal-footer mt-1" data-region="footer"></div>');
         // Hide the header because the tabs show us which part of the form we're
         // looking at.
         formElement.find(SELECTORS.FORM_HEADER).addClass('hidden');
@@ -230,7 +230,7 @@ function(
      * @param  {jquey} form The form element.
      */
     ModalAddRandomQuestion.prototype.moveCancelButtonToTabs = function(form) {
-        var cancelButton = form.find(SELECTORS.CANCEL_BUTTON_ELEMENT).addClass('m-l-1');
+        var cancelButton = form.find(SELECTORS.CANCEL_BUTTON_ELEMENT).addClass('ml-1');
         var tabFooters = form.find('[data-region="footer"]');
         // Remove the buttons container element.
         cancelButton.closest(SELECTORS.BUTTON_CONTAINER).remove();

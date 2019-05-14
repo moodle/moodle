@@ -52,9 +52,8 @@ class preview_options_form extends moodleform {
                 get_string('howquestionsbehave', 'question'), $behaviours);
         $mform->addHelpButton('behaviour', 'howquestionsbehave', 'question');
 
-        $mform->addElement('text', 'maxmark', get_string('markedoutof', 'question'),
+        $mform->addElement('float', 'maxmark', get_string('markedoutof', 'question'),
                 array('size' => '5'));
-        $mform->setType('maxmark', PARAM_FLOAT);
 
         if ($this->_customdata['maxvariant'] > 1) {
             $variants = range(1, $this->_customdata['maxvariant']);
@@ -152,7 +151,7 @@ class question_preview_options extends question_display_options {
     protected function get_field_types() {
         return array(
             'behaviour' => PARAM_ALPHA,
-            'maxmark' => PARAM_FLOAT,
+            'maxmark' => PARAM_LOCALISEDFLOAT,
             'variant' => PARAM_INT,
             'correctness' => PARAM_BOOL,
             'marks' => PARAM_INT,
@@ -326,33 +325,4 @@ function restart_preview($previewid, $questionid, $displayoptions, $context) {
     }
     redirect(question_preview_url($questionid, $displayoptions->behaviour,
             $displayoptions->maxmark, $displayoptions, $displayoptions->variant, $context));
-}
-
-/**
- * Scheduled tasks relating to question preview. Specifically, delete any old
- * previews that are left over in the database.
- */
-function question_preview_cron() {
-    $maxage = 24*60*60; // We delete previews that have not been touched for 24 hours.
-    $lastmodifiedcutoff = time() - $maxage;
-
-    mtrace("\n  Cleaning up old question previews...", '');
-    $oldpreviews = new qubaid_join('{question_usages} quba', 'quba.id',
-            'quba.component = :qubacomponent
-                    AND NOT EXISTS (
-                        SELECT 1
-                          FROM {question_attempts}      subq_qa
-                          JOIN {question_attempt_steps} subq_qas ON subq_qas.questionattemptid = subq_qa.id
-                          JOIN {question_usages}        subq_qu  ON subq_qu.id = subq_qa.questionusageid
-                         WHERE subq_qa.questionusageid = quba.id
-                           AND subq_qu.component = :qubacomponent2
-                           AND (subq_qa.timemodified > :qamodifiedcutoff
-                                    OR subq_qas.timecreated > :stepcreatedcutoff)
-                    )
-            ',
-            array('qubacomponent' => 'core_question_preview', 'qubacomponent2' => 'core_question_preview',
-                'qamodifiedcutoff' => $lastmodifiedcutoff, 'stepcreatedcutoff' => $lastmodifiedcutoff));
-
-    question_engine::delete_questions_usage_by_activities($oldpreviews);
-    mtrace('done.');
 }

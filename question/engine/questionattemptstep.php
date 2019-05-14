@@ -519,7 +519,7 @@ class question_attempt_pending_step extends question_attempt_step {
 
     /**
      * If as a result of processing this step, you identify that this variant of the
-     * question is acutally identical to the another one, you may change the
+     * question is actually identical to the another one, you may change the
      * variant number recorded, in order to give better statistics. For an example
      * see qbehaviour_opaque.
      * @param int $variant the new variant number.
@@ -571,7 +571,7 @@ class question_attempt_step_read_only extends question_attempt_step {
 /**
  * A null {@link question_attempt_step} returned from
  * {@link question_attempt::get_last_step()} etc. when a an attempt has just been
- * created and there is no acutal step.
+ * created and there is no actual step.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

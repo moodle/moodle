@@ -323,7 +323,7 @@ class mod_feedback_complete_form extends moodleform {
 
         // Set default value.
         if ($setdefaultvalue && ($tmpvalue = $this->get_item_value($item))) {
-            $this->_form->setDefault($element->getName(), $tmpvalue);
+            $this->_form->setDefault($element->getName(), htmlspecialchars_decode($tmpvalue, ENT_QUOTES));
         }
 
         // Freeze if needed.

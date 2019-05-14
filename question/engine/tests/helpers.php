@@ -726,8 +726,78 @@ class question_no_pattern_expectation {
 
 
 /**
- * Helper base class for tests that walk a question through a sequents of
- * interactions under the control of a particular behaviour.
+ * Helper base class for question walk-through tests.
+ *
+ * The purpose of tests that use this base class is to simulate the entire
+ * interaction of a student making an attempt at a question. Therefore,
+ * these are not really unit tests. They would more accurately be described
+ * as integration tests. However, whether they are unit tests or not,
+ * it works well to implement them in PHPUnit.
+ *
+ * Historically, tests like this were made because Moodle did not have anything
+ * like Behat for end-to-end testing. Even though we do now have Behat, it makes
+ * sense to keep these walk-through tests. They run massively faster than Behat
+ * tests, which gives you a much faster feedback loop while doing development.
+ * They also make it quite easy to test things like regrading the attempt after
+ * the question has been edited, which would be possible but very fiddly in Behat.
+ *
+ * Ideally, the full set of tests for the question class of a question type would be:
+ *
+ * 1. A lot of unit tests for each qtype_myqtype_question class method
+ *    like grade_response, is_complete_response, is_same_response, ...
+ *
+ * 2. Several of these walk-through tests, to test the end-to-end interaction
+ *    of a student with a question, for example with different behaviours.
+ *
+ * 3. Just one Behat test, using question preview, to verify that everything
+ *    is plugged together correctly and works when used through the UI.
+ *
+ * What one would expect to see in one of these walk-through tests is:
+ *
+ * // 1. Set up a question: $q.
+ *
+ * // 2. A call to $this->start_attempt_at_question($q, ...); with the relevant options.
+ *
+ * // 3. Some number of calls to $this->process_submission passing an array of simulated
+ * //    POST data that matches what would be sent back be submitting a form that contains
+ * //    the form fields that are output by rendering the question. This is like clicking
+ * //    the 'Check' button in a question, or navigating to the next page in a quiz.
+ *
+ * // 4. A call to $this->finish(); which is the equivalent of clicking
+ * //    'Submit all and finish' in the quiz.
+ *
+ * // 5. After each of steps 2-4 above, one would expect to see a certain amount of
+ * //    validation of the state of the question and how the question is rendered,
+ * //    using methods like $this->check_current_state(), $this->check_current_output, etc.
+ *
+ * The best way to work out how to write tests like this is probably to look at
+ * some examples in other question types or question behaviours.
+ *
+ * In writing these tests, it is worth noting the following points:
+ *
+ * a) The easiest mistake to make is at step 3. You need to ensure that your
+ *    simulated post data actually matches what gets sent back when the
+ *    question is submitted in the browser. Try checking it against the
+ *    HTTP POST requests you see in your browser when the question is submitted.
+ *    Some question types have a $q->prepare_simulated_post_data() method that
+ *    can help with this.
+ *
+ * b) In the past, tests like these used to contain even more repetitive code,
+ *    and so they were re-factored to add the helper methods like
+ *    start_attempt_at_question, process_submission, finish. That change had
+ *    good effects, like reducing duplicate code. However, there were down-sides.
+ *    The extra layers of indirection hide what is going on, which means these
+ *    tests are harder to understand until you know what the helpers are doing.
+ *    If you want an interesting exercise, take one of the walk-through tests,
+ *    and inline all the helpers. This might be a good way to understand more about
+ *    the question engine API. However, having made the everything-inlined code
+ *    and learned from the process, you should then just throw it away.
+ *
+ * c) The way check_current_output works is weird. When these tests were first written
+ *    Moodle used SimpleTest for unit tests and check_current_output os written in a
+ *    style that made sense there. When we moved to PHPUnit, a quick and dirty
+ *    conversion was done. That was a pragmatic move at the time, and we just have
+ *    to live with the result. Sorry. (And: don't copy that style for new things.)
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

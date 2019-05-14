@@ -745,6 +745,16 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/category:update'
     ),
 
+    'moodle/category:viewcourselist' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSECAT,
+        'archetypes' => array(
+            'guest' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
+        )
+    ),
+
     'moodle/category:viewhiddencategories' => array(
 
         'captype' => 'read',
@@ -2569,4 +2579,12 @@ $capabilities = array(
             'user' => CAP_ALLOW,
         ],
     ],
+
+    'moodle/analytics:listowninsights' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
+    ),
 );

@@ -30,7 +30,7 @@ require_once(__DIR__ . '/fixtures/test_indicator_fullname.php');
 require_once(__DIR__ . '/fixtures/test_target_shortname.php');
 require_once(__DIR__ . '/fixtures/test_static_target_shortname.php');
 require_once(__DIR__ . '/fixtures/test_target_course_level_shortname.php');
-require_once(__DIR__ . '/fixtures/test_analyser.php');
+require_once(__DIR__ . '/fixtures/test_analysis.php');
 
 /**
  * Unit tests for the model.
@@ -71,7 +71,7 @@ class analytics_model_testcase extends advanced_testcase {
     public function test_create() {
         $this->resetAfterTest(true);
 
-        $target = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
+        $target = \core_analytics\manager::get_target('\core_course\analytics\target\course_dropout');
         $indicators = array(
             \core_analytics\manager::get_indicator('\core\analytics\indicator\any_write_action'),
             \core_analytics\manager::get_indicator('\core\analytics\indicator\read_actions')
@@ -272,16 +272,14 @@ class analytics_model_testcase extends advanced_testcase {
     public function test_exists() {
         $this->resetAfterTest(true);
 
-        global $DB;
-
-        $count = $DB->count_records('analytics_models');
-
-        // No new models added if the builtin ones already exist.
-        \core_analytics\manager::add_builtin_models();
-        $this->assertCount($count, $DB->get_records('analytics_models'));
-
-        $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
+        $target = \core_analytics\manager::get_target('\core_course\analytics\target\no_teaching');
         $this->assertTrue(\core_analytics\model::exists($target));
+
+        foreach (\core_analytics\manager::get_all_models() as $model) {
+            $model->delete();
+        }
+
+        $this->assertFalse(\core_analytics\model::exists($target));
     }
 
     /**
@@ -294,7 +292,7 @@ class analytics_model_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        set_config('modeltimelimit', 2, 'analytics');
+        set_config('modeltimelimit', 1, 'analytics');
 
         $courses = array();
         for ($i = 0; $i < 5; $i++) {
@@ -304,19 +302,22 @@ class analytics_model_testcase extends advanced_testcase {
         }
 
         $target = new test_target_course_level_shortname();
-        $analyser = new test_analyser(1, $target, [], [], []);
+        $analyser = new \core\analytics\analyser\courses(1, $target, [], [], []);
 
-        // Each analysable element takes 1.1 secs, so the max (and likely) number of analysable
+        $result = new \core_analytics\local\analysis\result_array(1, false, []);
+        $analysis = new test_analysis($analyser, false, $result);
+
+        // Each analysable element takes 0.5 secs minimum (test_analysis), so the max (and likely) number of analysable
         // elements that will be processed is 2.
-        $analyser->get_analysable_data(false);
+        $analysis->run();
         $params = array('modelid' => 1, 'action' => 'prediction');
         $this->assertLessThanOrEqual(2, $DB->count_records('analytics_used_analysables', $params));
 
-        $analyser->get_analysable_data(false);
+        $analysis->run();
         $this->assertLessThanOrEqual(4, $DB->count_records('analytics_used_analysables', $params));
 
         // Check that analysable elements have been processed following the analyser order
-        // (course->sortorder here). We can not check this nicely after next get_analysable_data round
+        // (course->sortorder here). We can not check this nicely after next get_unlabelled_data round
         // because the first analysed element will be analysed again.
         $analysedelems = $DB->get_records('analytics_used_analysables', $params, 'timeanalysed ASC');
         // Just a default for the first checked element.
@@ -328,16 +329,21 @@ class analytics_model_testcase extends advanced_testcase {
             $last = $courses[$analysed->analysableid];
         }
 
-        $analyser->get_analysable_data(false);
-        $this->assertGreaterThanOrEqual(5, $DB->count_records('analytics_used_analysables', $params));
+        // No time limit now to process the rest.
+        set_config('modeltimelimit', 1000, 'analytics');
+
+        $analysis->run();
+        $this->assertEquals(5, $DB->count_records('analytics_used_analysables', $params));
 
         // New analysable elements are immediately pulled.
         $this->getDataGenerator()->create_course();
-        $analyser->get_analysable_data(false);
-        $this->assertGreaterThanOrEqual(6, $DB->count_records('analytics_used_analysables', $params));
+        $analysis->run();
+        $this->assertEquals(6, $DB->count_records('analytics_used_analysables', $params));
 
         // Training and prediction data do not get mixed.
-        $analyser->get_analysable_data(true);
+        $result = new \core_analytics\local\analysis\result_array(1, false, []);
+        $analysis = new test_analysis($analyser, false, $result);
+        $analysis->run();
         $params = array('modelid' => 1, 'action' => 'training');
         $this->assertLessThanOrEqual(2, $DB->count_records('analytics_used_analysables', $params));
     }
@@ -429,6 +435,63 @@ class analytics_model_testcase extends advanced_testcase {
         $modeldata = $method->invoke($modelconfig);
 
         $this->assertCount(1, $modeldata->indicators);
+    }
+
+    /**
+     * Test the implementation of {@link \core_analytics\model::inplace_editable_name()}.
+     */
+    public function test_inplace_editable_name() {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $output = new \core_renderer($PAGE, RENDERER_TARGET_GENERAL);
+
+        // Check as a user with permission to edit the name.
+        $this->setAdminUser();
+        $ie = $this->model->inplace_editable_name();
+        $this->assertInstanceOf(\core\output\inplace_editable::class, $ie);
+        $data = $ie->export_for_template($output);
+        $this->assertEquals('core_analytics', $data['component']);
+        $this->assertEquals('modelname', $data['itemtype']);
+
+        // Check as a user without permission to edit the name.
+        $this->setGuestUser();
+        $ie = $this->model->inplace_editable_name();
+        $this->assertInstanceOf(\core\output\inplace_editable::class, $ie);
+        $data = $ie->export_for_template($output);
+        $this->assertArrayHasKey('displayvalue', $data);
+    }
+
+    /**
+     * Test how the models present themselves in the UI and that they can be renamed.
+     */
+    public function test_get_name_and_rename() {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $output = new \core_renderer($PAGE, RENDERER_TARGET_GENERAL);
+
+        // By default, the model exported for template uses its target's name in the name inplace editable element.
+        $this->assertEquals($this->model->get_name(), $this->model->get_target()->get_name());
+        $data = $this->model->export($output);
+        $this->assertEquals($data->name['displayvalue'], $this->model->get_target()->get_name());
+        $this->assertEquals($data->name['value'], '');
+
+        // Rename the model.
+        $this->model->rename('Nějaký pokusný model');
+        $this->assertEquals($this->model->get_name(), 'Nějaký pokusný model');
+        $data = $this->model->export($output);
+        $this->assertEquals($data->name['displayvalue'], 'Nějaký pokusný model');
+        $this->assertEquals($data->name['value'], 'Nějaký pokusný model');
+
+        // Undo the renaming.
+        $this->model->rename('');
+        $this->assertEquals($this->model->get_name(), $this->model->get_target()->get_name());
+        $data = $this->model->export($output);
+        $this->assertEquals($data->name['displayvalue'], $this->model->get_target()->get_name());
+        $this->assertEquals($data->name['value'], '');
     }
 
     /**

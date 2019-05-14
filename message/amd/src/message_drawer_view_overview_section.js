@@ -116,6 +116,9 @@ function(
         var countElement = container.find(SELECTORS.SECTION_TOTAL_COUNT);
         countElement.text(count);
         container.removeClass('hidden');
+        Str.get_string('totalconversations', 'core_message', count).done(function(string) {
+            container.attr('aria-label', string);
+        });
 
         var numPlaceholders = count > 20 ? 20 : count;
         // Array of "true" up to the number of placeholders we want.
@@ -146,9 +149,46 @@ function(
         var countElement = root.find(SELECTORS.SECTION_UNREAD_COUNT);
         countElement.text(count);
 
+        Str.get_string('unreadconversations', 'core_message', count).done(function(string) {
+            countElement.attr('aria-label', string);
+        });
+
         if (count > 0) {
             countElement.removeClass('hidden');
         }
+    };
+
+    /**
+     * Create a formatted conversation object from the the one we get from events. The new object
+     * will be in a format that matches what we receive from the server.
+     *
+     * @param {Object} conversation
+     * @return {Object} formatted conversation.
+     */
+    var formatConversationFromEvent = function(conversation) {
+        // Recursively lowercase all of the keys for an object.
+        var recursivelyLowercaseKeys = function(object) {
+            return Object.keys(object).reduce(function(carry, key) {
+                if ($.isArray(object[key])) {
+                    carry[key.toLowerCase()] = object[key].map(recursivelyLowercaseKeys);
+                } else {
+                    carry[key.toLowerCase()] = object[key];
+                }
+
+                return carry;
+            }, {});
+        };
+
+        // Recursively lowercase all of the keys for the conversation.
+        var formatted = recursivelyLowercaseKeys(conversation);
+
+        // Make sure all messages have the useridfrom property set.
+        formatted.messages = formatted.messages.map(function(message) {
+            message.useridfrom = message.userfrom.id;
+            return message;
+        });
+
+        return formatted;
     };
 
     /**
@@ -159,7 +199,7 @@ function(
      * @param {Number} userId Logged in user id.
      * @return {Object} jQuery promise.
      */
-    var render = function(contentContainer, conversations, userId) {
+    var render = function(conversations, userId) {
         var formattedConversations = conversations.map(function(conversation) {
 
             var lastMessage = conversation.messages.length ? conversation.messages[conversation.messages.length - 1] : null;
@@ -176,14 +216,21 @@ function(
                 lastmessage: lastMessage ? $(lastMessage.text).text() || lastMessage.text : null
             };
 
-            if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
-                var otherUser = conversation.members.reduce(function(carry, member) {
+            var otherUser = null;
+            if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF) {
+                // Self-conversations have only one member.
+                otherUser = conversation.members[0];
+            } else if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
+                // For private conversations, remove the current userId from the members to get the other user.
+                otherUser = conversation.members.reduce(function(carry, member) {
                     if (!carry && member.id != userId) {
                         carry = member;
                     }
                     return carry;
                 }, null);
+            }
 
+            if (otherUser !== null) {
                 formattedConversation.userid = otherUser.id;
                 formattedConversation.showonlinestatus = otherUser.showonlinestatus;
                 formattedConversation.isonline = otherUser.isonline;
@@ -192,7 +239,7 @@ function(
 
             if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PUBLIC) {
                 formattedConversation.lastsendername = conversation.members.reduce(function(carry, member) {
-                    if (!carry && member.id == lastMessage.useridfrom) {
+                    if (!carry && lastMessage && member.id == lastMessage.useridfrom) {
                         carry = member.fullname;
                     }
                     return carry;
@@ -202,30 +249,54 @@ function(
             return formattedConversation;
         });
 
-        return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: formattedConversations})
-            .then(function(html) {
-                contentContainer.append(html);
-                return html;
-            })
-            .catch(Notification.exception);
+        formattedConversations.forEach(function(conversation) {
+            if (new Date().toDateString() == new Date(conversation.lastmessagedate * 1000).toDateString()) {
+                conversation.istoday = true;
+            }
+        });
+
+        return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: formattedConversations});
     };
 
     /**
      * Build the callback to load conversations.
      *
-     * @param  {Number} type The conversation type.
+     * @param  {Array|null} types The conversation types for this section.
      * @param  {bool} includeFavourites Include/exclude favourites.
      * @param  {Number} offset Result offset
      * @return {Function}
      */
-    var getLoadCallback = function(type, includeFavourites, offset) {
+    var getLoadCallback = function(types, includeFavourites, offset) {
+        // Note: This function is a bit messy because we've added the concept of loading
+        // multiple conversations types (e.g. private + self) at once but haven't properly
+        // updated the web service to accept an array of types. Instead we've added a new
+        // parameter for the self type which means we can only ever load self + other type.
+        // This should be improved to make it more extensible in the future. Adding new params
+        // for each type isn't very scalable.
+        var type = null;
+        // Include self conversations in the results by default.
+        var includeSelfConversations = true;
+        if (types && types.length) {
+            // Just get the conversation types that aren't "self" for now.
+            var nonSelfConversationTypes = types.filter(function(candidate) {
+                return candidate != MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF;
+            });
+            // If we're specifically asking for a list of types that doesn't include the self
+            // conversations then we don't need to include them.
+            includeSelfConversations = types.length != nonSelfConversationTypes.length;
+            // As mentioned above the webservice is currently limited to loading one type at a
+            // time (plus self conversations) so let's hope we never change this.
+            type = nonSelfConversationTypes[0];
+        }
+
         return function(root, userId) {
             return MessageRepository.getConversations(
                     userId,
                     type,
                     LOAD_LIMIT + 1,
                     offset,
-                    includeFavourites
+                    includeFavourites,
+                    includeSelfConversations
                 )
                 .then(function(response) {
                     var conversations = response.conversations;
@@ -373,60 +444,15 @@ function(
     };
 
     /**
-     * Update the last message from / to a contact.
-     *
-     * @param  {Object} element Conversation element.
-     * @param  {Object} conversation The conversation.
-     * @return {Object} jQuery promise
-     */
-    var updateLastMessage = function(element, conversation) {
-        var message = conversation.messages[conversation.messages.length - 1];
-        var senderString = '';
-        var senderStringRequest;
-        if (message.fromLoggedInUser) {
-            senderStringRequest = {key: 'you', component: 'core_message'};
-        } else {
-            senderStringRequest = {key: 'sender', component: 'core_message', param: message.userFrom.fullname};
-        }
-
-        var stringRequests = [
-            senderStringRequest,
-            {key: 'strftimetime24', component: 'core_langconfig'},
-        ];
-        return Str.get_strings(stringRequests)
-            .then(function(strings) {
-                senderString = strings[0];
-                return UserDate.get([{timestamp: message.timeCreated, format: strings[1]}]);
-            })
-            .then(function(dates) {
-                return dates[0];
-            })
-            .then(function(dateString) {
-                element.find(SELECTORS.LAST_MESSAGE_DATE).text(dateString).removeClass('hidden');
-
-                // No need to show sender string for private conversations and where the last message didn't come from you.
-                if (!message.fromLoggedInUser &&
-                        conversation.type === MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
-                    senderString = '';
-                }
-
-                // Now load the last message.
-                var lastMessage = senderString + " <span class='text-muted'>" + $(message.text).text() + "</span>";
-
-                return element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
-            });
-    };
-
-    /**
      * Create an render new conversation element in the list of conversations.
      *
      * @param  {Object} root Overview messages container element.
      * @param  {Object} conversation The conversation.
+     * @param  {Number} userId The logged in user id.
      * @return {Object} jQuery promise
      */
-    var createNewConversation = function(root, conversation) {
+    var createNewConversationFromEvent = function(root, conversation, userId) {
         var existingConversations = root.find(SELECTORS.CONVERSATION);
-        var text = '';
 
         if (!existingConversations.length) {
             // If we didn't have any conversations then we need to show
@@ -436,27 +462,10 @@ function(
             LazyLoadList.hideEmptyMessage(listRoot);
         }
 
-        var messageCount = conversation.messages.length;
-        var lastMessage = messageCount ? conversation.messages[messageCount - 1] : null;
-
-        if (lastMessage) {
-            text = $(lastMessage.text).text() || lastMessage.text;
-        }
-
-        var formattedConversation = {
-            id: conversation.id,
-            name: conversation.name,
-            subname: conversation.subname,
-            lastmessagedate: lastMessage ? lastMessage.timeCreated : null,
-            sentfromcurrentuser: lastMessage ? lastMessage.fromLoggedInUser : null,
-            lastmessage: text,
-            imageurl: conversation.imageUrl,
-        };
-
         // Cache the conversation.
         loadedConversationsById[conversation.id] = conversation;
 
-        return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: [formattedConversation]})
+        return render([conversation], userId)
             .then(function(html) {
                 var contentContainer = LazyLoadList.getContentContainer(root);
                 return contentContainer.prepend(html);
@@ -506,11 +515,28 @@ function(
      * @param {String} namespace Unique identifier for the Routes
      * @param {Object} root The section container element.
      * @param {Function} loadCallback The callback to load items.
-     * @param {Number} type The conversation type for this section
+     * @param {Array|null} types The conversation types for this section
      * @param {bool} includeFavourites If this section includes favourites
+     * @param {String} fromPanel Routing argument to send if the section is loaded in message index left panel.
      */
-    var registerEventListeners = function(namespace, root, loadCallback, type, includeFavourites) {
+    var registerEventListeners = function(namespace, root, loadCallback, types, includeFavourites, fromPanel) {
         var listRoot = LazyLoadList.getRoot(root);
+        var conversationBelongsToThisSection = function(conversation) {
+            // Make sure the type is an int so that the index of check matches correctly.
+            var conversationType = parseInt(conversation.type, 10);
+            if (
+                // If the conversation type isn't one this section cares about then we can ignore it.
+                (types && types.indexOf(conversationType) < 0) ||
+                // If this is the favourites section and the conversation isn't a favourite then ignore it.
+                (includeFavourites && !conversation.isFavourite) ||
+                // If this section doesn't include favourites and the conversation is a favourite then ignore it.
+                (!includeFavourites && conversation.isFavourite)
+            ) {
+                return false;
+            }
+
+            return true;
+        };
 
         // Set the minimum height of the section to the height of the toggle. This
         // smooths out the collapse animation.
@@ -519,7 +545,14 @@ function(
 
         root.on('show.bs.collapse', function() {
             setExpanded(root);
-            LazyLoadList.show(listRoot, loadCallback, render);
+            LazyLoadList.show(listRoot, loadCallback, function(contentContainer, conversations, userId) {
+                return render(conversations, userId)
+                    .then(function(html) {
+                        contentContainer.append(html);
+                        return html;
+                    })
+                    .catch(Notification.exception);
+            });
         });
 
         root.on('hidden.bs.collapse', function() {
@@ -558,25 +591,31 @@ function(
         });
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, function(conversation) {
-            if (
-                (type && conversation.type != type) ||
-                (includeFavourites && !conversation.isFavourite) ||
-                (!includeFavourites && conversation.isFavourite)
-            ) {
+            if (!conversationBelongsToThisSection(conversation)) {
                 return;
             }
 
+            var loggedInUserId = conversation.loggedInUserId;
             var conversationId = conversation.id;
             var element = getConversationElement(root, conversationId);
+            conversation = formatConversationFromEvent(conversation);
             if (element.length) {
-                updateLastMessage(element, conversation);
+                var contentContainer = LazyLoadList.getContentContainer(root);
+                render([conversation], loggedInUserId)
+                    .then(function(html) {
+                            contentContainer.prepend(html);
+                            element.remove();
+                            return html;
+                        })
+                    .catch(Notification.exception);
             } else {
-                createNewConversation(root, conversation);
+                createNewConversationFromEvent(root, conversation, loggedInUserId);
             }
         });
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_DELETED, function(conversationId) {
             var conversationElement = getConversationElement(root, conversationId);
+            delete loadedConversationsById[conversationId];
             if (conversationElement.length) {
                 deleteConversation(root, conversationElement);
             }
@@ -591,12 +630,16 @@ function(
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_SET_FAVOURITE, function(conversation) {
             var conversationElement = null;
-            if (includeFavourites && (!type || type == conversation.type)) {
+            if (conversationBelongsToThisSection(conversation)) {
                 conversationElement = getConversationElement(root, conversation.id);
                 if (!conversationElement.length) {
-                    createNewConversation(root, conversation);
+                    createNewConversationFromEvent(
+                        root,
+                        formatConversationFromEvent(conversation),
+                        conversation.loggedInUserId
+                    );
                 }
-            } else if (type == conversation.type) {
+            } else {
                 conversationElement = getConversationElement(root, conversation.id);
                 if (conversationElement.length) {
                     deleteConversation(root, conversationElement);
@@ -606,15 +649,19 @@ function(
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_UNSET_FAVOURITE, function(conversation) {
             var conversationElement = null;
-            if (includeFavourites) {
+            if (conversationBelongsToThisSection(conversation)) {
+                conversationElement = getConversationElement(root, conversation.id);
+                if (!conversationElement.length) {
+                    createNewConversationFromEvent(
+                        root,
+                        formatConversationFromEvent(conversation),
+                        conversation.loggedInUserId
+                    );
+                }
+            } else {
                 conversationElement = getConversationElement(root, conversation.id);
                 if (conversationElement.length) {
                     deleteConversation(root, conversationElement);
-                }
-            } else if (type == conversation.type) {
-                conversationElement = getConversationElement(root, conversation.id);
-                if (!conversationElement.length) {
-                    createNewConversation(root, conversation);
                 }
             }
         });
@@ -624,7 +671,7 @@ function(
             var conversationElement = $(e.target).closest(SELECTORS.CONVERSATION);
             var conversationId = conversationElement.attr('data-conversation-id');
             var conversation = loadedConversationsById[conversationId];
-            MessageDrawerRouter.go(namespace, MessageDrawerRoutes.VIEW_CONVERSATION, conversation);
+            MessageDrawerRouter.go(namespace, MessageDrawerRoutes.VIEW_CONVERSATION, conversation, fromPanel);
 
             data.originalEvent.preventDefault();
         });
@@ -637,22 +684,31 @@ function(
      * @param {Object} header The header container element.
      * @param {Object} body The section container element.
      * @param {Object} footer The footer container element.
-     * @param {Number} type The conversation type for this section
+     * @param {Array} types The conversation types that show in this section
      * @param {bool} includeFavourites If this section includes favourites
      * @param {Object} totalCountPromise Resolves wth the total conversations count
      * @param {Object} unreadCountPromise Resolves wth the unread conversations count
+     * @param {bool} fromPanel shown in message app panel.
      */
-    var show = function(namespace, header, body, footer, type, includeFavourites, totalCountPromise, unreadCountPromise) {
+    var show = function(namespace, header, body, footer, types, includeFavourites, totalCountPromise, unreadCountPromise,
+        fromPanel) {
         var root = $(body);
 
         if (!root.attr('data-init')) {
-            var loadCallback = getLoadCallback(type, includeFavourites, 0);
-            registerEventListeners(namespace, root, loadCallback, type, includeFavourites);
+            var loadCallback = getLoadCallback(types, includeFavourites, 0);
+            registerEventListeners(namespace, root, loadCallback, types, includeFavourites, fromPanel);
 
             if (isVisible(root)) {
                 setExpanded(root);
                 var listRoot = LazyLoadList.getRoot(root);
-                LazyLoadList.show(listRoot, loadCallback, render);
+                LazyLoadList.show(listRoot, loadCallback, function(contentContainer, conversations, userId) {
+                    return render(conversations, userId)
+                        .then(function(html) {
+                            contentContainer.append(html);
+                            return html;
+                        })
+                        .catch(Notification.exception);
+                });
             }
 
             // This is given to us by the calling code because the total counts for all sections

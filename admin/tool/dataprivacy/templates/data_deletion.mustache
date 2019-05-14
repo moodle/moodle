@@ -58,24 +58,24 @@
         <div class="alert alert-info">
             {{#str}}datadeletionpagehelp, tool_dataprivacy{{/str}}
         </div>
-        <div class="pull-left">
+        <div class="float-left">
             {{#filter}}
                 {{> core/single_select}}
             {{/filter}}
         </div>
         {{#existingcontexts}}
-            <div class="pull-right">
-                <button data-action="markfordeletion" class="btn btn-default">{{#str}}deleteselected, moodle{{/str}}</button>
+            <div class="float-right">
+                <button data-action="markfordeletion" class="btn btn-secondary">{{#str}}deleteselected, moodle{{/str}}</button>
             </div>
         {{/existingcontexts}}
     </div>
-    <div class="row m-t-1 m-b-1" data-region="expired-contexts-table">
+    <div class="row mt-1 mb-1" data-region="expired-contexts-table">
         {{{expiredcontexts}}}
     </div>
     <div class="row" data-region="bottom-nav">
         {{#existingcontexts}}
-            <div class="pull-right">
-                <button data-action="markfordeletion" class="btn btn-default">{{#str}}deleteselected, moodle{{/str}}</button>
+            <div class="float-right">
+                <button data-action="markfordeletion" class="btn btn-secondary">{{#str}}deleteselected, moodle{{/str}}</button>
             </div>
         {{/existingcontexts}}
     </div>

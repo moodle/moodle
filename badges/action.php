@@ -67,7 +67,7 @@ if ($copy) {
     $cloneid = $badge->make_clone();
     // If a user can edit badge details, they will be redirected to the edit page.
     if (has_capability('moodle/badges:configuredetails', $context)) {
-        redirect(new moodle_url('/badges/edit.php', array('id' => $cloneid, 'action' => 'details')));
+        redirect(new moodle_url('/badges/edit.php', array('id' => $cloneid, 'action' => 'badge')));
     }
     redirect(new moodle_url('/badges/overview.php', array('id' => $cloneid)));
 }

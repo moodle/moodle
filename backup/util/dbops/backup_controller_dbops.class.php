@@ -580,6 +580,17 @@ abstract class backup_controller_dbops extends backup_dbops {
                         'backup_import_competencies'       => 'competencies'
                 );
                 self::apply_admin_config_defaults($controller, $settings, true);
+                if ((!$controller->get_interactive()) &&
+                        $controller->get_type() == backup::TYPE_1ACTIVITY) {
+                    // This is duplicate - there is no concept of defaults - these settings must be on.
+                    $settings = array(
+                         'activities',
+                         'blocks',
+                         'filters',
+                         'questionbank'
+                    );
+                    self::force_enable_settings($controller, $settings);
+                }
                 break;
             case backup::MODE_AUTOMATED:
                 // Load the automated defaults.
@@ -604,6 +615,30 @@ abstract class backup_controller_dbops extends backup_dbops {
             default:
                 // Nothing to do for other modes (HUB...). Some day we
                 // can define defaults (admin UI...) for them if we want to
+        }
+    }
+
+    /**
+     * Turn these settings on. No defaults from admin settings.
+     *
+     * @param backup_controller $controller
+     * @param array $settings a map from admin config names to setting names (Config name => Setting name)
+     */
+    private static function force_enable_settings(backup_controller $controller, array $settings) {
+        $plan = $controller->get_plan();
+        foreach ($settings as $config => $settingname) {
+            $value = true;
+            if ($plan->setting_exists($settingname)) {
+                $setting = $plan->get_setting($settingname);
+                // We do not allow this setting to be locked for a duplicate function.
+                if ($setting->get_status() !== base_setting::NOT_LOCKED) {
+                    $setting->set_status(base_setting::NOT_LOCKED);
+                }
+                $setting->set_value($value);
+                $setting->set_status(base_setting::LOCKED_BY_CONFIG);
+            } else {
+                $controller->log('Unknown setting: ' . $setting, BACKUP::LOG_DEBUG);
+            }
         }
     }
 
@@ -640,5 +675,32 @@ abstract class backup_controller_dbops extends backup_dbops {
                 $controller->log('Unknown setting: ' . $setting, BACKUP::LOG_DEBUG);
             }
         }
+    }
+
+    /**
+     * Get the progress details of a backup operation.
+     * Get backup records directly from database, if the backup has successfully completed
+     * there will be no controller object to load.
+     *
+     * @param string $backupid The backup id to query.
+     * @return array $progress The backup progress details.
+     */
+    public static function get_progress($backupid) {
+        global $DB;
+
+        $progress = array();
+        $backuprecord = $DB->get_record(
+            'backup_controllers',
+            array('backupid' => $backupid),
+            'status, progress, operation',
+            MUST_EXIST);
+
+        $status = $backuprecord->status;
+        $progress = $backuprecord->progress;
+        $operation = $backuprecord->operation;
+
+        $progress = array('status' => $status, 'progress' => $progress, 'backupid' => $backupid, 'operation' => $operation);
+
+        return $progress;
     }
 }

@@ -47,6 +47,8 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertTrue($question->is_complete_response(array('answer' => '0')));
         $this->assertTrue($question->is_complete_response(array('answer' => '2')));
+        $this->assertFalse($question->is_complete_response(array('answer' => '-1')));
+        $this->assertFalse($question->is_complete_response(array('answer' => -1)));
     }
 
     public function test_is_gradable_response() {
@@ -55,6 +57,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertTrue($question->is_gradable_response(array('answer' => '0')));
         $this->assertTrue($question->is_gradable_response(array('answer' => '2')));
+        $this->assertFalse($question->is_gradable_response(array('answer' => '-1')));
     }
 
     public function test_is_same_response() {
@@ -80,6 +83,22 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $this->assertTrue($question->is_same_response(
                 array('answer' => '2'),
                 array('answer' => '2')));
+
+        $this->assertFalse($question->is_same_response(
+                array('answer' => '0'),
+                array('answer' => '-1')));
+
+        $this->assertFalse($question->is_same_response(
+                array('answer' => '-1'),
+                array('answer' => '0')));
+
+        $this->assertTrue($question->is_same_response(
+                array('answer' => '-1'),
+                array('answer' => '-1')));
+
+        $this->assertTrue($question->is_same_response(
+                array(),
+                array('answer' => '-1')));
     }
 
     public function test_grading() {
@@ -138,6 +157,9 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
                                             test_question_maker::get_a_qa($mc));
 
         $this->assertEquals('A', $summary);
+
+        $this->assertNull($mc->summarise_response(array(), test_question_maker::get_a_qa($mc)));
+        $this->assertNull($mc->summarise_response(array('answer' => '-1'), test_question_maker::get_a_qa($mc)));
     }
 
     public function test_classify_response() {
@@ -149,7 +171,11 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
 
         $this->assertEquals(array(
                 $mc->id => question_classified_response::no_response(),
-            ), $mc->classify_response(array()));
+        ), $mc->classify_response(array()));
+
+        $this->assertEquals(array(
+                $mc->id => question_classified_response::no_response(),
+        ), $mc->classify_response(array('answer' => '-1')));
     }
 
     public function test_make_html_inline() {

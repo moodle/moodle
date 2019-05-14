@@ -34,13 +34,14 @@
 
 }}
 
-<div class="hidden border-bottom px-2 py-3 view-search" aria-hidden="true" data-region="view-search">
+<div class="hidden border-bottom px-2 py-3 view-search" {{^isdrawer}}data-in-panel="true"{{/isdrawer}} aria-hidden="true" data-region="view-search">
     <div class="d-flex align-items-center">
         <a
             class="mr-2 align-self-stretch d-flex align-items-center"
             href="#"
             data-route-back
             data-action="cancel-search"
+            role="button"
         >
             {{> core_message/message_drawer_icon_back }}
         </a>
@@ -57,6 +58,7 @@
                     class="btn btn-outline-secondary"
                     type="button"
                     data-action="search"
+                    aria-label="{{#str}} search, core_search {{/str}}"
                 >
                     <span data-region="search-icon-container">
                         {{#pix}} a/search, core {{/pix}}

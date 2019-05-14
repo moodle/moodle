@@ -38,34 +38,43 @@ abstract class by_course extends base {
     /**
      * Return the list of courses to analyse.
      *
-     * @return \core_analytics\course[]
+     * @param string|null $action 'prediction', 'training' or null if no specific action needed.
+     * @return \Iterator
      */
-    public function get_analysables() {
+    public function get_analysables_iterator(?string $action = null) {
+        global $DB;
 
-        // Default to all system courses.
+        list($sql, $params) = $this->get_iterator_sql('course', CONTEXT_COURSE, $action, 'c');
+
+        // This will be updated to filter by context as part of MDL-64739.
         if (!empty($this->options['filter'])) {
             $courses = array();
             foreach ($this->options['filter'] as $courseid) {
                 $courses[$courseid] = new \stdClass();
                 $courses[$courseid]->id = $courseid;
             }
-        } else {
-            // Iterate through all potentially valid courses.
-            $courses = get_courses('all', 'c.sortorder ASC', 'c.id');
-        }
-        unset($courses[SITEID]);
 
-        $analysables = array();
-        foreach ($courses as $course) {
-            // Skip the frontpage course.
-            $analysable = \core_analytics\course::instance($course->id);
-            $analysables[$analysable->get_id()] = $analysable;
+            list($coursesql, $courseparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
+            $sql .= " AND c.id IN $coursesql";
+            $params = $params + $courseparams;
         }
 
-        if (empty($analysables)) {
-            $this->log[] = get_string('nocourses', 'analytics');
+        $ordersql = $this->order_sql('sortorder', 'ASC', 'c');
+
+        $recordset = $DB->get_recordset_sql($sql . $ordersql, $params);
+
+        if (!$recordset->valid()) {
+            $this->add_log(get_string('nocourses', 'analytics'));
+            return new \ArrayIterator([]);
         }
 
-        return $analysables;
+        return new \core\dml\recordset_walk($recordset, function($record) {
+
+            if ($record->id == SITEID) {
+                return false;
+            }
+            $context = \context_helper::preload_from_record($record);
+            return \core_analytics\course::instance($record, $context);
+        });
     }
 }

@@ -142,18 +142,11 @@ class provider implements
         $context = $userlist->get_context();
 
         if ($context instanceof \context_course) {
-            $params = [
-                'contextcourse' => CONTEXT_COURSE,
-                'contextid' => $context->id,
-
-            ];
+            $params = ['courseid' => $context->instanceid];
 
             $sql = "SELECT bc.userid
                       FROM {backup_controllers} bc
-                      JOIN {context} ctx
-                           ON ctx.instanceid = bc.itemid
-                           AND ctx.contextlevel = :contextcourse
-                     WHERE ctx.id = :contextid
+                     WHERE bc.itemid = :courseid
                            AND bc.type = :typecourse";
 
             $courseparams = ['typecourse' => 'course'] + $params;
@@ -164,10 +157,7 @@ class provider implements
                       FROM {backup_controllers} bc
                       JOIN {course_sections} c
                            ON bc.itemid = c.id
-                      JOIN {context} ctx
-                           ON ctx.instanceid = c.course
-                           AND ctx.contextlevel = :contextcourse
-                     WHERE ctx.id = :contextid
+                     WHERE c.course = :courseid
                            AND bc.type = :typesection";
 
             $sectionparams = ['typesection' => 'section'] + $params;
@@ -177,17 +167,13 @@ class provider implements
 
         if ($context instanceof \context_module) {
             $params = [
-                'contextmodule' => CONTEXT_MODULE,
-                'contextid' => $context->id,
+                'cmid' => $context->instanceid,
                 'typeactivity' => 'activity'
             ];
 
             $sql = "SELECT bc.userid
                       FROM {backup_controllers} bc
-                      JOIN {context} ctx
-                           ON ctx.instanceid = bc.itemid
-                           AND ctx.contextlevel = :contextmodule
-                     WHERE ctx.id = :contextid
+                     WHERE bc.itemid = :cmid
                            AND bc.type = :typeactivity";
 
             $userlist->add_from_sql('userid', $sql, $params);

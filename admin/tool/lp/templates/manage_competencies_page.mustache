@@ -15,6 +15,8 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template tool_lp/manage_competencies_page
+
     Manage competencies template.
 
     Classes required for JS:
@@ -25,10 +27,15 @@
     * data-region=term
     * data-region=selected-competency
 
-    Context variables required for this template:
-    * framework -
-    * competencies - array of objects containing id, shortname, idnumber, sortorder, parentid, competencyframeworkid, path
-    * canmanage - true if this user has permission to manage the competencies
+    Example context (json):
+    {
+        "framework": {
+            "description": "Framework",
+            "id": 0
+        },
+        "competencies": [],
+        "canmanage": false
+    }
 }}
 <div data-region="managecompetencies">
 <h2>
@@ -40,7 +47,7 @@
 <div>{{{framework.description}}}</div>
     <h3>{{#str}}competencies, core_competency{{/str}}</h3>
     <div class="row-fluid row">
-        <div class="span6 col-lg-6">
+        <div class="col-lg-6">
             <p>
                 <form data-region="filtercompetencies" data-frameworkid="{{framework.id}}" class="form-inline">
                     <div class="form-group">
@@ -55,11 +62,11 @@
             </ul>
         </div>
 
-        <div class="span6 card col-lg-6">
+        <div class="card col-lg-6">
             <div class="card-block card-body">
                 <div class="card-title">
                     <h4 data-region="selected-competency">{{#str}}selectedcompetency, tool_lp{{/str}}</h4>
-                        <span data-region="competencyactionsmenu" class="pull-xs-right">
+                        <span data-region="competencyactionsmenu" class="float-sm-right">
                             <ul title="{{#str}}edit{{/str}}" class="competencyactionsmenu">
                                 <li>
                                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
@@ -135,7 +142,8 @@ require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 
                    {{#quote}} {{{framework.shortname}}} {{/quote}},
                    '{{search}}',
                    '[data-enhance=tree]',
-                   {{canmanage}});
+                   {{canmanage}},
+                   {{competencyid}});
 
     actions.init(treeModel, {{pagecontextid}}, '{{{framework.taxonomies}}}', {{{rulesmodules}}});
 

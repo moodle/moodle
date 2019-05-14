@@ -125,7 +125,7 @@ class event_exporter_base extends exporter {
                 'null' => NULL_ALLOWED
             ],
             'location' => [
-                'type' => PARAM_RAW_TRIMMED,
+                'type' => PARAM_RAW,
                 'optional' => true,
                 'default' => null,
                 'null' => NULL_ALLOWED
@@ -236,6 +236,12 @@ class event_exporter_base extends exporter {
                 'default' => null,
                 'null' => NULL_ALLOWED
             ],
+            'normalisedeventtype' => [
+                'type' => PARAM_TEXT
+            ],
+            'normalisedeventtypetext' => [
+                'type' => PARAM_TEXT
+            ],
         ];
     }
 
@@ -254,11 +260,14 @@ class event_exporter_base extends exporter {
         $values['isactionevent'] = false;
         $values['iscourseevent'] = false;
         $values['iscategoryevent'] = false;
+        $values['normalisedeventtype'] = $event->get_type();
         if ($moduleproxy = $event->get_course_module()) {
             // We need a separate property to flag if an event is action event.
             // That's required because canedit return true but action action events cannot be edited on the calendar UI.
             // But they are considered editable because you can drag and drop the event on the month view.
             $values['isactionevent'] = true;
+            // Activity events are normalised to "look" like course events.
+            $values['normalisedeventtype'] = 'course';
         } else if ($event->get_type() == 'course') {
             $values['iscourseevent'] = true;
         } else if ($event->get_type() == 'category') {
@@ -266,6 +275,7 @@ class event_exporter_base extends exporter {
         }
         $timesort = $event->get_times()->get_sort_time()->getTimestamp();
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
+        $values['normalisedeventtypetext'] = get_string('type' . $values['normalisedeventtype'], 'calendar');
 
         $values['icon'] = $iconexporter->export($output);
 

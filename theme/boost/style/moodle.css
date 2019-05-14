@@ -7259,6 +7259,11 @@ button.bg-dark:focus {
   left: 0;
   z-index: 1030; }
 
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1020; }
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -8520,7 +8525,7 @@ a.dimmed_text:visited,
 /* stylelint-disable function-url-scheme-blacklist */
 /* stylelint-enable function-url-scheme-blacklist */
 .tag, .statusok, .statuswarning, .statusserious,
-.statuscritical, .que .correctness, .label, .badge {
+.statuscritical, .que .correctness, .label {
   display: inline-block;
   padding: 0.25rem 0.4em;
   font-size: 75%;
@@ -8531,7 +8536,7 @@ a.dimmed_text:visited,
   white-space: nowrap;
   vertical-align: baseline; }
   .tag:empty, .statusok:empty, .statuswarning:empty, .statusserious:empty,
-  .statuscritical:empty, .que .correctness:empty, .label:empty, .badge:empty {
+  .statuscritical:empty, .que .correctness:empty, .label:empty {
     display: none; }
 
 .form-control-success,
@@ -11253,6 +11258,7 @@ div.editor_atto_toolbar button .icon {
   margin-top: -0.5rem; }
 
 .block .block-cards a.coursename,
+.block .block-cards span.categoryname,
 .block .block-cards .btn-link {
   color: inherit; }
 
@@ -11654,11 +11660,13 @@ table.calendartable caption {
 .day-popover-content:empty + .day-popover-alternate {
   display: block; }
 
-.summary-modal-container .description-content > p {
-  margin: 0; }
-
-.summary-modal-container .location-content {
+.location-content {
   overflow-wrap: break-word; }
+
+.description-content {
+  overflow-wrap: break-word; }
+  .description-content > p {
+    margin: 0; }
 
 /* course.less */
 /* COURSE CONTENT */
@@ -11696,6 +11704,11 @@ table.calendartable caption {
 
 .sitetopic ul.section {
   margin: 0; }
+
+body:not(.editing) .sitetopic ul.section {
+  padding-left: 0; }
+  body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
+    padding-left: 0; }
 
 .course-content ul.section {
   margin: 1rem; }
@@ -12551,7 +12564,9 @@ span.editinstructions {
   height: 60px;
   /* fixed header height*/
   margin-top: -60px;
-  /* negative fixed header height */ }
+  /* negative fixed header height */
+  width: 1px;
+  pointer-events: none; }
 
 .pagelayout-embedded :target {
   padding-top: initial;
@@ -13388,7 +13403,7 @@ a.ygtvspacer:hover {
 
 .preferences-container .container-fluid {
   padding: 0; }
-  .preferences-container .container-fluid .span6 {
+  .preferences-container .container-fluid .col-md-6 {
     min-height: 20px; }
 
 .preferences-container .align-bottom {
@@ -13643,6 +13658,8 @@ a.ygtvspacer:hover {
   display: flex;
   flex-direction: column;
   transition: all 0.2s ease-in-out; }
+  .message-app .icon-back-in-drawer {
+    display: none; }
   .message-app.drawer {
     z-index: 1020;
     position: fixed;
@@ -13651,10 +13668,12 @@ a.ygtvspacer:hover {
     height: calc(100% - 50px);
     width: 320px;
     box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08); }
-    .message-app.drawer .body-container > * {
-      position: absolute; }
+    .message-app.drawer .icon-back-in-app {
+      display: none; }
+    .message-app.drawer .icon-back-in-drawer {
+      display: inherit; }
   .message-app.main {
-    height: 768px; }
+    min-height: 400px; }
   .message-app.hidden {
     display: block;
     right: -320px; }
@@ -13664,6 +13683,7 @@ a.ygtvspacer:hover {
     flex: 1;
     overflow: hidden; }
     .message-app .body-container > * {
+      position: absolute;
       right: 0;
       left: 0;
       top: 0;
@@ -13764,8 +13784,32 @@ a.ygtvspacer:hover {
     min-height: 1.5rem; }
   .message-app .section .collapsing {
     overflow: hidden; }
+  .message-app .message .tail {
+    content: '';
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 0.5rem solid transparent;
+    position: relative; }
+  .message-app .message.send .tail {
+    right: 0;
+    margin-right: -0.5rem;
+    border-bottom-color: #ced4da; }
+  .message-app .message.received .tail {
+    left: 0;
+    margin-left: -0.5rem;
+    border-bottom-color: #fff; }
   .message-app .lazy-load-list {
     overflow-y: auto; }
+
+#page-message-index #region-main {
+  height: 100%; }
+  #page-message-index #region-main div[role="main"] {
+    height: 100%; }
+    #page-message-index #region-main div[role="main"] #maincontent {
+      margin-top: -1px; }
+    #page-message-index #region-main div[role="main"] .message-app.main {
+      height: 100%; }
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
@@ -13991,6 +14035,13 @@ body.path-question-type {
 .que.multichoice .answer div.r0 .icon.fa-remove,
 .que.multichoice .answer div.r1 .icon.fa-remove {
   text-indent: 0; }
+
+.qtype_multichoice_clearchoice {
+  padding-top: 10px; }
+  .qtype_multichoice_clearchoice a {
+    cursor: pointer;
+    text-decoration: underline;
+    padding-left: 30px; }
 
 .formulation input[type="text"],
 .formulation select {
@@ -15720,7 +15771,8 @@ p.arrow_button {
   overflow-x: visible;
   min-width: 100%;
   width: auto;
-  display: inline-flex; }
+  display: inline-flex;
+  flex-direction: column; }
   .path-grade-report-grader #region-main > .card, .path-grade-report-grader #page-enrol-users #region-main > #filterform, #page-enrol-users .path-grade-report-grader #region-main > #filterform, .path-grade-report-grader .que #region-main > .history, .que .path-grade-report-grader #region-main > .history, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
     width: auto;
     overflow-x: initial; }
@@ -16629,31 +16681,6 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 .label-important {
   background-color: #d9534f; }
   .label-important[href]:hover, .label-important[href]:focus {
-    background-color: #c9302c; }
-
-.badge {
-  background-color: #868e96; }
-  .badge[href]:hover, .badge[href]:focus {
-    background-color: #6c757d; }
-
-.badge-success {
-  background-color: #5cb85c; }
-  .badge-success[href]:hover, .badge-success[href]:focus {
-    background-color: #449d44; }
-
-.badge-info {
-  background-color: #5bc0de; }
-  .badge-info[href]:hover, .badge-info[href]:focus {
-    background-color: #31b0d5; }
-
-.badge-warning {
-  background-color: #ff7518; }
-  .badge-warning[href]:hover, .badge-warning[href]:focus {
-    background-color: #e45c00; }
-
-.badge-important {
-  background-color: #d9534f; }
-  .badge-important[href]:hover, .badge-important[href]:focus {
     background-color: #c9302c; }
 
 .pull-left {

@@ -100,7 +100,9 @@ class entity {
             $record->completionreplies,
             $record->completionposts,
             $record->displaywordcount,
-            $record->lockdiscussionafter
+            $record->lockdiscussionafter,
+            $record->duedate,
+            $record->cutoffdate
         );
     }
 
@@ -124,7 +126,8 @@ class entity {
             $record->usermodified,
             $record->timestart,
             $record->timeend,
-            $record->pinned
+            $record->pinned,
+            $record->timelocked
         );
     }
 
@@ -150,7 +153,8 @@ class entity {
             $record->attachment,
             $record->totalscore,
             $record->mailnow,
-            $record->deleted
+            $record->deleted,
+            $record->privatereplyto
         );
     }
 

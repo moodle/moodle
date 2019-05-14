@@ -30,6 +30,7 @@ use mod_forum\local\data_mappers\legacy\author as author_data_mapper;
 use mod_forum\local\data_mappers\legacy\discussion as discussion_data_mapper;
 use mod_forum\local\data_mappers\legacy\forum as forum_data_mapper;
 use mod_forum\local\data_mappers\legacy\post as post_data_mapper;
+use mod_forum\local\entities\forum;
 
 /**
  * Legacy data mapper factory.
@@ -75,5 +76,24 @@ class legacy_data_mapper {
      */
     public function get_author_data_mapper() : author_data_mapper {
         return new author_data_mapper();
+    }
+
+    /**
+     * Get the corresponding entity based on the supplied value
+     *
+     * @param string $entity
+     * @return author_data_mapper|discussion_data_mapper|forum_data_mapper|post_data_mapper
+     */
+    public function get_legacy_data_mapper_for_vault($entity) {
+        switch($entity) {
+            case 'forum':
+                return $this->get_forum_data_mapper();
+            case 'discussion':
+                return $this->get_discussion_data_mapper();
+            case 'post':
+                return $this->get_post_data_mapper();
+            case 'author':
+                return $this->get_author_data_mapper();
+        }
     }
 }

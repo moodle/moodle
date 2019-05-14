@@ -267,13 +267,14 @@ class provider implements
         $context = $userlist->get_context();
         $userids = $userlist->get_userids();
 
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
         list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
 
-        $groupselect = "SELECT g.id
-                          FROM {groups} g
-                          JOIN {context} ctx ON g.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
-                         WHERE ctx.id = :contextid";
-        $groupparams = ['contextid' => $context->id, 'contextcourse' => CONTEXT_COURSE];
+        $groupselect = "SELECT id FROM {groups} WHERE courseid = :courseid";
+        $groupparams = ['courseid' => $context->instanceid];
 
         $select = "component = :component AND userid {$usersql} AND groupid IN ({$groupselect})";
         $params = ['component' => $component] + $groupparams + $userparams;

@@ -11,6 +11,15 @@ Feature: Manage contacts
       | student2 | Student   | 2        | student2@example.com |
       | student3 | Student   | 3        | student3@example.com |
       | student4 | Student   | 4        | student4@example.com |
+    And the following "courses" exist:
+      | fullname | shortname |
+      | course1 | C1 |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | student1 | C1 | student |
+      | student2 | C1 | student |
+      | student3 | C1 | student |
+      | student4 | C1 | student |
     And the following "message contacts" exist:
       | user     | contact |
       | student1 | student2 |
@@ -31,6 +40,7 @@ Feature: Manage contacts
     And I open contact menu
     And I click on "Add to contacts" "link"
     And I click on "Add" "button"
+    And I should see "Contact request sent"
     And I log out
     And I log in as "student4"
     Then I should see "2" in the "//*[@data-region='count-container']" "xpath_element"
@@ -39,7 +49,9 @@ Feature: Manage contacts
     Then I should see "2" in the "//div[@data-region='view-contacts']//*[@data-region='contact-request-count']" "xpath_element"
     And I click on "Requests" "link_or_button"
     And I click on "Student 1 Would like to contact you" "link"
+    Then I should see "Accept and add to contacts"
     And I click on "Accept and add to contacts" "link_or_button"
+    And I should not see "Accept and add to contacts"
     And I log out
     And I log in as "student1"
     And I open messaging
@@ -53,6 +65,7 @@ Feature: Manage contacts
     And I open contact menu
     And I click on "Add to contacts" "link"
     And I click on "Add" "button"
+    And I should see "Contact request sent"
     And I log out
     And I log in as "student3"
     Then I should see "1" in the "//*[@data-region='count-container']" "xpath_element"
@@ -61,7 +74,9 @@ Feature: Manage contacts
     Then I should see "1" in the "//div[@data-region='view-contacts']//*[@data-region='contact-request-count']" "xpath_element"
     And I click on "Requests" "link_or_button"
     And I click on "Student 1 Would like to contact you" "link"
+    Then I should see "Accept and add to contacts"
     And I click on "Decline" "link_or_button"
+    And I should not see "Accept and add to contacts"
     And I open contact menu
     Then I should see "Add to contacts" in the "//div[@data-region='header-container']" "xpath_element"
 

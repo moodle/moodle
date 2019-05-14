@@ -77,7 +77,7 @@ class test_site_users_analyser extends \core_analytics\local\analyser\sitewide {
      * @param \core_analytics\analysable $site
      * @return array
      */
-    protected function get_all_samples(\core_analytics\analysable $site) {
+    public function get_all_samples(\core_analytics\analysable $site) {
         global $DB;
 
         $users = $DB->get_records('user');
@@ -121,7 +121,7 @@ class test_site_users_analyser extends \core_analytics\local\analyser\sitewide {
      * @return array array(string, \renderable)
      */
     public function sample_description($sampleid, $contextid, $sampledata) {
-        $description = fullname($samplesdata['user']);
+        $description = fullname($sampledata['user']);
         $userimage = new \pix_icon('i/user', get_string('user'));
         return array($description, $userimage);
     }

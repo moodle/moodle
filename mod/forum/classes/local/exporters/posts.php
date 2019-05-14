@@ -45,6 +45,8 @@ class posts extends exporter {
     private $posts;
     /** @var author_entity[] $authorsbyid List of authors for the posts indexed by author id */
     private $authorsbyid;
+    /** @var int[] $authorcontextids List of authors context ids indexed by author id */
+    private $authorcontextids;
     /** @var array $attachmentsbypostid List of attachments indexed by post id */
     private $attachmentsbypostid;
     /** @var array $groupsbyauthorid List of author's groups indexed by author id */
@@ -59,6 +61,7 @@ class posts extends exporter {
      *
      * @param post_entity[] $posts List of posts to export
      * @param author_entity[] $authorsbyid List of authors for the posts indexed by author id
+     * @param int[] $authorcontextids List of authors context ids indexed by author id
      * @param array $attachmentsbypostid List of attachments indexed by post id
      * @param array $groupsbyauthorid List of author's groups indexed by author id
      * @param array $tagsbypostid List of tags indexed by post id
@@ -68,6 +71,7 @@ class posts extends exporter {
     public function __construct(
         array $posts,
         array $authorsbyid = [],
+        array $authorcontextids = [],
         array $attachmentsbypostid = [],
         array $groupsbyauthorid = [],
         array $tagsbypostid = [],
@@ -76,6 +80,7 @@ class posts extends exporter {
     ) {
         $this->posts = $posts;
         $this->authorsbyid = $authorsbyid;
+        $this->authorcontextids = $authorcontextids;
         $this->attachmentsbypostid = $attachmentsbypostid;
         $this->groupsbyauthorid = $groupsbyauthorid;
         $this->tagsbypostid = $tagsbypostid;
@@ -106,6 +111,7 @@ class posts extends exporter {
     protected function get_other_values(renderer_base $output) {
         $related = $this->related;
         $authorsbyid = $this->authorsbyid;
+        $authorcontextids = $this->authorcontextids;
         $attachmentsbypostid = $this->attachmentsbypostid;
         $groupsbyauthorid = $this->groupsbyauthorid;
         $tagsbypostid = $this->tagsbypostid;
@@ -114,6 +120,7 @@ class posts extends exporter {
             function($post) use (
                 $related,
                 $authorsbyid,
+                $authorcontextids,
                 $attachmentsbypostid,
                 $groupsbyauthorid,
                 $tagsbypostid,
@@ -123,12 +130,14 @@ class posts extends exporter {
                 $authorid = $post->get_author_id();
                 $postid = $post->get_id();
                 $author = isset($authorsbyid[$authorid]) ? $authorsbyid[$authorid] : [];
+                $authorcontextid = isset($authorcontextids[$authorid]) ? $authorcontextids[$authorid] : null;
                 $attachments = isset($attachmentsbypostid[$postid]) ? $attachmentsbypostid[$postid] : [];
                 $authorgroups = isset($groupsbyauthorid[$authorid]) ? $groupsbyauthorid[$authorid] : [];
                 $tags = isset($tagsbypostid[$postid]) ? $tagsbypostid[$postid] : [];
                 $rating = isset($ratingbypostid[$postid]) ? $ratingbypostid[$postid] : null;
                 $exporter = new post_exporter($post, array_merge($related, [
                     'author' => $author,
+                    'authorcontextid' => $authorcontextid,
                     'attachments' => $attachments,
                     'authorgroups' => $authorgroups,
                     'tags' => $tags,

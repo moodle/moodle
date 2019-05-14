@@ -145,7 +145,7 @@ abstract class discrete extends base {
      *
      * @return array List of values that will be ignored (array keys are ignored).
      */
-    protected function ignored_predicted_classes() {
+    public function ignored_predicted_classes() {
         // Coding exception as this will only be called if this target have non-linear values.
         throw new \coding_exception('Overwrite ignored_predicted_classes() and return an array with the classes that should not ' .
             'trigger the callback');

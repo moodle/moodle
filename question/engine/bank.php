@@ -409,21 +409,6 @@ abstract class question_bank {
     }
 
     /**
-     * Perform scheduled maintenance tasks relating to the question bank.
-     */
-    public static function cron() {
-        global $CFG;
-
-        // Delete any old question preview that got left in the database.
-        require_once($CFG->dirroot . '/question/previewlib.php');
-        question_preview_cron();
-
-        // Clear older calculated stats from cache.
-        require_once($CFG->dirroot . '/question/engine/statisticslib.php');
-        question_usage_statistics_cron();
-    }
-
-    /**
      * Return a list of the different question types present in the given categories.
      *
      * @param  array $categories a list of category ids

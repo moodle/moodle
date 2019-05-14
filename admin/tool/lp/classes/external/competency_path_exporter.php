@@ -76,6 +76,9 @@ class competency_path_exporter extends \core\external\exporter {
             ],
             'pagecontextid' => [
                 'type' => PARAM_INT
+            ],
+            'showlinks' => [
+                'type' => PARAM_BOOL
             ]
         ];
     }
@@ -91,6 +94,7 @@ class competency_path_exporter extends \core\external\exporter {
         $ancestors = [];
         $nodescount = count($this->related['ancestors']);
         $i = 1;
+        $result->showlinks = \core_competency\api::show_links();
         foreach ($this->related['ancestors'] as $competency) {
             $exporter = new path_node_exporter([
                     'id' => $competency->get('id'),

@@ -130,11 +130,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($author, [$post]);
         $events = $this->eventsink->get_events();
         $event = reset($events);
-        $this->assertInstanceOf('\core\event\notification_viewed', $event);
 
-        // And next event should be the 'notification_sent' one.
-        $event = $events[1];
-        $this->assertInstanceOf('\core\event\notification_sent', $event);
         $this->assertEquals($course->id, $event->other['courseid']);
 
         $this->send_notifications_and_assert($recipient, [$post]);
@@ -333,6 +329,56 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         $this->send_notifications_and_assert($author, [$post]);
         $this->send_notifications_and_assert($recipient, [$post]);
+    }
+
+    /**
+     * Ensure that private replies are not sent to users with an automatic subscription unless they are an expected
+     * recipient.
+     */
+    public function test_automatic_with_private_reply() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', [
+                'course' => $course->id,
+                'forcesubscribe' => FORUM_INITIALSUBSCRIBE,
+            ]);
+
+        [$student, $otherstudent] = $this->helper_create_users($course, 2, 'student');
+        [$teacher, $otherteacher] = $this->helper_create_users($course, 2, 'teacher');
+
+        [$discussion, $post] = $this->helper_post_to_forum($forum, $student);
+        $reply = $this->helper_post_to_discussion($forum, $discussion, $teacher, [
+                'privatereplyto' => $student->id,
+            ]);
+
+        // The private reply is queued to all messages as reply visibility may change between queueing, and sending.
+        $expect = [
+            (object) [
+                'userid' => $student->id,
+                'messages' => 2,
+            ],
+            (object) [
+                'userid' => $otherstudent->id,
+                'messages' => 2,
+            ],
+            (object) [
+                'userid' => $teacher->id,
+                'messages' => 2,
+            ],
+            (object) [
+                'userid' => $otherteacher->id,
+                'messages' => 2,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // The actual messages sent will respect private replies.
+        $this->send_notifications_and_assert($student, [$post, $reply]);
+        $this->send_notifications_and_assert($teacher, [$post, $reply]);
+        $this->send_notifications_and_assert($otherteacher, [$post, $reply]);
+        $this->send_notifications_and_assert($otherstudent, [$post]);
     }
 
     public function test_optional() {
@@ -1449,5 +1495,48 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($author, [$post]);
         $this->send_notifications_and_assert($recipient, [$post]);
         $this->send_notifications_and_assert($editor, [$post]);
+    }
+
+    /**
+     * Test notification comes with customdata.
+     */
+    public function test_notification_customdata() {
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        list($author) = $this->helper_create_users($course, 1);
+        list($commenter) = $this->helper_create_users($course, 1);
+
+        $strre = get_string('re', 'forum');
+
+        // New posts should not have Re: in the subject.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'commenter' => (object) [
+                'userid' => $commenter->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($author, [$post]);
+        $this->send_notifications_and_assert($commenter, [$post]);
+        $messages = $this->messagesink->get_messages();
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertEquals($forum->id, $customdata->instance);
+        $this->assertEquals($forum->cmid, $customdata->cmid);
+        $this->assertEquals($post->id, $customdata->postid);
+        $this->assertEquals($discussion->id, $customdata->discussionid);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(1, (array) $customdata->actionbuttons);
     }
 }

@@ -263,4 +263,16 @@ class renderer extends plugin_renderer_base {
         $n = new \core\output\notification($message, \core\output\notification::NOTIFY_SUCCESS);
         return $this->render($n);
     }
+
+    /**
+     * Defer to template.
+     *
+     * @param module_navigation $nav
+     * @return string
+     */
+    public function render_module_navigation(module_navigation $nav) {
+        $data = $nav->export_for_template($this);
+        return parent::render_from_template('tool_lp/module_navigation', $data);
+    }
+
 }

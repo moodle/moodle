@@ -25,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/mod/forum/lib.php');
-require_once(__DIR__ . '/helper.php');
+require_once(__DIR__ . '/generator_trait.php');
+require_once("{$CFG->dirroot}/mod/forum/lib.php");
 
 class mod_forum_subscriptions_testcase extends advanced_testcase {
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
-    use helper;
+    use mod_forum_tests_generator_trait;
 
     /**
      * Test setUp.
@@ -1377,5 +1377,49 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $this->setUser($user);
 
         $this->assertEquals($expect, \mod_forum\subscriptions::is_subscribable($forum));
+    }
+
+    public function test_get_user_default_subscription() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+        $options['course'] = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+        $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+
+        // Create a user enrolled in the course as a student.
+        list($author, $student) = $this->helper_create_users($course, 2, 'student');
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // A guest user.
+        $this->setUser(0);
+        $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+
+        // A user enrolled in the course.
+        $this->setUser($author->id);
+        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+
+        // Subscribption disabled.
+        $this->setUser($student->id);
+        \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_DISALLOWSUBSCRIBE);
+        $forum = $DB->get_record('forum', array('id' => $forum->id));
+        $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+
+        \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_FORCESUBSCRIBE);
+        $forum = $DB->get_record('forum', array('id' => $forum->id));
+        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+
+        // Admin user.
+        $this->setAdminUser();
+        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
     }
 }

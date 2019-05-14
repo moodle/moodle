@@ -653,4 +653,205 @@ class core_session_manager_testcase extends advanced_testcase {
         $this->assertEquals($real, $user1);
         $this->assertSame($_SESSION['REALUSER'], $real);
     }
+
+    /**
+     * Session lock info on pages.
+     *
+     * @return array
+     */
+    public function pages_sessionlocks() {
+        return [
+            [
+                'url'      => '/good.php',
+                'start'    => 1500000001.000,
+                'gained'   => 1500000002.000,
+                'released' => 1500000003.000,
+                'wait'     => 1.0,
+                'held'     => 1.0
+            ],
+            [
+                'url'      => '/bad.php?wait=5',
+                'start'    => 1500000003.000,
+                'gained'   => 1500000005.000,
+                'released' => 1500000007.000,
+                'held'     => 2.0,
+                'wait'     => 2.0
+            ]
+        ];
+    }
+
+    /**
+     * Test to get recent session locks.
+     */
+    public function test_get_recent_session_locks() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->debugsessionlock = 5;
+        $pages = $this->pages_sessionlocks();
+        // Recent session locks must be empty at first.
+        $recentsessionlocks = \core\session\manager::get_recent_session_locks();
+        $this->assertEmpty($recentsessionlocks);
+
+        // Add page to the recentsessionlocks array.
+        \core\session\manager::update_recent_session_locks($pages[0]);
+        $recentsessionlocks = \core\session\manager::get_recent_session_locks();
+        // Make sure we are getting the first page we added.
+        $this->assertEquals($pages[0], $recentsessionlocks[0]);
+        // There should be 1 page in the array.
+        $this->assertCount(1, $recentsessionlocks);
+
+        // Add second page to the recentsessionlocks array.
+        \core\session\manager::update_recent_session_locks($pages[1]);
+        $recentsessionlocks = \core\session\manager::get_recent_session_locks();
+        // Make sure we are getting the second page we added.
+        $this->assertEquals($pages[1], $recentsessionlocks[1]);
+        // There should be 2 pages in the array.
+        $this->assertCount(2, $recentsessionlocks);
+    }
+
+    /**
+     * Test to update recent session locks.
+     */
+    public function test_update_recent_session_locks() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->debugsessionlock = 5;
+        $pages = $this->pages_sessionlocks();
+
+        \core\session\manager::update_recent_session_locks($pages[0]);
+        \core\session\manager::update_recent_session_locks($pages[1]);
+        $recentsessionlocks = \core\session\manager::get_recent_session_locks();
+        // There should be 2 pages in the array.
+        $this->assertCount(2, $recentsessionlocks);
+        // Make sure the last page is added at the end of the array.
+        $this->assertEquals($pages[1], end($recentsessionlocks));
+
+    }
+
+    /**
+     * Test to get session lock info.
+     */
+    public function test_get_session_lock_info() {
+        global $PERF;
+
+        $this->resetAfterTest();
+
+        $pages = $this->pages_sessionlocks();
+        $PERF->sessionlock = $pages[0];
+        $sessionlock = \core\session\manager::get_session_lock_info();
+        $this->assertEquals($pages[0], $sessionlock);
+    }
+
+    /**
+     * Session lock info on some pages to serve as history.
+     *
+     * @return array
+     */
+    public function sessionlock_history() {
+        return [
+            [
+                'url'      => '/good.php',
+                'start'    => 1500000001.000,
+                'gained'   => 1500000001.100,
+                'released' => 1500000001.500,
+                'wait'     => 0.1
+            ],
+            [
+                // This bad request doesn't release the session for 10 seconds.
+                'url'      => '/bad.php',
+                'start'    => 1500000012.000,
+                'gained'   => 1500000012.200,
+                'released' => 1500000020.200,
+                'wait'     => 0.2
+            ],
+            [
+                // All subsequent requests are blocked and need to wait.
+                'url'      => '/good.php?id=1',
+                'start'    => 1500000012.900,
+                'gained'   => 1500000020.200,
+                'released' => 1500000022.000,
+                'wait'     => 7.29
+            ],
+            [
+                'url'      => '/good.php?id=2',
+                'start'    => 1500000014.000,
+                'gained'   => 1500000022.000,
+                'released' => 1500000025.000,
+                'wait'     => 8.0
+            ],
+            [
+                'url'      => '/good.php?id=3',
+                'start'    => 1500000015.000,
+                'gained'   => 1500000025.000,
+                'released' => 1500000026.000,
+                'wait'     => 10.0
+            ],
+            [
+                'url'      => '/good.php?id=4',
+                'start'    => 1500000016.000,
+                'gained'   => 1500000026.000,
+                'released' => 1500000027.000,
+                'wait'     => 10.0
+            ]
+        ];
+    }
+
+    /**
+     * Data provider for test_get_locked_page_at function.
+     *
+     * @return array
+     */
+    public function sessionlocks_info_provider() : array {
+        return [
+            [
+                'url'      => null,
+                'time'    => 1500000001.000
+            ],
+            [
+                'url'      => '/bad.php',
+                'time'    => 1500000014.000
+            ],
+            [
+                'url'      => '/good.php?id=2',
+                'time'    => 1500000022.500
+            ],
+        ];
+    }
+
+    /**
+     * Test to get locked page at a speficic timestamp.
+     *
+     * @dataProvider sessionlocks_info_provider
+     * @param array $url Session lock page url.
+     * @param array $time Session lock time.
+     */
+    public function test_get_locked_page_at($url, $time) {
+        global $CFG, $SESSION;
+
+        $this->resetAfterTest();
+        $CFG->debugsessionlock = 5;
+        $SESSION->recentsessionlocks = $this->sessionlock_history();
+
+        $page = \core\session\manager::get_locked_page_at($time);
+        $this->assertEquals($url, $page['url']);
+    }
+
+    /**
+     * Test cleanup recent session locks.
+     */
+    public function test_cleanup_recent_session_locks() {
+        global $CFG, $SESSION;
+
+        $this->resetAfterTest();
+        $CFG->debugsessionlock = 5;
+
+        $SESSION->recentsessionlocks = $this->sessionlock_history();
+        $this->assertCount(6, $SESSION->recentsessionlocks);
+        \core\session\manager::cleanup_recent_session_locks();
+        // Make sure the session history has been cleaned up and only has the latest page.
+        $this->assertCount(1, $SESSION->recentsessionlocks);
+        $this->assertEquals('/good.php?id=4', $SESSION->recentsessionlocks[0]['url']);
+    }
 }

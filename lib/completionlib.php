@@ -319,9 +319,10 @@ class completion_info {
      * @return string HTML code for help icon, or blank if not needed
      */
     public function display_help_icon() {
-        global $PAGE, $OUTPUT;
+        global $PAGE, $OUTPUT, $USER;
         $result = '';
-        if ($this->is_enabled() && !$PAGE->user_is_editing() && isloggedin() && !isguestuser()) {
+        if ($this->is_enabled() && !$PAGE->user_is_editing() && $this->is_tracked_user($USER->id) && isloggedin() &&
+                !isguestuser()) {
             $result .= html_writer::tag('div', get_string('yourprogress','completion') .
                     $OUTPUT->help_icon('completionicons', 'completion'), array('id' => 'completionprogressid',
                     'class' => 'completionprogress'));
@@ -1367,5 +1368,28 @@ class completion_info {
         global $CFG;
         throw new moodle_exception('err_system','completion',
             $CFG->wwwroot.'/course/view.php?id='.$this->course->id,null,$error);
+    }
+}
+
+/**
+ * Aggregate criteria status's as per configured aggregation method.
+ *
+ * @param int $method COMPLETION_AGGREGATION_* constant.
+ * @param bool $data Criteria completion status.
+ * @param bool|null $state Aggregation state.
+ */
+function completion_cron_aggregate($method, $data, &$state) {
+    if ($method == COMPLETION_AGGREGATION_ALL) {
+        if ($data && $state !== false) {
+            $state = true;
+        } else {
+            $state = false;
+        }
+    } else if ($method == COMPLETION_AGGREGATION_ANY) {
+        if ($data) {
+            $state = true;
+        } else if (!$data && $state === null) {
+            $state = false;
+        }
     }
 }

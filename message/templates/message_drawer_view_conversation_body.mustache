@@ -43,11 +43,15 @@
     style="overflow-y: auto; overflow-x: hidden"
 >
     <div class="position-relative h-100" data-region="content-container" style="overflow-y: auto; overflow-x: hidden">
-        <div class="p-3 text-center hidden" data-region="contact-request-sent-message-container">
-            <p class="m-0">{{#str}} contactrequestsent, core_message {{/str}}</p>
-            <p class="font-italic font-weight-light" data-region="text"></p>
-        </div>
-        <div class="content-message-container hidden h-100 px-2 pb-2 pt-0" data-region="content-message-container" role="log" style="overflow-y: auto; overflow-x: hidden">
+        <div class="content-message-container hidden h-100 px-2 pt-0" data-region="content-message-container" role="log" style="overflow-y: auto; overflow-x: hidden">
+            <div class="py-3 bg-light sticky-top border-bottom text-center hidden" data-region="contact-request-sent-message-container">
+                <p class="m-0">{{#str}} contactrequestsent, core_message {{/str}}</p>
+                <p class="font-italic font-weight-light" data-region="text"></p>
+            </div>
+            <div class="p-3 bg-light text-center hidden" data-region="self-conversation-message-container">
+                <p class="m-0">{{#str}} selfconversation, core_message {{/str}}</p>
+                <p class="font-italic font-weight-light" data-region="text">{{#str}} selfconversationdefaultmessage, core_message {{/str}}</p>
+           </div>
             <div class="hidden text-center p-3" data-region="more-messages-loading-icon-container">{{> core/loading }}</div>
         </div>
         <div class="p-4 w-100 h-100 hidden position-absolute" data-region="confirm-dialogue-container" style="top: 0; background: rgba(0,0,0,0.3);">

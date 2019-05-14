@@ -1,0 +1,18 @@
+{{< core_form/element-template-inline }}
+    {{$element}}
+        {{^element.frozen}}
+        <input type="submit"
+                class="btn
+                    {{^element.customclassoverride}}
+                        {{^element.secondary}}btn-primary{{/element.secondary}}
+                        {{#element.secondary}}btn-secondary{{/element.secondary}}
+                    {{/element.customclassoverride}}
+                    {{#error}} btn-danger {{/error}}
+                    {{#element.customclassoverride}}{{element.customclassoverride}}{{/element.customclassoverride}}"
+                name="{{element.name}}"
+                id="{{element.id}}"
+                value="{{element.value}}"
+                {{{element.attributes}}} >
+        {{/element.frozen}}
+    {{/element}}
+{{/ core_form/element-template-inline }}

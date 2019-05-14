@@ -80,12 +80,12 @@ class data_registry_page implements renderable, templatable {
             new \moodle_url('/admin/tool/dataprivacy/defaults.php'),
             get_string('setdefaults', 'tool_dataprivacy'),
             null,
-            ['class' => 'btn btn-default']
+            ['class' => 'btn btn-primary']
         );
         $data->defaultsbutton = $defaultsbutton->export_for_template($output);
 
         $actionmenu = new \action_menu();
-        $actionmenu->set_menu_trigger(get_string('edit'), 'btn btn-default');
+        $actionmenu->set_menu_trigger(get_string('edit'), 'btn btn-primary');
         $actionmenu->set_owner_selector('dataregistry-actions');
         $actionmenu->set_alignment(\action_menu::TL, \action_menu::BL);
 
@@ -233,10 +233,6 @@ class data_registry_page implements renderable, templatable {
         foreach ($courses as $course) {
 
             $coursecontext = \context_course::instance($course->id);
-
-            if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                continue;
-            }
 
             $coursenode = [
                 'text' => shorten_text(format_string($course->shortname, true, ['context' => $coursecontext])),

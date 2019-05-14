@@ -145,24 +145,24 @@ class discussion_list {
 
         $forum = $this->forum;
 
-        $pagesize = $this->get_page_size($pagesize);
-        $pageno = $this->get_page_number($pageno);
-
-        $groupids = $this->get_groups_from_groupid($user, $groupid);
         $forumexporter = $this->exporterfactory->get_forum_exporter(
             $user,
             $this->forum,
             $groupid
         );
 
+        $pagesize = $this->get_page_size($pagesize);
+        $pageno = $this->get_page_number($pageno);
+
         // Count all forum discussion posts.
-        $alldiscussionscount = $this->get_count_all_discussions($user, $groupids);
+        $alldiscussionscount = get_count_all_discussions($forum, $user, $groupid);
 
         // Get all forum discussions posts.
-        $discussions = $this->get_discussions($user, $groupids, $sortorder, $pageno, $pagesize);
+        $discussions = get_discussions($forum, $user, $groupid, $sortorder, $pageno, $pagesize);
 
         $forumview = [
             'forum' => (array) $forumexporter->export($this->renderer),
+            'newdiscussionhtml' => $this->get_discussion_form($user, $cm, $groupid),
             'groupchangemenu' => groups_print_activity_menu(
                 $cm,
                 $this->urlfactory->get_forum_view_url_from_forum($forum),
@@ -170,6 +170,12 @@ class discussion_list {
             ),
             'hasmore' => ($alldiscussionscount > $pagesize),
             'notifications' => $this->get_notifications($user, $groupid),
+            'settings' => [
+                'excludetext' => true,
+                'togglemoreicon' => true
+            ],
+            'totaldiscussioncount' => $alldiscussionscount,
+            'visiblediscussioncount' => count($discussions)
         ];
 
         if (!$discussions) {
@@ -181,10 +187,12 @@ class discussion_list {
             $exportedposts = ($this->postprocessfortemplate) ($discussions, $user, $forum);
         }
 
+        $baseurl = new \moodle_url($PAGE->url, array('o' => $sortorder));
+
         $forumview = array_merge(
             $forumview,
             [
-                'pagination' => $this->renderer->render(new \paging_bar($alldiscussionscount, $pageno, $pagesize, $PAGE->url, 'p')),
+                'pagination' => $this->renderer->render(new \paging_bar($alldiscussionscount, $pageno, $pagesize, $baseurl, 'p')),
             ],
             $exportedposts
         );
@@ -193,97 +201,62 @@ class discussion_list {
     }
 
     /**
-     * Get the list of groups to show based on the current user and requested groupid.
+     * Get the mod_forum_post_form. This is the default boiler plate from mod_forum/post_form.php with the inpage flag caveat
      *
-     * @param   stdClass    $user The user viewing
-     * @param   int         $groupid The groupid requested
-     * @return  array       The list of groups to show
+     * @param stdClass $user The user the form is being generated for
+     * @param \cm_info $cm
+     * @param int $groupid The groupid if any
+     *
+     * @return string The rendered html
      */
-    private function get_groups_from_groupid(stdClass $user, ?int $groupid) : ?array {
+    private function get_discussion_form(stdClass $user, \cm_info $cm, ?int $groupid) {
         $forum = $this->forum;
-        $effectivegroupmode = $forum->get_effective_group_mode();
-        if (empty($effectivegroupmode)) {
-            // This forum is not in a group mode. Show all posts always.
-            return null;
-        }
+        $forumrecord = $this->legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
+        $modcontext = \context_module::instance($cm->id);
+        $coursecontext = \context_course::instance($forum->get_course_id());
+        $post = (object) [
+            'course' => $forum->get_course_id(),
+            'forum' => $forum->get_id(),
+            'discussion' => 0,           // Ie discussion # not defined yet.
+            'parent' => 0,
+            'subject' => '',
+            'userid' => $user->id,
+            'message' => '',
+            'messageformat' => editors_get_preferred_format(),
+            'messagetrust' => 0,
+            'groupid' => $groupid,
+        ];
+        $thresholdwarning = forum_check_throttling($forumrecord, $cm);
 
-        if (null == $groupid) {
-            // No group was specified.
-            $showallgroups = (VISIBLEGROUPS == $effectivegroupmode);
-            $showallgroups = $showallgroups || $this->capabilitymanager->can_access_all_groups($user);
-            if ($showallgroups) {
-                // Return null to show all groups.
-                return null;
-            } else {
-                // No group was specified. Only show the users current groups.
-                return array_keys(
-                    groups_get_all_groups(
-                        $forum->get_course_id(),
-                        $user->id,
-                        $forum->get_course_module_record()->groupingid
-                    )
-                );
-            }
-        } else {
-            // A group was specified. Just show that group.
-            return [$groupid];
-        }
-    }
+        $formparams = array(
+            'course' => $forum->get_course_record(),
+            'cm' => $cm,
+            'coursecontext' => $coursecontext,
+            'modcontext' => $modcontext,
+            'forum' => $forumrecord,
+            'post' => $post,
+            'subscribe' => \mod_forum\subscriptions::is_subscribed($user->id, $forumrecord,
+                null, $cm),
+            'thresholdwarning' => $thresholdwarning,
+            'inpagereply' => true,
+            'edit' => 0
+        );
+        $posturl = new \moodle_url('/mod/forum/post.php');
+        $mformpost = new \mod_forum_post_form($posturl, $formparams, 'post', '', array('id' => 'mformforum'));
+        $discussionsubscribe = \mod_forum\subscriptions::get_user_default_subscription($forumrecord, $coursecontext, $cm, null);
 
-    /**
-     * Fetch the data used to display the discussions on the current page.
-     *
-     * @param   stdClass    $user The user to render for
-     * @param   int[]|null  $groupids The group ids for this list of discussions
-     * @param   int|null    $sortorder The sort order to use when selecting the discussions in the list
-     * @param   int|null    $pageno The zero-indexed page number to use
-     * @param   int|null    $pagesize The number of discussions to show on the page
-     * @return  stdClass    The data to use for display
-     */
-    private function get_discussions(stdClass $user, ?array $groupids, ?int $sortorder, ?int $pageno, ?int $pagesize) {
-        $forum = $this->forum;
-        $discussionvault = $this->vaultfactory->get_discussions_in_forum_vault();
-        if (null === $groupids) {
-            return $discussions = $discussionvault->get_from_forum_id(
-                $forum->get_id(),
-                $this->capabilitymanager->can_view_hidden_posts($user),
-                $user->id,
-                $sortorder,
-                $this->get_page_size($pagesize),
-                $this->get_page_number($pageno) * $this->get_page_size($pagesize));
-        } else {
-            return $discussions = $discussionvault->get_from_forum_id_and_group_id(
-                $forum->get_id(),
-                $groupids,
-                $this->capabilitymanager->can_view_hidden_posts($user),
-                $user->id,
-                $sortorder,
-                $this->get_page_size($pagesize),
-                $this->get_page_number($pageno) * $this->get_page_size($pagesize));
-        }
-    }
+        $params = array('reply' => 0, 'forum' => $forumrecord->id, 'edit' => 0) +
+            (isset($post->groupid) ? array('groupid' => $post->groupid) : array()) +
+            array(
+                'userid' => $post->userid,
+                'parent' => $post->parent,
+                'discussion' => $post->discussion,
+                'course' => $forum->get_course_id(),
+                'discussionsubscribe' => $discussionsubscribe
+            );
+        $mformpost->set_data($params);
 
-    /**
-     * Get a count of all discussions in a forum.
-     *
-     * @param   stdClass    $user The user to render for
-     * @param   array       $groupids The array of groups to render
-     * @return  int         The number of discussions in a forum
-     */
-    public function get_count_all_discussions(stdClass $user, ?array $groupids) {
-        $discussionvault = $this->vaultfactory->get_discussions_in_forum_vault();
-        if (null === $groupids) {
-            return $discussionvault->get_total_discussion_count_from_forum_id(
-                $this->forum->get_id(),
-                $this->capabilitymanager->can_view_hidden_posts($user),
-                $user->id);
-        } else {
-            return $discussionvault->get_total_discussion_count_from_forum_id_and_group_id(
-                $this->forum->get_id(),
-                $groupids,
-                $this->capabilitymanager->can_view_hidden_posts($user),
-                $user->id);
-        }
+        return $mformpost->render();
     }
 
     /**
@@ -326,6 +299,23 @@ class discussion_list {
         $forum = $this->forum;
         $renderer = $this->renderer;
         $capabilitymanager = $this->capabilitymanager;
+
+        if ($forum->is_cutoff_date_reached()) {
+            $notifications[] = (new notification(
+                    get_string('cutoffdatereached', 'forum'),
+                    notification::NOTIFY_INFO
+            ))->set_show_closebutton();
+        } else if ($forum->is_due_date_reached()) {
+            $notifications[] = (new notification(
+                    get_string('thisforumisdue', 'forum', userdate($forum->get_due_date())),
+                    notification::NOTIFY_INFO
+            ))->set_show_closebutton();
+        } else if ($forum->has_due_date()) {
+            $notifications[] = (new notification(
+                    get_string('thisforumhasduedate', 'forum', userdate($forum->get_due_date())),
+                    notification::NOTIFY_INFO
+            ))->set_show_closebutton();
+        }
 
         if ($forum->has_blocking_enabled()) {
             $notifications[] = (new notification(

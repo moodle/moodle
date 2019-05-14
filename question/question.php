@@ -261,7 +261,7 @@ if ($mform->is_cancelled()) {
     // Ensure we redirect back to the category the question is being saved into.
     $returnurl->param('category', $fromform->category);
 
-    // We are acutally saving the question.
+    // We are actually saving the question.
     if (!empty($question->id)) {
         question_require_capability_on($question, 'edit');
     } else {

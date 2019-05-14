@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/form_competency_list
+
+    List of competencies for a form element.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * competencies array
+      * id int
+      * shortname string
+      * idnumber string
+
+    Example context (json):
+    {
+        "competencies":
+        [
+            {
+                "id": 1,
+                "shortname": "Competency",
+                "idnumber": "C1"
+            }
+        ]
+    }
+
+}}
+<div data-region="competencies">
+<ul>
+    {{#competencies}}
+        <li>
+            <div class="float-right">
+                <a href="#" data-action="deselect-competency" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+            </div>
+            <p>
+                <a href="#" data-action="competency-dialogue" data-id="{{id}}">
+                    {{{shortname}}}{{#idnumber}} {{idnumber}}{{/idnumber}}
+                </a>
+            </p>
+        </li>
+    {{/competencies}}
+</ul>
+{{^competencies}}
+    {{#str}}nocompetenciesinlist, tool_lp{{/str}}
+{{/competencies}}
+</div>
+{{#js}}
+require(['tool_lp/competencydialogue'], function(Compdialogue) {
+    Compdialogue.init();
+});
+{{/js}}

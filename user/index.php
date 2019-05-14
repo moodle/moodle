@@ -210,7 +210,7 @@ $enrolbuttonsout = '';
 foreach ($enrolbuttons as $enrolbutton) {
     $enrolbuttonsout .= $enrolrenderer->render($enrolbutton);
 }
-echo html_writer::div($enrolbuttonsout, 'pull-right');
+echo html_writer::div($enrolbuttonsout, 'float-right');
 
 // Should use this variable so that we don't break stuff every time a variable is added or changed.
 $baseurl = new moodle_url('/user/index.php', array(
@@ -359,7 +359,7 @@ if ($bulkoperations) {
 echo '</div>';  // Userlist.
 
 $enrolrenderer = $PAGE->get_renderer('core_enrol');
-echo '<div class="pull-right">';
+echo '<div class="float-right">';
 foreach ($enrolbuttons as $enrolbutton) {
     echo $enrolrenderer->render($enrolbutton);
 }
@@ -369,7 +369,7 @@ if ($newcourse == 1) {
     $str = get_string('proceedtocourse', 'enrol');
     // Floated left so it goes under the enrol users button on mobile.
     // The margin is to make it line up with the enrol users button when they are both on the same line.
-    $classes = 'm-y-1 pull-xs-left';
+    $classes = 'my-1 pull-xs-left';
     $url = course_get_url($course);
     echo $OUTPUT->single_button($url, $str, 'GET', array('class' => $classes));
 }

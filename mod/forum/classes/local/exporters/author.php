@@ -27,6 +27,7 @@ namespace mod_forum\local\exporters;
 defined('MOODLE_INTERNAL') || die();
 
 use mod_forum\local\entities\author as author_entity;
+use mod_forum\local\exporters\group as group_exporter;
 use core\external\exporter;
 use renderer_base;
 
@@ -41,6 +42,8 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
 class author extends exporter {
     /** @var author_entity $author Author entity */
     private $author;
+    /** @var int|null $authorcontextid The context id for the author entity */
+    private $authorcontextid;
     /** @var array $authorgroups List of groups that the author belongs to */
     private $authorgroups;
     /** @var bool $canview Should the author be anonymised? */
@@ -50,12 +53,20 @@ class author extends exporter {
      * Constructor.
      *
      * @param author_entity $author The author entity to export
+     * @param int|null $authorcontextid The context id for the author entity to export (null if the user doesn't have one)
      * @param stdClass[] $authorgroups The list of groups that the author belongs to
      * @param bool $canview Can the requesting user view this author or should it be anonymised?
      * @param array $related The related data for the export.
      */
-    public function __construct(author_entity $author, array $authorgroups = [], bool $canview = true, array $related = []) {
+    public function __construct(
+        author_entity $author,
+        ?int $authorcontextid,
+        array $authorgroups = [],
+        bool $canview = true,
+        array $related = []
+    ) {
         $this->author = $author;
+        $this->authorcontextid = $authorcontextid;
         $this->authorgroups = $authorgroups;
         $this->canview = $canview;
         return parent::__construct([], $related);
@@ -85,6 +96,7 @@ class author extends exporter {
                 'optional' => true,
                 'type' => [
                     'id' => ['type' => PARAM_INT],
+                    'name' => ['type' => PARAM_TEXT],
                     'urls' => [
                         'type' => [
                             'image' => [
@@ -100,12 +112,14 @@ class author extends exporter {
             'urls' => [
                 'type' => [
                     'profile' => [
+                        'description' => 'The URL for the use profile page',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'profileimage' => [
+                        'description' => 'The URL for the use profile image',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
@@ -124,6 +138,7 @@ class author extends exporter {
      */
     protected function get_other_values(renderer_base $output) {
         $author = $this->author;
+        $authorcontextid = $this->authorcontextid;
         $urlfactory = $this->related['urlfactory'];
 
         if ($this->canview) {
@@ -131,6 +146,7 @@ class author extends exporter {
                 $imageurl = get_group_picture_url($group, $group->courseid);
                 return [
                     'id' => $group->id,
+                    'name' => $group->name,
                     'urls' => [
                         'image' => $imageurl ? $imageurl->out(false) : null
                     ]
@@ -143,7 +159,7 @@ class author extends exporter {
                 'groups' => $groups,
                 'urls' => [
                     'profile' => ($urlfactory->get_author_profile_url($author))->out(false),
-                    'profileimage' => ($urlfactory->get_author_profile_image_url($author))->out(false)
+                    'profileimage' => ($urlfactory->get_author_profile_image_url($author, $authorcontextid))->out(false)
                 ]
             ];
         } else {

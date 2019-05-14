@@ -38,12 +38,19 @@ require_once($CFG->dirroot . '/webservice/lib.php');
 
 $token = required_param('token', PARAM_ALPHANUM);
 $video = required_param('video', PARAM_ALPHANUM);   // Video ids are numeric, but it's more solid to expect things like 00001.
-$width = required_param('width', PARAM_INT);
-$height = required_param('height', PARAM_INT);
+$width = optional_param('width', 0, PARAM_INT);
+$height = optional_param('height', 0, PARAM_INT);
 
 // Authenticate the user.
 $webservicelib = new webservice();
 $webservicelib->authenticate_user($token);
+
+if (empty($width) && empty($height)) {
+    // Use the full page. The video will keep the ratio.
+    $display = 'style="position:absolute; top:0; left:0; width:100%; height:100%;"';
+} else {
+    $display = "width=\"$width\" height=\"$height\"";
+}
 
 $output = <<<OET
 <html>
@@ -52,7 +59,7 @@ $output = <<<OET
     </head>
     <body style="margin:0; padding:0">
         <iframe src="https://player.vimeo.com/video/$video"
-            width="$width" height="$height" frameborder="0"
+            $display frameborder="0"
             webkitallowfullscreen mozallowfullscreen allowfullscreen>
         </iframe>
     </body>

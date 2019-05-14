@@ -48,7 +48,6 @@ Feature: Test creating different types of feedback questions for non-anonymous f
       | Question                       | this is a multiple choice 2        |
       | Label                          | multichoice2                       |
       | Multiple choice type           | Multiple choice - multiple answers |
-      | Hide the "Not selected" option | Yes                                |
       | Multiple choice values         | option d\noption e\noption f       |
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | this is a multiple choice 3        |

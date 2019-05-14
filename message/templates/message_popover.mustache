@@ -35,10 +35,12 @@
     }
 
 }}
-<div class="pull-right popover-region collapsed">
-    <a id="message-drawer-toggle-{{uniqid}}" class="nav-link d-inline-block popover-region-toggle position-relative" href="#">
+<div class="float-right popover-region collapsed">
+    <a id="message-drawer-toggle-{{uniqid}}" class="nav-link d-inline-block popover-region-toggle position-relative" href="#"
+            role="button">
         {{#pix}} t/message, core, {{#str}} togglemessagemenu, message {{/str}} {{/pix}}
-        <div class="count-container {{^unreadcount}}hidden{{/unreadcount}}" data-region="count-container">{{unreadcount}}</div>
+        <div class="count-container {{^unreadcount}}hidden{{/unreadcount}}" data-region="count-container"
+        aria-label="{{#str}} unreadconversations, core_message, {{unreadcount}} {{/str}}">{{unreadcount}}</div>
     </a>
 </div>
 

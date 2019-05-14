@@ -25,14 +25,23 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$id = required_param('competencyframeworkid', PARAM_INT);
-$pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 $search = optional_param('search', '', PARAM_RAW);
+$competencyid = optional_param('competencyid', 0, PARAM_INT);
+$competency = null;
+if ($competencyid) {
+    $competency = \core_competency\api::read_competency($competencyid);
+    $id = $competency->get('competencyframeworkid');
+    $pagecontext = $competency->get_context();
+    $pagecontextid = $pagecontext->id;  // Reference to the context we came from.
+} else {
+    $id = required_param('competencyframeworkid', PARAM_INT);
+    $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
+    $pagecontext = context::instance_by_id($pagecontextid);
+}
 
 require_login();
 \core_competency\api::require_enabled();
 
-$pagecontext = context::instance_by_id($pagecontextid);
 $framework = \core_competency\api::read_framework($id);
 $context = $framework->get_context();
 
@@ -58,7 +67,7 @@ $PAGE->set_heading($title);
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 
-$page = new \tool_lp\output\manage_competencies_page($framework, $search, $pagecontext);
+$page = new \tool_lp\output\manage_competencies_page($framework, $search, $pagecontext, $competency);
 echo $output->render($page);
 
 // Log the framework viewed event after rendering the page.

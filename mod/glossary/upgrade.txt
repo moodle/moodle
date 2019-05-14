@@ -1,6 +1,9 @@
 This files describes API changes in /mod/glossary/*,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+* External functions get_entries_by_* and get_entry now return an additional field "tags" containing the entry tags.
+
 === 3.4 ===
   * External functions returning entries now return an additional field "ratinginfo" containing the entry rating information.
 

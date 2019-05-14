@@ -285,7 +285,7 @@
 
         $downloadlist = html_writer::tag('ul', implode('', $downloadoptions), array('class' => 'list-inline inline'));
         $downloadlist .= html_writer::tag('div', '', array('class' => 'clearfloat'));
-        echo html_writer::tag('div',$downloadlist, array('class' => 'downloadreport m-t-1'));
+        echo html_writer::tag('div',$downloadlist, array('class' => 'downloadreport mt-1'));
     }
     echo $OUTPUT->footer();
 

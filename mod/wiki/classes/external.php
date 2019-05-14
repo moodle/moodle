@@ -492,7 +492,8 @@ class mod_wiki_external extends external_api {
                         'pageviews' => $page->pageviews,
                         'readonly' => $page->readonly,
                         'caneditpage' => $caneditpages,
-                        'firstpage' => $page->id == $firstpage->id
+                        'firstpage' => $page->id == $firstpage->id,
+                        'tags' => \core_tag\external\util::get_item_tags('mod_wiki', 'wiki_pages', $page->id),
                     );
 
                 // Refresh page cached content if needed.
@@ -555,6 +556,9 @@ class mod_wiki_external extends external_api {
                             'contentformat' => new external_format_value('cachedcontent', VALUE_OPTIONAL),
                             'contentsize' => new external_value(PARAM_INT, 'Size of page contents in bytes (doesn\'t include'.
                                                                             ' size of attached files).', VALUE_OPTIONAL),
+                            'tags' => new external_multiple_structure(
+                                \core_tag\external\tag_item_exporter::get_read_structure(), 'Tags', VALUE_OPTIONAL
+                            ),
                         ), 'Pages'
                     )
                 ),
@@ -623,6 +627,7 @@ class mod_wiki_external extends external_api {
         $returnedpage['groupid'] = $subwiki->groupid;
         $returnedpage['userid'] = $subwiki->userid;
         $returnedpage['title'] = $page->title;
+        $returnedpage['tags'] = \core_tag\external\util::get_item_tags('mod_wiki', 'wiki_pages', $page->id);
 
         // Refresh page cached content if needed.
         if ($page->timerendered + WIKI_REFRESH_CACHE_TIME < time()) {
@@ -668,6 +673,9 @@ class mod_wiki_external extends external_api {
                         'contentformat' => new external_format_value('cachedcontent', VALUE_OPTIONAL),
                         'caneditpage' => new external_value(PARAM_BOOL, 'True if user can edit the page.'),
                         'version' => new external_value(PARAM_INT, 'Latest version of the page.', VALUE_OPTIONAL),
+                        'tags' => new external_multiple_structure(
+                            \core_tag\external\tag_item_exporter::get_read_structure(), 'Tags', VALUE_OPTIONAL
+                        ),
                     ), 'Page'
                 ),
                 'warnings' => new external_warnings()

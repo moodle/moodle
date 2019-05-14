@@ -61,6 +61,8 @@ define([], function() {
         CONTENT_MESSAGES_FOOTER_REQUIRE_UNBLOCK_CONTAINER: '[data-region="content-messages-footer-require-unblock-container"]',
         CONTENT_MESSAGES_FOOTER_UNABLE_TO_MESSAGE_CONTAINER: '[data-region="content-messages-footer-unable-to-message"]',
         DAY_MESSAGES_CONTAINER: '[data-region="day-messages-container"]',
+        DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE: '[data-region="delete-messages-for-all-users-toggle"]',
+        DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER: '[data-region="delete-messages-for-all-users-toggle-container"]',
         FAVOURITE_ICON_CONTAINER: '[data-region="favourite-icon-container"]',
         FOOTER_CONTAINER: '[data-region="content-messages-footer-container"]',
         HEADER: '[data-region="header-content"]',
@@ -78,6 +80,7 @@ define([], function() {
         MORE_MESSAGES_LOADING_ICON_CONTAINER: '[data-region="more-messages-loading-icon-container"]',
         MUTED_ICON_CONTAINER: '[data-region="muted-icon-container"]',
         PLACEHOLDER_CONTAINER: '[data-region="placeholder-container"]',
+        SELF_CONVERSATION_MESSAGE_CONTAINER: '[data-region="self-conversation-message-container"]',
         SEND_MESSAGE_BUTTON: '[data-action="send-message"]',
         SEND_MESSAGE_ICON_CONTAINER: '[data-region="send-icon-container"]',
         TEXT: '[data-region="text"]',
@@ -88,14 +91,17 @@ define([], function() {
         HEADER_PRIVATE: 'core_message/message_drawer_view_conversation_header_content_type_private',
         HEADER_PRIVATE_NO_CONTROLS: 'core_message/message_drawer_view_conversation_header_content_type_private_no_controls',
         HEADER_PUBLIC: 'core_message/message_drawer_view_conversation_header_content_type_public',
+        HEADER_SELF: 'core_message/message_drawer_view_conversation_header_content_type_self',
         DAY: 'core_message/message_drawer_view_conversation_body_day',
         MESSAGE: 'core_message/message_drawer_view_conversation_body_message',
         MESSAGES: 'core_message/message_drawer_view_conversation_body_messages'
     };
 
+    // Conversation types. They must have the same values defined in \core_message\api.
     var CONVERSATION_TYPES = {
         PRIVATE: 1,
-        PUBLIC: 2
+        PUBLIC: 2,
+        SELF: 3
     };
 
     return {

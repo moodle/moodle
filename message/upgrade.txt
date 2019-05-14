@@ -9,6 +9,16 @@ information provided here is intended especially for developers.
   functionality and remove all the legacy code (see MDL-63915).
   Note - It's still possible to view another user's messages if you have the right capabilities and are able to
   'log-in as' them.
+* A new parameter 'mergeself' has been added to the methods \core_message\api::get_conversations() and
+  core_message_external::get_conversations(), to decide whether the self-conversations should be included or not when the
+  private ones are requested, to display them together.
+* A new 'customdata' field for both messages and notifications has been added. This new field can store any custom data
+  serialised using json_encode().
+  This new field can be used for storing any data not fitting in the current message structure. For example, it will be used
+  to store additional information for the "Mobile notifications" processor.
+  Existing external functions: core_message_get_messages and message_popup_get_popup_notifications has been udated to return the
+  new field.
+* External function core_message_get_messages now returns the component and eventtype.
 
 === 3.6 ===
 

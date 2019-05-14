@@ -769,6 +769,8 @@ class competency extends persistent {
      * @return bool True if we can delete the competencies.
      */
     public static function can_all_be_deleted($ids) {
+        global $CFG;
+
         if (empty($ids)) {
             return true;
         }
@@ -792,6 +794,13 @@ class competency extends persistent {
         if (user_competency_plan::has_records_for_competencies($ids)) {
             return false;
         }
+
+        require_once($CFG->libdir . '/badgeslib.php');
+        // Check if competency is used in a badge.
+        if (badge_award_criteria_competency_has_records_for_competencies($ids)) {
+            return false;
+        }
+
         return true;
     }
 

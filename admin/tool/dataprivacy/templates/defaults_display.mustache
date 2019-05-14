@@ -41,28 +41,28 @@
         "contextlevel": 70
     }
 }}
-<div class="row-fluid rtl-compatible m-t-1 m-b-1">
-    <div class="col-md-9 span9">
-        <div class="row-fluid rtl-compatible m-t-1 m-b-1">
-            <div class="col-md-3 span3">
+<div class="row-fluid rtl-compatible mt-1 mb-1">
+    <div class="col-md-9">
+        <div class="row-fluid rtl-compatible mt-1 mb-1">
+            <div class="col-md-3">
                 <strong>{{#str}}category, tool_dataprivacy{{/str}}</strong>
             </div>
-            <div class="col-md-9 span9">
+            <div class="col-md-9">
                 {{category}}
             </div>
         </div>
-        <div class="row-fluid rtl-compatible m-t-1 m-b-1">
-            <div class="col-md-3 span3">
+        <div class="row-fluid rtl-compatible mt-1 mb-1">
+            <div class="col-md-3">
                 <strong>{{#str}}purpose, tool_dataprivacy{{/str}}</strong>
             </div>
-            <div class="col-md-9 span9">
+            <div class="col-md-9">
                 {{purpose}}
             </div>
         </div>
     </div>
-    <div class="col-md-3 span3 align-self-center">
+    <div class="col-md-3 align-self-center">
     {{#canedit}}
-        <button class="btn btn-default" {{!
+        <button class="btn btn-secondary" {{!
             }}data-action="edit-level-defaults" {{!
             }}data-contextlevel="{{contextlevel}}" {{!
             }}data-category="{{categoryid}}" {{!

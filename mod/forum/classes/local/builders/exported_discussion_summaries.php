@@ -32,6 +32,7 @@ use mod_forum\local\entities\post as post_entity;
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\exporter as exporter_factory;
 use mod_forum\local\factories\vault as vault_factory;
+use mod_forum\local\factories\manager as manager_factory;
 use rating_manager;
 use renderer_base;
 use stdClass;
@@ -67,6 +68,9 @@ class exported_discussion_summaries {
     /** @var vault_factory $vaultfactory Vault factory */
     private $vaultfactory;
 
+    /** @var manager_factory $managerfactory Manager factory */
+    private $managerfactory;
+
     /** @var rating_manager $ratingmanager Rating manager */
     private $ratingmanager;
 
@@ -77,20 +81,21 @@ class exported_discussion_summaries {
      * @param legacy_data_mapper_factory $legacydatamapperfactory Legacy data mapper factory
      * @param exporter_factory $exporterfactory Exporter factory
      * @param vault_factory $vaultfactory Vault factory
-     * @param rating_manager $ratingmanager Rating manager
+     * @param manager_factory $managerfactory Manager factory
      */
     public function __construct(
         renderer_base $renderer,
         legacy_data_mapper_factory $legacydatamapperfactory,
         exporter_factory $exporterfactory,
         vault_factory $vaultfactory,
-        rating_manager $ratingmanager
+        manager_factory $managerfactory
     ) {
         $this->renderer = $renderer;
         $this->legacydatamapperfactory = $legacydatamapperfactory;
         $this->exporterfactory = $exporterfactory;
         $this->vaultfactory = $vaultfactory;
-        $this->ratingmanager = $ratingmanager;
+        $this->managerfactory = $managerfactory;
+        $this->ratingmanager = $managerfactory->get_rating_manager();
     }
 
     /**
@@ -100,7 +105,7 @@ class exported_discussion_summaries {
      *
      * @param stdClass $user The user to export the posts for.
      * @param forum_entity $forum The forum that each of the $discussions belong to
-     * @param discussion_entity[] $discussions A list of all discussions that each of the $posts belong to
+     * @param discussion_summary_entity[] $discussions A list of all discussion summaries to export
      * @return stdClass[] List of exported posts in the same order as the $posts array.
      */
     public function build(
@@ -108,24 +113,38 @@ class exported_discussion_summaries {
         forum_entity $forum,
         array $discussions
     ) : array {
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $canseeanyprivatereply = $capabilitymanager->can_view_any_private_reply($user);
 
         $discussionids = array_keys($discussions);
 
         $postvault = $this->vaultfactory->get_post_vault();
-        $posts = $postvault->get_from_discussion_ids($discussionids);
+        $posts = $postvault->get_from_discussion_ids($user, $discussionids, $canseeanyprivatereply);
         $groupsbyid = $this->get_groups_available_in_forum($forum);
         $groupsbyauthorid = $this->get_author_groups_from_posts($posts, $forum);
 
-        $replycounts = $postvault->get_reply_count_for_discussion_ids($discussionids);
-        $latestposts = $postvault->get_latest_post_id_for_discussion_ids($discussionids);
+        $replycounts = $postvault->get_reply_count_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
+        $latestposts = $postvault->get_latest_posts_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
+        $latestauthors = $this->get_latest_posts_authors($latestposts);
+        $latestpostsids = array_map(function($post) {
+            return $post->get_id();
+        }, $latestposts);
+
+        $postauthorids = array_unique(array_reduce($discussions, function($carry, $summary) use ($latestposts){
+            $firstpostauthorid = $summary->get_first_post_author()->get_id();
+            $discussion = $summary->get_discussion();
+            $lastpostauthorid = $latestposts[$discussion->get_id()]->get_author_id();
+            return array_merge($carry, [$firstpostauthorid, $lastpostauthorid]);
+        }, []));
+        $postauthorcontextids = $this->get_author_context_ids($postauthorids);
 
         $unreadcounts = [];
-
+        $favourites = $this->get_favourites($user);
         $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
         $forumrecord = $forumdatamapper->to_legacy_object($forum);
 
         if (forum_tp_can_track_forums($forumrecord)) {
-            $unreadcounts = $postvault->get_unread_count_for_discussion_ids($user, $discussionids);
+            $unreadcounts = $postvault->get_unread_count_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
         }
 
         $summaryexporter = $this->exporterfactory->get_discussion_summaries_exporter(
@@ -136,10 +155,75 @@ class exported_discussion_summaries {
             $groupsbyauthorid,
             $replycounts,
             $unreadcounts,
-            $latestposts
+            $latestpostsids,
+            $postauthorcontextids,
+            $favourites,
+            $latestauthors
         );
 
-        return (array) $summaryexporter->export($this->renderer);
+        $exportedposts = (array) $summaryexporter->export($this->renderer);
+        $firstposts = $postvault->get_first_post_for_discussion_ids($discussionids);
+
+        array_walk($exportedposts['summaries'], function($summary) use ($firstposts, $latestposts) {
+            $summary->discussion->times['created'] = (int) $firstposts[$summary->discussion->firstpostid]->created;
+            $summary->discussion->times['modified'] = (int) $latestposts[$summary->discussion->id]->get_time_created();
+        });
+
+        // Pass the current, preferred sort order for the discussions list.
+        $discussionlistvault = $this->vaultfactory->get_discussions_in_forum_vault();
+        $sortorder = get_user_preferences('forum_discussionlistsortorder',
+            $discussionlistvault::SORTORDER_LASTPOST_DESC);
+
+        $sortoptions = array(
+            'islastpostdesc' => $sortorder == $discussionlistvault::SORTORDER_LASTPOST_DESC,
+            'islastpostasc' => $sortorder == $discussionlistvault::SORTORDER_LASTPOST_ASC,
+            'isrepliesdesc' => $sortorder == $discussionlistvault::SORTORDER_REPLIES_DESC,
+            'isrepliesasc' => $sortorder == $discussionlistvault::SORTORDER_REPLIES_ASC,
+            'iscreateddesc' => $sortorder == $discussionlistvault::SORTORDER_CREATED_DESC,
+            'iscreatedasc' => $sortorder == $discussionlistvault::SORTORDER_CREATED_ASC
+        );
+
+        $exportedposts['state']['sortorder'] = $sortoptions;
+
+        return $exportedposts;
+    }
+
+    /**
+     * Get a list of all favourited discussions.
+     *
+     * @param stdClass $user The user we are getting favourites for
+     * @return int[] A list of favourited itemids
+     */
+    private function get_favourites(stdClass $user) : array {
+        $ids = [];
+
+        if (isloggedin()) {
+            $usercontext = \context_user::instance($user->id);
+            $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+            $favourites = $ufservice->find_favourites_by_type('mod_forum', 'discussions');
+            foreach ($favourites as $favourite) {
+                $ids[] = $favourite->itemid;
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Returns a mapped array of discussionid to the authors of the latest post
+     *
+     * @param array $latestposts Mapped array of discussion to latest posts.
+     * @return array Array of authors mapped to the discussion
+     */
+    private function get_latest_posts_authors($latestposts) {
+        $authors = $this->vaultfactory->get_author_vault()->get_authors_for_posts($latestposts);
+
+        $mappedauthors = array_reduce($latestposts, function($carry, $item) use ($authors) {
+            $carry[$item->get_discussion_id()] = $authors[$item->get_author_id()];
+
+            return $carry;
+        }, []);
+        return $mappedauthors;
     }
 
     /**
@@ -194,5 +278,16 @@ class exported_discussion_summaries {
         }
 
         return $authorgroups;
+    }
+
+    /**
+     * Get the user context ids for each of the authors.
+     *
+     * @param int[] $authorids The list of author ids to fetch context ids for.
+     * @return int[] Context ids indexed by author id
+     */
+    private function get_author_context_ids(array $authorids) : array {
+        $authorvault = $this->vaultfactory->get_author_vault();
+        return $authorvault->get_context_ids_for_author_ids($authorids);
     }
 }

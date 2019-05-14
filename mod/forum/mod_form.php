@@ -54,6 +54,16 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addHelpButton('type', 'forumtype', 'forum');
         $mform->setDefault('type', 'general');
 
+        $mform->addElement('header', 'availability', get_string('availability', 'forum'));
+
+        $name = get_string('duedate', 'forum');
+        $mform->addElement('date_time_selector', 'duedate', $name, array('optional' => true));
+        $mform->addHelpButton('duedate', 'duedate', 'forum');
+
+        $name = get_string('cutoffdate', 'forum');
+        $mform->addElement('date_time_selector', 'cutoffdate', $name, array('optional' => true));
+        $mform->addHelpButton('cutoffdate', 'cutoffdate', 'forum');
+
         // Attachments and word count.
         $mform->addElement('header', 'attachmentswordcounthdr', get_string('attachmentswordcount', 'forum'));
 
@@ -143,7 +153,7 @@ class mod_forum_mod_form extends moodleform_mod {
             $choices[50] = '50';
             $mform->addElement('select', 'rssarticles', get_string('rssarticles'), $choices);
             $mform->addHelpButton('rssarticles', 'rssarticles', 'forum');
-            $mform->disabledIf('rssarticles', 'rsstype', 'eq', '0');
+            $mform->hideIf('rssarticles', 'rsstype', 'eq', '0');
             if (isset($CFG->forum_rssarticles)) {
                 $mform->setDefault('rssarticles', $CFG->forum_rssarticles);
             }
@@ -184,14 +194,14 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->setDefault('blockafter', '0');
         $mform->addRule('blockafter', null, 'numeric', null, 'client');
         $mform->addHelpButton('blockafter', 'blockafter', 'forum');
-        $mform->disabledIf('blockafter', 'blockperiod', 'eq', 0);
+        $mform->hideIf('blockafter', 'blockperiod', 'eq', 0);
 
         $mform->addElement('text', 'warnafter', get_string('warnafter', 'forum'));
         $mform->setType('warnafter', PARAM_INT);
         $mform->setDefault('warnafter', '0');
         $mform->addRule('warnafter', null, 'numeric', null, 'client');
         $mform->addHelpButton('warnafter', 'warnafter', 'forum');
-        $mform->disabledIf('warnafter', 'blockperiod', 'eq', 0);
+        $mform->hideIf('warnafter', 'blockperiod', 'eq', 0);
 
         $coursecontext = context_course::instance($COURSE->id);
         plagiarism_get_form_elements_module($mform, $coursecontext, 'mod_forum');
@@ -227,6 +237,18 @@ class mod_forum_mod_form extends moodleform_mod {
             $type->setPersistantFreeze(true);
         }
 
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if ($data['duedate'] && $data['cutoffdate']) {
+            if ($data['duedate'] > $data['cutoffdate']) {
+                $errors['cutoffdate'] = get_string('cutoffdatevalidation', 'forum');
+            }
+        }
+
+        return $errors;
     }
 
     function data_preprocessing(&$default_values) {

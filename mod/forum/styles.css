@@ -301,13 +301,18 @@ span.unread {
     background: url([[pix:mod_forum|t/unsubscribed]]) no-repeat -9999px -9999px;
 }
 
+.path-mod-forum .discussionsubscription,
+.path-mod-forum .discussion-settings-menu,
 .path-mod-forum .discussionsubscription {
     margin-top: -10px;
     text-align: right;
     margin-bottom: 10px;
 }
 
-.path-mod-forum .discussionsubscription > a > img {
+.path-mod-forum .discussionsubscription > a > img,
+.path-mod-forum .discussionlock > a > img,
+.path-mod-forum .favourite-discussion > a > img,
+.path-mod-forum .discussion-settings-menu > a > img {
     width: 12px;
     padding: 0 4px;
 }
@@ -327,3 +332,15 @@ span.unread {
 .path-mod-forum article .nav .nav-link + .nav-link {
     border-left: 1px solid #ddd;
 }
+
+.privatereplyinfo {
+    font-size: 80%;
+}
+
+/* This style is copied directly from the Bootstrap reboot file which adds button outline */
+/* stylelint-disable declaration-block-no-duplicate-properties */
+.post-actions .btn:focus {
+    outline: 1px dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+/* stylelint-enable declaration-block-no-duplicate-properties */

@@ -613,6 +613,22 @@ function(
     };
 
     /**
+     * Highlight words in search results.
+     *
+     * @param  {String} content HTML to search.
+     * @param  {String} searchText Search text.
+     * @return {String} searchText with search wrapped in matchtext span.
+     */
+    var highlightSearch = function(content, searchText) {
+        if (!content) {
+            return '';
+        }
+        var regex = new RegExp('(' + searchText + ')', 'gi');
+        return content.replace(regex, '<span class="matchtext">$1</span>');
+    };
+
+
+    /**
      * Render contacts in the contacts search results.
      *
      * @param {Object} root Search results container.
@@ -621,9 +637,10 @@ function(
      */
     var renderContacts = function(root, contacts) {
         var container = getContactsContainer(root);
+        var frompanel = root.attr('data-in-panel');
         var list = container.find(SELECTORS.LIST);
 
-        return Templates.render(TEMPLATES.CONTACTS_LIST, {contacts: contacts})
+        return Templates.render(TEMPLATES.CONTACTS_LIST, {contacts: contacts, frompanel: frompanel})
             .then(function(html) {
                 list.append(html);
                 return html;
@@ -639,9 +656,10 @@ function(
      */
     var renderNonContacts = function(root, nonContacts) {
         var container = getNonContactsContainer(root);
+        var frompanel = root.attr('data-in-panel');
         var list = container.find(SELECTORS.LIST);
 
-        return Templates.render(TEMPLATES.NON_CONTACTS_LIST, {noncontacts: nonContacts})
+        return Templates.render(TEMPLATES.NON_CONTACTS_LIST, {noncontacts: nonContacts, frompanel: frompanel})
             .then(function(html) {
                 list.append(html);
                 return html;
@@ -657,9 +675,10 @@ function(
      */
     var renderMessages = function(root, messages) {
         var container = getMessagesContainer(root);
+        var frompanel = root.attr('data-in-panel');
         var list = container.find(SELECTORS.LIST);
 
-        return Templates.render(TEMPLATES.MESSAGES_LIST, {messages: messages})
+        return Templates.render(TEMPLATES.MESSAGES_LIST, {messages: messages, frompanel: frompanel})
             .then(function(html) {
                 list.append(html);
                 return html;
@@ -701,6 +720,18 @@ function(
             .then(function(results) {
                 var contactsCount = results.contacts.length;
                 var nonContactsCount = results.noncontacts.length;
+
+                if (contactsCount) {
+                    results.contacts.forEach(function(contact) {
+                        contact.highlight = highlightSearch(contact.fullname, text);
+                    });
+                }
+
+                if (nonContactsCount) {
+                    results.noncontacts.forEach(function(contact) {
+                        contact.highlight = highlightSearch(contact.fullname, text);
+                    });
+                }
 
                 return $.when(
                     contactsCount ? renderContacts(root, results.contacts) : true,
@@ -756,6 +787,9 @@ function(
             })
             .then(function(messages) {
                 if (messages.length) {
+                    messages.forEach(function(message) {
+                        message.lastmessage = highlightSearch(message.lastmessage, text);
+                    });
                     return renderMessages(root, messages)
                         .then(function() {
                             return messages.length;
@@ -945,7 +979,6 @@ function(
             registerEventListeners(header, body);
             body.attr('data-init', true);
         }
-
         var searchInput = getSearchInput(header);
         searchInput.focus();
 
@@ -955,10 +988,14 @@ function(
     /**
      * String describing this page used for aria-labels.
      *
+     * @param {string} namespace The route namespace.
      * @param {Object} header Contacts header container element.
      * @return {Object} jQuery promise
      */
-    var description = function(header) {
+    var description = function(namespace, header) {
+        if (typeof header !== 'object') {
+            return Str.get_string('messagedrawerviewsearch', 'core_message');
+        }
         var searchInput = getSearchInput(header);
         var searchText = searchInput.val().trim();
         return Str.get_string('messagedrawerviewsearch', 'core_message', searchText);

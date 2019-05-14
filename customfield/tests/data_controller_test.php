@@ -146,7 +146,7 @@ class core_customfield_data_controller_testcase extends advanced_testcase {
             data_controller::create($datarecord->id + 1);
             $this->fail('Expected exception');
         } catch (dml_missing_record_exception $e) {
-            $this->assertStringMatchesFormat('Can not find data record in database table customfield_data%a', $e->getMessage());
+            $this->assertStringMatchesFormat('Can\'t find data record in database table customfield_data%a', $e->getMessage());
             $this->assertEquals(dml_missing_record_exception::class, get_class($e));
         }
 

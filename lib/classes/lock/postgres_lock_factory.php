@@ -188,7 +188,7 @@ class postgres_lock_factory implements lock_factory {
         do {
             $result = $this->db->get_record_sql('SELECT pg_try_advisory_lock(:locktype, :token) AS locked', $params);
             $locked = $result->locked === 't';
-            if (!$locked) {
+            if (!$locked && $timeout > 0) {
                 usleep(rand(10000, 250000)); // Sleep between 10 and 250 milliseconds.
             }
             // Try until the giveup time.

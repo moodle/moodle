@@ -128,36 +128,15 @@ class provider implements
             return;
         }
 
-        $params = [
-            'contextid' => $context->id,
-            'contextcourse' => CONTEXT_COURSE,
-        ];
+        $params = ['courseid' => $context->instanceid];
 
-        $sql = "SELECT sud.userid
-                  FROM {stats_user_daily} sud
-                  JOIN {context} ctx
-                       ON ctx.instanceid = sud.courseid
-                       AND ctx.contextlevel = :contextcourse
-                 WHERE ctx.id = :contextid";
-
+        $sql = "SELECT userid FROM {stats_user_daily} WHERE courseid = :courseid";
         $userlist->add_from_sql('userid', $sql, $params);
 
-        $sql = "SELECT suw.userid
-                  FROM {stats_user_weekly} suw
-                  JOIN {context} ctx
-                       ON ctx.instanceid = suw.courseid
-                       AND ctx.contextlevel = :contextcourse
-                 WHERE ctx.id = :contextid";
-
+        $sql = "SELECT userid FROM {stats_user_weekly} WHERE courseid = :courseid";
         $userlist->add_from_sql('userid', $sql, $params);
 
-        $sql = "SELECT sum.userid
-                  FROM {stats_user_monthly} sum
-                  JOIN {context} ctx
-                       ON ctx.instanceid = sum.courseid
-                       AND ctx.contextlevel = :contextcourse
-                 WHERE ctx.id = :contextid";
-
+        $sql = "SELECT userid FROM {stats_user_monthly} WHERE courseid = :courseid";
         $userlist->add_from_sql('userid', $sql, $params);
     }
 

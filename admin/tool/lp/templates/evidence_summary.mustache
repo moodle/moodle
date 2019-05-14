@@ -44,9 +44,9 @@
       "id": 1
     }
 }}
-<div class="well well-small evidence" data-region="evidence" data-id="{{id}}">
+<div class="card well-small evidence" data-region="evidence" data-id="{{id}}">
     {{#candelete}}
-        <div class="pull-xs-right">
+        <div class="float-sm-right">
             <a href="#" data-action="delete-evidence">{{#pix}}t/delete{{/pix}}</a>
         </div>
     {{/candelete}}
@@ -57,7 +57,7 @@
 {{/actionuser}}
 <strong><time datetime="{{userdate}}">{{userdate}}</time></strong>
 {{#grade}}
-    <p><span class="tag tag-info">{{gradename}}</span></p>
+    <p><span class="badge badge-info">{{gradename}}</span></p>
 {{/grade}}
 <p>{{description}}</p>
 {{#note}}

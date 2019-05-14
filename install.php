@@ -427,43 +427,56 @@ if ($config->stage == INSTALL_DATABASE) {
     $strdbport   = get_string('databaseport', 'install');
     $strdbsocket = get_string('databasesocket', 'install');
 
-    echo '<div class="userinput">';
+    echo '<div class="row mb-4">';
 
     $disabled = empty($distro->dbhost) ? '' : 'disabled="disabled';
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_dbhost">'.$strdbhost.'</label></div>';
-    echo '<div class="fitemelement"><input id="id_dbhost" name="dbhost" '.$disabled.' type="text" class="text-ltr" value="'.s($config->dbhost).'" size="50" /></div>';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_dbhost">'.$strdbhost.'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_dbhost" name="dbhost" '.$disabled.' type="text" class="form-control text-ltr" value="'.s($config->dbhost).'" size="50" /></div>';
     echo '</div>';
 
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_dbname">'.$strdbname.'</label></div>';
-    echo '<div class="fitemelement"><input id="id_dbname" name="dbname" type="text" class="text-ltr" value="'.s($config->dbname).'" size="50" /></div>';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_dbname">'.$strdbname.'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_dbname" name="dbname" type="text" class="form-control text-ltr" value="'.s($config->dbname).'" size="50" /></div>';
     echo '</div>';
 
     $disabled = empty($distro->dbuser) ? '' : 'disabled="disabled';
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_dbuser">'.$strdbuser.'</label></div>';
-    echo '<div class="fitemelement"><input id="id_dbuser" name="dbuser" '.$disabled.' type="text" class="text-ltr" value="'.s($config->dbuser).'" size="50" /></div>';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_dbuser">'.$strdbuser.'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_dbuser" name="dbuser" '.$disabled.' type="text" class="form-control text-ltr" value="'.s($config->dbuser).'" size="50" /></div>';
     echo '</div>';
 
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_dbpass">'.$strdbpass.'</label></div>';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_dbpass">'.$strdbpass.'</label></div>';
     // no password field here, the password may be visible in config.php if we can not write it to disk
-    echo '<div class="fitemelement"><input id="id_dbpass" name="dbpass" type="text" class="text-ltr" value="'.s($config->dbpass).'" size="50" /></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_dbpass" name="dbpass" type="text" class="form-control text-ltr" value="'.s($config->dbpass).'" size="50" /></div>';
     echo '</div>';
 
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_prefix">'.$strprefix.'</label></div>';
-    echo '<div class="fitemelement"><input id="id_prefix" name="prefix" type="text" class="text-ltr" value="'.s($config->prefix).'" size="10" /></div>';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_prefix">'.$strprefix.'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_prefix" name="prefix" type="text" class="form-control text-ltr" value="'.s($config->prefix).'" size="10" /></div>';
     echo '</div>';
 
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_prefix">'.$strdbport.'</label></div>';
-    echo '<div class="fitemelement"><input id="id_dbport" name="dbport" type="text" class="text-ltr" value="'.s($config->dbport).'" size="10" /></div>';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_prefix">'.$strdbport.'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_dbport" name="dbport" type="text" class="form-control text-ltr" value="'.s($config->dbport).'" size="10" /></div>';
     echo '</div>';
 
     if (!(stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin'))) {
-        echo '<div class="fitem"><div class="fitemtitle"><label for="id_dbsocket">'.$strdbsocket.'</label></div>';
-        echo '<div class="fitemelement"><input id="id_dbsocket" name="dbsocket" type="text" class="text-ltr" value="'.s($config->dbsocket).'" size="50" /></div>';
+        echo '<div class="row mb-4">';
+        echo '<div class="col-md-3 text-md-right pt-1"><label for="id_dbsocket">'.$strdbsocket.'</label></div>';
+        echo '<div class="col-md-9" data-fieldtype="text">';
+        echo '<input id="id_dbsocket" name="dbsocket" type="text" class="form-control text-ltr" value="'.s($config->dbsocket).'" size="50" /></div>';
         echo '</div>';
     }
 
     if ($hint_database !== '') {
-        echo '<div class="alert alert-error">'.$hint_database.'</div>';
+        echo '<div class="alert alert-danger">'.$hint_database.'</div>';
     }
     echo '</div>';
     install_print_footer($config);
@@ -486,9 +499,10 @@ if ($config->stage == INSTALL_DATABASETYPE) {
                        'sqlsrv' => moodle_database::get_driver_instance('sqlsrv', 'native'), // MS SQL*Server PHP driver
                       );
 
-    echo '<div class="userinput">';
-    echo '<div class="fitem"><div class="fitemtitle"><label for="dbtype">'.get_string('dbtype', 'install').'</label></div>';
-    echo '<div class="fitemelement"><select id="dbtype" name="dbtype">';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="dbtype">'.get_string('dbtype', 'install').'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="select">';
+    echo '<select class="form-control" id="dbtype" name="dbtype">';
     $disabled = array();
     $options = array();
     foreach ($databases as $type=>$database) {
@@ -506,7 +520,6 @@ if ($config->stage == INSTALL_DATABASETYPE) {
         echo '</optgroup>';
     }
     echo '</select></div></div>';
-    echo '</div>';
 
     install_print_footer($config);
     die;
@@ -565,28 +578,36 @@ if ($config->stage == INSTALL_PATHS) {
     $strdataroot     = get_string('dataroot', 'install');
     $stradmindirname = get_string('admindirname', 'install');
 
-    echo '<div class="userinput">';
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_wwwroot">'.$paths['wwwroot'].'</label></div>';
-    echo '<div class="fitemelement"><input id="id_wwwroot" name="wwwroot" type="text" class="text-ltr" value="'.s($CFG->wwwroot).'" disabled="disabled" size="70" /></div>';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_wwwroot">'.$paths['wwwroot'].'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_wwwroot" name="wwwroot" type="text" class="form-control text-ltr" value="'.s($CFG->wwwroot).'" disabled="disabled" size="70" /></div>';
     echo '</div>';
 
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_dirroot">'.$paths['dirroot'].'</label></div>';
-    echo '<div class="fitemelement"><input id="id_dirroot" name="dirroot" type="text" class="text-ltr" value="'.s($CFG->dirroot).'" disabled="disabled" size="70" /></div>';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_dirroot">'.$paths['dirroot'].'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_dirroot" name="dirroot" type="text" class="form-control text-ltr" value="'.s($CFG->dirroot).'" disabled="disabled" size="70" /></div>';
     echo '</div>';
 
-    echo '<div class="fitem"><div class="fitemtitle"><label for="id_dataroot">'.$paths['dataroot'].'</label></div>';
-    echo '<div class="fitemelement"><input id="id_dataroot" name="dataroot" type="text" class="text-ltr" value="'.s($config->dataroot).'" size="70" /></div>';
+    echo '<div class="row mb-4">';
+    echo '<div class="col-md-3 text-md-right pt-1"><label for="id_dataroot">'.$paths['dataroot'].'</label></div>';
+    echo '<div class="col-md-9" data-fieldtype="text">';
+    echo '<input id="id_dataroot" name="dataroot" type="text" class="form-control text-ltr" value="'.s($config->dataroot).'" size="70" /></div>';
+    echo '</div>';
     if ($hint_dataroot !== '') {
-        echo '<div class="alert alert-error">'.$hint_dataroot.'</div>';
+        echo '<div class="alert alert-danger">'.$hint_dataroot.'</div>';
     }
-    echo '</div>';
 
 
     if (!file_exists("$CFG->dirroot/admin/environment.xml")) {
-        echo '<div class="fitem"><div class="fitemtitle"><label for="id_admin">'.$paths['admindir'].'</label></div>';
-        echo '<div class="fitemelement"><input id="id_admin" name="admin" type="text" class="text-ltr" value="'.s($config->admin).'" size="10" /></div>';
+        echo '<div class="row mb-4">';
+        echo '<div class="col-md-3 text-md-right pt-1"><label for="id_admin">'.$paths['admindir'].'</label></div>';
+        echo '<div class="col-md-9" data-fieldtype="text">';
+        echo '<input id="id_admin" name="admin" type="text" class="form-control text-ltr" value="'.s($config->admin).'" size="10" /></div>';
+        echo '</div>';
         if ($hint_admindir !== '') {
-            echo '<div class="alert alert-error">'.$hint_admindir.'</div>';
+            echo '<div class="alert alert-danger">'.$hint_admindir.'</div>';
         }
         echo '</div>';
     }
@@ -617,14 +638,15 @@ if ($distro) {
 }
 
 $languages = get_string_manager()->get_list_of_translations();
-echo '<div class="userinput">';
-echo '<div class="fitem"><div class="fitemtitle"><label for="langselect">'.get_string('language').'</label></div>';
-echo '<div class="fitemelement"><select id="langselect" name="lang" onchange="this.form.submit()">';
+echo '<div class="row mb-4">';
+echo '<div class="col-md-3 text-md-right pt-1"><label for="langselect">'.get_string('language').'</label></div>';
+echo '<div class="col-md-9" data-fieldtype="select">';
+echo '<select id="langselect" class="form-control" name="lang" onchange="this.form.submit()">';
 foreach ($languages as $name=>$value) {
     $selected = ($name == $CFG->lang) ? 'selected="selected"' : '';
     echo '<option value="'.s($name).'" '.$selected.'>'.$value.'</option>';
 }
-echo '</select></div></div>';
+echo '</select></div>';
 echo '</div>';
 
 install_print_footer($config);

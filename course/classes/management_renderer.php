@@ -136,7 +136,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $catatlevel[] = array_shift($selectedparents);
         $catatlevel = array_unique($catatlevel);
 
-        $listing = core_course_category::get(0)->get_children();
+        $listing = core_course_category::top()->get_children();
 
         $attributes = array(
                 'class' => 'ml-1 list-unstyled',
@@ -200,10 +200,10 @@ class core_course_management_renderer extends plugin_renderer_base {
                 'aria-expanded' => $isexpanded ? 'true' : 'false'
         );
         $text = $category->get_formatted_name();
-        if ($category->parent) {
+        if (($parent = $category->get_parent_coursecat()) && $parent->id) {
             $a = new stdClass;
             $a->category = $text;
-            $a->parentcategory = $category->get_parent_coursecat()->get_formatted_name();
+            $a->parentcategory = $parent->get_formatted_name();
             $textlabel = get_string('categorysubcategoryof', 'moodle', $a);
         }
         $courseicon = $this->output->pix_icon('i/course', get_string('courses'));
@@ -327,12 +327,12 @@ class core_course_management_renderer extends plugin_renderer_base {
         $cancreatecategory = $category && $category->can_create_subcategory();
         $cancreatecategory = $cancreatecategory || core_course_category::can_create_top_level_category();
         if ($category === null) {
-            $category = core_course_category::get(0);
+            $category = core_course_category::top();
         }
 
         if ($cancreatecategory) {
             $url = new moodle_url('/course/editcategory.php', array('parent' => $category->id));
-            $actions[] = html_writer::link($url, get_string('createnewcategory'), array('class' => 'btn btn-default'));
+            $actions[] = html_writer::link($url, get_string('createnewcategory'), array('class' => 'btn btn-secondary'));
         }
         if (core_course_category::can_approve_course_requests()) {
             $actions[] = html_writer::link(new moodle_url('/course/pending.php'), get_string('coursespending'));
@@ -426,7 +426,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                     'resortcategoriesby',
                     'name',
                     false,
-                    array('aria-label' => get_string('selectcategorysortby'), 'class' => 'm-t-1')
+                    array('aria-label' => get_string('selectcategorysortby'), 'class' => 'mt-1')
                 )
             );
             $form .= html_writer::div(
@@ -445,22 +445,22 @@ class core_course_management_renderer extends plugin_renderer_base {
                     'resortcoursesby',
                     'fullname',
                     false,
-                    array('aria-label' => get_string('selectcoursesortby'), 'class' => 'm-t-1')
+                    array('aria-label' => get_string('selectcoursesortby'), 'class' => 'mt-1')
                 )
             );
             $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'bulksort',
-                'value' => get_string('sort'), 'class' => 'btn btn-secondary m-y-1'));
+                'value' => get_string('sort'), 'class' => 'btn btn-secondary my-1'));
             $form .= html_writer::end_div();
 
-            $html .= html_writer::start_div('detail-pair row yui3-g m-y-1');
-            $html .= html_writer::div(html_writer::span(get_string('sorting')), 'pair-key span3 col-md-3 yui3-u-1-4');
-            $html .= html_writer::div($form, 'pair-value span9 col-md-9 yui3-u-3-4');
+            $html .= html_writer::start_div('detail-pair row yui3-g my-1');
+            $html .= html_writer::div(html_writer::span(get_string('sorting')), 'pair-key col-md-3 yui3-u-1-4');
+            $html .= html_writer::div($form, 'pair-value col-md-9 yui3-u-3-4');
             $html .= html_writer::end_div();
         }
         if (core_course_category::can_change_parent_any()) {
             $options = array();
-            if (has_capability('moodle/category:manage', context_system::instance())) {
-                $options[0] = core_course_category::get(0)->get_formatted_name();
+            if (core_course_category::top()->has_manage_capability()) {
+                $options[0] = core_course_category::top()->get_formatted_name();
             }
             $options += core_course_category::make_categories_list('moodle/category:manage');
             $select = html_writer::select(
@@ -468,7 +468,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 'movecategoriesto',
                 '',
                 array('' => 'choosedots'),
-                array('aria-labelledby' => 'moveselectedcategoriesto', 'class' => 'm-r-1')
+                array('aria-labelledby' => 'moveselectedcategoriesto', 'class' => 'mr-1')
             );
             $submit = array('type' => 'submit', 'name' => 'bulkmovecategories', 'value' => get_string('move'),
                 'class' => 'btn btn-secondary');
@@ -660,7 +660,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $actions = array();
         if ($category->can_create_course()) {
             $url = new moodle_url('/course/edit.php', array('category' => $category->id, 'returnto' => 'catmanage'));
-            $actions[] = html_writer::link($url, get_string('createnewcourse'), array('class' => 'btn btn-default'));
+            $actions[] = html_writer::link($url, get_string('createnewcourse'), array('class' => 'btn btn-secondary'));
         }
         if ($category->can_request_course()) {
             // Request a new course.
@@ -764,7 +764,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 'movecoursesto',
                 '',
                 array('' => 'choosedots'),
-                array('aria-labelledby' => 'moveselectedcoursesto', 'class' => 'm-r-1')
+                array('aria-labelledby' => 'moveselectedcoursesto', 'class' => 'mr-1')
             );
             $submit = array('type' => 'submit', 'name' => 'bulkmovecourses', 'value' => get_string('move'),
                 'class' => 'btn btn-secondary');

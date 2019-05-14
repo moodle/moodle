@@ -2,7 +2,7 @@
 Feature: Close modals by clicking outside them
   In order to easily close the currently open pop-up
   As a user
-  Clicking outside the modal should close it.
+  Clicking outside the modal should close it if it doesn't contain a form.
 
   @javascript
   Scenario: The popup closes when clicked on dead space - YUI
@@ -20,20 +20,20 @@ Feature: Close modals by clicking outside them
     And I click on "a new question" "link"
     # Cannot use the normal ‘I click on’ here, because the pop-up gets in the way.
     And I click on ".moodle-dialogue-lightbox" "css_element" skipping visibility check
-    Then I should not see "Choose a question type to add"
+    # The modal does not close because it contains a form.
+    Then I should see "Choose a question type to add"
 
   @javascript
   Scenario: The popup closes when clicked on dead space - Modal
-    Given the following "courses" exist:
-      | fullname | shortname |
-      | Course 1 | C1        |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
-    And I click on "Add topics" "link"
+    Given I log in as "admin"
+    And I follow "This month"
+    And I press "New event"
     When I click on "[data-region='modal-container']" "css_element"
-    Then ".modal-backdrop" "css_element" should not be visible
-    And ".modal-content" "css_element" should not be visible
+    # The modal does not close becaue it contains a form.
+    Then ".modal-backdrop" "css_element" should be visible
+    # Confirm that the contents of the new calendar event modal are visible.
+    And I should see "New event" in the ".modal-title" "css_element"
+    And I should see "Event title" in the ".modal-body" "css_element"
 
   @javascript
   Scenario: The popup help closes when clicked

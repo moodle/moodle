@@ -103,6 +103,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
         $canreply = true;
         $canexport = true;
         $cancontrolreadstatus = true;
+        $canreplyprivately = true;
         $capabilitymanager = new test_capability_manager(
             $canview,
             $canedit,
@@ -110,7 +111,8 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
             $cansplit,
             $canreply,
             $canexport,
-            $cancontrolreadstatus
+            $cancontrolreadstatus,
+            $canreplyprivately
         );
         $managerfactory = \mod_forum\local\container::get_manager_factory();
         $entityfactory = \mod_forum\local\container::get_entity_factory();
@@ -118,6 +120,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
         $discussion = $entityfactory->get_discussion_from_stdclass($discussion);
         $post = $entityfactory->get_post_from_stdclass($post);
         $author = $entityfactory->get_author_from_stdclass($user);
+        $authorcontext = context_user::instance($author->get_id());
 
         $exporter = new post_exporter($post, [
             'legacydatamapperfactory' => \mod_forum\local\container::get_legacy_data_mapper_factory(),
@@ -127,6 +130,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
             'forum' => $forum,
             'discussion' => $discussion,
             'author' => $author,
+            'authorcontextid' => $authorcontext->id,
             'user' => $user,
             'context' => $context,
             'authorgroups' => [],
@@ -246,6 +250,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
         $discussion = $entityfactory->get_discussion_from_stdclass($discussion);
         $post = $entityfactory->get_post_from_stdclass($post);
         $author = $entityfactory->get_author_from_stdclass($user);
+        $authorcontext = context_user::instance($author->get_id());
 
         $exporter = new post_exporter($post, [
             'legacydatamapperfactory' => \mod_forum\local\container::get_legacy_data_mapper_factory(),
@@ -255,6 +260,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
             'forum' => $forum,
             'discussion' => $discussion,
             'author' => $author,
+            'authorcontextid' => $authorcontext->id,
             'user' => $user,
             'context' => $context,
             'authorgroups' => [],
@@ -352,6 +358,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
         $discussion = $entityfactory->get_discussion_from_stdclass($discussion);
         $post = $entityfactory->get_post_from_stdclass($post);
         $author = $entityfactory->get_author_from_stdclass($user);
+        $authorcontext = context_user::instance($author->get_id());
 
         $exporter = new post_exporter($post, [
             'legacydatamapperfactory' => \mod_forum\local\container::get_legacy_data_mapper_factory(),
@@ -361,6 +368,7 @@ class mod_forum_exporters_post_testcase extends advanced_testcase {
             'forum' => $forum,
             'discussion' => $discussion,
             'author' => $author,
+            'authorcontextid' => $authorcontext->id,
             'user' => $user,
             'context' => $context,
             'authorgroups' => [],
@@ -406,6 +414,8 @@ class test_capability_manager extends capability_manager {
     private $export;
     /** @var bool $controlreadstatus Value for can_manually_control_post_read_status */
     private $controlreadstatus;
+    /** @var bool $controlreadstatus Value for can_reply_privately_to_post */
+    private $canreplyprivatelytopost;
 
     /**
      * Constructor.
@@ -425,7 +435,8 @@ class test_capability_manager extends capability_manager {
         bool $split = true,
         bool $reply = true,
         bool $export = true,
-        bool $controlreadstatus = true
+        bool $controlreadstatus = true,
+        bool $canreplyprivatelytopost = true
     ) {
         $this->view = $view;
         $this->edit = $edit;
@@ -434,6 +445,7 @@ class test_capability_manager extends capability_manager {
         $this->reply = $reply;
         $this->export = $export;
         $this->controlreadstatus = $controlreadstatus;
+        $this->canreplyprivatelytopost = $canreplyprivatelytopost;
     }
 
     /**
@@ -515,5 +527,15 @@ class test_capability_manager extends capability_manager {
      */
     public function can_manually_control_post_read_status(stdClass $user) : bool {
         return $this->controlreadstatus;
+    }
+
+    /**
+     * Override can_reply_privately_to_post
+     * @param stdClass $user
+     * @param post_entity $post
+     * @return bool
+     */
+    public function can_reply_privately_to_post(stdClass $user, post_entity $post) : bool {
+        return $this->canreplyprivatelytopost;
     }
 }

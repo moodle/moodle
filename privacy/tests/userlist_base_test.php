@@ -34,6 +34,7 @@ use \core_privacy\local\request\userlist_base;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_privacy\local\request\userlist_base
  */
 class userlist_base_test extends advanced_testcase {
     /**
@@ -43,6 +44,7 @@ class userlist_base_test extends advanced_testcase {
      * @param   array   $input List of user IDs
      * @param   array   $expected list of userids
      * @param   int     $count Expected count
+     * @covers ::get_userids
      */
     public function test_get_userids($input, $expected, $count) {
         $uut = new test_userlist_base(\context_system::instance(), 'core_tests');
@@ -84,6 +86,8 @@ class userlist_base_test extends advanced_testcase {
 
     /**
      * Ensure that get_users returns the correct list of users.
+     *
+     * @covers ::get_users
      */
     public function test_get_users() {
         $this->resetAfterTest();
@@ -121,6 +125,7 @@ class userlist_base_test extends advanced_testcase {
      * @param   array   $input List of user IDs
      * @param   array   $expected list of userids
      * @param   int     $count Expected count
+     * @covers ::count
      */
     public function test_countable($input, $expected, $count) {
         $uut = new test_userlist_base(\context_system::instance(), 'core_tests');
@@ -131,6 +136,12 @@ class userlist_base_test extends advanced_testcase {
 
     /**
      * Ensure that the userlist_base iterates over the set of users.
+     *
+     * @covers ::current
+     * @covers ::key
+     * @covers ::next
+     * @covers ::rewind
+     * @covers ::valid
      */
     public function test_user_iteration() {
         $this->resetAfterTest();
@@ -161,6 +172,8 @@ class userlist_base_test extends advanced_testcase {
     /**
      * Test that a deleted user is still returned.
      * If a user has data then it still must be deleted, even if they are deleted.
+     *
+     * @covers ::count
      */
     public function test_current_user_one_user() {
         $this->resetAfterTest();
@@ -180,6 +193,8 @@ class userlist_base_test extends advanced_testcase {
 
     /**
      * Test that an invalid user returns no entry.
+     *
+     * @covers ::count
      */
     public function test_current_user_invalid() {
         $uut = new test_userlist_base(\context_system::instance(), 'core_tests');
@@ -191,6 +206,8 @@ class userlist_base_test extends advanced_testcase {
 
     /**
      * Test that where an invalid user is listed, the next user in the list is returned instead.
+     *
+     * @covers ::count
      */
     public function test_current_user_two_users() {
         $this->resetAfterTest();
@@ -206,6 +223,8 @@ class userlist_base_test extends advanced_testcase {
 
     /**
      * Ensure that the component specified in the constructor is used and available.
+     *
+     * @covers ::set_component
      */
     public function test_set_component_in_constructor() {
         $uut = new test_userlist_base(\context_system::instance(), 'core_tests');
@@ -214,6 +233,8 @@ class userlist_base_test extends advanced_testcase {
 
     /**
      * Ensure that the context specified in the constructor is available.
+     *
+     * @covers ::__construct
      */
     public function test_set_context_in_constructor() {
         $context = \context_user::instance(\core_user::get_user_by_username('admin')->id);

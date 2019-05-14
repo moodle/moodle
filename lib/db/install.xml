@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20190308" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20190501" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -552,6 +552,7 @@
         <FIELD NAME="timeusertodeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="eventtype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="customdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom data to be passed to the message processor. Must be serialisable using json_encode()"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -603,6 +604,8 @@
         <FIELD NAME="fullmessagehtml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="smallmessage" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="fullmessagetrust" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="customdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom data to be passed to the message processor. Must be serialisable using json_encode()"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -697,6 +700,7 @@
         <FIELD NAME="contexturlname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="customdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom data to be passed to the message processor. Must be serialisable using json_encode()"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -1303,24 +1307,6 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="roleid-contextid" UNIQUE="true" FIELDS="roleid, contextid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="role_sortorder" COMMENT="sort order of course managers in a course">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="sortoder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
-        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id"/>
-        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="userid-roleid-contextid" UNIQUE="true" FIELDS="userid, roleid, contextid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="role_context_levels" COMMENT="Lists which roles can be assigned at which context levels. The assignment is allowed in the corresponding row is present in this table.">
@@ -2898,6 +2884,7 @@
         <FIELD NAME="checksum" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="checksum of the backup_controller object"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time the controller was created"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="last time the controller was modified"/>
+        <FIELD NAME="progress" TYPE="number" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="14" COMMENT="The backup or restore progress as a floating point number"/>
         <FIELD NAME="controller" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="serialised backup_controller object"/>
       </FIELDS>
       <KEYS>
@@ -2907,6 +2894,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="typeitem_ix" UNIQUE="false" FIELDS="type, itemid"/>
+        <INDEX NAME="useritem_ix" UNIQUE="false" FIELDS="userid, itemid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="backup_logs" COMMENT="To store all the logs from backup and restore operations (by db logger)">
@@ -3179,14 +3167,15 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="backpackurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="backpackuid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="autosync" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="externalbackpackid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="externalbackpack" TYPE="foreign" FIELDS="externalbackpackid" REFTABLE="badge_external_backpack" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="badge_external" COMMENT="Setting for external badges display">
@@ -3194,13 +3183,28 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="backpackid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of a backpack"/>
         <FIELD NAME="collectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Badge collection id in the backpack"/>
+        <FIELD NAME="entityid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_backpackid" TYPE="foreign" FIELDS="backpackid" REFTABLE="badge_backpack" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="badge_competencies" COMMENT="Defines competencies alignment for badges">
+    <TABLE NAME="badge_external_identifier" COMMENT="Setting for external badges mappings">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="sitebackpackid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of a site backpack"/>
+        <FIELD NAME="internalid" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="externalid" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_backpackid" TYPE="foreign" FIELDS="sitebackpackid" REFTABLE="badge_backpack" REFFIELDS="id"/>
+        <KEY NAME="backpack-internal-external" TYPE="unique" FIELDS="sitebackpackid, internalid, externalid, type"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="badge_alignment" COMMENT="Defines alignment for badges">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="badgeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -3212,7 +3216,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="competenciesbadge" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
+        <KEY NAME="alignmentsbadge" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="badge_related" COMMENT="Defines badge related for badges">
@@ -3226,6 +3230,21 @@
         <KEY NAME="badgeid" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
         <KEY NAME="relatedbadgeid" TYPE="foreign" FIELDS="relatedbadgeid" REFTABLE="badge" REFFIELDS="id"/>
         <KEY NAME="badgeid-relatedbadgeid" TYPE="unique" FIELDS="badgeid, relatedbadgeid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="badge_external_backpack" COMMENT="Defines settings for site level backpacks that a user can connect to.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="backpackapiurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="backpackweburl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="apiversion" TYPE="char" LENGTH="12" NOTNULL="true" DEFAULT="1.0" SEQUENCE="false"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Password to login into external backpack and issue badges."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="backpackapiurlkey" TYPE="unique" FIELDS="backpackapiurl"/>
+        <KEY NAME="backpackweburlkey" TYPE="unique" FIELDS="backpackweburl"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="user_devices" COMMENT="This table stores user's mobile devices information in order to send PUSH notifications">
@@ -3818,6 +3837,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="trained" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="Explicit name of the model, the localised target name is used when left empty"/>
         <FIELD NAME="target" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="indicators" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timesplitting" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
@@ -3883,14 +3903,12 @@
         <FIELD NAME="modelid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="analysableid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timesplitting" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="fileid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="sampleids" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
-        <KEY NAME="fileid" TYPE="foreign" FIELDS="fileid" REFTABLE="files" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelidandanalysableidandtimesplitting" UNIQUE="false" FIELDS="modelid, analysableid, timesplitting" COMMENT="Index on modelid and analysableid and timesplitting"/>
@@ -3991,6 +4009,7 @@
         <FIELD NAME="modelid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="action" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="analysableid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="firstanalysis" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timeanalysed" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

@@ -107,6 +107,9 @@ class exported_posts {
      * to load the additional resources as efficiently as possible but there is no way around some of
      * the additional overhead.
      *
+     * Note: Some posts will be removed as part of the build process according to capabilities.
+     * A one-to-one mapping should not be expected.
+     *
      * @param stdClass $user The user to export the posts for.
      * @param forum_entity[] $forums A list of all forums that each of the $discussions belong to
      * @param discussion_entity[] $discussions A list of all discussions that each of the $posts belong to
@@ -134,6 +137,7 @@ class exported_posts {
         $groupedposts = $this->group_posts_by_discussion($forums, $discussions, $posts);
         // Load all of the resources we need in order to export the posts.
         $authorsbyid = $this->get_authors_for_posts($posts);
+        $authorcontextids = $this->get_author_context_ids(array_keys($authorsbyid));
         $attachmentsbypostid = $this->get_attachments_for_posts($groupedposts);
         $groupsbycourseandauthorid = $this->get_author_groups_from_posts($groupedposts);
         $tagsbypostid = $this->get_tags_from_posts($posts);
@@ -158,6 +162,7 @@ class exported_posts {
                 $discussion,
                 $groupedposts,
                 $authorsbyid,
+                $authorcontextids,
                 $attachmentsbypostid,
                 $groupsbycourseandauthorid[$courseid],
                 $readreceiptcollectionbyforumid[$forumid] ?? null,
@@ -243,6 +248,17 @@ class exported_posts {
     private function get_authors_for_posts(array $posts) : array {
         $authorvault = $this->vaultfactory->get_author_vault();
         return $authorvault->get_authors_for_posts($posts);
+    }
+
+    /**
+     * Get the user context ids for each of the authors.
+     *
+     * @param int[] $authorids The list of author ids to fetch context ids for.
+     * @return int[] Context ids indexed by author id
+     */
+    private function get_author_context_ids(array $authorids) : array {
+        $authorvault = $this->vaultfactory->get_author_vault();
+        return $authorvault->get_context_ids_for_author_ids($authorids);
     }
 
     /**

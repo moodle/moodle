@@ -35,7 +35,7 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'manageapproved', get_string('manageapproved', 'data'));
         $mform->addHelpButton('manageapproved', 'manageapproved', 'data');
         $mform->setDefault('manageapproved', 1);
-        $mform->disabledIf('manageapproved', 'approval', 'eq', 0);
+        $mform->hideIf('manageapproved', 'approval', 'eq', 0);
 
         $mform->addElement('selectyesno', 'comments', get_string('allowcomments', 'data'));
 

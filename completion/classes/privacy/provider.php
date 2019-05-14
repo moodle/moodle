@@ -110,28 +110,27 @@ class provider implements
      * @param userlist $userlist The userlist to add to.
      */
     public static function add_course_completion_users_to_userlist(userlist $userlist) {
-        $params = [
-            'contextid' => $userlist->get_context()->id,
-            'contextcourse' => CONTEXT_COURSE,
-        ];
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
+        $params = ['courseid' => $context->instanceid];
 
         $sql = "SELECT cmc.userid
-                 FROM {context} ctx
-                 JOIN {course} c ON ctx.instanceid = c.id
+                 FROM {course} c
                  JOIN {course_completion_criteria} ccc ON ccc.course = c.id
                  JOIN {course_modules_completion} cmc ON cmc.coursemoduleid = ccc.moduleinstance
-                WHERE ctx.id = :contextid
-                  AND ctx.contextlevel = :contextcourse";
+                WHERE c.id = :courseid";
 
         $userlist->add_from_sql('userid', $sql, $params);
 
         $sql = "SELECT ccc_compl.userid
-                 FROM {context} ctx
-                 JOIN {course} c ON ctx.instanceid = c.id
+                 FROM {course} c
                  JOIN {course_completion_criteria} ccc ON ccc.course = c.id
                  JOIN {course_completion_crit_compl} ccc_compl ON ccc_compl.criteriaid = ccc.id
-                WHERE ctx.id = :contextid
-                  AND ctx.contextlevel = :contextcourse";
+                WHERE c.id = :courseid";
 
         $userlist->add_from_sql('userid', $sql, $params);
     }

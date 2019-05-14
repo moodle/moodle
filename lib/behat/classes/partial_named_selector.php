@@ -72,6 +72,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'table_row' => 'table_row',
         'xpath_element' => 'xpath_element',
         'form_row' => 'form_row',
+        'group_message_header' => 'group_message_header',
     );
 
     /**
@@ -89,9 +90,11 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'file' => 'file',
         'filemanager' => 'filemanager',
         'group_message' => 'group_message',
+        'group_message_conversation' => 'group_message_conversation',
         'group_message_header' => 'group_message_header',
         'group_message_member' => 'group_message_member',
         'group_message_tab' => 'group_message_tab',
+        'group_message_list_area' => 'group_message_list_area',
         'icon' => 'icon',
         'link' => 'link',
         'link_or_button' => 'link_or_button',
@@ -154,8 +157,11 @@ XPATH
         , 'group_message' => <<<XPATH
         .//*[@data-conversation-id]//img[contains(@alt, %locator%)]/..
 XPATH
-        , 'group_message_header' => <<<XPATH
-        .//*[@data-region='message-drawer']//div[@data-region='header-container']//*[text()[contains(., %locator%)]]
+        , 'group_message_conversation' => <<<XPATH
+            .//*[@data-region='message-drawer' and contains(., %locator%)]//div[@data-region='content-message-container']
+XPATH
+    , 'group_message_header' => <<<XPATH
+        .//*[@data-region='message-drawer']//div[@data-region='header-container' and contains(., %locator%)]
 XPATH
     , 'group_message_member' => <<<XPATH
         .//*[@data-region='message-drawer']//div[@data-region='group-info-content-container']
@@ -164,7 +170,10 @@ XPATH
         //div[@data-region='empty-message-container' and not(contains(@class, 'hidden')) and contains(., %locator%)]
 XPATH
     , 'group_message_tab' => <<<XPATH
-        .//*[@data-region='message-drawer']//button[@data-toggle='collapse']//*[text()[contains(., %locator%)]]/..
+        .//*[@data-region='message-drawer']//button[@data-toggle='collapse' and contains(string(), %locator%)]
+XPATH
+    , 'group_message_list_area' => <<<XPATH
+        .//*[@data-region='message-drawer']//*[contains(@data-region, concat('view-overview-', %locator%))]
 XPATH
         , 'icon' => <<<XPATH
 .//*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') and ( contains(normalize-space(@title), %locator%))]

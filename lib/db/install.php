@@ -342,6 +342,6 @@ function xmldb_main_install() {
     make_default_scale();
     make_competence_scale();
 
-    // Add built-in prediction models.
-    \core_analytics\manager::add_builtin_models();
+    require_once($CFG->libdir . '/badgeslib.php');
+    badges_install_default_backpacks();
 }

@@ -525,6 +525,38 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame('', clean_param('user_', PARAM_COMPONENT));
     }
 
+    public function test_clean_param_localisedfloat() {
+
+        $this->assertSame(0.5, clean_param('0.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('0X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(0.5, clean_param('.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(10.5, clean_param('10.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('10X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(1000.5, clean_param('1 000.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('1 000X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('1.000.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('1X000X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('nan', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('10.6blah', PARAM_LOCALISEDFLOAT));
+
+        // Tests with a localised decimal separator.
+        $this->define_local_decimal_separator();
+
+        $this->assertSame(0.5, clean_param('0.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(0.5, clean_param('0X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(0.5, clean_param('.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(0.5, clean_param('X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(10.5, clean_param('10.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(10.5, clean_param('10X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(1000.5, clean_param('1 000.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(1000.5, clean_param('1 000X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('1.000.5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('1X000X5', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('nan', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(false, clean_param('10X6blah', PARAM_LOCALISEDFLOAT));
+    }
+
     public function test_is_valid_plugin_name() {
         $this->assertTrue(is_valid_plugin_name('forum'));
         $this->assertTrue(is_valid_plugin_name('forum2'));
@@ -4313,6 +4345,27 @@ class core_moodlelib_testcase extends advanced_testcase {
             'Fetch data using an invalid username' => [
                 'username', 's2', false
             ],
+            'Fetch by email' => [
+                'email', 's1@example.com', true
+            ],
+            'Fetch data using a non-existent email' => [
+                'email', 's2@example.com', false
+            ],
+            'Fetch data using a non-existent email, throw exception' => [
+                'email', 's2@example.com', false, dml_missing_record_exception::class
+            ],
+            'Multiple accounts with the same email' => [
+                'email', 's1@example.com', false, 1
+            ],
+            'Multiple accounts with the same email, throw exception' => [
+                'email', 's1@example.com', false, 1, dml_multiple_records_exception::class
+            ],
+            'Fetch data using a valid user ID' => [
+                'id', true, true
+            ],
+            'Fetch data using a non-existent user ID' => [
+                'id', false, false
+            ],
         ];
     }
 
@@ -4323,9 +4376,14 @@ class core_moodlelib_testcase extends advanced_testcase {
      * @param string $field The field to use for the query.
      * @param string|boolean $value The field value. When fetching by ID, set true to fetch valid user ID, false otherwise.
      * @param boolean $success Whether we expect for the fetch to succeed or return false.
+     * @param int $allowaccountssameemail Value for $CFG->allowaccountssameemail.
+     * @param string $expectedexception The exception to be expected.
      */
-    public function test_get_complete_user_data($field, $value, $success) {
+    public function test_get_complete_user_data($field, $value, $success, $allowaccountssameemail = 0, $expectedexception = '') {
         $this->resetAfterTest();
+
+        // Set config settings we need for our environment.
+        set_config('allowaccountssameemail', $allowaccountssameemail);
 
         // Generate the user data.
         $generator = $this->getDataGenerator();
@@ -4334,6 +4392,11 @@ class core_moodlelib_testcase extends advanced_testcase {
             'email' => 's1@example.com',
         ];
         $user = $generator->create_user($userdata);
+
+        if ($allowaccountssameemail) {
+            // Create another user with the same email address.
+            $generator->create_user(['email' => 's1@example.com']);
+        }
 
         // Since the data provider can't know what user ID to use, do a special handling for ID field tests.
         if ($field === 'id') {
@@ -4345,7 +4408,15 @@ class core_moodlelib_testcase extends advanced_testcase {
                 $value = $user->id + 1;
             }
         }
-        $fetcheduser = get_complete_user_data($field, $value);
+
+        // When an exception is expected.
+        $throwexception = false;
+        if ($expectedexception) {
+            $this->expectException($expectedexception);
+            $throwexception = true;
+        }
+
+        $fetcheduser = get_complete_user_data($field, $value, null, $throwexception);
         if ($success) {
             $this->assertEquals($user->id, $fetcheduser->id);
             $this->assertEquals($user->username, $fetcheduser->username);
@@ -4353,5 +4424,21 @@ class core_moodlelib_testcase extends advanced_testcase {
         } else {
             $this->assertFalse($fetcheduser);
         }
+    }
+
+    /**
+     * Test for send_password_change_().
+     */
+    public function test_send_password_change_info() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $sink = $this->redirectEmails(); // Make sure we are redirecting emails.
+        send_password_change_info($user);
+        $result = $sink->get_messages();
+        $sink->close();
+
+        $this->assertContains('passwords cannot be reset on this site', $result[0]->body);
     }
 }

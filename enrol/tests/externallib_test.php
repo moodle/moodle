@@ -453,6 +453,7 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals(100.0, $courseenrol['progress']);
                 $this->assertEquals(true, $courseenrol['completed']);
                 $this->assertTrue($courseenrol['completionhascriteria']);
+                $this->assertTrue($courseenrol['completionusertracked']);
                 $this->assertTrue($courseenrol['hidden']);
                 $this->assertTrue($courseenrol['isfavourite']);
                 $this->assertEquals(2, $courseenrol['enrolledusercount']);
@@ -465,6 +466,7 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals(0, $courseenrol['progress']);
                 $this->assertEquals(false, $courseenrol['completed']);
                 $this->assertFalse($courseenrol['completionhascriteria']);
+                $this->assertFalse($courseenrol['completionusertracked']);
                 $this->assertFalse($courseenrol['hidden']);
                 $this->assertFalse($courseenrol['isfavourite']);
                 $this->assertEquals(1, $courseenrol['enrolledusercount']);
@@ -489,11 +491,13 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($timenow, $courseenrol['lastaccess']);
                 $this->assertEquals(100.0, $courseenrol['progress']);
                 $this->assertTrue($courseenrol['completionhascriteria']);
+                $this->assertTrue($courseenrol['completionusertracked']);
                 $this->assertFalse($courseenrol['isfavourite']);    // This always false.
                 $this->assertFalse($courseenrol['hidden']); // This always false.
             } else {
                 $this->assertEquals(0, $courseenrol['progress']);
                 $this->assertFalse($courseenrol['completionhascriteria']);
+                $this->assertFalse($courseenrol['completionusertracked']);
                 $this->assertFalse($courseenrol['isfavourite']);    // This always false.
                 $this->assertFalse($courseenrol['hidden']); // This always false.
             }

@@ -596,36 +596,11 @@ class block_manager {
      * @see region_uses_dock
      * @param string $region
      * @return bool True if all of the blocks within that region are docked
+     *
+     * Return false as from MDL-64506
      */
     public function region_completely_docked($region, $output) {
-        global $CFG;
-        // If theme doesn't allow docking or allowblockstodock is not set, then return.
-        if (!$this->page->theme->enable_dock || empty($CFG->allowblockstodock)) {
-            return false;
-        }
-
-        // Do not dock the region when the user attemps to move a block.
-        if ($this->movingblock) {
-            return false;
-        }
-
-        // Block regions should not be docked during editing when all the blocks are hidden.
-        if ($this->page->user_is_editing() && $this->page->user_can_edit_blocks()) {
-            return false;
-        }
-
-        $this->check_is_loaded();
-        $this->ensure_content_created($region, $output);
-        if (!$this->region_has_content($region, $output)) {
-            // If the region has no content then nothing is docked at all of course.
-            return false;
-        }
-        foreach ($this->visibleblockcontent[$region] as $instance) {
-            if (!get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
     /**
@@ -634,20 +609,10 @@ class block_manager {
      * @see region_completely_docked
      * @param array|string $regions array of regions (or single region)
      * @return bool True if any of the blocks within that region are docked
+     *
+     * Return false as from MDL-64506
      */
     public function region_uses_dock($regions, $output) {
-        if (!$this->page->theme->enable_dock) {
-            return false;
-        }
-        $this->check_is_loaded();
-        foreach((array)$regions as $region) {
-            $this->ensure_content_created($region, $output);
-            foreach($this->visibleblockcontent[$region] as $instance) {
-                if(!empty($instance->content) && get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
-                    return true;
-                }
-            }
-        }
         return false;
     }
 
@@ -1486,13 +1451,13 @@ class block_manager {
 
             if (!$addableblocks) {
                 echo $OUTPUT->box(get_string('noblockstoaddhere'));
-                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('back')), 'm-x-3 m-b-1');
+                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('back')), 'mx-3 mb-1');
             } else {
                 $url = new moodle_url($addpage->url, array('sesskey' => sesskey()));
                 echo $OUTPUT->render_from_template('core/add_block_body',
                     ['blocks' => array_values($addableblocks),
                      'url' => '?' . $url->get_query_string(false)]);
-                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('cancel')), 'm-x-3 m-b-1');
+                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('cancel')), 'mx-3 mb-1');
             }
 
             echo $OUTPUT->footer();

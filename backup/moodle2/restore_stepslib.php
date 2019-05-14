@@ -2517,6 +2517,9 @@ class restore_badges_structure_step extends restore_structure_step {
         $paths[] = new restore_path_element('badge', '/badges/badge');
         $paths[] = new restore_path_element('criterion', '/badges/badge/criteria/criterion');
         $paths[] = new restore_path_element('parameter', '/badges/badge/criteria/criterion/parameters/parameter');
+        $paths[] = new restore_path_element('endorsement', '/badges/badge/endorsement');
+        $paths[] = new restore_path_element('alignment', '/badges/badge/alignments/alignment');
+        $paths[] = new restore_path_element('relatedbadge', '/badges/badge/relatedbadges/relatedbadge');
         $paths[] = new restore_path_element('manual_award', '/badges/badge/manual_awards/manual_award');
 
         return $paths;
@@ -2561,11 +2564,85 @@ class restore_badges_structure_step extends restore_structure_step {
                 'attachment'     => $data->attachment,
                 'notification'   => $data->notification,
                 'status'         => BADGE_STATUS_INACTIVE,
-                'nextcron'       => $data->nextcron
+                'nextcron'       => $data->nextcron,
+                'version'        => $data->version,
+                'language'       => $data->language,
+                'imageauthorname' => $data->imageauthorname,
+                'imageauthoremail' => $data->imageauthoremail,
+                'imageauthorurl' => $data->imageauthorurl,
+                'imagecaption'   => $data->imagecaption
         );
 
         $newid = $DB->insert_record('badge', $params);
         $this->set_mapping('badge', $data->id, $newid, $restorefiles);
+    }
+
+    /**
+     * Create an endorsement for a badge.
+     *
+     * @param mixed $data
+     * @return void
+     */
+    public function process_endorsement($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $params = [
+            'badgeid' => $this->get_new_parentid('badge'),
+            'issuername' => $data->issuername,
+            'issuerurl' => $data->issuerurl,
+            'issueremail' => $data->issueremail,
+            'claimid' => $data->claimid,
+            'claimcomment' => $data->claimcomment,
+            'dateissued' => $this->apply_date_offset($data->dateissued)
+        ];
+        $newid = $DB->insert_record('badge_endorsement', $params);
+        $this->set_mapping('endorsement', $data->id, $newid);
+    }
+
+    /**
+     * Link to related badges for a badge. This relies on post processing in after_execute().
+     *
+     * @param mixed $data
+     * @return void
+     */
+    public function process_relatedbadge($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $relatedbadgeid = $data->relatedbadgeid;
+
+        if ($relatedbadgeid) {
+            // Only backup and restore related badges if they are contained in the backup file.
+            $params = array(
+                    'badgeid'           => $this->get_new_parentid('badge'),
+                    'relatedbadgeid'    => $relatedbadgeid
+            );
+            $newid = $DB->insert_record('badge_related', $params);
+        }
+    }
+
+    /**
+     * Link to an alignment for a badge.
+     *
+     * @param mixed $data
+     * @return void
+     */
+    public function process_alignment($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $params = array(
+                'badgeid'           => $this->get_new_parentid('badge'),
+                'targetname'        => $data->targetname,
+                'targeturl'         => $data->targeturl,
+                'targetdescription' => $data->targetdescription,
+                'targetframework'   => $data->targetframework,
+                'targetcode'        => $data->targetcode
+        );
+        $newid = $DB->insert_record('badge_alignment', $params);
+        $this->set_mapping('alignment', $data->id, $newid);
     }
 
     public function process_criterion($data) {
@@ -2580,6 +2657,7 @@ class restore_badges_structure_step extends restore_structure_step {
                 'description'       => isset($data->description) ? $data->description : '',
                 'descriptionformat' => isset($data->descriptionformat) ? $data->descriptionformat : 0,
         );
+
         $newid = $DB->insert_record('badge_criteria', $params);
         $this->set_mapping('criterion', $data->id, $newid);
     }
@@ -2610,6 +2688,14 @@ class restore_badges_structure_step extends restore_structure_step {
             if (!empty($role)) {
                 $params['name'] = 'role_' . $role;
                 $params['value'] = $role;
+            } else {
+                return;
+            }
+        } else if ($data->criteriatype == BADGE_CRITERIA_TYPE_COMPETENCY) {
+            $competencyid = $this->get_mappingid('competency', $data->value);
+            if (!empty($competencyid)) {
+                $params['name'] = 'competency_' . $competencyid;
+                $params['value'] = $competencyid;
             } else {
                 return;
             }
@@ -2645,8 +2731,38 @@ class restore_badges_structure_step extends restore_structure_step {
     }
 
     protected function after_execute() {
+        global $DB;
         // Add related files.
         $this->add_related_files('badges', 'badgeimage', 'badge');
+
+        $badgeid = $this->get_new_parentid('badge');
+        // Remap any related badges.
+        // We do this in the DB directly because this is backup/restore it is not valid to call into
+        // the component API.
+        $params = array('badgeid' => $badgeid);
+        $query = "SELECT DISTINCT br.id, br.badgeid, br.relatedbadgeid
+                    FROM {badge_related} br
+                   WHERE (br.badgeid = :badgeid)";
+        $relatedbadges = $DB->get_records_sql($query, $params);
+        $newrelatedids = [];
+        foreach ($relatedbadges as $relatedbadge) {
+            $relatedid = $this->get_mappingid('badge', $relatedbadge->relatedbadgeid);
+            $params['relatedbadgeid'] = $relatedbadge->relatedbadgeid;
+            $DB->delete_records_select('badge_related', '(badgeid = :badgeid AND relatedbadgeid = :relatedbadgeid)', $params);
+            if ($relatedid) {
+                $newrelatedids[] = $relatedid;
+            }
+        }
+        if (!empty($newrelatedids)) {
+            $relatedbadges = [];
+            foreach ($newrelatedids as $relatedid) {
+                $relatedbadge = new stdClass();
+                $relatedbadge->badgeid = $badgeid;
+                $relatedbadge->relatedbadgeid = $relatedid;
+                $relatedbadges[] = $relatedbadge;
+            }
+            $DB->insert_records('badge_related', $relatedbadges);
+        }
     }
 }
 
@@ -5269,7 +5385,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     }
 
     /**
-     * This method does the acutal work for process_question_usage or
+     * This method does the actual work for process_question_usage or
      * process_{nameprefix}_question_usage.
      * @param array $data the data from the XML file.
      * @param string $nameprefix the element name prefix.
@@ -5304,7 +5420,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     abstract protected function inform_new_usage_id($newusageid);
 
     /**
-     * This method does the acutal work for process_question_attempt or
+     * This method does the actual work for process_question_attempt or
      * process_{nameprefix}_question_attempt.
      * @param array $data the data from the XML file.
      * @param string $nameprefix the element name prefix.
@@ -5334,7 +5450,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     }
 
     /**
-     * This method does the acutal work for process_question_attempt_step or
+     * This method does the actual work for process_question_attempt_step or
      * process_{nameprefix}_question_attempt_step.
      * @param array $data the data from the XML file.
      * @param string $nameprefix the element name prefix.

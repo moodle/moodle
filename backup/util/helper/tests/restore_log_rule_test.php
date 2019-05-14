@@ -49,4 +49,20 @@ class backup_restore_log_rule_testcase extends basic_testcase {
         // But the original log has been kept unmodified by the process() call.
         $this->assertEquals($originallog, $log);
     }
+
+    public function test_build_regexp() {
+        $original = 'Any (string) with [placeholders] like {this} and {this}. [end].';
+        $expectation = '~Any \(string\) with (.*) like (.*) and (.*)\. (.*)\.~';
+
+        $lr = new restore_log_rule('this', 'doesnt', 'matter', 'here');
+        $class = new ReflectionClass('restore_log_rule');
+
+        $method = $class->getMethod('extract_tokens');
+        $method->setAccessible(true);
+        $tokens = $method->invoke($lr, $original);
+
+        $method = $class->getMethod('build_regexp');
+        $method->setAccessible(true);
+        $this->assertSame($expectation, $method->invoke($lr, $original, $tokens));
+    }
 }

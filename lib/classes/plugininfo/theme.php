@@ -34,7 +34,7 @@ class theme extends base {
     public function is_uninstall_allowed() {
         global $CFG;
 
-        if ($this->name === 'bootstrapbase') {
+        if ($this->name === 'boost') {
             // All of these are protected for now.
             return false;
         }

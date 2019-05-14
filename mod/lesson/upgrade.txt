@@ -1,5 +1,10 @@
 This files describes API changes in the lesson code.
 
+=== 3.6.1 ===
+
+* A new function update_form_data() has been added to lesson_page class. This can be overridden by the individual page types
+  to alter the form data before being sent to the mform.
+
 === 3.4 ===
 
 * External function mod_lesson_external::get_user_attempt() now returns the full page object inside each answerpages.

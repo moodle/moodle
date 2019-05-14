@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\vaults\preprocessors\extract_context as extract_context_preprocessor;
 use mod_forum\local\vaults\preprocessors\extract_record as extract_record_preprocessor;
+use core\dml\table as dml_table;
 use context_helper;
 
 /**
@@ -60,27 +61,29 @@ class forum extends db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
+     * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null) : string {
         $db = $this->get_db();
         $alias = $this->get_table_alias();
-        $tablefields = $db->get_preload_columns(self::TABLE, $alias);
-        $coursemodulefields = $db->get_preload_columns('course_modules', 'cm_');
-        $coursefields = $db->get_preload_columns('course', 'c_');
+
+        $thistable = new dml_table(self::TABLE, $alias, $alias);
+        $cmtable = new dml_table('course_modules', 'cm', 'cm_');
+        $coursetable = new dml_table('course', 'c', 'c_');
 
         $fields = implode(', ', [
-            $db->get_preload_columns_sql($tablefields, $alias),
+            $thistable->get_field_select(),
             context_helper::get_preload_record_columns_sql('ctx'),
-            $db->get_preload_columns_sql($coursemodulefields, 'cm'),
-            $db->get_preload_columns_sql($coursefields, 'c'),
+            $cmtable->get_field_select(),
+            $coursetable->get_field_select(),
         ]);
 
-        $tables = '{' . self::TABLE . '} ' . $alias;
+        $tables = $thistable->get_from_sql();
         $tables .= " JOIN {modules} m ON m.name = 'forum'";
-        $tables .= " JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = {$alias}.id";
+        $tables .= " JOIN " . $cmtable->get_from_sql() . " ON cm.module = m.id AND cm.instance = {$alias}.id";
         $tables .= ' JOIN {context} ctx ON ctx.contextlevel = ' . CONTEXT_MODULE .  ' AND ctx.instanceid = cm.id';
-        $tables .= " JOIN {course} c ON c.id = {$alias}.course";
+        $tables .= " JOIN " . $coursetable->get_from_sql() . " ON c.id = {$alias}.course";
 
         $selectsql = 'SELECT ' . $fields . ' FROM ' . $tables;
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
@@ -99,9 +102,9 @@ class forum extends db_table_vault {
         return array_merge(
             parent::get_preprocessors(),
             [
-                'forum' => new extract_record_preprocessor($this->get_db(), self::TABLE, $this->get_table_alias()),
-                'course_module' => new extract_record_preprocessor($this->get_db(), 'course_modules', 'cm_'),
-                'course' => new extract_record_preprocessor($this->get_db(), 'course', 'c_'),
+                'forum' => new extract_record_preprocessor(self::TABLE, $this->get_table_alias()),
+                'course_module' => new extract_record_preprocessor('course_modules', 'cm_'),
+                'course' => new extract_record_preprocessor('course', 'c_'),
                 'context' => new extract_context_preprocessor(),
             ]
         );
@@ -152,5 +155,45 @@ class forum extends db_table_vault {
         $records = $this->get_db()->get_records_sql($sql, $params);
 
         return $this->transform_db_records_to_entities($records);
+    }
+
+    /**
+     * Get the forum entity for the given post id.
+     *
+     * @param int $id The course module id
+     * @return forum_entity|null
+     */
+    public function get_from_post_id(int $id) : ?forum_entity {
+        $alias = $this->get_table_alias();
+        $thistable = new dml_table(self::TABLE, $alias, $alias);
+        $coursemoduletable = new dml_table('course_modules', 'cm', 'cm_');
+        $coursetable = new dml_table('course', 'c', 'c_');
+
+        $tablefields = $thistable->get_field_select();
+        $coursemodulefields = $coursemoduletable->get_field_select();
+        $coursefields = $coursetable->get_field_select();
+
+        $fields = implode(', ', [
+            $tablefields,
+            context_helper::get_preload_record_columns_sql('ctx'),
+            $coursemodulefields,
+            $coursefields,
+        ]);
+
+        $tables = "{forum_posts} p";
+        $tables .= " JOIN {forum_discussions} d ON d.id = p.discussion";
+        $tables .= ' JOIN {' . self::TABLE . "} {$alias} ON {$alias}.id = d.forum";
+        $tables .= " JOIN {modules} m ON m.name = 'forum'";
+        $tables .= " JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = {$alias}.id";
+        $tables .= ' JOIN {context} ctx ON ctx.contextlevel = ' . CONTEXT_MODULE .  ' AND ctx.instanceid = cm.id';
+        $tables .= " JOIN {course} c ON c.id = {$alias}.course";
+
+        $sql = "SELECT {$fields} FROM {$tables} WHERE p.id = :postid";
+        $records = $this->get_db()->get_records_sql($sql, [
+            'postid' => $id,
+        ]);
+
+        $records = $this->transform_db_records_to_entities($records);
+        return count($records) ? array_shift($records) : null;
     }
 }

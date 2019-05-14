@@ -213,7 +213,16 @@ $tasks = array(
         'month' => '*'
     ),
     array(
-        'classname' => 'core\task\question_cron_task',
+        'classname' => 'core\task\question_preview_cleanup_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+    array(
+        'classname' => 'core\task\question_stats_cleanup_task',
         'blocking' => 0,
         'minute' => '*',
         'hour' => '*',
@@ -259,6 +268,15 @@ $tasks = array(
     ),
     array(
         'classname' => 'core\task\badges_cron_task',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+    array(
+        'classname' => 'core\task\badges_message_task',
         'blocking' => 0,
         'minute' => '*/5',
         'hour' => '*',

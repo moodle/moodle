@@ -95,10 +95,13 @@ class url {
      *
      * @param forum_entity $forum The forum entity
      * @param int|null $pageno The page number
+     * @param int|null $sortorder The sorting order
      * @return moodle_url
      */
-    public function get_forum_view_url_from_forum(forum_entity $forum, ?int $pageno = null) : moodle_url {
-        return $this->get_forum_view_url_from_course_module_id($forum->get_course_module_record()->id, $pageno);
+    public function get_forum_view_url_from_forum(forum_entity $forum, ?int $pageno = null,
+            ?int $sortorder = null) : moodle_url {
+
+        return $this->get_forum_view_url_from_course_module_id($forum->get_course_module_record()->id, $pageno, $sortorder);
     }
 
     /**
@@ -106,15 +109,22 @@ class url {
      *
      * @param int $coursemoduleid The course module id
      * @param int|null $pageno The page number
+     * @param int|null $sortorder The sorting order
      * @return moodle_url
      */
-    public function get_forum_view_url_from_course_module_id(int $coursemoduleid, ?int $pageno = null) : moodle_url {
+    public function get_forum_view_url_from_course_module_id(int $coursemoduleid, ?int $pageno = null,
+            ?int $sortorder = null) : moodle_url {
+
         $url = new moodle_url('/mod/forum/view.php', [
             'id' => $coursemoduleid,
         ]);
 
         if (null !== $pageno) {
-            $url->param('page', $pageno);
+            $url->param('p', $pageno);
+        }
+
+        if (null !== $sortorder) {
+            $url->param('o', $sortorder);
         }
 
         return $url;
@@ -393,16 +403,19 @@ class url {
     }
 
     /**
-     * Get the url to view the author's profile image.
+     * Get the url to view the author's profile image. The author's context id should be
+     * provided to prevent the code from needing to load it.
      *
      * @param author_entity $author The author
+     * @param int|null $authorcontextid The author context id
      * @return moodle_url
      */
-    public function get_author_profile_image_url(author_entity $author) : moodle_url {
+    public function get_author_profile_image_url(author_entity $author, int $authorcontextid = null) : moodle_url {
         global $PAGE;
 
         $datamapper = $this->legacydatamapperfactory->get_author_data_mapper();
         $record = $datamapper->to_legacy_object($author);
+        $record->contextid = $authorcontextid;
         $userpicture = new user_picture($record);
         $userpicture->size = 2;
 
@@ -455,6 +468,21 @@ class url {
             'sesskey' => sesskey(),
             'id' => $discussion->get_forum_id(),
             'd' => $discussion->get_id()
+        ]);
+    }
+
+    /**
+     * Generate the pinned discussion link
+     *
+     * @param discussion_entity $discussion
+     * @return moodle_url
+     * @throws \moodle_exception
+     */
+    public function get_pin_discussion_url_from_discussion(discussion_entity $discussion) : moodle_url {
+        return new moodle_url('discuss.php', [
+            'sesskey' => sesskey(),
+            'd' => $discussion->get_id(),
+            'pin' => $discussion->is_pinned() ? FORUM_DISCUSSION_UNPINNED : FORUM_DISCUSSION_PINNED
         ]);
     }
 }

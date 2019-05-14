@@ -58,7 +58,8 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
             $time,
             0,
             0,
-            false
+            false,
+            0
         );
 
         $past = time() - 100;
@@ -92,6 +93,8 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
         $completionposts = 0;
         $displaywordcount = false;
         $lockdiscussionafter = 0;
+        $duedate = 0;
+        $cutoffdate = 0;
 
         $forum = new forum_entity(
             $context,
@@ -122,7 +125,9 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
             $completionreplies,
             $completionposts,
             $displaywordcount,
-            $lockdiscussionafter
+            $lockdiscussionafter,
+            $duedate,
+            $cutoffdate
         );
 
         $this->assertEquals($context, $forum->get_context());
@@ -160,5 +165,9 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
         $this->assertEquals($lockdiscussionafter, $forum->get_lock_discussions_after());
         $this->assertEquals(false, $forum->has_lock_discussions_after());
         $this->assertEquals(false, $forum->is_discussion_locked($discussion));
+        $this->assertEquals(false, $forum->has_due_date());
+        $this->assertEquals(false, $forum->is_due_date_reached());
+        $this->assertEquals(false, $forum->has_cutoff_date());
+        $this->assertEquals(false, $forum->is_cutoff_date_reached());
     }
 }

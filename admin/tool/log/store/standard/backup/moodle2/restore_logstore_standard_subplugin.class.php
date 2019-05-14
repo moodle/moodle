@@ -60,7 +60,7 @@ class restore_logstore_standard_subplugin extends restore_tool_log_logstore_subp
     public function process_logstore_standard_log($data) {
         global $DB;
 
-        $data = $this->process_log($data);
+        $data = $this->process_log($data, get_config('logstore_standard', 'jsonformat'));
 
         if ($data) {
             $DB->insert_record('logstore_standard_log', $data);

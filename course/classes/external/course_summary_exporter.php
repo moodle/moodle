@@ -57,7 +57,7 @@ class course_summary_exporter extends \core\external\exporter {
         global $CFG;
         $courseimage = self::get_course_image($this->data);
         if (!$courseimage) {
-            $courseimage = self::get_course_pattern($this->data);
+            $courseimage = $output->get_generated_image_for_id($this->data->id);
         }
         $progress = self::get_course_progress($this->data);
         $hasprogress = false;
@@ -188,13 +188,13 @@ class course_summary_exporter extends \core\external\exporter {
      * The datauri is an encoded svg that can be passed as a url.
      * @param object $course
      * @return string datauri
+     * @deprecated 3.7
      */
     public static function get_course_pattern($course) {
-        $color = self::coursecolor($course->id);
-        $pattern = new \core_geopattern();
-        $pattern->setColor($color);
-        $pattern->patternbyid($course->id);
-        return $pattern->datauri();
+        global $OUTPUT;
+        debugging('course_summary_exporter::get_course_pattern() is deprecated. ' .
+            'Please use $OUTPUT->get_generated_image_for_id() instead.', DEBUG_DEVELOPER);
+        return $OUTPUT->get_generated_image_for_id($course->id);
     }
 
     /**
@@ -212,13 +212,12 @@ class course_summary_exporter extends \core\external\exporter {
      *
      * @param int $courseid
      * @return string hex color code.
+     * @deprecated 3.7
      */
     public static function coursecolor($courseid) {
-        // The colour palette is hardcoded for now. It would make sense to combine it with theme settings.
-        $basecolors = ['#81ecec', '#74b9ff', '#a29bfe', '#dfe6e9', '#00b894',
-            '#0984e3', '#b2bec3', '#fdcb6e', '#fd79a8', '#6c5ce7'];
-
-        $color = $basecolors[$courseid % 10];
-        return $color;
+        global $OUTPUT;
+        debugging('course_summary_exporter::coursecolor() is deprecated. ' .
+            'Please use $OUTPUT->get_generated_color_for_id() instead.', DEBUG_DEVELOPER);
+        return $OUTPUT->get_generated_color_for_id($courseid);
     }
 }

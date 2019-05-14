@@ -152,7 +152,8 @@ class forum_post implements \renderable, \templatable {
      * @return array Data ready for use in a mustache template
      */
     protected function export_for_template_text(\mod_forum_renderer $renderer) {
-        return array(
+        $data = $this->export_for_template_shared($renderer);
+        return $data + array(
             'id'                            => html_entity_decode($this->post->id),
             'coursename'                    => html_entity_decode($this->get_coursename()),
             'courselink'                    => html_entity_decode($this->get_courselink()),
@@ -193,7 +194,8 @@ class forum_post implements \renderable, \templatable {
      * @return array Data ready for use in a mustache template
      */
     protected function export_for_template_html(\mod_forum_renderer $renderer) {
-        return array(
+        $data = $this->export_for_template_shared($renderer);
+        return $data + array(
             'id'                            => $this->post->id,
             'coursename'                    => $this->get_coursename(),
             'courselink'                    => $this->get_courselink(),
@@ -207,7 +209,17 @@ class forum_post implements \renderable, \templatable {
             // Format some components according to the renderer.
             'message'                       => $renderer->format_message_text($this->cm, $this->post),
             'attachments'                   => $renderer->format_message_attachments($this->cm, $this->post),
+        );
+    }
 
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param \mod_forum_renderer $renderer The render to be used for formatting the message and attachments
+     * @return stdClass Data ready for use in a mustache template
+     */
+    protected function export_for_template_shared(\mod_forum_renderer $renderer) {
+        return array(
             'canreply'                      => $this->canreply,
             'permalink'                     => $this->get_permalink(),
             'firstpost'                     => $this->get_is_firstpost(),
@@ -224,6 +236,8 @@ class forum_post implements \renderable, \templatable {
             'authorpicture'                 => $this->get_author_picture($renderer),
 
             'grouppicture'                  => $this->get_group_picture($renderer),
+
+            'isprivatereply'                => !empty($this->post->privatereplyto),
         );
     }
 

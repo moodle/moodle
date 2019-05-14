@@ -69,12 +69,12 @@ class mod_glossary_entry_form extends moodleform {
 
             $mform->addElement('checkbox', 'casesensitive', get_string('casesensitive', 'glossary'));
             $mform->addHelpButton('casesensitive', 'casesensitive', 'glossary');
-            $mform->disabledIf('casesensitive', 'usedynalink');
+            $mform->hideIf('casesensitive', 'usedynalink');
             $mform->setDefault('casesensitive', $CFG->glossary_casesensitive);
 
             $mform->addElement('checkbox', 'fullmatch', get_string('fullmatch', 'glossary'));
             $mform->addHelpButton('fullmatch', 'fullmatch', 'glossary');
-            $mform->disabledIf('fullmatch', 'usedynalink');
+            $mform->hideIf('fullmatch', 'usedynalink');
             $mform->setDefault('fullmatch', $CFG->glossary_fullmatch);
         }
 

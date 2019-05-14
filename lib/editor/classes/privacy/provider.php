@@ -62,7 +62,7 @@ class provider implements
      */
     public static function export_user_preferences(int $userid) {
         $preference = get_user_preferences('htmleditor');
-        if (null !== $preference) {
+        if (!empty($preference)) {
             $desc = get_string('privacy:preference:htmleditor', 'core_editor',
                     get_string('pluginname', "editor_{$preference}"));
             writer::export_user_preference('core_editor', 'htmleditor', $preference, $desc);

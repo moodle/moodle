@@ -1544,6 +1544,11 @@ function quiz_send_confirmation($recipient, $a) {
     $eventdata->smallmessage      = get_string('emailconfirmsmall', 'quiz', $a);
     $eventdata->contexturl        = $a->quizurl;
     $eventdata->contexturlname    = $a->quizname;
+    $eventdata->customdata        = [
+        'cmid' => $a->quizcmid,
+        'instance' => $a->quizid,
+        'attemptid' => $a->attemptid,
+    ];
 
     // ... and send it.
     return message_send($eventdata);
@@ -1558,6 +1563,7 @@ function quiz_send_confirmation($recipient, $a) {
  * @return int|false as for {@link message_send()}.
  */
 function quiz_send_notification($recipient, $submitter, $a) {
+    global $PAGE;
 
     // Recipient info for template.
     $a->useridnumber = $recipient->idnumber;
@@ -1581,6 +1587,14 @@ function quiz_send_notification($recipient, $submitter, $a) {
     $eventdata->smallmessage      = get_string('emailnotifysmall', 'quiz', $a);
     $eventdata->contexturl        = $a->quizreviewurl;
     $eventdata->contexturlname    = $a->quizname;
+    $userpicture = new user_picture($submitter);
+    $userpicture->includetoken = $recipient->id; // Generate an out-of-session token for the user receiving the message.
+    $eventdata->customdata        = [
+        'cmid' => $a->quizcmid,
+        'instance' => $a->quizid,
+        'attemptid' => $a->attemptid,
+        'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),
+    ];
 
     // ... and send it.
     return message_send($eventdata);
@@ -1649,12 +1663,15 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
             format_string($quiz->name) . ' report</a>';
     $a->quizurl         = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
     $a->quizlink        = '<a href="' . $a->quizurl . '">' . format_string($quiz->name) . '</a>';
+    $a->quizid          = $quiz->id;
+    $a->quizcmid        = $cm->id;
     // Attempt info.
     $a->submissiontime  = userdate($attempt->timefinish);
     $a->timetaken       = format_time($attempt->timefinish - $attempt->timestart);
     $a->quizreviewurl   = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
     $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' .
             format_string($quiz->name) . ' review</a>';
+    $a->attemptid       = $attempt->id;
     // Student who sat the quiz info.
     $a->studentidnumber = $submitter->idnumber;
     $a->studentname     = fullname($submitter);
@@ -1748,6 +1765,11 @@ function quiz_send_overdue_message($attemptobj) {
     $eventdata->smallmessage      = get_string('emailoverduesmall', 'quiz', $a);
     $eventdata->contexturl        = $a->quizurl;
     $eventdata->contexturlname    = $a->quizname;
+    $eventdata->customdata        = [
+        'cmid' => $attemptobj->get_cmid(),
+        'instance' => $attemptobj->get_quizid(),
+        'attemptid' => $attemptobj->get_attemptid(),
+    ];
 
     // Send the message.
     return message_send($eventdata);

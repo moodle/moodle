@@ -101,50 +101,118 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
         },
 
         /**
-         * Displays a select-evaluation-mode choice.
+         * Displays evaluation mode and time-splitting method choices.
          *
          * @param  {String}  actionId
          * @param  {Boolean} trainedOnlyExternally
          */
-        selectEvaluationMode: function(actionId, trainedOnlyExternally) {
+        selectEvaluationOptions: function(actionId, trainedOnlyExternally, timeSplittingMethods) {
             $('[data-action-id="' + actionId + '"]').on('click', function(ev) {
                 ev.preventDefault();
 
                 var a = $(ev.currentTarget);
-
-                if (!trainedOnlyExternally) {
-                    // We can not evaluate trained models if the model was trained using data from this site.
-                    // Default to evaluate the model configuration if that is the case.
-                    window.location.href = a.attr('href');
-                    return;
-                }
 
                 var stringsPromise = Str.get_strings([
                     {
                         key: 'evaluatemodel',
                         component: 'tool_analytics'
                     }, {
-                        key: 'evaluationmode',
+                        key: 'evaluate',
                         component: 'tool_analytics'
                     }
                 ]);
                 var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
-                var bodyPromise = Templates.render('tool_analytics/evaluation_mode_selection', {});
+                var bodyPromise = Templates.render('tool_analytics/evaluation_options', {
+                    trainedexternally: trainedOnlyExternally,
+                    timesplittingmethods: timeSplittingMethods
+                });
 
                 $.when(stringsPromise, modalPromise).then(function(strings, modal) {
 
 
                     modal.getRoot().on(ModalEvents.hidden, modal.destroy.bind(modal));
 
-                    modal.setTitle(strings[1]);
-                    modal.setSaveButtonText(strings[0]);
+                    modal.setTitle(strings[0]);
+                    modal.setSaveButtonText(strings[1]);
                     modal.setBody(bodyPromise);
 
                     modal.getRoot().on(ModalEvents.save, function() {
+
+                        // Evaluation mode.
                         var evaluationMode = $("input[name='evaluationmode']:checked").val();
                         if (evaluationMode == 'trainedmodel') {
                             a.attr('href', a.attr('href') + '&mode=trainedmodel');
                         }
+
+                        // Selected time-splitting id.
+                        var timeSplittingMethod = $("#id-evaluation-timesplitting").val();
+                        a.attr('href', a.attr('href') + '&timesplitting=' + timeSplittingMethod);
+
+                        window.location.href = a.attr('href');
+                        return;
+                    });
+
+                    modal.show();
+                    return modal;
+                }).fail(Notification.exception);
+            });
+        },
+
+        /**
+         * Displays export options.
+         *
+         * We have two main options: export training data and export configuration.
+         * The 2nd option has an extra option: include the trained algorithm weights.
+         *
+         * @param  {String}  actionId
+         * @param  {Boolean} isTrained
+         */
+        selectExportOptions: function(actionId, isTrained) {
+            $('[data-action-id="' + actionId + '"]').on('click', function(ev) {
+                ev.preventDefault();
+
+                var a = $(ev.currentTarget);
+
+                if (!isTrained) {
+                    // Export the model configuration if the model is not trained. We can't export anything else.
+                    a.attr('href', a.attr('href') + '&action=exportmodel&includeweights=0');
+                    window.location.href = a.attr('href');
+                    return;
+                }
+
+                var stringsPromise = Str.get_strings([
+                    {
+                        key: 'export',
+                        component: 'tool_analytics'
+                    }
+                ]);
+                var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
+                var bodyPromise = Templates.render('tool_analytics/export_options', {});
+
+                $.when(stringsPromise, modalPromise).then(function(strings, modal) {
+
+                    modal.getRoot().on(ModalEvents.hidden, modal.destroy.bind(modal));
+
+                    modal.setTitle(strings[0]);
+                    modal.setSaveButtonText(strings[0]);
+                    modal.setBody(bodyPromise);
+
+                    modal.getRoot().on(ModalEvents.save, function() {
+
+                        var exportOption = $("input[name='exportoption']:checked").val();
+
+                        if (exportOption == 'exportdata') {
+                            a.attr('href', a.attr('href') + '&action=exportdata');
+
+                        } else {
+                            a.attr('href', a.attr('href') + '&action=exportmodel');
+                            if ($("#id-includeweights").is(':checked')) {
+                                a.attr('href', a.attr('href') + '&includeweights=1');
+                            } else {
+                                a.attr('href', a.attr('href') + '&includeweights=0');
+                            }
+                        }
+
                         window.location.href = a.attr('href');
                         return;
                     });

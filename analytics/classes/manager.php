@@ -41,6 +41,11 @@ class manager {
     const DEFAULT_MLBACKEND = '\mlbackend_php\processor';
 
     /**
+     * Name of the file where components declare their models.
+     */
+    const ANALYTICS_FILENAME = 'db/analytics.php';
+
+    /**
      * @var \core_analytics\predictor[]
      */
     protected static $predictionprocessors = null;
@@ -75,10 +80,23 @@ class manager {
      *
      * @throws \required_capability_exception
      * @param \context $context
+     * @param  bool $return The method returns a bool if true.
      * @return void
      */
-    public static function check_can_list_insights(\context $context) {
-        require_capability('moodle/analytics:listinsights', $context);
+    public static function check_can_list_insights(\context $context, bool $return = false) {
+        global $USER;
+
+        if ($context->contextlevel === CONTEXT_USER && $context->instanceid == $USER->id) {
+            $capability = 'moodle/analytics:listowninsights';
+        } else {
+            $capability = 'moodle/analytics:listinsights';
+        }
+
+        if ($return) {
+            return has_capability($capability, $context);
+        } else {
+            require_capability($capability, $context);
+        }
     }
 
     /**
@@ -107,7 +125,9 @@ class manager {
                 $params['trained'] = 1;
             }
             if ($predictioncontext) {
-                $conditions[] = "EXISTS (SELECT 'x' FROM {analytics_predictions} ap WHERE ap.modelid = am.id AND ap.contextid = :contextid)";
+                $conditions[] = "EXISTS (SELECT 'x'
+                                           FROM {analytics_predictions} ap
+                                          WHERE ap.modelid = am.id AND ap.contextid = :contextid)";
                 $params['contextid'] = $predictioncontext->id;
             }
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
@@ -267,22 +287,31 @@ class manager {
     }
 
     /**
-     * Returns the default time splitting methods for model evaluation.
+     * Returns the time-splitting methods for model evaluation.
      *
+     * @param  bool $all Return all the time-splitting methods that can potentially be used for evaluation or the default ones.
      * @return \core_analytics\local\time_splitting\base[]
      */
-    public static function get_time_splitting_methods_for_evaluation() {
+    public static function get_time_splitting_methods_for_evaluation(bool $all = false) {
 
-        if ($enabledtimesplittings = get_config('analytics', 'defaulttimesplittingsevaluation')) {
-            $enabledtimesplittings = array_flip(explode(',', $enabledtimesplittings));
+        if ($all === false) {
+            if ($enabledtimesplittings = get_config('analytics', 'defaulttimesplittingsevaluation')) {
+                $enabledtimesplittings = array_flip(explode(',', $enabledtimesplittings));
+            }
         }
 
         $timesplittings = self::get_all_time_splittings();
         foreach ($timesplittings as $key => $timesplitting) {
 
-            // We remove the ones that are not enabled. This also respects the default value (all methods enabled).
-            if (!empty($enabledtimesplittings) && !isset($enabledtimesplittings[$key])) {
+            if (!$timesplitting->valid_for_evaluation()) {
                 unset($timesplittings[$key]);
+            }
+
+            if ($all === false) {
+                // We remove the ones that are not enabled. This also respects the default value (all methods enabled).
+                if (!empty($enabledtimesplittings) && !isset($enabledtimesplittings[$key])) {
+                    unset($timesplittings[$key]);
+                }
             }
         }
         return $timesplittings;
@@ -502,84 +531,16 @@ class manager {
     }
 
     /**
-     * Adds the models included with moodle core to the system.
+     * Used to be used to add models included with the Moodle core.
      *
+     * @deprecated Deprecated since Moodle 3.7 (MDL-61667) - Use lib/db/analytics.php instead.
+     * @todo Remove this method in Moodle 4.1 (MDL-65186).
      * @return void
      */
     public static function add_builtin_models() {
 
-        $target = self::get_target('\core\analytics\target\course_dropout');
-
-        // Community of inquiry indicators.
-        $coiindicators = array(
-            '\mod_assign\analytics\indicator\cognitive_depth',
-            '\mod_assign\analytics\indicator\social_breadth',
-            '\mod_book\analytics\indicator\cognitive_depth',
-            '\mod_book\analytics\indicator\social_breadth',
-            '\mod_chat\analytics\indicator\cognitive_depth',
-            '\mod_chat\analytics\indicator\social_breadth',
-            '\mod_choice\analytics\indicator\cognitive_depth',
-            '\mod_choice\analytics\indicator\social_breadth',
-            '\mod_data\analytics\indicator\cognitive_depth',
-            '\mod_data\analytics\indicator\social_breadth',
-            '\mod_feedback\analytics\indicator\cognitive_depth',
-            '\mod_feedback\analytics\indicator\social_breadth',
-            '\mod_folder\analytics\indicator\cognitive_depth',
-            '\mod_folder\analytics\indicator\social_breadth',
-            '\mod_forum\analytics\indicator\cognitive_depth',
-            '\mod_forum\analytics\indicator\social_breadth',
-            '\mod_glossary\analytics\indicator\cognitive_depth',
-            '\mod_glossary\analytics\indicator\social_breadth',
-            '\mod_imscp\analytics\indicator\cognitive_depth',
-            '\mod_imscp\analytics\indicator\social_breadth',
-            '\mod_label\analytics\indicator\cognitive_depth',
-            '\mod_label\analytics\indicator\social_breadth',
-            '\mod_lesson\analytics\indicator\cognitive_depth',
-            '\mod_lesson\analytics\indicator\social_breadth',
-            '\mod_lti\analytics\indicator\cognitive_depth',
-            '\mod_lti\analytics\indicator\social_breadth',
-            '\mod_page\analytics\indicator\cognitive_depth',
-            '\mod_page\analytics\indicator\social_breadth',
-            '\mod_quiz\analytics\indicator\cognitive_depth',
-            '\mod_quiz\analytics\indicator\social_breadth',
-            '\mod_resource\analytics\indicator\cognitive_depth',
-            '\mod_resource\analytics\indicator\social_breadth',
-            '\mod_scorm\analytics\indicator\cognitive_depth',
-            '\mod_scorm\analytics\indicator\social_breadth',
-            '\mod_survey\analytics\indicator\cognitive_depth',
-            '\mod_survey\analytics\indicator\social_breadth',
-            '\mod_url\analytics\indicator\cognitive_depth',
-            '\mod_url\analytics\indicator\social_breadth',
-            '\mod_wiki\analytics\indicator\cognitive_depth',
-            '\mod_wiki\analytics\indicator\social_breadth',
-            '\mod_workshop\analytics\indicator\cognitive_depth',
-            '\mod_workshop\analytics\indicator\social_breadth',
-            '\core_course\analytics\indicator\completion_enabled',
-            '\core_course\analytics\indicator\potential_cognitive_depth',
-            '\core_course\analytics\indicator\potential_social_breadth',
-            '\core\analytics\indicator\any_access_after_end',
-            '\core\analytics\indicator\any_access_before_start',
-            '\core\analytics\indicator\any_write_action_in_course',
-            '\core\analytics\indicator\read_actions',
-        );
-        $indicators = array();
-        foreach ($coiindicators as $coiindicator) {
-            $indicator = self::get_indicator($coiindicator);
-            $indicators[$indicator->get_id()] = $indicator;
-        }
-        if (!\core_analytics\model::exists($target, $indicators)) {
-            $model = \core_analytics\model::create($target, $indicators);
-        }
-
-        // No teaching model.
-        $target = self::get_target('\core\analytics\target\no_teaching');
-        $timesplittingmethod = '\core\analytics\time_splitting\single_range';
-        $noteacher = self::get_indicator('\core_course\analytics\indicator\no_teacher');
-        $nostudent = self::get_indicator('\core_course\analytics\indicator\no_student');
-        $indicators = array($noteacher->get_id() => $noteacher, $nostudent->get_id() => $nostudent);
-        if (!\core_analytics\model::exists($target, $indicators)) {
-            \core_analytics\model::create($target, $indicators, $timesplittingmethod);
-        }
+        debugging('core_analytics\manager::add_builtin_models() has been deprecated. Core models are now automatically '.
+            'updated according to their declaration in the lib/db/analytics.php file.', DEBUG_DEVELOPER);
     }
 
     /**
@@ -613,14 +574,18 @@ class manager {
         $models = self::get_all_models();
         foreach ($models as $model) {
             $analyser = $model->get_analyser(array('notimesplitting' => true));
-            $analysables = $analyser->get_analysables();
-            if (!$analysables) {
+            $analysables = $analyser->get_analysables_iterator();
+
+            $analysableids = [];
+            foreach ($analysables as $analysable) {
+                if (!$analysable) {
+                    continue;
+                }
+                $analysableids[] = $analysable->get_id();
+            }
+            if (empty($analysableids)) {
                 continue;
             }
-
-            $analysableids = array_map(function($analysable) {
-                return $analysable->get_id();
-            }, $analysables);
 
             list($notinsql, $params) = $DB->get_in_or_equal($analysableids, SQL_PARAMS_NAMED, 'param', false);
             $params['modelid'] = $model->get_id();
@@ -650,23 +615,219 @@ class manager {
         // Just in case...
         $element = clean_param($element, PARAM_ALPHANUMEXT);
 
-        // Core analytics classes (analytics subsystem should not contain uses of the analytics API).
-        $classes = \core_component::get_component_classes_in_namespace('core', 'analytics\\' . $element);
+        $classes = \core_component::get_component_classes_in_namespace(null, 'analytics\\' . $element);
 
-        // Plugins.
-        foreach (\core_component::get_plugin_types() as $type => $unusedplugintypepath) {
-            foreach (\core_component::get_plugin_list($type) as $pluginname => $unusedpluginpath) {
-                $frankenstyle = $type . '_' . $pluginname;
-                $classes += \core_component::get_component_classes_in_namespace($frankenstyle, 'analytics\\' . $element);
+        return $classes;
+    }
+
+    /**
+     * Check that all the models declared by the component are up to date.
+     *
+     * This is intended to be called during the installation / upgrade to automatically create missing models.
+     *
+     * @param string $componentname The name of the component to load models for.
+     * @return array \core_analytics\model[] List of actually created models.
+     */
+    public static function update_default_models_for_component(string $componentname): array {
+
+        $result = [];
+
+        foreach (static::load_default_models_for_component($componentname) as $definition) {
+            if (!\core_analytics\model::exists(static::get_target($definition['target']))) {
+                $result[] = static::create_declared_model($definition);
             }
         }
 
-        // Core subsystems.
-        foreach (\core_component::get_core_subsystems() as $subsystemname => $unusedsubsystempath) {
-            $componentname = 'core_' . $subsystemname;
-            $classes += \core_component::get_component_classes_in_namespace($componentname, 'analytics\\' . $element);
+        return $result;
+    }
+
+    /**
+     * Return the list of models declared by the given component.
+     *
+     * @param string $componentname The name of the component to load models for.
+     * @throws \coding_exception Exception thrown in case of invalid syntax.
+     * @return array The $models description array.
+     */
+    public static function load_default_models_for_component(string $componentname): array {
+
+        $dir = \core_component::get_component_directory($componentname);
+
+        if (!$dir) {
+            // This is either an invalid component, or a core subsystem without its own root directory.
+            return [];
         }
 
-        return $classes;
+        $file = $dir . '/' . self::ANALYTICS_FILENAME;
+
+        if (!is_readable($file)) {
+            return [];
+        }
+
+        $models = null;
+        include($file);
+
+        if (!isset($models) || !is_array($models) || empty($models)) {
+            return [];
+        }
+
+        foreach ($models as &$model) {
+            if (!isset($model['enabled'])) {
+                $model['enabled'] = false;
+            } else {
+                $model['enabled'] = clean_param($model['enabled'], PARAM_BOOL);
+            }
+        }
+
+        static::validate_models_declaration($models);
+
+        return $models;
+    }
+
+    /**
+     * Return the list of all the models declared anywhere in this Moodle installation.
+     *
+     * Models defined by the core and core subsystems come first, followed by those provided by plugins.
+     *
+     * @return array indexed by the frankenstyle component
+     */
+    public static function load_default_models_for_all_components(): array {
+
+        $tmp = [];
+
+        foreach (\core_component::get_component_list() as $type => $components) {
+            foreach (array_keys($components) as $component) {
+                if ($loaded = static::load_default_models_for_component($component)) {
+                    $tmp[$type][$component] = $loaded;
+                }
+            }
+        }
+
+        $result = [];
+
+        if ($loaded = static::load_default_models_for_component('core')) {
+            $result['core'] = $loaded;
+        }
+
+        if (!empty($tmp['core'])) {
+            $result += $tmp['core'];
+            unset($tmp['core']);
+        }
+
+        foreach ($tmp as $components) {
+            $result += $components;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Validate the declaration of prediction models according the syntax expected in the component's db folder.
+     *
+     * The expected structure looks like this:
+     *
+     *  [
+     *      [
+     *          'target' => '\fully\qualified\name\of\the\target\class',
+     *          'indicators' => [
+     *              '\fully\qualified\name\of\the\first\indicator',
+     *              '\fully\qualified\name\of\the\second\indicator',
+     *          ],
+     *          'timesplitting' => '\optional\name\of\the\time_splitting\class',
+     *          'enabled' => true,
+     *      ],
+     *  ];
+     *
+     * @param array $models List of declared models.
+     * @throws \coding_exception Exception thrown in case of invalid syntax.
+     */
+    public static function validate_models_declaration(array $models) {
+
+        foreach ($models as $model) {
+            if (!isset($model['target'])) {
+                throw new \coding_exception('Missing target declaration');
+            }
+
+            if (!static::is_valid($model['target'], '\core_analytics\local\target\base')) {
+                throw new \coding_exception('Invalid target classname', $model['target']);
+            }
+
+            if (empty($model['indicators']) || !is_array($model['indicators'])) {
+                throw new \coding_exception('Missing indicators declaration');
+            }
+
+            foreach ($model['indicators'] as $indicator) {
+                if (!static::is_valid($indicator, '\core_analytics\local\indicator\base')) {
+                    throw new \coding_exception('Invalid indicator classname', $indicator);
+                }
+            }
+
+            if (isset($model['timesplitting'])) {
+                if (substr($model['timesplitting'], 0, 1) !== '\\') {
+                    throw new \coding_exception('Expecting fully qualified time splitting classname', $model['timesplitting']);
+                }
+                if (!static::is_valid($model['timesplitting'], '\core_analytics\local\time_splitting\base')) {
+                    throw new \coding_exception('Invalid time splitting classname', $model['timesplitting']);
+                }
+            }
+
+            if (!empty($model['enabled']) && !isset($model['timesplitting'])) {
+                throw new \coding_exception('Cannot enable a model without time splitting method specified');
+            }
+        }
+    }
+
+    /**
+     * Create the defined model.
+     *
+     * @param array $definition See {@link self::validate_models_declaration()} for the syntax.
+     * @return \core_analytics\model
+     */
+    public static function create_declared_model(array $definition): \core_analytics\model {
+
+        list($target, $indicators) = static::get_declared_target_and_indicators_instances($definition);
+
+        if (isset($definition['timesplitting'])) {
+            $timesplitting = $definition['timesplitting'];
+        } else {
+            $timesplitting = false;
+        }
+
+        $created = \core_analytics\model::create($target, $indicators, $timesplitting);
+
+        if (!empty($definition['enabled'])) {
+            $created->enable();
+        }
+
+        return $created;
+    }
+
+    /**
+     * Returns a string uniquely representing the given model declaration.
+     *
+     * @param array $model Model declaration
+     * @return string complying with PARAM_ALPHANUM rules and starting with an 'id' prefix
+     */
+    public static function model_declaration_identifier(array $model) : string {
+        return 'id'.sha1(serialize($model));
+    }
+
+    /**
+     * Given a model definition, return actual target and indicators instances.
+     *
+     * @param array $definition See {@link self::validate_models_declaration()} for the syntax.
+     * @return array [0] => target instance, [1] => array of indicators instances
+     */
+    public static function get_declared_target_and_indicators_instances(array $definition): array {
+
+        $target = static::get_target($definition['target']);
+
+        $indicators = [];
+
+        foreach ($definition['indicators'] as $indicatorname) {
+            $indicator = static::get_indicator($indicatorname);
+            $indicators[$indicator->get_id()] = $indicator;
+        }
+
+        return [$target, $indicators];
     }
 }

@@ -68,86 +68,51 @@ class lineitem extends resource_base {
         $params = $this->parse_template();
         $contextid = $params['context_id'];
         $itemid = $params['item_id'];
-        if ($response->get_request_method() === 'GET') {
-            $contenttype = $response->get_accept();
-        } else {
-            $contenttype = $response->get_content_type();
-        }
+        $isget = $response->get_request_method() === self::HTTP_GET;
         // We will receive typeid when working with LTI 1.x, if not then we are in LTI 2.
-        $typeid = optional_param('type_id', null, PARAM_ALPHANUM);
-        if (is_null($typeid)) {
-            if (!$this->check_tool_proxy(null, $response->get_request_data())) {
-                $response->set_code(403);
-                $response->set_reason("Invalid tool proxy specified.");
-                return;
+        $typeid = optional_param('type_id', null, PARAM_INT);
+
+        $scopes = array(gradebookservices::SCOPE_GRADEBOOKSERVICES_LINEITEM);
+        if ($response->get_request_method() === self::HTTP_GET) {
+            $scopes[] = gradebookservices::SCOPE_GRADEBOOKSERVICES_LINEITEM_READ;
+        }
+
+        try {
+            if (!$this->check_tool($typeid, $response->get_request_data(), $scopes)) {
+                throw new \Exception(null, 401);
             }
-        } else {
+            $typeid = $this->get_service()->get_type()->id;
+            if (!($course = $DB->get_record('course', array('id' => $contextid), 'id', IGNORE_MISSING))) {
+                throw new \Exception("Not Found: Course {$contextid} doesn't exist", 404);
+            }
+            if (!$this->get_service()->is_allowed_in_context($typeid, $course->id)) {
+                throw new \Exception('Not allowed in context', 403);
+            }
+            if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
+                throw new \Exception("Not Found: Grade item {$itemid} doesn't exist", 404);
+            }
+            $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
+            if ($item === false) {
+                throw new \Exception('Line item does not exist', 404);
+            }
+            require_once($CFG->libdir.'/gradelib.php');
             switch ($response->get_request_method()) {
                 case self::HTTP_GET:
-                    if (!$this->check_type($typeid, $contextid, 'LineItem.item:get', $response->get_request_data())) {
-                        $response->set_code(403);
-                        $response->set_reason("This resource does not support GET requests.");
-                        return;
-                    }
+                    $this->get_request($response, $item, $typeid);
                     break;
                 case self::HTTP_PUT:
-                    if (!$this->check_type($typeid, $contextid, 'LineItem.item:put', $response->get_request_data())) {
-                        $response->set_code(403);
-                        $response->set_reason("This resource does not support PUT requests.");
-                        return;
-                    }
+                    $json = $this->process_put_request($response->get_request_data(), $item, $typeid);
+                    $response->set_body($json);
+                    $response->set_code(200);
                     break;
                 case self::HTTP_DELETE:
-                    if (!$this->check_type($typeid, $contextid, 'LineItem.item:delete', $response->get_request_data())) {
-                        $response->set_code(403);
-                        $response->set_reason("This resource does not support DELETE requests.");
-                        return;
-                    }
+                    $this->process_delete_request($item);
+                    $response->set_code(204);
                     break;
-                default:  // Should not be possible.
-                    $response->set_code(405);
-                    return;
             }
-        }
-        if (empty($contextid) || (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
-            $response->set_code(400);
-            $response->set_reason("Invalid request made.");
-            return;
-        }
-        if (!$DB->record_exists('course', array('id' => $contextid))) {
-            $response->set_code(404);
-            $response->set_reason("Not Found: Course $contextid doesn't exist.");
-            return;
-        }
-        if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
-            $response->set_code(404);
-            $response->set_reason("Not Found: Grade item $itemid doesn't exist.");
-            return;
-        }
-        $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
-        if ($item === false) {
-            $response->set_code(403);
-            $response->set_reason("Line item does not exist.");
-            return;
-        }
-        require_once($CFG->libdir.'/gradelib.php');
-        switch ($response->get_request_method()) {
-            case 'GET':
-                $this->get_request($response, $item, $typeid);
-                break;
-            case 'PUT':
-                $json = $this->process_put_request($response->get_request_data(), $item, $typeid);
-                $response->set_body($json);
-                $response->set_code(200);
-                break;
-            case 'DELETE':
-                $this->process_delete_request($item);
-                $response->set_code(204);
-                break;
-            default:  // Should not be possible.
-                $response->set_code(405);
-                $response->set_reason("Invalid request method specified.");
-                return;
+        } catch (\Exception $e) {
+            $response->set_code($e->getCode());
+            $response->set_reason($e->getMessage());
         }
     }
 
@@ -218,7 +183,24 @@ class lineitem extends resource_base {
             $gbs->tag = $tag;
         }
         $ltilinkid = null;
-        if (isset($json->ltiLinkId)) {
+        if (isset($json->resourceLinkId)) {
+            if (is_numeric($json->resourceLinkId)) {
+                $ltilinkid = $json->resourceLinkId;
+                if ($gbs) {
+                    if (intval($gbs->ltilinkid) !== intval($json->resourceLinkId)) {
+                        $gbs->ltilinkid = $json->resourceLinkId;
+                        $upgradegradebookservices = true;
+                    }
+                } else {
+                    if (intval($item->iteminstance) !== intval($json->resourceLinkId)) {
+                        $item->iteminstance = intval($json->resourceLinkId);
+                        $updategradeitem = true;
+                    }
+                }
+            } else {
+                throw new \Exception(null, 400);
+            }
+        } else if (isset($json->ltiLinkId)) {
             if (is_numeric($json->ltiLinkId)) {
                 $ltilinkid = $json->ltiLinkId;
                 if ($gbs) {
@@ -317,24 +299,6 @@ class lineitem extends resource_base {
     }
 
     /**
-     * Get permissions from the config of the tool for that resource
-     *
-     * @param int $typeid
-     *
-     * @return array with the permissions related to this resource by the $lti_type or null if none.
-     */
-    public function get_permissions($typeid) {
-        $tool = lti_get_type_type_config($typeid);
-        if ($tool->ltiservice_gradesynchronization == '1') {
-            return array('LineItem.item:get');
-        } else if ($tool->ltiservice_gradesynchronization == '2') {
-            return array('LineItem.item:get', 'LineItem.item:put', 'LineItem.item:delete');
-        } else {
-            return array();
-        }
-    }
-
-    /**
      * Parse a value for custom parameter substitution variables.
      *
      * @param string $value String to be parsed
@@ -348,7 +312,13 @@ class lineitem extends resource_base {
             require_once($CFG->libdir . '/gradelib.php');
 
             $this->params['context_id'] = $COURSE->id;
+            if ($tool = $this->get_service()->get_type()) {
+                $this->params['tool_code'] = $tool->id;
+            }
             $id = optional_param('id', 0, PARAM_INT); // Course Module ID.
+            if (empty($id)) {
+                $id = optional_param('lti_message_hint', 0, PARAM_INT);
+            }
             if (!empty($id)) {
                 $cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
                 $id = $cm->instance;
@@ -356,6 +326,7 @@ class lineitem extends resource_base {
                 if ($item && $item->items) {
                     $this->params['item_id'] = $item->items[0]->id;
                     $resolved = parent::get_endpoint();
+                    $resolved .= "?type_id={$tool->id}";
                 }
             }
             $value = str_replace('$LineItem.url', $resolved, $value);

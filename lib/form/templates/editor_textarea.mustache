@@ -30,18 +30,18 @@
     }
 }}
 <div>
-<textarea id="{{id}}" name="{{name}}[text]" rows="{{rows}}" cols="{{cols}}" spellcheck="true" {{#changelistener}} onblur="{{onblur}}"
+<textarea id="{{id}}" name="{{name}}[text]" class="form-control" rows="{{rows}}" cols="{{cols}}" spellcheck="true" {{#changelistener}} onblur="{{onblur}}"
     onchange="{{onchange}}" {{/changelistener}}>{{value}}</textarea>
 </div>
 <div>
     {{#hasformats}}
-        <select name="{{name}}[format]" id="menu{{name}}format">
+        <select name="{{name}}[format]" id="menu{{name}}format" class="custom-select">
         {{#formats}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
         {{/formats}}
         </select>
     {{/hasformats}}
     {{^hasformats}}
-        <input name="{{name}}[format]" type="hidden" value="{{format}}"/>
+        <input name="{{name}}[format]" id="menu{{name}}format" type="hidden" value="{{format}}"/>
     {{/hasformats}}
 </div>

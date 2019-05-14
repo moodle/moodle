@@ -90,11 +90,12 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
     GradingPopup.prototype._refresh = function() {
         var region = $(this._regionSelector);
         var courseId = region.data('courseid');
+        var moduleId = region.data('moduleid');
         var userId = region.data('userid');
 
         ajax.call([{
             methodname: 'report_competency_data_for_report',
-            args: {courseid: courseId, userid: userId},
+            args: {courseid: courseId, userid: userId, moduleid: moduleId},
             done: this._pageContextLoaded.bind(this),
             fail: notification.exception
         }]);

@@ -45,7 +45,7 @@ class helper {
         // Form field is PARAM_ALPHANUMEXT and we are sending fully qualified class names
         // as option names, but replacing the backslash for a string that is really unlikely
         // to ever be part of a class name.
-        return str_replace('\\', '2015102400ouuu', $class);
+        return str_replace('\\', '__', $class);
     }
 
     /**
@@ -56,7 +56,7 @@ class helper {
      */
     public static function option_to_class($option) {
         // Really unlikely but yeah, I'm a bad booyyy.
-        return str_replace('2015102400ouuu', '\\', $option);
+        return str_replace('__', '\\', $option);
     }
 
     /**
@@ -86,10 +86,23 @@ class helper {
         if ($analyticmodels = $PAGE->settingsnav->find('analyticmodels', \navigation_node::TYPE_SETTING)) {
             $PAGE->navbar->add($analyticmodels->get_content(), $analyticmodels->action());
         }
-        $PAGE->navbar->add($title, $url);
+        $PAGE->navbar->add($title);
 
         $PAGE->set_pagelayout('report');
         $PAGE->set_title($title);
         $PAGE->set_heading($title);
+    }
+
+    /**
+     * Resets the current page.
+     *
+     * Note that this function can only be used by analytics pages that work at the system context.
+     *
+     * @return null
+     */
+    public static function reset_page() {
+        global $PAGE;
+        $PAGE->reset_theme_and_output();
+        $PAGE->set_context(\context_system::instance());
     }
 }

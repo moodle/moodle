@@ -55,6 +55,11 @@ if (!$forum) {
     throw new \moodle_exception('Unable to find forum with id ' . $discussion->get_forum_id());
 }
 
+$course = $forum->get_course_record();
+$cm = $forum->get_course_module_record();
+
+require_course_login($course, true, $cm);
+
 $managerfactory = mod_forum\local\container::get_manager_factory();
 $capabilitymanager = $managerfactory->get_capability_manager($forum);
 $urlfactory = mod_forum\local\container::get_url_factory();
@@ -70,11 +75,6 @@ $forumrecord = $forumdatamapper->to_legacy_object($forum);
 $discussiondatamapper = $datamapperfactory->get_discussion_data_mapper();
 $discussionrecord = $discussiondatamapper->to_legacy_object($discussion);
 $discussionviewurl = $urlfactory->get_discussion_view_url_from_discussion($discussion);
-
-$course = $forum->get_course_record();
-$cm = $forum->get_course_module_record();
-
-require_course_login($course, true, $cm);
 
 // move this down fix for MDL-6926
 require_once($CFG->dirroot . '/mod/forum/lib.php');
@@ -302,7 +302,7 @@ echo $OUTPUT->heading(format_string($discussion->get_name()), 3, 'discussionname
 $rendererfactory = mod_forum\local\container::get_renderer_factory();
 $discussionrenderer = $rendererfactory->get_discussion_renderer($forum, $discussion, $displaymode);
 $orderpostsby = $displaymode == FORUM_MODE_FLATNEWEST ? 'created DESC' : 'created ASC';
-$replies = $postvault->get_replies_to_post($post, $orderpostsby);
+$replies = $postvault->get_replies_to_post($USER, $post, $capabilitymanager->can_view_any_private_reply($USER), $orderpostsby);
 $postids = array_map(function($post) {
     return $post->get_id();
 }, array_merge([$post], array_values($replies)));

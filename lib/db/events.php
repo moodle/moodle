@@ -62,7 +62,10 @@ $observers = array(
         'eventname'   => '\core\event\cohort_member_added',
         'callback'    => 'core_badges_observer::cohort_criteria_review',
     ),
-
+    array(
+        'eventname'   => '\core\event\competency_evidence_created',
+        'callback'    => 'core_badges_observer::competency_criteria_review',
+    ),
     // Competencies.
     array(
         'eventname'   => '\core\event\course_completed',

@@ -47,8 +47,7 @@ class tool_generator_make_testplan_form extends moodleform {
             tool_generator_testplan_backend::get_size_choices());
         $mform->setDefault('size', tool_generator_testplan_backend::DEFAULT_SIZE);
 
-        $mform->addElement('select', 'courseid', get_string('targetcourse', 'tool_generator'),
-            tool_generator_testplan_backend::get_course_options());
+        $mform->addElement('course', 'courseid', get_string('targetcourse', 'tool_generator'));
 
         $mform->addElement('advcheckbox', 'updateuserspassword', get_string('updateuserspassword', 'tool_generator'));
         $mform->addHelpButton('updateuserspassword', 'updateuserspassword', 'tool_generator');

@@ -49,6 +49,7 @@
     * permalink
     * unsubscribeforumlink
     * unsubscribediscussionlink
+    * isprivatereply
 
     Example context (json):
     {
@@ -92,6 +93,11 @@
                         "date": {{# quote }}{{ postdate }}{{/ quote }}
                     } {{/ str }}
             </div>
+            {{# isprivatereply }}
+            <div class="privatereplyinfo">
+                {{# str }} postisprivatereply, forum {{/ str }}
+            </div>
+            {{/ isprivatereply }}
         </td>
     </tr>
     <tr>

@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/forum-action-menu
+
+    This template renders action menu for each course.
+
+    Example context (json):
+    {
+
+    }
+}}
+<div class="ml-auto dropdown">
+    <button class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} m-t-0 p-t-0 btn btn-link btn-icon"
+        type="button"
+        role="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        tabindex="0"
+        aria-controls="forum-action-menu-{{id}}-menu"
+        aria-expanded="false">
+        {{#settings.togglemoreicon}}
+            {{#pix}} i/moremenu, core{{/pix}}
+        {{/settings.togglemoreicon}}
+        {{^settings.togglemoreicon}}
+            {{#pix}} i/settings, core{{/pix}}
+        {{/settings.togglemoreicon}}
+        {{^settings.excludetext}}
+            {{#str}} settings, mod_forum {{/str}}
+        {{/settings.excludetext}}
+
+    </button>
+    <div class="dropdown-menu dropdown-menu-right menu"
+         aria-labelledby="forum-action-menu-{{id}}-menu"
+         data-rel="menu-content"
+         role="menu"
+         id="forum-action-menu-{{id}}-menu">
+        {{#capabilities.favourite}}
+            {{> mod_forum/discussion_favourite_toggle}}
+        {{/capabilities.favourite}}
+        {{#capabilities.pin}}
+            {{> mod_forum/discussion_pin_toggle}}
+        {{/capabilities.pin}}
+        {{#capabilities.manage}}
+        {{^istimelocked}}
+            {{> forum/discussion_lock_toggle }}
+        {{/istimelocked}}
+        {{/capabilities.manage}}
+    </div>
+</div>

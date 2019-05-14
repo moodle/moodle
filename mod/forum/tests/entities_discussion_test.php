@@ -56,7 +56,8 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
             $time,
             0,
             0,
-            false
+            false,
+            0
         );
         $firstpost = new post_entity(
             4,
@@ -72,6 +73,7 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
             true,
             false,
             0,
+            false,
             false,
             false
         );
@@ -89,6 +91,7 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
             true,
             false,
             0,
+            false,
             false,
             false
         );
@@ -110,5 +113,66 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
         $this->assertEquals(false, $discussion->is_first_post($notfirstpost));
         $this->assertEquals(true, $discussion->has_started());
         $this->assertEquals(true, $discussion->has_group());
+    }
+
+    /**
+     * Test the display period settings for discussions.
+     * This covers each individual date function as well as the combination of the 2.
+     *
+     * @dataProvider test_diplay_period_options_provider
+     * @param string $testdescription A basic description of the base assertions.
+     * @param int $startoffset Start time offset with current time in seconds.
+     * @param int $endoffset End time offset with current time in seconds.
+     * @param bool $timestartresult Expected result from the has_started function
+     * @param bool $timeendresult Expected result from the has_ended function
+     * @param bool $isvisible Expected result from the is_timed_discussion_visible function
+     */
+    public function test_display_period_settings($testdescription, $startoffset, $endoffset,
+                                                 $timestartresult, $timeendresult, $isvisible) {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $basetime = time();
+        $starttime = $startoffset != 0 ? $basetime + $startoffset : 0;
+        $endtime = $endoffset != 0 ? $basetime + $endoffset : 0;
+        $discussion = new discussion_entity(
+            1,
+            2,
+            3,
+            'test discussion',
+            4,
+            5,
+            6,
+            false,
+            $basetime,
+            $basetime,
+            $starttime,
+            $endtime,
+            false,
+            0
+        );
+        $CFG->forum_enabletimedposts = true;
+
+        $this->assertEquals($timestartresult, $discussion->has_started(), $testdescription);
+        $this->assertEquals($timeendresult, $discussion->has_ended(), $testdescription);
+        $this->assertEquals($isvisible, $discussion->is_timed_discussion_visible(), $testdescription);
+    }
+
+    /**
+     * Data provider for test_display_period_settings().
+     *
+     * @return array start/end time offsets and the expected results.
+     */
+    public function test_diplay_period_options_provider() {
+        return array(
+            ["No dates set", 0, 0, true, false, true],
+            ["Only started date in the future", 100, 0, false, false, false],
+            ["Only started date in the past", -100, 0, true, false, true],
+            ["Only end date in the future", 0, 100, true, false, true],
+            ["Only end date in the past", 0, -100, true, true, false],
+            ["Start date in the past, end date in the future", -100, 100, true, false, true],
+            ["Both dates in the past", -100, -50, true, true, false],
+            ["Both dates in the future", 100, 150, false, false, false],
+        );
     }
 }

@@ -926,12 +926,11 @@ abstract class testing_util {
 
             if (defined('BEHAT_SITE_RUNNING')) {
                 $tablesupdatedfile = self::get_tables_updated_by_scenario_list_path();
-                if ($tablesupdated = @json_decode(file_get_contents($tablesupdatedfile), true)) {
+                $tablesupdated = @json_decode(file_get_contents($tablesupdatedfile), true);
+                if (!isset($tablesupdated[$table])) {
                     $tablesupdated[$table] = true;
-                } else {
-                    $tablesupdated[$table] = true;
+                    @file_put_contents($tablesupdatedfile, json_encode($tablesupdated, JSON_PRETTY_PRINT));
                 }
-                @file_put_contents($tablesupdatedfile, json_encode($tablesupdated, JSON_PRETTY_PRINT));
             }
         }
     }

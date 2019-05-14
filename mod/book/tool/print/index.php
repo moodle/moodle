@@ -54,9 +54,6 @@ if ($chapterid) {
 
 $PAGE->set_url('/mod/book/print.php', array('id' => $id, 'chapterid' => $chapterid));
 
-// Use "embedded" instead of "print" because Bootstrapbase shows top
-// header bar and navbar even on print style - which is inconsistent
-// with extant behaviour.
 $PAGE->set_pagelayout("embedded");
 
 unset($id);

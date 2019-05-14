@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once(__DIR__ . '/helper.php');
+require_once(__DIR__ . '/generator_trait.php');
 require_once($CFG->dirroot . '/rating/lib.php');
 
 use \mod_forum\privacy\provider;
@@ -45,7 +45,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
-    use helper;
+    use mod_forum_tests_generator_trait;
 
     // Include the privacy helper trait for the ratings API.
     use \core_rating\phpunit\privacy_helper;
@@ -392,6 +392,93 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $this->assertNotEmpty($post->subject);
         $this->assertNotEmpty($post->message);
         $this->assertEquals(0, $post->deleted);
+    }
+
+    /**
+     * Test private reply in a range of scenarios.
+     */
+    public function test_user_private_reply() {
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $context = \context_module::instance($cm->id);
+
+        [$student, $otherstudent] = $this->helper_create_users($course, 2, 'student');
+        [$teacher, $otherteacher] = $this->helper_create_users($course, 2, 'teacher');
+
+        [$discussion, $post] = $this->helper_post_to_forum($forum, $student);
+        $reply = $this->helper_reply_to_post($post, $teacher, [
+                'privatereplyto' => $student->id,
+            ]);
+
+        // Testing as user $student.
+        $this->setUser($student);
+
+        // Retrieve all contexts - only this context should be returned.
+        $contextlist = $this->get_contexts_for_userid($student->id, 'mod_forum');
+        $this->assertCount(1, $contextlist);
+        $this->assertEquals($context, $contextlist->current());
+
+        // Export all of the data for the context.
+        $this->export_context_data_for_user($student->id, $context, 'mod_forum');
+        $writer = \core_privacy\local\request\writer::with_context($context);
+        $this->assertTrue($writer->has_any_data());
+
+        // The initial post and reply will be included.
+        $this->assert_post_data($post, $writer->get_data($this->get_subcontext($forum, $discussion, $post)), $writer);
+        $this->assert_post_data($reply, $writer->get_data($this->get_subcontext($forum, $discussion, $reply)), $writer);
+
+        // Testing as user $teacher.
+        \core_privacy\local\request\writer::reset();
+        $this->setUser($teacher);
+
+        // Retrieve all contexts - only this context should be returned.
+        $contextlist = $this->get_contexts_for_userid($teacher->id, 'mod_forum');
+        $this->assertCount(1, $contextlist);
+        $this->assertEquals($context, $contextlist->current());
+
+        // Export all of the data for the context.
+        $this->export_context_data_for_user($teacher->id, $context, 'mod_forum');
+        $writer = \core_privacy\local\request\writer::with_context($context);
+        $this->assertTrue($writer->has_any_data());
+
+        // The reply will be included.
+        $this->assert_post_data($post, $writer->get_data($this->get_subcontext($forum, $discussion, $post)), $writer);
+        $this->assert_post_data($reply, $writer->get_data($this->get_subcontext($forum, $discussion, $reply)), $writer);
+
+        // Testing as user $otherteacher.
+        // The user was not involved in any of the conversation.
+        \core_privacy\local\request\writer::reset();
+        $this->setUser($otherteacher);
+
+        // Retrieve all contexts - only this context should be returned.
+        $contextlist = $this->get_contexts_for_userid($otherteacher->id, 'mod_forum');
+        $this->assertCount(0, $contextlist);
+
+        // Export all of the data for the context.
+        $this->export_context_data_for_user($otherteacher->id, $context, 'mod_forum');
+        $writer = \core_privacy\local\request\writer::with_context($context);
+
+        // The user has none of the discussion.
+        $this->assertEmpty($writer->get_data($this->get_subcontext($forum, $discussion)));
+
+        // Testing as user $otherstudent.
+        // The user was not involved in any of the conversation.
+        \core_privacy\local\request\writer::reset();
+        $this->setUser($otherstudent);
+
+        // Retrieve all contexts - only this context should be returned.
+        $contextlist = $this->get_contexts_for_userid($otherstudent->id, 'mod_forum');
+        $this->assertCount(0, $contextlist);
+
+        // Export all of the data for the context.
+        $this->export_context_data_for_user($otherstudent->id, $context, 'mod_forum');
+        $writer = \core_privacy\local\request\writer::with_context($context);
+
+        // The user has none of the discussion.
+        $this->assertEmpty($writer->get_data($this->get_subcontext($forum, $discussion)));
     }
 
     /**

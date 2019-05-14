@@ -58,9 +58,10 @@ class discussion extends db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
+     * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null) : string {
         $selectsql = 'SELECT * FROM {' . self::TABLE . '} ' . $this->get_table_alias();
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
         $selectsql .= $sortsql ? ' ORDER BY ' . $sortsql : '';
@@ -124,5 +125,22 @@ class discussion extends db_table_vault {
     public function get_count_discussions_in_forum(forum_entity $forum) : ?int {
         return $this->get_db()->count_records(self::TABLE, [
             'forum' => $forum->get_id()]);
+    }
+
+    /**
+     * Update the discussion
+     *
+     * @param discussion_entity $discussion
+     * @return discussion_entity|null
+     */
+    public function update_discussion(discussion_entity $discussion) : ?discussion_entity {
+        $discussionrecord = $this->get_legacy_factory()->to_legacy_object($discussion);
+        if ($this->get_db()->update_record('forum_discussions', $discussionrecord)) {
+            $records = $this->transform_db_records_to_entities([$discussionrecord]);
+
+            return count($records) ? array_shift($records) : null;
+        }
+
+        return null;
     }
 }

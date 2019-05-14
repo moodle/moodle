@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 use context_course;
 use renderer_base;
 use stdClass;
+use moodle_url;
 use core_competency\competency_framework;
 use core_competency\external\competency_exporter;
 use core_competency\external\competency_framework_exporter;
@@ -82,7 +83,10 @@ class competency_summary_exporter extends \core\external\exporter {
             ),
             'comppath' => array(
                 'type' => competency_path_exporter::read_properties_definition(),
-            )
+            ),
+            'pluginbaseurl' => [
+                'type' => PARAM_URL
+            ]
         );
     }
 
@@ -136,6 +140,8 @@ class competency_summary_exporter extends \core\external\exporter {
             'context' => $context
         ]);
         $result->comppath = $exporter->export($output);
+        $result->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
+        $result->showlinks = \core_competency\api::show_links();
 
         return (array) $result;
     }

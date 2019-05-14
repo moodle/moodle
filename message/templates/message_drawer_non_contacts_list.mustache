@@ -41,12 +41,19 @@
         data-route="view-conversation"
         {{#conversationid}}
             data-route-param-1="{{.}}"
+            {{#frompanel}}
+                data-route-param-2="frompanel"
+            {{/frompanel}}
         {{/conversationid}}
         {{^conversationid}}
             data-route-param-1="false"
             data-route-param-2="create"
             data-route-param-3="{{id}}"
+            {{#frompanel}}
+                data-route-param-4="frompanel"
+            {{/frompanel}}
         {{/conversationid}}
+        role="button"
     >
         <img
             class="rounded-circle"
@@ -55,7 +62,7 @@
             aria-hidden="true"
             style="height: 38px"
         >
-        <h6 class="ml-2 font-weight-bold" data-region="searchable">{{fullname}}</h6>
+        <h6 class="ml-2 font-weight-bold">{{#highlight}}{{{highlight}}}{{/highlight}}{{^highlight}}{{fullname}}{{/highlight}}</h6>
         {{#isblocked}}
             <div class="ml-auto align-self-end">
                 {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}

@@ -314,11 +314,12 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * profile.
      */
     public function test_message_search_users_messagingallusers_disabled() {
+        global $DB;
         $this->resetAfterTest();
 
         // Create some users.
         $users = [];
-        foreach (range(1, 7) as $i) {
+        foreach (range(1, 8) as $i) {
             $user = new stdClass();
             $user->firstname = ($i == 4) ? 'User' : 'User search'; // Ensure the fourth user won't match the search term.
             $user->lastname = $i;
@@ -328,6 +329,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Enrol a few users in the same course, but leave them as non-contacts.
         $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
         $this->setAdminUser();
         $this->getDataGenerator()->enrol_user($users[1]->id, $course1->id);
         $this->getDataGenerator()->enrol_user($users[6]->id, $course1->id);
@@ -337,6 +340,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         \core_message\api::add_contact($users[1]->id, $users[2]->id);
         \core_message\api::add_contact($users[3]->id, $users[1]->id);
         \core_message\api::add_contact($users[1]->id, $users[4]->id);
+
+        // Enrol a user as a teacher in the course, and make the teacher role a course contact role.
+        $this->getDataGenerator()->enrol_user($users[8]->id, $course2->id, 'editingteacher');
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        set_config('coursecontact', $teacherrole->id);
 
         // Create individual conversations between some users, one contact and one non-contact.
         $ic1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -374,32 +382,36 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(0, $contacts[1]->conversations);
 
         // Check that we retrieved the correct non-contacts.
-        // When site wide messaging is disabled, we expect to see only those users whose profiles we can view.
-        $this->assertCount(2, $noncontacts);
-        $this->assertEquals($users[6]->id, $noncontacts[0]->id);
-        $this->assertEquals($users[7]->id, $noncontacts[1]->id);
+        // When site wide messaging is disabled, we expect to see only those users who we share a course with and whose profiles
+        // are visible in that course. This excludes users like course contacts.
+        $this->assertCount(3, $noncontacts);
+        // Self-conversation first.
+        $this->assertEquals($users[1]->id, $noncontacts[0]->id);
+        $this->assertEquals($users[6]->id, $noncontacts[1]->id);
+        $this->assertEquals($users[7]->id, $noncontacts[2]->id);
 
         // Verify the correct conversations were returned for the non-contacts.
-        $this->assertCount(1, $noncontacts[0]->conversations);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-            $noncontacts[0]->conversations[$ic2->id]->type);
-
         $this->assertCount(1, $noncontacts[1]->conversations);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[1]->conversations[$gc1->id]->type);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            $noncontacts[1]->conversations[$ic2->id]->type);
+
+        $this->assertCount(1, $noncontacts[2]->conversations);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[2]->conversations[$gc1->id]->type);
     }
 
     /**
      * Tests searching for users when site-wide messaging is enabled.
      *
-     * This test verifies that any contacts are returned, as well as any non-contacts, regardless of whether the searching user
-     * can view their respective profile.
+     * This test verifies that any contacts are returned, as well as any non-contacts,
+     * provided the searching user can view their profile.
      */
     public function test_message_search_users_messagingallusers_enabled() {
+        global $DB;
         $this->resetAfterTest();
 
         // Create some users.
         $users = [];
-        foreach (range(1, 8) as $i) {
+        foreach (range(1, 9) as $i) {
             $user = new stdClass();
             $user->firstname = ($i == 4) ? 'User' : 'User search'; // Ensure the fourth user won't match the search term.
             $user->lastname = $i;
@@ -407,17 +419,27 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $users[$i] = $user;
         }
 
-        // Enrol a few users in the same course, but leave them as non-contacts.
         $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course1->id);
+
+        // Enrol a few users in the same course, but leave them as non-contacts.
         $this->setAdminUser();
-        $this->getDataGenerator()->enrol_user($users[1]->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($users[6]->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($users[7]->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($users[1]->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($users[6]->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($users[7]->id, $course1->id, 'student');
 
         // Add some other users as contacts.
         \core_message\api::add_contact($users[1]->id, $users[2]->id);
         \core_message\api::add_contact($users[3]->id, $users[1]->id);
         \core_message\api::add_contact($users[1]->id, $users[4]->id);
+
+        // Enrol a user as a teacher in the course, and make the teacher role a course contact role.
+        $this->getDataGenerator()->enrol_user($users[9]->id, $course1->id, 'editingteacher');
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        set_config('coursecontact', $teacherrole->id);
+
+        // Get self-conversation.
+        $selfconversation = \core_message\api::get_self_conversation($users[1]->id);
 
         // Create individual conversations between some users, one contact and one non-contact.
         $ic1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -455,15 +477,22 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(0, $contacts[1]->conversations);
 
         // Check that we retrieved the correct non-contacts.
-        // If site wide messaging is enabled, we expect to be able to search for any users.
+        // If site wide messaging is enabled, we expect to only be able to search for users whose profiles we can view.
+        // In this case, as a student, that's the course contact for course2 and those noncontacts sharing a course with user1.
+        // Consider first conversations is self-conversation.
         $this->assertCount(4, $noncontacts);
-        $this->assertEquals($users[5]->id, $noncontacts[0]->id);
+        $this->assertEquals($users[1]->id, $noncontacts[0]->id);
         $this->assertEquals($users[6]->id, $noncontacts[1]->id);
         $this->assertEquals($users[7]->id, $noncontacts[2]->id);
-        $this->assertEquals($users[8]->id, $noncontacts[3]->id);
+        $this->assertEquals($users[9]->id, $noncontacts[3]->id);
+
+        $this->assertCount(1, $noncontacts[1]->conversations);
+        $this->assertCount(1, $noncontacts[2]->conversations);
+        $this->assertCount(0, $noncontacts[3]->conversations);
 
         // Verify the correct conversations were returned for the non-contacts.
-        $this->assertCount(0, $noncontacts[0]->conversations);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
+            $noncontacts[0]->conversations[$selfconversation->id]->type);
 
         $this->assertCount(1, $noncontacts[1]->conversations);
         $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -472,8 +501,36 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(1, $noncontacts[2]->conversations);
         $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[2]->conversations[$gc1->id]->type);
 
-        $this->assertCount(1, $noncontacts[3]->conversations);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $noncontacts[3]->conversations[$gc1->id]->type);
+        $this->assertCount(0, $noncontacts[3]->conversations);
+    }
+
+    /**
+     * Verify searching for users find themselves when they have self-conversations.
+     */
+    public function test_message_search_users_self_conversations() {
+        $this->resetAfterTest();
+
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = $this->getDataGenerator()->create_user($user1);
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'Two';
+        $user2 = $this->getDataGenerator()->create_user($user2);
+
+        // Get self-conversation for user1.
+        $sc1 = \core_message\api::get_self_conversation($user1->id);
+        testhelper::send_fake_message_to_conversation($user1, $sc1->id, 'Hi myself!');
+
+        // Perform a search as user1.
+        $this->setUser($user1);
+        $result = \core_message\api::message_search_users($user1->id, 'One');
+
+        // Check user1 is found as non-contacts.
+        $this->assertCount(0, $result[0]);
+        $this->assertCount(1, $result[1]);
     }
 
     /**
@@ -520,7 +577,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Enrol the first 9 users in the same course, but leave them as non-contacts.
         $this->setAdminUser();
         $course1 = $this->getDataGenerator()->create_course();
-        foreach (range(1, 9) as $i) {
+        foreach (range(1, 8) as $i) {
             $this->getDataGenerator()->enrol_user($users[$i]->id, $course1->id);
         }
 
@@ -545,10 +602,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($users[13]->id, $contacts[2]->id);
 
         // Check that we retrieved the correct non-contacts.
+        // Consider first conversations is self-conversation.
         $this->assertCount(3, $noncontacts);
-        $this->assertEquals($users[2]->id, $noncontacts[0]->id);
-        $this->assertEquals($users[3]->id, $noncontacts[1]->id);
-        $this->assertEquals($users[4]->id, $noncontacts[2]->id);
+        $this->assertEquals($users[1]->id, $noncontacts[0]->id);
+        $this->assertEquals($users[2]->id, $noncontacts[1]->id);
+        $this->assertEquals($users[3]->id, $noncontacts[2]->id);
 
         // Now, offset to get the next batch of results.
         // We expect to see 2 contacts, and 3 non-contacts.
@@ -560,9 +618,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($users[15]->id, $contacts[1]->id);
 
         $this->assertCount(3, $noncontacts);
-        $this->assertEquals($users[5]->id, $noncontacts[0]->id);
-        $this->assertEquals($users[6]->id, $noncontacts[1]->id);
-        $this->assertEquals($users[7]->id, $noncontacts[2]->id);
+        $this->assertEquals($users[4]->id, $noncontacts[0]->id);
+        $this->assertEquals($users[5]->id, $noncontacts[1]->id);
+        $this->assertEquals($users[6]->id, $noncontacts[2]->id);
 
         // Now, offset to get the next batch of results.
         // We expect to see 0 contacts, and 2 non-contacts.
@@ -572,8 +630,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(0, $contacts);
 
         $this->assertCount(2, $noncontacts);
-        $this->assertEquals($users[8]->id, $noncontacts[0]->id);
-        $this->assertEquals($users[9]->id, $noncontacts[1]->id);
+        $this->assertEquals($users[7]->id, $noncontacts[0]->id);
+        $this->assertEquals($users[8]->id, $noncontacts[1]->id);
     }
 
     /**
@@ -624,12 +682,12 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($users[3]->id, $contacts[1]->id);
 
         // Check that we retrieved the correct non-contacts.
-        // Site-wide messaging is disabled, but since we can see all users, we expect to be able to search for any users.
-        $this->assertCount(4, $noncontacts);
-        $this->assertEquals($users[5]->id, $noncontacts[0]->id);
+        // Site-wide messaging is disabled, so we expect to be able to search for any users whose profiles we can view.
+        // Consider first conversations is self-conversation.
+        $this->assertCount(3, $noncontacts);
+        $this->assertEquals($users[1]->id, $noncontacts[0]->id);
         $this->assertEquals($users[6]->id, $noncontacts[1]->id);
         $this->assertEquals($users[7]->id, $noncontacts[2]->id);
-        $this->assertEquals($users[8]->id, $noncontacts[3]->id);
     }
 
     /**
@@ -713,9 +771,72 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Tests getting self-conversations.
+     */
+    public function test_get_self_conversation() {
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User search';
+        $user3->lastname = 'Three';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        // Add some users as contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user3->id, $user1->id);
+
+        // Create private conversations with some users.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            array($user1->id, $user2->id));
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            array($user3->id, $user1->id));
+
+        // Create a group conversation with users.
+        $gc = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            array($user1->id, $user2->id, $user3->id),
+            'Project chat');
+
+        // Get self-conversations.
+        $rsc1 = \core_message\api::get_self_conversation($user1->id);
+        $rsc2 = \core_message\api::get_self_conversation($user2->id);
+        $rsc3 = \core_message\api::get_self_conversation($user3->id);
+
+        // Send message to self-conversation.
+        testhelper::send_fake_message_to_conversation($user1, $rsc1->id, 'Message to myself!');
+
+        // Check that we retrieved the correct conversations.
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF, $rsc1->type);
+        $members = \core_message\api::get_conversation_members($user1->id, $rsc1->id);
+        $this->assertCount(1, $members);
+        $member = reset($members);
+        $this->assertEquals($user1->id, $member->id);
+
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF, $rsc2->type);
+        $members = \core_message\api::get_conversation_members($user2->id, $rsc2->id);
+        $this->assertCount(1, $members);
+        $member = reset($members);
+        $this->assertEquals($user2->id, $member->id);
+
+        \core_message\api::delete_all_conversation_data($rsc3->id);
+        $rsc3 = \core_message\api::get_self_conversation($user3->id);
+        $this->assertFalse($rsc3);
+    }
+
+    /**
      * Tests searching messages.
      */
     public function test_search_messages() {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -724,13 +845,24 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // The person doing the search.
         $this->setUser($user1);
 
+        // Get self-conversation.
+        $sc = \core_message\api::get_self_conversation($user1->id);
+
+        // Create group conversation.
+        $gc = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id]
+        );
+
         // Send some messages back and forth.
         $time = 1;
-        $this->send_fake_message($user3, $user1, 'Don\'t block me.', 0, $time);
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message_to_conversation($user1, $sc->id, 'Test message to self!', $time);
+        testhelper::send_fake_message_to_conversation($user1, $gc->id, 'My hero!', $time + 1);
+        $this->send_fake_message($user3, $user1, 'Don\'t block me.', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 4);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 5);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 6);
 
         $convid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
         $conv2id = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
@@ -742,11 +874,12 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $messages = \core_message\api::search_messages($user1->id, 'o');
 
         // Confirm the data is correct.
-        $this->assertEquals(3, count($messages));
-
+        $this->assertEquals(5, count($messages));
         $message1 = $messages[0];
         $message2 = $messages[1];
         $message3 = $messages[2];
+        $message4 = $messages[3];
+        $message5 = $messages[4];
 
         $this->assertEquals($user2->id, $message1->userid);
         $this->assertEquals($user2->id, $message1->useridfrom);
@@ -783,6 +916,30 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message3->isblocked);
         $this->assertNull($message3->unreadcount);
         $this->assertEquals($conv2id, $message3->conversationid);
+
+        // This is a group conversation. For now, search_messages returns only one of the other users on the conversation. It can't
+        // be guaranteed who will be returned in the first place, so we need to use the in_array to check all the possibilities.
+        $this->assertTrue(in_array($message4->userid, [$user2->id, $user3->id]));
+        $this->assertEquals($user1->id, $message4->useridfrom);
+        $this->assertTrue($message4->ismessaging);
+        $this->assertEquals('My hero!', $message4->lastmessage);
+        $this->assertNotEmpty($message4->messageid);
+        $this->assertNull($message4->isonline);
+        $this->assertTrue($message4->isread);
+        $this->assertNull($message4->unreadcount);
+        $this->assertEquals($gc->id, $message4->conversationid);
+
+        $this->assertEquals($user1->id, $message5->userid);
+        $this->assertEquals($user1->id, $message5->useridfrom);
+        $this->assertEquals(fullname($user1), $message5->fullname);
+        $this->assertTrue($message5->ismessaging);
+        $this->assertEquals('Test message to self!', $message5->lastmessage);
+        $this->assertNotEmpty($message5->messageid);
+        $this->assertFalse($message5->isonline);
+        $this->assertTrue($message5->isread);
+        $this->assertFalse($message5->isblocked);
+        $this->assertNull($message5->unreadcount);
+        $this->assertEquals($sc->id, $message5->conversationid);
     }
 
     /**
@@ -798,8 +955,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // The person doing the search.
         $this->setUser($user1);
 
-        // No conversations yet.
-        $this->assertEquals([], \core_message\api::get_conversations($user1->id));
+        // Only self-conversation created.
+        $this->assertCount(1, \core_message\api::get_conversations($user1->id));
 
         // Create some conversations for user1.
         $time = 1;
@@ -827,12 +984,21 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $service->create_favourite('core_message', 'message_conversations', $convoid, $user1context);
         }
 
-        // We should have 3 conversations.
-        $this->assertCount(3, \core_message\api::get_conversations($user1->id));
+        // We should have 4 conversations.
+        // Consider first conversations is self-conversation.
+        $this->assertCount(4, \core_message\api::get_conversations($user1->id));
 
-        // And 2 favourited conversations.
+        // And 3 favourited conversations (self-conversation included).
         $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, true);
-        $this->assertCount(2, $conversations);
+        $this->assertCount(3, $conversations);
+        $conversations = \core_message\api::get_conversations(
+            $user1->id,
+            0,
+            20,
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
+            true
+        );
+        $this->assertCount(1, $conversations);
     }
 
     /**
@@ -848,8 +1014,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // The person doing the search.
         $this->setUser($user1);
 
-        // No conversations yet.
-        $this->assertEquals([], \core_message\api::get_conversations($user1->id));
+        // Only self-conversation created.
+        $this->assertCount(1, \core_message\api::get_conversations($user1->id));
 
         // Create some conversations for user1.
         $time = 1;
@@ -878,14 +1044,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $service->create_favourite('core_message', 'message_conversations', $convoid, $user1context);
         }
 
+        // Consider first conversations is self-conversation.
         // Get all records, using offset 0 and large limit.
-        $this->assertCount(2, \core_message\api::get_conversations($user1->id, 1, 10, null, true));
+        $this->assertCount(4, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
 
         // Now, get 10 conversations starting at the second record. We should see 2 conversations.
-        $this->assertCount(2, \core_message\api::get_conversations($user1->id, 1, 10, null, true));
+        $this->assertCount(3, \core_message\api::get_conversations($user1->id, 1, 10, null, true));
 
         // Now, try to get favourited conversations using an invalid offset.
-        $this->assertCount(0, \core_message\api::get_conversations($user1->id, 4, 10, null, true));
+        $this->assertCount(0, \core_message\api::get_conversations($user1->id, 5, 10, null, true));
     }
 
     /**
@@ -926,7 +1093,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, true);
 
         // We should have both conversations, despite the other user being soft-deleted.
-        $this->assertCount(2, $conversations);
+        // Consider first conversations is self-conversation.
+        $this->assertCount(3, $conversations);
 
         // Confirm the conversation is from the non-deleted user.
         $conversation = reset($conversations);
@@ -958,11 +1126,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $conversationid1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
         $favourite = \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
 
-        // Verify we have a single favourite conversation a user 1.
-        $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+        // Verify we have two favourite conversations a user 1.
+        // Consider first conversations is self-conversation.
+        $this->assertCount(2, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
 
-        // Verify we have no favourites as user2, despite being a member in that conversation.
-        $this->assertCount(0, \core_message\api::get_conversations($user2->id, 0, 20, null, true));
+        // Verify we have only one favourite as user2, despite being a member in that conversation.
+        // Consider first conversations is self-conversation.
+        $this->assertCount(1, \core_message\api::get_conversations($user2->id, 0, 20, null, true));
 
         // Try to favourite the same conversation again should just return the existing favourite.
         $repeatresult = \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
@@ -1034,16 +1204,16 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
         \core_message\api::set_favourite_conversation($conversationid2, $user3->id);
 
-        // Verify we have a single favourite conversation for both user 1 and user 3.
-        $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
-        $this->assertCount(1, \core_message\api::get_conversations($user3->id, 0, 20, null, true));
+        // Verify we have two favourite conversations for both user 1 and user 3, counting self conversations.
+        $this->assertCount(2, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+        $this->assertCount(2, \core_message\api::get_conversations($user3->id, 0, 20, null, true));
 
         // Now unfavourite the conversation as user 1.
         \core_message\api::unset_favourite_conversation($conversationid1, $user1->id);
 
-        // Verify we have a single favourite conversation user 3 only, and none for user1.
-        $this->assertCount(1, \core_message\api::get_conversations($user3->id, 0, 20, null, true));
-        $this->assertCount(0, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+        // Verify we have two favourite conversations user 3 only, and one for user1, counting self conversations.
+        $this->assertCount(2, \core_message\api::get_conversations($user3->id, 0, 20, null, true));
+        $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
 
         // Try to favourite the same conversation again as user 1.
         $this->expectException(\moodle_exception::class);
@@ -1158,9 +1328,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      */
     public function test_get_conversations_no_restrictions() {
         global $DB;
-        // No conversations should exist yet.
+
         $user1 = self::getDataGenerator()->create_user();
-        $this->assertEquals([], \core_message\api::get_conversations($user1->id));
+        // Self-conversation should exists.
+        $this->assertCount(1, \core_message\api::get_conversations($user1->id));
 
         // Get a bunch of conversations, some group, some individual and in different states.
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
@@ -1169,18 +1340,20 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Get all conversations for user1.
         $conversations = core_message\api::get_conversations($user1->id);
 
-        // Verify there are 2 individual conversation, 2 group conversations, and 2 empty group conversations.
+        // Verify there are 2 individual conversation, 2 group conversations, 2 empty group conversations,
+        // and a self-conversation.
         // The conversations with the most recent messages should be listed first, followed by the empty
         // conversations, with the most recently created first.
-        $this->assertCount(6, $conversations);
+        $this->assertCount(7, $conversations);
         $typecounts  = array_count_values(array_column($conversations, 'type'));
         $this->assertEquals(2, $typecounts[1]);
         $this->assertEquals(4, $typecounts[2]);
+        $this->assertEquals(1, $typecounts[3]);
 
-        // Those conversations having messages should be listed first, ordered by most recent message time.
+        // Those conversations having messages should be listed after self-conversation, ordered by most recent message time.
         $this->assertEquals($gc3->id, $conversations[0]->id);
         $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $conversations[0]->type);
-        $this->assertFalse($conversations[0]->isfavourite);
+        $this->assertFalse($conversations[1]->isfavourite);
         $this->assertCount(1, $conversations[0]->members);
         $this->assertEquals(4, $conversations[0]->membercount);
         $this->assertCount(1, $conversations[0]->messages);
@@ -1335,6 +1508,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             return $first->id > $second->id;
         });
 
+        // Consider first conversations is self-conversation.
+        $selfconversation = array_shift($conversations);
         $conv1 = array_shift($conversations);
         $conv2 = array_shift($conversations);
         $conv3 = array_shift($conversations);
@@ -1409,28 +1584,64 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Tests retrieving conversations when a legacy 'self' conversation exists.
+     * Tests retrieving conversations when a 'self' conversation exists.
      */
-    public function test_get_conversations_legacy_self_conversations() {
+    public function test_get_conversations_self_conversations() {
         global $DB;
 
-        // Create a legacy conversation between one user and themself.
+        // Create a conversation between one user and themself.
         $user1 = self::getDataGenerator()->create_user();
-        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-            [$user1->id, $user1->id]);
-        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Test message to self!');
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Create some individual conversations.
+        $ic1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+        $ic2 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user3->id]);
+        testhelper::send_fake_message_to_conversation($user1, $ic1->id, 'Message from user1 to user2');
+
+        // Get some self-conversations.
+        $sc1 = \core_message\api::get_self_conversation($user1->id);
+        $sc4 = \core_message\api::get_self_conversation($user4->id);
+        testhelper::send_fake_message_to_conversation($user1, $sc1->id, 'Test message to self 1!');
 
         // Verify we are in a 'self' conversation state.
-        $members = $DB->get_records('message_conversation_members', ['conversationid' => $conversation->id]);
-        $this->assertCount(2, $members);
-        $member = array_pop($members);
-        $this->assertEquals($user1->id, $member->userid);
+        $members = $DB->get_records('message_conversation_members', ['conversationid' => $sc1->id]);
+        $this->assertCount(1, $members);
         $member = array_pop($members);
         $this->assertEquals($user1->id, $member->userid);
 
-        // Verify this conversation is not returned by the method.
-        $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(0, $conversations);
+        // Verify the self-conversations are returned by the method.
+        $conversations = \core_message\api::get_conversations($user1->id, 0, 20, \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF);
+        $this->assertCount(1, $conversations);
+        $conversation = array_pop($conversations);
+        $this->assertEquals($conversation->id, $sc1->id);
+
+        $conversations = \core_message\api::get_conversations($user4->id);
+        // The self-conversation.
+        $this->assertCount(1, $conversations);
+
+        // Get only private conversations for user1 (empty conversations, like $ic2, are not returned).
+        $conversations = \core_message\api::get_conversations($user1->id, 0, 20,
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL);
+        $this->assertCount(1, $conversations);
+
+        // Merge self with private conversations for user1.
+        $conversations = \core_message\api::get_conversations($user1->id, 0, 20,
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, null, true);
+        $this->assertCount(2, $conversations);
+
+        // Get only private conversations for user2.
+        $conversations = \core_message\api::get_conversations($user2->id, 0, 20,
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL);
+        $this->assertCount(1, $conversations);
+
+        // Merge self with private conversations for user2.
+        $conversations = \core_message\api::get_conversations($user2->id, 0, 20,
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, null, true);
+        $this->assertCount(2, $conversations);
     }
 
     /**
@@ -1449,7 +1660,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // We no longer delete the user context, but historically we did.
         context_helper::delete_instance(CONTEXT_USER, $user2->id);
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(6, $conversations);
+        // Consider there's a self-conversation (the last one).
+        $this->assertCount(7, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]->id);
         $this->assertcount(1, $conversations[0]->members);
         $this->assertEquals($gc2->id, $conversations[1]->id);
@@ -1463,7 +1675,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // This user will still be present in the members array, as will the message in the messages array.
         delete_user($user4);
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(6, $conversations);
+
+        // Consider there's a self-conversation (the last one).
+        $this->assertCount(7, $conversations);
         $this->assertEquals($gc2->id, $conversations[1]->id);
         $this->assertcount(1, $conversations[1]->members);
         $this->assertEquals($user4->id, $conversations[1]->members[$user4->id]->id);
@@ -1475,7 +1689,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Group conversations are also present, albeit with less members.
         delete_user($user3);
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(6, $conversations);
+        // Consider there's a self-conversation (the last one).
+        $this->assertCount(7, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]->id);
         $this->assertcount(1, $conversations[0]->members);
         $this->assertEquals($gc2->id, $conversations[1]->id);
@@ -1495,7 +1710,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
 
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(6, $conversations);
+        // Consider first conversations is self-conversation.
+        $this->assertCount(7, $conversations);
 
         // Delete all messages from a group conversation the user is in - it should be returned.
         $this->assertTrue(\core_message\api::is_user_in_conversation($user1->id, $gc2->id));
@@ -1505,7 +1721,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             \core_message\api::delete_message($user1->id, $message->id);
         }
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(6, $conversations);
+        // Consider first conversations is self-conversation.
+        $this->assertCount(7, $conversations);
         $this->assertContains($gc2->id, array_column($conversations, 'id'));
 
         // Delete all messages from an individual conversation the user is in - it should not be returned.
@@ -1516,7 +1733,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             \core_message\api::delete_message($user1->id, $message->id);
         }
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(5, $conversations);
+        // Consider first conversations is self-conversation.
+        $this->assertCount(6, $conversations);
         $this->assertNotContains($ic1->id, array_column($conversations, 'id'));
     }
 
@@ -1534,21 +1752,26 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the conversation, first with no restrictions, confirming the favourite status of the conversations.
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(6, $conversations);
+        // Consider there is a self-conversation.
+        $selfconversation = \core_message\api::get_self_conversation($user1->id);
+        $this->assertCount(7, $conversations);
         foreach ($conversations as $conv) {
-            if (in_array($conv->id, [$ic2->id])) {
+            if (in_array($conv->id, [$ic2->id, $selfconversation->id])) {
                 $this->assertTrue($conv->isfavourite);
             } else {
                 $this->assertFalse($conv->isfavourite);
             }
         }
 
-        // Now, get ONLY favourite conversations.
+        // Now, get ONLY favourite conversations (including self-conversation).
         $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, true);
-        $this->assertCount(1, $conversations);
+        $this->assertCount(2, $conversations);
         foreach ($conversations as $conv) {
-            $this->assertTrue($conv->isfavourite);
-            $this->assertEquals($ic2->id, $conv->id);
+            if ($conv->type != \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF) {
+                $this->assertTrue($conv->isfavourite);
+                $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $conv->type);
+                $this->assertEquals($ic2->id, $conv->id);
+            }
         }
 
         // Now, try ONLY favourites of type 'group'.
@@ -1573,11 +1796,18 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
 
+        // Try to get ONLY favourite conversations, when only self-conversation exist.
+        $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+
+        // Unstar self-conversation.
+        $selfconversation = \core_message\api::get_self_conversation($user1->id);
+        \core_message\api::unset_favourite_conversation($selfconversation->id, $user1->id);
+
         // Try to get ONLY favourite conversations, when no favourites exist.
         $this->assertEquals([], \core_message\api::get_conversations($user1->id, 0, 20, null, true));
 
         // Try to get NO favourite conversations, when no favourites exist.
-        $this->assertCount(6, \core_message\api::get_conversations($user1->id, 0, 20, null, false));
+        $this->assertCount(7, \core_message\api::get_conversations($user1->id, 0, 20, null, false));
 
         // Mark a few conversations as favourites.
         \core_message\api::set_favourite_conversation($ic1->id, $user1->id);
@@ -1587,7 +1817,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the conversations, first with no restrictions, confirming the favourite status of the conversations.
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(6, $conversations);
+        $this->assertCount(7, $conversations);
         foreach ($conversations as $conv) {
             if (in_array($conv->id, $favouriteids)) {
                 $this->assertTrue($conv->isfavourite);
@@ -1615,7 +1845,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // And NO favourite conversations.
         $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, false);
-        $this->assertCount(3, $conversations);
+        $this->assertCount(4, $conversations);
         foreach ($conversations as $conv) {
             $this->assertFalse($conv->isfavourite);
             $this->assertFalse(array_search($conv->id, $favouriteids));
@@ -1728,6 +1958,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Verify the group without any image works as expected too.
         $conversations = \core_message\api::get_conversations($user3->id);
+        // Consider first conversations is self-conversation.
         $this->assertEquals(2, $conversations[0]->membercount);
         $this->assertEquals($course1->shortname, $conversations[0]->subname);
         $this->assertEquals('https://www.example.com/moodle/theme/image.php/_s/boost/core/1/g/g1', $conversations[0]->imageurl);
@@ -1735,7 +1966,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Now, disable the conversation linked to the group and verify it's no longer returned.
         $DB->set_field('message_conversations', 'enabled', 0, ['id' => $conversations[0]->id]);
         $conversations = \core_message\api::get_conversations($user3->id);
-        $this->assertCount(0, $conversations);
+        $this->assertCount(1, $conversations);
     }
 
    /**
@@ -3011,15 +3242,22 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // The person doing the search.
         $this->setUser($user1);
 
+        // Get self-conversation.
+        $sc1 = \core_message\api::get_self_conversation($user1->id);
+        $sc2 = \core_message\api::get_self_conversation($user2->id);
+
         // Send some messages back and forth.
         $time = 1;
         $m1id = $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
         $m2id = $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
         $m3id = $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
         $m4id = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        $m5id = testhelper::send_fake_message_to_conversation($user1, $sc1->id, 'Hi to myself!', $time + 5);
+        $m6id = testhelper::send_fake_message_to_conversation($user2, $sc2->id, 'I am talking with myself', $time + 6);
 
-        // Delete the conversation as user 1.
         $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
+        // Delete the individual conversation between user1 and user2 (only for user1).
         \core_message\api::delete_conversation_by_id($user1->id, $conversationid);
 
         $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
@@ -3047,6 +3285,26 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user1->id, $mua4->userid);
         $this->assertEquals($m4id, $mua4->messageid);
         $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua4->action);
+
+        // Delete the self-conversation as user 1.
+        \core_message\api::delete_conversation_by_id($user1->id, $sc1->id);
+
+        $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
+        $this->assertCount(5, $muas);
+
+        // Sort by id.
+        ksort($muas);
+
+        $mua1 = array_shift($muas);
+        $mua2 = array_shift($muas);
+        $mua3 = array_shift($muas);
+        $mua4 = array_shift($muas);
+        $mua5 = array_shift($muas);
+
+        // Check only messages in self-conversion for user1 are deleted (self-conversation for user2 shouldn't be removed).
+        $this->assertEquals($user1->id, $mua5->userid);
+        $this->assertEquals($m5id, $mua5->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua5->action);
     }
 
     /**
@@ -3364,8 +3622,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             ]
         );
 
+        // Get a self-conversation for user1.
+        $sc1 = \core_message\api::get_self_conversation($user1->id);
+
         // For group conversations, there are no user privacy checks, so only membership in the conversation is needed.
         $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+
+        // For self conversations, there are no user privacy checks, so only membership in the conversation is needed.
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $sc1->id));
 
         // For individual conversations, the default privacy setting of 'only contacts and course members' applies.
         // Users are not in the same course, nor are they contacts, so messages cannot be sent.
@@ -3516,9 +3780,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             ]
         );
 
+        // Get a self-conversation for user1.
+        $sc1 = \core_message\api::get_self_conversation($user1->id);
+
         // Verify, non members cannot send a message.
         $this->assertFalse(\core_message\api::can_send_message_to_conversation($user4->id, $gc1->id));
         $this->assertFalse(\core_message\api::can_send_message_to_conversation($user4->id, $ic1->id));
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user4->id, $sc1->id));
     }
 
     /**
@@ -4753,7 +5021,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
+        $sink = $this->redirectMessages();
         $request = \core_message\api::create_contact_request($user1->id, $user2->id);
+        $messages = $sink->get_messages();
+        $sink->close();
+        // Test customdata.
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(2, (array) $customdata->actionbuttons);
 
         $this->assertEquals($user1->id, $request->userid);
         $this->assertEquals($user2->id, $request->requesteduserid);
@@ -5755,6 +6031,33 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test returning members of a self conversation.
+     */
+    public function test_get_conversation_members_with_self_conversation() {
+        $lastaccess = new stdClass();
+        $lastaccess->lastaccess = time();
+
+        $user1 = self::getDataGenerator()->create_user($lastaccess);
+
+        $selfconversation = \core_message\api::get_self_conversation($user1->id);
+        testhelper::send_fake_message_to_conversation($user1, $selfconversation->id, 'This is a self-message!');
+
+        // Get the members for the self-conversation.
+        $members = \core_message\api::get_conversation_members($user1->id, $selfconversation->id);
+        $this->assertCount(1, $members);
+
+        $member1 = array_shift($members);
+
+        // Confirm the standard fields are OK.
+        $this->assertEquals($user1->id, $member1->id);
+        $this->assertEquals(fullname($user1), $member1->fullname);
+        $this->assertEquals(true, $member1->isonline);
+        $this->assertEquals(true, $member1->showonlinestatus);
+        $this->assertEquals(false, $member1->iscontact);
+        $this->assertEquals(false, $member1->isblocked);
+    }
+
+    /**
      * Test verifying that messages can be sent to existing individual conversations.
      */
     public function test_send_message_to_conversation_individual_conversation() {
@@ -5777,8 +6080,17 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Send a message to an individual conversation.
         $sink = $this->redirectEvents();
+        $messagessink = $this->redirectMessages();
         $message1 = \core_message\api::send_message_to_conversation($user1->id, $ic1->id, 'this is a message', FORMAT_MOODLE);
         $events = $sink->get_events();
+        $messages = $messagessink->get_messages();
+        // Test customdata.
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(1, (array) $customdata->actionbuttons);
+        $this->assertObjectHasAttribute('placeholders', $customdata);
+        $this->assertCount(1, (array) $customdata->placeholders);
 
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
@@ -5818,15 +6130,23 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Send a message to a group conversation.
         $sink = $this->redirectEvents();
+        $messagessink = $this->redirectMessages();
         $message1 = \core_message\api::send_message_to_conversation($user1->id, $gc2->id, 'message to the group', FORMAT_MOODLE);
         $events = $sink->get_events();
-
+        $messages = $messagessink->get_messages();
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
         $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
         $this->assertAttributeEquals('message to the group', 'text', $message1);
         $this->assertObjectHasAttribute('timecreated', $message1);
+        // Test customdata.
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertCount(1, (array) $customdata->actionbuttons);
+        $this->assertObjectHasAttribute('placeholders', $customdata);
+        $this->assertCount(1, (array) $customdata->placeholders);
+        $this->assertObjectNotHasAttribute('notificationiconurl', $customdata);    // No group image means no image.
 
         // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
         // however, we can still determine the number and ids of any recipients this way.
@@ -5835,6 +6155,66 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertNotContains($user1->id, $userids);
         $this->assertContains($user3->id, $userids);
         $this->assertContains($user4->id, $userids);
+    }
+
+    /**
+     * Test verifying that messages can be sent to existing linked group conversations.
+     */
+    public function test_send_message_to_conversation_linked_group_conversation() {
+        global $CFG;
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a group with a linked conversation and a valid image.
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $group = $this->getDataGenerator()->create_group([
+            'courseid' => $course->id,
+            'enablemessaging' => 1,
+            'picturepath' => $CFG->dirroot . '/lib/tests/fixtures/gd-logo.png'
+        ]);
+
+        // Add users to group.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user2->id));
+
+        // Verify the group with the image works as expected.
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $this->assertEquals(2, $conversations[0]->membercount);
+        $this->assertEquals($course->shortname, $conversations[0]->subname);
+        $groupimageurl = get_group_picture_url($group, $group->courseid, true);
+        $this->assertEquals($groupimageurl, $conversations[0]->imageurl);
+
+        // Redirect messages.
+        // This marks messages as read, but we can still observe and verify the number of conversation recipients,
+        // based on the message_viewed events generated as part of marking the message as read for each user.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        // Send a message to a group conversation.
+        $messagessink = $this->redirectMessages();
+        $message1 = \core_message\api::send_message_to_conversation($user1->id, $conversations[0]->id,
+            'message to the group', FORMAT_MOODLE);
+        $messages = $messagessink->get_messages();
+        // Verify the message returned.
+        $this->assertInstanceOf(\stdClass::class, $message1);
+        $this->assertObjectHasAttribute('id', $message1);
+        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
+        $this->assertAttributeEquals('message to the group', 'text', $message1);
+        $this->assertObjectHasAttribute('timecreated', $message1);
+        // Test customdata.
+        $customdata = json_decode($messages[0]->customdata);
+        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertEquals($groupimageurl, $customdata->notificationiconurl);
+        $this->assertEquals($group->name, $customdata->conversationname);
+
     }
 
     /**
@@ -5926,6 +6306,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     public function test_get_conversation_counts_test_cases() {
         $typeindividual = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
         $typegroup = \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP;
+        $typeself = \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF;
         list($user1, $user2, $user3, $user4, $user5, $user6, $user7, $user8) = [0, 1, 2, 3, 4, 5, 6, 7];
         $conversations = [
             [
@@ -5964,11 +6345,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'enabled' => false
             ],
             [
-                'type' => $typeindividual,
-                'users' => [$user8, $user8],
-                'messages' => [$user8, $user8],
+                'type' => $typeself,
+                'users' => [$user8],
+                'messages' => [$user8],
                 'favourites' => [],
-                'enabled' => null // Individual conversations cannot be disabled.
+                'enabled' => null // Self-conversations cannot be disabled.
             ],
         ];
 
@@ -5978,13 +6359,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user5],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -5993,13 +6376,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user4],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6008,13 +6393,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 2, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6023,13 +6410,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user2],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6038,13 +6427,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user4],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6053,13 +6444,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [0],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 2, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6068,13 +6461,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [3],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 2, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6083,13 +6478,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [0, 1, 2],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6098,13 +6495,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [3, 4, 5],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 2, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6113,13 +6512,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [0, 1, 2],
                 'arguments' => [$user2],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6128,13 +6529,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [3, 4, 5],
                 'arguments' => [$user3],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6143,13 +6546,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [6, 7],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 2, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6158,13 +6563,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [6, 7, 8, 9],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 2, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6173,13 +6580,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 2, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => [$user2]
             ],
@@ -6188,13 +6597,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user1],
-                'expectedcounts' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 2, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => [$user2, $user3, $user4]
             ],
@@ -6203,13 +6614,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user6],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6218,13 +6631,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user7],
-                'expectedcounts' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6235,11 +6650,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'arguments' => [$user8],
                 'expectedcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 1
                 ]],
                 'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -6325,6 +6742,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
         $this->assertEquals($expectedcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
             $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+        $this->assertEquals($expectedcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF],
+            $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF]);
     }
 
     /**
@@ -6437,6 +6856,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
         $this->assertEquals($expectedunreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
             $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+        $this->assertEquals($expectedunreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF],
+            $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF]);
     }
 
     public function test_delete_all_conversation_data() {
@@ -6490,6 +6911,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $g2m3 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation2->id);
         $g2m4 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation2->id);
 
+        // Favourite the conversation for several of the users.
+        \core_message\api::set_favourite_conversation($groupconversation1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($groupconversation1->id, $user2->id);
+
         // Delete a few messages.
         \core_message\api::delete_message($user1->id, $g1m1);
         \core_message\api::delete_message($user1->id, $g1m2);
@@ -6534,6 +6959,185 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m2]));
         $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m3]));
         $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m4]));
+
+        // Confirm favourites were deleted for both users.
+        $user1service = \core_favourites\service_factory::get_service_for_user_context(context_user::instance($user1->id));
+        $this->assertFalse($user1service->favourite_exists('core_message', 'message_conversations', $groupconversation1->id,
+            $coursecontext1));
+        $user2service = \core_favourites\service_factory::get_service_for_user_context(context_user::instance($user1->id));
+        $this->assertFalse($user2service->favourite_exists('core_message', 'message_conversations', $groupconversation1->id,
+            $coursecontext1));
+    }
+
+    /**
+     * Tests the user can delete message for all users as a teacher.
+     */
+    public function test_can_delete_message_for_all_users_teacher() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create fake data to test it.
+        list($teacher, $student1, $student2, $convgroup, $convindividual) = $this->create_delete_message_test_data();
+
+        // Allow Teacher can delete messages for all.
+        $editingteacher = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        assign_capability('moodle/site:deleteanymessage', CAP_ALLOW, $editingteacher->id, context_system::instance());
+
+        // Set as the first user.
+        $this->setUser($teacher);
+
+        // Send a message to private conversation and in a group conversation.
+        $messageidind = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convindividual->id);
+        $messageidgrp = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convgroup->id);
+
+        // Teacher cannot delete message for everyone in a private conversation.
+        $this->assertFalse(\core_message\api::can_delete_message_for_all_users($teacher->id, $messageidind));
+
+        // Teacher can delete message for everyone in a group conversation.
+        $this->assertTrue(\core_message\api::can_delete_message_for_all_users($teacher->id, $messageidgrp));
+    }
+
+    /**
+     * Tests the user can delete message for all users as a student.
+     */
+    public function test_can_delete_message_for_all_users_student() {
+        $this->resetAfterTest(true);
+
+        // Create fake data to test it.
+        list($teacher, $student1, $student2, $convgroup, $convindividual) = $this->create_delete_message_test_data();
+
+        // Set as the first user.
+        $this->setUser($student1);
+
+        // Send a message to private conversation and in a group conversation.
+        $messageidind = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convindividual->id);
+        $messageidgrp = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convgroup->id);
+
+        // Student1 cannot delete message for everyone in a private conversation.
+        $this->assertFalse(\core_message\api::can_delete_message_for_all_users($student1->id, $messageidind));
+
+        // Student1 cannot delete message for everyone in a group conversation.
+        $this->assertFalse(\core_message\api::can_delete_message_for_all_users($student1->id, $messageidgrp));
+    }
+
+    /**
+     * Tests tdelete message for all users in group conversation.
+     */
+    public function test_delete_message_for_all_users_group_conversation() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create fake data to test it.
+        list($teacher, $student1, $student2, $convgroup, $convindividual) = $this->create_delete_message_test_data();
+
+        // Send 3 messages to a group conversation.
+        $mgid1 = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convgroup->id);
+        $mgid2 = \core_message\tests\helper::send_fake_message_to_conversation($student1, $convgroup->id);
+        $mgid3 = \core_message\tests\helper::send_fake_message_to_conversation($student2, $convgroup->id);
+
+        // Delete message 1 for all users.
+        \core_message\api::delete_message_for_all_users($mgid1);
+
+        // Get the messages to check if the message 1 was deleted for teacher.
+        $convmessages1 = \core_message\api::get_conversation_messages($teacher->id, $convgroup->id);
+        // Only has to remains 2 messages.
+        $this->assertCount(2, $convmessages1['messages']);
+        // Check if no one of the two messages is message 1.
+        foreach ($convmessages1['messages'] as $message) {
+            $this->assertNotEquals($mgid1, $message->id);
+        }
+
+        // Get the messages to check if the message 1 was deleted for student1.
+        $convmessages2 = \core_message\api::get_conversation_messages($student1->id, $convgroup->id);
+        // Only has to remains 2 messages.
+        $this->assertCount(2, $convmessages2['messages']);
+        // Check if no one of the two messages is message 1.
+        foreach ($convmessages2['messages'] as $message) {
+            $this->assertNotEquals($mgid1, $message->id);
+        }
+
+        // Get the messages to check if the message 1 was deleted for student2.
+        $convmessages3 = \core_message\api::get_conversation_messages($student2->id, $convgroup->id);
+        // Only has to remains 2 messages.
+        $this->assertCount(2, $convmessages3['messages']);
+        // Check if no one of the two messages is message 1.
+        foreach ($convmessages3['messages'] as $message) {
+            $this->assertNotEquals($mgid1, $message->id);
+        }
+    }
+
+    /**
+     * Tests delete message for all users in private conversation.
+     */
+    public function test_delete_message_for_all_users_individual_conversation() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create fake data to test it.
+        list($teacher, $student1, $student2, $convgroup, $convindividual) = $this->create_delete_message_test_data();
+
+        // Send 2 messages in a individual conversation.
+        $mid1 = \core_message\tests\helper::send_fake_message_to_conversation($teacher, $convindividual->id);
+        $mid2 = \core_message\tests\helper::send_fake_message_to_conversation($student1, $convindividual->id);
+
+        // Delete the first message for all users.
+        \core_message\api::delete_message_for_all_users($mid1);
+
+        // Get the messages to check if the message 1 was deleted for teacher.
+        $convmessages1 = \core_message\api::get_conversation_messages($teacher->id, $convindividual->id);
+        // Only has to remains 1 messages for teacher.
+        $this->assertCount(1, $convmessages1['messages']);
+        // Check the one messages remains not is the first message.
+        $this->assertNotEquals($mid1, $convmessages1['messages'][0]->id);
+
+        // Get the messages to check if the message 1 was deleted for student1.
+        $convmessages2 = \core_message\api::get_conversation_messages($student1->id, $convindividual->id);
+        // Only has to remains 1 messages for student1.
+        $this->assertCount(1, $convmessages2['messages']);
+        // Check the one messages remains not is the first message.
+        $this->assertNotEquals($mid1, $convmessages2['messages'][0]->id);
+    }
+
+    /**
+     * Helper to seed the database with initial state with data.
+     */
+    protected function create_delete_message_test_data() {
+        // Create some users.
+        $teacher = self::getDataGenerator()->create_user();
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
+
+        // Create a course and enrol the users.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student');
+
+        // Create a group and added the users into.
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group1->id, $teacher->id);
+        groups_add_member($group1->id, $student1->id);
+        groups_add_member($group1->id, $student2->id);
+
+        // Create a group conversation linked with the course.
+        $convgroup = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$teacher->id, $student1->id, $student2->id],
+            'Group test delete for everyone', \core_message\api::MESSAGE_CONVERSATION_ENABLED,
+            'core_group',
+            'groups',
+            $group1->id,
+            context_course::instance($course->id)->id
+        );
+
+        // Create and individual conversation.
+        $convindividual = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$teacher->id, $student1->id]
+        );
+
+        return [$teacher, $student1, $student2, $convgroup, $convindividual];
     }
 
     /**
