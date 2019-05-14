@@ -23,7 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['companyid'] = 'Company ID';
+$string['courseid'] = 'Course ID';
 $string['doit'] = 'Yes, do it!';
+$string['fromdate'] = 'Completion from date';
+$string['idnumber'] = 'From tracking id number';
 $string['notifyfinished'] = '...finished';
 $string['pageheader'] = 'Recreate stored certificates';
 $string['privacy:metadata'] = 'Admin tool redo certs doesn\'t store any user details';
@@ -31,6 +35,5 @@ $string['pluginname'] = 'Recreate stored certificates';
 $string['searchusers'] = 'Select a user';
 $string['searchcourses'] = 'Select a course';
 $string['searchcompanies'] = 'Select a company';
-$string['idnumber'] = 'From tracking id number';
-$string['fromdate'] = 'Completion from date';
 $string['todate'] = 'Completion to date';
+$string['userid'] = 'User ID';

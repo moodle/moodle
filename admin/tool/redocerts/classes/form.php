@@ -49,12 +49,18 @@ class tool_redocerts_form extends moodleform {
         $mform->setExpanded('searchhdr', true);
 
         $mform->addElement('autocomplete', 'user', get_string('searchusers', 'tool_redocerts'), $allusers);
+        $mform->addElement('text', 'userid', get_string('userid', 'tool_redocerts'));
         $mform->addElement('autocomplete', 'course', get_string('searchcourses', 'tool_redocerts'), $allcourses);
+        $mform->addElement('text', 'courseid', get_string('courseid', 'tool_redocerts'));
         $mform->addElement('autocomplete', 'company', get_string('searchcompanies', 'tool_redocerts'), $allcompanies);
+        $mform->addElement('text', 'companyid', get_string('companyid', 'tool_redocerts'));
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'tool_redocerts'));
         $mform->addElement('date_time_selector', 'fromdate', get_string('fromdate', 'tool_redocerts'), array('optional' => true));
         $mform->addElement('date_time_selector', 'todate', get_string('todate', 'tool_redocerts'), array('optional' => true));
         $mform->setType('idnumber', PARAM_INT);
+        $mform->setType('userid', PARAM_INT);
+        $mform->setType('courseid', PARAM_INT);
+        $mform->setType('companyid', PARAM_INT);
 
         $this->add_action_buttons(false, get_string('doit', 'tool_redocerts'));
     }

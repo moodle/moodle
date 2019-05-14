@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
  * @global moodle_database $DB
  * @return bool true if transactions are allowed. false otherwise.
  */
-function do_redocerts($user = 0, $course = 0, $company = 0, $idnumber = 0, $fromdate = null, $todate = null) {
+function do_redocerts($user = 0, $course = 0, $company = 0, $idnumber = 0, $fromdate = null, $todate = null, $userid = 0, $courseid = 0, $companyid = 0) {
     global $DB, $CFG;
 
     // Build the SQL.
@@ -40,8 +40,17 @@ function do_redocerts($user = 0, $course = 0, $company = 0, $idnumber = 0, $from
     if (!empty($course)) {
         $usersql[] = " lit.courseid = $course ";
     }
+    if (!empty($userid)) {
+        $usersql[] = " lit.userid = $userid ";
+    }
+    if (!empty($courseid)) {
+        $usersql[] = " lit.courseid = $courseid ";
+    }
     if (!empty($company)) {
         $usersql[] = " lit.userid IN (SELECT userid FROM {company_users} WHERE companyid = $company) ";
+    }
+    if (!empty($companyid)) {
+        $usersql[] = " lit.userid IN (SELECT userid FROM {company_users} WHERE companyid = $companyid) ";
     }
     if (!empty($idnumber)) {
         $usersql[] = " lit.id > $idnumber ";
@@ -58,7 +67,7 @@ function do_redocerts($user = 0, $course = 0, $company = 0, $idnumber = 0, $from
         $extrasql = "";
     }
     // delete the initial records
-    $oldrecords = $DB->get_records_sql("SELECT lit.* from {local_iomad_track} lit JOIN {course} c ON (c.id = lit.courseid) join {user} u on (lit.userid = u.id and u.deleted = 0 )$extrasql order by lit.id asc");
+    $oldrecords = $DB->get_records_sql("SELECT lit.* from {local_iomad_track} lit JOIN {course} c ON (c.id = lit.courseid) join {user} u on (lit.userid = u.id and u.deleted = 0 ) $extrasql order by lit.id asc");
 
     $total = count($oldrecords);
     $count = 1;

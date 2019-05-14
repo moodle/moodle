@@ -48,7 +48,7 @@ if (!$data = $form->get_data()) {
 $PAGE->requires->js_init_code("window.scrollTo(0, 5000000);");
 
 echo $OUTPUT->box_start();
-do_redocerts($data->user, $data->course, $data->company, $data->idnumber, $data->fromdate, $data->todate);
+do_redocerts($data->user, $data->course, $data->company, $data->idnumber, $data->fromdate, $data->todate, $data->userid, $data->courseid, $data->companyid);
 echo $OUTPUT->box_end();
 
 // Course caches are now rebuilt on the fly.
