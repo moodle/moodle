@@ -35,6 +35,9 @@ use stdClass;
  *
  * This should be the only place that accessed the database.
  *
+ * This class should not return any objects other than post_entity objects. The class
+ * may contain some utility count methods which return integers.
+ *
  * This uses the repository pattern. See:
  * https://designpatternsphp.readthedocs.io/en/latest/More/Repository/README.html
  *
@@ -428,8 +431,8 @@ class post extends db_table_vault {
     /**
      * Get a mapping of the first post in each discussion based on post creation time.
      *
-     * @param   int[]        $discussionids The list of discussions to fetch counts for
-     * @return  stdClass[]   The post object of the first post for each discussions returned in an associative array
+     * @param   int[]         $discussionids The list of discussions to fetch counts for
+     * @return  post_entity[] The post object of the first post for each discussions returned in an associative array
      */
     public function get_first_post_for_discussion_ids(array $discussionids) : array {
 
@@ -449,6 +452,7 @@ class post extends db_table_vault {
               GROUP BY mp.discussion
               ) lp ON lp.discussion = p.discussion AND lp.created = p.created";
 
-        return $this->get_db()->get_records_sql($sql, $params);
+        $records = $this->get_db()->get_records_sql($sql, $params);
+        return $this->transform_db_records_to_entities($records);
     }
 }

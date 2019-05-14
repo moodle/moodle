@@ -858,6 +858,7 @@ class mod_forum_external extends external_api {
             $discussionids = array_keys($alldiscussions);
 
             $postvault = $vaultfactory->get_post_vault();
+            $postdatamapper = $legacydatamapperfactory->get_post_data_mapper();
             // Return the reply count for each discussion in a given forum.
             $replies = $postvault->get_reply_count_for_discussion_ids($USER, $discussionids, $canseeanyprivatereply);
             // Return the first post for each discussion in a given forum.
@@ -896,7 +897,12 @@ class mod_forum_external extends external_api {
                     continue;
                 }
 
-                $discussionobject = $firstposts[$discussion->get_first_post_id()];
+                $firstpost = $firstposts[$discussion->get_first_post_id()];
+                $discussionobject = $postdatamapper->to_legacy_object($firstpost);
+                // Fix up the types for these properties.
+                $discussionobject->mailed = $discussionobject->mailed ? 1 : 0;
+                $discussionobject->messagetrust = $discussionobject->messagetrust ? 1 : 0;
+                $discussionobject->mailnow = $discussionobject->mailnow ? 1 : 0;
                 $discussionobject->groupid = $discussion->get_group_id();
                 $discussionobject->timemodified = $discussion->get_time_modified();
                 $discussionobject->usermodified = $discussion->get_user_modified();
