@@ -165,7 +165,7 @@ class exported_discussion_summaries {
         $firstposts = $postvault->get_first_post_for_discussion_ids($discussionids);
 
         array_walk($exportedposts['summaries'], function($summary) use ($firstposts, $latestposts) {
-            $summary->discussion->times['created'] = (int) $firstposts[$summary->discussion->firstpostid]->created;
+            $summary->discussion->times['created'] = (int) $firstposts[$summary->discussion->firstpostid]->get_time_created();
             $summary->discussion->times['modified'] = (int) $latestposts[$summary->discussion->id]->get_time_created();
         });
 
