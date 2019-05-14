@@ -1299,7 +1299,8 @@ class mod_quiz_external extends external_api {
             if (!$attemptobj->is_finished()) {
                 throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptclosed');
             } else if (!$displayoptions->attempt) {
-                throw new moodle_exception($attemptobj->cannot_review_message());
+                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreview', null, '',
+                    $attemptobj->cannot_review_message());
             }
         } else if (!$attemptobj->is_review_allowed()) {
             throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreviewattempt');
