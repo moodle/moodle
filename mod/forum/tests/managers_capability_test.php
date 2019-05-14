@@ -689,11 +689,13 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
 
         // Create a new post that definitely isn't the first post of the discussion.
+        // Only the author, and a user with editanypost can edit it.
         $post = $this->entityfactory->get_post_from_stdclass(
             (object) array_merge((array) $this->postrecord, ['id' => $post->get_id() + 100])
         );
-
-        $this->assertFalse($capabilitymanager->can_edit_post($user, $discussion, $post));
+        $this->give_capability('mod/forum:editanypost');
+        $this->assertTrue($capabilitymanager->can_edit_post($user, $discussion, $post));
+        $this->assertFalse($capabilitymanager->can_edit_post($otheruser, $discussion, $post));
 
         $post = $this->post;
         // Set the first post of the discussion to our post.

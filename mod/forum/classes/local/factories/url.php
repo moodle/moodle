@@ -247,7 +247,7 @@ class url {
      * @return moodle_url
      */
     public function get_edit_post_url_from_post(forum_entity $forum, post_entity $post) : moodle_url {
-        if ($forum->get_type() == 'single') {
+        if ($forum->get_type() == 'single' && !$post->has_parent()) {
             return new moodle_url('/course/modedit.php', [
                 'update' => $forum->get_course_module_record()->id,
                 'sesskey' => sesskey(),
