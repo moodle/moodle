@@ -3421,5 +3421,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019050600.00);
     }
 
+    if ($oldversion < 2019051300.01) {
+        $DB->set_field('analytics_models', 'enabled', '1', ['target' => '\core_user\analytics\target\upcoming_activities_due']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019051300.01);
+    }
+
     return true;
 }
