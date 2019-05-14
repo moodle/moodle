@@ -162,7 +162,6 @@ class discussion_list {
 
         $forumview = [
             'forum' => (array) $forumexporter->export($this->renderer),
-            'newdiscussionhtml' => $this->get_discussion_form($user, $cm, $groupid),
             'groupchangemenu' => groups_print_activity_menu(
                 $cm,
                 $this->urlfactory->get_forum_view_url_from_forum($forum),
@@ -177,6 +176,10 @@ class discussion_list {
             'totaldiscussioncount' => $alldiscussionscount,
             'visiblediscussioncount' => count($discussions)
         ];
+
+        if ($forumview['forum']['capabilities']['create']) {
+            $forumview['newdiscussionhtml'] = $this->get_discussion_form($user, $cm, $groupid);
+        }
 
         if (!$discussions) {
             return $this->renderer->render_from_template($this->template, $forumview);
