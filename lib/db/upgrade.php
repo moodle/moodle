@@ -3394,5 +3394,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019060600.02);
     }
 
+    if ($oldversion < 2019062900.00) {
+        // Debugsmtp is now only available via config.php.
+        $DB->delete_records('config', array('name' => 'debugsmtp'));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019062900.00);
+    }
+
     return true;
 }

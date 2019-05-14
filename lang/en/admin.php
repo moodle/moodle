@@ -199,7 +199,6 @@ $string['configdbsessions'] = 'If enabled, this setting will use the database to
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
 $string['configdebugdisplay'] = 'Set to on, the error reporting will go to the HTML page. This is practical, but breaks XHTML, JS, cookies and HTTP headers in general. Set to off, it will send the output to your server logs, allowing better debugging. The PHP setting error_log controls which log this goes to.';
 $string['configdebugpageinfo'] = 'Enable if you want page information printed in page footer.';
-$string['configdebugsmtp'] = 'Enable verbose debug information during sending of email messages to SMTP server.';
 $string['configdebugvalidators'] = 'Enable if you want to have links to external validator servers in page footer. You may need to create new user with username <em>w3cvalidator</em>, and enable guest access. These changes may allow unauthorized access to server, do not enable on production sites!';
 $string['configdefaulthomepage'] = 'This determines the home page for logged in users';
 $string['configdefaultrequestcategory'] = 'Courses requested by users will be automatically placed in this category.';
@@ -448,7 +447,6 @@ $string['debugminimal'] = 'MINIMAL: Show only fatal errors';
 $string['debugnone'] = 'NONE: Do not show any errors or warnings';
 $string['debugnormal'] = 'NORMAL: Show errors, warnings and notices';
 $string['debugpageinfo'] = 'Show page information';
-$string['debugsmtp'] = 'Debug email sending';
 $string['debugstringids'] = 'Show origin of languages strings';
 $string['debugstringids_desc'] = 'If enabled, language string components and identifiers are displayed when ?strings=1 or &strings=1 is appended to the page URL.';
 $string['debugvalidators'] = 'Show validator links';

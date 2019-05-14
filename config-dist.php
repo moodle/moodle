@@ -641,6 +641,10 @@ $CFG->admin = 'admin';
 // Enable verbose debug information during fetching of email messages from IMAP server.
 // $CFG->debugimap = true;
 //
+// Enable verbose debug information during sending of email messages to SMTP server.
+// Note: also requires $CFG->debug set to DEBUG_DEVELOPER.
+// $CFG->debugsmtp = true;
+//
 // Prevent JS caching
 // $CFG->cachejs = false; // NOT FOR PRODUCTION SERVERS!
 //
