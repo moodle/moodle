@@ -1107,6 +1107,18 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         $where[] = "(d.forum $fullid_sql)";
     }
 
+    $favjoin = "";
+    if (in_array('starredonly:on', $searchterms)) {
+        $usercontext = context_user::instance($USER->id);
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        list($favjoin, $favparams) = $ufservice->get_join_sql_by_type('mod_forum', 'discussions',
+            "favourited", "d.id");
+
+        $searchterms = array_values(array_diff($searchterms, array('starredonly:on')));
+        $params = array_merge($params, $favparams);
+        $extrasql .= " AND favourited.itemid IS NOT NULL AND favourited.itemid != 0";
+    }
+
     $selectdiscussion = "(".implode(" OR ", $where).")";
 
     $messagesearch = '';
@@ -1132,36 +1144,39 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         $tagjoins = '';
         $tagfields = [];
         $tagfieldcount = 0;
-        foreach ($parsearray as $token) {
-            if ($token->getType() == TOKEN_TAGS) {
-                for ($i = 0; $i <= substr_count($token->getValue(), ','); $i++) {
-                    // Queries can only have a limited number of joins so set a limit sensible users won't exceed.
-                    if ($tagfieldcount > 10) {
-                        continue;
-                    }
-                    $tagjoins .= " LEFT JOIN {tag_instance} ti_$tagfieldcount
+        if ($parsearray) {
+            foreach ($parsearray as $token) {
+                if ($token->getType() == TOKEN_TAGS) {
+                    for ($i = 0; $i <= substr_count($token->getValue(), ','); $i++) {
+                        // Queries can only have a limited number of joins so set a limit sensible users won't exceed.
+                        if ($tagfieldcount > 10) {
+                            continue;
+                        }
+                        $tagjoins .= " LEFT JOIN {tag_instance} ti_$tagfieldcount
                                         ON p.id = ti_$tagfieldcount.itemid
                                             AND ti_$tagfieldcount.component = 'mod_forum'
                                             AND ti_$tagfieldcount.itemtype = 'forum_posts'";
-                    $tagjoins .= " LEFT JOIN {tag} t_$tagfieldcount ON t_$tagfieldcount.id = ti_$tagfieldcount.tagid";
-                    $tagfields[] = "t_$tagfieldcount.rawname";
-                    $tagfieldcount++;
+                        $tagjoins .= " LEFT JOIN {tag} t_$tagfieldcount ON t_$tagfieldcount.id = ti_$tagfieldcount.tagid";
+                        $tagfields[] = "t_$tagfieldcount.rawname";
+                        $tagfieldcount++;
+                    }
                 }
             }
+            list($messagesearch, $msparams) = search_generate_SQL($parsearray, 'p.message', 'p.subject',
+                'p.userid', 'u.id', 'u.firstname',
+                'u.lastname', 'p.modified', 'd.forum',
+                $tagfields);
+
+            $params = ($msparams ? array_merge($params, $msparams) : $params);
         }
-        list($messagesearch, $msparams) = search_generate_SQL($parsearray, 'p.message', 'p.subject',
-                                                              'p.userid', 'u.id', 'u.firstname',
-                                                              'u.lastname', 'p.modified', 'd.forum',
-                                                              $tagfields);
-        $params = array_merge($params, $msparams);
     }
 
     $fromsql = "{forum_posts} p
                   INNER JOIN {forum_discussions} d ON d.id = p.discussion
-                  INNER JOIN {user} u ON u.id = p.userid $tagjoins";
+                  INNER JOIN {user} u ON u.id = p.userid $tagjoins $favjoin";
 
-    $selectsql = " $messagesearch
-               AND p.discussion = d.id
+    $selectsql = ($messagesearch ? $messagesearch . " AND " : "").
+                " p.discussion = d.id
                AND p.userid = u.id
                AND $selectdiscussion
                    $extrasql";
