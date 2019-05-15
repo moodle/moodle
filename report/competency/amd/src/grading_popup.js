@@ -73,6 +73,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
      */
     GradingPopup.prototype._contextLoaded = function(context) {
         var self = this;
+
         // We have to display user info in popup.
         context.displayuser = true;
         templates.render('tool_lp/user_competency_summary_in_course', context).done(function(html, js) {
@@ -92,6 +93,11 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
         var courseId = region.data('courseid');
         var moduleId = region.data('moduleid');
         var userId = region.data('userid');
+
+        // The module id is expected to be an integer, so don't pass empty string.
+        if (moduleId === '') {
+            moduleId = 0;
+        }
 
         ajax.call([{
             methodname: 'report_competency_data_for_report',
