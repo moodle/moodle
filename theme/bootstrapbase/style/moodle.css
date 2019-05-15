@@ -22427,3 +22427,8 @@ ul.indented-list {
 .font-weight-bold {
   font-weight: 700 !important;
 }
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
