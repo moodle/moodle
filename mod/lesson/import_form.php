@@ -59,6 +59,7 @@ class lesson_import_form extends moodleform {
      * @param array $data the submitted data.
      * @param array $errors the errors so far.
      * @return array the updated errors.
+     * @throws moodle_exception
      */
     protected function validate_uploaded_file($data, $errors) {
         global $CFG;
@@ -69,7 +70,7 @@ class lesson_import_form extends moodleform {
         }
 
         $files = $this->get_draft_files('questionfile');
-        if (count($files) < 1) {
+        if (!is_array($files) || count($files) < 1) {
             $errors['questionfile'] = get_string('required');
             return $errors;
         }
