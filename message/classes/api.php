@@ -528,6 +528,8 @@ class api {
             throw new \moodle_exception("Invalid value ($type) for type param, please see api constants.");
         }
 
+        self::lazy_create_self_conversation($userid);
+
         // We need to know which conversations are favourites, so we can either:
         // 1) Include the 'isfavourite' attribute on conversations (when $favourite = null and we're including all conversations)
         // 2) Restrict the results to ONLY those conversations which are favourites (when $favourite = true)
@@ -1586,6 +1588,7 @@ class api {
      */
     public static function get_conversation_counts(int $userid) : array {
         global $DB;
+        self::lazy_create_self_conversation($userid);
 
         // Some restrictions we need to be aware of:
         // - Individual conversations containing soft-deleted user must be counted.
@@ -2451,6 +2454,7 @@ class api {
      */
     public static function get_self_conversation(int $userid) {
         global $DB;
+        self::lazy_create_self_conversation($userid);
 
         $conditions = [
             'type' => self::MESSAGE_CONVERSATION_TYPE_SELF,
@@ -2525,6 +2529,12 @@ class api {
         $conversation->convhash = null;
         if ($type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL || $type == self::MESSAGE_CONVERSATION_TYPE_SELF) {
             $conversation->convhash = helper::get_conversation_hash($userids);
+
+            // Don't blindly create a conversation between 2 users if there is already one present - return that.
+            // This stops us making duplicate self and individual conversations, which is invalid.
+            if ($record = $DB->get_record('message_conversations', ['convhash' => $conversation->convhash])) {
+                return $record;
+            }
         }
         $conversation->component = $component;
         $conversation->itemtype = $itemtype;
@@ -3394,6 +3404,27 @@ class api {
             foreach ($members as $member) {
                 self::delete_message($member->userid, $messageid);
             }
+        }
+    }
+
+    /**
+     * Create a self conversation for a user, only if one doesn't already exist.
+     *
+     * @param int $userid the user to whom the conversation belongs.
+     */
+    protected static function lazy_create_self_conversation(int $userid) : void {
+        global $DB;
+        // Check if the self-conversation for this user exists.
+        // If not, create and star it for the user.
+        // Don't use the API methods here, as they in turn may rely on
+        // lazy creation and we'll end up with recursive loops of doom.
+        $conditions = [
+            'type' => self::MESSAGE_CONVERSATION_TYPE_SELF,
+            'convhash' => helper::get_conversation_hash([$userid])
+        ];
+        if (empty($DB->get_record('message_conversations', $conditions))) {
+            $selfconversation = self::create_conversation(self::MESSAGE_CONVERSATION_TYPE_SELF, [$userid]);
+            self::set_favourite_conversation($selfconversation->id, $userid);
         }
     }
 }
