@@ -2528,6 +2528,12 @@ class api {
         $conversation->convhash = null;
         if ($type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL || $type == self::MESSAGE_CONVERSATION_TYPE_SELF) {
             $conversation->convhash = helper::get_conversation_hash($userids);
+
+            // Don't blindly create a conversation between 2 users if there is already one present - return that.
+            // This stops us making duplicate self and individual conversations, which is invalid.
+            if ($record = $DB->get_record('message_conversations', ['convhash' => $conversation->convhash])) {
+                return $record;
+            }
         }
         $conversation->component = $component;
         $conversation->itemtype = $itemtype;
