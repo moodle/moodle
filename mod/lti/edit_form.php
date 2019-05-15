@@ -352,7 +352,8 @@ class mod_lti_edit_types_form extends moodleform {
 
         $errors = parent::validation($data, $files);
 
-        if ($data['lti_ltiversion'] == LTI_VERSION_1P3) {
+        // LTI2 tools do not contain a ltiversion field.
+        if (isset($data['lti_ltiversion']) && $data['lti_ltiversion'] == LTI_VERSION_1P3) {
             require_once($CFG->dirroot . '/mod/lti/upgradelib.php');
 
             $warning = mod_lti_verify_private_key();
