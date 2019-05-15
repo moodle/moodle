@@ -342,9 +342,18 @@ span.unread {
     font-size: 80%;
 }
 
+.forum-post-container:focus {
+    outline: 0;
+}
+
 /* This style is copied directly from the Bootstrap reboot file which adds button outline */
 /* stylelint-disable declaration-block-no-duplicate-properties */
 .post-actions .btn:focus {
+    outline: 1px dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+
+.forum-post-container:focus > .focus-target {
     outline: 1px dotted;
     outline: 5px auto -webkit-focus-ring-color;
 }
