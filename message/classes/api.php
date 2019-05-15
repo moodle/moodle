@@ -2454,6 +2454,7 @@ class api {
      */
     public static function get_self_conversation(int $userid) {
         global $DB;
+        self::lazy_create_self_conversation($userid);
 
         $conditions = [
             'type' => self::MESSAGE_CONVERSATION_TYPE_SELF,

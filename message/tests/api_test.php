@@ -827,8 +827,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user2->id, $member->id);
 
         \core_message\api::delete_all_conversation_data($rsc3->id);
-        $rsc3 = \core_message\api::get_self_conversation($user3->id);
-        $this->assertFalse($rsc3);
+        $selfconversation = \core_message\api::get_self_conversation($user3->id);
+        $members = \core_message\api::get_conversation_members($user1->id, $selfconversation->id);
+        $this->assertCount(1, $members);
     }
 
     /**
