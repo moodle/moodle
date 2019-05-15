@@ -68,7 +68,7 @@ class qtype_multianswer_renderer extends qtype_renderer {
         }
 
         $this->page->requires->js_init_call('M.qtype_multianswer.init',
-                array('#q' . $qa->get_slot()), false, array(
+                array('#' . $qa->get_outer_question_div_unique_id()), false, array(
                     'name'     => 'qtype_multianswer',
                     'fullpath' => '/question/type/multianswer/module.js',
                     'requires' => array('base', 'node', 'event', 'overlay'),
