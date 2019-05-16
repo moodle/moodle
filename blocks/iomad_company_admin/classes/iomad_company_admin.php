@@ -133,7 +133,7 @@ class iomad_company_admin {
             $companyid = $company->id;
             if ($company->parentid == $parentid) {
                 $company->depth = $depth;
-                $newlist[] = $company;
+                $newlist[$company->id] = $company;
                 $children = array_filter($companies, function($comp) use ($companyid) {
                     return $comp->parentid == $companyid;
                 });
