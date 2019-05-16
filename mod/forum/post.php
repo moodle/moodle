@@ -36,6 +36,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 $groupid = optional_param('groupid', null, PARAM_INT);
 $subject = optional_param('subject', '', PARAM_TEXT);
 $prefilledpost = optional_param('post', '', PARAM_TEXT);
+$prefilledprivatereply = optional_param('privatereply', false, PARAM_BOOL);
 
 $PAGE->set_url('/mod/forum/post.php', array(
     'reply' => $reply,
@@ -260,6 +261,7 @@ if (!empty($forum)) {
     $post->userid      = $USER->id;
     $post->parentpostauthor = $parent->userid;
     $post->message     = $prefilledpost;
+    $post->isprivatereply = $prefilledprivatereply;
     $canreplyprivately = $capabilitymanager->can_reply_privately_to_post($USER, $parententity);
 
     $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;
@@ -743,7 +745,8 @@ $mformpost->set_data(
         'userid' => $post->userid,
         'parent' => $post->parent,
         'discussion' => $post->discussion,
-        'course' => $course->id
+        'course' => $course->id,
+        'isprivatereply' => $post->isprivatereply ?? false
     ) +
 
     $pageparams +
