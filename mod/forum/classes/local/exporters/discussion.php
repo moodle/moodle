@@ -166,23 +166,31 @@ class discussion extends exporter {
         $discussion = $this->discussion;
 
         $groupdata = null;
-        if ($discussion->has_group() && $group = $this->related['groupsbyid'][$discussion->get_group_id()]) {
-            $groupdata = [
-                'name' => $group->name,
-                'urls' => [],
-            ];
-            $canviewparticipants = $capabilitymanager->can_view_participants($user, $discussion);
-            if (!$group->hidepicture) {
-                $url = get_group_picture_url($group, $forum->get_course_id());
-                if (!empty($url)) {
-                    $groupdata['urls']['picture'] = $url;
+        if ($discussion->has_group()) {
+            $groupsbyid = $this->related['groupsbyid'];
+            $group = $groupsbyid[$discussion->get_group_id()] ?? null;
+
+            // We may not have received the group if the caller doesn't want to include it in the export
+            // or if it's been deleted and the discussion record hasn't been updated.
+            if ($group) {
+                $groupdata = [
+                    'name' => $group->name,
+                    'urls' => [],
+                ];
+
+                if (!$group->hidepicture) {
+                    $url = get_group_picture_url($group, $forum->get_course_id());
+                    if (!empty($url)) {
+                        $groupdata['urls']['picture'] = $url;
+                    }
                 }
-            }
-            if ($canviewparticipants) {
-                $groupdata['urls']['userlist'] = (new \moodle_url('/user/index.php', [
-                    'id' => $forum->get_course_id(),
-                    'group' => $group->id,
-                ]));
+
+                if ($capabilitymanager->can_view_participants($user, $discussion)) {
+                    $groupdata['urls']['userlist'] = (new \moodle_url('/user/index.php', [
+                        'id' => $forum->get_course_id(),
+                        'group' => $group->id,
+                    ]));
+                }
             }
         }
 
