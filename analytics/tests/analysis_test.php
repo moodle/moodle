@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/fixtures/test_timesplitting_upcoming_seconds.php');
+
 /**
  * Unit tests for the analysis class.
  *
@@ -40,20 +42,45 @@ class analytics_analysis_testcase extends advanced_testcase {
     public function test_fill_firstanalyses_cache() {
         $this->resetAfterTest();
 
-        $this->insert_used(1, 1, 'training', 123);
-        $this->insert_used(1, 2, 'training', 124);
-        $this->insert_used(1, 1, 'prediction', 125);
+        $modelid = 1;
 
-        $firstanalyses = \core_analytics\analysis::fill_firstanalyses_cache(1);
+        $params = ['startdate' => (new DateTimeImmutable('-5 seconds'))->getTimestamp()];
+        $course1 = $this->getDataGenerator()->create_course($params);
+        $course2 = $this->getDataGenerator()->create_course($params);
+        $analysable1 = new \core_analytics\course($course1);
+
+        $afewsecsago = time() - 5;
+        $earliest = $afewsecsago - 1;
+
+        $this->insert_used($modelid, $course1->id, 'training', $afewsecsago);
+
+        // Course2 processed after course1.
+        $this->insert_used($modelid, $course2->id, 'training', $afewsecsago + 1);
+
+        // After the first process involving course1.
+        $this->insert_used($modelid, $course1->id, 'prediction', $afewsecsago + 5);
+
+        $firstanalyses = \core_analytics\analysis::fill_firstanalyses_cache($modelid);
         $this->assertCount(2, $firstanalyses);
-        $this->assertEquals(123, $firstanalyses['1_1']);
-        $this->assertEquals(124, $firstanalyses['1_2']);
+        $this->assertEquals($afewsecsago, $firstanalyses[$modelid . '_' . $course1->id]);
+        $this->assertEquals($afewsecsago + 1, $firstanalyses[$modelid . '_' . $course2->id]);
 
         // The cached elements gets refreshed.
-        $this->insert_used(1, 1, 'prediction', 122);
-        $firstanalyses = \core_analytics\analysis::fill_firstanalyses_cache(1, 1);
+        $this->insert_used($modelid, $course1->id, 'prediction', $earliest);
+        $firstanalyses = \core_analytics\analysis::fill_firstanalyses_cache($modelid, $course1->id);
         $this->assertCount(1, $firstanalyses);
-        $this->assertEquals(122, $firstanalyses['1_1']);
+        $this->assertEquals($earliest, $firstanalyses[$modelid . '_' . $course1->id]);
+
+        // Upcoming periodic time-splitting methods can read and process the cached data.
+        $seconds = new test_timesplitting_upcoming_seconds();
+        $seconds->set_modelid($modelid);
+        $seconds->set_analysable($analysable1);
+
+        // The generated ranges should start from the cached firstanalysis value, which is $earliest.
+        $ranges = $seconds->get_all_ranges();
+        $this->assertCount(7, $ranges);
+        $firstrange = reset($ranges);
+        $this->assertEquals($earliest, $firstrange['time']);
     }
 
     private function insert_used($modelid, $analysableid, $action, $timestamp) {
