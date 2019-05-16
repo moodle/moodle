@@ -114,11 +114,13 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
          * @param  {String}  actionId
          * @param  {Boolean} trainedOnlyExternally
          */
-        selectEvaluationOptions: function(actionId, trainedOnlyExternally, timeSplittingMethods) {
+        selectEvaluationOptions: function(actionId, trainedOnlyExternally) {
             $('[data-action-id="' + actionId + '"]').on('click', function(ev) {
                 ev.preventDefault();
 
                 var a = $(ev.currentTarget);
+
+                var timeSplittingMethods = $(this).attr('data-timesplitting-methods');
 
                 var stringsPromise = Str.get_strings([
                     {
@@ -132,7 +134,7 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
                 var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
                 var bodyPromise = Templates.render('tool_analytics/evaluation_options', {
                     trainedexternally: trainedOnlyExternally,
-                    timesplittingmethods: timeSplittingMethods
+                    timesplittingmethods: JSON.parse(timeSplittingMethods)
                 });
 
                 $.when(stringsPromise, modalPromise).then(function(strings, modal) {
