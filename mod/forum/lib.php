@@ -6756,9 +6756,9 @@ function mod_forum_core_calendar_event_timestart_updated(\calendar_event $event,
  * @param   int|null                         $sortorder The sort order to use when selecting the discussions in the list
  * @param   int|null                         $pageno The zero-indexed page number to use
  * @param   int|null                         $pagesize The number of discussions to show on the page
- * @return  stdClass                         The data to use for display
+ * @return  array                            The data to use for display
  */
-function get_discussions(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid, ?int $sortorder,
+function mod_forum_get_discussion_summaries(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid, ?int $sortorder,
         ?int $pageno = 0, ?int $pagesize = 0) {
 
     $vaultfactory = mod_forum\local\container::get_vault_factory();
@@ -6766,7 +6766,7 @@ function get_discussions(\mod_forum\local\entities\forum $forum, stdClass $user,
     $managerfactory = mod_forum\local\container::get_manager_factory();
     $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
-    $groupids = get_groups_from_groupid($forum, $user, $groupid);
+    $groupids = mod_forum_get_groups_from_groupid($forum, $user, $groupid);
 
     if (null === $groupids) {
         return $discussions = $discussionvault->get_from_forum_id(
@@ -6796,14 +6796,14 @@ function get_discussions(\mod_forum\local\entities\forum $forum, stdClass $user,
  * @param   int                              $groupid The group to render
  * @return  int                              The number of discussions in a forum
  */
-function get_count_all_discussions(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid) {
+function mod_forum_count_all_discussions(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid) {
 
     $managerfactory = mod_forum\local\container::get_manager_factory();
     $capabilitymanager = $managerfactory->get_capability_manager($forum);
     $vaultfactory = mod_forum\local\container::get_vault_factory();
     $discussionvault = $vaultfactory->get_discussions_in_forum_vault();
 
-    $groupids = get_groups_from_groupid($forum, $user, $groupid);
+    $groupids = mod_forum_get_groups_from_groupid($forum, $user, $groupid);
 
     if (null === $groupids) {
         return $discussionvault->get_total_discussion_count_from_forum_id(
@@ -6827,7 +6827,7 @@ function get_count_all_discussions(\mod_forum\local\entities\forum $forum, stdCl
  * @param   int                              $groupid The groupid requested
  * @return  array                            The list of groups to show
  */
-function get_groups_from_groupid(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid) : ?array {
+function mod_forum_get_groups_from_groupid(\mod_forum\local\entities\forum $forum, stdClass $user, ?int $groupid) : ?array {
 
     $effectivegroupmode = $forum->get_effective_group_mode();
     if (empty($effectivegroupmode)) {

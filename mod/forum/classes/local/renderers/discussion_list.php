@@ -155,10 +155,10 @@ class discussion_list {
         $pageno = $this->get_page_number($pageno);
 
         // Count all forum discussion posts.
-        $alldiscussionscount = get_count_all_discussions($forum, $user, $groupid);
+        $alldiscussionscount = mod_forum_count_all_discussions($forum, $user, $groupid);
 
-        // Get all forum discussions posts.
-        $discussions = get_discussions($forum, $user, $groupid, $sortorder, $pageno, $pagesize);
+        // Get all forum discussion summaries.
+        $discussions = mod_forum_get_discussion_summaries($forum, $user, $groupid, $sortorder, $pageno, $pagesize);
 
         $forumview = [
             'forum' => (array) $forumexporter->export($this->renderer),

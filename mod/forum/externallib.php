@@ -852,7 +852,7 @@ class mod_forum_external extends external_api {
             throw new moodle_exception('noviewdiscussionspermission', 'forum');
         }
 
-        $alldiscussions = get_discussions($forum, $USER, $groupid, $sortorder, $page, $perpage);
+        $alldiscussions = mod_forum_get_discussion_summaries($forum, $USER, $groupid, $sortorder, $page, $perpage);
 
         if ($alldiscussions) {
             $discussionids = array_keys($alldiscussions);
