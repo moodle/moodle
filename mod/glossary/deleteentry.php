@@ -39,6 +39,11 @@ if (! $entry = $DB->get_record("glossary_entries", array("id"=>$entry))) {
     print_error('invalidentry');
 }
 
+// Permission checks are based on the course module instance so make sure it is correct.
+if ($cm->instance != $entry->glossaryid) {
+    print_error('invalidentry');
+}
+
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 $manageentries = has_capability('mod/glossary:manageentries', $context);
