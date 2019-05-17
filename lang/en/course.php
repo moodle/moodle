@@ -46,6 +46,12 @@ $string['nocourseactivity'] = 'Not enough course activity between the start and 
 $string['nocourseendtime'] = 'The course does not have an end time';
 $string['nocoursesections'] = 'No course sections';
 $string['nocoursestudents'] = 'No students';
+$string['noaccesssincestartinfomessage'] = 'Hi {$a->userfirstname},
+
+</br><br/>Students in {$a->coursename} have never accessed the course.';
+$string['norecentaccessesinfomessage'] = 'Hi {$a->userfirstname},
+
+</br><br/>Students in {$a->coursename} have not accessed the course recently.';
 $string['noteachinginfomessage'] = 'Hi {$a->userfirstname},
 
 </br><br/>Courses with start dates in the next week have been identified as having no teacher or student enrolments.';
@@ -66,6 +72,10 @@ $string['target:coursedropout'] = 'Students at risk of dropping out';
 $string['target:coursedropout_help'] = 'This target describes whether the student is considered at risk of dropping out.';
 $string['target:coursegradetopass'] = 'Students at risk of not achieving the minimum grade to pass the course';
 $string['target:coursegradetopass_help'] = 'This target describes whether the student is at risk of not achieving the minimum grade to pass the course.';
+$string['target:noaccesssincecoursestart'] = 'Students who have not accessed the course yet';
+$string['target:noaccesssincecoursestart_help'] = 'This target describes students who never accessed a course they are enrolled in.';
+$string['target:norecentaccesses'] = 'Students who have not accessed the course recently';
+$string['target:norecentaccesses_help'] = 'This target describes students who have not accessed a course recently.';
 $string['target:noteachingactivity'] = 'Courses at risk of not starting';
 $string['target:noteachingactivity_help'] = 'This target describes whether courses due to start in the coming week will have teaching activity.';
 $string['targetlabelstudentcompletionno'] = 'Student who is likely to meet the course completion conditions';
