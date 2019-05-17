@@ -116,6 +116,11 @@ class filter_multilang_filter_testcase extends advanced_testcase {
                 <span lang="fr_ca" class="multilang">Québécois</span>',
                 'fr', ['fr_ca' => 'fr'],
             ],
+            'Fallback to parent when child not present when parent is en' => [
+                'English',
+                '<span lang="de" class="multilang">Deutsch</span><span lang="en" class="multilang">English</span>',
+                'en_us',
+            ],
         ];
     }
 
