@@ -836,7 +836,7 @@ abstract class community_of_inquiry_activity extends linear {
         // When the course is using format weeks we use the week's end date.
         $format = course_get_format($activity->get_modinfo()->get_course());
         // We should change this in MDL-60702.
-        if (get_class($format) == 'format_weeks' || is_subclass_of($format, 'format_weeks')
+        if ((get_class($format) == 'format_weeks' || is_subclass_of($format, 'format_weeks'))
              && method_exists($format, 'get_section_dates')) {
             $dates = $format->get_section_dates($section);
 
