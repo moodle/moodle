@@ -118,6 +118,11 @@ class course_competencies extends course_enrolments {
      */
     protected function calculate_sample($sampleid, \core_analytics\analysable $course, $starttime = false, $endtime = false) {
 
+        if ($this->enrolment_starts_after_calculation_start($sampleid, $starttime)) {
+            // Discard user enrolments whose start date is after $starttime.
+            return null;
+        }
+
         $userenrol = $this->retrieve('user_enrolments', $sampleid);
 
         $key = $course->get_id();
