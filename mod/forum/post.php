@@ -36,6 +36,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 $groupid = optional_param('groupid', null, PARAM_INT);
 $subject = optional_param('subject', '', PARAM_TEXT);
 $prefilledpost = optional_param('post', '', PARAM_TEXT);
+$prefilledpostformat = optional_param('postformat', FORMAT_MOODLE, PARAM_INT);
 $prefilledprivatereply = optional_param('privatereply', false, PARAM_BOOL);
 
 $PAGE->set_url('/mod/forum/post.php', array(
@@ -249,6 +250,12 @@ if (!empty($forum)) {
 
     if ($parententity->is_private_reply()) {
         print_error('cannotreplytoprivatereply', 'forum');
+    }
+
+    // If the prefilled post is sent using a different format to the preferred by the user, convert it.
+    $preferredformat = editors_get_preferred_format();
+    if ($preferredformat != $prefilledpostformat) {
+        $prefilledpost = format_text($prefilledpost, $prefilledpostformat, ['context' => $modcontext]);
     }
 
     // Load up the $post variable.

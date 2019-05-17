@@ -39,6 +39,7 @@
             <div class="row pb-1">
                 <span>
                     <textarea rows="5" name="post" title="post" class="w-100" placeholder="{{#str}} replyplaceholder, forum {{/str}}"></textarea>
+                    <input type="hidden" name="postformat" value="{{postformat}}"/>
                 </span>
                 <input type="hidden" name="subject" value="{{#str}} inpagereplysubject, forum, {{parentsubject}} {{/str}}"/>
                 <input type="hidden" name="reply" value="{{postid}}"/>
