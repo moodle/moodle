@@ -252,10 +252,15 @@ if (!empty($forum)) {
         print_error('cannotreplytoprivatereply', 'forum');
     }
 
-    // If the prefilled post is sent using a different format to the preferred by the user, convert it.
+    // We always are going to honor the preferred format. We are creating a new post.
     $preferredformat = editors_get_preferred_format();
-    if ($preferredformat != $prefilledpostformat) {
-        $prefilledpost = format_text($prefilledpost, $prefilledpostformat, ['context' => $modcontext]);
+
+    // Only if there are prefilled contents coming.
+    if (!empty($prefilledpost)) {
+        // If the prefilled post is not HTML and the preferred format is HTML, convert to it.
+        if ($prefilledpostformat != FORMAT_HTML and $preferredformat == FORMAT_HTML) {
+            $prefilledpost = format_text($prefilledpost, $prefilledpostformat, ['context' => $modcontext]);
+        }
     }
 
     // Load up the $post variable.
@@ -268,6 +273,7 @@ if (!empty($forum)) {
     $post->userid      = $USER->id;
     $post->parentpostauthor = $parent->userid;
     $post->message     = $prefilledpost;
+    $post->messageformat  = $preferredformat;
     $post->isprivatereply = $prefilledprivatereply;
     $canreplyprivately = $capabilitymanager->can_reply_privately_to_post($USER, $parententity);
 
