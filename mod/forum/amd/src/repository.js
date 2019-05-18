@@ -43,7 +43,7 @@ define(['core/ajax'], function(Ajax) {
         return Ajax.call([request])[0];
     };
 
-    var addDiscussionPost = function(postid, subject, message, messageformat, isprivatereply, tohtml) {
+    var addDiscussionPost = function(postid, subject, message, messageformat, isprivatereply, topreferredformat) {
         var request = {
             methodname: 'mod_forum_add_discussion_post',
             args: {
@@ -55,8 +55,8 @@ define(['core/ajax'], function(Ajax) {
                     name: "private",
                     value: isprivatereply,
                 }, {
-                    name: "tohtml",
-                    value: tohtml,
+                    name: "topreferredformat",
+                    value: topreferredformat,
                 }]
             }
         };

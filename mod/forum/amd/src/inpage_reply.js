@@ -94,7 +94,7 @@ define([
             // In the future, other formats should be supported, letting users to use their preferred editor and format.
             var messageformat = CONTENT_FORMATS.MOODLE;
             // The message post will be converted from messageformat to FORMAT_HTML.
-            var tohtml = true;
+            var topreferredformat = true;
             var postid = form.elements.reply.value;
             var subject = form.elements.subject.value;
             var currentRoot = submitButton.parents(Selectors.post.forumContent);
@@ -106,7 +106,7 @@ define([
                 showSubmitButtonLoadingIcon(submitButton);
                 allButtons.prop('disabled', true);
 
-                Repository.addDiscussionPost(postid, subject, message, messageformat, isprivatereply, tohtml)
+                Repository.addDiscussionPost(postid, subject, message, messageformat, isprivatereply, topreferredformat)
                     .then(function(context) {
                         var message = context.messages.reduce(function(carry, message) {
                             if (message.type == 'success') {

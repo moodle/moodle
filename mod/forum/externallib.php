@@ -1188,7 +1188,7 @@ class mod_forum_external extends external_api {
                                         private (bool); make this reply private to the author of the parent post, default to false.
                                         inlineattachmentsid              (int); the draft file area id for inline attachments
                                         attachmentsid       (int); the draft file area id for attachments
-                                        tohtml (bool); convert the message & messageformat to FORMAT_HTML, defaults to false
+                                        topreferredformat (bool); convert the message & messageformat to FORMAT_HTML, defaults to false
                             '),
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                             this param is validated in the external function.'
@@ -1263,7 +1263,7 @@ class mod_forum_external extends external_api {
             'private'             => false,
             'inlineattachmentsid' => 0,
             'attachmentsid' => null,
-            'tohtml'        => false
+            'topreferredformat'   => false
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
@@ -1284,7 +1284,7 @@ class mod_forum_external extends external_api {
                         $value = 0;
                     }
                     break;
-                case 'tohtml':
+                case 'topreferredformat':
                     $value = clean_param($option['value'], PARAM_BOOL);
                     break;
                 default:
@@ -1300,10 +1300,15 @@ class mod_forum_external extends external_api {
         $thresholdwarning = forum_check_throttling($forumrecord, $cm);
         forum_check_blocking_threshold($thresholdwarning);
 
-        // If we want to force a conversion to HTML, let's do it now.
-        if ($options['tohtml'] && $params['messageformat'] != FORMAT_HTML) {
-            $params['message'] = format_text($params['message'], $params['messageformat'], ['context' => $context]);
-            $params['messageformat'] = FORMAT_HTML;
+        // If we want to force a conversion to the preferred format, let's do it now.
+        if ($options['topreferredformat']) {
+            // We always are going to honor the preferred format. We are creating a new post.
+            $preferredformat = editors_get_preferred_format();
+            // If the post is not HTML and the preferred format is HTML, convert to it.
+            if ($params['messageformat'] != FORMAT_HTML and $preferredformat == FORMAT_HTML) {
+                $params['message'] = format_text($params['message'], $params['messageformat'], ['context' => $context]);
+            }
+            $params['messageformat'] = $preferredformat;
         }
 
         // Create the post.

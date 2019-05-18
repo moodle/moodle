@@ -1601,9 +1601,10 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals($format, $dbformat);
         }
 
-        // Now let's try the 'tohtml' option. That should end with the content
-        // transformed and the format being FORMAT_HTML always.
-        $options = [['name' => 'tohtml', 'value' => true]];
+        // Now let's try the 'topreferredformat' option. That should end with the content
+        // transformed and the format being FORMAT_HTML (when, like in this case,  user preferred
+        // format is HTML, inferred from editor in preferences).
+        $options = [['name' => 'topreferredformat', 'value' => true]];
         $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost,
             'interesting subject', 'with some https://example.com link', $options, FORMAT_MOODLE);
         $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
