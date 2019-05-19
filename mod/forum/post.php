@@ -649,7 +649,8 @@ $mformpost->set_data(
         'subject' => $post->subject,
         'message' => array(
             'text' => $currenttext,
-            'format' => empty($post->messageformat) ? editors_get_preferred_format() : $post->messageformat,
+            'format' => !isset($post->messageformat) || !is_numeric($post->messageformat) ?
+                editors_get_preferred_format() : $post->messageformat,
             'itemid' => $draftideditor
         ),
         'discussionsubscribe' => $discussionsubscribe,
