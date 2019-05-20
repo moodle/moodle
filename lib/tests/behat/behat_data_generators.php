@@ -208,6 +208,11 @@ class behat_data_generators extends behat_base {
             'required' => array('user', 'contact'),
             'switchids' => array('user' => 'userid', 'contact' => 'contactid')
         ),
+        'group messages' => array(
+            'datagenerator' => 'group_messages',
+            'required' => array('user', 'group', 'message'),
+            'switchids' => array('user' => 'userid', 'group' => 'groupid')
+        ),
         'language customisations' => array(
             'datagenerator' => 'customlang',
             'required' => array('component', 'stringid', 'value'),
@@ -956,6 +961,10 @@ class behat_data_generators extends behat_base {
      * @return void
      */
     protected function process_private_messages(array $data) {
+        if (empty($data['format'])) {
+            $data['format'] = 'FORMAT_PLAIN';
+        }
+
         if (!$conversationid = \core_message\api::get_conversation_between_users([$data['userid'], $data['contactid']])) {
             $conversation = \core_message\api::create_conversation(
                 \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -963,7 +972,48 @@ class behat_data_generators extends behat_base {
             );
             $conversationid = $conversation->id;
         }
-        \core_message\api::send_message_to_conversation($data['userid'], $conversationid, $data['message'], FORMAT_PLAIN);
+        \core_message\api::send_message_to_conversation(
+            $data['userid'],
+            $conversationid,
+            $data['message'],
+            constant($data['format'])
+        );
+    }
+
+    /**
+     * Send a new message from user to a group conversation
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_group_messages(array $data) {
+        global $DB;
+
+        if (empty($data['format'])) {
+            $data['format'] = 'FORMAT_PLAIN';
+        }
+
+        $group = $DB->get_record('groups', ['id' => $data['groupid']]);
+        $coursecontext = context_course::instance($group->courseid);
+        if (!$conversation = \core_message\api::get_conversation_by_area('core_group', 'groups', $data['groupid'],
+            $coursecontext->id)) {
+            $members = $DB->get_records_menu('groups_members', ['groupid' => $data['groupid']], '', 'userid, id');
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+                array_keys($members),
+                $group->name,
+                \core_message\api::MESSAGE_CONVERSATION_ENABLED,
+                'core_group',
+                'groups',
+                $group->id,
+                $coursecontext->id);
+        }
+        \core_message\api::send_message_to_conversation(
+            $data['userid'],
+            $conversation->id,
+            $data['message'],
+            constant($data['format'])
+        );
     }
 
     /**
