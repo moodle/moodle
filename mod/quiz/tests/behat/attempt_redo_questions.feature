@@ -30,11 +30,11 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
       | question | page | maxmark |
       | TF1      | 1    | 2       |
       | TF2      | 1    | 1       |
-    And I log in as "student"
-    And I am on "Course 1" course homepage
 
   @javascript
   Scenario: After completing a question, there is a redo question button that restarts the question
+    Given I log in as "student"
+    And I am on "Course 1" course homepage
     When I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
@@ -45,6 +45,8 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   @javascript
   Scenario: The redo question button is visible but disabled for teachers
+    Given I log in as "student"
+    And I am on "Course 1" course homepage
     When I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
@@ -59,6 +61,8 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   @javascript
   Scenario: The redo question buttons are no longer visible after the attempt is submitted.
+    Given I log in as "student"
+    And I am on "Course 1" course homepage
     When I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
@@ -70,6 +74,8 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   @javascript @_switch_window
   Scenario: Teachers reviewing can see all the qestions attempted in a slot
+    Given I log in as "student"
+    And I am on "Course 1" course homepage
     When I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
@@ -100,6 +106,8 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   @javascript
   Scenario: Redoing question 1 should save any changes to question 2 on the same page
+    Given I log in as "student"
+    And I am on "Course 1" course homepage
     When I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
