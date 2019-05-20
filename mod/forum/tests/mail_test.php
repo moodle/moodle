@@ -764,6 +764,53 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($author, [$reply]);
     }
 
+    public function test_subscription_by_inactive_users() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $u1, $u2, $u3) = $this->helper_create_users($course, 4);
+
+        // Subscribe the three users to the forum.
+        \mod_forum\subscriptions::subscribe_user($u1->id, $forum);
+        \mod_forum\subscriptions::subscribe_user($u2->id, $forum);
+        \mod_forum\subscriptions::subscribe_user($u3->id, $forum);
+
+        // Make the first user inactive - suspended.
+        $DB->set_field('user', 'suspended', 1, ['id' => $u1->id]);
+
+        // Make the second user inactive - unable to log in.
+        $DB->set_field('user', 'auth', 'nologin', ['id' => $u2->id]);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        $expect = [
+            (object) [
+                'userid' => $u1->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $u2->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $u3->id,
+                'messages' => 1,
+            ],
+        ];
+
+        $this->queue_tasks_and_assert($expect);
+        $this->send_notifications_and_assert($u1, []);
+        $this->send_notifications_and_assert($u2, []);
+        $this->send_notifications_and_assert($u3, [$post]);
+    }
+
     public function test_forum_message_inbound_multiple_posts() {
         $this->resetAfterTest(true);
 
