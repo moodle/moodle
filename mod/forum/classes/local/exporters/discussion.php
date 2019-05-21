@@ -179,7 +179,7 @@ class discussion extends exporter {
                 ];
 
                 if (!$group->hidepicture) {
-                    $url = get_group_picture_url($group, $forum->get_course_id());
+                    $url = get_group_picture_url($group, $forum->get_course_id(), true);
                     if (!empty($url)) {
                         $groupdata['urls']['picture'] = $url;
                     }
