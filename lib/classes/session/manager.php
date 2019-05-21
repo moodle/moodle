@@ -888,6 +888,16 @@ class manager {
         if ($generateevent) {
             $event->trigger();
         }
+
+        // Queue migrating the messaging data, if we need to.
+        if (!get_user_preferences('core_message_migrate_data', false, $userid)) {
+            // Check if there are any legacy messages to migrate.
+            if (\core_message\helper::legacy_messages_exist($userid)) {
+                \core_message\task\migrate_message_data::queue_task($userid);
+            } else {
+                set_user_preference('core_message_migrate_data', true, $userid);
+            }
+        }
     }
 
     /**
