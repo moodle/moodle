@@ -428,6 +428,18 @@ class url {
     }
 
     /**
+     * Get the url to view an author's group.
+     *
+     * @param \stdClass $group The group
+     * @return moodle_url
+     */
+    public function get_author_group_url(\stdClass $group) : moodle_url {
+        return new moodle_url('/user/index.php', [
+                'id' => $group->courseid,
+                'group' => $group->id
+        ]);
+    }
+    /**
      * Get the url to mark a discussion as read.
      *
      * @param forum_entity $forum The forum that the discussion belongs to
