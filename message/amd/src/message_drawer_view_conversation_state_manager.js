@@ -101,13 +101,26 @@ define(['jquery'], function($) {
      * @param  {Number} midnight Midnight time.
      * @param  {Number} loggedInUserId The logged in user id.
      * @param  {Number} id The conversation id.
+     * @param  {Number} messagePollMin The message poll start timeout in seconds.
+     * @param  {Number} messagePollMax The message poll max timeout limit in seconds.
+     * @param  {Number} messagePollAfterMax The message poll frequency in seconds to reset to after max limit is reached.
      * @return {Object} Initial state.
      */
-    var buildInitialState = function(midnight, loggedInUserId, id) {
+    var buildInitialState = function(
+        midnight,
+        loggedInUserId,
+        id,
+        messagePollMin,
+        messagePollMax,
+        messagePollAfterMax
+    ) {
         return {
             midnight: midnight,
             loggedInUserId: loggedInUserId,
             id: id,
+            messagePollMin: messagePollMin,
+            messagePollMax: messagePollMax,
+            messagePollAfterMax: messagePollAfterMax,
             name: null,
             subname: null,
             type: null,
