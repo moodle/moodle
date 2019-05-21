@@ -489,6 +489,7 @@ class core_course_external extends external_api {
                                                     VALUE_OPTIONAL),
                                                   'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for external files.',
                                                     VALUE_OPTIONAL),
+                                                  'ishidden' => new external_value(PARAM_BOOL, 'Whether the content is hidden.', VALUE_OPTIONAL),
 
                                                   // copyright related info
                                                   'userid' => new external_value(PARAM_INT, 'User who added this content to moodle'),

@@ -570,7 +570,7 @@ function book_export_contents($cm, $baseurl) {
     $currentchapter = 0;
 
     foreach ($chapters as $chapter) {
-        if ($chapter->hidden) {
+        if ($chapter->hidden && !has_capability('mod/book:viewhiddenchapters', $context)) {
             continue;
         }
 
@@ -612,6 +612,7 @@ function book_export_contents($cm, $baseurl) {
         $chapterindexfile['author']       = null;
         $chapterindexfile['license']      = null;
         $chapterindexfile['tags']         = \core_tag\external\util::get_item_tags('mod_book', 'book_chapters', $chapter->id);
+        $chapterindexfile['ishidden']     = (bool) $chapter->hidden;
         $contents[] = $chapterindexfile;
 
         // Chapter files (images usually).
