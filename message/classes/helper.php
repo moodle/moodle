@@ -26,6 +26,8 @@ namespace core_message;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/message/lib.php');
+
 /**
  * Helper class for the message area.
  *
@@ -741,6 +743,12 @@ class helper {
                 'id' => $USER->id,
                 'midnight' => usergetmidnight(time())
             ],
+            // The starting timeout value for message polling.
+            'messagepollmin' => $CFG->messagingminpoll ?? MESSAGE_DEFAULT_MIN_POLL_IN_SECONDS,
+            // The maximum value that message polling timeout can reach.
+            'messagepollmax' => $CFG->messagingmaxpoll ?? MESSAGE_DEFAULT_MAX_POLL_IN_SECONDS,
+            // The timeout to reset back to after the max polling time has been reached.
+            'messagepollaftermax' => $CFG->messagingtimeoutpoll ?? MESSAGE_DEFAULT_TIMEOUT_POLL_IN_SECONDS,
             'contacts' => [
                 'sectioncontacts' => [
                     'placeholders' => array_fill(0, $contactscount > 50 ? 50 : $contactscount, true)
