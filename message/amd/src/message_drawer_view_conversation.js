@@ -107,7 +107,7 @@ function(
 
     var NEWEST_FIRST = Constants.NEWEST_MESSAGES_FIRST;
     var LOAD_MESSAGE_LIMIT = Constants.LOAD_MESSAGE_LIMIT;
-    var INITIAL_NEW_MESSAGE_POLL_TIMEOUT = Constants.INITIAL_NEW_MESSAGE_POLL_TIMEOUT;
+    var MILLISECONDS_IN_SEC = Constants.MILLISECONDS_IN_SEC;
     var SELECTORS = Constants.SELECTORS;
     var CONVERSATION_TYPES = Constants.CONVERSATION_TYPES;
 
@@ -1337,13 +1337,12 @@ function(
 
         newMessagesPollTimer = new BackOffTimer(
             getLoadNewMessagesCallback(conversationId, NEWEST_FIRST),
-            function(time) {
-                if (!time) {
-                    return INITIAL_NEW_MESSAGE_POLL_TIMEOUT;
-                }
-
-                return time * 2;
-            }
+            BackOffTimer.getIncrementalCallback(
+                viewState.messagePollMin * MILLISECONDS_IN_SEC,
+                MILLISECONDS_IN_SEC,
+                viewState.messagePollMax * MILLISECONDS_IN_SEC,
+                viewState.messagePollAfterMax * MILLISECONDS_IN_SEC
+            )
         );
 
         newMessagesPollTimer.start();
@@ -1360,7 +1359,17 @@ function(
     var resetState = function(body, conversationId, loggedInUserProfile) {
         var loggedInUserId = loggedInUserProfile.id;
         var midnight = parseInt(body.attr('data-midnight'), 10);
-        var initialState = StateManager.buildInitialState(midnight, loggedInUserId, conversationId);
+        var messagePollMin = parseInt(body.attr('data-message-poll-min'), 10);
+        var messagePollMax = parseInt(body.attr('data-message-poll-max'), 10);
+        var messagePollAfterMax = parseInt(body.attr('data-message-poll-after-max'), 10);
+        var initialState = StateManager.buildInitialState(
+            midnight,
+            loggedInUserId,
+            conversationId,
+            messagePollMin,
+            messagePollMax,
+            messagePollAfterMax
+        );
 
         if (!viewState) {
             viewState = initialState;
