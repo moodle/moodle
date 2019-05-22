@@ -59,7 +59,7 @@ define([
                 postid: $(currentRoot).data('post-id'),
                 "reply_url": $(e.currentTarget).attr('href'),
                 sesskey: M.cfg.sesskey,
-                parentsubject: currentSubject.html(),
+                parentsubject: currentSubject.data('replySubject'),
                 canreplyprivately: $(e.currentTarget).data('can-reply-privately'),
                 postformat: InPageReply.CONTENT_FORMATS.MOODLE
             };

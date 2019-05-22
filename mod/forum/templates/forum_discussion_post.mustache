@@ -67,7 +67,11 @@
                     {{#parentauthorname}}
                         <span class="sr-only">{{#str}} inreplyto, mod_forum, {{.}} {{/str}}</span>
                     {{/parentauthorname}}
-                    <h3 class="h6 font-weight-bold mb-0" data-region-content="forum-post-core-subject">{{$subject}}{{{subject}}}{{/subject}}</h3>
+                    <h3 {{!
+                        }}class="h6 font-weight-bold mb-0" {{!
+                        }}data-region-content="forum-post-core-subject" {{!
+                        }}data-reply-subject="{{replysubject}}" {{!
+                        }}>{{$subject}}{{{subject}}}{{/subject}}</h3>
                     {{^isdeleted}}
                         <address tabindex="-1">
                             {{#html.authorsubheading}}{{{.}}}{{/html.authorsubheading}}
