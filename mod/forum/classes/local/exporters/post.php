@@ -92,6 +92,7 @@ class post extends exporter {
         return [
             'id' => ['type' => PARAM_INT],
             'subject' => ['type' => PARAM_TEXT],
+            'replysubject' => ['type' => PARAM_TEXT],
             'message' => ['type' => PARAM_RAW],
             'messageformat' => ['type' => PARAM_INT],
             'author' => ['type' => author_exporter::read_properties_definition()],
@@ -401,9 +402,16 @@ class post extends exporter {
             }
         }
 
+        $replysubject = $subject;
+        $strre = get_string('re', 'forum');
+        if (!(substr($replysubject, 0, strlen($strre)) == $strre)) {
+            $replysubject = "{$strre} {$replysubject}";
+        }
+
         return [
             'id' => $post->get_id(),
             'subject' => $subject,
+            'replysubject' => $replysubject,
             'message' => $message,
             'messageformat' => $post->get_message_format(),
             'author' => $exportedauthor,

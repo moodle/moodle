@@ -323,7 +323,6 @@ $string['invalidforcesubscribe'] = 'Invalid force subscription mode';
 $string['invalidforumid'] = 'Forum ID was incorrect';
 $string['invalidparentpostid'] = 'Parent post ID was incorrect';
 $string['invalidpostid'] = 'Invalid post ID - {$a}';
-$string['inpagereplysubject'] = 'Re: {$a}';
 $string['lastpost'] = 'Last post';
 $string['learningforums'] = 'Learning forums';
 $string['lockdiscussionafter'] = 'Lock discussions after period of inactivity';
@@ -673,3 +672,6 @@ $string['yournewtopic'] = 'Your new discussion topic';
 $string['yourreply'] = 'Your reply';
 $string['forumsubjectdeleted'] = 'This forum post has been removed';
 $string['forumbodydeleted'] = 'The content of this forum post has been removed and can no longer be accessed.';
+
+// Deprecated since Moodle 3.8.
+$string['inpagereplysubject'] = 'Re: {$a}';
