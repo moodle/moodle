@@ -79,7 +79,7 @@ class block_iomad_company_admin extends block_base {
      * Check company status when accessing this block
      */
     private function check_company_status() {
-        global $SESSION, $DB;
+        global $SESSION, $DB, $USER;
 
         $systemcontext = context_system::instance();
 
