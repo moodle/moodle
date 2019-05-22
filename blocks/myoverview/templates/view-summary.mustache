@@ -30,7 +30,8 @@
                 "summary": "This course is about assignments",
                 "hasprogress": true,
                 "progress": 10,
-                "coursecategory": "Miscellaneous"
+                "coursecategory": "Miscellaneous",
+                "visible": true
             }
         ]
     }
@@ -75,6 +76,11 @@
                     </a>
                     {{> block_myoverview/course-action-menu }}
                 </div>
+                {{^visible}}
+                    <div class="d-flex flex-wrap">
+                        <span class="tag tag-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                    </div>
+                {{/visible}}
                 <div class="summary">
                     <span class="sr-only">{{#str}}aria:coursesummary, block_myoverview{{/str}}</span>
                     {{{summary}}}

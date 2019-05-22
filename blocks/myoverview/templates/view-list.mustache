@@ -29,7 +29,8 @@
                 "fullname": "course 3",
                 "hasprogress": true,
                 "progress": 10,
-                "coursecategory": "Miscellaneous"
+                "coursecategory": "Miscellaneous",
+                "visible": true
             }
         ]
     }
@@ -65,6 +66,11 @@
                         </span>
                         {{{fullname}}}
                     </a>
+                    {{^visible}}
+                        <div class="d-flex flex-wrap">
+                            <span class="tag tag-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                        </div>
+                    {{/visible}}
                 </div>
             </div>
             {{#hasprogress}}
