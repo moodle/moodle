@@ -143,6 +143,10 @@ class manager {
                 $models[$modelobj->id] = $model;
             }
         }
+
+        // Sort the models by the model name using the current session language.
+        \core_collator::asort_objects_by_method($models, 'get_name');
+
         return $models;
     }
 
