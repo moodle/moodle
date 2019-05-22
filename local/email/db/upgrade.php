@@ -289,7 +289,7 @@ function xmldb_local_email_upgrade($oldversion) {
         }
 
         // get all emails
-        $emails = $DB->get_records('email');
+        $emails = $DB->get_recordset('email', [], '', 'id, userid');
 
         foreach ($emails as $email) {
             $company = company::by_userid($email->userid);
