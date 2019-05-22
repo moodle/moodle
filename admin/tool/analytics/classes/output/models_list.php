@@ -216,10 +216,11 @@ class models_list implements \renderable, \templatable {
 
             // Get predictions.
             if (!$onlycli && $modeldata->enabled && !empty($modeldata->timesplitting)) {
-                $urlparams['action'] = 'getpredictions';
+                $urlparams['action'] = 'scheduledanalysis';
                 $url = new \moodle_url('model.php', $urlparams);
-                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/notifications',
-                    get_string('getpredictions', 'tool_analytics')), get_string('getpredictions', 'tool_analytics'));
+                $icon = new \action_menu_link_secondary($url,
+                    new \pix_icon('i/notifications', get_string('executescheduledanalysis', 'tool_analytics')),
+                    get_string('executescheduledanalysis', 'tool_analytics'));
                 $actionsmenu->add($icon);
             }
 
