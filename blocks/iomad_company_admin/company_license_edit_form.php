@@ -253,7 +253,9 @@ class company_license_form extends company_moodleform {
             // check that the amount of free licenses slots is more than the amount being allocated.
             $currentlicense = $DB->get_record('companylicense', array('id' => $data['licenseid']));
             if (!empty($currentlicense->program)) {
-                $used = $currentlicense->used / count($data['licensecourses']);
+                // Used count comes from the number of currently allocated courses.  Not those being passed.
+                $coursecount = $DB->count_records('companylicense_courses', array('licenseid' => $currentlicense->id));
+                $used = $currentlicense->used / $coursecount;
             } else {
                 $used = $currentlicense->used;
             }
@@ -312,12 +314,12 @@ class company_license_form extends company_moodleform {
         }
 
         // Is the value for length appropriate?
-	if (empty($data['type']) && $data['validlength'] < 1 ) {
+        if (empty($data['type']) && $data['validlength'] < 1 ) {
             if (empty($data['validlength'])) {
-	        $errors['validlength'] = get_string('missingvalidlength', 'block_iomad_company_admin');
-	    } else {
+                $errors['validlength'] = get_string('missingvalidlength', 'block_iomad_company_admin');
+            } else {
                 $errors['validlength'] = get_string('invalidnumber', 'block_iomad_company_admin');
-	    }
+            }
         }
 
         // Did we get passed any courses?
