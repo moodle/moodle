@@ -29,7 +29,8 @@
                 "fullname": "course 3",
                 "summary": "This course is about assignments",
                 "hasprogress": true,
-                "progress": 10
+                "progress": 10,
+                "visible": true
             }
         ]
     }
@@ -48,21 +49,28 @@
 
             <div class="align-self-stretch d-flex flex-column w-100">
                 <div class="d-flex mb-1">
-                    <a href="{{viewurl}}" class="coursename">
-                        {{#showshortname}}
+                    <div>
+                        <a href="{{viewurl}}" class="coursename">
+                            {{#showshortname}}
+                                <span class="sr-only">
+                                    {{#str}}aria:courseshortname, core_course{{/str}}
+                                </span>
+                                <div class="text-muted muted mb-1">
+                                    {{{shortname}}}
+                                </div>
+                            {{/showshortname}}
+                            {{> core_course/favouriteicon }}
                             <span class="sr-only">
-                                {{#str}}aria:courseshortname, core_course{{/str}}
+                                {{#str}}aria:coursename, core_course{{/str}}
                             </span>
-                            <div class="text-muted muted mb-1">
-                                {{{shortname}}}
+                            <h6 class="d-inline h5">{{{fullname}}}</h6>
+                        </a>
+                        {{^visible}}
+                            <div class="hiddenmessage">
+                                <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
                             </div>
-                        {{/showshortname}}
-                        {{> core_course/favouriteicon }}
-                        <span class="sr-only">
-                            {{#str}}aria:coursename, core_course{{/str}}
-                        </span>
-                        <h6 class="d-inline h5">{{{fullname}}}</h6>
-                    </a>
+                        {{/visible}}
+                    </div>
                     {{> block_myoverview/course-action-menu }}
                 </div>
                 <div class="summary">
