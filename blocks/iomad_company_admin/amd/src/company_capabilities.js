@@ -17,14 +17,13 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/modal_factory', 'core/
             $(".capabilities-checkbox").on('change', function() {
                 var capability = $(this).data("capability");
                 var checked = $(this).prop('checked');
-                var allow = (checked == 'true') ? 1 : 0;
                 ajax.call([{
                     methodname : 'block_iomad_company_admin_restrict_capability',
                     args : {
                         capability : capability,
                         roleid : roleid,
                         companyid : companyid,
-                        allow : allow,
+                        allow : checked,
                         templateid: templateid
                     },
                     fail: notification.exception
