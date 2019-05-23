@@ -836,18 +836,18 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
 
         $firstposts = $this->vault->get_first_post_for_discussion_ids([$discussion1->id]);
         $this->assertCount(1, $firstposts);
-        $this->assertEquals($post1->id, reset($firstposts)->id);
+        $this->assertEquals($post1->id, reset($firstposts)->get_id());
 
         $firstposts = $this->vault->get_first_post_for_discussion_ids([$discussion1->id, $discussion2->id]);
         $this->assertCount(2, $firstposts);
-        $this->assertEquals($post1->id, $firstposts[$post1->id]->id);
-        $this->assertEquals($post5->id, $firstposts[$post5->id]->id);
+        $this->assertEquals($post1->id, $firstposts[$post1->id]->get_id());
+        $this->assertEquals($post5->id, $firstposts[$post5->id]->get_id());
 
         $firstposts = $this->vault->get_first_post_for_discussion_ids([$discussion1->id, $discussion2->id, $discussion3->id]);
         $this->assertCount(3, $firstposts);
-        $this->assertEquals($post1->id, $firstposts[$post1->id]->id);
-        $this->assertEquals($post5->id, $firstposts[$post5->id]->id);
-        $this->assertEquals($post7->id, $firstposts[$post7->id]->id);
+        $this->assertEquals($post1->id, $firstposts[$post1->id]->get_id());
+        $this->assertEquals($post5->id, $firstposts[$post5->id]->get_id());
+        $this->assertEquals($post7->id, $firstposts[$post7->id]->get_id());
 
         $firstposts = $this->vault->get_first_post_for_discussion_ids([
             $discussion1->id,
@@ -856,9 +856,9 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
             $discussion3->id + 1000
         ]);
         $this->assertCount(3, $firstposts);
-        $this->assertEquals($post1->id, $firstposts[$post1->id]->id);
-        $this->assertEquals($post5->id, $firstposts[$post5->id]->id);
-        $this->assertEquals($post7->id, $firstposts[$post7->id]->id);
+        $this->assertEquals($post1->id, $firstposts[$post1->id]->get_id());
+        $this->assertEquals($post5->id, $firstposts[$post5->id]->get_id());
+        $this->assertEquals($post7->id, $firstposts[$post7->id]->get_id());
     }
 
     /**

@@ -3135,59 +3135,6 @@ function xmldb_main_upgrade($oldversion) {
         }
         $legacyselfmessagesrs->close();
 
-        // STEP 3. For existing users without self-conversations, create and star it.
-
-        // Get all the users without a self-conversation.
-        $sql = "SELECT u.id
-                  FROM {user} u
-                  WHERE u.deleted = 0 AND u.id NOT IN (SELECT mcm.userid
-                                     FROM {message_conversation_members} mcm
-                                     INNER JOIN {message_conversations} mc
-                                             ON mc.id = mcm.conversationid AND mc.type = ?
-                                    )";
-        $useridsrs = $DB->get_recordset_sql($sql, [\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF]);
-        // Create the self-conversation for all these users.
-        foreach ($useridsrs as $user) {
-            $conditions = [
-                'type' => \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
-                'convhash' => \core_message\helper::get_conversation_hash([$user->id])
-            ];
-            $selfconversation = $DB->get_record('message_conversations', $conditions);
-            if (empty($selfconversation)) {
-                // Create the self-conversation.
-                $selfconversation = new \stdClass();
-                $selfconversation->type = \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF;
-                $selfconversation->convhash = \core_message\helper::get_conversation_hash([$user->id]);
-                $selfconversation->enabled = 1;
-                $selfconversation->timecreated = time();
-                $selfconversation->timemodified = $selfconversation->timecreated;
-
-                $selfconversation->id = $DB->insert_record('message_conversations', $selfconversation);
-
-                // Add user to this self-conversation.
-                $member = new \stdClass();
-                $member->conversationid = $selfconversation->id;
-                $member->userid = $user->id;
-                $member->timecreated = time();
-
-                $member->id = $DB->insert_record('message_conversation_members', $member);
-
-                // Star the self-conversation.
-                $favouriterecord = new \stdClass();
-                $favouriterecord->component = 'core_message';
-                $favouriterecord->itemtype = 'message_conversations';
-                $favouriterecord->itemid = $selfconversation->id;
-                $userctx = \context_user::instance($user->id);
-                $favouriterecord->contextid = $userctx->id;
-                $favouriterecord->userid = $user->id;
-                $favouriterecord->timecreated = time();
-                $favouriterecord->timemodified = $favouriterecord->timecreated;
-
-                $DB->insert_record('favourite', $favouriterecord);
-            }
-        }
-        $useridsrs->close();
-
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019041800.01);
     }
@@ -3419,6 +3366,13 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019050600.00);
+    }
+
+    if ($oldversion < 2019051300.01) {
+        $DB->set_field('analytics_models', 'enabled', '1', ['target' => '\core_user\analytics\target\upcoming_activities_due']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019051300.01);
     }
 
     return true;

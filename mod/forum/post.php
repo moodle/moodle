@@ -36,6 +36,8 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 $groupid = optional_param('groupid', null, PARAM_INT);
 $subject = optional_param('subject', '', PARAM_TEXT);
 $prefilledpost = optional_param('post', '', PARAM_TEXT);
+$prefilledpostformat = optional_param('postformat', FORMAT_MOODLE, PARAM_INT);
+$prefilledprivatereply = optional_param('privatereply', false, PARAM_BOOL);
 
 $PAGE->set_url('/mod/forum/post.php', array(
     'reply' => $reply,
@@ -250,6 +252,17 @@ if (!empty($forum)) {
         print_error('cannotreplytoprivatereply', 'forum');
     }
 
+    // We always are going to honor the preferred format. We are creating a new post.
+    $preferredformat = editors_get_preferred_format();
+
+    // Only if there are prefilled contents coming.
+    if (!empty($prefilledpost)) {
+        // If the prefilled post is not HTML and the preferred format is HTML, convert to it.
+        if ($prefilledpostformat != FORMAT_HTML and $preferredformat == FORMAT_HTML) {
+            $prefilledpost = format_text($prefilledpost, $prefilledpostformat, ['context' => $modcontext]);
+        }
+    }
+
     // Load up the $post variable.
     $post = new stdClass();
     $post->course      = $course->id;
@@ -260,6 +273,8 @@ if (!empty($forum)) {
     $post->userid      = $USER->id;
     $post->parentpostauthor = $parent->userid;
     $post->message     = $prefilledpost;
+    $post->messageformat  = $preferredformat;
+    $post->isprivatereply = $prefilledprivatereply;
     $canreplyprivately = $capabilitymanager->can_reply_privately_to_post($USER, $parententity);
 
     $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;
@@ -735,7 +750,8 @@ $mformpost->set_data(
         'subject' => $post->subject,
         'message' => array(
             'text' => $currenttext,
-            'format' => empty($post->messageformat) ? editors_get_preferred_format() : $post->messageformat,
+            'format' => !isset($post->messageformat) || !is_numeric($post->messageformat) ?
+                editors_get_preferred_format() : $post->messageformat,
             'itemid' => $draftideditor
         ),
         'discussionsubscribe' => $discussionsubscribe,
@@ -743,7 +759,8 @@ $mformpost->set_data(
         'userid' => $post->userid,
         'parent' => $post->parent,
         'discussion' => $post->discussion,
-        'course' => $course->id
+        'course' => $course->id,
+        'isprivatereply' => $post->isprivatereply ?? false
     ) +
 
     $pageparams +

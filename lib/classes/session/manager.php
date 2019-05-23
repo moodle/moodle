@@ -42,6 +42,12 @@ use html_writer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
+    /** @var int A hard cutoff of maximum stored history */
+    const MAXIMUM_STORED_SESSION_HISTORY = 50;
+
+    /** @var int The recent session locks array is reset if there is a time gap more than this value in seconds */
+    const SESSION_RESET_GAP_THRESHOLD = 1;
+
     /** @var handler $handler active session handler instance */
     protected static $handler;
 
@@ -1101,20 +1107,24 @@ class manager {
     }
 
     /**
-     * Reset recent session locks array if there is a 10 seconds time gap.
-     *
-     * @return array Recent session locks array.
+     * Reset recent session locks array if there is a time gap more than SESSION_RESET_GAP_THRESHOLD.
      */
     public static function cleanup_recent_session_locks() {
         global $SESSION;
 
         $locks = self::get_recent_session_locks();
+
+        if (count($locks) > self::MAXIMUM_STORED_SESSION_HISTORY) {
+            // Keep the last MAXIMUM_STORED_SESSION_HISTORY locks and ignore the rest.
+            $locks = array_slice($locks, -1 * self::MAXIMUM_STORED_SESSION_HISTORY);
+        }
+
         if (count($locks) > 2) {
             for ($i = count($locks) - 1; $i > 0; $i--) {
                 // Calculate the gap between session locks.
                 $gap = $locks[$i]['released'] - $locks[$i - 1]['start'];
-                if ($gap >= 10) {
-                    // Remove previous locks if the gap is 10 seconds or more.
+                if ($gap >= self::SESSION_RESET_GAP_THRESHOLD) {
+                    // Remove previous locks if the gap is 1 second or more.
                     $SESSION->recentsessionlocks = array_slice($locks, $i);
                     break;
                 }

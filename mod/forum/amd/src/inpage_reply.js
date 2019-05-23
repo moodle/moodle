@@ -42,6 +42,13 @@ define([
         FLAT_NEWEST_FIRST: -1
     };
 
+     /**
+      * Moodle formats taken from the FORMAT_* constants declared in lib/weblib.php.
+      * @type {Object}
+      */
+    var CONTENT_FORMATS = {
+        MOODLE: 0
+    };
     /**
      * Show the loading icon for the submit button.
      *
@@ -83,6 +90,11 @@ define([
             var allButtons = submitButton.parent().find(Selectors.post.inpageReplyButton);
             var form = submitButton.parents(Selectors.post.inpageReplyForm).get(0);
             var message = form.elements.post.value.trim();
+            // For now, we consider the inline reply post written using the FORMAT_MOODLE (because a textarea is displayed).
+            // In the future, other formats should be supported, letting users to use their preferred editor and format.
+            var messageformat = CONTENT_FORMATS.MOODLE;
+            // The message post will be converted from messageformat to FORMAT_HTML.
+            var topreferredformat = true;
             var postid = form.elements.reply.value;
             var subject = form.elements.subject.value;
             var currentRoot = submitButton.parents(Selectors.post.forumContent);
@@ -94,7 +106,7 @@ define([
                 showSubmitButtonLoadingIcon(submitButton);
                 allButtons.prop('disabled', true);
 
-                Repository.addDiscussionPost(postid, subject, message, isprivatereply)
+                Repository.addDiscussionPost(postid, subject, message, messageformat, isprivatereply, topreferredformat)
                     .then(function(context) {
                         var message = context.messages.reduce(function(carry, message) {
                             if (message.type == 'success') {
@@ -161,6 +173,7 @@ define([
     return {
         init: function(root) {
             registerEventListeners(root);
-        }
+        },
+        CONTENT_FORMATS: CONTENT_FORMATS
     };
 });

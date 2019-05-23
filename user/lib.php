@@ -126,10 +126,6 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
         \core\event\user_created::create_from_userid($newuserid)->trigger();
     }
 
-    // All new users must have a starred self-conversation.
-    $selfconversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF, [$newuserid]);
-    \core_message\api::set_favourite_conversation($selfconversation->id, $newuserid);
-
     // Purge the associated caches for the current user only.
     $presignupcache = \cache::make('core', 'presignup');
     $presignupcache->purge_current_user();

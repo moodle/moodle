@@ -101,6 +101,15 @@ abstract class base {
     }
 
     /**
+     * Assigns the model id to this time-splitting method it case it needs it.
+     *
+     * @param int $modelid
+     */
+    public function set_modelid(int $modelid) {
+        $this->modelid = $modelid;
+    }
+
+    /**
      * get_analysable
      *
      * @return \core_analytics\analysable

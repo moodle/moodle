@@ -59,7 +59,6 @@ require_once($CFG->dirroot.'/mod/lti/OAuth.php');
 require_once($CFG->libdir.'/weblib.php');
 require_once($CFG->dirroot . '/course/modlib.php');
 require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
-require_once($CFG->libdir . '/php-jwt/src/JWT.php');
 
 define('LTI_URL_DOMAIN_REGEX', '/(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i');
 
@@ -3018,6 +3017,7 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
  * @return array|null
  */
 function lti_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce = '') {
+    global $CFG;
 
     if (empty($typeid)) {
         $typeid = 0;
@@ -3054,7 +3054,7 @@ function lti_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce 
         'iat' => $now,
         'exp' => $now + 60,
     );
-    $payload['iss'] = get_config('mod_lti', 'platformid');
+    $payload['iss'] = $CFG->wwwroot;
     $payload['aud'] = $oauthconsumerkey;
     $payload[LTI_JWT_CLAIM_PREFIX . '/claim/deployment_id'] = strval($typeid);
     $payload[LTI_JWT_CLAIM_PREFIX . '/claim/target_link_uri'] = $endpoint;
@@ -3264,7 +3264,7 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
  */
 function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = 'basic-lti-launch-request', $title = '',
         $text = '') {
-    global $SESSION, $USER;
+    global $SESSION, $USER, $CFG;
 
     if (!empty($instance)) {
         $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $config->lti_toolurl;
@@ -3284,7 +3284,7 @@ function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = '
     }
 
     $params = array();
-    $params['iss'] = get_config('mod_lti', 'platformid');
+    $params['iss'] = $CFG->wwwroot;
     $params['target_link_uri'] = $endpoint;
     $params['login_hint'] = $USER->id;
     $params['lti_message_hint'] = $id;
@@ -3839,7 +3839,8 @@ function get_tool_type_state_info(stdClass $type) {
  * @return array An array with configuration details
  */
 function get_tool_type_config($type) {
-    $platformid = get_config('mod_lti', 'platformid');
+    global $CFG;
+    $platformid = $CFG->wwwroot;
     $clientid = $type->clientid;
     $deploymentid = $type->id;
     $publickeyseturl = new moodle_url('/mod/lti/certs.php');
@@ -3940,7 +3941,7 @@ function serialise_tool_type(stdClass $type) {
         'description' => $description,
         'urls' => get_tool_type_urls($type),
         'state' => get_tool_type_state_info($type),
-        'platformid' => get_config('mod_lti', 'platformid'),
+        'platformid' => $CFG->wwwroot,
         'clientid' => $type->clientid,
         'deploymentid' => $type->id,
         'hascapabilitygroups' => !empty($capabilitygroups),

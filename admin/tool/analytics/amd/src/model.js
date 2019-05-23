@@ -55,7 +55,15 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
      * @return {String}
      */
     var getModelName = function(actionItem) {
-        return $(actionItem.closest('tr')[0]).find('span.target-name').text();
+        var wrap = $(actionItem).closest('[data-model-name]');
+
+        if (wrap.length) {
+            return wrap.attr('data-model-name');
+
+        } else {
+            log.error('Unexpected DOM error - unable to obtain the model name');
+            return '';
+        }
     };
 
     /** @alias module:tool_analytics/model */

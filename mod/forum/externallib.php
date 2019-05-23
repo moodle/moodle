@@ -852,12 +852,13 @@ class mod_forum_external extends external_api {
             throw new moodle_exception('noviewdiscussionspermission', 'forum');
         }
 
-        $alldiscussions = get_discussions($forum, $USER, $groupid, $sortorder, $page, $perpage);
+        $alldiscussions = mod_forum_get_discussion_summaries($forum, $USER, $groupid, $sortorder, $page, $perpage);
 
         if ($alldiscussions) {
             $discussionids = array_keys($alldiscussions);
 
             $postvault = $vaultfactory->get_post_vault();
+            $postdatamapper = $legacydatamapperfactory->get_post_data_mapper();
             // Return the reply count for each discussion in a given forum.
             $replies = $postvault->get_reply_count_for_discussion_ids($USER, $discussionids, $canseeanyprivatereply);
             // Return the first post for each discussion in a given forum.
@@ -896,7 +897,12 @@ class mod_forum_external extends external_api {
                     continue;
                 }
 
-                $discussionobject = $firstposts[$discussion->get_first_post_id()];
+                $firstpost = $firstposts[$discussion->get_first_post_id()];
+                $discussionobject = $postdatamapper->to_legacy_object($firstpost);
+                // Fix up the types for these properties.
+                $discussionobject->mailed = $discussionobject->mailed ? 1 : 0;
+                $discussionobject->messagetrust = $discussionobject->messagetrust ? 1 : 0;
+                $discussionobject->mailnow = $discussionobject->mailnow ? 1 : 0;
                 $discussionobject->groupid = $discussion->get_group_id();
                 $discussionobject->timemodified = $discussion->get_time_modified();
                 $discussionobject->usermodified = $discussion->get_user_modified();
@@ -952,12 +958,12 @@ class mod_forum_external extends external_api {
 
                 } else {
                     $discussionobject->userfullname = $firstpostauthor->get_full_name();
-                    $discussionobject->userpictureurl = $urlfactory->get_author_profile_image_url($firstpostauthor)
+                    $discussionobject->userpictureurl = $urlfactory->get_author_profile_image_url($firstpostauthor, null, 2)
                         ->out(false);
 
                     $discussionobject->usermodifiedfullname = $latestpostauthor->get_full_name();
-                    $discussionobject->usermodifiedpictureurl = $urlfactory->get_author_profile_image_url($latestpostauthor)
-                        ->out(false);
+                    $discussionobject->usermodifiedpictureurl = $urlfactory->get_author_profile_image_url(
+                        $latestpostauthor, null, 2)->out(false);
                 }
 
                 $discussions[] = (array) $discussionobject;
@@ -1172,7 +1178,7 @@ class mod_forum_external extends external_api {
                 'postid' => new external_value(PARAM_INT, 'the post id we are going to reply to
                                                 (can be the initial discussion post'),
                 'subject' => new external_value(PARAM_TEXT, 'new post subject'),
-                'message' => new external_value(PARAM_RAW, 'new post message (only html format allowed)'),
+                'message' => new external_value(PARAM_RAW, 'new post message (html assumed if messageformat is not provided)'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -1182,12 +1188,14 @@ class mod_forum_external extends external_api {
                                         private (bool); make this reply private to the author of the parent post, default to false.
                                         inlineattachmentsid              (int); the draft file area id for inline attachments
                                         attachmentsid       (int); the draft file area id for attachments
+                                        topreferredformat (bool); convert the message & messageformat to FORMAT_HTML, defaults to false
                             '),
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                             this param is validated in the external function.'
                         )
                     )
-                ), 'Options', VALUE_DEFAULT, array())
+                ), 'Options', VALUE_DEFAULT, array()),
+                'messageformat' => new external_format_value('message', VALUE_DEFAULT)
             )
         );
     }
@@ -1197,13 +1205,14 @@ class mod_forum_external extends external_api {
      *
      * @param int $postid the post id we are going to reply to
      * @param string $subject new post subject
-     * @param string $message new post message (only html format allowed)
+     * @param string $message new post message (html assumed if messageformat is not provided)
      * @param array $options optional settings
+     * @param string $messageformat The format of the message, defaults to FORMAT_HTML for BC
      * @return array of warnings and the new post id
      * @since Moodle 3.0
      * @throws moodle_exception
      */
-    public static function add_discussion_post($postid, $subject, $message, $options = array()) {
+    public static function add_discussion_post($postid, $subject, $message, $options = array(), $messageformat = FORMAT_HTML) {
         global $CFG, $USER;
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
@@ -1222,7 +1231,8 @@ class mod_forum_external extends external_api {
                 'postid' => $postid,
                 'subject' => $subject,
                 'message' => $message,
-                'options' => $options
+                'options' => $options,
+                'messageformat' => $messageformat,
             )
         );
 
@@ -1252,7 +1262,8 @@ class mod_forum_external extends external_api {
             'discussionsubscribe' => true,
             'private'             => false,
             'inlineattachmentsid' => 0,
-            'attachmentsid' => null
+            'attachmentsid' => null,
+            'topreferredformat'   => false
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
@@ -1273,6 +1284,9 @@ class mod_forum_external extends external_api {
                         $value = 0;
                     }
                     break;
+                case 'topreferredformat':
+                    $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
                 default:
                     throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
             }
@@ -1286,13 +1300,24 @@ class mod_forum_external extends external_api {
         $thresholdwarning = forum_check_throttling($forumrecord, $cm);
         forum_check_blocking_threshold($thresholdwarning);
 
+        // If we want to force a conversion to the preferred format, let's do it now.
+        if ($options['topreferredformat']) {
+            // We always are going to honor the preferred format. We are creating a new post.
+            $preferredformat = editors_get_preferred_format();
+            // If the post is not HTML and the preferred format is HTML, convert to it.
+            if ($params['messageformat'] != FORMAT_HTML and $preferredformat == FORMAT_HTML) {
+                $params['message'] = format_text($params['message'], $params['messageformat'], ['context' => $context]);
+            }
+            $params['messageformat'] = $preferredformat;
+        }
+
         // Create the post.
         $post = new stdClass();
         $post->discussion = $discussion->get_id();
         $post->parent = $parent->id;
         $post->subject = $params['subject'];
         $post->message = $params['message'];
-        $post->messageformat = FORMAT_HTML;   // Force formatting for now.
+        $post->messageformat = $params['messageformat'];
         $post->messagetrust = trusttext_trusted($context);
         $post->itemid = $options['inlineattachmentsid'];
         $post->attachments = $options['attachmentsid'];

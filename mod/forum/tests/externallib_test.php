@@ -1581,10 +1581,37 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             if ($createdpost['postid'] == $thispost['id']) {
                 $this->assertEquals('some subject', $thispost['subject']);
                 $this->assertEquals('some text here...', $thispost['message']);
+                $this->assertEquals(FORMAT_HTML, $thispost['messageformat']); // This is the default if format was not specified.
                 $tested = true;
             }
         }
         $this->assertTrue($tested);
+
+        // Let's simulate a call with any other format, it should be stored that way.
+        global $DB; // Yes, we are going to use DB facilities too, because cannot rely on other functions for checking
+                    // the format. They eat it completely (going back to FORMAT_HTML. So we only can trust DB for further
+                    // processing.
+        $formats = [FORMAT_PLAIN, FORMAT_MOODLE, FORMAT_MARKDOWN, FORMAT_HTML];
+        $options = [];
+        foreach ($formats as $format) {
+            $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost,
+                'with some format', 'some formatted here...', $options, $format);
+            $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
+            $dbformat = $DB->get_field('forum_posts', 'messageformat', ['id' => $createdpost['postid']]);
+            $this->assertEquals($format, $dbformat);
+        }
+
+        // Now let's try the 'topreferredformat' option. That should end with the content
+        // transformed and the format being FORMAT_HTML (when, like in this case,  user preferred
+        // format is HTML, inferred from editor in preferences).
+        $options = [['name' => 'topreferredformat', 'value' => true]];
+        $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost,
+            'interesting subject', 'with some https://example.com link', $options, FORMAT_MOODLE);
+        $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
+        $dbpost = $DB->get_record('forum_posts', ['id' => $createdpost['postid']]);
+        // Format HTML and content converted, we should get.
+        $this->assertEquals(FORMAT_HTML, $dbpost->messageformat);
+        $this->assertEquals('<div class="text_to_html">with some https://example.com link</div>', $dbpost->message);
 
         // Test inline and regular attachment in post
         // Create a file in a draft area for inline attachments.
@@ -1658,7 +1685,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('nopostforum', $e->errorcode);
         }
-
     }
 
     /*

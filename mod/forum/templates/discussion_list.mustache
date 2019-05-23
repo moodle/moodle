@@ -61,7 +61,7 @@
                 {{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}
             </span>
             <table
-                class="table table-hover table-striped"
+                class="table table-hover table-striped discussion-list"
                 aria-label='{{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}'
                 aria-describedby="discussion-table-description-{{uniqid}}"
             >
@@ -152,7 +152,7 @@
                                     <div class="d-flex flex-row">
                                         <div class="align-middle p-0">
                                             <img
-                                                class="h-auto rounded-circle userpicture"
+                                                class="rounded-circle userpicture"
                                                 src="{{urls.profileimage}}"
                                                 alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
                                             >
@@ -216,11 +216,11 @@
                                     <div class="d-flex flex-row">
                                         <div class="align-middle p-0">
                                             <a href="{{latestpostauthor.urls.profile}}">
-                                                <img {{!
-                                                    }} class="h-auto rounded-circle userpicture" {{!
-                                                    }} src="{{latestpostauthor.urls.profileimage}}" {{!
-                                                    }} alt="{{#str}}pictureof, moodle, {{latestpostauthor.fullname}}{{/str}}" {{!
-                                                    }}>
+                                                <img
+                                                    class="rounded-circle userpicture"
+                                                    src="{{latestpostauthor.urls.profileimage}}"
+                                                    alt="{{#str}}pictureof, moodle, {{latestpostauthor.fullname}}{{/str}}"
+                                                >
                                             </a>
                                         </div>
                                         <div class="p-2 p-t-0 p-b-0 d-inline-flex flex-column">

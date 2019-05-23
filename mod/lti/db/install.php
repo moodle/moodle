@@ -28,20 +28,13 @@ defined('MOODLE_INTERNAL') || die();
  * Stub for database installation.
  */
 function xmldb_lti_install() {
-    global $CFG;
-
-    // Add platform ID configuration setting.
-    set_config('platformid', $CFG->wwwroot, 'mod_lti');
+    global $CFG, $OUTPUT;
 
     // Create the private key.
-    $kid = bin2hex(openssl_random_pseudo_bytes(10));
-    set_config('kid', $kid, 'mod_lti');
-    $config = array(
-        "digest_alg" => "sha256",
-        "private_key_bits" => 2048,
-        "private_key_type" => OPENSSL_KEYTYPE_RSA,
-    );
-    $res = openssl_pkey_new($config);
-    openssl_pkey_export($res, $privatekey);
-    set_config('privatekey', $privatekey, 'mod_lti');
+    require_once($CFG->dirroot . '/mod/lti/upgradelib.php');
+
+    $warning = mod_lti_verify_private_key();
+    if (!empty($warning)) {
+        echo $OUTPUT->notification($warning, 'notifyproblem');
+    }
 }

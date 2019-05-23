@@ -6523,13 +6523,14 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
 
         // Some random conversation.
         $otherconversation = \core_message\api::create_conversation(
             \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
             [
                 $user1->id,
-                $user2->id,
+                $user3->id,
             ]
         );
 
@@ -7037,6 +7038,17 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
             foreach ($config['messages'] as $userfromindex) {
                 $userfrom = $users[$userfromindex];
                 $messageids[] = testhelper::send_fake_message_to_conversation($userfrom, $conversation->id);
+            }
+
+            // Remove the self conversations created by the generator,
+            // so we can choose to set that ourself and honour the original intention of the test.
+            $userids = array_map(function($userindex) use ($users) {
+                return $users[$userindex]->id;
+            }, $config['users']);
+            foreach ($userids as $userid) {
+                if ($conversation->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF) {
+                    \core_message\api::unset_favourite_conversation($conversation->id, $userid);
+                }
             }
 
             foreach ($config['favourites'] as $userfromindex) {

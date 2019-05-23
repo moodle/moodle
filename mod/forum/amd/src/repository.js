@@ -43,16 +43,20 @@ define(['core/ajax'], function(Ajax) {
         return Ajax.call([request])[0];
     };
 
-    var addDiscussionPost = function(postid, subject, message, isprivatereply) {
+    var addDiscussionPost = function(postid, subject, message, messageformat, isprivatereply, topreferredformat) {
         var request = {
             methodname: 'mod_forum_add_discussion_post',
             args: {
                 postid: postid,
                 message: message,
+                messageformat: messageformat,
                 subject: subject,
                 options: [{
                     name: "private",
                     value: isprivatereply,
+                }, {
+                    name: "topreferredformat",
+                    value: topreferredformat,
                 }]
             }
         };

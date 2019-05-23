@@ -1014,6 +1014,7 @@ class model {
 
                 // Append new elements (we can not get duplicates because sample-analysable relation is N-1).
                 $timesplitting = $this->get_time_splitting();
+                $timesplitting->set_modelid($this->get_id());
                 $timesplitting->set_analysable($data->analysable);
                 $range = $timesplitting->get_range_by_index($rangeindex);
 
@@ -1076,6 +1077,7 @@ class model {
 
         $analysable = $this->get_analyser()->get_sample_analysable($sampleid);
         $timesplitting = $this->get_time_splitting();
+        $timesplitting->set_modelid($this->get_id());
         $timesplitting->set_analysable($analysable);
         $range = $timesplitting->get_range_by_index($rangeindex);
         if ($range) {
@@ -1447,6 +1449,7 @@ class model {
 
         $data = clone $this->model;
 
+        $data->modelname = format_string($this->get_name());
         $data->name = $this->inplace_editable_name()->export_for_template($output);
         $data->target = $this->get_target()->get_name();
         $data->targetclass = $this->get_target()->get_id();

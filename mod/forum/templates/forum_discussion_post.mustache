@@ -31,7 +31,7 @@
 }}
 <article
     id="p{{id}}"
-    class="relativelink mb-2"
+    class="forum-post-container mb-2"
     data-post-id="{{id}}"
     data-region="post"
     data-target="{{id}}-target"
@@ -41,7 +41,7 @@
 >
     <!-- The firstpost and starter classes below aren't used for anything other than to identify the first post in behat -->
     <div
-        class="d-flex border p-2 mb-2 forumpost {{#unread}}unread{{/unread}} {{#firstpost}}firstpost starter{{/firstpost}}"
+        class="d-flex border p-2 mb-2 forumpost focus-target {{#unread}}unread{{/unread}} {{#firstpost}}firstpost starter{{/firstpost}}"
         aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
         data-post-id="{{id}}" data-content="forum-post"
     >

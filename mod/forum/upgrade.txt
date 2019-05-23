@@ -14,6 +14,7 @@ information provided here is intended especially for developers.
   * New external function mod_forum_external::get_forum_discussions returns a list of forum discussions optionally sorted and paginated.
   * External function mod_forum_external::get_forum_discussions_paginated has been deprecated.
     Use mod_forum_external::get_forum_discussions instead.
+  * External function mod_forum_external::add_discussion_post() has a new 'messageformat' param to be able to handle other formats different from FORMAT_HTML (that continues being the default one). Also a new 'topreferredformat' option enables the automatic conversion between any format and the preferred format (given the editor preference) before contents are saved.
 
 === 3.6 ===
 

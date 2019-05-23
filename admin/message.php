@@ -60,7 +60,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                 // setting for each possible processor. Note that this block will
                 // always be processed first after entring parental foreach iteration
                 // so we can change form values on this stage.
-                foreach ($allprocessors as $processor) {
+                foreach ($processors as $processor) {
                     $value = '';
                     if (isset($form->{$componentprovidersetting}[$processor->name])) {
                         $value = $form->{$componentprovidersetting}[$processor->name];

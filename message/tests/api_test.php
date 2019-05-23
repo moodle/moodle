@@ -827,8 +827,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user2->id, $member->id);
 
         \core_message\api::delete_all_conversation_data($rsc3->id);
-        $rsc3 = \core_message\api::get_self_conversation($user3->id);
-        $this->assertFalse($rsc3);
+        $selfconversation = \core_message\api::get_self_conversation($user3->id);
+        $members = \core_message\api::get_conversation_members($user1->id, $selfconversation->id);
+        $this->assertCount(1, $members);
     }
 
     /**
@@ -2264,6 +2265,22 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 ),
             ),
         );
+    }
+
+    /**
+     * Test that creation can't create the same conversation twice for 1:1 conversations.
+     */
+    public function test_create_conversation_duplicate_conversations() {
+        global $DB;
+        $user1 = $this::getDataGenerator()->create_user();
+
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF, [$user1->id]);
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_SELF, [$user1->id]);
+
+        $convhash = \core_message\helper::get_conversation_hash([$user1->id]);
+        $countconversations = $DB->count_records('message_conversations', ['convhash' => $convhash]);
+        $this->assertEquals(1, $countconversations);
+        $this->assertNotEmpty($conversation = \core_message\api::get_self_conversation($user1->id));
     }
 
     /**
@@ -6715,6 +6732,17 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             foreach ($config['messages'] as $userfromindex) {
                 $userfrom = $users[$userfromindex];
                 $messageids[] = testhelper::send_fake_message_to_conversation($userfrom, $conversation->id);
+            }
+
+            // Remove the self conversations created by the generator,
+            // so we can choose to set that ourself and honour the original intention of the test.
+            $userids = array_map(function($userindex) use ($users) {
+                return $users[$userindex]->id;
+            }, $config['users']);
+            foreach ($userids as $userid) {
+                if ($conversation->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF) {
+                    \core_message\api::unset_favourite_conversation($conversation->id, $userid);
+                }
             }
 
             foreach ($config['favourites'] as $userfromindex) {

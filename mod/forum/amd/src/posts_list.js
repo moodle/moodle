@@ -60,7 +60,8 @@ define([
                 "reply_url": $(e.currentTarget).attr('href'),
                 sesskey: M.cfg.sesskey,
                 parentsubject: currentSubject.html(),
-                canreplyprivately: $(e.currentTarget).data('can-reply-privately')
+                canreplyprivately: $(e.currentTarget).data('can-reply-privately'),
+                postformat: InPageReply.CONTENT_FORMATS.MOODLE
             };
 
             if (!currentRoot.find(Selectors.post.inpageReplyContent).length) {

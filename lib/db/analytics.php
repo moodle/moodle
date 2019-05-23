@@ -95,5 +95,6 @@ $models = [
             '\core_course\analytics\indicator\activities_due',
         ],
         'timesplitting' => '\core\analytics\time_splitting\upcoming_week',
+        'enabled' => true,
     ],
 ];

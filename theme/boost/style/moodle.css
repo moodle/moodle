@@ -10549,6 +10549,10 @@ div.editor_atto_toolbar button .icon {
   overflow-wrap: break-word !important;
   /* stylelint-disable-line declaration-no-important */ }
 
+.z-index-1 {
+  z-index: 1 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
 .icon {
   font-size: 16px;
   width: 16px;
@@ -11412,6 +11416,9 @@ div.editor_atto_toolbar button .icon {
   .block_navigation .block_tree p.hasicon .icon,
   .block_settings .block_tree p.hasicon .icon {
     margin-right: 2px; }
+
+.block.invisibleblock .card-title {
+  color: #868e96; }
 
 .navbar {
   max-height: 50px; }

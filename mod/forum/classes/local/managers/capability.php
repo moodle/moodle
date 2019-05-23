@@ -420,7 +420,10 @@ class capability {
                 $ineditingtime = !$post->has_parent() && $discussion->has_started();
                 break;
             case 'single':
-                return $discussion->is_first_post($post) && has_capability('moodle/course:manageactivities', $context, $user);
+                if ($discussion->is_first_post($post)) {
+                    return has_capability('moodle/course:manageactivities', $context, $user);
+                }
+                break;
         }
 
         return ($ownpost && $ineditingtime) || has_capability('mod/forum:editanypost', $context, $user);

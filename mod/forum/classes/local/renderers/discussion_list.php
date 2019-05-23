@@ -155,14 +155,13 @@ class discussion_list {
         $pageno = $this->get_page_number($pageno);
 
         // Count all forum discussion posts.
-        $alldiscussionscount = get_count_all_discussions($forum, $user, $groupid);
+        $alldiscussionscount = mod_forum_count_all_discussions($forum, $user, $groupid);
 
-        // Get all forum discussions posts.
-        $discussions = get_discussions($forum, $user, $groupid, $sortorder, $pageno, $pagesize);
+        // Get all forum discussion summaries.
+        $discussions = mod_forum_get_discussion_summaries($forum, $user, $groupid, $sortorder, $pageno, $pagesize);
 
         $forumview = [
             'forum' => (array) $forumexporter->export($this->renderer),
-            'newdiscussionhtml' => $this->get_discussion_form($user, $cm, $groupid),
             'groupchangemenu' => groups_print_activity_menu(
                 $cm,
                 $this->urlfactory->get_forum_view_url_from_forum($forum),
@@ -177,6 +176,10 @@ class discussion_list {
             'totaldiscussioncount' => $alldiscussionscount,
             'visiblediscussioncount' => count($discussions)
         ];
+
+        if ($forumview['forum']['capabilities']['create']) {
+            $forumview['newdiscussionhtml'] = $this->get_discussion_form($user, $cm, $groupid);
+        }
 
         if (!$discussions) {
             return $this->renderer->render_from_template($this->template, $forumview);

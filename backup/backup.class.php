@@ -142,7 +142,7 @@ abstract class backup implements checksumable {
      * point is backup when some behavior/approach channged, in order to allow
      * conditional coding based on it.
      */
-    const VERSION = 2018120300;
+    const VERSION = 2019052000;
     /**
      * Usually same than major release zero version, mainly for informative/historic purposes.
      */

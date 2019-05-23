@@ -20,6 +20,7 @@ Feature: Award badges based on competency completion
     And the following lp "competencies" exist:
       | shortname | framework |
       | comp1 | sc-y-2 |
+      | comp2 | sc-y-2 |
     And I log in as "admin"
 
   @javascript
@@ -79,6 +80,10 @@ Feature: Award badges based on competency completion
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
+    And I press "Add competencies to course"
+    And "Competency picker" "dialogue" should be visible
+    And I select "comp2" of the competency tree
+    And I click on "Add" "button" in the "Competency picker" "dialogue"
     # Add a badge to the site
     And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
@@ -92,6 +97,11 @@ Feature: Award badges based on competency completion
     And I press "Add competency"
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree
+    And I click on "Add" "button" in the "Competency picker" "dialogue"
+    And I wait until the page is ready
+    And I press "Add competency"
+    And "Competency picker" "dialogue" should be visible
+    And I select "comp2" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
     And I wait until the page is ready
     And I press "Save"
@@ -110,6 +120,77 @@ Feature: Award badges based on competency completion
     And I click on "Rate" "button" in the "Rate" "dialogue"
     And I log out
     # See if we got the badge
+    Then I log in as "user1"
+    And I follow "Profile" in the user menu
+    And I should see "Site Badge"
+
+  @javascript
+  Scenario: Award badge for completing all competencies in the site
+    # Add a competency to the course
+    When I am on "Course 1" course homepage
+    And I follow "Competencies"
+    And I press "Add competencies to course"
+    And "Competency picker" "dialogue" should be visible
+    And I select "comp1" of the competency tree
+    And I click on "Add" "button" in the "Competency picker" "dialogue"
+    And I press "Add competencies to course"
+    And "Competency picker" "dialogue" should be visible
+    And I select "comp2" of the competency tree
+    And I click on "Add" "button" in the "Competency picker" "dialogue"
+    # Add a badge to the site
+    And I navigate to "Badges > Add a new badge" in site administration
+    And I set the following fields to these values:
+      | Name | Site Badge |
+      | Description | Site badge description |
+      | issuername | Tester of site badge |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
+    And I press "Create badge"
+    # Set the competency as a criteria for the badge
+    And I set the field "type" to "Competencies"
+    And I press "Add competency"
+    And "Competency picker" "dialogue" should be visible
+    And I select "comp1" of the competency tree
+    And I click on "Add" "button" in the "Competency picker" "dialogue"
+    And I wait until the page is ready
+    And I press "Add competency"
+    And "Competency picker" "dialogue" should be visible
+    And I select "comp2" of the competency tree
+    And I click on "Add" "button" in the "Competency picker" "dialogue"
+    And I wait until the page is ready
+    And I click on "This criterion is complete when" "link"
+    And I click on "All of the selected competencies have been completed" "radio"
+    And I press "Save"
+    # Enable the badge
+    And I wait until the page is ready
+    And I press "Enable access"
+    And I press "Continue"
+    # Rate the competency in the course
+    And I am on "Course 1" course homepage
+    And I follow "Competencies"
+    And I click on "comp1" "link" in the "[data-region='coursecompetencies']" "css_element"
+    And I press "Rate"
+    And I set the following fields to these values:
+      | Rating | C |
+    And I wait until the page is ready
+    And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I log out
+    # We should not get the badge yet.
+    Then I log in as "user1"
+    And I follow "Profile" in the user menu
+    And I should not see "Site Badge"
+    And I log out
+    # Rate the other competency.
+    And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I follow "Competencies"
+    And I click on "comp2" "link" in the "[data-region='coursecompetencies']" "css_element"
+    And I press "Rate"
+    And I set the following fields to these values:
+      | Rating | C |
+    And I wait until the page is ready
+    And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I log out
+    # See if we got the badge now.
     Then I log in as "user1"
     And I follow "Profile" in the user menu
     And I should see "Site Badge"

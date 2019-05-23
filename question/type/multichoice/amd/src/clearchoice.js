@@ -75,11 +75,14 @@ define(['jquery', 'core/custom_interaction_events'], function($, CustomEvents) {
     var registerEventListeners = function(root, fieldPrefix) {
         var clearChoiceContainer = getClearChoiceElement(root, fieldPrefix);
 
-        root.on(CustomEvents.events.activate, SELECTORS.CLEAR_CHOICE_ELEMENT, function() {
+        root.on(CustomEvents.events.activate, SELECTORS.CLEAR_CHOICE_ELEMENT, function(e, data) {
+
                 // Mark the clear choice radio element as checked.
                 checkClearChoiceRadio(clearChoiceContainer);
                 // Now that the hidden radio has been checked, hide the clear choice option.
                 hideClearChoiceOption(clearChoiceContainer);
+
+                data.originalEvent.preventDefault();
         });
 
         root.on(CustomEvents.events.activate, SELECTORS.CHOICE_ELEMENT, function() {

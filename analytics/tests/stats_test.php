@@ -51,8 +51,9 @@ class analytics_stats_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        // By default, sites have {@link \core_course\analytics\target\no_teaching} enabled.
-        $this->assertEquals(1, \core_analytics\stats::enabled_models());
+        // By default, sites have {@link \core_course\analytics\target\no_teaching} and
+        // {@link \core_user\analytics\target\upcoming_activities_due} enabled.
+        $this->assertEquals(2, \core_analytics\stats::enabled_models());
 
         $model = \core_analytics\model::create(
             \core_analytics\manager::get_target('\core_course\analytics\target\course_dropout'),
@@ -62,11 +63,11 @@ class analytics_stats_testcase extends advanced_testcase {
         );
 
         // Purely adding a new model does not make it included in the stats.
-        $this->assertEquals(1, \core_analytics\stats::enabled_models());
+        $this->assertEquals(2, \core_analytics\stats::enabled_models());
 
         // New models must be enabled to have them counted.
         $model->enable('\core\analytics\time_splitting\quarters');
-        $this->assertEquals(2, \core_analytics\stats::enabled_models());
+        $this->assertEquals(3, \core_analytics\stats::enabled_models());
     }
 
     /**
