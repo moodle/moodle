@@ -1,6 +1,12 @@
 This files describes API changes in analytics sub system,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+
+* "Time-splitting method" have been replaced by "Analysis interval" for the language strings that are
+  displayed in the Moodle UI. The name of several time-splitting methods have been updated according
+  to the new description of the field.
+
 === 3.7 ===
 
 * \core_analytics\regressor::evaluate_regression and \core_analytics\classifier::evaluate_classification
