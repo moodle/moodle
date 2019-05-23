@@ -181,7 +181,7 @@ class models_list implements \renderable, \templatable {
                         if ($contextid == SYSCONTEXTID) {
                             $contextname = get_string('allpredictions', 'tool_analytics');
                         } else {
-                            $contextname = shorten_text($context->get_context_name(true, true), 90);
+                            $contextname = shorten_text($context->get_context_name(false, true), 40);
                         }
                         $predictioncontexts[$contextid] = $contextname;
                     }
