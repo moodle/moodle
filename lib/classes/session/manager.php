@@ -428,7 +428,7 @@ class manager {
 
         $user = null;
 
-        if (!empty($CFG->opentogoogle)) {
+        if (!empty($CFG->opentowebcrawlers)) {
             if (\core_useragent::is_web_crawler()) {
                 $user = guest_user();
             }

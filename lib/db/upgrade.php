@@ -3378,5 +3378,21 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019060600.02) {
+        // Renaming 'opentogoogle' config to 'opentowebcrawlers'.
+        $opentogooglevalue = get_config('core', 'opentogoogle');
+
+        // Move the value over if it was previously configured.
+        if ($opentogooglevalue !== false) {
+            set_config('opentowebcrawlers', $opentogooglevalue);
+        }
+
+        // Remove the now unused value.
+        unset_config('opentogoogle');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019060600.02);
+    }
+
     return true;
 }
