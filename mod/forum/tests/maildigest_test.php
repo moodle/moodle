@@ -518,4 +518,85 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
 
         $this->send_digests_and_assert($user, $fulldigests, $shortdigests);
     }
+
+    /**
+     * The digest being in the past is queued til the next day.
+     */
+    public function test_cron_digest_previous_day() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Set up a basic user enrolled in a course.
+        $userhelper = $this->helper_setup_user_in_course();
+        $user = $userhelper->user;
+        $course1 = $userhelper->courses->course1;
+        $forum1 = $userhelper->forums->forum1;
+        $forum2 = $userhelper->forums->forum2;
+        $fulldigests = [];
+        $shortdigests = [];
+
+        // Add 1 discussions to forum 1.
+        list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+        $fulldigests[] = $post;
+
+        // Set the tested user's default maildigest setting.
+        $DB->set_field('user', 'maildigest', 1, array('id' => $user->id));
+
+        // Set the digest time to midnight.
+        $CFG->digestmailtime = 0;
+        // One digest e-mail should be sent, and no individual notifications.
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $tasks = $DB->get_records('task_adhoc');
+        $task = reset($tasks);
+        $this->assertGreaterThanOrEqual(time(), $task->nextruntime);
+    }
+
+    /**
+     * The digest being in the past is queued til the next day.
+     */
+    public function test_cron_digest_same_day() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Set up a basic user enrolled in a course.
+        $userhelper = $this->helper_setup_user_in_course();
+        $user = $userhelper->user;
+        $course1 = $userhelper->courses->course1;
+        $forum1 = $userhelper->forums->forum1;
+        $forum2 = $userhelper->forums->forum2;
+        $fulldigests = [];
+        $shortdigests = [];
+
+        // Add 1 discussions to forum 1.
+        list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+        $fulldigests[] = $post;
+
+        // Set the tested user's default maildigest setting.
+        $DB->set_field('user', 'maildigest', 1, array('id' => $user->id));
+
+        // Set the digest time to the future (magic, shouldn't work).
+        $CFG->digestmailtime = 25;
+        // One digest e-mail should be sent, and no individual notifications.
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $tasks = $DB->get_records('task_adhoc');
+        $task = reset($tasks);
+        $digesttime = usergetmidnight(time(), \core_date::get_server_timezone()) + ($CFG->digestmailtime * 3600);
+        $this->assertLessThanOrEqual($digesttime, $task->nextruntime);
+    }
 }
