@@ -1,4 +1,8 @@
 This files describes API changes in the enrol_ldap code.
 
+=== 3.8 ===
+
+* enrol/ldap/cli/sync.php script has been removed. You should use enrol_ldap\task\sync_enrolments task instead.
+
 === 3.3 ===
 * enrol/ldap/cli/sync.php script has been deprecated in favour of enrol_ldap\task\sync_enrolments task.
