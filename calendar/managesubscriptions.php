@@ -129,6 +129,10 @@ $params = [];
 $usedefaultfilters = true;
 if (!empty($courseid) && $courseid == SITEID && !empty($types['site'])) {
     $searches[] = "(eventtype = 'site')";
+    $usedefaultfilters = false;
+}
+
+if (!empty($types['user'])) {
     $searches[] = "(eventtype = 'user' AND userid = :userid)";
     $params['userid'] = $USER->id;
     $usedefaultfilters = false;
