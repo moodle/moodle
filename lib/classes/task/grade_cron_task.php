@@ -43,6 +43,7 @@ class grade_cron_task extends scheduled_task {
      */
     public function execute() {
         global $CFG, $DB;
+        require_once($CFG->libdir . '/gradelib.php');
 
         $now = time();
         $sql = "SELECT i.*
