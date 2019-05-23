@@ -122,6 +122,8 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
      */
     public function is_valid_sample($sampleid, \core_analytics\analysable $course, $fortraining = true) {
 
+        $now = time();
+
         $userenrol = $this->retrieve('user_enrolments', $sampleid);
         if ($userenrol->timeend && $course->get_start() > $userenrol->timeend) {
             // Discard enrolments which time end is prior to the course start. This should get rid of
@@ -139,9 +141,22 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
             return false;
         }
 
-        if (($userenrol->timestart && $userenrol->timestart > $course->get_end()) ||
-                (!$userenrol->timestart && $userenrol->timecreated > $course->get_end())) {
-            // Discard user enrolments that starts after the analysable official end.
+        if ($course->get_end()) {
+            if (($userenrol->timestart && $userenrol->timestart > $course->get_end()) ||
+                    (!$userenrol->timestart && $userenrol->timecreated > $course->get_end())) {
+                // Discard user enrolments that starts after the analysable official end.
+                return false;
+            }
+
+        }
+
+        if ($now < $userenrol->timestart && $userenrol->timestart) {
+            // Discard enrolments whose start date is after now (no need to check timecreated > $now :P).
+            return false;
+        }
+
+        if (!$fortraining && $userenrol->timeend && $userenrol->timeend < $now) {
+            // We don't want to generate predictions for finished enrolments.
             return false;
         }
 
@@ -181,5 +196,28 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
                 get_string('outlinereport'), false, $attrs);
 
         return array_merge($actions, parent::prediction_actions($prediction, $includedetailsaction));
+    }
+
+    /**
+     * Does the user enrolment created after this time range start time or starts after it?
+     *
+     * We need to identify these enrolments because the indicators can not be calculated properly
+     * if the student enrolment started half way through this time range.
+     *
+     * User enrolments whose end date is before time() have already been discarded in
+     * course_enrolments::is_valid_sample.
+     *
+     * @param  int    $sampleid
+     * @param  int    $starttime
+     * @return bool
+     */
+    protected function enrolment_starts_after_calculation_start(int $sampleid, int $starttime) {
+
+        $userenrol = $this->retrieve('user_enrolments', $sampleid);
+        if ($userenrol->timestart && $userenrol->timestart > $starttime) {
+            return true;
+        }
+
+        return false;
     }
 }
