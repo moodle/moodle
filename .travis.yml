@@ -13,7 +13,7 @@ language: php
 
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
-    - 7.2
+    - 7.3
     - 7.1
 
 addons:
@@ -23,10 +23,6 @@ addons:
     - mysql-client-core-5.6
     - mysql-client-5.6
 
-# Redis tests are currently failing on php 7.2 due to https://bugs.php.net/bug.php?id=75628
-# services:
-#     - redis-server
-
 env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
     # start first so that the total run time is not too high.
@@ -34,9 +30,6 @@ env:
     # We only run MySQL on PHP 7.2, so run that first.
     # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
     # Postgres is significantly is pretty reasonable in its run-time.
-
-    # Run unit tests on MySQL
-    - DB=mysqli   TASK=PHPUNIT
 
     # Run CI Tests without running PHPUnit.
     - DB=none     TASK=CITEST
@@ -54,21 +47,21 @@ matrix:
     fast_finish: true
 
     include:
+          # Run mysql only on 7.3 - it's just too slow
+        - php: 7.3
+          env: DB=mysqli   TASK=PHPUNIT
           # Run grunt/npm install on highest version ('node' is an alias for the latest node.js version.)
         - php: 7.2
           env: DB=none     TASK=GRUNT   NVM_VERSION='lts/carbon'
-
-    exclude:
-        # MySQL - it's just too slow.
-        # Exclude it on all versions except for 7.2
-
-        - env: DB=mysqli   TASK=PHPUNIT
-          php: 7.1
 
 cache:
     directories:
       - $HOME/.composer/cache
       - $HOME/.npm
+
+before_install:
+    # Avoid IPv6 default binding as service (causes redis not to start).
+    sudo service redis-server start --bind 127.0.0.1
 
 install:
     - >
@@ -99,10 +92,8 @@ install:
                 echo 'auth.json' >> .git/info/exclude
             fi
 
-            # Enable Redis.
-            # Redis tests are currently failing on php 7.2 due to https://bugs.php.net/bug.php?id=75628
-            # echo 'extension="redis.so"' > /tmp/redis.ini
-            # phpenv config-add /tmp/redis.ini
+            echo 'extension="redis.so"' > /tmp/redis.ini
+            phpenv config-add /tmp/redis.ini
 
             # Install composer dependencies.
             # We need --no-interaction in case we hit API limits for composer. This causes it to fall back to a standard clone.
@@ -173,11 +164,18 @@ before_script:
         mkdir -p "$HOME"/roots/phpunit
 
         # The phpunit dataroot and prefix..
-        # Redis tests are currently failing on php 7.2 due to https://bugs.php.net/bug.php?id=75628
-        # -e "/require_once/i \\define('TEST_SESSION_REDIS_HOST', '127.0.0.1');" \
         sed -i \
           -e "/require_once/i \\\$CFG->phpunit_dataroot = '\/home\/travis\/roots\/phpunit';" \
           -e "/require_once/i \\\$CFG->phpunit_prefix = 'p_';" \
+          config.php ;
+        # Redis cache store tests
+        sed -i \
+          -e "/require_once/i \\define('TEST_CACHESTORE_REDIS_TESTSERVERS', '127.0.0.1');" \
+          config.php ;
+        # Redis session tests, but not for PHP 7.2 and up. See MDL-60978 for more info.
+        redissession="if (version_compare(PHP_VERSION, '7.2.0', '<')) { define('TEST_SESSION_REDIS_HOST', '127.0.0.1'); }"
+        sed -i \
+          -e "/require_once/i \\${redissession}" \
           config.php ;
 
         # Initialise PHPUnit for Moodle.
