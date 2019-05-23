@@ -47,6 +47,17 @@ $drawer-bg: $gray-lighter !default;
 #nav-drawer {
     right: auto;
     left: 0;
+
+    /* Override the z-indexes defined in bootstrap/_list-group.scss that
+       lead to side effects on the user tours positioning. */
+    .list-group-item-action.active,
+    .list-group-item.active {
+        z-index: inherit;
+    }
+    .list-group-item-action.active + .list-group-item,
+    .list-group-item.active + .list-group-item {
+        border-top: none;
+    }
 }
 #page {
     margin-top: $fixed-header-y;
