@@ -275,7 +275,9 @@ class event_exporter_base extends exporter {
         }
         $timesort = $event->get_times()->get_sort_time()->getTimestamp();
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
-        $values['normalisedeventtypetext'] = get_string('type' . $values['normalisedeventtype'], 'calendar');
+        $identifier = 'type' . $values['normalisedeventtype'];
+        $stringexists = get_string_manager()->string_exists($identifier, 'calendar');
+        $values['normalisedeventtypetext'] = $stringexists ? get_string($identifier, 'calendar') : '';
 
         $values['icon'] = $iconexporter->export($output);
 
