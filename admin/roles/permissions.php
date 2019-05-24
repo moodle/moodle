@@ -213,7 +213,7 @@ $arguments = array('contextid' => $contextid,
 $PAGE->requires->strings_for_js(
                                 array('roleprohibitinfo', 'roleprohibitheader', 'roleallowinfo', 'roleallowheader',
                                     'confirmunassigntitle', 'confirmroleunprohibit', 'confirmroleprevent', 'confirmunassignyes',
-                                    'confirmunassignno'), 'core_role');
+                                    'confirmunassignno', 'deletexrole'), 'core_role');
 $PAGE->requires->js_call_amd('core/permissionmanager', 'initialize', array($arguments));
 $table = new core_role_permissions_table($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles);
 echo $OUTPUT->box_start('generalbox capbox');
