@@ -21,7 +21,6 @@ lib/mlbackend/php/phpml/
 lib/adodb/
 lib/bennu/
 lib/evalmath/
-lib/lessphp/
 lib/phpexcel/
 lib/google/
 lib/htmlpurifier/
