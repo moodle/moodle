@@ -97,11 +97,13 @@ function(
     var loadedAllMessages = false;
     var messagesOffset = 0;
     var newMessagesPollTimer = null;
+    var isRendering = false;
+    var renderBuffer = [];
     // If the UI is currently resetting.
     var isResetting = true;
     // If the UI is currently sending a message.
     var isSendingMessage = false;
-    // This is the render function which will be generated when this module is
+    // These functions which will be generated when this module is
     // first called. See generateRenderFunction for details.
     var render = null;
 
@@ -267,10 +269,9 @@ function(
         var loggedInUserId = loggedInUserProfile.id;
         var newState = StateManager.setLoadingMembers(viewState, true);
         newState = StateManager.setLoadingMessages(newState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.getMemberInfo(loggedInUserId, [otherUserId], true, true);
-            })
+        render(newState);
+
+        return Repository.getMemberInfo(loggedInUserId, [otherUserId], true, true)
             .then(function(profiles) {
                 if (profiles.length) {
                     return profiles[0];
@@ -286,10 +287,8 @@ function(
                 newState = StateManager.setType(newState, 1);
                 newState = StateManager.setImageUrl(newState, profile.profileimageurl);
                 newState = StateManager.setTotalMemberCount(newState, 2);
-                return render(newState)
-                    .then(function() {
-                        return profile;
-                    });
+                render(newState);
+                return profile;
             })
             .catch(function(error) {
                 var newState = StateManager.setLoadingMembers(viewState, false);
@@ -349,20 +348,19 @@ function(
         var loggedInUserId = loggedInUserProfile.id;
         var newState = StateManager.setLoadingMembers(viewState, true);
         newState = StateManager.setLoadingMessages(newState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.getConversation(
-                    loggedInUserId,
-                    conversationId,
-                    true,
-                    true,
-                    0,
-                    0,
-                    messageLimit + 1,
-                    messageOffset,
-                    newestFirst
-                );
-            })
+        render(newState);
+
+        return Repository.getConversation(
+            loggedInUserId,
+            conversationId,
+            true,
+            true,
+            0,
+            0,
+            messageLimit + 1,
+            messageOffset,
+            newestFirst
+        )
             .then(function(conversation) {
                 if (conversation.messages.length > messageLimit) {
                     conversation.messages = conversation.messages.slice(1);
@@ -425,36 +423,29 @@ function(
             conversation.members = conversation.members.concat([loggedInUserProfile]);
         }
 
+        var messageCount = conversation.messages.length;
+        var hasLoadedEnoughMessages = messageCount >= messageLimit;
         var newState = updateStateFromConversation(conversation, loggedInUserProfile.id);
         newState = StateManager.setLoadingMembers(newState, false);
-        newState = StateManager.setLoadingMessages(newState, true);
-        var messageCount = conversation.messages.length;
-        return render(newState)
-            .then(function() {
-                if (messageCount < messageLimit) {
+        newState = StateManager.setLoadingMessages(newState, !hasLoadedEnoughMessages);
+        var renderPromise = render(newState);
+
+        return renderPromise.then(function() {
+                if (!hasLoadedEnoughMessages) {
                     // We haven't got enough messages so let's load some more.
-                    return loadMessages(conversation.id, messageLimit, messageCount, newestFirst, [])
-                        .then(function(result) {
-                            // Give the list of messages to the next handler.
-                            return result.messages;
-                        });
+                    return loadMessages(conversation.id, messageLimit, messageCount, newestFirst, []);
                 } else {
                     // We've got enough messages. No need to load any more for now.
-                    var newState = StateManager.setLoadingMessages(viewState, false);
-                    return render(newState)
-                        .then(function() {
-                            // Give the list of messages to the next handler.
-                            return conversation.messages;
-                        });
+                    return {messages: conversation.messages};
                 }
             })
-            .then(function(messages) {
+            .then(function() {
+                var messages = viewState.messages;
                 // Update the offset to reflect the number of messages we've loaded.
                 setMessagesOffset(messages.length);
+                markConversationAsRead(viewState.id);
+
                 return messages;
-            })
-            .then(function() {
-                return markConversationAsRead(conversation.id);
             })
             .catch(Notification.exception);
     };
@@ -602,14 +593,12 @@ function(
      * Tell the statemanager there is request to block a user and run the renderer
      * to show the block user dialogue.
      *
-     * @param  {Number} userId User id.
-     * @return {Promise} Renderer promise.
+     * @param {Number} userId User id.
      */
     var requestBlockUser = function(userId) {
-        return cancelRequest(userId).then(function() {
-            var newState = StateManager.addPendingBlockUsersById(viewState, [userId]);
-            return render(newState);
-        });
+        cancelRequest(userId);
+        var newState = StateManager.addPendingBlockUsersById(viewState, [userId]);
+        render(newState);
     };
 
     /**
@@ -621,10 +610,9 @@ function(
      */
     var blockUser = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.blockUser(viewState.loggedInUserId, userId);
-            })
+        render(newState);
+
+        return Repository.blockUser(viewState.loggedInUserId, userId)
             .then(function(profile) {
                 var newState = StateManager.addMembers(viewState, [profile]);
                 newState = StateManager.removePendingBlockUsersById(newState, [userId]);
@@ -638,14 +626,12 @@ function(
      * Tell the statemanager there is a request to unblock a user and run the renderer
      * to show the unblock user dialogue.
      *
-     * @param  {Number} userId User id of user to unblock.
-     * @return {Promise} Renderer promise.
+     * @param {Number} userId User id of user to unblock.
      */
     var requestUnblockUser = function(userId) {
-        return cancelRequest(userId).then(function() {
-            var newState = StateManager.addPendingUnblockUsersById(viewState, [userId]);
-            return render(newState);
-        });
+        cancelRequest(userId);
+        var newState = StateManager.addPendingUnblockUsersById(viewState, [userId]);
+        render(newState);
     };
 
     /**
@@ -657,10 +643,9 @@ function(
      */
     var unblockUser = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.unblockUser(viewState.loggedInUserId, userId);
-            })
+        render(newState);
+
+        return Repository.unblockUser(viewState.loggedInUserId, userId)
             .then(function(profile) {
                 var newState = StateManager.addMembers(viewState, [profile]);
                 newState = StateManager.removePendingUnblockUsersById(newState, [userId]);
@@ -674,14 +659,12 @@ function(
      * Tell the statemanager there is a request to remove a user from the contact list
      * and run the renderer to show the remove user from contacts dialogue.
      *
-     * @param  {Number} userId User id of user to remove from contacts.
-     * @return {Promise} Renderer promise.
+     * @param {Number} userId User id of user to remove from contacts.
      */
     var requestRemoveContact = function(userId) {
-        return cancelRequest(userId).then(function() {
-            var newState = StateManager.addPendingRemoveContactsById(viewState, [userId]);
-            return render(newState);
-        });
+        cancelRequest(userId);
+        var newState = StateManager.addPendingRemoveContactsById(viewState, [userId]);
+        render(newState);
     };
 
     /**
@@ -693,10 +676,9 @@ function(
      */
     var removeContact = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.deleteContacts(viewState.loggedInUserId, [userId]);
-            })
+        render(newState);
+
+        return Repository.deleteContacts(viewState.loggedInUserId, [userId])
             .then(function(profiles) {
                 var newState = StateManager.addMembers(viewState, profiles);
                 newState = StateManager.removePendingRemoveContactsById(newState, [userId]);
@@ -710,14 +692,12 @@ function(
      * Tell the statemanager there is a request to add a user to the contact list
      * and run the renderer to show the add user to contacts dialogue.
      *
-     * @param  {Number} userId User id of user to add to contacts.
-     * @return {Promise} Renderer promise.
+     * @param {Number} userId User id of user to add to contacts.
      */
     var requestAddContact = function(userId) {
-        return cancelRequest(userId).then(function() {
-            var newState = StateManager.addPendingAddContactsById(viewState, [userId]);
-            return render(newState);
-        });
+        cancelRequest(userId);
+        var newState = StateManager.addPendingAddContactsById(viewState, [userId]);
+        render(newState);
     };
 
     /**
@@ -729,10 +709,9 @@ function(
      */
     var addContact = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.createContactRequest(viewState.loggedInUserId, userId);
-            })
+        render(newState);
+
+        return Repository.createContactRequest(viewState.loggedInUserId, userId)
             .then(function(response) {
                 if (!response.request) {
                     throw new Error(response.warnings[0].message);
@@ -796,15 +775,13 @@ function(
      * Tell the statemanager there is a request to delete the selected messages
      * and run the renderer to show confirm delete messages dialogue.
      *
-     * @param  {Number} userId User id.
-     * @return {Promise} Renderer promise.
+     * @param {Number} userId User id.
      */
     var requestDeleteSelectedMessages = function(userId) {
         var selectedMessageIds = viewState.selectedMessageIds;
-        return cancelRequest(userId).then(function() {
-            var newState = StateManager.addPendingDeleteMessagesById(viewState, selectedMessageIds);
-            return render(newState);
-        });
+        cancelRequest(userId);
+        var newState = StateManager.addPendingDeleteMessagesById(viewState, selectedMessageIds);
+        render(newState);
     };
 
     /**
@@ -816,10 +793,9 @@ function(
     var deleteSelectedMessages = function() {
         var messageIds = viewState.pendingDeleteMessageIds;
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.deleteMessages(viewState.loggedInUserId, messageIds);
-            })
+        render(newState);
+
+        return Repository.deleteMessages(viewState.loggedInUserId, messageIds)
             .then(function() {
                 var newState = StateManager.removeMessagesById(viewState, messageIds);
                 newState = StateManager.removePendingDeleteMessagesById(newState, messageIds);
@@ -844,14 +820,12 @@ function(
      * Tell the statemanager there is a request to delete a conversation
      * and run the renderer to show confirm delete conversation dialogue.
      *
-     * @param  {Number} userId User id of other user.
-     * @return {Promise} Renderer promise.
+     * @param {Number} userId User id of other user.
      */
     var requestDeleteConversation = function(userId) {
-        return cancelRequest(userId).then(function() {
-            var newState = StateManager.setPendingDeleteConversation(viewState, true);
-            return render(newState);
-        });
+        cancelRequest(userId);
+        var newState = StateManager.setPendingDeleteConversation(viewState, true);
+        render(newState);
     };
 
     /**
@@ -862,10 +836,9 @@ function(
      */
     var deleteConversation = function() {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.deleteConversation(viewState.loggedInUserId, viewState.id);
-            })
+        render(newState);
+
+        return Repository.deleteConversation(viewState.loggedInUserId, viewState.id)
             .then(function() {
                 var newState = StateManager.removeMessages(viewState, viewState.messages);
                 newState = StateManager.removeSelectedMessagesById(newState, viewState.selectedMessageIds);
@@ -880,7 +853,6 @@ function(
      * Tell the statemanager to cancel all pending actions.
      *
      * @param  {Number} userId User id.
-     * @return {Promise} Renderer promise.
      */
     var cancelRequest = function(userId) {
         var pendingDeleteMessageIds = viewState.pendingDeleteMessageIds;
@@ -890,7 +862,7 @@ function(
         newState = StateManager.removePendingBlockUsersById(newState, [userId]);
         newState = StateManager.removePendingDeleteMessagesById(newState, pendingDeleteMessageIds);
         newState = StateManager.setPendingDeleteConversation(newState, false);
-        return render(newState);
+        render(newState);
     };
 
     /**
@@ -908,10 +880,9 @@ function(
         });
         var request = requests[0];
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.acceptContactRequest(userId, loggedInUserId);
-            })
+        render(newState);
+
+        return Repository.acceptContactRequest(userId, loggedInUserId)
             .then(function(profile) {
                 var newState = StateManager.removeContactRequests(viewState, [request]);
                 newState = StateManager.addMembers(viewState, [profile]);
@@ -940,10 +911,9 @@ function(
         });
         var request = requests[0];
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
-        return render(newState)
-            .then(function() {
-                return Repository.declineContactRequest(userId, loggedInUserId);
-            })
+        render(newState);
+
+        return Repository.declineContactRequest(userId, loggedInUserId)
             .then(function(profile) {
                 var newState = StateManager.removeContactRequests(viewState, [request]);
                 newState = StateManager.addMembers(viewState, [profile]);
@@ -968,22 +938,24 @@ function(
         isSendingMessage = true;
         var newState = StateManager.setSendingMessage(viewState, true);
         var newConversationId = null;
-        return render(newState)
-            .then(function() {
-                if (!conversationId && viewState.type == CONVERSATION_TYPES.PRIVATE) {
-                    // If it's a new private conversation then we need to use the old
-                    // web service function to create the conversation.
-                    var otherUserId = getOtherUserId();
-                    return Repository.sendMessageToUser(otherUserId, text)
-                        .then(function(message) {
-                            newConversationId = parseInt(message.conversationid, 10);
-                            return message;
-                        });
-                } else {
-                    return Repository.sendMessageToConversation(conversationId, text);
-                }
-            })
-            .then(function(message) {
+        render(newState);
+
+        var sendMessagePromise = null;
+
+        if (!conversationId && viewState.type == CONVERSATION_TYPES.PRIVATE) {
+            // If it's a new private conversation then we need to use the old
+            // web service function to create the conversation.
+            var otherUserId = getOtherUserId();
+            sendMessagePromise = Repository.sendMessageToUser(otherUserId, text)
+                .then(function(message) {
+                    newConversationId = parseInt(message.conversationid, 10);
+                    return message;
+                });
+        } else {
+            sendMessagePromise = Repository.sendMessageToConversation(conversationId, text);
+        }
+
+        sendMessagePromise.then(function(message) {
                 var newState = StateManager.addMessages(viewState, [message]);
                 newState = StateManager.setSendingMessage(newState, false);
                 var conversation = formatConversationForEvent(newState);
@@ -997,12 +969,10 @@ function(
                     PubSub.publish(MessageDrawerEvents.CONVERSATION_CREATED, conversation);
                 }
 
-                return render(newState)
-                    .then(function() {
-                        isSendingMessage = false;
-                        PubSub.publish(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, conversation);
-                        return;
-                    });
+                render(newState);
+                isSendingMessage = false;
+                PubSub.publish(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, conversation);
+                return;
             })
             .catch(function(error) {
                 isSendingMessage = false;
@@ -1016,7 +986,6 @@ function(
      * Toggle the selected messages update the statemanager and render the result.
      *
      * @param  {Number} messageId The id of the message to be toggled
-     * @return {Promise} Renderer promise.
      */
     var toggleSelectMessage = function(messageId) {
         var newState = viewState;
@@ -1027,7 +996,7 @@ function(
             newState = StateManager.addSelectedMessagesById(viewState, [messageId]);
         }
 
-        return render(newState);
+        render(newState);
     };
 
     /**
@@ -1036,10 +1005,41 @@ function(
      * @return {Promise} Renderer promise.
      */
     var cancelEditMode = function() {
-        return cancelRequest(getOtherUserId())
+        cancelRequest(getOtherUserId());
+        var newState = StateManager.removeSelectedMessagesById(viewState, viewState.selectedMessageIds);
+        render(newState);
+    };
+
+    /**
+     * Process the patches in the render buffer one at a time in order until the
+     * buffer is empty.
+     *
+     * @param {Object} header The conversation header container element.
+     * @param {Object} body The conversation body container element.
+     * @param {Object} footer The conversation footer container element.
+     */
+    var processRenderBuffer = function(header, body, footer) {
+        if (isRendering) {
+            return;
+        }
+
+        if (!renderBuffer.length) {
+            return;
+        }
+
+        isRendering = true;
+        var renderable = renderBuffer.shift();
+        Renderer.render(header, body, footer, renderable.patch)
             .then(function() {
-                var newState = StateManager.removeSelectedMessagesById(viewState, viewState.selectedMessageIds);
-                return render(newState);
+                isRendering = false;
+                renderable.deferred.resolve(true);
+                // Keep processing the buffer until it's empty.
+                processRenderBuffer(header, body, footer);
+            })
+            .catch(function(error) {
+                isRendering = false;
+                renderable.deferred.reject(error);
+                Notification.exception(error);
             });
     };
 
@@ -1054,22 +1054,39 @@ function(
     var generateRenderFunction = function(header, body, footer) {
         return function(newState) {
             var patch = Patcher.buildPatch(viewState, newState);
+            var deferred = $.Deferred();
+
+            // Check if the patch has any data. Ignore empty patches.
+            if (Object.keys(patch).length) {
+                // Add the patch to the render buffer which gets processed in order.
+                renderBuffer.push({
+                    patch: patch,
+                    deferred: deferred
+                });
+            } else {
+                deferred.resolve(true);
+            }
             // This is a great place to add in some console logging if you need
             // to debug something. You can log the current state, the next state,
             // and the generated patch and see exactly what will be updated.
-            return Renderer.render(header, body, footer, patch)
-                .then(function() {
-                    viewState = newState;
-                    if (newState.id) {
-                        // Only cache created conversations.
-                        stateCache[newState.id] = {
-                            state: newState,
-                            messagesOffset: getMessagesOffset(),
-                            loadedAllMessages: hasLoadedAllMessages()
-                        };
-                    }
-                    return;
-                });
+
+            // Optimistically update the state. We're going to assume that the rendering
+            // will always succeed. The rendering is asynchronous (annoyingly) so it's buffered
+            // but it'll reach eventual consistency with the current state.
+            viewState = newState;
+            if (newState.id) {
+                // Only cache created conversations.
+                stateCache[newState.id] = {
+                    state: newState,
+                    messagesOffset: getMessagesOffset(),
+                    loadedAllMessages: hasLoadedAllMessages()
+                };
+            }
+
+            // Start processing the buffer.
+            processRenderBuffer(header, body, footer);
+
+            return deferred.promise();
         };
     };
 
@@ -1082,12 +1099,9 @@ function(
     var generateConfirmActionHandler = function(actionCallback) {
         return function(e, data) {
             if (!viewState.loadingConfirmAction) {
-                actionCallback(getOtherUserId())
-                    .catch(function(error) {
-                        var newState = StateManager.setLoadingConfirmAction(viewState, false);
-                        render(newState);
-                        Notification.exception(error);
-                    });
+                actionCallback(getOtherUserId());
+                var newState = StateManager.setLoadingConfirmAction(viewState, false);
+                render(newState);
             }
             data.originalEvent.preventDefault();
         };
@@ -1135,7 +1149,7 @@ function(
         var element = target.closest(SELECTORS.MESSAGE);
         var messageId = parseInt(element.attr('data-message-id'), 10);
 
-        toggleSelectMessage(messageId).catch(Notification.exception);
+        toggleSelectMessage(messageId);
 
         data.originalEvent.preventDefault();
     };
@@ -1147,7 +1161,7 @@ function(
      * @param {Object} data Data for this event.
      */
     var handleCancelEditMode = function(e, data) {
-        cancelEditMode().catch(Notification.exception);
+        cancelEditMode();
         data.originalEvent.preventDefault();
     };
 
@@ -1273,10 +1287,9 @@ function(
             if (!isResetting && !isLoadingMoreMessages && !hasLoadedAllMessages() && hasMembers) {
                 isLoadingMoreMessages = true;
                 var newState = StateManager.setLoadingMessages(viewState, true);
-                render(newState)
-                    .then(function() {
-                        return loadMessages(viewState.id, LOAD_MESSAGE_LIMIT, getMessagesOffset(), NEWEST_FIRST, []);
-                    })
+                render(newState);
+
+                loadMessages(viewState.id, LOAD_MESSAGE_LIMIT, getMessagesOffset(), NEWEST_FIRST, [])
                     .then(function() {
                         isLoadingMoreMessages = false;
                         setMessagesOffset(getMessagesOffset() + LOAD_MESSAGE_LIMIT);
@@ -1355,9 +1368,15 @@ function(
      * @param  {Object} body Conversation body container element.
      * @param  {Number|null} conversationId The conversation id.
      * @param  {Object} loggedInUserProfile The logged in user's profile.
-     * @return {Promise} Renderer promise.
      */
     var resetState = function(body, conversationId, loggedInUserProfile) {
+        // Reset all of the states back to the beginning if we're loading a new
+        // conversation.
+        isResetting = true;
+        isRendering = false;
+        renderBuffer = [];
+        isSendingMessage = false;
+
         var loggedInUserId = loggedInUserProfile.id;
         var midnight = parseInt(body.attr('data-midnight'), 10);
         var initialState = StateManager.buildInitialState(midnight, loggedInUserId, conversationId);
@@ -1370,7 +1389,7 @@ function(
             newMessagesPollTimer.stop();
         }
 
-        return render(initialState);
+        render(initialState);
     };
 
     /**
@@ -1384,27 +1403,25 @@ function(
     var resetNoConversation = function(body, loggedInUserProfile, otherUserId) {
         // Always reset the state back to the initial state so that the
         // state manager and patcher can work correctly.
-        return resetState(body, null, loggedInUserProfile)
-            .then(function() {
-                return Repository.getConversationBetweenUsers(
-                        loggedInUserProfile.id,
-                        otherUserId,
-                        true,
-                        true,
-                        0,
-                        0,
-                        LOAD_MESSAGE_LIMIT,
-                        0,
-                        NEWEST_FIRST
-                    )
-                    .then(function(conversation) {
-                        // Looks like we have a conversation after all! Let's use that.
-                        return resetByConversation(body, conversation, loggedInUserProfile);
-                    })
-                    .catch(function() {
-                        // Can't find a conversation. Oh well. Just load up a blank one.
-                        return loadEmptyPrivateConversation(loggedInUserProfile, otherUserId);
-                    });
+        resetState(body, null, loggedInUserProfile);
+        return Repository.getConversationBetweenUsers(
+                loggedInUserProfile.id,
+                otherUserId,
+                true,
+                true,
+                0,
+                0,
+                LOAD_MESSAGE_LIMIT,
+                0,
+                NEWEST_FIRST
+            )
+            .then(function(conversation) {
+                // Looks like we have a conversation after all! Let's use that.
+                return resetByConversation(body, conversation, loggedInUserProfile);
+            })
+            .catch(function() {
+                // Can't find a conversation. Oh well. Just load up a blank one.
+                return loadEmptyPrivateConversation(loggedInUserProfile, otherUserId);
             });
     };
 
@@ -1424,31 +1441,32 @@ function(
 
         // Always reset the state back to the initial state so that the
         // state manager and patcher can work correctly.
-        return resetState(body, conversationId, loggedInUserProfile)
-            .then(function() {
-                if (cache) {
-                    // We've seen this conversation before so there is no need to
-                    // send any network requests.
-                    var newState = cache.state;
-                    // Reset some loading states just in case they were left weirdly.
-                    newState = StateManager.setLoadingMessages(newState, false);
-                    newState = StateManager.setLoadingMembers(newState, false);
-                    setMessagesOffset(cache.messagesOffset);
-                    setLoadedAllMessages(cache.loadedAllMessages);
-                    return render(newState);
-                } else {
-                    return loadNewConversation(
-                        conversationId,
-                        loggedInUserProfile,
-                        LOAD_MESSAGE_LIMIT,
-                        0,
-                        NEWEST_FIRST
-                    );
-                }
-            })
-            .then(function() {
-                return resetMessagePollTimer(conversationId);
-            });
+        resetState(body, conversationId, loggedInUserProfile);
+
+        var promise = $.Deferred().resolve({}).promise();
+        if (cache) {
+            // We've seen this conversation before so there is no need to
+            // send any network requests.
+            var newState = cache.state;
+            // Reset some loading states just in case they were left weirdly.
+            newState = StateManager.setLoadingMessages(newState, false);
+            newState = StateManager.setLoadingMembers(newState, false);
+            setMessagesOffset(cache.messagesOffset);
+            setLoadedAllMessages(cache.loadedAllMessages);
+            render(newState);
+        } else {
+            promise = loadNewConversation(
+                conversationId,
+                loggedInUserProfile,
+                LOAD_MESSAGE_LIMIT,
+                0,
+                NEWEST_FIRST
+            );
+        }
+
+        return promise.then(function() {
+            return resetMessagePollTimer(conversationId);
+        });
     };
 
     /**
@@ -1467,30 +1485,31 @@ function(
 
         // Always reset the state back to the initial state so that the
         // state manager and patcher can work correctly.
-        return resetState(body, conversation.id, loggedInUserProfile)
-            .then(function() {
-                if (cache) {
-                    // We've seen this conversation before so there is no need to
-                    // send any network requests.
-                    var newState = cache.state;
-                    // Reset some loading states just in case they were left weirdly.
-                    newState = StateManager.setLoadingMessages(newState, false);
-                    newState = StateManager.setLoadingMembers(newState, false);
-                    setMessagesOffset(cache.messagesOffset);
-                    setLoadedAllMessages(cache.loadedAllMessages);
-                    return render(newState);
-                } else {
-                    return loadExistingConversation(
-                        conversation,
-                        loggedInUserProfile,
-                        LOAD_MESSAGE_LIMIT,
-                        NEWEST_FIRST
-                    );
-                }
-            })
-            .then(function() {
-                return resetMessagePollTimer(conversation.id);
-            });
+        resetState(body, conversation.id, loggedInUserProfile);
+
+        var promise = $.Deferred().resolve({}).promise();
+        if (cache) {
+            // We've seen this conversation before so there is no need to
+            // send any network requests.
+            var newState = cache.state;
+            // Reset some loading states just in case they were left weirdly.
+            newState = StateManager.setLoadingMessages(newState, false);
+            newState = StateManager.setLoadingMembers(newState, false);
+            setMessagesOffset(cache.messagesOffset);
+            setLoadedAllMessages(cache.loadedAllMessages);
+            render(newState);
+        } else {
+            promise = loadExistingConversation(
+                conversation,
+                loggedInUserProfile,
+                LOAD_MESSAGE_LIMIT,
+                NEWEST_FIRST
+            );
+        }
+
+        return promise.then(function() {
+            return resetMessagePollTimer(conversation.id);
+        });
     };
 
     /**
@@ -1532,7 +1551,7 @@ function(
         }
 
         if (!body.attr('data-init')) {
-            // Generate the render function to bind the header, body, and footer
+            // Generate these functions to bind the header, body, and footer
             // elements to it so that we don't need to pass them around this module.
             render = generateRenderFunction(header, body, footer);
             registerEventListeners(header, body, footer);
@@ -1549,9 +1568,6 @@ function(
         //    conversation with.
         var isNewConversation = !viewState || (viewState.id != conversationId) || (otherUserId && otherUserId != getOtherUserId());
         if (isNewConversation) {
-            // Reset all of the states back to the beginning if we're loading a new
-            // conversation.
-            isResetting = true;
             var renderPromise = null;
             var loggedInUserProfile = getLoggedInUserProfile(body);
             if (conversation) {
