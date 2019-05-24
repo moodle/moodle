@@ -95,6 +95,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'group_message_member' => 'group_message_member',
         'group_message_tab' => 'group_message_tab',
         'group_message_list_area' => 'group_message_list_area',
+        'group_message_message_content' => 'group_message_message_content',
         'icon' => 'icon',
         'link' => 'link',
         'link_or_button' => 'link_or_button',
@@ -174,6 +175,9 @@ XPATH
 XPATH
     , 'group_message_list_area' => <<<XPATH
         .//*[@data-region='message-drawer']//*[contains(@data-region, concat('view-overview-', %locator%))]
+XPATH
+    , 'group_message_message_content' => <<<XPATH
+        .//*[@data-region='message-drawer']//*[@data-region='message' and @data-message-id and contains(., %locator%)]
 XPATH
         , 'icon' => <<<XPATH
 .//*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') and ( contains(normalize-space(@title), %locator%))]
