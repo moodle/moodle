@@ -96,7 +96,7 @@ class core_role_permissions_table extends core_role_capability_table_base {
                                   "linkclass" => "preventlink", "adminurl" => $adminurl->out(), "icon" => "", "iconalt" => "");
                 if (isset($overridableroles[$id]) and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
                     $templatecontext['icon'] = 't/delete';
-                    $templatecontext['iconalt'] = get_string('delete');
+                    $templatecontext['iconalt'] = get_string('deletexrole', 'core_role', $name);
                 }
                 $neededroles[$id] = $renderer->render_from_template('core/permissionmanager_role', $templatecontext);
             }
@@ -109,7 +109,7 @@ class core_role_permissions_table extends core_role_capability_table_base {
                                 "icon" => "", "iconalt" => "");
                 if (isset($overridableroles[$id]) and prohibit_is_removable($id, $context, $capability->name)) {
                     $templatecontext['icon'] = 't/delete';
-                    $templatecontext['iconalt'] = get_string('delete');
+                    $templatecontext['iconalt'] = get_string('deletexrole', 'core_role', $name);
                 }
                 $forbiddenroles[$id] = $renderer->render_from_template('core/permissionmanager_role', $templatecontext);
             }
