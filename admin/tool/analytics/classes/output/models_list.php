@@ -96,17 +96,6 @@ class models_list implements \renderable, \templatable {
             $onlycli = 1;
         }
 
-        // Evaluation options.
-        $timesplittingmethods = [
-            ['id' => 'all', 'text' => get_string('alltimesplittingmethods', 'tool_analytics')],
-        ];
-        foreach (\core_analytics\manager::get_time_splitting_methods_for_evaluation(true) as $timesplitting) {
-            $timesplittingmethods[] = [
-                'id' => \tool_analytics\output\helper::class_to_option($timesplitting->get_id()),
-                'text' => $timesplitting->get_name()->out(),
-            ];
-        }
-
         $data->models = array();
         foreach ($this->models as $model) {
             $modeldata = $model->export($output);
@@ -216,7 +205,22 @@ class models_list implements \renderable, \templatable {
 
                 $actionid = 'evaluate-' . $model->get_id();
 
-                $modeltimesplittingmethods = $timesplittingmethods;
+                // Evaluation options.
+                $modeltimesplittingmethods = [
+                    ['id' => 'all', 'text' => get_string('alltimesplittingmethods', 'tool_analytics')],
+                ];
+                $potentialtimesplittingmethods = $model->get_potential_timesplittings();
+                foreach (\core_analytics\manager::get_time_splitting_methods_for_evaluation(true) as $timesplitting) {
+                    if (empty($potentialtimesplittingmethods[$timesplitting->get_id()])) {
+                        // This time-splitting method can not be used for this model.
+                        continue;
+                    }
+                    $modeltimesplittingmethods[] = [
+                        'id' => \tool_analytics\output\helper::class_to_option($timesplitting->get_id()),
+                        'text' => $timesplitting->get_name()->out(),
+                    ];
+                }
+
                 // Include the current time-splitting method as the default selection method the model already have one.
                 if ($model->get_model_obj()->timesplitting) {
                     $currenttimesplitting = ['id' => 'current', 'text' => get_string('currenttimesplitting', 'tool_analytics')];

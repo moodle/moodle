@@ -33,7 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class single_range extends \core_analytics\local\time_splitting\base {
+class single_range extends \core_analytics\local\time_splitting\base
+        implements \core_analytics\local\time_splitting\before_now {
 
     /**
      * Returns a lang_string object representing the name for the time spliting method.

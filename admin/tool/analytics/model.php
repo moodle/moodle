@@ -118,7 +118,7 @@ switch ($action) {
             'trainedmodel' => $model->is_trained(),
             'staticmodel' => $model->is_static(),
             'indicators' => $model->get_potential_indicators(),
-            'timesplittings' => \core_analytics\manager::get_all_time_splittings(),
+            'timesplittings' => $model->get_potential_timesplittings(),
             'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors()
         );
         $mform = new \tool_analytics\output\form\edit_model(null, $customdata);

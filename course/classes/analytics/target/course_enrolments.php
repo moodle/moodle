@@ -51,6 +51,16 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Only past stuff.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @return bool
+     */
+    public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool {
+        return ($timesplitting instanceof \core_analytics\local\time_splitting\before_now);
+    }
+
+    /**
      * Overwritten to show a simpler language string.
      *
      * @param  int $modelid

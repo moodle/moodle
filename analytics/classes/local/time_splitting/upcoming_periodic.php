@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class upcoming_periodic extends periodic {
+abstract class upcoming_periodic extends periodic implements after_now {
 
     /**
      * The next range indicator calculations should be based on upcoming dates.

@@ -94,7 +94,7 @@ class analytics_model_testcase extends advanced_testcase {
         $coursetrain1 = $this->getDataGenerator()->create_course(array('visible' => 1));
         $coursetrain2 = $this->getDataGenerator()->create_course(array('visible' => 1));
 
-        $this->model->enable('\core\analytics\time_splitting\no_splitting');
+        $this->model->enable('\core\analytics\time_splitting\single_range');
 
         $this->model->train();
         $this->model->predict();
@@ -139,7 +139,7 @@ class analytics_model_testcase extends advanced_testcase {
         $coursetrain1 = $this->getDataGenerator()->create_course(array('visible' => 1));
         $coursetrain2 = $this->getDataGenerator()->create_course(array('visible' => 1));
 
-        $this->model->enable('\core\analytics\time_splitting\no_splitting');
+        $this->model->enable('\core\analytics\time_splitting\single_range');
 
         $this->model->train();
         $this->model->predict();
@@ -492,6 +492,17 @@ class analytics_model_testcase extends advanced_testcase {
         $data = $this->model->export($output);
         $this->assertEquals($data->name['displayvalue'], $this->model->get_target()->get_name());
         $this->assertEquals($data->name['value'], '');
+    }
+
+    /**
+     * Tests model::get_potential_timesplittings()
+     */
+    public function test_potential_timesplittings() {
+        $this->resetAfterTest();
+
+        $this->assertArrayNotHasKey('\core\analytics\time_splitting\no_splitting', $this->model->get_potential_timesplittings());
+        $this->assertArrayHasKey('\core\analytics\time_splitting\single_range', $this->model->get_potential_timesplittings());
+        $this->assertArrayHasKey('\core\analytics\time_splitting\quarters', $this->model->get_potential_timesplittings());
     }
 
     /**
