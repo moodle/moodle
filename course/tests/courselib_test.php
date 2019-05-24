@@ -5021,6 +5021,7 @@ class core_course_courselib_testcase extends advanced_testcase {
      * Test the course_get_recent_courses function.
      */
     public function test_course_get_recent_courses() {
+        global $DB;
 
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
@@ -5043,9 +5044,15 @@ class core_course_courselib_testcase extends advanced_testcase {
         // No course accessed.
         $this->assertCount(0, $result);
 
+        $time = time();
         foreach ($courses as $course) {
             $context = context_course::instance($course->id);
             course_view($context);
+            $DB->set_field('user_lastaccess', 'timeaccess', $time, [
+                'userid' => $student->id,
+                'courseid' => $course->id,
+                ]);
+            $time++;
         }
 
         // Every course accessed.
@@ -5056,10 +5063,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $result = course_get_recent_courses($student->id, 2);
         $this->assertCount(2, $result);
 
-        // Every course accessed, with limit and offset. Should return only the last created course ($course[2]).
+        // Every course accessed, with limit and offset should return the first course.
         $result = course_get_recent_courses($student->id, 3, 2);
         $this->assertCount(1, $result);
-        $this->assertArrayHasKey($courses[2]->id, $result);
+        $this->assertArrayHasKey($courses[0]->id, $result);
 
         // Every course accessed, order by shortname DESC. The last create course ($course[2]) should have the greater shortname.
         $result = course_get_recent_courses($student->id, 0, 0, 'shortname DESC');
