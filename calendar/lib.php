@@ -3502,7 +3502,7 @@ function calendar_output_fragment_event_form($args) {
         $eventtypes = calendar_get_allowed_event_types($courseid);
 
         // If the user is on course context and is allowed to add course events set the event type default to course.
-        if ($courseid != SITEID && !empty($eventtypes['course'])) {
+        if (!empty($courseid) && !empty($eventtypes['course'])) {
             $data['eventtype'] = 'course';
             $data['courseid'] = $courseid;
             $data['groupcourseid'] = $courseid;
