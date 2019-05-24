@@ -2367,7 +2367,7 @@ function course_overviewfiles_options($course) {
     }
     $options = array(
         'maxfiles' => $CFG->courseoverviewfileslimit,
-        'maxbytes' => $CFG->maxbytes,
+        'maxbytes' => $CFG->courseoverviewfilessizelimit,
         'subdirs' => 0,
         'accepted_types' => $accepted_types
     );

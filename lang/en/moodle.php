@@ -343,6 +343,7 @@ $string['coursehidden'] = 'This course is currently unavailable to students';
 $string['courseoverviewfiles'] = 'Course image';
 $string['courseoverviewfilesext'] = 'Course image file extensions';
 $string['courseoverviewfileslimit'] = 'Course image files limit';
+$string['courseoverviewfilessizelimit'] = 'Course image all files size limit';
 $string['courseoverviewfiles_help'] = 'The course image is displayed in the course overview on the Dashboard. Additional accepted file types and more than one file may be enabled by a site administrator. If so, these files will be displayed next to the course summary on the list of courses page.';
 $string['courseinfo'] = 'Course info';
 $string['coursenotaccessible'] = 'This course does not allow public access';
