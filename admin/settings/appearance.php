@@ -227,6 +227,8 @@ preferences,moodle|/user/preferences.php|t/preferences',
     $temp->add(new admin_setting_configtext('courseswithsummarieslimit', new lang_string('courseswithsummarieslimit', 'admin'), new lang_string('configcourseswithsummarieslimit', 'admin'), 10, PARAM_INT));
     $temp->add(new admin_setting_configtext('courseoverviewfileslimit', new lang_string('courseoverviewfileslimit'),
             new lang_string('configcourseoverviewfileslimit', 'admin'), 1, PARAM_INT));
+    $temp->add(new admin_setting_configtext('courseoverviewfilessizelimit', new lang_string('courseoverviewfilessizelimit'),
+        new lang_string('configcourseoverviewfilessizelimit', 'admin'), $CFG->maxbytes, PARAM_INT));
     $temp->add(new admin_setting_configtext('courseoverviewfilesext', new lang_string('courseoverviewfilesext'),
             new lang_string('configcourseoverviewfilesext', 'admin'), '.jpg,.gif,.png'));
     $temp->add(new admin_setting_configtext('coursegraceperiodbefore', new lang_string('coursegraceperiodbefore', 'admin'),
