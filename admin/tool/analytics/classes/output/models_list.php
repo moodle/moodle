@@ -96,6 +96,10 @@ class models_list implements \renderable, \templatable {
             $onlycli = 1;
         }
 
+        // Evaluation options.
+        $timesplittingsforevaluation = \core_analytics\manager::get_time_splitting_methods_for_evaluation(true);
+
+        $misconfiguredmodels = [];
         $data->models = array();
         foreach ($this->models as $model) {
             $modeldata = $model->export($output);
@@ -110,6 +114,10 @@ class models_list implements \renderable, \templatable {
                 // We really want to encourage developers to add help to their targets.
                 debugging("The target '{$modeldata->target}' should include a '{$identifier}_help' string to
                     describe its purpose.", DEBUG_DEVELOPER);
+            }
+
+            if ($model->invalid_timesplitting_selected()) {
+                $misconfiguredmodels[$model->get_id()] = $model->get_name();
             }
 
             // Check if there is a help icon for the indicators to show.
@@ -206,20 +214,7 @@ class models_list implements \renderable, \templatable {
                 $actionid = 'evaluate-' . $model->get_id();
 
                 // Evaluation options.
-                $modeltimesplittingmethods = [
-                    ['id' => 'all', 'text' => get_string('alltimesplittingmethods', 'tool_analytics')],
-                ];
-                $potentialtimesplittingmethods = $model->get_potential_timesplittings();
-                foreach (\core_analytics\manager::get_time_splitting_methods_for_evaluation(true) as $timesplitting) {
-                    if (empty($potentialtimesplittingmethods[$timesplitting->get_id()])) {
-                        // This time-splitting method can not be used for this model.
-                        continue;
-                    }
-                    $modeltimesplittingmethods[] = [
-                        'id' => \tool_analytics\output\helper::class_to_option($timesplitting->get_id()),
-                        'text' => $timesplitting->get_name()->out(),
-                    ];
-                }
+                $modeltimesplittingmethods = $this->timesplittings_options_for_evaluation($model, $timesplittingsforevaluation);
 
                 // Include the current time-splitting method as the default selection method the model already have one.
                 if ($model->get_model_obj()->timesplitting) {
@@ -338,10 +333,10 @@ class models_list implements \renderable, \templatable {
             $data->models[] = $modeldata;
         }
 
+        $data->warnings = [];
+        $data->infos = [];
         if (!$onlycli) {
-            $data->warnings = array(
-                (object)array('message' => get_string('bettercli', 'tool_analytics'), 'closebutton' => true)
-            );
+            $data->warnings[] = (object)array('message' => get_string('bettercli', 'tool_analytics'), 'closebutton' => true);
         } else {
             $url = new \moodle_url('/admin/settings.php', array('section' => 'analyticssettings'),
                 'id_s_analytics_onlycli');
@@ -350,12 +345,43 @@ class models_list implements \renderable, \templatable {
             if (is_siteadmin()) {
                 $langstrid = 'clievaluationandpredictions';
             }
-            $data->infos = array(
-                (object)array('message' => get_string($langstrid, 'tool_analytics', $url->out()),
-                    'closebutton' => true)
-            );
+            $data->infos[] = (object)array('message' => get_string($langstrid, 'tool_analytics', $url->out()),
+                'closebutton' => true);
+        }
+
+        if ($misconfiguredmodels) {
+            $warningstr = get_string('invalidtimesplittinginmodels', 'tool_analytics', implode(', ', $misconfiguredmodels));
+            $data->warnings[] = (object)array('message' => $warningstr, 'closebutton' => true);
         }
 
         return $data;
+    }
+
+    /**
+     * Returns the list of time splitting methods that are available for evaluation.
+     *
+     * @param  \core_analytics\model $model
+     * @param  array                 $timesplittingsforevaluation
+     * @return array
+     */
+    private function timesplittings_options_for_evaluation(\core_analytics\model $model,
+            array $timesplittingsforevaluation): array {
+
+        $modeltimesplittingmethods = [
+            ['id' => 'all', 'text' => get_string('alltimesplittingmethods', 'tool_analytics')],
+        ];
+        $potentialtimesplittingmethods = $model->get_potential_timesplittings();
+        foreach ($timesplittingsforevaluation as $timesplitting) {
+            if (empty($potentialtimesplittingmethods[$timesplitting->get_id()])) {
+                // This time-splitting method can not be used for this model.
+                continue;
+            }
+            $modeltimesplittingmethods[] = [
+                'id' => \tool_analytics\output\helper::class_to_option($timesplitting->get_id()),
+                'text' => $timesplitting->get_name()->out(),
+            ];
+        }
+
+        return $modeltimesplittingmethods;
     }
 }

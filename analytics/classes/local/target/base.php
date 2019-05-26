@@ -85,6 +85,16 @@ abstract class base extends \core_analytics\calculable {
     abstract protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false);
 
     /**
+     * Can the provided time-splitting method be used on this target?.
+     *
+     * Time-splitting methods not matching the target requirements will not be selectable by models based on this target.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @return bool
+     */
+    abstract public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool;
+
+    /**
      * Is this target generating insights?
      *
      * Defaults to true.
@@ -102,18 +112,6 @@ abstract class base extends \core_analytics\calculable {
      */
     public static function based_on_assumptions() {
         return false;
-    }
-
-    /**
-     * Can the provided time-splitting method be used on this target?.
-     *
-     * Time-splitting methods not matching the target requirements will not be selectable by models based on this target.
-     *
-     * @param  \core_analytics\local\time_splitting\base $timesplitting
-     * @return bool
-     */
-    public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool {
-        return true;
     }
 
     /**

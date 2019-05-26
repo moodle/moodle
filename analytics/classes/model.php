@@ -1800,6 +1800,26 @@ class model {
     }
 
     /**
+     * Returns true if the time-splitting method used by this model is invalid for this model.
+     * @return  bool
+     */
+    public function invalid_timesplitting_selected(): bool {
+        $currenttimesplitting = $this->model->timesplitting;
+        if (empty($currenttimesplitting)) {
+            // Not set is different from invalid. This function is used to identify invalid
+            // time-splittings.
+            return false;
+        }
+
+        $potentialtimesplittings = $this->get_potential_timesplittings();
+        if ($currenttimesplitting && empty($potentialtimesplittings[$currenttimesplitting])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Adds the id from {analytics_predictions} db table to the prediction \stdClass objects.
      *
      * @param  \stdClass[] $predictionrecords
