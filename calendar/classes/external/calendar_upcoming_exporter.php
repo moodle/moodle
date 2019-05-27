@@ -90,6 +90,9 @@ class calendar_upcoming_exporter extends exporter {
             'isloggedin' => [
                 'type' => PARAM_BOOL,
             ],
+            'date' => [
+                'type' => date_exporter::read_properties_definition(),
+            ],
         ];
     }
 
@@ -138,7 +141,8 @@ class calendar_upcoming_exporter extends exporter {
         }
         $return['filter_selector'] = $this->get_course_filter_selector($output);
         $return['courseid'] = $this->calendar->courseid;
-
+        $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
+        $return['date'] = (new date_exporter($date))->export($output);
         if ($this->calendar->categoryid) {
             $return['categoryid'] = $this->calendar->categoryid;
         }

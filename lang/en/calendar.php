@@ -49,6 +49,7 @@ $string['categoryevents'] = 'Category events';
 $string['courses'] = 'Courses';
 $string['customexport'] = 'Custom range ({$a->timestart} - {$a->timeend})';
 $string['daily'] = 'Daily';
+$string['day'] = 'Day';
 $string['daynext'] = 'Next day';
 $string['dayprev'] = 'Previous day';
 $string['dayviewfor'] = 'Day view for:';

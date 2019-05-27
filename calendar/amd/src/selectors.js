@@ -42,6 +42,7 @@ define([], function() {
             month: "[data-period='month']",
         },
         courseSelector: 'select[name="course"]',
+        viewSelector: 'div[data-region="view-selector"]',
         actions: {
             create: '[data-action="new-event-button"]',
             edit: '[data-action="edit"]',
