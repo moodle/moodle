@@ -56,5 +56,22 @@ function xmldb_data_upgrade($oldversion) {
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019052001) {
+
+        $columns = $DB->get_columns('data');
+
+        $oldclass = "mod-data-default-template ##approvalstatus##";
+        $newclass = "mod-data-default-template ##approvalstatusclass##";
+
+        // Update existing classes.
+        $DB->replace_all_text('data', $columns['singletemplate'], $oldclass, $newclass);
+        $DB->replace_all_text('data', $columns['listtemplate'], $oldclass, $newclass);
+        $DB->replace_all_text('data', $columns['addtemplate'], $oldclass, $newclass);
+        $DB->replace_all_text('data', $columns['rsstemplate'], $oldclass, $newclass);
+        $DB->replace_all_text('data', $columns['asearchtemplate'], $oldclass, $newclass);
+
+        // Data savepoint reached.
+        upgrade_mod_savepoint(true, 2019052001, 'data');
+    }
     return true;
 }

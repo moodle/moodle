@@ -608,7 +608,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
 
         $table = new html_table();
-        $table->attributes['class'] = 'mod-data-default-template ##approvalstatus##';
+        $table->attributes['class'] = 'mod-data-default-template ##approvalstatusclass##';
         $table->colclasses = array('template-field', 'template-token');
         $table->data = array();
         foreach ($fields as $field) {
@@ -1507,12 +1507,16 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         }
 
         $patterns[] = '##approvalstatus##';
+        $patterns[] = '##approvalstatusclass##';
         if (!$data->approval) {
+            $replacement[] = '';
             $replacement[] = '';
         } else if ($record->approved) {
             $replacement[] = get_string('approved', 'data');
+            $replacement[] = 'approved';
         } else {
             $replacement[] = get_string('notapproved', 'data');
+            $replacement[] = 'notapproved';
         }
 
         $patterns[]='##comments##';
