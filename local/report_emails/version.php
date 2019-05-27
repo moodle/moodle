@@ -15,6 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $plugin->version  = 2019012100;
-$plugin->requires = 2018120300;
-$plugin->release  = '3.6.4+ (Build: 20190527)'; // Human-friendly version name
+$plugin->requires = 2019052000;
+$plugin->release  = '3.7 (Build: 20190527)'; // Human-friendly version name
 $plugin->component  = 'local_report_emails';

@@ -17,6 +17,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2017030701;   // The (date) version of this plugin.
-$plugin->requires = 2010021900;   // Requires this Moodle version.
-$plugin->release  = '3.6.4+ (Build: 20190527)'; // Human-friendly version name
+$plugin->requires = 2019052000;   // Requires this Moodle version.
+$plugin->release  = '3.7 (Build: 20190527)'; // Human-friendly version name
 $plugin->component = 'block_iomad_commerce';

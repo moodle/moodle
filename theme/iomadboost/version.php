@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2016123100;
-$plugin->requires  = 2016112900;
-$plugin->release  = '3.6.4+ (Build: 20190527)'; // Human-friendly version name
+$plugin->requires  = 2019052000;
+$plugin->release  = '3.7 (Build: 20190527)'; // Human-friendly version name
 $plugin->component = 'theme_iomadboost';
 $plugin->dependencies = [
     'theme_boost' => '2016102100',
