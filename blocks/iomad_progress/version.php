@@ -27,5 +27,5 @@
 $plugin->version   = 2016091800;
 $plugin->requires  = 2010121000;
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'Version for Moodle 2.0 onwards';
+$plugin->release  = '3.6.4+ (Build: 20190527)'; // Human-friendly version name
 $plugin->component = 'block_iomad_progress';
