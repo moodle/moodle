@@ -420,12 +420,14 @@ class core_badges_renderer extends plugin_renderer_base {
 
         $output .= $this->output->heading(get_string('issuancedetails', 'badges'), 3);
         $dl = array();
-        $issued['issuedOn'] = !preg_match( '~^[1-9][0-9]*$~', $issued['issuedOn'] ) ?
-            strtotime($issued['issuedOn']) : $issued['issuedOn'];
+        if (!is_numeric($issued['issuedOn'])) {
+            $issued['issuedOn'] = strtotime($issued['issuedOn']);
+        }
         $dl[get_string('dateawarded', 'badges')] = userdate($issued['issuedOn']);
         if (isset($issued['expires'])) {
-            $issued['expires'] = !preg_match( '~^[1-9][0-9]*$~', $issued['expires'] ) ?
-                strtotime($issued['expires']) : $issued['expires'];
+            if (!is_numeric($issued['expires'])) {
+                $issued['expires'] = strtotime($issued['expires']);
+            }
             if ($issued['expires'] < $now) {
                 $dl[get_string('expirydate', 'badges')] = userdate($issued['expires']) . get_string('warnexpired', 'badges');
 
@@ -508,7 +510,7 @@ class core_badges_renderer extends plugin_renderer_base {
         }
         $output .= html_writer::empty_tag('img', array('src' => $issued->image, 'width' => '100'));
         if (isset($assertion->expires)) {
-            $expiration = !strtotime($assertion->expires) ? s($assertion->expires) : strtotime($assertion->expires);
+            $expiration = is_numeric($assertion->expires) ? $assertion->expires : strtotime($assertion->expires);
             if ($expiration < $today) {
                 $output .= $this->output->pix_icon('i/expired',
                         get_string('expireddate', 'badges', userdate($expiration)),
@@ -564,7 +566,7 @@ class core_badges_renderer extends plugin_renderer_base {
 
         $dl = array();
         if (isset($assertion->issued_on)) {
-            $issuedate = !strtotime($assertion->issued_on) ? s($assertion->issued_on) : strtotime($assertion->issued_on);
+            $issuedate = is_numeric($assertion->issued_on) ? $assertion->issued_on : strtotime($assertion->issued_on);
             $dl[get_string('dateawarded', 'badges')] = userdate($issuedate);
         }
         if (isset($assertion->expires)) {
