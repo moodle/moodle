@@ -728,7 +728,12 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $allroles = get_all_roles();
         $this->assertInternalType('array', $allroles);
-        $this->assertCount(8, $allroles); // There are 8 roles is standard install.
+        $initialrolescount = count($allroles);
+        $this->assertTrue($initialrolescount >= 8); // There are 8 roles is standard install.
+        $rolenames = array_column($allroles, 'shortname');
+        foreach (get_role_archetypes() as $archetype) {
+            $this->assertContains($archetype, $rolenames);
+        }
 
         $role = reset($allroles);
         $role = (array)$role;
@@ -751,7 +756,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $allroles = get_all_roles($coursecontext);
         $this->assertInternalType('array', $allroles);
-        $this->assertCount(9, $allroles);
+        $this->assertCount($initialrolescount + 1, $allroles);
         $role = reset($allroles);
         $role = (array)$role;
 
@@ -784,11 +789,11 @@ class core_accesslib_testcase extends advanced_testcase {
     public function test_get_archetype_roles() {
         $this->resetAfterTest();
 
-        // New install should have 1 role for each archetype.
+        // New install should have at least 1 role for each archetype.
         $archetypes = get_role_archetypes();
         foreach ($archetypes as $archetype) {
             $roles = get_archetype_roles($archetype);
-            $this->assertCount(1, $roles);
+            $this->assertGreaterThanOrEqual(1, count($roles));
             $role = reset($roles);
             $this->assertSame($archetype, $role->archetype);
         }
@@ -818,8 +823,11 @@ class core_accesslib_testcase extends advanced_testcase {
         $renames = $DB->get_records_menu('role_names', array('contextid'=>$coursecontext->id), '', 'roleid, name');
 
         foreach ($allroles as $role) {
+            if (in_array($role->shortname, get_role_archetypes())) {
+                // Standard roles do not have a set name.
+                $this->assertSame('', $role->name);
+            }
             // Get localised name from lang pack.
-            $this->assertSame('', $role->name);
             $name = role_get_name($role, null, ROLENAME_ORIGINAL);
             $this->assertNotEmpty($name);
             $this->assertNotEquals($role->shortname, $name);
