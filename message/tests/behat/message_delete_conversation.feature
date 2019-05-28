@@ -19,6 +19,7 @@ Feature: Message delete conversations
     And the following config values are set as admin:
       | messaging         | 1 |
       | messagingallusers | 1 |
+      | messagingminpoll  | 1 |
     And the following "private messages" exist:
       | user     | contact  | message               |
       | student1 | student2 | Hi!                   |
