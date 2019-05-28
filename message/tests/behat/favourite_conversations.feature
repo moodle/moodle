@@ -24,7 +24,8 @@ Feature: Star and unstar conversations
       | student1 | G1 |
       | student2 | G1 |
     And the following config values are set as admin:
-      | messaging | 1 |
+      | messaging        | 1 |
+      | messagingminpoll | 1 |
 
   Scenario: Star a group conversation
     Given I log in as "student1"
