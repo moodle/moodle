@@ -162,9 +162,12 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
     var showCartridgeRegistration = function(url) {
         hideExternalRegistration();
         hideRegistrationChoices();
-        getCartridgeRegistrationContainer().removeClass('hidden');
-        getCartridgeRegistrationContainer().find(SELECTORS.CARTRIDGE_REGISTRATION_FORM).attr('data-cartridge-url', url);
-        screenReaderAnnounce(getCartridgeRegistrationContainer());
+        // Don't save the key and secret from the last tool.
+        var container = getCartridgeRegistrationContainer();
+        container.find('input').val('');
+        container.removeClass('hidden');
+        container.find(SELECTORS.CARTRIDGE_REGISTRATION_FORM).attr('data-cartridge-url', url);
+        screenReaderAnnounce(container);
     };
 
     /**
