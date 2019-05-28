@@ -24,7 +24,8 @@ Feature: Unread messages
       | student1 | NG |
       | student2 | NG |
     And the following config values are set as admin:
-      | messaging | 1 |
+      | messaging        | 1 |
+      | messagingminpoll | 1 |
 
   Scenario: Unread messages for group conversation
     Given I log in as "student1"

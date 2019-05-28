@@ -39,6 +39,9 @@ Feature: Create conversations for course's groups
       | teacher1 | G2 |
       | teacher1 | G3 |
       | student0 | G3 |
+    And the following config values are set as admin:
+      | messaging        | 1 |
+      | messagingminpoll | 1 |
 
   Scenario: Group conversations are restricted to members
     Given I log in as "teacher1"

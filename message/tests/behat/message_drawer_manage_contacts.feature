@@ -24,8 +24,9 @@ Feature: Manage contacts
       | user     | contact |
       | student1 | student2 |
     And the following config values are set as admin:
-      | messaging | 1 |
+      | messaging         | 1 |
       | messagingallusers | 1 |
+      | messagingminpoll  | 1 |
 
   Scenario: Send a 'contact request' to someone to add a contact
     Given I log in as "student1"
