@@ -34,7 +34,8 @@ Feature: Delete messages from conversations
       | student2 | student1 | Hello!        |
       | student1 | student2 | Are you free? |
     And the following config values are set as admin:
-      | messaging | 1 |
+      | messaging        | 1 |
+      | messagingminpoll | 1 |
 
   Scenario: Delete a message sent by the user from a group conversation
     Given I log in as "student1"

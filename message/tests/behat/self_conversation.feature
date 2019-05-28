@@ -9,7 +9,8 @@ Feature: Self conversation
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
     And the following config values are set as admin:
-      | messaging | 1 |
+      | messaging        | 1 |
+      | messagingminpoll | 1 |
 
   Scenario: Self conversation exists
     Given I log in as "student1"
