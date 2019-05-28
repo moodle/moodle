@@ -75,7 +75,7 @@ class site_registration_form extends \moodleform {
         $mform->addElement('header', 'moodle', get_string('registrationinfo', 'hub'));
 
         $mform->addElement('text', 'name', get_string('sitename', 'hub'),
-            array('class' => 'registration_textfield'));
+            array('class' => 'registration_textfield', 'maxlength' => 255));
         $mform->setType('name', PARAM_TEXT);
         $mform->addHelpButton('name', 'sitename', 'hub');
 

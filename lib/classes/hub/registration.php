@@ -350,6 +350,13 @@ class registration {
         $record['timemodified'] = time();
         $DB->update_record('registration_hubs', $record);
         self::$registration = null;
+
+        $siteinfo = self::get_site_info();
+        if (strlen(http_build_query($siteinfo)) > 1800) {
+            // Update registration again because the initial request was too long and could have been truncated.
+            api::update_registration($siteinfo);
+            self::$registration = null;
+        }
     }
 
     /**
@@ -397,10 +404,22 @@ class registration {
             self::$registration = null;
         }
 
-        $params = ['token' => $hub->token] + self::get_site_info();
+        $params = self::get_site_info();
+
+        // The most conservative limit for the redirect URL length is 2000 characters. Only pass parameters before
+        // we reach this limit. The next registration update will update all fields.
+        // We will also update registration after we receive confirmation from moodle.net.
+        $url = new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/siteregistration.php',
+            ['token' => $hub->token, 'url' => $params['url']]);
+        foreach ($params as $key => $value) {
+            if (strlen($url->out(false, [$key => $value])) > 2000) {
+                break;
+            }
+            $url->param($key, $value);
+        }
 
         $SESSION->registrationredirect = $returnurl;
-        redirect(new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/siteregistration.php', $params));
+        redirect($url);
     }
 
     /**
