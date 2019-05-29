@@ -1,4 +1,4 @@
-@mod @mod_quiz
+@mod @mod_quiz @quiz @quiz_grading
 Feature: Basic use of the Manual grading report
   In order to easily find students attempts that need manual grading
   As a teacher
@@ -50,8 +50,15 @@ Feature: Basic use of the Manual grading report
     And "Short answer 001" row "To grade" column of "questionstograde" table should contain "0"
     And "Short answer 001" row "Already graded" column of "questionstograde" table should contain "0"
 
-    # Adjust the mark for Student1.
+    # Go to the grading page.
     And I click on "update grades" "link" in the "Short answer 001" "table_row"
+    And I should see "Grading attempts 1 to 1 of 1"
+
+    # Test the display options.
+    And I set the field "Order attempts" to "By student id number"
+    And I press "Change options"
+
+    # Adjust the mark for Student1.
     And I set the field "Comment" to "I have adjusted your mark to 0.6"
     And I set the field "Mark" to "0.6"
     And I press "Save and go to next page"
