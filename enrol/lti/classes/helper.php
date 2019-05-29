@@ -576,18 +576,19 @@ class helper {
         // Work out the name of the tool.
         $title = self::get_name($tool);
         $launchurl = self::get_launch_url($toolid);
-        $launchurl = $launchurl->out();
-        $icon = self::get_icon($tool);
+        $launchurl = $launchurl->out(false);
+        $iconurl = self::get_icon($tool);
+        $iconurl = $iconurl->out(false);
         $securelaunchurl = null;
-        $secureicon = null;
+        $secureiconurl = null;
         $vendorurl = new \moodle_url('/');
-        $vendorurl = $vendorurl->out();
+        $vendorurl = $vendorurl->out(false);
         $description = self::get_description($tool);
 
         // If we are a https site, we can add the launch url and icon urls as secure equivalents.
         if (\is_https()) {
             $securelaunchurl = $launchurl;
-            $secureicon = $icon;
+            $secureiconurl = $iconurl;
         }
 
         return array(
@@ -595,13 +596,13 @@ class helper {
                     "/blti:title" => $title,
                     "/blti:description" => $description,
                     "/blti:extensions" => array(
-                            "/lticm:property[@name='icon_url']" => $icon,
-                            "/lticm:property[@name='secure_icon_url']" => $secureicon
+                            "/lticm:property[@name='icon_url']" => $iconurl,
+                            "/lticm:property[@name='secure_icon_url']" => $secureiconurl
                         ),
                     "/blti:launch_url" => $launchurl,
                     "/blti:secure_launch_url" => $securelaunchurl,
-                    "/blti:icon" => $icon,
-                    "/blti:secure_icon" => $secureicon,
+                    "/blti:icon" => $iconurl,
+                    "/blti:secure_icon" => $secureiconurl,
                     "/blti:vendor" => array(
                             "/lticp:code" => $SITE->shortname,
                             "/lticp:name" => $SITE->fullname,
@@ -634,7 +635,7 @@ class helper {
                         if (is_null($value)) {
                             $node->parentNode->removeChild($node);
                         } else {
-                            $node->nodeValue = $value;
+                            $node->nodeValue = s($value);
                         }
                     }
                 } else {
