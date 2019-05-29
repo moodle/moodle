@@ -669,7 +669,7 @@ class enrol_self_testcase extends advanced_testcase {
         $context = context_course::instance($course1->id);
 
         // Get editing teacher role.
-        $editingteacherrole = $DB->get_record('role', ['archetype' => 'editingteacher']);
+        $editingteacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
         $this->assertNotEmpty($editingteacherrole);
 
         // Enable self enrolment plugin and set to send email from course contact.
@@ -700,7 +700,7 @@ class enrol_self_testcase extends advanced_testcase {
         $this->assertEquals($user1->email, $contact->email);
 
         // Get manager role, and enrol user as manager.
-        $managerrole = $DB->get_record('role', ['archetype' => 'manager']);
+        $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
         $this->assertNotEmpty($managerrole);
         $instance1->customint4 = ENROL_SEND_EMAIL_FROM_KEY_HOLDER;
         $DB->update_record('enrol', $instance1);

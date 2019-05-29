@@ -340,7 +340,9 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
-        role_assign($CFG->coursecontact, $user->id, context_course::instance($course->id));
+        $contactroles = preg_split('/,/', $CFG->coursecontact);
+        $roleid = reset($contactroles);
+        role_assign($roleid, $user->id, context_course::instance($course->id));
         $this->assertTrue(has_coursecontact_role($user->id));
     }
 
@@ -800,7 +802,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         create_role('New student role', 'student2', 'New student description', 'student');
         $roles = get_archetype_roles('student');
-        $this->assertCount(2, $roles);
+        $this->assertGreaterThanOrEqual(2, count($roles));
     }
 
     /**
@@ -1508,14 +1510,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $allroles = get_all_roles();
         $expected = array($id2=>$allroles[$id2]);
 
-        foreach (get_role_archetypes() as $archetype) {
-            $defaults = get_default_contextlevels($archetype);
-            if (in_array(CONTEXT_COURSE, $defaults)) {
-                $roles = get_archetype_roles($archetype);
-                foreach ($roles as $role) {
-                    $expected[$role->id] = $role;
-                }
-            }
+        foreach (get_roles_for_contextlevels(CONTEXT_COURSE) as $roleid) {
+            $expected[$roleid] = $roleid;
         }
 
         $roles = get_default_enrol_roles($coursecontext);
@@ -2694,7 +2690,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $testcourses = array();
         $testpages = array();
         $testblocks = array();
-        $allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
+        $allroles = $DB->get_records_menu('role', array(), 'id', 'shortname, id');
 
         $systemcontext = context_system::instance();
         $frontpagecontext = context_course::instance(SITEID);
@@ -3616,8 +3612,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         $froncontext = context_course::instance($SITE->id);
-        $student = $DB->get_record('role', array('archetype'=>'student'));
-        $teacher = $DB->get_record('role', array('archetype'=>'teacher'));
+        $student = $DB->get_record('role', array('shortname'=>'student'));
+        $teacher = $DB->get_record('role', array('shortname'=>'teacher'));
 
         $existingcaps = $DB->get_records('capabilities', array(), 'id', 'name, captype, contextlevel, component, riskbitmask');
 
