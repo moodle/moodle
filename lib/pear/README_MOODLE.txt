@@ -29,8 +29,3 @@ It was decided that we will not upgrade this library from upstream  any more, se
 
 Changed constructors in classes PEAR and PEAR_ERROR to be __construct().
 MDL-60281 - replaced deprecated function each() with foreach loop for PHP7.2 compatibility
-
-
-Crypt/CHAP
-==========
-MDL-52285 - made all constructors PHP7 compatible

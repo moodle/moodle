@@ -45,11 +45,6 @@ In detail, the libraries added here are:
     - by Elizabeth Smith, Arpad Ray, Joshua Eichorn, David Coallier and Laurent Yaish
     - License: LGPL
     - http://pear.php.net/package/HTML_AJAX/
-- PEAR Crypt_CHAP:
-    - Current Version: 1.0.1 (2007-03-14)
-    - by Michael Bretterklieber
-    - License: BSD
-    - http://pear.php.net/package/Crypt_CHAP
 
 ----------------------------------------------------------------
 A NOTE TO DEVELOPERS
