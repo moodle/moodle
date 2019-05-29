@@ -522,6 +522,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
      * Search cohorts.
      */
     public function test_search_cohorts() {
+        global $DB, $CFG;
         $this->resetAfterTest(true);
 
         $creator = $this->getDataGenerator()->create_user();
@@ -537,9 +538,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $coursecontext = context_course::instance($course->id);
 
         // Fetching default authenticated user role.
-        $userroles = get_archetype_roles('user');
-        $this->assertCount(1, $userroles);
-        $authrole = array_pop($userroles);
+        $authrole = $DB->get_record('role', array('id' => $CFG->defaultuserroleid));
 
         // Reset all default authenticated users permissions.
         unassign_capability('moodle/cohort:manage', $authrole->id);
