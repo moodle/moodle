@@ -1980,6 +1980,12 @@ class restore_course_structure_step extends restore_structure_step {
                 }
 
                 $capability = 'mod/' . $modname . ':addinstance';
+
+                if (!get_capability_info($capability)) {
+                    $this->log("Capability '{$capability}' was not found!", backup::LOG_WARNING);
+                    continue;
+                }
+
                 foreach ($roleids as $roleid) {
                     assign_capability($capability, CAP_PREVENT, $roleid, $context);
                 }
@@ -2107,9 +2113,12 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
         $newroleid = $this->get_mappingid('role', $data->roleid);
         // If newroleid and context are valid assign it via API (it handles dupes and so on)
         if ($newroleid && $this->task->get_contextid()) {
-            // TODO: assign_capability() needs one userid param to be able to specify our restore userid
-            // TODO: it seems that assign_capability() doesn't check for valid capabilities at all ???
-            assign_capability($data->capability, $data->permission, $newroleid, $this->task->get_contextid());
+            if (!get_capability_info($data->capability)) {
+                $this->log("Capability '{$data->capability}' was not found!", backup::LOG_WARNING);
+            } else {
+                // TODO: assign_capability() needs one userid param to be able to specify our restore userid.
+                assign_capability($data->capability, $data->permission, $newroleid, $this->task->get_contextid());
+            }
         }
     }
 }
