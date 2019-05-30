@@ -1,4 +1,4 @@
-@mod @mod_quiz @javascript
+@mod @mod_quiz
 Feature: Quiz user override
   In order to grant a student special access to a quiz
   As a teacher
@@ -18,24 +18,14 @@ Feature: Quiz user override
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
     And the following "activities" exist:
       | activity   | name   | intro              | course | idnumber |
       | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
-    And the following "questions" exist:
-      | questioncategory | qtype       | name  | questiontext    |
-      | Test questions   | truefalse   | TF1   | First question  |
-      | Test questions   | truefalse   | TF2   | Second question |
-    And quiz "Quiz 1" contains the following questions:
-      | question | page | maxmark |
-      | TF1      | 1    |         |
-      | TF2      | 1    | 3.0     |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
 
+  @javascript
   Scenario: Add, modify then delete a user override
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
     When I follow "Quiz 1"
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
@@ -58,8 +48,11 @@ Feature: Quiz user override
     And I press "Continue"
     And I should not see "Student One"
 
+  @javascript
   Scenario: Being able to modify a user override when the quiz is not available to the student
-    Given I follow "Quiz 1"
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 1"
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "Availability" to "Hide from students"
@@ -71,3 +64,48 @@ Feature: Quiz user override
       | Attempts allowed | 1        |
     And I press "Save"
     Then "Edit" "icon" should exist in the "Student One" "table_row"
+
+  Scenario: A teacher without accessallgroups permission should only be able to add user override for users that he/she shares groups with,
+        when the activity's group mode is to "separate groups"
+    Given the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C1     | G1       |
+      | Group 2 | C1     | G2       |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+      | teacher1 | G1    |
+      | student2 | G2    |
+    And the following "permission overrides" exist:
+      | capability                  | permission | role           | contextlevel | reference |
+      | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
+    And the following "activities" exist:
+      | activity | name   | intro              | course | idnumber | groupmode |
+      | quiz     | Quiz 2 | Quiz 2 description | C1     | quiz2    | 1         |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 2"
+    And I navigate to "User overrides" in current page administration
+    And I press "Add user override"
+    Then the "Override user" select box should contain "Student One, student1@example.com"
+    And the "Override user" select box should not contain "Student Two, student2@example.com"
+
+  Scenario: Override user in an activity with group mode set to "separate groups" as a teacher who is not a member in any group, and does not have accessallgroups permission
+    Given the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C1     | G1       |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+    And the following "permission overrides" exist:
+      | capability                  | permission | role           | contextlevel | reference |
+      | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
+    And the following "activities" exist:
+      | activity | name   | intro              | course | idnumber | groupmode |
+      | quiz     | Quiz 2 | Quiz 2 description | C1     | quiz2    | 1         |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 2"
+    And I navigate to "User overrides" in current page administration
+    Then I should see "No groups you can access."
+    And the "Add user override" "button" should be disabled
