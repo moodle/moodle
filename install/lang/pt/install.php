@@ -61,7 +61,7 @@ $string['pathssubdataroot'] = '<p>Uma diretoria em que o Moodle irá armazenar t
 <p>Não deve ser diretamente acessível através da web.</p>
 <p> Se a diretoria não existir atualmente, o processo de instalação tentará criá-la.</p>';
 $string['pathssubdirroot'] = 'Caminho completo para a diretoria que contém o código Moodle.';
-$string['pathssubwwwroot'] = 'Endereço web completo de acesso ao Moodle. Não é possível aceder ao Moodle usando mais do que um endereço. Se o site tiver mais do que um endereço público, devem ser configurados redirecionamentos permanentes em todos eles, à exceção deste. Se o site pode ser acedido a partir da Internet e de Intranet, então use o endereço público aqui. Se o endereço atual não está correto, altere o endereço indicado na barra de endereço do seu navegador e reinicie a instalação.';
+$string['pathssubwwwroot'] = 'Endereço web completo de acesso ao Moodle. Não é possível aceder ao Moodle usando mais do que um endereço. Se o site tiver mais do que um endereço público, devem ser configurados redirecionamentos permanentes em todos eles, à exceção deste. Se o site pode ser acedido a partir da Internet e de Intranet, use o endereço público aqui. Se o endereço atual não está correto, altere o endereço indicado na barra de endereço do seu navegador e reinicie a instalação.';
 $string['pathsunsecuredataroot'] = 'A localização da pasta de dados não é segura';
 $string['pathswrongadmindir'] = 'A pasta <b>admin</b> não existe';
 $string['phpextension'] = 'Extensão <b>{$a}</b> do PHP';
