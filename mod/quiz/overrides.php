@@ -35,11 +35,18 @@ $mode = optional_param('mode', '', PARAM_ALPHA); // One of 'user' or 'group', de
 list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'quiz');
 $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
 
-// Get the course groups.
-$groups = groups_get_all_groups($cm->course);
-if ($groups === false) {
-    $groups = array();
-}
+require_login($course, false, $cm);
+
+$context = context_module::instance($cm->id);
+
+// Check the user has the required capabilities to list overrides.
+require_capability('mod/quiz:manageoverrides', $context);
+
+$quizgroupmode = groups_get_activity_groupmode($cm);
+$accessallgroups = ($quizgroupmode == NOGROUPS) || has_capability('moodle/site:accessallgroups', $context);
+
+// Get the course groups that the current user can access.
+$groups = $accessallgroups ? groups_get_all_groups($cm->course) : groups_get_activity_allowed_groups($cm);
 
 // Default mode is "group", unless there are no groups.
 if ($mode != "user" and $mode != "group") {
@@ -55,13 +62,6 @@ $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id, 'mode'=>
 
 $PAGE->set_url($url);
 
-require_login($course, false, $cm);
-
-$context = context_module::instance($cm->id);
-
-// Check the user has the required capabilities to list overrides.
-require_capability('mod/quiz:manageoverrides', $context);
-
 // Display a list of overrides.
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('overrides', 'quiz'));
@@ -71,38 +71,63 @@ echo $OUTPUT->heading(format_string($quiz->name, true, array('context' => $conte
 
 // Delete orphaned group overrides.
 $sql = 'SELECT o.id
-            FROM {quiz_overrides} o LEFT JOIN {groups} g
-            ON o.groupid = g.id
-            WHERE o.groupid IS NOT NULL
-              AND g.id IS NULL
-              AND o.quiz = ?';
+          FROM {quiz_overrides} o
+     LEFT JOIN {groups} g ON o.groupid = g.id
+         WHERE o.groupid IS NOT NULL
+               AND g.id IS NULL
+               AND o.quiz = ?';
 $params = array($quiz->id);
 $orphaned = $DB->get_records_sql($sql, $params);
 if (!empty($orphaned)) {
     $DB->delete_records_list('quiz_overrides', 'id', array_keys($orphaned));
 }
 
+$overrides = [];
+
 // Fetch all overrides.
 if ($groupmode) {
     $colname = get_string('group');
-    $sql = 'SELECT o.*, g.name
-                FROM {quiz_overrides} o
-                JOIN {groups} g ON o.groupid = g.id
-                WHERE o.quiz = :quizid
-                ORDER BY g.name';
-    $params = array('quizid' => $quiz->id);
+    // To filter the result by the list of groups that the current user has access to.
+    if ($groups) {
+        $params = ['quizid' => $quiz->id];
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        $params += $inparams;
+
+        $sql = "SELECT o.*, g.name
+                  FROM {quiz_overrides} o
+                  JOIN {groups} g ON o.groupid = g.id
+                 WHERE o.quiz = :quizid AND g.id $insql
+              ORDER BY g.name";
+
+        $overrides = $DB->get_records_sql($sql, $params);
+    }
 } else {
     $colname = get_string('user');
     list($sort, $params) = users_order_by_sql('u');
-    $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
-            FROM {quiz_overrides} o
-            JOIN {user} u ON o.userid = u.id
-            WHERE o.quiz = :quizid
-            ORDER BY ' . $sort;
     $params['quizid'] = $quiz->id;
-}
 
-$overrides = $DB->get_records_sql($sql, $params);
+    if ($accessallgroups) {
+        $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
+                  FROM {quiz_overrides} o
+                  JOIN {user} u ON o.userid = u.id
+                 WHERE o.quiz = :quizid
+              ORDER BY ' . $sort;
+
+        $overrides = $DB->get_records_sql($sql, $params);
+    } else if ($groups) {
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        $params += $inparams;
+
+        $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
+                  FROM {quiz_overrides} o
+                  JOIN {user} u ON o.userid = u.id
+                  JOIN {groups_members} gm ON u.id = gm.userid
+                 WHERE o.quiz = :quizid AND gm.groupid ' . $insql . '
+              ORDER BY ' . $sort;
+
+        $overrides = $DB->get_records_sql($sql, $params);
+    }
+}
 
 // Initialise table.
 $table = new html_table();
@@ -256,13 +281,21 @@ if ($groupmode) {
 } else {
     $users = array();
     // See if there are any students in the quiz.
-    $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
+    if ($accessallgroups) {
+        $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
+        $nousermessage = get_string('usersnone', 'quiz');
+    } else if ($groups) {
+        $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id', '', '', '', array_keys($groups));
+        $nousermessage = get_string('usersnone', 'quiz');
+    } else {
+        $nousermessage = get_string('groupsnone', 'quiz');
+    }
     $info = new \core_availability\info_module($cm);
     $users = $info->filter_user_list($users);
 
     if (empty($users)) {
         // There are no students.
-        echo $OUTPUT->notification(get_string('usersnone', 'quiz'), 'error');
+        echo $OUTPUT->notification($nousermessage, 'error');
         $options['disabled'] = true;
     }
     echo $OUTPUT->single_button($overrideediturl->out(true,
