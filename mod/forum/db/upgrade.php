@@ -271,8 +271,28 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019100109, 'forum');
 
     }
+
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2019111801) {
+        $sql = "SELECT d.id AS discussionid, p.userid AS correctuser
+                FROM {forum_discussions} d
+                INNER JOIN {forum_posts} p ON p.id = d.firstpost
+                WHERE d.userid <> p.userid";
+        $recordset = $DB->get_recordset_sql($sql);
+        foreach ($recordset as $record) {
+            $object = new stdClass();
+            $object->id = $record->discussionid;
+            $object->userid = $record->correctuser;
+            $DB->update_record('forum_discussions', $object);
+        }
+
+        $recordset->close();
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2019111801, 'forum');
+    }
 
     return true;
 }
