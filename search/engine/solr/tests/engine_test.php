@@ -1011,6 +1011,68 @@ class search_solr_engine_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests searching for results containing words in italic text. (This used to fail.)
+     */
+    public function test_italics() {
+        global $USER;
+
+        // Use real search areas.
+        $this->search->clear_static();
+        $this->search->add_core_search_areas();
+
+        // Create a course and a forum.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+
+        // As admin user, create forum discussions with various words in italics or with underlines.
+        $this->setAdminUser();
+        $forumgen = $generator->get_plugin_generator('mod_forum');
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+                'userid' => $USER->id, 'name' => 'Post1',
+                'message' => '<p>This is a post about <i>frogs</i>.</p>']);
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+                'userid' => $USER->id, 'name' => 'Post2',
+                'message' => '<p>This is a post about <i>toads and zombies</i>.</p>']);
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+                'userid' => $USER->id, 'name' => 'Post3',
+                'message' => '<p>This is a post about toads_and_zombies.</p>']);
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+                'userid' => $USER->id, 'name' => 'Post4',
+                'message' => '<p>This is a post about _leading and trailing_ underlines.</p>']);
+
+        // Index the data.
+        $this->search->index();
+
+        // Search for 'frogs' should find the post.
+        $querydata = new stdClass();
+        $querydata->q = 'frogs';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Post1'], $results);
+
+        // Search for 'toads' or 'zombies' should find post 2 (and not 3)...
+        $querydata->q = 'toads';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Post2'], $results);
+        $querydata->q = 'zombies';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Post2'], $results);
+
+        // Search for 'toads_and_zombies' should find post 3.
+        $querydata->q = 'toads_and_zombies';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Post3'], $results);
+
+        // Search for '_leading' or 'trailing_' should find post 4.
+        $querydata->q = '_leading';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Post4'], $results);
+        $querydata->q = 'trailing_';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Post4'], $results);
+    }
+
+    /**
      * Asserts that the returned documents have the expected titles (regardless of order).
      *
      * @param string[] $expected List of expected document titles
