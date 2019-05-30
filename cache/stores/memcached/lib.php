@@ -201,7 +201,8 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         $this->options[Memcached::OPT_HASH] = $hashmethod;
         $this->options[Memcached::OPT_BUFFER_WRITES] = $bufferwrites;
 
-        $this->connection = new Memcached(crc32($this->name));
+        // User cache prefix to identify permanent connection (MDL-51816).
+        $this->connection = new Memcached(crc32($this->prefix));
         $servers = $this->connection->getServerList();
         if (empty($servers)) {
             foreach ($this->options as $key => $value) {
@@ -212,10 +213,13 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
 
         if ($this->clustered) {
             foreach ($this->setservers as $setserver) {
-                // Since we will have a number of them with the same name, append server and port.
-                $connection = new Memcached(crc32($this->name.$setserver[0].$setserver[1]));
-                foreach ($this->options as $key => $value) {
-                    $connection->setOption($key, $value);
+                // Since we will have a number of them with the same prefix, append server and port ((MDL-51816)).
+                $connection = new Memcached(crc32($this->prefix.$setserver[0].$setserver[1]));
+                // Check if servers are already added (MDL-51816)
+                if (empty($servers)) {
+                    foreach ($this->options as $key => $value) {
+                        $connection->setOption($key, $value);
+                    }
                 }
                 $connection->addServer($setserver[0], $setserver[1]);
                 $this->setconnections[] = $connection;
