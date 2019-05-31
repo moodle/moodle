@@ -67,6 +67,7 @@ class core_grade_item_testcase extends grade_base_testcase {
         $this->sub_test_update_final_grade();
         $this->sub_test_grade_item_can_control_visibility();
         $this->sub_test_grade_item_fix_sortorder();
+        $this->sub_test_grade_item_created_event();
     }
 
     protected function sub_test_grade_item_construct() {
@@ -977,4 +978,37 @@ class core_grade_item_testcase extends grade_base_testcase {
         $this->assertEquals($todefaults['weightoverride'], $gi->weightoverride);
     }
 
+    /**
+     * Test that grade item event triggered when a grade item is created.
+     */
+    protected function sub_test_grade_item_created_event() {
+        $sink = $this->redirectEvents();
+
+        $gradeitem = new grade_item();
+
+        $gradeitem->courseid = $this->courseid;
+        $gradeitem->categoryid = $this->grade_categories[1]->id;
+        $gradeitem->itemname = 'unittestgradeitem4';
+        $gradeitem->itemtype = 'mod';
+        $gradeitem->itemmodule = 'quiz';
+        $gradeitem->iteminfo = 'Grade item used for unit testing';
+
+        $gradeitem->insert();
+
+        $result = $sink->get_events();
+        $sink->close();
+
+        $this->assertCount(1, $result);
+
+        $event = reset($result);
+        $this->assertEventContextNotUsed($event);
+
+        $eventgradeitem = $event->get_grade_item();
+
+        $this->assertInstanceOf('grade_item', $eventgradeitem);
+        $this->assertEquals($gradeitem->id, $eventgradeitem->id);
+        $this->assertEquals($gradeitem->itemname, $event->other['itemname']);
+        $this->assertEquals($gradeitem->itemtype, $event->other['itemtype']);
+        $this->assertEquals($gradeitem->itemmodule, $event->other['itemmodule']);
+    }
 }
