@@ -358,6 +358,7 @@ ul.assignfeedback_editpdf_menu {
 
 .assignfeedback_editpdf_widget .commentdrawable.commentcollapsed {
     z-index: auto;
+    width: 24px;
 }
 
 .assignfeedback_editpdf_widget .commentdrawable.commentcollapsed textarea,
