@@ -207,6 +207,60 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         // Confirm student's data is exported.
         $writer = \core_privacy\local\request\writer::with_context($studentcontext);
         $this->assertTrue($writer->has_any_data());
+
+        delete_course($course, false);
+        $sc = context_user::instance($student->id);
+        $approvedlist = new approved_contextlist($student, $component, [$sc->id]);
+        provider::export_user_data($approvedlist);
+        $writer = \core_privacy\local\request\writer::with_context($sc);
+        $this->assertTrue($writer->has_any_data());
+    }
+
+    /**
+     * Test exporting data for an approved contextlist with a deleted course
+     */
+    public function test_export_user_data_with_deleted_course() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $component = 'block_recentlyaccesseditems';
+
+        $student = $generator->create_user();
+        $studentcontext = context_user::instance($student->id);
+
+        // Enrol user in course and add course items.
+        $course = $generator->create_course();
+        $generator->enrol_user($student->id, $course->id, 'student');
+        $forum = $generator->create_module('forum', ['course' => $course]);
+        $chat = $generator->create_module('chat', ['course' => $course]);
+
+        // Generate some recent activity.
+        $this->setUser($student);
+        $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+                'objectid' => $forum->id]);
+        $event->trigger();
+        $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+                'objectid' => $chat->id]);
+        $event->trigger();
+
+        // Confirm data is present.
+        $params = [
+            'courseid' => $course->id,
+            'userid' => $student->id,
+        ];
+
+        $result = $DB->count_records('block_recentlyaccesseditems', $params);
+        $this->assertEquals(2, $result);
+        delete_course($course, false);
+
+        // Export data for student.
+        $approvedlist = new approved_contextlist($student, $component, [$studentcontext->id]);
+        provider::export_user_data($approvedlist);
+
+        // Confirm student's data is exported.
+        $writer = \core_privacy\local\request\writer::with_context($studentcontext);
+        $this->assertFalse($writer->has_any_data());
     }
 
     /**
