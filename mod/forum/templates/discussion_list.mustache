@@ -155,6 +155,7 @@
                                                 class="rounded-circle userpicture"
                                                 src="{{urls.profileimage}}"
                                                 alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
+                                                title="{{fullname}}"
                                             >
                                         </div>
                                         <div class="align-middle p-2">
@@ -164,21 +165,28 @@
                                 {{/firstpostauthor}}
                             </td>
                             {{#forum.state.groupmode}}
-                                <td scope="col" class="group">
+                                <td scope="col" class="group align-middle">
                                     {{#discussion.group}}
                                         {{#urls.picture}}
                                             {{#urls.userlist}}
-                                                <a href="{{{urls.userlist}}}">
-                                                    <img class="border rounded h-auto rounded-circle" src="{{{urls.picture}}}">
+                                                <a href="{{{urls.userlist}}}" role="button" aria-label='{{#str}} memberofgroup, group, {{name}}{{/str}}'>
+                                                    <img alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                         aria-hidden="true"
+                                                         class="border rounded h-auto rounded-circle grouppicture"
+                                                         src="{{{urls.picture}}}"
+                                                         title="{{name}}">
                                                 </a>
                                             {{/urls.userlist}}
                                             {{^urls.userlist}}
-                                                <img class="border rounded h-auto rounded-circle" src="{{{urls.picture}}}">
+                                                <img alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                     class="border rounded h-auto rounded-circle grouppicture"
+                                                     src="{{{urls.picture}}}"
+                                                     title="{{name}}">
                                             {{/urls.userlist}}
                                         {{/urls.picture}}
                                         {{^urls.picture}}
                                             {{#urls.userlist}}
-                                                <a href="{{{urls.userlist}}}">{{name}}</a>
+                                                <a href="{{{urls.userlist}}}" aria-label='{{#str}} memberofgroup, group, {{name}}{{/str}}'>{{name}}</a>
                                             {{/urls.userlist}}
                                             {{^urls.userlist}}
                                                 {{name}}
@@ -220,6 +228,7 @@
                                                     class="rounded-circle userpicture"
                                                     src="{{latestpostauthor.urls.profileimage}}"
                                                     alt="{{#str}}pictureof, moodle, {{latestpostauthor.fullname}}{{/str}}"
+                                                    title="{{latestpostauthor.fullname}}"
                                                 >
                                             </a>
                                         </div>

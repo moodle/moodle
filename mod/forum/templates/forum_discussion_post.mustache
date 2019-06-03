@@ -58,6 +58,7 @@
                                     src="{{{.}}}"
                                     alt="{{#str}} pictureof, core, {{author.fullname}} {{/str}}"
                                     aria-hidden="true"
+                                    title="{{author.fullname}}"
                                 >
                             {{/urls.profileimage}}
                         </div>
@@ -94,14 +95,28 @@
                     {{#author}}
                         <div class="mr-2 author-groups-container" style="width: 45px; flex-shrink: 0">
                             {{#groups}}
-                                {{#urls.image}}
-                                    <img
-                                        class="rounded-circle w-100"
-                                        src="{{{.}}}"
-                                        alt="{{#str}} pictureof, core, {{name}} {{/str}}"
-                                        aria-hidden="true"
-                                    >
-                                {{/urls.image}}
+                                {{#urls.group}}
+                                    {{#urls.image}}
+                                        <a href="{{urls.group}}" role="button" aria-label='{{#str}} memberofgroup, group, {{name}}{{/str}}'>
+                                            <img
+                                                 class="rounded-circle w-100"
+                                                 src="{{{.}}}"
+                                                 alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                 aria-hidden="true"
+                                                 title="{{name}}"
+                                            >
+                                        </a>
+                                    {{/urls.image}}
+                                {{/urls.group}}
+                                {{^urls.group}}
+                                    {{#urls.image}}
+                                        <img class="rounded-circle w-100"
+                                            src="{{{.}}}"
+                                            alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                            title="{{name}}"
+                                        >
+                                    {{/urls.image}}
+                                {{/urls.group}}
                             {{/groups}}
                         </div>
                     {{/author}}
