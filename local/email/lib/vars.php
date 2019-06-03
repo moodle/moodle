@@ -143,7 +143,15 @@ class EmailVars {
                 $object = strtolower($matches[1]);
                 $property = strtolower($matches[2]);
 
-                return isset($this->$object->$property) ? $this->$object->$property : $this->blank;
+                if (isset($this->$object->$property)) {
+                    return $this->$object->$property;
+                } else if (method_exists($this->$object, '__get')) {
+                    return $this->$object->__get($property);
+                } else if (method_exists($this->$object, 'get')) {
+                    return $this->$object->get($property);
+                } else {
+                    return $this->blank;
+                }
             } else if (self::ok2call($name)) {
                 return $this->$name();
             }
