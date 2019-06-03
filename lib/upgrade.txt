@@ -7,6 +7,10 @@ information provided here is intended especially for developers.
 * Final deprecation i_dock_block() in behat_deprecated.php
 * Final deprecation of get_courses_page. Function has been removed and core_course_category::get_courses() should be
   used instead.
+* New encryption API in \core\encryption allows secure encryption and decryption of data. By
+  default the key is stored in moodledata but admins can configure a different, more secure
+  location in config.php if required. To get the best possible security for this feature, we
+  recommend enabling the Sodium PHP extension.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:

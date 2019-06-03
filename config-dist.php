@@ -727,6 +727,22 @@ $CFG->admin = 'admin';
 //
 // $CFG->maxcoursesincategory = 10000;
 //
+// Admin setting encryption
+//
+//      $CFG->secretdataroot = '/var/www/my_secret_folder';
+//
+// Location to store encryption keys. By default this is $CFG->dataroot/secret; set this if
+// you want to use a different location for increased security (e.g. if too many people have access
+// to the main dataroot, or if you want to avoid using shared storage). Your web server user needs
+// read access to this location, and write access unless you manually create the keys.
+//
+//      $CFG->nokeygeneration = false;
+//
+// If you change this to true then the server will give an error if keys don't exist, instead of
+// automatically generating them. This is only needed if you want to ensure that keys are consistent
+// across a cluster when not using shared storage. If you stop the server generating keys, you will
+// need to manually generate them by running 'php admin/cli/generate_key.php'.
+
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
