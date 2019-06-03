@@ -216,7 +216,8 @@
     margin: 5px 0;
 }
 
-.discussion-list .userpicture {
+.discussion-list .userpicture,
+.discussion-list .grouppicture {
     height: 35px;
     width: 35px;
 }
