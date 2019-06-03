@@ -197,27 +197,4 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
 
         return array_merge($actions, parent::prediction_actions($prediction, $includedetailsaction));
     }
-
-    /**
-     * Does the user enrolment created after this time range start time or starts after it?
-     *
-     * We need to identify these enrolments because the indicators can not be calculated properly
-     * if the student enrolment started half way through this time range.
-     *
-     * User enrolments whose end date is before time() have already been discarded in
-     * course_enrolments::is_valid_sample.
-     *
-     * @param  int    $sampleid
-     * @param  int    $starttime
-     * @return bool
-     */
-    protected function enrolment_starts_after_calculation_start(int $sampleid, int $starttime) {
-
-        $userenrol = $this->retrieve('user_enrolments', $sampleid);
-        if ($userenrol->timestart && $userenrol->timestart > $starttime) {
-            return true;
-        }
-
-        return false;
-    }
 }
