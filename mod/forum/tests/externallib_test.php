@@ -693,7 +693,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'reply' => 1,
                 'export' => 0,
                 'controlreadstatus' => 0,
-                'canreplyprivately' => 0
+                'canreplyprivately' => 0,
+                'selfenrol' => 0
             ],
             'urls' => [
                 'view' => $urlfactory->get_view_post_url_from_post_id($discussion1reply2->discussion, $discussion1reply2->id),
@@ -747,7 +748,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'reply' => 1,
                 'export' => 0,
                 'controlreadstatus' => 0,
-                'canreplyprivately' => 0
+                'canreplyprivately' => 0,
+                'selfenrol' => 0
             ],
             'urls' => [
                 'view' => $urlfactory->get_view_post_url_from_post_id($discussion1reply1->discussion, $discussion1reply1->id),

@@ -607,4 +607,30 @@ class capability {
     public function can_manage_tags(stdClass $user) : bool {
         return has_capability('moodle/tag:manage', context_system::instance(), $user);
     }
+
+    /**
+     * Checks whether the user can self enrol into the course.
+     * Mimics the checks on the add button in deprecatedlib/forum_print_latest_discussions
+     *
+     * @param stdClass $user
+     * @return bool
+     */
+    public function can_self_enrol(stdClass $user) : bool {
+        $canstart = false;
+
+        if ($this->forum->get_type() != 'news') {
+            if (isguestuser($user) or !isloggedin()) {
+                $canstart = true;
+            }
+
+            if (!is_enrolled($this->context) and !is_viewing($this->context)) {
+                 // Allow guests and not-logged-in to see the button - they are prompted to log in after clicking the link,
+                 // Normal users with temporary guest access see this button too, they are asked to enrol instead,
+                 // Do not show the button to users with suspended enrolments here.
+                $canstart = enrol_selfenrol_available($this->forum->get_course_id());
+            }
+        }
+
+        return $canstart;
+    }
 }

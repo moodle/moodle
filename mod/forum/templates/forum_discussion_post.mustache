@@ -277,6 +277,21 @@
                                                     </a>
                                                 {{/replyoutput}}
                                             {{/reply}}
+                                            {{^reply}}
+                                                {{#selfenrol}}
+                                                    {{$replyoutput}}
+                                                        <a
+                                                                href="{{{urls.reply}}}"
+                                                                class="btn btn-link"
+                                                                data-post-id="{{id}}"
+                                                                data-can-reply-privately="{{canreplyprivately}}"
+                                                                title="{{#str}} reply, mod_forum {{/str}}"
+                                                        >
+                                                            {{#str}} reply, mod_forum {{/str}}
+                                                        </a>
+                                                    {{/replyoutput}}
+                                                {{/selfenrol}}
+                                            {{/reply}}
                                             {{#export}}
                                                 <a
                                                     data-region="post-action"
