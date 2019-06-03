@@ -51,6 +51,18 @@
             </div>
         </div>
     {{/forum.capabilities.create}}
+    {{^forum.capabilities.create}}
+        {{#forum.capabilities.selfenrol}}
+            <div class="p-t-1 p-b-1">
+                <a class="btn btn-primary" href="{{forum.urls.create}}">
+                    {{$discussion_create_text}}
+                        {{#str}}addanewdiscussion, forum{{/str}}
+                    {{/discussion_create_text}}
+                </a>
+            </div>
+        {{/forum.capabilities.selfenrol}}
+    {{/forum.capabilities.create}}
+
 
     {{#state.hasdiscussions}}
         {{$discussion_top_pagination}}
