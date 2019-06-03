@@ -4,10 +4,17 @@
     "description": "Moodle - the world's open source learning platform",
     "type": "project",
     "homepage": "https://moodle.org",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/moodlehq/php-webdriver.git"
+        }
+    ],
     "require-dev": {
         "phpunit/phpunit": "7.5.*",
         "phpunit/dbunit": "4.0.*",
         "moodlehq/behat-extension": "3.38.0",
-        "mikey179/vfsstream": "^1.6"
+        "mikey179/vfsstream": "^1.6",
+        "instaclick/php-webdriver": "dev-local as 1.x-dev"
     }
 }

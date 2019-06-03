@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6d083d8c30f80b245ed03f8f064d4ec",
+    "content-hash": "26075c0bf968fde4986dd492a3b8889f",
     "packages": [],
     "packages-dev": [
         {
@@ -808,16 +808,16 @@
         },
         {
             "name": "instaclick/php-webdriver",
-            "version": "1.4.5",
+            "version": "dev-local",
             "source": {
                 "type": "git",
-                "url": "https://github.com/instaclick/php-webdriver.git",
-                "reference": "6fa959452e774dcaed543faad3a9d1a37d803327"
+                "url": "https://github.com/moodlehq/php-webdriver.git",
+                "reference": "e311e55bf2c4746db9df72707f3cf1a731ad98aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/6fa959452e774dcaed543faad3a9d1a37d803327",
-                "reference": "6fa959452e774dcaed543faad3a9d1a37d803327",
+                "url": "https://api.github.com/repos/moodlehq/php-webdriver/zipball/e311e55bf2c4746db9df72707f3cf1a731ad98aa",
+                "reference": "e311e55bf2c4746db9df72707f3cf1a731ad98aa",
                 "shasum": ""
             },
             "require": {
@@ -839,7 +839,6 @@
                     "WebDriver": "lib/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -863,7 +862,10 @@
                 "webdriver",
                 "webtest"
             ],
-            "time": "2017-06-30T04:02:48+00:00"
+            "support": {
+                "source": "https://github.com/moodlehq/php-webdriver/tree/local"
+            },
+            "time": "2019-06-03T22:55:37+00:00"
         },
         {
             "name": "mikey179/vfsStream",
@@ -3445,9 +3447,18 @@
             "time": "2018-12-25T11:19:39+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "alias": "1.x-dev",
+            "alias_normalized": "1.9999999.9999999.9999999-dev",
+            "version": "dev-local",
+            "package": "instaclick/php-webdriver"
+        }
+    ],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "instaclick/php-webdriver": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
