@@ -4218,7 +4218,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
         } else if ($filearea == GRADE_FEEDBACK_FILEAREA || $filearea == GRADE_HISTORY_FEEDBACK_FILEAREA) {
             if ($context->contextlevel != CONTEXT_MODULE) {
-                send_file_not_found;
+                send_file_not_found();
             }
 
             require_login($course, false);
