@@ -213,6 +213,11 @@ book_view($book, $chapter, $islastchapter, $course, $cm, $context);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($book->name));
 
+// Info box.
+if ($book->intro) {
+    echo $OUTPUT->box(format_module_intro('book', $book, $cm->id), 'generalbox', 'intro');
+}
+
 $navclasses = book_get_nav_classes();
 
 if ($book->navstyle) {

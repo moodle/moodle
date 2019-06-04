@@ -37,7 +37,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @return string
      */
     public function header($lesson, $cm, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null, $extrapagetitle = null) {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $activityname = format_string($lesson->name, true, $lesson->course);
         if (empty($extrapagetitle)) {
@@ -49,7 +49,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         // Build the buttons
         $context = context_module::instance($cm->id);
 
-    /// Header setup
+        // Header setup.
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
         lesson_add_header_buttons($cm, $context, $extraeditbuttons, $lessonpageid);
@@ -57,7 +57,10 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
         if (has_capability('mod/lesson:manage', $context)) {
             $output .= $this->output->heading_with_help($activityname, 'overview', 'lesson');
-
+            // Info box.
+            if ($lesson->intro) {
+                $output .= $OUTPUT->box(format_module_intro('lesson', $lesson, $cm->id), 'generalbox', 'intro');
+            }
             if (!empty($currenttab)) {
                 ob_start();
                 include($CFG->dirroot.'/mod/lesson/tabs.php');
@@ -66,6 +69,10 @@ class mod_lesson_renderer extends plugin_renderer_base {
             }
         } else {
             $output .= $this->output->heading($activityname);
+            // Info box.
+            if ($lesson->intro) {
+                $output .= $OUTPUT->box(format_module_intro('lesson', $lesson, $cm->id), 'generalbox', 'intro');
+            }
         }
 
         foreach ($lesson->messages as $message) {
