@@ -58,7 +58,7 @@
                                     src="{{{.}}}"
                                     alt="{{#str}} pictureof, core, {{author.fullname}} {{/str}}"
                                     aria-hidden="true"
-                                    title="{{author.fullname}}"
+                                    title="{{#str}} pictureof, core, {{author.fullname}} {{/str}}"
                                 >
                             {{/urls.profileimage}}
                         </div>
@@ -107,7 +107,7 @@
                                                  src="{{{.}}}"
                                                  alt="{{#str}} pictureof, core, {{name}} {{/str}}"
                                                  aria-hidden="true"
-                                                 title="{{name}}"
+                                                 title="{{#str}} pictureof, core, {{name}} {{/str}}"
                                             >
                                         </a>
                                     {{/urls.image}}
@@ -117,7 +117,7 @@
                                         <img class="rounded-circle w-100"
                                             src="{{{.}}}"
                                             alt="{{#str}} pictureof, core, {{name}} {{/str}}"
-                                            title="{{name}}"
+                                            title="{{#str}} pictureof, core, {{name}} {{/str}}"
                                         >
                                     {{/urls.image}}
                                 {{/urls.group}}
