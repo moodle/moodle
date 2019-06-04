@@ -31,3 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Γλώσσα';
+$string['moodlelogo'] = 'Λογότυπο Moodle';
+$string['next'] = 'Επόμενο';
+$string['previous'] = 'Προηγούμενο';
+$string['reload'] = 'Eπαναφόρτωση';
