@@ -135,9 +135,7 @@
                             {{/state.sortorder.iscreateddesc}}
                         </th>
                         <th scope="col">&nbsp;</th>
-                        {{#forum.capabilities.subscribe}}
-                            <th scope="col" class="discussionsubscription"></th>
-                        {{/forum.capabilities.subscribe}}
+                        <th scope="col" class="discussionsubscription"></th>
                     </tr>
                 </thead>
                 {{/discussion_list_header}}
@@ -287,12 +285,16 @@
                                         <div class="pt-1 mt-2  {{^discussion.locked}}hidden{{/discussion.locked}}" data-region="locked-icon">
                                             <span class="btn" >{{#pix}}i/lock, core, {{#str}}locked, forum{{/str}}{{/pix}}</span>
                                         </div>
+                                        {{#forum.capabilities.subscribe}}
                                         <div>
                                             {{> mod_forum/discussion_subscription_toggle}}
                                         </div>
+                                        {{/forum.capabilities.subscribe}}
+                                        {{#hasanyactions}}
                                         <div class="mt-3" data-container='discussion-tools'>
                                             {{> mod_forum/forum_action_menu}}
                                         </div>
+                                        {{/hasanyactions}}
                                     </div>
                                 {{/discussion}}
                             </td>
