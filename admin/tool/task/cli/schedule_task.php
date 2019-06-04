@@ -50,7 +50,7 @@ Options:
 -h, --help            Print out this help
 
 Example:
-\$sudo -u www-data /usr/bin/php admin/tool/task/cli/scheduled_task.php --execute=\\\\core\\\\task\\\\session_cleanup_task
+\$sudo -u www-data /usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\core\\\\task\\\\session_cleanup_task
 
 ";
 
