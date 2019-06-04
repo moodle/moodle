@@ -247,14 +247,13 @@ $mform->set_data($params);
 echo $OUTPUT->header();
 
 // Get the list of companies and display it as a drop down select..
+$companyids = [
+        'none' => get_string('nocompany', 'block_iomad_company_admin'),
+        'all' => get_string('allcourses', 'block_iomad_company_admin')
+] + $DB->get_records_menu('company', array(), 'name');
 
-$companyids = $DB->get_records_menu('company', array(), 'id, name');
-$companyids['none'] = get_string('nocompany', 'block_iomad_company_admin');
-$companyids['all'] = get_string('allcourses', 'block_iomad_company_admin');
-ksort($companyids);
 $companyselect = new single_select($linkurl, 'companyid', $companyids, $companyid);
 $companyselect->label = get_string('filtercompany', 'block_iomad_company_admin');
-$companyselect->formid = 'choosecompany';
 echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
 echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'</br>';
 $mform->display();
@@ -329,4 +328,4 @@ $table->out($CFG->iomad_max_list_courses, true);
 
 echo html_writer::end_tag('div');
 
-echo $OUTPUT->footer(); 
+echo $OUTPUT->footer();
