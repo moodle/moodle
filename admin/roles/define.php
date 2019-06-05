@@ -52,10 +52,12 @@ if ($return === 'manage') {
     $returnurl = new moodle_url('/admin/roles/define.php', array('action'=>'view', 'roleid'=>$roleid));;
 }
 
+admin_externalpage_setup('defineroles', '', array('action' => $action, 'roleid' => $roleid),
+    new moodle_url('/admin/roles/define.php'));
+
 // Check access permissions.
 $systemcontext = context_system::instance();
 require_capability('moodle/role:manage', $systemcontext);
-admin_externalpage_setup('defineroles', '', array('action' => $action, 'roleid' => $roleid), new moodle_url('/admin/roles/define.php'));
 
 // Export role.
 if ($action === 'export') {

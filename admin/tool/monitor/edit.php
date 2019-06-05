@@ -29,7 +29,7 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 
 // Validate course id.
 if (empty($courseid)) {
-    require_login();
+    require_login(null, false);
     $context = context_system::instance();
     $coursename = format_string($SITE->fullname, true, array('context' => $context));
     $PAGE->set_context($context);

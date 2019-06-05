@@ -33,8 +33,7 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 $PAGE->set_url('/admin/antiviruses.php', array('action' => $action, 'antivirus' => $antivirus));
 $PAGE->set_context(context_system::instance());
 
-require_login();
-require_capability('moodle/site:config', context_system::instance());
+require_admin();
 
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageantiviruses";
 

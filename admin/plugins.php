@@ -43,9 +43,8 @@ $confirminstallupdate = optional_param('confirminstallupdate', false, PARAM_BOOL
 // NOTE: do not use admin_externalpage_setup() here because it loads
 //       full admin tree which is not possible during uninstallation.
 
-require_login();
+require_admin();
 $syscontext = context_system::instance();
-require_capability('moodle/site:config', $syscontext);
 
 // URL params we want to maintain on redirects.
 $pageparams = array('updatesonly' => $updatesonly, 'contribonly' => $contribonly);

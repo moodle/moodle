@@ -29,9 +29,8 @@ require('../../../config.php');
 require_once($CFG->libdir.'/cronlib.php');
 
 // Basic security checks.
-require_login();
+require_admin();
 $context = context_system::instance();
-require_capability('moodle/site:config', $context);
 
 // Get task and check the parameter is valid.
 $taskname = required_param('task', PARAM_RAW_TRIMMED);

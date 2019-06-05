@@ -52,7 +52,7 @@ switch ($context->contextlevel) {
     break;
 
     case CONTEXT_COURSECAT:
-        require_login();
+        require_login(null, false);
 
         $recyclebin = new \tool_recyclebin\category_bin($context->instanceid);
         if (!$recyclebin->can_view()) {

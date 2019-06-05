@@ -23,8 +23,7 @@ require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/licenselib.php');
 
-require_login();
-require_capability('moodle/site:config', context_system::instance());
+require_admin();
 
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=managelicenses";
 

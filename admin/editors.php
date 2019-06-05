@@ -15,8 +15,7 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 $PAGE->set_url('/admin/editors.php', array('action'=>$action, 'editor'=>$editor));
 $PAGE->set_context(context_system::instance());
 
-require_login();
-require_capability('moodle/site:config', context_system::instance());
+require_admin();
 
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageeditors";
 

@@ -30,12 +30,12 @@ require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
-// Check permissions.
+admin_externalpage_setup('manageqtypes');
+
 $systemcontext = context_system::instance();
 require_capability('moodle/question:config', $systemcontext);
 $canviewreports = has_capability('report/questioninstances:view', $systemcontext);
 
-admin_externalpage_setup('manageqtypes');
 $thispageurl = new moodle_url('/admin/qtypes.php');
 
 $qtypes = question_bank::get_all_qtypes();

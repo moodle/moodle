@@ -39,7 +39,7 @@ if ($competencyid) {
     $pagecontext = context::instance_by_id($pagecontextid);
 }
 
-require_login();
+require_login(null, false);
 \core_competency\api::require_enabled();
 
 $framework = \core_competency\api::read_framework($id);
