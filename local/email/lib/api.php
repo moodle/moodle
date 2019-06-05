@@ -461,6 +461,9 @@ class EmailTemplate {
                     $supportuser->customheaders['From'] = $fromuser->email;
                 }
                 unset($supportuser->customheaders['template']);
+            } else {
+                $emailtemplate = new EmailTemplate($email->templatename, array('course' => $email->courseid, 'user' => $user, 'company' => $company));
+                $template = $emailtemplate->template;
             }
             if (!empty($supportuser->customheaders['attachment'])) {
                 $attachment = $supportuser->customheaders['attachment'];
