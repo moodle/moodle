@@ -79,24 +79,25 @@ class collections extends moodleform {
         $hasgroups = false;
         if (!empty($groups)) {
             foreach ($groups as $group) {
-                // Assertions or badges.
                 $count = 0;
-
+                // Handle attributes based on backpack's supported version.
                 if ($sitebackpack->apiversion == OPEN_BADGES_V2) {
+                    // OpenBadges v2 data attributes.
                     if (empty($group->published)) {
                         // Only public collections.
                         continue;
                     }
-                }
-                if (!empty($group->assertions)) {
+
+                    // Get the number of badges associated with this collection from the assertions array returned.
                     $count = count($group->assertions);
-                }
-                if (!empty($group->badges)) {
-                    $count = count($group->badges);
-                }
-                if (!empty($group->groupId)) {
+                } else {
+                    // OpenBadges v1 data attributes.
                     $group->entityId = $group->groupId;
+
+                    // Get the number of badges associated with this collection. In that case, the number is returned directly.
+                    $count = $group->badges;
                 }
+
                 if (!$hasgroups) {
                     $mform->addElement('static', 'selectgroup', '', get_string('selectgroup_start', 'badges'));
                 }
