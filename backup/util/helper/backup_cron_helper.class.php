@@ -69,6 +69,40 @@ abstract class backup_cron_automated_helper {
     const STORAGE_COURSE_AND_DIRECTORY = 2;
 
     /**
+     * Get the courses to backup.
+     *
+     * When there are multiple courses to backup enforce some order to the record set.
+     * The following is the preference order.
+     * First backup courses that do not have an entry in backup_courses first,
+     * as they are likely new and never been backed up. Do the oldest modified courses first.
+     * Then backup courses that have previously been backed up starting with the oldest next start time.
+     *
+     * @param null|int $now timestamp to use in course selection.
+     * @return moodle_recordset The recordset of matching courses.
+     */
+    protected static function get_courses($now = null) {
+        global $DB;
+        if ($now == null) {
+            $now = time();
+        }
+
+        $sql = 'SELECT c.*,
+                       COALESCE(bc.nextstarttime, 1) nextstarttime
+                  FROM {course} c
+             LEFT JOIN {backup_courses} bc ON bc.courseid = c.id
+                 WHERE bc.nextstarttime IS NULL OR bc.nextstarttime < ?
+              ORDER BY nextstarttime ASC,
+                       c.timemodified ASC';
+
+        $params = array(
+            $now,  // Only get courses where the backup start time is in the past.
+        );
+        $rs = $DB->get_recordset_sql($sql, $params);
+
+        return $rs;
+    }
+
+    /**
      * Runs the automated backups if required
      *
      * @global moodle_database $DB
@@ -127,7 +161,7 @@ abstract class backup_cron_automated_helper {
                 $showtime = date('r', $nextstarttime);
             }
 
-            $rs = $DB->get_recordset('course');
+            $rs = self::get_courses($now); // Get courses to backup.
             foreach ($rs as $course) {
                 $backupcourse = $DB->get_record('backup_courses', array('courseid' => $course->id));
                 if (!$backupcourse) {
