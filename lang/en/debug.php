@@ -49,6 +49,7 @@ $string['nomodules'] = 'No modules found!!';
 $string['nopageclass'] = 'Imported {$a} but found no page classes';
 $string['noreports'] = 'No reports accessible';
 $string['notables'] = 'No tables!';
+$string['outputbuffer'] = 'Output buffer';
 $string['phpvaroff'] = 'The PHP server variable \'{$a->name}\' should be Off - {$a->link}';
 $string['phpvaron'] = 'The PHP server variable \'{$a->name}\' is not turned On - {$a->link}';
 $string['sessionmissing'] = '{$a} object missing from session';
