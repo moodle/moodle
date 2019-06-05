@@ -5749,6 +5749,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      */
     public function test_get_individual_conversations_between_users_no_user_sets() {
         $this->assertEmpty(\core_message\api::get_individual_conversations_between_users([]));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -5763,6 +5764,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             [null],
             \core_message\api::get_individual_conversations_between_users([[$user1->id, $user2->id]])
         );
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -5783,6 +5785,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             [$user2->id, $user3->id],
             [$user1->id, $user3->id]
         ]);
+        $this->assertDebuggingCalled();
 
         $result = array_map(function($result) {
             if ($result) {
@@ -5817,6 +5820,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             [$user2->id, $user3->id],
             [$user1->id, $user3->id]
         ]);
+        $this->assertDebuggingCalled();
 
         $result = array_map(function($result) {
             if ($result) {
@@ -5851,6 +5855,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             [$user2->id, $user3->id],
             [$user1->id, $user3->id]
         ]);
+        $this->assertDebuggingCalled();
 
         $result = array_map(function($result) {
             if ($result) {
@@ -5870,6 +5875,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             [$user1->id, $user2->id],
             [$user1->id, $user3->id]
         ]);
+        $this->assertDebuggingCalled();
 
         $result = array_map(function($result) {
             if ($result) {

@@ -2386,10 +2386,14 @@ class api {
     public static function get_conversation_between_users(array $userids) {
         global $DB;
 
-        $conversations = self::get_individual_conversations_between_users([$userids]);
-        $conversation = $conversations[0];
+        if (empty($userids)) {
+            return false;
+        }
 
-        if ($conversation) {
+        $hash = helper::get_conversation_hash($userids);
+
+        if ($conversation = $DB->get_record('message_conversations', ['type' => self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                'convhash' => $hash])) {
             return $conversation->id;
         }
 
@@ -2415,11 +2419,15 @@ class api {
      *
      * Where null is returned for the pairing of [3, 4] since no record exists.
      *
+     * @deprecated since 3.8
      * @param array $useridsets An array of arrays where the inner array is the set of user ids
      * @return stdClass[] Array of conversation records
      */
     public static function get_individual_conversations_between_users(array $useridsets) : array {
         global $DB;
+
+        debugging('\core_message\api::get_individual_conversations_between_users is deprecated and no longer used',
+            DEBUG_DEVELOPER);
 
         if (empty($useridsets)) {
             return [];

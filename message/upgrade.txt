@@ -1,6 +1,11 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+
+* The following methods have been deprecated and should not be used any more:
+  - \core_message\api::get_individual_conversations_between_users()
+
 === 3.7 ===
 
 * The message/index.php page used to support viewing another user's messages (if you had the right capabilities) by
