@@ -253,7 +253,10 @@ EOD;
         }
 
         $record['timemodified'] = $record['timecreated'];
-        $record['lastip'] = '0.0.0.0';
+
+        if (!isset($record['lastip'])) {
+            $record['lastip'] = '0.0.0.0';
+        }
 
         if ($record['deleted']) {
             $delname = $record['email'].'.'.time();

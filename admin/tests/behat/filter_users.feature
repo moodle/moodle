@@ -6,11 +6,11 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email | auth | confirmed |
-      | user1 | User | One | one@example.com | manual | 0 |
-      | user2 | User | Two | two@example.com | ldap | 1 |
-      | user3 | User | Three | three@example.com | manual | 1 |
-      | user4 | User | Four | four@example.com | ldap | 0 |
+      | username | firstname | lastname | email | auth | confirmed | lastip |
+      | user1 | User | One | one@example.com | manual | 0 | 127.0.1.1 |
+      | user2 | User | Two | two@example.com | ldap | 1 | 0.0.0.0 |
+      | user3 | User | Three | three@example.com | manual | 1 | 0.0.0.0 |
+      | user4 | User | Four | four@example.com | ldap | 0 | 127.0.1.2 |
     And the following "cohorts" exist:
       | name | idnumber |
       | Cohort 1 | CH1 |
@@ -81,4 +81,26 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
     And I should not see "User One"
     And I should not see "User Two"
     And I should not see "User Three"
+    And I should see "User Four"
+
+  Scenario: Filter user accounts by last IP address
+    When I set the following fields to these values:
+      | id_lastip | 127.0.1.1 |
+    And I press "Add filter"
+    Then I should see "User One"
+    And I should not see "User Two"
+    And I should not see "User Three"
+    And I should not see "User Four"
+    And I press "Remove all filters"
+    And I set the following fields to these values:
+      | id_lastip | 127.0.1.2 |
+    And I press "Add filter"
+    And I should not see "User One"
+    And I should not see "User Two"
+    And I should not see "User Three"
+    And I should see "User Four"
+    And I press "Remove all filters"
+    And I should see "User One"
+    And I should see "User Two"
+    And I should see "User Three"
     And I should see "User Four"

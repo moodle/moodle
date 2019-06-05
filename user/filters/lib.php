@@ -68,7 +68,7 @@ class user_filtering {
                                 'country' => 1, 'confirmed' => 1, 'suspended' => 1, 'profile' => 1, 'courserole' => 1,
                                 'anycourses' => 1, 'systemrole' => 1, 'cohort' => 1, 'firstaccess' => 1, 'lastaccess' => 1,
                                 'neveraccessed' => 1, 'timemodified' => 1, 'nevermodified' => 1, 'auth' => 1, 'mnethostid' => 1,
-                                'idnumber' => 1);
+                                'idnumber' => 1, 'lastip' => 1);
         }
 
         $this->_fields  = array();
@@ -154,6 +154,7 @@ class user_filtering {
             case 'nevermodified': return new user_filter_checkbox('nevermodified', get_string('nevermodified', 'filters'), $advanced, array('timemodified', 'timecreated'), array('timemodified_sck', 'timemodified_eck'));
             case 'cohort':      return new user_filter_cohort($advanced);
             case 'idnumber':    return new user_filter_text('idnumber', get_string('idnumber'), $advanced, 'idnumber');
+            case 'lastip':    return new user_filter_text('lastip', get_string('lastip'), $advanced, 'lastip');
             case 'auth':
                 $plugins = core_component::get_plugin_list('auth');
                 $choices = array();
