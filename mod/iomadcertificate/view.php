@@ -63,6 +63,8 @@ if (!has_capability('mod/iomadcertificate:viewother',context_system::instance())
     }
 }
 
+$PAGE->set_url('/mod/iomadcertificate/view.php', array('id' => $cm->id));
+$PAGE->set_cm($cm);
 
 $event = \mod_iomadcertificate\event\course_module_viewed::create(array(
     'objectid' => $iomadcertificate->id,
@@ -77,9 +79,6 @@ $completion->set_module_viewed($cm);
 
 // Initialize $PAGE, compute blocks
 if ($userid == $USER->id || empty ($userid)) {
-    $PAGE->set_url('/mod/iomadcertificate/view.php', array('id' => $cm->id));
-    $PAGE->set_context($context);
-    $PAGE->set_cm($cm);
     $PAGE->set_title(format_string($iomadcertificate->name));
     $PAGE->set_heading(format_string($course->fullname));
 }
