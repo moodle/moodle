@@ -42,19 +42,6 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
 class behat_deprecated extends behat_base {
 
     /**
-     * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
-     * @Given /^I go to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
-     * @param string $gradepath
-     * @deprecated since Moodle 3.3 MDL-57282 - please do not use this step any more.
-     */
-    public function i_go_to_in_the_course_gradebook($gradepath) {
-        $alternative = 'I navigate to "' . $this->escape($gradepath) . '"  in the course gradebook';
-        $this->deprecated_message($alternative);
-
-        $this->execute('behat_grade::i_navigate_to_in_the_course_gradebook', $gradepath);
-    }
-
-    /**
      * Click link in navigation tree that matches the text in parentnode/s (seperated using greater-than character if more than one)
      *
      * @throws ExpectationException
