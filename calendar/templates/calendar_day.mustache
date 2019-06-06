@@ -32,9 +32,7 @@
     }
 }}
 <div id="calendar-day-{{uniqid}}" data-template="core_calendar/day_detailed">
-    <div class="mb-5">
-        {{> core_calendar/view_selector}}
-    </div>
+    {{> core_calendar/header}}
     {{> core_calendar/day_detailed}}
 </div>
 {{#js}}

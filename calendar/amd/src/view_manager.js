@@ -134,7 +134,7 @@ define([
                                 return window.history.pushState({}, '', '?view=day');
                             }).fail(Notification.exception);
                     } else if (view == 'upcoming') {
-                        reloadCurrentUpcoming(root, courseId, categoryId, 'core_calendar/calendar_upcoming')
+                        reloadCurrentUpcoming(root, courseId, categoryId, root, 'core_calendar/calendar_upcoming')
                             .then(function() {
                                 return window.history.pushState({}, '', '?view=upcoming');
                             }).fail(Notification.exception);
@@ -353,13 +353,15 @@ define([
          * @param {Number} courseId The course id.
          * @param {Number} categoryId The id of the category whose events are shown
          * @param {String} template The template to be rendered.
+         * @param {object} target The element being replaced. If not specified, the calendarwrapper is used.
          * @return {promise}
          */
-        var reloadCurrentUpcoming = function(root, courseId, categoryId, template) {
+        var reloadCurrentUpcoming = function(root, courseId, categoryId, target, template) {
             startLoading(root);
 
-            var target = root.find(CalendarSelectors.wrapper);
+            target = target || root.find(CalendarSelectors.wrapper);
             template = template || root.attr('data-template');
+
             if (typeof courseId === 'undefined') {
                 courseId = root.find(CalendarSelectors.wrapper).data('courseid');
             }
