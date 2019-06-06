@@ -92,7 +92,7 @@ abstract class backup_cron_automated_helper {
              LEFT JOIN {backup_courses} bc ON bc.courseid = c.id
                  WHERE bc.nextstarttime IS NULL OR bc.nextstarttime < ?
               ORDER BY nextstarttime ASC,
-                       c.timemodified ASC';
+                       c.timemodified DESC';
 
         $params = array(
             $now,  // Only get courses where the backup start time is in the past.
