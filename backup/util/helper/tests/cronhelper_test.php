@@ -374,7 +374,7 @@ class backup_cron_helper_testcase extends advanced_testcase {
         global $DB;
 
         // Create test courses.
-        $course1 = $this->getDataGenerator()->create_course(array('timecreated' => 1551402000));
+        $course1 = $this->getDataGenerator()->create_course(array('timecreated' => 1553402000)); // Newest.
         $course2 = $this->getDataGenerator()->create_course(array('timecreated' => 1552179600));
         $course3 = $this->getDataGenerator()->create_course(array('timecreated' => 1552179600));
         $course4 = $this->getDataGenerator()->create_course(array('timecreated' => 1552179600));
@@ -417,10 +417,10 @@ class backup_cron_helper_testcase extends advanced_testcase {
         }
         $courseset->close();
 
-        // First should be course 1, it is the oldest modified without a backup.
+        // First should be course 1, it is the more recently modified without a backup.
         $this->assertEquals($course1->id, $coursearray[0]);
 
-        // Second should be course 2, it is the next oldest modified without a backup.
+        // Second should be course 2, it is the next more recently modified without a backup.
         $this->assertEquals($course2->id, $coursearray[1]);
 
         // Third should be course 3, it is the course with the oldest backup.
@@ -454,10 +454,10 @@ class backup_cron_helper_testcase extends advanced_testcase {
         $courseset->close();
 
         // Should only be two courses.
-        // First should be course 1, it is the oldest modified without a backup.
+        // First should be course 1, it is the more recently modified without a backup.
         $this->assertEquals($course1->id, $coursearray[0]);
 
-        // Second should be course 2, it is the next oldest modified without a backup.
+        // Second should be course 2, it is the next more recently modified without a backup.
         $this->assertEquals($course2->id, $coursearray[1]);
     }
 
