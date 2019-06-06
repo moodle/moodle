@@ -677,6 +677,22 @@ $functions = array(
         'loginrequired' => false,
         'ajax' => true,
     ),
+    'core_session_touch' => array(
+        'classname' => 'core\session\external',
+        'methodname' => 'touch_session',
+        'description' => 'Keep the users session alive',
+        'type' => 'read',
+        'loginrequired' => true,
+        'ajax' => true,
+    ),
+    'core_session_time_remaining' => array(
+        'classname' => 'core\session\external',
+        'methodname' => 'time_remaining',
+        'description' => 'Count the seconds remaining in this session',
+        'type' => 'read',
+        'loginrequired' => true,
+        'ajax' => true,
+    ),
     'core_files_get_files' => array(
         'classname' => 'core_files_external',
         'methodname' => 'get_files',

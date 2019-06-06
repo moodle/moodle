@@ -65,6 +65,10 @@ if ($mform->is_cancelled()) {
     redirect($returnurl, $warning, null, \core\output\notification::NOTIFY_ERROR);
 }
 
+// Try to keep the session alive on this page as it may take some time
+// before significant interaction happens with the server.
+\core\session\manager::keepalive();
+
 echo $OUTPUT->header();
 $mform->display();
 echo $OUTPUT->footer();

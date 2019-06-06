@@ -282,16 +282,9 @@ if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.php')) 
     include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.php');
 }
 
-// Add the checknet system to keep checking for a connection.
-$PAGE->requires->string_for_js('networkdropped', 'mod_scorm');
-// Build arguments to send to checknet JS.
-$args = array(
-    'message' => array('networkdropped', 'mod_scorm'),
-    'frequency' => 30000, // Frequency of network check.
-    'timeout' => 10000, // Timeout of network check.
-    'maxalerts' => 1 // Max number of alerts to be thrown.
-);
-$PAGE->requires->yui_module('moodle-core-checknet', 'M.core.checknet.init', array($args));
+// Add the keepalive system to keep checking for a connection.
+\core\session\manager::keepalive('networkdropped', 'mod_scorm', 30, 10);
+
 echo $OUTPUT->footer();
 
 // Set the start time of this SCO.
