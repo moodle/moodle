@@ -54,11 +54,13 @@ define([], function() {
         },
         today: '.today',
         day: '[data-region="day"]',
+        calendarMain: '[data-region="calendar"]',
         wrapper: '.calendarwrapper',
         eventItem: '[data-type="event"]',
         links: {
             navLink: '.calendarwrapper .arrow_link',
             eventLink: "[data-region='event-item']",
+            miniDayLink: "[data-region='mini-day-link']",
         },
         containers: {
             loadingIcon: '[data-region="overlay-icon-container"]',

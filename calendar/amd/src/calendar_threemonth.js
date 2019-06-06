@@ -47,7 +47,7 @@ function(
      */
     var registerCalendarEventListeners = function(root) {
         var body = $('body');
-        body.on(CalendarEvents.monthChanged, function(e, year, month, courseId, categoryId) {
+        body.on([CalendarEvents.monthChanged, CalendarEvents.dayChanged], function(e, year, month, courseId, categoryId) {
             // We have to use a queue here because the calling code is decoupled from these listeners.
             // It's possible for the event to be called multiple times before one call is fully resolved.
             root.queue(function(next) {
@@ -117,6 +117,22 @@ function(
                 return $.when(slideUpPromise, slideDownPromise);
             });
         };
+
+        // Listen for a click on the day link in the three month block to load the day view.
+        root.on('click', CalendarSelectors.links.miniDayLink, function(e) {
+
+                var miniDayLink = $(e.target);
+                var year = miniDayLink.data('year'),
+                    month = miniDayLink.data('month'),
+                    day = miniDayLink.text(),
+                    courseId = miniDayLink.data('courseid'),
+                    categoryId = miniDayLink.data('categoryid'),
+                    calendarRoot = $('body').find(CalendarSelectors.calendarMain);
+                CalendarViewManager.refreshDayContent(calendarRoot, year, month, day, courseId, categoryId,
+                    calendarRoot, 'core_calendar/calendar_day');
+                e.preventDefault();
+                window.history.pushState({}, '', '?view=day');
+        });
     };
 
     return {
