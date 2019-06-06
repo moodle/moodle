@@ -297,7 +297,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
 
         $select = html_writer::label($label, 'course', false, ['class' => 'mr-1']);
-        $select .= html_writer::select($courseoptions, 'course', $selected, false, ['class' => 'cal_courses_flt']);
+        $select .= html_writer::select($courseoptions, 'course', $selected, false,
+                ['class' => 'cal_courses_flt mr-auto']);
 
         return $select;
     }

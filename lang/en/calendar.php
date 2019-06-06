@@ -46,6 +46,7 @@ $string['course'] = 'Course';
 $string['courseevent'] = 'Course event';
 $string['courseevents'] = 'Course events';
 $string['categoryevents'] = 'Category events';
+$string['coursecalendar'] = '{$a} calendar';
 $string['courses'] = 'Courses';
 $string['customexport'] = 'Custom range ({$a->timestart} - {$a->timeend})';
 $string['daily'] = 'Daily';

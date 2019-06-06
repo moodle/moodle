@@ -11919,6 +11919,9 @@ table.calendartable caption {
   .description-content > p {
     margin: 0; }
 
+.cal_courses_flt {
+  color: #868e96; }
+
 /* course.less */
 /* COURSE CONTENT */
 .section-modchooser-link img {
