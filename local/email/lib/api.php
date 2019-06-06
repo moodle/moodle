@@ -434,37 +434,39 @@ class EmailTemplate {
 
             if (!empty($supportuser->customheaders['template'])) {
                 $template = $supportuser->customheaders['template'];
-                if (!empty($template->replyto)) {
-                    $replytouser = self::get_user($template->replyto);
-                    $supportuser->customheaders['From'] = $replytouser->email;
-                    $supportuser->customheaders['Reply-to'] = $replytouser->email;
-                }
-                if (!empty($template->replytoother) && validate_email($template->replytoother)) {
-                    $supportuser->customheaders['From'] = $template->replytoother;
-                    $supportuser->customheaders['Reply-to'] = $template->replytoother;
-                }
-                if (!empty($template->emailfromother) && validate_email($template->emailfromother) ) {
-                    $supportuser->email = $template->emailfromother;
-                    $supportuser->customheaders['From'] = $template->emailfromother;
-                }
-                if (!empty($template->emailfromothername)) {
-                    if ($template->emailfromothername == "{Company_Name}") {
-                        $supportuser->firstname = $company->get_name();
-                    } else {
-                        $supportuser->firstname = $template->emailfromothername;
-                    }
-                }
-                if (!empty($template->emailfrom)) {
-                    $fromuser = self::get_user($template->emailfrom);
-                    $supportuser->email = $fromuser->email;
-                    $supportuser->firstname = $fromuser->firstname;
-                    $supportuser->customheaders['From'] = $fromuser->email;
-                }
                 unset($supportuser->customheaders['template']);
             } else {
                 $emailtemplate = new EmailTemplate($email->templatename, array('course' => $email->courseid, 'user' => $user, 'company' => $company));
                 $template = $emailtemplate->template;
             }
+
+            if (!empty($template->replyto)) {
+                $replytouser = self::get_user($template->replyto);
+                $supportuser->customheaders['From'] = $replytouser->email;
+                $supportuser->customheaders['Reply-to'] = $replytouser->email;
+            }
+            if (!empty($template->replytoother) && validate_email($template->replytoother)) {
+                $supportuser->customheaders['From'] = $template->replytoother;
+                $supportuser->customheaders['Reply-to'] = $template->replytoother;
+            }
+            if (!empty($template->emailfromother) && validate_email($template->emailfromother) ) {
+                $supportuser->email = $template->emailfromother;
+                $supportuser->customheaders['From'] = $template->emailfromother;
+            }
+            if (!empty($template->emailfromothername)) {
+                if ($template->emailfromothername == "{Company_Name}") {
+                    $supportuser->firstname = $company->get_name();
+                } else {
+                    $supportuser->firstname = $template->emailfromothername;
+                }
+            }
+            if (!empty($template->emailfrom)) {
+                $fromuser = self::get_user($template->emailfrom);
+                $supportuser->email = $fromuser->email;
+                $supportuser->firstname = $fromuser->firstname;
+                $supportuser->customheaders['From'] = $fromuser->email;
+            }
+
             if (!empty($supportuser->customheaders['attachment'])) {
                 $attachment = $supportuser->customheaders['attachment'];
                 unset($supportuser->customheaders['attachment']);
