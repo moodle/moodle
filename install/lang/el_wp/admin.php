@@ -41,3 +41,4 @@ $string['cliunknowoption'] = 'Μη αναγνωρίσιμες επιλογές: 
 $string['cliyesnoprompt'] = 'πατήστε y (σημαίνει yes=ναι) ή πατήστε n (σημαίνει no=όχι)';
 $string['environmentrequireinstall'] = 'απαιτείται να εγκατασταθεί/ ενεργοποιηθεί';
 $string['environmentrequireversion'] = 'απαιτείται η έκδοση {$a->needed} ενώ εσείς έχετε την {$a->current}';
+$string['upgradekeyset'] = 'Κλειδί αναβάθμισης (αφήστε κενό για να μην το ορίσετε)';
