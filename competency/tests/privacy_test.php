@@ -2576,7 +2576,7 @@ class core_competency_privacy_testcase extends provider_testcase {
      */
     protected function allow_anyone_to_comment_anywhere() {
         global $DB;
-        $roleid = $DB->get_field('role', 'id', ['archetype' => 'user'], MUST_EXIST);
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'user'], MUST_EXIST);
         assign_capability('moodle/competency:plancomment', CAP_ALLOW, $roleid, SYSCONTEXTID, true);
         assign_capability('moodle/competency:planmanage', CAP_ALLOW, $roleid, SYSCONTEXTID, true);
         assign_capability('moodle/competency:planmanagedraft', CAP_ALLOW, $roleid, SYSCONTEXTID, true);

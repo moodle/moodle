@@ -58,7 +58,7 @@ if (!during_initial_install()) { //do not use during installation
         foreach ($roles as $role) {
             if (empty($role->archetype) or $role->archetype === 'guest' or $role->archetype === 'frontpage' or $role->archetype === 'student') {
                 $options[$role->id] = $role->localname;
-                if ($role->archetype === 'frontpage') {
+                if ($role->archetype === 'frontpage' && !$defaultfrontpageroleid) {
                     $defaultfrontpageroleid = $role->id;
                 }
             }
