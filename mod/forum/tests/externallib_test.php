@@ -1691,6 +1691,92 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         }
     }
 
+    /**
+     * Test add_discussion_post and auto subscription to a discussion.
+     */
+    public function test_add_discussion_post_subscribe_discussion() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        self::setAdminUser();
+
+        $user = self::getDataGenerator()->create_user();
+        $admin = get_admin();
+        // Create course to add the module.
+        $course = self::getDataGenerator()->create_course(array('groupmode' => VISIBLEGROUPS, 'groupmodeforce' => 0));
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        // Forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+        $cm = get_coursemodule_from_id('forum', $forum->cmid, 0, false, MUST_EXIST);
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $admin->id;
+        $record->forum = $forum->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Try to post as user.
+        self::setUser($user);
+        // Enable auto subscribe discussion.
+        $USER->autosubscribe = true;
+        // Add a discussion post in a forum discussion where the user is not subscribed (auto-subscribe preference enabled).
+        mod_forum_external::add_discussion_post($discussion1->firstpost, 'some subject', 'some text here...');
+
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // We receive the discussion and the post.
+        $this->assertEquals(2, count($posts['posts']));
+        // The user should be subscribed to the discussion after adding a discussion post.
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion1->id, $cm));
+
+        // Disable auto subscribe discussion.
+        $USER->autosubscribe = false;
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion1->id, $cm));
+        // Add a discussion post in a forum discussion where the user is subscribed (auto-subscribe preference disabled).
+        mod_forum_external::add_discussion_post($discussion1->firstpost, 'some subject 1', 'some text here 1...');
+
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // We receive the discussion and the post.
+        $this->assertEquals(3, count($posts['posts']));
+        // The user should still be subscribed to the discussion after adding a discussion post.
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion1->id, $cm));
+
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion2->id, $cm));
+        // Add a discussion post in a forum discussion where the user is not subscribed (auto-subscribe preference disabled).
+        mod_forum_external::add_discussion_post($discussion2->firstpost, 'some subject 2', 'some text here 2...');
+
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion2->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // We receive the discussion and the post.
+        $this->assertEquals(2, count($posts['posts']));
+        // The user should still not be subscribed to the discussion after adding a discussion post.
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion2->id, $cm));
+
+        // Passing a value for the discussionsubscribe option parameter.
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion2->id, $cm));
+        // Add a discussion post in a forum discussion where the user is not subscribed (auto-subscribe preference disabled),
+        // and the option parameter 'discussionsubscribe' => true in the webservice.
+        $option = array('name' => 'discussionsubscribe', 'value' => true);
+        $options[] = $option;
+        mod_forum_external::add_discussion_post($discussion2->firstpost, 'some subject 2', 'some text here 2...',
+            $options);
+
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion2->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // We receive the discussion and the post.
+        $this->assertEquals(3, count($posts['posts']));
+        // The user should now be subscribed to the discussion after adding a discussion post.
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion2->id, $cm));
+    }
+
     /*
      * Test add_discussion. A basic test since all the API functions are already covered by unit tests.
      */
