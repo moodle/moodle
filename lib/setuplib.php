@@ -610,49 +610,24 @@ function get_exception_info($ex) {
 }
 
 /**
- * Generate a uuid.
+ * Generate a V4 UUID.
  *
- * Unique is hard. Very hard. Attempt to use the PECL UUID functions if available, and if not then revert to
+ * Unique is hard. Very hard. Attempt to use the PECL UUID function if available, and if not then revert to
  * constructing the uuid using mt_rand.
  *
  * It is important that this token is not solely based on time as this could lead
  * to duplicates in a clustered environment (especially on VMs due to poor time precision).
  *
+ * @see https://tools.ietf.org/html/rfc4122
+ *
+ * @deprecated since Moodle 3.8 MDL-61038 - please do not use this function any more.
+ * @see \core\uuid::generate()
+ *
  * @return string The uuid.
  */
 function generate_uuid() {
-    $uuid = '';
-
-    if (function_exists("uuid_create")) {
-        $context = null;
-        uuid_create($context);
-
-        uuid_make($context, UUID_MAKE_V4);
-        uuid_export($context, UUID_FMT_STR, $uuid);
-    } else {
-        // Fallback uuid generation based on:
-        // "http://www.php.net/manual/en/function.uniqid.php#94959".
-        $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-
-            // 32 bits for "time_low".
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-
-            // 16 bits for "time_mid".
-            mt_rand(0, 0xffff),
-
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4.
-            mt_rand(0, 0x0fff) | 0x4000,
-
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1.
-            mt_rand(0, 0x3fff) | 0x8000,
-
-            // 48 bits for "node".
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
-    }
-    return trim($uuid);
+    debugging('generate_uuid() is deprecated. Please use \core\uuid::generate() instead.', DEBUG_DEVELOPER);
+    return \core\uuid::generate();
 }
 
 /**
@@ -1513,7 +1488,7 @@ function make_unique_writable_directory($basedir, $exceptiononerror = true) {
 
     do {
         // Generate a new (hopefully unique) directory name.
-        $uniquedir = $basedir . DIRECTORY_SEPARATOR . generate_uuid();
+        $uniquedir = $basedir . DIRECTORY_SEPARATOR . \core\uuid::generate();
     } while (
             // Ensure that basedir is still writable - if we do not check, we could get stuck in a loop here.
             is_writable($basedir) &&
