@@ -156,7 +156,7 @@ class models_list implements \renderable, \templatable {
                     $modeldata->timesplittinghelp = $helpicon->export_for_template($output);
                 } else {
                     // We really want to encourage developers to add help to their time splitting methods.
-                    debugging("The time splitting method '{$modeldata->timesplitting}' should include a '{$identifier}_help'
+                    debugging("The analysis interval '{$modeldata->timesplitting}' should include a '{$identifier}_help'
                         string to describe its purpose.", DEBUG_DEVELOPER);
                 }
             } else {
@@ -216,10 +216,11 @@ class models_list implements \renderable, \templatable {
 
             // Get predictions.
             if (!$onlycli && $modeldata->enabled && !empty($modeldata->timesplitting)) {
-                $urlparams['action'] = 'getpredictions';
+                $urlparams['action'] = 'scheduledanalysis';
                 $url = new \moodle_url('model.php', $urlparams);
-                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/notifications',
-                    get_string('getpredictions', 'tool_analytics')), get_string('getpredictions', 'tool_analytics'));
+                $icon = new \action_menu_link_secondary($url,
+                    new \pix_icon('i/notifications', get_string('executescheduledanalysis', 'tool_analytics')),
+                    get_string('executescheduledanalysis', 'tool_analytics'));
                 $actionsmenu->add($icon);
             }
 

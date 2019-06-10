@@ -45,8 +45,8 @@ switch ($action) {
     case 'evaluate':
         $title = get_string('evaluatemodel', 'tool_analytics');
         break;
-    case 'getpredictions':
-        $title = get_string('getpredictions', 'tool_analytics');
+    case 'scheduledanalysis':
+        $title = get_string('analysis', 'tool_analytics');
         break;
     case 'log':
         $title = get_string('viewlog', 'tool_analytics');
@@ -200,7 +200,7 @@ switch ($action) {
         echo $renderer->render_evaluate_results($results, $model->get_analyser()->get_logs());
         break;
 
-    case 'getpredictions':
+    case 'scheduledanalysis':
         confirm_sesskey();
 
         if ($onlycli) {

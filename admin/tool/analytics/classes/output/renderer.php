@@ -90,9 +90,9 @@ class renderer extends plugin_renderer_base {
                 $langstrdata = (object)array('name' => $timesplitting->get_name(), 'id' => $timesplittingid);
 
                 if (CLI_SCRIPT) {
-                    $output .= $OUTPUT->heading(get_string('getpredictionsresultscli', 'tool_analytics', $langstrdata), 3);
+                    $output .= $OUTPUT->heading(get_string('scheduledanalysisresultscli', 'tool_analytics', $langstrdata), 3);
                 } else {
-                    $output .= $OUTPUT->heading(get_string('getpredictionsresults', 'tool_analytics', $langstrdata), 3);
+                    $output .= $OUTPUT->heading(get_string('scheduledanalysisresults', 'tool_analytics', $langstrdata), 3);
                 }
             }
 
