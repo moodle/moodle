@@ -28,67 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-
-/**
- * Subclass of quiz_attempt to allow faking of the page layout.
- *
- * @copyright 2014 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_quiz_attempt_testable extends quiz_attempt {
-    /** @var array list of slots to treat as if they contain descriptions in the fake layout. */
-    protected $infos = array();
-
-    /**
-     * Set a fake page layout. Used when we test URL generation.
-     * @param int $id assumed attempt id.
-     * @param string $layout layout to set. Like quiz attempt.layout. E.g. '1,2,0,3,4,0,'.
-     * @param array $infos slot numbers which contain 'descriptions', or other non-questions.
-     * @return quiz_attempt attempt object for use in unit tests.
-     */
-    public static function setup_fake_attempt_layout($id, $layout, $infos = array()) {
-        $attempt = new stdClass();
-        $attempt->id = $id;
-        $attempt->layout = $layout;
-
-        $course = new stdClass();
-        $quiz = new stdClass();
-        $cm = new stdClass();
-        $cm->id = 0;
-
-        $attemptobj = new self($attempt, $quiz, $cm, $course, false);
-
-        $attemptobj->slots = array();
-        foreach (explode(',', $layout) as $slot) {
-            if ($slot == 0) {
-                continue;
-            }
-            $attemptobj->slots[$slot] = new stdClass();
-            $attemptobj->slots[$slot]->slot = $slot;
-            $attemptobj->slots[$slot]->requireprevious = 0;
-            $attemptobj->slots[$slot]->questionid = 0;
-        }
-
-        $attemptobj->sections = array();
-        $attemptobj->sections[0] = new stdClass();
-        $attemptobj->sections[0]->heading = '';
-        $attemptobj->sections[0]->firstslot = 1;
-        $attemptobj->sections[0]->shufflequestions = 0;
-
-        $attemptobj->infos = $infos;
-        $attemptobj->link_sections_and_slots();
-        $attemptobj->determine_layout();
-        $attemptobj->number_questions();
-
-        return $attemptobj;
-    }
-
-    public function is_real_question($slot) {
-        return !in_array($slot, $this->infos);
-    }
-}
-
-
 /**
  * Tests for the quiz_attempt class.
  *
@@ -96,28 +35,72 @@ class mod_quiz_attempt_testable extends quiz_attempt {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_attempt_testcase extends advanced_testcase {
+
+    /**
+     * Create quiz and attempt data with layout.
+     *
+     * @param string $layout layout to set. Like quiz attempt.layout. E.g. '1,2,0,3,4,0,'.
+     * @return quiz_attempt the new quiz_attempt object
+     */
+    protected function create_quiz_and_attempt_with_layout($layout) {
+        $this->resetAfterTest(true);
+
+        // Make a user to do the quiz.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        // Make a quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id,
+            'grade' => 100.0, 'sumgrades' => 2, 'layout' => $layout]);
+
+        $quizobj = quiz::create($quiz->id, $user->id);
+
+
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+
+        $page = 1;
+        foreach (explode(',', $layout) as $slot) {
+            if ($slot == 0) {
+                $page += 1;
+                continue;
+            }
+
+            $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+            quiz_add_quiz_question($question->id, $quiz, $page);
+        }
+
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        return quiz_attempt::create($attempt->id);
+    }
+
     /**
      * Test the functions quiz_update_open_attempts() and get_list_of_overdue_attempts()
      */
     public function test_attempt_url() {
-        $attempt = mod_quiz_attempt_testable::setup_fake_attempt_layout(
-                123, '1,2,0,3,4,0,5,6,0');
-
-        // Attempt pages.
-        $this->assertEquals(new moodle_url(
-                '/mod/quiz/attempt.php?attempt=123&cmid=0'),
-                $attempt->attempt_url());
+        $attempt = $this->create_quiz_and_attempt_with_layout('1,2,0,3,4,0,5,6,0');
+        $attemptid = $attempt->get_attempt()->id;
+        $cmid = $attempt->get_cmid();
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/attempt.php?attempt=123&page=2&cmid=0'),
+                '/mod/quiz/attempt.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->attempt_url(null, 2));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/attempt.php?attempt=123&page=1&cmid=0#'),
+                '/mod/quiz/attempt.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid . '#'),
                 $attempt->attempt_url(3));
 
+        $questionattempt = $attempt->get_question_attempt(4);
+        $expecteanchor = '#' . $questionattempt->get_outer_question_div_unique_id();
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/attempt.php?attempt=123&page=1&cmid=0#q4'),
+                '/mod/quiz/attempt.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid . $expecteanchor),
                 $attempt->attempt_url(4));
 
         $this->assertEquals(new moodle_url(
@@ -128,74 +111,72 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
                 '#'),
                 $attempt->attempt_url(3, -1, 1));
 
-        $this->assertEquals(new moodle_url(
-                '#q4'),
-                $attempt->attempt_url(4, -1, 1));
+        $questionattempt = $attempt->get_question_attempt(4);
+        $expecteanchor = '#' . $questionattempt->get_outer_question_div_unique_id();
+        $this->assertEquals(new moodle_url($expecteanchor), $attempt->attempt_url(4, -1, 1));
 
         // Summary page.
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/summary.php?attempt=123&cmid=0'),
+                '/mod/quiz/summary.php?attempt=' . $attemptid . '&cmid=' . $cmid),
                 $attempt->summary_url());
 
         // Review page.
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&cmid=' . $cmid),
                 $attempt->review_url());
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=2&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->review_url(null, 2));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=1&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid),
                 $attempt->review_url(3, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=1&cmid=0#q4'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid . $expecteanchor),
                 $attempt->review_url(4, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&cmid=' . $cmid),
                 $attempt->review_url(null, 2, true));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&cmid=' . $cmid),
                 $attempt->review_url(1, -1, true));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=2&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->review_url(null, 2, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&showall=0&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&showall=0&cmid=' . $cmid),
                 $attempt->review_url(null, 0, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&showall=0&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&showall=0&cmid=' . $cmid),
                 $attempt->review_url(1, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=1&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid),
                 $attempt->review_url(3, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=2&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->review_url(null, 2));
 
-        $this->assertEquals(new moodle_url(
-                '#'),
-                $attempt->review_url(null, -1, null, 0));
+        $this->assertEquals(new moodle_url('#'), $attempt->review_url(null, -1, null, 0));
 
-        $this->assertEquals(new moodle_url(
-                '#q3'),
-                $attempt->review_url(3, -1, null, 0));
 
-        $this->assertEquals(new moodle_url(
-                '#q4'),
-                $attempt->review_url(4, -1, null, 0));
+        $questionattempt = $attempt->get_question_attempt(3);
+        $expecteanchor = '#' . $questionattempt->get_outer_question_div_unique_id();
+        $this->assertEquals(new moodle_url($expecteanchor), $attempt->review_url(3, -1, null, 0));
 
-        $this->assertEquals(new moodle_url(
-                '#'),
+        $questionattempt = $attempt->get_question_attempt(4);
+        $expecteanchor = '#' . $questionattempt->get_outer_question_div_unique_id();
+        $this->assertEquals(new moodle_url(  $expecteanchor), $attempt->review_url(4, -1, null, 0));
+
+        $this->assertEquals(new moodle_url('#'),
                 $attempt->review_url(null, 2, true, 0));
 
         $this->assertEquals(new moodle_url(
@@ -203,7 +184,7 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
                 $attempt->review_url(1, -1, true, 0));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=2&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->review_url(null, 2, false, 0));
 
         $this->assertEquals(new moodle_url(
@@ -215,70 +196,75 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
                 $attempt->review_url(1, -1, false, 0));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=1&cmid=0#'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid),
                 $attempt->review_url(3, -1, false, 0));
 
-        // Review with more than 50 questions in the quiz.
-        $attempt = mod_quiz_attempt_testable::setup_fake_attempt_layout(
-                124, '1,2,3,4,5,6,7,8,9,10,0,11,12,13,14,15,16,17,18,19,20,0,' .
-                '21,22,23,24,25,26,27,28,29,30,0,31,32,33,34,35,36,37,38,39,40,0,' .
-                '41,42,43,44,45,46,47,48,49,50,0,51,52,53,54,55,56,57,58,59,60,0');
+        // Setup another attempt.
+        $attempt = $this->create_quiz_and_attempt_with_layout(
+            '1,2,3,4,5,6,7,8,9,10,0,11,12,13,14,15,16,17,18,19,20,0,' .
+            '21,22,23,24,25,26,27,28,29,30,0,31,32,33,34,35,36,37,38,39,40,0,' .
+            '41,42,43,44,45,46,47,48,49,50,0,51,52,53,54,55,56,57,58,59,60,0');
+        $attemptid = $attempt->get_attempt()->id;
+        $cmid = $attempt->get_cmid();
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&cmid=' . $cmid),
                 $attempt->review_url());
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=2&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->review_url(null, 2));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid . '#'),
                 $attempt->review_url(11, -1, false));
 
+
+        $questionattempt = $attempt->get_question_attempt(12);
+        $expecteanchor = '#' . $questionattempt->get_outer_question_div_unique_id();
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1&cmid=0#q12'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid . $expecteanchor),
                 $attempt->review_url(12, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&showall=1&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&showall=1&cmid=' . $cmid),
                 $attempt->review_url(null, 2, true));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&showall=1&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&showall=1&cmid=' . $cmid),
                 $attempt->review_url(1, -1, true));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=2&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->review_url(null, 2, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&cmid=' . $cmid),
                 $attempt->review_url(null, 0, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid),
                 $attempt->review_url(11, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1&cmid=0#q12'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid . $expecteanchor),
                 $attempt->review_url(12, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=2&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->review_url(null, 2));
 
         $this->assertEquals(new moodle_url(
                 '#'),
                 $attempt->review_url(null, -1, null, 0));
 
-        $this->assertEquals(new moodle_url(
-                '#q3'),
-                $attempt->review_url(3, -1, null, 0));
+        $questionattempt = $attempt->get_question_attempt(3);
+        $expecteanchor = '#' . $questionattempt->get_outer_question_div_unique_id();
+        $this->assertEquals(new moodle_url($expecteanchor), $attempt->review_url(3, -1, null, 0));
 
-        $this->assertEquals(new moodle_url(
-                '#q4'),
-                $attempt->review_url(4, -1, null, 0));
+        $questionattempt = $attempt->get_question_attempt(4);
+        $expecteanchor = '#' . $questionattempt->get_outer_question_div_unique_id();
+        $this->assertEquals(new moodle_url($expecteanchor), $attempt->review_url(4, -1, null, 0));
 
         $this->assertEquals(new moodle_url(
                 '#'),
@@ -289,7 +275,7 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
                 $attempt->review_url(1, -1, true, 0));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=2&cmid=0'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=2&cmid=' . $cmid),
                 $attempt->review_url(null, 2, false, 0));
 
         $this->assertEquals(new moodle_url(
@@ -301,7 +287,7 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
                 $attempt->review_url(1, -1, false, 0));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1&cmid=0#'),
+                '/mod/quiz/review.php?attempt=' . $attemptid . '&page=1&cmid=' . $cmid . '#'),
                 $attempt->review_url(11, -1, false, 0));
     }
 
