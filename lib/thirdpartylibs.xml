@@ -67,7 +67,7 @@
     <location>minify/matthiasmullie-pathconverter</location>
     <name>MatthiasMullie\PathConverter</name>
     <license>MIT</license>
-    <version>1.1.0</version>
+    <version>1.1.2</version>
     <licenseversion></licenseversion>
   </library>
   <library>
