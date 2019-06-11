@@ -1,5 +1,10 @@
 This files describes API changes in /admin/*.
 
+=== 3.8 ===
+
+* Admin setting "Open to Google" (opentogoogle) has been renamed to the more generic "Open to search engines" (opentowebcrawlers).
+  This is a more accurate representation of what is being set and the config string has also been moved and updated to reflect this.
+
 === 3.7 ===
 
 * Admin setting "Allow blocks to use the dock" (allowblockstodock) has been removed & stings deprecated.
