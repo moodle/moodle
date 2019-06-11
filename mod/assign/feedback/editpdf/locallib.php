@@ -164,6 +164,14 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
 
         $renderer = $PAGE->get_renderer('assignfeedback_editpdf');
 
+        // Links to download the generated pdf...
+        if ($attempt > -1 && page_editor::has_annotations_or_comments($grade->id, false)) {
+            $html = $this->assignment->render_area_files('assignfeedback_editpdf',
+                                                         document_services::FINAL_PDF_FILEAREA,
+                                                         $grade->id);
+            $mform->addElement('static', 'editpdf_files', get_string('downloadfeedback', 'assignfeedback_editpdf'), $html);
+        }
+
         $widget = $this->get_widget($userid, $grade, false);
 
         $html = $renderer->render($widget);
