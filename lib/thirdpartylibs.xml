@@ -176,13 +176,6 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>recaptchalib.php</location>
-    <name>ReCAPTCHA</name>
-    <license>MIT</license>
-    <version>1.10</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>xhprof</location>
     <name>XHProf</name>
     <license>Apache</license>
