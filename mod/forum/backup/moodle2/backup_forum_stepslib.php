@@ -58,7 +58,7 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $post = new backup_nested_element('post', array('id'), array(
             'parent', 'userid', 'created', 'modified',
             'mailed', 'subject', 'message', 'messageformat',
-            'messagetrust', 'attachment', 'totalscore', 'mailnow'));
+            'messagetrust', 'attachment', 'totalscore', 'mailnow', 'privatereplyto'));
 
         $tags = new backup_nested_element('poststags');
         $tag = new backup_nested_element('tag', array('id'), array('itemid', 'rawname'));
