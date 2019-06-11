@@ -1,4 +1,13 @@
 <?php
+/**
+ * CSS Minifier
+ *
+ * Please report bugs on https://github.com/matthiasmullie/minify/issues
+ *
+ * @author Matthias Mullie <minify@mullie.eu>
+ * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
+ * @license MIT License
+ */
 
 namespace MatthiasMullie\Minify;
 
@@ -7,10 +16,11 @@ use MatthiasMullie\PathConverter\ConverterInterface;
 use MatthiasMullie\PathConverter\Converter;
 
 /**
- * CSS minifier.
+ * CSS minifier
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
+ * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
@@ -19,12 +29,12 @@ use MatthiasMullie\PathConverter\Converter;
 class CSS extends Minify
 {
     /**
-     * @var int
+     * @var int maximum inport size in kB
      */
     protected $maxImportSize = 5;
 
     /**
-     * @var string[]
+     * @var string[] valid import extensions
      */
     protected $importExtensions = array(
         'gif' => 'data:image/gif',
@@ -76,14 +86,14 @@ class CSS extends Minify
      */
     protected function moveImportsToTop($content)
     {
-        if (preg_match_all('/@import[^;]+;/', $content, $matches)) {
+        if (preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)));?/', $content, $matches)) {
             // remove from content
             foreach ($matches[0] as $import) {
                 $content = str_replace($import, '', $content);
             }
 
             // add to top
-            $content = implode('', $matches[0]).$content;
+            $content = implode(';', $matches[2]).';'.trim($content, ';');
         }
 
         return $content;
@@ -207,6 +217,8 @@ class CSS extends Minify
             // grab referenced file & minify it (which may include importing
             // yet other @import statements recursively)
             $minifier = new static($importPath);
+            $minifier->setMaxImportSize($this->maxImportSize);
+            $minifier->setImportExtensions($this->importExtensions);
             $importContent = $minifier->execute($source, $parents);
 
             // check if this is only valid for certain media
@@ -295,10 +307,11 @@ class CSS extends Minify
              */
             $this->extractStrings();
             $this->stripComments();
+            $this->extractCalcs();
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
-            $css = $this->shortenHex($css);
+            $css = $this->shortenColors($css);
             $css = $this->shortenZeroes($css);
             $css = $this->shortenFontWeights($css);
             $css = $this->stripEmptyTags($css);
@@ -469,12 +482,16 @@ class CSS extends Minify
      *
      * @return string
      */
-    protected function shortenHex($content)
+    protected function shortenColors($content)
     {
-        $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?=[; }])/i', '#$1$2$3', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?:([0-9a-z])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
 
-        // we can shorten some even more by replacing them with their color name
+        // remove alpha channel if it's pointless...
+        $content = preg_replace('/(?<=[: ])#([0-9a-z]{6})ff?(?=[; }])/i', '#$1', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-z]{3})f?(?=[; }])/i', '#$1', $content);
+
         $colors = array(
+            // we can shorten some even more by replacing them with their color name
             '#F0FFFF' => 'azure',
             '#F5F5DC' => 'beige',
             '#A52A2A' => 'brown',
@@ -502,6 +519,9 @@ class CSS extends Minify
             '#FF6347' => 'tomato',
             '#EE82EE' => 'violet',
             '#F5DEB3' => 'wheat',
+            // or the other way around
+            'WHITE' => '#fff',
+            'BLACK' => '#000',
         );
 
         return preg_replace_callback(
@@ -543,6 +563,12 @@ class CSS extends Minify
      */
     protected function shortenZeroes($content)
     {
+        // we don't want to strip units in `calc()` expressions:
+        // `5px - 0px` is valid, but `5px - 0` is not
+        // `10px * 0` is valid (equates to 0), and so is `10 * 0px`, but
+        // `10 * 0` is invalid
+        // we've extracted calcs earlier, so we don't need to worry about this
+
         // reusable bits of code throughout these regexes:
         // before & after are used to make sure we don't match lose unintended
         // 0-like values (e.g. in #000, or in http://url/1.0)
@@ -571,28 +597,11 @@ class CSS extends Minify
         // strip negative zeroes (-0 -> 0) & truncate zeroes (00 -> 0)
         $content = preg_replace('/'.$before.'-?0+'.$units.'?'.$after.'/', '0\\1', $content);
 
-        // remove zeroes where they make no sense in calc: e.g. calc(100px - 0)
-        // the 0 doesn't have any effect, and this isn't even valid without unit
-        // strip all `+ 0` or `- 0` occurrences: calc(10% + 0) -> calc(10%)
-        // looped because there may be multiple 0s inside 1 group of parentheses
-        do {
-            $previous = $content;
-            $content = preg_replace('/\(([^\(\)]+) [\+\-] 0( [^\(\)]+)?\)/', '(\\1\\2)', $content);
-        } while ($content !== $previous);
-        // strip all `0 +` occurrences: calc(0 + 10%) -> calc(10%)
-        $content = preg_replace('/\(0 \+ ([^\(\)]+)\)/', '(\\1)', $content);
-        // strip all `0 -` occurrences: calc(0 - 10%) -> calc(-10%)
-        $content = preg_replace('/\(0 \- ([^\(\)]+)\)/', '(-\\1)', $content);
-        // I'm not going to attempt to optimize away `x * 0` instances:
-        // it's dumb enough code already that it likely won't occur, and it's
-        // too complex to do right (order of operations would have to be
-        // respected etc)
-        // what I cared about most here was fixing incorrectly truncated units
-
-        // IE doesn't seem to understand a unitless flex-basis value, so let's
-        // add it in again (make it `%`, which is only 1 char: 0%, 0px, 0
-        // anything, it's all just the same)
-        $content = preg_replace('/flex:([^ ]+ [^ ]+ )0([;\}])/', 'flex:${1}0%${2}', $content);
+        // IE doesn't seem to understand a unitless flex-basis value (correct -
+        // it goes against the spec), so let's add it in again (make it `%`,
+        // which is only 1 char: 0%, 0px, 0 anything, it's all just the same)
+        // @see https://developer.mozilla.org/nl/docs/Web/CSS/flex
+        $content = preg_replace('/flex:([0-9]+\s[0-9]+\s)0([;\}])/', 'flex:${1}0%${2}', $content);
         $content = preg_replace('/flex-basis:0([;\}])/', 'flex-basis:0%${1}', $content);
 
         return $content;
@@ -607,7 +616,10 @@ class CSS extends Minify
      */
     protected function stripEmptyTags($content)
     {
-        return preg_replace('/(^|\}|;)[^\{\};]+\{\s*\}/', '\\1', $content);
+        $content = preg_replace('/(?<=^)[^\{\};]+\{\s*\}/', '', $content);
+        $content = preg_replace('/(?<=(\}|;))[^\{\};]+\{\s*\}/', '', $content);
+
+        return $content;
     }
 
     /**
@@ -615,6 +627,17 @@ class CSS extends Minify
      */
     protected function stripComments()
     {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
+            $count = count($minifier->extracted);
+            $placeholder = '/*'.$count.'*/';
+            $minifier->extracted[$placeholder] = $match[0];
+
+            return $placeholder;
+        };
+        $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
+
         $this->registerPattern('/\/\*.*?\*\//s', '');
     }
 
@@ -637,8 +660,8 @@ class CSS extends Minify
         // remove whitespace around meta characters
         // inspired by stackoverflow.com/questions/15195750/minify-compress-css-with-regex
         $content = preg_replace('/\s*([\*$~^|]?+=|[{};,>~]|!important\b)\s*/', '$1', $content);
-        $content = preg_replace('/([\[(:])\s+/', '$1', $content);
-        $content = preg_replace('/\s+([\]\)])/', '$1', $content);
+        $content = preg_replace('/([\[(:>\+])\s+/', '$1', $content);
+        $content = preg_replace('/\s+([\]\)>\+])/', '$1', $content);
         $content = preg_replace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
 
         // whitespace around + and - can only be stripped inside some pseudo-
@@ -652,6 +675,40 @@ class CSS extends Minify
         $content = str_replace(';}', '}', $content);
 
         return trim($content);
+    }
+
+    /**
+     * Replace all `calc()` occurrences.
+     */
+    protected function extractCalcs()
+    {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
+            $length = strlen($match[1]);
+            $expr = '';
+            $opened = 0;
+
+            for ($i = 0; $i < $length; $i++) {
+                $char = $match[1][$i];
+                $expr .= $char;
+                if ($char === '(') {
+                    $opened++;
+                } elseif ($char === ')' && --$opened === 0) {
+                    break;
+                }
+            }
+            $rest = str_replace($expr, '', $match[1]);
+            $expr = trim(substr($expr, 1, -1));
+
+            $count = count($minifier->extracted);
+            $placeholder = 'calc('.$count.')';
+            $minifier->extracted[$placeholder] = 'calc('.$expr.')';
+
+            return $placeholder.$rest;
+        };
+
+        $this->registerPattern('/calc(\(.+?)(?=$|;|calc\()/', $callback);
     }
 
     /**
