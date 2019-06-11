@@ -137,6 +137,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
     }
 
     public function test_forced_subscription() {
+        global $DB;
         $this->resetAfterTest(true);
 
         // Create a course, with a forum.
@@ -145,8 +146,14 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        // Create two users enrolled in the course as students.
-        list($author, $recipient) = $this->helper_create_users($course, 2);
+        // Create users enrolled in the course as students.
+        list($author, $recipient, $unconfirmed, $deleted) = $this->helper_create_users($course, 4);
+
+        // Make the third user unconfirmed (thence inactive) to make sure it does not break the notifications.
+        $DB->set_field('user', 'confirmed', 0, ['id' => $unconfirmed->id]);
+
+        // Mark the fourth user as deleted to make sure it does not break the notifications.
+        $DB->set_field('user', 'deleted', 1, ['id' => $deleted->id]);
 
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
@@ -160,11 +167,21 @@ class mod_forum_mail_testcase extends advanced_testcase {
                 'userid' => $recipient->id,
                 'messages' => 1,
             ],
+            (object) [
+                'userid' => $unconfirmed->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $deleted->id,
+                'messages' => 0,
+            ],
         ];
         $this->queue_tasks_and_assert($expect);
 
         $this->send_notifications_and_assert($author, [$post]);
         $this->send_notifications_and_assert($recipient, [$post]);
+        $this->send_notifications_and_assert($unconfirmed, []);
+        $this->send_notifications_and_assert($deleted, []);
     }
 
     /**
