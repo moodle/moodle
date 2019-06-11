@@ -277,6 +277,12 @@ function edit_module_post_actions($moduleinfo, $course) {
             if ($update) {
                 $item->update();
             }
+            $gradecategory = $grade_item->get_parent_category();
+            if (!empty($moduleinfo->add)) {
+                if ($grade_item->set_aggregation_fields_for_aggregation(0, $gradecategory->aggregation)) {
+                    $grade_item->update();
+                }
+            }
         }
     }
 
@@ -332,6 +338,12 @@ function edit_module_post_actions($moduleinfo, $course) {
                     $outcomeitem->move_after_sortorder($item->sortorder);
                 } else if (isset($moduleinfo->gradecat)) {
                     $outcomeitem->set_parent($moduleinfo->gradecat);
+                }
+                $gradecategory = $outcome_item->get_parent_category();
+                if ($outcomeexists == false) {
+                    if ($outcome_item->set_aggregation_fields_for_aggregation(0, $gradecategory->aggregation)) {
+                        $outcome_item->update();
+                    }
                 }
             }
         }
