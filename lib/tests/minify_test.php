@@ -83,7 +83,7 @@ function hm()
 }
 ";
 
-        $this->assertSame("function hm()\n{}", core_minify::js($js));
+        $this->assertSame("function hm(){}", core_minify::js($js));
 
         $js = "function hm{}";
         $result = core_minify::js($js);
