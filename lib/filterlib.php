@@ -38,7 +38,7 @@ define('TEXTFILTER_DISABLED', -9999);
  *  keys. It must be something rare enough to avoid having matches with
  *  filterobjects. MDL-18165
  */
-define('TEXTFILTER_EXCL_SEPARATOR', '-%-');
+define('TEXTFILTER_EXCL_SEPARATOR', chr(0x1F) . '%' . chr(0x1F));
 
 
 /**
