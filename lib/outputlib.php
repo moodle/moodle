@@ -1547,7 +1547,7 @@ class theme_config {
      * @return string Return compiled css.
      */
     public function get_precompiled_css_content() {
-        $configs = [$this] + $this->parent_configs;
+        $configs = array_reverse($this->parent_configs) + [$this];
         $css = '';
 
         foreach ($configs as $config) {
