@@ -1,6 +1,10 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+* The following functions have been finally deprecated and can not be used any more:
+  - core_course_external::get_activities_overview
+
 === 3.7 ===
 
  * The course pattern function in course_summary_exporter::get_course_pattern has been moved to $OUTPUT->get_generated_image_for_id.
@@ -9,7 +13,6 @@ information provided here is intended especially for developers.
    - valueused (indicates whether the completion state affects the availability of other content)
  * External function core_course_external::get_course_contents now returns a new contentsinfo field with summary files information.
  * External function core_course_external::get_course_contents now returns an additional field "tags" returning the content tags.
-
 
 === 3.6 ===
 

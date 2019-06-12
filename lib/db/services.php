@@ -529,15 +529,6 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_course_get_activities_overview' => array(
-        'classname' => 'core_course_external',
-        'methodname' => 'get_activities_overview',
-        'classpath' => 'course/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Return activities overview for the given courses.',
-        'type' => 'read',
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
     'core_course_get_user_navigation_options' => array(
         'classname' => 'core_course_external',
         'methodname' => 'get_user_navigation_options',

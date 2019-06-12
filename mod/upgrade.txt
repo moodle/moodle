@@ -1,6 +1,10 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+
+* The final deprecation of xxx_print_overview() callback means that this function will no longer be called.
+
 === 3.6 ===
 
 * The final deprecation of xxx_get_types() callback means that this function will no longer be called.
@@ -44,7 +48,8 @@ information provided here is intended especially for developers.
   - isexternalfile (if is a file reference to a external repository)
   - repositorytype (the repository name in case is a external file)
   Those fields are VALUE_OPTIONAL for backwards compatibility.
-* The block_course_overview has been removed and the related core module *_print_overview functions have been deprecated.
+* The block_course_overview has been removed and the related core module
+*_print_overview functions have been deprecated.
 * The block_myoverview has replaced block_course_overview to provide better information to students. To support this,
   actions can now be attached to calendar events. Documentation for the following new API callbacks introduced in
   MDL-55611 can be found at https://docs.moodle.org/dev/Calendar_API. The 3 new callbacks are:
