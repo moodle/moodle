@@ -558,7 +558,6 @@ $string['notyetviewed'] = 'Not yet viewed';
 $string['notyourattempt'] = 'This is not your attempt!';
 $string['noview'] = 'Logged-in user is not allowed to view this quiz';
 $string['numattempts'] = '{$a->studentnum} {$a->studentstring} have made {$a->attemptnum} attempts';
-$string['numattemptsmade'] = '{$a} attempts made on this quiz';
 $string['numberabbr'] = '#';
 $string['numerical'] = 'Numerical';
 $string['numquestionsx'] = 'Questions: {$a}';
@@ -989,3 +988,6 @@ $string['wronguse'] = 'You can not use this page like that';
 $string['xhtml'] = 'XHTML';
 $string['youneedtoenrol'] = 'You need to enrol in this course before you can attempt this quiz';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is {$a}.';
+
+// Deprecated since Moodle 3.8.
+$string['numattemptsmade'] = '{$a} attempts made on this quiz';
