@@ -147,4 +147,3 @@ $string['viewchoices'] = 'View choices';
 $string['withselected'] = 'With selected';
 $string['userchoosethisoption'] = 'Users who chose this option';
 $string['yourselection'] = 'Your selection';
-$string['skipresultgraph'] = 'Skip result graph';
