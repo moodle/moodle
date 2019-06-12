@@ -2809,16 +2809,20 @@ EOD;
         $output .= $this->box($message, 'errorbox alert alert-danger', null, array('data-rel' => 'fatalerror'));
 
         if ($CFG->debugdeveloper) {
+            $labelsep = get_string('labelsep', 'langconfig');
             if (!empty($debuginfo)) {
                 $debuginfo = s($debuginfo); // removes all nasty JS
                 $debuginfo = str_replace("\n", '<br />', $debuginfo); // keep newlines
-                $output .= $this->notification('<strong>Debug info:</strong> '.$debuginfo, 'notifytiny');
+                $label = get_string('debuginfo', 'debug') . $labelsep;
+                $output .= $this->notification("<strong>$label</strong> " . $debuginfo, 'notifytiny');
             }
             if (!empty($backtrace)) {
-                $output .= $this->notification('<strong>Stack trace:</strong> '.format_backtrace($backtrace), 'notifytiny');
+                $label = get_string('stacktrace', 'debug') . $labelsep;
+                $output .= $this->notification("<strong>$label</strong> " . format_backtrace($backtrace), 'notifytiny');
             }
             if ($obbuffer !== '' ) {
-                $output .= $this->notification('<strong>Output buffer:</strong> '.s($obbuffer), 'notifytiny');
+                $label = get_string('outputbuffer', 'debug') . $labelsep;
+                $output .= $this->notification("<strong>$label</strong> " . s($obbuffer), 'notifytiny');
             }
         }
 
