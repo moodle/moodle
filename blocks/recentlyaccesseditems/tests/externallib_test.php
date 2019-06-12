@@ -103,5 +103,15 @@ class block_recentlyaccesseditems_externallib_testcase extends externallib_advan
             }
             $this->assertTrue($record->timeaccess < $result[$key - 1]->timeaccess);
         }
+
+        // Delete a course and confirm it's activities don't get returned.
+        delete_course($courses[0], false);
+        $result = \block_recentlyaccesseditems\external::get_recent_items();
+        $this->assertCount((count($forum) + count($chat)) - 2, $result);
+
+        // Delete a single course module should still return.
+        course_delete_module($forum[1]->cmid);
+        $result = \block_recentlyaccesseditems\external::get_recent_items();
+        $this->assertCount((count($forum) + count($chat)) - 3, $result);
     }
 }
