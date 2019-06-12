@@ -100,8 +100,6 @@ class footer_options_exporter extends exporter {
             $params['course'] = $this->calendar->course->id;
         } else if (null !== $this->calendar->categoryid && $this->calendar->categoryid > 0) {
             $params['category'] = $this->calendar->categoryid;
-        } else {
-            $params['course'] = SITEID;
         }
 
         return $params;
