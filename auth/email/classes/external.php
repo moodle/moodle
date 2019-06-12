@@ -117,10 +117,7 @@ class auth_email_external extends external_api {
 
         if (signup_captcha_enabled()) {
             // With reCAPTCHA v2 the captcha will be rendered by the mobile client using just the publickey.
-            // For now include placeholders for the v1 paramaters to support older mobile app versions.
             $result['recaptchapublickey'] = $CFG->recaptchapublickey;
-            list($result['recaptchachallengehash'], $result['recaptchachallengeimage'], $result['recaptchachallengejs']) =
-                array('', '', '');
         }
 
         $result['warnings'] = array();
