@@ -38,7 +38,7 @@
            {{< mod_forum/forum_discussion_post }}
                {{$footer}}
                    <div class="link text-right">
-                       <a href="{{urls.discuss}}">{{#str}}discussthistopic, forum{{/str}}</a>&nbsp;({{discussionrepliescount}}{{#isreplyplural}}{{#str}}repliesmany, forum{{/str}}{{/isreplyplural}}{{^isreplyplural}}{{#str}}repliesone, forum{{/str}}{{/isreplyplural}})
+                       <a href="{{urls.discuss}}">{{#str}}discussthistopic, forum{{/str}}</a>&nbsp;({{#isreplyplural}}{{#str}} repliesmany, forum, {{discussionrepliescount}} {{/str}}{{/isreplyplural}}{{^isreplyplural}}{{#str}} repliesone, forum, {{discussionrepliescount}} {{/str}}{{/isreplyplural}})
                    </div>
                {{/footer}}
                {{$replyoutput}}{{/replyoutput}}
