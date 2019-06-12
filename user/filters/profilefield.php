@@ -74,7 +74,8 @@ class user_filter_profilefield extends user_filter_type {
      */
     public function get_profile_fields() {
         global $DB;
-        if (!$fields = $DB->get_records_menu('user_info_field', null, 'name', 'id, name')) {
+        $order = $DB->sql_order_by_text('name');
+        if (!$fields = $DB->get_records_menu('user_info_field', null, $order, 'id, name')) {
             return null;
         }
         $res = array(0 => get_string('anyfield', 'filters'));
