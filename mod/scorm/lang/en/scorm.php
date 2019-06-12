@@ -121,7 +121,6 @@ $string['displaydesc'] = 'Whether to display the SCORM package in a new window.'
 $string['displaysettings'] = 'Display settings';
 $string['dnduploadscorm'] = 'Add a SCORM package';
 $string['domxml'] = 'DOMXML external library';
-$string['duedate'] = 'Due date';
 $string['element'] = 'Element';
 $string['enter'] = 'Enter';
 $string['entercourse'] = 'Enter course';
@@ -444,3 +443,6 @@ $string['whatgradedesc'] = 'Whether the highest, average (mean), first or last c
 $string['width'] = 'Width';
 $string['window'] = 'Window';
 $string['youmustselectastatus'] = 'You must select a status to require';
+
+// Deprecated since Moodle 3.8.
+$string['duedate'] = 'Due date';
