@@ -93,8 +93,10 @@
                     {{#str}}searchdatefrom, forum{{/str}}
                 </td>
                 <td class="c1">
+                    <div class="fdate_time_selector d-flex flex-wrap align-items-center">
                     <input type="checkbox" name="timefromrestrict" value="1" {{#datefromchecked}}checked{{/datefromchecked}}>
-                    {{{datefromfields}}}
+                        {{{datefromfields}}}
+                    </div>
                     <input type="hidden" name="hfromday" value="0">
                     <input type="hidden" name="hfrommonth" value="0">
                     <input type="hidden" name="hfromyear" value="0">
@@ -107,8 +109,10 @@
                     {{#str}}searchdateto, forum{{/str}}
                 </td>
                 <td class="c1">
+                    <div class="fdate_time_selector d-flex flex-wrap align-items-center">
                     <input type="checkbox" name="timetorestrict" value="1" {{#datetochecked}}checked{{/datetochecked}}>
-                    {{{datetofields}}}
+                        {{{datetofields}}}
+                    </div>
                     <input type="hidden" name="htoday" value="0">
                     <input type="hidden" name="htomonth" value="0">
                     <input type="hidden" name="htoyear" value="0">

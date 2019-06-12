@@ -214,17 +214,19 @@ class big_search_form implements renderable, templatable {
             $dateto = time() + HOURSECS;
         }
 
-        $data->datefromfields = html_writer::select_time('days', 'fromday', $datefrom)
-                              . html_writer::select_time('months', 'frommonth', $datefrom)
-                              . html_writer::select_time('years', 'fromyear', $datefrom)
-                              . html_writer::select_time('hours', 'fromhour', $datefrom)
-                              . html_writer::select_time('minutes', 'fromminute', $datefrom);
+        $data->datefromfields = html_writer::div(html_writer::select_time('days', 'fromday', $datefrom), 'form-group fitem ml-2')
+                              . html_writer::div(html_writer::select_time('months', 'frommonth', $datefrom),
+                           'form-group fitem ml-2')
+                              . html_writer::div(html_writer::select_time('years', 'fromyear', $datefrom), 'form-group fitem ml-2')
+                              . html_writer::div(html_writer::select_time('hours', 'fromhour', $datefrom), 'form-group fitem ml-2')
+                              . html_writer::div(html_writer::select_time('minutes', 'fromminute', $datefrom),
+                           'form-group fitem ml-2');
 
-        $data->datetofields = html_writer::select_time('days', 'today', $dateto)
-                            . html_writer::select_time('months', 'tomonth', $dateto)
-                            . html_writer::select_time('years', 'toyear', $dateto)
-                            . html_writer::select_time('hours', 'tohour', $dateto)
-                            . html_writer::select_time('minutes', 'tominute', $dateto);
+        $data->datetofields = html_writer::div(html_writer::select_time('days', 'today', $dateto), 'form-group fitem ml-2')
+                            . html_writer::div(html_writer::select_time('months', 'tomonth', $dateto), 'form-group fitem ml-2')
+                            . html_writer::div(html_writer::select_time('years', 'toyear', $dateto), 'form-group fitem ml-2')
+                            . html_writer::div(html_writer::select_time('hours', 'tohour', $dateto), 'form-group fitem ml-2')
+                            . html_writer::div(html_writer::select_time('minutes', 'tominute', $dateto), 'form-group fitem ml-2');
 
         if ($this->forumid && !empty($this->forumoptions)) {
             foreach ($this->forumoptions as $index => $option) {
