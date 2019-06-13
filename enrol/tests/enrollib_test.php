@@ -1080,4 +1080,23 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertArrayHasKey($roles['student'], $return[$user2->id]);
         $this->assertArrayNotHasKey($roles['teacher'], $return[$user2->id]);
     }
+
+    /**
+     * Test enrol_calculate_duration function
+     */
+    public function test_enrol_calculate_duration() {
+        // Start time 07/01/2019 @ 12:00am (UTC).
+        $timestart = 1561939200;
+        // End time 07/05/2019 @ 12:00am (UTC).
+        $timeend = 1562284800;
+        $duration = enrol_calculate_duration($timestart, $timeend);
+        $durationinday = $duration / DAYSECS;
+        $this->assertEquals(4, $durationinday);
+
+        // End time 07/10/2019 @ 12:00am (UTC).
+        $timeend = 1562716800;
+        $duration = enrol_calculate_duration($timestart, $timeend);
+        $durationinday = $duration / DAYSECS;
+        $this->assertEquals(9, $durationinday);
+    }
 }
