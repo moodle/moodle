@@ -2325,58 +2325,74 @@ class core_course_courselib_testcase extends advanced_testcase {
      * Tests for event related to course module creation.
      */
     public function test_course_module_created_event() {
-        global $USER, $DB;
+        global $USER;
+
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Create an assign module.
         $sink = $this->redirectEvents();
-        $modinfo = $this->create_specific_module_test('assign');
+        $course = $this->getDataGenerator()->create_course();
+        $module = $this->getDataGenerator()->create_module('assign', ['course' => $course]);
         $events = $sink->get_events();
-        $event = array_pop($events);
-
-        $cm = get_coursemodule_from_id('assign', $modinfo->coursemodule, 0, false, MUST_EXIST);
-        $mod = $DB->get_record('assign', array('id' => $modinfo->instance), '*', MUST_EXIST);
+        $eventscount = 0;
 
         // Validate event data.
-        $this->assertInstanceOf('\core\event\course_module_created', $event);
-        $this->assertEquals($cm->id, $event->objectid);
-        $this->assertEquals($USER->id, $event->userid);
-        $this->assertEquals('course_modules', $event->objecttable);
-        $url = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
-        $this->assertEquals($url, $event->get_url());
+        foreach ($events as $event) {
+            if ($event instanceof \core\event\course_module_created) {
+                $eventscount++;
 
-        // Test legacy data.
-        $this->assertSame('mod_created', $event->get_legacy_eventname());
-        $eventdata = new stdClass();
-        $eventdata->modulename = 'assign';
-        $eventdata->name       = $mod->name;
-        $eventdata->cmid       = $cm->id;
-        $eventdata->courseid   = $cm->course;
-        $eventdata->userid     = $USER->id;
-        $this->assertEventLegacyData($eventdata, $event);
+                $this->assertEquals($module->cmid, $event->objectid);
+                $this->assertEquals($USER->id, $event->userid);
+                $this->assertEquals('course_modules', $event->objecttable);
+                $url = new moodle_url('/mod/assign/view.php', array('id' => $module->cmid));
+                $this->assertEquals($url, $event->get_url());
 
-        $arr = array(
-            array($cm->course, "course", "add mod", "../mod/assign/view.php?id=$cm->id", "assign $cm->instance"),
-            array($cm->course, "assign", "add", "view.php?id=$cm->id", $cm->instance, $cm->id)
-        );
-        $this->assertEventLegacyLogData($arr, $event);
-        $this->assertEventContextNotUsed($event);
+                // Test legacy data.
+                $this->assertSame('mod_created', $event->get_legacy_eventname());
+                $eventdata = new stdClass();
+                $eventdata->modulename = 'assign';
+                $eventdata->name       = $module->name;
+                $eventdata->cmid       = $module->cmid;
+                $eventdata->courseid   = $module->course;
+                $eventdata->userid     = $USER->id;
+                $this->assertEventLegacyData($eventdata, $event);
+
+                $arr = array(
+                    array($module->course, "course", "add mod", "../mod/assign/view.php?id=$module->cmid", "assign $module->id"),
+                    array($module->course, "assign", "add", "view.php?id=$module->cmid", $module->id, $module->cmid)
+                );
+                $this->assertEventLegacyLogData($arr, $event);
+                $this->assertEventContextNotUsed($event);
+            }
+        }
+        // Only one \core\event\course_module_created event should be triggered.
+        $this->assertEquals(1, $eventscount);
 
         // Let us see if duplicating an activity results in a nice course module created event.
         $sink->clear();
-        $course = get_course($mod->course);
+        $course = get_course($module->course);
+        $cm = get_coursemodule_from_id('assign', $module->cmid, 0, false, MUST_EXIST);
         $newcm = duplicate_module($course, $cm);
         $events = $sink->get_events();
-        $event = array_pop($events);
+        $eventscount = 0;
         $sink->close();
 
-        // Validate event data.
-        $this->assertInstanceOf('\core\event\course_module_created', $event);
-        $this->assertEquals($newcm->id, $event->objectid);
-        $this->assertEquals($USER->id, $event->userid);
-        $this->assertEquals($course->id, $event->courseid);
-        $url = new moodle_url('/mod/assign/view.php', array('id' => $newcm->id));
-        $this->assertEquals($url, $event->get_url());
+        foreach ($events as $event) {
+            if ($event instanceof \core\event\course_module_created) {
+                $eventscount++;
+                // Validate event data.
+                $this->assertInstanceOf('\core\event\course_module_created', $event);
+                $this->assertEquals($newcm->id, $event->objectid);
+                $this->assertEquals($USER->id, $event->userid);
+                $this->assertEquals($course->id, $event->courseid);
+                $url = new moodle_url('/mod/assign/view.php', array('id' => $newcm->id));
+                $this->assertEquals($url, $event->get_url());
+            }
+        }
+
+        // Only one \core\event\course_module_created event should be triggered.
+        $this->assertEquals(1, $eventscount);
     }
 
     /**
@@ -2455,36 +2471,44 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         $modinfo = $this->update_specific_module_test('forum');
         $events = $sink->get_events();
-        $event = array_pop($events);
+        $eventscount = 0;
         $sink->close();
 
         $cm = $DB->get_record('course_modules', array('id' => $modinfo->coursemodule), '*', MUST_EXIST);
         $mod = $DB->get_record('forum', array('id' => $cm->instance), '*', MUST_EXIST);
 
         // Validate event data.
-        $this->assertInstanceOf('\core\event\course_module_updated', $event);
-        $this->assertEquals($cm->id, $event->objectid);
-        $this->assertEquals($USER->id, $event->userid);
-        $this->assertEquals('course_modules', $event->objecttable);
-        $url = new moodle_url('/mod/forum/view.php', array('id' => $cm->id));
-        $this->assertEquals($url, $event->get_url());
+        foreach ($events as $event) {
+            if ($event instanceof \core\event\course_module_updated) {
+                $eventscount++;
 
-        // Test legacy data.
-        $this->assertSame('mod_updated', $event->get_legacy_eventname());
-        $eventdata = new stdClass();
-        $eventdata->modulename = 'forum';
-        $eventdata->name       = $mod->name;
-        $eventdata->cmid       = $cm->id;
-        $eventdata->courseid   = $cm->course;
-        $eventdata->userid     = $USER->id;
-        $this->assertEventLegacyData($eventdata, $event);
+                $this->assertEquals($cm->id, $event->objectid);
+                $this->assertEquals($USER->id, $event->userid);
+                $this->assertEquals('course_modules', $event->objecttable);
+                $url = new moodle_url('/mod/forum/view.php', array('id' => $cm->id));
+                $this->assertEquals($url, $event->get_url());
 
-        $arr = array(
-            array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$cm->id", "forum $cm->instance"),
-            array($cm->course, "forum", "update", "view.php?id=$cm->id", $cm->instance, $cm->id)
-        );
-        $this->assertEventLegacyLogData($arr, $event);
-        $this->assertEventContextNotUsed($event);
+                // Test legacy data.
+                $this->assertSame('mod_updated', $event->get_legacy_eventname());
+                $eventdata = new stdClass();
+                $eventdata->modulename = 'forum';
+                $eventdata->name       = $mod->name;
+                $eventdata->cmid       = $cm->id;
+                $eventdata->courseid   = $cm->course;
+                $eventdata->userid     = $USER->id;
+                $this->assertEventLegacyData($eventdata, $event);
+
+                $arr = array(
+                    array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$cm->id", "forum $cm->instance"),
+                    array($cm->course, "forum", "update", "view.php?id=$cm->id", $cm->instance, $cm->id)
+                );
+                $this->assertEventLegacyLogData($arr, $event);
+                $this->assertEventContextNotUsed($event);
+            }
+        }
+
+        // Only one \core\event\course_module_updated event should be triggered.
+        $this->assertEquals(1, $eventscount);
     }
 
     /**
