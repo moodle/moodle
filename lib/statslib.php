@@ -1196,11 +1196,13 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
         break;
 
     case STATS_REPORT_USER_VIEW:
-        $param->fields = 'statsreads as line1, statswrites as line2, statsreads+statswrites as line3';
+        $param->fields = 'timeend, SUM(statsreads) AS line1, SUM(statswrites) AS line2, SUM(statsreads+statswrites) AS line3';
+        $param->fieldscomplete = true;
         $param->line1 = get_string('statsuserreads');
         $param->line2 = get_string('statsuserwrites');
         $param->line3 = get_string('statsuseractivity');
         $param->stattype = 'activity';
+        $param->extras = "GROUP BY timeend";
         break;
 
     // ******************** STATS_MODE_RANKED ******************** //
