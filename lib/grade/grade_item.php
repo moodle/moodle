@@ -479,6 +479,10 @@ class grade_item extends grade_object {
         if (parent::insert($source)) {
             // force regrading of items if needed
             $this->force_regrading();
+
+            $event = \core\event\grade_item_created::create_from_grade_item($this);
+            $event->trigger();
+
             return $this->id;
 
         } else {
