@@ -527,7 +527,9 @@ class ADODB_mssqlnative extends ADOConnection {
 			$arr = $args;
 		}
 
-		array_walk($arr, create_function('&$v', '$v = "CAST(" . $v . " AS VARCHAR(255))";'));
+		array_walk($arr, function(&$v) {
+			$v = "CAST(" . $v . " AS VARCHAR(255))";
+		});
 		$s = implode('+',$arr);
 		if (sizeof($arr) > 0) return "$s";
 
