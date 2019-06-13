@@ -39,6 +39,11 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
  */
 class quiz_overview_report extends quiz_attempts_report {
 
+    /**
+     * @var bool whether there are actually students to show, given the options.
+     */
+    protected $hasgroupstudents;
+
     public function display($quiz, $cm, $course) {
         global $DB, $OUTPUT, $PAGE;
 
@@ -376,21 +381,22 @@ class quiz_overview_report extends quiz_attempts_report {
         global $DB;
         $this->unlock_session();
 
-        $sql = "SELECT quiza.*
-                  FROM {quiz_attempts} quiza";
+        $sql = "SELECT quiza.*, " . get_all_user_name_fields(true, 'u') . "
+                  FROM {quiz_attempts} quiza
+                  JOIN {user} u ON u.id = quiza.userid";
         $where = "quiz = :qid AND preview = 0";
         $params = array('qid' => $quiz->id);
 
         if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
-            $sql .= "\nJOIN {user} u ON u.id = quiza.userid
-                    {$groupstudentsjoins->joins}";
+            $sql .= "\n{$groupstudentsjoins->joins}";
             $where .= " AND {$groupstudentsjoins->wheres}";
             $params += $groupstudentsjoins->params;
         }
 
         if ($attemptids) {
-            $aids = join(',', $attemptids);
-            $where .= " AND quiza.id IN ({$aids})";
+            list($attemptidcondition, $attemptidparams) = $DB->get_in_or_equal($attemptids, SQL_PARAMS_NAMED);
+            $where .= " AND quiza.id $attemptidcondition";
+            $params += $attemptidparams;
         }
 
         $sql .= "\nWHERE {$where}";
@@ -407,11 +413,16 @@ class quiz_overview_report extends quiz_attempts_report {
             'done'  => 0,
         );
         foreach ($attempts as $attempt) {
-            $this->regrade_attempt($attempt, $dryrun);
             $a['done']++;
+            $a['attemptnum'] = $attempt->attempt;
+            $a['name'] = fullname($attempt);
+            $a['attemptid'] = $attempt->id;
             $progressbar->update($a['done'], $a['count'],
-                    get_string('regradingattemptxofy', 'quiz_overview', $a));
+                    get_string('regradingattemptxofywithdetails', 'quiz_overview', $a));
+            $this->regrade_attempt($attempt, $dryrun);
         }
+        $progressbar->update($a['done'], $a['count'],
+                get_string('regradedsuccessfullyxofy', 'quiz_overview', $a));
 
         if (!$dryrun) {
             $this->update_overall_grades($quiz);
@@ -457,8 +468,13 @@ class quiz_overview_report extends quiz_attempts_report {
             return;
         }
 
-        $attempts = $DB->get_records_list('quiz_attempts', 'uniqueid',
-                array_keys($attemptquestions));
+        list($uniqueidcondition, $params) = $DB->get_in_or_equal(array_keys($attemptquestions));
+        $attempts = $DB->get_records_sql("
+                SELECT quiza.*, " . get_all_user_name_fields(true, 'u') . "
+                  FROM {quiz_attempts} quiza
+                  JOIN {user} u ON u.id = quiza.userid
+                 WHERE quiza.uniqueid $uniqueidcondition
+                ", $params);
 
         $this->clear_regrade_table($quiz, $groupstudentsjoins);
 
@@ -468,11 +484,16 @@ class quiz_overview_report extends quiz_attempts_report {
             'done'  => 0,
         );
         foreach ($attempts as $attempt) {
-            $this->regrade_attempt($attempt, false, $attemptquestions[$attempt->uniqueid]);
             $a['done']++;
+            $a['attemptnum'] = $attempt->attempt;
+            $a['name'] = fullname($attempt);
+            $a['attemptid'] = $attempt->id;
             $progressbar->update($a['done'], $a['count'],
-                    get_string('regradingattemptxofy', 'quiz_overview', $a));
+                    get_string('regradingattemptxofywithdetails', 'quiz_overview', $a));
+            $this->regrade_attempt($attempt, false, $attemptquestions[$attempt->uniqueid]);
         }
+        $progressbar->update($a['done'], $a['count'],
+                get_string('regradedsuccessfullyxofy', 'quiz_overview', $a));
 
         $this->update_overall_grades($quiz);
     }

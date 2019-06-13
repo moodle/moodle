@@ -109,7 +109,8 @@ abstract class quiz_attempts_report_table extends table_sql {
      */
     public function col_checkbox($attempt) {
         if ($attempt->attempt) {
-            return '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
+            return html_writer::checkbox('attemptid[]', $attempt->attempt, false,
+                    get_string('selectattempt', 'quiz'), [], ['class' => 'accesshide']);
         } else {
             return '';
         }
