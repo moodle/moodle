@@ -33,9 +33,7 @@ $strheading = get_string('scheduledtasks', 'tool_task');
 $PAGE->set_title($strheading);
 $PAGE->set_heading($strheading);
 
-require_login();
-
-require_capability('moodle/site:config', context_system::instance());
+require_admin();
 
 $renderer = $PAGE->get_renderer('tool_task');
 

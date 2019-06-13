@@ -12,9 +12,7 @@
     $PAGE->set_url('/admin/timezone.php');
     $PAGE->set_context(context_system::instance());
 
-    require_login();
-
-    require_capability('moodle/site:config', context_system::instance());
+    require_admin();
 
     $strtimezone = get_string("timezone");
     $strsavechanges = get_string("savechanges");

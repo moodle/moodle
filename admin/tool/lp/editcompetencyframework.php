@@ -39,7 +39,7 @@ if (!empty($id)) {
 }
 
 // We check that we have the permission to edit this framework, in its own context.
-require_login();
+require_login(null, false);
 \core_competency\api::require_enabled();
 require_capability('moodle/competency:competencymanage', $context);
 

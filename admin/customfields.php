@@ -32,8 +32,7 @@ $syscontext = context_system::instance();
 $PAGE->set_url('/admin/customfields.php');
 $PAGE->set_context($syscontext);
 
-require_login();
-require_capability('moodle/site:config', $syscontext);
+require_admin();
 require_sesskey();
 
 $return = new moodle_url('/admin/settings.php', array('section' => 'managecustomfields'));

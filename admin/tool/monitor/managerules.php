@@ -33,6 +33,7 @@ $status = optional_param('status', 0, PARAM_BOOL);
 
 // Validate course id.
 if (empty($courseid)) {
+    admin_externalpage_setup('toolmonitorrules', '', null, '', array('pagelayout' => 'report'));
     $context = context_system::instance();
     $coursename = format_string($SITE->fullname, true, array('context' => $context));
     $PAGE->set_context($context);
@@ -53,10 +54,6 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_title($coursename);
 $PAGE->set_heading($coursename);
 
-// Site level report.
-if (empty($courseid)) {
-    admin_externalpage_setup('toolmonitorrules', '', null, '', array('pagelayout' => 'report'));
-}
 
 if (!empty($action) && $action == 'changestatus') {
     require_sesskey();

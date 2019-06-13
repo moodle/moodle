@@ -30,7 +30,7 @@ $competencyframeworkid = optional_param('competencyframeworkid', 0, PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 $parentid = optional_param('parentid', 0, PARAM_INT);
 
-require_login();
+require_login(null, false);
 \core_competency\api::require_enabled();
 
 if (empty($competencyframeworkid) && empty($id)) {

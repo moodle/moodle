@@ -35,8 +35,7 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 $PAGE->set_url('/admin/enrol.php');
 $PAGE->set_context(context_system::instance());
 
-require_login();
-require_capability('moodle/site:config', context_system::instance());
+require_admin();
 require_sesskey();
 
 $enabled = enrol_get_plugins(true);

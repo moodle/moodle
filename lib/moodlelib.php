@@ -3028,6 +3028,14 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 }
 
+/**
+ * A convenience function for where we must be logged in as admin
+ * @return void
+ */
+function require_admin() {
+    require_login(null, false);
+    require_capability('moodle/site:config', context_system::instance());
+}
 
 /**
  * This function just makes sure a user is logged out.
