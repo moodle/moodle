@@ -2201,7 +2201,8 @@ function move_courses($courseids, $categoryid) {
             'objectid' => $course->id,
             'context' => context_course::instance($course->id),
             'other' => array('shortname' => $dbcourse->shortname,
-                             'fullname' => $dbcourse->fullname)
+                             'fullname' => $dbcourse->fullname,
+                             'updatedfields' => array('category' => $category->id))
         ));
         $event->set_legacy_logdata(array($course->id, 'course', 'move', 'edit.php?id=' . $course->id, $course->id));
         $event->trigger();
@@ -2513,8 +2514,6 @@ function create_course($data, $editoroptions = NULL) {
 function update_course($data, $editoroptions = NULL) {
     global $DB, $CFG;
 
-    $data->timemodified = time();
-
     // Prevent changes on front page course.
     if ($data->id == SITEID) {
         throw new moodle_exception('invalidcourse', 'error');
@@ -2522,6 +2521,28 @@ function update_course($data, $editoroptions = NULL) {
 
     $oldcourse = course_get_format($data->id)->get_course();
     $context   = context_course::instance($oldcourse->id);
+
+    // Capture the updated fields for the log data.
+    $updatedfields = [];
+    foreach (get_object_vars($oldcourse) as $field => $value) {
+        if ($field == 'summary_editor') {
+            if (($data->$field)['text'] !== $value['text']) {
+                // The summary might be very long, we don't wan't to fill up the log record with the full text.
+                $updatedfields[$field] = '(updated)';
+            }
+        } else if ($field == 'tags') {
+            // Tags might not have the same array keys, just check the values.
+            if (array_values($data->$field) !== array_values($value)) {
+                $updatedfields[$field] = $data->$field;
+            }
+        } else {
+            if (isset($data->$field) && $data->$field != $value) {
+                $updatedfields[$field] = $data->$field;
+            }
+        }
+    }
+
+    $data->timemodified = time();
 
     if ($editoroptions) {
         $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course', 'summary', 0);
@@ -2629,7 +2650,8 @@ function update_course($data, $editoroptions = NULL) {
         'objectid' => $course->id,
         'context' => context_course::instance($course->id),
         'other' => array('shortname' => $course->shortname,
-                         'fullname' => $course->fullname)
+                         'fullname' => $course->fullname,
+                         'updatedfields' => $updatedfields)
     ));
 
     $event->set_legacy_logdata(array($course->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id));
