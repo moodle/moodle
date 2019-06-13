@@ -3429,9 +3429,11 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         $month->set_initialeventsloaded(!$skipevents);
         $month->set_showcoursefilter($view == "month");
         $data = $month->export($renderer);
+        $data->viewingmonth = true;
     } else if ($view == "day") {
         $day = new \core_calendar\external\calendar_day_exporter($calendar, $related);
         $data = $day->export($renderer);
+        $data->viewingday = true;
         $template = 'core_calendar/calendar_day';
     } else if ($view == "upcoming" || $view == "upcoming_mini") {
         $upcoming = new \core_calendar\external\calendar_upcoming_exporter($calendar, $related);
@@ -3439,6 +3441,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
 
         if ($view == "upcoming") {
             $template = 'core_calendar/calendar_upcoming';
+            $data->viewingupcoming = true;
         } else if ($view == "upcoming_mini") {
             $template = 'core_calendar/calendar_upcoming_mini';
         }

@@ -172,6 +172,22 @@ define([
      * @param {object} root The calendar root element
      */
     var registerEventListeners = function(root) {
+        // Listen the click on the day link to render the day view.
+        root.on('click', SELECTORS.VIEW_DAY_LINK, function(e) {
+            var dayLink = $(e.target);
+            var year = dayLink.data('year'),
+                month = dayLink.data('month'),
+                day = dayLink.data('day'),
+                courseId = dayLink.data('courseid'),
+                categoryId = dayLink.data('categoryid');
+            CalendarViewManager.refreshDayContent(root, year, month, day, courseId, categoryId, root,
+                    'core_calendar/calendar_day').then(function() {
+                e.preventDefault();
+                var url = '?view=day&time=' + dayLink.data('timestamp');
+                return window.history.pushState({}, '', url);
+            }).fail(Notification.exception);
+        });
+
         root.on('change', CalendarSelectors.elements.courseSelector, function() {
             var selectElement = $(this);
             var courseId = selectElement.val();

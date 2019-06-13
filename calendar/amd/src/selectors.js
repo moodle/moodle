@@ -42,6 +42,7 @@ define([], function() {
             month: "[data-period='month']",
         },
         courseSelector: 'select[name="course"]',
+        viewSelector: 'div[data-region="view-selector"]',
         actions: {
             create: '[data-action="new-event-button"]',
             edit: '[data-action="edit"]',
@@ -53,11 +54,13 @@ define([], function() {
         },
         today: '.today',
         day: '[data-region="day"]',
+        calendarMain: '[data-region="calendar"]',
         wrapper: '.calendarwrapper',
         eventItem: '[data-type="event"]',
         links: {
             navLink: '.calendarwrapper .arrow_link',
             eventLink: "[data-region='event-item']",
+            miniDayLink: "[data-region='mini-day-link']",
         },
         containers: {
             loadingIcon: '[data-region="overlay-icon-container"]',

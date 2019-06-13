@@ -40,7 +40,6 @@
     }} data-year="{{date.year}}"{{!
     }} data-view="month"{{!
     }}>
-    {{> core_calendar/header }}
     {{> core_calendar/month_navigation }}
     {{> core/overlay_loading}}
     <table id="month-detailed-{{uniqid}}" class="calendarmonth calendartable mb-0">
@@ -73,7 +72,10 @@
                         data-new-event-timestamp="{{neweventtimestamp}}">
                         <div class="d-none d-md-block hidden-phone text-xs-center">
                             {{#hasevents}}
-                                <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
+                                <a data-action="view-day-link" href="#" class="day" title="{{viewdaylinktitle}}"
+                                    data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
+                                    data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
+                                    data-timestamp="{{timestamp}}">{{mday}}</a>
                             {{/hasevents}}
                             {{^hasevents}}
                                 {{mday}}
@@ -121,7 +123,10 @@
                         </div>
                         <div class="d-md-none hidden-desktop hidden-tablet">
                             {{#hasevents}}
-                                <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
+                                <a data-action="view-day-link" href="#" class="day" title="{{viewdaylinktitle}}"
+                                    data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
+                                    data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
+                                    data-timestamp="{{timestamp}}">{{mday}}</a>
                             {{/hasevents}}
                             {{^hasevents}}
                                 <div data-region="day-content">

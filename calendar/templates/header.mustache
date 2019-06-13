@@ -31,7 +31,8 @@
     {
     }
 }}
-<div class="header">
+<div class="header d-flex flex-wrap">
+    {{> core_calendar/view_selector}}
     {{#filter_selector}}
         {{{filter_selector}}}
     {{/filter_selector}}

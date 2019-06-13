@@ -32,7 +32,7 @@
     }
 }}
 <div class="calendarwrapper" data-view="upcoming" data-context-id="{{defaulteventcontext}}" data-courseid="{{courseid}}">
-    {{> core_calendar/header}}
     {{> core/overlay_loading}}
+        <h2 class="current text-center">{{#str}}upcomingevents, core_calendar{{/str}}</h2>
     {{> core_calendar/event_list }}
 </div>
