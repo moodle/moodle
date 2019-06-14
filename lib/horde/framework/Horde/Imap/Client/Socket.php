@@ -2,7 +2,7 @@
 /**
  * Copyright 2005-2017 Horde LLC (http://www.horde.org/)
  *
- * See the enclosed file COPYING for license information (LGPL). If you
+ * See the enclosed file LICENSE for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * Originally based on code from:
@@ -664,6 +664,9 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
     protected function _tryLogin($method)
     {
         $username = $this->getParam('username');
+        if (is_null($authusername = $this->getParam('authusername'))) {
+	       $authusername = $username;
+        }
         $password = $this->getParam('password');
 
         switch ($method) {
@@ -764,7 +767,7 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
                 $method,
                 base64_encode(implode("\0", array(
                     $username,
-                    $username,
+                    $authusername,
                     $password
                 ))),
                 $username
@@ -2402,10 +2405,12 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
             $cmd->add($tmp);
 
             /* Charset is mandatory for SORT (RFC 5256 [3]).
-             * However, if UTF-8 support is activated, a client MUST NOT
-             * send the charset specification (RFC 6855 [3]; Errata 4029). */
+             * If UTF-8 support is activated, a client MUST ONLY
+             * send the 'UTF-8' specification (RFC 6855 [3]; Errata 4029). */
             if (!$this->_capability()->isEnabled('UTF8=ACCEPT')) {
                 $cmd->add($charset);
+            } else {
+                $cmd->add('UTF-8');
             }
         } else {
             $cmd = $this->_command(
@@ -2750,11 +2755,14 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
             empty($options['sequence']) ? 'UID THREAD' : 'THREAD'
         )->add($tsort);
 
-        /* If UTF-8 support is activated, a client MUST NOT
-         * send the charset specification (RFC 6855 [3]; Errata 4029). */
+        /* If UTF-8 support is activated, a client MUST send the UTF-8
+         * charset specification since charset is mandatory for this
+         * command (RFC 6855 [3]; Errata 4029). */
         if (empty($options['search'])) {
             if (!$this->_capability()->isEnabled('UTF8=ACCEPT')) {
                 $cmd->add('US-ASCII');
+            } else {
+                $cmd->add('UTF-8');
             }
             $cmd->add('ALL');
         } else {
@@ -2841,18 +2849,24 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
             }
         } catch (Horde_Imap_Client_Exception_ServerResponse $e) {
             if ($e->status === Horde_Imap_Client_Interaction_Server::NO) {
-                if ($e->getCode() === $e::UNKNOWNCTE) {
+                if ($e->getCode() === $e::UNKNOWNCTE ||
+                    $e->getCode() === $e::PARSEERROR) {
                     /* UNKNOWN-CTE error. Redo the query without the BINARY
-                     * elements. */
-                    $bq = $pipeline->data['binaryquery'];
-
-                    foreach ($queries as $val) {
-                        foreach ($bq as $key2 => $val2) {
-                            unset($val2['decode']);
-                            $val['_query']->bodyPart($key2, $val2);
-                            $val['_query']->remove(Horde_Imap_Client::FETCH_BODYPARTSIZE, $key2);
+                     * elements. Also include PARSEERROR in this as
+                     * Dovecot >= 2.2 binary fetch treats broken email as PARSE
+                     * error and no longer UNKNOWN-CTE
+                     */
+                    if (!empty($pipeline->data['binaryquery'])) {
+                        foreach ($queries as $val) {
+                            foreach ($pipeline->data['binaryquery'] as $key2 => $val2) {
+                                unset($val2['decode']);
+                                $val['_query']->bodyPart($key2, $val2);
+                                $val['_query']->remove(Horde_Imap_Client::FETCH_BODYPARTSIZE, $key2);
+                            }
+                            $pipeline->data['fetch_followup'][] = $val;
                         }
-                        $pipeline->data['fetch_followup'][] = $val;
+                    } else {
+                        $this->noop();
                     }
                 } elseif ($sequence) {
                     /* A NO response, when coupled with a sequence FETCH, most
@@ -4829,7 +4843,7 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
                     $ob,
                     $pipeline
                 );
-                $e->messagePrintf(strval($ob->token));
+                $e->messagePrintf(array(strval($ob->token)));
                 throw $e;
             }
             break;
