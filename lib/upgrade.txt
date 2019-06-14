@@ -8,6 +8,10 @@ information provided here is intended especially for developers.
 * Remove lib/pear/auth/RADIUS.php (MDL-65746)
 * Core components are now defined in /lib/components.json instead of coded into /lib/classes/component.php
 * Subplugins should now be defined using /db/subplugins.json instead of /db/subplugins.php (which will still work in order to maintain backwards compatibility).
+* The following functions have been finally deprecated and can not be used anymore:
+    * allow_override()
+    * allow_assign()
+    * allow_switch()
 
 === 3.7 ===
 
