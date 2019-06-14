@@ -157,11 +157,13 @@ abstract class HTMLPurifier_Injector
             return false;
         }
         // check for exclusion
-        for ($i = count($this->currentNesting) - 2; $i >= 0; $i--) {
-            $node = $this->currentNesting[$i];
-            $def  = $this->htmlDefinition->info[$node->name];
-            if (isset($def->excludes[$name])) {
-                return false;
+        if (!empty($this->currentNesting)) {
+            for ($i = count($this->currentNesting) - 2; $i >= 0; $i--) {
+                $node = $this->currentNesting[$i];
+                $def  = $this->htmlDefinition->info[$node->name];
+                if (isset($def->excludes[$name])) {
+                    return false;
+                }
             }
         }
         return true;
