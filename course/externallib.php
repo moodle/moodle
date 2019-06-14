@@ -3129,7 +3129,20 @@ class core_course_external extends external_api {
             }
 
             if ($params['field'] === 'ids') {
-                $courses = $DB->get_records_list('course', 'id', explode(',', $value), 'id ASC');
+                // Preload categories to avoid loading one at a time.
+                $courseids = explode(',', $value);
+                list ($listsql, $listparams) = $DB->get_in_or_equal($courseids);
+                $categoryids = $DB->get_fieldset_sql("
+                        SELECT DISTINCT cc.id
+                          FROM {course} c
+                          JOIN {course_categories} cc ON cc.id = c.category
+                         WHERE c.id $listsql", $listparams);
+                core_course_category::get_many($categoryids);
+
+                // Load and validate all courses. This is called because it loads the courses
+                // more efficiently.
+                list ($courses, $warnings) = external_util::validate_courses($courseids, [],
+                        false, true);
             } else {
                 $courses = $DB->get_records('course', array($params['field'] => $value), 'id ASC');
             }
@@ -3148,9 +3161,11 @@ class core_course_external extends external_api {
             // Get the public course information, even if we are not enrolled.
             $courseinlist = new core_course_list_element($course);
 
-            // Now, check if we have access to the course.
+            // Now, check if we have access to the course, unless it was already checked.
             try {
-                self::validate_context($context);
+                if (empty($course->contextvalidated)) {
+                    self::validate_context($context);
+                }
             } catch (Exception $e) {
                 // User can not access the course, check if they can see the public information about the course and return it.
                 if (core_course_category::can_view_course_info($course)) {
