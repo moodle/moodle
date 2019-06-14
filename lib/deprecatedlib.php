@@ -2527,96 +2527,32 @@ function calendar_preferences_button() {
 }
 
 /**
- * Return the name of the weekday
- *
  * @deprecated since 3.3
- * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
- * @param string $englishname
- * @return string of the weekeday
  */
-function calendar_wday_name($englishname) {
-    debugging(__FUNCTION__ . '() is deprecated and no longer used in core.', DEBUG_DEVELOPER);
-    return get_string(strtolower($englishname), 'calendar');
+function calendar_wday_name() {
+    throw new coding_exception('Function calendar_wday_name() is removed and no longer used in core.');
 }
 
 /**
- * Get the upcoming event block.
- *
  * @deprecated since 3.3
- * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
- * @param array $events list of events
- * @param moodle_url|string $linkhref link to event referer
- * @param boolean $showcourselink whether links to courses should be shown
- * @return string|null $content html block content
  */
-function calendar_get_block_upcoming($events, $linkhref = null, $showcourselink = false) {
-    global $CFG;
-
-    debugging(
-            __FUNCTION__ . '() has been deprecated. ' .
-            'Please see block_calendar_upcoming::get_content() for the correct API usage.',
-            DEBUG_DEVELOPER
-        );
-
-    require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
-    require_once($CFG->dirroot . '/blocks/calendar_upcoming/block_calendar_upcoming.php');
-    return block_calendar_upcoming::get_upcoming_content($events, $linkhref, $showcourselink);
+function calendar_get_block_upcoming() {
+    throw new coding_exception('Function calendar_get_block_upcoming() is removed,' .
+        'Please see block_calendar_upcoming::get_content() for the correct API usage.');
 }
 
 /**
- * Display month selector options.
- *
  * @deprecated since 3.3
- * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
- * @param string $name for the select element
- * @param string|array $selected options for select elements
  */
-function calendar_print_month_selector($name, $selected) {
-    debugging(__FUNCTION__ . '() is deprecated and no longer used in core.', DEBUG_DEVELOPER);
-    $months = array();
-    for ($i = 1; $i <= 12; $i++) {
-        $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
-    }
-    echo html_writer::label(get_string('months'), 'menu'. $name, false, array('class' => 'accesshide'));
-    echo html_writer::select($months, $name, $selected, false);
+function calendar_print_month_selector() {
+    throw new coding_exception('Function calendar_print_month_selector() is removed and can no longer used in core.');
 }
 
 /**
- * Update calendar subscriptions.
- *
  * @deprecated since 3.3
- * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
- * @return bool
  */
 function calendar_cron() {
-    debugging(__FUNCTION__ . '() is deprecated and should not be used. Please use the core\task\calendar_cron_task instead.',
-        DEBUG_DEVELOPER);
-
-    global $CFG, $DB;
-
-    require_once($CFG->dirroot . '/calendar/lib.php');
-    // In order to execute this we need bennu.
-    require_once($CFG->libdir.'/bennu/bennu.inc.php');
-
-    mtrace('Updating calendar subscriptions:');
-    cron_trace_time_and_memory();
-
-    $time = time();
-    $subscriptions = $DB->get_records_sql('SELECT * FROM {event_subscriptions} WHERE pollinterval > 0
-      AND lastupdated + pollinterval < ?', array($time));
-    foreach ($subscriptions as $sub) {
-        mtrace("Updating calendar subscription {$sub->name} in course {$sub->courseid}");
-        try {
-            $log = calendar_update_subscription_events($sub->id);
-            mtrace(trim(strip_tags($log)));
-        } catch (moodle_exception $ex) {
-            mtrace('Error updating calendar subscription: ' . $ex->getMessage());
-        }
-    }
-
-    mtrace('Finished updating calendar subscriptions.');
-
-    return true;
+    throw new coding_exception('Function calendar_cron() is removed. Please use the core\task\calendar_cron_task instead.');
 }
 
 /**
