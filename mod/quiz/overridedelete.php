@@ -49,6 +49,16 @@ require_login($course, false, $cm);
 // Check the user has the required capabilities to modify an override.
 require_capability('mod/quiz:manageoverrides', $context);
 
+if ($override->groupid) {
+    if (!groups_group_visible($override->groupid, $course, $cm)) {
+        print_error('invalidoverrideid', 'quiz');
+    }
+} else {
+    if (!groups_user_groups_visible($course, $override->userid, $cm)) {
+        print_error('invalidoverrideid', 'quiz');
+    }
+}
+
 $url = new moodle_url('/mod/quiz/overridedelete.php', array('id'=>$override->id));
 $confirmurl = new moodle_url($url, array('id'=>$override->id, 'confirm'=>1));
 $cancelurl = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
