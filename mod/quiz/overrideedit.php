@@ -76,6 +76,16 @@ require_capability('mod/quiz:manageoverrides', $context);
 if ($overrideid) {
     // Editing an override.
     $data = clone $override;
+
+    if ($override->groupid) {
+        if (!groups_group_visible($override->groupid, $course, $cm)) {
+            print_error('invalidoverrideid', 'quiz');
+        }
+    } else {
+        if (!groups_user_groups_visible($course, $override->userid, $cm)) {
+            print_error('invalidoverrideid', 'quiz');
+        }
+    }
 } else {
     // Creating a new override.
     $data = new stdClass();
