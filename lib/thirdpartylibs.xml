@@ -270,7 +270,7 @@
     <version>0.0.1</version>
   </library>
   <library>
-    <location>/fonts</location>
+    <location>fonts</location>
     <name>Font Awesome by Dave Gandy - http://fontawesome.io</name>
     <license>SIL OFL</license>
     <version>4.7.0</version>
