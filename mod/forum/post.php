@@ -778,6 +778,17 @@ $mformpost->set_data(
     (isset($discussion->id) ? array('discussion' => $discussion->id) : array())
 );
 
+// If we are being redirected via a no_submit_button press OR if the message is being prefilled.
+// then set the initial 'dirty' state.
+$dirty = $prefilledpost ? true : false;
+if ($mformpost->no_submit_button_pressed()) {
+    $data = $mformpost->get_submitted_data();
+
+    // If a no submit button has been pressed but the default values haven't been then reset the form change.
+    $dirty = (!trim($data->message['text']) && !trim($data->subject)) ? false : true;
+}
+$mformpost->set_initial_dirty_state($dirty);
+
 if ($mformpost->is_cancelled()) {
     if (!isset($discussion->id) || $forum->type === 'single') {
         // Single forums don't have a discussion page.
