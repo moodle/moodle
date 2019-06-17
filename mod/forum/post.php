@@ -789,11 +789,11 @@ if ($mformpost->no_submit_button_pressed()) {
     $data = $mformpost->get_submitted_data();
 
     // If a no submit button has been pressed but the default values haven't been then reset the form change.
-    if (!$dirty && !empty(trim($data->message['text']))) {
+    if (!$dirty && isset($data->message['text']) && !empty(trim($data->message['text']))) {
         $dirty = true;
     }
 
-    if (!$dirty && !empty(trim($data->message['message']))) {
+    if (!$dirty && isset($data->message['message']) && !empty(trim($data->message['message']))) {
         $dirty = true;
     }
 }
