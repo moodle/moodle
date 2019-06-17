@@ -971,29 +971,37 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
                     'try' => $try['try'],
                 ];
 
-                $attemptlinkcontents = '';
                 if ($try["grade"] !== null) { // if null then not done yet
                     // this is what the link does when the user has completed the try
                     $timetotake = $try["timeend"] - $try["timestart"];
 
-                    $attemptlinkcontents .= $try["grade"]."%";
                     if ($try["grade"] > $bestgrade) {
                         $bestgrade = $try["grade"];
                     }
-                    $attemptlinkcontents .= "&nbsp;".userdate($try["timestart"]);
-                    $attemptlinkcontents .= ",&nbsp;(".format_time($timetotake).")";
+
+                    $attemptdata = (object)[
+                        'grade' => $try["grade"],
+                        'timestart' => userdate($try["timestart"]),
+                        'duration' => format_time($timetotake),
+                    ];
+                    $attemptlinkcontents = get_string('attemptinfowithgrade', 'lesson', $attemptdata);
+
                 } else {
                     if ($try["end"]) {
                         // User finished the lesson but has no grade. (Happens when there are only content pages).
-                        $attemptlinkcontents .= "&nbsp;".userdate($try["timestart"]);
                         $timetotake = $try["timeend"] - $try["timestart"];
-                        $attemptlinkcontents .= ",&nbsp;(".format_time($timetotake).")";
+                        $attemptdata = (object)[
+                            'timestart' => userdate($try["timestart"]),
+                            'duration' => format_time($timetotake),
+                        ];
+                        $attemptlinkcontents = get_string('attemptinfonograde', 'lesson', $attemptdata);
                     } else {
                         // This is what the link does/looks like when the user has not completed the attempt.
-                        $attemptlinkcontents .= get_string("notcompleted", "lesson");
                         if ($try['timestart'] !== 0) {
                             // Teacher previews do not track time spent.
-                            $attemptlinkcontents .= "&nbsp;".userdate($try["timestart"]);
+                            $attemptlinkcontents = get_string("notcompletedwithdate", "lesson", userdate($try["timestart"]));
+                        } else {
+                            $attemptlinkcontents = get_string("notcompleted", "lesson");
                         }
                         $timetotake = null;
                     }
