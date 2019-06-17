@@ -5532,8 +5532,15 @@ class assign {
         }
 
         if ($instance->teamsubmission) {
+            $warnofungroupedusers = assign_grading_summary::WARN_GROUPS_NO;
             $defaultteammembers = $this->get_submission_group_members(0, true);
-            $warnofungroupedusers = (count($defaultteammembers) > 0 && $instance->preventsubmissionnotingroup);
+            if (count($defaultteammembers) > 0) {
+                if ($instance->preventsubmissionnotingroup) {
+                    $warnofungroupedusers = assign_grading_summary::WARN_GROUPS_REQUIRED;
+                } else {
+                    $warnofungroupedusers = assign_grading_summary::WARN_GROUPS_OPTIONAL;
+                }
+            }
 
             $summary = new assign_grading_summary($this->count_teams($activitygroup),
                                                   $instance->submissiondrafts,
@@ -5561,7 +5568,7 @@ class assign {
                                                   $this->get_course_module()->id,
                                                   $this->count_submissions_need_grading($activitygroup),
                                                   $instance->teamsubmission,
-                                                  false,
+                                                  assign_grading_summary::WARN_GROUPS_NO,
                                                   $this->can_grade(),
                                                   $isvisible);
         }
