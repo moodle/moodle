@@ -1448,6 +1448,16 @@ abstract class moodleform {
         $oldclass = $this->_form->getAttribute('class');
         $this->_form->updateAttributes(array('class' => $oldclass . ' full-width-labels'));
     }
+
+    /**
+     * Set the initial 'dirty' state of the form.
+     *
+     * @param bool $state
+     * @since Moodle 3.7.1
+     */
+    public function set_initial_dirty_state($state = false) {
+        $this->_form->set_initial_dirty_state($state);
+    }
 }
 
 /**
@@ -1502,6 +1512,13 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
     /** @var bool whether to automatically initialise M.formchangechecker for this form. */
     protected $_use_form_change_checker = true;
+
+    /**
+     * The initial state of the dirty state.
+     *
+     * @var bool
+     */
+    protected $_initial_form_dirty_state = false;
 
     /**
      * The form name is derived from the class name of the wrapper minus the trailing form
@@ -1719,6 +1736,26 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     function setDisableShortforms ($disable = true) {
         $this->_disableShortforms = $disable;
+    }
+
+    /**
+     * Set the initial 'dirty' state of the form.
+     *
+     * @param bool $state
+     * @since Moodle 3.7.1
+     */
+    public function set_initial_dirty_state($state = false) {
+        $this->_initial_form_dirty_state = $state;
+    }
+
+    /**
+     * Is the form currently set to dirty?
+     *
+     * @return boolean Initial dirty state.
+     * @since Moodle 3.7.1
+     */
+    public function is_dirty() {
+        return $this->_initial_form_dirty_state;
     }
 
     /**
@@ -2964,7 +3001,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $PAGE->requires->yui_module('moodle-core-formchangechecker',
                     'M.core_formchangechecker.init',
                     array(array(
-                        'formid' => $formid
+                        'formid' => $formid,
+                        'initialdirtystate' => $form->is_dirty(),
                     ))
             );
             $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
