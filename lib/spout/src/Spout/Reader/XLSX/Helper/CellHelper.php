@@ -7,8 +7,6 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 /**
  * Class CellHelper
  * This class provides helper functions when working with cells
- *
- * @package Box\Spout\Reader\XLSX\Helper
  */
 class CellHelper
 {
@@ -21,38 +19,14 @@ class CellHelper
     ];
 
     /**
-     * Fills the missing indexes of an array with a given value.
-     * For instance, $dataArray = []; $a[1] = 1; $a[3] = 3;
-     * Calling fillMissingArrayIndexes($dataArray, 'FILL') will return this array: ['FILL', 1, 'FILL', 3]
-     *
-     * @param array $dataArray The array to fill
-     * @param string|void $fillValue optional
-     * @return array
-     */
-    public static function fillMissingArrayIndexes($dataArray, $fillValue = '')
-    {
-        if (empty($dataArray)) {
-            return [];
-        }
-        $existingIndexes = array_keys($dataArray);
-
-        $newIndexes = array_fill_keys(range(0, max($existingIndexes)), $fillValue);
-        $dataArray += $newIndexes;
-
-        ksort($dataArray);
-
-        return $dataArray;
-    }
-
-    /**
      * Returns the base 10 column index associated to the cell index (base 26).
      * Excel uses A to Z letters for column indexing, where A is the 1st column,
      * Z is the 26th and AA is the 27th.
      * The mapping is zero based, so that A1 maps to 0, B2 maps to 1, Z13 to 25 and AA4 to 26.
      *
      * @param string $cellIndex The Excel cell index ('A1', 'BC13', ...)
-     * @return int
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException When the given cell index is invalid
+     * @return int
      */
     public static function getColumnIndexFromCellIndex($cellIndex)
     {

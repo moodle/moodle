@@ -2,17 +2,18 @@
 
 namespace Box\Spout\Writer\ODS\Helper;
 
+use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
-use Box\Spout\Writer\ODS\Internal\Worksheet;
+use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
+use Box\Spout\Writer\ODS\Manager\WorksheetManager;
 
 /**
  * Class FileSystemHelper
  * This class provides helper functions to help with the file system operations
  * like files/folders creation & deletion for ODS files
- *
- * @package Box\Spout\Writer\ODS\Helper
  */
-class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
+class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper implements FileSystemWithRootFolderHelperInterface
 {
     const APP_NAME = 'Spout';
     const MIMETYPE = 'application/vnd.oasis.opendocument.spreadsheet';
@@ -26,6 +27,9 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
     const MIMETYPE_FILE_NAME = 'mimetype';
     const STYLES_XML_FILE_NAME = 'styles.xml';
 
+    /** @var ZipHelper Helper to perform tasks with Zip archive */
+    private $zipHelper;
+
     /** @var string Path to the root folder inside the temp folder where the files to create the ODS will be stored */
     protected $rootFolder;
 
@@ -34,6 +38,16 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
 
     /** @var string Path to the temp folder, inside the root folder, where specific sheets content will be written to */
     protected $sheetsContentTempFolder;
+
+    /**
+     * @param string $baseFolderPath The path of the base folder where all the I/O can occur
+     * @param ZipHelper $zipHelper Helper to perform tasks with Zip archive
+     */
+    public function __construct($baseFolderPath, $zipHelper)
+    {
+        parent::__construct($baseFolderPath);
+        $this->zipHelper = $zipHelper;
+    }
 
     /**
      * @return string
@@ -54,8 +68,8 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
     /**
      * Creates all the folders needed to create a ODS file, as well as the files that won't change.
      *
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the base folders
+     * @return void
      */
     public function createBaseFilesAndFolders()
     {
@@ -70,20 +84,21 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
     /**
      * Creates the folder that will be used as root
      *
-     * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder
+     * @return FileSystemHelper
      */
     protected function createRootFolder()
     {
         $this->rootFolder = $this->createFolder($this->baseFolderRealPath, uniqid('ods'));
+
         return $this;
     }
 
     /**
      * Creates the "META-INF" folder under the root folder as well as the "manifest.xml" file in it
      *
-     * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder or the "manifest.xml" file
+     * @return FileSystemHelper
      */
     protected function createMetaInfoFolderAndFile()
     {
@@ -97,12 +112,12 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
     /**
      * Creates the "manifest.xml" file under the "META-INF" folder (under root)
      *
-     * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the file
+     * @return FileSystemHelper
      */
     protected function createManifestFile()
     {
-        $manifestXmlFileContents = <<<EOD
+        $manifestXmlFileContents = <<<'EOD'
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2">
     <manifest:file-entry manifest:full-path="/" manifest:media-type="application/vnd.oasis.opendocument.spreadsheet"/>
@@ -121,20 +136,21 @@ EOD;
      * Creates the temp folder where specific sheets content will be written to.
      * This folder is not part of the final ODS file and is only used to be able to jump between sheets.
      *
-     * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder
+     * @return FileSystemHelper
      */
     protected function createSheetsContentTempFolder()
     {
         $this->sheetsContentTempFolder = $this->createFolder($this->rootFolder, self::SHEETS_CONTENT_TEMP_FOLDER_NAME);
+
         return $this;
     }
 
     /**
      * Creates the "meta.xml" file under the root folder
      *
-     * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the file
+     * @return FileSystemHelper
      */
     protected function createMetaFile()
     {
@@ -160,31 +176,33 @@ EOD;
     /**
      * Creates the "mimetype" file under the root folder
      *
-     * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the file
+     * @return FileSystemHelper
      */
     protected function createMimetypeFile()
     {
         $this->createFileWithContents($this->rootFolder, self::MIMETYPE_FILE_NAME, self::MIMETYPE);
+
         return $this;
     }
 
     /**
      * Creates the "content.xml" file under the root folder
      *
+     * @param WorksheetManager $worksheetManager
+     * @param StyleManager $styleManager
      * @param Worksheet[] $worksheets
-     * @param StyleHelper $styleHelper
      * @return FileSystemHelper
      */
-    public function createContentFile($worksheets, $styleHelper)
+    public function createContentFile($worksheetManager, $styleManager, $worksheets)
     {
-        $contentXmlFileContents = <<<EOD
+        $contentXmlFileContents = <<<'EOD'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <office:document-content office:version="1.2" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:msoxl="http://schemas.microsoft.com/office/excel/formula" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
 EOD;
 
-        $contentXmlFileContents .= $styleHelper->getContentXmlFontFaceSectionContent();
-        $contentXmlFileContents .= $styleHelper->getContentXmlAutomaticStylesSectionContent(count($worksheets));
+        $contentXmlFileContents .= $styleManager->getContentXmlFontFaceSectionContent();
+        $contentXmlFileContents .= $styleManager->getContentXmlAutomaticStylesSectionContent($worksheets);
 
         $contentXmlFileContents .= '<office:body><office:spreadsheet>';
 
@@ -196,9 +214,9 @@ EOD;
 
         foreach ($worksheets as $worksheet) {
             // write the "<table:table>" node, with the final sheet's name
-            fwrite($contentXmlHandle, $worksheet->getTableElementStartAsString());
+            fwrite($contentXmlHandle, $worksheetManager->getTableElementStartAsString($worksheet));
 
-            $worksheetFilePath = $worksheet->getWorksheetFilePath();
+            $worksheetFilePath = $worksheet->getFilePath();
             $this->copyFileContentsToTarget($worksheetFilePath, $contentXmlHandle);
 
             fwrite($contentXmlHandle, '</table:table>');
@@ -236,20 +254,20 @@ EOD;
     public function deleteWorksheetTempFolder()
     {
         $this->deleteFolderRecursively($this->sheetsContentTempFolder);
+
         return $this;
     }
-
 
     /**
      * Creates the "styles.xml" file under the root folder
      *
-     * @param StyleHelper $styleHelper
+     * @param StyleManager $styleManager
      * @param int $numWorksheets Number of created worksheets
      * @return FileSystemHelper
      */
-    public function createStylesFile($styleHelper, $numWorksheets)
+    public function createStylesFile($styleManager, $numWorksheets)
     {
-        $stylesXmlFileContents = $styleHelper->getStylesXMLFileContent($numWorksheets);
+        $stylesXmlFileContents = $styleManager->getStylesXMLFileContent($numWorksheets);
         $this->createFileWithContents($this->rootFolder, self::STYLES_XML_FILE_NAME, $stylesXmlFileContents);
 
         return $this;
@@ -263,17 +281,19 @@ EOD;
      */
     public function zipRootFolderAndCopyToStream($streamPointer)
     {
-        $zipHelper = new ZipHelper($this->rootFolder);
+        $zip = $this->zipHelper->createZip($this->rootFolder);
+
+        $zipFilePath = $this->zipHelper->getZipFilePath($zip);
 
         // In order to have the file's mime type detected properly, files need to be added
         // to the zip file in a particular order.
         // @see http://www.jejik.com/articles/2010/03/how_to_correctly_create_odf_documents_using_zip/
-        $zipHelper->addUncompressedFileToArchive($this->rootFolder, self::MIMETYPE_FILE_NAME);
+        $this->zipHelper->addUncompressedFileToArchive($zip, $this->rootFolder, self::MIMETYPE_FILE_NAME);
 
-        $zipHelper->addFolderToArchive($this->rootFolder, ZipHelper::EXISTING_FILES_SKIP);
-        $zipHelper->closeArchiveAndCopyToStream($streamPointer);
+        $this->zipHelper->addFolderToArchive($zip, $this->rootFolder, ZipHelper::EXISTING_FILES_SKIP);
+        $this->zipHelper->closeArchiveAndCopyToStream($zip, $streamPointer);
 
         // once the zip is copied, remove it
-        $this->deleteFile($zipHelper->getZipFilePath());
+        $this->deleteFile($zipFilePath);
     }
 }

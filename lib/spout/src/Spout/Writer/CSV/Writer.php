@@ -2,17 +2,17 @@
 
 namespace Box\Spout\Writer\CSV;
 
-use Box\Spout\Writer\AbstractWriter;
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
+use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\WriterAbstract;
 
 /**
  * Class Writer
  * This class provides support to write data to CSV files
- *
- * @package Box\Spout\Writer\CSV
  */
-class Writer extends AbstractWriter
+class Writer extends WriterAbstract
 {
     /** Number of rows to write before flushing */
     const FLUSH_THRESHOLD = 500;
@@ -20,41 +20,32 @@ class Writer extends AbstractWriter
     /** @var string Content-Type value for the header */
     protected static $headerContentType = 'text/csv; charset=UTF-8';
 
-    /** @var string Defines the character used to delimit fields (one character only) */
-    protected $fieldDelimiter = ',';
-
-    /** @var string Defines the character used to enclose fields (one character only) */
-    protected $fieldEnclosure = '"';
-
     /** @var int */
     protected $lastWrittenRowIndex = 0;
-
-    /** @var bool */
-    protected $shouldAddBOM = true;
 
     /**
      * Sets the field delimiter for the CSV
      *
-     * @api
      * @param string $fieldDelimiter Character that delimits fields
      * @return Writer
      */
     public function setFieldDelimiter($fieldDelimiter)
     {
-        $this->fieldDelimiter = $fieldDelimiter;
+        $this->optionsManager->setOption(Options::FIELD_DELIMITER, $fieldDelimiter);
+
         return $this;
     }
 
     /**
      * Sets the field enclosure for the CSV
      *
-     * @api
      * @param string $fieldEnclosure Character that enclose fields
      * @return Writer
      */
     public function setFieldEnclosure($fieldEnclosure)
     {
-        $this->fieldEnclosure = $fieldEnclosure;
+        $this->optionsManager->setOption(Options::FIELD_ENCLOSURE, $fieldEnclosure);
+
         return $this;
     }
 
@@ -66,7 +57,8 @@ class Writer extends AbstractWriter
      */
     public function setShouldAddBOM($shouldAddBOM)
     {
-        $this->shouldAddBOM = (bool) $shouldAddBOM;
+        $this->optionsManager->setOption(Options::SHOULD_ADD_BOM, (bool) $shouldAddBOM);
+
         return $this;
     }
 
@@ -77,24 +69,25 @@ class Writer extends AbstractWriter
      */
     protected function openWriter()
     {
-        if ($this->shouldAddBOM) {
+        if ($this->optionsManager->getOption(Options::SHOULD_ADD_BOM)) {
             // Adds UTF-8 BOM for Unicode compatibility
             $this->globalFunctionsHelper->fputs($this->filePointer, EncodingHelper::BOM_UTF8);
         }
     }
 
     /**
-     * Adds data to the currently opened writer.
+     * Adds a row to the currently opened writer.
      *
-     * @param  array $dataRow Array containing data to be written.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param \Box\Spout\Writer\Style\Style $style Ignored here since CSV does not support styling.
+     * @param Row $row The row containing cells and styles
+     * @throws IOException If unable to write data
      * @return void
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    protected function addRowToWriter(array $dataRow, $style)
+    protected function addRowToWriter(Row $row)
     {
-        $wasWriteSuccessful = $this->globalFunctionsHelper->fputcsv($this->filePointer, $dataRow, $this->fieldDelimiter, $this->fieldEnclosure);
+        $fieldDelimiter = $this->optionsManager->getOption(Options::FIELD_DELIMITER);
+        $fieldEnclosure = $this->optionsManager->getOption(Options::FIELD_ENCLOSURE);
+
+        $wasWriteSuccessful = $this->globalFunctionsHelper->fputcsv($this->filePointer, $row->getCells(), $fieldDelimiter, $fieldEnclosure);
         if ($wasWriteSuccessful === false) {
             throw new IOException('Unable to write data');
         }

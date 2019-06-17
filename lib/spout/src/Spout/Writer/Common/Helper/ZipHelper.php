@@ -2,11 +2,11 @@
 
 namespace Box\Spout\Writer\Common\Helper;
 
+use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
+
 /**
  * Class ZipHelper
  * This class provides helper functions to create zip files
- *
- * @package Box\Spout\Writer\Common\Helper
  */
 class ZipHelper
 {
@@ -16,44 +16,40 @@ class ZipHelper
     const EXISTING_FILES_SKIP = 'skip';
     const EXISTING_FILES_OVERWRITE = 'overwrite';
 
-    /** @var string Path of the folder where the zip file will be created */
-    protected $tmpFolderPath;
-
-    /** @var \ZipArchive The ZipArchive instance */
-    protected $zip;
+    /** @var InternalEntityFactory Factory to create entities */
+    private $entityFactory;
 
     /**
-     * @param string $tmpFolderPath Path of the temp folder where the zip file will be created
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($tmpFolderPath)
+    public function __construct($entityFactory)
     {
-        $this->tmpFolderPath = $tmpFolderPath;
+        $this->entityFactory = $entityFactory;
     }
 
     /**
-     * Returns the already created ZipArchive instance or
-     * creates one if none exists.
+     * Returns a new ZipArchive instance pointing at the given path.
      *
+     * @param string $tmpFolderPath Path of the temp folder where the zip file will be created
      * @return \ZipArchive
      */
-    protected function createOrGetZip()
+    public function createZip($tmpFolderPath)
     {
-        if (!isset($this->zip)) {
-            $this->zip = new \ZipArchive();
-            $zipFilePath = $this->getZipFilePath();
+        $zip = $this->entityFactory->createZipArchive();
+        $zipFilePath = $tmpFolderPath . self::ZIP_EXTENSION;
 
-            $this->zip->open($zipFilePath, \ZipArchive::CREATE|\ZipArchive::OVERWRITE);
-        }
+        $zip->open($zipFilePath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-        return $this->zip;
+        return $zip;
     }
 
     /**
+     * @param \ZipArchive $zip An opened zip archive object
      * @return string Path where the zip file of the given folder will be created
      */
-    public function getZipFilePath()
+    public function getZipFilePath(\ZipArchive $zip)
     {
-        return $this->tmpFolderPath . self::ZIP_EXTENSION;
+        return $zip->filename;
     }
 
     /**
@@ -61,17 +57,19 @@ class ZipHelper
      * The file will be compressed.
      *
      * Example of use:
-     *   addFileToArchive('/tmp/xlsx/foo', 'bar/baz.xml');
+     *   addFileToArchive($zip, '/tmp/xlsx/foo', 'bar/baz.xml');
      *   => will add the file located at '/tmp/xlsx/foo/bar/baz.xml' in the archive, but only as 'bar/baz.xml'
      *
+     * @param \ZipArchive $zip An opened zip archive object
      * @param string $rootFolderPath Path of the root folder that will be ignored in the archive tree.
      * @param string $localFilePath Path of the file to be added, under the root folder
-     * @param string|void $existingFileMode Controls what to do when trying to add an existing file
+     * @param string $existingFileMode Controls what to do when trying to add an existing file
      * @return void
      */
-    public function addFileToArchive($rootFolderPath, $localFilePath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
+    public function addFileToArchive($zip, $rootFolderPath, $localFilePath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
     {
         $this->addFileToArchiveWithCompressionMethod(
+            $zip,
             $rootFolderPath,
             $localFilePath,
             $existingFileMode,
@@ -84,17 +82,19 @@ class ZipHelper
      * The file will NOT be compressed.
      *
      * Example of use:
-     *   addUncompressedFileToArchive('/tmp/xlsx/foo', 'bar/baz.xml');
+     *   addUncompressedFileToArchive($zip, '/tmp/xlsx/foo', 'bar/baz.xml');
      *   => will add the file located at '/tmp/xlsx/foo/bar/baz.xml' in the archive, but only as 'bar/baz.xml'
      *
+     * @param \ZipArchive $zip An opened zip archive object
      * @param string $rootFolderPath Path of the root folder that will be ignored in the archive tree.
      * @param string $localFilePath Path of the file to be added, under the root folder
-     * @param string|void $existingFileMode Controls what to do when trying to add an existing file
+     * @param string $existingFileMode Controls what to do when trying to add an existing file
      * @return void
      */
-    public function addUncompressedFileToArchive($rootFolderPath, $localFilePath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
+    public function addUncompressedFileToArchive($zip, $rootFolderPath, $localFilePath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
     {
         $this->addFileToArchiveWithCompressionMethod(
+            $zip,
             $rootFolderPath,
             $localFilePath,
             $existingFileMode,
@@ -107,19 +107,18 @@ class ZipHelper
      * The file will NOT be compressed.
      *
      * Example of use:
-     *   addUncompressedFileToArchive('/tmp/xlsx/foo', 'bar/baz.xml');
+     *   addUncompressedFileToArchive($zip, '/tmp/xlsx/foo', 'bar/baz.xml');
      *   => will add the file located at '/tmp/xlsx/foo/bar/baz.xml' in the archive, but only as 'bar/baz.xml'
      *
+     * @param \ZipArchive $zip An opened zip archive object
      * @param string $rootFolderPath Path of the root folder that will be ignored in the archive tree.
      * @param string $localFilePath Path of the file to be added, under the root folder
      * @param string $existingFileMode Controls what to do when trying to add an existing file
      * @param int $compressionMethod The compression method
      * @return void
      */
-    protected function addFileToArchiveWithCompressionMethod($rootFolderPath, $localFilePath, $existingFileMode, $compressionMethod)
+    protected function addFileToArchiveWithCompressionMethod($zip, $rootFolderPath, $localFilePath, $existingFileMode, $compressionMethod)
     {
-        $zip = $this->createOrGetZip();
-
         if (!$this->shouldSkipFile($zip, $localFilePath, $existingFileMode)) {
             $normalizedFullFilePath = $this->getNormalizedRealPath($rootFolderPath . '/' . $localFilePath);
             $zip->addFile($normalizedFullFilePath, $localFilePath);
@@ -140,14 +139,13 @@ class ZipHelper
     }
 
     /**
+     * @param \ZipArchive $zip An opened zip archive object
      * @param string $folderPath Path to the folder to be zipped
-     * @param string|void $existingFileMode Controls what to do when trying to add an existing file
+     * @param string $existingFileMode Controls what to do when trying to add an existing file
      * @return void
      */
-    public function addFolderToArchive($folderPath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
+    public function addFolderToArchive($zip, $folderPath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
     {
-        $zip = $this->createOrGetZip();
-
         $folderRealPath = $this->getNormalizedRealPath($folderPath) . '/';
         $itemIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($folderPath, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
 
@@ -184,33 +182,35 @@ class ZipHelper
     protected function getNormalizedRealPath($path)
     {
         $realPath = realpath($path);
+
         return str_replace(DIRECTORY_SEPARATOR, '/', $realPath);
     }
 
     /**
      * Closes the archive and copies it into the given stream
      *
+     * @param \ZipArchive $zip An opened zip archive object
      * @param resource $streamPointer Pointer to the stream to copy the zip
      * @return void
      */
-    public function closeArchiveAndCopyToStream($streamPointer)
+    public function closeArchiveAndCopyToStream($zip, $streamPointer)
     {
-        $zip = $this->createOrGetZip();
+        $zipFilePath = $zip->filename;
         $zip->close();
-        unset($this->zip);
 
-        $this->copyZipToStream($streamPointer);
+        $this->copyZipToStream($zipFilePath, $streamPointer);
     }
 
     /**
      * Streams the contents of the zip file into the given stream
      *
+     * @param string $zipFilePath Path of the zip file
      * @param resource $pointer Pointer to the stream to copy the zip
      * @return void
      */
-    protected function copyZipToStream($pointer)
+    protected function copyZipToStream($zipFilePath, $pointer)
     {
-        $zipFilePointer = fopen($this->getZipFilePath(), 'r');
+        $zipFilePointer = fopen($zipFilePath, 'r');
         stream_copy_to_stream($zipFilePointer, $pointer);
         fclose($zipFilePointer);
     }
