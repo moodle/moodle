@@ -405,28 +405,7 @@ class quiz_overview_report extends quiz_attempts_report {
             return;
         }
 
-        $this->clear_regrade_table($quiz, $groupstudentsjoins);
-
-        $progressbar = new progress_bar('quiz_overview_regrade', 500, true);
-        $a = array(
-            'count' => count($attempts),
-            'done'  => 0,
-        );
-        foreach ($attempts as $attempt) {
-            $a['done']++;
-            $a['attemptnum'] = $attempt->attempt;
-            $a['name'] = fullname($attempt);
-            $a['attemptid'] = $attempt->id;
-            $progressbar->update($a['done'], $a['count'],
-                    get_string('regradingattemptxofywithdetails', 'quiz_overview', $a));
-            $this->regrade_attempt($attempt, $dryrun);
-        }
-        $progressbar->update($a['done'], $a['count'],
-                get_string('regradedsuccessfullyxofy', 'quiz_overview', $a));
-
-        if (!$dryrun) {
-            $this->update_overall_grades($quiz);
-        }
+        $this->regrade_batch_of_attempts($quiz, $attempts, $dryrun, $groupstudentsjoins);
     }
 
     /**
@@ -476,6 +455,30 @@ class quiz_overview_report extends quiz_attempts_report {
                  WHERE quiza.uniqueid $uniqueidcondition
                 ", $params);
 
+        foreach ($attempts as $attempt) {
+            $attempt->regradeonlyslots = $attemptquestions[$attempt->uniqueid];
+        }
+
+        $this->regrade_batch_of_attempts($quiz, $attempts, false, $groupstudentsjoins);
+    }
+
+    /**
+     * This is a helper used by {@link regrade_attempts()} and
+     * {@link regrade_attempts_needing_it()}.
+     *
+     * Given an array of attempts, it regrades them all, or does a dry run.
+     * Each object in the attempts array must be a row from the quiz_attempts
+     * table, with the get_all_user_name_fields from the user table joined in.
+     * In addition, if $attempt->regradeonlyslots is set, then only those slots
+     * are regraded, otherwise all slots are regraded.
+     *
+     * @param object $quiz the quiz settings.
+     * @param array $attempts of data from the quiz_attempts table, with extra data as above.
+     * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
+     * @param \core\dml\sql_join $groupstudentsjoins empty for all attempts, otherwise regrade attempts
+     */
+    protected function regrade_batch_of_attempts($quiz, array $attempts,
+            bool $dryrun, \core\dml\sql_join $groupstudentsjoins) {
         $this->clear_regrade_table($quiz, $groupstudentsjoins);
 
         $progressbar = new progress_bar('quiz_overview_regrade', 500, true);
@@ -488,21 +491,28 @@ class quiz_overview_report extends quiz_attempts_report {
             $a['attemptnum'] = $attempt->attempt;
             $a['name'] = fullname($attempt);
             $a['attemptid'] = $attempt->id;
+            if (!isset($attempt->regradeonlyslots)) {
+                $attempt->regradeonlyslots = null;
+            }
             $progressbar->update($a['done'], $a['count'],
                     get_string('regradingattemptxofywithdetails', 'quiz_overview', $a));
-            $this->regrade_attempt($attempt, false, $attemptquestions[$attempt->uniqueid]);
+            $this->regrade_attempt($attempt, $dryrun, $attempt->regradeonlyslots);
         }
         $progressbar->update($a['done'], $a['count'],
                 get_string('regradedsuccessfullyxofy', 'quiz_overview', $a));
 
-        $this->update_overall_grades($quiz);
+        if (!$dryrun) {
+            $this->update_overall_grades($quiz);
+        }
     }
 
     /**
      * Count the number of attempts in need of a regrade.
+     *
      * @param object $quiz the quiz settings.
      * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params) If this is given, only data relating
      * to these users is cleared.
+     * @return int the number of attempts.
      */
     protected function count_question_attempts_needing_regrade($quiz, \core\dml\sql_join $groupstudentsjoins) {
         global $DB;
