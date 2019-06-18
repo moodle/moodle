@@ -45,12 +45,14 @@ function local_mymedia_extend_navigation($navigation) {
     }
 
     $nodehome = $navigation->get('home');
+    if (empty($nodehome)){
+        $nodehome = $navigation;
+    }
     $context = context_user::instance($USER->id);
 
-    if (empty($nodehome) || !has_capability('local/mymedia:view', $context, $USER)) {
+    if (!has_capability('local/mymedia:view', $context, $USER)) {
         return;
     }
-
     $mymedia = get_string('nav_mymedia', 'local_mymedia');
     $icon = new pix_icon('my-media', '', 'local_mymedia');
     $nodemymedia = $nodehome->add($mymedia, new moodle_url('/local/mymedia/mymedia.php'), navigation_node::NODETYPE_LEAF, $mymedia, 'mymedia', $icon);
