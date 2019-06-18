@@ -38,6 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @author    Russell Smith <mr-russ@smith2001.net>
  * @copyright 2016 Russell Smith
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runClassInSeparateProcess
  */
 class core_session_redis_testcase extends advanced_testcase {
 
