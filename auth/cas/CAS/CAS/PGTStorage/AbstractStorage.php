@@ -83,7 +83,7 @@ abstract class CAS_PGTStorage_AbstractStorage
      * This virtual method returns an informational string giving the type of storage
      * used by the object (used for debugging purposes).
      *
-     * @return void
+     * @return string
      *
      * @public
      */
@@ -96,7 +96,7 @@ abstract class CAS_PGTStorage_AbstractStorage
      * This virtual method returns an informational string giving informations on the
      * parameters of the storage.(used for debugging purposes).
      *
-     * @return void
+     * @return string
      *
      * @public
      */
@@ -136,7 +136,7 @@ abstract class CAS_PGTStorage_AbstractStorage
     /**
      * This method returns an error message set by PGTStorage::setErrorMessage().
      *
-     * @return an error message when set by PGTStorage::setErrorMessage(), FALSE
+     * @return string an error message when set by PGTStorage::setErrorMessage(), FALSE
      * otherwise.
      *
      * @deprecated not used.
@@ -161,7 +161,7 @@ abstract class CAS_PGTStorage_AbstractStorage
     /**
      * This method tells if the storage has already been intialized.
      *
-     * @return a boolean
+     * @return bool
      *
      * @protected
      */
@@ -206,7 +206,7 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @param string $pgt_iou the PGT iou
      *
-     * @return void
+     * @return string
      *
      * @note Should never be called.
      */

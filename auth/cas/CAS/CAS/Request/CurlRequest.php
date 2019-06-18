@@ -97,7 +97,7 @@ implements CAS_Request_RequestInterface
      * This method should NOT be used outside of the CurlRequest or the
      * CurlMultiRequest.
      *
-     * @return resource The cURL handle on success, false on failure
+     * @return resource|false The cURL handle on success, false on failure
      */
     public function initAndConfigure()
     {
@@ -187,10 +187,10 @@ implements CAS_Request_RequestInterface
     /**
      * Internal method for capturing the headers from a curl request.
      *
-     * @param handle $ch     handle of curl
+     * @param resource $ch     handle of curl
      * @param string $header header
      *
-     * @return void
+     * @return int
      */
     private function _curlReadHeaders ($ch, $header)
     {

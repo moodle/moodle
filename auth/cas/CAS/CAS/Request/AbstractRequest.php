@@ -322,6 +322,7 @@ implements CAS_Request_RequestInterface
      *
      * @return int
      * @throws CAS_OutOfSequenceException If called before the Request has been sent.
+     * @throws CAS_Request_Exception if the response did not contain a status code
      */
     public function getResponseStatusCode ()
     {

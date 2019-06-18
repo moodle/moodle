@@ -58,7 +58,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
     /**
      * This method returns the PDO object to use for database interactions.
      *
-     * @return the PDO object
+     * @return PDO object
      */
     private function _getPdo()
     {
@@ -71,17 +71,17 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
     private $_dsn;
     private $_username;
     private $_password;
-    private $_table_options;
+    private $_driver_options;
 
     /**
-     * the table to use for storing/retrieving pgt's
+     * @var string the table to use for storing/retrieving pgt's
      */
     private $_table;
 
     /**
      * This method returns the table to use when storing/retrieving PGT's
      *
-     * @return the name of the pgt storage table.
+     * @return string the name of the pgt storage table.
      */
     private function _getTable()
     {
@@ -96,7 +96,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
      * This method returns an informational string giving the type of storage
      * used by the object (used for debugging purposes).
      *
-     * @return an informational string.
+     * @return string an informational string.
      */
     public function getStorageType()
     {
@@ -107,7 +107,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
      * This method returns an informational string giving informations on the
      * parameters of the storage.(used for debugging purposes).
      *
-     * @return an informational string.
+     * @return string an informational string.
      * @public
      */
     public function getStorageInfo()
@@ -248,7 +248,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
     /**
      * This method returns the query used to create a pgt storage table
      *
-     * @return the create table SQL, no bind params in query
+     * @return string the create table SQL, no bind params in query
      */
     protected function createTableSql()
     {
@@ -259,7 +259,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
     /**
      * This method returns the query used to store a pgt
      *
-     * @return the store PGT SQL, :pgt and :pgt_iou are the bind params contained
+     * @return string the store PGT SQL, :pgt and :pgt_iou are the bind params contained
      *         in the query
      */
     protected function storePgtSql()
@@ -272,7 +272,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
      * This method returns the query used to retrieve a pgt. the first column
      * of the first row should contain the pgt
      *
-     * @return the retrieve PGT SQL, :pgt_iou is the only bind param contained
+     * @return string the retrieve PGT SQL, :pgt_iou is the only bind param contained
      *         in the query
      */
     protected function retrievePgtSql()
@@ -283,7 +283,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
     /**
      * This method returns the query used to delete a pgt.
      *
-     * @return the delete PGT SQL, :pgt_iou is the only bind param contained in
+     * @return string the delete PGT SQL, :pgt_iou is the only bind param contained in
      *         the query
      */
     protected function deletePgtSql()
@@ -387,7 +387,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
      *
      * @param string $pgt_iou the PGT iou
      *
-     * @return the corresponding PGT, or FALSE on error
+     * @return string|false the corresponding PGT, or FALSE on error
      */
     public function read($pgt_iou)
     {
