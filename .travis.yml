@@ -173,7 +173,7 @@ before_script:
           -e "/require_once/i \\define('TEST_CACHESTORE_REDIS_TESTSERVERS', '127.0.0.1');" \
           config.php ;
         # Redis session tests, but not for PHP 7.2 and up. See MDL-60978 for more info.
-        redissession="if (version_compare(PHP_VERSION, '7.2.0', '<')) { define('TEST_SESSION_REDIS_HOST', '127.0.0.1'); }"
+        redissession="define('TEST_SESSION_REDIS_HOST', '127.0.0.1');"
         sed -i \
           -e "/require_once/i \\${redissession}" \
           config.php ;
