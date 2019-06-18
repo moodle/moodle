@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.9  21-Dec-2016
+@version   v5.20.14  06-Jan-2019
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence.
 Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.sourceforge.net
+  Latest version is available at http://adodb.org/
 
   Native mssql driver. Requires mssql client. Works on Windows.
   To configure for Unix, see
@@ -245,6 +245,8 @@ class ADODB_mssql extends ADOConnection {
 
 	function SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
 	{
+		$nrows = (int) $nrows;
+		$offset = (int) $offset;
 		if ($nrows > 0 && $offset <= 0) {
 			$sql = preg_replace(
 				'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop." $nrows ",$sql);
@@ -680,7 +682,12 @@ order by constraint_name, referenced_table_name, keyno";
                 $arr = $args;
             }
 
-            array_walk($arr, create_function('&$v', '$v = "CAST(" . $v . " AS VARCHAR(255))";'));
+			array_walk(
+				$arr,
+				function(&$value, $key) {
+					$value = "CAST(" . $value . " AS VARCHAR(255))";
+				}
+			);
             $s = implode('+',$arr);
             if (sizeof($arr) > 0) return "$s";
 
@@ -798,7 +805,16 @@ order by constraint_name, referenced_table_name, keyno";
 						$decl .= "@P$i NVARCHAR($len)";
 					}
 
-					$params .= "@P$i=N". (strncmp($v,"'",1)==0? $v : $this->qstr($v));
+
+					if (substr($v,0,1) == "'" && substr($v,-1,1) == "'")
+						/*
+						* String is already fully quoted
+						*/
+						$inputVar = $v;
+					else
+						$inputVar = $this->qstr($v);
+
+					$params .= "@P$i=N" . $inputVar;	
 				} else if (is_integer($v)) {
 					$decl .= "@P$i INT";
 					$params .= "@P$i=".$v;

@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.9  21-Dec-2016
+@version   v5.20.14  06-Jan-2019
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence.
 Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.sourceforge.net
+  Latest version is available at http://adodb.org/
 
   Oracle support via ODBC. Requires ODBC. Works on Windows.
 */
@@ -76,11 +76,9 @@ class  ADODB_odbc_oracle extends ADODB_odbc {
 	// returns true or false
 	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
-	global $php_errormsg;
-
-		$php_errormsg = '';
+		$last_php_error = $this->resetLastError();
 		$this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword,SQL_CUR_USE_ODBC );
-		$this->_errorMsg = $php_errormsg;
+		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
 
 		$this->Execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
@@ -89,10 +87,9 @@ class  ADODB_odbc_oracle extends ADODB_odbc {
 	// returns true or false
 	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
-	global $php_errormsg;
-		$php_errormsg = '';
+		$last_php_error = $this->resetLastError();
 		$this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword,SQL_CUR_USE_ODBC );
-		$this->_errorMsg = $php_errormsg;
+		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
 
 		$this->Execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);

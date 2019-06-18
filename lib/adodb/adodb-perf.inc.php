@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.9  21-Dec-2016
+@version   v5.20.14  06-Jan-2019
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence. See License.txt.
   Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.sourceforge.net
+  Latest version is available at http://adodb.org/
 
   Library for basic performance monitoring and tuning.
 
@@ -147,7 +147,7 @@ function adodb_log_sql(&$connx,$sql,$inputarr)
 		if (empty($d)) $d = date("'Y-m-d H:i:s'");
 		if ($conn->dataProvider == 'oci8' && $dbT != 'oci8po') {
 			$isql = "insert into $perf_table values($d,:b,:c,:d,:e,:f)";
-		} else if ($dbT == 'odbc_mssql' || $dbT == 'informix' || strncmp($dbT,'odbtp',4)==0) {
+		} else if ($dbT == 'mssqlnative' || $dbT == 'odbc_mssql' || $dbT == 'informix' || strncmp($dbT,'odbtp',4)==0) {
 			$timer = $arr['f'];
 			if ($dbT == 'informix') $sql2 = substr($sql2,0,230);
 
@@ -166,6 +166,9 @@ function adodb_log_sql(&$connx,$sql,$inputarr)
 
 		global $ADODB_PERF_MIN;
 		if ($errN != 0 || $time >= $ADODB_PERF_MIN) {
+			if($conn instanceof ADODB_mysqli && $conn->_queryID) {
+				mysqli_free_result($conn->_queryID);
+			}
 			$ok = $conn->Execute($isql,$arr);
 		} else
 			$ok = true;
@@ -226,7 +229,7 @@ class adodb_perf {
 	var $cliFormat = "%32s => %s \r\n";
 	var $sql1 = 'sql1';  // used for casting sql1 to text for mssql
 	var $explain = true;
-	var $helpurl = '<a href="http://adodb.sourceforge.net/docs-adodb.htm#logsql">LogSQL help</a>';
+	var $helpurl = '<a href="http://adodb.org/dokuwiki/doku.php?id=v5:performance:logsql">LogSQL help</a>';
 	var $createTableSQL = false;
 	var $maxLength = 2000;
 
@@ -721,7 +724,7 @@ Committed_AS:   348732 kB
 
 	if  (empty($_GET['hidem']))
 	echo "<table border=1 width=100% bgcolor=lightyellow><tr><td colspan=2>
-	<b><a href=http://adodb.sourceforge.net/?perf=1>ADOdb</a> Performance Monitor</b> <font size=1>for $app</font></tr><tr><td>
+	<b><a href=http://adodb.org/dokuwiki/doku.php?id=v5:performance:performance_index>ADOdb</a> Performance Monitor</b> <font size=1>for $app</font></tr><tr><td>
 	<a href=?do=stats><b>Performance Stats</b></a> &nbsp; <a href=?do=viewsql><b>View SQL</b></a>
 	 &nbsp; <a href=?do=tables><b>View Tables</b></a> &nbsp; <a href=?do=poll><b>Poll Stats</b></a>",
 	 $allowsql ? ' &nbsp; <a href=?do=dosql><b>Run SQL</b></a>' : '',

@@ -1,7 +1,7 @@
 <?php
 
 /*
-@version   v5.20.9  21-Dec-2016
+@version   v5.20.14  06-Jan-2019
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -73,12 +73,14 @@ WHERE relkind in ('r','v') AND (c.relname='%s' or c.relname = lower('%s'))
 
 	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
 	{
-		 $offsetStr = ($offset >= 0) ? " OFFSET $offset" : '';
-		 $limitStr  = ($nrows >= 0)  ? " LIMIT $nrows" : '';
-		 if ($secs2cache)
-		  	$rs = $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
-		 else
-		  	$rs = $this->Execute($sql."$limitStr$offsetStr",$inputarr);
+		$nrows = (int) $nrows;
+		$offset = (int) $offset;
+		$offsetStr = ($offset >= 0) ? " OFFSET $offset" : '';
+		$limitStr  = ($nrows >= 0)  ? " LIMIT $nrows" : '';
+		if ($secs2cache)
+			$rs = $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
+		else
+			$rs = $this->Execute($sql."$limitStr$offsetStr",$inputarr);
 
 		return $rs;
 	}

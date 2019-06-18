@@ -2,7 +2,7 @@
 /*
  * Set tabs to 4 for best viewing.
  *
- * Latest version is available at http://adodb.sourceforge.net
+ * Latest version is available at http://adodb.org/
  *
  * This is the main include file for ADOdb.
  * Database specific drivers are stored in the adodb/drivers/adodb-*.inc.php
@@ -14,7 +14,7 @@
 /**
 	\mainpage
 
-	@version   v5.20.9  21-Dec-2016
+	@version   v5.20.14  06-Jan-2019
 	@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 	@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
@@ -29,9 +29,6 @@
 	Informix, PostgreSQL, FrontBase, Interbase (Firebird and Borland variants), Foxpro, Access,
 	ADO, SAP DB, SQLite and ODBC. We have had successful reports of connecting to Progress and
 	other databases via ODBC.
-
-	Latest Download at http://adodb.sourceforge.net/
-
  */
 
 if (!defined('_ADODB_LAYER')) {
@@ -227,13 +224,12 @@ if (!defined('_ADODB_LAYER')) {
 
 		// Initialize random number generator for randomizing cache flushes
 		// -- note Since PHP 4.2.0, the seed  becomes optional and defaults to a random value if omitted.
-		// MDL-41198 Removed random seed initialization.
-		// srand(((double)microtime())*1000000);
+		srand(((double)microtime())*1000000);
 
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'v5.20.9  21-Dec-2016';
+		$ADODB_vers = 'v5.20.14  06-Jan-2019';
 
 		/**
 		 * Determines whether recordset->RecordCount() is used.
@@ -432,6 +428,7 @@ if (!defined('_ADODB_LAYER')) {
 	var $databaseType = '';		/// RDBMS currently in use, eg. odbc, mysql, mssql
 	var $database = '';			/// Name of database to be used.
 	var $host = '';				/// The hostname of the database server
+	var $port = '';				/// The port of the database server
 	var $user = '';				/// The username which is used to connect to the database server.
 	var $password = '';			/// Password for the username. For security, we no longer store it.
 	var $debug = false;			/// if set to true will output sql statements
@@ -634,6 +631,26 @@ if (!defined('_ADODB_LAYER')) {
 	}
 
 	/**
+	 * Parses the hostname to extract the port.
+	 * Overwrites $this->host and $this->port, only if a port is specified.
+	 * The Hostname can be fully or partially qualified,
+	 * ie: "db.mydomain.com:5432" or "ldaps://ldap.mydomain.com:636"
+	 * Any specified scheme such as ldap:// or ldaps:// is maintained.
+	 */
+	protected function parseHostNameAndPort() {
+		$parsed_url = parse_url($this->host);
+		if (is_array($parsed_url) && isset($parsed_url['host']) && isset($parsed_url['port'])) {
+			if ( isset($parsed_url['scheme']) ) {
+				// If scheme is specified (ie: ldap:// or ldaps://, make sure we retain that.
+				$this->host = $parsed_url['scheme'] . "://" . $parsed_url['host'];
+			} else {
+				$this->host = $parsed_url['host'];
+			}
+			$this->port = $parsed_url['port'];
+		}
+	}
+
+	/**
 	 * Connect to database
 	 *
 	 * @param [argHostname]		Host to connect to
@@ -648,9 +665,9 @@ if (!defined('_ADODB_LAYER')) {
 		if ($argHostname != "") {
 			$this->host = $argHostname;
 		}
-		if ( strpos($this->host, ':') > 0 && isset($this->port) ) {
-			list($this->host, $this->port) = explode(":", $this->host, 2);
-        	}
+		// Overwrites $this->host and $this->port if a port is specified.
+		$this->parseHostNameAndPort();
+
 		if ($argUsername != "") {
 			$this->user = $argUsername;
 		}
@@ -731,9 +748,9 @@ if (!defined('_ADODB_LAYER')) {
 		if ($argHostname != "") {
 			$this->host = $argHostname;
 		}
-		if ( strpos($this->host, ':') > 0 && isset($this->port) ) {
-			list($this->host, $this->port) = explode(":", $this->host, 2);
-	        }
+		// Overwrites $this->host and $this->port if a port is specified.
+		$this->parseHostNameAndPort();
+
 		if ($argUsername != "") {
 			$this->user = $argUsername;
 		}
@@ -1497,6 +1514,9 @@ if (!defined('_ADODB_LAYER')) {
 	 * @return		the recordset ($rs->databaseType == 'array')
 	 */
 	function SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0) {
+		$nrows = (int)$nrows;
+		$offset = (int)$offset;
+
 		if ($this->hasTop && $nrows > 0) {
 			// suggested by Reinhard Balling. Access requires top after distinct
 			// Informix requires first before distinct - F Riosa
@@ -1511,7 +1531,7 @@ if (!defined('_ADODB_LAYER')) {
 					// access includes ties in result
 					if ($isaccess) {
 						$sql = preg_replace(
-						'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop.' '.((integer)$nrows).' ',$sql);
+						'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop.' '.$nrows.' ',$sql);
 
 						if ($secs2cache != 0) {
 							$ret = $this->CacheExecute($secs2cache, $sql,$inputarr);
@@ -1521,10 +1541,10 @@ if (!defined('_ADODB_LAYER')) {
 						return $ret; // PHP5 fix
 					} else if ($ismssql){
 						$sql = preg_replace(
-						'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop.' '.((integer)$nrows).' ',$sql);
+						'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop.' '.$nrows.' ',$sql);
 					} else {
 						$sql = preg_replace(
-						'/(^\s*select\s)/i','\\1 '.$this->hasTop.' '.((integer)$nrows).' ',$sql);
+						'/(^\s*select\s)/i','\\1 '.$this->hasTop.' '.$nrows.' ',$sql);
 					}
 			} else {
 				$nn = $nrows + $offset;
@@ -2392,6 +2412,7 @@ if (!defined('_ADODB_LAYER')) {
 	 */
 	function Close() {
 		$rez = $this->_close();
+		$this->_queryID = false;
 		$this->_connectionID = false;
 		return $rez;
 	}
@@ -3037,6 +3058,61 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		}*/
 		$rs = $this->PageExecute($sql,$nrows,$page,$inputarr,$secs2cache);
 		return $rs;
+	}
+
+	/**
+	 * Get the last error recorded by PHP and clear the message.
+	 *
+	 * By clearing the message, it becomes possible to detect whether a new error
+	 * has occurred, even when it is the same error as before being repeated.
+	 *
+	 * @return array|null Array if an error has previously occurred. Null otherwise.
+	 */
+	protected function resetLastError() {
+		$error = error_get_last();
+
+		if (is_array($error)) {
+			$error['message'] = '';
+		}
+
+		return $error;
+	}
+
+	/**
+	 * Compare a previously stored error message with the last error recorded by PHP
+	 * to determine whether a new error has occured.
+	 *
+	 * @param array|null $old Optional. Previously stored return value of error_get_last().
+	 *
+	 * @return string The error message if a new error has occured
+	 *                or an empty string if no (new) errors have occured..
+	 */
+	protected function getChangedErrorMsg($old = null) {
+		$new = error_get_last();
+
+		if (is_null($new)) {
+			// No error has occured yet at all.
+			return '';
+		}
+
+		if (is_null($old)) {
+			// First error recorded.
+			return $new['message'];
+		}
+
+		$changed = false;
+		foreach($new as $key => $value) {
+			if ($new[$key] !== $old[$key]) {
+				$changed = true;
+				break;
+			}
+		}
+
+		if ($changed === true) {
+			return $new['message'];
+		}
+
+		return '';
 	}
 
 } // end class ADOConnection
@@ -4618,8 +4694,8 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 				$class = $db; break;
 		}
 
-		$file = ADODB_DIR."/drivers/adodb-".$db.".inc.php";
-		@include_once($file);
+		$file = "drivers/adodb-$db.inc.php";
+		@include_once(ADODB_DIR . '/' . $file);
 		$ADODB_LASTDB = $class;
 		if (class_exists("ADODB_" . $class)) {
 			return $class;

@@ -7,7 +7,8 @@
 // NOTICE OF COPYRIGHT                                                   //
 //                                                                       //
 // ADOdb  - Database Abstraction Library for PHP                         //
-//          http://adodb.sourceforge.net/                                //
+//                                                                       //
+// Latest version is available at http://adodb.org                       //
 //                                                                       //
 // Copyright (c) 2000-2014 John Lim (jlim\@natsoft.com.my)               //
 //          All rights reserved.                                         //
