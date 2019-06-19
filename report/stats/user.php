@@ -130,9 +130,11 @@ $param->table = 'user_'.$param->table;
 $wheres = [
     "userid = :userid",
     "timeend >= :timeend",
+    "stattype = :stattype",
 ];
 $params['userid'] = $user->id;
 $params['timeend'] = $param->timeafter;
+$params['stattype'] = $param->stattype;
 // Add condition for course ID when specified.
 if ($course->id != SITEID) {
     $wheres[] = "courseid = :courseid";
