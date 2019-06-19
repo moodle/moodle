@@ -1,0 +1,5 @@
+{
+    "plugintypes": {
+        "logstore": "admin\/tool\/log\/store"
+    }
+}

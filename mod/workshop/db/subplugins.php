@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,8 +24,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array(
-                    'workshopform'       => 'mod/workshop/form',
-                    'workshopallocation' => 'mod/workshop/allocation',
-                    'workshopeval'       => 'mod/workshop/eval',
-                    );
+debugging('Use of subplugins.php has been deprecated. Please provide a subplugins.json instead.', DEBUG_DEVELOPER);
+$subplugins = (array) json_decode(file_get_contents(__DIR__ . "/subplugins.json"))->plugintypes;

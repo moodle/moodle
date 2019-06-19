@@ -7010,20 +7010,27 @@ class context_module extends context {
         $module = $DB->get_record('modules', array('id'=>$cm->module));
 
         $subcaps = array();
-        $subpluginsfile = "$CFG->dirroot/mod/$module->name/db/subplugins.php";
-        if (file_exists($subpluginsfile)) {
+
+        $modulepath = "{$CFG->dirroot}/mod/{$module->name}";
+        if (file_exists("{$modulepath}/db/subplugins.json")) {
+            $subplugins = (array) json_decode(file_get_contents("{$modulepath}/db/subplugins.json"))->plugintypes;
+        } else if (file_exists("{$modulepath}/db/subplugins.php")) {
+            debugging('Use of subplugins.php has been deprecated. ' .
+                    'Please update your plugin to provide a subplugins.json file instead.',
+                    DEBUG_DEVELOPER);
             $subplugins = array();  // should be redefined in the file
-            include($subpluginsfile);
-            if (!empty($subplugins)) {
-                foreach (array_keys($subplugins) as $subplugintype) {
-                    foreach (array_keys(core_component::get_plugin_list($subplugintype)) as $subpluginname) {
-                        $subcaps = array_merge($subcaps, array_keys(load_capability_def($subplugintype.'_'.$subpluginname)));
-                    }
+            include("{$modulepath}/db/subplugins.php");
+        }
+
+        if (!empty($subplugins)) {
+            foreach (array_keys($subplugins) as $subplugintype) {
+                foreach (array_keys(core_component::get_plugin_list($subplugintype)) as $subpluginname) {
+                    $subcaps = array_merge($subcaps, array_keys(load_capability_def($subplugintype.'_'.$subpluginname)));
                 }
             }
         }
 
-        $modfile = "$CFG->dirroot/mod/$module->name/lib.php";
+        $modfile = "{$modulepath}/lib.php";
         $extracaps = array();
         if (file_exists($modfile)) {
             include_once($modfile);
