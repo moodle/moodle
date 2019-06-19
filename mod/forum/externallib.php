@@ -1257,9 +1257,13 @@ class mod_forum_external extends external_api {
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
+        $coursecontext = \context_course::instance($forum->get_course_id());
+        $discussionsubscribe = \mod_forum\subscriptions::get_user_default_subscription($forumrecord, $coursecontext,
+            $cm, null);
+
         // Validate options.
         $options = array(
-            'discussionsubscribe' => true,
+            'discussionsubscribe' => $discussionsubscribe,
             'private'             => false,
             'inlineattachmentsid' => 0,
             'attachmentsid' => null,
@@ -1350,9 +1354,11 @@ class mod_forum_external extends external_api {
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
 
-            $settings = new stdClass();
-            $settings->discussionsubscribe = $options['discussionsubscribe'];
-            forum_post_subscription($settings, $forumrecord, $discussionrecord);
+            if ($options['discussionsubscribe']) {
+                $settings = new stdClass();
+                $settings->discussionsubscribe = $options['discussionsubscribe'];
+                forum_post_subscription($settings, $forumrecord, $discussionrecord);
+            }
         } else {
             throw new moodle_exception('couldnotadd', 'forum');
         }
