@@ -154,4 +154,80 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
                     array($questiondata1->id, $questiondata2->id, $questiondata3->id),
                     new qubaid_list(array($quba->get_id()))));
     }
+
+    public function test_repeated_usage_saving_new_usage() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $initialqurows = $DB->count_records('question_usages');
+        $initialqarows = $DB->count_records('question_attempts');
+        $initialqasrows = $DB->count_records('question_attempt_steps');
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $questiondata1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+
+        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba->set_preferred_behaviour('deferredfeedback');
+        $quba->add_question(question_bank::load_question($questiondata1->id));
+        $quba->start_all_questions();
+        question_engine::save_questions_usage_by_activity($quba);
+
+        // Check one usage, question_attempts and step added.
+        $firstid = $quba->get_id();
+        $this->assertEquals(1, $DB->count_records('question_usages') - $initialqurows);
+        $this->assertEquals(1, $DB->count_records('question_attempts') - $initialqarows);
+        $this->assertEquals(1, $DB->count_records('question_attempt_steps') - $initialqasrows);
+
+        $quba->finish_all_questions();
+        question_engine::save_questions_usage_by_activity($quba);
+
+        // Check usage id not changed.
+        $this->assertEquals($firstid, $quba->get_id());
+
+        // Check still one usage, question_attempts, but now two steps.
+        $this->assertEquals(1, $DB->count_records('question_usages') - $initialqurows);
+        $this->assertEquals(1, $DB->count_records('question_attempts') - $initialqarows);
+        $this->assertEquals(2, $DB->count_records('question_attempt_steps') - $initialqasrows);
+    }
+
+    public function test_repeated_usage_saving_existing_usage() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $questiondata1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+
+        $initquba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $initquba->set_preferred_behaviour('deferredfeedback');
+        $slot = $initquba->add_question(question_bank::load_question($questiondata1->id));
+        $initquba->start_all_questions();
+        question_engine::save_questions_usage_by_activity($initquba);
+
+        $quba = question_engine::load_questions_usage_by_activity($initquba->get_id());
+
+        $initialqurows = $DB->count_records('question_usages');
+        $initialqarows = $DB->count_records('question_attempts');
+        $initialqasrows = $DB->count_records('question_attempt_steps');
+
+        $quba->process_all_actions(time(), $quba->prepare_simulated_post_data(
+                [$slot => ['answer' => 'Frog']]));
+        question_engine::save_questions_usage_by_activity($quba);
+
+        // Check one usage, question_attempts and step added.
+        $this->assertEquals(0, $DB->count_records('question_usages') - $initialqurows);
+        $this->assertEquals(0, $DB->count_records('question_attempts') - $initialqarows);
+        $this->assertEquals(1, $DB->count_records('question_attempt_steps') - $initialqasrows);
+
+        $quba->finish_all_questions();
+        question_engine::save_questions_usage_by_activity($quba);
+
+        // Check still one usage, question_attempts, but now two steps.
+        $this->assertEquals(0, $DB->count_records('question_usages') - $initialqurows);
+        $this->assertEquals(0, $DB->count_records('question_attempts') - $initialqarows);
+        $this->assertEquals(2, $DB->count_records('question_attempt_steps') - $initialqasrows);
+    }
 }

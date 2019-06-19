@@ -104,6 +104,8 @@ class question_engine_data_mapper {
         if ($stepdata) {
             $this->insert_all_step_data($stepdata);
         }
+
+        $quba->set_observer(new question_engine_unit_of_work($quba));
     }
 
     /**
