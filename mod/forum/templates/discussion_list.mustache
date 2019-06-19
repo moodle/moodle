@@ -215,10 +215,10 @@
                                     <td scope="col" class="p-0 text-center align-middle">
                                         {{#unread}}
                                             {{! TODO Rewrite as AJAX}}
-                                            <div class="p-3 w-100 h-100 d-block">
+                                            <span class="p-1 w-100 h-100 d-block unread">
                                                 <a href="{{{discussion.urls.viewfirstunread}}}">{{unread}}</a>
                                                 <a href="{{{discussion.urls.markasread}}}">{{#pix}}t/markasread, core, {{#str}}markalldread, mod_forum{{/str}}{{/pix}}</a>
-                                            </div>
+                                            </span>
                                         {{/unread}}
                                         {{^unread}}
                                             <span class="p-3 w-100 h-100 d-block">
