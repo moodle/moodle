@@ -112,6 +112,7 @@ class Html2Text
         '/&#151;/i',                                     // m-dash in win-1252
         '/&(amp|#38);/i',                                // Ampersand: see converter()
         '/[ ]{2,}/',                                     // Runs of spaces, post-handling
+        '/&#39;/i',                                      // The apostrophe symbol
     );
 
     /**
@@ -125,6 +126,7 @@ class Html2Text
         '—',         // m-dash
         '|+|amp|+|', // Ampersand: see converter()
         ' ',         // Runs of spaces, post-handling
+        '\'',        // Apostrophe
     );
 
     /**

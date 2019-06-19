@@ -165,7 +165,7 @@
     <location>html2text</location>
     <name>HTML2Text</name>
     <license>GPL</license>
-    <version>4.1.0</version>
+    <version>4.2.1</version>
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>
