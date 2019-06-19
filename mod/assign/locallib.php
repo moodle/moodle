@@ -7407,6 +7407,14 @@ class assign {
             $options = array('' => get_string('markingworkflowstatenotmarked', 'assign')) + $states;
             $mform->addElement('select', 'workflowstate', get_string('markingworkflowstate', 'assign'), $options);
             $mform->addHelpButton('workflowstate', 'markingworkflowstate', 'assign');
+            $gradingstatus = $this->get_grading_status($userid);
+            if ($gradingstatus != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+                if ($grade->grade && $grade->grade != -1) {
+                    $assigngradestring = html_writer::span(grade_floatval($grade->grade), 'currentgrade');
+                    $label = get_string('currentassigngrade', 'assign');
+                    $mform->addElement('static', 'currentassigngrade', $label, $assigngradestring);
+                }
+            }
         }
 
         if ($this->get_instance()->markingworkflow &&
@@ -7428,6 +7436,7 @@ class assign {
             $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE);
             $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_RELEASED);
         }
+
         $gradestring = '<span class="currentgrade">' . $gradestring . '</span>';
         $mform->addElement('static', 'currentgrade', get_string('currentgrade', 'assign'), $gradestring);
 
