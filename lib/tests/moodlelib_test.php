@@ -36,18 +36,24 @@ class core_moodlelib_testcase extends advanced_testcase {
      * It is not possible to directly change the result of get_string in
      * a unit test. Instead, we create a language pack for language 'xx' in
      * dataroot and make langconfig.php with the string we need to change.
-     * The example separator used here is 'X'; on PHP 5.3 and before this
+     * The default example separator used here is 'X'; on PHP 5.3 and before this
      * must be a single byte character due to PHP bug/limitation in
      * number_format, so you can't use UTF-8 characters.
+     *
+     * @param string $decsep Separator character. Defaults to `'X'`.
      */
-    protected function define_local_decimal_separator() {
+    protected function define_local_decimal_separator(string $decsep = 'X') {
         global $SESSION, $CFG;
 
         $SESSION->lang = 'xx';
-        $langconfig = "<?php\n\$string['decsep'] = 'X';";
+        $langconfig = "<?php\n\$string['decsep'] = '$decsep';";
         $langfolder = $CFG->dataroot . '/lang/xx';
         check_dir_exists($langfolder);
         file_put_contents($langfolder . '/langconfig.php', $langconfig);
+
+        // Ensure the new value is picked up and not taken from the cache.
+        $stringmanager = get_string_manager();
+        $stringmanager->reset_caches(true);
     }
 
     public function test_cleanremoteaddr() {
@@ -2257,6 +2263,14 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Localisation off.
         $this->assertEquals('5.43000', format_float(5.43, 5, false));
         $this->assertEquals('5.43', format_float(5.43, 5, false, true));
+
+        // Tests with tilde as localised decimal separator.
+        $this->define_local_decimal_separator('~');
+
+        // Must also work for '~' as decimal separator.
+        $this->assertEquals('5', format_float(5.0001, 3, true, true));
+        $this->assertEquals('5~43000', format_float(5.43, 5));
+        $this->assertEquals('5~43', format_float(5.43, 5, true, true));
     }
 
     /**
