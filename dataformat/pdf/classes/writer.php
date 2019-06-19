@@ -89,6 +89,11 @@ class writer extends \core\dataformat\base {
     public function write_record($record, $rownum) {
         $rowheight = 0;
 
+        // If $record is an object convert it to an array.
+        if (is_object($record)) {
+            $record = (array)$record;
+        }
+
         foreach ($record as $cell) {
             $rowheight = max($rowheight, $this->pdf->getStringHeight($this->colwidth, $cell, false, true, '', 1));
         }
@@ -99,12 +104,19 @@ class writer extends \core\dataformat\base {
             $this->print_heading();
         }
 
-        $total = count($record);
-        $counter = 1;
-        foreach ($record as $cell) {
-            $nextposition = ($counter == $total) ? 1 : 0;
+        // Get the last key for this record.
+        end($record);
+        $lastkey = key($record);
+
+        // Reset the record pointer.
+        reset($record);
+
+        // Loop through each element.
+        foreach ($record as $key => $cell) {
+            // Determine whether we're at the last element of the record.
+            $nextposition = ($lastkey === $key) ? 1 : 0;
+            // Write the element.
             $this->pdf->Multicell($this->colwidth, $rowheight, $cell, 1, 'L', false, $nextposition);
-            $counter++;
         }
     }
 
