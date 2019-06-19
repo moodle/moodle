@@ -46,14 +46,12 @@ $string['atleastoneoption'] = 'You need to provide at least one possible answer.
 $string['full'] = '(Full)';
 $string['havetologin'] = 'You have to log in before you can submit your choice';
 $string['choice'] = 'Choice';
-$string['choiceactivityname'] = 'Choice: {$a}';
 $string['choice:addinstance'] = 'Add a new choice';
 $string['choiceclose'] = 'Allow responses until';
 $string['choice:deleteresponses'] = 'Modify and delete responses';
 $string['choice:downloadresponses'] = 'Download responses';
 $string['choicefull'] = 'One or more of the options you have selected have already been filled. Your response has not been saved. Please make another selection.';
 $string['choice:choose'] = 'Record a choice';
-$string['choicecloseson'] = 'Choice closes on {$a}';
 $string['choicename'] = 'Choice name';
 $string['choiceopen'] = 'Allow responses from';
 $string['choiceoptions'] = 'Choice options';
@@ -147,4 +145,7 @@ $string['viewchoices'] = 'View choices';
 $string['withselected'] = 'With selected';
 $string['userchoosethisoption'] = 'Users who chose this option';
 $string['yourselection'] = 'Your selection';
-$string['skipresultgraph'] = 'Skip result graph';
+
+// Deprecated since Moodle 3.8.
+$string['choiceactivityname'] = 'Choice: {$a}';
+$string['choicecloseson'] = 'Choice closes on {$a}';

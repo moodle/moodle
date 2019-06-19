@@ -2195,50 +2195,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test get_activities_overview
-     */
-    public function test_get_activities_overview() {
-        global $USER;
-
-        $this->resetAfterTest();
-        $course1 = self::getDataGenerator()->create_course();
-        $course2 = self::getDataGenerator()->create_course();
-
-        // Create a viewer user.
-        $viewer = self::getDataGenerator()->create_user((object) array('trackforums' => 1));
-        $this->getDataGenerator()->enrol_user($viewer->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($viewer->id, $course2->id);
-
-        // Create two forums - one in each course.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $forum1 = self::getDataGenerator()->create_module('forum', (object) array('course' => $course1->id));
-        $forum2 = self::getDataGenerator()->create_module('forum', (object) array('course' => $course2->id));
-
-        $this->setAdminUser();
-        // A standard post in the forum.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $record->userid = $USER->id;
-        $record->forum = $forum1->id;
-        $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
-
-        $this->setUser($viewer->id);
-        $courses = array($course1->id , $course2->id);
-
-        $result = core_course_external::get_activities_overview($courses);
-        $this->assertDebuggingCalledCount(8);
-        $result = external_api::clean_returnvalue(core_course_external::get_activities_overview_returns(), $result);
-
-        // There should be one entry for course1, and no others.
-        $this->assertCount(1, $result['courses']);
-        $this->assertEquals($course1->id, $result['courses'][0]['id']);
-        // Check expected overview data for the module.
-        $this->assertEquals('forum', $result['courses'][0]['overviews'][0]['module']);
-        $this->assertContains('1 total unread', $result['courses'][0]['overviews'][0]['overviewtext']);
-    }
-
-    /**
      * Test get_user_navigation_options
      */
     public function test_get_user_navigation_options() {
