@@ -1,6 +1,8 @@
+$nabvar-bg-color: $dark !default;
+
 .navbar-bootswatch {
     @extend .navbar-dark;
-    background-color: $primary;
+    background-color: $nabvar-bg-color;
 
     .usermenu {
         color: $navbar-dark-color;
@@ -10,7 +12,7 @@
     }
     a.dropdown-toggle,
     a .usertext {
-        color: $navbar-dark-color;
+        color: $navbar-dark-active-color;
         @include hover-focus {
             color: $navbar-dark-hover-color;
         }
