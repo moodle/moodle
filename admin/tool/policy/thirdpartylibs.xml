@@ -4,7 +4,7 @@
     <location>amd/src/jquery-eu-cookie-law-popup.js</location>
     <name>jQuery EU Cookie Law popups</name>
     <license>MIT</license>
-    <version>1.0.1</version>
+    <version>1.1.2</version>
     <licenseversion></licenseversion>
   </library>
 </libraries>

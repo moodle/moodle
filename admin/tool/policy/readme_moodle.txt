@@ -1,4 +1,4 @@
-jQuery EU Cookie Law popups 1.0.1
+jQuery EU Cookie Law popups 1.1.2
 -------------
 https://github.com/wimagguc/jquery-eu-cookie-law-popup
 
@@ -53,4 +53,4 @@ $(document).bind("user_cookie_consent_changed", function(event, object) {
    Add "tool_policy styles" to the end of the styles file.
 
 4. Execute grunt to compile js
-   grunt js
+   grunt amd
