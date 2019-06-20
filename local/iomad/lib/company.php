@@ -2348,7 +2348,7 @@ class company {
         global $DB, $CFG;
 
         // Check if the course is associated to any learning path.
-        if (!$DB->get_records('iomad_learningpathcourse', array('courseid' => $courseid))) {
+        if (!$DB->get_records('iomad_learningpathcourse', array('course' => $courseid))) {
             return true;
         }
 
