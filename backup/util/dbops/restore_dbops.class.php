@@ -1062,13 +1062,27 @@ abstract class restore_dbops {
                             $foundfile = reset($foundfiles);
                             $fs->create_file_from_storedfile($file_record, $foundfile->id);
                         } else {
-                            // Finally try to restore the file from trash.
-                            $filesytem = $fs->get_file_system();
+                            $filesystem = $fs->get_file_system();
                             $restorefile = $file;
                             $restorefile->contextid = $newcontextid;
                             $storedfile = new stored_file($fs, $restorefile);
-                            $trashrecovery = $filesytem->recover_file($storedfile, true);
-                            if (!$trashrecovery) {
+
+                            // Ok, let's try recover this file.
+                            // 1. We check if the file can be fetched locally without attempting to fetch
+                            //    from the trash.
+                            // 2. We check if we can get the remote filepath for the specified stored file.
+                            // 3. We check if the file can be fetched from the trash.
+                            // 4. All failed, say we couldn't find it.
+                            if ($filesystem->is_file_readable_locally_by_storedfile($storedfile)) {
+                                $localpath = $filesystem->get_local_path_from_storedfile($storedfile);
+                                $fs->create_file_from_pathname($file, $localpath);
+                            } else if ($filesystem->is_file_readable_remotely_by_storedfile($storedfile)) {
+                                $url = $filesystem->get_remote_path_from_storedfile($storedfile);
+                                $fs->create_file_from_url($file, $url);
+                            } else if ($filesystem->is_file_readable_locally_by_storedfile($storedfile, true)) {
+                                $localpath = $filesystem->get_local_path_from_storedfile($storedfile, true);
+                                $fs->create_file_from_pathname($file, $localpath);
+                            } else {
                                 // A matching file was not found.
                                 $results[] = self::get_missing_file_result($file);
                                 continue;
