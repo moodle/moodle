@@ -237,15 +237,6 @@ abstract class file_system {
     abstract public function remove_file($contenthash);
 
     /**
-     * Tries to recover missing content of file from trash.
-     *
-     * @param stored_file $file stored_file instance
-     * @param bool $createrecord Create file record for stored file.
-     * @return bool success
-     */
-    abstract public function recover_file(stored_file $file, $createrecord=false);
-
-    /**
      * Check whether a file is removable.
      *
      * This must be called prior to file removal.
