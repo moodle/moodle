@@ -870,6 +870,11 @@ class core_calendar_external extends external_api {
         self::validate_context($context);
         parse_str($params['formdata'], $data);
 
+        if (WS_SERVER) {
+            // Request via WS, ignore sesskey checks in form library.
+            $USER->ignoresesskey = true;
+        }
+
         $eventtype = isset($data['eventtype']) ? $data['eventtype'] : null;
         $coursekey = ($eventtype == 'group') ? 'groupcourseid' : 'courseid';
         $courseid = (!empty($data[$coursekey])) ? $data[$coursekey] : null;
