@@ -153,7 +153,6 @@ if (!async_helper::is_async_pending($id, 'course', 'backup')) {
         // Before we perform the backup check settings to see if user
         // or setting defaults are set to exclude files from the backup.
         if ($backup->get_setting_value('files') == 0) {
-            $bc->set_mode(backup::MODE_SAMESITE);
             $renderer->set_samesite_notification();
         }
 

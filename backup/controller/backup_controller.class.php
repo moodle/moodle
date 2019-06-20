@@ -185,20 +185,6 @@ class backup_controller extends base_controller {
         backup_check::check_security($this, false);
     }
 
-    /**
-     * Sets the mode (purpose) of the backup.
-     *
-     * @param int $mode The mode to set.
-     */
-    public function set_mode($mode) {
-        $this->mode = $mode;
-        $this->set_include_files(); // Need to check if files are included as mode may have changed.
-        $this->save_controller();
-        $tbc = self::load_controller($this->backupid);
-        $this->logger = $tbc->logger; // Wakeup loggers.
-        $tbc->plan->destroy(); // Clean plan controller structures, keeping logger alive.
-    }
-
     public function set_status($status) {
         // Note: never save_controller() with the object info after STATUS_EXECUTING or the whole controller,
         // containing all the steps will be sent to DB. 100% (monster) useless.
