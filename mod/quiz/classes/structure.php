@@ -59,6 +59,9 @@ class structure {
     /** @var bool caches the results of can_be_edited. */
     protected $canbeedited = null;
 
+    /** @var bool caches the results of can_add_random_question. */
+    protected $canaddrandom = null;
+
     /** @var bool tracks whether tags have been loaded */
     protected $hasloadedtags = false;
 
@@ -1092,5 +1095,24 @@ class structure {
         }
 
         return isset($this->slottags[$slotid]) ? $this->slottags[$slotid] : [];
+    }
+
+    /**
+     * Whether the current user can add random questions to the quiz or not.
+     * It is only possible to add a random question if the user has the moodle/question:useall capability
+     * on at least one of the contexts related to the one where we are currently editing questions.
+     *
+     * @return bool
+     */
+    public function can_add_random_questions() {
+        if ($this->canaddrandom === null) {
+            $quizcontext = $this->quizobj->get_context();
+            $relatedcontexts = new \question_edit_contexts($quizcontext);
+            $usablecontexts = $relatedcontexts->having_cap('moodle/question:useall');
+
+            $this->canaddrandom = !empty($usablecontexts);
+        }
+
+        return $this->canaddrandom;
     }
 }
