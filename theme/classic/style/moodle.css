@@ -10,9 +10,7 @@
  *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
-.fa, .block_settings .block_tree [aria-expanded="true"]:before,
-.block_navigation .block_tree [aria-expanded="true"]:before, .block_settings .block_tree [aria-expanded="false"]:before,
-.block_navigation .block_tree [aria-expanded="false"]:before {
+.fa {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: inherit;
@@ -69,14 +67,10 @@
 .fa-pull-right {
   float: right; }
 
-.fa.fa-pull-left, .block_settings .block_tree .fa-pull-left[aria-expanded="true"]:before,
-.block_navigation .block_tree .fa-pull-left[aria-expanded="true"]:before, .block_settings .block_tree .fa-pull-left[aria-expanded="false"]:before,
-.block_navigation .block_tree .fa-pull-left[aria-expanded="false"]:before {
+.fa.fa-pull-left {
   margin-right: .3em; }
 
-.fa.fa-pull-right, .block_settings .block_tree .fa-pull-right[aria-expanded="true"]:before,
-.block_navigation .block_tree .fa-pull-right[aria-expanded="true"]:before, .block_settings .block_tree .fa-pull-right[aria-expanded="false"]:before,
-.block_navigation .block_tree .fa-pull-right[aria-expanded="false"]:before {
+.fa.fa-pull-right {
   margin-left: .3em; }
 
 /* Deprecated as of 4.4.0 */
@@ -86,14 +80,10 @@
 .pull-left {
   float: left; }
 
-.fa.pull-left, .block_settings .block_tree .pull-left[aria-expanded="true"]:before,
-.block_navigation .block_tree .pull-left[aria-expanded="true"]:before, .block_settings .block_tree .pull-left[aria-expanded="false"]:before,
-.block_navigation .block_tree .pull-left[aria-expanded="false"]:before {
+.fa.pull-left {
   margin-right: .3em; }
 
-.fa.pull-right, .block_settings .block_tree .pull-right[aria-expanded="true"]:before,
-.block_navigation .block_tree .pull-right[aria-expanded="true"]:before, .block_settings .block_tree .pull-right[aria-expanded="false"]:before,
-.block_navigation .block_tree .pull-right[aria-expanded="false"]:before {
+.fa.pull-right {
   margin-left: .3em; }
 
 .fa-spin {
@@ -11638,14 +11628,26 @@ div.editor_atto_toolbar button .icon {
 .block_navigation .block_tree [aria-expanded="true"]:before {
   content: "";
   margin-right: 0;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
   width: 16px; }
 
 .block_settings .block_tree [aria-expanded="false"]:before,
 .block_navigation .block_tree [aria-expanded="false"]:before {
   content: "";
-  font-size: 16px;
   margin-right: 0;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
   width: 16px; }
 
 .dir-rtl .block_settings .block_tree [aria-expanded="false"]:before,

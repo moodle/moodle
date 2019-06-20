@@ -300,17 +300,17 @@ body.drawer-open-left #region-main.has-blocks {
 .block_navigation .block_tree [aria-expanded="true"]:before {
     content: $fa-var-angle-down;
     margin-right: 0;
+    @include fa-icon();
     font-size: 16px;
-    @extend .fa;
     width: 16px;
 }
 
 .block_settings .block_tree [aria-expanded="false"]:before,
 .block_navigation .block_tree [aria-expanded="false"]:before {
     content: $fa-var-angle-right;
-    font-size: 16px;
     margin-right: 0;
-    @extend .fa;
+    @include fa-icon();
+    font-size: 16px;
     width: 16px;
 }
 .dir-rtl {
