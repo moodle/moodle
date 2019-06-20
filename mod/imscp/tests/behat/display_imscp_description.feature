@@ -15,7 +15,7 @@ Feature: Display the IMS content package description in the IMSCP and optionally
       | user | course | role |
       | teacher1 | C1 | editingteacher |
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Description is displayed in the IMS content package
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
@@ -30,7 +30,7 @@ Feature: Display the IMS content package description in the IMSCP and optionally
     When I follow "Test IMS content package"
     Then I should see "Test IMS content package description"
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Show IMS description in the course homepage
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
@@ -51,7 +51,7 @@ Feature: Display the IMS content package description in the IMSCP and optionally
     When I am on "Course 1" course homepage
     Then I should see "Test IMS content package description"
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Hide IMS description in the course homepage
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
