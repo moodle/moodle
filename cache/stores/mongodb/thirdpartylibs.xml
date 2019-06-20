@@ -4,7 +4,7 @@
     <location>MongoDB</location>
     <name>MongoDB PHP Library</name>
     <license>Apache</license>
-    <version>1.4</version>
+    <version>1.4.2</version>
     <licenseversion>2.0</licenseversion>
   </library>
 </libraries>
