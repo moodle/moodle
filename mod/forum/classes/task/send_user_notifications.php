@@ -353,6 +353,7 @@ class send_user_notifications extends \core\task\adhoc_task {
         $eventdata->contexturlname = $discussion->name;
         // User image.
         $userpicture = new \user_picture($author);
+        $userpicture->size = 1; // Use f1 size.
         $userpicture->includetoken = $this->recipient->id; // Generate an out-of-session token for the user receiving the message.
         $eventdata->customdata = [
             'cmid' => $cm->id,

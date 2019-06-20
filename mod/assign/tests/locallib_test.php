@@ -1526,6 +1526,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertEquals($assign->get_instance()->id, $customdata->instance);
         $this->assertEquals('feedbackavailable', $customdata->messagetype);
         $userpicture = new user_picture($teacher);
+        $userpicture->size = 1; // Use f1 size.
         $this->assertEquals($userpicture->get_url($PAGE)->out(false), $customdata->notificationiconurl);
         $this->assertEquals(0, $customdata->uniqueidforuser);   // Not used in this case.
         $this->assertFalse($customdata->blindmarking);

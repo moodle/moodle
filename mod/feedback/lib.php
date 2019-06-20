@@ -2639,6 +2639,7 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
                 $eventdata->contexturlname   = $info->feedback;
                 // User image.
                 $userpicture = new user_picture($user);
+                $userpicture->size = 1; // Use f1 size.
                 $userpicture->includetoken = $teacher->id; // Generate an out-of-session token for the user receiving the message.
                 $customdata['notificationiconurl'] = $userpicture->get_url($PAGE)->out(false);
                 $eventdata->customdata = $customdata;

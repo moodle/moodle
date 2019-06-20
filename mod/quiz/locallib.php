@@ -1588,6 +1588,7 @@ function quiz_send_notification($recipient, $submitter, $a) {
     $eventdata->contexturl        = $a->quizreviewurl;
     $eventdata->contexturlname    = $a->quizname;
     $userpicture = new user_picture($submitter);
+    $userpicture->size = 1; // Use f1 size.
     $userpicture->includetoken = $recipient->id; // Generate an out-of-session token for the user receiving the message.
     $eventdata->customdata        = [
         'cmid' => $a->quizcmid,
