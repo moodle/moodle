@@ -346,11 +346,11 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_role_assignments', new lang_string('generalroleassignments','backup'), new lang_string('configgeneralroleassignments','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_activities', new lang_string('generalactivities','backup'), new lang_string('configgeneralactivities','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_blocks', new lang_string('generalblocks','backup'), new lang_string('configgeneralblocks','backup'), 1));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_filters', new lang_string('generalfilters','backup'), new lang_string('configgeneralfilters','backup'), 1));
     $temp->add(new admin_setting_configcheckbox(
             'backup/backup_auto_files',
             new lang_string('generalfiles', 'backup'),
             new lang_string('configgeneralfiles', 'backup'), '1'));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_filters', new lang_string('generalfilters','backup'), new lang_string('configgeneralfilters','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_comments', new lang_string('generalcomments','backup'), new lang_string('configgeneralcomments','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_badges', new lang_string('generalbadges','backup'), new lang_string('configgeneralbadges','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_calendarevents', new lang_string('generalcalendarevents','backup'), new lang_string('configgeneralcalendarevents','backup'), 1));
