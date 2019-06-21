@@ -110,7 +110,7 @@ class MoodleExcelWorkbook {
     public function close() {
         global $CFG;
 
-        foreach ($this->objspreadsheet->getAllSheets() as $sheet){
+        foreach ($this->objspreadsheet->getAllSheets() as $sheet) {
             $sheet->setSelectedCells('A1');
         }
         $this->objspreadsheet->setActiveSheetIndex(0);
@@ -139,8 +139,8 @@ class MoodleExcelWorkbook {
         header('Content-Type: '.$mimetype);
         header('Content-Disposition: attachment;filename="'.$filename.'"');
 
-        $objWriter = IOFactory::createWriter($this->objspreadsheet, $this->type);
-        $objWriter->save('php://output');
+        $objwriter = IOFactory::createWriter($this->objspreadsheet, $this->type);
+        $objwriter->save('php://output');
     }
 
     /**
@@ -203,8 +203,8 @@ class MoodleExcelWorksheet {
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
         $col += 1;
 
-        $this->worksheet->getStyleByColumnAndRow($col, $row+1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
-        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row+1, $str, DataType::TYPE_STRING);
+        $this->worksheet->getStyleByColumnAndRow($col, $row + 1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row + 1, $str, DataType::TYPE_STRING);
         $this->apply_format($row, $col, $format);
     }
 
@@ -220,8 +220,8 @@ class MoodleExcelWorksheet {
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
         $col += 1;
 
-        $this->worksheet->getStyleByColumnAndRow($col, $row+1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_GENERAL);
-        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row+1, $num, DataType::TYPE_NUMERIC);
+        $this->worksheet->getStyleByColumnAndRow($col, $row + 1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_GENERAL);
+        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row + 1, $num, DataType::TYPE_NUMERIC);
         $this->apply_format($row, $col, $format);
     }
 
@@ -237,8 +237,8 @@ class MoodleExcelWorksheet {
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
         $col += 1;
 
-        $this->worksheet->setCellValueByColumnAndRow($col, $row+1, $url);
-        $this->worksheet->getCellByColumnAndRow($col, $row+1)->getHyperlink()->setUrl($url);
+        $this->worksheet->setCellValueByColumnAndRow($col, $row + 1, $url);
+        $this->worksheet->getCellByColumnAndRow($col, $row + 1)->getHyperlink()->setUrl($url);
         $this->apply_format($row, $col, $format);
     }
 
@@ -263,8 +263,9 @@ class MoodleExcelWorksheet {
             $getdate['seconds']
         );
 
-        $this->worksheet->setCellValueByColumnAndRow($col, $row+1, $exceldate);
-        $this->worksheet->getStyleByColumnAndRow($col, $row+1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_XLSX22);
+        $this->worksheet->setCellValueByColumnAndRow($col, $row + 1, $exceldate);
+        $style = $this->worksheet->getStyleByColumnAndRow($col, $row + 1);
+        $style->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_XLSX22);
         $this->apply_format($row, $col, $format);
     }
 
@@ -280,7 +281,7 @@ class MoodleExcelWorksheet {
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
         $col += 1;
 
-        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row+1, $formula, DataType::TYPE_FORMULA);
+        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row + 1, $formula, DataType::TYPE_FORMULA);
         $this->apply_format($row, $col, $format);
     }
 
@@ -295,7 +296,7 @@ class MoodleExcelWorksheet {
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
         $col += 1;
 
-        $this->worksheet->setCellValueByColumnAndRow($col, $row+1, '');
+        $this->worksheet->setCellValueByColumnAndRow($col, $row + 1, '');
         $this->apply_format($row, $col, $format);
     }
 
@@ -353,10 +354,10 @@ class MoodleExcelWorksheet {
             $level = 7;
         }
         if (isset($height)) {
-            $this->worksheet->getRowDimension($row+1)->setRowHeight($height);
+            $this->worksheet->getRowDimension($row + 1)->setRowHeight($height);
         }
-        $this->worksheet->getRowDimension($row+1)->setVisible(!$hidden);
-        $this->worksheet->getRowDimension($row+1)->setOutlineLevel($level);
+        $this->worksheet->getRowDimension($row + 1)->setVisible(!$hidden);
+        $this->worksheet->getRowDimension($row + 1)->setOutlineLevel($level);
         $this->apply_row_format($row, $format);
     }
 
@@ -378,7 +379,7 @@ class MoodleExcelWorksheet {
         }
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
         $i = $firstcol + 1;
-        while($i <= $lastcol + 1) {
+        while ($i <= $lastcol + 1) {
             if (isset($width)) {
                 $this->worksheet->getColumnDimensionByColumn($i)->setWidth($width);
             }
@@ -411,40 +412,40 @@ class MoodleExcelWorksheet {
     * @param string  $bitmap  The bitmap filename
     * @param integer $x       The horizontal position (offset) of the image inside the cell.
     * @param integer $y       The vertical position (offset) of the image inside the cell.
-    * @param integer $scale_x The horizontal scale
-    * @param integer $scale_y The vertical scale
+    * @param integer $scalex The horizontal scale
+    * @param integer $scaley The vertical scale
     */
-    public function insert_bitmap($row, $col, $bitmap, $x = 0, $y = 0, $scale_x = 1, $scale_y = 1) {
+    public function insert_bitmap($row, $col, $bitmap, $x = 0, $y = 0, $scalex = 1, $scaley = 1) {
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
         $col += 1;
 
-        $objDrawing = new Drawing();
-        $objDrawing->setPath($bitmap);
-        $objDrawing->setCoordinates(Coordinate::stringFromColumnIndex($col) . ($row+1));
-        $objDrawing->setOffsetX($x);
-        $objDrawing->setOffsetY($y);
-        $objDrawing->setWorksheet($this->worksheet);
+        $objdrawing = new Drawing();
+        $objdrawing->setPath($bitmap);
+        $objdrawing->setCoordinates(Coordinate::stringFromColumnIndex($col) . ($row + 1));
+        $objdrawing->setOffsetX($x);
+        $objdrawing->setOffsetY($y);
+        $objdrawing->setWorksheet($this->worksheet);
         if ($scale_x != 1) {
-            $objDrawing->setResizeProportional(false);
-            $objDrawing->getWidth($objDrawing->getWidth()*$scale_x);
+            $objdrawing->setResizeProportional(false);
+            $objdrawing->getWidth($objdrawing->getWidth() * $scalex);
         }
         if ($scale_y != 1) {
-            $objDrawing->setResizeProportional(false);
-            $objDrawing->setHeight($objDrawing->getHeight()*$scale_y);
+            $objdrawing->setResizeProportional(false);
+            $objdrawing->setHeight($objdrawing->getHeight() * $scaley);
         }
     }
 
    /**
     * Merges the area given by its arguments.
     *
-    * @param integer $first_row First row of the area to merge
-    * @param integer $first_col First column of the area to merge
-    * @param integer $last_row  Last row of the area to merge
-    * @param integer $last_col  Last column of the area to merge
+    * @param integer $firstrow First row of the area to merge
+    * @param integer $firstcol First column of the area to merge
+    * @param integer $lastrow  Last row of the area to merge
+    * @param integer $lastcol  Last column of the area to merge
     */
-    public function merge_cells($first_row, $first_col, $last_row, $last_col) {
+    public function merge_cells($firstrow, $firstcol, $lastrow, $lastcol) {
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
-        $this->worksheet->mergeCellsByColumnAndRow($first_col + 1, $first_row+1, $last_col + 1, $last_row+1);
+        $this->worksheet->mergeCellsByColumnAndRow($firstcol + 1, $firstrow + 1, $lastcol + 1, $lastrow + 1);
     }
 
     protected function apply_format($row, $col, $format = null) {
@@ -453,7 +454,7 @@ class MoodleExcelWorksheet {
         } else if (is_array($format)) {
             $format = new MoodleExcelFormat($format);
         }
-        $this->worksheet->getStyleByColumnAndRow($col, $row+1)->applyFromArray($format->get_format_array());
+        $this->worksheet->getStyleByColumnAndRow($col, $row + 1)->applyFromArray($format->get_format_array());
     }
 
     protected function apply_column_format($col, $format = null) {
@@ -471,7 +472,7 @@ class MoodleExcelWorksheet {
         } else if (is_array($format)) {
             $format = new MoodleExcelFormat($format);
         }
-        $this->worksheet->getStyle($row+1)->applyFromArray($format->get_format_array());
+        $this->worksheet->getStyle($row + 1)->applyFromArray($format->get_format_array());
     }
 }
 
@@ -863,9 +864,9 @@ class MoodleExcelFormat {
      * Set the numerical format of the format.
      * It can be date, time, currency, etc...
      *
-     * @param mixed $num_format The numeric format
+     * @param mixed $numformat The numeric format
      */
-    public function set_num_format($num_format) {
+    public function set_num_format($numformat) {
         $numbers = array();
 
         $numbers[1] = '0';
@@ -882,14 +883,14 @@ class MoodleExcelFormat {
         $numbers[22] = 'm/d/yy h:mm';
         $numbers[49] = '@';
 
-        if ($num_format !== 0 and in_array($num_format, $numbers)) {
-            $this->format['numberFormat']['formatCode'] = $num_format;
+        if ($numformat !== 0 and in_array($numformat, $numbers)) {
+            $this->format['numberFormat']['formatCode'] = $numformat;
         }
 
-        if (!isset($numbers[$num_format])) {
+        if (!isset($numbers[$numformat])) {
             return;
         }
 
-        $this->format['numberFormat']['formatCode'] = $numbers[$num_format];
+        $this->format['numberFormat']['formatCode'] = $numbers[$numformat];
     }
 }
