@@ -16,6 +16,8 @@
 
 namespace core_question\bank;
 
+use core\output\checkbox_toggleall;
+
 /**
  * A column with a checkbox for each question with name q{questionid}.
  *
@@ -23,37 +25,23 @@ namespace core_question\bank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class checkbox_column extends column_base {
-    protected $strselect;
-
-    public function init() {
-        global $PAGE;
-
-        $PAGE->requires->js_call_amd('core/checkbox-toggleall', 'init');
-    }
 
     public function get_name() {
         return 'checkbox';
     }
 
     protected function get_title() {
-        $input = \html_writer::empty_tag('input', [
+        global $OUTPUT;
+
+        $mastercheckbox = new checkbox_toggleall('qbank', true, [
             'id' => 'qbheadercheckbox',
             'name' => 'qbheadercheckbox',
-            'type' => 'checkbox',
             'value' => '1',
-            'data-action' => 'toggle',
-            'data-toggle' => 'master',
-            'data-togglegroup' => 'qbank',
-            'data-toggle-selectall' => get_string('selectall', 'moodle'),
-            'data-toggle-deselectall' => get_string('deselectall', 'moodle'),
+            'label' => get_string('selectall'),
+            'labelclasses' => 'accesshide',
         ]);
 
-        $label = \html_writer::tag('label', get_string('selectall', 'moodle'), [
-            'class' => 'accesshide',
-            'for' => 'qbheadercheckbox',
-        ]);
-
-        return $input . $label;
+        return $OUTPUT->render($mastercheckbox);
     }
 
     protected function get_title_tip() {
@@ -61,16 +49,17 @@ class checkbox_column extends column_base {
     }
 
     protected function display_content($question, $rowclasses) {
-        echo \html_writer::empty_tag('input', [
-            'title' => get_string('select'),
-            'type' => 'checkbox',
-            'name' => "q{$question->id}",
+        global $OUTPUT;
+
+        $checkbox = new checkbox_toggleall('qbank', false, [
             'id' => "checkq{$question->id}",
+            'name' => "q{$question->id}",
             'value' => '1',
-            'data-action' => 'toggle',
-            'data-toggle' => 'slave',
-            'data-togglegroup' => 'qbank',
+            'label' => get_string('select'),
+            'labelclasses' => 'accesshide',
         ]);
+
+        echo $OUTPUT->render($checkbox);
     }
 
     public function get_required_fields() {

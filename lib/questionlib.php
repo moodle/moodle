@@ -1259,7 +1259,14 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
         $options[] = array($group => $opts);
     }
     echo html_writer::label(get_string('questioncategory', 'core_question'), 'id_movetocategory', false, array('class' => 'accesshide'));
-    $attrs = array('id' => 'id_movetocategory', 'class' => 'custom-select');
+    $attrs = array(
+        'id' => 'id_movetocategory',
+        'class' => 'custom-select',
+        'data-action' => 'toggle',
+        'data-togglegroup' => 'qbank',
+        'data-toggle' => 'action',
+        'disabled' => true,
+    );
     echo html_writer::select($options, 'category', $selected, $choose, $attrs);
 }
 
