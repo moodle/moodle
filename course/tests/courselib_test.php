@@ -6519,8 +6519,10 @@ class core_course_courselib_testcase extends advanced_testcase {
      */
     public function provider_course_modules_pending_deletion() {
         return [
-            ['forum', true],
-            ['assign', true],
+            ['forum', false, true],
+            ['assign', false, true],
+            ['forum', true, false],
+            ['assign', true, true],
         ];
     }
 
@@ -6528,10 +6530,11 @@ class core_course_courselib_testcase extends advanced_testcase {
      * Tests the function course_modules_pending_deletion.
      *
      * @param string $module The module we want to test with
+     * @param bool $gradable The value to pass to the gradable argument of the course_modules_pending_deletion function
      * @param bool $expected The expected result
      * @dataProvider provider_course_modules_pending_deletion
      */
-    public function test_course_modules_pending_deletion(string $module, bool $expected) {
+    public function test_course_modules_pending_deletion(string $module, bool $gradable, bool $expected) {
         $this->resetAfterTest();
 
         // Ensure recyclebin is enabled.
@@ -6544,6 +6547,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinstance = $generator->create_module($module, array('course' => $course->id));
 
         course_delete_module($moduleinstance->cmid, true); // Try to delete the instance asynchronously.
-        $this->assertEquals($expected, course_modules_pending_deletion($course->id));
+        $this->assertEquals($expected, course_modules_pending_deletion($course->id, $gradable));
     }
 }
