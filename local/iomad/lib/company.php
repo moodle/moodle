@@ -1294,15 +1294,24 @@ class company {
     public function get_userlevel($user) {
 
         global $DB;
+
+        // Get the system context.
+        $systemcontext = context_system::instance();
+
+        // Can the user see the whole department tree?
         if (is_siteadmin() ||
-            iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance()) ||
-            iomad::has_capability('block/iomad_company_admin:company_add_child', context_system::instance())) {
+            iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext) ||
+            iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext) ||
+            iomad::has_capability('block/iomad_company_admin:company_add_child', $systemcontext)) {
             return self::get_company_parentnode($this->id);
         }
+
+        // If not, get the department the user is assigned to in this company.
         if ($userdepartment = $DB->get_record('company_users', array('userid' => $user->id, 'companyid' => $this->id))) {
             $userlevel = $DB->get_record('department', array('id' => $userdepartment->departmentid));
             return $userlevel;
         } else {
+            // User doesn't exist in this company.
             return false;
         }
     }

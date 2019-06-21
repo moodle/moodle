@@ -160,13 +160,9 @@ $urlparams = $params;
 $baseurl = new moodle_url(basename(__FILE__), $urlparams);
 $returnurl = $baseurl;
 
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext) ||
-    !empty($SESSION->currenteditingcompany)) {
-    $userhierarchylevel = $parentlevel->id;
-} else {
-    $userlevel = $company->get_userlevel($USER);
-    $userhierarchylevel = $userlevel->id;
-}
+// Work out where the user sits in the company department tree.
+$userlevel = $company->get_userlevel($USER);
+$userhierarchylevel = $userlevel->id;
 if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }
