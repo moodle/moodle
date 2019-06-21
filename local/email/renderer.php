@@ -163,7 +163,7 @@ class local_email_renderer extends plugin_renderer_base {
                     $sendbutton = "";
                 }
                 $rowform = new email_template_edit_form(new moodle_url('template_edit_form.php'), $company->id, $templatename, $templatesetid);
-                $rowform->set_data(array('templatename' => $templatename));
+                $rowform->set_data(array('templatename' => $templatename, 'lang' => $lang));
                 $cell = new html_table_cell($rowform->render());
                 $row->cells[] = $cell;
                 $table->data[] = $row;

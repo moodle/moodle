@@ -74,7 +74,7 @@ $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
-$lang         = optional_param('lang', 'en', PARAM_LANG);
+$lang         = optional_param('lang', '', PARAM_LANG);
 $ajaxtemplate = optional_param('ajaxtemplate', '', PARAM_CLEAN);
 $ajaxvalue = optional_param('ajaxvalue', '', PARAM_CLEAN);
 $save = optional_param('savetemplateset', 0, PARAM_CLEAN);
@@ -93,6 +93,15 @@ if (!empty($SESSION->currenttemplatesetid) && !$finished) {
 if ($finished) {
     unset($SESSION->currenttemplatesetid);
     $templatesetid = 0;
+}
+
+// Deal with the default language.
+if (empty($lang)) {
+    if (isset($SESSION->lang)) {
+        $lang = $SESSION->lang;
+    } else {
+        $lang = $CFG->lang;
+    }
 }
 
 $context = context_system::instance();
@@ -136,7 +145,8 @@ if (!empty($SESSION->currenteditingcompany)) {
 }
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir,
-                                                    'perpage' => $perpage));
+                                                    'perpage' => $perpage,
+                                                    'lang' => $lang));
 $returnurl = $baseurl;
 
 // check if ajax callback
@@ -158,7 +168,9 @@ if ($ajaxtemplate) {
             $newtemplate->disabledmanager = 0;
             $newtemplate->disabledsupervisor = 0;
 
-            if (isset($CFG->lang)) {
+            if (isset($SESSION->lang)) {
+                $newtemplate->lang = $SESSION->lang;
+            } else if (isset($CFG->lang)) {
                 $newtemplate->lang = $CFG->lang;
             } else {
                 $newtemplate->lang = 'en';
@@ -241,7 +253,9 @@ if ($ajaxtemplate) {
             $newtemplate->disabledmanager = 0;
             $newtemplate->disabledsupervisor = 0;
 
-            if (isset($CFG->lang)) {
+            if (isset($SESSION->lang)) {
+                $newtemplate->lang = $SESSION->lang;
+            } else if (isset($CFG->lang)) {
                 $newtemplate->lang = $CFG->lang;
             } else {
                 $newtemplate->lang = 'en';

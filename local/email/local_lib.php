@@ -64,7 +64,7 @@ class local_email {
         }
 
         $rowform = new email_template_edit_form(new moodle_url('template_edit_form.php'), $company->id, $templatename, $templatesetid);
-        $rowform->set_data(array('templatename' => $templatename));
+        $rowform->set_data(array('templatename' => $templatename, 'lang' => $lang));
         $row = new html_table_row();
         $row->cells[] = get_string($templatename.'_name', 'local_email') . $OUTPUT->help_icon($templatename.'_name', 'local_email');
         $cell = new html_table_cell($enablebutton);

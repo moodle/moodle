@@ -277,7 +277,7 @@ $templateid = optional_param('templateid', 0, PARAM_INTEGER);
 $templatesetid = optional_param('templatesetid', 0, PARAM_INTEGER);
 $templatename = optional_param('templatename', '', PARAM_NOTAGS);
 $new = optional_param('createnew', 0, PARAM_INTEGER);
-$lang = optional_param('lang', 'en', PARAM_LANG);
+$lang = optional_param('lang', '', PARAM_LANG);
 $edit = optional_param('edit', '', PARAM_TEXT);
 $view = optional_param('view', '', PARAM_TEXT);
 $add = optional_param('add', '', PARAM_TEXT);
@@ -288,6 +288,15 @@ if (!empty($edit)) {
     $isediting = false;
 }
 $isadding = false;
+
+// Deal with the default language.
+if (empty($lang)) {
+    if (isset($SESSION->lang)) {
+        $lang = $SESSION->lang;
+    } else {
+        $lang = $CFG->lang;
+    }
+}
 
 $context = context_system::instance();
 require_login();
