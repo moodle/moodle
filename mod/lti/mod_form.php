@@ -165,19 +165,26 @@ class mod_lti_mod_form extends moodleform_mod {
         }
 
         // Add button that launches the content-item selection dialogue.
-        if ($showoptions) {
-            // Set contentitem URL.
-            $contentitemurl = new moodle_url('/mod/lti/contentitem.php');
-            $contentbuttonattributes = [
-                'data-contentitemurl' => $contentitemurl->out(false)
-            ];
-            $contentbuttonlabel = get_string('selectcontent', 'lti');
-            $contentbutton = $mform->addElement('button', 'selectcontent', $contentbuttonlabel, $contentbuttonattributes);
-            // Disable select content button if the selected tool doesn't support content item or it's set to Automatic.
+        // Set contentitem URL.
+        $contentitemurl = new moodle_url('/mod/lti/contentitem.php');
+        $contentbuttonattributes = [
+            'data-contentitemurl' => $contentitemurl->out(false)
+        ];
+        if (!$showtypes) {
+            if (!$typeid || empty(lti_get_type_config($typeid)['contentitem'])) {
+                $contentbuttonattributes['disabled'] = 'disabled';
+            }
+        }
+        $contentbuttonlabel = get_string('selectcontent', 'lti');
+        $contentbutton = $mform->addElement('button', 'selectcontent', $contentbuttonlabel, $contentbuttonattributes);
+        // Disable select content button if the selected tool doesn't support content item or it's set to Automatic.
+        if ($showtypes) {
             $allnoncontentitemtypes = $noncontentitemtypes;
             $allnoncontentitemtypes[] = '0'; // Add option value for "Automatic, based on tool URL".
             $mform->disabledIf('selectcontent', 'typeid', 'in', $allnoncontentitemtypes);
+        }
 
+        if ($showoptions) {
             $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size' => '64'));
             $mform->setType('toolurl', PARAM_URL);
             $mform->addHelpButton('toolurl', 'launch_url', 'lti');
@@ -193,19 +200,19 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'urlmatchedtypeid', '', array( 'id' => 'id_urlmatchedtypeid' ));
         $mform->setType('urlmatchedtypeid', PARAM_INT);
 
+        $launchoptions = array();
+        $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
+        $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
+        $launchoptions[LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'lti');
+        $launchoptions[LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW] = get_string('existing_window', 'lti');
+        $launchoptions[LTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'lti');
+
+        $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'lti'), $launchoptions);
+        $mform->setDefault('launchcontainer', LTI_LAUNCH_CONTAINER_DEFAULT);
+        $mform->addHelpButton('launchcontainer', 'launchinpopup', 'lti');
+        $mform->setAdvanced('launchcontainer');
+
         if ($showoptions) {
-            $launchoptions = array();
-            $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
-            $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
-            $launchoptions[LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'lti');
-            $launchoptions[LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW] = get_string('existing_window', 'lti');
-            $launchoptions[LTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'lti');
-
-            $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'lti'), $launchoptions);
-            $mform->setDefault('launchcontainer', LTI_LAUNCH_CONTAINER_DEFAULT);
-            $mform->addHelpButton('launchcontainer', 'launchinpopup', 'lti');
-            $mform->setAdvanced('launchcontainer');
-
             $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'lti'));
             $mform->setType('resourcekey', PARAM_TEXT);
             $mform->setAdvanced('resourcekey');
