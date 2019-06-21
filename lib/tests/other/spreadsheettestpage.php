@@ -35,7 +35,7 @@ require_capability('moodle/site:config', $context);
 
 $type = optional_param('type', '', PARAM_ALPHANUM);
 
-if (!in_array($type, array('excel2007', 'ods'))) {
+if (!in_array($type, array('xslx', 'ods'))) {
     $type = '';
 }
 
@@ -50,7 +50,7 @@ if (!$type) {
 Tested with:
 
 * MS Excel Viewer 2003 (with Compatibility Pack), 2010
-* LibreOffice 3.5, 3.6
+* LibreOffice 6.0
 * NeoOffice 3.3
 * Apple Numbers \'09 (2.3) and Preview
 * Google Drive spreadsheet import
@@ -60,20 +60,19 @@ Tested with:
 
 Known problems:
 
-* Excel 2007 borders appear too thick in LibreOffice
 * Excel 2007 can not be opened in Calligra Suite
 ';
 
     echo markdown_to_html($notes);
     echo $OUTPUT->box_end();
-    echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('type' => 'excel2007')), 'Test Excel 2007 format');
+    echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('type' => 'xslx')), 'Test Excel format');
     echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('type' => 'ods')), 'Test ODS format');
     echo $OUTPUT->footer();
     die;
 }
 
-if ($type === 'excel2007') {
-    $workbook = new MoodleExcelWorkbook('moodletest.xlsx', 'Excel2007');
+if ($type === 'xslx') {
+    $workbook = new MoodleExcelWorkbook('moodletest.xlsx', 'Xslx');
 } else if ($type === 'ods') {
     $workbook = new MoodleODSWorkbook('moodletest.ods');
 }
@@ -84,7 +83,8 @@ $worksheet = $workbook->add_worksheet('Supported');
 
 $worksheet->hide_screen_gridlines();
 
-$worksheet->write_string(0, 0, 'Moodle worksheet export test', $workbook->add_format(array('color'=>'red', 'size'=>20, 'bold'=>1, 'italic'=>1)));
+$worksheet->write_string(0, 0, 'Moodle worksheet export test',
+    $workbook->add_format(array('color'=>'red', 'size'=>20, 'bold'=>1, 'italic'=>1)));
 $worksheet->set_row(0, 25);
 $worksheet->write(1, 0, 'Moodle release: '.$CFG->release, $workbook->add_format(array('size'=>8, 'italic'=>1)));
 
@@ -147,7 +147,8 @@ $worksheet->set_row(26, 5);
 
 $worksheet->write(27, 0, 'Wrapped text - Žloťoučký koníček', $workbook->add_format(array('text_wrap'=>true, 'border'=>1)));
 $worksheet->set_row(27, 30);
-$worksheet->write(27, 1, 'All centered', $workbook->add_format(array('v_align'=>'center', 'h_align'=>'center', 'border'=>1)));
+$worksheet->write(27, 1, 'All centered',
+    $workbook->add_format(array('v_align'=>'center', 'h_align'=>'center', 'border'=>1)));
 $worksheet->write(28, 0, 'Top', $workbook->add_format(array('align'=>'top', 'border'=>1)));
 $worksheet->set_row(28, 25);
 $worksheet->write(29, 0, 'Vcenter', $workbook->add_format(array('align'=>'vcenter', 'border'=>1)));
@@ -161,21 +162,6 @@ $worksheet->write(30, 1, 'Right', $workbook->add_format(array('align'=>'right', 
 $worksheet->write(32, 0, 'Number formats', $miniheading);
 $worksheet->set_row(32, 20);
 $worksheet->set_row(33, 5);
-
-$numbers[1] = '0';
-$numbers[2] = '0.00';
-$numbers[3] = '#,##0';
-$numbers[4] = '#,##0.00';
-$numbers[11] = '0.00E+00';
-$numbers[12] = '# ?/?';
-$numbers[13] = '# ??/??';
-$numbers[14] = 'mm-dd-yy';
-$numbers[15] = 'd-mmm-yy';
-$numbers[16] = 'd-mmm';
-$numbers[17] = 'mmm-yy';
-$numbers[22] = 'm/d/yy h:mm';
-$numbers[49] = '@';
-
 
 $worksheet->write_string(34, 0, '1: 0');
 $worksheet->write_number(34, 1, 1003.14159, array('num_format'=>1));
@@ -222,7 +208,8 @@ $worksheet->merge_cells(27, 3, 28, 3);
 $worksheet->write(27, 3, 'Vertical merging of cells', $workbook->add_format(array('bg_color'=>'silver')));
 
 $worksheet->merge_cells(30, 3, 30, 4);
-$worksheet->write(30, 3, 'Horizontal merging of cells', $workbook->add_format(array('pattern'=>1, 'bg_color'=>'silver')));
+$worksheet->write(30, 3, 'Horizontal merging of cells',
+    $workbook->add_format(array('pattern'=>1, 'bg_color'=>'silver')));
 $worksheet->set_column(4, 4, 5);
 
 $worksheet->set_row(44, null, null, true);
@@ -247,7 +234,8 @@ $worksheet->set_column(7, 7, 20, null, false, 2);
 // Some unfinished stuff.
 
 $worksheet2 = $workbook->add_worksheet('Unsupported');
-$worksheet2->write(0, 0, 'Incomplete and missing features', $workbook->add_format(array('size'=>20, 'bold'=>1, 'italic'=>1)));
+$worksheet2->write(0, 0, 'Incomplete and missing features',
+    $workbook->add_format(array('size'=>20, 'bold'=>1, 'italic'=>1)));
 $worksheet2->set_row(0, 25);
 $worksheet2->set_column(1, 1, 25);
 

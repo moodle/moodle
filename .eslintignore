@@ -20,7 +20,7 @@ lib/mlbackend/php/phpml/
 lib/adodb/
 lib/bennu/
 lib/evalmath/
-lib/phpexcel/
+lib/phpspreadsheet/
 lib/google/
 lib/htmlpurifier/
 lib/jabber/
