@@ -44,7 +44,7 @@ define('BLOCK_MYOVERVIEW_SORTING_LASTACCESSED', 'lastaccessed');
 /**
  * Constants for the user preferences view options
  */
-define('BLOCK_MYOVERVIEW_VIEW_CARD', 'cards');
+define('BLOCK_MYOVERVIEW_VIEW_CARD', 'card');
 define('BLOCK_MYOVERVIEW_VIEW_LIST', 'list');
 define('BLOCK_MYOVERVIEW_VIEW_SUMMARY', 'summary');
 
