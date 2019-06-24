@@ -140,6 +140,13 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             $overrideparams['userid'] = backup_helper::is_sqlparam(null);
 
         }
+
+        // Skip group overrides if not including groups.
+        $groupinfo = $this->get_setting_value('groups');
+        if (!$groupinfo) {
+            $overrideparams['groupid'] = backup_helper::is_sqlparam(null);
+        }
+
         $override->set_source_table('quiz_overrides', $overrideparams);
 
         // All the rest of elements only happen if we are including user info.

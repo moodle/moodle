@@ -377,6 +377,11 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $data->groupid = $this->get_mappingid('group', $data->groupid);
         }
 
+        // Skip if there is no user and no group data.
+        if (empty($data->userid) && empty($data->groupid)) {
+            return;
+        }
+
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
 
