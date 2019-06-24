@@ -654,18 +654,20 @@ class edit_renderer extends \plugin_renderer_base {
         $actions['questionbank'] = new \action_menu_link_secondary($pageurl, $icon, $str->questionbank, $attributes);
 
         // Add a random question.
-        $returnurl = new \moodle_url('/mod/quiz/edit.php', array('cmid' => $structure->get_cmid(), 'data-addonpage' => $page));
-        $params = array('returnurl' => $returnurl, 'cmid' => $structure->get_cmid(), 'appendqnumstring' => 'addarandomquestion');
-        $url = new \moodle_url('/mod/quiz/addrandom.php', $params);
-        $icon = new \pix_icon('t/add', $str->addarandomquestion, 'moodle', array('class' => 'iconsmall', 'title' => ''));
-        $attributes = array('class' => 'cm-edit-action addarandomquestion', 'data-action' => 'addarandomquestion');
-        if ($page) {
-            $title = get_string('addrandomquestiontopage', 'quiz', $page);
-        } else {
-            $title = get_string('addrandomquestionatend', 'quiz');
+        if ($structure->can_add_random_questions()) {
+            $returnurl = new \moodle_url('/mod/quiz/edit.php', array('cmid' => $structure->get_cmid(), 'data-addonpage' => $page));
+            $params = ['returnurl' => $returnurl, 'cmid' => $structure->get_cmid(), 'appendqnumstring' => 'addarandomquestion'];
+            $url = new \moodle_url('/mod/quiz/addrandom.php', $params);
+            $icon = new \pix_icon('t/add', $str->addarandomquestion, 'moodle', array('class' => 'iconsmall', 'title' => ''));
+            $attributes = array('class' => 'cm-edit-action addarandomquestion', 'data-action' => 'addarandomquestion');
+            if ($page) {
+                $title = get_string('addrandomquestiontopage', 'quiz', $page);
+            } else {
+                $title = get_string('addrandomquestionatend', 'quiz');
+            }
+            $attributes = array_merge(array('data-header' => $title, 'data-addonpage' => $page), $attributes);
+            $actions['addarandomquestion'] = new \action_menu_link_secondary($url, $icon, $str->addarandomquestion, $attributes);
         }
-        $attributes = array_merge(array('data-header' => $title, 'data-addonpage' => $page), $attributes);
-        $actions['addarandomquestion'] = new \action_menu_link_secondary($url, $icon, $str->addarandomquestion, $attributes);
 
         // Add a new section to the add_menu if possible. This is always added to the HTML
         // then hidden with CSS when no needed, so that as things are re-ordered, etc. with

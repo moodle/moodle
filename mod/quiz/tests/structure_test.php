@@ -1051,4 +1051,26 @@ class mod_quiz_structure_testcase extends advanced_testcase {
 
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * Test for can_add_random_questions.
+     */
+    public function test_can_add_random_questions() {
+        $this->resetAfterTest();
+
+        $quiz = $this->create_test_quiz([]);
+        $course = $quiz->get_course();
+
+        $generator = $this->getDataGenerator();
+        $teacher = $generator->create_and_enrol($course, 'editingteacher');
+        $noneditingteacher = $generator->create_and_enrol($course, 'teacher');
+
+        $this->setUser($teacher);
+        $structure = \mod_quiz\structure::create_for_quiz($quiz);
+        $this->assertTrue($structure->can_add_random_questions());
+
+        $this->setUser($noneditingteacher);
+        $structure = \mod_quiz\structure::create_for_quiz($quiz);
+        $this->assertFalse($structure->can_add_random_questions());
+    }
 }
