@@ -3,6 +3,13 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 3.8 ===
+
+* Ajax calls can now specify a cache key. This allows for better caching capabilities on servers. If a cache key
+  is passed and the web service call does not require the user to be logged in we will attempt to use GET for the
+  request. This allows for things like proxy caching on URLs. The cache key must be changed if we do not want to
+  retrieve what has been cached and want to perform the request again.
+
 === 3.7 ===
 
 * External function core_webservice_external::get_site_info() now returns the current site theme (for the user).
