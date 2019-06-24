@@ -211,7 +211,6 @@ if (!async_helper::is_async_pending($id, 'course', 'backup')) {
                     'headingident' => 'backup'
             );
 
-            echo $renderer->set_samesite_notification();
             echo $renderer->render_from_template('core/async_backup_status', $progresssetup);
         }
 
