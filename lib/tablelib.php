@@ -1615,7 +1615,7 @@ class table_sql extends flexible_table {
             }
             $grandtotal = $DB->count_records_sql($this->countsql, $this->countparams);
             if ($useinitialsbar && !$this->is_downloading()) {
-                $this->initialbars($grandtotal > $pagesize);
+                $this->initialbars(true);
             }
 
             list($wsql, $wparams) = $this->get_sql_where();
