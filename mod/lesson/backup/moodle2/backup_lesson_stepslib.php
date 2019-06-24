@@ -180,6 +180,12 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             $overrideparams['userid'] = backup_helper::is_sqlparam(null); //  Without userinfo, skip user overrides.
         }
 
+        // Skip group overrides if not including groups.
+        $groupinfo = $this->get_setting_value('groups');
+        if (!$groupinfo) {
+            $overrideparams['groupid'] = backup_helper::is_sqlparam(null);
+        }
+
         $override->set_source_table('lesson_overrides', $overrideparams);
 
         // Annotate the user id's where required.

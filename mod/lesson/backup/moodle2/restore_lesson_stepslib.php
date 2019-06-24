@@ -220,6 +220,11 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             $data->groupid = $this->get_mappingid('group', $data->groupid);
         }
 
+        // Skip if there is no user and no group data.
+        if (empty($data->userid) && empty($data->groupid)) {
+            return;
+        }
+
         $data->available = $this->apply_date_offset($data->available);
         $data->deadline = $this->apply_date_offset($data->deadline);
 
