@@ -178,7 +178,11 @@ class mod_feedback_completion extends mod_feedback_structure {
             }
             return null;
         }
-        return $itemobj->compare_value($ditem, $value, $item->dependvalue) ? true : false;
+        $check = $itemobj->compare_value($ditem, $value, $item->dependvalue) ? true : false;
+        if ($check) {
+            return $this->can_see_item($ditem);
+        }
+        return false;
     }
 
     /**
