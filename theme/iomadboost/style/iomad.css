@@ -316,3 +316,7 @@ div.iomadlink, div.iomadlinkreports {
 .progress-bar {
     background-color: green;
 }
+
+#page-blocks-iomad_company_admin-company_groups_create_form #region-main {
+    height: 100%;
+}
