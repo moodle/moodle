@@ -327,12 +327,16 @@ if ($mform->is_cancelled()) {
         $companydetails = $DB->get_record('company', array('id' => $companyid));
         $companydetails->category = $coursecat->id;
         $DB->update_record('company', $companydetails);
+        $redirectmessage = get_string('companycreatedok', 'block_iomad_company_admin');
+
+echo "322</br>";
         // Deal with any parent company assignments.
         if (!empty($companydetails->parentid)) {
             $company = new company($companydetails->id);
             $company->assign_parent_managers($companydetails->parentid);
+            $companylist = $linkurl;
+            $redirectmessage = "";
         }
-        $redirectmessage = get_string('companycreatedok', 'block_iomad_company_admin');
 
         // Deal with any assigned templates.
         if (!empty($data->templates)) {
@@ -369,12 +373,16 @@ if ($mform->is_cancelled()) {
             }
         }
 
+        $redirectmessage = get_string('companysavedok', 'block_iomad_company_admin');
+
         // Has the company parentid changed?
         $companyparent = $company->get_parentid();
         if ($companyparent != $data->parentid) {
-
-            // Clear the old ones.
-            $company->unassign_parent_managers($companyparent);
+            // Is there currently a company parent set?
+            if (!empty($companyparent)) {
+                // Clear the old ones.
+                $company->unassign_parent_managers($companyparent);
+            }
 
             // Update the company record.
             $DB->update_record('company', $data);
@@ -383,6 +391,10 @@ if ($mform->is_cancelled()) {
                 // Assign the new ones.
                 $company->assign_parent_managers($data->parentid);
             }
+
+            // We only want to change the parent, not submit the form.
+            $companylist = $linkurl;
+            $redirectmessage = "";
         }
 
         // Did we apply a template?
@@ -427,7 +439,6 @@ if ($mform->is_cancelled()) {
         if (company_user::is_company_user()) {
             company_user::reload_company();
         }
-        $redirectmessage = get_string('companysavedok', 'block_iomad_company_admin');
     }
 
     $company = new company($data->id);
@@ -509,6 +520,7 @@ if ($mform->is_cancelled()) {
             $DB->set_field('company_course', 'autoenrol', true, array('companyid' => $companyid, 'courseid' => $autoid));
         }
     }
+
     redirect($companylist, $redirectmessage, \core\output\notification::NOTIFY_SUCCESS);
 }
 
