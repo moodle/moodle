@@ -3491,6 +3491,10 @@ function calendar_output_fragment_event_form($args) {
                 $formoptions['groups'][$groupid] = $groupdata->name;
             }
         }
+
+        // Let's check first which event types user can add.
+        $eventtypes = calendar_get_allowed_event_types($courseid);
+        $formoptions['eventtypes'] = $eventtypes;
         $mform = new \core_calendar\local\event\forms\create(
             null,
             $formoptions,
@@ -3500,9 +3504,6 @@ function calendar_output_fragment_event_form($args) {
             true,
             $data
         );
-
-        // Let's check first which event types user can add.
-        $eventtypes = calendar_get_allowed_event_types($courseid);
 
         // If the user is on course context and is allowed to add course events set the event type default to course.
         if (!empty($courseid) && !empty($eventtypes['course'])) {
