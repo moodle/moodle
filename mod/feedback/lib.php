@@ -1925,10 +1925,23 @@ function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted) {
         //check if there are depend items
         $item = $DB->get_record('feedback_item', array('id'=>$value->item));
         if ($item->dependitem > 0 && isset($allitems[$item->dependitem])) {
-            $check = feedback_compare_item_value($tmpcplid,
-                                        $allitems[$item->dependitem],
-                                        $item->dependvalue,
-                                        true);
+            $ditem = $allitems[$item->dependitem];
+            while ($ditem !== null) {
+                $check = feedback_compare_item_value($tmpcplid,
+                                            $ditem,
+                                            $item->dependvalue,
+                                            true);
+                if (!$check) {
+                    break;
+                }
+                if ($ditem->dependitem > 0 && isset($allitems[$ditem->dependitem])) {
+                    $item = $ditem;
+                    $ditem = $allitems[$ditem->dependitem];
+                } else {
+                    $ditem = null;
+                }
+            }
+
         } else {
             $check = true;
         }
