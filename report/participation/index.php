@@ -31,6 +31,9 @@ require_once($CFG->dirroot.'/report/participation/locallib.php');
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
 
+// Release session lock.
+\core\session\manager::write_close();
+
 $id         = required_param('id', PARAM_INT); // course id.
 $roleid     = optional_param('roleid', 0, PARAM_INT); // which role to show
 $instanceid = optional_param('instanceid', 0, PARAM_INT); // instance we're looking at.
