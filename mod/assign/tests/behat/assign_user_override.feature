@@ -139,12 +139,12 @@ Feature: Assign user override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then I should not see "You have not made a submission yet"
+    Then I should not see "You have not made a submission yet."
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I should see "You have not made a submission yet"
+    And I should see "You have not made a submission yet."
 
   Scenario: Allow a user to have a different start date
     When I follow "Test assignment name"
