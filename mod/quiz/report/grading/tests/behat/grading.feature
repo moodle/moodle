@@ -55,7 +55,7 @@ Feature: Basic use of the Manual grading report
     And I should see "Grading attempts 1 to 1 of 1"
 
     # Test the display options.
-    And I set the field "Order attempts" to "By student id number"
+    And I set the field "Order attempts" to "By student ID number"
     And I press "Change options"
 
     # Adjust the mark for Student1.
