@@ -263,19 +263,13 @@ $string['lti_tool_request_added'] = 'Tool configuration request successfully sub
 $string['lti_tool_request_existing'] = 'A tool configuration for the tool domain has already been submitted.';
 $string['ltiunknownserviceapicall'] = 'LTI unknown service API call.';
 $string['main_admin'] = 'General help';
-$string['main_admin_help'] = 'External tools allow Moodle users to seamlessly interact with learning resources hosted remotely. Through a special
-launch protocol, the remote tool will have access to some general information about the launching user. For example,
-the institution name, course id, user id, and other information such as the user\'s name or e-mail address.
+$string['main_admin_help'] = 'External tools allow Moodle users to interact with learning resources hosted remotely. Through a special launch protocol, the remote tool has access to general information about the launching user. For example, the institution name, course ID, user ID, and other information such as the user\'s name or email address.
 
 Tools listed on this page are separated into three categories:
 
-* **Active** - These tool providers have been approved and configured by an administrator. They can be used from within any
-        course on this Moodle instance. If a consumer key and shared secret are entered, a trust relationship is established
-        between this Moodle instance and the remote tool, providing a secure communication channel.
-* **Pending** - These tool providers came in through a package import, but have not been configured by an administrator.
-        Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
-* **Rejected** - These tools providers are flagged as ones which an administrator has no intention of making available to the entire
-        Moodle instance. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
+* **Active** - These tool providers have been approved and configured by an administrator. They can be used from within any course on this site. If a consumer key and shared secret are entered, a trust relationship is established between this site and the remote tool, providing a secure communication channel.
+* **Pending** - These tool providers came in through a package import, but have not been configured by an administrator. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
+* **Rejected** - These tools providers are flagged as ones which an administrator has no intention of making available on the site. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
 $string['manage_external_tools'] = 'Manage tools';
 $string['manage_tools'] = 'Manage preconfigured tools';
 $string['manage_tool_proxies'] = 'Manage external tool registrations';
