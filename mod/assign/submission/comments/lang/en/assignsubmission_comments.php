@@ -28,6 +28,5 @@ $string['privacy:metadata:commentpurpose'] = 'Comments between the student and t
 $string['default'] = 'Enabled by default';
 $string['default_help'] = 'If set, this submission method will be enabled by default for all new assignments.';
 $string['enabled'] = 'Submission comments';
-$string['enabled_help'] = 'If enabled, students can leave comments on their own submission. This can be used to let students alert the marker about which files the master file is in cases of inter-linked files, for instance.
-';
+$string['enabled_help'] = 'If enabled, students can leave comments on their own submission. For example, this can be used for students to specify which is the master file when submitting inter-linked files.';
 $string['pluginname'] = 'Submission comments';

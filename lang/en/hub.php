@@ -223,7 +223,7 @@ $string['usersnumber'] = 'Number of users ({$a})';
 $string['wrongtoken'] = 'The registration failed for some unknown reason (network?). Please try again.';
 
 // Deprecated since Moodle 3.4.
-$string['registermoochtips'] = 'Register your site with Moodle to get security alerts and access to Moodle.net, our course sharing platform.';
+$string['registermoochtips'] = 'By registering, you will receive security alerts, can activate mobile app push notifications from your site, and are contributing to our Moodle statistics of the worldwide community.';
 $string['errorcronnoxmlrpc'] = 'XML-RPC must be enabled in order to update the registration.';
 $string['advertiseonhub'] = 'Share this course for people to join';
 $string['advertiseonmoodleorg'] = 'Advertise this course on moodle.org';

@@ -96,9 +96,7 @@ $string['capabilities_help'] = 'Select those capabilities which you wish to offe
 $string['cleanaccesstokens'] = 'External tool removal of expired access tokens';
 $string['click_to_continue'] = '<a href="{$a->link}" target="_top">Click to continue</a>';
 $string['clientidadmin'] = 'Client ID';
-$string['clientidadmin_help'] = 'The client ID can be thought of as a unique value used to identify a tool.
-It is created automatically for each tool which uses the JWT security profile introduced in LTI 1.3 and should
-be part of the details passed to the provider of the tool so that they can configure the connection at their end.';
+$string['clientidadmin_help'] = 'The client ID is a unique value used to identify a tool. It is created automatically for each tool which uses the JWT security profile introduced in LTI 1.3 and should be part of the details passed to the tool provider so that they can configure the connection at their end.';
 $string['comment'] = 'Comment';
 $string['configpassword'] = 'Default remote tool password';
 $string['configpreferheight'] = 'Default preferred height';
@@ -273,19 +271,13 @@ $string['ltiunknownserviceapicall'] = 'LTI unknown service API call.';
 $string['ltiversion'] = 'LTI version';
 $string['ltiversion_help'] = 'The version of LTI being used for signing messages and service requests: LTI 1.0/1.1 and LTI 2.0 use the OAuth 1.0A security profile; LTI 1.3.0 uses JWTs.';
 $string['main_admin'] = 'General help';
-$string['main_admin_help'] = 'External tools allow Moodle users to seamlessly interact with learning resources hosted remotely. Through a special
-launch protocol, the remote tool will have access to some general information about the launching user. For example,
-the institution name, course id, user id, and other information such as the user\'s name or e-mail address.
+$string['main_admin_help'] = 'External tools allow Moodle users to interact with learning resources hosted remotely. Through a special launch protocol, the remote tool has access to general information about the launching user. For example, the institution name, course ID, user ID, and other information such as the user\'s name or email address.
 
 Tools listed on this page are separated into three categories:
 
-* **Active** - These tool providers have been approved and configured by an administrator. They can be used from within any
-        course on this Moodle instance. If a consumer key and shared secret are entered, a trust relationship is established
-        between this Moodle instance and the remote tool, providing a secure communication channel.
-* **Pending** - These tool providers came in through a package import, but have not been configured by an administrator.
-        Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
-* **Rejected** - These tools providers are flagged as ones which an administrator has no intention of making available to the entire
-        Moodle instance. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
+* **Active** - These tool providers have been approved and configured by an administrator. They can be used from within any course on this site. If a consumer key and shared secret are entered, a trust relationship is established between this site and the remote tool, providing a secure communication channel.
+* **Pending** - These tool providers came in through a package import, but have not been configured by an administrator. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
+* **Rejected** - These tools providers are flagged as ones which an administrator has no intention of making available on the site. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
 $string['manage_external_tools'] = 'Manage tools';
 $string['manage_tools'] = 'Manage preconfigured tools';
 $string['manage_tool_proxies'] = 'Manage external tool registrations';

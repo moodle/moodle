@@ -43,7 +43,7 @@ $string['editfeeds'] = 'Edit, subscribe or unsubscribe from RSS/Atom news feeds'
 $string['editnewsfeeds'] = 'Edit news feeds';
 $string['editrssblock'] = 'Edit RSS headline block';
 $string['enableautodiscovery'] = 'Enable auto-discovery of feeds?';
-$string['enableautodiscovery_help'] = 'If enabled, feeds on web pages are found automatically. For example, if http://docs.moodle.org is entered, then http://docs.moodle.org/en/index.php?title=Special:RecentChanges&feed=rss would be found.';
+$string['enableautodiscovery_help'] = 'If enabled, feeds on web pages are found automatically. For example, if https://docs.moodle.org is entered, then https://docs.moodle.org/en/index.php?title=Special:RecentChanges&feed=rss would be found.';
 $string['failedfeed'] = 'Feed failed to download - will retry after {$a}';
 $string['failedfeeds'] = 'One or more RSS feeds have failed';
 $string['feed'] = 'Feed';
