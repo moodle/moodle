@@ -60,9 +60,9 @@ class data_field_textarea extends data_field_base {
 
         $text   = '';
         $format = 0;
-        $str = '<div title="' . s($this->field->description) . '">';
-        $str .= '<label for="field_' . $this->field->id . '" class="accesshide">';
-        $str .= html_writer::span($this->field->name);
+        $str = '<div title="' . s($this->field->description) . '" class="d-inline-flex">';
+        $str .= '<label for="field_' . $this->field->id . '">';
+        $str .= html_writer::span($this->field->name, 'accesshide');
         if ($this->field->required) {
             $image = $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
             $str .= html_writer::div($image, 'inline-req');
