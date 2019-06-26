@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['all'] = 'All';
+$string['allincludinghidden'] = 'All';
 $string['allexcepthidden'] = 'All (except hidden)';
 $string['addtofavourites'] = 'Star this course';
 $string['aria:addtofavourites'] = 'Star for';
-$string['aria:allcourses'] = 'All courses';
+$string['aria:allcoursesincludinghidden'] = 'All courses';
 $string['aria:allcoursesexcepthidden'] = 'All courses except hidden courses';
 $string['aria:card'] = 'Switch to card view';
 $string['aria:controls'] = 'Course overview controls';
