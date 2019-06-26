@@ -362,14 +362,14 @@ function default_exception_handler($ex) {
 
     $info = get_exception_info($ex);
 
-    if (debugging('', DEBUG_MINIMAL)) {
-        $logerrmsg = "Default exception handler: ".$info->message.' Debug: '.$info->debuginfo."\n".format_backtrace($info->backtrace, true);
-        error_log($logerrmsg);
-    }
-
     if (is_early_init($info->backtrace)) {
         echo bootstrap_renderer::early_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo, $info->errorcode);
     } else {
+        if (debugging('', DEBUG_MINIMAL)) {
+            $logerrmsg = "Default exception handler: ".$info->message.' Debug: '.$info->debuginfo."\n".format_backtrace($info->backtrace, true);
+            error_log($logerrmsg);
+        }
+
         try {
             if ($DB) {
                 // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
@@ -569,7 +569,12 @@ function get_exception_info($ex) {
     if (!empty($CFG->errordocroot)) {
         $errordoclink = $CFG->errordocroot . '/en/';
     } else {
-        $errordoclink = get_docs_url();
+        // Only if the function is available. May be not for early errors.
+        if (function_exists('current_language')) {
+            $errordoclink = get_docs_url();
+        } else {
+            $errordoclink = 'https://docs.moodle.org/en/';
+        }
     }
 
     if ($module === 'error') {
@@ -1971,7 +1976,15 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
         $debug = $debug || (!empty($CFG->config_php_settings['debug'])  && $CFG->config_php_settings['debug'] >= DEBUG_DEVELOPER );
         if ($debug) {
             if (!empty($debuginfo)) {
-                $debuginfo = s($debuginfo); // removes all nasty JS
+                // Remove all nasty JS.
+                if (function_exists('s')) { // Function may be not available for some early errors.
+                    $debuginfo = s($debuginfo);
+                } else {
+                    // Because weblib is not available for these early errors, we
+                    // just duplicate s() code here to be safe.
+                    $debuginfo = preg_replace('/&amp;#(\d+|x[0-9a-f]+);/i', '&#$1;',
+                    htmlspecialchars($debuginfo, ENT_QUOTES | ENT_HTML401 | ENT_SUBSTITUTE));
+                }
                 $debuginfo = str_replace("\n", '<br />', $debuginfo); // keep newlines
                 $content .= '<div class="notifytiny">Debug info: ' . $debuginfo . '</div>';
             }
@@ -2107,9 +2120,11 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
         }
 
         $footer = '';
-        if (MDL_PERF_TEST) {
-            $perfinfo = get_performance_info();
-            $footer = '<footer>' . $perfinfo['html'] . '</footer>';
+        if (function_exists('get_performance_info')) { // Function may be not available for some early errors.
+            if (MDL_PERF_TEST) {
+                $perfinfo = get_performance_info();
+                $footer = '<footer>' . $perfinfo['html'] . '</footer>';
+            }
         }
 
         return '<!DOCTYPE html>
