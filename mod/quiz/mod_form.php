@@ -517,11 +517,6 @@ class mod_quiz_mod_form extends moodleform_mod {
                 $toform[$name] = $value;
             }
         }
-
-        // Completion settings check.
-        if (empty($toform['completionusegrade'])) {
-            $toform['completionpass'] = 0; // Forced unchecked.
-        }
     }
 
     public function validation($data, $files) {

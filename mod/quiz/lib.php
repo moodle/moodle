@@ -1128,6 +1128,14 @@ function quiz_process_options($quiz) {
     $quiz->reviewoverallfeedback = quiz_review_option_form_to_db($quiz, 'overallfeedback');
     $quiz->reviewattempt |= mod_quiz_display_options::DURING;
     $quiz->reviewoverallfeedback &= ~mod_quiz_display_options::DURING;
+
+    // Ensure that disabled checkboxes in completion settings are set to 0.
+    if (empty($quiz->completionusegrade)) {
+        $quiz->completionpass = 0;
+    }
+    if (empty($quiz->completionpass)) {
+        $quiz->completionattemptsexhausted = 0;
+    }
 }
 
 /**
