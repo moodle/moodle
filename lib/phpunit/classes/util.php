@@ -984,4 +984,16 @@ class phpunit_util extends testing_util {
 
         return null;
     }
+
+    /**
+     * Whether the current process is an isolated test process.
+     *
+     * @return bool
+     */
+    public static function is_in_isolated_process(): bool {
+        // Note: There is no function to call, or much to go by in order to tell whether we are in an isolated process
+        // during Bootstrap, when this function is called.
+        // We can do so by testing the existence of the wrapper function, but there is nothing set until that point.
+        return function_exists('__phpunit_run_isolated_test');
+    }
 }
