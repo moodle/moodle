@@ -96,7 +96,7 @@ $string['cannotfindinfo'] = 'Cannot find info for: "{$a}"';
 $string['cannotfindlang'] = 'Cannot find "{$a}" language pack!';
 $string['cannotfindteacher'] = 'Cannot find teacher';
 $string['cannotfinduser'] = 'Cannot find user named "{$a}"';
-$string['cannotgeoplugin'] = 'Cannot connect to geoPlugin server at http://www.geoplugin.com, please check proxy settings or better install MaxMind GeoLite City data file';
+$string['cannotgeoplugin'] = 'Cannot connect to the geoPlugin server at https://www.geoplugin.com. Please check your proxy settings or install the MaxMind GeoLite City data file.';
 $string['cannotgetblock'] = 'Could not retrieve blocks from the database';
 $string['cannotgetcats'] = 'Cannot get category record';
 $string['cannotgetdata'] = 'Cannot get data';
@@ -384,7 +384,7 @@ $string['loginasonecourse'] = 'You cannot enter this course.<br /> You have to t
 $string['maxbytesfile'] = 'The file {$a->file} is too large. The maximum size you can upload is {$a->size}.';
 $string['maxareabytes'] = 'The file is larger than the space remaining in this area.';
 $string['messagingdisable'] = 'Messaging is disabled on this site';
-$string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to obtain the C source from <a href="http://www.forkosh.com/mimetex.zip">http://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
+$string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to obtain the C source from <a href="https://www.forkosh.com/mimetex.zip">https://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
 $string['mimetexnotexecutable'] = 'Custom mimetex is not executable!';
 $string['missingfield'] = 'Field "{$a}" is missing';
 $string['missingkeyinsql'] = 'ERROR: missing param "{$a}" in query';

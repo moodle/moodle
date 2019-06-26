@@ -155,12 +155,12 @@ $string['disallowsubscription'] = 'Subscription';
 $string['disallowsubscription_help'] = 'This forum has been configured so that you cannot subscribe to discussions.';
 $string['disallowsubscribeteacher'] = 'Subscriptions not allowed (except for teachers)';
 $string['discussion'] = 'Discussion';
-$string['discussionlistsortbycreatedasc'] = 'Sort the discussions list by the creation date in ascending order';
-$string['discussionlistsortbycreateddesc'] = 'Sort the discussions list by the creation date in descending order';
-$string['discussionlistsortbylastpostdesc'] = 'Sort the discussions list by the creation date of the last post in descending order';
-$string['discussionlistsortbylastpostasc'] = 'Sort the discussions list by the creation date of the last post in ascending order';
-$string['discussionlistsortbyrepliesasc'] = 'Sort the discussions list by the number of replies in ascending order';
-$string['discussionlistsortbyrepliesdesc'] = 'Sort the discussions list by the number of replies in descending order';
+$string['discussionlistsortbycreatedasc'] = 'Sort by creation date in ascending order';
+$string['discussionlistsortbycreateddesc'] = 'Sort by creation date in descending order';
+$string['discussionlistsortbylastpostdesc'] = 'Sort by last post creation date in descending order';
+$string['discussionlistsortbylastpostasc'] = 'Sort by last post creation date in ascending order';
+$string['discussionlistsortbyrepliesasc'] = 'Sort by number of replies in ascending order';
+$string['discussionlistsortbyrepliesdesc'] = 'Sort by number of replies in descending order';
 $string['discussionlocked'] = 'This discussion has been locked so you can no longer reply to it.';
 $string['discussionlockingheader'] = 'Discussion locking';
 $string['discussionlockingdisabled'] = 'Do not lock discussions';
@@ -641,7 +641,7 @@ $string['trackingoptional'] = 'Optional';
 $string['trackingtype'] = 'Read tracking';
 $string['trackingtype_help'] = 'Read tracking enables participants to easily check which posts they have not yet seen by highlighting any new posts.
 
-If set to optional, participants can choose whether to turn tracking on or off via a link in the administration block. (Users must also enable forum tracking in their forum preferences.)
+If set to optional, participants can choose whether to turn tracking on or off via a link in the actions menu or administration block, depending on the theme. (Users must also enable forum tracking in their forum preferences.)
 
 If \'Allow forced read tracking\' is enabled in the site administration, then a further option is available - forced. This means that tracking is always on, regardless of users\' forum preferences.';
 $string['unlockdiscussion'] = 'Unlock this discussion';
