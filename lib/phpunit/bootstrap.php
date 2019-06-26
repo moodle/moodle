@@ -80,8 +80,6 @@ if ($phpunitversion === '@package_version@') {
 }
 unset($phpunitversion);
 
-define('NO_OUTPUT_BUFFERING', true);
-
 // only load CFG from config.php, stop ASAP in lib/setup.php
 define('ABORT_AFTER_CONFIG', true);
 require(__DIR__ . '/../../config.php');
