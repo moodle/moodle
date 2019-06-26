@@ -270,6 +270,24 @@ class core_session_redis_testcase extends advanced_testcase {
         $this->assertEmpty($this->redis->keys($this->keyprefix.'*'), 'There should be no session data left.');
     }
 
+    public function test_exception_when_connection_attempts_exceeded() {
+        global $CFG;
+
+        $CFG->session_redis_port = 111111;
+        $actual = '';
+
+        $sess = new \core\session\redis();
+        try {
+            $sess->init();
+        } catch (RedisException $e) {
+            $actual = $e->getMessage();
+        }
+
+        $expected = 'Failed to connect (try 5 out of 5) to redis at 127.0.0.1:111111';
+        $this->assertDebuggingCalledCount(5);
+        $this->assertContains($expected, $actual);
+    }
+
     /**
      * Assert that we don't have any session locks in Redis.
      */
