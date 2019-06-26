@@ -1120,11 +1120,7 @@ class manager {
             if (count($result) === 5) {
                 list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
             } else {
-                // Backward compatibility for engines that don't support partial adding.
-                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc) = $result;
-                debugging('engine::add_documents() should return $partial (4-value return is deprecated)',
-                        DEBUG_DEVELOPER);
-                $partial = false;
+                throw new coding_exception('engine::add_documents() should return $partial (4-value return is deprecated)');
             }
 
             if ($numdocs > 0) {
