@@ -1,8 +1,11 @@
 This files describes API changes in /media/ plugins,
 information provided here is intended especially for developers.
 
-=== 3.6 ===
+=== 3.8 ===
+* The final deprecation of core_media_manager::setup() means that this function will no longer be called.
+The setup is now done in ::instance() so there is no need to call this.
 
+=== 3.6 ===
 * The following functions have been finally deprecated and can not be used anymore:
   * core_media_player::is_enabled()
   * core_media_player::compare_by_rank()
