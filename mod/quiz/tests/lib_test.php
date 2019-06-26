@@ -166,6 +166,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
                       'questionsperpage' => 0,
                       'sumgrades' => 1,
                       'completion' => COMPLETION_TRACKING_AUTOMATIC,
+                      'completionusegrade' => 1,
                       'completionpass' => 1);
         $quiz = $quizgenerator->create_instance($data);
         $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
@@ -880,14 +881,14 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $quiz1 = $this->getDataGenerator()->create_module('quiz', [
             'course' => $course->id,
             'completion' => 2,
+            'completionusegrade' => 1,
             'completionattemptsexhausted' => 1,
             'completionpass' => 1
         ]);
         $quiz2 = $this->getDataGenerator()->create_module('quiz', [
             'course' => $course->id,
             'completion' => 2,
-            'completionattemptsexhausted' => 0,
-            'completionpass' => 0
+            'completionusegrade' => 0
         ]);
         $cm1 = cm_info::create(get_coursemodule_from_instance('quiz', $quiz1->id));
         $cm2 = cm_info::create(get_coursemodule_from_instance('quiz', $quiz2->id));
