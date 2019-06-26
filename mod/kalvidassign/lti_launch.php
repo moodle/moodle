@@ -25,6 +25,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 global $USER;
 
@@ -52,11 +53,31 @@ $launch['custom_publishdata'] = '';
 
 $source = $source = local_kaltura_add_kaf_uri_token($source);
 
+if (!$cm = get_coursemodule_from_id('kalvidassign', $cmid)) {
+    print_error('invalidcoursemodule');
+}
+
+if (!$kalvidassignobj = $DB->get_record('kalvidassign', array('id' => $cm->instance))) {
+    print_error('invalidid', 'kalvidassign');
+}
+
+$submissionParams = array('vidassignid' => $kalvidassignobj->id, 'userid' => $USER->id);
+$submission = $DB->get_record('kalvidassign_submission', $submissionParams);
+
 if (false === local_kaltura_url_contains_configured_hostname($source) && !empty($source)) {
     echo get_string('invalid_source_parameter', 'mod_kalvidres');
     die;
 } else {
     $launch['source'] = urldecode($source);
+}
+
+$isResubmit = !empty($submission->entry_id) || !empty($submission->timecreated);
+$isExpired = kalvidassign_assignemnt_submission_expired($kalvidassignobj);
+$isReplaceMediaDisabled = $isExpired || !$kalvidassignobj->resubmit;
+
+if ($isResubmit && $isReplaceMediaDisabled && empty($source)) {
+    echo get_string('notallowedtoreplacemedia', 'mod_kalvidassign');
+    die;
 }
 
 if (local_kaltura_validate_browseembed_required_params($launch)) {
