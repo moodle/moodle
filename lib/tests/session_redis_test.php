@@ -283,7 +283,7 @@ class core_session_redis_testcase extends advanced_testcase {
             $actual = $e->getMessage();
         }
 
-        $expected = 'Failed to connect (try 5 out of 5) to redis at 127.0.0.1:111111';
+        $expected = 'Failed to connect (try 5 out of 5) to redis at ' . TEST_SESSION_REDIS_HOST . ':111111';
         $this->assertDebuggingCalledCount(5);
         $this->assertContains($expected, $actual);
     }
