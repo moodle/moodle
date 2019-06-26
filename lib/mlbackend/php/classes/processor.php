@@ -88,9 +88,10 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      * Delete the output directory.
      *
      * @param string $modeloutputdir
+     * @param string $uniqueid
      * @return null
      */
-    public function delete_output_dir($modeloutputdir) {
+    public function delete_output_dir($modeloutputdir, $uniqueid) {
         remove_dir($modeloutputdir);
     }
 

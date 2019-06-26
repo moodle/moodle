@@ -15,6 +15,7 @@ information provided here is intended especially for developers.
 * A new \core_analytics\local\time_splitting\past_periodic abstract class has been added. Time-splitting
   methods extending \core_analytics\local\time_splitting\periodic directly should be extending past_periodic
   now. 'periodic' can still be directly extended by implementing get_next_range and get_first_start methods.
+* \core_analytics\predictor::delete_output_dir has a new 2nd parameter, $uniquemodelid.
 
 === 3.7 ===
 

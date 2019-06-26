@@ -70,8 +70,9 @@ interface predictor {
      * can only be named 'execution', 'evaluation' or 'testing'.
      *
      * @param string $modeloutputdir The model directory id (parent of all model versions subdirectories).
+     * @param string $uniqueid
      * @return null
      */
-    public function delete_output_dir($modeloutputdir);
+    public function delete_output_dir($modeloutputdir, $uniqueid);
 
 }

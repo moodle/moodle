@@ -17,6 +17,14 @@
 /**
  * Unit tests for evaluation, training and prediction.
  *
+ * NOTE: in order to execute this test using a separate server for the
+ *       python ML backend you need to define these variables in your config.php file:
+ *
+ * define('TEST_MLBACKEND_PYTHON_HOST', '127.0.0.1');
+ * define('TEST_MLBACKEND_PYTHON_PORT', 5000);
+ * define('TEST_MLBACKEND_PYTHON_USERNAME', 'default');
+ * define('TEST_MLBACKEND_PYTHON_PASSWORD', 'sshhhh');
+ *
  * @package   core_analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -109,12 +117,18 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * @param int $predictedrangeindex
      * @param int $nranges
      * @param string $predictionsprocessorclass
+     * @param array $forcedconfig
      * @return void
      */
-    public function test_ml_training_and_prediction($timesplittingid, $predictedrangeindex, $nranges, $predictionsprocessorclass) {
+    public function test_ml_training_and_prediction($timesplittingid, $predictedrangeindex, $nranges, $predictionsprocessorclass,
+            $forcedconfig) {
         global $DB;
 
         $this->resetAfterTest(true);
+
+        $this->set_forced_config($forcedconfig);
+        $predictionsprocessor = $this->is_predictions_processor_ready($predictionsprocessorclass);
+
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
@@ -122,13 +136,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $ncourses = 10;
         $this->generate_courses($ncourses);
 
-        // We repeat the test for all prediction processors.
-        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
-        if ($predictionsprocessor->is_ready() !== true) {
-            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
-        }
-
         $model = $this->add_perfect_model();
+
         $model->update(true, false, $timesplittingid, get_class($predictionsprocessor));
 
         // No samples trained yet.
@@ -250,6 +259,17 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->assertCount(2, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
             \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
+        // Confirm that the files associated to the model are deleted on clear and on delete. The ML backend deletion
+        // processes will be triggered by these actions and any exception there would result in a failed test.
+        $model->clear();
+        $this->assertEquals(0, $DB->count_records('analytics_used_files',
+            array('modelid' => $model->get_id(), 'action' => 'trained')));
+        $this->assertCount(0, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertCount(0, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $model->delete();
+
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
     }
@@ -273,11 +293,15 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * test_ml_export_import
      *
      * @param string $predictionsprocessorclass The class name
+     * @param array $forcedconfig
      * @dataProvider provider_ml_processors
      */
-    public function test_ml_export_import($predictionsprocessorclass) {
-
+    public function test_ml_export_import($predictionsprocessorclass, $forcedconfig) {
         $this->resetAfterTest(true);
+
+        $this->set_forced_config($forcedconfig);
+        $predictionsprocessor = $this->is_predictions_processor_ready($predictionsprocessorclass);
+
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
@@ -285,13 +309,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $ncourses = 10;
         $this->generate_courses($ncourses);
 
-        // We repeat the test for all prediction processors.
-        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
-        if ($predictionsprocessor->is_ready() !== true) {
-            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
-        }
-
         $model = $this->add_perfect_model();
+
         $model->update(true, false, '\core\analytics\time_splitting\quarters', get_class($predictionsprocessor));
 
         $model->train();
@@ -355,15 +374,14 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * @param int $nsamples
      * @param int $classes
      * @param string $predictionsprocessorclass
+     * @param array $forcedconfig
      * @return void
      */
-    public function test_ml_classifiers_return($success, $nsamples, $classes, $predictionsprocessorclass) {
+    public function test_ml_classifiers_return($success, $nsamples, $classes, $predictionsprocessorclass, $forcedconfig) {
         $this->resetAfterTest();
 
-        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
-        if ($predictionsprocessor->is_ready() !== true) {
-            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
-        }
+        $this->set_forced_config($forcedconfig);
+        $predictionsprocessor = $this->is_predictions_processor_ready($predictionsprocessorclass);
 
         if ($nsamples % count($classes) != 0) {
             throw new \coding_exception('The number of samples should be divisible by the number of classes');
@@ -396,7 +414,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         // Training should work correctly if at least 1 sample of each class is included.
         $dir = make_request_directory();
-        $result = $predictionsprocessor->train_classification('whatever', $dataset, $dir);
+        $result = $predictionsprocessor->train_classification('whatever' . microtime(), $dataset, $dir);
 
         switch ($success) {
             case 'yes':
@@ -441,15 +459,18 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * @dataProvider provider_test_multi_classifier
      * @param string $timesplittingid
      * @param string $predictionsprocessorclass
+     * @param array|null $forcedconfig
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public function test_ml_multi_classifier($timesplittingid, $predictionsprocessorclass) {
+    public function test_ml_multi_classifier($timesplittingid, $predictionsprocessorclass, $forcedconfig) {
         global $DB;
 
         $this->resetAfterTest(true);
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
+
+        $this->set_forced_config($forcedconfig);
 
         $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
         if ($predictionsprocessor->is_ready() !== true) {
@@ -483,6 +504,9 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             // The range index is not important here, both ranges prediction will be the same.
             $this->assertEquals($correct[$sampleid], $predictiondata->prediction);
         }
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
     }
 
     /**
@@ -508,10 +532,16 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * @param int $ncourses
      * @param array $expected
      * @param string $predictionsprocessorclass
+     * @param array $forcedconfig
      * @return void
      */
-    public function test_ml_evaluation_configuration($modelquality, $ncourses, $expected, $predictionsprocessorclass) {
+    public function test_ml_evaluation_configuration($modelquality, $ncourses, $expected, $predictionsprocessorclass,
+            $forcedconfig) {
         $this->resetAfterTest(true);
+
+        $this->set_forced_config($forcedconfig);
+        $predictionsprocessor = $this->is_predictions_processor_ready($predictionsprocessorclass);
+
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
@@ -529,12 +559,6 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         // Generate training data.
         $this->generate_courses($ncourses);
-
-        // We repeat the test for all prediction processors.
-        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
-        if ($predictionsprocessor->is_ready() !== true) {
-            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
-        }
 
         $model->update(false, false, false, get_class($predictionsprocessor));
         $results = $model->evaluate();
@@ -563,10 +587,15 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * @coversNothing
      * @dataProvider provider_ml_processors
      * @param  string $predictionsprocessorclass
+     * @param array $forcedconfig
      * @return null
      */
-    public function test_ml_evaluation_trained_model($predictionsprocessorclass) {
+    public function test_ml_evaluation_trained_model($predictionsprocessorclass, $forcedconfig) {
         $this->resetAfterTest(true);
+
+        $this->set_forced_config($forcedconfig);
+        $predictionsprocessor = $this->is_predictions_processor_ready($predictionsprocessorclass);
+
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
@@ -574,12 +603,6 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         // Generate training data.
         $this->generate_courses(50);
-
-        // We repeat the test for all prediction processors.
-        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
-        if ($predictionsprocessor->is_ready() !== true) {
-            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
-        }
 
         $model->update(true, false, '\\core\\analytics\\time_splitting\\quarters', get_class($predictionsprocessor));
         $model->train();
@@ -825,6 +848,41 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     }
 
     /**
+     * Forces some configuration values.
+     *
+     * @param array $forcedconfig
+     */
+    protected function set_forced_config($forcedconfig) {
+        \core_analytics\manager::reset_prediction_processors();
+
+        if (empty($forcedconfig)) {
+            return;
+        }
+        foreach ($forcedconfig as $pluginname => $pluginconfig) {
+            foreach ($pluginconfig as $name => $value) {
+                set_config($name, $value, $pluginname);
+            }
+        }
+    }
+
+    /**
+     * Is the provided processor ready using the current configuration in the site?
+     *
+     * @param  string  $predictionsprocessorclass
+     * @return \core_analytics\predictor
+     */
+    protected function is_predictions_processor_ready(string $predictionsprocessorclass) {
+        // We repeat the test for all prediction processors.
+        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
+        $ready = $predictionsprocessor->is_ready();
+        if ($ready !== true) {
+            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready: ' . $ready);
+        }
+
+        return $predictionsprocessor;
+    }
+
+    /**
      * add_prediction_processors
      *
      * @param array $cases
@@ -834,12 +892,32 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         $return = array();
 
-        // We need to test all system prediction processors.
+        if (defined('TEST_MLBACKEND_PYTHON_HOST') && defined('TEST_MLBACKEND_PYTHON_PORT')
+                && defined('TEST_MLBACKEND_PYTHON_USERNAME') && defined('TEST_MLBACKEND_PYTHON_USERNAME')) {
+            $testpythonserver = true;
+        }
+
+        // We need to test all prediction processors in the system.
         $predictionprocessors = \core_analytics\manager::get_all_prediction_processors();
-        foreach ($predictionprocessors as $classfullname => $unused) {
+        foreach ($predictionprocessors as $classfullname => $predictionsprocessor) {
+
             foreach ($cases as $key => $case) {
-                $newkey = $key . '-' . $classfullname;
-                $return[$newkey] = $case + array('predictionsprocessorclass' => $classfullname);
+                $return[$key . '-' . $classfullname] = $case + ['predictionsprocessor' => $classfullname, 'forcedconfig' => null];
+            }
+
+            if ($predictionsprocessor instanceof \mlbackend_python\processor && !empty($testpythonserver)) {
+                // We also want to test the python processor using the server.
+
+                foreach ($cases as $key => $case) {
+
+                    // We want the configuration to be forced during the test as things like importing models create new
+                    // instances of ML backend processors during the process.
+                    $forcedconfig = ['mlbackend_python' => ['useserver' => true, 'host' => TEST_MLBACKEND_PYTHON_HOST,
+                        'port' => TEST_MLBACKEND_PYTHON_PORT, 'secure' => false, 'username' => TEST_MLBACKEND_PYTHON_USERNAME,
+                        'password' => TEST_MLBACKEND_PYTHON_PASSWORD]];
+                    $casekey = $key . '-' . $classfullname . '-server';
+                    $return[$casekey] = $case + ['predictionsprocessor' => $classfullname, 'forcedconfig' => $forcedconfig];
+                }
             }
         }
 
