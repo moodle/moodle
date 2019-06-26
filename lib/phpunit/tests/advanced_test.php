@@ -539,6 +539,10 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
      * @depends test_message_redirection
      */
     public function test_message_redirection_noreset($sink) {
+        if ($this->isInIsolation()) {
+            $this->markTestSkipped('State cannot be carried over between tests in isolated tests');
+        }
+
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
         $this->resetAfterTest();
 
