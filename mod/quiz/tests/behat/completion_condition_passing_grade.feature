@@ -25,8 +25,8 @@ Feature: Set a quiz to be marked complete when the student passes
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
     And the following "activities" exist:
-      | activity   | name           | course | idnumber | attempts | gradepass | completion | completionpass |
-      | quiz       | Test quiz name | C1     | quiz1    | 4        | 5.00      | 2          | 1              |
+      | activity | name           | course | idnumber | attempts | gradepass | completion | completionusegrade | completionpass |
+      | quiz     | Test quiz name | C1     | quiz1    | 4        | 5.00      | 2          | 1                  | 1              |
     And quiz "Test quiz name" contains the following questions:
       | question       | page |
       | First question | 1    |
