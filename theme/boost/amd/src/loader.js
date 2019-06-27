@@ -61,6 +61,20 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
         // Disables flipping the dropdowns up and getting hidden behind the navbar.
         jQuery.fn.dropdown.Constructor.Default.flip = false;
 
+        jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            var hash = jQuery(e.target).attr('href');
+            if (history.replaceState) {
+                history.replaceState(null, null, hash);
+            } else {
+                location.hash = hash;
+            }
+        });
+
+        var hash = window.location.hash;
+        if (hash) {
+           jQuery('.nav-link[href="' + hash + '"]').tab('show');
+        }
+
         // We need to call popover automatically if nodes are added to the page later.
         Event.getLegacyEvents().done(function(events) {
             jQuery(document).on(events.FILTER_CONTENT_UPDATED, function() {
