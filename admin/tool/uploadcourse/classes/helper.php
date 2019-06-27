@@ -287,6 +287,25 @@ class tool_uploadcourse_helper {
     }
 
     /**
+     * Helper to detect how many sections a course with a given shortname has.
+     *
+     * @param string $shortname shortname of a course to count sections from.
+     * @return integer count of sections.
+     */
+    public static function get_coursesection_count($shortname) {
+        global $DB;
+        if (!empty($shortname) || is_numeric($shortname)) {
+            // Creating restore from an existing course.
+            $course = $DB->get_record('course', array('shortname' => $shortname));
+        }
+        if (!empty($course)) {
+            $courseformat = course_get_format($course);
+            return $courseformat->get_last_section_number();
+        }
+        return 0;
+    }
+
+    /**
      * Get the role renaming data from the passed data.
      *
      * @param array $data data to extract the names from.
