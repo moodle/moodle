@@ -14,6 +14,7 @@ information provided here is intended especially for developers.
     * allow_switch()
 * Remove duplicate font-awesome SCSS, Please see /theme/boost/scss/fontawesome for usage (MDL-65936)
 * Remove lib/pear/Crypt/CHAP.php (MDL-65747)
+* Upgrade scssphp to v1.0.0, This involves renaming classes from Leafo => ScssPhp as the repo has changed.
 
 === 3.7 ===
 

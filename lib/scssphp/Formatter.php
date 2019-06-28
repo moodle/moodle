@@ -2,17 +2,17 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2018 Leaf Corcoran
+ * @copyright 2012-2019 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
- * @link http://leafo.github.io/scssphp
+ * @link http://scssphp.github.io/scssphp
  */
 
-namespace Leafo\ScssPhp;
+namespace ScssPhp\ScssPhp;
 
-use Leafo\ScssPhp\Formatter\OutputBlock;
-use Leafo\ScssPhp\SourceMap\SourceMapGenerator;
+use ScssPhp\ScssPhp\Formatter\OutputBlock;
+use ScssPhp\ScssPhp\SourceMap\SourceMapGenerator;
 
 /**
  * Base formatter
@@ -62,7 +62,7 @@ abstract class Formatter
     public $keepSemicolons;
 
     /**
-     * @var \Leafo\ScssPhp\Formatter\OutputBlock
+     * @var \ScssPhp\ScssPhp\Formatter\OutputBlock
      */
     protected $currentBlock;
 
@@ -77,7 +77,7 @@ abstract class Formatter
     protected $currentColumn;
 
     /**
-     * @var \Leafo\ScssPhp\SourceMap\SourceMapGenerator
+     * @var \ScssPhp\ScssPhp\SourceMap\SourceMapGenerator
      */
     protected $sourceMapGenerator;
 
@@ -136,7 +136,7 @@ abstract class Formatter
     /**
      * Output lines inside a block
      *
-     * @param \Leafo\ScssPhp\Formatter\OutputBlock $block
+     * @param \ScssPhp\ScssPhp\Formatter\OutputBlock $block
      */
     protected function blockLines(OutputBlock $block)
     {
@@ -154,7 +154,7 @@ abstract class Formatter
     /**
      * Output block selectors
      *
-     * @param \Leafo\ScssPhp\Formatter\OutputBlock $block
+     * @param \ScssPhp\ScssPhp\Formatter\OutputBlock $block
      */
     protected function blockSelectors(OutputBlock $block)
     {
@@ -168,7 +168,7 @@ abstract class Formatter
     /**
      * Output block children
      *
-     * @param \Leafo\ScssPhp\Formatter\OutputBlock $block
+     * @param \ScssPhp\ScssPhp\Formatter\OutputBlock $block
      */
     protected function blockChildren(OutputBlock $block)
     {
@@ -180,7 +180,7 @@ abstract class Formatter
     /**
      * Output non-empty block
      *
-     * @param \Leafo\ScssPhp\Formatter\OutputBlock $block
+     * @param \ScssPhp\ScssPhp\Formatter\OutputBlock $block
      */
     protected function block(OutputBlock $block)
     {
@@ -222,8 +222,8 @@ abstract class Formatter
      *
      * @api
      *
-     * @param \Leafo\ScssPhp\Formatter\OutputBlock             $block              An abstract syntax tree
-     * @param \Leafo\ScssPhp\SourceMap\SourceMapGenerator|null $sourceMapGenerator Optional source map generator
+     * @param \ScssPhp\ScssPhp\Formatter\OutputBlock             $block              An abstract syntax tree
+     * @param \ScssPhp\ScssPhp\SourceMap\SourceMapGenerator|null $sourceMapGenerator Optional source map generator
      *
      * @return string
      */

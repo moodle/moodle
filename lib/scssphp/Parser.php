@@ -2,21 +2,21 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2018 Leaf Corcoran
+ * @copyright 2012-2019 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
- * @link http://leafo.github.io/scssphp
+ * @link http://scssphp.github.io/scssphp
  */
 
-namespace Leafo\ScssPhp;
+namespace ScssPhp\ScssPhp;
 
-use Leafo\ScssPhp\Block;
-use Leafo\ScssPhp\Cache;
-use Leafo\ScssPhp\Compiler;
-use Leafo\ScssPhp\Exception\ParserException;
-use Leafo\ScssPhp\Node;
-use Leafo\ScssPhp\Type;
+use ScssPhp\ScssPhp\Block;
+use ScssPhp\ScssPhp\Cache;
+use ScssPhp\ScssPhp\Compiler;
+use ScssPhp\ScssPhp\Exception\ParserException;
+use ScssPhp\ScssPhp\Node;
+use ScssPhp\ScssPhp\Type;
 
 /**
  * Parser
@@ -75,10 +75,10 @@ class Parser
      *
      * @api
      *
-     * @param string               $sourceName
-     * @param integer              $sourceIndex
-     * @param string               $encoding
-     * @param \Leafo\ScssPhp\Cache $cache
+     * @param string                 $sourceName
+     * @param integer                $sourceIndex
+     * @param string                 $encoding
+     * @param \ScssPhp\ScssPhp\Cache $cache
      */
     public function __construct($sourceName, $sourceIndex = 0, $encoding = 'utf-8', $cache = null)
     {
@@ -126,13 +126,15 @@ class Parser
      *
      * @param string $msg
      *
-     * @throws \Leafo\ScssPhp\Exception\ParserException
+     * @throws \ScssPhp\ScssPhp\Exception\ParserException
      */
     public function throwParseError($msg = 'parse error')
     {
-        list($line, /* $column */) = $this->getSourcePosition($this->count);
+        list($line, $column) = $this->getSourcePosition($this->count);
 
-        $loc = empty($this->sourceName) ? "line: $line" : "$this->sourceName on line $line";
+        $loc = empty($this->sourceName)
+             ? "line: $line, column: $column"
+             : "$this->sourceName on line $line, at column $column";
 
         if ($this->peek("(.*?)(\n|$)", $m, $this->count)) {
             throw new ParserException("$msg: failed at `$m[1]` $loc");
@@ -148,7 +150,7 @@ class Parser
      *
      * @param string $buffer
      *
-     * @return \Leafo\ScssPhp\Block
+     * @return \ScssPhp\ScssPhp\Block
      */
     public function parse($buffer)
     {
@@ -199,8 +201,6 @@ class Parser
         if ($this->charset) {
             array_unshift($this->env->children, $this->charset);
         }
-
-        $this->env->isRoot    = true;
 
         $this->restoreEncoding();
 
@@ -662,8 +662,13 @@ class Parser
         }
 
         // opening css block
-        if ($this->selectors($selectors) && $this->matchChar('{')) {
+        if ($this->selectors($selectors) && $this->matchChar('{', false)) {
             $this->pushBlock($selectors, $s);
+
+            if ($this->eatWhiteDefault) {
+                $this->whitespace();
+                $this->append(null); // collect comments at the begining if needed
+            }
 
             return true;
         }
@@ -675,6 +680,10 @@ class Parser
             $foundSomething = false;
 
             if ($this->valueList($value)) {
+                if (empty($this->env->parent)) {
+                    $this->throwParseError('expected "{"');
+                }
+
                 $this->append([Type::T_ASSIGN, $name, $value], $s);
                 $foundSomething = true;
             }
@@ -727,7 +736,7 @@ class Parser
      * @param array   $selectors
      * @param integer $pos
      *
-     * @return \Leafo\ScssPhp\Block
+     * @return \ScssPhp\ScssPhp\Block
      */
     protected function pushBlock($selectors, $pos = 0)
     {
@@ -764,7 +773,7 @@ class Parser
      * @param string  $type
      * @param integer $pos
      *
-     * @return \Leafo\ScssPhp\Block
+     * @return \ScssPhp\ScssPhp\Block
      */
     protected function pushSpecialBlock($type, $pos)
     {
@@ -777,7 +786,7 @@ class Parser
     /**
      * Pop scope and return last block
      *
-     * @return \Leafo\ScssPhp\Block
+     * @return \ScssPhp\ScssPhp\Block
      *
      * @throws \Exception
      */
@@ -976,12 +985,57 @@ class Parser
 
         while (preg_match(static::$whitePattern, $this->buffer, $m, null, $this->count)) {
             if (isset($m[1]) && empty($this->commentsSeen[$this->count])) {
-                $this->appendComment([Type::T_COMMENT, $m[1]]);
+                // comment that are kept in the output CSS
+                $comment = [];
+                $endCommentCount = $this->count + strlen($m[1]);
+
+                // find interpolations in comment
+                $p = strpos($this->buffer, '#{', $this->count);
+
+                while ($p !== false && $p < $endCommentCount) {
+                    $c = substr($this->buffer, $this->count, $p - $this->count);
+                    $comment[] = $c;
+                    $this->count = $p;
+                    $out = null;
+
+                    if ($this->interpolation($out)) {
+                        // keep right spaces in the following string part
+                        if ($out[3]) {
+                            while ($this->buffer[$this->count-1] !== '}') {
+                                $this->count--;
+                            }
+
+                            $out[3] = '';
+                        }
+
+                        $comment[] = $out;
+                    } else {
+                        $comment[] = substr($this->buffer, $this->count, 2);
+
+                        $this->count += 2;
+                    }
+
+                    $p = strpos($this->buffer, '#{', $this->count);
+                }
+
+                // remaining part
+                $c = substr($this->buffer, $this->count, $endCommentCount - $this->count);
+
+                if (! $comment) {
+                    // single part static comment
+                    $this->appendComment([Type::T_COMMENT, $c]);
+                } else {
+                    $comment[] = $c;
+                    $this->appendComment([Type::T_COMMENT, [Type::T_STRING, '', $comment]]);
+                }
 
                 $this->commentsSeen[$this->count] = true;
+                $this->count = $endCommentCount;
+            } else {
+                // comment that are ignored and not kept in the output css
+                $this->count += strlen($m[0]);
             }
 
-            $this->count += strlen($m[0]);
             $gotWhite = true;
         }
 
@@ -995,7 +1049,9 @@ class Parser
      */
     protected function appendComment($comment)
     {
-        $comment[1] = substr(preg_replace(['/^\s+/m', '/^(.)/m'], ['', ' \1'], $comment[1]), 1);
+        if ($comment[0] === Type::T_COMMENT && is_string($comment[1])) {
+            $comment[1] = substr(preg_replace(['/^\s+/m', '/^(.)/m'], ['', ' \1'], $comment[1]), 1);
+        }
 
         $this->env->comments[] = $comment;
     }
@@ -1008,15 +1064,17 @@ class Parser
      */
     protected function append($statement, $pos = null)
     {
-        if ($pos !== null) {
-            list($line, $column) = $this->getSourcePosition($pos);
+        if (! is_null($statement)) {
+            if ($pos !== null) {
+                list($line, $column) = $this->getSourcePosition($pos);
 
-            $statement[static::SOURCE_LINE]   = $line;
-            $statement[static::SOURCE_COLUMN] = $column;
-            $statement[static::SOURCE_INDEX]  = $this->sourceIndex;
+                $statement[static::SOURCE_LINE]   = $line;
+                $statement[static::SOURCE_COLUMN] = $column;
+                $statement[static::SOURCE_INDEX]  = $this->sourceIndex;
+            }
+
+            $this->env->children[] = $statement;
         }
-
-        $this->env->children[] = $statement;
 
         $comments = $this->env->comments;
 
@@ -1409,6 +1467,19 @@ class Parser
 
         $this->seek($s);
 
+        if ($this->literal('url(', 4, false) && $this->match('\s*(\/\/\S+)\s*', $m)) {
+            $content = 'url(' . $m[1];
+
+            if ($this->matchChar(')')) {
+                $content .= ')';
+                $out = [Type::T_KEYWORD, $content];
+
+                return true;
+            }
+        }
+
+        $this->seek($s);
+
         // not
         if ($char === 'n' && $this->literal('not', 3, false)) {
             if ($this->whitespace() && $this->value($inner)) {
@@ -1486,6 +1557,12 @@ class Parser
         }
 
         if ($this->unit($out)) {
+            return true;
+        }
+
+        // unicode range with wildcards
+        if ($this->literal('U+', 2) && $this->match('([0-9A-F]+\?*)(-([0-9A-F]+))?', $m, false)) {
+            $out = [Type::T_KEYWORD, 'U+' . $m[0]];
             return true;
         }
 
@@ -1901,6 +1978,11 @@ class Parser
                     $content[] = $m[2] . "'";
                 } elseif ($this->literal("\\", 1, false)) {
                     $content[] = $m[2] . "\\";
+                } elseif ($this->literal("\r\n", 2, false)
+                  || $this->matchChar("\r", false)
+                  || $this->matchChar("\n", false)
+                  || $this->matchChar("\f", false)) {
+                    // this is a continuation escaping, to be ignored
                 } else {
                     $content[] = $m[2];
                 }
@@ -2460,7 +2542,7 @@ class Parser
     {
         if ($this->match(
             $this->utf8
-                ? '(([\pL\w_\-\*!"\']|[\\\\].)([\pL\w\-_"\']|[\\\\].)*)'
+                ? '(([\pL\w\x{00A0}-\x{10FFFF}_\-\*!"\']|[\\\\].)([\pL\w\x{00A0}-\x{10FFFF}\-_"\']|[\\\\].)*)'
                 : '(([\w_\-\*!"\']|[\\\\].)([\w\-_"\']|[\\\\].)*)',
             $m,
             $eatWhitespace

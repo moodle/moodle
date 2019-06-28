@@ -10861,9 +10861,9 @@ class admin_setting_scsscode extends admin_setting_configtextarea {
         $scss = new core_scss();
         try {
             $scss->compile($data);
-        } catch (Leafo\ScssPhp\Exception\ParserException $e) {
+        } catch (ScssPhp\ScssPhp\Exception\ParserException $e) {
             return get_string('scssinvalid', 'admin', $e->getMessage());
-        } catch (Leafo\ScssPhp\Exception\CompilerException $e) {
+        } catch (ScssPhp\ScssPhp\Exception\CompilerException $e) {
             // Silently ignore this - it could be a scss variable defined from somewhere
             // else which we are not examining here.
             return true;
