@@ -24,6 +24,7 @@ $string['modulenameplural'] = 'Kaltura Video Resource';
 $string['modulename'] = 'Kaltura Video Resource';
 $string['modulename_help'] = 'The Kaltura Video Resource enables a teacher to create a resource using a Kaltura video.';
 $string['pluginadministration'] = 'Kaltura Video Resource';
+$string['noresource'] = 'No video resource found in the course';
 $string['pluginname'] = 'Kaltura Video Resource';
 $string['name'] = 'Name';
 $string['novidsource'] = 'No media content found. You must add media content in order to save a video resource.';
