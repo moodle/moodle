@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'ადმინისტრატორის დირექტორია';
 $string['availablelangs'] = 'ხელმისაწვდომი ენის პაკეტები';
+$string['chooselanguagehead'] = 'აირჩიეთ ენა';
 $string['dataroot'] = 'მონაცემტა დირექტორია';
 $string['dbprefix'] = 'ცხრილების პრეფიქსი';
 $string['dirroot'] = 'Moodle-ის დირექტორია';
