@@ -327,6 +327,14 @@ M.mod_quiz.autosave = {
         if (typeof window.tinyMCE !== 'undefined') {
             window.tinyMCE.triggerSave();
         }
+
+        // YUI io.form incorrectly (in my opinion) sends the value of all submit
+        // buttons in the ajax request. We don't want any submit buttons.
+        // Therefore, temporarily change the type.
+        // (Yes, this is a nasty hack. One day this will be re-written as AMD, hopefully).
+        var allsubmitbuttons = this.form.all('input[type=submit], button[type=submit]');
+        allsubmitbuttons.setAttribute('type', 'button');
+
         this.save_transaction = Y.io(this.AUTOSAVE_HANDLER, {
             method:  'POST',
             form:    {id: this.form},
@@ -336,6 +344,9 @@ M.mod_quiz.autosave = {
             },
             context: this
         });
+
+        // Change the button types back.
+        allsubmitbuttons.setAttribute('type', 'submit');
     },
 
     save_done: function(transactionid, response) {
