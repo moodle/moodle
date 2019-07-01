@@ -50,7 +50,7 @@ Feature: The my overview block allows users to persistence of their page limits
     Given I log in as "student1"
     When I click on "[data-toggle='dropdown']" "css_element" in the "Course overview" "block"
     And I click on "All" "link"
-    And I click on "All" "button" in the "Course overview" "block"
+    And I click on "All (except hidden)" "button" in the "Course overview" "block"
     And I click on "In progress" "link" in the "Course overview" "block"
     Then I should see "Course 13"
     And I should see "All" in the "[data-action='limit-toggle']" "css_element"

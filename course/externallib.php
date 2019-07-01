@@ -3741,6 +3741,8 @@ class core_course_external extends external_api {
         $sort = $params['sort'];
 
         switch($classification) {
+            case COURSE_TIMELINE_ALLINCLUDINGHIDDEN:
+                break;
             case COURSE_TIMELINE_ALL:
                 break;
             case COURSE_TIMELINE_PAST:
@@ -3764,10 +3766,16 @@ class core_course_external extends external_api {
         $hiddencourses = get_hidden_courses_on_timeline();
         $courses = [];
 
-        // If the timeline requires the hidden courses then restrict the result to only $hiddencourses else exclude.
-        if ($classification == COURSE_TIMELINE_HIDDEN) {
+        // If the timeline requires really all courses, get really all courses.
+        if ($classification == COURSE_TIMELINE_ALLINCLUDINGHIDDEN) {
+            $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields, COURSE_DB_QUERY_LIMIT);
+
+            // Otherwise if the timeline requires the hidden courses then restrict the result to only $hiddencourses.
+        } else if ($classification == COURSE_TIMELINE_HIDDEN) {
             $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
                 COURSE_DB_QUERY_LIMIT, $hiddencourses);
+
+            // Otherwise get the requested courses and exclude the hidden courses.
         } else {
             $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
                 COURSE_DB_QUERY_LIMIT, [], $hiddencourses);

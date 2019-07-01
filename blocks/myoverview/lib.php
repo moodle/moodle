@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Constants for the user preferences grouping options
  */
+define('BLOCK_MYOVERVIEW_GROUPING_ALLINCLUDINGHIDDEN', 'allincludinghidden');
 define('BLOCK_MYOVERVIEW_GROUPING_ALL', 'all');
 define('BLOCK_MYOVERVIEW_GROUPING_INPROGRESS', 'inprogress');
 define('BLOCK_MYOVERVIEW_GROUPING_FUTURE', 'future');
@@ -74,6 +75,7 @@ function block_myoverview_user_preferences() {
         'default' => BLOCK_MYOVERVIEW_GROUPING_ALL,
         'type' => PARAM_ALPHA,
         'choices' => array(
+            BLOCK_MYOVERVIEW_GROUPING_ALLINCLUDINGHIDDEN,
             BLOCK_MYOVERVIEW_GROUPING_ALL,
             BLOCK_MYOVERVIEW_GROUPING_INPROGRESS,
             BLOCK_MYOVERVIEW_GROUPING_FUTURE,

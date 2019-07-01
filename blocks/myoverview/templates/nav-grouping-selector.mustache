@@ -21,6 +21,7 @@
 
     Example context (json):
     {
+        "allincludinghidden": false,
         "all": true,
         "inprogress": false,
         "future": false,
@@ -34,6 +35,7 @@
     <button id="groupingdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:groupingdropdown, block_myoverview {{/str}}">
         {{#pix}} i/filter {{/pix}}
         <span class="d-sm-inline-block" data-active-item-text>
+            {{#allincludinghidden}}{{#str}} allincludinghidden, block_myoverview {{/str}}{{/allincludinghidden}}
             {{#all}}{{#str}} all, block_myoverview {{/str}}{{/all}}
             {{#inprogress}}{{#str}} inprogress, block_myoverview {{/str}}{{/inprogress}}
             {{#future}}{{#str}} future, block_myoverview {{/str}}{{/future}}
@@ -43,6 +45,14 @@
         </span>
     </button>
     <ul class="dropdown-menu" data-show-active-item data-active-item-text aria-labelledby="groupingdropdown">
+        <li>
+            <a class="dropdown-item {{#allincludinghidden}}active{{/allincludinghidden}}" href="#" data-filter="grouping" data-value="allincludinghidden" data-pref="allincludinghidden" aria-label="{{#str}} aria:allcoursesincludinghidden, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                {{#str}} allincludinghidden, block_myoverview {{/str}}
+            </a>
+        </li>
+        <li class="dropdown-divider" role="presentation">
+            <span class="filler">&nbsp;</span>
+        </li>
         <li>
             <a class="dropdown-item {{#all}}active{{/all}}" href="#" data-filter="grouping" data-value="all" data-pref="all" aria-label="{{#str}} aria:allcourses, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
                 {{#str}} all, block_myoverview {{/str}}
