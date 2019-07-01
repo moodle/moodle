@@ -82,6 +82,55 @@ class main implements renderable, templatable {
     private $layouts;
 
     /**
+     * Store a course grouping option setting
+     *
+     * @var boolean
+     */
+    private $displaygroupingallincludinghidden;
+
+    /**
+     * Store a course grouping option setting.
+     *
+     * @var boolean
+     */
+    private $displaygroupingall;
+
+    /**
+     * Store a course grouping option setting.
+     *
+     * @var boolean
+     */
+    private $displaygroupinginprogress;
+
+    /**
+     * Store a course grouping option setting.
+     *
+     * @var boolean
+     */
+    private $displaygroupingfuture;
+
+    /**
+     * Store a course grouping option setting.
+     *
+     * @var boolean
+     */
+    private $displaygroupingpast;
+
+    /**
+     * Store a course grouping option setting.
+     *
+     * @var boolean
+     */
+    private $displaygroupingstarred;
+
+    /**
+     * Store a course grouping option setting.
+     *
+     * @var boolean
+     */
+    private $displaygroupinghidden;
+
+    /**
      * main constructor.
      * Initialize the user preferences
      *
@@ -92,23 +141,89 @@ class main implements renderable, templatable {
      * @throws \dml_exception
      */
     public function __construct($grouping, $sort, $view, $paging) {
-        $this->grouping = $grouping ? $grouping : BLOCK_MYOVERVIEW_GROUPING_ALL;
+        // Get plugin config.
+        $config = get_config('block_myoverview');
+
+        // Build the course grouping option name to check if the given grouping is enabled afterwards.
+        $groupingconfigname = 'displaygrouping'.$grouping;
+        // Check the given grouping and remember it if it is enabled.
+        if ($grouping && $config->$groupingconfigname == true) {
+            $this->grouping = $grouping;
+
+            // Otherwise fall back to another grouping in a reasonable order.
+            // This is done to prevent one-time UI glitches in the case when a user has chosen a grouping option previously which
+            // was then disabled by the admin in the meantime.
+        } else if ($config->displaygroupingall == true) {
+            $this->grouping = BLOCK_MYOVERVIEW_GROUPING_ALL;
+        } else if ($config->displaygroupingallincludinghidden == true) {
+            $this->grouping = BLOCK_MYOVERVIEW_GROUPING_ALLINCLUDINGHIDDEN;
+        } else if ($config->displaygroupinginprogress == true) {
+            $this->grouping = BLOCK_MYOVERVIEW_GROUPING_INPROGRESS;
+        } else if ($config->displaygroupingfuture == true) {
+            $this->grouping = BLOCK_MYOVERVIEW_GROUPING_FUTURE;
+        } else if ($config->displaygroupingpast == true) {
+            $this->grouping = BLOCK_MYOVERVIEW_GROUPING_PAST;
+        } else if ($config->displaygroupingstarred == true) {
+            $this->grouping = BLOCK_MYOVERVIEW_GROUPING_FAVOURITES;
+        } else if ($config->displaygroupinghidden == true) {
+            $this->grouping = BLOCK_MYOVERVIEW_GROUPING_HIDDEN;
+
+            // In this case, no grouping option is enabled and the grouping is not needed at all.
+            // But it's better not to leave $this->grouping unset for any unexpected case.
+        } else {
+            $this->grouping = BLOCK_MYOVERVIEW_GROUPING_ALLINCLUDINGHIDDEN;
+        }
+        unset ($groupingconfigname);
+
+        // Check and remember the given sorting.
         $this->sort = $sort ? $sort : BLOCK_MYOVERVIEW_SORTING_TITLE;
+
+        // Check and remember the given view.
+        $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
+
+        // Check and remember the given page size.
         if ($paging == BLOCK_MYOVERVIEW_PAGING_ALL) {
             $this->paging = BLOCK_MYOVERVIEW_PAGING_ALL;
         } else {
             $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;
         }
 
-        $config = get_config('block_myoverview');
+        // Check and remember if the course categories should be shown or not.
         if (!$config->displaycategories) {
             $this->displaycategories = BLOCK_MYOVERVIEW_DISPLAY_CATEGORIES_OFF;
         } else {
             $this->displaycategories = BLOCK_MYOVERVIEW_DISPLAY_CATEGORIES_ON;
         }
 
+        // Get and remember the available layouts.
         $this->set_available_layouts();
         $this->view = $view ? $view : reset($this->layouts);
+
+        // Check and remember if the particular grouping options should be shown or not.
+        $this->displaygroupingallincludinghidden = $config->displaygroupingallincludinghidden;
+        $this->displaygroupingall = $config->displaygroupingall;
+        $this->displaygroupinginprogress = $config->displaygroupinginprogress;
+        $this->displaygroupingfuture = $config->displaygroupingfuture;
+        $this->displaygroupingpast = $config->displaygroupingpast;
+        $this->displaygroupingstarred = $config->displaygroupingstarred;
+        $this->displaygroupinghidden = $config->displaygroupinghidden;
+
+        // Check and remember if the grouping selector should be shown at all or not.
+        // It will be shown if more than 1 grouping option is enabled.
+        $displaygroupingselectors = array($this->displaygroupingallincludinghidden,
+                $this->displaygroupingall,
+                $this->displaygroupinginprogress,
+                $this->displaygroupingfuture,
+                $this->displaygroupingpast,
+                $this->displaygroupingstarred,
+                $this->displaygroupinghidden);
+        $displaygroupingselectorscount = count(array_filter($displaygroupingselectors));
+        if ($displaygroupingselectorscount > 1) {
+            $this->displaygroupingselector = true;
+        } else {
+            $this->displaygroupingselector = false;
+        }
+        unset ($displaygroupingselectors, $displaygroupingselectorscount);
     }
 
 
@@ -204,6 +319,14 @@ class main implements renderable, templatable {
             'layouts' => $availablelayouts,
             'displaycategories' => $this->displaycategories,
             'displaydropdown' => (count($availablelayouts) > 1) ? true : false,
+            'displaygroupingallincludinghidden' => $this->displaygroupingallincludinghidden,
+            'displaygroupingall' => $this->displaygroupingall,
+            'displaygroupinginprogress' => $this->displaygroupinginprogress,
+            'displaygroupingfuture' => $this->displaygroupingfuture,
+            'displaygroupingpast' => $this->displaygroupingpast,
+            'displaygroupingstarred' => $this->displaygroupingstarred,
+            'displaygroupinghidden' => $this->displaygroupinghidden,
+            'displaygroupingselector' => $this->displaygroupingselector,
         ];
         return array_merge($defaultvariables, $preferences);
 

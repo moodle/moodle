@@ -45,4 +45,50 @@ if ($ADMIN->fulltree) {
         $choices,
         $choices));
 
+    // Enable / Disable course filter items.
+    $settings->add(new admin_setting_heading('block_myoverview/availablegroupings',
+            get_string('availablegroupings', 'block_myoverview'),
+            get_string('availablegroupings_desc', 'block_myoverview')));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingallincludinghidden',
+            get_string('allincludinghidden', 'block_myoverview'),
+            '',
+            0));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingall',
+            get_string('all', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupinginprogress',
+            get_string('inprogress', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingpast',
+            get_string('past', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingfuture',
+            get_string('future', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingstarred',
+            get_string('favourites', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupinghidden',
+            get_string('hiddencourses', 'block_myoverview'),
+            '',
+            1));
 }

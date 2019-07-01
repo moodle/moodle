@@ -71,7 +71,10 @@ Feature: The my overview block allows users to easily access their courses
     And I log out
 
   Scenario: View all (including hidden) courses
-    Given I log in as "student1"
+    Given the following config values are set as admin:
+      | config                            | value | plugin           |
+      | displaygroupingallincludinghidden | 1     | block_myoverview |
+    And I log in as "student1"
     And I click on "All (except hidden)" "button" in the "Course overview" "block"
     # We have to click on the data attribute instead of the button element text as we might risk to click on the false positive "All (except hidden)" element instead
     When I click on "[data-value='allincludinghidden']" "css_element" in the "Course overview" "block"
@@ -231,7 +234,10 @@ Feature: The my overview block allows users to easily access their courses
     And I log out
 
   Scenario: View all (including hidden) courses with hide persistent functionality
-    Given I log in as "student1"
+    Given the following config values are set as admin:
+      | config                            | value | plugin           |
+      | displaygroupingallincludinghidden | 1     | block_myoverview |
+    And I log in as "student1"
     And I click on "All (except hidden)" "button" in the "Course overview" "block"
     # We have to click on the data attribute instead of the button element text as we might risk to click on the false positive "All (except hidden)" element instead
     When I click on "[data-value='allincludinghidden']" "css_element" in the "Course overview" "block"
