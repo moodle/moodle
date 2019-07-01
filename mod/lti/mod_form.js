@@ -149,6 +149,10 @@
         },
 
         updateAutomaticToolMatch: function(field){
+            if (!field) {
+                return;
+            }
+
             var self = this;
 
             var toolurl = field;
