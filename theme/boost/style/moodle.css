@@ -12566,6 +12566,13 @@ span.editinstructions {
   height: 32px;
   font-size: 32px; }
 
+.activity-navigation .row {
+  align-items: center; }
+
+.activity-navigation #prev-activity-link,
+.activity-navigation #next-activity-link {
+  white-space: pre-wrap; }
+
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target::before {
   content: " ";

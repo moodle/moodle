@@ -1200,3 +1200,13 @@ span.editinstructions {
     height: 32px;
     font-size: 32px;
 }
+
+.activity-navigation {
+    .row {
+        align-items: center;
+    }
+    #prev-activity-link,
+    #next-activity-link {
+        white-space: pre-wrap;
+    }
+}
