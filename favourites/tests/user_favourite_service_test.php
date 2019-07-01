@@ -225,14 +225,14 @@ class user_favourite_service_testcase extends advanced_testcase {
 
         // Verify we can get favourites by area.
         $favourites = $service->find_favourites_by_type('core_course', 'course');
-        $this->assertInternalType('array', $favourites);
+        $this->assertIsArray($favourites);
         $this->assertCount(1, $favourites); // We only get favourites for the 'core_course/course' area.
-        $this->assertAttributeEquals($fav1->id, 'id', $favourites[$fav1->id]);
+        $this->assertEquals($fav1->id, $favourites[$fav1->id]->id);
 
         $favourites = $service->find_favourites_by_type('core_course', 'anothertype');
-        $this->assertInternalType('array', $favourites);
+        $this->assertIsArray($favourites);
         $this->assertCount(1, $favourites); // We only get favourites for the 'core_course/course' area.
-        $this->assertAttributeEquals($fav2->id, 'id', $favourites[$fav2->id]);
+        $this->assertEquals($fav2->id, $favourites[$fav2->id]->id);
     }
 
     /**
@@ -252,14 +252,14 @@ class user_favourite_service_testcase extends advanced_testcase {
 
         // Verify find_favourites_by_type only returns results for the user to which the service is scoped.
         $user1favourites = $user1service->find_favourites_by_type('core_course', 'course');
-        $this->assertInternalType('array', $user1favourites);
+        $this->assertIsArray($user1favourites);
         $this->assertCount(1, $user1favourites); // We only get favourites for the 'core_course/course' area for $user1.
-        $this->assertAttributeEquals($fav1->id, 'id', $user1favourites[$fav1->id]);
+        $this->assertEquals($fav1->id, $user1favourites[$fav1->id]->id);
 
         $user2favourites = $user2service->find_favourites_by_type('core_course', 'course');
-        $this->assertInternalType('array', $user2favourites);
+        $this->assertIsArray($user2favourites);
         $this->assertCount(1, $user2favourites); // We only get favourites for the 'core_course/course' area for $user2.
-        $this->assertAttributeEquals($fav2->id, 'id', $user2favourites[$fav2->id]);
+        $this->assertEquals($fav2->id, $user2favourites[$fav2->id]->id);
     }
 
     /**
