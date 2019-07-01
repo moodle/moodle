@@ -754,7 +754,7 @@ class assign_grading_summary implements renderable {
     public $isvisible = true;
 
     /** @var string no warning needed about group submissions */
-    const WARN_GROUPS_NO = 'nowarning';
+    const WARN_GROUPS_NO = false;
     /** @var string warn about group submissions, as groups are required */
     const WARN_GROUPS_REQUIRED = 'warnrequired';
     /** @var string warn about group submissions, as some will submit as 'Default group' */
