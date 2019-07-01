@@ -87,6 +87,20 @@ class discussion extends db_table_vault {
     }
 
     /**
+     * Get all discussions in the specified forum.
+     *
+     * @param   forum_entity $forum
+     * @return  array
+     */
+    public function get_all_discussions_in_forum(forum_entity $forum): ?array {
+        $records = $this->get_db()->get_records(self::TABLE, [
+            'forum' => $forum->get_id(),
+        ]);
+
+        return $this->transform_db_records_to_entities($records);
+    }
+
+    /**
      * Get the first discussion in the specified forum.
      *
      * @param   forum_entity $forum
