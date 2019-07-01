@@ -16339,10 +16339,6 @@ div#dock {
 .path-mod-assign [data-region="grade-panel"] .fitem.row {
   margin: 0; }
 
-.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3 > .pull-xs-right {
-  float: none !important;
-  /* stylelint-disable-line declaration-no-important */ }
-
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
   width: 100%; }
 
