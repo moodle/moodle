@@ -180,3 +180,14 @@ Feature: Perform basic calendar functionality
     And I set the field "Event title" to "Really awesome event!"
     When I click on "Save" "button"
     Then I should see "Select a course"
+
+  @javascript
+  Scenario: Default event type selection in the event form
+    Given I log in as "teacher1"
+    When I am viewing site calendar
+    And I click on "New event" "button"
+    Then the field "Type of event" matches value "User"
+    And I am on "Course 1" course homepage
+    And I follow "This month"
+    When I click on "New event" "button"
+    Then the field "Type of event" matches value "Course"
