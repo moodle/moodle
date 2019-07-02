@@ -31,7 +31,7 @@
     }
 }}
 <label for="{{id}}" class="sr-only">{{label}}</label>
-<select name="{{name}}" id="{{id}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} class="form-control">
+<select name="{{name}}" id="{{id}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} class="form-control custom-select">
     {{#options}}
         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
     {{/options}}
