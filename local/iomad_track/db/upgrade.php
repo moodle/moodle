@@ -376,5 +376,51 @@ mtrace("enrol end " . time());
         // Iomad_track savepoint reached.
         upgrade_plugin_savepoint(true, 2019022700, 'local', 'iomad_track');
     }
+
+    if ($oldversion < 2019070200) {
+
+        // Define field expirysent to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $field = new xmldb_field('expirysent', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'licenseallocated');
+
+        // Conditionally launch add field expirysent.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add any which have been sent.
+        $expirycourses = $DB->get_records_sql("SELECT * FROM {iomad_courses}
+                                               WHERE validlength > 0");
+        $timenow = time();
+        foreach ($expirycourses as $expirycourse) {
+            $expiryemails = $DB->get-records('email', array('templatename' => 'expiry_warn_user','courseid' => $expirycourse->courseid));
+            foreach ($expiryemails as $expiryemail) {
+                // Get the track records
+                $trackrecords = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+                                                      WHERE userid = :userid
+                                                      AND courseid = :courseid
+                                                      AND timecompleted IS NOT NULL
+                                                      AND timecompleted > :modifiedtime
+                                                      AND expirysent IS NULL",
+                                                      array('userid' => $expiryemail->userid,
+                                                            'courseid' => $expiryemail->courseid,
+                                                            'modifiedtime' => $expiryemail - 3600));
+                foreach ($trackrecords as $trackrecord) {
+                    if ($trackrecord->timecompleted + ($expirycourse->validlength - $expirycourse->warnafter) * 24 * 60 * 60 < $timenow) {
+                        // continue as we havent reached the date to send yet.
+                        continue;
+                    } else {
+                        $trackrecord->expirysent = $expiryemail->sent;
+                        $trackrecord->modifiedtime = $timenow;
+                        $DB->update_record('local_iomad_track', $trackrecord);
+                    }
+                }
+            }
+        }
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2019070200, 'local', 'iomad_track');
+    }
+
     return $result;
 }

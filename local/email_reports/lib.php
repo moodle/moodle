@@ -333,7 +333,8 @@ function email_reports_cron() {
                     ON (cc.userid = u.id
                         AND u.deleted = 0
                         AND u.suspended = 0)
-                    WHERE cc.id IN (
+                    WHERE cc.expirysent IS NULL
+                    AND cc.id IN (
                         SELECT max(id) FROM {local_iomad_track}
                         GROUP BY userid,courseid)";
 
@@ -365,7 +366,7 @@ function email_reports_cron() {
             }
         }
 
-        if (!$DB->get_record_sql("SELECT ra.id FROM
+        if ($DB->get_record_sql("SELECT ra.id FROM
                                  {user_enrolments} ue
                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                  JOIN {role_assignments} ra ON (ue.userid = ra.userid)
@@ -377,8 +378,14 @@ function email_reports_cron() {
                                  array('courseid' => $compuser->courseid,
                                        'userid' => $compuser->userid,
                                        'studentrole' => $studentrole->id))) {
-            continue;
+            // Expire the user from the course.
+            $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
+                                                                                        'courseid' => $course->id,
+                                                                                        'objectid' => $course->id,
+                                                                                        'userid' => $user->id));
+            $event->trigger();
         }
+        // Check if we have recently sent the email.
         if ($DB->get_records_sql("SELECT id FROM {email}
                                   WHERE userid = :userid
                                   AND courseid = :courseid
@@ -391,15 +398,13 @@ function email_reports_cron() {
             continue;
         }
         mtrace("Sending expiry warning email to $user->email");
-        $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
-                                                                                    'courseid' => $course->id,
-                                                                                    'objectid' => $course->id,
-                                                                                    'userid' => $user->id));
-        $event->trigger();
         EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
         // Send the supervisor email too.
         mtrace("Sending supervisor warning email for $user->email");
         company::send_supervisor_expiry_warning_email($user, $course);
+
+        // Update the tracking table.
+        $DB->set_field('local_iomad_track', 'expirysent', $runtime, array('userid' =>$compuser->userid, 'courseid' => $compuser->courseid, 'timecompleted' => $compuser->timecompleted));
     }
 
     // Email the managers
@@ -490,20 +495,6 @@ function email_reports_cron() {
                             if (!$course = $DB->get_record('course', array('id' => $manageruser->courseid))) {
                                 continue;
                             }
-                            if (!$DB->get_record_sql("SELECT ra.id FROM
-                                                     {user_enrolments} ue
-                                                     INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
-                                                     JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                                     JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
-                                                     WHERE c.contextlevel = 50
-                                                     AND ue.userid = :userid
-                                                     AND e.courseid = :courseid
-                                                     AND ra.roleid = :studentrole",
-                                                     array('courseid' => $manageruser->courseid,
-                                                           'userid' => $manageruser->userid,
-                                                           'studentrole' => $studentrole->id))) {
-                                continue;
-                            }
                             $foundusers = true;
                             if ($manageruser->timecompleted == 0) {
                                 $datestring = get_string('never') . "\n";
@@ -529,6 +520,34 @@ function email_reports_cron() {
                     }
                 }
             }
+        }
+    }
+
+    // Deal with users who have passed the expired threshold.
+    $completionexpirycourses = $DB->get_records_sql("SELECT * FROM {iomad_courses)
+                                                     WHERE expireafter > 0");
+    foreach ($completionexpirecourses as $completionexpirecourse) {
+        // Get all of the users who have a time completed time > this time.
+        $expiretime = 24 * 60 * 60 * $completionexpirecourse->expireafter;
+        $userlist = $DB->get_records_sql("SELECT lit.* FROM
+                                          {local_iomad_track) lit
+                                          JOIN {user_enrolments} ue ON (lit.userid = ue.userid)
+                                          JOIN {enrol} e ON (lit.courseid = e.courseid AND ue.enrolid = e.id)
+                                          WHERE lit.courseid = :courseid
+                                          AND lit.timecompleted + :expiretime < :runtime",
+                                          array('courseid' => $completionexpirycourse->courseid,
+                                                'expiretime' => $expiretime,
+                                                'runtime' => $runtime));
+
+        //  Cycle through any found users.
+        foreach ($userlist as $founduser) {
+            // Expire the user from the course.
+            $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($founduser->courseid),
+                                                                                        'courseid' => $founduser->courseid,
+                                                                                        'objectid' => $founduser->courseid,
+                                                                                        'userid' => $founduser->userid));
+            $event->trigger();
+
         }
     }
 
