@@ -393,7 +393,7 @@ mtrace("enrol end " . time());
                                                WHERE validlength > 0");
         $timenow = time();
         foreach ($expirycourses as $expirycourse) {
-            $expiryemails = $DB->get-records('email', array('templatename' => 'expiry_warn_user','courseid' => $expirycourse->courseid));
+            $expiryemails = $DB->get_records('email', array('templatename' => 'expiry_warn_user','courseid' => $expirycourse->courseid));
             foreach ($expiryemails as $expiryemail) {
                 // Get the track records
                 $trackrecords = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
