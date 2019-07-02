@@ -703,10 +703,18 @@ class tool_uploadcourse_course {
             $coursedata += $courseformat->validate_course_format_options($this->rawdata);
         }
 
-        // Special case, 'numsections' is not a course format option any more but still should apply from defaults.
+        // Special case, 'numsections' is not a course format option any more but still should apply from the template course,
+        // if any, and otherwise from defaults.
         if (!$exists || !array_key_exists('numsections', $coursedata)) {
             if (isset($this->rawdata['numsections']) && is_numeric($this->rawdata['numsections'])) {
                 $coursedata['numsections'] = (int)$this->rawdata['numsections'];
+            } else if (isset($this->options['templatecourse'])) {
+                $numsections = tool_uploadcourse_helper::get_coursesection_count($this->options['templatecourse']);
+                if ($numsections != 0) {
+                    $coursedata['numsections'] = $numsections;
+                } else {
+                    $coursedata['numsections'] = get_config('moodlecourse', 'numsections');
+                }
             } else {
                 $coursedata['numsections'] = get_config('moodlecourse', 'numsections');
             }
