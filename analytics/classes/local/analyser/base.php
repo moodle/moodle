@@ -594,7 +594,9 @@ abstract class base {
         }
 
         try {
-            foreach ($this->indicators as $key => $indicator) {
+
+            // Instantiate empty indicators to ensure that no garbage is dragged from previous analyses.
+            foreach ($this->instantiate_indicators() as $key => $indicator) {
                 // The analyser attaches the main entities the sample depends on and are provided to the
                 // indicator to calculate the sample.
                 $this->indicators[$key]->add_sample_data($samplesdata);
@@ -649,6 +651,18 @@ abstract class base {
         $result->message = get_string('successfullyanalysed', 'analytics');
         $result->file = $file;
         return $result;
+    }
+
+    /**
+     * Instantiate the indicators.
+     *
+     * @return \core_analytics\local\indicator\base[]
+     */
+    public function instantiate_indicators() {
+        foreach ($this->indicators as $key => $indicator) {
+            $this->indicators[$key] = call_user_func(array($indicator, 'instance'));
+        }
+        return $this->indicators;
     }
 
     /**
