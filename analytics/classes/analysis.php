@@ -313,7 +313,8 @@ class analysis {
         }
 
         try {
-            $indicators = $this->analyser->get_indicators();
+            // Instantiate empty indicators to ensure that no garbage is dragged from previous analyses.
+            $indicators = $this->analyser->instantiate_indicators();
             foreach ($indicators as $key => $indicator) {
                 // The analyser attaches the main entities the sample depends on and are provided to the
                 // indicator to calculate the sample.
