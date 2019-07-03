@@ -98,7 +98,7 @@ trait eventtype {
             $mform->hideIf('categoryid', 'eventtype', 'noteq', 'category');
         }
 
-        $showall = $CFG->calendar_adminseesall && !has_capability('moodle/calendar:manageentries', \context_system::instance());
+        $showall = is_siteadmin() && !empty($CFG->calendar_adminseesall);
         if (!empty($eventtypes['course'])) {
             $mform->addElement('course', 'courseid', get_string('course'), ['limittoenrolled' => !$showall]);
             $mform->hideIf('courseid', 'eventtype', 'noteq', 'course');
