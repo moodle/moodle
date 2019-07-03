@@ -14,6 +14,8 @@ Feature: Perform basic calendar functionality
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
+      | Course 2 | C2 | topics |
+      | Course 3 | C3 | topics |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
@@ -188,3 +190,29 @@ Feature: Perform basic calendar functionality
     And I follow "This month"
     When I click on "New event" "button"
     Then the field "Type of event" matches value "Course"
+
+  @javascript
+  Scenario: Admin can only see all courses if calendar_adminseesall setting is enabled.
+    Given I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I enrol "admin" user as "Teacher"
+    And I am viewing site calendar
+    And I click on "New event" "button"
+    And I set the field "Type of event" to "Course"
+    When I open the autocomplete suggestions list
+    Then I should see "Course 1" in the ".form-autocomplete-suggestions" "css_element"
+    And I should not see "Course 2" in the ".form-autocomplete-suggestions" "css_element"
+    And I should not see "Course 3" in the ".form-autocomplete-suggestions" "css_element"
+    And I click on "Close" "button"
+    And I am on site homepage
+    And I navigate to "Appearance > Calendar" in site administration
+    And I set the field "Admins see all" to "1"
+    And I press "Save changes"
+    And I am viewing site calendar
+    And I click on "New event" "button"
+    And I set the field "Type of event" to "Course"
+    When I open the autocomplete suggestions list
+    Then I should see "Course 1" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "Course 2" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "Course 3" in the ".form-autocomplete-suggestions" "css_element"
+
