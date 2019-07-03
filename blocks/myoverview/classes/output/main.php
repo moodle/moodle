@@ -94,7 +94,11 @@ class main implements renderable, templatable {
     public function __construct($grouping, $sort, $view, $paging) {
         $this->grouping = $grouping ? $grouping : BLOCK_MYOVERVIEW_GROUPING_ALL;
         $this->sort = $sort ? $sort : BLOCK_MYOVERVIEW_SORTING_TITLE;
-        $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;
+        if ($paging == BLOCK_MYOVERVIEW_PAGING_ALL) {
+            $this->paging = BLOCK_MYOVERVIEW_PAGING_ALL;
+        } else {
+            $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;
+        }
 
         $config = get_config('block_myoverview');
         if (!$config->displaycategories) {
@@ -178,8 +182,11 @@ class main implements renderable, templatable {
      *
      * @param \renderer_base $output
      * @return array Context variables for the template
+     * @throws \coding_exception
+     *
      */
     public function export_for_template(renderer_base $output) {
+        global $USER;
 
         $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
 
@@ -187,6 +194,7 @@ class main implements renderable, templatable {
         $availablelayouts = $this->get_formatted_available_layouts_for_export();
 
         $defaultvariables = [
+            'totalcoursecount' => count(enrol_get_all_users_courses($USER->id, true)),
             'nocoursesimg' => $nocoursesurl,
             'grouping' => $this->grouping,
             'sort' => $this->sort == BLOCK_MYOVERVIEW_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc',

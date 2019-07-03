@@ -64,12 +64,13 @@
                         aria-label="{{.}}"
                     {{/arialabels.itemsperpage}}
                     {{^arialabels.itemsperpage}}
-                        aria-label="{{#str}} pagedcontentpagingbaritemsperpage, core, {{#itemsperpage}}{{#active}}{{value}}{{/active}}{{/itemsperpage}}{{/str}}"
+                        aria-label="{{#str}} pagedcontentpagingbaritemsperpage, core, {{#itemsperpage}}{{#active}}{{#value}}{{.}}{{/value}}{{^value}}{{#str}} all, core {{/str}}{{/value}}{{/active}}{{/itemsperpage}}{{/str}}"
                     {{/arialabels.itemsperpage}}
                 >
                     {{#itemsperpage}}
                         {{#active}}
-                            {{value}}
+                            {{#value}}{{.}}{{/value}}
+                            {{^value}}{{#str}} all, core {{/str}}{{/value}}
                         {{/active}}
                     {{/itemsperpage}}
                 </button>
@@ -101,7 +102,6 @@
     {{/showitemsperpageselector}}
 
     <nav
-        role="navigation"
         id="{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}"
         class="{{#showitemsperpageselector}}ml-auto{{/showitemsperpageselector}}"
         data-region="paging-bar"
