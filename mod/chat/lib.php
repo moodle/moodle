@@ -1401,6 +1401,14 @@ function mod_chat_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
     $chattime = $DB->get_field('chat', 'chattime', array('id' => $event->instance));
     $usertimezone = core_date::get_user_timezone($user);
     $chattimemidnight = usergetmidnight($chattime, $usertimezone);

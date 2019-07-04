@@ -2073,6 +2073,14 @@ function mod_quiz_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
     quiz_update_effective_access($quiz, $userid);
 
     // Check if quiz is closed, if so don't display it.

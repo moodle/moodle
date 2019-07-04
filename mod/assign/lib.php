@@ -1555,6 +1555,14 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
     $cm = get_fast_modinfo($event->courseid, $userid)->instances['assign'][$event->instance];
     $context = context_module::instance($cm->id);
 
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
     $assign = new assign($context, $cm, null);
 
     // Apply overrides.
