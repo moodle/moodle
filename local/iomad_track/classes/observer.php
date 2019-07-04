@@ -485,7 +485,7 @@ class observer {
             // Create one.
             if ($courserec = $DB->get_record('course', array('id' => $courseid))) {
                 if ($companies = $DB->get_records_sql("SELECT cu.* FROM {company_users} cu
-                                                      JOIN {company_course} cc on (cu.companyid = cu.companyid)
+                                                      JOIN {company_course} cc on (cu.companyid = cc.companyid)
                                                       WHERE cu.userid = :userid
                                                       AND cc.courseid = :courseid
                                                       ORDER BY cu.id DESC",
