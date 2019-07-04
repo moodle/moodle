@@ -31,5 +31,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = 'el';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Ελληνικά για Χώρους Εργασίας';
+$string['thislanguage'] = 'Ελληνικά για σχολές';
