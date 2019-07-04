@@ -99,10 +99,7 @@ $string['welcomep20'] = 'You are seeing this page because you have successfully 
 $string['welcomep30'] = 'This release of the <strong>{$a->installername}</strong> includes the applications
     to create an environment in which <strong>Moodle</strong> will operate, namely:';
 $string['welcomep40'] = 'The package also includes <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'The use of all the applications in this package is governed by their respective
-    licences. The complete <strong>{$a->installername}</strong> package is
-    <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> and is distributed
-    under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> license.';
+$string['welcomep50'] = 'The use of all the applications in this package is governed by their respective licences. The complete <strong>{$a->installername}</strong> package is <a href="https://www.opensource.org/docs/definition_plain.html">open source</a> and is distributed under the <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> license.';
 $string['welcomep60'] = 'The following pages will lead you through some easy to follow steps to
     configure and set up <strong>Moodle</strong> on your computer. You may accept the default
     settings or, optionally, amend them to suit your own needs.';
