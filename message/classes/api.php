@@ -1869,9 +1869,11 @@ class api {
      *
      * @param int $recipientid The recipient user id.
      * @param int $senderid The sender user id.
+     * @param bool $evenifblocked This lets the user know, that even if the recipient has blocked the user
+     *        the user is still able to send a message.
      * @return bool true if user is permitted, false otherwise.
      */
-    public static function can_send_message(int $recipientid, int $senderid) : bool {
+    public static function can_send_message(int $recipientid, int $senderid, bool $evenifblocked = false) : bool {
         $systemcontext = \context_system::instance();
 
         if (!has_capability('moodle/site:sendmessage', $systemcontext, $senderid)) {
@@ -1883,7 +1885,7 @@ class api {
         }
 
         // Check if the recipient can be messaged by the sender.
-        return self::can_contact_user($recipientid, $senderid);
+        return self::can_contact_user($recipientid, $senderid, $evenifblocked);
     }
 
     /**
@@ -2966,9 +2968,11 @@ class api {
      *
      * @param int $recipientid
      * @param int $senderid
+     * @param bool $evenifblocked This lets the user know, that even if the recipient has blocked the user
+     *        the user is still able to send a message.
      * @return bool true if recipient hasn't blocked sender and sender can contact to recipient, false otherwise.
      */
-    protected static function can_contact_user(int $recipientid, int $senderid) : bool {
+    protected static function can_contact_user(int $recipientid, int $senderid, bool $evenifblocked = false) : bool {
         if (has_capability('moodle/site:messageanyuser', \context_system::instance(), $senderid) ||
             $recipientid == $senderid) {
             // The sender has the ability to contact any user across the entire site or themselves.
@@ -2978,7 +2982,7 @@ class api {
         // The initial value of $cancontact is null to indicate that a value has not been determined.
         $cancontact = null;
 
-        if (self::is_blocked($recipientid, $senderid)) {
+        if (self::is_blocked($recipientid, $senderid) || $evenifblocked) {
             // The recipient has specifically blocked this sender.
             $cancontact = false;
         }

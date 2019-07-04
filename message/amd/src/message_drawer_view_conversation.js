@@ -182,7 +182,8 @@ function(
             isblocked: null,
             iscontact: null,
             isdeleted: null,
-            canmessage:  null,
+            canmessage: null,
+            canmessageevenifblocked: null,
             requirescontact: null,
             contactrequests: []
         };

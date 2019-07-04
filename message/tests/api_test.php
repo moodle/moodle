@@ -3614,6 +3614,98 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Tests the user when blocked will not be able to send messages if they are blocked.
+     */
+    public function test_can_send_message_even_if_blocked() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id, true));
+    }
+
+    /**
+     * Tests the user will be able to send a message even if they are blocked as the user
+     * has the capability 'moodle/site:messageanyuser'.
+     */
+    public function test_can_send_message_even_if_blocked_with_message_any_user_cap() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $authenticateduserrole = $DB->get_record('role', array('shortname' => 'user'));
+        assign_capability('moodle/site:messageanyuser', CAP_ALLOW, $authenticateduserrole->id, context_system::instance(), true);
+
+        $this->assertTrue(\core_message\api::can_send_message($user2->id, $user1->id, true));
+    }
+
+    /**
+     * Tests the user will be able to send a message even if they are blocked as the user
+     * has the capability 'moodle/site:readallmessages'.
+     */
+    public function test_can_send_message_even_if_blocked_with_read_all_message_cap() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $authenticateduserrole = $DB->get_record('role', array('shortname' => 'user'));
+        assign_capability('moodle/site:readallmessages', CAP_ALLOW, $authenticateduserrole->id, context_system::instance(), true);
+
+        $this->assertTrue(\core_message\api::can_send_message($user2->id, $user1->id, true));
+    }
+
+    /**
+     * Tests the user can not always send a message if they are blocked just because they share a course.
+     */
+    public function test_can_send_message_even_if_blocked_shared_course() {
+        $this->resetAfterTest();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id, true));
+    }
+
+    /**
+     * Tests the user can always send a message even if they are blocked because they share a course and
+     * have the capability 'moodle/site:messageanyuser' at the course context.
+     */
+    public function test_can_send_message_even_if_blocked_shared_course_with_message_any_user_cap() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $editingteacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+
+        $teacher = self::getDataGenerator()->create_user();
+        $student = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $editingteacherrole->id);
+        $this->getDataGenerator()->enrol_user($student->id, $course->id);
+
+        assign_capability('moodle/site:messageanyuser', CAP_ALLOW, $editingteacherrole->id,
+            context_course::instance($course->id), true);
+
+        // Check that the second user can no longer send the first user a message.
+        $this->assertTrue(\core_message\api::can_send_message($student->id, $teacher->id, true));
+    }
+
+    /**
      * Tests the user can post a message.
      */
     public function test_can_post_message() {

@@ -1069,10 +1069,17 @@ function(
      */
     var renderConfirmBlockUser = function(header, body, footer, user) {
         if (user) {
-            return Str.get_string('blockuserconfirm', 'core_message', user.fullname)
-                .then(function(string) {
-                    return showConfirmDialogue(header, body, footer, [SELECTORS.ACTION_CONFIRM_BLOCK], string, '', true, false);
-                });
+            if (user.canmessageevenifblocked) {
+                return Str.get_string('cantblockuser', 'core_message', user.fullname)
+                    .then(function(string) {
+                        return showConfirmDialogue(header, body, footer, [], string, '', true, false);
+                    });
+            } else {
+                return Str.get_string('blockuserconfirm', 'core_message', user.fullname)
+                    .then(function(string) {
+                        return showConfirmDialogue(header, body, footer, [SELECTORS.ACTION_CONFIRM_BLOCK], string, '', true, false);
+                    });
+            }
         } else {
             return hideConfirmDialogue(header, body, footer);
         }

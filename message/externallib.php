@@ -583,6 +583,11 @@ class core_message_external extends external_api {
             throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
+        // If the blocking is going to be useless then don't do it.
+        if (\core_message\api::can_send_message($userid, $blockeduserid, true)) {
+            return [];
+        }
+
         if (!\core_message\api::is_blocked($params['userid'], $params['blockeduserid'])) {
             \core_message\api::block_user($params['userid'], $params['blockeduserid']);
         }
@@ -1290,6 +1295,8 @@ class core_message_external extends external_api {
             'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
             'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?'),
             'isdeleted' => new external_value(PARAM_BOOL, 'Is the user deleted?'),
+            'canmessageevenifblocked' => new external_value(PARAM_BOOL,
+                'If the user can still message even if they get blocked'),
             'canmessage' => new external_value(PARAM_BOOL, 'If the user can be messaged'),
             'requirescontact' => new external_value(PARAM_BOOL, 'If the user requires to be contacts'),
         ];

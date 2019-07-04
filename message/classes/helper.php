@@ -589,9 +589,14 @@ class helper {
 
             $data->requirescontact = null;
             $data->canmessage = null;
+            $data->canmessageevenifblocked = null;
             if ($includeprivacyinfo) {
                 $privacysetting = api::get_user_privacy_messaging_preference($member->id);
                 $data->requirescontact = $privacysetting == api::MESSAGE_PRIVACY_ONLYCONTACTS;
+
+                // Here we check that if the sender wanted to block the recipient, the recipient would
+                // still be able to message them regardless.
+                $data->canmessageevenifblocked = api::can_send_message($referenceuserid, $member->id, true);
                 $data->canmessage = !$data->isdeleted && api::can_send_message($member->id, $referenceuserid);
             }
 
