@@ -57,6 +57,8 @@ abstract class core_filetypes {
             'aif' => array('type' => 'audio/x-aiff', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
             'aiff' => array('type' => 'audio/x-aiff', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
             'aifc' => array('type' => 'audio/x-aiff', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
+            'amr' => array('type' => 'audio/amr', 'icon' => 'amr', 'groups' => array('audio', 'html_audio', 'web_audio'),
+                    'string' => 'audio'),
             'applescript' => array('type' => 'text/plain', 'icon' => 'text'),
             'asc' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
             'asm' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
