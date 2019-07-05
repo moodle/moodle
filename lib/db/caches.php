@@ -400,4 +400,12 @@ $definitions = array(
         'simplekeys' => true,
         'staticacceleration' => true
     ],
+
+    // Cache the user dates for courses set to relative dates mode.
+    'course_user_dates' => [
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true
+    ],
 );
