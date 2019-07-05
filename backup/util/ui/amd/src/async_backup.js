@@ -46,6 +46,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
     var typeid; //  The type of operation backup or restore.
     var backupintervalid; //  The id of the setInterval function.
     var allbackupintervalid; //  The id of the setInterval function.
+    var timeout = 2000; // Timeout for ajax requests.
 
     /**
      * Helper function to update UI components.
@@ -348,7 +349,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
                 'backupids': [backupid],
                 'contextid': contextid
             },
-        }])[0].done(function(response) {
+        }], true, true, false, timeout)[0].done(function(response) {
             // We have the progress now update the UI.
             updateProgress(response[0]);
         });
@@ -373,7 +374,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
                     'backupids': backupids,
                     'contextid': contextid
                 },
-            }])[0].done(function(response) {
+            }], true, true, false, timeout)[0].done(function(response) {
                 updateProgressAll(response);
             });
         } else {
