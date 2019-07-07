@@ -43,6 +43,7 @@ $string['previewvideo'] = 'Preview';
 $string['gradesubmission'] = 'Grade submissions';
 $string['numberofsubmissions'] = 'Number of submissions: {$a}';
 $string['assignmentexpired'] = 'Submission cancelled.  The assignment due date has passed';
+$string['notallowedtoreplacemedia'] = 'You are not allowed to replace the media.';
 $string['assignmentsubmitted'] = 'Success, your assignment has been submitted';
 $string['emptyentryid'] = 'Video assignment was not submitted correctly.  Please try to resubmit.';
 $string['deleteallsubmissions'] = 'Delete all video submissions';
