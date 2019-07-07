@@ -28,3 +28,4 @@ $string['invalid_launch_parameters'] = 'Invalid launch parameters';
 $string['mymedia:view'] = 'View My Media page';
 $string['nav_mymedia'] = 'My Media';
 $string['pluginname'] = 'My Media';
+$string['privacy:metadata'] = 'My Media plugin does not store any personal data.';
