@@ -694,7 +694,7 @@ class block_iomad_company_admin_external extends external_api {
                         new external_single_structure(
                             array(
                                 'userid' => new external_value(PARAM_INT, 'Department ID'),
-                                'company' => new external_value(PARAM_INT, 'Company ID'),
+                                'companyid' => new external_value(PARAM_INT, 'Company ID'),
                                 'result' => new external_value(PARAM_BOOL, 'Success or failure'),
                                 'message' => new external_value(PARAM_TEXT, 'Failure message'),
                                 )
