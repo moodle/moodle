@@ -1785,10 +1785,12 @@ class html_writer {
      * @param bool $checked Whether the checkbox is checked
      * @param string $label The label for the checkbox
      * @param array $attributes Any attributes to apply to the checkbox
+     * @param array $labelattributes Any attributes to apply to the label, if present
      * @return string html fragment
      */
-    public static function checkbox($name, $value, $checked = true, $label = '', array $attributes = null) {
-        $attributes = (array)$attributes;
+    public static function checkbox($name, $value, $checked = true, $label = '',
+            array $attributes = null, array $labelattributes = null) {
+        $attributes = (array) $attributes;
         $output = '';
 
         if ($label !== '' and !is_null($label)) {
@@ -1804,7 +1806,9 @@ class html_writer {
         $output .= self::empty_tag('input', $attributes);
 
         if ($label !== '' and !is_null($label)) {
-            $output .= self::tag('label', $label, array('for'=>$attributes['id']));
+            $labelattributes = (array) $labelattributes;
+            $labelattributes['for'] = $attributes['id'];
+            $output .= self::tag('label', $label, $labelattributes);
         }
 
         return $output;
