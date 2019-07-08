@@ -96,6 +96,15 @@ class block_iomad_company_admin_external extends external_api {
             // Create the company record
             $companyid = $DB->insert_record('company', $company);
 
+            // Deal with certificate info.
+            $certificateinforec = array('companyid' => $companyid,
+                                        'uselogo' => 1,
+                                        'usesignature' => 1,
+                                        'useborder' => 1,
+                                        'usewatermark' => 1,
+                                        'showgrade' => 1);
+            $DB->insert_record('companycertificate', $certificateinforec);
+
             // Fire an event for this.
             $eventother = array('companyid' => $companyid);
             $event = \block_iomad_company_admin\event\company_created::create(array('context' => context_system::instance(),
