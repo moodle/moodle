@@ -32,7 +32,12 @@
     {
     }
 }}
-<div id="discussion-list-{{uniqid}}">
+<div id="discussion-list-{{uniqid}}" {{!
+    }}data-cmid="{{cmid}}" {{!
+    }}data-group="{{forum.groupid}}" {{!
+    }}data-gradable-itemtype="forum" {{!
+    }}{{#firstgradeduserid}}data-initialuserid="{{firstgradeduserid}}" {{/firstgradeduserid}}{{!
+    }}>
     {{{groupchangemenu}}}
 
     {{#notifications}}
@@ -63,6 +68,8 @@
         {{/forum.capabilities.selfenrol}}
     {{/forum.capabilities.create}}
 
+    {{!TODO Add capability check}}
+    <a class="btn btn-primary" href="" data-grade-action="launch">{{#str}}gradeusers, forum{{/str}}</a>
 
     {{#state.hasdiscussions}}
         {{$discussion_top_pagination}}
@@ -305,5 +312,9 @@
     require(['jquery', 'mod_forum/discussion_list'], function($, View) {
         var root = $('#discussion-list-{{uniqid}}');
         View.init(root);
+    });
+
+    require(['mod_forum/grades/grader'], function(Grader) {
+        Grader.registerLaunchListeners();
     });
 {{/js}}
