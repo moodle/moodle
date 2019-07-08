@@ -691,7 +691,8 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
 
         $attr = array('type' => 'submit',
                      'name' => 'grade_submissions',
-                     'value' => get_string('gradesubmission', 'kalvidassign'));
+                     'value' => get_string('gradesubmission', 'kalvidassign'),
+                     'class' => 'btn btn-secondary');
 
         $html .= html_writer::empty_tag('input', $attr);
 
