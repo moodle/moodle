@@ -686,6 +686,67 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->delete_quba();
     }
 
+    /**
+     * Test that regrading doesn't convert autosave steps to finished steps.
+     * This can result in students loosing data (due to question_out_of_sequence_exception) if a teacher
+     * regrades an attempt while it is in progress.
+     */
+    public function test_autosave_and_regrade_then_display() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question = $generator->create_question('shortanswer', null,
+                array('category' => $cat->id));
+
+        // Start attempt at a shortanswer question.
+        $q = question_bank::load_question($question->id);
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+
+        // First see if the starting sequence is right.
+        $this->render();
+        $this->check_output_contains_hidden_input(':sequencecheck', 1);
+
+        // Add a submission.
+        $this->process_submission(array('answer' => 'first response'));
+        $this->save_quba();
+
+        // Check the submission and that the sequence went up.
+        $this->render();
+        $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
+        $this->assertFalse($this->get_question_attempt()->has_autosaved_step());
+
+        // Add a autosave response.
+        $this->load_quba();
+        $this->process_autosave(array('answer' => 'second response'));
+        $this->save_quba();
+
+        // Confirm that the autosave value shows up, but that the sequence hasn't increased.
+        $this->render();
+        $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
+        $this->assertTrue($this->get_question_attempt()->has_autosaved_step());
+
+        // Call regrade.
+        $this->load_quba();
+        $this->quba->regrade_all_questions();
+        $this->save_quba();
+
+        // Check and see if the autosave response is still there, that the sequence didn't increase,
+        // and that there is an autosave step.
+        $this->load_quba();
+        $this->render();
+        $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
+        $this->assertTrue($this->get_question_attempt()->has_autosaved_step());
+
+        $this->delete_quba();
+    }
+
     protected function tearDown() {
         // This test relies on the destructor for the second DB connection being called before running the next test.
         // Without this change - there will be unit test failures on "some" DBs (MySQL).
