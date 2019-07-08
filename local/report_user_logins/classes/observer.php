@@ -31,8 +31,15 @@ class observer {
 
         // Does it alreay exist?
         if ($current = $DB->get_record('local_report_user_logins', array('userid' => $userid))) {
+            // Check if this is first log on.
+            if (empty($current->firstlogin)) {
+                $userrec = $DB->get_record('user', array('id' => $userid);
+                $DB->set_field('local_report_user_logins', 'firstlogin', $userrec->firstaccess, array('id' => $current->id));
+            }
+
             // update it.
             $DB->set_field('local_report_user_logins', 'logincount', $current->logincount + 1, array('id' => $current->id));
+            $DB->set_field('local_report_user_logins', 'lastlogin', $data['timecreated'], array('id' => $current->id));
             $DB->set_field('local_report_user_logins', 'modifiedtime', $data['timecreated'], array('id' => $current->id));
         } else {
            // Doesn't exist but should. Create it!
