@@ -1,4 +1,7 @@
 This files describes API changes in the assign code.
+=== 3.8 ===
+* Webservice function mod_assign_get_submission_status, return value 'warnofungroupedusers', changed from PARAM_BOOL to PARAM_ALPHA. See the description for possible values.
+
 === 3.7 ===
 * Submissions plugins should implement the "remove" function to remove data when "Remove submission" is used.
 
