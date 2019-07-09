@@ -33,7 +33,7 @@ class observer {
         if ($current = $DB->get_record('local_report_user_logins', array('userid' => $userid))) {
             // Check if this is first log on.
             if (empty($current->firstlogin)) {
-                $userrec = $DB->get_record('user', array('id' => $userid);
+                $userrec = $DB->get_record('user', array('id' => $userid));
                 $DB->set_field('local_report_user_logins', 'firstlogin', $userrec->firstaccess, array('id' => $current->id));
             }
 
