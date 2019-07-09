@@ -94,15 +94,6 @@ if (empty($logtable)) {
     $onlyuselegacyreader = true;
 }
 
-// If no legacy and no logtable then don't proceed.
-if (!$onlyuselegacyreader && empty($logtable)) {
-    echo $OUTPUT->box_start('generalbox', 'notice');
-    echo get_string('nologreaderenabled', 'report_participation');
-    echo $OUTPUT->box_end();
-    echo $OUTPUT->footer();
-    die();
-}
-
 $modinfo = get_fast_modinfo($course);
 
 // Print first controls.
