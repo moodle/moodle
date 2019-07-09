@@ -1065,6 +1065,7 @@ abstract class restore_dbops {
                             $filesystem = $fs->get_file_system();
                             $restorefile = $file;
                             $restorefile->contextid = $newcontextid;
+                            $restorefile->itemid = $rec->newitemid;
                             $storedfile = new stored_file($fs, $restorefile);
 
                             // Ok, let's try recover this file.
