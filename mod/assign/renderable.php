@@ -753,6 +753,13 @@ class assign_grading_summary implements renderable {
     /** @var boolean isvisible - Is the assignment's context module visible to students? */
     public $isvisible = true;
 
+    /** @var string no warning needed about group submissions */
+    const WARN_GROUPS_NO = false;
+    /** @var string warn about group submissions, as groups are required */
+    const WARN_GROUPS_REQUIRED = 'warnrequired';
+    /** @var string warn about group submissions, as some will submit as 'Default group' */
+    const WARN_GROUPS_OPTIONAL = 'warnoptional';
+
     /**
      * constructor
      *
@@ -766,6 +773,7 @@ class assign_grading_summary implements renderable {
      * @param int $coursemoduleid
      * @param int $submissionsneedgradingcount
      * @param bool $teamsubmission
+     * @param string $warnofungroupedusers
      * @param bool $cangrade
      * @param bool $isvisible
      */

@@ -571,6 +571,7 @@ $string['timeremaining'] = 'Time remaining';
 $string['timeremainingcolon'] = 'Time remaining: {$a}';
 $string['togglezoom'] = 'Zoom in/out of region';
 $string['ungroupedusers'] = 'The setting \'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions.';
+$string['ungroupedusersoptional'] = 'The setting \'Students submit in groups\' is enabled and some users are either not a member of any group, or are a member of more than one group. Please be aware that these students will submit as members of the \'Default group\'.';
 $string['unlocksubmissionforstudent'] = 'Allow submissions for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['unlocksubmissions'] = 'Unlock submissions';
 $string['unlimitedattempts'] = 'Unlimited';

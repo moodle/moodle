@@ -129,3 +129,96 @@ Feature: Submit assignment without group
     And I should see "The setting 'Require group to make submission' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
     And I navigate to "View all submissions" in current page administration
     And I should see "Member of more than one group, so unable to make submissions." in the "Student 3" "table_row"
+
+  Scenario: All users are in groups, so no warning messages needed.
+    Given the following "courses" exist:
+      | fullname | shortname | groupmode |
+      | Course 1 | C1        | 0         |
+    And the following "activities" exist:
+      | activity | course | idnumber | name                | intro                       | assignsubmission_onlinetext_enabled | preventsubmissionnotingroup | teamsubmission |
+      | assign   | C1     | assign1  | Allow default group | Test assignment description | 1                                   | 0                           | 1              |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+      | student2 | Student   | 2        | student2@example.com |
+    And the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C1     | G1       |
+      | Group 2 | C1     | G2       |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+      | student2 | G2    |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Allow default group"
+    Then I should not see "The setting 'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
+    And I should not see "The setting 'Students submit in groups' is enabled and some users are either not a member of any group, or are a member of more than one group. Please be aware that these students will submit as members of the 'Default group'."
+
+  Scenario: One user is not in a group, so should see a warning about default group submission
+    Given the following "courses" exist:
+      | fullname | shortname | groupmode |
+      | Course 1 | C1        | 0         |
+    And the following "activities" exist:
+      | activity | course | idnumber | name                | intro                       | assignsubmission_onlinetext_enabled | preventsubmissionnotingroup | teamsubmission |
+      | assign   | C1     | assign1  | Allow default group | Test assignment description | 1                                   | 0                           | 1              |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+      | student2 | Student   | 2        | student2@example.com |
+    And the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C1     | G1       |
+      | Group 2 | C1     | G2       |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Allow default group"
+    Then I should not see "The setting 'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
+    And I should see "The setting 'Students submit in groups' is enabled and some users are either not a member of any group, or are a member of more than one group. Please be aware that these students will submit as members of the 'Default group'."
+
+  Scenario: One user is a member of multiple groups, so should see a warning about default group submission
+    Given the following "courses" exist:
+      | fullname | shortname | groupmode |
+      | Course 1 | C1        | 0         |
+    And the following "activities" exist:
+      | activity | course | idnumber | name                | intro                       | assignsubmission_onlinetext_enabled | preventsubmissionnotingroup | teamsubmission |
+      | assign   | C1     | assign1  | Allow default group | Test assignment description | 1                                   | 0                           | 1              |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+      | student2 | Student   | 2        | student2@example.com |
+    And the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C1     | G1       |
+      | Group 2 | C1     | G2       |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+      | student2 | G1    |
+      | student2 | G2    |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Allow default group"
+    Then I should not see "The setting 'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
+    And I should see "The setting 'Students submit in groups' is enabled and some users are either not a member of any group, or are a member of more than one group. Please be aware that these students will submit as members of the 'Default group'."

@@ -2509,8 +2509,10 @@ class mod_assign_external extends external_api {
                         'submissionsenabled' => new external_value(PARAM_BOOL, 'Whether submissions are enabled or not.'),
                         'submissionssubmittedcount' => new external_value(PARAM_INT, 'Number of submissions in submitted status.'),
                         'submissionsneedgradingcount' => new external_value(PARAM_INT, 'Number of submissions that need grading.'),
-                        'warnofungroupedusers' => new external_value(PARAM_BOOL, 'Whether we need to warn people that there
-                                                                        are users without groups.'),
+                        'warnofungroupedusers' => new external_value(PARAM_ALPHA, 'Whether we need to warn people that there
+                                                                        are users without groups (\'warningrequired\'), warn
+                                                                        people there are users who will submit in the default
+                                                                        group (\'warningoptional\') or no warning (\'\').'),
                     ), 'Grading information.', VALUE_OPTIONAL
                 ),
                 'lastattempt' => new external_single_structure(
