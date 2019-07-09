@@ -643,32 +643,53 @@ function(
                 element.find(SELECTORS.TIME_CREATED).text(formattedTime).removeClass('hidden');
             }
 
-            if (before.state != after.state) {
+            if (before.sendState != after.sendState) {
                 var loading = element.find(SELECTORS.LOADING_ICON_CONTAINER);
                 var time = element.find(SELECTORS.TIME_CREATED);
                 var retry = element.find(SELECTORS.RETRY_SEND);
 
                 loading.addClass('hidden');
+                loading.attr('aria-hidden', 'true');
                 time.addClass('hidden');
+                time.attr('aria-hidden', 'true');
                 retry.addClass('hidden');
+                retry.attr('aria-hidden', 'true');
                 element.removeClass('border border-danger');
 
-                switch (after.state) {
+                switch (after.sendState) {
                     case 'pending':
                         loading.removeClass('hidden');
+                        loading.attr('aria-hidden', 'false');
                         break;
                     case 'error':
                         retry.removeClass('hidden');
+                        retry.attr('aria-hidden', 'false');
                         element.addClass('border border-danger');
                         break;
                     case 'sent':
                         time.removeClass('hidden');
+                        time.attr('aria-hidden', 'false');
                         break;
                 }
             }
 
             if (before.text != after.text) {
                 element.find(SELECTORS.TEXT_CONTAINER).html(after.text);
+            }
+
+            if (before.errorMessage != after.errorMessage) {
+                var messageContainer = element.find(SELECTORS.ERROR_MESSAGE_CONTAINER);
+                var message = messageContainer.find(SELECTORS.ERROR_MESSAGE);
+
+                if (after.errorMessage) {
+                    messageContainer.removeClass('hidden');
+                    messageContainer.attr('aria-hidden', 'false');
+                    message.text(after.errorMessage);
+                } else {
+                    messageContainer.addClass('hidden');
+                    messageContainer.attr('aria-hidden', 'true');
+                    message.text('');
+                }
             }
         });
     };

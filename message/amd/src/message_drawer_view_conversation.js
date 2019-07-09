@@ -864,16 +864,28 @@ function(
      */
     var deleteSelectedMessages = function() {
         var messageIds = viewState.pendingDeleteMessageIds;
+        var sentMessages = viewState.messages.filter(function(message) {
+            // If a message sendState is null then it means it was loaded from the server or if it's
+            // set to sent then it means the user has successfully sent it in this page load.
+            return messageIds.indexOf(message.id) >= 0 && (message.sendState == 'sent' || message.sendState === null);
+        });
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
 
         render(newState);
 
-        var deleteMessagesPromise = null;
+        var deleteMessagesPromise = $.Deferred().resolve().promise();
 
-        if (newState.deleteMessagesForAllUsers) {
-            deleteMessagesPromise = Repository.deleteMessagesForAllUsers(viewState.loggedInUserId, messageIds);
-        } else {
-            deleteMessagesPromise = Repository.deleteMessages(viewState.loggedInUserId, messageIds);
+        if (sentMessages.length) {
+            // We only need to send a request to the server if we're trying to delete messages that
+            // have successfully been sent.
+            var sentMessageIds = sentMessages.map(function(message) {
+                return message.id;
+            });
+            if (newState.deleteMessagesForAllUsers) {
+                deleteMessagesPromise = Repository.deleteMessagesForAllUsers(viewState.loggedInUserId, sentMessageIds);
+            } else {
+                deleteMessagesPromise = Repository.deleteMessages(viewState.loggedInUserId, sentMessageIds);
+            }
         }
 
         return deleteMessagesPromise.then(function() {
@@ -894,7 +906,8 @@ function(
                 }
 
                 return render(newState);
-            });
+            })
+            .catch(Notification.exception);
     };
 
     /**
@@ -1021,7 +1034,7 @@ function(
             // We're already sending messages so nothing to do.
             return;
         }
-         if (!sendMessageBuffer.length) {
+        if (!sendMessageBuffer.length) {
             // No messages waiting to send. Nothing to do.
             return;
         }
@@ -1063,14 +1076,36 @@ function(
                 var newMessageIds = messages.map(function(message) {
                     return message.id;
                 });
-                var data = messagesToSend.map(function(oldMessage, index) {
+                var data = [];
+                var selectedToRemove = [];
+                var selectedToAdd = [];
+
+                messagesToSend.forEach(function(oldMessage, index) {
+                    var newMessage = messages[index];
                     // Update messages expects and array of arrays where the first value
                     // is the old message to update and the second value is the new values
                     // to set.
-                    return [oldMessage, messages[index]];
+                    data.push([oldMessage, newMessage]);
+
+                    if (viewState.selectedMessageIds.indexOf(oldMessage.id) >= 0) {
+                        // If the message was added to the "selected messages" list while it was still
+                        // being sent then we should update it's id in that list now to make sure future
+                        // actions work.
+                        selectedToRemove.push(oldMessage.id);
+                        selectedToAdd.push(newMessage.id);
+                    }
                 });
                 var newState = StateManager.updateMessages(viewState, data);
                 newState = StateManager.setMessagesSendSuccessById(newState, newMessageIds);
+
+                if (selectedToRemove.length) {
+                    newState = StateManager.removeSelectedMessagesById(newState, selectedToRemove);
+                }
+
+                if (selectedToAdd.length) {
+                    newState = StateManager.addSelectedMessagesById(newState, selectedToAdd);
+                }
+
                 var conversation = formatConversationForEvent(newState);
 
                 if (!newState.id) {
@@ -1089,14 +1124,32 @@ function(
                 isSendingMessage = false;
                 processSendMessageBuffer();
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, conversation);
+                return;
             })
-            .catch(function() {
-                // We failed to create messages so remove the old messages from the pending queue
-                // and update the UI to indicate that the message failed.
-                var newState = StateManager.setMessagesSendFailById(viewState, messageIds);
-                render(newState);
-                isSendingMessage = false;
-                processSendMessageBuffer();
+            .catch(function(e) {
+                if (e.message) {
+                    var errorMessage =  $.Deferred().resolve(e.message).promise();
+                } else {
+                    var errorMessage =  Str.get_string('unknownerror', 'core');
+                }
+
+                var handleFailedMessages = function(errorMessage) {
+                    // We failed to create messages so remove the old messages from the pending queue
+                    // and update the UI to indicate that the message failed.
+                    var newState = StateManager.setMessagesSendFailById(viewState, messageIds, errorMessage);
+                    render(newState);
+                    isSendingMessage = false;
+                    processSendMessageBuffer();
+                };
+
+                errorMessage.then(handleFailedMessages)
+                    .catch(function(e) {
+                        // Hrmm, we can't even load the error messages string! We'll have to
+                        // hard code something in English here if we still haven't got a message
+                        // to show.
+                        var finalError = e.message || 'Something went wrong!';
+                        handleFailedMessages(finalError);
+                    });
             });
     };
 
@@ -1347,6 +1400,8 @@ function(
         }
 
         data.originalEvent.preventDefault();
+        data.originalEvent.stopPropagation();
+        e.stopPropagation();
     };
 
     /**

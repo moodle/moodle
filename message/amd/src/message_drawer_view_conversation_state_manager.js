@@ -158,8 +158,9 @@ define(['jquery'], function($) {
         var newState = cloneState(state);
         var formattedMessages = formatMessages(messages, state.loggedInUserId, state.members);
         formattedMessages = formattedMessages.map(function(message) {
-            message.state = 'pending';
+            message.sendState = null;
             message.timeAdded = Date.now();
+            message.errorMessage = null;
             return message;
         });
         var allMessages = state.messages.concat(formattedMessages);
@@ -476,7 +477,8 @@ define(['jquery'], function($) {
         });
         newState.messages.forEach(function(message) {
             if (messageIds.indexOf(message.id) >= 0) {
-                message.state = 'pending';
+                message.sendState = 'pending';
+                message.errorMessage = null;
             }
         });
         return newState;
@@ -496,7 +498,8 @@ define(['jquery'], function($) {
         });
         newState.messages.forEach(function(message) {
             if (messageIds.indexOf(message.id) >= 0) {
-                message.state = 'sent';
+                message.sendState = 'sent';
+                message.errorMessage = null;
             }
         });
         return newState;
@@ -509,14 +512,15 @@ define(['jquery'], function($) {
      * @param  {Array} messageIds Messages to delete.
      * @return {Object} New state with array of pending delete message ids.
      */
-    var setMessagesSendFailById = function(state, messageIds) {
+    var setMessagesSendFailById = function(state, messageIds, errorMessage) {
         var newState = cloneState(state);
         messageIds = messageIds.map(function(id) {
             return "" + id;
         });
         newState.messages.forEach(function(message) {
             if (messageIds.indexOf(message.id) >= 0) {
-                message.state = 'error';
+                message.sendState = 'error';
+                message.errorMessage = errorMessage;
             }
         });
         return newState;
@@ -684,6 +688,9 @@ define(['jquery'], function($) {
      */
     var addSelectedMessagesById = function(state, messageIds) {
         var newState = cloneState(state);
+        messageIds = messageIds.map(function(id) {
+            return "" + id;
+        });
         newState.selectedMessageIds = newState.selectedMessageIds.concat(messageIds);
         return newState;
     };

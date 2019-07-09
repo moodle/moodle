@@ -220,13 +220,13 @@ function(
         return isObjectEqual(
             {
                 id: a.id,
-                state: a.state,
+                state: a.sendState,
                 text: a.text,
                 timeCreated: a.timeCreated
             },
             {
                 id: b.id,
-                state: b.state,
+                state: b.sendState,
                 text: b.text,
                 timeCreated: b.timeCreated
             }
@@ -294,7 +294,7 @@ function(
                     // If the IDs match or it was a state change (i.e. message with a temp
                     // ID goes from pending to sent and receives an actual id) then they are
                     // the same message which should be an update not an add/remove.
-                    return a.id == b.id || (a.state != b.state && a.timeAdded == b.timeAdded);
+                    return a.id == b.id || (a.sendState != b.sendState && a.timeAdded == b.timeAdded);
                 }
             );
 
