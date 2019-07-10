@@ -55,31 +55,18 @@ class provider implements \core_privacy\local\metadata\provider,
     public static function export_user_preferences(int $userid) {
         $context = \context_system::instance();
         $assignmentpreferences = [
-            'kalvidassign_filter' => [
-                'string' => get_string('privacy:metadata:kalvidassignfilter', 'mod_kalvidassign'),
-                'bool' => false
-            ],
-            'kalvidassign_group_filter' => [
-                'string' => get_string('privacy:metadata:kalvidassigngroupfilter', 'mod_kalvidassign'),
-                'bool' => false
-            ],
-            'kalvidassign_perpage' => [
-                'string' => get_string('privacy:metadata:kalvidassignperpage', 'mod_kalvidassign'),
-                'bool' => false
-            ],
-            'kalvidassign_quickgrade' => [
-                'string' => get_string('privacy:metadata:kalvidassignquickgrade', 'mod_kalvidassign'),
-                'bool' => false
-            ],
+            'kalvidassign_filter' => get_string('privacy:metadata:kalvidassignfilter', 'mod_kalvidassign'),
+            'kalvidassign_group_filter' => get_string('privacy:metadata:kalvidassigngroupfilter', 'mod_kalvidassign'),
+            'kalvidassign_perpage' => get_string('privacy:metadata:kalvidassignperpage', 'mod_kalvidassign'),
+            'kalvidassign_quickgrade' => get_string('privacy:metadata:kalvidassignquickgrade', 'mod_kalvidassign')
         ];
-        foreach ($assignmentpreferences as $key => $preference) {
+
+        foreach ($assignmentpreferences as $key => $preferencestring) {
             $value = get_user_preferences($key, null, $userid);
-            if ($preference['bool']) {
-                $value = transform::yesno($value);
-            }
+
             if (isset($value)) {
                 writer::with_context($context)
-                    ->export_user_preference('mod_kalvidassign', $key, $value, $preference['string']);
+                    ->export_user_preference('mod_kalvidassign', $key, $value, $preferencestring);
             }
         }
     }
@@ -287,12 +274,11 @@ class provider implements \core_privacy\local\metadata\provider,
      *
      * @param object $contextlist   Object with the contexts related to a userid to retrieve kalvidassign submissions by.
      * @param int $userid           The user ID to find kalvidassign submissions that were submitted by.
-     * @param bool $teacher         The teacher status to determine if marked kalvidassign submissions should be returned.
      * @return array                Array of kalvidassign submission details.
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    protected static function get_kalvidassign_submissions_by_contextlist($contextlist, $userid, $teacher = false) {
+    protected static function get_kalvidassign_submissions_by_contextlist($contextlist, $userid) {
         global $DB;
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
@@ -318,14 +304,7 @@ class provider implements \core_privacy\local\metadata\provider,
                   JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
                   JOIN {kalvidassign} a ON cm.instance = a.id
                   JOIN {kalvidassign_submission} s ON s.vidassignid = a.id
-                 WHERE (s.userid = :userid";
-
-        if ($teacher == true) {
-            $sql .= " OR s.teacher = :teacher";
-            $params['teacher'] = $userid;
-        }
-
-        $sql .= ")";
+                 WHERE (s.userid = :userid)";
 
         $sql .= " AND ctx.id {$contextsql}";
         $params += $contextparams;
