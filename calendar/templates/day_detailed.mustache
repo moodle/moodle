@@ -45,5 +45,9 @@
 }}>
     {{> core_calendar/day_navigation }}
     {{> core/overlay_loading}}
-    {{> core_calendar/event_list }}
+    {{< core_calendar/event_list }}
+        {{$noeventsmessage}}
+            {{#str}} daywithnoevents, core_calendar {{/str}}
+        {{/noeventsmessage}}
+    {{/core_calendar/event_list}}
 </div>
