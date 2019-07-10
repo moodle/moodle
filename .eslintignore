@@ -26,7 +26,6 @@ lib/htmlpurifier/
 lib/jabber/
 lib/minify/matthiasmullie-minify/
 lib/minify/matthiasmullie-pathconverter/
-lib/pear/Crypt/CHAP.php
 lib/pear/HTML/Common.php
 lib/pear/HTML/QuickForm.php
 lib/pear/HTML/QuickForm/
