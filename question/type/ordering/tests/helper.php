@@ -70,7 +70,7 @@ class qtype_ordering_test_helper extends question_test_helper {
         $q->options->selectcount = 0;
         $q->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $q->options->showgrading = true;
-
+        $q->options->answernumbering = qtype_ordering_question::ANSWER_NUMBERING_DEFAULT;
         return $q;
     }
 
@@ -130,6 +130,7 @@ class qtype_ordering_test_helper extends question_test_helper {
         $form->selectcount = 0;
         $form->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $form->showgrading = true;
+        $form->answernumbering = qtype_ordering_question::ANSWER_NUMBERING_DEFAULT;
 
         $form->countanswers = 6;
         $form->answer = [
@@ -174,16 +175,16 @@ class qtype_ordering_test_helper extends question_test_helper {
         $questiondata->options->selectcount = 0;
         $questiondata->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $questiondata->options->showgrading = true;
+        $questiondata->options->answernumbering = qtype_ordering_question::ANSWER_NUMBERING_DEFAULT;
 
         $questiondata->options->answers = [
-                13 => $this->make_answer(13, 'Modular', FORMAT_HTML, 1),
-                14 => $this->make_answer(14, 'Object', FORMAT_HTML, 2),
-                15 => $this->make_answer(15, 'Oriented', FORMAT_HTML, 3),
-                16 => $this->make_answer(16, 'Dynamic', FORMAT_HTML, 4),
-                17 => $this->make_answer(17, 'Learning', FORMAT_HTML, 5),
-                18 => $this->make_answer(18, 'Environment', FORMAT_HTML, 6),
+            13 => $this->make_answer(13, 'Modular', FORMAT_HTML, 1),
+            14 => $this->make_answer(14, 'Object', FORMAT_HTML, 2),
+            15 => $this->make_answer(15, 'Oriented', FORMAT_HTML, 3),
+            16 => $this->make_answer(16, 'Dynamic', FORMAT_HTML, 4),
+            17 => $this->make_answer(17, 'Learning', FORMAT_HTML, 5),
+            18 => $this->make_answer(18, 'Environment', FORMAT_HTML, 6),
         ];
-
         return $questiondata;
     }
 }

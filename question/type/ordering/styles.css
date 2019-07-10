@@ -8,8 +8,7 @@
 .que.ordering ul.sortablelist {
     float            : left;
     list-style-type  : none;
-    margin           : 0;
-    margin-left      : 5px;
+    margin           : 0 0 0 5px;
     padding          : 4px;
 }
 .que.ordering ul.sortablelist.orderingactive {
@@ -27,7 +26,29 @@
 .que.ordering ul.sortablelist li.sortableitem {
     position         : relative;
     cursor           : move;
+    margin-left      : 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
 }
+
+.que.ordering ul.sortablelist li.sortableitem.numbering123 {
+    list-style-type  : decimal;
+}
+.que.ordering ul.sortablelist li.sortableitem.numberingabc {
+    list-style-type  : lower-alpha;
+}
+.que.ordering ul.sortablelist li.sortableitem.numberingABCD {
+    list-style-type  : upper-alpha;
+}
+.que.ordering ul.sortablelist li.sortableitem.numberingiii  {
+    list-style-type  : lower-roman;
+}
+.que.ordering ul.sortablelist li.sortableitem.numberingIIII {
+    list-style-type  : upper-roman;
+}
+.que.ordering ul.sortablelist li.sortableitem.numberingnone {
+    list-style-type  : none;
+    margin-left: 0px;
+}
+
 .que.ordering ul.sortablelist li.sortableitem:focus {
     border-color: #0a0;
     box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);

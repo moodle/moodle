@@ -42,6 +42,7 @@ class qtype_ordering extends question_type {
      */
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
+        $question->answernumbering = $questiondata->options->answernumbering;
         $this->initialise_combined_feedback($question, $questiondata);
     }
 
@@ -158,7 +159,6 @@ class qtype_ordering extends question_type {
                 $DB->set_field('question_answers', 'answer', $answertext, array('id' => $answer->id));
             }
         }
-
         // Create $options for this ordering question.
         $options = (object)array(
             'questionid' => $question->id,
@@ -166,7 +166,8 @@ class qtype_ordering extends question_type {
             'selecttype' => $question->selecttype,
             'selectcount' => $question->selectcount,
             'gradingtype' => $question->gradingtype,
-            'showgrading' => $question->showgrading
+            'showgrading' => $question->showgrading,
+            'answernumbering' => $question->answernumbering
         );
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $this->save_hints($question, false);
@@ -826,5 +827,30 @@ class qtype_ordering extends question_type {
         $question->selectcount = $selectcount;
         $question->gradingtype = $gradingtype;
         $question->showgrading = $showgrading;
+    }
+
+    /**
+     * Return the answer numbering style
+     * @param $questiondata
+     * @return string
+     */
+    public function get_answernumbering($questiondata) {
+        return $questiondata->options->answernumbering;
+    }
+
+    /**
+     * @return array of the numbering styles supported. For each one, there
+     *      should be a lang string answernumberingxxx in the qtype_ordering
+     *      language file, and a case in the switch statement in number_in_style,
+     *      and it should be listed in the definition of this column in install.xml.
+     */
+    public static function get_numbering_styles() {
+        $styles = [];
+        $numberingoptions = ['abc', 'ABCD', '123', 'iii', 'IIII', \qtype_ordering_question::ANSWER_NUMBERING_DEFAULT];
+        foreach ($numberingoptions as $numberingoption) {
+            $styles[$numberingoption] =
+                    get_string('answernumbering' . $numberingoption, 'qtype_ordering');
+        }
+        return $styles;
     }
 }

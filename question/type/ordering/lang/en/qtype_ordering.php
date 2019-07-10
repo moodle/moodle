@@ -28,6 +28,14 @@ $string['addsingleanswer'] = 'Add one more item';
 $string['allornothing'] = 'All or nothing';
 $string['answer'] = 'Item text';
 $string['answerheader'] = 'Draggable item {no}';
+$string['answernumbering'] = 'Number the choices?';
+$string['answernumbering123'] = '1., 2., 3., ...';
+$string['answernumberingabc'] = 'a., b., c., ...';
+$string['answernumberingABCD'] = 'A., B., C., ...';
+$string['answernumberingiii'] = 'i., ii., iii., ...';
+$string['answernumberingIIII'] = 'I., II., III., ...';
+$string['answernumberingnone'] = 'No numbering';
+$string['answernumbering_desc'] = 'The default numbering style.';
 
 $string['correctorder'] = 'The correct order for these items is as follows:';
 

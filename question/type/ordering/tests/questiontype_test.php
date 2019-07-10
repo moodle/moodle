@@ -65,7 +65,7 @@ class qtype_ordering_test extends advanced_testcase {
         $questiondata = test_question_maker::get_question_data('ordering');
         $formdata = test_question_maker::get_question_form_data('ordering');
 
-        /* @var core_question_generator $generator */
+        /** @var core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category([]);
 
@@ -160,4 +160,37 @@ class qtype_ordering_test extends advanced_testcase {
         );
         $this->assertEquals($expectedresponseclasses, $possibleresponses, '', 0.0000005);
     }
+
+    public function test_get_answernumbering() {
+        $questiondata = test_question_maker::get_question_data('ordering');
+        $expected = qtype_ordering_question::ANSWER_NUMBERING_DEFAULT;
+        $actual = $this->qtype->get_answernumbering($questiondata);
+        $this->assertEquals($expected, $actual);
+
+        $questiondata->options->answernumbering = 'abc';
+        $expected = 'abc';
+        $actual = $this->qtype->get_answernumbering($questiondata);
+        $this->assertEquals($expected, $actual);
+
+        $questiondata->options->answernumbering = 'ABCD';
+        $expected = 'ABCD';
+        $actual = $this->qtype->get_answernumbering($questiondata);
+        $this->assertEquals($expected, $actual);
+
+        $questiondata->options->answernumbering = '123';
+        $expected = '123';
+        $actual = $this->qtype->get_answernumbering($questiondata);
+        $this->assertEquals($expected, $actual);
+
+        $questiondata->options->answernumbering = 'iii';
+        $expected = 'iii';
+        $actual = $this->qtype->get_answernumbering($questiondata);
+        $this->assertEquals($expected, $actual);
+
+        $questiondata->options->answernumbering = 'III';
+        $expected = 'III';
+        $actual = $this->qtype->get_answernumbering($questiondata);
+        $this->assertEquals($expected, $actual);
+    }
+
 }

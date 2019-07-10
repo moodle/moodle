@@ -230,6 +230,22 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
+
+    $newversion = 2019062000;
+    if ($oldversion < $newversion) {
+
+        // Define field answernumbering to be added to qtype_ordering_options.
+        $table = new xmldb_table('qtype_ordering_options');
+        $field = new xmldb_field('answernumbering', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'none', 'partiallycorrectfeedbackformat');
+
+        // Conditionally launch add field answernumbering.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Ordering savepoint reached.
+        upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
+    }
     return true;
 }
 

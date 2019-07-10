@@ -46,6 +46,8 @@ class qtype_ordering_question extends question_graded_automatically {
     /** Show answers in one horizontal line */
     const LAYOUT_HORIZONTAL = 1;
 
+    /** Show answernumbering default */
+    const ANSWER_NUMBERING_DEFAULT = 'none';
 
     /** @var int Zero grade on any error */
     const GRADING_ALL_OR_NOTHING = -1;
@@ -541,7 +543,8 @@ class qtype_ordering_question extends question_graded_automatically {
                     'incorrectfeedback' => '',
                     'incorrectfeedbackformat' => FORMAT_MOODLE,
                     'partiallycorrectfeedback' => '',
-                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE
+                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE,
+                    'answernumbering' => self::ANSWER_NUMBERING_DEFAULT
                 );
                 $this->options->id = $DB->insert_record('qtype_ordering_options', $this->options);
             }

@@ -134,6 +134,7 @@ define([
             proxy.width(itemDragging.outerWidth());
             proxy.height(itemDragging.outerHeight());
             itemDragging.addClass(config.itemMovingClass);
+            updateProxy(itemDragging);
 
             // Start drag.
             drag.start(event, proxy, dragMove, dragEnd);
@@ -155,11 +156,28 @@ define([
             if (closestItem[0] === itemDragging[0]) {
                 return;
             }
-
             if (midY(proxy) < midY(closestItem)) {
                 itemDragging.insertBefore(closestItem);
             } else {
                 itemDragging.insertAfter(closestItem);
+            }
+            updateProxy(itemDragging);
+        };
+
+        /**
+         * Update proxy's position.
+         * @param itemDragging
+         */
+        var updateProxy = function(itemDragging) {
+            var list = itemDragging.closest('ol, ul');
+            var items = list.find('li');
+            var count = items.length;
+            for (var i = 0; i < count; ++i) {
+                //proxy.css('margin-left', '20p');
+                if (itemDragging[0] === items[i]) {
+                    proxy.find('li').attr('value', i + 1);
+                    break;
+                }
             }
         };
 

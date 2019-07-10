@@ -99,6 +99,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             if ($qa->get_state()->is_active()) {
                 $activeclass = ' orderingactive';
             }
+            $numberingclass = 'numbering' . $question->options->answernumbering;
 
             // Generate ordering items.
             foreach ($currentresponse as $position => $answerid) {
@@ -136,7 +137,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                         $img = '';
                         break;
                 }
-                $class = trim("$class $layoutclass");
+                $class = trim("$class $layoutclass $numberingclass");
 
                 // Format the answer text.
                 $answer = $question->answers[$answerid];

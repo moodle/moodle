@@ -123,6 +123,11 @@ class qtype_ordering_edit_form extends question_edit_form {
         $elements = array();
         $options = array();
 
+        $name = 'answernumbering';
+        $label = get_string($name, 'qtype_ordering');
+        $mform->addElement('select', $name, $label, qtype_ordering::get_numbering_styles());
+        $mform->setDefault($name, $this->get_default_value($name, get_config('qtype_ordering', $name)));
+
         $name = 'answerheader';
         $label = get_string($name, $plugin);
         $elements[] = $mform->createElement('header', $name, $label);
