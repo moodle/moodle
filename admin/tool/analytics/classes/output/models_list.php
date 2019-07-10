@@ -166,36 +166,20 @@ class models_list implements \renderable, \templatable {
 
             // Has this model generated predictions?.
             $predictioncontexts = $model->get_predictions_contexts();
+            $anypredictionobtained = $model->any_prediction_obtained();
 
             // Model predictions list.
             if (!$model->is_enabled()) {
                 $modeldata->noinsights = get_string('disabledmodel', 'analytics');
             } else if ($model->uses_insights()) {
                 if ($predictioncontexts) {
-
-                    foreach ($predictioncontexts as $contextid => $unused) {
-                        // We prepare this to be used as single_select template options.
-                        $context = \context::instance_by_id($contextid);
-
-                        // Special name for system level predictions as showing "System is not visually nice".
-                        if ($contextid == SYSCONTEXTID) {
-                            $contextname = get_string('allpredictions', 'tool_analytics');
-                        } else {
-                            $contextname = shorten_text($context->get_context_name(false, true), 40);
-                        }
-                        $predictioncontexts[$contextid] = $contextname;
-                    }
-                    \core_collator::asort($predictioncontexts);
-
-                    if (!empty($predictioncontexts)) {
-                        $url = new \moodle_url('/report/insights/insights.php', array('modelid' => $model->get_id()));
-                        $singleselect = new \single_select($url, 'contextid', $predictioncontexts);
-                        $modeldata->insights = $singleselect->export_for_template($output);
-                    }
+                    $url = new \moodle_url('/report/insights/insights.php', array('modelid' => $model->get_id()));
+                    $modeldata->insights = \tool_analytics\output\helper::prediction_context_selector($predictioncontexts,
+                        $url, $output);
                 }
 
                 if (empty($modeldata->insights)) {
-                    if ($model->any_prediction_obtained()) {
+                    if ($anypredictionobtained) {
                         $modeldata->noinsights = get_string('noinsights', 'analytics');
                     } else {
                         $modeldata->noinsights = get_string('nopredictionsyet', 'analytics');
@@ -304,6 +288,15 @@ class models_list implements \renderable, \templatable {
                 }
             }
 
+            // Effectivity report.
+            if (!empty($anypredictionobtained) && $model->uses_insights()) {
+                $urlparams['action'] = 'effectivenessreport';
+                $url = new \moodle_url('/admin/tool/analytics/model.php', $urlparams);
+                $pix = new \pix_icon('i/report', get_string('effectivenessreport', 'tool_analytics'));
+                $icon = new \action_menu_link_secondary($url, $pix, get_string('effectivenessreport', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
             // Invalid analysables.
             $analyser = $model->get_analyser(['notimesplitting' => true]);
             if (!$analyser instanceof \core_analytics\local\analyser\sitewide) {
@@ -315,7 +308,7 @@ class models_list implements \renderable, \templatable {
             }
 
             // Clear model.
-            if (!empty($predictioncontexts) || $model->is_trained()) {
+            if (!empty($anypredictionobtained) || $model->is_trained()) {
                 $actionid = 'clear-' . $model->get_id();
                 $PAGE->requires->js_call_amd('tool_analytics/model', 'confirmAction', [$actionid, 'clear']);
                 $urlparams['action'] = 'clear';

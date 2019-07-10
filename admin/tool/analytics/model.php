@@ -69,6 +69,9 @@ switch ($action) {
     case 'clear':
         $title = get_string('clearpredictions', 'tool_analytics');
         break;
+    case 'effectivenessreport':
+        $title = get_string('effectivenessreport', 'tool_analytics');
+        break;
     case 'invalidanalysables':
         $title = get_string('invalidanalysables', 'tool_analytics');
         break;
@@ -271,6 +274,18 @@ switch ($action) {
 
         $model->clear();
         redirect($returnurl);
+        break;
+
+    case 'effectivenessreport':
+
+        $contextid = optional_param('contextid', null, PARAM_INT);
+
+        echo $OUTPUT->header();
+
+        $renderable = new \tool_analytics\output\effectiveness_report($model, $contextid);
+        $renderer = $PAGE->get_renderer('tool_analytics');
+        echo $renderer->render($renderable);
+
         break;
 
     case 'invalidanalysables':

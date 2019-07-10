@@ -23,6 +23,9 @@
  */
 
 $string['accuracy'] = 'Accuracy';
+$string['actions'] = 'Actions';
+$string['actionsexecutedbyusers'] = 'Actions executed by users';
+$string['actionexecutedgroupedusefulness'] = 'Grouped actions';
 $string['allpredictions'] = 'All predictions';
 $string['alltimesplittingmethods'] = 'All analysis intervals';
 $string['analysingsitedata'] = 'Analysing the site';
@@ -48,6 +51,8 @@ $string['deletemodelconfirmation'] = 'Are you sure you want to delete "{$a}"? Th
 $string['disabled'] = 'Disabled';
 $string['editmodel'] = 'Edit "{$a}" model';
 $string['edittrainedwarning'] = 'This model has already been trained. Note that changing its indicators or its analysis interval will delete its previous predictions and start generating new predictions.';
+$string['effectivenessreport'] = 'Effectiveness report';
+$string['effectivenessreportfor'] = 'Model "{$a}" effectiveness';
 $string['enabled'] = 'Enabled';
 $string['errorcantenablenotimesplitting'] = 'You need to select an analysis interval before enabling the model';
 $string['errornoenabledandtrainedmodels'] = 'There are no enabled and trained models to predict.';
@@ -105,6 +110,7 @@ $string['modelresults'] = '{$a} results';
 $string['modeltimesplitting'] = 'Analysis interval';
 $string['newmodel'] = 'New model';
 $string['nextpage'] = 'Next page';
+$string['noactionsfound'] = 'Users have not executed any actions on the generated insights.';
 $string['nodatatoevaluate'] = 'There is no data to evaluate the model';
 $string['nodatatopredict'] = 'No new elements to get predictions for.';
 $string['nodatatotrain'] = 'There is no new data that can be used for training.';
