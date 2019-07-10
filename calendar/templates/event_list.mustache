@@ -37,7 +37,7 @@
     {{/events}}
     {{^events}}
         <span class="calendar-information calendar-no-results">
-            {{#str}}daywithnoevents, calendar{{/str}}
+            {{$noeventsmessage}}{{/noeventsmessage}}
         </span>
     {{/events}}
 </div>
