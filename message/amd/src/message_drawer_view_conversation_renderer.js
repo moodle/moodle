@@ -421,16 +421,6 @@ function(
     };
 
     /**
-     * Get the text input area element.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     * @return {Object} The footer placeholder container element.
-     */
-    var getMessageTextArea = function(footer) {
-        return footer.find(SELECTORS.MESSAGE_TEXT_AREA);
-    };
-
-    /**
      * Get a message element.
      *
      * @param  {Object} body Conversation body container element.
@@ -480,59 +470,6 @@ function(
      */
     var hideMoreMessagesLoadingIcon = function(body) {
         getMoreMessagesLoadingIconContainer(body).addClass('hidden');
-    };
-
-    /**
-     * Disable the message controls for sending a message.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     */
-    var disableSendMessage = function(footer) {
-        footer.find(SELECTORS.SEND_MESSAGE_BUTTON).prop('disabled', true);
-        getMessageTextArea(footer).prop('disabled', true);
-    };
-
-    /**
-     * Enable the message controls for sending a message.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     */
-    var enableSendMessage = function(footer) {
-        footer.find(SELECTORS.SEND_MESSAGE_BUTTON).prop('disabled', false);
-        getMessageTextArea(footer).prop('disabled', false);
-    };
-
-    /**
-     * Show the sending message loading icon and disable sending more.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     */
-    var startSendMessageLoading = function(footer) {
-        disableSendMessage(footer);
-        footer.find(SELECTORS.SEND_MESSAGE_ICON_CONTAINER).addClass('hidden');
-        footer.find(SELECTORS.LOADING_ICON_CONTAINER).removeClass('hidden');
-    };
-
-    /**
-     * Hide the sending message loading icon and allow sending new messages.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     */
-    var stopSendMessageLoading = function(footer) {
-        enableSendMessage(footer);
-        footer.find(SELECTORS.SEND_MESSAGE_ICON_CONTAINER).removeClass('hidden');
-        footer.find(SELECTORS.LOADING_ICON_CONTAINER).addClass('hidden');
-    };
-
-    /**
-     * Clear out message text input and focus the input element.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     */
-    var hasSentMessage = function(footer) {
-        var textArea = getMessageTextArea(footer);
-        textArea.val('');
-        textArea.focus();
     };
 
     /**
@@ -600,7 +537,7 @@ function(
                 fromloggedinuser: message.fromLoggedInUser,
                 userfrom: message.userFrom,
                 text: message.text,
-                formattedtime: datesCache[message.timeCreated]
+                formattedtime: message.timeCreated ? datesCache[message.timeCreated] : null
             };
         });
     };
@@ -682,6 +619,82 @@ function(
     };
 
     /**
+     * Update existing messages.
+     *
+     * @param  {Object} header The header container element.
+     * @param  {Object} body The body container element.
+     * @param  {Object} footer The footer container element.
+     * @param  {Array} messages List of messages.
+     * @param  {Object} datesCache Cache timestamps and their formatted date string.
+     */
+    var renderUpdateMessages = function(header, body, footer, messages, datesCache) {
+        messages.forEach(function(message) {
+            var before = message.before;
+            var after = message.after;
+            var element = getMessageElement(body, before.id);
+
+            if (before.id != after.id) {
+                element.attr('data-message-id', after.id);
+            }
+
+            if (before.timeCreated != after.timeCreated) {
+                var formattedTime = datesCache[after.timeCreated];
+                element.find(SELECTORS.LOADING_ICON_CONTAINER).addClass('hidden');
+                element.find(SELECTORS.TIME_CREATED).text(formattedTime).removeClass('hidden');
+            }
+
+            if (before.sendState != after.sendState) {
+                var loading = element.find(SELECTORS.LOADING_ICON_CONTAINER);
+                var time = element.find(SELECTORS.TIME_CREATED);
+                var retry = element.find(SELECTORS.RETRY_SEND);
+
+                loading.addClass('hidden');
+                loading.attr('aria-hidden', 'true');
+                time.addClass('hidden');
+                time.attr('aria-hidden', 'true');
+                retry.addClass('hidden');
+                retry.attr('aria-hidden', 'true');
+                element.removeClass('border border-danger');
+
+                switch (after.sendState) {
+                    case 'pending':
+                        loading.removeClass('hidden');
+                        loading.attr('aria-hidden', 'false');
+                        break;
+                    case 'error':
+                        retry.removeClass('hidden');
+                        retry.attr('aria-hidden', 'false');
+                        element.addClass('border border-danger');
+                        break;
+                    case 'sent':
+                        time.removeClass('hidden');
+                        time.attr('aria-hidden', 'false');
+                        break;
+                }
+            }
+
+            if (before.text != after.text) {
+                element.find(SELECTORS.TEXT_CONTAINER).html(after.text);
+            }
+
+            if (before.errorMessage != after.errorMessage) {
+                var messageContainer = element.find(SELECTORS.ERROR_MESSAGE_CONTAINER);
+                var message = messageContainer.find(SELECTORS.ERROR_MESSAGE);
+
+                if (after.errorMessage) {
+                    messageContainer.removeClass('hidden');
+                    messageContainer.attr('aria-hidden', 'false');
+                    message.text(after.errorMessage);
+                } else {
+                    messageContainer.addClass('hidden');
+                    messageContainer.attr('aria-hidden', 'true');
+                    message.text('');
+                }
+            }
+        });
+    };
+
+    /**
      * Remove days from conversation.
      *
      * @param  {Object} body The body container element.
@@ -721,6 +734,7 @@ function(
         var renderingPromises = [];
         var hasAddDays = data.days.add.length > 0;
         var hasAddMessages = data.messages.add.length > 0;
+        var hasUpdateMessages = data.messages.update.length > 0;
         var timestampsToFormat = [];
         var datesCachePromise = $.Deferred().resolve({}).promise();
 
@@ -728,18 +742,33 @@ function(
             // Search for all of the timeCreated values in all of the messages in all of
             // the days that we need to render.
             timestampsToFormat = timestampsToFormat.concat(data.days.add.reduce(function(carry, day) {
-                return carry.concat(day.value.messages.map(function(message) {
-                    return message.timeCreated;
-                }));
+                return carry.concat(day.value.messages.reduce(function(timestamps, message) {
+                    if (message.timeCreated) {
+                        timestamps.push(message.timeCreated);
+                    }
+                    return timestamps;
+                }, []));
             }, []));
         }
 
         if (hasAddMessages) {
             // Search for all of the timeCreated values in all of the messages that we
             // need to render.
-            timestampsToFormat = timestampsToFormat.concat(data.messages.add.map(function(message) {
-                return message.value.timeCreated;
-            }));
+            timestampsToFormat = timestampsToFormat.concat(data.messages.add.reduce(function(timestamps, message) {
+                if (message.value.timeCreated) {
+                    timestamps.push(message.value.timeCreated);
+                }
+                return timestamps;
+            }, []));
+        }
+
+        if (hasUpdateMessages) {
+            timestampsToFormat = timestampsToFormat.concat(data.messages.update.reduce(function(timestamps, message) {
+                if (message.before.timeCreated != message.after.timeCreated) {
+                    timestamps.push(message.after.timeCreated);
+                }
+                return timestamps;
+            }, []));
         }
 
         if (timestampsToFormat.length) {
@@ -774,6 +803,12 @@ function(
         if (hasAddMessages) {
             renderingPromises.push(datesCachePromise.then(function(datesCache) {
                 return renderAddMessages(header, body, footer, data.messages.add, datesCache);
+            }));
+        }
+
+        if (hasUpdateMessages) {
+            renderingPromises.push(datesCachePromise.then(function(datesCache) {
+                return renderUpdateMessages(header, body, footer, data.messages.update, datesCache);
             }));
         }
 
@@ -932,23 +967,6 @@ function(
             showMoreMessagesLoadingIcon(body);
         } else {
             hideMoreMessagesLoadingIcon(body);
-        }
-    };
-
-    /**
-     * Activate or deactivate send message controls.
-     *
-     * @param {Object} header The header container element.
-     * @param {Object} body The body container element.
-     * @param {Object} footer The footer container element.
-     * @param {Bool} isSending Message sending.
-     */
-    var renderSendingMessage = function(header, body, footer, isSending) {
-        if (isSending) {
-            startSendMessageLoading(footer);
-        } else {
-            stopSendMessageLoading(footer);
-            hasSentMessage(footer);
         }
     };
 
@@ -1596,7 +1614,6 @@ function(
                 loadingMembers: renderLoadingMembers,
                 loadingFirstMessages: renderLoadingFirstMessages,
                 loadingMessages: renderLoadingMessages,
-                sendingMessage: renderSendingMessage,
                 isBlocked: renderIsBlocked,
                 isContact: renderIsContact,
                 isFavourite: renderIsFavourite,

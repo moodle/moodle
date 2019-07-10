@@ -103,6 +103,8 @@ function(
     var isResetting = true;
     // If the UI is currently sending a message.
     var isSendingMessage = false;
+    // A buffer of messages to send.
+    var sendMessageBuffer = [];
     // These functions which will be generated when this module is
     // first called. See generateRenderFunction for details.
     var render = null;
@@ -549,8 +551,9 @@ function(
         return function() {
             var messages = viewState.messages;
             var mostRecentMessage = messages.length ? messages[messages.length - 1] : null;
+            var lastTimeCreated = mostRecentMessage ? mostRecentMessage.timeCreated : null;
 
-            if (mostRecentMessage && !isResetting && !isSendingMessage) {
+            if (lastTimeCreated && !isResetting && !isSendingMessage) {
                 // There may be multiple messages with the same time created value since
                 // the accuracy is only down to the second. The server will include these
                 // messages in the result (since it does a >= comparison on time from) so
@@ -559,7 +562,7 @@ function(
                 var ignoreMessageIds = [];
                 for (var i = messages.length - 1; i >= 0; i--) {
                     var message = messages[i];
-                    if (message.timeCreated === mostRecentMessage.timeCreated) {
+                    if (message.timeCreated === lastTimeCreated) {
                         ignoreMessageIds.push(message.id);
                     } else {
                         // Since the messages are ordered in ascending order of time created
@@ -575,7 +578,7 @@ function(
                         0,
                         newestFirst,
                         ignoreMessageIds,
-                        mostRecentMessage.timeCreated
+                        lastTimeCreated
                     )
                     .then(function(result) {
                         if (result.messages.length) {
@@ -861,16 +864,28 @@ function(
      */
     var deleteSelectedMessages = function() {
         var messageIds = viewState.pendingDeleteMessageIds;
+        var sentMessages = viewState.messages.filter(function(message) {
+            // If a message sendState is null then it means it was loaded from the server or if it's
+            // set to sent then it means the user has successfully sent it in this page load.
+            return messageIds.indexOf(message.id) >= 0 && (message.sendState == 'sent' || message.sendState === null);
+        });
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
 
         render(newState);
 
-        var deleteMessagesPromise = null;
+        var deleteMessagesPromise = $.Deferred().resolve().promise();
 
-        if (newState.deleteMessagesForAllUsers) {
-            deleteMessagesPromise = Repository.deleteMessagesForAllUsers(viewState.loggedInUserId, messageIds);
-        } else {
-            deleteMessagesPromise = Repository.deleteMessages(viewState.loggedInUserId, messageIds);
+        if (sentMessages.length) {
+            // We only need to send a request to the server if we're trying to delete messages that
+            // have successfully been sent.
+            var sentMessageIds = sentMessages.map(function(message) {
+                return message.id;
+            });
+            if (newState.deleteMessagesForAllUsers) {
+                deleteMessagesPromise = Repository.deleteMessagesForAllUsers(viewState.loggedInUserId, sentMessageIds);
+            } else {
+                deleteMessagesPromise = Repository.deleteMessages(viewState.loggedInUserId, sentMessageIds);
+            }
         }
 
         return deleteMessagesPromise.then(function() {
@@ -891,7 +906,8 @@ function(
                 }
 
                 return render(newState);
-            });
+            })
+            .catch(Notification.exception);
     };
 
     /**
@@ -1007,39 +1023,89 @@ function(
     };
 
     /**
-     * Send a message to the repository, update the statemanager publish a message send event
-     * and call the renderer.
+     * Send all of the messages in the buffer to the server to be created. Update the
+     * UI with the newly created message information.
      *
-     * @param  {Number} conversationId The conversation to send to.
-     * @param  {String} text Text to send.
-     * @return {Promise} Renderer promise.
+     * This function will recursively call itself in order to make sure the buffer is
+     * always being processed.
      */
-    var sendMessage = function(conversationId, text) {
+    var processSendMessageBuffer = function() {
+        if (isSendingMessage) {
+            // We're already sending messages so nothing to do.
+            return;
+        }
+        if (!sendMessageBuffer.length) {
+            // No messages waiting to send. Nothing to do.
+            return;
+        }
+
+        // Flag that we're processing the queue.
         isSendingMessage = true;
-        var newState = StateManager.setSendingMessage(viewState, true);
+        // Grab all of the messages in the buffer.
+        var messagesToSend = sendMessageBuffer.slice();
+        // Empty the buffer since we're processing it.
+        sendMessageBuffer = [];
+        var conversationId = viewState.id;
         var newConversationId = null;
-
-        render(newState);
-
+        var messagesText = messagesToSend.map(function(message) {
+            return message.text;
+        });
+        var messageIds = messagesToSend.map(function(message) {
+            return message.id;
+        });
         var sendMessagePromise = null;
         var newCanDeleteMessagesForAllUsers = null;
         if (!conversationId && (viewState.type != CONVERSATION_TYPES.PUBLIC)) {
             // If it's a new private conversation then we need to use the old
             // web service function to create the conversation.
             var otherUserId = getOtherUserId();
-            sendMessagePromise = Repository.sendMessageToUser(otherUserId, text)
-                .then(function(message) {
-                    newConversationId = parseInt(message.conversationid, 10);
-                    newCanDeleteMessagesForAllUsers = message.candeletemessagesforallusers;
-                    return message;
+            sendMessagePromise = Repository.sendMessagesToUser(otherUserId, messagesText)
+                .then(function(messages) {
+                    if (messages.length) {
+                        newConversationId = parseInt(messages[0].conversationid, 10);
+                        newCanDeleteMessagesForAllUsers = messages[0].candeletemessagesforallusers;
+                    }
+                    return messages;
                 });
         } else {
-            sendMessagePromise = Repository.sendMessageToConversation(conversationId, text);
+            sendMessagePromise = Repository.sendMessagesToConversation(conversationId, messagesText);
         }
 
-        sendMessagePromise.then(function(message) {
-                var newState = StateManager.addMessages(viewState, [message]);
-                newState = StateManager.setSendingMessage(newState, false);
+        sendMessagePromise
+            .then(function(messages) {
+                var newMessageIds = messages.map(function(message) {
+                    return message.id;
+                });
+                var data = [];
+                var selectedToRemove = [];
+                var selectedToAdd = [];
+
+                messagesToSend.forEach(function(oldMessage, index) {
+                    var newMessage = messages[index];
+                    // Update messages expects and array of arrays where the first value
+                    // is the old message to update and the second value is the new values
+                    // to set.
+                    data.push([oldMessage, newMessage]);
+
+                    if (viewState.selectedMessageIds.indexOf(oldMessage.id) >= 0) {
+                        // If the message was added to the "selected messages" list while it was still
+                        // being sent then we should update it's id in that list now to make sure future
+                        // actions work.
+                        selectedToRemove.push(oldMessage.id);
+                        selectedToAdd.push(newMessage.id);
+                    }
+                });
+                var newState = StateManager.updateMessages(viewState, data);
+                newState = StateManager.setMessagesSendSuccessById(newState, newMessageIds);
+
+                if (selectedToRemove.length) {
+                    newState = StateManager.removeSelectedMessagesById(newState, selectedToRemove);
+                }
+
+                if (selectedToAdd.length) {
+                    newState = StateManager.addSelectedMessagesById(newState, selectedToAdd);
+                }
+
                 var conversation = formatConversationForEvent(newState);
 
                 if (!newState.id) {
@@ -1052,17 +1118,73 @@ function(
                     newState = StateManager.setCanDeleteMessagesForAllUsers(newState, newCanDeleteMessagesForAllUsers);
                 }
 
+                // Update the UI with the new message values from the server.
                 render(newState);
+                // Recurse just in case there has been more messages added to the buffer.
                 isSendingMessage = false;
+                processSendMessageBuffer();
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, conversation);
                 return;
             })
-            .catch(function(error) {
-                isSendingMessage = false;
-                var newState = StateManager.setSendingMessage(viewState, false);
-                render(newState);
-                Notification.exception(error);
+            .catch(function(e) {
+                if (e.message) {
+                    var errorMessage =  $.Deferred().resolve(e.message).promise();
+                } else {
+                    var errorMessage =  Str.get_string('unknownerror', 'core');
+                }
+
+                var handleFailedMessages = function(errorMessage) {
+                    // We failed to create messages so remove the old messages from the pending queue
+                    // and update the UI to indicate that the message failed.
+                    var newState = StateManager.setMessagesSendFailById(viewState, messageIds, errorMessage);
+                    render(newState);
+                    isSendingMessage = false;
+                    processSendMessageBuffer();
+                };
+
+                errorMessage.then(handleFailedMessages)
+                    .catch(function(e) {
+                        // Hrmm, we can't even load the error messages string! We'll have to
+                        // hard code something in English here if we still haven't got a message
+                        // to show.
+                        var finalError = e.message || 'Something went wrong!';
+                        handleFailedMessages(finalError);
+                    });
             });
+    };
+
+    /**
+     * Buffers messages to be sent to the server. We use a buffer here to allow the
+     * user to freely input messages without blocking the interface for them.
+     *
+     * Instead we just queue all of their messages up and send them as fast as we can.
+     *
+     * @param {String} text Text to send.
+     */
+    var sendMessage = function(text) {
+        var id = 'temp' + Date.now();
+        var message = {
+            id: id,
+            useridfrom: viewState.loggedInUserId,
+            text: text,
+            timecreated: null
+        };
+        var newState = StateManager.addMessages(viewState, [message]);
+        render(newState);
+        sendMessageBuffer.push(message);
+        processSendMessageBuffer();
+    };
+
+    /**
+     * Retry sending a message that failed.
+     *
+     * @param {Object} message The message to send.
+     */
+    var retrySendMessage = function(message) {
+        var newState = StateManager.setMessagesSendPendingById(viewState, [message.id]);
+        render(newState);
+        sendMessageBuffer.push(message);
+        processSendMessageBuffer();
     };
 
     /**
@@ -1222,7 +1344,9 @@ function(
         var text = textArea.val().trim();
 
         if (text !== '') {
-            sendMessage(viewState.id, text);
+            sendMessage(text);
+            textArea.val('');
+            textArea.focus();
         }
 
         data.originalEvent.preventDefault();
@@ -1249,11 +1373,35 @@ function(
         }
 
         var element = target.closest(SELECTORS.MESSAGE);
-        var messageId = parseInt(element.attr('data-message-id'), 10);
+        var messageId = element.attr('data-message-id');
 
         toggleSelectMessage(messageId);
 
         data.originalEvent.preventDefault();
+    };
+
+    /**
+     * Handle retry sending of message.
+     *
+     * @param {Object} e Element this event handler is called on.
+     * @param {Object} data Data for this event.
+     */
+    var handleRetrySendMessage = function(e, data) {
+        var target = $(e.target);
+        var element = target.closest(SELECTORS.MESSAGE);
+        var messageId = element.attr('data-message-id');
+        var messages = viewState.messages.filter(function(message) {
+            return message.id == messageId;
+        });
+        var message = messages.length ? messages[0] : null;
+
+        if (message) {
+            retrySendMessage(message);
+        }
+
+        data.originalEvent.preventDefault();
+        data.originalEvent.stopPropagation();
+        e.stopPropagation();
     };
 
     /**
@@ -1400,7 +1548,8 @@ function(
             [SELECTORS.ACTION_ACCEPT_CONTACT_REQUEST, generateConfirmActionHandler(acceptContactRequest)],
             [SELECTORS.ACTION_DECLINE_CONTACT_REQUEST, generateConfirmActionHandler(declineContactRequest)],
             [SELECTORS.MESSAGE, handleSelectMessage],
-            [SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE, handleDeleteMessagesForAllUsersToggle]
+            [SELECTORS.DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE, handleDeleteMessagesForAllUsersToggle],
+            [SELECTORS.RETRY_SEND, handleRetrySendMessage]
         ];
         var footerActivateHandlers = [
             [SELECTORS.SEND_MESSAGE_BUTTON, handleSendMessage],
@@ -1516,10 +1665,14 @@ function(
     var resetState = function(body, conversationId, loggedInUserProfile) {
         // Reset all of the states back to the beginning if we're loading a new
         // conversation.
-        isResetting = true;
+        loadedAllMessages = false;
+        messagesOffset = 0;
+        newMessagesPollTimer = null;
         isRendering = false;
         renderBuffer = [];
+        isResetting = true;
         isSendingMessage = false;
+        sendMessageBuffer = [];
 
         var loggedInUserId = loggedInUserProfile.id;
         var midnight = parseInt(body.attr('data-midnight'), 10);
@@ -1741,6 +1894,7 @@ function(
         if (isNewConversation) {
             var renderPromise = null;
             var loggedInUserProfile = getLoggedInUserProfile(body);
+
             if (conversation) {
                 renderPromise = resetByConversation(body, conversation, loggedInUserProfile, otherUserId);
             } else if (conversationId) {

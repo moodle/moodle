@@ -1696,6 +1696,7 @@ $string['restoreuserinfofailed'] = 'The restore process has stopped because you 
 $string['restoreusersprecheck'] = 'Checking user data';
 $string['restoreusersprecheckerror'] = 'Some problems were detected when checking user data';
 $string['restricted'] = 'Restricted';
+$string['retry'] = 'Retry';
 $string['returningtosite'] = 'Returning to this web site?';
 $string['returntooriginaluser'] = 'Return to {$a}';
 $string['revert'] = 'Revert';
