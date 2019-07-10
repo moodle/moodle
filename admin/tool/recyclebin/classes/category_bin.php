@@ -109,14 +109,15 @@ class category_bin extends base_bin {
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
         // As far as recycle bin is using MODE_AUTOMATED, it observes the backup_auto_storage
-        // setting (storing backups @ real location. For recycle bin we want to ensure that
-        // backup files are always stored in Moodle file area. In order to achieve that, we
-        // hack the setting here via $CFG->forced_plugin_settings, so it won't interfere other
-        // operations.  See MDL-65218 for more information.
+        // settings (storing backups @ real location and potentially not including files).
+        // For recycle bin we want to ensure that backup files are always stored in Moodle file
+        // area and always contain the users' files. In order to achieve that, we hack the
+        // setting here via $CFG->forced_plugin_settings, so it won't interfere other operations.
+        // See MDL-65218 and MDL-35773 for more information.
         // This hack will be removed once recycle bin switches to use its own backup mode, with
-        // own preferences and 100% appart from MODLE_AUTOMATED.
+        // own preferences and 100% separate from MOODLE_AUTOMATED.
         // TODO: Remove this as part of MDL-65228.
-        $CFG->forced_plugin_settings['backup'] = ['backup_auto_storage' => 0];
+        $CFG->forced_plugin_settings['backup'] = ['backup_auto_storage' => 0, 'backup_auto_files' => 1];
 
         // Backup the course.
         $user = get_admin();
