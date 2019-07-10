@@ -95,6 +95,7 @@ class event_mapper implements event_mapper_interface {
 
         // Normalise for the legacy event because it wants zero rather than null.
         $properties->courseid = empty($properties->courseid) ? 0 : $properties->courseid;
+        $properties->categoryid = empty($properties->categoryid) ? 0 : $properties->categoryid;
         $properties->groupid = empty($properties->groupid) ? 0 : $properties->groupid;
         $properties->userid = empty($properties->userid) ? 0 : $properties->userid;
         $properties->modulename = empty($properties->modulename) ? 0 : $properties->modulename;
