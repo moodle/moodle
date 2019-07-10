@@ -1334,18 +1334,53 @@ class external_util {
     /**
      * Validate a list of courses, returning the complete course objects for valid courses.
      *
+     * Each course has an additional 'contextvalidated' field, this will be set to true unless
+     * you set $keepfails, in which case it will be false if validation fails for a course.
+     *
      * @param  array $courseids A list of course ids
      * @param  array $courses   An array of courses already pre-fetched, indexed by course id.
      * @param  bool $addcontext True if the returned course object should include the full context object.
+     * @param  bool $keepfails  True to keep all the course objects even if validation fails
      * @return array            An array of courses and the validation warnings
      */
-    public static function validate_courses($courseids, $courses = array(), $addcontext = false) {
+    public static function validate_courses($courseids, $courses = array(), $addcontext = false,
+            $keepfails = false) {
+        global $DB;
+
         // Delete duplicates.
         $courseids = array_unique($courseids);
         $warnings = array();
 
         // Remove courses which are not even requested.
-        $courses =  array_intersect_key($courses, array_flip($courseids));
+        $courses = array_intersect_key($courses, array_flip($courseids));
+
+        // For any courses NOT loaded already, get them in a single query (and preload contexts)
+        // for performance. Preserve ordering because some tests depend on it.
+        $newcourseids = [];
+        foreach ($courseids as $cid) {
+            if (!array_key_exists($cid, $courses)) {
+                $newcourseids[] = $cid;
+            }
+        }
+        if ($newcourseids) {
+            list ($listsql, $listparams) = $DB->get_in_or_equal($newcourseids);
+
+            // Load list of courses, and preload associated contexts.
+            $contextselect = context_helper::get_preload_record_columns_sql('x');
+            $newcourses = $DB->get_records_sql("
+                            SELECT c.*, $contextselect
+                              FROM {course} c
+                              JOIN {context} x ON x.instanceid = c.id
+                             WHERE x.contextlevel = ? AND c.id $listsql",
+                    array_merge([CONTEXT_COURSE], $listparams));
+            foreach ($newcourseids as $cid) {
+                if (array_key_exists($cid, $newcourses)) {
+                    $course = $newcourses[$cid];
+                    context_helper::preload_from_record($course);
+                    $courses[$course->id] = $course;
+                }
+            }
+        }
 
         foreach ($courseids as $cid) {
             // Check the user can function in this context.
@@ -1353,14 +1388,16 @@ class external_util {
                 $context = context_course::instance($cid);
                 external_api::validate_context($context);
 
-                if (!isset($courses[$cid])) {
-                    $courses[$cid] = get_course($cid);
-                }
                 if ($addcontext) {
                     $courses[$cid]->context = $context;
                 }
+                $courses[$cid]->contextvalidated = true;
             } catch (Exception $e) {
-                unset($courses[$cid]);
+                if ($keepfails) {
+                    $courses[$cid]->contextvalidated = false;
+                } else {
+                    unset($courses[$cid]);
+                }
                 $warnings[] = array(
                     'item' => 'course',
                     'itemid' => $cid,
