@@ -135,9 +135,10 @@ Y.extend(LTICONTAINER, Y.Base, {
     resize : function() {
         if (this.lastheight !== Math.min(this.documentheight, this.viewportheight)) {
             var newheight = this.viewportheight - this.ltiframe.getY() - this.padding;
-            if (newheight < 600)
-                newheight = 600;
-            this.ltiframe.setStyle('height', newheight+"px");
+            var originalheight = this.ltiframe._node.height.replace(/[^0-9]/g, '');
+            if (newheight < originalheight)
+                return;
+            this.ltiframe.setStyle('height', newheight+'px');
             this.lastheight = Math.min(this.documentheight, this.viewportheight);
         }
 
