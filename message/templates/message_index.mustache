@@ -79,6 +79,6 @@
 {{#js}}
     require(['jquery', 'core_message/message_drawer'], function($, MessageDrawer) {
     var root = $('#message-index-{{uniqid}}');
-    MessageDrawer.init(root, '{{uniqid}}', true, {{sendtouser}}, {{conversationid}});
+    MessageDrawer.init(root, '{{uniqid}}', true, {{{route}}});
     });
 {{/js}}

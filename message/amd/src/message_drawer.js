@@ -270,22 +270,18 @@ function(
      * @param {int} sendToUser Should we message someone now?
      * @param {int} conversationId The value of the conversation id, null if none
      */
-    var init = function(root, uniqueId, alwaysVisible, sendToUser, conversationId) {
+    var init = function(root, uniqueId, alwaysVisible, route) {
         root = $(root);
         createRoutes(uniqueId, root);
         registerEventListeners(uniqueId, root, alwaysVisible);
+
         if (alwaysVisible) {
             show(uniqueId, root);
-            // Are we sending to a specific user?
-            if (sendToUser) {
-                // Check if a conversation already exists, if not, create one.
-                if (conversationId) {
-                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, conversationId);
-                } else {
-                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, null, 'create', sendToUser);
-                }
-            } else if (conversationId) { // We aren't sending to a specific user, but to a group conversation.
-                Router.go(uniqueId, Routes.VIEW_CONVERSATION, conversationId);
+
+            if (route) {
+                var routeParams = route.params || [];
+                routeParams = [uniqueId, route.path].concat(routeParams);
+                Router.go.apply(null, routeParams);
             }
         }
     };
