@@ -193,7 +193,7 @@
     <location>amd/src/loglevel.js</location>
     <name>loglevel.js</name>
     <license>MIT</license>
-    <version>1.5.1</version>
+    <version>1.6.2</version>
   </library>
   <library>
     <location>mustache</location>
