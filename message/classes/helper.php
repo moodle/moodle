@@ -583,7 +583,10 @@ class helper {
 
             // Set contact and blocked status indicators.
             $data->iscontact = ($member->contactid) ? true : false;
-            $data->isblocked = ($member->blockedid) ? true : false;
+
+            // We don't want that a user has been blocked if they can message the user anyways.
+            $canmessageifblocked = api::can_send_message($referenceuserid, $member->id, true);
+            $data->isblocked = ($member->blockedid && !$canmessageifblocked) ? true : false;
 
             $data->isdeleted = ($member->deleted) ? true : false;
 
@@ -594,9 +597,9 @@ class helper {
                 $privacysetting = api::get_user_privacy_messaging_preference($member->id);
                 $data->requirescontact = $privacysetting == api::MESSAGE_PRIVACY_ONLYCONTACTS;
 
-                // Here we check that if the sender wanted to block the recipient, the recipient would
-                // still be able to message them regardless.
-                $data->canmessageevenifblocked = api::can_send_message($referenceuserid, $member->id, true);
+                // Here we check that if the sender wanted to block the recipient, the
+                // recipient would still be able to message them regardless.
+                $data->canmessageevenifblocked = !$data->isdeleted && $canmessageifblocked;
                 $data->canmessage = !$data->isdeleted && api::can_send_message($member->id, $referenceuserid);
             }
 

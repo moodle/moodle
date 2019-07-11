@@ -41,3 +41,27 @@ Feature: To be able to block users that we are able to or to see a message if we
     And I open contact menu
     When I click on "Block" "link" in the "[data-region='header-container']" "css_element"
     Then I should see "You are unable to block Teacher 1"
+
+  Scenario: Block a user who then gets an elevated role
+    Given I log in as "student1"
+    And I select "Student 2" user in messaging
+    And I open contact menu
+    And I click on "Block" "link" in the "[data-region='header-container']" "css_element"
+    And I click on "Block" "button" in the "[data-region='confirm-dialogue']" "css_element"
+    And I log out
+    And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I click on "Unenrol" "icon" in the "student2" "table_row"
+    And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
+    And I enrol "Student 2" user as "Teacher"
+    And I log out
+    And I log in as "student2"
+    And I select "Student 1" user in messaging
+    And I should not see "You are unable to message this user"
+    And I log out
+    And I log in as "student1"
+    And I select "Student 2" user in messaging
+    And I open contact menu
+    When I click on "Block" "link" in the "[data-region='header-container']" "css_element"
+    Then I should see "You are unable to block Student 2"
