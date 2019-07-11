@@ -1127,5 +1127,41 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
                 ['discussionids' => $discussionids, 'userids' => $userids], false);
         $this->assertCount(1, $entities);
         $this->assertArrayHasKey($otherpost->id, $entities);
+
+    }
+
+    /**
+     * Test get_from_user_id.
+     *
+     * @covers ::get_posts_in_forum_for_user_id
+     */
+    public function test_get_from_user_id() {
+        $this->resetAfterTest();
+
+        $datagenerator = $this->getDataGenerator();
+        $user = $datagenerator->create_user();
+        $course = $datagenerator->create_course();
+        $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
+
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+
+        $forumvault = $vaultfactory->get_forum_vault();
+        $forumentity = $forumvault->get_from_course_module_id($forum->cmid);
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forumentity);
+        [$discussion1, $post1] = $this->helper_post_to_forum($forum, $user);
+        $post2 = $this->helper_reply_to_post($post1, $user);
+        $post3 = $this->helper_reply_to_post($post1, $user);
+        [$discussion2, $post4] = $this->helper_post_to_forum($forum, $user);
+        $discussionkeys = [$discussion1->id, $discussion2->id];
+
+        $viewhidden = $capabilitymanager->can_view_any_private_reply($user);
+        $entities = $this->vault->get_posts_in_forum_for_user_id($discussionkeys, $user->id, $viewhidden, 'modified DESC');
+        $this->assertCount(4, $entities);
+        $this->assertArrayHasKey($post1->id, $entities); // Order is not guaranteed, so just verify element existence.
+        $this->assertArrayHasKey($post2->id, $entities);
+        $this->assertArrayHasKey($post3->id, $entities);
+        $this->assertArrayHasKey($post4->id, $entities);
     }
 }

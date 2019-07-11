@@ -168,6 +168,7 @@ class discussion_list {
 
         $forumview = [
             'forum' => (array) $forumexporter->export($this->renderer),
+            'cmid' => $cm->id,
             'hasanyactions' => $hasanyactions,
             'groupchangemenu' => groups_print_activity_menu(
                 $cm,
@@ -206,6 +207,9 @@ class discussion_list {
             ],
             $exportedposts
         );
+
+        $firstdiscussion = reset($discussions);
+        $forumview['firstgradeduserid'] = $firstdiscussion->get_latest_post_author()->get_id();
 
         return $this->renderer->render_from_template($this->template, $forumview);
     }

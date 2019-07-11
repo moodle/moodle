@@ -2152,4 +2152,141 @@ class mod_forum_external extends external_api {
             )
         );
     }
+
+    /**
+     * Get the forum posts in the specified forum instance.
+     *
+     * @param   int $userid
+     * @param   int $cmid
+     * @param   string $sortby
+     * @param   string $sortdirection
+     * @return  array
+     */
+    public static function get_discussion_posts_by_userid(int $userid = 0, int $cmid, ?string $sortby, ?string $sortdirection) {
+        global $USER, $DB;
+        // Validate the parameter.
+        $params = self::validate_parameters(self::get_discussion_posts_by_userid_parameters(), [
+                'userid' => $userid,
+                'cmid' => $cmid,
+                'sortby' => $sortby,
+                'sortdirection' => $sortdirection,
+        ]);
+        $warnings = [];
+
+        $user = $DB->get_record('user', ['id' => (int)$params['userid']], '*', IGNORE_MISSING);
+
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+
+        $forumvault = $vaultfactory->get_forum_vault();
+        $forum = $forumvault->get_from_course_module_id($params['cmid']);
+
+        // Validate the module context. It checks everything that affects the module visibility (including groupings, etc..).
+        self::validate_context($forum->get_context());
+
+        $sortby = $params['sortby'];
+        $sortdirection = $params['sortdirection'];
+        $sortallowedvalues = ['id', 'created', 'modified'];
+        $directionallowedvalues = ['ASC', 'DESC'];
+
+        if (!in_array(strtolower($sortby), $sortallowedvalues)) {
+            throw new invalid_parameter_exception('Invalid value for sortby parameter (value: ' . $sortby . '),' .
+                    'allowed values are: ' . implode(', ', $sortallowedvalues));
+        }
+
+        $sortdirection = strtoupper($sortdirection);
+        if (!in_array($sortdirection, $directionallowedvalues)) {
+            throw new invalid_parameter_exception('Invalid value for sortdirection parameter (value: ' . $sortdirection . '),' .
+                    'allowed values are: ' . implode(',', $directionallowedvalues));
+        }
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussions = $discussionvault->get_all_discussions_in_forum($forum, 'timemodified ASC, id ASC');
+
+        $postvault = $vaultfactory->get_post_vault();
+
+        $builderfactory = mod_forum\local\container::get_builder_factory();
+        $postbuilder = $builderfactory->get_exported_posts_builder();
+
+        $builtdiscussions = [];
+        foreach ($discussions as $id => $discussion) {
+            $posts = $postvault->get_posts_in_discussion_for_user_id(
+                    $discussion->get_id(),
+                    $user->id,
+                    $capabilitymanager->can_view_any_private_reply($USER),
+                    "{$sortby} {$sortdirection}"
+            );
+            if (empty($posts)) {
+                continue;
+            }
+
+            $parentids = array_filter(array_map(function($post) {
+                return $post->has_parent() ? $post->get_parent_id() : null;
+            }, $posts));
+
+            $parentposts = [];
+            if ($parentids) {
+                $parentposts = $postbuilder->build(
+                    $user,
+                    [$forum],
+                    [$discussion],
+                    $postvault->get_from_ids(array_values($parentids))
+                );
+            }
+
+            $builtdiscussions[] = [
+                'name' => $discussion->get_name(),
+                'id' => $discussion->get_id(),
+                'posts' => [
+                    'userposts' => $postbuilder->build($user, [$forum], [$discussion], $posts),
+                    'parentposts' => $parentposts,
+                ],
+            ];
+        }
+
+        return [
+                'discussions' => $builtdiscussions,
+                'warnings' => $warnings,
+        ];
+    }
+
+    /**
+     * Describe the post parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_discussion_posts_by_userid_parameters() {
+        return new external_function_parameters ([
+                'userid' => new external_value(
+                        PARAM_INT, 'The ID of the user of whom to fetch posts.', VALUE_REQUIRED),
+                'cmid' => new external_value(
+                        PARAM_INT, 'The ID of the module of which to fetch items.', VALUE_REQUIRED),
+                'sortby' => new external_value(
+                        PARAM_ALPHA, 'Sort by this element: id, created or modified', VALUE_DEFAULT, 'created'),
+                'sortdirection' => new external_value(
+                        PARAM_ALPHA, 'Sort direction: ASC or DESC', VALUE_DEFAULT, 'DESC')
+        ]);
+    }
+
+    /**
+     * Describe the post return format.
+     *
+     * @return external_single_structure
+     */
+    public static function get_discussion_posts_by_userid_returns() {
+        return new external_single_structure([
+                'discussions' => new external_multiple_structure(
+                    new external_single_structure([
+                        'name' => new external_value(PARAM_RAW, 'Name of the discussion'),
+                        'id' => new external_value(PARAM_INT, 'ID of the discussion'),
+                        'posts' => new external_single_structure([
+                            'userposts' => new external_multiple_structure(\mod_forum\local\exporters\post::get_read_structure()),
+                            'parentposts' => new external_multiple_structure(\mod_forum\local\exporters\post::get_read_structure()),
+                        ]),
+                    ])),
+                'warnings' => new external_warnings(),
+        ]);
+    }
 }

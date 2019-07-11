@@ -112,11 +112,34 @@ define(['core/ajax'], function(Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get the discussions for the user and cmid provided.
+     *
+     * @param {number} userid
+     * @param {number} cmid
+     * @param {string} sortby
+     * @param {string} sortdirection
+     * @return {*|Promise}
+     */
+    var getDiscussionByUserID = function(userid, cmid, sortby = 'modified', sortdirection = 'DESC') {
+        var request = {
+            methodname: 'mod_forum_get_discussion_posts_by_userid',
+            args: {
+                userid: userid,
+                cmid: cmid,
+                sortby: sortby,
+                sortdirection: sortdirection,
+            },
+        };
+        return Ajax.call([request])[0];
+    };
+
     return {
         setDiscussionSubscriptionState: setDiscussionSubscriptionState,
         addDiscussionPost: addDiscussionPost,
         setDiscussionLockState: setDiscussionLockState,
         setFavouriteDiscussionState: setFavouriteDiscussionState,
-        setPinDiscussionState: setPinDiscussionState
+        setPinDiscussionState: setPinDiscussionState,
+        getDiscussionByUserID: getDiscussionByUserID
     };
 });

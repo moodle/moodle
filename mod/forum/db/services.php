@@ -175,6 +175,7 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+
     'mod_forum_delete_post' => array(
         'classname' => 'mod_forum_external',
         'methodname' => 'delete_post',
@@ -182,5 +183,15 @@ $functions = array(
         'description' => 'Deletes a post or a discussion completely when the post is the discussion topic.',
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+
+    'mod_forum_get_discussion_posts_by_userid' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'get_discussion_posts_by_userid',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Returns a list of forum posts for a discussion for a user.',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting',
     ),
 );
