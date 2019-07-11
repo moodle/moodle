@@ -30,6 +30,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = '';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Slovenščina';
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueretry'] = 'Valoarea nu este corectă, încercați din nou';
+$string['environmentrequireinstall'] = 'trebuie să fie instalat și activat';
+$string['environmentrequireversion'] = 'versiunea {$a->needed} este necesară iar dumneavoastră rulați {$a->current}';
