@@ -4818,7 +4818,12 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
     $field = core_text::strtolower($field);
 
     // List of case insensitive fields.
-    $caseinsensitivefields = ['username', 'email'];
+    $caseinsensitivefields = ['email'];
+
+    // Username input is forced to lowercase and should be case sensitive.
+    if ($field == 'username') {
+        $value = core_text::strtolower($value);
+    }
 
     // Build the WHERE clause for an SQL query.
     $params = array('fieldval' => $value);
