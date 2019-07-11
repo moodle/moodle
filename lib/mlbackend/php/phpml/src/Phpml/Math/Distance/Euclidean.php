@@ -4,41 +4,25 @@ declare(strict_types=1);
 
 namespace Phpml\Math\Distance;
 
-use Phpml\Exception\InvalidArgumentException;
-use Phpml\Math\Distance;
-
-class Euclidean implements Distance
+/**
+ * Class Euclidean
+ *
+ * L^2 Metric.
+ */
+class Euclidean extends Distance
 {
     /**
-     * @param array $a
-     * @param array $b
-     *
-     * @return float
-     *
-     * @throws InvalidArgumentException
+     * Euclidean constructor.
      */
-    public function distance(array $a, array $b): float
+    public function __construct()
     {
-        if (count($a) !== count($b)) {
-            throw InvalidArgumentException::arraySizeNotMatch();
-        }
-
-        $distance = 0;
-
-        foreach ($a as $i => $val) {
-            $distance += ($val - $b[$i]) ** 2;
-        }
-
-        return sqrt((float) $distance);
+        parent::__construct(2.0);
     }
 
     /**
      * Square of Euclidean distance
      *
-     * @param array $a
-     * @param array $b
-     *
-     * @return float
+     * @throws \Phpml\Exception\InvalidArgumentException
      */
     public function sqDistance(array $a, array $b): float
     {

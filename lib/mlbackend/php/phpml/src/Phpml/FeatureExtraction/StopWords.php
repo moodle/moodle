@@ -11,39 +11,24 @@ class StopWords
     /**
      * @var array
      */
-    protected $stopWords;
+    protected $stopWords = [];
 
-    /**
-     * @param array $stopWords
-     */
     public function __construct(array $stopWords)
     {
         $this->stopWords = array_fill_keys($stopWords, true);
     }
 
-    /**
-     * @param string $token
-     *
-     * @return bool
-     */
     public function isStopWord(string $token): bool
     {
         return isset($this->stopWords[$token]);
     }
 
-    /**
-     * @param string $language
-     *
-     * @return StopWords
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function factory($language = 'English'): StopWords
+    public static function factory(string $language = 'English'): self
     {
-        $className = __NAMESPACE__."\\StopWords\\$language";
+        $className = __NAMESPACE__."\\StopWords\\${language}";
 
         if (!class_exists($className)) {
-            throw InvalidArgumentException::invalidStopWordsLanguage($language);
+            throw new InvalidArgumentException(sprintf('Can\'t find "%s" language for StopWords', $language));
         }
 
         return new $className();

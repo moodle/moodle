@@ -9,6 +9,8 @@ use Phpml\Math\Distance\Euclidean;
 
 class DBSCAN implements Clusterer
 {
+    private const NOISE = -1;
+
     /**
      * @var float
      */
@@ -24,14 +26,9 @@ class DBSCAN implements Clusterer
      */
     private $distanceMetric;
 
-    /**
-     * @param float    $epsilon
-     * @param int      $minSamples
-     * @param Distance $distanceMetric
-     */
-    public function __construct($epsilon = 0.5, $minSamples = 3, Distance $distanceMetric = null)
+    public function __construct(float $epsilon = 0.5, int $minSamples = 3, ?Distance $distanceMetric = null)
     {
-        if (null === $distanceMetric) {
+        if ($distanceMetric === null) {
             $distanceMetric = new Euclidean();
         }
 
@@ -40,72 +37,84 @@ class DBSCAN implements Clusterer
         $this->distanceMetric = $distanceMetric;
     }
 
-    /**
-     * @param array $samples
-     *
-     * @return array
-     */
-    public function cluster(array $samples)
+    public function cluster(array $samples): array
     {
-        $clusters = [];
-        $visited = [];
+        $labels = [];
+        $n = 0;
 
         foreach ($samples as $index => $sample) {
-            if (isset($visited[$index])) {
+            if (isset($labels[$index])) {
                 continue;
             }
-            $visited[$index] = true;
 
-            $regionSamples = $this->getSamplesInRegion($sample, $samples);
-            if (count($regionSamples) >= $this->minSamples) {
-                $clusters[] = $this->expandCluster($regionSamples, $visited);
+            $neighborIndices = $this->getIndicesInRegion($sample, $samples);
+
+            if (count($neighborIndices) < $this->minSamples) {
+                $labels[$index] = self::NOISE;
+
+                continue;
             }
+
+            $labels[$index] = $n;
+
+            $this->expandCluster($samples, $neighborIndices, $labels, $n);
+
+            ++$n;
+        }
+
+        return $this->groupByCluster($samples, $labels, $n);
+    }
+
+    private function expandCluster(array $samples, array $seeds, array &$labels, int $n): void
+    {
+        while (($index = array_pop($seeds)) !== null) {
+            if (isset($labels[$index])) {
+                if ($labels[$index] === self::NOISE) {
+                    $labels[$index] = $n;
+                }
+
+                continue;
+            }
+
+            $labels[$index] = $n;
+
+            $sample = $samples[$index];
+            $neighborIndices = $this->getIndicesInRegion($sample, $samples);
+
+            if (count($neighborIndices) >= $this->minSamples) {
+                $seeds = array_unique(array_merge($seeds, $neighborIndices));
+            }
+        }
+    }
+
+    private function getIndicesInRegion(array $center, array $samples): array
+    {
+        $indices = [];
+
+        foreach ($samples as $index => $sample) {
+            if ($this->distanceMetric->distance($center, $sample) < $this->epsilon) {
+                $indices[] = $index;
+            }
+        }
+
+        return $indices;
+    }
+
+    private function groupByCluster(array $samples, array $labels, int $n): array
+    {
+        $clusters = array_fill(0, $n, []);
+
+        foreach ($samples as $index => $sample) {
+            if ($labels[$index] !== self::NOISE) {
+                $clusters[$labels[$index]][$index] = $sample;
+            }
+        }
+
+        // Reindex (i.e. to 0, 1, 2, ...) integer indices for backword compatibility
+        foreach ($clusters as $index => $cluster) {
+            $clusters[$index] = array_merge($cluster, []);
         }
 
         return $clusters;
-    }
-
-    /**
-     * @param array $localSample
-     * @param array $samples
-     *
-     * @return array
-     */
-    private function getSamplesInRegion($localSample, $samples)
-    {
-        $region = [];
-
-        foreach ($samples as $index => $sample) {
-            if ($this->distanceMetric->distance($localSample, $sample) < $this->epsilon) {
-                $region[$index] = $sample;
-            }
-        }
-
-        return $region;
-    }
-
-    /**
-     * @param array $samples
-     * @param array $visited
-     *
-     * @return array
-     */
-    private function expandCluster($samples, &$visited)
-    {
-        $cluster = [];
-
-        foreach ($samples as $index => $sample) {
-            if (!isset($visited[$index])) {
-                $visited[$index] = true;
-                $regionSamples = $this->getSamplesInRegion($sample, $samples);
-                if (count($regionSamples) > $this->minSamples) {
-                    $cluster = array_merge($regionSamples, $cluster);
-                }
-            }
-
-            $cluster[] = $sample;
-        }
-
-        return $cluster;
     }
 }

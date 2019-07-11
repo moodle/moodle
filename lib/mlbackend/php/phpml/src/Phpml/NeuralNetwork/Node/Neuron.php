@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Phpml\NeuralNetwork\Node;
 
 use Phpml\NeuralNetwork\ActivationFunction;
-use Phpml\NeuralNetwork\Node\Neuron\Synapse;
+use Phpml\NeuralNetwork\ActivationFunction\Sigmoid;
 use Phpml\NeuralNetwork\Node;
+use Phpml\NeuralNetwork\Node\Neuron\Synapse;
 
 class Neuron implements Node
 {
     /**
      * @var Synapse[]
      */
-    protected $synapses;
+    protected $synapses = [];
 
     /**
      * @var ActivationFunction
@@ -23,22 +24,19 @@ class Neuron implements Node
     /**
      * @var float
      */
-    protected $output;
+    protected $output = 0.0;
 
     /**
-     * @param ActivationFunction|null $activationFunction
+     * @var float
      */
-    public function __construct(ActivationFunction $activationFunction = null)
+    protected $z = 0.0;
+
+    public function __construct(?ActivationFunction $activationFunction = null)
     {
-        $this->activationFunction = $activationFunction ?: new ActivationFunction\Sigmoid();
-        $this->synapses = [];
-        $this->output = 0;
+        $this->activationFunction = $activationFunction ?: new Sigmoid();
     }
 
-    /**
-     * @param Synapse $synapse
-     */
-    public function addSynapse(Synapse $synapse)
+    public function addSynapse(Synapse $synapse): void
     {
         $this->synapses[] = $synapse;
     }
@@ -46,30 +44,33 @@ class Neuron implements Node
     /**
      * @return Synapse[]
      */
-    public function getSynapses()
+    public function getSynapses(): array
     {
         return $this->synapses;
     }
 
-    /**
-     * @return float
-     */
     public function getOutput(): float
     {
-        if (0 === $this->output) {
-            $sum = 0;
+        if ($this->output === 0.0) {
+            $this->z = 0;
             foreach ($this->synapses as $synapse) {
-                $sum += $synapse->getOutput();
+                $this->z += $synapse->getOutput();
             }
 
-            $this->output = $this->activationFunction->compute($sum);
+            $this->output = $this->activationFunction->compute($this->z);
         }
 
         return $this->output;
     }
 
-    public function reset()
+    public function getDerivative(): float
     {
-        $this->output = 0;
+        return $this->activationFunction->differentiate($this->z, $this->output);
+    }
+
+    public function reset(): void
+    {
+        $this->output = 0.0;
+        $this->z = 0.0;
     }
 }

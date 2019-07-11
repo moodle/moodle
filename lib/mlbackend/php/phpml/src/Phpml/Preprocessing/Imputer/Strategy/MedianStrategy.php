@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace Phpml\Preprocessing\Imputer\Strategy;
 
-use Phpml\Preprocessing\Imputer\Strategy;
 use Phpml\Math\Statistic\Mean;
+use Phpml\Preprocessing\Imputer\Strategy;
 
 class MedianStrategy implements Strategy
 {
-    /**
-     * @param array $currentAxis
-     *
-     * @return float
-     */
-    public function replaceValue(array $currentAxis)
+    public function replaceValue(array $currentAxis): float
     {
         return Mean::median($currentAxis);
     }

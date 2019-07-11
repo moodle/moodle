@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace Phpml\DimensionReduction;
 
+use Closure;
+use Phpml\Exception\InvalidArgumentException;
+use Phpml\Exception\InvalidOperationException;
 use Phpml\Math\Distance\Euclidean;
 use Phpml\Math\Distance\Manhattan;
 use Phpml\Math\Matrix;
 
 class KernelPCA extends PCA
 {
-    const KERNEL_RBF = 1;
-    const KERNEL_SIGMOID = 2;
-    const KERNEL_LAPLACIAN = 3;
-    const KERNEL_LINEAR = 4;
+    public const KERNEL_RBF = 1;
+
+    public const KERNEL_SIGMOID = 2;
+
+    public const KERNEL_LAPLACIAN = 3;
+
+    public const KERNEL_LINEAR = 4;
 
     /**
      * Selected kernel function
@@ -25,7 +31,7 @@ class KernelPCA extends PCA
     /**
      * Gamma value used by the kernel
      *
-     * @var float
+     * @var float|null
      */
     protected $gamma;
 
@@ -34,7 +40,7 @@ class KernelPCA extends PCA
      *
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * Kernel principal component analysis (KernelPCA) is an extension of PCA using
@@ -44,18 +50,16 @@ class KernelPCA extends PCA
      * will initialize the algorithm with an RBF kernel having the gamma parameter as 15,0. <br>
      * This transformation will return the same number of rows with only <i>2</i> columns.
      *
-     * @param int $kernel
      * @param float $totalVariance Total variance to be preserved if numFeatures is not given
-     * @param int $numFeatures Number of columns to be returned
-     * @param float $gamma Gamma parameter is used with RBF and Sigmoid kernels
+     * @param int   $numFeatures   Number of columns to be returned
+     * @param float $gamma         Gamma parameter is used with RBF and Sigmoid kernels
      *
-     * @throws \Exception
+     * @throws InvalidArgumentException
      */
-    public function __construct(int $kernel = self::KERNEL_RBF, $totalVariance = null, $numFeatures = null, $gamma = null)
+    public function __construct(int $kernel = self::KERNEL_RBF, ?float $totalVariance = null, ?int $numFeatures = null, ?float $gamma = null)
     {
-        $availableKernels = [self::KERNEL_RBF, self::KERNEL_SIGMOID, self::KERNEL_LAPLACIAN, self::KERNEL_LINEAR];
-        if (!in_array($kernel, $availableKernels)) {
-            throw new \Exception("KernelPCA can be initialized with the following kernels only: Linear, RBF, Sigmoid and Laplacian");
+        if (!in_array($kernel, [self::KERNEL_RBF, self::KERNEL_SIGMOID, self::KERNEL_LAPLACIAN, self::KERNEL_LINEAR], true)) {
+            throw new InvalidArgumentException('KernelPCA can be initialized with the following kernels only: Linear, RBF, Sigmoid and Laplacian');
         }
 
         parent::__construct($totalVariance, $numFeatures);
@@ -69,12 +73,8 @@ class KernelPCA extends PCA
      * of this data while preserving $totalVariance or $numFeatures. <br>
      * $data is an n-by-m matrix and returned array is
      * n-by-k matrix where k <= m
-     *
-     * @param array $data
-     *
-     * @return array
      */
-    public function fit(array $data)
+    public function fit(array $data): array
     {
         $numRows = count($data);
         $this->data = $data;
@@ -94,15 +94,32 @@ class KernelPCA extends PCA
     }
 
     /**
+     * Transforms the given sample to a lower dimensional vector by using
+     * the variables obtained during the last run of <code>fit</code>.
+     *
+     * @throws InvalidArgumentException
+     * @throws InvalidOperationException
+     */
+    public function transform(array $sample): array
+    {
+        if (!$this->fit) {
+            throw new InvalidOperationException('KernelPCA has not been fitted with respect to original dataset, please run KernelPCA::fit() first');
+        }
+
+        if (is_array($sample[0])) {
+            throw new InvalidArgumentException('KernelPCA::transform() accepts only one-dimensional arrays');
+        }
+
+        $pairs = $this->getDistancePairs($sample);
+
+        return $this->projectSample($pairs);
+    }
+
+    /**
      * Calculates similarity matrix by use of selected kernel function<br>
      * An n-by-m matrix is given and an n-by-n matrix is returned
-     *
-     * @param array $data
-     * @param int   $numRows
-     *
-     * @return array
      */
-    protected function calculateKernelMatrix(array $data, int $numRows)
+    protected function calculateKernelMatrix(array $data, int $numRows): array
     {
         $kernelFunc = $this->getKernel();
 
@@ -125,15 +142,10 @@ class KernelPCA extends PCA
      * conversion:
      *
      * K′ = K − N.K −  K.N + N.K.N where N is n-by-n matrix filled with 1/n
-     *
-     * @param array $matrix
-     * @param int   $n
-     *
-     * @return array
      */
-    protected function centerMatrix(array $matrix, int $n)
+    protected function centerMatrix(array $matrix, int $n): array
     {
-        $N = array_fill(0, $n, array_fill(0, $n, 1.0/$n));
+        $N = array_fill(0, $n, array_fill(0, $n, 1.0 / $n));
         $N = new Matrix($N, false);
         $K = new Matrix($matrix, false);
 
@@ -145,19 +157,17 @@ class KernelPCA extends PCA
         $N_K_N = $N->multiply($K_N);
 
         return $K->subtract($N_K)
-                 ->subtract($K_N)
-                 ->add($N_K_N)
-                 ->toArray();
+            ->subtract($K_N)
+            ->add($N_K_N)
+            ->toArray();
     }
 
     /**
      * Returns the callable kernel function
      *
-     * @return \Closure
-     *
      * @throws \Exception
      */
-    protected function getKernel()
+    protected function getKernel(): Closure
     {
         switch ($this->kernel) {
             case self::KERNEL_LINEAR:
@@ -168,6 +178,7 @@ class KernelPCA extends PCA
             case self::KERNEL_RBF:
                 // k(x,y)=exp(-γ.|x-y|) where |..| is Euclidean distance
                 $dist = new Euclidean();
+
                 return function ($x, $y) use ($dist) {
                     return exp(-$this->gamma * $dist->sqDistance($x, $y));
                 };
@@ -176,27 +187,25 @@ class KernelPCA extends PCA
                 // k(x,y)=tanh(γ.xT.y+c0) where c0=1
                 return function ($x, $y) {
                     $res = Matrix::dot($x, $y)[0] + 1.0;
-                    return tanh($this->gamma * $res);
+
+                    return tanh((float) $this->gamma * $res);
                 };
 
             case self::KERNEL_LAPLACIAN:
                 // k(x,y)=exp(-γ.|x-y|) where |..| is Manhattan distance
                 $dist = new Manhattan();
+
                 return function ($x, $y) use ($dist) {
                     return exp(-$this->gamma * $dist->distance($x, $y));
                 };
 
             default:
-                throw new \Exception(sprintf('KernelPCA initialized with invalid kernel: %d', $this->kernel));
+                // Not reached
+                throw new InvalidArgumentException(sprintf('KernelPCA initialized with invalid kernel: %d', $this->kernel));
         }
     }
 
-    /**
-     * @param array $sample
-     *
-     * @return array
-     */
-    protected function getDistancePairs(array $sample)
+    protected function getDistancePairs(array $sample): array
     {
         $kernel = $this->getKernel();
 
@@ -208,12 +217,7 @@ class KernelPCA extends PCA
         return $pairs;
     }
 
-    /**
-     * @param array $pairs
-     *
-     * @return array
-     */
-    protected function projectSample(array $pairs)
+    protected function projectSample(array $pairs): array
     {
         // Normalize eigenvectors by eig = eigVectors / eigValues
         $func = function ($eigVal, $eigVect) {
@@ -226,30 +230,5 @@ class KernelPCA extends PCA
 
         // return k.dot(eig)
         return Matrix::dot($pairs, $eig);
-    }
-
-    /**
-     * Transforms the given sample to a lower dimensional vector by using
-     * the variables obtained during the last run of <code>fit</code>.
-     *
-     * @param array $sample
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function transform(array $sample)
-    {
-        if (!$this->fit) {
-            throw new \Exception("KernelPCA has not been fitted with respect to original dataset, please run KernelPCA::fit() first");
-        }
-
-        if (is_array($sample[0])) {
-            throw new \Exception("KernelPCA::transform() accepts only one-dimensional arrays");
-        }
-
-        $pairs = $this->getDistancePairs($sample);
-
-        return $this->projectSample($pairs);
     }
 }

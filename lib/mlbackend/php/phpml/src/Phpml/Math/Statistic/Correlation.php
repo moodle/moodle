@@ -9,17 +9,15 @@ use Phpml\Exception\InvalidArgumentException;
 class Correlation
 {
     /**
-     * @param array|int[]|float[] $x
-     * @param array|int[]|float[] $y
-     *
-     * @return float
+     * @param int[]|float[] $x
+     * @param int[]|float[] $y
      *
      * @throws InvalidArgumentException
      */
-    public static function pearson(array $x, array $y)
+    public static function pearson(array $x, array $y): float
     {
         if (count($x) !== count($y)) {
-            throw InvalidArgumentException::arraySizeNotMatch();
+            throw new InvalidArgumentException('Size of given arrays does not match');
         }
 
         $count = count($x);
@@ -34,12 +32,10 @@ class Correlation
             $a = $x[$i] - $meanX;
             $b = $y[$i] - $meanY;
             $axb += ($a * $b);
-            $a2 += pow($a, 2);
-            $b2 += pow($b, 2);
+            $a2 += $a ** 2;
+            $b2 += $b ** 2;
         }
 
-        $corr = $axb / sqrt((float) ($a2 * $b2));
-
-        return $corr;
+        return $axb / ($a2 * $b2) ** .5;
     }
 }

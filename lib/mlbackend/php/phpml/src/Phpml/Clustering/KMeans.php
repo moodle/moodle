@@ -9,8 +9,9 @@ use Phpml\Exception\InvalidArgumentException;
 
 class KMeans implements Clusterer
 {
-    const INIT_RANDOM = 1;
-    const INIT_KMEANS_PLUS_PLUS = 2;
+    public const INIT_RANDOM = 1;
+
+    public const INIT_KMEANS_PLUS_PLUS = 2;
 
     /**
      * @var int
@@ -22,32 +23,21 @@ class KMeans implements Clusterer
      */
     private $initialization;
 
-    /**
-     * @param int $clustersNumber
-     * @param int $initialization
-     *
-     * @throws InvalidArgumentException
-     */
     public function __construct(int $clustersNumber, int $initialization = self::INIT_KMEANS_PLUS_PLUS)
     {
         if ($clustersNumber <= 0) {
-            throw InvalidArgumentException::invalidClustersNumber();
+            throw new InvalidArgumentException('Invalid clusters number');
         }
 
         $this->clustersNumber = $clustersNumber;
         $this->initialization = $initialization;
     }
 
-    /**
-     * @param array $samples
-     *
-     * @return array
-     */
-    public function cluster(array $samples)
+    public function cluster(array $samples): array
     {
-        $space = new Space(count($samples[0]));
-        foreach ($samples as $sample) {
-            $space->addPoint($sample);
+        $space = new Space(count(reset($samples)));
+        foreach ($samples as $key => $sample) {
+            $space->addPoint($sample, $key);
         }
 
         $clusters = [];
