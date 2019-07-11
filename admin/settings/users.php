@@ -21,6 +21,38 @@ if ($hassiteconfig
     $ADMIN->add('accounts', new admin_externalpage('userbulk', new lang_string('userbulk','admin'), "$CFG->wwwroot/$CFG->admin/user/user_bulk.php", array('moodle/user:update', 'moodle/user:delete')));
     $ADMIN->add('accounts', new admin_externalpage('addnewuser', new lang_string('addnewuser'), "$CFG->wwwroot/user/editadvanced.php?id=-1", 'moodle/user:create'));
 
+    // "User management" settingpage.
+    $temp = new admin_settingpage('usermanagement', new lang_string('usermanagement', 'admin'));
+    if ($ADMIN->fulltree) {
+        $choices = array();
+        $choices['realname'] = new lang_string('fullnameuser');
+        $choices['lastname'] = new lang_string('lastname');
+        $choices['firstname'] = new lang_string('firstname');
+        $choices['username'] = new lang_string('username');
+        $choices['email'] = new lang_string('email');
+        $choices['city'] = new lang_string('city');
+        $choices['country'] = new lang_string('country');
+        $choices['confirmed'] = new lang_string('confirmed', 'admin');
+        $choices['suspended'] = new lang_string('suspended', 'auth');
+        $choices['profile'] = new lang_string('profilefields', 'admin');
+        $choices['courserole'] = new lang_string('courserole', 'filters');
+        $choices['anycourses'] = new lang_string('anycourses', 'filters');
+        $choices['systemrole'] = new lang_string('globalrole', 'role');
+        $choices['cohort'] = new lang_string('idnumber', 'core_cohort');
+        $choices['firstaccess'] = new lang_string('firstaccess', 'filters');
+        $choices['lastaccess'] = new lang_string('lastaccess');
+        $choices['neveraccessed'] = new lang_string('neveraccessed', 'filters');
+        $choices['timemodified'] = new lang_string('lastmodified');
+        $choices['nevermodified'] = new lang_string('nevermodified', 'filters');
+        $choices['auth'] = new lang_string('authentication');
+        $choices['idnumber'] = new lang_string('idnumber');
+        $choices['lastip'] = new lang_string('lastip');
+        $choices['mnethostid'] = new lang_string('mnetidprovider', 'mnet');
+        $temp->add(new admin_setting_configmultiselect('userfiltersdefault', new lang_string('userfiltersdefault', 'admin'),
+            new lang_string('userfiltersdefault_desc', 'admin'), array('realname'), $choices));
+    }
+    $ADMIN->add('accounts', $temp);
+
     // "User default preferences" settingpage.
     $temp = new admin_settingpage('userdefaultpreferences', new lang_string('userdefaultpreferences', 'admin'));
     if ($ADMIN->fulltree) {
