@@ -3639,7 +3639,7 @@ EDITOR.prototype = {
      * @method open_in_panel
      */
     open_in_panel: function(panel) {
-        var drawingcanvas, drawingregion;
+        var drawingcanvas;
 
         this.panel = panel;
         panel.append(this.get('body'));
@@ -3649,9 +3649,6 @@ EDITOR.prototype = {
 
         drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
         this.graphic = new Y.Graphic({render: drawingcanvas});
-
-        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
-        drawingregion.on('scroll', this.move_canvas, this);
 
         if (!this.get('readonly')) {
             drawingcanvas.on('gesturemovestart', this.edit_start, null, this);
@@ -3669,7 +3666,7 @@ EDITOR.prototype = {
      * @method link_handler
      */
     link_handler: function(e) {
-        var drawingcanvas, drawingregion;
+        var drawingcanvas;
         var resize = true;
         e.preventDefault();
 
@@ -3691,9 +3688,6 @@ EDITOR.prototype = {
 
             drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
             this.graphic = new Y.Graphic({render: drawingcanvas});
-
-            drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
-            drawingregion.on('scroll', this.move_canvas, this);
 
             if (!this.get('readonly')) {
                 drawingcanvas.on('gesturemovestart', this.edit_start, null, this);
