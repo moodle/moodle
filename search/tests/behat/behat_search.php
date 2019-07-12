@@ -135,4 +135,14 @@ class behat_search extends behat_base {
 
         set_config('behat_fakeresult', json_encode($outdata), 'core_search');
     }
+
+    /**
+     * Updates the global search index to take account of any added activities.
+     *
+     * @Given /^I update the global search index$/
+     * @throws moodle_exception
+     */
+    public function i_update_the_global_search_index() {
+        \core_search\manager::instance()->index(false);
+    }
 }
