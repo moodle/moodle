@@ -193,8 +193,8 @@ class mod_choice_renderer extends plugin_renderer_base {
                 // Build the select/deselect all for this option.
                 $selectallid = 'select-response-option-' . $optionid;
                 $togglegroup = 'responses response-option-' . $optionid;
-                $selectalltext = get_string('selectall', 'moodle') . ' ' . $headertitle;
-                $deselectalltext = get_string('deselectall', 'moodle') . ' ' . $headertitle;
+                $selectalltext = get_string('selectalloption', 'choice', $headertitle);
+                $deselectalltext = get_string('deselectalloption', 'choice', $headertitle);
                 $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
                     'id' => $selectallid,
                     'name' => $selectallid,
