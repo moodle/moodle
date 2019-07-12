@@ -29,24 +29,24 @@
     margin-left      : 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
 }
 
+.que.ordering ul.sortablelist li.sortableitem.numberingnone {
+    list-style-type  : none;
+    margin-left: 0px;
+}
 .que.ordering ul.sortablelist li.sortableitem.numbering123 {
     list-style-type  : decimal;
 }
 .que.ordering ul.sortablelist li.sortableitem.numberingabc {
     list-style-type  : lower-alpha;
 }
-.que.ordering ul.sortablelist li.sortableitem.numberingABCD {
+.que.ordering ul.sortablelist li.sortableitem.numberingABC {
     list-style-type  : upper-alpha;
 }
 .que.ordering ul.sortablelist li.sortableitem.numberingiii  {
     list-style-type  : lower-roman;
 }
-.que.ordering ul.sortablelist li.sortableitem.numberingIIII {
+.que.ordering ul.sortablelist li.sortableitem.numberingIII {
     list-style-type  : upper-roman;
-}
-.que.ordering ul.sortablelist li.sortableitem.numberingnone {
-    list-style-type  : none;
-    margin-left: 0px;
 }
 
 .que.ordering ul.sortablelist li.sortableitem:focus {

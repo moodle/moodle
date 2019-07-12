@@ -46,8 +46,8 @@ class qtype_ordering_question extends question_graded_automatically {
     /** Show answers in one horizontal line */
     const LAYOUT_HORIZONTAL = 1;
 
-    /** Show answernumbering default */
-    const ANSWER_NUMBERING_DEFAULT = 'none';
+    /** Default value for numberingstyle */
+    const NUMBERING_STYLE_DEFAULT = 'none';
 
     /** @var int Zero grade on any error */
     const GRADING_ALL_OR_NOTHING = -1;
@@ -537,14 +537,14 @@ class qtype_ordering_question extends question_graded_automatically {
                     'selecttype' => self::SELECT_ALL,
                     'selectcount' => 0,
                     'gradingtype' => self::GRADING_ABSOLUTE_POSITION,
-                    'showgradingdetails' => 1,
+                    'showgrading' => 1,
+                    'numberingstyle' => self::NUMBERING_STYLE_DEFAULT,
                     'correctfeedback' => '',
                     'correctfeedbackformat' => FORMAT_MOODLE,
                     'incorrectfeedback' => '',
                     'incorrectfeedbackformat' => FORMAT_MOODLE,
                     'partiallycorrectfeedback' => '',
-                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE,
-                    'answernumbering' => self::ANSWER_NUMBERING_DEFAULT
+                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE
                 );
                 $this->options->id = $DB->insert_record('qtype_ordering_options', $this->options);
             }
@@ -826,5 +826,23 @@ class qtype_ordering_question extends question_graded_automatically {
             self::GRADING_LONGEST_CONTIGUOUS_SUBSET      => get_string('longestcontiguoussubset',    $plugin)
         );
         return self::get_types($types, $type);
+    }
+
+    /**
+     * @param string $style
+     * @return array of the numbering styles supported. For each one, there
+     *      should be a lang string numberingstylexxx in the qtype_ordering
+     *      language file, and a case in the switch statement in number_in_style,
+     *      and it should be listed in the definition of this column in install.xml.
+     */
+    public static function get_numbering_styles($style=null) {
+        $plugin = 'qtype_ordering';
+        $styles = array('none' => get_string('numberingstylenone', $plugin),
+                        'abc'  => get_string('numberingstyleabc',  $plugin),
+                        'ABC'  => get_string('numberingstyleABC',  $plugin),
+                        '123'  => get_string('numberingstyle123',  $plugin),
+                        'iii'  => get_string('numberingstyleiii',  $plugin),
+                        'III'  => get_string('numberingstyleIII',  $plugin));
+        return self::get_types($styles, $style);
     }
 }

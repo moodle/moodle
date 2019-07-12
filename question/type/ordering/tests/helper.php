@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/question/type/ordering/question.php');
 
-
 /**
  * Test helper for the ordering question type.
  *
@@ -70,7 +69,7 @@ class qtype_ordering_test_helper extends question_test_helper {
         $q->options->selectcount = 0;
         $q->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $q->options->showgrading = true;
-        $q->options->answernumbering = qtype_ordering_question::ANSWER_NUMBERING_DEFAULT;
+        $q->options->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
         return $q;
     }
 
@@ -130,7 +129,7 @@ class qtype_ordering_test_helper extends question_test_helper {
         $form->selectcount = 0;
         $form->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $form->showgrading = true;
-        $form->answernumbering = qtype_ordering_question::ANSWER_NUMBERING_DEFAULT;
+        $form->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
 
         $form->countanswers = 6;
         $form->answer = [
@@ -175,7 +174,7 @@ class qtype_ordering_test_helper extends question_test_helper {
         $questiondata->options->selectcount = 0;
         $questiondata->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $questiondata->options->showgrading = true;
-        $questiondata->options->answernumbering = qtype_ordering_question::ANSWER_NUMBERING_DEFAULT;
+        $questiondata->options->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
 
         $questiondata->options->answers = [
             13 => $this->make_answer(13, 'Modular', FORMAT_HTML, 1),
