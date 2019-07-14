@@ -87,7 +87,7 @@ $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Ову страницу видите зато што сте успешно инсталирали и покренули <strong>{$a->packname} {$a->packversion}</strong> пакет на свом серверу. Честитамо!';
 $string['welcomep30'] = 'Ово издање <strong>{$a->installername}</strong> укључује апликације за креирање окружења у којем ће <strong>Moodle</strong> успешно функционисати, конкретно:';
 $string['welcomep40'] = 'Овај пакет обухвата и <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Коришћење свих апликација овог пакета је уређено њиховим лиценцама. Комплетан<strong>{$a->installername}</strong> пакет је <a href="http://www.opensource.org/docs/definition_plain.html">отвореног кода</a> и дистрибуира се под <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> лиценцом.';
+$string['welcomep50'] = 'Коришћење свих апликација овог пакета је уређено њиховим лиценцама. Комплетан<strong>{$a->installername}</strong> пакет је <a href="https://www.opensource.org/docs/definition_plain.html">отвореног кода</a> и дистрибуира се под <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> лиценцом.';
 $string['welcomep60'] = 'Наредне странице ће вас провести кроз неколико једноставних корака током којих ћете конфигурисати и подесити <strong>Moodle</strong> на свом рачунару. Можете прихватити подразумевана подешавања или их, опционо, прилагодити сопственим потребама.';
 $string['welcomep70'] = 'Кликните на дугме за наставак да бисте даље подешавали <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Веб адреса';
