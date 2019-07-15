@@ -3416,5 +3416,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019070400.01);
     }
 
+    if ($oldversion < 2019071800.01) {
+        // Remove the "popup" processor from the list of default processors for the messagecontactrequests notification.
+        $oldloggedinconfig = get_config('message', 'message_provider_moodle_messagecontactrequests_loggedin');
+        $oldloggedoffconfig = get_config('message', 'message_provider_moodle_messagecontactrequests_loggedoff');
+        $newloggedinconfig = implode(',', array_filter(explode(',', $oldloggedinconfig), function($value) {
+            return $value != 'popup';
+        }));
+        $newloggedoffconfig = implode(',', array_filter(explode(',', $oldloggedoffconfig), function($value) {
+            return $value != 'popup';
+        }));
+        set_config('message_provider_moodle_messagecontactrequests_loggedin', $newloggedinconfig, 'message');
+        set_config('message_provider_moodle_messagecontactrequests_loggedoff', $newloggedoffconfig, 'message');
+
+        upgrade_main_savepoint(true, 2019071800.01);
+    }
+
     return true;
 }
