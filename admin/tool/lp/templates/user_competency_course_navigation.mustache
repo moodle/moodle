@@ -38,6 +38,9 @@
 <div class="float-sm-right card card-block p-x-1 p-b-1">
 <p>{{{groupselector}}}</p>
 <form class="user-competency-course-navigation">
+<input type="hidden" name="userid" value="{{userid}}"/>
+<input type="hidden" name="competencyid" value="{{competencyid}}"/>
+<input type="hidden" name="courseid" value="{{courseid}}"/>
 {{#hasusers}}
 <span>
 <label for="user-nav-{{uniqid}}" class="accesshide">{{#str}}jumptouser, tool_lp{{/str}}</label>
