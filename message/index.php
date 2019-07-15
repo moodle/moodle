@@ -42,6 +42,7 @@ $id = optional_param('id', 0, PARAM_INT);
 $user1id = optional_param('user1', $USER->id, PARAM_INT);
 $user2id = optional_param('user2', $id, PARAM_INT);
 $contactsfirst = optional_param('contactsfirst', 0, PARAM_INT);
+$view = optional_param('view', null, PARAM_ALPHANUM);
 
 $url = new moodle_url('/message/index.php');
 if ($id) {
@@ -111,6 +112,8 @@ if ($currentuser) {
         $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'createConversationWithUser', [$user2id]);
     } else if (!empty($conversationid)) {
         $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'showConversation', [$conversationid]);
+    } else if (!empty($view) && $view === 'contactrequests') {
+        $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'showContactRequests');
     } else {
         $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'show');
     }

@@ -230,6 +230,11 @@ function(
             Router.go(Routes.VIEW_SETTINGS);
         });
 
+        PubSub.subscribe(Events.SHOW_CONTACT_REQUESTS, function() {
+            show(root);
+            Router.go(Routes.VIEW_CONTACTS, 'requests');
+        });
+
         PubSub.subscribe(Events.PREFERENCES_UPDATED, function(preferences) {
             var filteredPreferences = preferences.filter(function(preference) {
                 return preference.type == 'message_entertosend';
