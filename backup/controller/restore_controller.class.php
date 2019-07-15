@@ -332,6 +332,21 @@ class restore_controller extends base_controller {
     public function get_plan() {
         return $this->plan;
     }
+    /**
+     * Gets the value for the requested setting
+     *
+     * @param string $name
+     * @param bool $default
+     * @return mixed
+     */
+    public function get_setting_value($name, $default = false) {
+        try {
+            return $this->get_plan()->get_setting($name)->get_value();
+        } catch (Exception $e) {
+            debugging('Failed to find the setting: '.$name, DEBUG_DEVELOPER);
+            return $default;
+        }
+    }
 
     public function get_info() {
         return $this->info;
@@ -341,6 +356,14 @@ class restore_controller extends base_controller {
         // Basic/initial prevention against time/memory limits
         core_php_time_limit::raise(1 * 60 * 60); // 1 hour for 1 course initially granted
         raise_memory_limit(MEMORY_EXTRA);
+
+        // Do course cleanup precheck, if required. This was originally in restore_ui. Moved to handle async backup/restore.
+        if ($this->get_target() == backup::TARGET_CURRENT_DELETING || $this->get_target() == backup::TARGET_EXISTING_DELETING) {
+            $options = array();
+            $options['keep_roles_and_enrolments'] = $this->get_setting_value('keep_roles_and_enrolments');
+            $options['keep_groups_and_groupings'] = $this->get_setting_value('keep_groups_and_groupings');
+            restore_dbops::delete_course_content($this->get_courseid(), $options);
+        }
         // If this is not a course restore or single activity restore (e.g. duplicate), inform the plan we are not
         // including all the activities for sure. This will affect any
         // task/step executed conditionally to stop processing information
