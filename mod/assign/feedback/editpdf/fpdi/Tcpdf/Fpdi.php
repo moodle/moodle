@@ -22,7 +22,7 @@ use setasign\Fpdi\PdfParser\Type\PdfTypeException;
  *
  * @package setasign\Fpdi
  */
-class Fpdi extends \TCPDF
+class Fpdi extends \pdf
 {
     use FpdiTrait {
         writePdfType as fpdiWritePdfType;
