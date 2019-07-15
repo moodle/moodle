@@ -1369,8 +1369,13 @@ class question_attempt {
 
             } else {
                 // This is the normal case. Replay the next step of the attempt.
-                $this->process_action($step->get_submitted_data(),
-                        $step->get_timecreated(), $step->get_user_id(), $step->get_id());
+                if ($step === $oldqa->autosavedstep) {
+                    $this->process_autosave($step->get_submitted_data(),
+                            $step->get_timecreated(), $step->get_user_id());
+                } else {
+                    $this->process_action($step->get_submitted_data(),
+                            $step->get_timecreated(), $step->get_user_id(), $step->get_id());
+                }
             }
         }
 
