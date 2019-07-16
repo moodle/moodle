@@ -1470,10 +1470,13 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         // 5 users * 2 forums * 1 file in each forum
         // Original total: 10
         // One post with file removed.
-        $this->assertCount(0, $DB->get_records_select('files', "itemid {$postinsql}", $postinparams));
+        $componentsql = "component = 'mod_forum' AND ";
+        $this->assertCount(0, $DB->get_records_select('files',
+            "{$componentsql} itemid {$postinsql}", $postinparams));
 
         // Files for the other posts should remain.
-        $this->assertCount(18, $DB->get_records_select('files', "filename <> '.' AND itemid {$otherpostinsql}", $otherpostinparams));
+        $this->assertCount(18, $DB->get_records_select('files',
+            "{$componentsql} filename <> '.' AND itemid {$otherpostinsql}", $otherpostinparams));
     }
 
     /**
@@ -1678,11 +1681,14 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         // 5 users * 2 forums * 1 file in each forum
         // Original total: 10
         // One post with file removed.
-        $this->assertCount(0, $DB->get_records_select('files', "itemid {$postinsql}", $postinparams));
+        $componentsql = "component = 'mod_forum' AND ";
+        $this->assertCount(0, $DB->get_records_select('files',
+            "{$componentsql} itemid {$postinsql}", $postinparams));
 
         // Files for the other posts should remain.
         $this->assertCount(18,
-                $DB->get_records_select('files', "filename <> '.' AND itemid {$otherpostinsql}", $otherpostinparams));
+                $DB->get_records_select('files',
+                    "{$componentsql} filename <> '.' AND itemid {$otherpostinsql}", $otherpostinparams));
     }
 
     /**
