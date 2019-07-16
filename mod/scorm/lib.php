@@ -1660,6 +1660,14 @@ function mod_scorm_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
         // The scorm has closed so the user can no longer submit anything.
         return null;

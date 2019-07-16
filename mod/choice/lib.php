@@ -1166,6 +1166,14 @@ function mod_choice_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
     $now = time();
 
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < $now) {
