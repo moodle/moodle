@@ -124,7 +124,7 @@ class converter implements \core_files\converter_interface {
         $uploadurl;
         // Google returns a location header with the location for the upload.
         foreach ($headers as $header) {
-            if (strpos($header, 'Location:') === 0) {
+            if (stripos($header, 'Location:') === 0) {
                 $uploadurl = trim(substr($header, strpos($header, ':') + 1));
             }
         }
