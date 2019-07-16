@@ -47,7 +47,7 @@ function(
      */
     var registerCalendarEventListeners = function(root) {
         var body = $('body');
-        body.on([CalendarEvents.monthChanged, CalendarEvents.dayChanged], function(e, year, month, courseId, categoryId) {
+        body.on([CalendarEvents.monthChanged, CalendarEvents.dayChanged].join(' '), function(e, year, month, courseId, categoryId) {
             // We have to use a queue here because the calling code is decoupled from these listeners.
             // It's possible for the event to be called multiple times before one call is fully resolved.
             root.queue(function(next) {
