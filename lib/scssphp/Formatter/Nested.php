@@ -2,17 +2,18 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2018 Leaf Corcoran
+ * @copyright 2012-2019 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
- * @link http://leafo.github.io/scssphp
+ * @link http://scssphp.github.io/scssphp
  */
 
-namespace Leafo\ScssPhp\Formatter;
+namespace ScssPhp\ScssPhp\Formatter;
 
-use Leafo\ScssPhp\Formatter;
-use Leafo\ScssPhp\Formatter\OutputBlock;
+use ScssPhp\ScssPhp\Formatter;
+use ScssPhp\ScssPhp\Formatter\OutputBlock;
+use ScssPhp\ScssPhp\Type;
 
 /**
  * Nested formatter
@@ -67,44 +68,17 @@ class Nested extends Formatter
         }
 
         $this->write($inner . implode($glue, $block->lines));
-
-        if (! empty($block->children)) {
-            $this->write($this->break);
-        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function blockSelectors(OutputBlock $block)
+    protected function hasFlatChild($block)
     {
-        $inner = $this->indentStr();
-
-        $this->write($inner
-            . implode($this->tagSeparator, $block->selectors)
-            . $this->open . $this->break);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function blockChildren(OutputBlock $block)
-    {
-        foreach ($block->children as $i => $child) {
-            $this->block($child);
-
-            if ($i < count($block->children) - 1) {
-                $this->write($this->break);
-
-                if (isset($block->children[$i + 1])) {
-                    $next = $block->children[$i + 1];
-
-                    if ($next->depth === max($block->depth, 1) && $child->depth >= $next->depth) {
-                        $this->write($this->break);
-                    }
-                }
+        foreach ($block->children as $child) {
+            if (empty($child->selectors)) {
+                return true;
             }
         }
+
+        return false;
     }
 
     /**
@@ -112,8 +86,38 @@ class Nested extends Formatter
      */
     protected function block(OutputBlock $block)
     {
+        static $depths;
+        static $downLevel;
+        static $closeBlock;
+        static $previousEmpty;
+        static $previousHasSelector;
+
         if ($block->type === 'root') {
-            $this->adjustAllChildren($block);
+            $depths = [ 0 ];
+            $downLevel = '';
+            $closeBlock = '';
+            $this->depth = 0;
+            $previousEmpty = false;
+            $previousHasSelector = false;
+        }
+
+        $isMediaOrDirective = in_array($block->type, [Type::T_DIRECTIVE, Type::T_MEDIA]);
+        $isSupport = ($block->type === Type::T_DIRECTIVE
+            && $block->selectors && strpos(implode('', $block->selectors), '@supports') !== false);
+
+        while ($block->depth < end($depths) || ($block->depth == 1 && end($depths) == 1)) {
+            array_pop($depths);
+            $this->depth--;
+
+            if (!$this->depth && ($block->depth <= 1 || (!$this->indentLevel && $block->type === Type::T_COMMENT)) &&
+                (($block->selectors && ! $isMediaOrDirective) || $previousHasSelector)
+            ) {
+                $downLevel = $this->break;
+            }
+
+            if (empty($block->lines) && empty($block->children)) {
+                $previousEmpty = true;
+            }
         }
 
         if (empty($block->lines) && empty($block->children)) {
@@ -122,80 +126,87 @@ class Nested extends Formatter
 
         $this->currentBlock = $block;
 
+        if (! empty($block->lines) || (! empty($block->children) && ($this->depth < 1 || $isSupport))) {
+            if ($block->depth > end($depths)) {
+                if (! $previousEmpty || $this->depth < 1) {
+                    $this->depth++;
+                    $depths[] = $block->depth;
+                } else {
+                    // keep the current depth unchanged but take the block depth as a new reference for following blocks
+                    array_pop($depths);
+                    $depths[] = $block->depth;
+                }
+            }
+        }
 
-        $this->depth = $block->depth;
+        $previousEmpty = ($block->type === Type::T_COMMENT);
+        $previousHasSelector = false;
 
         if (! empty($block->selectors)) {
+            if ($closeBlock) {
+                $this->write($closeBlock);
+                $closeBlock = '';
+            }
+
+            if ($downLevel) {
+                $this->write($downLevel);
+                $downLevel = '';
+            }
+
             $this->blockSelectors($block);
 
             $this->indentLevel++;
         }
 
         if (! empty($block->lines)) {
+            if ($closeBlock) {
+                $this->write($closeBlock);
+                $closeBlock = '';
+            }
+
+            if ($downLevel) {
+                $this->write($downLevel);
+                $downLevel = '';
+            }
+
             $this->blockLines($block);
+            $closeBlock = $this->break;
         }
 
         if (! empty($block->children)) {
-            $this->blockChildren($block);
+            if ($this->depth>0 && ($isMediaOrDirective || ! $this->hasFlatChild($block))) {
+                array_pop($depths);
+                $this->depth--;
+                $this->blockChildren($block);
+                $this->depth++;
+                $depths[] = $block->depth;
+            } else {
+                $this->blockChildren($block);
+            }
+        }
+
+        // reclear to not be spoiled by children if T_DIRECTIVE
+        if ($block->type === Type::T_DIRECTIVE) {
+            $previousHasSelector = false;
         }
 
         if (! empty($block->selectors)) {
             $this->indentLevel--;
 
             $this->write($this->close);
+            $closeBlock = $this->break;
+
+            if ($this->depth > 1 && ! empty($block->children)) {
+                array_pop($depths);
+                $this->depth--;
+            }
+            if (! $isMediaOrDirective) {
+                $previousHasSelector = true;
+            }
         }
 
         if ($block->type === 'root') {
             $this->write($this->break);
-        }
-    }
-
-    /**
-     * Adjust the depths of all children, depth first
-     *
-     * @param \Leafo\ScssPhp\Formatter\OutputBlock $block
-     */
-    private function adjustAllChildren(OutputBlock $block)
-    {
-        // flatten empty nested blocks
-        $children = [];
-
-        foreach ($block->children as $i => $child) {
-            if (empty($child->lines) && empty($child->children)) {
-                if (isset($block->children[$i + 1])) {
-                    $block->children[$i + 1]->depth = $child->depth;
-                }
-
-                continue;
-            }
-
-            $children[] = $child;
-        }
-
-        $count = count($children);
-
-        for ($i = 0; $i < $count; $i++) {
-            $depth = $children[$i]->depth;
-            $j = $i + 1;
-
-            if (isset($children[$j]) && $depth < $children[$j]->depth) {
-                $childDepth = $children[$j]->depth;
-
-                for (; $j < $count; $j++) {
-                    if ($depth < $children[$j]->depth && $childDepth >= $children[$j]->depth) {
-                        $children[$j]->depth = $depth + 1;
-                    }
-                }
-            }
-        }
-
-        $block->children = $children;
-
-        // make relative to parent
-        foreach ($block->children as $child) {
-            $this->adjustAllChildren($child);
-
-            $child->depth = $child->depth - $block->depth;
         }
     }
 }

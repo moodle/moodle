@@ -19,6 +19,7 @@ information provided here is intended especially for developers.
     a button. Action elements which perform actions on the selected checkboxes can also be enabled/disabled depending on whether
     at least a single checkbox item is selected or not.
 * Final deprecation (removal) of the core/modal_confirm dialogue.
+* Upgrade scssphp to v1.0.2, This involves renaming classes from Leafo => ScssPhp as the repo has changed.
 
 === 3.7 ===
 

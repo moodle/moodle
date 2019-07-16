@@ -1,7 +1,7 @@
 scssphp
 -------
 
-Downloaded from: https://github.com/leafo/scssphp
+Downloaded from: https://github.com/scssphp/scssphp
 
 Import procedure:
 
