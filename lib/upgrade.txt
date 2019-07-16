@@ -18,6 +18,7 @@ information provided here is intended especially for developers.
   - This allows developers to easily output groups of checkboxes that can be toggled by master controls in the form of a checkbox or
     a button. Action elements which perform actions on the selected checkboxes can also be enabled/disabled depending on whether
     at least a single checkbox item is selected or not.
+* Final deprecation (removal) of the core/modal_confirm dialogue.
 
 === 3.7 ===
 
