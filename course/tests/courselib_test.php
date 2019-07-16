@@ -745,6 +745,63 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertGreaterThan($oldtimemodified, $newtimemodified);
     }
 
+    /**
+     * Relative dates mode settings provider for course creation.
+     */
+    public function create_course_relative_dates_provider() {
+        return [
+            [0, 0, 0],
+            [0, 1, 0],
+            [1, 0, 0],
+            [1, 1, 1],
+        ];
+    }
+
+    /**
+     * Test create_course by attempting to change the relative dates mode.
+     *
+     * @dataProvider create_course_relative_dates_provider
+     * @param int $setting The value for the 'enablecourserelativedates' admin setting.
+     * @param int $mode The value for the course's 'relativedatesmode' field.
+     * @param int $expectedvalue The expected value of the 'relativedatesmode' field after course creation.
+     */
+    public function test_relative_dates_mode_for_course_creation($setting, $mode, $expectedvalue) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('enablecourserelativedates', $setting);
+
+        // Generate a course with relative dates mode set to 1.
+        $course = $this->getDataGenerator()->create_course(['relativedatesmode' => $mode]);
+
+        // Verify that the relative dates match what's expected.
+        $relativedatesmode = $DB->get_field('course', 'relativedatesmode', ['id' => $course->id]);
+        $this->assertEquals($expectedvalue, $relativedatesmode);
+    }
+
+    /**
+     * Test update_course by attempting to change the relative dates mode.
+     */
+    public function test_relative_dates_mode_for_course_update() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('enablecourserelativedates', 1);
+
+        // Generate a course with relative dates mode set to 1.
+        $course = $this->getDataGenerator()->create_course(['relativedatesmode' => 1]);
+
+        // Attempt to update the course with a changed relativedatesmode.
+        $course->relativedatesmode = 0;
+        update_course($course);
+
+        // Verify that the relative dates mode has not changed.
+        $relativedatesmode = $DB->get_field('course', 'relativedatesmode', ['id' => $course->id]);
+        $this->assertEquals(1, $relativedatesmode);
+    }
+
     public function test_course_add_cm_to_section() {
         global $DB;
         $this->resetAfterTest(true);
