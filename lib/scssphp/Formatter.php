@@ -126,9 +126,7 @@ abstract class Formatter
             return;
         }
 
-        if (($count = count($lines))
-            && substr($lines[$count - 1], -1) === ';'
-        ) {
+        if (($count = count($lines)) && substr($lines[$count - 1], -1) === ';') {
             $lines[$count - 1] = substr($lines[$count - 1], 0, -1);
         }
     }
@@ -218,6 +216,30 @@ abstract class Formatter
     }
 
     /**
+     * Test and clean safely empty children
+     * @param \ScssPhp\ScssPhp\Formatter\OutputBlock $block
+     * @return bool
+     */
+    protected function testEmptyChildren($block)
+    {
+        $isEmpty = empty($block->lines);
+
+        if ($block->children) {
+            foreach ($block->children as $k => &$child) {
+                if (! $this->testEmptyChildren($child)) {
+                    $isEmpty = false;
+                } else {
+                    if ($child->type === Type::T_MEDIA || $child->type === Type::T_DIRECTIVE) {
+                        $child->children = [];
+                        $child->selectors = null;
+                    }
+                }
+            }
+        }
+        return $isEmpty;
+    }
+
+    /**
      * Entry point to formatting a block
      *
      * @api
@@ -236,6 +258,8 @@ abstract class Formatter
             $this->currentColumn = 0;
             $this->sourceMapGenerator = $sourceMapGenerator;
         }
+
+        $this->testEmptyChildren($block);
 
         ob_start();
 

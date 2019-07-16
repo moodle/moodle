@@ -148,10 +148,10 @@ class Number extends Node implements \ArrayAccess
             return $this->sourceLine !== null;
         }
 
-        if ($offset === -1
-            || $offset === 0
-            || $offset === 1
-            || $offset === 2
+        if ($offset === -1 ||
+            $offset === 0 ||
+            $offset === 1 ||
+            $offset === 2
         ) {
             return true;
         }
