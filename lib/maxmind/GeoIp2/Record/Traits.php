@@ -32,18 +32,32 @@ namespace GeoIp2\Record;
  * running on. If the system is behind a NAT, this may differ from the IP
  * address locally assigned to it. This attribute is returned by all end
  * points.
+ * @property-read bool $isAnonymous This is true if the IP address belongs to
+ * any sort of anonymous network. This property is only available from GeoIP2
+ * Precision Insights.
  * @property-read bool $isAnonymousProxy *Deprecated.* Please see our
  * {@link * https://www.maxmind.com/en/geoip2-anonymous-ip-database GeoIP2
  * Anonymous IP database} to determine whether the IP address is used by an
  * anonymizing service.
+ * @property-read bool $isAnonymousVpn This is true if the IP address belongs to
+ * an anonymous VPN system. This property is only available from GeoIP2
+ * Precision Insights.
+ * @property-read bool $isHostingProvider This is true if the IP address belongs
+ * to a hosting provider. This property is only available from GeoIP2
+ * Precision Insights.
  * @property-read bool $isLegitimateProxy This attribute is true if MaxMind
  * believes this IP address to be a legitimate proxy, such as an internal
  * VPN used by a corporation. This attribute is only available in the GeoIP2
  * Enterprise database.
+ * @property-read bool $isPublicProxy This is true if the IP address belongs to
+ * a public proxy. This property is only available from GeoIP2 Precision
+ * Insights.
  * @property-read bool $isSatelliteProvider *Deprecated.* Due to the
  * increased coverage by mobile carriers, very few satellite providers now
  * serve multiple countries. As a result, the output does not provide
  * sufficiently relevant data for us to maintain it.
+ * @property-read bool $isTorExitNode This is true if the IP address is a Tor
+ * exit node. This property is only available from GeoIP2 Precision Insights.
  * @property-read string|null $isp The name of the ISP associated with the IP
  * address. This attribute is only available from the City and Insights web
  * services and the GeoIP2 Enterprise database.
@@ -84,11 +98,16 @@ class Traits extends AbstractRecord
         'autonomousSystemOrganization',
         'connectionType',
         'domain',
-        'isAnonymousProxy',
-        'isLegitimateProxy',
-        'isSatelliteProvider',
-        'isp',
         'ipAddress',
+        'isAnonymous',
+        'isAnonymousProxy',
+        'isAnonymousVpn',
+        'isHostingProvider',
+        'isLegitimateProxy',
+        'isp',
+        'isPublicProxy',
+        'isSatelliteProvider',
+        'isTorExitNode',
         'organization',
         'userType',
     ];
