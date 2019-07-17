@@ -30,6 +30,8 @@
 }}
 <div class="float-right card p-2">
 <form class="user-competency-course-navigation">
+<input type="hidden" name="courseid" value="{{courseid}}"/>
+<input type="hidden" name="mod" value="{{moduleid}}"/>
 {{#hasmodules}}
 <span>
 <label for="module-nav-{{uniqid}}" class="accesshide">{{#str}}filterbyactivity, tool_lp{{/str}}</label>

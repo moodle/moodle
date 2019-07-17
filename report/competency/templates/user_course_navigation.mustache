@@ -25,6 +25,9 @@
 <div class="float-right card p-x-1 p-b-1">
 <p>{{{groupselector}}}</p>
 <form class="user-competency-course-navigation">
+<input type="hidden" name="user" value="{{userid}}"/>
+<input type="hidden" name="id" value="{{courseid}}"/>
+<input type="hidden" name="mod" value="{{moduleid}}"/>
 {{#hasusers}}
 <span>
 <label for="user-nav-{{uniqid}}" class="accesshide">{{#str}}jumptouser, tool_lp{{/str}}</label>
