@@ -262,7 +262,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                             $slavecheckbox = new \core\output\checkbox_toggleall($togglegroup, false, [
                                 'id' => $checkboxid,
                                 'name' => $checkboxname,
-                                'class' => 'mr-1',
+                                'classes' => 'mr-1',
                                 'value' => $checkboxvalue,
                                 'label' => $userfullname . ' ' . $options->text,
                                 'labelclasses' => 'accesshide',
