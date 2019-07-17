@@ -22,3 +22,8 @@ By Adrian Greeve <adrian@moodle.com>
 ==========
 Updated to version 1.5.0 (MDL-60236)
 By Ankit Agarwal <ankit.agrr@gmail.com>
+
+2019/06/18
+==========
+Updated to version 1.5.2 (MDL-65750)
+By Simey Lameze <simey@moodle.com>

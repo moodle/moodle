@@ -145,6 +145,14 @@ class SimplePie_Parse_Date
 		'Παρ' => 5,
 		'Σαβ' => 6,
 		'Κυρ' => 7,
+		// Russian
+		'Пн.' => 1,
+		'Вт.' => 2,
+		'Ср.' => 3,
+		'Чт.' => 4,
+		'Пт.' => 5,
+		'Сб.' => 6,
+		'Вс.' => 7,
 	);
 
 	/**
@@ -289,7 +297,33 @@ class SimplePie_Parse_Date
 		'Σεπ' => 9,
 		'Οκτ' => 10,
 		'Νοέ' => 11,
-		'Δεκ' => 12,
+		'Δεκ' => 12,		
+		// Russian
+		'Янв' => 1,
+		'января' => 1,
+		'Фев' => 2,
+		'февраля' => 2,
+		'Мар' => 3,
+		'марта' => 3,
+		'Апр' => 4,
+		'апреля' => 4,
+		'Май' => 5,
+		'мая' => 5,
+		'Июн' => 6,
+		'июня' => 6,
+		'Июл' => 7,
+		'июля' => 7,
+		'Авг' => 8,
+		'августа' => 8,
+		'Сен' => 9,
+		'сентября' => 9,
+		'Окт' => 10,
+		'октября' => 10,
+		'Ноя' => 11,
+		'ноября' => 11,
+		'Дек' => 12,
+		'декабря' => 12,
+
 	);
 
 	/**
@@ -694,10 +728,8 @@ class SimplePie_Parse_Date
 
 			return gmmktime($match[4], $match[5], $second, $match[2], $match[3], $match[1]) - $timezone;
 		}
-		else
-		{
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -848,10 +880,8 @@ class SimplePie_Parse_Date
 
 			return gmmktime($match[5], $match[6], $second, $month, $match[2], $match[4]) - $timezone;
 		}
-		else
-		{
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -913,10 +943,8 @@ class SimplePie_Parse_Date
 
 			return gmmktime($match[5], $match[6], $match[7], $month, $match[2], $match[4]) - $timezone;
 		}
-		else
-		{
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -955,10 +983,8 @@ class SimplePie_Parse_Date
 			$month = $this->month[strtolower($match[2])];
 			return gmmktime($match[4], $match[5], $match[6], $month, $match[3], $match[7]);
 		}
-		else
-		{
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -974,10 +1000,7 @@ class SimplePie_Parse_Date
 		{
 			return false;
 		}
-		else
-		{
-			return $strtotime;
-		}
+
+		return $strtotime;
 	}
 }
-
