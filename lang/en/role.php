@@ -225,6 +225,7 @@ $string['errorbadroleshortname'] = 'Incorrect role short name';
 $string['errorexistsrolename'] = 'Role name already exists';
 $string['errorexistsroleshortname'] = 'Role name already exists';
 $string['errorroleshortnametoolong'] = 'The short name must not exceed 100 characters';
+$string['eventcapabilityassigned'] = 'Capability assigned';
 $string['eventroleallowassignupdated'] = 'Allow role assignment';
 $string['eventroleallowoverrideupdated'] = 'Allow role override';
 $string['eventroleallowswitchupdated'] = 'Allow role switch';

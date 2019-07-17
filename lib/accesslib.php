@@ -1379,6 +1379,18 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         }
     }
 
+    // Trigger capability_assigned event.
+    \core\event\capability_assigned::create([
+        'userid' => $cap->modifierid,
+        'context' => $context,
+        'objectid' => $roleid,
+        'other' => [
+            'capability' => $capability,
+            'oldpermission' => $existing->permission ?? CAP_INHERIT,
+            'permission' => $permission
+        ]
+    ])->trigger();
+
     // Reset any cache of this role, including MUC.
     accesslib_clear_role_cache($roleid);
 
