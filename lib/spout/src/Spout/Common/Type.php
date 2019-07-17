@@ -5,8 +5,6 @@ namespace Box\Spout\Common;
 /**
  * Class Type
  * This class references the supported types
- *
- * @api
  */
 abstract class Type
 {

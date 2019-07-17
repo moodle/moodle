@@ -3,34 +3,20 @@
 namespace Box\Spout\Reader\ODS;
 
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Reader\AbstractReader;
+use Box\Spout\Reader\ODS\Creator\InternalEntityFactory;
+use Box\Spout\Reader\ReaderAbstract;
 
 /**
  * Class Reader
  * This class provides support to read data from a ODS file
- *
- * @package Box\Spout\Reader\ODS
  */
-class Reader extends AbstractReader
+class Reader extends ReaderAbstract
 {
     /** @var \ZipArchive */
     protected $zip;
 
     /** @var SheetIterator To iterator over the ODS sheets */
     protected $sheetIterator;
-
-    /**
-     * Returns the reader's current options
-     *
-     * @return ReaderOptions
-     */
-    protected function getOptions()
-    {
-        if (!isset($this->options)) {
-            $this->options = new ReaderOptions();
-        }
-        return $this->options;
-    }
 
     /**
      * Returns whether stream wrappers are supported
@@ -46,16 +32,21 @@ class Reader extends AbstractReader
      * Opens the file at the given file path to make it ready to be read.
      *
      * @param  string $filePath Path of the file to be read
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the file at the given path or its content cannot be read
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
+     * @return void
      */
     protected function openReader($filePath)
     {
-        $this->zip = new \ZipArchive();
+        /** @var InternalEntityFactory $entityFactory */
+        $entityFactory = $this->entityFactory;
+
+        $this->zip = $entityFactory->createZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            $this->sheetIterator = new SheetIterator($filePath, $this->getOptions());
+            /** @var InternalEntityFactory $entityFactory */
+            $entityFactory = $this->entityFactory;
+            $this->sheetIterator = $entityFactory->createSheetIterator($filePath, $this->optionsManager);
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }

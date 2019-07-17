@@ -228,7 +228,7 @@
     <location>spout</location>
     <name>Spout</name>
     <license>Apache</license>
-    <version>2.7.3</version>
+    <version>3.0.1</version>
     <licenseversion>2.0</licenseversion>
   </library>
   <library>

@@ -6,8 +6,6 @@ use Box\Spout\Reader\Exception\XMLProcessingException;
 
 /**
  * Trait XMLInternalErrorsHelper
- *
- * @package Box\Spout\Reader\Wrapper
  */
 trait XMLInternalErrorsHelper
 {
@@ -30,8 +28,8 @@ trait XMLInternalErrorsHelper
      * Throws an XMLProcessingException if an error occured.
      * It also always resets the "libxml_use_internal_errors" setting back to its initial value.
      *
-     * @return void
      * @throws \Box\Spout\Reader\Exception\XMLProcessingException
+     * @return void
      */
     protected function resetXMLInternalErrorsSettingAndThrowIfXMLErrorOccured()
     {
@@ -57,7 +55,7 @@ trait XMLInternalErrorsHelper
      * Returns the error message for the last XML error that occured.
      * @see libxml_get_last_error
      *
-     * @return String|null Last XML error message or null if no error
+     * @return string|null Last XML error message or null if no error
      */
     private function getLastXMLErrorMessage()
     {
@@ -78,5 +76,4 @@ trait XMLInternalErrorsHelper
     {
         libxml_use_internal_errors($this->initialUseInternalErrorsValue);
     }
-
 }

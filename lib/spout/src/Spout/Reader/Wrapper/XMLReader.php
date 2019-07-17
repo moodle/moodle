@@ -1,15 +1,11 @@
 <?php
 
 namespace Box\Spout\Reader\Wrapper;
-use DOMNode;
-
 
 /**
  * Class XMLReader
  * Wrapper around the built-in XMLReader
  * @see \XMLReader
- *
- * @package Box\Spout\Reader\Wrapper
  */
 class XMLReader extends \XMLReader
 {
@@ -49,7 +45,10 @@ class XMLReader extends \XMLReader
      */
     public function getRealPathURIForFileInZip($zipFilePath, $fileInsideZipPath)
     {
-        return (self::ZIP_WRAPPER . realpath($zipFilePath) . '#' . $fileInsideZipPath);
+        // The file path should not start with a '/', otherwise it won't be found
+        $fileInsideZipPathWithoutLeadingSlash = ltrim($fileInsideZipPath, '/');
+
+        return (self::ZIP_WRAPPER . realpath($zipFilePath) . '#' . $fileInsideZipPathWithoutLeadingSlash);
     }
 
     /**
@@ -81,8 +80,8 @@ class XMLReader extends \XMLReader
      * Move to next node in document
      * @see \XMLReader::read
      *
-     * @return bool TRUE on success or FALSE on failure
      * @throws \Box\Spout\Reader\Exception\XMLProcessingException If an error/warning occurred
+     * @return bool TRUE on success or FALSE on failure
      */
     public function read()
     {
@@ -99,8 +98,8 @@ class XMLReader extends \XMLReader
      * Read until the element with the given name is found, or the end of the file.
      *
      * @param string $nodeName Name of the node to find
-     * @return bool TRUE on success or FALSE on failure
      * @throws \Box\Spout\Reader\Exception\XMLProcessingException If an error/warning occurred
+     * @return bool TRUE on success or FALSE on failure
      */
     public function readUntilNodeFound($nodeName)
     {
@@ -116,9 +115,9 @@ class XMLReader extends \XMLReader
      * Move cursor to next node skipping all subtrees
      * @see \XMLReader::next
      *
-     * @param string|void $localName The name of the next node to move to
-     * @return bool TRUE on success or FALSE on failure
+     * @param string|null $localName The name of the next node to move to
      * @throws \Box\Spout\Reader\Exception\XMLProcessingException If an error/warning occurred
+     * @return bool TRUE on success or FALSE on failure
      */
     public function next($localName = null)
     {
@@ -137,7 +136,7 @@ class XMLReader extends \XMLReader
      */
     public function isPositionedOnStartingNode($nodeName)
     {
-        return $this->isPositionedOnNode($nodeName, XMLReader::ELEMENT);
+        return $this->isPositionedOnNode($nodeName, self::ELEMENT);
     }
 
     /**
@@ -146,7 +145,7 @@ class XMLReader extends \XMLReader
      */
     public function isPositionedOnEndingNode($nodeName)
     {
-        return $this->isPositionedOnNode($nodeName, XMLReader::END_ELEMENT);
+        return $this->isPositionedOnNode($nodeName, self::END_ELEMENT);
     }
 
     /**
