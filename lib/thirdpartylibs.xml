@@ -198,7 +198,7 @@
     <location>amd/src/mustache.js</location>
     <name>Mustache.js</name>
     <license>MIT</license>
-    <version>2.3.0</version>
+    <version>3.0.1</version>
   </library>
   <library>
     <location>graphlib.php</location>
