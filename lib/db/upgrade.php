@@ -3402,5 +3402,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019062900.00);
     }
 
+    if ($oldversion < 2019070400.01) {
+
+        $basecolors = ['#81ecec', '#74b9ff', '#a29bfe', '#dfe6e9', '#00b894',
+            '#0984e3', '#b2bec3', '#fdcb6e', '#fd79a8', '#6c5ce7'];
+
+        $colornr = 1;
+        foreach ($basecolors as $color) {
+            set_config('coursecolor' .  $colornr, $color, 'core_admin');
+            $colornr++;
+        }
+
+        upgrade_main_savepoint(true, 2019070400.01);
+    }
+
     return true;
 }
