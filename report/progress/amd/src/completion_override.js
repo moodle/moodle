@@ -126,9 +126,9 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
                     {key: 'areyousureoverridecompletion', component: 'completion', param: strings[0]}
                 ]);
             }).then(function(strings) {
-                // Create a yes/no modal.
+                // Create a save/cancel modal.
                 return ModalFactory.create({
-                    type: ModalFactory.types.CONFIRM,
+                    type: ModalFactory.types.SAVE_CANCEL,
                     title: strings[0],
                     body: strings[1],
                 });
@@ -136,7 +136,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
                 // Now set up the handlers for the confirmation or cancellation of the modal, and show it.
 
                 // Confirmation only.
-                modal.getRoot().on(ModalEvents.yes, function() {
+                modal.getRoot().on(ModalEvents.save, function() {
                     setOverride(override);
                 });
 
