@@ -131,6 +131,157 @@ class core_course_restore_testcase extends advanced_testcase {
         return $this->restore_course($backupid, 0, $userid);
     }
 
+    /**
+     * Restore a course.
+     *
+     * @param int $backupid The backup ID.
+     * @param int $courseid The course ID to restore in, or 0.
+     * @param int $userid The ID of the user performing the restore.
+     * @param int $target THe target of the restore.
+     *
+     * @return stdClass The updated course object.
+     */
+    protected function async_restore_course($backupid, $courseid, $userid, $target) {
+        global $DB;
+
+        if (!$courseid) {
+            $target = backup::TARGET_NEW_COURSE;
+            $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+            $courseid = restore_dbops::create_new_course('Tmp', 'tmp', $categoryid);
+        }
+
+        $rc = new restore_controller($backupid, $courseid, backup::INTERACTIVE_NO, backup::MODE_ASYNC, $userid, $target);
+        $target == backup::TARGET_NEW_COURSE ?: $rc->get_plan()->get_setting('overwrite_conf')->set_value(true);
+        $this->assertTrue($rc->execute_precheck());
+
+        $restoreid = $rc->get_restoreid();
+        $rc->destroy();
+
+        // Create the adhoc task.
+        $asynctask = new \core\task\asynchronous_restore_task();
+        $asynctask->set_blocking(false);
+        $asynctask->set_custom_data(array('backupid' => $restoreid));
+        \core\task\manager::queue_adhoc_task($asynctask);
+
+        // We are expecting trace output during this test.
+        $this->expectOutputRegex("/$restoreid/");
+
+        // Execute adhoc task.
+        $now = time();
+        $task = \core\task\manager::get_next_adhoc_task($now);
+        $this->assertInstanceOf('\\core\\task\\asynchronous_restore_task', $task);
+        $task->execute();
+        \core\task\manager::adhoc_task_complete($task);
+
+        $course = $DB->get_record('course', array('id' => $rc->get_courseid()));
+
+        return $course;
+    }
+
+    /**
+     * Restore a course to an existing course.
+     *
+     * @param int $backupid The backup ID.
+     * @param int $courseid The course ID to restore in.
+     * @param int $userid The ID of the user performing the restore.
+     * @param int $target The type of restore we are performing.
+     * @return stdClass The updated course object.
+     */
+    protected function async_restore_to_existing_course($backupid, $courseid,
+        $userid = 2, $target = backup::TARGET_CURRENT_ADDING) {
+        return $this->async_restore_course($backupid, $courseid, $userid, $target);
+    }
+
+    /**
+     * Restore a course to a new course.
+     *
+     * @param int $backupid The backup ID.
+     * @param int $userid The ID of the user performing the restore.
+     * @return stdClass The new course object.
+     */
+    protected function async_restore_to_new_course($backupid, $userid = 2) {
+        return $this->async_restore_course($backupid, 0, $userid, 0);
+    }
+
+    public function test_async_restore_existing_idnumber_in_new_course() {
+        $this->resetAfterTest();
+
+        $dg = $this->getDataGenerator();
+        $c1 = $dg->create_course(['idnumber' => 'ABC']);
+        $backupid = $this->backup_course($c1->id);
+        $c2 = $this->async_restore_to_new_course($backupid);
+
+        // The ID number is set empty.
+        $this->assertEquals('', $c2->idnumber);
+    }
+
+    public function test_async_restore_course_info_in_existing_course() {
+        global $DB;
+        $this->resetAfterTest();
+        $dg = $this->getDataGenerator();
+
+        $this->assertEquals(1, get_config('restore', 'restore_merge_course_shortname'));
+        $this->assertEquals(1, get_config('restore', 'restore_merge_course_fullname'));
+        $this->assertEquals(1, get_config('restore', 'restore_merge_course_startdate'));
+
+        $startdate = mktime(12, 0, 0, 7, 1, 2016); // 01-Jul-2016.
+
+        // Create two courses with different start dates,in each course create a chat that opens 1 week after the course start date.
+        $c1 = $dg->create_course(['shortname' => 'SN', 'fullname' => 'FN', 'summary' => 'DESC', 'summaryformat' => FORMAT_MOODLE,
+            'startdate' => $startdate]);
+        $chat1 = $dg->create_module('chat', ['name' => 'First', 'course' => $c1->id, 'chattime' => $c1->startdate + 1 * WEEKSECS]);
+        $c2 = $dg->create_course(['shortname' => 'A', 'fullname' => 'B', 'summary' => 'C', 'summaryformat' => FORMAT_PLAIN,
+            'startdate' => $startdate + 2 * WEEKSECS]);
+        $chat2 = $dg->create_module('chat', ['name' => 'Second', 'course' => $c2->id, 'chattime' => $c2->startdate + 1 * WEEKSECS]);
+        $backupid = $this->backup_course($c1->id);
+
+        // The information is restored but adapted because names are already taken.
+        $c2 = $this->async_restore_to_existing_course($backupid, $c2->id);
+        $this->assertEquals('SN_1', $c2->shortname);
+        $this->assertEquals('FN copy 1', $c2->fullname);
+        $this->assertEquals('DESC', $c2->summary);
+        $this->assertEquals(FORMAT_MOODLE, $c2->summaryformat);
+        $this->assertEquals($startdate, $c2->startdate);
+
+        // Now course c2 has two chats - one ('Second') was already there and one ('First') was restored from the backup.
+        // Their dates are exactly the same as they were in the original modules.
+        $restoredchat1 = $DB->get_record('chat', ['name' => 'First', 'course' => $c2->id]);
+        $restoredchat2 = $DB->get_record('chat', ['name' => 'Second', 'course' => $c2->id]);
+        $this->assertEquals($chat1->chattime, $restoredchat1->chattime);
+        $this->assertEquals($chat2->chattime, $restoredchat2->chattime);
+    }
+
+    public function test_async_restore_course_info_in_existing_course_delete_first() {
+        global $DB;
+        $this->resetAfterTest();
+        $dg = $this->getDataGenerator();
+
+        $this->assertEquals(1, get_config('restore', 'restore_merge_course_shortname'));
+        $this->assertEquals(1, get_config('restore', 'restore_merge_course_fullname'));
+        $this->assertEquals(1, get_config('restore', 'restore_merge_course_startdate'));
+
+        $startdate = mktime(12, 0, 0, 7, 1, 2016); // 01-Jul-2016.
+
+        // Create two courses with different start dates,in each course create a chat that opens 1 week after the course start date.
+        $c1 = $dg->create_course(['shortname' => 'SN', 'fullname' => 'FN', 'summary' => 'DESC', 'summaryformat' => FORMAT_MOODLE,
+            'startdate' => $startdate]);
+        $chat1 = $dg->create_module('chat', ['name' => 'First', 'course' => $c1->id, 'chattime' => $c1->startdate + 1 * WEEKSECS]);
+        $c2 = $dg->create_course(['shortname' => 'A', 'fullname' => 'B', 'summary' => 'C', 'summaryformat' => FORMAT_PLAIN,
+            'startdate' => $startdate + 2 * WEEKSECS]);
+        $chat2 = $dg->create_module('chat', ['name' => 'Second', 'course' => $c2->id, 'chattime' => $c2->startdate + 1 * WEEKSECS]);
+        $backupid = $this->backup_course($c1->id);
+
+        // The information is restored and the existing course settings is modified.
+        $c2 = $this->async_restore_to_existing_course($backupid, $c2->id, 2, backup::TARGET_CURRENT_DELETING);
+        $this->assertEquals(FORMAT_MOODLE, $c2->summaryformat);
+
+        // Now course2 should have a new forum with the original forum deleted.
+        $restoredchat1 = $DB->get_record('chat', ['name' => 'First', 'course' => $c2->id]);
+        $restoredchat2 = $DB->get_record('chat', ['name' => 'Second', 'course' => $c2->id]);
+        $this->assertEquals($chat1->chattime, $restoredchat1->chattime);
+        $this->assertEmpty($restoredchat2);
+    }
+
     public function test_restore_existing_idnumber_in_new_course() {
         $this->resetAfterTest();
 
