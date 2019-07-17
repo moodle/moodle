@@ -11,3 +11,7 @@ Procedure:
 * run phpunit tests
 
 Petr Skoda
+
+* Referenced commits are now in the 1.8.0 release.
+
+Mathew May
