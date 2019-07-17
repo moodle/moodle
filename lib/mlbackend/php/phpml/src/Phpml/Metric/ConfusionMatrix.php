@@ -6,22 +6,15 @@ namespace Phpml\Metric;
 
 class ConfusionMatrix
 {
-    /**
-     * @param array $actualLabels
-     * @param array $predictedLabels
-     * @param array $labels
-     *
-     * @return array
-     */
-    public static function compute(array $actualLabels, array $predictedLabels, array $labels = null): array
+    public static function compute(array $actualLabels, array $predictedLabels, array $labels = []): array
     {
-        $labels = $labels ? array_flip($labels) : self::getUniqueLabels($actualLabels);
+        $labels = count($labels) === 0 ? self::getUniqueLabels($actualLabels) : array_flip($labels);
         $matrix = self::generateMatrixWithZeros($labels);
 
         foreach ($actualLabels as $index => $actual) {
             $predicted = $predictedLabels[$index];
 
-            if (!isset($labels[$actual]) || !isset($labels[$predicted])) {
+            if (!isset($labels[$actual], $labels[$predicted])) {
                 continue;
             }
 
@@ -32,17 +25,12 @@ class ConfusionMatrix
                 $column = $labels[$predicted];
             }
 
-            $matrix[$row][$column] += 1;
+            ++$matrix[$row][$column];
         }
 
         return $matrix;
     }
 
-    /**
-     * @param array $labels
-     *
-     * @return array
-     */
     private static function generateMatrixWithZeros(array $labels): array
     {
         $count = count($labels);
@@ -55,17 +43,11 @@ class ConfusionMatrix
         return $matrix;
     }
 
-    /**
-     * @param array $labels
-     *
-     * @return array
-     */
     private static function getUniqueLabels(array $labels): array
     {
         $labels = array_values(array_unique($labels));
         sort($labels);
-        $labels = array_flip($labels);
 
-        return $labels;
+        return array_flip($labels);
     }
 }

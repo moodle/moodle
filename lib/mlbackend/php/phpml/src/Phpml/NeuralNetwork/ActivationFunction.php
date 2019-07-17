@@ -8,8 +8,12 @@ interface ActivationFunction
 {
     /**
      * @param float|int $value
-     *
-     * @return float
      */
     public function compute($value): float;
+
+    /**
+     * @param float|int $value
+     * @param float|int $computedvalue
+     */
+    public function differentiate($value, $computedvalue): float;
 }

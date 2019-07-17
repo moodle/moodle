@@ -30,6 +30,7 @@ use Phpml\Preprocessing\Normalizer;
 use Phpml\CrossValidation\RandomSplit;
 use Phpml\Dataset\ArrayDataset;
 use Phpml\ModelManager;
+use Phpml\Classification\Linear\LogisticRegression;
 
 /**
  * PHP predictions processor.
@@ -110,7 +111,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
         if (file_exists($modelfilepath)) {
             $classifier = $modelmanager->restoreFromFile($modelfilepath);
         } else {
-            $classifier = new \Phpml\Classification\Linear\LogisticRegression(self::TRAIN_ITERATIONS, Normalizer::NORM_L2);
+            $classifier = $this->instantiate_algorithm();
         }
 
         $fh = $dataset->get_content_file_handle();
@@ -314,7 +315,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
         for ($i = 0; $i < $niterations; $i++) {
 
             if (!$trainedmodeldir) {
-                $classifier = new \Phpml\Classification\Linear\LogisticRegression(self::TRAIN_ITERATIONS, Normalizer::NORM_L2);
+                $classifier = $this->instantiate_algorithm();
 
                 // Split up the dataset in classifier and testing.
                 $data = new RandomSplit(new ArrayDataset($samples, $targets), 0.2);
@@ -560,5 +561,15 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
     protected function extract_metadata($fh) {
         $metadata = fgetcsv($fh);
         return array_combine($metadata, fgetcsv($fh));
+    }
+
+    /**
+     * Instantiates the ML algorithm.
+     *
+     * @return \Phpml\Classification\Linear\LogisticRegression
+     */
+    protected function instantiate_algorithm(): \Phpml\Classification\Linear\LogisticRegression {
+        return new LogisticRegression(self::TRAIN_ITERATIONS, true,
+            LogisticRegression::CONJUGATE_GRAD_TRAINING, 'log');
     }
 }

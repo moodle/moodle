@@ -11,35 +11,26 @@ class TfIdfTransformer implements Transformer
     /**
      * @var array
      */
-    private $idf;
+    private $idf = [];
 
-    /**
-     * @param array $samples
-     */
-    public function __construct(array $samples = null)
+    public function __construct(array $samples = [])
     {
-        if ($samples) {
+        if (count($samples) > 0) {
             $this->fit($samples);
         }
     }
 
-    /**
-     * @param array $samples
-     */
-    public function fit(array $samples)
+    public function fit(array $samples, ?array $targets = null): void
     {
         $this->countTokensFrequency($samples);
 
         $count = count($samples);
         foreach ($this->idf as &$value) {
-            $value = log((float)($count / $value), 10.0);
+            $value = log((float) ($count / $value), 10.0);
         }
     }
 
-    /**
-     * @param array $samples
-     */
-    public function transform(array &$samples)
+    public function transform(array &$samples): void
     {
         foreach ($samples as &$sample) {
             foreach ($sample as $index => &$feature) {
@@ -48,10 +39,7 @@ class TfIdfTransformer implements Transformer
         }
     }
 
-    /**
-     * @param array $samples
-     */
-    private function countTokensFrequency(array $samples)
+    private function countTokensFrequency(array $samples): void
     {
         $this->idf = array_fill_keys(array_keys($samples[0]), 0);
 

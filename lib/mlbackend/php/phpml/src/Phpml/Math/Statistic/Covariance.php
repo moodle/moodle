@@ -11,25 +11,17 @@ class Covariance
     /**
      * Calculates covariance from two given arrays, x and y, respectively
      *
-     * @param array $x
-     * @param array $y
-     * @param bool  $sample
-     * @param float $meanX
-     * @param float $meanY
-     *
-     * @return float
-     *
      * @throws InvalidArgumentException
      */
-    public static function fromXYArrays(array $x, array $y, $sample = true, float $meanX = null, float $meanY = null)
+    public static function fromXYArrays(array $x, array $y, bool $sample = true, ?float $meanX = null, ?float $meanY = null): float
     {
-        if (empty($x) || empty($y)) {
-            throw InvalidArgumentException::arrayCantBeEmpty();
+        $n = count($x);
+        if ($n === 0 || count($y) === 0) {
+            throw new InvalidArgumentException('The array has zero elements');
         }
 
-        $n = count($x);
         if ($sample && $n === 1) {
-            throw InvalidArgumentException::arraySizeToSmall(2);
+            throw new InvalidArgumentException('The array must have at least 2 elements');
         }
 
         if ($meanX === null) {
@@ -56,31 +48,22 @@ class Covariance
     /**
      * Calculates covariance of two dimensions, i and k in the given data.
      *
-     * @param array $data
-     * @param int   $i
-     * @param int   $k
-     * @param bool  $sample
-     * @param float $meanX
-     * @param float $meanY
-     *
-     * @return float
-     *
      * @throws InvalidArgumentException
      * @throws \Exception
      */
-    public static function fromDataset(array $data, int $i, int $k, bool $sample = true, float $meanX = null, float $meanY = null)
+    public static function fromDataset(array $data, int $i, int $k, bool $sample = true, ?float $meanX = null, ?float $meanY = null): float
     {
-        if (empty($data)) {
-            throw InvalidArgumentException::arrayCantBeEmpty();
+        if (count($data) === 0) {
+            throw new InvalidArgumentException('The array has zero elements');
         }
 
         $n = count($data);
         if ($sample && $n === 1) {
-            throw InvalidArgumentException::arraySizeToSmall(2);
+            throw new InvalidArgumentException('The array must have at least 2 elements');
         }
 
         if ($i < 0 || $k < 0 || $i >= $n || $k >= $n) {
-            throw new \Exception("Given indices i and k do not match with the dimensionality of data");
+            throw new InvalidArgumentException('Given indices i and k do not match with the dimensionality of data');
         }
 
         if ($meanX === null || $meanY === null) {
@@ -104,15 +87,17 @@ class Covariance
             // with a slight cost of CPU utilization.
             $sum = 0.0;
             foreach ($data as $row) {
-                $val = [];
+                $val = [0, 0];
                 foreach ($row as $index => $col) {
                     if ($index == $i) {
                         $val[0] = $col - $meanX;
                     }
+
                     if ($index == $k) {
                         $val[1] = $col - $meanY;
                     }
                 }
+
                 $sum += $val[0] * $val[1];
             }
         }
@@ -127,12 +112,9 @@ class Covariance
     /**
      * Returns the covariance matrix of n-dimensional data
      *
-     * @param array      $data
      * @param array|null $means
-     *
-     * @return array
      */
-    public static function covarianceMatrix(array $data, array $means = null)
+    public static function covarianceMatrix(array $data, ?array $means = null): array
     {
         $n = count($data[0]);
 
@@ -150,7 +132,12 @@ class Covariance
                     $cov[$i][$k] = $cov[$k][$i];
                 } else {
                     $cov[$i][$k] = self::fromDataset(
-                        $data, $i, $k, true, $means[$i], $means[$k]
+                        $data,
+                        $i,
+                        $k,
+                        true,
+                        $means[$i],
+                        $means[$k]
                     );
                 }
             }

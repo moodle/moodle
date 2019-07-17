@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace Phpml\Classification\Ensemble;
 
+use Phpml\Classification\Classifier;
 use Phpml\Classification\Linear\DecisionStump;
 use Phpml\Classification\WeightedClassifier;
-use Phpml\Math\Statistic\Mean;
-use Phpml\Math\Statistic\StandardDeviation;
-use Phpml\Classification\Classifier;
+use Phpml\Exception\InvalidArgumentException;
 use Phpml\Helper\Predictable;
 use Phpml\Helper\Trainable;
+use Phpml\Math\Statistic\Mean;
+use Phpml\Math\Statistic\StandardDeviation;
+use ReflectionClass;
 
 class AdaBoost implements Classifier
 {
-    use Predictable, Trainable;
+    use Predictable;
+    use Trainable;
 
     /**
      * Actual labels given in the targets array
+     *
      * @var array
      */
     protected $labels = [];
@@ -74,8 +78,6 @@ class AdaBoost implements Classifier
      * ADAptive BOOSTing (AdaBoost) is an ensemble algorithm to
      * improve classification performance of 'weak' classifiers such as
      * DecisionStump (default base classifier of AdaBoost).
-     *
-     * @param int $maxIterations
      */
     public function __construct(int $maxIterations = 50)
     {
@@ -84,32 +86,29 @@ class AdaBoost implements Classifier
 
     /**
      * Sets the base classifier that will be used for boosting (default = DecisionStump)
-     *
-     * @param string $baseClassifier
-     * @param array $classifierOptions
      */
-    public function setBaseClassifier(string $baseClassifier = DecisionStump::class, array $classifierOptions = [])
+    public function setBaseClassifier(string $baseClassifier = DecisionStump::class, array $classifierOptions = []): void
     {
         $this->baseClassifier = $baseClassifier;
         $this->classifierOptions = $classifierOptions;
     }
 
     /**
-     * @param array $samples
-     * @param array $targets
-     *
-     * @throws \Exception
+     * @throws InvalidArgumentException
      */
-    public function train(array $samples, array $targets)
+    public function train(array $samples, array $targets): void
     {
         // Initialize usual variables
         $this->labels = array_keys(array_count_values($targets));
-        if (count($this->labels) != 2) {
-            throw new \Exception("AdaBoost is a binary classifier and can classify between two classes only");
+        if (count($this->labels) !== 2) {
+            throw new InvalidArgumentException('AdaBoost is a binary classifier and can classify between two classes only');
         }
 
         // Set all target values to either -1 or 1
-        $this->labels = [1 => $this->labels[0], -1 => $this->labels[1]];
+        $this->labels = [
+            1 => $this->labels[0],
+            -1 => $this->labels[1],
+        ];
         foreach ($targets as $target) {
             $this->targets[] = $target == $this->labels[1] ? 1 : -1;
         }
@@ -140,25 +139,34 @@ class AdaBoost implements Classifier
     }
 
     /**
-     * Returns the classifier with the lowest error rate with the
-     * consideration of current sample weights
-     *
-     * @return Classifier
+     * @return mixed
      */
-    protected function getBestClassifier()
+    public function predictSample(array $sample)
     {
-        $ref = new \ReflectionClass($this->baseClassifier);
-        if ($this->classifierOptions) {
-            $classifier = $ref->newInstanceArgs($this->classifierOptions);
-        } else {
-            $classifier = $ref->newInstance();
+        $sum = 0;
+        foreach ($this->alpha as $index => $alpha) {
+            $h = $this->classifiers[$index]->predict($sample);
+            $sum += $h * $alpha;
         }
 
-        if (is_subclass_of($classifier, WeightedClassifier::class)) {
+        return $this->labels[$sum > 0 ? 1 : -1];
+    }
+
+    /**
+     * Returns the classifier with the lowest error rate with the
+     * consideration of current sample weights
+     */
+    protected function getBestClassifier(): Classifier
+    {
+        $ref = new ReflectionClass($this->baseClassifier);
+        /** @var Classifier $classifier */
+        $classifier = count($this->classifierOptions) === 0 ? $ref->newInstance() : $ref->newInstanceArgs($this->classifierOptions);
+
+        if ($classifier instanceof WeightedClassifier) {
             $classifier->setSampleWeights($this->weights);
             $classifier->train($this->samples, $this->targets);
         } else {
-            list($samples, $targets) = $this->resample();
+            [$samples, $targets] = $this->resample();
             $classifier->train($samples, $targets);
         }
 
@@ -168,25 +176,24 @@ class AdaBoost implements Classifier
     /**
      * Resamples the dataset in accordance with the weights and
      * returns the new dataset
-     *
-     * @return array
      */
-    protected function resample()
+    protected function resample(): array
     {
         $weights = $this->weights;
         $std = StandardDeviation::population($weights);
-        $mean= Mean::arithmetic($weights);
+        $mean = Mean::arithmetic($weights);
         $min = min($weights);
-        $minZ= (int)round(($min - $mean) / $std);
+        $minZ = (int) round(($min - $mean) / $std);
 
         $samples = [];
         $targets = [];
         foreach ($weights as $index => $weight) {
-            $z = (int)round(($weight - $mean) / $std) - $minZ + 1;
+            $z = (int) round(($weight - $mean) / $std) - $minZ + 1;
             for ($i = 0; $i < $z; ++$i) {
-                if (rand(0, 1) == 0) {
+                if (random_int(0, 1) == 0) {
                     continue;
                 }
+
                 $samples[] = $this->samples[$index];
                 $targets[] = $this->targets[$index];
             }
@@ -197,12 +204,8 @@ class AdaBoost implements Classifier
 
     /**
      * Evaluates the classifier and returns the classification error rate
-     *
-     * @param Classifier $classifier
-     *
-     * @return float
      */
-    protected function evaluateClassifier(Classifier $classifier)
+    protected function evaluateClassifier(Classifier $classifier): float
     {
         $total = (float) array_sum($this->weights);
         $wrong = 0;
@@ -218,25 +221,20 @@ class AdaBoost implements Classifier
 
     /**
      * Calculates alpha of a classifier
-     *
-     * @param float $errorRate
-     * @return float
      */
-    protected function calculateAlpha(float $errorRate)
+    protected function calculateAlpha(float $errorRate): float
     {
         if ($errorRate == 0) {
             $errorRate = 1e-10;
         }
+
         return 0.5 * log((1 - $errorRate) / $errorRate);
     }
 
     /**
      * Updates the sample weights
-     *
-     * @param Classifier $classifier
-     * @param float $alpha
      */
-    protected function updateWeights(Classifier $classifier, float $alpha)
+    protected function updateWeights(Classifier $classifier, float $alpha): void
     {
         $sumOfWeights = array_sum($this->weights);
         $weightsT1 = [];
@@ -250,20 +248,5 @@ class AdaBoost implements Classifier
         }
 
         $this->weights = $weightsT1;
-    }
-
-    /**
-     * @param array $sample
-     * @return mixed
-     */
-    public function predictSample(array $sample)
-    {
-        $sum = 0;
-        foreach ($this->alpha as $index => $alpha) {
-            $h = $this->classifiers[$index]->predict($sample);
-            $sum += $h * $alpha;
-        }
-
-        return $this->labels[ $sum > 0 ? 1 : -1];
     }
 }

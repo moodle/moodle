@@ -14,9 +14,6 @@ class RBF implements Kernel
      */
     private $gamma;
 
-    /**
-     * @param float $gamma
-     */
     public function __construct(float $gamma)
     {
         $this->gamma = $gamma;
@@ -25,15 +22,12 @@ class RBF implements Kernel
     /**
      * @param array $a
      * @param array $b
-     *
-     * @return float
      */
-    public function compute($a, $b)
+    public function compute($a, $b): float
     {
         $score = 2 * Product::scalar($a, $b);
         $squares = Product::scalar($a, $a) + Product::scalar($b, $b);
-        $result = exp(-$this->gamma * ($squares - $score));
 
-        return $result;
+        return exp(-$this->gamma * ($squares - $score));
     }
 }

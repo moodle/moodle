@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Phpml\Clustering\KMeans;
 
+use InvalidArgumentException;
+use LogicException;
 use Phpml\Clustering\KMeans;
 use SplObjectStorage;
-use LogicException;
-use InvalidArgumentException;
 
 class Space extends SplObjectStorage
 {
@@ -16,10 +16,7 @@ class Space extends SplObjectStorage
      */
     protected $dimension;
 
-    /**
-     * @param $dimension
-     */
-    public function __construct($dimension)
+    public function __construct(int $dimension)
     {
         if ($dimension < 1) {
             throw new LogicException('a space dimension cannot be null or negative');
@@ -28,12 +25,11 @@ class Space extends SplObjectStorage
         $this->dimension = $dimension;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $points = [];
+
+        /** @var Point $point */
         foreach ($this as $point) {
             $points[] = $point->toArray();
         }
@@ -42,33 +38,31 @@ class Space extends SplObjectStorage
     }
 
     /**
-     * @param array $coordinates
-     *
-     * @return Point
+     * @param mixed $label
      */
-    public function newPoint(array $coordinates)
+    public function newPoint(array $coordinates, $label = null): Point
     {
-        if (count($coordinates) != $this->dimension) {
+        if (count($coordinates) !== $this->dimension) {
             throw new LogicException('('.implode(',', $coordinates).') is not a point of this space');
         }
 
-        return new Point($coordinates);
+        return new Point($coordinates, $label);
     }
 
     /**
-     * @param array $coordinates
-     * @param null  $data
+     * @param mixed $label
+     * @param mixed $data
      */
-    public function addPoint(array $coordinates, $data = null)
+    public function addPoint(array $coordinates, $label = null, $data = null): void
     {
-        $this->attach($this->newPoint($coordinates), $data);
+        $this->attach($this->newPoint($coordinates, $label), $data);
     }
 
     /**
-     * @param Point $point
-     * @param null   $data
+     * @param object $point
+     * @param mixed  $data
      */
-    public function attach($point, $data = null)
+    public function attach($point, $data = null): void
     {
         if (!$point instanceof Point) {
             throw new InvalidArgumentException('can only attach points to spaces');
@@ -77,10 +71,7 @@ class Space extends SplObjectStorage
         parent::attach($point, $data);
     }
 
-    /**
-     * @return int
-     */
-    public function getDimension()
+    public function getDimension(): int
     {
         return $this->dimension;
     }
@@ -90,30 +81,30 @@ class Space extends SplObjectStorage
      */
     public function getBoundaries()
     {
-        if (!count($this)) {
+        if (count($this) === 0) {
             return false;
         }
 
         $min = $this->newPoint(array_fill(0, $this->dimension, null));
         $max = $this->newPoint(array_fill(0, $this->dimension, null));
 
+        /** @var self $point */
         foreach ($this as $point) {
             for ($n = 0; $n < $this->dimension; ++$n) {
-                ($min[$n] > $point[$n] || $min[$n] === null) && $min[$n] = $point[$n];
-                ($max[$n] < $point[$n] || $max[$n] === null) && $max[$n] = $point[$n];
+                if ($min[$n] === null || $min[$n] > $point[$n]) {
+                    $min[$n] = $point[$n];
+                }
+
+                if ($max[$n] === null || $max[$n] < $point[$n]) {
+                    $max[$n] = $point[$n];
+                }
             }
         }
 
         return [$min, $max];
     }
 
-    /**
-     * @param Point $min
-     * @param Point $max
-     *
-     * @return Point
-     */
-    public function getRandomPoint(Point $min, Point $max)
+    public function getRandomPoint(Point $min, Point $max): Point
     {
         $point = $this->newPoint(array_fill(0, $this->dimension, null));
 
@@ -125,12 +116,9 @@ class Space extends SplObjectStorage
     }
 
     /**
-     * @param int $clustersNumber
-     * @param int $initMethod
-     *
-     * @return array|Cluster[]
+     * @return Cluster[]
      */
-    public function cluster(int $clustersNumber, int $initMethod = KMeans::INIT_RANDOM)
+    public function cluster(int $clustersNumber, int $initMethod = KMeans::INIT_RANDOM): array
     {
         $clusters = $this->initializeClusters($clustersNumber, $initMethod);
 
@@ -141,20 +129,19 @@ class Space extends SplObjectStorage
     }
 
     /**
-     * @param $clustersNumber
-     * @param $initMethod
-     *
-     * @return array|Cluster[]
+     * @return Cluster[]
      */
-    protected function initializeClusters(int $clustersNumber, int $initMethod)
+    protected function initializeClusters(int $clustersNumber, int $initMethod): array
     {
         switch ($initMethod) {
             case KMeans::INIT_RANDOM:
                 $clusters = $this->initializeRandomClusters($clustersNumber);
+
                 break;
 
             case KMeans::INIT_KMEANS_PLUS_PLUS:
                 $clusters = $this->initializeKMPPClusters($clustersNumber);
+
                 break;
 
             default:
@@ -167,11 +154,9 @@ class Space extends SplObjectStorage
     }
 
     /**
-     * @param $clusters
-     *
-     * @return bool
+     * @param Cluster[] $clusters
      */
-    protected function iterate($clusters)
+    protected function iterate(array $clusters): bool
     {
         $convergence = true;
 
@@ -183,8 +168,8 @@ class Space extends SplObjectStorage
                 $closest = $point->getClosest($clusters);
 
                 if ($closest !== $cluster) {
-                    isset($attach[$closest]) || $attach[$closest] = new SplObjectStorage();
-                    isset($detach[$cluster]) || $detach[$cluster] = new SplObjectStorage();
+                    $attach[$closest] ?? $attach[$closest] = new SplObjectStorage();
+                    $detach[$cluster] ?? $detach[$cluster] = new SplObjectStorage();
 
                     $attach[$closest]->attach($point);
                     $detach[$cluster]->attach($point);
@@ -194,10 +179,12 @@ class Space extends SplObjectStorage
             }
         }
 
+        /** @var Cluster $cluster */
         foreach ($attach as $cluster) {
             $cluster->attachAll($attach[$cluster]);
         }
 
+        /** @var Cluster $cluster */
         foreach ($detach as $cluster) {
             $cluster->detachAll($detach[$cluster]);
         }
@@ -210,52 +197,61 @@ class Space extends SplObjectStorage
     }
 
     /**
-     * @param int $clustersNumber
-     *
-     * @return array
+     * @return Cluster[]
      */
-    private function initializeRandomClusters(int $clustersNumber)
+    protected function initializeKMPPClusters(int $clustersNumber): array
     {
         $clusters = [];
-        list($min, $max) = $this->getBoundaries();
+        $this->rewind();
 
-        for ($n = 0; $n < $clustersNumber; ++$n) {
-            $clusters[] = new Cluster($this, $this->getRandomPoint($min, $max)->getCoordinates());
+        /** @var Point $current */
+        $current = $this->current();
+
+        $clusters[] = new Cluster($this, $current->getCoordinates());
+
+        $distances = new SplObjectStorage();
+
+        for ($i = 1; $i < $clustersNumber; ++$i) {
+            $sum = 0;
+            /** @var Point $point */
+            foreach ($this as $point) {
+                $closest = $point->getClosest($clusters);
+                if ($closest === null) {
+                    continue;
+                }
+
+                $distance = $point->getDistanceWith($closest);
+                $sum += $distances[$point] = $distance;
+            }
+
+            $sum = random_int(0, (int) $sum);
+            /** @var Point $point */
+            foreach ($this as $point) {
+                $sum -= $distances[$point];
+
+                if ($sum > 0) {
+                    continue;
+                }
+
+                $clusters[] = new Cluster($this, $point->getCoordinates());
+
+                break;
+            }
         }
 
         return $clusters;
     }
 
     /**
-     * @param int $clustersNumber
-     *
-     * @return array
+     * @return Cluster[]
      */
-    protected function initializeKMPPClusters(int $clustersNumber)
+    private function initializeRandomClusters(int $clustersNumber): array
     {
         $clusters = [];
-        $this->rewind();
+        [$min, $max] = $this->getBoundaries();
 
-        $clusters[] = new Cluster($this, $this->current()->getCoordinates());
-
-        $distances = new SplObjectStorage();
-
-        for ($i = 1; $i < $clustersNumber; ++$i) {
-            $sum = 0;
-            foreach ($this as $point) {
-                $distance = $point->getDistanceWith($point->getClosest($clusters));
-                $sum += $distances[$point] = $distance;
-            }
-
-            $sum = random_int(0, (int) $sum);
-            foreach ($this as $point) {
-                if (($sum -= $distances[$point]) > 0) {
-                    continue;
-                }
-
-                $clusters[] = new Cluster($this, $point->getCoordinates());
-                break;
-            }
+        for ($n = 0; $n < $clustersNumber; ++$n) {
+            $clusters[] = new Cluster($this, $this->getRandomPoint($min, $max)->getCoordinates());
         }
 
         return $clusters;

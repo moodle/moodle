@@ -13,26 +13,17 @@ class Input implements Node
      */
     private $input;
 
-    /**
-     * @param float $input
-     */
     public function __construct(float $input = 0.0)
     {
         $this->input = $input;
     }
 
-    /**
-     * @return float
-     */
     public function getOutput(): float
     {
         return $this->input;
     }
 
-    /**
-     * @param float $input
-     */
-    public function setInput(float $input)
+    public function setInput(float $input): void
     {
         $this->input = $input;
     }

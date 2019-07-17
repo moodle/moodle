@@ -9,25 +9,25 @@ abstract class Type
     /**
      * classification.
      */
-    const C_SVC = 0;
+    public const C_SVC = 0;
 
     /**
      * classification.
      */
-    const NU_SVC = 1;
+    public const NU_SVC = 1;
 
     /**
      * distribution estimation.
      */
-    const ONE_CLASS_SVM = 2;
+    public const ONE_CLASS_SVM = 2;
 
     /**
      * regression.
      */
-    const EPSILON_SVR = 3;
+    public const EPSILON_SVR = 3;
 
     /**
      * regression.
      */
-    const NU_SVR = 4;
+    public const NU_SVR = 4;
 }

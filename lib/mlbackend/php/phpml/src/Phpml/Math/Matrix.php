@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Phpml\Math;
 
-use Phpml\Math\LinearAlgebra\LUDecomposition;
 use Phpml\Exception\InvalidArgumentException;
 use Phpml\Exception\MatrixException;
+use Phpml\Math\LinearAlgebra\LUDecomposition;
 
 class Matrix
 {
     /**
      * @var array
      */
-    private $matrix;
+    private $matrix = [];
 
     /**
      * @var int
@@ -31,9 +31,6 @@ class Matrix
     private $determinant;
 
     /**
-     * @param array $matrix
-     * @param bool  $validate
-     *
      * @throws InvalidArgumentException
      */
     public function __construct(array $matrix, bool $validate = true)
@@ -51,7 +48,7 @@ class Matrix
         if ($validate) {
             for ($i = 0; $i < $this->rows; ++$i) {
                 if (count($matrix[$i]) !== $this->columns) {
-                    throw InvalidArgumentException::matrixDimensionsDidNotMatch();
+                    throw new InvalidArgumentException('Matrix dimensions did not match');
                 }
             }
         }
@@ -59,12 +56,7 @@ class Matrix
         $this->matrix = $matrix;
     }
 
-    /**
-     * @param array $array
-     *
-     * @return Matrix
-     */
-    public static function fromFlatArray(array $array)
+    public static function fromFlatArray(array $array): self
     {
         $matrix = [];
         foreach ($array as $value) {
@@ -74,54 +66,37 @@ class Matrix
         return new self($matrix);
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->matrix;
     }
 
-    /**
-     * @return float
-     */
-    public function toScalar()
+    public function toScalar(): float
     {
         return $this->matrix[0][0];
     }
 
-    /**
-     * @return int
-     */
-    public function getRows()
+    public function getRows(): int
     {
         return $this->rows;
     }
 
-    /**
-     * @return int
-     */
-    public function getColumns()
+    public function getColumns(): int
     {
         return $this->columns;
     }
 
     /**
-     * @param $column
-     *
-     * @return array
-     *
      * @throws MatrixException
      */
-    public function getColumnValues($column)
+    public function getColumnValues(int $column): array
     {
         if ($column >= $this->columns) {
-            throw MatrixException::columnOutOfRange();
+            throw new MatrixException('Column out of range');
         }
 
         return array_column($this->matrix, $column);
     }
-
 
     /**
      * @return float|int
@@ -130,12 +105,12 @@ class Matrix
      */
     public function getDeterminant()
     {
-        if ($this->determinant) {
+        if ($this->determinant !== null) {
             return $this->determinant;
         }
 
         if (!$this->isSquare()) {
-            throw MatrixException::notSquareMatrix();
+            throw new MatrixException('Matrix is not square matrix');
         }
 
         $lu = new LUDecomposition($this);
@@ -143,20 +118,14 @@ class Matrix
         return $this->determinant = $lu->det();
     }
 
-    /**
-     * @return bool
-     */
-    public function isSquare()
+    public function isSquare(): bool
     {
         return $this->columns === $this->rows;
     }
 
-    /**
-     * @return Matrix
-     */
-    public function transpose()
+    public function transpose(): self
     {
-        if ($this->rows == 1) {
+        if ($this->rows === 1) {
             $matrix = array_map(function ($el) {
                 return [$el];
             }, $this->matrix[0]);
@@ -167,28 +136,30 @@ class Matrix
         return new self($matrix, false);
     }
 
-    /**
-     * @param Matrix $matrix
-     *
-     * @return Matrix
-     *
-     * @throws InvalidArgumentException
-     */
-    public function multiply(Matrix $matrix)
+    public function multiply(self $matrix): self
     {
-        if ($this->columns != $matrix->getRows()) {
-            throw InvalidArgumentException::inconsistentMatrixSupplied();
+        if ($this->columns !== $matrix->getRows()) {
+            throw new InvalidArgumentException('Inconsistent matrix supplied');
         }
 
+        $array1 = $this->toArray();
+        $array2 = $matrix->toArray();
+        $colCount = $matrix->columns;
+
+        /*
+         - To speed-up multiplication, we need to avoid use of array index operator [ ] as much as possible( See #255 for details)
+         - A combination of "foreach" and "array_column" works much faster then accessing the array via index operator
+        */
         $product = [];
-        $multiplier = $matrix->toArray();
-        for ($i = 0; $i < $this->rows; ++$i) {
-            $columns = $matrix->getColumns();
-            for ($j = 0; $j < $columns; ++$j) {
-                $product[$i][$j] = 0;
-                for ($k = 0; $k < $this->columns; ++$k) {
-                    $product[$i][$j] += $this->matrix[$i][$k] * $multiplier[$k][$j];
+        foreach ($array1 as $row => $rowData) {
+            for ($col = 0; $col < $colCount; ++$col) {
+                $columnData = array_column($array2, $col);
+                $sum = 0;
+                foreach ($rowData as $key => $valueData) {
+                    $sum += $valueData * $columnData[$key];
                 }
+
+                $product[$row][$col] = $sum;
             }
         }
 
@@ -196,11 +167,9 @@ class Matrix
     }
 
     /**
-     * @param $value
-     *
-     * @return Matrix
+     * @param float|int $value
      */
-    public function divideByScalar($value)
+    public function divideByScalar($value): self
     {
         $newMatrix = [];
         for ($i = 0; $i < $this->rows; ++$i) {
@@ -213,11 +182,9 @@ class Matrix
     }
 
     /**
-     * @param $value
-     *
-     * @return Matrix
+     * @param float|int $value
      */
-    public function multiplyByScalar($value)
+    public function multiplyByScalar($value): self
     {
         $newMatrix = [];
         for ($i = 0; $i < $this->rows; ++$i) {
@@ -231,37 +198,106 @@ class Matrix
 
     /**
      * Element-wise addition of the matrix with another one
-     *
-     * @param Matrix $other
-     *
-     * @return Matrix
      */
-    public function add(Matrix $other)
+    public function add(self $other): self
     {
         return $this->_add($other);
     }
 
     /**
      * Element-wise subtracting of another matrix from this one
-     *
-     * @param Matrix $other
-     *
-     * @return Matrix
      */
-    public function subtract(Matrix $other)
+    public function subtract(self $other): self
     {
         return $this->_add($other, -1);
     }
 
+    public function inverse(): self
+    {
+        if (!$this->isSquare()) {
+            throw new MatrixException('Matrix is not square matrix');
+        }
+
+        $LU = new LUDecomposition($this);
+        $identity = $this->getIdentity();
+        $inverse = $LU->solve($identity);
+
+        return new self($inverse, false);
+    }
+
+    public function crossOut(int $row, int $column): self
+    {
+        $newMatrix = [];
+        $r = 0;
+        for ($i = 0; $i < $this->rows; ++$i) {
+            $c = 0;
+            if ($row != $i) {
+                for ($j = 0; $j < $this->columns; ++$j) {
+                    if ($column != $j) {
+                        $newMatrix[$r][$c] = $this->matrix[$i][$j];
+                        ++$c;
+                    }
+                }
+
+                ++$r;
+            }
+        }
+
+        return new self($newMatrix, false);
+    }
+
+    public function isSingular(): bool
+    {
+        return $this->getDeterminant() == 0;
+    }
+
+    /**
+     * Frobenius norm (Hilbert–Schmidt norm, Euclidean norm) (‖A‖F)
+     * Square root of the sum of the square of all elements.
+     *
+     * https://en.wikipedia.org/wiki/Matrix_norm#Frobenius_norm
+     *
+     *          _____________
+     *         /ᵐ   ⁿ
+     * ‖A‖F = √ Σ   Σ  |aᵢⱼ|²
+     *         ᵢ₌₁ ᵢ₌₁
+     */
+    public function frobeniusNorm(): float
+    {
+        $squareSum = 0;
+        for ($i = 0; $i < $this->rows; ++$i) {
+            for ($j = 0; $j < $this->columns; ++$j) {
+                $squareSum += $this->matrix[$i][$j] ** 2;
+            }
+        }
+
+        return $squareSum ** .5;
+    }
+
+    /**
+     * Returns the transpose of given array
+     */
+    public static function transposeArray(array $array): array
+    {
+        return (new self($array, false))->transpose()->toArray();
+    }
+
+    /**
+     * Returns the dot product of two arrays<br>
+     * Matrix::dot(x, y) ==> x.y'
+     */
+    public static function dot(array $array1, array $array2): array
+    {
+        $m1 = new self($array1, false);
+        $m2 = new self($array2, false);
+
+        return $m1->multiply($m2->transpose())->toArray()[0];
+    }
+
     /**
      * Element-wise addition or substraction depending on the given sign parameter
-     *
-     * @param Matrix $other
-     * @param int    $sign
-     *
-     * @return Matrix
      */
-    protected function _add(Matrix $other, $sign = 1)
+    private function _add(self $other, int $sign = 1): self
     {
         $a1 = $this->toArray();
         $a2 = $other->toArray();
@@ -277,29 +313,9 @@ class Matrix
     }
 
     /**
-     * @return Matrix
-     *
-     * @throws MatrixException
-     */
-    public function inverse()
-    {
-        if (!$this->isSquare()) {
-            throw MatrixException::notSquareMatrix();
-        }
-
-        $LU = new LUDecomposition($this);
-        $identity = $this->getIdentity();
-        $inverse = $LU->solve($identity);
-
-        return new self($inverse, false);
-    }
-
-    /**
      * Returns diagonal identity matrix of the same size of this matrix
-     *
-     * @return Matrix
      */
-    protected function getIdentity()
+    private function getIdentity(): self
     {
         $array = array_fill(0, $this->rows, array_fill(0, $this->columns, 0));
         for ($i = 0; $i < $this->rows; ++$i) {
@@ -307,68 +323,5 @@ class Matrix
         }
 
         return new self($array, false);
-    }
-
-    /**
-     * @param int $row
-     * @param int $column
-     *
-     * @return Matrix
-     */
-    public function crossOut(int $row, int $column)
-    {
-        $newMatrix = [];
-        $r = 0;
-        for ($i = 0; $i < $this->rows; ++$i) {
-            $c = 0;
-            if ($row != $i) {
-                for ($j = 0; $j < $this->columns; ++$j) {
-                    if ($column != $j) {
-                        $newMatrix[$r][$c] = $this->matrix[$i][$j];
-                        ++$c;
-                    }
-                }
-                ++$r;
-            }
-        }
-
-        return new self($newMatrix, false);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSingular() : bool
-    {
-        return 0 == $this->getDeterminant();
-    }
-
-    /**
-     * Returns the transpose of given array
-     *
-     * @param array $array
-     *
-     * @return array
-     */
-    public static function transposeArray(array $array)
-    {
-        return (new self($array, false))->transpose()->toArray();
-    }
-
-    /**
-     * Returns the dot product of two arrays<br>
-     * Matrix::dot(x, y) ==> x.y'
-     *
-     * @param array $array1
-     * @param array $array2
-     *
-     * @return array
-     */
-    public static function dot(array $array1, array $array2)
-    {
-        $m1 = new self($array1, false);
-        $m2 = new self($array2, false);
-
-        return $m1->multiply($m2->transpose())->toArray()[0];
     }
 }

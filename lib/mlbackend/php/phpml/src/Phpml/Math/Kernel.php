@@ -7,10 +7,10 @@ namespace Phpml\Math;
 interface Kernel
 {
     /**
-     * @param float $a
-     * @param float $b
+     * @param float|array $a
+     * @param float|array $b
      *
-     * @return float
+     * @return float|array
      */
     public function compute($a, $b);
 }
