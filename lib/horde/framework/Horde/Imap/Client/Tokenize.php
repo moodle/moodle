@@ -2,7 +2,7 @@
 /**
  * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
- * See the enclosed file COPYING for license information (LGPL). If you
+ * See the enclosed file LICENSE for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
@@ -295,7 +295,7 @@ class Horde_Imap_Client_Tokenize implements Iterator
                         // identifier.
                         $binary = true;
                         $text .= $c;
-                        break;
+                        continue 3;
 
                     case '{':
                         if ($binary) {

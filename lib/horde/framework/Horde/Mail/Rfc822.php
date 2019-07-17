@@ -571,7 +571,7 @@ class Horde_Mail_Rfc822
                 if (substr($str, -1) == "\r") {
                     $str = substr($str, 0, -1);
                 }
-                break;
+                continue 2;
 
             case '\\':
                 if (($chr = $this->_curr(true)) === false) {
@@ -737,7 +737,7 @@ class Horde_Mail_Rfc822
             case "\r":
             case "\t":
                 ++$this->_ptr;
-                break;
+                continue 2;
 
             case '(':
                 $this->_rfc822SkipComment();
@@ -765,7 +765,7 @@ class Horde_Mail_Rfc822
             switch ($chr) {
             case '(':
                 ++$level;
-                break;
+                continue 2;
 
             case ')':
                 if (--$level == 0) {
