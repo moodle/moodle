@@ -266,4 +266,19 @@ class qtype_ddimageortext_question_test extends basic_testcase {
             4 => new question_classified_response(4, '4. dog', 1)
         ), $dd->classify_response(array('p1' => '', 'p2' => '1', 'p3' => '2', 'p4' => '2')));
     }
+
+    public function test_summarise_response_choice_deleted() {
+        /** @var qtype_ddtoimage_question_base $dd */
+        $dd = test_question_maker::make_question('ddimageortext');
+        $dd->shufflechoices = false;
+        $dd->start_attempt(new question_attempt_step(), 1);
+        // Simulation of an instructor deleting 1 choice after an attempt has been made.
+        unset($dd->choices[1][1]);
+        $delquestionstr = get_string('deletedchoice', 'qtype_ddimageortext');
+        $this->assertEquals("Drop zone 1 -> {{$delquestionstr}} ".
+            "Drop zone 2 -> {{$delquestionstr}} ".
+            'Drop zone 3 -> {3. lazy} '.
+            'Drop zone 4 -> {3. lazy}',
+            $dd->summarise_response(array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
+    }
 }

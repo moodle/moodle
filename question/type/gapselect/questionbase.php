@@ -127,7 +127,7 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
 
     protected function get_selected_choice($group, $shuffledchoicenumber) {
         $choiceno = $this->choiceorder[$group][$shuffledchoicenumber];
-        return $this->choices[$group][$choiceno];
+        return isset($this->choices[$group][$choiceno]) ? $this->choices[$group][$choiceno] : null;
     }
 
     public function summarise_response(array $response) {
