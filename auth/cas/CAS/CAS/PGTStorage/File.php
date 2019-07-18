@@ -61,7 +61,7 @@ class CAS_PGTStorage_File extends CAS_PGTStorage_AbstractStorage
      * This method returns the name of the directory where PGT's should be stored
      * on the filesystem.
      *
-     * @return the name of a directory (with leading and trailing '/')
+     * @return string the name of a directory (with leading and trailing '/')
      *
      * @private
      */
@@ -78,7 +78,7 @@ class CAS_PGTStorage_File extends CAS_PGTStorage_AbstractStorage
      * This method returns an informational string giving the type of storage
      * used by the object (used for debugging purposes).
      *
-     * @return an informational string.
+     * @return string an informational string.
      * @public
      */
     function getStorageType()
@@ -90,7 +90,7 @@ class CAS_PGTStorage_File extends CAS_PGTStorage_AbstractStorage
      * This method returns an informational string giving informations on the
      * parameters of the storage.(used for debugging purposes).
      *
-     * @return an informational string.
+     * @return string an informational string.
      * @public
      */
     function getStorageInfo()
@@ -122,7 +122,7 @@ class CAS_PGTStorage_File extends CAS_PGTStorage_AbstractStorage
             $path = CAS_PGT_STORAGE_FILE_DEFAULT_PATH;
         }
         // check that the path is an absolute path
-        if (getenv("OS")=="Windows_NT") {
+        if (getenv("OS")=="Windows_NT" || strtoupper(substr(PHP_OS,0,3)) == 'WIN') {
 
             if (!preg_match('`^[a-zA-Z]:`', $path)) {
                 phpCAS::error('an absolute path is needed for PGT storage to file');
@@ -174,7 +174,7 @@ class CAS_PGTStorage_File extends CAS_PGTStorage_AbstractStorage
      *
      * @param string $pgt_iou the PGT iou.
      *
-     * @return a filename
+     * @return string a filename
      * @private
      */
     function getPGTIouFilename($pgt_iou)
@@ -227,7 +227,7 @@ class CAS_PGTStorage_File extends CAS_PGTStorage_AbstractStorage
      *
      * @param string $pgt_iou the PGT iou
      *
-     * @return the corresponding PGT, or FALSE on error
+     * @return string|false the corresponding PGT, or FALSE on error
      *
      * @public
      */
