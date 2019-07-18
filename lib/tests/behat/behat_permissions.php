@@ -236,11 +236,11 @@ class behat_permissions extends behat_base {
 
             if ($allowed == 'Assignable') {
                 if (!$node->isChecked()) {
-                    $node->click();
+                    $node->check();
                 }
             } else if ($allowed == 'Not assignable') {
                 if ($node->isChecked()) {
-                    $node->click();
+                    $node->uncheck();
                 }
             } else {
                 throw new ExpectationException(
