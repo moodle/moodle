@@ -668,7 +668,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     // Check for passwords that we want to force users to reset next
                     // time they log in.
                     $errmsg = null;
-                    $weak = !check_password_policy($user->password, $errmsg);
+                    $weak = !check_password_policy($user->password, $errmsg, $user);
                     if ($resetpasswords == UU_PWRESET_ALL or ($resetpasswords == UU_PWRESET_WEAK and $weak)) {
                         if ($weak) {
                             $weakpasswords++;
@@ -809,7 +809,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     }
                 } else {
                     $errmsg = null;
-                    $weak = !check_password_policy($user->password, $errmsg);
+                    $weak = !check_password_policy($user->password, $errmsg, $user);
                     if ($resetpasswords == UU_PWRESET_ALL or ($resetpasswords == UU_PWRESET_WEAK and $weak)) {
                         if ($weak) {
                             $weakpasswords++;

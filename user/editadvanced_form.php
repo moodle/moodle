@@ -266,7 +266,7 @@ class user_editadvanced_form extends moodleform {
         } else {
             if (!empty($usernew->newpassword)) {
                 $errmsg = ''; // Prevent eclipse warning.
-                if (!check_password_policy($usernew->newpassword, $errmsg)) {
+                if (!check_password_policy($usernew->newpassword, $errmsg, $usernew)) {
                     $err['newpassword'] = $errmsg;
                 }
             } else if (!$user) {
