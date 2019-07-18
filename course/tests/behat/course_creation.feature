@@ -68,3 +68,48 @@ Feature: Managers can create courses
       | id_enddate_day | 24 |
       | id_enddate_month | October |
       | id_enddate_year | 2016 |
+
+  Scenario: Create a course as a custom course creator
+    Given the following "users" exist:
+      | username  | firstname | lastname | email          |
+      | kevin  | Kevin   | the        | kevin@example.com |
+    And the following "roles" exist:
+      | shortname | name    | archetype |
+      | creator   | Creator |           |
+    And the following "system role assigns" exist:
+      | user   | role    | contextlevel |
+      | kevin  | creator | System       |
+    And I log in as "admin"
+    And I set the following system permissions of "Creator" role:
+      | capability | permission |
+      | moodle/course:create | Allow |
+      | moodle/course:manageactivities | Allow |
+      | moodle/course:viewparticipants | Allow |
+      | moodle/role:assign | Allow |
+    And I log out
+    And I log in as "kevin"
+    And I am on site homepage
+    When I press "Add a new course"
+    And I set the following fields to these values:
+      | Course full name  | My first course |
+      | Course short name | myfirstcourse |
+    And I press "Save and display"
+    And I follow "Participants"
+    Then I should see "Kevin the"
+    And I should not see "Teacher"
+    And I log out
+    Given I log in as "admin"
+    And I define the allowed role assignments for the "Creator" role as:
+      | Teacher | Assignable |
+    And I log out
+    And I log in as "kevin"
+    And I am on site homepage
+    And I turn editing mode on
+    When I press "Add a new course"
+    And I set the following fields to these values:
+      | Course full name  | My second course |
+      | Course short name | mysecondcourse |
+    And I press "Save and display"
+    And I follow "Participants"
+    Then I should see "Kevin the"
+    And I should see "Teacher"
