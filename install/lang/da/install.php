@@ -88,7 +88,7 @@ $string['welcomep20'] = 'Du ser denne side fordi du har installeret og åbnet pa
 Tillykke med det!';
 $string['welcomep30'] = 'Denne version af <strong>{$a->installername}</strong> indeholder programmerne til at oprette et miljø, hvori <strong>Moodle</strong> vil operere, nemlig:';
 $string['welcomep40'] = 'Pakken indeholder også <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Brugen af programmerne i denne pakke reguleres af deres respektive licenser. Hele <strong>{$a->installername}</strong>-pakken er <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> og distribueret under <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>-licensen.';
+$string['welcomep50'] = 'Brugen af programmerne i denne pakke reguleres af deres respektive licenser. Hele <strong>{$a->installername}</strong>-pakken er <a href="https://www.opensource.org/docs/definition_plain.html">open source</a> og distribueret under <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>-licensen.';
 $string['welcomep60'] = 'De følgende sider vil hjælpe dig gennem nogle nemme trin til konfiguration og opsætning af <strong>Moodle</strong> på din computer. Du kan acceptere standardindstillingerne, eller vælge at ændre dem så de bedre svarer til dine egne behov.';
 $string['welcomep70'] = 'Klik på "Næste" herunder for at forsætte opsætningen af <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Webadresse';
