@@ -235,6 +235,7 @@ $string['eventroleassigned'] = 'Role assigned';
 $string['eventrolecapabilitiesupdated'] = 'Role capabilities updated';
 $string['eventroledeleted'] = 'Role deleted';
 $string['eventroleunassigned'] = 'Role unassigned';
+$string['eventroleupdated'] = 'Role updated';
 $string['existingadmins'] = 'Current site administrators';
 $string['existingusers'] = '{$a} existing users';
 $string['explanation'] = 'Explanation';

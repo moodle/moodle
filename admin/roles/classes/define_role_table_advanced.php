@@ -434,7 +434,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     public function save_changes() {
-        global $DB;
+        global $DB, $USER;
 
         if (!$this->roleid) {
             // Creating role.
@@ -443,6 +443,20 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         } else {
             // Updating role.
             $DB->update_record('role', $this->role);
+
+            // Trigger role updated event.
+            \core\event\role_updated::create([
+                'userid' => $USER->id,
+                'objectid' => $this->role->id,
+                'context' => $this->context,
+                'other' => [
+                    'name' => $this->role->name,
+                    'shortname' => $this->role->shortname,
+                    'description' => $this->role->description,
+                    'archetype' => $this->role->archetype,
+                    'contextlevels' => $this->contextlevels
+                ]
+            ])->trigger();
 
             // This will ensure the course contacts cache is purged so name changes get updated in
             // the UI. It would be better to do this only when we know that fields affected are
