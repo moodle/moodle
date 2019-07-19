@@ -2233,6 +2233,11 @@ class core_plugin_manager {
      * @return bool
      */
     protected function common_uninstall_check(\core\plugininfo\base $pluginfo) {
+        global $CFG;
+        // Check if uninstall is allowed from the GUI.
+        if (!empty($CFG->uninstallclionly) && (!CLI_SCRIPT)) {
+            return false;
+        }
 
         if (!$pluginfo->is_uninstall_allowed()) {
             // The plugin's plugininfo class declares it should not be uninstalled.
