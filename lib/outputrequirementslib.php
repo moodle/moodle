@@ -1569,8 +1569,18 @@ class page_requirements_manager {
      * @return string the HTML code to go at the start of the <body> tag.
      */
     public function get_top_of_body_code(renderer_base $renderer) {
+        global $CFG;
+
         // First the skip links.
         $output = $renderer->render_skip_links($this->skiplinks);
+
+        // The polyfill needs to load before the other JavaScript in order to make sure
+        // that we have access to the functions it provides.
+        if (empty($CFG->cachejs)) {
+            $output .= html_writer::script('', $this->js_fix_url('/lib/babel-polyfill/polyfill.js'));
+        } else {
+            $output .= html_writer::script('', $this->js_fix_url('/lib/babel-polyfill/polyfill.min.js'));
+        }
 
         // YUI3 JS needs to be loaded early in the body. It should be cached well by the browser.
         $output .= $this->get_yui3lib_headcode();

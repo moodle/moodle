@@ -302,4 +302,10 @@
     <version>5.0.0</version>
     <licenseversion>3-Clause</licenseversion>
   </library>
+  <library>
+    <location>babel-polyfill</location>
+    <name>babel-polyfill</name>
+    <license>MIT</license>
+    <version>6.26.0</version>
+  </library>
 </libraries>
