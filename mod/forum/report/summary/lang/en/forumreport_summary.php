@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Strings for the Forum report subplugin.
  *
- * @package   mod_forum
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package   forumreport_summary
+ * @copyright 2019 Michael Hawkins <michaelh@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2019071900;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;       // Requires this Moodle version
-$plugin->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)
+$string['nodetitle'] = 'Summary report';
+$string['pluginname'] = 'Forum summary report';
+$string['postcount'] = 'Number of discussions posted';
+$string['privacy:metadata'] = 'The Forum summary report plugin does not store any personal data.';
+$string['replycount'] = 'Number of replies posted';
+$string['summary:viewall'] = 'Access summary report data for each user within a given forum or forums';
+$string['summary:view'] = 'Access summary report within a given forum or forums';
+$string['summarytitle'] = 'Summary report - {$a}';
