@@ -13,7 +13,7 @@
     "require-dev": {
         "phpunit/phpunit": "6.5.*",
         "phpunit/dbunit": "3.0.*",
-        "moodlehq/behat-extension": "3.36.0",
+        "moodlehq/behat-extension": "3.36.1",
         "mikey179/vfsstream": "^1.6",
         "instaclick/php-webdriver": "dev-local as 1.x-dev"
     }
