@@ -7070,19 +7070,10 @@ function current_language() {
  */
 function get_parent_language($lang=null) {
 
-    // Let's hack around the current language.
-    if (!empty($lang)) {
-        $oldforcelang = force_current_language($lang);
-    }
+    $parentlang = get_string_manager()->get_string('parentlanguage', 'langconfig', null, $lang);
 
-    $parentlang = get_string('parentlanguage', 'langconfig');
     if ($parentlang === 'en') {
         $parentlang = '';
-    }
-
-    // Let's hack around the current language.
-    if (!empty($lang)) {
-        force_current_language($oldforcelang);
     }
 
     return $parentlang;
