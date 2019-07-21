@@ -28,7 +28,43 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK
     ),
 
-    'block/iomad_microlearning:admin_view' => array(
+    'block/iomad_microlearning:edit_threads' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_microlearning:edit_nuggets' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_microlearning:thread_delete' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_microlearning:thread_view' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_microlearning:assign_threads' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_BLOCK,

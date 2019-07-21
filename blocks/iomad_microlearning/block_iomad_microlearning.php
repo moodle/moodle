@@ -33,10 +33,44 @@ class block_iomad_microlearning extends block_base {
     public function get_content() {
         global $CFG, $USER, $DB;
 
+        // Get any nuggets assigned and not completed.
+        $mynuggets = $DB->get_records_sql("SELECT mtu.*,mn.name AS nuggetname,mn.cmid,.mn.sectionid,mt.name AS threadname 
+                                           FROM {microlearning_thread_user} mtu
+                                           JOIN {microlearning_nugget} mn ON (mtu.nuggetid = mn.id)
+                                           JOIN {microlearning_thread} mt ON (mtu.threadid = mt.id)
+                                           WHERE mtu.userid = :userid
+                                           AND mtu.timecompleted IS NULL
+                                           ORDER BY mt.nameid,mtu.scheduledate",
+                                           array('userid' => $USER->id));
+        if (empty($mynuggets)) {
+            $nuggetout = get_string('nolearningthreads', 'block_microlearning');
+        } else {
+            $threadid = 0;
+            $nuggetout = html_writer::start_tag('div', array('class' => 'microlearningthreads'));
+            foreach ($mynuggets as $mynugget) {
+                if ($threadid != $mynugget->threadid) {
+                    // display the thread name.
+                    $nuggetout .= html_writer::start_tag('div', array('class' => 'microlearningthreadhead'));
+                    $nuggetout .= format_text($mynugget->threadname);
+                    $nuggetout .= html_writer::end_tag('a');
+                    $threadid = $mynugget->threadid;
+                }
+                $linkurl = microlearning::get_nugget_url($mynugget);
+                $nuggetout .= html_writer::start_tag('div', array('class' => 'microlearningnugget'));
+                $nuggetout .= html_writer::start_tag('a', array('class' => 'microlearningnugget_link', 'href' => $linkurl));
+                $nuggetout .= format_string($mynugget->nuggetname);
+                $nuggetout .= html_writer::end_tag('a');
+                $nuggetout .= html_writer::end_tag('div');
+            }
+            $nuggetout .= html_writer::end_tag('div');
+        }
+
+        // Need to add in links to manage if we have caps.
+
         $this->content = new stdClass;
         $this->content->footer = '';
 
-        $this->content->text = "";
+        $this->content->text = $nuggetout;
 
         return $this->content;
     }

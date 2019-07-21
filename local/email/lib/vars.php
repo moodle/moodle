@@ -112,7 +112,9 @@ class EmailVars {
             // Activity information fields .
                         'Activity_Name', 'Activity_Duedate',
             // Miscellaneouss fields.
-                        'LinkURL', 'SiteURL'
+                        'LinkURL', 'SiteURL',
+            // Microlearning fields.
+                        'Nugget_Name', 'Nugget_URL'
         );
 
         // Add all methods of this class that are ok2call to the $result array as well.

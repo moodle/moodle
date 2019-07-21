@@ -1456,3 +1456,169 @@ class potential_company_group_user_selector extends company_user_selector_base {
         return array($groupname => $availableusers);
     }
 }
+
+class current_company_course_user_selector extends company_user_selector_base {
+    public function __construct($name, $options) {
+        $this->companyid  = $options['companyid'];
+        $this->threadid = $options['threadid'];
+        $this->departmentid = $options['departmentid'];
+
+        parent::__construct($name, $options);
+    }
+
+    /**
+     * Company users enrolled into the selected company course
+     * @param <type> $search
+     * @return array
+     */
+    public function find_users($search, $all = false) {
+        global $CFG, $DB;
+
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $params['companyid'] = $this->companyid;
+        $params['threadid'] = $this->threadid;
+
+        // Deal with departments.
+        $departmentlist = company::get_all_subdepartments($this->departmentid);
+        $departmentsql = "";
+        if (!empty($departmentlist)) {
+            $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
+        }
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(1)';
+
+        $sql = " FROM {user} u
+                 INNER JOIN {company_users} cu
+                 ON (cu.userid = u.id AND managertype = 0 $departmentsql)
+                WHERE $wherecondition AND u.suspended = 0
+                    AND cu.companyid = :companyid
+                    AND cu.userid IN
+                     (SELECT DISTINCT userid)
+                     FROM {microlearning_thread_users}
+                     WHERE threadid=:threadid)";
+
+        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+
+        if (!$this->is_validating() && !$all) {
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
+                return $this->too_many_results($search, $potentialmemberscount);
+            }
+        }
+
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('currentlyenrolledusersmatching', 'block_iomad_company_admin', $search);
+        } else {
+            $groupname = get_string('currentlyenrolledusers', 'block_iomad_company_admin');
+        }
+
+        return array($groupname => $availableusers);
+    }
+}
+
+class potential_company_course_user_selector extends company_user_selector_base {
+
+    public function __construct($name, $options) {
+        $this->companyid  = $options['companyid'];
+        $this->threadid  = $options['threadid'];
+        $this->departmentid = $options['departmentid'];
+        $this->subdepartments = $options['subdepartments'];
+        $this->parentdepartmentid = $options['parentdepartmentid'];
+        parent::__construct($name, $options);
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['companyid'] = $this->companyid;
+        $options['threadid'] = $this->threadid;
+        $options['departmentid'] = $this->departmentid;
+        $options['subdepartments'] = $this->subdepartments;
+        $options['parentdepartmentid'] = $this->parentdepartmentid;
+        $options['file']    = 'blocks/iomad_company_admin/lib.php';
+        return $options;
+    }
+
+    /**
+     * Company users enrolled into the selected company course
+     * @param <type> $search
+     * @return array
+     */
+    public function find_users($search, $all = false) {
+        global $CFG, $DB;
+        $companyrec = $DB->get_record('company', array('id' => $this->companyid));
+        $company = new company($this->companyid);
+
+        // Get the full company tree as we may need it.
+        $topcompanyid = $company->get_topcompanyid();
+        $topcompany = new company($topcompanyid);
+        $companytree = $topcompany->get_child_companies_recursive();
+        $parentcompanies = $company->get_parent_companies_recursive();
+
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $params['companyid'] = $this->companyid;
+        $params['threadid'] = $this->threadid;
+
+        // Deal with departments.
+        $departmentlist = company::get_all_subdepartments($this->departmentid);
+        $departmentsql = "";
+        if (!empty($departmentlist)) {
+            $departmentsql = " AND cu.departmentid IN (".implode(',', array_keys($departmentlist)).")";
+        } else {
+            $departmentsql = "";
+        }
+
+        // Deal with parent company managers
+        if (!empty($parentcompanies)) {
+            $userfilter = " AND u.id NOT IN (
+                             SELECT userid FROM {company_users}
+                             WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
+        } else {
+            $userfilter = "";
+        }
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(1)';
+
+        $sql = " FROM {user} u INNER JOIN {company_users} cu ON cu.userid = u.id
+                WHERE $wherecondition  AND u.suspended = 0 $departmentsql
+                    AND
+                    cu.companyid = :companyid
+                    $userfilter
+                    AND u.id NOT IN
+                     (SELECT DISTINCT userid
+                     FROM {microlearning_thread_users}
+                     WHERE threadid=:threadid)";
+
+        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+
+        if (!$this->is_validating() && !$all) {
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
+                return $this->too_many_results($search, $potentialmemberscount);
+            }
+        }
+
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('potentialcourseusersmatching', 'block_iomad_company_admin', $search);
+        } else {
+            $groupname = get_string('potentialcourseusers', 'block_iomad_company_admin');
+        }
+
+        return array($groupname => $availableusers);
+    }
+}

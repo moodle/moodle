@@ -23,19 +23,19 @@ require_once($CFG->libdir . '/formslib.php');
 require_once('lib.php');
 require_once(dirname(__FILE__) . '/../../course/lib.php');
 
-$threadid = optional_param('threadid', 0, PARAM_INT);
+$nuggetid = optional_param('nuggetid', 0, PARAM_INT);
 
 $context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_microlearning:edit_threads', $context);
+iomad::require_capability('block/iomad_microlearning:edit_nuggets', $context);
 
-$threadlist = new moodle_url('/blocks/iomad_microlearning/threads.php');
+$nuggetlist = new moodle_url('/blocks/iomad_microlearning/nuggets.php');
 
-$linktext = get_string('editthread', 'block_iomad_microlearning');
+$linktext = get_string('editnugget', 'block_iomad_microlearning');
 
 // Set the url.
-$linkurl = new moodle_url('/blocks/iomad_microlearning/thread_edit.php');
+$linkurl = new moodle_url('/blocks/iomad_microlearning/nugget_edit.php');
 
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
@@ -55,18 +55,18 @@ $companyid = iomad::get_my_companyid($context);
 
 
 // Set up the form.
-$editform = new block_iomad_microloearning\forms\thread_edit_form();
+$editform = new block_iomad_microloearning\forms\nugget_edit_form();
 
 // Set up the initial forms.
-if (!empty($threadid)) {
-    $thread = $DB->get_record('microlearning_thread', array('id' => $threadid));
+if (!empty($nuggetid)) {
+    $nugget = $DB->get_record('microlearning_nugget', array('id' => $nuggetid));
 
     // Sort the hour stuff out.
-    $hours = $thread->message_time;
+    $hours = $nugget->message_time;
     $h = floor($hours / 3600);
     $m = floor(($hourse / 60) % 60);
-    $thread->message_time = array('hour' => $h, 'minute' => $m);
-    $editform->set_data($thread);
+    $nugget->message_time = array('hour' => $h, 'minute' => $m);
+    $editform->set_data($nugget);
 } else {
     $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
     $editform->set_data(array('companyid' => $company->id));
@@ -74,7 +74,7 @@ if (!empty($threadid)) {
 
 // Process the form.
 if ($editform->is_cancelled()) {
-    redirect($threadlist);
+    redirect($nuggetlist);
     die;
 } else if ($createdata = $editform->get_data()) {
 
@@ -83,39 +83,39 @@ if ($editform->is_cancelled()) {
 
     // Create or update the department.
     if (empty($createdata->id)) {
-        // We are creating a new thread.
+        // We are creating a new nugget.
         $createdata->timecreated = time();
         $createdata->message_time = $createdata->message_time['hour'] * 3600 + $createdata->message_time['minute'] * 60;
 
-        $threadid = $DB->insert_record('microlearning_thread', $createdata);
-        $redirectmessage = get_string('threadcreatedok', 'block_iomad_microlearning');
+        $nuggetid = $DB->insert_record('microlearning_nugget', $createdata);
+        $redirectmessage = get_string('nuggetcreatedok', 'block_iomad_microlearning');
 
         // Fire an Event for this.
         $eventother = array('companyid' => $companyid);
 
-        $event = \block_iomad_microlearning\event\thread_created::create(array('context' => context_system::instance(),
+        $event = \block_iomad_microlearning\event\nugget_created::create(array('context' => context_system::instance(),
                                                                                'userid' => $USER->id,
-                                                                               'objectid' => $threadid,
+                                                                               'objectid' => $nuggetid,
                                                                                'other' => $eventother));
         $event->trigger();
     } else {
-        // We are editing a current thread.
+        // We are editing a current nugget.
         $createdata->message_time = $createdata->message_time['hour'] * 3600 + $createdata->message_time['minute'] * 60;
 
-        $threadid = $DB->update_record('microlearning_thread', $createdata);
-        $redirectmessage = get_string('threadcupdatedok', 'block_iomad_microlearning');
+        $nuggetid = $DB->update_record('microlearning_nugget', $createdata);
+        $redirectmessage = get_string('nuggetcupdatedok', 'block_iomad_microlearning');
 
         // Fire an Event for this.
         $eventother = array('companyid' => $companyid);
 
-        $event = \block_iomad_microlearning\event\thread_updated::create(array('context' => context_system::instance(),
+        $event = \block_iomad_microlearning\event\nugget_updated::create(array('context' => context_system::instance(),
                                                                                'userid' => $USER->id,
-                                                                               'objectid' => $threadid,
+                                                                               'objectid' => $nuggetid,
                                                                                'other' => $eventother));
         $event->trigger();
     }
 
-    redirect($threadlist, $redirectmessage, null, \core\output\notification::NOTIFY_SUCCESS);
+    redirect($nuggetlist, $redirectmessage, null, \core\output\notification::NOTIFY_SUCCESS);
     die;
 }
 
