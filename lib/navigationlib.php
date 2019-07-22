@@ -5020,6 +5020,16 @@ class settings_navigation extends navigation_node {
             $useraccount->add(get_string("changepassword"), $passwordchangeurl, self::TYPE_SETTING, null, 'changepassword');
         }
 
+        // Default homepage.
+        $defaulthomepageuser = (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
+        if (isloggedin() && !isguestuser($user) && $defaulthomepageuser) {
+            if ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||
+                    has_capability('moodle/user:editprofile', $usercontext)) {
+                $url = new moodle_url('/user/defaulthomepage.php', ['id' => $user->id]);
+                $useraccount->add(get_string('defaulthomepageuser'), $url, self::TYPE_SETTING, null, 'defaulthomepageuser');
+            }
+        }
+
         if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
             if ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||
                     has_capability('moodle/user:editprofile', $usercontext)) {

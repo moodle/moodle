@@ -2,14 +2,19 @@
 Feature: Set the site home page and dashboard as the default home page
   In order to set a page as my default home page
   As a user
-  I need to go to the page I want and set it as my home page
+  I need to choose which page I want and set it as my home page
 
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    # TODO MDL-57208 this functionality does not work without administration block.
-    And I log in as "admin"
+    And the following "users" exist:
+      | username | firstname | lastname | email             |
+      | user1    | User      | One      | user1@example.com |
+
+  Scenario: Admin sets the site page and then the dashboard as the default home page
+    # This functionality does not work without the administration block.
+    Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     And I add the "Administration" block if not present
@@ -17,10 +22,6 @@ Feature: Set the site home page and dashboard as the default home page
     And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
-    And I log out
-
-  Scenario: Admin sets the site page and then the dashboard as the default home page
-    Given I log in as "admin"
     And I navigate to "Appearance > Navigation" in site administration
     And I set the field "Default home page for users" to "User preference"
     And I press "Save changes"
@@ -35,3 +36,25 @@ Feature: Set the site home page and dashboard as the default home page
     And I should not see "Make this my default home page"
     And I am on "Course 1" course homepage
     Then "Dashboard" "text" should exist in the ".breadcrumb" "css_element"
+
+  Scenario: User cannot configure their preferred default home page unless allowed by admin
+    Given I log in as "user1"
+    When I follow "Preferences" in the user menu
+    Then I should not see "Default home page"
+
+  Scenario Outline: User can configure their preferred default home page when allowed by admin
+    Given I log in as "admin"
+    And I navigate to "Appearance > Navigation" in site administration
+    And I set the field "Default home page for users" to "User preference"
+    And I press "Save changes"
+    And I log out
+    When I log in as "user1"
+    And I follow "Preferences" in the user menu
+    And I follow "Default home page"
+    And I set the field "Default home page" to "<preference>"
+    And I press "Save changes"
+    Then "<breadcrumb>" "text" should exist in the ".breadcrumb" "css_element"
+    Examples:
+      | preference | breadcrumb |
+      | Site       | Home       |
+      | Dashboard  | Dashboard  |
