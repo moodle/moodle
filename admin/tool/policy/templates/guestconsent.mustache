@@ -58,7 +58,7 @@ require(['jquery', 'tool_policy/jquery-eu-cookie-law-popup', 'tool_policy/policy
                    "<ul>{{#policies}}" +
                    "<li>" +
                    "<a href=\"{{pluginbaseurl}}/view.php?versionid={{id}}{{#returnurl}}&amp;returnurl={{.}}{{/returnurl}}\" " +
-                   "   data-action=\"view\" data-versionid=\"{{id}}\" data-behalfid=\"1\" >" +
+                   "   data-action=\"view-guest\" data-versionid=\"{{id}}\" data-behalfid=\"1\" >" +
                    "{{{name}}}" +
                    "</a>" +
                    "</li>" +
@@ -81,7 +81,7 @@ require(['jquery', 'tool_policy/jquery-eu-cookie-law-popup', 'tool_policy/policy
             {{/haspolicies}}
 
             // Initialise the JS for the modal window which displays the policy versions.
-            ActionsMod.init();
+            ActionsMod.init('[data-action="view-guest"]');
         });
 });
 
