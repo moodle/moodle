@@ -772,7 +772,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         set_config('enablecourserelativedates', $setting);
 
-        // Generate a course with relative dates mode set to 1.
+        // Generate a course with relative dates mode set to $mode.
         $course = $this->getDataGenerator()->create_course(['relativedatesmode' => $mode]);
 
         // Verify that the relative dates match what's expected.
