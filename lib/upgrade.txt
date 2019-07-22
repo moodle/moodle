@@ -22,6 +22,8 @@ information provided here is intended especially for developers.
     at least a single checkbox item is selected or not.
 * Final deprecation (removal) of the core/modal_confirm dialogue.
 * Upgrade scssphp to v1.0.2, This involves renaming classes from Leafo => ScssPhp as the repo has changed.
+* $CFG->httpswwwroot has been removed. It is no longer necessary as loginhttps has already been removed and it's no longer being
+  used anywhere in core.
 
 === 3.7 ===
 

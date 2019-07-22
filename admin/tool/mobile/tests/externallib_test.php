@@ -71,7 +71,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         $expected = array(
             'wwwroot' => $CFG->wwwroot,
-            'httpswwwroot' => $CFG->httpswwwroot,
+            'httpswwwroot' => $CFG->wwwroot,
             'sitename' => external_format_string($SITE->fullname, $context->id, true),
             'guestlogin' => $CFG->guestloginbutton,
             'rememberusername' => $CFG->rememberusername,

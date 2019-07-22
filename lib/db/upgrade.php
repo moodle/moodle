@@ -3416,5 +3416,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019070400.01);
     }
 
+    if ($oldversion < 2019072200.00) {
+        unset_config('httpswwwroot');
+
+        upgrade_main_savepoint(true, 2019072200.00);
+    }
+
     return true;
 }

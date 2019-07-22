@@ -534,10 +534,6 @@ global $FULLSCRIPT;
  */
 global $SCRIPT;
 
-// Set httpswwwroot to $CFG->wwwroot for backwards compatibility
-// The loginhttps option is deprecated, so httpswwwroot is no longer necessary. See MDL-42834.
-$CFG->httpswwwroot = $CFG->wwwroot;
-
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
 if (NO_OUTPUT_BUFFERING) {
