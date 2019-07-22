@@ -46,6 +46,7 @@ $string['cachedef_coursecattree'] = 'Course categories tree';
 $string['cachedef_coursecompletion'] = 'Course completion status';
 $string['cachedef_coursecontacts'] = 'List of course contacts';
 $string['cachedef_coursemodinfo'] = 'Accumulated information about modules and sections for each course';
+$string['cachedef_course_user_dates'] = 'The user dates for courses set to relative dates mode';
 $string['cachedef_completion'] = 'Activity completion status';
 $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
