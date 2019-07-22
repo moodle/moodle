@@ -12,6 +12,8 @@ information provided here is intended especially for developers.
     * allow_override()
     * allow_assign()
     * allow_switch()
+    * https_required()
+    * verify_https_required()
 * Remove duplicate font-awesome SCSS, Please see /theme/boost/scss/fontawesome for usage (MDL-65936)
 * Remove lib/pear/Crypt/CHAP.php (MDL-65747)
 * New output component available: \core\output\checkbox_toggleall

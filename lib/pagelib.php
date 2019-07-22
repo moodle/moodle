@@ -1460,29 +1460,17 @@ class moodle_page {
     }
 
     /**
-     * This function indicates that current page requires the https when $CFG->loginhttps enabled.
-     * Since loginhttps was removed this is no longer required or functional.
-     *
-     * @deprecated since Moodle 3.4 MDL-42834 - please do not use this function any more.
-     * @todo MDL-46267 This will be deleted in Moodle 3.8
-     *
-     * @throws coding_exception
+     * @deprecated since Moodle 3.4
      */
     public function https_required() {
-        debugging('https_required() has been deprecated. It no longer needs to be called.', DEBUG_DEVELOPER);
+        throw new coding_exception('https_required() cannot be used anymore.');
     }
 
     /**
-     * Makes sure that page previously marked with https_required() is really using https://, if not it redirects to https://
-     * Since loginhttps was removed this is no longer required or functional.
-     *
-     * @deprecated since Moodle 3.4 MDL-42834 - please do not use this function any more.
-     * @todo MDL-46267 This will be deleted in Moodle 3.8
-     *
-     * @throws coding_exception
+     * @deprecated since Moodle 3.4
      */
     public function verify_https_required() {
-        debugging('verify_https_required() has been deprecated. It no longer needs to be called.', DEBUG_DEVELOPER);
+        throw new coding_exception('verify_https_required() cannot be used anymore.');
     }
 
     // Initialisation methods =====================================================
