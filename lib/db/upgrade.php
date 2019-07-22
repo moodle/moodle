@@ -3390,5 +3390,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019052001.04);
     }
 
+    if ($oldversion < 2019052001.12) {
+        // Remove unused config.
+        unset_config('enablecoursepublishing');
+        upgrade_main_savepoint(true, 2019052001.12);
+    }
+
     return true;
 }

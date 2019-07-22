@@ -3193,7 +3193,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($adminoptions->outcomes);
         $this->assertTrue($adminoptions->badges);
         $this->assertTrue($adminoptions->import);
-        $this->assertFalse($adminoptions->publish);
         $this->assertTrue($adminoptions->reset);
         $this->assertTrue($adminoptions->roles);
     }
@@ -3225,7 +3224,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($adminoptions->outcomes);
         $this->assertTrue($adminoptions->badges);
         $this->assertFalse($adminoptions->import);
-        $this->assertFalse($adminoptions->publish);
         $this->assertFalse($adminoptions->reset);
         $this->assertFalse($adminoptions->roles);
 

@@ -4530,13 +4530,6 @@ class settings_navigation extends navigation_node {
             $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
         }
 
-        // Publish course on a hub
-        if ($adminoptions->publish) {
-            $url = new moodle_url('/course/publish/index.php', array('id'=>$course->id));
-            $coursenode->add(get_string('publish', 'core_hub'), $url, self::TYPE_SETTING, null, 'publish',
-                new pix_icon('i/publish', ''));
-        }
-
         // Reset this course
         if ($adminoptions->reset) {
             $url = new moodle_url('/course/reset.php', array('id'=>$course->id));
