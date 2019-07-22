@@ -21,10 +21,10 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once('lib.php');
 require_once($CFG->dirroot."/lib/tablelib.php");
-require_once('threads_table.php');
+require_once('nugget_table.php');
 
 
-$threadid = required_param('threadid', 0, PARAM_INT);
+$threadid = required_param('threadid', PARAM_INT);
 $nuggetid = optional_param('nuggetid', 0, PARAM_INT);
 $deleteid = optional_param('deleteid', 0, PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
@@ -96,28 +96,29 @@ if ($deleteid) {
 }
 
 // Create the thread table.
-$nuggettable = new block_microlearning_nugget_table('block_microlearning_nuggets');
+$nuggettable = new block_iomad_microlearning_nugget_table('block_microlearning_nuggets');
 $sqlparams = array('threadid' => $threadid);
 $selectsql = "*";
 $fromsql = "{microlearning_nugget}";
 $wheresql = "threadid = :threadid";
 
-$headers = array();
-$headers['name'] = get_string('threadname', 'block_iomad_microlearning');
-$headers['order'] = get_string('active', 'block_iomad_microlearning');
-$headers['timecreated'] = get_strng('timecreated', 'block_iomad_microlearning');
-$headers['updown'] = get_string('updown');
-$headers['actions'] = get_string('actions', 'block_iomad_microlearning');
+$headers = array(get_string('threadname', 'block_iomad_microlearning'),
+                 get_string('nuggetorder', 'block_iomad_microlearning'),
+                 get_string('timecreated', 'block_iomad_microlearning'),
+                 get_string('updown', 'block_iomad_microlearning'),
+                 get_string('actions', 'block_iomad_microlearning'));
 
-$threadtable->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
-$threadtable->define_base_url($linkurl);
-$threadtable->define_columns(array('name', 'order', 'timecreated', 'updown', 'actions'));
-$threadtable->define_headers($headers);
-$threadtable->no_sorting(array('name', 'order', 'updown', 'actions'));
-$threadtable->sort_default_column='order';
+$nuggettable->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
+$nuggettable->define_baseurl($linkurl);
+$nuggettable->define_columns(array('name', 'nuggetorder', 'timecreated', 'updown', 'actions'));
+$nuggettable->define_headers($headers);
+$nuggettable->no_sorting(array('name', 'nuggetorder', 'updown', 'actions'));
+$nuggettable->sort_default_column='nuggetorder';
 
 echo $output->header();
 
-$threadtable->out(30);
+echo $output->threads_buttons(new moodle_url('nugget_edit.php', array('threadid' => $threadid)));
+
+$nuggettable->out(30, true);
 
 echo $output->footer();

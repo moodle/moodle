@@ -77,6 +77,16 @@ class block_iomad_microlearning_thread_table extends table_sql {
         }
     }
 
+    public function col_startdate($row) {
+        global $CFG;
+
+        if (!empty($row->timecreated)) {
+            return date($CFG->iomad_date_format, $row->timecreated);
+        } else {
+            return;
+        }
+    }
+
     /**
      * Generate the display of the actions
      * @param object $row the table row being output.
@@ -89,12 +99,25 @@ class block_iomad_microlearning_thread_table extends table_sql {
             return;
         }
 
-        $deletelink = new moodle_url('threads.php', array('deleteid' => $row->id));
+        $html = "";
+        $context = context_system::instance();
+        $deletelink = new moodle_url('threads.php', array('deleteid' => $row->id, 'sesskey' => sesskey()));
         $editlink = new moodle_url('thread_edit.php', array('threadid' => $row->id));
-        $nuggetlink = new moodle_url('nuggets', array('threadid' => $row->id));
-        $userlink = new moodle_url('users', array('threadid' => $row->id));
-        $html = '<a class="btn btn-secondary" href="' . $editlink . '">' . get_string('edit') . '</a>' .
-                '<a class="btn btn-danger" href="' . $deletelink . '">' . get_string('delete') . '</a>';
-        return; $html;
+        $nuggetlink = new moodle_url('nuggets.php', array('threadid' => $row->id));
+        $userlink = new moodle_url('users.php', array('threadid' => $row->id));
+        if (iomad::has_capability('block/iomad_microlearning:edit_threads', $context)) {
+            $html .= '<a href="' . $editlink . '"><i class="fa fa-cog"></i></a>&nbsp';
+        }
+        if (iomad::has_capability('block/iomad_microlearning:edit_nuggets', $context)) {
+            $html .= '<a href="' . $nuggetlink . '"><i class="fa fa-microchip"></i></a>&nbsp';
+        }
+        if (iomad::has_capability('block/iomad_microlearning:assign_threads', $context)) {
+            $html .= '<a href="' . $userlink . '"><i class="fa fa-group"></i></a>&nbsp';
+        }
+        if (iomad::has_capability('block/iomad_microlearning:thread_delete', $context)) {
+            $html .= '<a href="' . $deletelink . '"><i class="fa fa-times"></i></a>';
+        }
+
+        return $html;
     }
 }

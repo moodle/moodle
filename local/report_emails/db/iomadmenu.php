@@ -21,7 +21,7 @@ function local_report_emails_menu() {
         return array(
             'emails' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_emails'),
                 'url' => '/local/report_emails/index.php',
                 'cap' => 'local/report_emails:view',

@@ -91,14 +91,14 @@ class microlearning {
         // Get any nuggets after this one.
         if ($afters = $DB->get_records_sql("SELECT * FROM {microlearning_nugget}
                                             WHERE threadid = :threadid
-                                            AND order > :current",
+                                            AND nuggetorder > :current",
                                             array('threadid' => $nugget->threadid,
-                                                  'current' => $nugget->order))) {
+                                                  'current' => $nugget->nuggetorder))) {
             // Move them up.
             foreach ($afters as $after) {
-                $after->order--;
-                if ($after->order < 0) {
-                    $after->order = 0;
+                $after->nuggetorder--;
+                if ($after->nuggetorder < 0) {
+                    $after->nuggetorder = 0;
                 }
                 $DB->update_record('microlearning_nugget', $after);
             }
@@ -131,19 +131,19 @@ class microlearning {
         }
 
         // is it already the first one?
-        if ($nugget->order == 0) {
+        if ($nugget->nuggetorder == 0) {
             return true;
         }
 
         // Get any nuggets after this one.
         if ($above = $DB->get_record_sql("SELECT * FROM {microlearning_nugget}
                                             WHERE threadid = :threadid
-                                            AND order = :above",
+                                            AND nuggetorder = :above",
                                             array('threadid' => $nugget->threadid,
-                                                  'above' => $nugget->order - 1))) {
-            $above->order++;
+                                                  'above' => $nugget->nuggetorder - 1))) {
+            $above->nuggetorder++;
             $DB->update_record('microlearning_nugget', $above);
-            $nugget->order--;
+            $nugget->nuggetorder--;
             $DB->update_record('microlearning_nugget', $nugget);
         }
 
@@ -167,19 +167,19 @@ class microlearning {
         }
 
         // is it already the first one?
-        if ($nugget->order == 0) {
+        if ($nugget->nuggetorder == 0) {
             return true;
         }
 
         // Get any nuggets after this one.
         if ($below = $DB->get_record_sql("SELECT * FROM {microlearning_nugget}
                                             WHERE threadid = :threadid
-                                            AND order = :above",
+                                            AND nuggetorder = :above",
                                             array('threadid' => $nugget->threadid,
-                                                  'above' => $nugget->order + 1))) {
-            $below->order--;
+                                                  'above' => $nugget->nuggetorder + 1))) {
+            $below->nuggetorder--;
             $DB->update_record('microlearning_nugget', $below);
-            $nugget->order++;
+            $nugget->nuggetorder++;
             $DB->update_record('microlearning_nugget', $nugget);
         }
 

@@ -40,29 +40,28 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
     $settings = new admin_settingpage('block_iomad_microlearning', get_string('pluginname', 'block_iomad_microlearning'));
-    $ADMIN->add('blocks', $settings);
 
     $settings->add(new admin_setting_configtext('microlearningdefaultdue',
-                                                get_string('microlearningdefaultdue', 'local_iomad_settings'),
-                                                get_string('microlearningdefaultdue_help', 'local_iomad_settings'),
+                                                get_string('microlearningdefaultdue', 'block_iomad_microlearning'),
+                                                get_string('microlearningdefaultdue_help', 'block_iomad_microlearning'),
                                                 '30',
                                                 PARAM_INT));
 
     $settings->add(new admin_setting_configtext('microlearningdefaultpulse',
-                                                get_string('microlearningdefaultpulse', 'local_iomad_settings'),
-                                                get_string('microlearningdefaultpulse_help', 'local_iomad_settings'),
+                                                get_string('microlearningdefaultpulse', 'block_iomad_microlearning'),
+                                                get_string('microlearningdefaultpulse_help', 'block_iomad_microlearning'),
                                                 '30',
                                                 PARAM_INT));
 
     $settings->add(new admin_setting_configtext('microlearningdefaultreminder1',
-                                                get_string('microlearningdefaultreminder1', 'local_iomad_settings'),
-                                                get_string('microlearningdefaultreminder1_help', 'local_iomad_settings'),
+                                                get_string('microlearningdefaultreminder1', 'block_iomad_microlearning'),
+                                                get_string('microlearningdefaultreminder1_help', 'block_iomad_microlearning'),
                                                 '14',
                                                 PARAM_INT));
 
     $settings->add(new admin_setting_configtext('microlearningdefaultreminder2',
-                                                get_string('microlearningdefaultreminder2', 'local_iomad_settings'),
-                                                get_string('microlearningdefaultreminder2_help', 'local_iomad_settings'),
+                                                get_string('microlearningdefaultreminder2', 'block_iomad_microlearning'),
+                                                get_string('microlearningdefaultreminder2_help', 'block_iomad_microlearning'),
                                                 '21',
                                                 PARAM_INT));
 

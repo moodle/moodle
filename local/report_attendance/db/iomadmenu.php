@@ -21,7 +21,7 @@ function local_report_attendance_menu() {
         return array(
             'attendance' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_attendance'),
                 'url' => '/local/report_attendance/index.php',
                 'cap' => 'local/report_attendance:view',

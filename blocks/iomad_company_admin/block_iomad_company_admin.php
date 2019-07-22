@@ -224,6 +224,16 @@ class block_iomad_company_admin extends block_base {
             $panes[6] = ['category' => 'ECommerceAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
+        if (iomad::has_capability('block/iomad_microlearning:view', $context)) {
+            $tabs[] = [
+                'category' => 'MicrolearningAdmin',
+                'icon' => 'fa-microchip',
+                'selected' => false,
+                'label' => get_string('threads', 'block_iomad_microlearning')
+            ];
+            $panes[7] = ['category' => 'Microlearning', 'items' => [], 'selected' => false];
+            $selected = false;
+        }
         if (iomad::has_capability('block/iomad_reports:view', $context)) {
             $tabs[] = [
                 'category' => 'Reports',
@@ -231,7 +241,7 @@ class block_iomad_company_admin extends block_base {
                 'selected' => $selected,
                 'label' => get_string('reports', 'block_iomad_company_admin')
             ];
-            $panes[7] = ['category' => 'Reports', 'items' => [], 'selected' => $selected];
+            $panes[8] = ['category' => 'Reports', 'items' => [], 'selected' => false];
             $selected = false;
         }
 

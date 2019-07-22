@@ -48,14 +48,14 @@ $output = $PAGE->get_renderer('block_iomad_microlearning');
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($linktext, $departmentlist);
+$PAGE->navbar->add($linktext, $threadlist);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
 
 // Set up the form.
-$editform = new block_iomad_microloearning\forms\thread_edit_form();
+$editform = new block_iomad_microlearning\forms\thread_edit_form();
 
 // Set up the initial forms.
 if (!empty($threadid)) {
@@ -64,12 +64,12 @@ if (!empty($threadid)) {
     // Sort the hour stuff out.
     $hours = $thread->message_time;
     $h = floor($hours / 3600);
-    $m = floor(($hourse / 60) % 60);
-    $thread->message_time = array('hour' => $h, 'minute' => $m);
+    $m = floor(($hours / 60) % 60);
+    $thread->hour = $h;
+    $thread->minute = $m;
     $editform->set_data($thread);
 } else {
-    $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
-    $editform->set_data(array('companyid' => $company->id));
+    $editform->set_data(array('companyid' => $companyid));
 }
 
 // Process the form.
@@ -84,8 +84,21 @@ if ($editform->is_cancelled()) {
     // Create or update the department.
     if (empty($createdata->id)) {
         // We are creating a new thread.
+        // Make sure defaults are OK.
+        if (empty($createdata->send_message)) {
+            $createdata->send_message = 0;
+        }
+        if (empty($createdata->send_reminder)) {
+            $createdata->send_reminder = 0;
+        }
+        if (empty($createdata->halt_until_fulfilled)) {
+            $createdata->halt_until_fulfilled = 0;
+        }
+        if (empty($createdata->active)) {
+            $createdata->active = 0;
+        }
         $createdata->timecreated = time();
-        $createdata->message_time = $createdata->message_time['hour'] * 3600 + $createdata->message_time['minute'] * 60;
+        $createdata->message_time = $createdata->hour * 3600 + $createdata->minute * 60;
 
         $threadid = $DB->insert_record('microlearning_thread', $createdata);
         $redirectmessage = get_string('threadcreatedok', 'block_iomad_microlearning');

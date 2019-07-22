@@ -21,7 +21,7 @@ function local_report_companies_menu() {
         return array(
             'companies' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_companies'),
                 'url' => '/local/report_companies/index.php',
                 'cap' => 'local/report_companies:view',

@@ -1457,7 +1457,7 @@ class potential_company_group_user_selector extends company_user_selector_base {
     }
 }
 
-class current_company_course_user_selector extends company_user_selector_base {
+class current_company_thread_user_selector extends company_user_selector_base {
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
         $this->threadid = $options['threadid'];
@@ -1524,7 +1524,7 @@ class current_company_course_user_selector extends company_user_selector_base {
     }
 }
 
-class potential_company_course_user_selector extends company_user_selector_base {
+class potential_company_thread_user_selector extends company_user_selector_base {
 
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];

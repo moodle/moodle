@@ -21,7 +21,7 @@ function local_report_users_menu() {
         return array(
             'users' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_users'),
                 'url' => '/local/report_users/index.php',
                 'cap' => 'local/report_users:view',

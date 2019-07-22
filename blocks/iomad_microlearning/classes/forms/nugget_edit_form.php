@@ -20,15 +20,15 @@ defined('MOODLE_INTERNAL') || die;
 
 use \moodleform;
 
-class thread_edit_form extends \moodleform {
+class nugget_edit_form extends \moodleform {
 
     public function __construct($actionurl, $threadid, $nuggetid = 0) {
         global $DB;
 
-        $nuggetcount = $DB->count_records('microlearning_tread', array('threadid' => $threadid));
+        $nuggetcount = $DB->count_records('microlearning_nugget', array('threadid' => $threadid));
         if (empty($nuggetid)) {
             // We are adding so count is whatever is there plus this one.
-            $nuggetcount++
+            $nuggetcount++;
         }
         $this->orderselect = array();
         $count = 1;
@@ -75,7 +75,7 @@ class thread_edit_form extends \moodleform {
                             get_string('halt_until_fulfilled', 'block_iomad_microlearning'));
         $mform->addHelpButton('halt_until_fulfilled', 'halt_until_fulfilled', 'block_iomad_microlearning');
 
-        $mform->addElement('select', 'order', get_string('order', 'block_iomad_microlearning'), $this->orderselect);
+        $mform->addElement('select', 'nuggetorder', get_string('nuggetorder', 'block_iomad_microlearning'), $this->orderselect);
 
         $this->add_action_buttons();
     }

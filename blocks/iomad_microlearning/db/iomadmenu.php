@@ -19,49 +19,27 @@
 function block_iomad_microlearning_menu() {
 
     return array(
-        'MicroLearnings' => array(
-            'category' => 'MicroLearningAdmin',
-            'tab' => 7,
-            'name' => get_string('microlearning', 'block_iomad_microlearning'),
-            'url' => '/blocks/iomad_microlearning/microlearning.php',
-            'cap' => 'block/iomad_microlearning:microlearning_view',
-            'icondefault' => 'courses',
-            'style' => 'lthread',
-            'icon' => 'fa-file-text',
-            'iconsmall' => 'fa-money'
-        ),
-        'MicroLearningNuggets' => array(
-            'category' => 'MicroLearningAdmin',
-            'tab' => 7,
-            'name' => get_string('learningnuggets', 'block_iomad_microlearning'),
-            'url' => '/blocks/iomad_microlearning/nuggets.php',
-            'cap' => 'block/iomad_microlearning:nuggets_view',
-            'icondefault' => 'orders',
-            'style' => 'ecomm',
-            'icon' => 'fa-truck',
-            'iconsmall' => 'fa-eye'
-        ),
         'MicroLearningSchedules' => array(
             'category' => 'MicroLearningAdmin',
             'tab' => 7,
-            'name' => get_string('learningschedules', 'block_iomad_microlearning'),
-            'url' => '/blocks/iomad_microlearning/schedules.php',
-            'cap' => 'block/iomad_microlearning:schedules_view',
-            'icondefault' => 'orders',
-            'style' => 'ecomm',
-            'icon' => 'fa-truck',
-            'iconsmall' => 'fa-eye'
+            'name' => get_string('threads', 'block_iomad_microlearning'),
+            'url' => '/blocks/iomad_microlearning/threads.php',
+            'cap' => 'block/iomad_microlearning:edit_threads',
+            'icondefault' => 'microthreads',
+            'style' => 'micro',
+            'icon' => 'fa-file-text',
+            'iconsmall' => 'fa-microchip'
         ),
         'MicroLearningUsers' => array(
             'category' => 'MicroLearningAdmin',
             'tab' => 7,
             'name' => get_string('learningusers', 'block_iomad_microlearning'),
             'url' => '/blocks/iomad_microlearning/users.php',
-            'cap' => 'block/iomad_microlearning:users_view',
-            'icondefault' => 'orders',
-            'style' => 'ecomm',
-            'icon' => 'fa-truck',
-            'iconsmall' => 'fa-eye'
+            'cap' => 'block/iomad_microlearning:assign_threads',
+            'icondefault' => 'users',
+            'style' => 'micro',
+            'icon' => 'fa-group',
+            'iconsmall' => 'fa-microchip'
         ),
     );
 }

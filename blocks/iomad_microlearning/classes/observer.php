@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/blocks/iomad_microlearning/lib/company.php');
+require_once($CFG->dirroot.'/blocks/iomad_microlearning/lib.php');
 
 class block_iomad_microlearning_observer {
 

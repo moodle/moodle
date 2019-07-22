@@ -21,7 +21,7 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once('lib.php');
 require_once($CFG->dirroot."/lib/tablelib.php");
-require_once('threads_table.php');
+require_once('thread_table.php');
 
 
 $threadid = optional_param('threadid', 0, PARAM_INT);
@@ -36,7 +36,7 @@ require_login();
 iomad::require_capability('block/iomad_microlearning:edit_threads', $context);
 
 $urlparams = array();
-$urlparams('search' => $search);
+$urlparams['search'] = $search;
 $companylist = new moodle_url('/my', $urlparams);
 
 $linktext = get_string('threads', 'block_iomad_microlearning');
@@ -63,7 +63,7 @@ $companyid = iomad::get_my_companyid($context);
 // Delete any valid threads.
 if ($deleteid) {
     // Check the thread is valid.
-    if (!$threadinfo = $DB->get_record('microlearning_thread', array('id' => $threadid))) {
+    if (!$threadinfo = $DB->get_record('microlearning_thread', array('id' => $deleteid))) {
         print_error('invalidthread', 'block_iomad_microlearning');
     }
 
@@ -91,8 +91,8 @@ if ($deleteid) {
 }
 
 // Create the thread table.
-$threadtable = new block_microlearning_threads_table('block_microlearning_threads');
-$sqlparams = array('companyid' => $company->id);
+$threadtable = new block_iomad_microlearning_thread_table('block_microlearning_threads');
+$sqlparams = array('companyid' => $companyid);
 $selectsql = "*";
 $fromsql = "{microlearning_thread}";
 $wheresql = "companyid = :companyid";
@@ -101,15 +101,20 @@ if (!empty($search)) {
     $sqlparams['search'] = "%search%";
 }
 
-$headers = array();
-$headers['name'] = get_string('threadname', 'block_iomad_microlearning');
-$headers['active'] = get_string('active', 'block_iomad_microlearning');
-$headers['timecreated'] = get_strng('timecreated', 'block_iomad_microlearning');
-$headers['actions'] = get_string('actions', 'block_iomad_microlearning');
+$headers = array(get_string('threadname', 'block_iomad_microlearning'),
+                 get_string('active', 'block_iomad_microlearning'),
+                 get_string('startdate', 'block_iomad_microlearning'),
+                 get_string('timecreated', 'block_iomad_microlearning'),
+                 get_string('actions', 'block_iomad_microlearning'));
+$columns = array('name',
+                 'active',
+                 'startdate',
+                 'timecreated',
+                 'actions');
 
 $threadtable->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
-$threadtable->define_base_url($linkurl);
-$threadtable->define_columns(array('name', 'active', 'timecreated', 'actions'));
+$threadtable->define_baseurl($linkurl);
+$threadtable->define_columns($columns);
 $threadtable->define_headers($headers);
 $threadtable->no_sorting('actions');
 $threadtable->sort_default_column='name';
@@ -118,6 +123,6 @@ echo $output->header();
 
 echo $output->threads_buttons(new moodle_url('thread_edit.php'));
 
-$threadtable->out(30);
+$threadtable->out(30, true);
 
 echo $output->footer();

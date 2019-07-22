@@ -20,7 +20,7 @@
         <FIELD NAME="send_message" TYPE="binary" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="message_preset" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="message_time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="send_remainder" TYPE="binary" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="send_reminder" TYPE="binary" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="halt_until_fulfilled" TYPE="binary" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="remainder1" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="remainder2" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -40,7 +40,7 @@
         <FIELD NAME="sectionid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="cmid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="halt_until_fulfilled" TYPE="binary" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="order" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="nuggetorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

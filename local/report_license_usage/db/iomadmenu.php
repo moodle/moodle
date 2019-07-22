@@ -21,7 +21,7 @@ function local_report_license_usage_menu() {
         return array(
             'licenseusage' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_license_usage'),
                 'url' => '/local/report_license_usage/index.php',
                 'cap' => 'local/report_license_usage:view',

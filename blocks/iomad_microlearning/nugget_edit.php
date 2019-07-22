@@ -24,13 +24,14 @@ require_once('lib.php');
 require_once(dirname(__FILE__) . '/../../course/lib.php');
 
 $nuggetid = optional_param('nuggetid', 0, PARAM_INT);
+$threadid = required_param('threadid', PARAM_INT);
 
 $context = context_system::instance();
 require_login();
 
 iomad::require_capability('block/iomad_microlearning:edit_nuggets', $context);
 
-$nuggetlist = new moodle_url('/blocks/iomad_microlearning/nuggets.php');
+$nuggetlist = new moodle_url('/blocks/iomad_microlearning/nuggets.php', array('threadid' => $threadid));
 
 $linktext = get_string('editnugget', 'block_iomad_microlearning');
 
@@ -48,29 +49,23 @@ $output = $PAGE->get_renderer('block_iomad_microlearning');
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($linktext, $departmentlist);
+$PAGE->navbar->add(get_string('nuggets', 'block_iomad_microlearning'), $nuggetlist);
+$PAGE->navbar->add($linktext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
 
 // Set up the form.
-$editform = new block_iomad_microloearning\forms\nugget_edit_form();
+$editform = new block_iomad_microlearning\forms\nugget_edit_form($PAGE->url, $threadid, $nuggetid);
 
 // Set up the initial forms.
 if (!empty($nuggetid)) {
     $nugget = $DB->get_record('microlearning_nugget', array('id' => $nuggetid));
-
-    // Sort the hour stuff out.
-    $hours = $nugget->message_time;
-    $h = floor($hours / 3600);
-    $m = floor(($hourse / 60) % 60);
-    $nugget->message_time = array('hour' => $h, 'minute' => $m);
-    $editform->set_data($nugget);
 } else {
-    $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
-    $editform->set_data(array('companyid' => $company->id));
+    $nugget->threadid = $threadid;
 }
+$editform->set_data($nugget);
 
 // Process the form.
 if ($editform->is_cancelled()) {
@@ -85,7 +80,7 @@ if ($editform->is_cancelled()) {
     if (empty($createdata->id)) {
         // We are creating a new nugget.
         $createdata->timecreated = time();
-        $createdata->message_time = $createdata->message_time['hour'] * 3600 + $createdata->message_time['minute'] * 60;
+        $createdata->threadid = $threadid;
 
         $nuggetid = $DB->insert_record('microlearning_nugget', $createdata);
         $redirectmessage = get_string('nuggetcreatedok', 'block_iomad_microlearning');

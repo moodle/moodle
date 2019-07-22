@@ -21,7 +21,7 @@ function local_report_user_license_allocations_menu() {
         return array(
             'userlicenseallocations' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_user_license_allocations'),
                 'url' => '/local/report_user_license_allocations/index.php',
                 'cap' => 'local/report_user_license_allocations:view',

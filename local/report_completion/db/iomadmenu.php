@@ -21,7 +21,7 @@ function local_report_completion_menu() {
         return array(
             'completion' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_completion'),
                 'url' => '/local/report_completion/index.php',
                 'cap' => 'local/report_completion:view',

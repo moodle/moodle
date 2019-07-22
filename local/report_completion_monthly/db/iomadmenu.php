@@ -21,7 +21,7 @@ function local_report_completion_monthly_menu() {
         return array(
             'completionmonthly' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_completion_monthly'),
                 'url' => '/local/report_completion_monthly/index.php',
                 'cap' => 'local/report_completion_monthly:view',

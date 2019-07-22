@@ -39,7 +39,7 @@ class thread_edit_form extends \moodleform {
 
         $headhtml = '<table class="generaltable" width="95%"><thead><tr>
                      <th class="header c0" style="text-align:left;" scope="col">' . get_string('nugget', 'block_iomad_microlearning') . '</th>
-                     <th class="header c1" style="text-align:right;" scope="col">' . get_string('order') . '</th>
+                     <th class="header c1" style="text-align:right;" scope="col">' . get_string('nuggetorder') . '</th>
                      <th class="header c2" style="text-align:right;" scope="col">' . get_string('scheduledate', 'block_iomad_microlearning') . '</th>
                      <th class="header c3" style="text-align:right;" scope="col">' . get_string('duedate', 'block_iomad_microlearning') . '</th>
                      <th class="header c4" style="text-align:right;" scope="col">' . get_string('reminder1', 'block_iomad_microlearning') . '</th>
@@ -50,7 +50,7 @@ class thread_edit_form extends \moodleform {
         foreach ($this->nuggets as $nugget) {
             $mform->addElement('html', '<tr class=""><td class="cell c0" style="">' . format_text($nugget->name) .
                                        '</td><td class="cell c1" style="text-align:left;">');
-            $mform->addElement('html', $nugget->order + 1 . '</td><td class="cell c2" style="text-align:left;">');
+            $mform->addElement('html', $nugget->nuggetorder + 1 . '</td><td class="cell c2" style="text-align:left;">');
             $mform->addElement('date_time_selector', "schedulearray[$nugget->id]", '');
             $mform->addElement('html', '</td><td class="cell c2" style="text-align:left;">');
             $mform->addElement('date_time_selector', "duedatearray[$nugget->id]", '');
@@ -95,7 +95,7 @@ class thread_edit_form extends \moodleform {
             }
 
             foreach ($this->nuggets as $check) {
-                if ($check->order <= $nugget->order) {
+                if ($check->nuggetorder <= $nugget->nuggetorder) {
                     // continue;
                 }
                 if ($data['schedulearray'][$check->id] < $data['schedulearray'][$nugget->id]) {

@@ -21,7 +21,7 @@ function local_report_user_logins_menu() {
         return array(
             'userlogins' => array(
                 'category' => 'Reports',
-                'tab' => 7,
+                'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_user_logins'),
                 'url' => '/local/report_user_logins/index.php',
                 'cap' => 'local/report_user_logins:view',

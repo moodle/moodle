@@ -34,7 +34,7 @@ require_once($CFG->libdir.'/tablelib.php');
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_iomad_microlearning_thread_table extends table_sql {
+class block_iomad_microlearning_nugget_table extends table_sql {
 
     /**
      * Generate the display of the user's firstname
@@ -72,15 +72,41 @@ class block_iomad_microlearning_thread_table extends table_sql {
 
         $html = "";
         $count=$DB->count_records('microlearning_nugget', array('threadid' => $row->threadid));
-        if ($row->order != 0) {
-            $uplink = new moodle_url('nuggets.php', array('action' => up, 'nuggetid' => $row->id));
+        if ($row->nuggetorder != 0) {
+            $uplink = new moodle_url('nuggets.php', array('action' => 'up', 'nuggetid' => $row->id));
             $html .= '<a href=" '. $uplink . '"><i class="icon fa fa-arrow-up fa-fw " title="' . get_string('up') . '" aria-label="'. get_string('up') . '"></i></a>';
         }
-        if (($row->order  + 1) >= $count) {
-            $downlink = new moodle_url('nuggets.php', array('action' => up, 'nuggetid' => $row->id));
+        if (($row->nuggetorder  + 1) >= $count) {
+            $downlink = new moodle_url('nuggets.php', array('action' => 'down', 'nuggetid' => $row->id));
             $html .= '<a href=" '. $downlink . '"><i class="icon fa fa-arrow-down fa-fw " title="' . get_string('down') . '" aria-label="'. get_string('down') . '"></i></a>';
         }
         return $html;
+    }
+
+    /**
+     * Generate the display of the user's license allocated timestamp
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_nuggetorder($row) {
+        global $CFG, $DB;
+
+        return $row->nuggetorder + 1;
+    }
+
+    /**
+     * Generate the display of the user's license allocated timestamp
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_timecreated($row) {
+        global $CFG;
+
+        if (!empty($row->timecreated)) {
+            return date($CFG->iomad_date_format, $row->timecreated);
+        } else {
+            return;
+        }
     }
 
     /**
@@ -95,8 +121,8 @@ class block_iomad_microlearning_thread_table extends table_sql {
             return;
         }
 
-        $editlink = new moodle_url('nugget_edit.php', array('nuggetid' => $row->id));
-        $html = '<a class="btn btn-secondary" href="' . $editlink . '"><i class="icon fa fa-cog fa-fw " title="' . get_string('edit') . '" aria-label="'. get_string('edit') . '"></i></a>';
-        return; $html;
+        $editlink = new moodle_url('nugget_edit.php', array('nuggetid' => $row->id, 'threadid' => $row->threadid));
+        $html = '<a href="' . $editlink . '"><i class="icon fa fa-cog fa-fw " title="' . get_string('edit') . '" aria-label="'. get_string('edit') . '"></i></a>';
+        return $html;
     }
 }

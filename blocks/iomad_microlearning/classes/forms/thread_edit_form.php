@@ -47,6 +47,7 @@ class thread_edit_form extends \moodleform {
         $mform->addHelpButton('send_message', 'send_message', 'block_iomad_microlearning');
 
         $mform->addElement('date_selector', 'startdate', get_string('startdate', 'block_iomad_microlearning'));
+        $mform->addHelpButton('startdate', 'startdate', 'block_iomad_microlearning');
 
         $mform->addElement('duration', 'message_preset',
                             get_string('message_preset', 'block_iomad_microlearning'));
@@ -89,9 +90,9 @@ class thread_edit_form extends \moodleform {
                             get_string('reminder1', 'block_iomad_microlearning'));
         $mform->addHelpButton('reminder1', 'reminder1', 'block_iomad_microlearning');
 
-        $mform->addElement('duration', 'reminder1',
-                            get_string('reminder1', 'block_iomad_microlearning'));
-        $mform->addHelpButton('reminder1', 'reminder1', 'block_iomad_microlearning');
+        $mform->addElement('duration', 'reminder2',
+                            get_string('reminder2', 'block_iomad_microlearning'));
+        $mform->addHelpButton('reminder2', 'reminder2', 'block_iomad_microlearning');
 
         $mform->addElement('selectyesno', 'active',
                             get_string('active', 'block_iomad_microlearning'));
@@ -106,7 +107,7 @@ class thread_edit_form extends \moodleform {
 
         $errors = array();
 
-        if ($threadbyname = $DB->get_record('microlearning_thread', array('company' => $data['companyid'], 'name' => trim($data['name'])))) {
+        if ($threadbyname = $DB->get_record('microlearning_thread', array('companyid' => $data['companyid'], 'name' => trim($data['name'])))) {
             if ($threadbyname->id != $data['id']) {
                 $errors['name'] = get_string('nameinuse', 'block_iomad_microlearning');
             }
