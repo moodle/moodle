@@ -3416,5 +3416,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019070400.01);
     }
 
+    if ($oldversion < 2019072200.00) {
+
+        // Define field relativedatesmode to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('relativedatesmode', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'enddate');
+
+        // Conditionally launch add field relativedatesmode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019072200.00);
+    }
+
     return true;
 }
