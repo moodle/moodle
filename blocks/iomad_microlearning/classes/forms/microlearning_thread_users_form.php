@@ -18,9 +18,12 @@ namespace block_iomad_microlearning\forms;
 
 defined('MOODLE_INTERNAL') || die;
 
-use \moodleform;
+use \company_moodleform;
+use \company;
+use \microlearning;
+use \iomad;
 
-class microlearning_thread_users_form extends moodleform {
+class microlearning_thread_users_form extends \company_moodleform {
     protected $context = null;
     protected $selectedcompany = 0;
     protected $selectedthread = 0;
@@ -39,26 +42,25 @@ class microlearning_thread_users_form extends moodleform {
         $this->selectedcompany = $companyid;
         $this->selectedthread = $threadid;
         $this->context = $context;
-        $company = new company($this->selectedcompany);
+        $company = new \company($this->selectedcompany);
         $this->company = $company;
-        $this->parentlevel = company::get_company_parentnode($company->id);
+        $this->parentlevel = \company::get_company_parentnode($company->id);
         $this->companydepartment = $this->parentlevel->id;
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
-        if (iomad::has_capability('block/iomad_microlearning:edit_all_departments', $context)) {
+        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
             $userhierarchylevel = $userlevel->id;
         }
 
-        $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
+        $this->subhierarchieslist = \company::get_all_subdepartments($userhierarchylevel);
         if ($departmentid == 0 ) {
             $this->departmentid = $userhierarchylevel;
         } else {
             $this->departmentid = $departmentid;
         }
-
         $this->thread = $DB->get_record('microlearning_thread', array('id' => $threadid));
 
         parent::__construct($actionurl);
@@ -74,11 +76,11 @@ class microlearning_thread_users_form extends moodleform {
                              'parentdepartmentid' => $this->parentlevel,
                              'class' => 'potential_company_thread_user_selector');
             if (empty($this->potentialusers)) {
-                $this->potentialusers = new potential_company_thread_user_selector('potentialthreadusers', $options);
+                $this->potentialusers = new \potential_company_thread_user_selector('potentialthreadusers', $options);
             }
             $options['class'] = 'current_company_thread_user_selector';
             if (empty($this->currentusers)) {
-                $this->currentusers = new current_company_thread_user_selector('currentlyenrolledusers', $options);
+                $this->currentusers = new \current_company_thread_user_selector('currentlyenrolledusers', $options);
             }
         } else {
             return;
@@ -110,28 +112,15 @@ class microlearning_thread_users_form extends moodleform {
         // changed in the process function, the changes get displayed, rather than the
         // lists as they are before processing.
 
-        if (!$this->thread ) {
+        if (!$this->thread->id ) {
             die('No thread selected.');
         }
 
-        $thread = $DB->get_record('thread', array('id' => $this->thread->id));
-        $company = new company($this->selectedcompany);
+        $thread = $DB->get_record('microlearning_thread', array('id' => $this->thread->id));
+        $company = new \company($this->selectedcompany);
         $mform->addElement('header', 'header',
                             get_string('company_users_for', 'block_iomad_microlearning',
-                            format_string($thread->fullname, true, 1) ));
-
-        $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_microlearning'));
-        $mform->addHelpButton('due', 'senddate', 'block_iomad_microlearning');
-
-        if ($DB->get_record('iomad_threads', array('threadid' => $this->thread->id, 'shared' => 0))) {
-            $mform->addElement('hidden', 'groupid', 0);
-            $mform->setType('groupid', PARAM_INT);
-        } else {
-            $mform->addElement('autocomplete', 'groupid', get_string('group'),
-                               $this->groups,
-                               array('setmultiple' => false,
-                                     'onchange' => 'this.form.submit()'));
-        }
+                            format_string($thread->name, true, 1) ));
 
         $mform->addElement('html', '<table summary="" class="companythreaduserstable'.
                                    ' addremovetable generaltable generalbox'.
@@ -145,17 +134,17 @@ class microlearning_thread_users_form extends moodleform {
               </td>
               <td id="buttonscell">
                       <input name="add" id="add" type="submit" value="&nbsp;' .
-                      $output->larrow().'&nbsp;'. get_string('enrol', 'block_iomad_microlearning') .
+                      $output->larrow().'&nbsp;'. get_string('enrol', 'block_iomad_company_admin') .
                        '" title="Enrol" /></br>
                       <input name="addall" id="addall" type="submit" value="&nbsp;' .
-                      $output->larrow().'&nbsp;'. get_string('enrolall', 'block_iomad_microlearning') .
+                      $output->larrow().'&nbsp;'. get_string('enrolall', 'block_iomad_company_admin') .
                       '" title="Enrolall" /></br>
 
                       <input name="remove" id="remove" type="submit" value="' .
-                       $output->rarrow().'&nbsp;'. get_string('unenrol', 'block_iomad_microlearning') .
+                       $output->rarrow().'&nbsp;'. get_string('unenrol', 'block_iomad_company_admin') .
                        '&nbsp;" title="Unenrol" /></br>
                       <input name="removeall" id="removeall" type="submit" value="&nbsp;' .
-                      $output->rarrow().'&nbsp;'. get_string('unenrolall', 'block_iomad_microlearning') .
+                      $output->rarrow().'&nbsp;'. get_string('unenrolall', 'block_iomad_company_admin') .
                       '" title="Enrolall" /></br>
               </td>
               <td id="potentialcell">');
@@ -198,7 +187,7 @@ class microlearning_thread_users_form extends moodleform {
                     $allow = true;
 
                     // Check the userid is valid.
-                    if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
+                    if (!\company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
 
@@ -209,7 +198,7 @@ class microlearning_thread_users_form extends moodleform {
                         } else {
                             $duedate = 0;
                         }
-                        microlearning::assign_thread_to_user($adduser, $this->thread->id, $this->selectedcompany);
+                        \microlearning::assign_thread_to_user($adduser, $this->thread->id, $this->selectedcompany);
                     }
                 }
 
@@ -238,11 +227,11 @@ class microlearning_thread_users_form extends moodleform {
 
                 foreach ($userstounassign as $removeuser) {
                     // Check the userid is valid.
-                    if (!company::check_valid_user($this->selectedcompany, $removeuser->id, $this->departmentid)) {
+                    if (!\company::check_valid_user($this->selectedcompany, $removeuser->id, $this->departmentid)) {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
 
-                    microlearning::remove_thread_from_user($removeuser, $this->thread->id, $this->selectedcompany);
+                    \microlearning::remove_thread_from_user($removeuser, $this->thread->id, $this->selectedcompany);
                 }
 
                 $this->potentialusers->invalidate_selected_users();

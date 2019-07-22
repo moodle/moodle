@@ -82,7 +82,7 @@ if ($deleteid) {
         // No so show the confirmation question.
         echo $output->header();
         echo $output->heading(get_string('deletethread', 'block_iomad_microlearning'));
-        $optionsyes = array('deleteid' => $threadid, 'confirm' => md5($threadid), 'sesskey' => sesskey());
+        $optionsyes = array('deleteid' => $deleteid, 'confirm' => md5($deleteid), 'sesskey' => sesskey());
         echo $output->confirm(get_string('deletethreadcheckfull', 'block_iomad_microlearning', "'$threadinfo->name'"),
                               new moodle_url('threads.php', $optionsyes), 'threads.php');
     }

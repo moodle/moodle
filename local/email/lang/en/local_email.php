@@ -442,3 +442,18 @@ $string['company_licenseassigned_subject'] = "New Training assigned to {Company_
 $string['company_licenseassigned_body'] = "<p>Dear {User_Firstname} {User_Lastname},</p>
 <p>New courses have been allocated to your company on {SiteURL}.</p>
 <p>Please log in using your username {User_Username} to manage this.</p>";
+$string['microlearning_nugget_scheduled_name'] = 'Microlearning nugget scheduled for user';
+$string['microlearning_nugget_scheduled_name_help'] = 'This email is sent out to a user when a microlearning nugget within a microlearning thread is scheduled.';
+$string['microlearning_nugget_scheduled_subject'] = 'New microlearning nugget for you.';
+$string['microlearning_nugget_scheduled_body'] = "<p>Hi {User_Firstname}</p>
+<p>You have a new Microlearning Nugget to complete.  You can access this by clicking on <a href='{Nugget_URL}'>{Nugget_Name}</a></p>";
+$string['microlearning_nugget_reminder1_name'] = 'Microlearning nugget first reminder for user';
+$string['microlearning_nugget_reminder1_name_help'] = 'This email is sent out to a user when a microlearning nugget within a microlearning thread reaches the frst reminder and has not yet been completed.';
+$string['microlearning_nugget_reminder1_subject'] = 'New microlearning nugget for you.';
+$string['microlearning_nugget_reminder1_body'] = "<p>Hi {User_Firstname}</p>
+<p>You have not yet completed your Microlearning Nugget.  You can access this by clicking on <a href='{Nugget_URL}'>{Nugget_Name}</a> or by logging into the <a href='{Site_URL}'>Site</a></p>";
+$string['microlearning_nugget_reminder1_name'] = 'Microlearning nugget first reminder for user';
+$string['microlearning_nugget_reminder1_name_help'] = 'This email is sent out to a user when a microlearning nugget within a microlearning thread reaches the frst reminder and has not yet been completed.';
+$string['microlearning_nugget_reminder1_subject'] = 'New microlearning nugget for you.';
+$string['microlearning_nugget_reminder1_body'] = "<p>Hi {User_Firstname}</p>
+<p>You have not yet completed your Microlearning Nugget.  You can access this by clicking on <a href='{Nugget_URL}'>{Nugget_Name}</a> or by logging into the <a href='{Site_URL}'>Site</a></p>";

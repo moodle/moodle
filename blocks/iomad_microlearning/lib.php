@@ -18,8 +18,8 @@ require_once(dirname(__FILE__) . '/../../config.php');
 
 class microlearning {
 
-    public function check_valid_thread($companyid, $threadid) {
-        global $DB;
+    public static function check_valid_thread($companyid, $threadid) {
+        global $DB, $USER;
         if ($DB->get_record('microlearning_thread', array('id' => $threadid, 'companyid' => $companyid))) {
             return true;
         } else {
@@ -28,7 +28,11 @@ class microlearning {
     }
 
     public static function delete_thread($threadid) {
-        global $DB;
+        global $DB, $USER;
+
+        if (!$threadrec = $DB->get_record('microlearning_thread', array('id' => $threadid))) {
+            return false;
+        }
 
         // start transaction.
         $transaction = $DB->start_delegated_transaction();
@@ -67,7 +71,7 @@ class microlearning {
         }
 
         // Fire an Event for this.
-        $eventother = array('companyid' => $companyid);
+        $eventother = array('companyid' => $threadrec->companyid);
 
         $event = \block_iomad_microlearning\event\thread_deleted::create(array('context' => context_system::instance(),
                                                                                'userid' => $USER->id,
@@ -77,7 +81,7 @@ class microlearning {
     }
 
     public static function delete_nugget($nuggetid) {
-        global $DB;
+        global $DB, $USER;
 
         // Does the nugget exist.
         if (!$nugget = $DB->get_record('microlearning_nugget', array('id' => $nuggetid))) {
@@ -123,7 +127,7 @@ class microlearning {
     }
 
     public static function up_nugget($nuggetid) {
-        global $DB;
+        global $DB, $USER;
 
         // Does the nugget exist.
         if (!$nugget = $DB->get_record('microlearning_nugget', array('id' => $nuggetid))) {
@@ -159,24 +163,19 @@ class microlearning {
     }
 
     public static function down_nugget($nuggetid) {
-        global $DB;
+        global $DB, $USER;
 
         // Does the nugget exist.
         if (!$nugget = $DB->get_record('microlearning_nugget', array('id' => $nuggetid))) {
             return false;
         }
 
-        // is it already the first one?
-        if ($nugget->nuggetorder == 0) {
-            return true;
-        }
-
         // Get any nuggets after this one.
         if ($below = $DB->get_record_sql("SELECT * FROM {microlearning_nugget}
                                             WHERE threadid = :threadid
-                                            AND nuggetorder = :above",
+                                            AND nuggetorder = :below",
                                             array('threadid' => $nugget->threadid,
-                                                  'above' => $nugget->nuggetorder + 1))) {
+                                                  'below' => $nugget->nuggetorder + 1))) {
             $below->nuggetorder--;
             $DB->update_record('microlearning_nugget', $below);
             $nugget->nuggetorder++;
@@ -197,7 +196,7 @@ class microlearning {
     public static function get_schedules($threadinfo, $nuggets) {
         global $DB, $CFG;
 
-        $returndata = new std_class();
+        $returndata = new stdclass();
         $returndata->threadid = $threadinfo->id;
         $startdate = $threadinfo->startdate;
         $schedulearray = array();
@@ -209,7 +208,7 @@ class microlearning {
             // Check if we already have a schedule.
             if ($schedule = $DB->get_record('microlearning_nugget_sched', array('nuggetid' => $nugget->id))) {
                 $startdate = $schedule->due_date;
-                $schedulearray[$nugget->id] = $schedule->schedule_date;
+                $schedulearray[$nugget->id] = $schedule->scheduledate;
                 $duedatearray[$nugget->id] = $schedule->due_date;
                 $reminder1array[$nugget->id] = $schedule->reminder1_date;
                 $reminder2array[$nugget->id] = $schedule->reminder2_date;
@@ -226,11 +225,11 @@ class microlearning {
         $returndata->reminder1array = $reminder1array;
         $returndata->reminder2array = $reminder2array;
 
-        return $returndaata;
+        return $returndata;
     }
 
     public static function reset_thread_schedule($threadinfo) {
-        global $DB;
+        global $DB, $USER;
 
         // Delete the current schedules for any nuggets.
         if ($nuggets = $DB->get_records('microlearning_nugget', array('threadid' => $threadinfo->id))) {
@@ -245,7 +244,7 @@ class microlearning {
     }
 
     public static function update_thread_schedule($scheduledata) {
-        global $DB;
+        global $DB, $USER;
 
         // process the scheduledata.
         foreach (array_keys($scheduledata->schedulearray) as $nuggetid) {
@@ -257,10 +256,22 @@ class microlearning {
                 $DB->set_field('microlearning_nugget_sched', 'reminder1_date', $scheduledata->reminder1datearray[$nuggetid], array('nuggetid' => $nuggetid));
                 $DB->set_field('microlearning_nugget_sched', 'reminder2_date', $scheduledata->reminder2datearray[$nuggetid], array('nuggetid' => $nuggetid));
             } else {
+                // Make sure we have all the defaults.
+                if (empty($scheduledata->duedatearray[$nuggetid])) {
+                    $scheduledata->duedatearray[$nuggetid] = 0;
+                }
+                if (empty($scheduledata->reminder1datearray[$nuggetid])) {
+                    $scheduledata->reminder1datearray[$nuggetid] = 0;
+                }
+                if (empty($scheduledata->reminder2datearray[$nuggetid])) {
+                    $scheduledata->reminder2datearray[$nuggetid] = 0;
+                }
                 $DB->insert_record('microlearning_nugget_sched', array('scheduledate' => $scheduledata->schedulearray[$nuggetid],
-                                                                       'due_date', $scheduledata->duedatearray[$nuggetid],
-                                                                       'reminder1_date', $scheduledata->reminder1datearray[$nuggetid],
-                                                                       'reminder2_date', $scheduledata->reminder2datearray[$nuggetid]));
+                                                                       'nuggetid' => $nuggetid,
+                                                                       'timecreated' => time(),
+                                                                       'due_date'=> $scheduledata->duedatearray[$nuggetid],
+                                                                       'reminder1_date' => $scheduledata->reminder1datearray[$nuggetid],
+                                                                       'reminder2_date'=> $scheduledata->reminder2datearray[$nuggetid]));
             }
 
             // Update the user nugget schedules.
@@ -282,7 +293,7 @@ class microlearning {
     }
 
     public static function add_user_to_thread($threadid, $userid) {
-        global $DB;
+        global $DB, $USER;
 
         // check the user is valid.
         if (!$user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0))) {
@@ -366,7 +377,7 @@ class microlearning {
     }
 
     public static function remove_user_from_thread($threadid, $userid) {
-        global $DB;
+        global $DB, $USER;
 
         // check the user is valid.
         if (!$user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0))) {
@@ -389,6 +400,7 @@ class microlearning {
             $transaction->allow_commit();
             return true;
         }
+
     }
 
     public static function generate_accesskey() {
@@ -396,7 +408,7 @@ class microlearning {
     }
 
     public static function get_nugget_url($nugget) {
-        global $DB;
+        global $DB, $USER;
 
         // Get the nugget url.
         if (!empty($nugget->section)) {
@@ -412,49 +424,128 @@ class microlearning {
 
         return $linkurl;
     }
+
+    public static function get_menu_threads($companyid) {
+        global $DB, $USER;
+
+        $threads = $DB->get_records_menu('microlearning_thread', array('companyid' => $companyid), 'name', 'id,name');
+        $menuthreads = array(0 => get_string('selectthread', 'block_iomad_microlearning'));
+        foreach ($threads as $id => $name) {
+            $menuthreads[$id] = format_text($name);
+        }
+
+        return $menuthreads;
+    }
+
+    public static function assign_thread_to_user($user, $threadid, $companyid) {
+        global $DB, $USER;
+
+        // Is the user valid.
+        if (!$userrec = $DB->get_record('user', array('id' => $user->id, 'deleted' => 0, 'suspended' => 0))) {
+            return false;
+        }
+
+        // The thread?
+        if (!$threadrec = $DB->get_record('microlearning_thread', array('id' => $threadid, 'companyid' => $companyid))) {
+            return false;
+        }
+
+        // The company?
+        if (!$companyrec = $DB->get_record('company', array('id' => $companyid, 'suspended' => 0))) {
+            return false;
+        }
+
+        // All OK so do the work.
+        self::add_user_to_thread($threadid, $user->id);
+
+        // Fire an event for this.
+        $eventother = array('companyid' => $companyid);
+
+        $event = \block_iomad_microlearning\event\nugget_created::create(array('context' => context_system::instance(),
+                                                                               'userid' => $USER->id,
+                                                                               'relateduserid' => $user->id,
+                                                                               'objectid' => $threadid,
+                                                                               'other' => $eventother));
+        $event->trigger();
+
+    }
+
+    public static function remove_thread_from_user($user, $threadid, $companyid) {
+        global $DB, $USER;
+
+        // Is the user valid.
+        if (!$userrec = $DB->get_record('user', array('id' => $user->id, 'deleted' => 0, 'suspended' => 0))) {
+            return false;
+        }
+
+        // The thread?
+        if (!$threadrec = $DB->get_record('microlearning_thread', array('id' => $threadid, 'companyid' => $companyid))) {
+            return false;
+        }
+
+        // The company?
+        if (!$companyrec = $DB->get_record('company', array('id' => $companyid, 'suspended' => 0))) {
+            return false;
+        }
+
+        // All OK so do the work.
+        self::remove_user_from_thread($threadid, $userid);
+
+        // Fire an event for this.
+        $eventother = array('companyid' => $companyid);
+
+        $event = \block_iomad_microlearning\event\nugget_created::create(array('context' => context_system::instance(),
+                                                                               'userid' => $USER->id,
+                                                                               'relateduserid' => $user->id,
+                                                                               'objectid' => $threadid,
+                                                                               'other' => $eventother));
+        $event->trigger();
+
+    }
+
     /* Event handlers */
 
     public static function event_thread_created(\block_iomad_microlearning\event\thread_created $event) {
-        global $DB;
+        global $DB, $USER;
     }
 
     public static function event_thread_deleted(\block_iomad_microlearning\event\thread_deleted $event) {
-        global $DB;
+        global $DB, $USER;
     }
 
     public static function event_thread_updated(\block_iomad_microlearning\event\thread_updated $event) {
-        global $DB;
+        global $DB, $USER;
     }
 
     public static function event_thread_schedule_updated(\block_iomad_microlearning\event\thread_schedule_updated $event) {
-        global $DB;
+        global $DB, $USER;
     }
 
     public static function event_nugget_created(\block_iomad_microlearning\event\nugget_created $event) {
-        global $DB;
+        global $DB, $USER;
     }
 
     public static function event_nugget_deleted(\block_iomad_microlearning\event\nugget_deleted $event) {
-        global $DB;
+        global $DB, $USER;
     }
 
     public static function event_nugget_updated(\block_iomad_microlearning\event\nugget_updated $event) {
-        global $DB;
+        global $DB, $USER;
     }
 
     public static function event_nugget_moved(\block_iomad_microlearning\event\nugget_moved $event) {
-        global $DB;
+        global $DB, $USER;
     }
 
     public static function user_deleted(\core\event\user_deleted $event) {
-        global $DB;
+        global $DB, $USER;
 
         // Delete all of the schedules for this user.
         $DB->delete_records('microlearning_thread_user', array('userid' => $event->objectid));
     }
 
     public static function course_module_completion_updated(\core\event\course_module_completion_updated $event) {
-        global $DB;
+        global $DB, $USER;
         $cmid = $event->contextinstanceid;
         if ($nuggets = $DB->get_records_sql("SELECT mtu.* FROM {microlearning_thread_user} mtu
                                              JOIN {microlearning_nugget} mn ON (mtu.nuggetid = mn.id)
@@ -497,7 +588,7 @@ class microlearning {
     }
 
     public static function cron() {
-        global $DB;
+        global $DB, $USER;
 
         // Get the current timestamp.
         $runtime = time();
@@ -520,6 +611,8 @@ class microlearning {
                     // Get the email payload.
                     if ($nugget = $DB->get_record('microlearning_nugget', array('id' => $scheduleuser->nuggetid))) {
                         $company = company::by_userid($user->id);
+                        // Get the nugget link.
+                        $nugget->url = self::get_nugget_url($nugget);
                         // Fire the email.
                         EmailTemplate::send('microlearning_nugget_scheduled', array('user' => $user, 'company' => $company, 'nugget' => $nugget));
                         $DB->set_field('microlearning_thread_user', 'message_delivered', true, array('id' => $scheduleuser->id));
@@ -549,7 +642,7 @@ class microlearning {
                         $company = company::by_userid($user->id);
                         // Fix the payload.
                         $nugget->name = format_text($nugget->name);
-                        $nugget->url = 
+                        $nugget->url = self::get_nugget_url($nugget);
                         // Fire the email.
                         EmailTemplate::send('microlearning_nugget_reminder1', array('user' => $user, 'company' => $company, 'nugget' => $nugget));
                         $DB->set_field('microlearning_thread_user', 'reminder1_delivered', true, array('id' => $scheduleuser->id));

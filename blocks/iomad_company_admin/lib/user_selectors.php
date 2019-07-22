@@ -1495,8 +1495,8 @@ class current_company_thread_user_selector extends company_user_selector_base {
                 WHERE $wherecondition AND u.suspended = 0
                     AND cu.companyid = :companyid
                     AND cu.userid IN
-                     (SELECT DISTINCT userid)
-                     FROM {microlearning_thread_users}
+                     (SELECT DISTINCT userid
+                     FROM {microlearning_thread_user}
                      WHERE threadid=:threadid)";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
@@ -1595,7 +1595,7 @@ class potential_company_thread_user_selector extends company_user_selector_base 
                     $userfilter
                     AND u.id NOT IN
                      (SELECT DISTINCT userid
-                     FROM {microlearning_thread_users}
+                     FROM {microlearning_thread_user}
                      WHERE threadid=:threadid)";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';

@@ -72,12 +72,13 @@ class block_iomad_microlearning_nugget_table extends table_sql {
 
         $html = "";
         $count=$DB->count_records('microlearning_nugget', array('threadid' => $row->threadid));
+
         if ($row->nuggetorder != 0) {
-            $uplink = new moodle_url('nuggets.php', array('action' => 'up', 'nuggetid' => $row->id));
+            $uplink = new moodle_url('nuggets.php', array('action' => 'up', 'nuggetid' => $row->id, 'threadid' => $row->threadid));
             $html .= '<a href=" '. $uplink . '"><i class="icon fa fa-arrow-up fa-fw " title="' . get_string('up') . '" aria-label="'. get_string('up') . '"></i></a>';
         }
-        if (($row->nuggetorder  + 1) >= $count) {
-            $downlink = new moodle_url('nuggets.php', array('action' => 'down', 'nuggetid' => $row->id));
+        if (($row->nuggetorder  + 1) < $count) {
+            $downlink = new moodle_url('nuggets.php', array('action' => 'down', 'nuggetid' => $row->id, 'threadid' => $row->threadid));
             $html .= '<a href=" '. $downlink . '"><i class="icon fa fa-arrow-down fa-fw " title="' . get_string('down') . '" aria-label="'. get_string('down') . '"></i></a>';
         }
         return $html;
@@ -121,8 +122,14 @@ class block_iomad_microlearning_nugget_table extends table_sql {
             return;
         }
 
+        $html = "";
+        $context = context_system::instance();
+        $deletelink = new moodle_url('nuggets.php', array('deleteid' => $row->id, 'threadid' => $row->threadid, 'sesskey' => sesskey()));
         $editlink = new moodle_url('nugget_edit.php', array('nuggetid' => $row->id, 'threadid' => $row->threadid));
-        $html = '<a href="' . $editlink . '"><i class="icon fa fa-cog fa-fw " title="' . get_string('edit') . '" aria-label="'. get_string('edit') . '"></i></a>';
+        if (iomad::has_capability('block/iomad_microlearning:edit_nuggets', $context)) {
+            $html = '<a href="' . $editlink . '"><i class="icon fa fa-cog fa-fw " title="' . get_string('edit') . '" aria-label="'. get_string('edit') . '"></i></a>';
+            $html .= '<a href="' . $deletelink . '"><i class="icon fa fa-times fa-fw " title="' . get_string('delete') . '" aria-label="'. get_string('delete') . '"></i></a>';
+        }
         return $html;
     }
 }

@@ -20,13 +20,15 @@ defined('MOODLE_INTERNAL') || die;
 
 use \moodleform;
 
-class thread_edit_form extends \moodleform {
+class thread_schedule_form extends \moodleform {
     protected $threadid;
     protected $nuggets;
 
     public function __construct($actionurl, $threadid, $nuggets) {
         $this->threadid = $threadid;
         $this->nuggets = $nuggets;
+        parent::__construct($actionurl);
+
     }
 
     public function definition() {
@@ -39,7 +41,7 @@ class thread_edit_form extends \moodleform {
 
         $headhtml = '<table class="generaltable" width="95%"><thead><tr>
                      <th class="header c0" style="text-align:left;" scope="col">' . get_string('nugget', 'block_iomad_microlearning') . '</th>
-                     <th class="header c1" style="text-align:right;" scope="col">' . get_string('nuggetorder') . '</th>
+                     <th class="header c1" style="text-align:right;" scope="col">' . get_string('nuggetorder', 'block_iomad_microlearning') . '</th>
                      <th class="header c2" style="text-align:right;" scope="col">' . get_string('scheduledate', 'block_iomad_microlearning') . '</th>
                      <th class="header c3" style="text-align:right;" scope="col">' . get_string('duedate', 'block_iomad_microlearning') . '</th>
                      <th class="header c4" style="text-align:right;" scope="col">' . get_string('reminder1', 'block_iomad_microlearning') . '</th>
@@ -53,11 +55,11 @@ class thread_edit_form extends \moodleform {
             $mform->addElement('html', $nugget->nuggetorder + 1 . '</td><td class="cell c2" style="text-align:left;">');
             $mform->addElement('date_time_selector', "schedulearray[$nugget->id]", '');
             $mform->addElement('html', '</td><td class="cell c2" style="text-align:left;">');
-            $mform->addElement('date_time_selector', "duedatearray[$nugget->id]", '');
+            $mform->addElement('date_time_selector', "duedatearray[$nugget->id]", '', array('optional' => true));
             $mform->addElement('html', '</td><td class="cell c3" style="text-align:left;">');
-            $mform->addElement('date_time_selector', "reminder1array[$nugget->id]", '');
+            $mform->addElement('date_time_selector', "reminder1datearray[$nugget->id]", '', array('optional' => true));
             $mform->addElement('html', '</td><td class="cell c4" style="text-align:left;">');
-            $mform->addElement('date_time_selector', "reminder2array[$nugget->id]", '');
+            $mform->addElement('date_time_selector', "reminder2datearray[$nugget->id]", '', array('optional' => true));
             $mform->addElement('html', '</td></tr>');
         }
         $mform->addElement('html', '</tbody></table>');
@@ -78,31 +80,32 @@ class thread_edit_form extends \moodleform {
         $errors = array();
 
         foreach ($this->nuggets as $nugget) {
-            if ($data['duedatearray'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
+            if (!empty($data['duedatearray'][$nugget->id]) && $data['duedatearray'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
                 $errors['duedatearray'][$nugget->id] = get_string('duedatebeforescheduledate', 'block_iomad_microlearning');
             }
 
-            if ($data['reminder1datearray'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
+            if (!empty($data['reminder1datearray'][$nugget->id]) && $data['reminder1datearray'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
                 $errors['reminder1datearray'][$nugget->id] = get_string('reminderdatebeforescheduledate', 'block_iomad_microlearning');
             }
 
-            if ($data['reminder2datearray'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
+            if (!empty($data['reminder2datearray'][$nugget->id]) && $data['reminder2datearray'][$nugget->id] < $data['schedulearray'][$nugget->id]) {
                 $errors['reminder2datearray'][$nugget->id] = get_string('reminderdatebeforescheduledate', 'block_iomad_microlearning');
             }
 
-            if ($data['reminder2datearray'][$nugget->id] < $data['reminder1datearray'][$nugget->id]) {
+            if (!empty($data['reminder2datearray'][$nugget->id]) && !empty($data['reminder1datearray'][$nugget->id]) && $data['reminder2datearray'][$nugget->id] < $data['reminder1datearray'][$nugget->id]) {
                 $errors['reminder2datearray'][$nugget->id] = get_string('reminderdatesoutoforder', 'block_iomad_microlearning');
             }
 
             foreach ($this->nuggets as $check) {
                 if ($check->nuggetorder <= $nugget->nuggetorder) {
-                    // continue;
+                    continue;
                 }
                 if ($data['schedulearray'][$check->id] < $data['schedulearray'][$nugget->id]) {
                     $errors['schedulearray'][$check->id] = get_string('scheduleoutoforder', 'block_iomad_microlearning');
                 }
             }
         }
+
         return $errors;
     }
 }

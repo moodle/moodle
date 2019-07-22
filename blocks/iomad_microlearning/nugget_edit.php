@@ -63,6 +63,7 @@ $editform = new block_iomad_microlearning\forms\nugget_edit_form($PAGE->url, $th
 if (!empty($nuggetid)) {
     $nugget = $DB->get_record('microlearning_nugget', array('id' => $nuggetid));
 } else {
+    $nugget = new stdclass();
     $nugget->threadid = $threadid;
 }
 $editform->set_data($nugget);

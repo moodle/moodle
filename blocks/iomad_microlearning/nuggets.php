@@ -49,6 +49,7 @@ $urlparams = array('threadid' => $threadid, 'nuggetid' => $nuggetid, 'page' => $
 $companylist = new moodle_url('/my', $urlparams);
 
 $linktext = get_string('nuggets', 'block_iomad_microlearning');
+$threadlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
 
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_microlearning/nuggets.php', $urlparams);
@@ -64,7 +65,8 @@ $output = $PAGE->get_renderer('block_iomad_microlearning');
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->navbar->add(get_string('threads', 'block_iomad_microlearning'), $threadlink);
+$PAGE->navbar->add($linktext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -72,7 +74,7 @@ $companyid = iomad::get_my_companyid($context);
 // Delete any valid nuggets.
 if ($deleteid) {
     // Check the thread is valid.
-    if (!$nuggetinfo = $DB->get_record('microlearning_nugget', array('id' => $nuggetid))) {
+    if (!$nuggetinfo = $DB->get_record('microlearning_nugget', array('id' => $deleteid))) {
         print_error('invalidnugget', 'block_iomad_microlearning');
     }
 
@@ -87,7 +89,7 @@ if ($deleteid) {
         // No so show the confirmation question.
         echo $output->header();
         echo $output->heading(get_string('deletenugget', 'block_iomad_microlearning'));
-        $optionsyes = array('deleteid' => $nuggetid, 'confirm' => md5($nuggetid), 'sesskey' => sesskey());
+        $optionsyes = array('threadid' => $threadid, 'deleteid' => $deleteid, 'confirm' => md5($deleteid), 'sesskey' => sesskey());
         echo $output->confirm(get_string('deletenuggetcheckfull', 'block_iomad_microlearning', "'$nuggetinfo->name'"),
                               new moodle_url('nuggets.php', $optionsyes), 'threads.php');
     }

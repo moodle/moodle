@@ -19,8 +19,10 @@ namespace block_iomad_microlearning\forms;
 defined('MOODLE_INTERNAL') || die;
 
 use \company_moodleform;
+use \company;
+use \microlearning;
 
-class microlearning_threads_form extends moodleform {
+class microlearning_threads_form extends company_moodleform {
     protected $context = null;
     protected $selectedcompany = 0;
     protected $selectedthread = 0;
@@ -32,10 +34,10 @@ class microlearning_threads_form extends moodleform {
         global $DB, $USER;
         $this->departmentid = $departmentid;
         $this->selectedcompany = $companyid;
-        $this->company = new company($companyid);
+        $this->company = new \company($companyid);
         $this->context = $context;
         $this->selectedthread = $selectedthread;
-        $this->threads = microlearning::get_menu_threads($companyid);
+        $this->threads = \microlearning::get_menu_threads($companyid);
         parent::__construct($actionurl);
     }
 
@@ -56,7 +58,6 @@ class microlearning_threads_form extends moodleform {
         } else {
             $mform->addElement('html', '<div class="alert alert-warning">' . get_string('nothreads', 'block_iomad_microlearning') . '</div>');
         }
-
         // Disable the onchange popup.
         $mform->disable_form_change_checker();
     }

@@ -231,7 +231,7 @@ class block_iomad_company_admin extends block_base {
                 'selected' => false,
                 'label' => get_string('threads', 'block_iomad_microlearning')
             ];
-            $panes[7] = ['category' => 'Microlearning', 'items' => [], 'selected' => false];
+            $panes[7] = ['category' => 'MicrolearningAdmin', 'items' => [], 'selected' => false];
             $selected = false;
         }
         if (iomad::has_capability('block/iomad_reports:view', $context)) {

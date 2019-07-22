@@ -105,11 +105,15 @@ class block_iomad_microlearning_thread_table extends table_sql {
         $editlink = new moodle_url('thread_edit.php', array('threadid' => $row->id));
         $nuggetlink = new moodle_url('nuggets.php', array('threadid' => $row->id));
         $userlink = new moodle_url('users.php', array('threadid' => $row->id));
+        $schedulelink = new moodle_url('thread_schedule.php', array('threadid' => $row->id));
         if (iomad::has_capability('block/iomad_microlearning:edit_threads', $context)) {
             $html .= '<a href="' . $editlink . '"><i class="fa fa-cog"></i></a>&nbsp';
         }
         if (iomad::has_capability('block/iomad_microlearning:edit_nuggets', $context)) {
             $html .= '<a href="' . $nuggetlink . '"><i class="fa fa-microchip"></i></a>&nbsp';
+        }
+        if (iomad::has_capability('block/iomad_microlearning:edit_threads', $context)) {
+            $html .= '<a href="' . $schedulelink . '"><i class="fa fa-list-alt"></i></a>&nbsp';
         }
         if (iomad::has_capability('block/iomad_microlearning:assign_threads', $context)) {
             $html .= '<a href="' . $userlink . '"><i class="fa fa-group"></i></a>&nbsp';

@@ -23,7 +23,7 @@ require_once($CFG->libdir . '/formslib.php');
 require_once('lib.php');
 require_once(dirname(__FILE__) . '/../../course/lib.php');
 
-$threadid = required_param('threadid', 0, PARAM_INT);
+$threadid = required_param('threadid', PARAM_INT);
 $deleteid = optional_param('deleteid', 0, PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 
@@ -50,7 +50,8 @@ $output = $PAGE->get_renderer('block_iomad_microlearning');
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($linktext, $departmentlist);
+$PAGE->navbar->add(get_string('threads', 'block_iomad_microlearning'), $threadlist);
+$PAGE->navbar->add($linktext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -76,27 +77,29 @@ if ($deleteid && confirm_sesskey() && $confirm == md5($deleteid)) {
 }
 
 // Get the nuggets for this thread.
-$nuggets = $DB->get_records('microlearning_nugget', array('threadid' => $threadid), 'order ASC');
+$nuggets = $DB->get_records('microlearning_nugget', array('threadid' => $threadid), 'nuggetorder ASC');
 
 // Set up the form.
-$editform = new block_iomad_microloearning\forms\thread_schedule_form($PAGE->url, $nuggets);
+$editform = new block_iomad_microlearning\forms\thread_schedule_form($PAGE->url, $threadid, $nuggets);
 
 $nuggetschedules = microlearning::get_schedules($threadinfo, $nuggets);
 
-$mform->set_data($nuggetschedules);
+$editform->set_data($nuggetschedules);
 
 // Process the form.
 if ($editform->is_cancelled()) {
     redirect($threadlist);
     die;
-} else if ($scheduledata = $editform->get_data()) {
+}
+if ($scheduledata = $editform->get_data()) {
 
     // Are we resetting the schedules to default?
     if (!empty($scheduledata->resetallbutton)) {
+
         // No so show the confirmation question.
         echo $output->header();
         echo $output->heading(get_string('resetschedule', 'block_iomad_microlearning'));
-        $optionsyes = array('deleteid' => $threadid, 'confirm' => md5($threadid), 'sesskey' => sesskey());
+        $optionsyes = array('threadid' => $threadid, 'deleteid' => $threadid, 'confirm' => md5($threadid), 'sesskey' => sesskey());
         echo $output->confirm(get_string('resetschedulecheckfull', 'block_iomad_microlearning', "'$threadinfo->name'"),
                               new moodle_url('thread_schedule.php', $optionsyes), 'threads.php');
         echo $output->footer();
@@ -112,6 +115,8 @@ if ($editform->is_cancelled()) {
 
 // Display the form.
 echo $output->header();
+
+echo "<pre>";print_r($scheduledata);echo"</pre>";
 
 $editform->display();
 
