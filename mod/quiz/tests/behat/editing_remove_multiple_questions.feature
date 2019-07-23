@@ -131,7 +131,7 @@ Feature: Edit quiz page - remove multiple questions
 
   # Delete all questions in page. Page contains multiple questions
     When I click on "Select multiple items" "button"
-    Then I click on "Select all" "link"
+    Then I press "Select all"
     And I click on "Delete selected" "button"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
 
@@ -162,10 +162,10 @@ Feature: Edit quiz page - remove multiple questions
 
   # Delete last question in last page. Page contains multiple questions
     When I click on "Select multiple items" "button"
-    And I click on "Select all" "link"
+    And I press "Select all"
     Then the field "selectquestion-3" matches value "1"
 
-    When I click on "Deselect all" "link"
+    When I press "Deselect all"
     Then the field "selectquestion-3" matches value "0"
 
   @javascript
