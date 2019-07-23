@@ -2583,6 +2583,19 @@ class admin_setting_confightmleditor extends admin_setting_configtextarea {
         $editor->use_editor($this->get_id(), array('noclean'=>true));
         return parent::output_html($data, $query);
     }
+
+    /**
+     * Checks if data has empty html.
+     *
+     * @param string $data
+     * @return string Empty when no errors.
+     */
+    public function write_setting($data) {
+        if (trim(html_to_text($data)) === '') {
+            $data = '';
+        }
+        return parent::write_setting($data);
+    }
 }
 
 
