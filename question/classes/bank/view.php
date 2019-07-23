@@ -703,9 +703,6 @@ class view {
 
         $category = $this->get_current_category($categoryandcontext);
 
-        $strselectall = get_string('selectall');
-        $strselectnone = get_string('deselectall');
-
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
         $catcontext = \context::instance_by_id($contextid);
 
@@ -764,8 +761,6 @@ class view {
         }
         echo '</div>';
 
-        $PAGE->requires->js_call_amd('core_question/qbankmanager', 'init');
-
         $this->display_bottom_controls($totalnumber, $recurse, $category, $catcontext, $addcontexts);
 
         echo '</fieldset>';
@@ -791,11 +786,29 @@ class view {
 
             // Print delete and move selected question.
             if ($caneditall) {
-                echo '<input type="submit" class="btn btn-secondary" name="deleteselected" value="' . get_string('delete') . "\" />\n";
+                echo \html_writer::empty_tag('input', [
+                    'type' => 'submit',
+                    'class' => 'btn btn-secondary mr-1',
+                    'name' => 'deleteselected',
+                    'value' => get_string('delete'),
+                    'data-action' => 'toggle',
+                    'data-togglegroup' => 'qbank',
+                    'data-toggle' => 'action',
+                    'disabled' => true,
+                ]);
             }
 
             if ($canmoveall && count($addcontexts)) {
-                echo '<input type="submit" class="btn btn-secondary" name="move" value="' . get_string('moveto', 'question') . "\" />\n";
+                echo \html_writer::empty_tag('input', [
+                    'type' => 'submit',
+                    'class' => 'btn btn-secondary mr-1',
+                    'name' => 'move',
+                    'value' => get_string('moveto', 'question'),
+                    'data-action' => 'toggle',
+                    'data-togglegroup' => 'qbank',
+                    'data-toggle' => 'action',
+                    'disabled' => true,
+                ]);
                 question_category_select_menu($addcontexts, false, 0, "{$category->id},{$category->contextid}");
             }
         }

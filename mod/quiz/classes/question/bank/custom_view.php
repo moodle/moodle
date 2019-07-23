@@ -166,14 +166,15 @@ class custom_view extends \core_question\bank\view {
 
             // Add selected questions to the quiz.
             $params = array(
-                    'type' => 'submit',
-                    'name' => 'add',
-                    'class' => 'btn btn-primary',
-                    'value' => get_string('addselectedquestionstoquiz', 'quiz'),
+                'type' => 'submit',
+                'name' => 'add',
+                'class' => 'btn btn-primary',
+                'value' => get_string('addselectedquestionstoquiz', 'quiz'),
+                'data-action' => 'toggle',
+                'data-togglegroup' => 'qbank',
+                'data-toggle' => 'action',
+                'disabled' => true,
             );
-            if ($cmoptions->hasattempts) {
-                $params['disabled'] = 'disabled';
-            }
             echo \html_writer::empty_tag('input', $params);
         }
         echo "</div>\n";
