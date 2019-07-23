@@ -1,7 +1,7 @@
 <?php
 
 /*
- @version   v5.20.9  21-Dec-2016
+ @version   v5.20.14  06-Jan-2019
  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -9,7 +9,7 @@
   the BSD license will take precedence. See License.txt.
   Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.sourceforge.net
+  Latest version is available at http://adodb.org/
 
   Thanks Diogo Toscano (diogo#scriptcase.net) for the code.
 	And also Sid Dunayer [sdunayer#interserv.com] for extensive fixes.
@@ -54,13 +54,15 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
 
 	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
 	{
+		$nrows = (int) $nrows;
+		$offset = (int) $offset;
 		$parent = $this->pdoDriver;
 		$offsetStr = ($offset >= 0) ? " OFFSET $offset" : '';
 		$limitStr  = ($nrows >= 0)  ? " LIMIT $nrows" : ($offset >= 0 ? ' LIMIT 999999999' : '');
-	  	if ($secs2cache)
-	   		$rs = $parent->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
-	  	else
-	   		$rs = $parent->Execute($sql."$limitStr$offsetStr",$inputarr);
+		if ($secs2cache)
+			$rs = $parent->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
+		else
+			$rs = $parent->Execute($sql."$limitStr$offsetStr",$inputarr);
 
 		return $rs;
 	}
