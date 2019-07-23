@@ -612,7 +612,7 @@ class microlearning {
                     if ($nugget = $DB->get_record('microlearning_nugget', array('id' => $scheduleuser->nuggetid))) {
                         $company = company::by_userid($user->id);
                         // Get the nugget link.
-                        $nugget->url = self::get_nugget_url($nugget);
+                        $nugget->url = new moodle_url('/blocks/iomad_microlearning/land.php', array('nuggetid' => $nugget->id, 'userid' => $user->id, 'accesskey' =>$scheduleuser->accesskey));
                         // Fire the email.
                         EmailTemplate::send('microlearning_nugget_scheduled', array('user' => $user, 'company' => $company, 'nugget' => $nugget));
                         $DB->set_field('microlearning_thread_user', 'message_delivered', true, array('id' => $scheduleuser->id));
@@ -642,7 +642,7 @@ class microlearning {
                         $company = company::by_userid($user->id);
                         // Fix the payload.
                         $nugget->name = format_text($nugget->name);
-                        $nugget->url = self::get_nugget_url($nugget);
+                        $nugget->url = new moodle_url('/blocks/iomad_microlearning/land.php', array('nuggetid' => $nugget->id, 'userid' => $user->id, 'accesskey' =>$scheduleuser->accesskey));
                         // Fire the email.
                         EmailTemplate::send('microlearning_nugget_reminder1', array('user' => $user, 'company' => $company, 'nugget' => $nugget));
                         $DB->set_field('microlearning_thread_user', 'reminder1_delivered', true, array('id' => $scheduleuser->id));
