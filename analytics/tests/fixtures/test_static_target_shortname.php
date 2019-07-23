@@ -62,6 +62,16 @@ class test_static_target_shortname extends test_target_shortname {
     }
 
     /**
+     * Everything yep, this is just for testing.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @return bool
+     */
+    public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool {
+        return true;
+    }
+
+    /**
      * Different analyser just to test a different one.
      *
      * @return string

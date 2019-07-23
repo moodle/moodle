@@ -92,6 +92,16 @@ class test_target_shortname extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Only past stuff.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @return bool
+     */
+    public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool {
+        return ($timesplitting instanceof \core_analytics\local\time_splitting\before_now);
+    }
+
+    /**
      * is_valid_analysable
      *
      * @param \core_analytics\analysable $analysable

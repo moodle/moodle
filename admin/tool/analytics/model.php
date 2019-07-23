@@ -113,12 +113,18 @@ switch ($action) {
     case 'edit':
         confirm_sesskey();
 
+        $invalidcurrenttimesplitting = $model->invalid_timesplitting_selected();
+        $potentialtimesplittings = $model->get_potential_timesplittings();
+
         $customdata = array(
             'id' => $model->get_id(),
             'trainedmodel' => $model->is_trained(),
             'staticmodel' => $model->is_static(),
+            'invalidcurrenttimesplitting' => (!empty($invalidcurrenttimesplitting)),
+            'targetclass' => $model->get_target()->get_id(),
+            'targetname' => $model->get_target()->get_name(),
             'indicators' => $model->get_potential_indicators(),
-            'timesplittings' => \core_analytics\manager::get_all_time_splittings(),
+            'timesplittings' => $potentialtimesplittings,
             'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors()
         );
         $mform = new \tool_analytics\output\form\edit_model(null, $customdata);

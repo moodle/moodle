@@ -37,6 +37,7 @@ $string['defaultpredictoroption'] = 'Default processor ({$a})';
 $string['disabledmodel'] = 'Disabled model';
 $string['erroralreadypredict'] = 'File {$a} has already been used to generate predictions.';
 $string['errorcannotreaddataset'] = 'Dataset file {$a} cannot be read.';
+$string['errorcannotusetimesplitting'] = 'The provided analysis interval can\'t be used on this model.';
 $string['errorcannotwritedataset'] = 'Dataset file {$a} cannot be written.';
 $string['errorexportmodelresult'] = 'The machine learning model cannot be exported.';
 $string['errorimport'] = 'Error importing the provided JSON file.';

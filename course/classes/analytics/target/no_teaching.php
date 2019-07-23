@@ -45,6 +45,16 @@ class no_teaching extends \core_analytics\local\target\binary {
     }
 
     /**
+     * It requires a specific time-splitting method.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @return bool
+     */
+    public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool {
+        return (get_class($timesplitting) === \core\analytics\time_splitting\single_range::class);
+    }
+
+    /**
      * Returns the name.
      *
      * If there is a corresponding '_help' string this will be shown as well.

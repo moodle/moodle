@@ -6,6 +6,8 @@ information provided here is intended especially for developers.
 * "Time-splitting method" have been replaced by "Analysis interval" for the language strings that are
   displayed in the Moodle UI. The name of several time-splitting methods have been updated according
   to the new description of the field.
+* A new target::can_use_timesplitting method must be implemented to discard time-splitting methods that can not
+  be used on a target.
 
 === 3.7 ===
 
