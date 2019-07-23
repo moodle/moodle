@@ -6127,24 +6127,16 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     if (!empty($user->mailformat) && $user->mailformat == 1) {
         // Only process html templates if the user preferences allow html email.
 
-        if ($messagehtml) {
-            // If html has been given then pass it through the template.
-            $context['body'] = $messagehtml;
-            $messagehtml = $renderer->render_from_template('core/email_html', $context);
-
-        } else {
+        if (!$messagehtml) {
             // If no html has been given, BUT there is an html wrapping template then
             // auto convert the text to html and then wrap it.
-            $autohtml = trim(text_to_html($messagetext));
-            $context['body'] = $autohtml;
-            $temphtml = $renderer->render_from_template('core/email_html', $context);
-            if ($autohtml != $temphtml) {
-                $messagehtml = $temphtml;
-            }
+            $messagehtml = trim(text_to_html($messagetext));
         }
+        $context['body'] = $messagehtml;
+        $messagehtml = $renderer->render_from_template('core/email_html', $context);
     }
 
-    $context['body'] = $messagetext;
+    $context['body'] = html_to_text(nl2br($messagetext));
     $mail->Subject = $renderer->render_from_template('core/email_subject', $context);
     $mail->FromName = $renderer->render_from_template('core/email_fromname', $context);
     $messagetext = $renderer->render_from_template('core/email_text', $context);
@@ -6430,8 +6422,6 @@ function send_confirmation_email($user, $confirmationurl = null) {
 
     $message     = get_string('emailconfirmation', '', $data);
     $messagehtml = text_to_html(get_string('emailconfirmation', '', $data), false, false, true);
-
-    $user->mailformat = 1;  // Always send HTML version as well.
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
     return email_to_user($user, $supportuser, $subject, $message, $messagehtml);

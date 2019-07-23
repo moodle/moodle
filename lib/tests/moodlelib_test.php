@@ -3238,15 +3238,15 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
-        $user2 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1, 'mailformat' => 0));
+        $user2 = $this->getDataGenerator()->create_user(array('maildisplay' => 1, 'mailformat' => 1));
         $user3 = $this->getDataGenerator()->create_user(array('maildisplay' => 0));
         set_config('allowedemaildomains', "example.com\r\nmoodle.org");
 
         $subject = 'subject';
         $messagetext = 'message text';
         $subject2 = 'subject 2';
-        $messagetext2 = 'message text 2';
+        $messagetext2 = '<b>message text 2</b>';
 
         // Close the default email sink.
         $sink = $this->redirectEmails();
@@ -3274,11 +3274,13 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($messagetext, trim($result[0]->body));
         $this->assertSame($user1->email, $result[0]->to);
         $this->assertSame($user2->email, $result[0]->from);
+        $this->assertContains('Content-Type: text/plain', $result[0]->header);
 
         $this->assertSame($subject2, $result[1]->subject);
-        $this->assertSame($messagetext2, trim($result[1]->body));
+        $this->assertContains($messagetext2, quoted_printable_decode($result[1]->body));
         $this->assertSame($user2->email, $result[1]->to);
         $this->assertSame($user1->email, $result[1]->from);
+        $this->assertNotContains('Content-Type: text/plain', $result[1]->header);
 
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
@@ -4453,6 +4455,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = $sink->get_messages();
         $sink->close();
 
-        $this->assertContains('passwords cannot be reset on this site', $result[0]->body);
+        $this->assertContains('passwords cannot be reset on this site', quoted_printable_decode($result[0]->body));
     }
 }
