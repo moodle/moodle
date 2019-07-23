@@ -133,7 +133,7 @@ class report extends \mod_scorm\report {
             $headers = array();
             if (!$download && $candelete) {
                 $columns[] = 'checkbox';
-                $headers[] = null;
+                $headers[] = $this->generate_master_checkbox();
             }
             if (!$download && $CFG->grade_report_showuserimage) {
                 $columns[] = 'picture';
@@ -426,7 +426,7 @@ class report extends \mod_scorm\report {
                     }
                     if (in_array('checkbox', $columns)) {
                         if ($candelete && !empty($timetracks->start)) {
-                            $row[] = \html_writer::checkbox('attemptid[]', $scouser->userid . ':' . $scouser->attempt, false);
+                            $row[] = $this->generate_row_checkbox('attemptid[]', "{$scouser->userid}:{$scouser->attempt}");
                         } else if ($candelete) {
                             $row[] = '';
                         }
@@ -581,24 +581,7 @@ class report extends \mod_scorm\report {
                     if ($candelete) {
                         echo \html_writer::start_tag('table', array('id' => 'commands'));
                         echo \html_writer::start_tag('tr').\html_writer::start_tag('td');
-                        echo \html_writer::link('#', get_string('selectall', 'scorm'), array('id' => 'checkattempts'));
-                        echo ' / ';
-                        echo \html_writer::link('#', get_string('selectnone', 'scorm'), array('id' => 'uncheckattempts'));
-                        $PAGE->requires->js_amd_inline("
-                        require(['jquery'], function($) {
-                            $('#checkattempts').click(function(e) {
-                                $('#attemptsform').find('input:checkbox').prop('checked', true);
-                                e.preventDefault();
-                            });
-                            $('#uncheckattempts').click(function(e) {
-                                $('#attemptsform').find('input:checkbox').prop('checked', false);
-                                e.preventDefault();
-                            });
-                        });");
-                        echo '&nbsp;&nbsp;';
-                        echo \html_writer::empty_tag('input', array('type' => 'submit',
-                                                                    'value' => get_string('deleteselected', 'scorm'),
-                                                                    'class' => 'btn btn-secondary'));
+                        echo $this->generate_delete_selected_button();
                         echo \html_writer::end_tag('td').\html_writer::end_tag('tr').\html_writer::end_tag('table');
                         // Close form.
                         echo \html_writer::end_tag('div');

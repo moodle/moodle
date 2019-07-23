@@ -54,4 +54,60 @@ class report {
     public function canview($contextmodule) {
         return true;
     }
+
+    /**
+     * Generates a checkbox that can be added to header tables to select/deselect all quiz attempts.
+     *
+     * @return string
+     */
+    protected function generate_master_checkbox(): string {
+        global $OUTPUT;
+
+        // Build the select/deselect all control.
+        $selectalltext = get_string('selectall', 'scorm');
+        $deselectalltext = get_string('selectnone', 'scorm');
+        $mastercheckbox = new \core\output\checkbox_toggleall('scorm-attempts', true, [
+            'name' => 'scorm-selectall-attempts',
+            'value' => 1,
+            'label' => $selectalltext,
+            'labelclasses' => 'accesshide',
+            'selectall' => $selectalltext,
+            'deselectall' => $deselectalltext,
+        ]);
+
+        return $OUTPUT->render($mastercheckbox);
+    }
+
+    /**
+     * Generates a checkbox for a row in the attempts table.
+     *
+     * @param string $name The checkbox's name attribute.
+     * @param string $value The checkbox's value.
+     * @return string
+     */
+    protected function generate_row_checkbox(string $name, string $value): string {
+        global $OUTPUT;
+
+        $checkbox = new \core\output\checkbox_toggleall('scorm-attempts', false, [
+            'name' => $name,
+            'value' => $value,
+        ]);
+        return $OUTPUT->render($checkbox);
+    }
+
+    /**
+     * Generates an action button that deletes the selected attempts.
+     */
+    protected function generate_delete_selected_button(): string {
+        $deleteselectedparams = array(
+            'type' => 'submit',
+            'value' => get_string('deleteselected', 'scorm'),
+            'class' => 'btn btn-secondary',
+            'data-action' => 'toggle',
+            'data-togglegroup' => 'scorm-attempts',
+            'data-toggle' => 'action',
+            'disabled' => true
+        );
+        return \html_writer::empty_tag('input', $deleteselectedparams);
+    }
 }
