@@ -52,11 +52,6 @@ $file = '/' . min_clean_param($file, 'SAFEPATH');
 $jsfiles = array();
 list($unused, $component, $module) = explode('/', $file, 3);
 
-// No subdirs allowed - only flat module structure please.
-if (strpos('/', $module) !== false) {
-    die('Invalid module');
-}
-
 // Use the caching only for meaningful revision numbers which prevents future cache poisoning.
 if ($rev > 0 and $rev < (time() + 60 * 60)) {
     // This is "production mode".

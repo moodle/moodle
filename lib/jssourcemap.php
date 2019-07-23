@@ -44,11 +44,6 @@ $file = '/' . min_clean_param($file, 'SAFEPATH');
 // Only load js files from the js modules folder from the components.
 [$unused, $component, $module] = explode('/', $file, 3);
 
-// No subdirs allowed - only flat module structure please.
-if (strpos('/', $module) !== false) {
-    die('Invalid module');
-}
-
 // When running a lazy load, we only deal with one file so we can just return the working sourcemap.
 $jsfiles = core_requirejs::find_one_amd_module($component, $module, false);
 $jsfile = reset($jsfiles);

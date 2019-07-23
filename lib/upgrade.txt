@@ -20,6 +20,17 @@ information provided here is intended especially for developers.
     at least a single checkbox item is selected or not.
 * Final deprecation (removal) of the core/modal_confirm dialogue.
 * Upgrade scssphp to v1.0.2, This involves renaming classes from Leafo => ScssPhp as the repo has changed.
+* It is now possible to use sub-directories for AMD modules.
+  The standard rules for Level 2 namespaces also apply to AMD modules.
+  The sub-directory used must be either an valid component, or placed inside a 'local' directory to ensure that it does not conflict with other components.
+
+    The following are all valid module names and locations in your plugin:
+      mod_forum/view: mod/forum/amd/src/view.js
+      mod_forum/local/views/post: mod/forum/amd/src/local/views/post
+      mod_forum/form/checkbox-toggle: mod/forum/amd/src/form/checkbox-toggle.js
+
+    The following are all invalid module names and locations in your plugin:
+      mod_forum/views/post: mod/forum/amd/src/views/post
 
 === 3.7 ===
 
