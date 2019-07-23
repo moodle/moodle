@@ -487,6 +487,7 @@ $table->define_headers($headers);
 $table->no_sorting('controls');
 $table->no_sorting('templatename');
 $table->sort_default_column = 'sent';
+$table->sort_default_order = 'desc';
 $table->out($CFG->iomad_max_list_users, true);
 
 if (!$table->is_downloading()) {
