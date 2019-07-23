@@ -163,68 +163,76 @@ class block_iomad_company_admin extends block_base {
         $tabs = [];
         $panes = [];
         $url = '/my';
+        $selected = true;
         if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $context)) {
             $tabs[] = [
                 'category' => 'CompanyAdmin',
                 'icon' => 'fa-building',
-                'selected' => true,
+                'selected' => $selected,
                 'label' => get_string('companymanagement', 'block_iomad_company_admin')
             ];
-            $panes[1] = ['category' => 'CompanyAdmin', 'items' => [], 'selected' => true];
+            $panes[1] = ['category' => 'CompanyAdmin', 'items' => [], 'selected' => $selected];
+            $selected = false;
         }
         if (iomad::has_capability('block/iomad_company_admin:usermanagement_view', $context)) {
             $tabs[] = [
                 'category' => 'UserAdmin',
                 'icon' => 'fa-user',
-                'selected' => false,
+                'selected' => $selected,
                 'label' => get_string('usermanagement', 'block_iomad_company_admin')
             ];
-            $panes[2] = ['category' => 'UserAdmin', 'items' => [], 'selected' => false];
+            $panes[2] = ['category' => 'UserAdmin', 'items' => [], 'selected' => $selected];
+            $selected = false;
         }
         if (iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $context)) {
             $tabs[] = [
                 'category' => 'CourseAdmin',
                 'icon' => 'fa-file-text',
-                'selected' => false,
+                'selected' => $selected,
                 'label' => get_string('coursemanagement', 'block_iomad_company_admin')
             ];
-            $panes[3] = ['category' => 'CourseAdmin', 'items' => [], 'selected' => false];
+            $panes[3] = ['category' => 'CourseAdmin', 'items' => [], 'selected' => $selected];
+            $selected = false;
         }
         if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context)) {
             $tabs[] = [
                 'category' => 'LicenseAdmin',
                 'icon' => 'fa-legal',
-                'selected' => false,
+                'selected' => $selected,
                 'label' => get_string('licensemanagement', 'block_iomad_company_admin')
             ];
-            $panes[4] = ['category' => 'LicenseAdmin', 'items' => [], 'selected' => false];
+            $panes[4] = ['category' => 'LicenseAdmin', 'items' => [], 'selected' => $selected];
+            $selected = false;
         }
         if (iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $context)) {
             $tabs[] = [
                 'category' => 'CompetencyAdmin',
                 'icon' => 'fa-cubes',
-                'selected' => false,
+                'selected' => $selected,
                 'label' => get_string('competencymanagement', 'block_iomad_company_admin')
             ];
-            $panes[5] = ['category' => 'CompetencyAdmin', 'items' => [], 'selected' => false];
+            $panes[5] = ['category' => 'CompetencyAdmin', 'items' => [], 'selected' => $selected];
+            $selected = false;
         }
         if (iomad::has_capability('block/iomad_commerce:admin_view', $context)) {
             $tabs[] = [
                 'category' => 'ECommerceAdmin',
                 'icon' => 'fa-truck',
-                'selected' => false,
+                'selected' => $selected,
                 'label' => get_string('blocktitle', 'block_iomad_commerce')
             ];
-            $panes[6] = ['category' => 'ECommerceAdmin', 'items' => [], 'selected' => false];
+            $panes[6] = ['category' => 'ECommerceAdmin', 'items' => [], 'selected' => $selected];
+            $selected = false;
         }
         if (iomad::has_capability('block/iomad_reports:view', $context)) {
             $tabs[] = [
                 'category' => 'Reports',
                 'icon' => 'fa-bar-chart-o',
-                'selected' => false,
+                'selected' => $selected,
                 'label' => get_string('reports', 'block_iomad_company_admin')
             ];
-            $panes[7] = ['category' => 'Reports', 'items' => [], 'selected' => false];
+            $panes[7] = ['category' => 'Reports', 'items' => [], 'selected' => $selected];
+            $selected = false;
         }
 
         // Build content for selected tab (from menu array).
