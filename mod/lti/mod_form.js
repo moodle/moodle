@@ -538,11 +538,20 @@
          * @returns {number|boolean} The ID of the tool type if it supports Content-Item selection. False, otherwise.
          */
         getContentItemId: function() {
-            var selected = this.getSelectedToolTypeOption();
-            if (selected.getAttribute('data-contentitem')) {
-                return selected.getAttribute('data-id');
+            try {
+                var selected = this.getSelectedToolTypeOption();
+                if (selected.getAttribute('data-contentitem')) {
+                    return selected.getAttribute('data-id');
+                }
+                return false;
+            } catch (err) {
+                // Tool selector not available - check for hidden fields instead.
+                var content = Y.one('input[name="contentitem"]');
+                if (!content || !content.get('value')) {
+                    return false;
+                }
+                return Y.one('input[name="typeid"]').get('value');
             }
-            return false;
         },
 
         /**

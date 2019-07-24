@@ -162,6 +162,13 @@ class mod_lti_mod_form extends moodleform_mod {
         } else {
             $mform->addElement('hidden', 'typeid', $typeid);
             $mform->setType('typeid', PARAM_INT);
+            if ($typeid) {
+                $config = lti_get_type_config($typeid);
+                if (!empty($config['contentitem'])) {
+                    $mform->addElement('hidden', 'contentitem', 1);
+                    $mform->setType('contentitem', PARAM_INT);
+                }
+            }
         }
 
         // Add button that launches the content-item selection dialogue.
