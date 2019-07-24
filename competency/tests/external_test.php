@@ -2838,4 +2838,50 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($filter, $result[0]->shortname);
     }
 
+    /**
+     * Test that we can list competencies with a course module.
+     *
+     * @return void
+     */
+    public function test_list_competencies_with_course_module() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
+        $course = $dg->create_course();
+
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+
+        $cc1 = api::add_competency_to_course($course->id, $c1->get('id'));
+        $cc2 = api::add_competency_to_course($course->id, $c2->get('id'));
+        $cc3 = api::add_competency_to_course($course->id, $c3->get('id'));
+
+        $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
+        $page = $pagegenerator->create_instance(array('course' => $course->id));
+
+        $cm = get_coursemodule_from_instance('page', $page->id);
+        // Add a link and list again.
+        $ccm1 = api::add_competency_to_course_module($cm, $c1->get('id'));
+        $ccm2 = api::add_competency_to_course_module($cm, $c2->get('id'));
+
+        // Test list competencies for this course module.
+        $total = external::count_course_module_competencies($cm->id);
+        $result = external::list_course_module_competencies($cm->id);
+        $this->assertCount($total, $result);
+
+        // Now we should have an array and each element of the array should have a competency and
+        // a coursemodulecompetency.
+        foreach ($result as $instance) {
+            $cmc = $instance['coursemodulecompetency'];
+            $c = $instance['competency'];
+            $this->assertEquals($cmc->competencyid, $c->id);
+        }
+
+    }
+
 }

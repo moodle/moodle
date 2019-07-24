@@ -1204,6 +1204,31 @@ class api {
     }
 
     /**
+     * Count the competencies associated to a course module.
+     *
+     * @param mixed $cmorid The course module, or its ID.
+     * @return int
+     */
+    public static function count_course_module_competencies($cmorid) {
+        static::require_enabled();
+        $cm = $cmorid;
+        if (!is_object($cmorid)) {
+            $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+        }
+
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
+        $context = context_module::instance($cm->id);
+
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $context)) {
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
+        }
+
+        return course_module_competency::count_competencies($cm->id);
+    }
+
+    /**
      * List the competencies associated to a course module.
      *
      * @param mixed $cmorid The course module, or its ID.
@@ -1231,7 +1256,7 @@ class api {
         $result = array();
 
         // TODO We could improve the performance of this into one single query.
-        $coursemodulecompetencies = course_competency::list_course_module_competencies($cm->id);
+        $coursemodulecompetencies = course_module_competency::list_course_module_competencies($cm->id);
         $competencies = course_module_competency::list_competencies($cm->id);
 
         // Build the return values.
