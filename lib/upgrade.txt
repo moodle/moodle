@@ -53,6 +53,7 @@ validation against and defaults to null (so, no user needed) if not provided.
 * Following behat steps have been removed from core:
     - I go to "<gradepath_string>" in the course gradebook
 * A new admin setting widget 'core_admin\local\settings\filesize' is added.
+* Core capabilities 'moodle/community:add' and 'moodle/community:download' have been removed from core as part of Moodle.net sunsetting.
 
 === 3.7 ===
 
