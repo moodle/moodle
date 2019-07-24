@@ -56,6 +56,8 @@ class editstep extends \moodleform {
      * Form definition.
      */
     public function definition() {
+        global $CFG;
+
         $mform = $this->_form;
 
         $mform->addElement('header', 'heading_target', get_string('target_heading', 'tool_usertours'));
@@ -79,9 +81,16 @@ class editstep extends \moodleform {
         $mform->setType('title', PARAM_TEXT);
         $mform->addHelpButton('title', 'title', 'tool_usertours');
 
-        $mform->addElement('textarea', 'content', get_string('content', 'tool_usertours'));
+        $editoroptions = [
+            'subdirs' => 1,
+            'maxbytes' => $CFG->maxbytes,
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'changeformat' => 1,
+            'trusttext' => true
+        ];
+        $mform->addElement('editor', 'content', get_string('content', 'tool_usertours'), null, $editoroptions);
         $mform->addRule('content', get_string('required'), 'required', null, 'client');
-        $mform->setType('content', PARAM_RAW);
+        $mform->setType('content', PARAM_RAW);  // No XSS prevention here, users must be trusted.
         $mform->addHelpButton('content', 'content', 'tool_usertours');
 
         // Add the step configuration.

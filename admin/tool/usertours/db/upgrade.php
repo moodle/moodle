@@ -114,5 +114,19 @@ function xmldb_tool_usertours_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021100700, 'tool', 'usertours');
     }
 
+    if ($oldversion < 2021101300) {
+        // Define field contentformat to be added to tool_usertours_steps.
+        $table = new xmldb_table('tool_usertours_steps');
+        $field = new xmldb_field('contentformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'content');
+
+        // Conditionally launch add field contentformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Usertours savepoint reached.
+        upgrade_plugin_savepoint(true, 2021101300, 'tool', 'usertours');
+    }
+
     return true;
 }
