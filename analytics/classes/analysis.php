@@ -138,6 +138,9 @@ class analysis {
                 }
             }
         }
+
+        // Force GC to clean up the indicator instances used during the last iteration.
+        $this->analyser->instantiate_indicators();
     }
 
     /**
@@ -474,6 +477,11 @@ class analysis {
                 list($samplesfeatures, $newindicatorcalculations, $indicatornotnulls) = $rangeindicator->calculate($sampleids,
                     $this->analyser->get_samples_origin(), $range['start'], $range['end'], $prevcalculations);
 
+                // Free memory ASAP.
+                unset($rangeindicator);
+                gc_collect_cycles();
+                gc_mem_caches();
+
                 // Copy the features data to the dataset.
                 foreach ($samplesfeatures as $analysersampleid => $features) {
 
@@ -503,7 +511,7 @@ class analysis {
                         $indcalc->endtime = $range['end'];
                         $indcalc->sampleid = $sampleid;
                         $indcalc->sampleorigin = $this->analyser->get_samples_origin();
-                        $indcalc->indicator = $rangeindicator->get_id();
+                        $indcalc->indicator = $indicator->get_id();
                         $indcalc->value = $calculatedvalue;
                         $indcalc->timecreated = $timecreated;
                         $newcalculations[] = $indcalc;
