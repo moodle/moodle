@@ -1231,7 +1231,7 @@ class api {
         $result = array();
 
         // TODO We could improve the performance of this into one single query.
-        $coursemodulecompetencies = course_competency::list_course_module_competencies($cm->id);
+        $coursemodulecompetencies = course_module_competency::list_course_module_competencies($cm->id);
         $competencies = course_module_competency::list_competencies($cm->id);
 
         // Build the return values.
