@@ -3089,9 +3089,11 @@ class company {
             return true;
         }
 
-        if ($DB->get_records('email_template', array('companyid' => $this->id, 'name' => $templatename, 'disabled' => 1))) {
-            // Disabled for the company.
-            return false;
+        if ($managertype == 0) {
+            if ($DB->get_records('email_template', array('companyid' => $this->id, 'name' => $templatename, 'disabled' => 1))) {
+                // Disabled for the company.
+                return false;
+            }
         }
 
         if ($managertype == 1) {
