@@ -39,7 +39,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
      * Module level variables.
      */
     var Asyncbackup = {};
-    var checkdelay = 5000; //  How often we check for progress updates.
+    var checkdelay = 15000; //  How often we check for progress updates.
     var backupid; //  The backup id to get the progress for.
     var contextid; //  The course this backup progress is for.
     var restoreurl; //  The URL to view course restores.
