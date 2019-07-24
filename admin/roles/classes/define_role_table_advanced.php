@@ -487,10 +487,17 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $addfunction = "core_role_set_{$type}_allowed";
         $deltable = 'role_allow_'.$type;
         $field = 'allow'.$type;
+        $eventclass = "\\core\\event\\role_allow_" . $type . "_updated";
+        $context = context_system::instance();
 
         foreach ($current as $roleid) {
             if (!in_array($roleid, $wanted)) {
                 $DB->delete_records($deltable, array('roleid'=>$this->roleid, $field=>$roleid));
+                $eventclass::create([
+                    'context' => $context,
+                    'objectid' => $this->roleid,
+                    'other' => ['targetroleid' => $roleid, 'allow' => false]
+                ])->trigger();
                 continue;
             }
             $key = array_search($roleid, $wanted);
@@ -502,6 +509,14 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
                 $roleid = $this->roleid;
             }
             $addfunction($this->roleid, $roleid);
+
+            if (in_array($roleid, $wanted)) {
+                $eventclass::create([
+                    'context' => $context,
+                    'objectid' => $this->roleid,
+                    'other' => ['targetroleid' => $roleid, 'allow' => true]
+                ])->trigger();
+            }
         }
     }
 

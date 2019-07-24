@@ -977,7 +977,11 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('role_allow_assign', array('roleid'=>$otherid, 'allowassign'=>$student->id)));
 
         // Test event trigger.
-        $allowroleassignevent = \core\event\role_allow_assign_updated::create(array('context' => context_system::instance()));
+        $allowroleassignevent = \core\event\role_allow_assign_updated::create([
+            'context' => context_system::instance(),
+            'objectid' => $otherid,
+            'other' => ['targetroleid' => $student->id]
+        ]);
         $sink = $this->redirectEvents();
         $allowroleassignevent->trigger();
         $events = $sink->get_events();
@@ -1006,7 +1010,11 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('role_allow_override', array('roleid'=>$otherid, 'allowoverride'=>$student->id)));
 
         // Test event trigger.
-        $allowroleassignevent = \core\event\role_allow_override_updated::create(array('context' => context_system::instance()));
+        $allowroleassignevent = \core\event\role_allow_override_updated::create([
+            'context' => context_system::instance(),
+            'objectid' => $otherid,
+            'other' => ['targetroleid' => $student->id]
+        ]);
         $sink = $this->redirectEvents();
         $allowroleassignevent->trigger();
         $events = $sink->get_events();
@@ -1035,7 +1043,11 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('role_allow_switch', array('roleid'=>$otherid, 'allowswitch'=>$student->id)));
 
         // Test event trigger.
-        $allowroleassignevent = \core\event\role_allow_switch_updated::create(array('context' => context_system::instance()));
+        $allowroleassignevent = \core\event\role_allow_switch_updated::create([
+            'context' => context_system::instance(),
+            'objectid' => $otherid,
+            'other' => ['targetroleid' => $student->id]
+        ]);
         $sink = $this->redirectEvents();
         $allowroleassignevent->trigger();
         $events = $sink->get_events();
@@ -1064,7 +1076,11 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('role_allow_view', array('roleid' => $otherid, 'allowview' => $student->id)));
 
         // Test event trigger.
-        $allowroleassignevent = \core\event\role_allow_view_updated::create(array('context' => context_system::instance()));
+        $allowroleassignevent = \core\event\role_allow_view_updated::create([
+            'context' => context_system::instance(),
+            'objectid' => $otherid,
+            'other' => ['targetroleid' => $student->id]
+        ]);
         $sink = $this->redirectEvents();
         $allowroleassignevent->trigger();
         $events = $sink->get_events();
