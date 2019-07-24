@@ -27,6 +27,9 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+debugging('core\\event\\role_capabilities_updated has been deprecated. Please use
+        core\\event\\capability_assigned instead', DEBUG_DEVELOPER);
+
 /**
  * Role updated event class.
  *
@@ -101,5 +104,15 @@ class role_capabilities_updated extends base {
 
     public static function get_objectid_mapping() {
         return array('db' => 'role', 'restore' => 'role');
+    }
+
+
+    /**
+     * This event has been deprecated.
+     *
+     * @return boolean
+     */
+    public static function is_deprecated() {
+        return true;
     }
 }
