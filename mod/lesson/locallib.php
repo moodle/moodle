@@ -581,7 +581,7 @@ function lesson_add_header_buttons($cm, $context, $extraeditbuttons=false, $less
                 'id'       => $cm->id,
                 'pageid'   => $lessonpageid,
                 'edit'     => 1,
-                'returnto' => $PAGE->url->out(false)
+                'returnto' => $PAGE->url->out_as_local_url(false)
             ));
             $PAGE->set_button($OUTPUT->single_button($url, get_string('editpagecontent', 'lesson')));
         }
@@ -1320,7 +1320,7 @@ abstract class lesson_add_page_form_base extends moodleform {
 
         if (!empty($this->_customdata['returnto'])) {
             $mform->addElement('hidden', 'returnto', $this->_customdata['returnto']);
-            $mform->setType('returnto', PARAM_URL);
+            $mform->setType('returnto', PARAM_LOCALURL);
         }
 
         $mform->addElement('hidden', 'id');
