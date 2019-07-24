@@ -5,6 +5,21 @@ information provided here is intended especially for theme designer.
 
 * The PHP Less compilier has now been removed from the core library.
   Please consider migrating your theme to use SCSS.
+* It is now possible to use sub-directories when creating mustache templates.
+  The standard rules for Level 2 namespaces also apply to templates.
+  The sub-directory used must be either an valid component, or placed inside a 'local' directory to ensure that it does not conflict with other components.
+
+    The following are all valid template names and locations in your theme:
+      theme_themename/columns2: theme/[themename]/columns2.mustache
+      theme_themename/local/layouts/columns2: theme/[themename]/local/layouts/columns2.mustache
+
+    The following are core templates, locations, and override locations in your theme:
+      core/modal: lib/templates/modal.mustache => theme/[themename]/core/modal.mustache
+      mod_forum/forum_post: mod/forum/templates/forum_post.mustache => theme/[themename]/mod_forum/forum_post.mustache
+      mod_forum/local/post/user: mod/forum/templates/local/post/user.mustache => theme/[themename]/mod_forum/local/post/user.mustache
+
+    The following are _invalid_ template names and locations:
+      theme_themename/layouts/columns2: theme/[themename]/layouts/columns2.mustache
 
 === 3.7 ===
 * The core/form_autocompelte_input template now has a `data-tags` attribute.
