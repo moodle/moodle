@@ -592,14 +592,7 @@ class helper {
             if ($includeprivacyinfo) {
                 $privacysetting = api::get_user_privacy_messaging_preference($member->id);
                 $data->requirescontact = $privacysetting == api::MESSAGE_PRIVACY_ONLYCONTACTS;
-
-                $recipient = new \stdClass();
-                $recipient->id = $member->id;
-
-                $sender = new \stdClass();
-                $sender->id = $referenceuserid;
-
-                $data->canmessage = !$data->isdeleted && api::can_post_message($recipient, $sender);
+                $data->canmessage = !$data->isdeleted && api::can_send_message($member->id, $referenceuserid);
             }
 
             // Populate the contact requests, even if we don't need them.

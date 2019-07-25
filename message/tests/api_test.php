@@ -3419,6 +3419,201 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Tests the user can send a message.
+     */
+    public function test_can_send_message() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set as the first user.
+        $this->setUser($user1);
+
+        // With the default privacy setting, users can't message them.
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id));
+
+        // Enrol users to the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        // After enrolling users to the course, they should be able to message them with the default privacy setting.
+        $this->assertTrue(\core_message\api::can_send_message($user2->id, $user1->id));
+    }
+
+    /**
+     * Tests the user can't send a message without proper capability.
+     */
+    public function test_can_send_message_without_sendmessage_cap() {
+        global $DB;
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set as the user 1.
+        $this->setUser($user1);
+
+        // Remove the capability to send a message.
+        $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
+        unassign_capability('moodle/site:sendmessage', $roleids['user'],
+            context_system::instance());
+
+        // Check that we can not post a message without the capability.
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id));
+    }
+
+    /**
+     * Tests the user can send a message when they are contact.
+     */
+    public function test_can_send_message_when_contact() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set as the first user.
+        $this->setUser($user1);
+
+        // Check that we can not send user2 a message.
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id));
+
+        // Add users as contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        // Check that the return result is now true.
+        $this->assertTrue(\core_message\api::can_send_message($user2->id, $user1->id));
+    }
+
+    /**
+     * Tests the user can't send a message if they are not a contact and the user
+     * has requested messages only from contacts.
+     */
+    public function test_can_send_message_when_not_contact() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set as the first user.
+        $this->setUser($user1);
+
+        // Set the second user's preference to not receive messages from non-contacts.
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2->id);
+
+        // Check that we can not send user 2 a message.
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id));
+    }
+
+    /**
+     * Tests the user can't send a message if they are blocked.
+     */
+    public function test_can_send_message_when_blocked() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set the user.
+        $this->setUser($user1);
+
+        // Block the second user.
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        // Check that the second user can no longer send the first user a message.
+        $this->assertFalse(\core_message\api::can_send_message($user1->id, $user2->id));
+    }
+
+    /**
+     * Tests the user can send a message when site-wide messaging setting is enabled,
+     * even if they are not a contact and are not members of the same course.
+     */
+    public function test_can_send_message_site_messaging_setting() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set as the first user.
+        $this->setUser($user1);
+
+        // By default, user only can be messaged by contacts and members of any of his/her courses.
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id));
+
+        // Enable site-wide messagging privacy setting. The user will be able to receive messages from everybody.
+        set_config('messagingallusers', true);
+
+        // Set the second user's preference to receive messages from everybody.
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_SITE, $user2->id);
+
+        // Check that we can send user2 a message.
+        $this->assertTrue(\core_message\api::can_send_message($user2->id, $user1->id));
+
+        // Disable site-wide messagging privacy setting. The user will be able to receive messages from contacts
+        // and members sharing a course with her.
+        set_config('messagingallusers', false);
+
+        // As site-wide messaging setting is disabled, the value for user2 will be changed to MESSAGE_PRIVACY_COURSEMEMBER.
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id));
+
+        // Enrol users to the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        // Check that we can send user2 a message because they are sharing a course.
+        $this->assertTrue(\core_message\api::can_send_message($user2->id, $user1->id));
+
+        // Set the second user's preference to receive messages only from contacts.
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2->id);
+        // Check that now the user2 can't be contacted because user1 is not their contact.
+        $this->assertFalse(\core_message\api::can_send_message($user2->id, $user1->id));
+
+        // Make contacts user1 and user2.
+        \core_message\api::add_contact($user2->id, $user1->id);
+        // Check that we can send user2 a message because they are contacts.
+        $this->assertTrue(\core_message\api::can_send_message($user2->id, $user1->id));
+    }
+
+    /**
+     * Tests the user with the messageanyuser capability can send a message.
+     */
+    public function test_can_send_message_with_messageanyuser_cap() {
+        global $DB;
+
+        // Create some users.
+        $teacher1 = self::getDataGenerator()->create_user();
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
+
+        // Create users not enrolled in any course.
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Create a course.
+        $course1 = $this->getDataGenerator()->create_course();
+
+        // Enrol the users in the course.
+        $this->getDataGenerator()->enrol_user($teacher1->id, $course1->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($student1->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($student2->id, $course1->id, 'student');
+
+        // Set some student preferences to not receive messages from non-contacts.
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $student1->id);
+
+        // Check that we can send student1 a message because teacher has the messageanyuser cap by default.
+        $this->assertTrue(\core_message\api::can_send_message($student1->id, $teacher1->id));
+
+        // Check that the teacher can't contact user1 because it's not his teacher.
+        $this->assertFalse(\core_message\api::can_send_message($user1->id, $teacher1->id));
+
+        // Remove the messageanyuser capability from the course1 for teachers.
+        $coursecontext = context_course::instance($course1->id);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        assign_capability('moodle/site:messageanyuser', CAP_PROHIBIT, $teacherrole->id, $coursecontext->id);
+        $coursecontext->mark_dirty();
+
+        // Check that we can't send user1 a message because they are not contacts.
+        $this->assertFalse(\core_message\api::can_send_message($student1->id, $teacher1->id));
+
+        // However, teacher can message student2 because they are sharing a course.
+        $this->assertTrue(\core_message\api::can_send_message($student2->id, $teacher1->id));
+    }
+
+    /**
      * Tests the user can post a message.
      */
     public function test_can_post_message() {
@@ -3431,6 +3626,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // With the default privacy setting, users can't message them.
         $this->assertFalse(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
 
         // Enrol users to the same course.
         $course = $this->getDataGenerator()->create_course();
@@ -3438,6 +3634,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
         // After enrolling users to the course, they should be able to message them with the default privacy setting.
         $this->assertTrue(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -3460,6 +3657,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check that we can not post a message without the capability.
         $this->assertFalse(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -3475,12 +3673,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check that we can not send user2 a message.
         $this->assertFalse(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
 
         // Add users as contacts.
         \core_message\api::add_contact($user1->id, $user2->id);
 
         // Check that the return result is now true.
         $this->assertTrue(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -3500,6 +3700,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check that we can not send user 2 a message.
         $this->assertFalse(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -3518,6 +3719,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check that the second user can no longer send the first user a message.
         $this->assertFalse(\core_message\api::can_post_message($user1, $user2));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -3534,6 +3736,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // By default, user only can be messaged by contacts and members of any of his/her courses.
         $this->assertFalse(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
 
         // Enable site-wide messagging privacy setting. The user will be able to receive messages from everybody.
         set_config('messagingallusers', true);
@@ -3543,6 +3746,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check that we can send user2 a message.
         $this->assertTrue(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
 
         // Disable site-wide messagging privacy setting. The user will be able to receive messages from contacts
         // and members sharing a course with her.
@@ -3550,6 +3754,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // As site-wide messaging setting is disabled, the value for user2 will be changed to MESSAGE_PRIVACY_COURSEMEMBER.
         $this->assertFalse(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
 
         // Enrol users to the same course.
         $course = $this->getDataGenerator()->create_course();
@@ -3557,16 +3762,19 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
         // Check that we can send user2 a message because they are sharing a course.
         $this->assertTrue(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
 
         // Set the second user's preference to receive messages only from contacts.
         set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2->id);
         // Check that now the user2 can't be contacted because user1 is not their contact.
         $this->assertFalse(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
 
         // Make contacts user1 and user2.
         \core_message\api::add_contact($user2->id, $user1->id);
         // Check that we can send user2 a message because they are contacts.
         $this->assertTrue(\core_message\api::can_post_message($user2));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -3596,8 +3804,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check that we can send student1 a message because teacher has the messageanyuser cap by default.
         $this->assertTrue(\core_message\api::can_post_message($student1, $teacher1));
+        $this->assertDebuggingCalled();
         // Check that the teacher can't contact user1 because it's not his teacher.
         $this->assertFalse(\core_message\api::can_post_message($user1, $teacher1));
+        $this->assertDebuggingCalled();
 
         // Remove the messageanyuser capability from the course1 for teachers.
         $coursecontext = context_course::instance($course1->id);
@@ -3607,8 +3817,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check that we can't send user1 a message because they are not contacts.
         $this->assertFalse(\core_message\api::can_post_message($student1, $teacher1));
+        $this->assertDebuggingCalled();
         // However, teacher can message student2 because they are sharing a course.
         $this->assertTrue(\core_message\api::can_post_message($student2, $teacher1));
+        $this->assertDebuggingCalled();
     }
 
     /**
