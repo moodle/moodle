@@ -155,7 +155,9 @@ class backup_ui_stage_initial extends backup_ui_stage {
                             $this->ui->get_type(),
                             $this->ui->get_controller_id(),
                             $this->ui->get_setting_value('users'),
-                            $this->ui->get_setting_value('anonymize')
+                            $this->ui->get_setting_value('anonymize'),
+                            false,
+                            (bool)$this->ui->get_setting_value('files')
                         );
                         $setting->set_value($filename);
                     }
@@ -457,7 +459,16 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
                         $id = $this->ui->get_controller_id();
                         $users = $this->ui->get_setting_value('users');
                         $anonymised = $this->ui->get_setting_value('anonymize');
-                        $setting->set_value(backup_plan_dbops::get_default_backup_filename($format, $type, $id, $users, $anonymised));
+                        $files = (bool)$this->ui->get_setting_value('files');
+                        $filename = backup_plan_dbops::get_default_backup_filename(
+                                $format,
+                                $type,
+                                $id,
+                                $users,
+                                $anonymised,
+                                false,
+                                $files);
+                        $setting->set_value($filename);
                     }
                     $form->add_setting($setting, $task);
                     break;
@@ -628,6 +639,7 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
         if (!empty($this->results['missing_files_in_pool'])) {
             $output .= $renderer->notification(get_string('missingfilesinpool', 'backup'), 'notifyproblem');
         }
+        $output .= $renderer->get_samesite_notification();
         $output .= $renderer->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');
         $output .= $renderer->continue_button($restorerul);
         $output .= $renderer->box_end();

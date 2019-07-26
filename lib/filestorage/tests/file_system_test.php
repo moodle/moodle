@@ -250,9 +250,7 @@ class core_files_file_system_testcase extends advanced_testcase {
 
         $file = $this->get_stored_file($filecontent);
 
-        $method = new ReflectionMethod(file_system::class, 'get_local_path_from_storedfile');
-        $method->setAccessible(true);
-        $result = $method->invokeArgs($fs, array_merge([$file], $args));
+        $result = $fs->get_local_path_from_storedfile($file, $fetch);
 
         $this->assertEquals($filepath, $result);
     }
@@ -280,9 +278,7 @@ class core_files_file_system_testcase extends advanced_testcase {
 
         $file = $this->get_stored_file($filecontent);
 
-        $method = new ReflectionMethod(file_system::class, 'get_remote_path_from_storedfile');
-        $method->setAccessible(true);
-        $result = $method->invokeArgs($fs, [$file]);
+        $result = $fs->get_remote_path_from_storedfile($file);
 
         $this->assertEquals($filepath, $result);
     }

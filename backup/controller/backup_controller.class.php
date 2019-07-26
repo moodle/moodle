@@ -271,6 +271,37 @@ class backup_controller extends base_controller {
         return $this->includefiles;
     }
 
+    /**
+     * Returns the default value for $this->includefiles before we consider any settings.
+     *
+     * @return bool
+     * @throws dml_exception
+     */
+    protected function get_include_files_default() : bool {
+        // We normally include files.
+        $includefiles = true;
+
+        // In an import, we don't need to include files.
+        if ($this->get_mode() === backup::MODE_IMPORT) {
+            $includefiles = false;
+        }
+
+        // When a backup is intended for the same site, we don't need to include the files.
+        // Note, this setting is only used for duplication of an entire course.
+        if ($this->get_mode() === backup::MODE_SAMESITE) {
+            $includefiles = false;
+        }
+
+        // If backup is automated and we have set auto backup config to exclude
+        // files then set them to be excluded here.
+        $backupautofiles = (bool) get_config('backup', 'backup_auto_files');
+        if ($this->get_mode() === backup::MODE_AUTOMATED && !$backupautofiles) {
+            $includefiles = false;
+        }
+
+        return $includefiles;
+    }
+
     public function get_operation() {
         return $this->operation;
     }
@@ -326,6 +357,12 @@ class backup_controller extends base_controller {
         // Basic/initial prevention against time/memory limits
         core_php_time_limit::raise(1 * 60 * 60); // 1 hour for 1 course initially granted
         raise_memory_limit(MEMORY_EXTRA);
+
+        // If the controller has decided that we can include files, then check the setting, otherwise do not include files.
+        if ($this->get_include_files()) {
+            $this->set_include_files((bool) $this->get_plan()->get_setting('files')->get_value());
+        }
+
         // If this is not a course backup, or single activity backup (e.g. duplicate) inform the plan we are not
         // including all the activities for sure. This will affect any
         // task/step executed conditionally to stop including information
@@ -386,35 +423,19 @@ class backup_controller extends base_controller {
         $this->log('applying plan defaults', backup::LOG_DEBUG);
         backup_controller_dbops::apply_config_defaults($this);
         $this->set_status(backup::STATUS_CONFIGURED);
-        $this->set_include_files();
+        $this->set_include_files($this->get_include_files_default());
     }
 
     /**
      * Set the initial value for the include_files setting.
      *
+     * @param bool $includefiles
      * @see backup_controller::get_include_files for further information on the purpose of this setting.
-     * @return int Indicates whether files should be included in backups.
      */
-    protected function set_include_files() {
-        // We normally include files.
-        $includefiles = true;
-
-        // In an import, we don't need to include files.
-        if ($this->get_mode() === backup::MODE_IMPORT) {
-            $includefiles = false;
-        }
-
-        // When a backup is intended for the same site, we don't need to include the files.
-        // Note, this setting is only used for duplication of an entire course.
-        if ($this->get_mode() === backup::MODE_SAMESITE) {
-            $includefiles = false;
-        }
-
-        $this->includefiles = (int) $includefiles;
+    protected function set_include_files(bool $includefiles) {
         $this->log("setting file inclusion to {$this->includefiles}", backup::LOG_DEBUG);
-        return $this->includefiles;
+        $this->includefiles = (int) $includefiles;
     }
-
 }
 
 /*

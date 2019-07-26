@@ -110,6 +110,12 @@ class backup_root_task extends backup_task {
         $this->add_setting($blocks);
         $this->converter_deps($blocks, $converters);
 
+        // Define files.
+        $files = new backup_generic_setting('files', base_setting::IS_BOOLEAN, true);
+        $files->set_ui(new backup_setting_ui_checkbox($files, get_string('rootsettingfiles', 'backup')));
+        $this->add_setting($files);
+        $this->converter_deps($files, $converters);
+
         // Define filters
         $filters = new backup_generic_setting('filters', base_setting::IS_BOOLEAN, true);
         $filters->set_ui(new backup_setting_ui_checkbox($filters, get_string('rootsettingfilters', 'backup')));

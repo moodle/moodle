@@ -415,8 +415,9 @@ abstract class backup_cron_automated_helper {
             $id = $bc->get_id();
             $users = $bc->get_plan()->get_setting('users')->get_value();
             $anonymised = $bc->get_plan()->get_setting('anonymize')->get_value();
+            $incfiles = (bool)$config->backup_auto_files;
             $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename($format, $type,
-                    $id, $users, $anonymised));
+                    $id, $users, $anonymised, false, $incfiles));
 
             $bc->set_status(backup::STATUS_AWAITING);
 
