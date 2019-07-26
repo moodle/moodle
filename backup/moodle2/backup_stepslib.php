@@ -1794,9 +1794,6 @@ class backup_final_files_structure_step extends backup_structure_step {
             'source', 'author', 'license', 'sortorder',
             'repositorytype', 'repositoryid', 'reference'));
 
-        // Set whether we want to store the actual files in the backup.
-        $file->set_include_files($this->get_setting_value('files'));
-
         // Build the tree
 
         $files->add_child($file);
@@ -1836,8 +1833,7 @@ class backup_main_structure_step extends backup_structure_step {
         $info['backup_date']    = time();
         $info['backup_uniqueid']= $this->get_backupid();
         $info['mnet_remoteusers']=backup_controller_dbops::backup_includes_mnet_remote_users($this->get_backupid());
-        $info['include_files'] = $this->get_setting_value('files') &&
-            backup_controller_dbops::backup_includes_files($this->get_backupid());
+        $info['include_files'] = backup_controller_dbops::backup_includes_files($this->get_backupid());
         $info['include_file_references_to_external_content'] =
                 backup_controller_dbops::backup_includes_file_references($this->get_backupid());
         $info['original_wwwroot']=$CFG->wwwroot;
