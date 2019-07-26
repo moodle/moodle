@@ -231,7 +231,3 @@ $string['withconditions'] = 'With conditions';
 $string['writingcompletiondata'] = 'Writing completion data';
 $string['xdays'] = '{$a} days';
 $string['yourprogress'] = 'Your progress';
-
-// Deprecated since Moodle 3.3.
-$string['completion-title-manual-n'] = 'Mark as complete: {$a}';
-$string['completion-title-manual-y'] = 'Mark as not complete: {$a}';

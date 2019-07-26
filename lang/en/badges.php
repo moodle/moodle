@@ -555,17 +555,6 @@ $string['version_help'] = 'The version field may be used to keep track of the ba
 $string['warnexpired'] = ' (This badge has expired!)';
 $string['year'] = 'Year(s)';
 
-// Deprecated since Moodle 3.3.
-$string['personaconnection'] = 'Sign in with your email';
-$string['personaconnection_help'] = 'Persona is a system for identifying yourself across the web, using an email address that you own. The Open Badges backpack uses Persona as a login system, so to be able to connect to a backpack you will need a Persona account.
-
-For more information about Persona visit <a href="https://login.persona.org/about">https://login.persona.org/about</a>.';
-$string['error:backpackloginfailed'] = 'You could not be connected to an external backpack for the following reason: {$a}';
-$string['error:badjson'] = 'The connection attempt returned invalid data.';
-$string['error:noassertion'] = 'No assertion was returned by Persona. You may have closed the dialog before completing the login process.';
-$string['error:personaneedsjs'] = 'Currently, Javascript is required to connect to your backpack. If you can, enable Javascript and reload the page.';
-$string['signinwithyouremail'] = 'Sign in with your email';
-
 // Deprecated since Moodle 3.6.
 $string['error:invalidbadgeurl'] = 'Invalid issuer URL format. The URL should have a prefix http:// or https://.';
 $string['backpackbadges'] = 'You have {$a->totalbadges} badge(s) displayed from {$a->totalcollections} collection(s). <a href="mybackpack.php">Change backpack settings</a>.';
