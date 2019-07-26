@@ -368,7 +368,7 @@ class core_accesslib_testcase extends advanced_testcase {
      * Test adding of capabilities to roles.
      */
     public function test_assign_capability() {
-        global $DB;
+        global $DB, $USER;
 
         $this->resetAfterTest();
 
@@ -408,33 +408,40 @@ class core_accesslib_testcase extends advanced_testcase {
         $permission = $DB->get_record('role_capabilities', array('contextid'=>$frontcontext->id, 'roleid'=>$student->id, 'capability'=>'moodle/backup:backupcourse'));
         $this->assertEmpty($permission);
 
-        // Test event trigger.
-        $rolecapabilityevent = \core\event\capability_assigned::create(['context' => $syscontext,
-                                                                        'objectid' => $student->id,
-                                                                        'other' => [
-                                                                            'capability' => 'moodle/backup:backupcourse',
-                                                                            'oldpermission' => $permission->permission ?? CAP_INHERIT,
-                                                                            'permission' => CAP_ALLOW
-                                                                        ]]);
-        $rolecapabilityevent->add_record_snapshot('role', $student);
-
+        // Test event triggered.
         $sink = $this->redirectEvents();
-        $rolecapabilityevent->trigger();
+        $capability = 'moodle/backup:backupcourse';
+        assign_capability($capability, CAP_ALLOW, $student->id, $syscontext);
         $events = $sink->get_events();
         $sink->close();
-        $event = array_pop($events);
-
+        $this->assertCount(1, $events);
+        $event = $events[0];
         $this->assertInstanceOf('\core\event\capability_assigned', $event);
-        $expectedurl = new moodle_url('/admin/roles/define.php', array('action' => 'view', 'roleid' => $student->id));
-        $this->assertEquals($expectedurl, $event->get_url());
-        $this->assertEventContextNotUsed($event);
+        $this->assertSame('role_capabilities', $event->objecttable);
+        $this->assertEquals($student->id, $event->objectid);
+        $this->assertEquals($syscontext->id, $event->contextid);
+        $other = ['capability' => $capability, 'oldpermission' => CAP_INHERIT, 'permission' => CAP_ALLOW];
+        $this->assertEquals($other, $event->other);
+        $description = "The user id '$USER->id' assigned the '$capability' capability for " .
+            "role '$student->id' with 'Allow' permission";
+        $this->assertEquals($description, $event->get_description());
+
+        // Test if the event has different description when updating the capability permission.
+        $sink = $this->redirectEvents();
+        assign_capability($capability, CAP_PROHIBIT, $student->id, $syscontext, true);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = $events[0];
+        $description = "The user id '$USER->id' changed the '$capability' capability permission for " .
+            "role '$student->id' from 'Allow' to 'Prohibit'";
+        $this->assertEquals($description, $event->get_description());
     }
 
     /**
      * Test removing of capabilities from roles.
      */
     public function test_unassign_capability() {
-        global $DB;
+        global $DB, $USER;
 
         $this->resetAfterTest();
 
@@ -462,6 +469,22 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($result);
         $this->assertFalse($DB->record_exists('role_capabilities', array('contextid'=>$syscontext->id, 'roleid'=>$manager->id, 'capability'=>'moodle/backup:backupcourse')));
         $this->assertFalse($DB->record_exists('role_capabilities', array('contextid'=>$frontcontext->id, 'roleid'=>$manager->id, 'capability'=>'moodle/backup:backupcourse')));
+
+        // Test event triggered.
+        $sink = $this->redirectEvents();
+        $capability = 'moodle/backup:backupcourse';
+        unassign_capability($capability, CAP_ALLOW, $manager->id);
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\capability_unassigned', $event);
+        $this->assertSame('role_capabilities', $event->objecttable);
+        $this->assertEquals($manager->id, $event->objectid);
+        $this->assertEquals($syscontext->id, $event->contextid);
+        $this->assertEquals($capability, $event->other['capability']);
+        $description = "The user id id '$USER->id' has unassigned the '$capability' capability for role '$manager->id'";
+        $this->assertEquals($description, $event->get_description());
     }
 
     /**
