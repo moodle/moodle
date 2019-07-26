@@ -31,6 +31,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_auth_cas_upgrade($oldversion) {
     global $CFG;
+    global $DB;
+
+    $dbman = $DB->get_manager();
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/cas to auth_cas.
@@ -53,6 +56,31 @@ function xmldb_auth_cas_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2019072900) {
+
+        // Define table auth_cas_tickets to be created.
+        $table = new xmldb_table('auth_cas_tickets');
+
+        // Adding fields to table auth_cas_tickets.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('usercas', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('ticket', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table auth_cas_tickets.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table auth_cas_tickets.
+        $table->add_index('ticket', XMLDB_INDEX_UNIQUE, array('ticket'));
+
+        // Conditionally launch create table for auth_cas_tickets.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Cas savepoint reached.
+        upgrade_plugin_savepoint(true, 2019072900, 'auth', 'cas');
+    }
 
     return true;
 }

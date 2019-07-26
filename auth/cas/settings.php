@@ -108,6 +108,15 @@ if ($ADMIN->fulltree) {
                 new lang_string('auth_cas_logoutcas_key', 'auth_cas'),
                 new lang_string('auth_cas_logoutcas', 'auth_cas'), 0 , $yesno));
 
+        // Single Logout broadcast allowed hosts
+        $settings->add(new admin_setting_configtext('auth_cas/allowedhosts',
+                get_string('auth_cas_allowedhosts_key', 'auth_cas'),
+                get_string('auth_cas_allowedhosts', 'auth_cas'), '', PARAM_RAW));
+
+        $settings->add(new admin_setting_configtext('auth_cas/broadcastnodes',
+                get_string('auth_cas_broadcastnodes_key', 'auth_cas'),
+                get_string('auth_cas_broadcastnodes', 'auth_cas'), '', PARAM_RAW));
+
         // Multi-auth.
         $settings->add(new admin_setting_configselect('auth_cas/multiauth',
                 new lang_string('auth_cas_multiauth_key', 'auth_cas'),

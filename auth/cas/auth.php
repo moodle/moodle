@@ -139,6 +139,19 @@ class auth_plugin_cas extends auth_plugin_ldap {
         // Connection to CAS server
         $this->connectCAS();
 
+        phpCAS::setSingleSignoutCallback(['auth_plugin_cas', 'closeSessionFromTicket']);
+        if (!empty($this->config->rebroadcastnodes)) {
+            foreach (explode(',', $this->config->rebroadcastnodes) as $node) {
+                phpCAS::addRebroadcastNode($node);
+            }
+        }
+        if (isset($_POST) && isset($_POST['logoutRequest'])) {
+            phpCAS::handleLogoutRequests(!empty($this->config->allowedhosts), !empty($this->config->allowedhosts) ? explode(',', $this->config->allowedhosts) : false);
+        }
+
+        phpCAS::setPostAuthenticateCallback(['auth_plugin_cas', 'mapTicketWithSession']);
+
+        //if not a logout request, check authentication
         if (phpCAS::checkAuthentication()) {
             $frm = new stdClass();
             $frm->username = phpCAS::getUser();
@@ -168,6 +181,23 @@ class auth_plugin_cas extends auth_plugin_ldap {
         }
     }
 
+    public static function closeSessionFromTicket($logoutTicket) {
+        global $DB;
+
+        $record = $DB->get_record('auth_cas_tickets', array('ticket' => $logoutTicket));
+        if($record and isset($record->usercas)) {
+            $user = $DB->get_record('user', array('username' => $record->usercas));
+            \core\session\manager::kill_user_sessions($user->id);
+            $DB->delete_records('auth_cas_tickets', array('ticket' => $logoutTicket));
+        }
+    }
+
+    public static function mapTicketWithSession($logoutTicket) {
+        global $DB;
+
+        $user = phpCAS::getUser();
+        $DB->insert_record('auth_cas_tickets', array('usercas' => $user, 'ticket' => $logoutTicket));
+    }
 
     /**
      * Connect to the CAS (clientcas connection or proxycas connection)
