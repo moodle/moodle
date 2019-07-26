@@ -4093,7 +4093,7 @@ class company {
         $template = new EmailTemplate('completion_warn_supervisor', array('course' => $course, 'user' => $user, 'company' => $company));
 
         // Is this enabled for this company?
-        if (!$company->email_template_is_enabled('completion_expiry_warn_supervisor', 2)) {
+        if (!$company->email_template_is_enabled('completion_warn_supervisor', 2)) {
             return true;
         }
 
