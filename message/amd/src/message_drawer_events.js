@@ -42,6 +42,7 @@ define([], function() {
         HIDE: 'message-drawer-hide',
         TOGGLE_VISIBILITY: 'message-drawer-toggle',
         SHOW_CONVERSATION: 'message-drawer-show-conversation',
+        SHOW_CONTACT_REQUESTS: 'message-drawer-show-contact-requests',
         SHOW_SETTINGS: 'message-drawer-show-settings',
     };
 });
