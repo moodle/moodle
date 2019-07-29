@@ -74,10 +74,13 @@ theme/boost/amd/src/button.js
 theme/boost/amd/src/carousel.js
 theme/boost/amd/src/collapse.js
 theme/boost/amd/src/dropdown.js
+theme/boost/amd/src/index.js
 theme/boost/amd/src/modal.js
 theme/boost/amd/src/popover.js
+theme/boost/amd/src/sanitizer.js
 theme/boost/amd/src/scrollspy.js
 theme/boost/amd/src/tab.js
+theme/boost/amd/src/toast.js
 theme/boost/amd/src/tooltip.js
 theme/boost/amd/src/util.js
 theme/boost/amd/src/tether.js
