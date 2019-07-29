@@ -620,6 +620,12 @@ $CFG->admin = 'admin';
 //
 //      $CFG->debugsessionlock = 5;
 //
+// Uninstall plugins from CLI only. This stops admins from uninstalling plugins from the graphical admin
+// user interface, and forces plugins to be uninstalled from the Command Line tool only, found at
+// admin/cli/plugin_uninstall.php.
+//
+//      $CFG->uninstallclionly = true;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
