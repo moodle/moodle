@@ -12,6 +12,8 @@ information provided here is intended especially for developers.
     * allow_override()
     * allow_assign()
     * allow_switch()
+    * https_required()
+    * verify_https_required()
 * Remove duplicate font-awesome SCSS, Please see /theme/boost/scss/fontawesome for usage (MDL-65936)
 * Remove lib/pear/Crypt/CHAP.php (MDL-65747)
 * New output component available: \core\output\checkbox_toggleall
@@ -22,6 +24,8 @@ information provided here is intended especially for developers.
 * Upgrade scssphp to v1.0.2, This involves renaming classes from Leafo => ScssPhp as the repo has changed.
 * The methods get_local_path_from_storedfile and get_remote_path_from_storedfile in lib/filestore/file_system.php
   are now public. If you are overriding these then you will need to change your methods to public in your class.
+* $CFG->httpswwwroot has been removed. It is no longer necessary as loginhttps has already been removed and it's no longer being
+  used anywhere in core.
 
 === 3.7 ===
 
