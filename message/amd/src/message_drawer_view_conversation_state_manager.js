@@ -88,7 +88,8 @@ define(['jquery'], function($) {
                 isblocked: member.isblocked,
                 iscontact: member.iscontact,
                 isdeleted: member.isdeleted,
-                canmessage:  member.canmessage,
+                canmessage: member.canmessage,
+                canmessageevenifblocked: member.canmessageevenifblocked,
                 requirescontact: member.requirescontact,
                 contactrequests: member.contactrequests || []
             };

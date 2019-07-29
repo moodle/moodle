@@ -2412,7 +2412,7 @@ function message_page_type_list() {
  */
 function message_can_post_message() {
     throw new coding_exception('message_can_post_message() can not be used anymore. Please use ' .
-        '\core_message\api::can_post_message() instead.');
+        '\core_message\api::can_send_message() instead.');
 }
 
 /**

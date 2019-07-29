@@ -981,6 +981,7 @@ function(
      * @param {String} headerText Text to show in dialogue header.
      * @param {Bool} canCancel Can this dialogue be cancelled.
      * @param {Bool} skipHeader Skip blanking out the header
+     * @param {Bool} showOk Show an 'Okay' button for a dialogue which will close it
      */
     var showConfirmDialogue = function(
         header,
@@ -990,13 +991,15 @@ function(
         bodyText,
         headerText,
         canCancel,
-        skipHeader
+        skipHeader,
+        showOk
     ) {
         var dialogue = getConfirmDialogueContainer(body);
         var buttons = buttonSelectors.map(function(selector) {
             return dialogue.find(selector);
         });
         var cancelButton = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_CANCEL_BUTTON);
+        var okayButton = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_OKAY_BUTTON);
         var text = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_TEXT);
         var dialogueHeader = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_HEADER);
 
@@ -1006,6 +1009,12 @@ function(
             cancelButton.removeClass('hidden');
         } else {
             cancelButton.addClass('hidden');
+        }
+
+        if (showOk) {
+            okayButton.removeClass('hidden');
+        } else {
+            okayButton.addClass('hidden');
         }
 
         if (headerText) {
@@ -1041,6 +1050,7 @@ function(
     var hideConfirmDialogue = function(header, body, footer) {
         var dialogue = getConfirmDialogueContainer(body);
         var cancelButton = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_CANCEL_BUTTON);
+        var okayButton = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_OKAY_BUTTON);
         var text = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_TEXT);
         var dialogueHeader = dialogue.find(SELECTORS.CONFIRM_DIALOGUE_HEADER);
 
@@ -1050,6 +1060,7 @@ function(
         hideConfirmDialogueContainer(header);
         dialogue.find('button').addClass('hidden');
         cancelButton.removeClass('hidden');
+        okayButton.removeClass('hidden');
         text.text('');
         dialogueHeader.addClass('hidden');
         dialogueHeader.text('');
@@ -1069,10 +1080,17 @@ function(
      */
     var renderConfirmBlockUser = function(header, body, footer, user) {
         if (user) {
-            return Str.get_string('blockuserconfirm', 'core_message', user.fullname)
-                .then(function(string) {
-                    return showConfirmDialogue(header, body, footer, [SELECTORS.ACTION_CONFIRM_BLOCK], string, '', true, false);
-                });
+            if (user.canmessageevenifblocked) {
+                return Str.get_string('cantblockuser', 'core_message', user.fullname)
+                    .then(function(string) {
+                        return showConfirmDialogue(header, body, footer, [], string, '', false, false, true);
+                    });
+            } else {
+                return Str.get_string('blockuserconfirm', 'core_message', user.fullname)
+                    .then(function(string) {
+                        return showConfirmDialogue(header, body, footer, [SELECTORS.ACTION_CONFIRM_BLOCK], string, '', true, false);
+                    });
+            }
         } else {
             return hideConfirmDialogue(header, body, footer);
         }

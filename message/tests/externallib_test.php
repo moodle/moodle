@@ -1217,6 +1217,30 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test blocking a user.
+     */
+    public function test_block_user_when_ineffective() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        $authenticateduser = $DB->get_record('role', array('shortname' => 'user'));
+        assign_capability('moodle/site:messageanyuser', CAP_ALLOW, $authenticateduser->id, context_system::instance(), true);
+
+        // Blocking a user.
+        $return = core_message_external::block_user($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(0, $DB->count_records('message_users_blocked'));
+    }
+
+    /**
      * Test blocking a user with messaging disabled.
      */
     public function test_block_user_messaging_disabled() {

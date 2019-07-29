@@ -1844,6 +1844,8 @@ class api {
      * Determines if a user is permitted to send another user a private message.
      * If no sender is provided then it defaults to the logged in user.
      *
+     * @deprecated since 3.8
+     * @todo Final deprecation in MDL-66266
      * @param \stdClass $recipient The user object.
      * @param \stdClass|null $sender The user object.
      * @return bool true if user is permitted, false otherwise.
@@ -1851,22 +1853,39 @@ class api {
     public static function can_post_message($recipient, $sender = null) {
         global $USER;
 
+        debugging('\core_message\api::can_post_message is deprecated, please use ' .
+            '\core_message\api::can_send_message instead.', DEBUG_DEVELOPER);
+
         if (is_null($sender)) {
             // The message is from the logged in user, unless otherwise specified.
             $sender = $USER;
         }
 
+        return self::can_send_message($recipient->id, $sender->id);
+    }
+
+    /**
+     * Determines if a user is permitted to send another user a private message.
+     *
+     * @param int $recipientid The recipient user id.
+     * @param int $senderid The sender user id.
+     * @param bool $evenifblocked This lets the user know, that even if the recipient has blocked the user
+     *        the user is still able to send a message.
+     * @return bool true if user is permitted, false otherwise.
+     */
+    public static function can_send_message(int $recipientid, int $senderid, bool $evenifblocked = false) : bool {
         $systemcontext = \context_system::instance();
-        if (!has_capability('moodle/site:sendmessage', $systemcontext, $sender)) {
+
+        if (!has_capability('moodle/site:sendmessage', $systemcontext, $senderid)) {
             return false;
         }
 
-        if (has_capability('moodle/site:readallmessages', $systemcontext, $sender->id)) {
+        if (has_capability('moodle/site:readallmessages', $systemcontext, $senderid)) {
             return true;
         }
 
         // Check if the recipient can be messaged by the sender.
-        return (self::can_contact_user($recipient->id, $sender->id));
+        return self::can_contact_user($recipientid, $senderid, $evenifblocked);
     }
 
     /**
@@ -2949,9 +2968,11 @@ class api {
      *
      * @param int $recipientid
      * @param int $senderid
+     * @param bool $evenifblocked This lets the user know, that even if the recipient has blocked the user
+     *        the user is still able to send a message.
      * @return bool true if recipient hasn't blocked sender and sender can contact to recipient, false otherwise.
      */
-    protected static function can_contact_user(int $recipientid, int $senderid) : bool {
+    protected static function can_contact_user(int $recipientid, int $senderid, bool $evenifblocked = false) : bool {
         if (has_capability('moodle/site:messageanyuser', \context_system::instance(), $senderid) ||
             $recipientid == $senderid) {
             // The sender has the ability to contact any user across the entire site or themselves.
@@ -2961,7 +2982,7 @@ class api {
         // The initial value of $cancontact is null to indicate that a value has not been determined.
         $cancontact = null;
 
-        if (self::is_blocked($recipientid, $senderid)) {
+        if (self::is_blocked($recipientid, $senderid) || $evenifblocked) {
             // The recipient has specifically blocked this sender.
             $cancontact = false;
         }

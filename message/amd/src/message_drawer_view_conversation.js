@@ -182,7 +182,8 @@ function(
             isblocked: null,
             iscontact: null,
             isdeleted: null,
-            canmessage:  null,
+            canmessage: null,
+            canmessageevenifblocked: null,
             requirescontact: null,
             contactrequests: []
         };
@@ -1544,6 +1545,7 @@ function(
             [SELECTORS.ACTION_CONFIRM_REMOVE_CONTACT, generateConfirmActionHandler(removeContact)],
             [SELECTORS.ACTION_CONFIRM_DELETE_SELECTED_MESSAGES, generateConfirmActionHandler(deleteSelectedMessages)],
             [SELECTORS.ACTION_CONFIRM_DELETE_CONVERSATION, generateConfirmActionHandler(deleteConversation)],
+            [SELECTORS.ACTION_OKAY_CONFIRM, generateConfirmActionHandler(cancelRequest)],
             [SELECTORS.ACTION_REQUEST_ADD_CONTACT, generateConfirmActionHandler(requestAddContact)],
             [SELECTORS.ACTION_ACCEPT_CONTACT_REQUEST, generateConfirmActionHandler(acceptContactRequest)],
             [SELECTORS.ACTION_DECLINE_CONTACT_REQUEST, generateConfirmActionHandler(declineContactRequest)],

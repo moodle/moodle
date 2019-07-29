@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 
 * The following methods have been deprecated and should not be used any more:
   - \core_message\api::get_individual_conversations_between_users()
+  - \core_message\api::can_post_message()
 
 === 3.7 ===
 

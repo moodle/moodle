@@ -25,6 +25,7 @@ define([], function() {
     var SELECTORS = {
         ACTION_ACCEPT_CONTACT_REQUEST: '[data-action="accept-contact-request"]',
         ACTION_CANCEL_CONFIRM: '[data-action="cancel-confirm"]',
+        ACTION_OKAY_CONFIRM: '[data-action="okay-confirm"]',
         ACTION_CANCEL_EDIT_MODE: '[data-action="cancel-edit-mode"]',
         ACTION_CONFIRM_ADD_CONTACT: '[data-action="confirm-add-contact"]',
         ACTION_CONFIRM_BLOCK: '[data-action="confirm-block"]',
@@ -50,6 +51,7 @@ define([], function() {
         CONFIRM_DIALOGUE_CANCEL_BUTTON: '[data-action="cancel-confirm"]',
         CONFIRM_DIALOGUE_CONTAINER: '[data-region="confirm-dialogue-container"]',
         CONFIRM_DIALOGUE_HEADER: '[data-region="dialogue-header"]',
+        CONFIRM_DIALOGUE_OKAY_BUTTON: '[data-action="okay-confirm"]',
         CONFIRM_DIALOGUE_TEXT: '[data-region="dialogue-text"]',
         CONTACT_REQUEST_SENT_MESSAGE_CONTAINER: '[data-region="contact-request-sent-message-container"]',
         CONTENT_PLACEHOLDER_CONTAINER: '[data-region="content-placeholder"]',
