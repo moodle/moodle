@@ -230,7 +230,6 @@
     margin-right: 0;
     margin-top: 0;
     border-radius: 4px;
-    width: 200px;
 }
 
 .moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdf_dropdown .moodle-dialogue-bd {
@@ -274,7 +273,6 @@ ul.assignfeedback_editpdf_search {
 
 ul.assignfeedback_editpdf_menu {
     margin: 0;
-    min-width: 200px;
     max-height: 40vh;
     overflow-y: auto;
     overflow-x: hidden;
