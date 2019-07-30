@@ -135,7 +135,7 @@ class core_user_renderer extends plugin_renderer_base {
         }
 
         $criteria = get_string('role');
-        $roleoptions = [];
+        $roleoptions = $this->format_filter_option(USER_FILTER_ROLE, $criteria, -1, get_string('noroles', 'role'));
         foreach ($roles as $id => $role) {
             $roleoptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $id, $role);
         }
