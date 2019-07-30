@@ -3615,7 +3615,9 @@ function print_password_policy() {
     $message = '';
     if (!empty($CFG->passwordpolicy)) {
         $messages = array();
-        $messages[] = get_string('informminpasswordlength', 'auth', $CFG->minpasswordlength);
+        if (!empty($CFG->minpasswordlength)) {
+            $messages[] = get_string('informminpasswordlength', 'auth', $CFG->minpasswordlength);
+        }
         if (!empty($CFG->minpassworddigits)) {
             $messages[] = get_string('informminpassworddigits', 'auth', $CFG->minpassworddigits);
         }
@@ -3630,7 +3632,10 @@ function print_password_policy() {
         }
 
         $messages = join(', ', $messages); // This is ugly but we do not have anything better yet...
-        $message = get_string('informpasswordpolicy', 'auth', $messages);
+        // Check if messages is empty before outputting any text.
+        if ($messages != '') {
+            $message = get_string('informpasswordpolicy', 'auth', $messages);
+        }
     }
     return $message;
 }
