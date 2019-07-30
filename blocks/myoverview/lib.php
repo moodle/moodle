@@ -54,6 +54,8 @@ define('BLOCK_MYOVERVIEW_VIEW_SUMMARY', 'summary');
 define('BLOCK_MYOVERVIEW_PAGING_12', 12);
 define('BLOCK_MYOVERVIEW_PAGING_24', 24);
 define('BLOCK_MYOVERVIEW_PAGING_48', 48);
+define('BLOCK_MYOVERVIEW_PAGING_96', 96);
+define('BLOCK_MYOVERVIEW_PAGING_ALL', 0);
 
 /**
  * Constants for the admin category display setting
@@ -115,7 +117,9 @@ function block_myoverview_user_preferences() {
         'choices' => array(
             BLOCK_MYOVERVIEW_PAGING_12,
             BLOCK_MYOVERVIEW_PAGING_24,
-            BLOCK_MYOVERVIEW_PAGING_48
+            BLOCK_MYOVERVIEW_PAGING_48,
+            BLOCK_MYOVERVIEW_PAGING_96,
+            BLOCK_MYOVERVIEW_PAGING_ALL
         )
     );
 

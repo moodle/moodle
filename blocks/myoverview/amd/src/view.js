@@ -67,7 +67,7 @@ function(
         NOCOURSES: 'core_course/no-courses'
     };
 
-    var NUMCOURSES_PERPAGE = [12, 24, 48];
+    var NUMCOURSES_PERPAGE = [12, 24, 48, 96, 0];
 
     var loadedPages = [];
 
@@ -421,19 +421,24 @@ function(
     var initializePagedContent = function(root) {
         namespace = "block_myoverview_" + root.attr('id') + "_" + Math.random();
 
-        var itemsPerPage = NUMCOURSES_PERPAGE;
         var pagingLimit = parseInt(root.find(Selectors.courseView.region).attr('data-paging'), 10);
-        if (pagingLimit) {
-            itemsPerPage = NUMCOURSES_PERPAGE.map(function(value) {
-                var active = false;
-                if (value == pagingLimit) {
-                    active = true;
-                }
+        var itemsPerPage = NUMCOURSES_PERPAGE.map(function(value) {
+            var active = false;
+            if (value == pagingLimit) {
+                active = true;
+            }
 
-                return {
-                    value: value,
-                    active: active
-                };
+            return {
+                value: value,
+                active: active
+            };
+        });
+
+        // Filter out all pagination options which are too large for the amount of courses user is enrolled in.
+        var totalCourseCount = parseInt(root.find(Selectors.courseView.region).attr('data-totalcoursecount'), 10);
+        if (totalCourseCount) {
+            itemsPerPage = itemsPerPage.filter(function(pagingOption) {
+                return pagingOption.value < totalCourseCount;
             });
         }
 
@@ -448,7 +453,7 @@ function(
 
                 pagesData.forEach(function(pageData) {
                     var currentPage = pageData.pageNumber;
-                    var limit = pageData.limit;
+                    var limit = (pageData.limit > 0) ? pageData.limit : 0;
 
                     // Reset local variables if limits have changed
                     if (lastLimit != limit) {
@@ -491,7 +496,7 @@ function(
                             }
                         } else {
                             nextPageStart = pageData.limit;
-                            pageCourses = courses.slice(0, pageData.limit);
+                            pageCourses = (pageData.limit > 0) ? courses.slice(0, pageData.limit) : courses;
                         }
 
                         // Finished setting up the current page
@@ -500,7 +505,7 @@ function(
                         };
 
                         // Set up the next page
-                        var remainingCourses = courses.slice(nextPageStart, courses.length);
+                        var remainingCourses = nextPageStart ? courses.slice(nextPageStart, courses.length) : [];
                         if (remainingCourses.length) {
                             loadedPages[currentPage + 1] = {
                                 courses: remainingCourses
