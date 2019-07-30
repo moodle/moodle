@@ -3631,6 +3631,15 @@ function print_password_policy() {
             $messages[] = get_string('informminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
         }
 
+        // Fire any additional password policy functions from plugins.
+        // Callbacks must return an array of message strings.
+        $pluginsfunction = get_plugins_with_function('print_password_policy');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $messages = array_merge($messages, $pluginfunction());
+            }
+        }
+
         $messages = join(', ', $messages); // This is ugly but we do not have anything better yet...
         // Check if messages is empty before outputting any text.
         if ($messages != '') {
