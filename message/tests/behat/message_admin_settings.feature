@@ -8,6 +8,9 @@ Feature: Message admin settings
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | user1 | User | One | one@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1        | 0        | 1         |
 
   Scenario: enable site messaging
     Given the following config values are set as admin:
@@ -18,6 +21,9 @@ Feature: Message admin settings
     And I should see "User One"
     And I follow "User One"
     And "Add to contacts" "link" should exist
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And the "With selected users..." select box should contain "Send a message"
 
   Scenario: disable site messaging
     Given the following config values are set as admin:
@@ -28,3 +34,6 @@ Feature: Message admin settings
     And I should see "User One"
     And I follow "User One"
     And "Add to contacts" "link" should not exist
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And the "With selected users..." select box should not contain "Send a message"
