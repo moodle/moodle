@@ -114,11 +114,14 @@ class core_requirejs {
                 // Skip it - RecursiveDirectoryIterator fatals if the directory is not readable as an iterator.
                 continue;
             }
-            $items = new RecursiveDirectoryIterator($srcdir);
+            $srcdir = realpath($srcdir);
+            $directory = new RecursiveDirectoryIterator($srcdir);
+            $items = new RecursiveIteratorIterator($directory);
             foreach ($items as $item) {
                 $extension = $item->getExtension();
                 if ($extension === 'js') {
-                    $filename = str_replace('.min', '', $item->getBaseName('.js'));
+                    $filename = substr($item->getRealpath(), strlen($srcdir) + 1);
+                    $filename = str_replace('.min', '', $filename);
                     // We skip lazy loaded modules unless specifically requested.
                     if ($includelazy || strpos($filename, '-lazy') === false) {
                         $modulename = $component . '/' . $filename;
