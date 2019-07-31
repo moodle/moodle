@@ -3453,5 +3453,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019072500.03);
     }
 
+    if ($oldversion < 2019073100.00) {
+        // Update the empty tag instructions to null.
+        $instructions = get_config('core', 'auth_instructions');
+
+        if (trim(html_to_text($instructions)) === '') {
+            set_config('auth_instructions', '');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019073100.00);
+    }
     return true;
 }
