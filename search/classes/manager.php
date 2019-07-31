@@ -254,6 +254,21 @@ class manager {
     }
 
     /**
+     * Returns the search URL for course search
+     *
+     * @return moodle_url
+     */
+    public static function get_course_search_url() {
+        if (self::is_global_search_enabled()) {
+            $searchurl = '/search/index.php';
+        } else {
+            $searchurl = '/course/search.php';
+        }
+
+        return new \moodle_url($searchurl);
+    }
+
+    /**
      * Returns whether indexing is enabled or not (you can enable indexing even when search is not
      * enabled at the moment, so as to have it ready for students).
      *
