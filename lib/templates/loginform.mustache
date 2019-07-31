@@ -36,7 +36,8 @@
         "signupurl": "http://localhost/stable_master/login/signup.php",
         "cookieshelpiconformatted": "",
         "username": "",
-        "logintoken": "randomstring"
+        "logintoken": "randomstring",
+        "maintenance": "For full access to this site, you need to login in as an admin."
     }
 }}
 {{#hasinstructions}}
@@ -163,6 +164,22 @@
     </div>
 </div>
 
+{{#maintenance}}
+    <div class="row justify-content-center mt-3">
+        <div class="col-xl-6 col-sm-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">
+                        <h2>{{#str}}sitemaintenance, core_admin{{/str}}</h2>
+                    </div>
+                    <div>
+                        {{{maintenance}}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/maintenance}}
 {{#js}}
     {{#error}}
         require(['jquery'], function($) {
