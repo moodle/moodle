@@ -83,9 +83,9 @@ $string['numberingstyle'] = 'Number the choices?';
 $string['numberingstylenone'] = 'No numbering';
 $string['numberingstyle123'] = '1., 2., 3., ...';
 $string['numberingstyleabc'] = 'a., b., c., ...';
-$string['numberingstyleABC'] = 'A., B., C., ...';
+$string['numberingstyleABCD'] = 'A., B., C., ...';
 $string['numberingstyleiii'] = 'i., ii., iii., ...';
-$string['numberingstyleIII'] = 'I., II., III., ...';
+$string['numberingstyleIIII'] = 'I., II., III., ...';
 $string['numberingstyle_desc'] = 'The default numbering style.';
 $string['numberingstyle_help'] = 'Choose the numbering style for draggable items in this question.';
 

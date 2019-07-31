@@ -839,10 +839,10 @@ class qtype_ordering_question extends question_graded_automatically {
         $plugin = 'qtype_ordering';
         $styles = array('none' => get_string('numberingstylenone', $plugin),
                         'abc'  => get_string('numberingstyleabc',  $plugin),
-                        'ABC'  => get_string('numberingstyleABC',  $plugin),
+                        'ABCD'  => get_string('numberingstyleABCD',  $plugin),
                         '123'  => get_string('numberingstyle123',  $plugin),
                         'iii'  => get_string('numberingstyleiii',  $plugin),
-                        'III'  => get_string('numberingstyleIII',  $plugin));
+                        'IIII'  => get_string('numberingstyleIIII',  $plugin));
         return self::get_types($styles, $style);
     }
 }

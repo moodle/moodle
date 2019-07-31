@@ -357,7 +357,7 @@ class qtype_ordering extends question_type {
                           'LONGEST_ORDERED_SUBSET|'.
                           'LONGEST_CONTIGUOUS_SUBSET)?';
         $showgrading = '(?:SHOW|TRUE|YES|1|HIDE|FALSE|NO|0)?';
-        $numberingstyle = '(?:none|123|abc|ABC|iii|III)?';
+        $numberingstyle = '(?:none|123|abc|ABCD|iii|IIII)?';
         $search = '/^\s*>\s*('.$selectcount.')\s*'.
                            '('.$selecttype.')\s*'.
                            '('.$layouttype.')\s*'.
@@ -884,9 +884,9 @@ class qtype_ordering extends question_type {
             case 'none':
             case '123':
             case 'abc':
-            case 'ABC':
+            case 'ABCD':
             case 'iii':
-            case 'III':
+            case 'IIII':
                 $question->numberingstyle = $numberingstyle;
                 break;
 
