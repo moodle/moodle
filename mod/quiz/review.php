@@ -106,7 +106,7 @@ if ($attemptobj->is_own_preview()) {
 
 // Set up the page header.
 $headtags = $attemptobj->get_html_head_contributions($page, $showall);
-$PAGE->set_title($attemptobj->get_quiz_name());
+$PAGE->set_title($attemptobj->review_page_title($page, $showall));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 
 // Summary table start. ============================================================================
