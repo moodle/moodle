@@ -524,4 +524,15 @@ class behat_app extends behat_base {
         $this->getSession()->getDriver()->executeScript('window.close()');
         $this->getSession()->switchToWindow($names[0]);
     }
+
+    /**
+     * Switch navigator online mode.
+     *
+     * @Given /^I switch offline mode to "(?P<offline_string>(?:[^"]|\\")*)"$/
+     * @param string $offline New value for navigator online mode
+     * @throws DriverException If the navigator.online mode is not available
+     */
+    public function i_switch_offline_mode(string $offline) {
+        $this->getSession()->evaluateScript('appProvider.setForceOffline(' . $offline . ');');
+    }
 }
