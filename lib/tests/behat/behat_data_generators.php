@@ -227,6 +227,10 @@ class behat_data_generators extends behat_base {
             'datagenerator' => 'customlang',
             'required' => array('component', 'stringid', 'value'),
         ),
+        'analytics model' => array (
+            'datagenerator' => 'analytics_model',
+            'required' => array('target', 'indicators', 'timesplitting', 'enabled'),
+        ),
     );
 
     /**
@@ -1084,5 +1088,26 @@ class behat_data_generators extends behat_base {
             $conversationid = $conversation->id;
         }
         \core_message\api::mute_conversation($data['userid'], $conversationid);
+    }
+
+    /**
+     * Transform indicators string into array.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_analytics_model($data) {
+        $data['indicators'] = explode(',', $data['indicators']);
+        return $data;
+    }
+
+    /**
+     * Creates an analytics model
+     *
+     * @param target $data
+     * @return void
+     */
+    protected function process_analytics_model($data) {
+        \core_analytics\manager::create_declared_model($data);
     }
 }
