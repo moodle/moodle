@@ -860,6 +860,10 @@ class qformat_default {
     public function exportprocess($checkcapabilities = true) {
         global $CFG, $DB;
 
+        // Raise time and memory, as exporting can be quite intensive.
+        core_php_time_limit::raise();
+        raise_memory_limit(MEMORY_EXTRA);
+
         // Get the parents (from database) for this category.
         $parents = [];
         if ($this->category) {
