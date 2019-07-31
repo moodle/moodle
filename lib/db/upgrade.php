@@ -3378,5 +3378,17 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019052001.04) {
+        // Update the empty tag instructions to null.
+        $instructions = get_config('core', 'auth_instructions');
+
+        if (trim(html_to_text($instructions)) === '') {
+            set_config('auth_instructions', '');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019052001.04);
+    }
+
     return true;
 }
