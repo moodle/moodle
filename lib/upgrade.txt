@@ -37,6 +37,9 @@ information provided here is intended especially for developers.
 
     The following are all invalid module names and locations in your plugin:
       mod_forum/views/post: mod/forum/amd/src/views/post
+* The 'xxxx_check_password_policy' method now has an extra parameter: $user. It contains the user object to perform password
+validation against and defaults to null (so, no user needed) if not provided.
+
 
 === 3.7 ===
 
