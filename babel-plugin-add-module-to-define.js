@@ -36,6 +36,7 @@
 
 module.exports = ({ template, types }) => {
     const fs = require('fs');
+    const path = require('path');
     const glob = require('glob');
     const cwd = process.cwd();
 
@@ -92,7 +93,7 @@ module.exports = ({ template, types }) => {
      */
     function getModuleNameFromFileName(searchFileName) {
         searchFileName = fs.realpathSync(searchFileName);
-        const relativeFileName = searchFileName.replace(`${cwd}/`, '');
+        const relativeFileName = searchFileName.replace(`${cwd}${path.sep}`, '').replace(/\\/g, '/');
         const [componentPath, file] = relativeFileName.split('/amd/src/');
         const fileName = file.replace('.js', '');
 
