@@ -22,3 +22,8 @@ composer.json
 get_oauth_token.php
 phpdoc.dist.xml
 travis.phpunit.xml.dist
+
+Local changes (to verify/apply with new imports):
+
+- MDL-65749: Applied security patch for mitigating CVE-2018-19296
+    https://github.com/PHPMailer/PHPMailer/commit/8e653bb79643abad30ae60b1aad6966c0810b896
