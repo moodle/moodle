@@ -29,3 +29,6 @@ Local changes (to verify/apply with new imports):
     lib/phpmailer/src/PHPMailer.php: FILTER_FLAG_HOST_REQUIRED is deprecated and
     implied with FILTER_VALIDATE_URL. This was fixed upstream by
     https://github.com/PHPMailer/PHPMailer/pull/1551
+
+- MDL-65749: Applied security patch for mitigating CVE-2018-19296
+    https://github.com/PHPMailer/PHPMailer/commit/8e653bb79643abad30ae60b1aad6966c0810b896
