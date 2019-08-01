@@ -72,7 +72,7 @@ module.exports = ({ template, types }) => {
             var rawContents = fs.readFileSync(file);
             var subplugins = JSON.parse(rawContents);
 
-            for (const [component, path] of Object.entries(subplugins)) {
+            for (const [component, path] of Object.entries(subplugins.plugintypes)) {
                 if (path) {
                     moodlePlugins[path] = component;
                 }
