@@ -5092,4 +5092,39 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertCount(3, $result);
         $this->assertArrayNotHasKey($courses[0]->id, $result);
     }
+
+    /**
+     * Data provider for test_course_modules_pending_deletion.
+     *
+     * @return array An array of arrays contain test data
+     */
+    public function provider_course_modules_pending_deletion() {
+        return [
+            ['forum', true],
+            ['assign', true],
+        ];
+    }
+
+    /**
+     * Tests the function course_modules_pending_deletion.
+     *
+     * @param string $module The module we want to test with
+     * @param bool $expected The expected result
+     * @dataProvider provider_course_modules_pending_deletion
+     */
+    public function test_course_modules_pending_deletion(string $module, bool $expected) {
+        $this->resetAfterTest();
+
+        // Ensure recyclebin is enabled.
+        set_config('coursebinenable', true, 'tool_recyclebin');
+
+        // Create course and modules.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $moduleinstance = $generator->create_module($module, array('course' => $course->id));
+
+        course_delete_module($moduleinstance->cmid, true); // Try to delete the instance asynchronously.
+        $this->assertEquals($expected, course_modules_pending_deletion($course->id));
+    }
 }
