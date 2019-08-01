@@ -64,7 +64,7 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     if ($updatepassword && isset($user->password)) {
 
         // Check password toward the password policy.
-        if (!check_password_policy($user->password, $errmsg)) {
+        if (!check_password_policy($user->password, $errmsg, $user)) {
             throw new moodle_exception($errmsg);
         }
 
@@ -165,7 +165,7 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
     if ($updatepassword && isset($user->password)) {
 
         // Check password toward the password policy.
-        if (!check_password_policy($user->password, $errmsg)) {
+        if (!check_password_policy($user->password, $errmsg, $user)) {
             throw new moodle_exception($errmsg);
         }
 

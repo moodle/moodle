@@ -4939,9 +4939,10 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
  *
  * @param string $password the password to be checked against the password policy
  * @param string $errmsg the error message to display when the password doesn't comply with the policy.
+ * @param stdClass $user the user object to perform password validation against. Defaults to null if not provided
  * @return bool true if the password is valid according to the policy. false otherwise.
  */
-function check_password_policy($password, &$errmsg) {
+function check_password_policy($password, &$errmsg, $user = null) {
     global $CFG;
 
     if (!empty($CFG->passwordpolicy)) {
@@ -4971,7 +4972,7 @@ function check_password_policy($password, &$errmsg) {
     $pluginsfunction = get_plugins_with_function('check_password_policy');
     foreach ($pluginsfunction as $plugintype => $plugins) {
         foreach ($plugins as $pluginfunction) {
-            $pluginerr = $pluginfunction($password);
+            $pluginerr = $pluginfunction($password, $user);
             if ($pluginerr) {
                 $errmsg .= '<div>'. $pluginerr .'</div>';
             }
