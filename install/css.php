@@ -372,6 +372,30 @@ body {
     background-color: rgb(245, 245, 245);
     padding: 8px 15px;
 }
+
+.w-100 {
+    width: 100%!important;
+}
+.flex-row-reverse {
+    flex-direction: row-reverse!important;
+}
+.btn-group, .btn-group-vertical {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+}
+.mb-3, .my-3 {
+    margin-bottom: 1rem!important;
+}
+.mr-auto, .mx-auto {
+    margin-right: auto!important;
+}
+.ml-auto, .mx-auto {
+    margin-left: auto!important;
+}
+.ml-1, .mx-1 {
+    margin-left: .25rem!important;
+}
 /*
 End of MDL-43839 IE9 specific CSS.
 */
