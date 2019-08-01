@@ -224,6 +224,23 @@
 </div>
 {{/hasinstructions}}
 
+{{#maintenance}}
+    <div class="row justify-content-center mt-3">
+        <div class="col-xl-6 col-sm-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">
+                        <h2>{{#str}}sitemaintenance, core_admin{{/str}}</h2>
+                    </div>
+                    <div>
+                        {{{maintenance}}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/maintenance}}
+
 {{#js}}
     {{#error}}
         require(['jquery'], function($) {
