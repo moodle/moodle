@@ -50,6 +50,7 @@ validation against and defaults to null (so, no user needed) if not provided.
 
     The following are _invalid_ template names and locations:
       mod_forum/post/user: mod/forum/templates/local/post/user.mustache
+* A new admin setting widget 'core_admin\local\settings\filesize' is added.
 
 === 3.7 ===
 

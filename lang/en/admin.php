@@ -568,6 +568,7 @@ $string['filescleanupperiod'] = 'Clean trash pool files';
 $string['filescleanupperiod_help'] = 'How often trash files are removed. These are files that are associated with a context that no longer exists';
 $string['fileconversioncleanuptask'] = 'Cleanup of temporary records for file conversions.';
 $string['filecreated'] = 'New file created';
+$string['filesizeunits'] = 'file size units';
 $string['filestoredin'] = 'Save file into folder :';
 $string['filestoredinhelp'] = 'Where the file will be stored';
 $string['filterall'] = 'Filter all strings';
