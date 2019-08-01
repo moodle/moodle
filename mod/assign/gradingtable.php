@@ -1034,7 +1034,7 @@ class assign_grading_table extends table_sql implements renderable {
     public function col_status(stdClass $row) {
         $o = '';
 
-        $instance = $this->assignment->get_instance();
+        $instance = $this->assignment->get_instance($row->userid);
 
         $due = $instance->duedate;
         if ($row->extensionduedate) {
