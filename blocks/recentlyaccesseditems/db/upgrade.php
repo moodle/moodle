@@ -50,8 +50,22 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
     if ($oldversion < 2019052001) {
-        $sql = "courseid NOT IN (SELECT c.id from {course} c) OR cmid NOT IN (SELECT cm.id from {course_modules} cm)";
-        $DB->delete_records_select("block_recentlyaccesseditems", $sql);
+        // Query the items to be deleted as a list of IDs. We cannot delete directly from this as a
+        // subquery because MySQL does not support delete with subqueries.
+        $fordeletion = $DB->get_fieldset_sql("
+                SELECT rai.id
+                  FROM {block_recentlyaccesseditems} rai
+             LEFT JOIN {course} c ON c.id = rai.courseid
+             LEFT JOIN {course_modules} cm ON cm.id = rai.cmid
+                 WHERE c.id IS NULL OR cm.id IS NULL");
+
+        // Delete the array in chunks of 500 (Oracle does not support more than 1000 parameters,
+        // let's leave some leeway, there are likely only one chunk anyway).
+        $chunks = array_chunk($fordeletion, 500);
+        foreach ($chunks as $chunk) {
+            $DB->delete_records_list('block_recentlyaccesseditems', 'id', $chunk);
+        }
+
         upgrade_block_savepoint(true, 2019052001, 'recentlyaccesseditems', false);
     }
 
