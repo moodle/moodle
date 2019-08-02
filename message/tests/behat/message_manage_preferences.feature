@@ -33,8 +33,9 @@ Feature: Manage preferences
       | user     | contact |
       | student1 | student2 |
     And the following config values are set as admin:
-      | messaging | 1 |
+      | messaging         | 1 |
       | messagingallusers | 1 |
+      | messagingminpoll  | 1 |
 
   # Recipient has 'My contacts only' set.
   Scenario: Allow sending a message when you are a contact

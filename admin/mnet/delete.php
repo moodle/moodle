@@ -34,9 +34,6 @@ $step   = optional_param('step', 'verify', PARAM_ALPHA);
 $hostid = required_param('hostid', PARAM_INT);
 
 
-
-$context = context_system::instance();
-
 $mnet = get_mnet_environment();
 
 $PAGE->set_url('/admin/mnet/delete.php');

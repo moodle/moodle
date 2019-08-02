@@ -47,14 +47,12 @@ abstract class EigenTransformerBase
      * Calculates eigenValues and eigenVectors of the given matrix. Returns
      * top eigenVectors along with the largest eigenValues. The total explained variance
      * of these eigenVectors will be no less than desired $totalVariance value
-     *
-     * @param array $matrix
      */
-    protected function eigenDecomposition(array $matrix)
+    protected function eigenDecomposition(array $matrix): void
     {
         $eig = new EigenvalueDecomposition($matrix);
         $eigVals = $eig->getRealEigenvalues();
-        $eigVects= $eig->getEigenvectors();
+        $eigVects = $eig->getEigenvectors();
 
         $totalEigVal = array_sum($eigVals);
         // Sort eigenvalues in descending order
@@ -85,12 +83,8 @@ abstract class EigenTransformerBase
 
     /**
      * Returns the reduced data
-     *
-     * @param array $data
-     *
-     * @return array
      */
-    protected function reduce(array $data)
+    protected function reduce(array $data): array
     {
         $m1 = new Matrix($data);
         $m2 = new Matrix($this->eigVectors);

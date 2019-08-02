@@ -169,7 +169,7 @@ class main_view extends XMLDBAction {
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
                     empty($dbdir->xml_loaded)) {
-                    $b .= '<a href="index.php?action=load_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['load'] . ']</a>';
+                    $b .= '<a href="index.php?action=load_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['load'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['load'] . ']';
                 }
@@ -239,7 +239,7 @@ class main_view extends XMLDBAction {
                     is_readable($key . '/install.xml') &&
                     !empty($dbdir->xml_loaded) &&
                     empty($dbdir->xml_changed)) {
-                    $b .= '<a href="index.php?action=unload_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['unload'] . ']</a>';
+                    $b .= '<a href="index.php?action=unload_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['unload'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['unload'] . ']';
                 }

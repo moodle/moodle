@@ -18,37 +18,22 @@ class Sigma
      */
     private $sigma;
 
-    /**
-     * @param Neuron $neuron
-     * @param float  $sigma
-     */
-    public function __construct(Neuron $neuron, $sigma)
+    public function __construct(Neuron $neuron, float $sigma)
     {
         $this->neuron = $neuron;
         $this->sigma = $sigma;
     }
 
-    /**
-     * @return Neuron
-     */
-    public function getNeuron()
+    public function getNeuron(): Neuron
     {
         return $this->neuron;
     }
 
-    /**
-     * @return float
-     */
-    public function getSigma()
+    public function getSigma(): float
     {
         return $this->sigma;
     }
 
-    /**
-     * @param Neuron $neuron
-     *
-     * @return float
-     */
     public function getSigmaForNeuron(Neuron $neuron): float
     {
         $sigma = 0.0;

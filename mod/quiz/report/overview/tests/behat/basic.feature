@@ -78,13 +78,3 @@ Feature: Basic use of the Grades report
     And I should see "25.00" in the "S1 Student1" "table_row"
     # Check student2's grade
     And I should see "100.00" in the "S2 Student2" "table_row"
-
-    # Check regrade and delete attempts.
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'student1@example.com')]//input[@type='checkbox']" to "1"
-    And I press "Regrade selected attempts"
-    And I press "Continue"
-    And I should see "student1@example.com"
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'student1@example.com')]//input[@type='checkbox']" to "1"
-    And I press "Delete selected attempts"
-    And I press "Yes"
-    And I should not see "student1@example.com"

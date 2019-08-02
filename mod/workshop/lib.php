@@ -1807,6 +1807,14 @@ function mod_workshop_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
     return $factory->create_instance(
         get_string('viewworkshopsummary', 'workshop'),
         new \moodle_url('/mod/workshop/view.php', array('id' => $cm->id)),

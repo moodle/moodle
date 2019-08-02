@@ -1054,17 +1054,40 @@ abstract class restore_dbops {
                     // Create the file in the filepool if it does not exist yet.
                     if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
 
-                        // Even if a file has been deleted since the backup was made, the file metadata will remain in the
-                        // files table, and the file will not be moved to the trashdir.
-                        // Files are not cleared from the files table by cron until several days after deletion.
+                        // Even if a file has been deleted since the backup was made, the file metadata may remain in the
+                        // files table, and the file will not yet have been moved to the trashdir. e.g. a draft file version.
+                        // Try to recover from file table first.
                         if ($foundfiles = $DB->get_records('files', array('contenthash' => $file->contenthash), '', '*', 0, 1)) {
                             // Only grab one of the foundfiles - the file content should be the same for all entries.
                             $foundfile = reset($foundfiles);
                             $fs->create_file_from_storedfile($file_record, $foundfile->id);
                         } else {
-                            // A matching existing file record was not found in the database.
-                            $results[] = self::get_missing_file_result($file);
-                            continue;
+                            $filesystem = $fs->get_file_system();
+                            $restorefile = $file;
+                            $restorefile->contextid = $newcontextid;
+                            $restorefile->itemid = $rec->newitemid;
+                            $storedfile = new stored_file($fs, $restorefile);
+
+                            // Ok, let's try recover this file.
+                            // 1. We check if the file can be fetched locally without attempting to fetch
+                            //    from the trash.
+                            // 2. We check if we can get the remote filepath for the specified stored file.
+                            // 3. We check if the file can be fetched from the trash.
+                            // 4. All failed, say we couldn't find it.
+                            if ($filesystem->is_file_readable_locally_by_storedfile($storedfile)) {
+                                $localpath = $filesystem->get_local_path_from_storedfile($storedfile);
+                                $fs->create_file_from_pathname($file, $localpath);
+                            } else if ($filesystem->is_file_readable_remotely_by_storedfile($storedfile)) {
+                                $url = $filesystem->get_remote_path_from_storedfile($storedfile);
+                                $fs->create_file_from_url($file, $url);
+                            } else if ($filesystem->is_file_readable_locally_by_storedfile($storedfile, true)) {
+                                $localpath = $filesystem->get_local_path_from_storedfile($storedfile, true);
+                                $fs->create_file_from_pathname($file, $localpath);
+                            } else {
+                                // A matching file was not found.
+                                $results[] = self::get_missing_file_result($file);
+                                continue;
+                            }
                         }
                     }
                 }

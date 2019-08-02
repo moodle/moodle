@@ -65,7 +65,7 @@ class analytics_analysis_testcase extends advanced_testcase {
         $this->assertEquals($afewsecsago, $firstanalyses[$modelid . '_' . $course1->id]);
         $this->assertEquals($afewsecsago + 1, $firstanalyses[$modelid . '_' . $course2->id]);
 
-        // The cached elements gets refreshed.
+        // The cached elements get refreshed.
         $this->insert_used($modelid, $course1->id, 'prediction', $earliest);
         $firstanalyses = \core_analytics\analysis::fill_firstanalyses_cache($modelid, $course1->id);
         $this->assertCount(1, $firstanalyses);
@@ -78,7 +78,7 @@ class analytics_analysis_testcase extends advanced_testcase {
 
         // The generated ranges should start from the cached firstanalysis value, which is $earliest.
         $ranges = $seconds->get_all_ranges();
-        $this->assertCount(7, $ranges);
+        $this->assertGreaterThanOrEqual(7, count($ranges));
         $firstrange = reset($ranges);
         $this->assertEquals($earliest, $firstrange['time']);
     }

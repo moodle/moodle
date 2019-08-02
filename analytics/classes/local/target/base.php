@@ -85,6 +85,16 @@ abstract class base extends \core_analytics\calculable {
     abstract protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false);
 
     /**
+     * Can the provided time-splitting method be used on this target?.
+     *
+     * Time-splitting methods not matching the target requirements will not be selectable by models based on this target.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @return bool
+     */
+    abstract public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool;
+
+    /**
      * Is this target generating insights?
      *
      * Defaults to true.
@@ -130,8 +140,10 @@ abstract class base extends \core_analytics\calculable {
         global $PAGE;
 
         $predictionid = $prediction->get_prediction_data()->id;
+        $contextid = $prediction->get_prediction_data()->contextid;
+        $modelid = $prediction->get_prediction_data()->modelid;
 
-        $PAGE->requires->js_call_amd('report_insights/actions', 'init', array($predictionid));
+        $PAGE->requires->js_call_amd('report_insights/actions', 'init', array($predictionid, $contextid, $modelid));
 
         $actions = array();
 
@@ -227,7 +239,12 @@ abstract class base extends \core_analytics\calculable {
      */
     public function get_insights_users(\context $context) {
         if ($context->contextlevel === CONTEXT_USER) {
-            $users = [$context->instanceid => \core_user::get_user($context->instanceid)];
+            if (!has_capability('moodle/analytics:listowninsights', $context, $context->instanceid)) {
+                $users = [];
+            } else {
+                $users = [$context->instanceid => \core_user::get_user($context->instanceid)];
+            }
+
         } else if ($context->contextlevel >= CONTEXT_COURSE) {
             // At course level or below only enrolled users although this is not ideal for
             // teachers assigned at category level.

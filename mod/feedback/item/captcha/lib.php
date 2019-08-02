@@ -194,9 +194,6 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         // With reCAPTCHA v2 the captcha will be rendered by the mobile client using just the publickey.
-        // For now include placeholders for the v1 paramaters to support older mobile app versions.
-        // recaptchachallengehash, recaptchachallengeimage and recaptchachallengejs.
-        $data = array('', '', '');
         $data[] = $CFG->recaptchapublickey;
         return json_encode($data);
     }

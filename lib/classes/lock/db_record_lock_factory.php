@@ -103,7 +103,7 @@ class db_record_lock_factory implements lock_factory {
      * to duplicates in a clustered environment (especially on VMs due to poor time precision).
      */
     protected function generate_unique_token() {
-        return generate_uuid();
+        return \core\uuid::generate();
     }
 
     /**

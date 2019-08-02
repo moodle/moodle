@@ -34,4 +34,15 @@ if ($ADMIN->fulltree) {
         get_string('displaycategories_help', 'block_myoverview'),
         1));
 
+       $choices = array(BLOCK_MYOVERVIEW_VIEW_CARD => get_string('card', 'block_myoverview'),
+        BLOCK_MYOVERVIEW_VIEW_LIST => get_string('list', 'block_myoverview'),
+        BLOCK_MYOVERVIEW_VIEW_SUMMARY => get_string('summary', 'block_myoverview'));
+
+    $settings->add(new admin_setting_configmulticheckbox(
+        'block_myoverview/layouts',
+        get_string('layouts', 'block_myoverview'),
+        get_string('layouts_help', 'block_myoverview'),
+        $choices,
+        $choices));
+
 }

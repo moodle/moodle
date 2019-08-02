@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.9  21-Dec-2016
+@version   v5.20.14  06-Jan-2019
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence.
 Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.sourceforge.net
+  Latest version is available at http://adodb.org/
 
   Requires ODBC. Works on Windows and Unix.
 */
@@ -50,8 +50,6 @@ class ADODB_odbc extends ADOConnection {
 		// returns true or false
 	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
-	global $php_errormsg;
-
 		if (!function_exists('odbc_connect')) return null;
 
 		if (!empty($argDatabasename) && stristr($argDSN, 'Database=') === false) {
@@ -61,10 +59,10 @@ class ADODB_odbc extends ADOConnection {
 			$argDSN .= 'Database='.$argDatabasename;
 		}
 
-		if (isset($php_errormsg)) $php_errormsg = '';
+		$last_php_error = $this->resetLastError();
 		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
 		else $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword,$this->curmode);
-		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
 		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
 
 		return $this->_connectionID != false;
@@ -73,12 +71,10 @@ class ADODB_odbc extends ADOConnection {
 	// returns true or false
 	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
-	global $php_errormsg;
-
 		if (!function_exists('odbc_connect')) return null;
 
-		if (isset($php_errormsg)) $php_errormsg = '';
-		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+		$last_php_error = $this->resetLastError();
+		$this->_errorMsg = '';
 		if ($this->debug && $argDatabasename) {
 			ADOConnection::outp("For odbc PConnect(), $argDatabasename is not used. Place dsn in 1st parameter.");
 		}
@@ -86,7 +82,7 @@ class ADODB_odbc extends ADOConnection {
 		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
 		else $this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword,$this->curmode);
 
-		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
 		if ($this->_connectionID && $this->autoRollback) @odbc_rollback($this->_connectionID);
 		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
 
@@ -503,9 +499,8 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 	/* returns queryID or false */
 	function _query($sql,$inputarr=false)
 	{
-	GLOBAL $php_errormsg;
-		if (isset($php_errormsg)) $php_errormsg = '';
-		$this->_error = '';
+		$last_php_error = $this->resetLastError();
+		$this->_errorMsg = '';
 
 		if ($inputarr) {
 			if (is_array($sql)) {
@@ -514,7 +509,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 				$stmtid = odbc_prepare($this->_connectionID,$sql);
 
 				if ($stmtid == false) {
-					$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+					$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
 					return false;
 				}
 			}
@@ -555,14 +550,16 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 			if ($this->_haserrorfunctions) {
 				$this->_errorMsg = '';
 				$this->_errorCode = 0;
-			} else
-				$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+			} else {
+				$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
+			}
 		} else {
 			if ($this->_haserrorfunctions) {
 				$this->_errorMsg = odbc_errormsg();
 				$this->_errorCode = odbc_error();
-			} else
-				$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+			} else {
+				$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
+			}
 		}
 		return $stmtid;
 	}

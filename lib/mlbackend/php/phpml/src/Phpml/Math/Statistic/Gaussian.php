@@ -16,10 +16,6 @@ class Gaussian
      */
     protected $std;
 
-    /**
-     * @param float $mean
-     * @param float $std
-     */
     public function __construct(float $mean, float $std)
     {
         $this->mean = $mean;
@@ -29,8 +25,6 @@ class Gaussian
     /**
      * Returns probability density of the given <i>$value</i>
      *
-     * @param float $value
-     *
      * @return float|int
      */
     public function pdf(float $value)
@@ -39,22 +33,18 @@ class Gaussian
         // Ref: https://en.wikipedia.org/wiki/Normal_distribution
         $std2 = $this->std ** 2;
         $mean = $this->mean;
-        return exp(- (($value - $mean) ** 2) / (2 * $std2)) / sqrt(2 * $std2 * pi());
+
+        return exp(-(($value - $mean) ** 2) / (2 * $std2)) / ((2 * $std2 * M_PI) ** .5);
     }
 
     /**
      * Returns probability density value of the given <i>$value</i> based on
      * given standard deviation and the mean
-     *
-     * @param float $mean
-     * @param float $std
-     * @param float $value
-     *
-     * @return float
      */
-    public static function distributionPdf(float $mean, float $std, float $value)
+    public static function distributionPdf(float $mean, float $std, float $value): float
     {
         $normal = new self($mean, $std);
+
         return $normal->pdf($value);
     }
 }

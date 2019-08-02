@@ -24,6 +24,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->libdir/phpspreadsheet/vendor/autoload.php");
+
+use \PhpOffice\PhpSpreadsheet\Spreadsheet;
+use \PhpOffice\PhpSpreadsheet\IOFactory;
+use \PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use \PhpOffice\PhpSpreadsheet\Cell\DataType;
+use \PhpOffice\PhpSpreadsheet\Shared\Date;
+use \PhpOffice\PhpSpreadsheet\Style\Alignment;
+use \PhpOffice\PhpSpreadsheet\Style\Border;
+use \PhpOffice\PhpSpreadsheet\Style\Fill;
+use \PhpOffice\PhpSpreadsheet\Style\Font;
+use \PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use \PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 /**
  * Define and operate over one Moodle Workbook.
  *
@@ -35,8 +50,8 @@ defined('MOODLE_INTERNAL') || die();
  * @package moodlecore
  */
 class MoodleExcelWorkbook {
-    /** @var PHPExcel */
-    protected $objPHPExcel;
+    /** @var PhpSpreadsheet */
+    protected $objspreadsheet;
 
     /** @var string */
     protected $filename;
@@ -48,22 +63,21 @@ class MoodleExcelWorkbook {
      * Constructs one Moodle Workbook.
      *
      * @param string $filename The name of the file
-     * @param string $type file format type used to be 'Excel5 or Excel2007' but now only 'Excel2007'
+     * @param string $type file format type used to be 'Xls or Xlsx' but now only 'Xlsx'
      */
-    public function __construct($filename, $type = 'Excel2007') {
+    public function __construct($filename, $type = 'Xlsx') {
         global $CFG;
-        require_once("$CFG->libdir/phpexcel/PHPExcel.php");
 
-        $this->objPHPExcel = new PHPExcel();
-        $this->objPHPExcel->removeSheetByIndex(0);
+        $this->objspreadsheet = new Spreadsheet();
+        $this->objspreadsheet->removeSheetByIndex(0);
 
         $this->filename = $filename;
 
-        if (strtolower($type) === 'excel5') {
-            debugging('Excel5 is no longer supported, using Excel2007 instead');
-            $this->type = 'Excel2007';
+        if (strtolower($type) === 'Xls') {
+            debugging('Xls is no longer supported, using Xlsx instead');
+            $this->type = 'Xlsx';
         } else {
-            $this->type = 'Excel2007';
+            $this->type = 'Xlsx';
         }
     }
 
@@ -74,7 +88,7 @@ class MoodleExcelWorkbook {
      * @return MoodleExcelWorksheet
      */
     public function add_worksheet($name = '') {
-        return new MoodleExcelWorksheet($name, $this->objPHPExcel);
+        return new MoodleExcelWorksheet($name, $this->objspreadsheet);
     }
 
     /**
@@ -96,10 +110,10 @@ class MoodleExcelWorkbook {
     public function close() {
         global $CFG;
 
-        foreach ($this->objPHPExcel->getAllSheets() as $sheet){
+        foreach ($this->objspreadsheet->getAllSheets() as $sheet) {
             $sheet->setSelectedCells('A1');
         }
-        $this->objPHPExcel->setActiveSheetIndex(0);
+        $this->objspreadsheet->setActiveSheetIndex(0);
 
         $filename = preg_replace('/\.xlsx?$/i', '', $this->filename);
 
@@ -125,8 +139,8 @@ class MoodleExcelWorkbook {
         header('Content-Type: '.$mimetype);
         header('Content-Disposition: attachment;filename="'.$filename.'"');
 
-        $objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, $this->type);
-        $objWriter->save('php://output');
+        $objwriter = IOFactory::createWriter($this->objspreadsheet, $this->type);
+        $objwriter->save('php://output');
     }
 
     /**
@@ -149,16 +163,16 @@ class MoodleExcelWorkbook {
  * @package   core
  */
 class MoodleExcelWorksheet {
-    /** @var PHPExcel_Worksheet */
+    /** @var Worksheet */
     protected $worksheet;
 
     /**
      * Constructs one Moodle Worksheet.
      *
      * @param string $name The name of the file
-     * @param PHPExcel $workbook The internal Workbook object we are creating.
+     * @param Spreadsheet $workbook The internal Workbook object we are creating.
      */
-    public function __construct($name, PHPExcel $workbook) {
+    public function __construct($name, Spreadsheet $workbook) {
         // Replace any characters in the name that Excel cannot cope with.
         $name = strtr(trim($name, "'"), '[]*/\?:', '       ');
         // Shorten the title if necessary.
@@ -171,7 +185,7 @@ class MoodleExcelWorksheet {
             $name = 'Sheet'.($workbook->getSheetCount()+1);
         }
 
-        $this->worksheet = new PHPExcel_Worksheet($workbook, $name);
+        $this->worksheet = new Worksheet($workbook, $name);
         $this->worksheet->setPrintGridlines(false);
 
         $workbook->addSheet($this->worksheet);
@@ -186,8 +200,11 @@ class MoodleExcelWorksheet {
      * @param mixed   $format The XF format for the cell
      */
     public function write_string($row, $col, $str, $format = null) {
-        $this->worksheet->getStyleByColumnAndRow($col, $row+1)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
-        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row+1, $str, PHPExcel_Cell_DataType::TYPE_STRING);
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $col += 1;
+
+        $this->worksheet->getStyleByColumnAndRow($col, $row + 1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row + 1, $str, DataType::TYPE_STRING);
         $this->apply_format($row, $col, $format);
     }
 
@@ -200,8 +217,11 @@ class MoodleExcelWorksheet {
      * @param mixed   $format The XF format for the cell
      */
     public function write_number($row, $col, $num, $format = null) {
-        $this->worksheet->getStyleByColumnAndRow($col, $row+1)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_GENERAL);
-        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row+1, $num, PHPExcel_Cell_DataType::TYPE_NUMERIC);
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $col += 1;
+
+        $this->worksheet->getStyleByColumnAndRow($col, $row + 1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_GENERAL);
+        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row + 1, $num, DataType::TYPE_NUMERIC);
         $this->apply_format($row, $col, $format);
     }
 
@@ -214,8 +234,11 @@ class MoodleExcelWorksheet {
      * @param mixed   $format The XF format for the cell
      */
     public function write_url($row, $col, $url, $format = null) {
-        $this->worksheet->setCellValueByColumnAndRow($col, $row+1, $url);
-        $this->worksheet->getCellByColumnAndRow($col, $row+1)->getHyperlink()->setUrl($url);
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $col += 1;
+
+        $this->worksheet->setCellValueByColumnAndRow($col, $row + 1, $url);
+        $this->worksheet->getCellByColumnAndRow($col, $row + 1)->getHyperlink()->setUrl($url);
         $this->apply_format($row, $col, $format);
     }
 
@@ -227,8 +250,11 @@ class MoodleExcelWorksheet {
      * @param mixed   $format The XF format for the cell
      */
     public function write_date($row, $col, $date, $format = null) {
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $col += 1;
+
         $getdate = usergetdate($date);
-        $exceldate = PHPExcel_Shared_Date::FormattedPHPToExcel(
+        $exceldate = Date::FormattedPHPToExcel(
             $getdate['year'],
             $getdate['mon'],
             $getdate['mday'],
@@ -237,8 +263,9 @@ class MoodleExcelWorksheet {
             $getdate['seconds']
         );
 
-        $this->worksheet->setCellValueByColumnAndRow($col, $row+1, $exceldate);
-        $this->worksheet->getStyleByColumnAndRow($col, $row+1)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX22);
+        $this->worksheet->setCellValueByColumnAndRow($col, $row + 1, $exceldate);
+        $style = $this->worksheet->getStyleByColumnAndRow($col, $row + 1);
+        $style->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_XLSX22);
         $this->apply_format($row, $col, $format);
     }
 
@@ -251,7 +278,10 @@ class MoodleExcelWorksheet {
      * @param mixed   $format The XF format for the cell
      */
     public function write_formula($row, $col, $formula, $format = null) {
-        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row+1, $formula, PHPExcel_Cell_DataType::TYPE_FORMULA);
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $col += 1;
+
+        $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row + 1, $formula, DataType::TYPE_FORMULA);
         $this->apply_format($row, $col, $format);
     }
 
@@ -263,7 +293,10 @@ class MoodleExcelWorksheet {
      * @param mixed   $format The XF format for the cell
      */
     public function write_blank($row, $col, $format = null) {
-        $this->worksheet->setCellValueByColumnAndRow($col, $row+1, '');
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $col += 1;
+
+        $this->worksheet->setCellValueByColumnAndRow($col, $row + 1, '');
         $this->apply_format($row, $col, $format);
     }
 
@@ -321,10 +354,10 @@ class MoodleExcelWorksheet {
             $level = 7;
         }
         if (isset($height)) {
-            $this->worksheet->getRowDimension($row+1)->setRowHeight($height);
+            $this->worksheet->getRowDimension($row + 1)->setRowHeight($height);
         }
-        $this->worksheet->getRowDimension($row+1)->setVisible(!$hidden);
-        $this->worksheet->getRowDimension($row+1)->setOutlineLevel($level);
+        $this->worksheet->getRowDimension($row + 1)->setVisible(!$hidden);
+        $this->worksheet->getRowDimension($row + 1)->setOutlineLevel($level);
         $this->apply_row_format($row, $format);
     }
 
@@ -344,8 +377,9 @@ class MoodleExcelWorksheet {
         } else if ($level > 7) {
             $level = 7;
         }
-        $i = $firstcol;
-        while($i <= $lastcol) {
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $i = $firstcol + 1;
+        while ($i <= $lastcol + 1) {
             if (isset($width)) {
                 $this->worksheet->getColumnDimensionByColumn($i)->setWidth($width);
             }
@@ -378,36 +412,40 @@ class MoodleExcelWorksheet {
     * @param string  $bitmap  The bitmap filename
     * @param integer $x       The horizontal position (offset) of the image inside the cell.
     * @param integer $y       The vertical position (offset) of the image inside the cell.
-    * @param integer $scale_x The horizontal scale
-    * @param integer $scale_y The vertical scale
+    * @param integer $scalex The horizontal scale
+    * @param integer $scaley The vertical scale
     */
-    public function insert_bitmap($row, $col, $bitmap, $x = 0, $y = 0, $scale_x = 1, $scale_y = 1) {
-        $objDrawing = new PHPExcel_Worksheet_Drawing();
-        $objDrawing->setPath($bitmap);
-        $objDrawing->setCoordinates(PHPExcel_Cell::stringFromColumnIndex($col) . ($row+1));
-        $objDrawing->setOffsetX($x);
-        $objDrawing->setOffsetY($y);
-        $objDrawing->setWorksheet($this->worksheet);
+    public function insert_bitmap($row, $col, $bitmap, $x = 0, $y = 0, $scalex = 1, $scaley = 1) {
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $col += 1;
+
+        $objdrawing = new Drawing();
+        $objdrawing->setPath($bitmap);
+        $objdrawing->setCoordinates(Coordinate::stringFromColumnIndex($col) . ($row + 1));
+        $objdrawing->setOffsetX($x);
+        $objdrawing->setOffsetY($y);
+        $objdrawing->setWorksheet($this->worksheet);
         if ($scale_x != 1) {
-            $objDrawing->setResizeProportional(false);
-            $objDrawing->getWidth($objDrawing->getWidth()*$scale_x);
+            $objdrawing->setResizeProportional(false);
+            $objdrawing->getWidth($objdrawing->getWidth() * $scalex);
         }
         if ($scale_y != 1) {
-            $objDrawing->setResizeProportional(false);
-            $objDrawing->setHeight($objDrawing->getHeight()*$scale_y);
+            $objdrawing->setResizeProportional(false);
+            $objdrawing->setHeight($objdrawing->getHeight() * $scaley);
         }
     }
 
    /**
     * Merges the area given by its arguments.
     *
-    * @param integer $first_row First row of the area to merge
-    * @param integer $first_col First column of the area to merge
-    * @param integer $last_row  Last row of the area to merge
-    * @param integer $last_col  Last column of the area to merge
+    * @param integer $firstrow First row of the area to merge
+    * @param integer $firstcol First column of the area to merge
+    * @param integer $lastrow  Last row of the area to merge
+    * @param integer $lastcol  Last column of the area to merge
     */
-    public function merge_cells($first_row, $first_col, $last_row, $last_col) {
-        $this->worksheet->mergeCellsByColumnAndRow($first_col, $first_row+1, $last_col, $last_row+1);
+    public function merge_cells($firstrow, $firstcol, $lastrow, $lastcol) {
+        // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
+        $this->worksheet->mergeCellsByColumnAndRow($firstcol + 1, $firstrow + 1, $lastcol + 1, $lastrow + 1);
     }
 
     protected function apply_format($row, $col, $format = null) {
@@ -416,7 +454,7 @@ class MoodleExcelWorksheet {
         } else if (is_array($format)) {
             $format = new MoodleExcelFormat($format);
         }
-        $this->worksheet->getStyleByColumnAndRow($col, $row+1)->applyFromArray($format->get_format_array());
+        $this->worksheet->getStyleByColumnAndRow($col, $row + 1)->applyFromArray($format->get_format_array());
     }
 
     protected function apply_column_format($col, $format = null) {
@@ -425,7 +463,7 @@ class MoodleExcelWorksheet {
         } else if (is_array($format)) {
             $format = new MoodleExcelFormat($format);
         }
-        $this->worksheet->getStyle(PHPExcel_Cell::stringFromColumnIndex($col))->applyFromArray($format->get_format_array());
+        $this->worksheet->getStyle(Coordinate::stringFromColumnIndex($col))->applyFromArray($format->get_format_array());
     }
 
     protected function apply_row_format($row, $format = null) {
@@ -434,7 +472,7 @@ class MoodleExcelWorksheet {
         } else if (is_array($format)) {
             $format = new MoodleExcelFormat($format);
         }
-        $this->worksheet->getStyle($row+1)->applyFromArray($format->get_format_array());
+        $this->worksheet->getStyle($row + 1)->applyFromArray($format->get_format_array());
     }
 }
 
@@ -509,11 +547,11 @@ class MoodleExcelFormat {
      */
     public function set_underline($underline) {
         if ($underline == 1) {
-            $this->format['font']['underline'] = PHPExcel_Style_Font::UNDERLINE_SINGLE;
+            $this->format['font']['underline'] = Font::UNDERLINE_SINGLE;
         } else if ($underline == 2) {
-            $this->format['font']['underline'] = PHPExcel_Style_Font::UNDERLINE_DOUBLE;
+            $this->format['font']['underline'] = Font::UNDERLINE_DOUBLE;
         } else {
-            $this->format['font']['underline'] = PHPExcel_Style_Font::UNDERLINE_NONE;
+            $this->format['font']['underline'] = Font::UNDERLINE_NONE;
         }
     }
 
@@ -528,7 +566,7 @@ class MoodleExcelFormat {
      * Set strikeout of the format.
      */
     public function set_strikeout() {
-        $this->format['font']['strike'] = true;
+        $this->format['font']['strikethrough'] = true;
     }
 
     /**
@@ -553,12 +591,12 @@ class MoodleExcelFormat {
      */
     public function set_script($script) {
         if ($script == 1) {
-            $this->format['font']['superScript'] = true;
+            $this->format['font']['superscript'] = true;
         } else if ($script == 2) {
-            $this->format['font']['subScript'] = true;
+            $this->format['font']['subscript'] = true;
         } else {
-            $this->format['font']['superScript'] = false;
-            $this->format['font']['subScript'] = false;
+            $this->format['font']['superscript'] = false;
+            $this->format['font']['subscript'] = false;
         }
     }
 
@@ -656,8 +694,8 @@ class MoodleExcelFormat {
      * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63])
      */
     public function set_bg_color($color) {
-        if (!isset($this->format['fill']['type'])) {
-            $this->format['fill']['type'] = PHPExcel_Style_Fill::FILL_SOLID;
+        if (!isset($this->format['fill']['fillType'])) {
+            $this->format['fill']['fillType'] = Fill::FILL_SOLID;
         }
         $this->format['fill']['color']['rgb'] = $this->parse_color($color);
     }
@@ -675,7 +713,7 @@ class MoodleExcelFormat {
             }
         } else {
             unset($this->format['fill']['color']['rgb']);
-            unset($this->format['fill']['type']);
+            unset($this->format['fill']['fillType']);
         }
     }
 
@@ -683,7 +721,7 @@ class MoodleExcelFormat {
      * Set text wrap of the format.
      */
     public function set_text_wrap() {
-        $this->format['alignment']['wrap'] = true;
+        $this->format['alignment']['wrapText'] = true;
     }
 
     /**
@@ -708,20 +746,20 @@ class MoodleExcelFormat {
     public function set_h_align($location) {
         switch ($location) {
             case 'left':
-                $this->format['alignment']['horizontal'] = PHPExcel_Style_Alignment::HORIZONTAL_LEFT;
+                $this->format['alignment']['horizontal'] = Alignment::HORIZONTAL_LEFT;
                 break;
             case 'center':
             case 'centre':
-                $this->format['alignment']['horizontal'] = PHPExcel_Style_Alignment::HORIZONTAL_CENTER;
+                $this->format['alignment']['horizontal'] = Alignment::HORIZONTAL_CENTER;
                 break;
             case 'right':
-                $this->format['alignment']['horizontal'] = PHPExcel_Style_Alignment::HORIZONTAL_RIGHT;
+                $this->format['alignment']['horizontal'] = Alignment::HORIZONTAL_RIGHT;
                 break;
             case 'justify':
-                $this->format['alignment']['horizontal'] = PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY;
+                $this->format['alignment']['horizontal'] = Alignment::HORIZONTAL_JUSTIFY;
                 break;
             default:
-                $this->format['alignment']['horizontal'] = PHPExcel_Style_Alignment::HORIZONTAL_GENERAL;
+                $this->format['alignment']['horizontal'] = Alignment::HORIZONTAL_GENERAL;
         }
     }
 
@@ -733,20 +771,20 @@ class MoodleExcelFormat {
     public function set_v_align($location) {
         switch ($location) {
             case 'top':
-                $this->format['alignment']['vertical'] = PHPExcel_Style_Alignment::VERTICAL_TOP;
+                $this->format['alignment']['vertical'] = Alignment::VERTICAL_TOP;
                 break;
             case 'vcentre':
             case 'vcenter':
             case 'centre':
             case 'center':
-                $this->format['alignment']['vertical'] = PHPExcel_Style_Alignment::VERTICAL_CENTER;
+                $this->format['alignment']['vertical'] = Alignment::VERTICAL_CENTER;
                 break;
             case 'vjustify':
             case 'justify':
-                $this->format['alignment']['vertical'] = PHPExcel_Style_Alignment::VERTICAL_JUSTIFY;
+                $this->format['alignment']['vertical'] = Alignment::VERTICAL_JUSTIFY;
                 break;
             default:
-                $this->format['alignment']['vertical'] = PHPExcel_Style_Alignment::VERTICAL_BOTTOM;
+                $this->format['alignment']['vertical'] = Alignment::VERTICAL_BOTTOM;
         }
     }
 
@@ -757,11 +795,11 @@ class MoodleExcelFormat {
      */
     public function set_top($style) {
         if ($style == 1) {
-            $this->format['borders']['top']['style'] = PHPExcel_Style_Border::BORDER_THIN;
+            $this->format['borders']['top']['borderStyle'] = Border::BORDER_THIN;
         } else if ($style == 2) {
-            $this->format['borders']['top']['style'] = PHPExcel_Style_Border::BORDER_THICK;
+            $this->format['borders']['top']['borderStyle'] = Border::BORDER_THICK;
         } else {
-            $this->format['borders']['top']['style'] = PHPExcel_Style_Border::BORDER_NONE;
+            $this->format['borders']['top']['borderStyle'] = Border::BORDER_NONE;
         }
     }
 
@@ -772,11 +810,11 @@ class MoodleExcelFormat {
      */
     public function set_bottom($style) {
         if ($style == 1) {
-            $this->format['borders']['bottom']['style'] = PHPExcel_Style_Border::BORDER_THIN;
+            $this->format['borders']['bottom']['borderStyle'] = Border::BORDER_THIN;
         } else if ($style == 2) {
-            $this->format['borders']['bottom']['style'] = PHPExcel_Style_Border::BORDER_THICK;
+            $this->format['borders']['bottom']['borderStyle'] = Border::BORDER_THICK;
         } else {
-            $this->format['borders']['bottom']['style'] = PHPExcel_Style_Border::BORDER_NONE;
+            $this->format['borders']['bottom']['borderStyle'] = Border::BORDER_NONE;
         }
     }
 
@@ -787,11 +825,11 @@ class MoodleExcelFormat {
      */
     public function set_left($style) {
         if ($style == 1) {
-            $this->format['borders']['left']['style'] = PHPExcel_Style_Border::BORDER_THIN;
+            $this->format['borders']['left']['borderStyle'] = Border::BORDER_THIN;
         } else if ($style == 2) {
-            $this->format['borders']['left']['style'] = PHPExcel_Style_Border::BORDER_THICK;
+            $this->format['borders']['left']['borderStyle'] = Border::BORDER_THICK;
         } else {
-            $this->format['borders']['left']['style'] = PHPExcel_Style_Border::BORDER_NONE;
+            $this->format['borders']['left']['borderStyle'] = Border::BORDER_NONE;
         }
     }
 
@@ -802,11 +840,11 @@ class MoodleExcelFormat {
      */
     public function set_right($style) {
         if ($style == 1) {
-            $this->format['borders']['right']['style'] = PHPExcel_Style_Border::BORDER_THIN;
+            $this->format['borders']['right']['borderStyle'] = Border::BORDER_THIN;
         } else if ($style == 2) {
-            $this->format['borders']['right']['style'] = PHPExcel_Style_Border::BORDER_THICK;
+            $this->format['borders']['right']['borderStyle'] = Border::BORDER_THICK;
         } else {
-            $this->format['borders']['right']['style'] = PHPExcel_Style_Border::BORDER_NONE;
+            $this->format['borders']['right']['borderStyle'] = Border::BORDER_NONE;
         }
     }
 
@@ -826,9 +864,9 @@ class MoodleExcelFormat {
      * Set the numerical format of the format.
      * It can be date, time, currency, etc...
      *
-     * @param mixed $num_format The numeric format
+     * @param mixed $numformat The numeric format
      */
-    public function set_num_format($num_format) {
+    public function set_num_format($numformat) {
         $numbers = array();
 
         $numbers[1] = '0';
@@ -845,14 +883,14 @@ class MoodleExcelFormat {
         $numbers[22] = 'm/d/yy h:mm';
         $numbers[49] = '@';
 
-        if ($num_format !== 0 and in_array($num_format, $numbers)) {
-            $this->format['numberformat']['code'] = $num_format;
+        if ($numformat !== 0 and in_array($numformat, $numbers)) {
+            $this->format['numberFormat']['formatCode'] = $numformat;
         }
 
-        if (!isset($numbers[$num_format])) {
+        if (!isset($numbers[$numformat])) {
             return;
         }
 
-        $this->format['numberformat']['code'] = $numbers[$num_format];
+        $this->format['numberFormat']['formatCode'] = $numbers[$numformat];
     }
 }

@@ -17,7 +17,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('forcelogin', new lang_string('forcelogin', 'admin'), new lang_string('configforcelogin', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('forceloginforprofiles', new lang_string('forceloginforprofiles', 'admin'), new lang_string('configforceloginforprofiles', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('forceloginforprofileimage', new lang_string('forceloginforprofileimage', 'admin'), new lang_string('forceloginforprofileimage_help', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('opentogoogle', new lang_string('opentogoogle', 'admin'), new lang_string('configopentogoogle', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('opentowebcrawlers', new lang_string('opentowebcrawlers', 'admin'), new lang_string('configopentowebcrawlers', 'admin'), 0));
     $temp->add(new admin_setting_configselect('allowindexing', new lang_string('allowindexing', 'admin'), new lang_string('allowindexing_desc', 'admin'),
         0,
         array(0 => new lang_string('allowindexingexceptlogin', 'admin'),

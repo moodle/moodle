@@ -39,6 +39,10 @@ $iconsizes: map-merge((
         height: $icon-big-height;
         font-size: $icon-big-height;
     }
+
+    &.movetarget {
+        width: 80px;
+    }
 }
 
 .navbar-dark a .icon {

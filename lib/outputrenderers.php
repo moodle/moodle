@@ -1570,9 +1570,11 @@ class core_renderer extends renderer_base {
      * @return string hex color code.
      */
     public function get_generated_color_for_id($id) {
-        // The colour palette is hardcoded for now. It would make sense to combine it with theme settings.
-        $basecolors = ['#81ecec', '#74b9ff', '#a29bfe', '#dfe6e9', '#00b894',
-            '#0984e3', '#b2bec3', '#fdcb6e', '#fd79a8', '#6c5ce7'];
+        $colornumbers = range(1, 10);
+        $basecolors = [];
+        foreach ($colornumbers as $number) {
+            $basecolors[] = get_config('core_admin', 'coursecolor' . $number);
+        }
 
         $color = $basecolors[$id % 10];
         return $color;
@@ -2809,16 +2811,20 @@ EOD;
         $output .= $this->box($message, 'errorbox alert alert-danger', null, array('data-rel' => 'fatalerror'));
 
         if ($CFG->debugdeveloper) {
+            $labelsep = get_string('labelsep', 'langconfig');
             if (!empty($debuginfo)) {
                 $debuginfo = s($debuginfo); // removes all nasty JS
                 $debuginfo = str_replace("\n", '<br />', $debuginfo); // keep newlines
-                $output .= $this->notification('<strong>Debug info:</strong> '.$debuginfo, 'notifytiny');
+                $label = get_string('debuginfo', 'debug') . $labelsep;
+                $output .= $this->notification("<strong>$label</strong> " . $debuginfo, 'notifytiny');
             }
             if (!empty($backtrace)) {
-                $output .= $this->notification('<strong>Stack trace:</strong> '.format_backtrace($backtrace), 'notifytiny');
+                $label = get_string('stacktrace', 'debug') . $labelsep;
+                $output .= $this->notification("<strong>$label</strong> " . format_backtrace($backtrace), 'notifytiny');
             }
             if ($obbuffer !== '' ) {
-                $output .= $this->notification('<strong>Output buffer:</strong> '.s($obbuffer), 'notifytiny');
+                $label = get_string('outputbuffer', 'debug') . $labelsep;
+                $output .= $this->notification("<strong>$label</strong> " . s($obbuffer), 'notifytiny');
             }
         }
 
@@ -4706,6 +4712,16 @@ EOD;
         global $PAGE;
         $data = $bar->export_for_template($this);
         return $this->render_from_template('core/progress_bar', $data);
+    }
+
+    /**
+     * Renders element for a toggle-all checkbox.
+     *
+     * @param \core\output\checkbox_toggleall $element
+     * @return string
+     */
+    public function render_checkbox_toggleall(\core\output\checkbox_toggleall $element) {
+        return $this->render_from_template($element->get_template(), $element->export_for_template($this));
     }
 }
 

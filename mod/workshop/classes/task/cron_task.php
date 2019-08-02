@@ -65,7 +65,7 @@ class cron_task extends \core\task\scheduled_task {
                 $cm = get_coursemodule_from_instance('workshop', $workshop->id, $workshop->course, false, MUST_EXIST);
                 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
                 $workshop = new \workshop($workshop, $cm, $course);
-                $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
+                $workshop->switch_phase(\workshop::PHASE_ASSESSMENT);
 
                 $params = [
                     'objectid' => $workshop->id,

@@ -3517,7 +3517,8 @@ class assign {
                     $prefix = str_replace('_', ' ', $groupname . get_string('participant', 'assign'));
                     $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
                 } else {
-                    $prefix = str_replace('_', ' ', $groupname . fullname($student));
+                    $fullname = fullname($student, has_capability('moodle/site:viewfullnames', $this->get_context()));
+                    $prefix = str_replace('_', ' ', $groupname . $fullname);
                     $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
                 }
 
@@ -5531,8 +5532,15 @@ class assign {
         }
 
         if ($instance->teamsubmission) {
+            $warnofungroupedusers = assign_grading_summary::WARN_GROUPS_NO;
             $defaultteammembers = $this->get_submission_group_members(0, true);
-            $warnofungroupedusers = (count($defaultteammembers) > 0 && $instance->preventsubmissionnotingroup);
+            if (count($defaultteammembers) > 0) {
+                if ($instance->preventsubmissionnotingroup) {
+                    $warnofungroupedusers = assign_grading_summary::WARN_GROUPS_REQUIRED;
+                } else {
+                    $warnofungroupedusers = assign_grading_summary::WARN_GROUPS_OPTIONAL;
+                }
+            }
 
             $summary = new assign_grading_summary($this->count_teams($activitygroup),
                                                   $instance->submissiondrafts,
@@ -5560,7 +5568,7 @@ class assign {
                                                   $this->get_course_module()->id,
                                                   $this->count_submissions_need_grading($activitygroup),
                                                   $instance->teamsubmission,
-                                                  false,
+                                                  assign_grading_summary::WARN_GROUPS_NO,
                                                   $this->can_grade(),
                                                   $isvisible);
         }
@@ -7585,6 +7593,14 @@ class assign {
             $options = array('' => get_string('markingworkflowstatenotmarked', 'assign')) + $states;
             $mform->addElement('select', 'workflowstate', get_string('markingworkflowstate', 'assign'), $options);
             $mform->addHelpButton('workflowstate', 'markingworkflowstate', 'assign');
+            $gradingstatus = $this->get_grading_status($userid);
+            if ($gradingstatus != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+                if ($grade->grade && $grade->grade != -1) {
+                    $assigngradestring = html_writer::span(grade_floatval($grade->grade), 'currentgrade');
+                    $label = get_string('currentassigngrade', 'assign');
+                    $mform->addElement('static', 'currentassigngrade', $label, $assigngradestring);
+                }
+            }
         }
 
         if ($this->get_instance()->markingworkflow &&
@@ -7606,6 +7622,7 @@ class assign {
             $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE);
             $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_RELEASED);
         }
+
         $gradestring = '<span class="currentgrade">' . $gradestring . '</span>';
         $mform->addElement('static', 'currentgrade', get_string('currentgrade', 'assign'), $gradestring);
 

@@ -31,7 +31,10 @@ module.exports = function(grunt) {
         async = require('async'),
         DOMParser = require('xmldom').DOMParser,
         xpath = require('xpath'),
-        semver = require('semver');
+        semver = require('semver'),
+        watchman = require('fb-watchman'),
+        watchmanClient = new watchman.Client(),
+        gruntFilePath = process.cwd();
 
     // Verify the node version is new enough.
     var expected = semver.validRange(grunt.file.readJSON('package.json').engines.node);
@@ -52,10 +55,23 @@ module.exports = function(grunt) {
         }
     }
 
+    var files = null;
+    if (grunt.option('files')) {
+        // Accept a comma separated list of files to process.
+        files = grunt.option('files').split(',');
+    }
+
     var inAMD = path.basename(cwd) == 'amd';
 
     // Globbing pattern for matching all AMD JS source files.
-    var amdSrc = [inAMD ? cwd + '/src/*.js' : '**/amd/src/*.js'];
+    var amdSrc = [];
+    if (inAMD) {
+        amdSrc.push(cwd + "/src/*.js");
+        amdSrc.push(cwd + "/src/**/*.js");
+    } else {
+        amdSrc.push("**/amd/src/*.js");
+        amdSrc.push("**/amd/src/**/*.js");
+    }
 
     /**
      * Function to generate the destination for the uglify task
@@ -67,10 +83,9 @@ module.exports = function(grunt) {
      * @param {String} srcPath the  matched src path
      * @return {String} The rewritten destination path.
      */
-    var uglifyRename = function(destPath, srcPath) {
+    var babelRename = function(destPath, srcPath) {
         destPath = srcPath.replace('src', 'build');
         destPath = destPath.replace('.js', '.min.js');
-        destPath = path.resolve(cwd, destPath);
         return destPath;
     };
 
@@ -112,18 +127,57 @@ module.exports = function(grunt) {
             // Even though warnings dont stop the build we don't display warnings by default because
             // at this moment we've got too many core warnings.
             options: {quiet: !grunt.option('show-lint-warnings')},
-            amd: {src: amdSrc},
+            amd: {src: files ? files : amdSrc},
             // Check YUI module source files.
-            yui: {src: ['**/yui/src/**/*.js', '!*/**/yui/src/*/meta/*.js']}
+            yui: {src: files ? files : ['**/yui/src/**/*.js', '!*/**/yui/src/*/meta/*.js']}
         },
-        uglify: {
-            amd: {
+        babel: {
+            options: {
+                sourceMaps: true,
+                comments: false,
+                plugins: [
+                    'transform-es2015-modules-amd-lazy',
+                    // This plugin modifies the Babel transpiling for "export default"
+                    // so that if it's used then only the exported value is returned
+                    // by the generated AMD module.
+                    //
+                    // It also adds the Moodle plugin name to the AMD module definition
+                    // so that it can be imported as expected in other modules.
+                    path.resolve('babel-plugin-add-module-to-define.js'),
+                    '@babel/plugin-syntax-dynamic-import',
+                    '@babel/plugin-syntax-import-meta',
+                    ['@babel/plugin-proposal-class-properties', {'loose': false}],
+                    '@babel/plugin-proposal-json-strings'
+                ],
+                presets: [
+                    ['minify', {
+                        // This minification plugin needs to be disabled because it breaks the
+                        // source map generation and causes invalid source maps to be output.
+                        simplify: false,
+                        builtIns: false
+                    }],
+                    ['@babel/preset-env', {
+                        targets: {
+                            browsers: [
+                                ">0.25%",
+                                "last 2 versions",
+                                "not ie <= 10",
+                                "not op_mini all",
+                                "not Opera > 0",
+                                "not dead"
+                            ]
+                        },
+                        modules: false,
+                        useBuiltIns: false
+                    }]
+                ]
+            },
+            dist: {
                 files: [{
                     expand: true,
-                    src: amdSrc,
-                    rename: uglifyRename
-                }],
-                options: {report: 'none'}
+                    src: files ? files : amdSrc,
+                    rename: babelRename
+                }]
             }
         },
         sass: {
@@ -145,6 +199,14 @@ module.exports = function(grunt) {
                 files: ['**/amd/src/**/*.js'],
                 tasks: ['amd']
             },
+            boost: {
+                files: ['**/theme/boost/scss/**/*.scss'],
+                tasks: ['scss']
+            },
+            rawcss: {
+                files: ['**/*.css', '**/theme/**/!(moodle.css|editor.css)'],
+                tasks: ['rawcss']
+            },
             yui: {
                 files: ['**/yui/src/**/*.js'],
                 tasks: ['yui']
@@ -157,21 +219,21 @@ module.exports = function(grunt) {
         shifter: {
             options: {
                 recursive: true,
-                paths: [cwd]
+                paths: files ? files : [cwd]
             }
         },
         gherkinlint: {
             options: {
-                files: ['**/tests/behat/*.feature'],
+                files: files ? files : ['**/tests/behat/*.feature'],
             }
         },
         stylelint: {
             scss: {
                 options: {syntax: 'scss'},
-                src: ['*/**/*.scss']
+                src: files ? files : ['*/**/*.scss']
             },
             css: {
-                src: ['*/**/*.css'],
+                src: files ? files : ['*/**/*.css'],
                 options: {
                     configOverrides: {
                         rules: {
@@ -322,23 +384,231 @@ module.exports = function(grunt) {
         }
     };
 
+    /**
+     * This is a wrapper task to handle the grunt watch command. It attempts to use
+     * Watchman to monitor for file changes, if it's installed, because it's much faster.
+     *
+     * If Watchman isn't installed then it falls back to the grunt-contrib-watch file
+     * watcher for backwards compatibility.
+     */
+    tasks.watch = function() {
+        var watchTaskDone = this.async();
+        var watchInitialised = false;
+        var watchTaskQueue = {};
+        var processingQueue = false;
+
+        // Grab the tasks and files that have been queued up and execute them.
+        var processWatchTaskQueue = function() {
+            if (!Object.keys(watchTaskQueue).length || processingQueue) {
+                // If there is nothing in the queue or we're already processing then wait.
+                return;
+            }
+
+            processingQueue = true;
+
+            // Grab all tasks currently in the queue.
+            var queueToProcess = watchTaskQueue;
+            // Reset the queue.
+            watchTaskQueue = {};
+
+            async.forEachSeries(
+                Object.keys(queueToProcess),
+                function(task, next) {
+                    var files = queueToProcess[task];
+                    var filesOption = '--files=' + files.join(',');
+                    grunt.log.ok('Running task ' + task + ' for files ' + filesOption);
+
+                    // Spawn the task in a child process so that it doesn't kill this one
+                    // if it failed.
+                    grunt.util.spawn(
+                        {
+                            // Spawn with the grunt bin.
+                            grunt: true,
+                            // Run from current working dir and inherit stdio from process.
+                            opts: {
+                                cwd: cwd,
+                                stdio: 'inherit'
+                            },
+                            args: [task, filesOption]
+                        },
+                        function(err, res, code) {
+                            if (code !== 0) {
+                                // The grunt task failed.
+                                grunt.log.error(err);
+                            }
+
+                            // Move on to the next task.
+                            next();
+                        }
+                    );
+                },
+                function() {
+                    // No longer processing.
+                    processingQueue = false;
+                    // Once all of the tasks are done then recurse just in case more tasks
+                    // were queued while we were processing.
+                    processWatchTaskQueue();
+                }
+            );
+        };
+
+        var watchConfig = grunt.config.get(['watch']);
+        watchConfig = Object.keys(watchConfig).reduce(function(carry, key) {
+            if (key == 'options') {
+                return carry;
+            }
+
+            var value = watchConfig[key];
+            var fileGlobs = value.files;
+            var taskNames = value.tasks;
+
+            taskNames.forEach(function(taskName) {
+                carry[taskName] = fileGlobs;
+            });
+
+            return carry;
+        }, {});
+
+        watchmanClient.on('error', function(error) {
+            // We have to add an error handler here and parse the error string because the
+            // example way from the docs to check if Watchman is installed doesn't actually work!!
+            // See: https://github.com/facebook/watchman/issues/509
+            if (error.message.match('Watchman was not found')) {
+                // If watchman isn't installed then we should fallback to the other watch task.
+                grunt.log.ok('It is recommended that you install Watchman for better performance using the "watch" command.');
+
+                // Fallback to the old grunt-contrib-watch task.
+                grunt.renameTask('watch-grunt', 'watch');
+                grunt.task.run(['watch']);
+                // This task is finished.
+                watchTaskDone(0);
+            } else {
+                grunt.log.error(error);
+                // Fatal error.
+                watchTaskDone(1);
+            }
+        });
+
+        watchmanClient.on('subscription', function(resp) {
+            if (resp.subscription !== 'grunt-watch') {
+                return;
+            }
+
+            resp.files.forEach(function(file) {
+                grunt.log.ok('File changed: ' + file.name);
+
+                var fullPath = cwd + '/' + file.name;
+                Object.keys(watchConfig).forEach(function(task) {
+                    var fileGlobs = watchConfig[task];
+                    var match = fileGlobs.every(function(fileGlob) {
+                        return grunt.file.isMatch(fileGlob, fullPath);
+                    });
+                    if (match) {
+                        // If we are watching a subdirectory then the file.name will be relative
+                        // to that directory. However the grunt tasks  expect the file paths to be
+                        // relative to the Gruntfile.js location so let's normalise them before
+                        // adding them to the queue.
+                        var relativePath = fullPath.replace(gruntFilePath + '/', '');
+                        if (task in watchTaskQueue) {
+                            if (!watchTaskQueue[task].includes(relativePath)) {
+                                watchTaskQueue[task] = watchTaskQueue[task].concat(relativePath);
+                            }
+                        } else {
+                            watchTaskQueue[task] = [relativePath];
+                        }
+                    }
+                });
+            });
+
+            processWatchTaskQueue();
+        });
+
+        process.on('SIGINT', function() {
+            // Let the user know that they may need to manually stop the Watchman daemon if they
+            // no longer want it running.
+            if (watchInitialised) {
+                grunt.log.ok('The Watchman daemon may still be running and may need to be stopped manually.');
+            }
+
+            process.exit();
+        });
+
+        // Initiate the watch on the current directory.
+        watchmanClient.command(['watch-project', cwd], function(watchError, watchResponse) {
+            if (watchError) {
+                grunt.log.error('Error initiating watch:', watchError);
+                watchTaskDone(1);
+                return;
+            }
+
+            if ('warning' in watchResponse) {
+                grunt.log.error('warning: ', watchResponse.warning);
+            }
+
+            var watch = watchResponse.watch;
+            var relativePath = watchResponse.relative_path;
+            watchInitialised = true;
+
+            watchmanClient.command(['clock', watch], function(clockError, clockResponse) {
+                if (clockError) {
+                    grunt.log.error('Failed to query clock:', clockError);
+                    watchTaskDone(1);
+                    return;
+                }
+
+                // Use the matching patterns specified in the watch config.
+                var matches = Object.keys(watchConfig).map(function(task) {
+                    var fileGlobs = watchConfig[task];
+                    var fileGlobMatches = fileGlobs.map(function(fileGlob) {
+                        return ['match', fileGlob, 'wholename'];
+                    });
+
+                    return ['allof'].concat(fileGlobMatches);
+                });
+
+                var sub = {
+                    expression: ["anyof"].concat(matches),
+                    // Which fields we're interested in.
+                    fields: ["name", "size", "type"],
+                    // Add our time constraint.
+                    since: clockResponse.clock
+                };
+
+                if (relativePath) {
+                    sub.relative_root = relativePath;
+                }
+
+                watchmanClient.command(['subscribe', watch, 'grunt-watch', sub], function(subscribeError) {
+                    if (subscribeError) {
+                        // Probably an error in the subscription criteria.
+                        grunt.log.error('failed to subscribe: ', subscribeError);
+                        watchTaskDone(1);
+                        return;
+                    }
+
+                    grunt.log.ok('Listening for changes to files in ' + cwd);
+                });
+            });
+        });
+    };
+
     // On watch, we dynamically modify config to build only affected files. This
     // method is slightly complicated to deal with multiple changed files at once (copied
     // from the grunt-contrib-watch readme).
     var changedFiles = Object.create(null);
     var onChange = grunt.util._.debounce(function() {
-          var files = Object.keys(changedFiles);
-          grunt.config('eslint.amd.src', files);
-          grunt.config('eslint.yui.src', files);
-          grunt.config('uglify.amd.files', [{expand: true, src: files, rename: uglifyRename}]);
-          grunt.config('shifter.options.paths', files);
-          grunt.config('gherkinlint.options.files', files);
-          changedFiles = Object.create(null);
+        var files = Object.keys(changedFiles);
+        grunt.config('eslint.amd.src', files);
+        grunt.config('eslint.yui.src', files);
+        grunt.config('shifter.options.paths', files);
+        grunt.config('gherkinlint.options.files', files);
+        grunt.config('babel.dist.files', [{expand: true, src: files, rename: babelRename}]);
+        changedFiles = Object.create(null);
     }, 200);
 
     grunt.event.on('watch', function(action, filepath) {
-          changedFiles[filepath] = action;
-          onChange();
+        changedFiles[filepath] = action;
+        onChange();
     });
 
     // Register NPM tasks.
@@ -347,17 +617,24 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-eslint');
     grunt.loadNpmTasks('grunt-stylelint');
+    grunt.loadNpmTasks('grunt-babel');
+
+    // Rename the grunt-contrib-watch "watch" task because we're going to wrap it.
+    grunt.renameTask('watch', 'watch-grunt');
 
     // Register JS tasks.
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
     grunt.registerTask('gherkinlint', 'Run gherkinlint against the current directory', tasks.gherkinlint);
     grunt.registerTask('ignorefiles', 'Generate ignore files for linters', tasks.ignorefiles);
+    grunt.registerTask('watch', 'Run tasks on file changes', tasks.watch);
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
-    grunt.registerTask('amd', ['eslint:amd', 'uglify']);
+    grunt.registerTask('amd', ['eslint:amd', 'babel']);
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
     grunt.registerTask('css', ['stylelint:scss', 'sass', 'stylelint:css']);
+    grunt.registerTask('scss', ['stylelint:scss', 'sass']);
+    grunt.registerTask('rawcss', ['stylelint:css']);
 
     // Register the startup task.
     grunt.registerTask('startup', 'Run the correct tasks for the current directory', tasks.startup);

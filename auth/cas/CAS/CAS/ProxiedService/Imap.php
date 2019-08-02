@@ -248,6 +248,7 @@ extends CAS_ProxiedService_Abstract
      * Answer the IMAP stream
      *
      * @return resource
+     * @throws CAS_OutOfSequenceException if stream is not opened yet
      */
     public function getStream ()
     {

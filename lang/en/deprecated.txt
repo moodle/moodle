@@ -158,3 +158,5 @@ backpackbadges,core_badges
 nobackpackbadges,core_badges
 nobackpackcollections,core_badges
 error:nogroups,core_badges
+purgedefinitionsuccess,core_cache
+purgestoresuccess,core_cache

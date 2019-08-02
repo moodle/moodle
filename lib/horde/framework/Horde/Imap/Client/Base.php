@@ -2,7 +2,7 @@
 /**
  * Copyright 2008-2017 Horde LLC (http://www.horde.org/)
  *
- * See the enclosed file COPYING for license information (LGPL). If you
+ * See the enclosed file LICENSE for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
@@ -231,6 +231,11 @@ implements Serializable, SplObserver
      * - timeout: (integer)  Connection timeout, in seconds.
      *            DEFAULT: 30 seconds
      * - username: (string) [REQUIRED] The username.
+     * - authusername (string) The username used for SASL authentication.
+     * 	 If specified this is the user name whose password is used 
+     * 	 (e.g. administrator).
+     * 	 Only valid for RFC 2595/4616 - PLAIN SASL mechanism.
+     * 	 DEFAULT: the same value provided in the username parameter.
      * </pre>
      */
     public function __construct(array $params = array())

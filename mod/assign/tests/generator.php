@@ -128,8 +128,6 @@ trait mod_assign_test_generator {
             ]);
 
         // Bump all timecreated and timemodified for this user back.
-        // The old assign_print_overview function includes submissions which have been graded where the grade modified
-        // date matches the submission modified date.
         $DB->execute('UPDATE {assign_submission} SET timecreated = timecreated - 1, timemodified = timemodified - 1 WHERE userid = :userid',
             ['userid' => $student->id]);
 

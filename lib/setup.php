@@ -534,10 +534,6 @@ global $FULLSCRIPT;
  */
 global $SCRIPT;
 
-// Set httpswwwroot to $CFG->wwwroot for backwards compatibility
-// The loginhttps option is deprecated, so httpswwwroot is no longer necessary. See MDL-42834.
-$CFG->httpswwwroot = $CFG->wwwroot;
-
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
 if (NO_OUTPUT_BUFFERING) {
@@ -620,8 +616,12 @@ setup_validate_php_configuration();
 setup_DB();
 
 if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
-    // make sure tests do not run in parallel
-    test_lock::acquire('phpunit');
+    // Make sure tests do not run in parallel.
+    $suffix = '';
+    if (phpunit_util::is_in_isolated_process()) {
+        $suffix = '.isolated';
+    }
+    test_lock::acquire('phpunit', $suffix);
     $dbhash = null;
     try {
         if ($dbhash = $DB->get_field('config', 'value', array('name'=>'phpunittest'))) {

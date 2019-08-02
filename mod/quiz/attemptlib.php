@@ -588,7 +588,7 @@ class quiz_attempt {
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
         $this->slots = $DB->get_records('quiz_slots',
                 array('quizid' => $this->get_quizid()), 'slot',
-                'slot, requireprevious, questionid, includingsubcategories');
+                'slot, id, requireprevious, questionid, includingsubcategories');
         $this->sections = array_values($DB->get_records('quiz_sections',
                 array('quizid' => $this->get_quizid()), 'firstslot'));
 
@@ -2121,7 +2121,8 @@ class quiz_attempt {
                 // First question on page, go to top.
                 $fragment = '#';
             } else {
-                $fragment = '#q' . $slot;
+                $qa = $this->get_question_attempt($slot);
+                $fragment = '#' . $qa->get_outer_question_div_unique_id();
             }
         }
 

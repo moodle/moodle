@@ -9,15 +9,16 @@ use Phpml\Helper\Trainable;
 
 class Apriori implements Associator
 {
-    use Trainable, Predictable;
+    use Trainable;
+    use Predictable;
 
-    const ARRAY_KEY_ANTECEDENT = 'antecedent';
+    public const ARRAY_KEY_ANTECEDENT = 'antecedent';
 
-    const ARRAY_KEY_CONFIDENCE = 'confidence';
+    public const ARRAY_KEY_CONFIDENCE = 'confidence';
 
-    const ARRAY_KEY_CONSEQUENT = 'consequent';
+    public const ARRAY_KEY_CONSEQUENT = 'consequent';
 
-    const ARRAY_KEY_SUPPORT = 'support';
+    public const ARRAY_KEY_SUPPORT = 'support';
 
     /**
      * Minimum relative probability of frequent transactions.
@@ -31,7 +32,7 @@ class Apriori implements Associator
      *
      * @var mixed[][][]
      */
-    private $large;
+    private $large = [];
 
     /**
      * Minimum relative frequency of transactions.
@@ -45,13 +46,10 @@ class Apriori implements Associator
      *
      * @var mixed[][]
      */
-    private $rules;
+    private $rules = [];
 
     /**
      * Apriori constructor.
-     *
-     * @param float $support
-     * @param float $confidence
      */
     public function __construct(float $support = 0.0, float $confidence = 0.0)
     {
@@ -64,13 +62,13 @@ class Apriori implements Associator
      *
      * @return mixed[][]
      */
-    public function getRules() : array
+    public function getRules(): array
     {
-        if (!$this->large) {
+        if (count($this->large) === 0) {
             $this->large = $this->apriori();
         }
 
-        if ($this->rules) {
+        if (count($this->rules) > 0) {
             return $this->rules;
         }
 
@@ -86,15 +84,14 @@ class Apriori implements Associator
      *
      * @return mixed[][][]
      */
-    public function apriori() : array
+    public function apriori(): array
     {
         $L = [];
-        $L[1] = $this->items();
-        $L[1] = $this->frequent($L[1]);
 
-        for ($k = 2; !empty($L[$k - 1]); ++$k) {
-            $L[$k] = $this->candidates($L[$k - 1]);
-            $L[$k] = $this->frequent($L[$k]);
+        $items = $this->frequent($this->items());
+        for ($k = 1; isset($items[0]); ++$k) {
+            $L[$k] = $items;
+            $items = $this->frequent($this->candidates($items));
         }
 
         return $L;
@@ -105,7 +102,7 @@ class Apriori implements Associator
      *
      * @return mixed[][]
      */
-    protected function predictSample(array $sample) : array
+    protected function predictSample(array $sample): array
     {
         $predicts = array_values(array_filter($this->getRules(), function ($rule) use ($sample) {
             return $this->equals($rule[self::ARRAY_KEY_ANTECEDENT], $sample);
@@ -119,9 +116,9 @@ class Apriori implements Associator
     /**
      * Generate rules for each k-length frequent item set.
      */
-    private function generateAllRules()
+    private function generateAllRules(): void
     {
-        for ($k = 2; !empty($this->large[$k]); ++$k) {
+        for ($k = 2; isset($this->large[$k]); ++$k) {
             foreach ($this->large[$k] as $frequent) {
                 $this->generateRules($frequent);
             }
@@ -133,15 +130,16 @@ class Apriori implements Associator
      *
      * @param mixed[] $frequent
      */
-    private function generateRules(array $frequent)
+    private function generateRules(array $frequent): void
     {
         foreach ($this->antecedents($frequent) as $antecedent) {
-            if ($this->confidence <= ($confidence = $this->confidence($frequent, $antecedent))) {
+            $confidence = $this->confidence($frequent, $antecedent);
+            if ($this->confidence <= $confidence) {
                 $consequent = array_values(array_diff($frequent, $antecedent));
                 $this->rules[] = [
                     self::ARRAY_KEY_ANTECEDENT => $antecedent,
                     self::ARRAY_KEY_CONSEQUENT => $consequent,
-                    self::ARRAY_KEY_SUPPORT => $this->support($consequent),
+                    self::ARRAY_KEY_SUPPORT => $this->support($frequent),
                     self::ARRAY_KEY_CONFIDENCE => $confidence,
                 ];
             }
@@ -155,7 +153,7 @@ class Apriori implements Associator
      *
      * @return mixed[][]
      */
-    private function powerSet(array $sample) : array
+    private function powerSet(array $sample): array
     {
         $results = [[]];
         foreach ($sample as $item) {
@@ -174,7 +172,7 @@ class Apriori implements Associator
      *
      * @return mixed[][]
      */
-    private function antecedents(array $sample) : array
+    private function antecedents(array $sample): array
     {
         $cardinality = count($sample);
         $antecedents = $this->powerSet($sample);
@@ -189,7 +187,7 @@ class Apriori implements Associator
      *
      * @return mixed[][]
      */
-    private function items() : array
+    private function items(): array
     {
         $items = [];
 
@@ -213,11 +211,11 @@ class Apriori implements Associator
      *
      * @return mixed[][]
      */
-    private function frequent(array $samples) : array
+    private function frequent(array $samples): array
     {
-        return array_filter($samples, function ($entry) {
+        return array_values(array_filter($samples, function ($entry) {
             return $this->support($entry) >= $this->support;
-        });
+        }));
     }
 
     /**
@@ -227,7 +225,7 @@ class Apriori implements Associator
      *
      * @return mixed[][]
      */
-    private function candidates(array $samples) : array
+    private function candidates(array $samples): array
     {
         $candidates = [];
 
@@ -237,15 +235,16 @@ class Apriori implements Associator
                     continue;
                 }
 
-                $candidate = array_unique(array_merge($p, $q));
+                $candidate = array_values(array_unique(array_merge($p, $q)));
 
                 if ($this->contains($candidates, $candidate)) {
                     continue;
                 }
 
-                foreach ((array) $this->samples as $sample) {
+                foreach ($this->samples as $sample) {
                     if ($this->subset($sample, $candidate)) {
                         $candidates[] = $candidate;
+
                         continue 2;
                     }
                 }
@@ -261,10 +260,8 @@ class Apriori implements Associator
      *
      * @param mixed[] $set
      * @param mixed[] $subset
-     *
-     * @return float
      */
-    private function confidence(array $set, array $subset) : float
+    private function confidence(array $set, array $subset): float
     {
         return $this->support($set) / $this->support($subset);
     }
@@ -276,10 +273,8 @@ class Apriori implements Associator
      * @see \Phpml\Association\Apriori::samples
      *
      * @param mixed[] $sample
-     *
-     * @return float
      */
-    private function support(array $sample) : float
+    private function support(array $sample): float
     {
         return $this->frequency($sample) / count($this->samples);
     }
@@ -290,10 +285,8 @@ class Apriori implements Associator
      * @see \Phpml\Association\Apriori::samples
      *
      * @param mixed[] $sample
-     *
-     * @return int
      */
-    private function frequency(array $sample) : int
+    private function frequency(array $sample): int
     {
         return count(array_filter($this->samples, function ($entry) use ($sample) {
             return $this->subset($entry, $sample);
@@ -307,10 +300,8 @@ class Apriori implements Associator
      *
      * @param mixed[][] $system
      * @param mixed[]   $set
-     *
-     * @return bool
      */
-    private function contains(array $system, array $set) : bool
+    private function contains(array $system, array $set): bool
     {
         return (bool) array_filter($system, function ($entry) use ($set) {
             return $this->equals($entry, $set);
@@ -322,12 +313,10 @@ class Apriori implements Associator
      *
      * @param mixed[] $set
      * @param mixed[] $subset
-     *
-     * @return bool
      */
-    private function subset(array $set, array $subset) : bool
+    private function subset(array $set, array $subset): bool
     {
-        return !array_diff($subset, array_intersect($subset, $set));
+        return count(array_diff($subset, array_intersect($subset, $set))) === 0;
     }
 
     /**
@@ -335,10 +324,8 @@ class Apriori implements Associator
      *
      * @param mixed[] $set1
      * @param mixed[] $set2
-     *
-     * @return bool
      */
-    private function equals(array $set1, array $set2) : bool
+    private function equals(array $set1, array $set2): bool
     {
         return array_diff($set1, $set2) == array_diff($set2, $set1);
     }

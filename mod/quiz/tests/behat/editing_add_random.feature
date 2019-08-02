@@ -46,3 +46,14 @@ Feature: Adding random questions to a quiz based on category and tags
     And I open the autocomplete suggestions list
     Then "foo" "autocomplete_suggestions" should exist
     And "bar" "autocomplete_suggestions" should exist
+
+  Scenario: Teacher without moodle/question:useall should not see the add a random question menu item
+    Given the following "permission overrides" exist:
+      | capability             | permission | role           | contextlevel | reference |
+      | moodle/question:useall | Prevent    | editingteacher | Course       | C1        |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 1"
+    And I navigate to "Edit quiz" in current page administration
+    When I open the "last" add to quiz menu
+    Then I should not see "a random question"

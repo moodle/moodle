@@ -2,17 +2,17 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2018 Leaf Corcoran
+ * @copyright 2012-2019 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
- * @link http://leafo.github.io/scssphp
+ * @link http://scssphp.github.io/scssphp
  */
 
-namespace Leafo\ScssPhp;
+namespace ScssPhp\ScssPhp;
 
-use Leafo\ScssPhp\Base\Range;
-use Leafo\ScssPhp\Exception\RangeException;
+use ScssPhp\ScssPhp\Base\Range;
+use ScssPhp\ScssPhp\Exception\RangeException;
 
 /**
  * Utilty functions
@@ -26,13 +26,13 @@ class Util
      * room for slight floating-point errors.
      *
      * @param string                    $name  The name of the value. Used in the error message.
-     * @param \Leafo\ScssPhp\Base\Range $range Range of values.
+     * @param \ScssPhp\ScssPhp\Base\Range $range Range of values.
      * @param array                     $value The value to check.
      * @param string                    $unit  The unit of the value. Used in error reporting.
      *
      * @return mixed `value` adjusted to fall within range, if it was outside by a floating-point margin.
      *
-     * @throws \Leafo\ScssPhp\Exception\RangeException
+     * @throws \ScssPhp\ScssPhp\Exception\RangeException
      */
     public static function checkRange($name, Range $range, $value, $unit = '')
     {
@@ -63,7 +63,7 @@ class Util
      */
     public static function encodeURIComponent($string)
     {
-        $revert = array('%21' => '!', '%2A' => '*', '%27' => "'", '%28' => '(', '%29' => ')');
+        $revert = ['%21' => '!', '%2A' => '*', '%27' => "'", '%28' => '(', '%29' => ')'];
 
         return strtr(rawurlencode($string), $revert);
     }

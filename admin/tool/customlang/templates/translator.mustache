@@ -113,14 +113,14 @@
                     <div class="d-md-none">
                         <strong>{{#str}}headingstandard, tool_customlang{{/str}}</strong>
                     </div>
-                    {{{ master }}}
+                    {{ master }}
                     <div class="info">
                         {{{ placeholderhelp }}}
                         {{{ outdatedhelp}}}
                     </div>
                     {{#showoriginalvsmaster}}
                     <div class="alert-secondary mt-3 mt-1">
-                        {{{ original }}}
+                        {{ original }}
                     </div>
                     {{/showoriginalvsmaster}}
                 </div>
@@ -146,5 +146,14 @@
         </div>
     {{/strings}}
     </div>
+
+    <fieldset class="m-a-1 m-3">
+        <button type="submit" name="savecontinue" class="btn btn-secondary">
+            {{#str}}savecontinue, tool_customlang{{/str}}
+        </button>
+        <button type="submit" name="savecheckin" class="btn btn-secondary">
+            {{#str}}savecheckin, tool_customlang{{/str}}
+        </button>
+    </fieldset>
 </form>
 {{/hasstrings}}

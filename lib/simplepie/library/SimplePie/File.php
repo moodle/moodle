@@ -71,7 +71,7 @@ class SimplePie_File
 		{
 			$idn = new idna_convert();
 			$parsed = SimplePie_Misc::parse_url($url);
-			$url = SimplePie_Misc::compress_parse_url($parsed['scheme'], $idn->encode($parsed['authority']), $parsed['path'], $parsed['query'], $parsed['fragment']);
+			$url = SimplePie_Misc::compress_parse_url($parsed['scheme'], $idn->encode($parsed['authority']), $parsed['path'], $parsed['query'], NULL);
 		}
 		$this->url = $url;
 		$this->permanent_url = $url;
@@ -136,8 +136,7 @@ class SimplePie_File
 						$this->url = $info['url'];
 					}
 					curl_close($fp);
-					$this->headers = explode("\r\n\r\n", $this->headers, $info['redirect_count'] + 1);
-					$this->headers = array_pop($this->headers);
+					$this->headers = SimplePie_HTTP_Parser::prepareHeaders($this->headers, $info['redirect_count'] + 1);
 					$parser = new SimplePie_HTTP_Parser($this->headers);
 					if ($parser->parse())
 					{

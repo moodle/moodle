@@ -90,9 +90,9 @@ class renderer extends plugin_renderer_base {
                 $langstrdata = (object)array('name' => $timesplitting->get_name(), 'id' => $timesplittingid);
 
                 if (CLI_SCRIPT) {
-                    $output .= $OUTPUT->heading(get_string('getpredictionsresultscli', 'tool_analytics', $langstrdata), 3);
+                    $output .= $OUTPUT->heading(get_string('scheduledanalysisresultscli', 'tool_analytics', $langstrdata), 3);
                 } else {
-                    $output .= $OUTPUT->heading(get_string('getpredictionsresults', 'tool_analytics', $langstrdata), 3);
+                    $output .= $OUTPUT->heading(get_string('scheduledanalysisresults', 'tool_analytics', $langstrdata), 3);
                 }
             }
 
@@ -206,6 +206,17 @@ class renderer extends plugin_renderer_base {
         }
 
         return $output;
+    }
+
+    /**
+     * Defer to template.
+     *
+     * @param \tool_analytics\output\effectiveness_report $effectivenessreport
+     * @return string HTML
+     */
+    protected function render_effectiveness_report(\tool_analytics\output\effectiveness_report $effectivenessreport): string {
+        $data = $effectivenessreport->export_for_template($this);
+        return parent::render_from_template('tool_analytics/effectiveness_report', $data);
     }
 
     /**

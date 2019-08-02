@@ -1,1 +1,2 @@
-skipresultgraph,mod_choice
+choiceactivityname,mod_choice
+choicecloseson,mod_choice

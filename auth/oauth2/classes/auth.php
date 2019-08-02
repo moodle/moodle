@@ -36,6 +36,7 @@ use core\oauth2\client;
 
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->dirroot.'/user/profile/lib.php');
 
 /**
  * Plugin for oauth2 authentication.

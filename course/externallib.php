@@ -2909,121 +2909,6 @@ class core_course_external extends external_api {
     /**
      * Returns description of method parameters
      *
-     * @deprecated since 3.3
-     * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
-     * @return external_function_parameters
-     * @since Moodle 3.2
-     */
-    public static function get_activities_overview_parameters() {
-        return new external_function_parameters(
-            array(
-                'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'Course id.')),
-            )
-        );
-    }
-
-    /**
-     * Return activities overview for the given courses.
-     *
-     * @deprecated since 3.3
-     * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
-     * @param array $courseids a list of course ids
-     * @return array of warnings and the activities overview
-     * @since Moodle 3.2
-     * @throws moodle_exception
-     */
-    public static function get_activities_overview($courseids) {
-        global $USER;
-
-        // Parameter validation.
-        $params = self::validate_parameters(self::get_activities_overview_parameters(), array('courseids' => $courseids));
-        $courseoverviews = array();
-
-        list($courses, $warnings) = external_util::validate_courses($params['courseids']);
-
-        if (!empty($courses)) {
-            // Add lastaccess to each course (required by print_overview function).
-            // We need the complete user data, the ws server does not load a complete one.
-            $user = get_complete_user_data('id', $USER->id);
-            foreach ($courses as $course) {
-                if (isset($user->lastcourseaccess[$course->id])) {
-                    $course->lastaccess = $user->lastcourseaccess[$course->id];
-                } else {
-                    $course->lastaccess = 0;
-                }
-            }
-
-            $overviews = array();
-            if ($modules = get_plugin_list_with_function('mod', 'print_overview')) {
-                foreach ($modules as $fname) {
-                    $fname($courses, $overviews);
-                }
-            }
-
-            // Format output.
-            foreach ($overviews as $courseid => $modules) {
-                $courseoverviews[$courseid]['id'] = $courseid;
-                $courseoverviews[$courseid]['overviews'] = array();
-
-                foreach ($modules as $modname => $overviewtext) {
-                    $courseoverviews[$courseid]['overviews'][] = array(
-                        'module' => $modname,
-                        'overviewtext' => $overviewtext // This text doesn't need formatting.
-                    );
-                }
-            }
-        }
-
-        $result = array(
-            'courses' => $courseoverviews,
-            'warnings' => $warnings
-        );
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @deprecated since 3.3
-     * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
-     * @return external_description
-     * @since Moodle 3.2
-     */
-    public static function get_activities_overview_returns() {
-        return new external_single_structure(
-            array(
-                'courses' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Course id'),
-                            'overviews' => new external_multiple_structure(
-                                new external_single_structure(
-                                    array(
-                                        'module' => new external_value(PARAM_PLUGIN, 'Module name'),
-                                        'overviewtext' => new external_value(PARAM_RAW, 'Overview text'),
-                                    )
-                                )
-                            )
-                        )
-                    ), 'List of courses'
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function get_activities_overview_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
      * @return external_function_parameters
      * @since Moodle 3.2
      */
@@ -3244,7 +3129,20 @@ class core_course_external extends external_api {
             }
 
             if ($params['field'] === 'ids') {
-                $courses = $DB->get_records_list('course', 'id', explode(',', $value), 'id ASC');
+                // Preload categories to avoid loading one at a time.
+                $courseids = explode(',', $value);
+                list ($listsql, $listparams) = $DB->get_in_or_equal($courseids);
+                $categoryids = $DB->get_fieldset_sql("
+                        SELECT DISTINCT cc.id
+                          FROM {course} c
+                          JOIN {course_categories} cc ON cc.id = c.category
+                         WHERE c.id $listsql", $listparams);
+                core_course_category::get_many($categoryids);
+
+                // Load and validate all courses. This is called because it loads the courses
+                // more efficiently.
+                list ($courses, $warnings) = external_util::validate_courses($courseids, [],
+                        false, true);
             } else {
                 $courses = $DB->get_records('course', array($params['field'] => $value), 'id ASC');
             }
@@ -3263,9 +3161,11 @@ class core_course_external extends external_api {
             // Get the public course information, even if we are not enrolled.
             $courseinlist = new core_course_list_element($course);
 
-            // Now, check if we have access to the course.
+            // Now, check if we have access to the course, unless it was already checked.
             try {
-                self::validate_context($context);
+                if (empty($course->contextvalidated)) {
+                    self::validate_context($context);
+                }
             } catch (Exception $e) {
                 // User can not access the course, check if they can see the public information about the course and return it.
                 if (core_course_category::can_view_course_info($course)) {

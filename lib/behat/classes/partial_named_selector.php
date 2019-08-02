@@ -73,6 +73,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'xpath_element' => 'xpath_element',
         'form_row' => 'form_row',
         'group_message_header' => 'group_message_header',
+        'group_message' => 'group_message',
     );
 
     /**
@@ -95,6 +96,8 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'group_message_member' => 'group_message_member',
         'group_message_tab' => 'group_message_tab',
         'group_message_list_area' => 'group_message_list_area',
+        'group_message_message_content' => 'group_message_message_content',
+        'icon_container' => 'icon_container',
         'icon' => 'icon',
         'link' => 'link',
         'link_or_button' => 'link_or_button',
@@ -161,7 +164,7 @@ XPATH
             .//*[@data-region='message-drawer' and contains(., %locator%)]//div[@data-region='content-message-container']
 XPATH
     , 'group_message_header' => <<<XPATH
-        .//*[@data-region='message-drawer']//div[@data-region='header-container' and contains(., %locator%)]
+        .//*[@data-region='message-drawer']//div[@data-region='header-content' and contains(., %locator%)]
 XPATH
     , 'group_message_member' => <<<XPATH
         .//*[@data-region='message-drawer']//div[@data-region='group-info-content-container']
@@ -174,6 +177,12 @@ XPATH
 XPATH
     , 'group_message_list_area' => <<<XPATH
         .//*[@data-region='message-drawer']//*[contains(@data-region, concat('view-overview-', %locator%))]
+XPATH
+    , 'group_message_message_content' => <<<XPATH
+        .//*[@data-region='message-drawer']//*[@data-region='message' and @data-message-id and contains(., %locator%)]
+XPATH
+    , 'icon_container' => <<<XPATH
+        .//span[contains(@data-region, concat(%locator%,'-icon-container'))]
 XPATH
         , 'icon' => <<<XPATH
 .//*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') and ( contains(normalize-space(@title), %locator%))]

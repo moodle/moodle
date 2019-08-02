@@ -31,6 +31,9 @@ require_once($CFG->dirroot.'/report/participation/locallib.php');
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
 
+// Release session lock.
+\core\session\manager::write_close();
+
 $id         = required_param('id', PARAM_INT); // course id.
 $roleid     = optional_param('roleid', 0, PARAM_INT); // which role to show
 $instanceid = optional_param('instanceid', 0, PARAM_INT); // instance we're looking at.
@@ -80,7 +83,8 @@ $PAGE->set_title(format_string($course->shortname, true, array('context' => $con
 $PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)));
 echo $OUTPUT->header();
 
-$uselegacyreader = false; // Use legacy reader with sql_internal_table_reader to aggregate records.
+// Logs will not have been recorded before the course timecreated time.
+$minlog = $course->timecreated;
 $onlyuselegacyreader = false; // Use only legacy log table to aggregate records.
 
 $logtable = report_participation_get_log_table_name(); // Log table to use for fetaching records.
@@ -90,41 +94,7 @@ if (empty($logtable)) {
     $onlyuselegacyreader = true;
 }
 
-// If no legacy and no logtable then don't proceed.
-if (!$onlyuselegacyreader && empty($logtable)) {
-    echo $OUTPUT->box_start('generalbox', 'notice');
-    echo get_string('nologreaderenabled', 'report_participation');
-    echo $OUTPUT->box_end();
-    echo $OUTPUT->footer();
-    die();
-}
-
 $modinfo = get_fast_modinfo($course);
-
-$minloginternalreader = 0; // Time of first record in sql_internal_table_reader.
-
-if ($onlyuselegacyreader) {
-    // If no sql_inrenal_reader enabled then get min. time from log table.
-    $minlog = $DB->get_field_sql('SELECT min(time) FROM {log} WHERE course = ?', array($course->id));
-} else {
-    $uselegacyreader = true;
-    $minlog = $DB->get_field_sql('SELECT min(time) FROM {log} WHERE course = ?', array($course->id));
-
-    // If legacy reader is not logging then get data from new log table.
-    // Get minimum log time for this course from preferred log reader.
-    $minloginternalreader = $DB->get_field_sql('SELECT min(timecreated) FROM {' . $logtable . '}
-                                                 WHERE courseid = ?', array($course->id));
-    // If new log store has oldest data then don't use old log table.
-    if (empty($minlog) || ($minloginternalreader <= $minlog)) {
-        $uselegacyreader = false;
-        $minlog = $minloginternalreader;
-    }
-
-    // If timefrom is greater then first record in sql_internal_table_reader then get record from sql_internal_table_reader only.
-    if (!empty($timefrom) && ($minloginternalreader < $timefrom)) {
-        $uselegacyreader = false;
-    }
-}
 
 // Print first controls.
 report_participation_print_filter_form($course, $timefrom, $minlog, $action, $roleid, $instanceid);
@@ -154,6 +124,7 @@ $groupmode = groups_get_course_groupmode($course);
 $currentgroup = $SESSION->activegroup[$course->id][$groupmode][$course->defaultgroupingid];
 
 if (!empty($instanceid) && !empty($roleid)) {
+    $uselegacyreader = $DB->record_exists('log', ['course' => $course->id]);
 
     // Trigger a report viewed event.
     $event = \report_participation\event\report_viewed::create(array('context' => $context,
@@ -250,11 +221,6 @@ if (!empty($instanceid) && !empty($roleid)) {
     $users = array();
     // If using legacy log then get users from old table.
     if ($uselegacyreader || $onlyuselegacyreader) {
-        $limittime = '';
-        if ($uselegacyreader && !empty($minloginternalreader)) {
-            $limittime = ' AND time < :tilltime ';
-            $params['tilltime'] = $minloginternalreader;
-        }
         $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
                   FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
                   JOIN {user} u ON u.id = ra.userid
@@ -263,7 +229,7 @@ if (!empty($instanceid) && !empty($roleid)) {
                     SELECT userid, COUNT(action) AS actioncount
                       FROM {log}
                      WHERE cmid = :instanceid
-                           AND time > :timefrom " . $limittime . $actionsql .
+                           AND time > :timefrom " . $actionsql .
                 " GROUP BY userid) l ON (l.userid = ra.userid)";
         if ($twhere) {
             $sql .= ' WHERE '.$twhere; // Initial bar.

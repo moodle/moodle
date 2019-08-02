@@ -58,14 +58,38 @@
             <h6 class="text-truncate m-0 font-weight-bold">{{userfrom.fullname}}</h6>
         </div>
         {{/fromloggedinuser}}
+
         <div
-            class="ml-auto small text-right text-muted"
+            class="ml-auto small text-right text-muted {{^formattedtime}}hidden{{/formattedtime}}"
             style="flex-shrink: 0"
+            data-region="time-created"
         >
             {{formattedtime}}
         </div>
+        <div
+            class="ml-auto small {{#formattedtime}}hidden{{/formattedtime}}"
+            {{#formattedtime}}aria-hidden="true"{{/formattedtime}}
+            {{^formattedtime}}aria-hidden="false"{{/formattedtime}}
+            data-region="loading-icon-container"
+        >
+            {{> core/loading }}
+        </div>
+        <div role="alert" class="text-danger hidden small" aria-hidden="true" data-region="error-message-container">
+            <div class="d-flex align-items-center">
+                {{#pix}} req, core {{/pix}}
+                <span class="ml-1" data-region="error-message"></span>
+            </div>
+        </div>
+        <button
+            class="ml-auto btn btn-link p-0 line-height-3 hidden"
+            aria-hidden="true"
+            data-region="retry-send"
+            title="{{#str}} retry, core {{/str}}"
+        >
+            <span class="text-primary small">{{#str}} retry, core {{/str}}</span>
+        </button>
         <span class="hidden ml-2 small text-dark" data-region="not-selected-icon">{{#pix}} i/uncheckedcircle, core {{/pix}}</span>
         <span class="hidden ml-2 small text-primary" data-region="selected-icon">{{#pix}} i/checkedcircle, core {{/pix}}</span>
     </div>
-    <div dir="auto" align="initial">{{{text}}}</div>
+    <div dir="auto" align="initial" data-region="text-container">{{{text}}}</div>
 </div>

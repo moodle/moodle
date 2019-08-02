@@ -31,7 +31,7 @@ $context = context::instance_by_id($pagecontextid);
 $url = new moodle_url("/admin/tool/lp/competencyframeworks.php");
 $url->param('pagecontextid', $pagecontextid);
 
-require_login();
+require_login(null, false);
 \core_competency\api::require_enabled();
 
 if (!\core_competency\competency_framework::can_read_context($context)) {

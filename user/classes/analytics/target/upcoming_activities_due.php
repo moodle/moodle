@@ -55,6 +55,16 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Only upcoming stuff.
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @return bool
+     */
+    public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool {
+        return ($timesplitting instanceof \core_analytics\local\time_splitting\after_now);
+    }
+
+    /**
      * Returns the name.
      *
      * If there is a corresponding '_help' string this will be shown as well.

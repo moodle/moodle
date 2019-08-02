@@ -150,6 +150,12 @@ if (!async_helper::is_async_pending($id, 'course', 'backup')) {
     $loghtml = '';
     if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
 
+        // Before we perform the backup check settings to see if user
+        // or setting defaults are set to exclude files from the backup.
+        if ($backup->get_setting_value('files') == 0) {
+            $renderer->set_samesite_notification();
+        }
+
         if ($backupmode != backup::MODE_ASYNC) {
             // Synchronous backup handling.
 
@@ -180,6 +186,7 @@ if (!async_helper::is_async_pending($id, 'course', 'backup')) {
             // Hide the progress display and first backup step bar (the 'finished' step will show next).
             echo html_writer::end_div();
             echo html_writer::script('document.getElementById("executionprogress").style.display = "none";');
+
         } else {
             // Async backup handling.
             $backup->get_controller()->finish_ui();
@@ -203,6 +210,7 @@ if (!async_helper::is_async_pending($id, 'course', 'backup')) {
                     'restoreurl' => $restoreurl->out(),
                     'headingident' => 'backup'
             );
+
             echo $renderer->render_from_template('core/async_backup_status', $progresssetup);
         }
 

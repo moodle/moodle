@@ -155,6 +155,11 @@ class manager {
     protected static $phpunitfaketime = 0;
 
     /**
+     * @var int Result count when used with mock results for Behat tests.
+     */
+    protected $behatresultcount = 0;
+
+    /**
      * Constructor, use \core_search\manager::instance instead to get a class instance.
      *
      * @param \core_search\base The search engine to use
@@ -887,6 +892,10 @@ class manager {
         } else {
             // Get the possible count reported by engine, and limit to our max.
             $out->totalcount = $this->engine->get_query_total_count();
+            if (defined('BEHAT_SITE_RUNNING') && $this->behatresultcount) {
+                // Override results when using Behat mock results.
+                $out->totalcount = $this->behatresultcount;
+            }
             $out->totalcount = min($out->totalcount, static::MAX_RESULTS);
         }
 
@@ -953,6 +962,12 @@ class manager {
                     $doc->set_doc_url($area->get_doc_url($doc));
                     $doc->set_context_url($area->get_context_url($doc));
                     $docs[] = $doc;
+                }
+
+                // Store the mock count, and apply the limit to the returned results.
+                $this->behatresultcount = count($docs);
+                if ($this->behatresultcount > $limit) {
+                    $docs = array_slice($docs, 0, $limit);
                 }
 
                 return $docs;
@@ -1120,11 +1135,7 @@ class manager {
             if (count($result) === 5) {
                 list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
             } else {
-                // Backward compatibility for engines that don't support partial adding.
-                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc) = $result;
-                debugging('engine::add_documents() should return $partial (4-value return is deprecated)',
-                        DEBUG_DEVELOPER);
-                $partial = false;
+                throw new coding_exception('engine::add_documents() should return $partial (4-value return is deprecated)');
             }
 
             if ($numdocs > 0) {

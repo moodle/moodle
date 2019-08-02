@@ -5,7 +5,6 @@ theme/classic/style/moodle.css
 node_modules/
 vendor/
 admin/tool/policy/amd/src/jquery-eu-cookie-law-popup.js
-admin/tool/usertours/amd/src/tour.js
 auth/cas/CAS/
 cache/stores/mongodb/MongoDB/
 enrol/lti/ims-blti/
@@ -21,15 +20,12 @@ lib/mlbackend/php/phpml/
 lib/adodb/
 lib/bennu/
 lib/evalmath/
-lib/lessphp/
-lib/phpexcel/
+lib/phpspreadsheet/
 lib/google/
 lib/htmlpurifier/
 lib/jabber/
 lib/minify/matthiasmullie-minify/
 lib/minify/matthiasmullie-pathconverter/
-lib/pear/Auth/RADIUS.php
-lib/pear/Crypt/CHAP.php
 lib/pear/HTML/Common.php
 lib/pear/HTML/QuickForm.php
 lib/pear/HTML/QuickForm/
@@ -43,7 +39,6 @@ lib/yuilib/gallery/
 lib/jquery/
 lib/html2text/
 lib/markdown/
-lib/recaptchalib.php
 lib/xhprof/
 lib/horde/
 lib/requirejs/
@@ -66,6 +61,7 @@ lib/validateurlsyntax.php
 lib/amd/src/popper.js
 lib/geopattern-php/
 lib/php-jwt/
+lib/babel-polyfill/
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/
@@ -79,10 +75,13 @@ theme/boost/amd/src/button.js
 theme/boost/amd/src/carousel.js
 theme/boost/amd/src/collapse.js
 theme/boost/amd/src/dropdown.js
+theme/boost/amd/src/index.js
 theme/boost/amd/src/modal.js
 theme/boost/amd/src/popover.js
+theme/boost/amd/src/sanitizer.js
 theme/boost/amd/src/scrollspy.js
 theme/boost/amd/src/tab.js
+theme/boost/amd/src/toast.js
 theme/boost/amd/src/tooltip.js
 theme/boost/amd/src/util.js
 theme/boost/amd/src/tether.js

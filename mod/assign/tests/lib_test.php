@@ -46,139 +46,6 @@ class mod_assign_lib_testcase extends advanced_testcase {
     // Use the generator helper.
     use mod_assign_test_generator;
 
-    public function test_assign_print_overview() {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        $course = $this->getDataGenerator()->create_course();
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
-
-        $this->setAdminUser();
-
-        // Assignment with default values.
-        $firstassign = $this->create_instance($course, ['name' => 'First Assignment']);
-
-        // Assignment with submissions.
-        $secondassign = $this->create_instance($course, [
-                'name' => 'Assignment with submissions',
-                'duedate' => time(),
-                'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL,
-                'maxattempts' => 3,
-                'submissiondrafts' => 1,
-                'assignsubmission_onlinetext_enabled' => 1,
-            ]);
-        $this->add_submission($student, $secondassign);
-        $this->submit_for_grading($student, $secondassign);
-        $this->mark_submission($teacher, $secondassign, $student, 50.0);
-
-        // Past assignments should not show up.
-        $pastassign = $this->create_instance($course, [
-                'name' => 'Past Assignment',
-                'duedate' => time() - DAYSECS - 1,
-                'cutoffdate' => time() - DAYSECS,
-                'nosubmissions' => 0,
-                'assignsubmission_onlinetext_enabled' => 1,
-            ]);
-
-        // Open assignments should show up only if relevant.
-        $openassign = $this->create_instance($course, [
-                'name' => 'Open Assignment',
-                'duedate' => time(),
-                'cutoffdate' => time() + DAYSECS,
-                'nosubmissions' => 0,
-                'assignsubmission_onlinetext_enabled' => 1,
-            ]);
-        $pastsubmission = $pastassign->get_user_submission($student->id, true);
-        $opensubmission = $openassign->get_user_submission($student->id, true);
-
-        // Check the overview as the different users.
-        // For students , open assignments should show only when there are no valid submissions.
-        $this->setUser($student);
-        $overview = array();
-        $courses = $DB->get_records('course', array('id' => $course->id));
-        assign_print_overview($courses, $overview);
-        $this->assertDebuggingCalledCount(3);
-        $this->assertEquals(1, count($overview));
-        $this->assertRegExp('/.*Open Assignment.*/', $overview[$course->id]['assign']); // No valid submission.
-        $this->assertNotRegExp('/.*First Assignment.*/', $overview[$course->id]['assign']); // Has valid submission.
-
-        // And now submit the submission.
-        $opensubmission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-        $openassign->testable_update_submission($opensubmission, $student->id, true, false);
-
-        $overview = array();
-        assign_print_overview($courses, $overview);
-        $this->assertDebuggingCalledCount(3);
-        $this->assertEquals(0, count($overview));
-
-        $this->setUser($teacher);
-        $overview = array();
-        assign_print_overview($courses, $overview);
-        $this->assertDebuggingCalledCount(3);
-        $this->assertEquals(1, count($overview));
-        // Submissions without a grade.
-        $this->assertRegExp('/.*Open Assignment.*/', $overview[$course->id]['assign']);
-        $this->assertNotRegExp('/.*Assignment with submissions.*/', $overview[$course->id]['assign']);
-
-        $this->setUser($teacher);
-        $overview = array();
-        assign_print_overview($courses, $overview);
-        $this->assertDebuggingCalledCount(3);
-        $this->assertEquals(1, count($overview));
-        // Submissions without a grade.
-        $this->assertRegExp('/.*Open Assignment.*/', $overview[$course->id]['assign']);
-        $this->assertNotRegExp('/.*Assignment with submissions.*/', $overview[$course->id]['assign']);
-
-        // Let us grade a submission.
-        $this->setUser($teacher);
-        $data = new stdClass();
-        $data->grade = '50.0';
-        $openassign->testable_apply_grade_to_user($data, $student->id, 0);
-
-        // The assign_print_overview expects the grade date to be after the submission date.
-        $graderecord = $DB->get_record('assign_grades', array('assignment' => $openassign->get_instance()->id,
-            'userid' => $student->id, 'attemptnumber' => 0));
-        $graderecord->timemodified += 1;
-        $DB->update_record('assign_grades', $graderecord);
-
-        $overview = array();
-        assign_print_overview($courses, $overview);
-        // Now assignment 4 should not show up.
-        $this->assertDebuggingCalledCount(3);
-        $this->assertEmpty($overview);
-
-        $this->setUser($teacher);
-        $overview = array();
-        assign_print_overview($courses, $overview);
-        $this->assertDebuggingCalledCount(3);
-        // Now assignment 4 should not show up.
-        $this->assertEmpty($overview);
-    }
-
-    /**
-     * Test that assign_print_overview does not return any assignments which are Open Offline.
-     */
-    public function test_assign_print_overview_open_offline() {
-        $this->resetAfterTest();
-        $course = $this->getDataGenerator()->create_course();
-        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
-
-        $this->setAdminUser();
-        $openassign = $this->create_instance($course, [
-                'duedate' => time() + DAYSECS,
-                'cutoffdate' => time() + (DAYSECS * 2),
-            ]);
-
-        $this->setUser($student);
-        $overview = [];
-        assign_print_overview([$course], $overview);
-
-        $this->assertDebuggingCalledCount(1);
-        $this->assertEquals(0, count($overview));
-    }
-
     /**
      * Test that assign_print_recent_activity shows ungraded submitted assignments.
      */
@@ -797,6 +664,71 @@ class mod_assign_lib_testcase extends advanced_testcase {
         // Confirm there was no event to action.
         $factory = new \core_calendar\action_factory();
         $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory, $student->id);
+        $this->assertNull($actionevent);
+    }
+
+    public function test_assign_core_calendar_provide_event_action_already_completed() {
+        $this->resetAfterTest();
+        set_config('enablecompletion', 1);
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $assign = $this->create_instance($course,
+         ['completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS]);
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('assign', $assign->get_instance()->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course, $assign,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
+    public function test_assign_core_calendar_provide_event_action_already_completed_for_user() {
+        $this->resetAfterTest();
+        set_config('enablecompletion', 1);
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $assign = $this->create_instance($course,
+         ['completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS]);
+
+        // Enrol a student in the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('assign', $assign->get_instance()->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course, $assign,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed for the student.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm, $student->id);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Ensure result was null.
         $this->assertNull($actionevent);
     }
 

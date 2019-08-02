@@ -166,6 +166,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
                       'questionsperpage' => 0,
                       'sumgrades' => 1,
                       'completion' => COMPLETION_TRACKING_AUTOMATIC,
+                      'completionusegrade' => 1,
                       'completionpass' => 1);
         $quiz = $quizgenerator->create_instance($data);
         $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
@@ -845,6 +846,71 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $this->assertNull(mod_quiz_core_calendar_provide_event_action($event, $factory, $student->id));
     }
 
+    public function test_quiz_core_calendar_provide_event_action_already_completed() {
+        $this->resetAfterTest();
+        set_config('enablecompletion', 1);
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id),
+            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $quiz->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_quiz_core_calendar_provide_event_action($event, $factory);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
+    public function test_quiz_core_calendar_provide_event_action_already_completed_for_user() {
+        $this->resetAfterTest();
+        set_config('enablecompletion', 1);
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id),
+            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+
+        // Enrol a student in the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $quiz->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed for the student.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm, $student->id);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_quiz_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
     /**
      * Creates an action event.
      *
@@ -880,14 +946,14 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $quiz1 = $this->getDataGenerator()->create_module('quiz', [
             'course' => $course->id,
             'completion' => 2,
+            'completionusegrade' => 1,
             'completionattemptsexhausted' => 1,
             'completionpass' => 1
         ]);
         $quiz2 = $this->getDataGenerator()->create_module('quiz', [
             'course' => $course->id,
             'completion' => 2,
-            'completionattemptsexhausted' => 0,
-            'completionpass' => 0
+            'completionusegrade' => 0
         ]);
         $cm1 = cm_info::create(get_coursemodule_from_instance('quiz', $quiz1->id));
         $cm2 = cm_info::create(get_coursemodule_from_instance('quiz', $quiz2->id));

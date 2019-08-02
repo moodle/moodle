@@ -2412,7 +2412,7 @@ function message_page_type_list() {
  */
 function message_can_post_message() {
     throw new coding_exception('message_can_post_message() can not be used anymore. Please use ' .
-        '\core_message\api::can_post_message() instead.');
+        '\core_message\api::can_send_message() instead.');
 }
 
 /**
@@ -2527,96 +2527,32 @@ function calendar_preferences_button() {
 }
 
 /**
- * Return the name of the weekday
- *
  * @deprecated since 3.3
- * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
- * @param string $englishname
- * @return string of the weekeday
  */
-function calendar_wday_name($englishname) {
-    debugging(__FUNCTION__ . '() is deprecated and no longer used in core.', DEBUG_DEVELOPER);
-    return get_string(strtolower($englishname), 'calendar');
+function calendar_wday_name() {
+    throw new coding_exception('Function calendar_wday_name() is removed and no longer used in core.');
 }
 
 /**
- * Get the upcoming event block.
- *
  * @deprecated since 3.3
- * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
- * @param array $events list of events
- * @param moodle_url|string $linkhref link to event referer
- * @param boolean $showcourselink whether links to courses should be shown
- * @return string|null $content html block content
  */
-function calendar_get_block_upcoming($events, $linkhref = null, $showcourselink = false) {
-    global $CFG;
-
-    debugging(
-            __FUNCTION__ . '() has been deprecated. ' .
-            'Please see block_calendar_upcoming::get_content() for the correct API usage.',
-            DEBUG_DEVELOPER
-        );
-
-    require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
-    require_once($CFG->dirroot . '/blocks/calendar_upcoming/block_calendar_upcoming.php');
-    return block_calendar_upcoming::get_upcoming_content($events, $linkhref, $showcourselink);
+function calendar_get_block_upcoming() {
+    throw new coding_exception('Function calendar_get_block_upcoming() is removed,' .
+        'Please see block_calendar_upcoming::get_content() for the correct API usage.');
 }
 
 /**
- * Display month selector options.
- *
  * @deprecated since 3.3
- * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
- * @param string $name for the select element
- * @param string|array $selected options for select elements
  */
-function calendar_print_month_selector($name, $selected) {
-    debugging(__FUNCTION__ . '() is deprecated and no longer used in core.', DEBUG_DEVELOPER);
-    $months = array();
-    for ($i = 1; $i <= 12; $i++) {
-        $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
-    }
-    echo html_writer::label(get_string('months'), 'menu'. $name, false, array('class' => 'accesshide'));
-    echo html_writer::select($months, $name, $selected, false);
+function calendar_print_month_selector() {
+    throw new coding_exception('Function calendar_print_month_selector() is removed and can no longer used in core.');
 }
 
 /**
- * Update calendar subscriptions.
- *
  * @deprecated since 3.3
- * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
- * @return bool
  */
 function calendar_cron() {
-    debugging(__FUNCTION__ . '() is deprecated and should not be used. Please use the core\task\calendar_cron_task instead.',
-        DEBUG_DEVELOPER);
-
-    global $CFG, $DB;
-
-    require_once($CFG->dirroot . '/calendar/lib.php');
-    // In order to execute this we need bennu.
-    require_once($CFG->libdir.'/bennu/bennu.inc.php');
-
-    mtrace('Updating calendar subscriptions:');
-    cron_trace_time_and_memory();
-
-    $time = time();
-    $subscriptions = $DB->get_records_sql('SELECT * FROM {event_subscriptions} WHERE pollinterval > 0
-      AND lastupdated + pollinterval < ?', array($time));
-    foreach ($subscriptions as $sub) {
-        mtrace("Updating calendar subscription {$sub->name} in course {$sub->courseid}");
-        try {
-            $log = calendar_update_subscription_events($sub->id);
-            mtrace(trim(strip_tags($log)));
-        } catch (moodle_exception $ex) {
-            mtrace('Error updating calendar subscription: ' . $ex->getMessage());
-        }
-    }
-
-    mtrace('Finished updating calendar subscriptions.');
-
-    return true;
+    throw new coding_exception('Function calendar_cron() is removed. Please use the core\task\calendar_cron_task instead.');
 }
 
 /**
@@ -2641,211 +2577,46 @@ function dedupe_user_access() {
 }
 
 /**
- * Previous internal API, it was not supposed to be used anywhere.
- * Return a nested array showing role assignments
- * and all relevant role capabilities for the user.
- *
- * [ra]   => [/path][roleid]=roleid
- * [rdef] => ["$contextpath:$roleid"][capability]=permission
- *
- * @access private
  * @deprecated since Moodle 3.4. MDL-49398.
- * @param int $userid - the id of the user
- * @return array access info array
  */
-function get_user_access_sitewide($userid) {
-    debugging('get_user_access_sitewide() is deprecated. Do not use private functions or data structures.', DEBUG_DEVELOPER);
-
-    $accessdata = get_user_accessdata($userid);
-    $accessdata['rdef'] = array();
-    $roles = array();
-
-    foreach ($accessdata['ra'] as $path => $pathroles) {
-        $roles = array_merge($pathroles, $roles);
-    }
-
-    $rdefs = get_role_definitions($roles);
-
-    foreach ($rdefs as $roleid => $rdef) {
-        foreach ($rdef as $path => $caps) {
-            $accessdata['rdef']["$path:$roleid"] = $caps;
-        }
-    }
-
-    return $accessdata;
+function get_user_access_sitewide() {
+    throw new coding_exception('get_user_access_sitewide() is removed. Do not use private functions or data structures.');
 }
 
 /**
- * Generates the HTML for a miniature calendar.
- *
- * @param array $courses list of course to list events from
- * @param array $groups list of group
- * @param array $users user's info
- * @param int|bool $calmonth calendar month in numeric, default is set to false
- * @param int|bool $calyear calendar month in numeric, default is set to false
- * @param string|bool $placement the place/page the calendar is set to appear - passed on the the controls function
- * @param int|bool $courseid id of the course the calendar is displayed on - passed on the the controls function
- * @param int $time the unixtimestamp representing the date we want to view, this is used instead of $calmonth
- *     and $calyear to support multiple calendars
- * @return string $content return html table for mini calendar
  * @deprecated since Moodle 3.4. MDL-59333
  */
-function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyear = false, $placement = false,
-                           $courseid = false, $time = 0) {
-    global $PAGE;
-
-    debugging('calendar_get_mini() has been deprecated. Please update your code to use calendar_get_view.',
-        DEBUG_DEVELOPER);
-
-    if (!empty($calmonth) && !empty($calyear)) {
-        // Do this check for backwards compatibility.
-        // The core should be passing a timestamp rather than month and year.
-        // If a month and year are passed they will be in Gregorian.
-        // Ensure it is a valid date, else we will just set it to the current timestamp.
-        if (checkdate($calmonth, 1, $calyear)) {
-            $time = make_timestamp($calyear, $calmonth, 1);
-        } else {
-            $time = time();
-        }
-    } else if (empty($time)) {
-        // Get the current date in the calendar type being used.
-        $time = time();
-    }
-
-    if ($courseid == SITEID) {
-        $course = get_site();
-    } else {
-        $course = get_course($courseid);
-    }
-    $calendar = new calendar_information(0, 0, 0, $time);
-    $calendar->prepare_for_view($course, $courses);
-
-    $renderer = $PAGE->get_renderer('core_calendar');
-    list($data, $template) = calendar_get_view($calendar, 'mini');
-    return $renderer->render_from_template($template, $data);
+function calendar_get_mini() {
+    throw new coding_exception('calendar_get_mini() has been removed. Please update your code to use calendar_get_view.');
 }
 
 /**
- * Gets the calendar upcoming event.
- *
- * @param array $courses array of courses
- * @param array|int|bool $groups array of groups, group id or boolean for all/no group events
- * @param array|int|bool $users array of users, user id or boolean for all/no user events
- * @param int $daysinfuture number of days in the future we 'll look
- * @param int $maxevents maximum number of events
- * @param int $fromtime start time
- * @return array $output array of upcoming events
  * @deprecated since Moodle 3.4. MDL-59333
  */
-function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
-    debugging(
-            'calendar_get_upcoming() has been deprecated. ' .
-            'Please see block_calendar_upcoming::get_content() for the correct API usage.',
-            DEBUG_DEVELOPER
-        );
-
-    global $COURSE;
-
-    $display = new \stdClass;
-    $display->range = $daysinfuture; // How many days in the future we 'll look.
-    $display->maxevents = $maxevents;
-
-    $output = array();
-
-    $processed = 0;
-    $now = time(); // We 'll need this later.
-    $usermidnighttoday = usergetmidnight($now);
-
-    if ($fromtime) {
-        $display->tstart = $fromtime;
-    } else {
-        $display->tstart = $usermidnighttoday;
-    }
-
-    // This works correctly with respect to the user's DST, but it is accurate
-    // only because $fromtime is always the exact midnight of some day!
-    $display->tend = usergetmidnight($display->tstart + DAYSECS * $display->range + 3 * HOURSECS) - 1;
-
-    // Get the events matching our criteria.
-    $events = calendar_get_legacy_events($display->tstart, $display->tend, $users, $groups, $courses);
-
-    // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
-    // possibly removing SITEID from $courses, there is only one course left, then clicking on a day in the month
-    // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
-    // arguments to this function.
-    $hrefparams = array();
-    if (!empty($courses)) {
-        $courses = array_diff($courses, array(SITEID));
-        if (count($courses) == 1) {
-            $hrefparams['course'] = reset($courses);
-        }
-    }
-
-    if ($events !== false) {
-        foreach ($events as $event) {
-            if (!empty($event->modulename)) {
-                $instances = get_fast_modinfo($event->courseid)->get_instances_of($event->modulename);
-                if (empty($instances[$event->instance]->uservisible)) {
-                    continue;
-                }
-            }
-
-            if ($processed >= $display->maxevents) {
-                break;
-            }
-
-            $event->time = calendar_format_event_time($event, $now, $hrefparams);
-            $output[] = $event;
-            $processed++;
-        }
-    }
-
-    return $output;
+function calendar_get_upcoming() {
+    throw new coding_exception('calendar_get_upcoming() has been removed. ' .
+            'Please see block_calendar_upcoming::get_content() for the correct API usage.');
 }
 
 /**
- * Creates a record in the role_allow_override table
- *
- * @param int $sroleid source roleid
- * @param int $troleid target roleid
- * @return void
  * @deprecated since Moodle 3.4. MDL-50666
  */
-function allow_override($sroleid, $troleid) {
-    debugging('allow_override() has been deprecated. Please update your code to use core_role_set_override_allowed.',
-            DEBUG_DEVELOPER);
-
-    core_role_set_override_allowed($sroleid, $troleid);
+function allow_override() {
+    throw new coding_exception('allow_override() has been removed. Please update your code to use core_role_set_override_allowed.');
 }
 
 /**
- * Creates a record in the role_allow_assign table
- *
- * @param int $fromroleid source roleid
- * @param int $targetroleid target roleid
- * @return void
  * @deprecated since Moodle 3.4. MDL-50666
  */
-function allow_assign($fromroleid, $targetroleid) {
-    debugging('allow_assign() has been deprecated. Please update your code to use core_role_set_assign_allowed.',
-            DEBUG_DEVELOPER);
-
-    core_role_set_assign_allowed($fromroleid, $targetroleid);
+function allow_assign() {
+    throw new coding_exception('allow_assign() has been removed. Please update your code to use core_role_set_assign_allowed.');
 }
 
 /**
- * Creates a record in the role_allow_switch table
- *
- * @param int $fromroleid source roleid
- * @param int $targetroleid target roleid
- * @return void
  * @deprecated since Moodle 3.4. MDL-50666
  */
-function allow_switch($fromroleid, $targetroleid) {
-    debugging('allow_switch() has been deprecated. Please update your code to use core_role_set_switch_allowed.',
-            DEBUG_DEVELOPER);
-
-    core_role_set_switch_allowed($fromroleid, $targetroleid);
+function allow_switch() {
+    throw new coding_exception('allow_switch() has been removed. Please update your code to use core_role_set_switch_allowed.');
 }
 
 /**

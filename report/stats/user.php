@@ -124,14 +124,35 @@ $time = array_pop($timekeys);
 
 $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id,STATS_MODE_DETAILED);
 $params = $param->params;
-
 $param->table = 'user_'.$param->table;
 
-$sql = 'SELECT id, timeend,'.$param->fields.' FROM {stats_'.$param->table.'} WHERE '
-.(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
-    .' userid = '.$user->id.' AND timeend >= '.$param->timeafter .$param->extras
-    .' ORDER BY timeend DESC';
-$stats = $DB->get_records_sql($sql, $params); //TODO: improve these params!!
+// Build the conditions and parameters.
+$wheres = [
+    "userid = :userid",
+    "timeend >= :timeend",
+    "stattype = :stattype",
+];
+$params['userid'] = $user->id;
+$params['timeend'] = $param->timeafter;
+$params['stattype'] = $param->stattype;
+// Add condition for course ID when specified.
+if ($course->id != SITEID) {
+    $wheres[] = "courseid = :courseid";
+    $params['courseid'] = $course->id;
+}
+// Combine the conditions.
+$wheresql = implode(" AND ", $wheres);
+
+// Build the query.
+$sql = "
+    SELECT {$param->fields}
+      FROM {stats_{$param->table}}
+     WHERE {$wheresql}
+    {$param->extras}
+  ORDER BY timeend DESC";
+
+// Fetch the stats data.
+$stats = $DB->get_records_sql($sql, $params);
 
 if (empty($stats)) {
     print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');

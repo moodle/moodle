@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class equal_parts extends base {
+abstract class equal_parts extends base implements before_now {
 
     /**
      * Returns the number of parts the analyser duration should be split in.

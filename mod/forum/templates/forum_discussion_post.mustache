@@ -58,6 +58,7 @@
                                     src="{{{.}}}"
                                     alt="{{#str}} pictureof, core, {{author.fullname}} {{/str}}"
                                     aria-hidden="true"
+                                    title="{{#str}} pictureof, core, {{author.fullname}} {{/str}}"
                                 >
                             {{/urls.profileimage}}
                         </div>
@@ -67,7 +68,11 @@
                     {{#parentauthorname}}
                         <span class="sr-only">{{#str}} inreplyto, mod_forum, {{.}} {{/str}}</span>
                     {{/parentauthorname}}
-                    <h3 class="h6 font-weight-bold mb-0" data-region-content="forum-post-core-subject">{{$subject}}{{{subject}}}{{/subject}}</h3>
+                    <h3 {{!
+                        }}class="h6 font-weight-bold mb-0" {{!
+                        }}data-region-content="forum-post-core-subject" {{!
+                        }}data-reply-subject="{{replysubject}}" {{!
+                        }}>{{$subject}}{{{subject}}}{{/subject}}</h3>
                     {{^isdeleted}}
                         <address tabindex="-1">
                             {{#html.authorsubheading}}{{{.}}}{{/html.authorsubheading}}
@@ -94,14 +99,28 @@
                     {{#author}}
                         <div class="mr-2 author-groups-container" style="width: 45px; flex-shrink: 0">
                             {{#groups}}
-                                {{#urls.image}}
-                                    <img
-                                        class="rounded-circle w-100"
-                                        src="{{{.}}}"
-                                        alt="{{#str}} pictureof, core, {{name}} {{/str}}"
-                                        aria-hidden="true"
-                                    >
-                                {{/urls.image}}
+                                {{#urls.group}}
+                                    {{#urls.image}}
+                                        <a href="{{urls.group}}" role="button" aria-label='{{#str}} memberofgroup, group, {{name}}{{/str}}'>
+                                            <img
+                                                 class="rounded-circle w-100"
+                                                 src="{{{.}}}"
+                                                 alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                 aria-hidden="true"
+                                                 title="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                            >
+                                        </a>
+                                    {{/urls.image}}
+                                {{/urls.group}}
+                                {{^urls.group}}
+                                    {{#urls.image}}
+                                        <img class="rounded-circle w-100"
+                                            src="{{{.}}}"
+                                            alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                            title="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                        >
+                                    {{/urls.image}}
+                                {{/urls.group}}
                             {{/groups}}
                         </div>
                     {{/author}}
@@ -257,6 +276,21 @@
                                                         {{#str}} reply, mod_forum {{/str}}
                                                     </a>
                                                 {{/replyoutput}}
+                                            {{/reply}}
+                                            {{^reply}}
+                                                {{#selfenrol}}
+                                                    {{$replyoutput}}
+                                                        <a
+                                                                href="{{{urls.reply}}}"
+                                                                class="btn btn-link"
+                                                                data-post-id="{{id}}"
+                                                                data-can-reply-privately="{{canreplyprivately}}"
+                                                                title="{{#str}} reply, mod_forum {{/str}}"
+                                                        >
+                                                            {{#str}} reply, mod_forum {{/str}}
+                                                        </a>
+                                                    {{/replyoutput}}
+                                                {{/selfenrol}}
                                             {{/reply}}
                                             {{#export}}
                                                 <a

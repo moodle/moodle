@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot. '/course/format/lib.php');
+require_once($CFG->dirroot. '/course/lib.php');
 
 /**
  * Main class for the Weeks course format
@@ -363,10 +364,12 @@ class format_weeks extends format_base {
      * @return stdClass property start for startdate, property end for enddate
      */
     public function get_section_dates($section, $startdate = false) {
+        global $USER;
 
         if ($startdate === false) {
             $course = $this->get_course();
-            $startdate = $course->startdate;
+            $userdates = course_get_course_dates_for_user_id($course, $USER->id);
+            $startdate = $userdates['start'];
         }
 
         if (is_object($section)) {

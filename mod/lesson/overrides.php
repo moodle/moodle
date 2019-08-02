@@ -35,11 +35,18 @@ $mode = optional_param('mode', '', PARAM_ALPHA); // One of 'user' or 'group', de
 list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'lesson');
 $lesson = $DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST);
 
-// Get the course groups.
-$groups = groups_get_all_groups($cm->course);
-if ($groups === false) {
-    $groups = array();
-}
+require_login($course, false, $cm);
+
+$context = context_module::instance($cm->id);
+
+// Check the user has the required capabilities to list overrides.
+require_capability('mod/lesson:manageoverrides', $context);
+
+$lessongroupmode = groups_get_activity_groupmode($cm);
+$accessallgroups = ($lessongroupmode == NOGROUPS) || has_capability('moodle/site:accessallgroups', $context);
+
+// Get the course groups that the current user can access.
+$groups = $accessallgroups ? groups_get_all_groups($cm->course) : groups_get_activity_allowed_groups($cm);
 
 // Default mode is "group", unless there are no groups.
 if ($mode != "user" and $mode != "group") {
@@ -55,13 +62,6 @@ $url = new moodle_url('/mod/lesson/overrides.php', array('cmid' => $cm->id, 'mod
 
 $PAGE->set_url($url);
 
-require_login($course, false, $cm);
-
-$context = context_module::instance($cm->id);
-
-// Check the user has the required capabilities to list overrides.
-require_capability('mod/lesson:manageoverrides', $context);
-
 // Display a list of overrides.
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('overrides', 'lesson'));
@@ -71,35 +71,62 @@ echo $OUTPUT->heading(format_string($lesson->name, true, array('context' => $con
 
 // Delete orphaned group overrides.
 $sql = 'SELECT o.id
-            FROM {lesson_overrides} o LEFT JOIN {groups} g
-            ON o.groupid = g.id
-            WHERE o.groupid IS NOT NULL
-              AND g.id IS NULL
-              AND o.lessonid = ?';
+          FROM {lesson_overrides} o
+     LEFT JOIN {groups} g ON o.groupid = g.id
+         WHERE o.groupid IS NOT NULL
+               AND g.id IS NULL
+               AND o.lessonid = ?';
 $params = array($lesson->id);
 $orphaned = $DB->get_records_sql($sql, $params);
 if (!empty($orphaned)) {
     $DB->delete_records_list('lesson_overrides', 'id', array_keys($orphaned));
 }
 
+$overrides = [];
+
 // Fetch all overrides.
 if ($groupmode) {
     $colname = get_string('group');
-    $sql = 'SELECT o.*, g.name
-                FROM {lesson_overrides} o
-                JOIN {groups} g ON o.groupid = g.id
-                WHERE o.lessonid = :lessonid
-                ORDER BY g.name';
-    $params = array('lessonid' => $lesson->id);
+    // To filter the result by the list of groups that the current user has access to.
+    if ($groups) {
+        $params = ['lessonid' => $lesson->id];
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        $params += $inparams;
+
+        $sql = "SELECT o.*, g.name
+                  FROM {lesson_overrides} o
+                  JOIN {groups} g ON o.groupid = g.id
+                 WHERE o.lessonid = :lessonid AND g.id $insql
+              ORDER BY g.name";
+
+        $overrides = $DB->get_records_sql($sql, $params);
+    }
 } else {
     $colname = get_string('user');
     list($sort, $params) = users_order_by_sql('u');
-    $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
-            FROM {lesson_overrides} o
-            JOIN {user} u ON o.userid = u.id
-            WHERE o.lessonid = :lessonid
-            ORDER BY ' . $sort;
     $params['lessonid'] = $lesson->id;
+
+    if ($accessallgroups) {
+        $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
+                  FROM {lesson_overrides} o
+                  JOIN {user} u ON o.userid = u.id
+                 WHERE o.lessonid = :lessonid
+              ORDER BY ' . $sort;
+
+        $overrides = $DB->get_records_sql($sql, $params);
+    } else if ($groups) {
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        $params += $inparams;
+
+        $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
+                  FROM {lesson_overrides} o
+                  JOIN {user} u ON o.userid = u.id
+                  JOIN {groups_members} gm ON u.id = gm.userid
+                 WHERE o.lessonid = :lessonid AND gm.groupid ' . $insql . '
+              ORDER BY ' . $sort;
+
+        $overrides = $DB->get_records_sql($sql, $params);
+    }
 }
 
 $overrides = $DB->get_records_sql($sql, $params);
@@ -272,13 +299,31 @@ if ($groupmode) {
 } else {
     $users = array();
     // See if there are any users in the lesson.
-    $users = get_enrolled_users($context);
+    if ($accessallgroups) {
+        $users = get_enrolled_users($context, '', 0, 'u.id');
+        $nousermessage = get_string('usersnone', 'lesson');
+    } else if ($groups) {
+        $enrolledjoin = get_enrolled_join($context, 'u.id');
+        list($ingroupsql, $ingroupparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        $params = $enrolledjoin->params + $ingroupparams;
+        $sql = "SELECT u.id
+                  FROM {user} u
+                  JOIN {groups_members} gm ON gm.userid = u.id
+                       {$enrolledjoin->joins}
+                 WHERE gm.groupid $ingroupsql
+                       AND {$enrolledjoin->wheres}
+              ORDER BY $sort";
+        $users = $DB->get_records_sql($sql, $params);
+        $nousermessage = get_string('usersnone', 'lesson');
+    } else {
+        $nousermessage = get_string('groupsnone', 'lesson');
+    }
     $info = new \core_availability\info_module($cm);
     $users = $info->filter_user_list($users);
 
     if (empty($users)) {
         // There are no users.
-        echo $OUTPUT->notification(get_string('usersnone', 'lesson'), 'error');
+        echo $OUTPUT->notification($nousermessage, 'error');
         $options['disabled'] = true;
     }
     echo $OUTPUT->single_button($overrideediturl->out(true,

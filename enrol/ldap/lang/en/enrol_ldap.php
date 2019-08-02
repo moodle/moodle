@@ -29,7 +29,7 @@ $string['autocreate'] = '<p>Courses can be created automatically if there are en
 $string['autocreate_key'] = 'Auto create';
 $string['autocreation_settings'] = 'Automatic course creation settings';
 $string['autoupdate_settings'] = 'Automatic course update settings';
-$string['autoupdate_settings_desc'] = '<p>Select fields to update when synchronisation script is running (enrol/ldap/cli/sync.php).</p><p>When at least one field is selected an update will occur.</p>';
+$string['autoupdate_settings_desc'] = '<p>Select fields to update when the \'Synchronise LDAP enrolments\' scheduled task is running.</p><p>When at least one field is selected an update will occur.</p>';
 $string['bind_dn'] = 'If you want to use a bind user to search users, specify it here. Someting like \'cn=ldapuser,ou=public,o=org\'';
 $string['bind_dn_key'] = 'Bind user distinguished name';
 $string['bind_pw'] = 'Password for the bind user';

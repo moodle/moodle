@@ -4,8 +4,6 @@ namespace Box\Spout\Reader;
 
 /**
  * Interface ReaderInterface
- *
- * @package Box\Spout\Reader
  */
 interface ReaderInterface
 {
@@ -14,16 +12,16 @@ interface ReaderInterface
      * that the file exists and is readable.
      *
      * @param  string $filePath Path of the file to be read
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException
+     * @return void
      */
     public function open($filePath);
 
     /**
      * Returns an iterator to iterate over sheets.
      *
-     * @return \Iterator To iterate over sheets
      * @throws \Box\Spout\Reader\Exception\ReaderNotOpenedException If called before opening the reader
+     * @return \Iterator To iterate over sheets
      */
     public function getSheetIterator();
 

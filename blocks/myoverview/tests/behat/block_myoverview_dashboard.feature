@@ -136,7 +136,7 @@ Feature: The my overview block allows users to easily access their courses
     And I click on "Card" "link" in the "Course overview" "block"
     And I reload the page
     Then I should see "Card" in the "Course overview" "block"
-    And "[data-display='cards']" "css_element" in the "Course overview" "block" should be visible
+    And "[data-display='card']" "css_element" in the "Course overview" "block" should be visible
 
   Scenario: Summary display  persistence
     Given I log in as "student1"

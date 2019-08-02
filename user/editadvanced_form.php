@@ -99,6 +99,7 @@ class user_editadvanced_form extends moodleform {
 
         $purpose = user_edit_map_field_purpose($userid, 'username');
         $mform->addElement('text', 'username', get_string('username'), 'size="20"' . $purpose);
+        $mform->addRule('username', get_string('required'), 'required', null, 'client');
         $mform->addHelpButton('username', 'username', 'auth');
         $mform->setType('username', PARAM_RAW);
 
@@ -265,7 +266,7 @@ class user_editadvanced_form extends moodleform {
         } else {
             if (!empty($usernew->newpassword)) {
                 $errmsg = ''; // Prevent eclipse warning.
-                if (!check_password_policy($usernew->newpassword, $errmsg)) {
+                if (!check_password_policy($usernew->newpassword, $errmsg, $usernew)) {
                     $err['newpassword'] = $errmsg;
                 }
             } else if (!$user) {

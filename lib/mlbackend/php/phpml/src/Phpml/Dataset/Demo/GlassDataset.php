@@ -22,7 +22,7 @@ class GlassDataset extends CsvDataset
 {
     public function __construct()
     {
-        $filepath = __DIR__.'/../../../../data/glass.csv';
+        $filepath = __DIR__.'/../../../data/glass.csv';
         parent::__construct($filepath, 9, true);
     }
 }

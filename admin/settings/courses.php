@@ -206,6 +206,11 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_role_assignments', new lang_string('generalroleassignments','backup'), new lang_string('configgeneralroleassignments','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_activities', new lang_string('generalactivities','backup'), new lang_string('configgeneralactivities','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_blocks', new lang_string('generalblocks','backup'), new lang_string('configgeneralblocks','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock(
+            'backup/backup_general_files',
+            new lang_string('generalfiles', 'backup'),
+            new lang_string('configgeneralfiles', 'backup'),
+            array('value' => '1', 'locked' => 0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_filters', new lang_string('generalfilters','backup'), new lang_string('configgeneralfilters','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_comments', new lang_string('generalcomments','backup'), new lang_string('configgeneralcomments','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_badges', new lang_string('generalbadges','backup'), new lang_string('configgeneralbadges','backup'), array('value'=>1,'locked'=>0)));
@@ -341,6 +346,10 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_role_assignments', new lang_string('generalroleassignments','backup'), new lang_string('configgeneralroleassignments','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_activities', new lang_string('generalactivities','backup'), new lang_string('configgeneralactivities','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_blocks', new lang_string('generalblocks','backup'), new lang_string('configgeneralblocks','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox(
+            'backup/backup_auto_files',
+            new lang_string('generalfiles', 'backup'),
+            new lang_string('configgeneralfiles', 'backup'), '1'));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_filters', new lang_string('generalfilters','backup'), new lang_string('configgeneralfilters','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_comments', new lang_string('generalcomments','backup'), new lang_string('configgeneralcomments','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_badges', new lang_string('generalbadges','backup'), new lang_string('configgeneralbadges','backup'), 1));
@@ -459,27 +468,31 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $ADMIN->add('backups', $temp);
 
     // Create a page for asynchronous backup and restore configuration and defaults.
-    if (!empty($CFG->enableasyncbackup)) {  // Only add settings if async mode is enable at site level.
-        $temp = new admin_settingpage('asyncgeneralsettings', new lang_string('asyncgeneralsettings', 'backup'));
+    $temp = new admin_settingpage('asyncgeneralsettings', new lang_string('asyncgeneralsettings', 'backup'));
 
-        $temp->add(new admin_setting_configcheckbox(
-                'backup/backup_async_message_users',
-                new lang_string('asyncemailenable', 'backup'),
-                new lang_string('asyncemailenabledetail', 'backup'), 0));
+    $temp->add(new admin_setting_configcheckbox('enableasyncbackup', new lang_string('enableasyncbackup', 'backup'),
+            new lang_string('enableasyncbackup_help', 'backup'), 0, 1, 0));
 
-        $temp->add(new admin_setting_configtext(
-                'backup/backup_async_message_subject',
-                new lang_string('asyncmessagesubject', 'backup'),
-                new lang_string('asyncmessagesubjectdetail', 'backup'),
-                new lang_string('asyncmessagesubjectdefault', 'backup')));
+    $temp->add(new admin_setting_configcheckbox(
+            'backup/backup_async_message_users',
+            new lang_string('asyncemailenable', 'backup'),
+            new lang_string('asyncemailenabledetail', 'backup'), 0));
+    $temp->hide_if('backup/backup_async_message_users', 'enableasyncbackup');
 
-        $temp->add(new admin_setting_confightmleditor(
-                'backup/backup_async_message',
-                new lang_string('asyncmessagebody', 'backup'),
-                new lang_string('asyncmessagebodydetail', 'backup'),
-                new lang_string('asyncmessagebodydefault', 'backup')));
+    $temp->add(new admin_setting_configtext(
+            'backup/backup_async_message_subject',
+            new lang_string('asyncmessagesubject', 'backup'),
+            new lang_string('asyncmessagesubjectdetail', 'backup'),
+            new lang_string('asyncmessagesubjectdefault', 'backup')));
+    $temp->hide_if('backup/backup_async_message_subject', 'backup/backup_async_message_users');
 
-        $ADMIN->add('backups', $temp);
-    }
+    $temp->add(new admin_setting_confightmleditor(
+            'backup/backup_async_message',
+            new lang_string('asyncmessagebody', 'backup'),
+            new lang_string('asyncmessagebodydetail', 'backup'),
+            new lang_string('asyncmessagebodydefault', 'backup')));
+    $temp->hide_if('backup/backup_async_message', 'backup/backup_async_message_users');
+
+    $ADMIN->add('backups', $temp);
 
 }

@@ -28,7 +28,7 @@ $string['auth_shib_auth_method_description'] = 'Provide a name for the Shibbolet
 $string['auth_shib_auth_logo'] = 'Authentication method logo';
 $string['auth_shib_auth_logo_description'] = 'Provide a logo for the Shibboleth authentication method that is familiar to your users. This could be the logo of your Shibboleth federation, e.g. <tt>SWITCHaai Login</tt> or <tt>InCommon Login</tt> or similar.';
 $string['auth_shib_contact_administrator'] = 'In case you are not associated with the given organizations and you need access to a course on this server, please contact the <a href="mailto:{$a}">Moodle Administrator</a>.';
-$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href="http://shibboleth.internet2.edu/">Shibboleth</a>.<br />Be sure to read the <a href="../auth/shibboleth/README.txt">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
+$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using Shibboleth. For set-up details, see the <a href="../auth/shibboleth/README.txt">Shibboleth README</a>.';
 $string['auth_shibboleth_errormsg'] = 'Please select the organization you are member of!';
 $string['auth_shibboleth_login'] = 'Shibboleth login';
 $string['auth_shibboleth_login_long'] = 'Login to Moodle via Shibboleth';

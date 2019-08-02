@@ -51,6 +51,18 @@
             </div>
         </div>
     {{/forum.capabilities.create}}
+    {{^forum.capabilities.create}}
+        {{#forum.capabilities.selfenrol}}
+            <div class="p-t-1 p-b-1">
+                <a class="btn btn-primary" href="{{forum.urls.create}}">
+                    {{$discussion_create_text}}
+                        {{#str}}addanewdiscussion, forum{{/str}}
+                    {{/discussion_create_text}}
+                </a>
+            </div>
+        {{/forum.capabilities.selfenrol}}
+    {{/forum.capabilities.create}}
+
 
     {{#state.hasdiscussions}}
         {{$discussion_top_pagination}}
@@ -123,9 +135,7 @@
                             {{/state.sortorder.iscreateddesc}}
                         </th>
                         <th scope="col">&nbsp;</th>
-                        {{#forum.capabilities.subscribe}}
-                            <th scope="col" class="discussionsubscription"></th>
-                        {{/forum.capabilities.subscribe}}
+                        <th scope="col" class="discussionsubscription"></th>
                     </tr>
                 </thead>
                 {{/discussion_list_header}}
@@ -155,6 +165,7 @@
                                                 class="rounded-circle userpicture"
                                                 src="{{urls.profileimage}}"
                                                 alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
+                                                title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
                                             >
                                         </div>
                                         <div class="align-middle p-2">
@@ -164,21 +175,28 @@
                                 {{/firstpostauthor}}
                             </td>
                             {{#forum.state.groupmode}}
-                                <td scope="col" class="group">
+                                <td scope="col" class="group align-middle">
                                     {{#discussion.group}}
                                         {{#urls.picture}}
                                             {{#urls.userlist}}
-                                                <a href="{{{urls.userlist}}}">
-                                                    <img class="border rounded h-auto rounded-circle" src="{{{urls.picture}}}">
+                                                <a href="{{{urls.userlist}}}" role="button" aria-label='{{#str}} memberofgroup, group, {{name}}{{/str}}'>
+                                                    <img alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                         aria-hidden="true"
+                                                         class="border rounded h-auto rounded-circle grouppicture"
+                                                         src="{{{urls.picture}}}"
+                                                         title="{{#str}} pictureof, core, {{name}} {{/str}}">
                                                 </a>
                                             {{/urls.userlist}}
                                             {{^urls.userlist}}
-                                                <img class="border rounded h-auto rounded-circle" src="{{{urls.picture}}}">
+                                                <img alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                     class="border rounded h-auto rounded-circle grouppicture"
+                                                     src="{{{urls.picture}}}"
+                                                     title="{{#str}} pictureof, core, {{name}} {{/str}}">
                                             {{/urls.userlist}}
                                         {{/urls.picture}}
                                         {{^urls.picture}}
                                             {{#urls.userlist}}
-                                                <a href="{{{urls.userlist}}}">{{name}}</a>
+                                                <a href="{{{urls.userlist}}}" aria-label='{{#str}} memberofgroup, group, {{name}}{{/str}}'>{{name}}</a>
                                             {{/urls.userlist}}
                                             {{^urls.userlist}}
                                                 {{name}}
@@ -197,10 +215,10 @@
                                     <td scope="col" class="p-0 text-center align-middle">
                                         {{#unread}}
                                             {{! TODO Rewrite as AJAX}}
-                                            <div class="p-3 w-100 h-100 d-block">
+                                            <span class="p-1 w-100 h-100 d-block unread">
                                                 <a href="{{{discussion.urls.viewfirstunread}}}">{{unread}}</a>
                                                 <a href="{{{discussion.urls.markasread}}}">{{#pix}}t/markasread, core, {{#str}}markalldread, mod_forum{{/str}}{{/pix}}</a>
-                                            </div>
+                                            </span>
                                         {{/unread}}
                                         {{^unread}}
                                             <span class="p-3 w-100 h-100 d-block">
@@ -220,6 +238,7 @@
                                                     class="rounded-circle userpicture"
                                                     src="{{latestpostauthor.urls.profileimage}}"
                                                     alt="{{#str}}pictureof, moodle, {{latestpostauthor.fullname}}{{/str}}"
+                                                    title="{{#str}}pictureof, moodle, {{latestpostauthor.fullname}}{{/str}}"
                                                 >
                                             </a>
                                         </div>
@@ -266,12 +285,16 @@
                                         <div class="pt-1 mt-2  {{^discussion.locked}}hidden{{/discussion.locked}}" data-region="locked-icon">
                                             <span class="btn" >{{#pix}}i/lock, core, {{#str}}locked, forum{{/str}}{{/pix}}</span>
                                         </div>
+                                        {{#forum.capabilities.subscribe}}
                                         <div>
                                             {{> mod_forum/discussion_subscription_toggle}}
                                         </div>
+                                        {{/forum.capabilities.subscribe}}
+                                        {{#hasanyactions}}
                                         <div class="mt-3" data-container='discussion-tools'>
                                             {{> mod_forum/forum_action_menu}}
                                         </div>
+                                        {{/hasanyactions}}
                                     </div>
                                 {{/discussion}}
                             </td>

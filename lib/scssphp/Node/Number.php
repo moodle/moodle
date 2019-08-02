@@ -2,18 +2,18 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2018 Leaf Corcoran
+ * @copyright 2012-2019 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
- * @link http://leafo.github.io/scssphp
+ * @link http://scssphp.github.io/scssphp
  */
 
-namespace Leafo\ScssPhp\Node;
+namespace ScssPhp\ScssPhp\Node;
 
-use Leafo\ScssPhp\Compiler;
-use Leafo\ScssPhp\Node;
-use Leafo\ScssPhp\Type;
+use ScssPhp\ScssPhp\Compiler;
+use ScssPhp\ScssPhp\Node;
+use ScssPhp\ScssPhp\Type;
 
 /**
  * Dimension + optional units
@@ -100,7 +100,7 @@ class Number extends Node implements \ArrayAccess
      *
      * @param array $units
      *
-     * @return \Leafo\ScssPhp\Node\Number
+     * @return \ScssPhp\ScssPhp\Node\Number
      */
     public function coerce($units)
     {
@@ -123,7 +123,7 @@ class Number extends Node implements \ArrayAccess
     /**
      * Normalize number
      *
-     * @return \Leafo\ScssPhp\Node\Number
+     * @return \ScssPhp\ScssPhp\Node\Number
      */
     public function normalize()
     {
@@ -148,10 +148,10 @@ class Number extends Node implements \ArrayAccess
             return $this->sourceLine !== null;
         }
 
-        if ($offset === -1
-            || $offset === 0
-            || $offset === 1
-            || $offset === 2
+        if ($offset === -1 ||
+            $offset === 0 ||
+            $offset === 1 ||
+            $offset === 2
         ) {
             return true;
         }
@@ -259,7 +259,7 @@ class Number extends Node implements \ArrayAccess
     /**
      * Output number
      *
-     * @param \Leafo\ScssPhp\Compiler $compiler
+     * @param \ScssPhp\ScssPhp\Compiler $compiler
      *
      * @return string
      */

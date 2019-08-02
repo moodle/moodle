@@ -487,15 +487,15 @@ function get_message_output_default_preferences() {
 function translate_message_default_setting($plugindefault, $processorname) {
     // Preset translation arrays
     $permittedvalues = array(
-        0x04 => 'disallowed',
-        0x08 => 'permitted',
-        0x0c => 'forced',
+        MESSAGE_DISALLOWED => 'disallowed',
+        MESSAGE_PERMITTED  => 'permitted',
+        MESSAGE_FORCED     => 'forced',
     );
 
     $loggedinstatusvalues = array(
         0x00 => null, // use null if loggedin/loggedoff is not defined
-        0x01 => 'loggedin',
-        0x02 => 'loggedoff',
+        MESSAGE_DEFAULT_LOGGEDIN  => 'loggedin',
+        MESSAGE_DEFAULT_LOGGEDOFF => 'loggedoff',
     );
 
     // define the default setting

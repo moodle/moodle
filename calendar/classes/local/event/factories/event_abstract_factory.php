@@ -138,7 +138,9 @@ abstract class event_abstract_factory implements event_factory_interface {
             $module = new cm_info_proxy($dbrow->modulename, $dbrow->instance, $dbrow->courseid);
         }
 
-        $category = new coursecat_proxy($dbrow->categoryid);
+        if ($dbrow->categoryid) {
+            $category = new coursecat_proxy($dbrow->categoryid);
+        }
 
         $course = new std_proxy($dbrow->courseid, function($id) {
             return calendar_get_course_cached($this->coursecachereference, $id);

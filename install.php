@@ -160,7 +160,6 @@ $CFG->lang                 = $config->lang;
 $CFG->dirroot              = __DIR__;
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - ppl must use the real address when installing
-$CFG->httpswwwroot         = $CFG->wwwroot;
 $CFG->dataroot             = $config->dataroot;
 $CFG->tempdir              = $CFG->dataroot.'/temp';
 $CFG->backuptempdir        = $CFG->tempdir.'/backup';

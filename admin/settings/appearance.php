@@ -76,6 +76,24 @@ preferences,moodle|/user/preferences.php|t/preferences',
 
     $ADMIN->add('appearance', $temp);
 
+    // Course colours section.
+    $temp = new admin_settingpage('coursecolors', new lang_string('coursecolorsettings', 'admin'));
+    $temp->add(new admin_setting_heading('coursecolorheading', '',
+        new lang_string('coursecolorheading_desc', 'admin')));
+
+    $basecolors = ['#81ecec', '#74b9ff', '#a29bfe', '#dfe6e9', '#00b894',
+            '#0984e3', '#b2bec3', '#fdcb6e', '#fd79a8', '#6c5ce7'];
+
+    foreach ($basecolors as $key => $color) {
+        $number = $key + 1;
+        $name = 'core_admin/coursecolor' . $number;
+        $title = get_string('coursecolor', 'admin', $number);
+        $setting = new admin_setting_configcolourpicker($name, $title, '', $color);
+        $temp->add($setting);
+    }
+
+    $ADMIN->add('appearance', $temp);
+
     // Calendar settings.
     $temp = new admin_settingpage('calendar', new lang_string('calendarsettings','admin'));
 

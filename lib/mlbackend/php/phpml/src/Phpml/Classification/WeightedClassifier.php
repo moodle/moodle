@@ -9,14 +9,12 @@ abstract class WeightedClassifier implements Classifier
     /**
      * @var array
      */
-    protected $weights;
+    protected $weights = [];
 
     /**
      * Sets the array including a weight for each sample
-     *
-     * @param array $weights
      */
-    public function setSampleWeights(array $weights)
+    public function setSampleWeights(array $weights): void
     {
         $this->weights = $weights;
     }

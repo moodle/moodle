@@ -80,7 +80,7 @@ abstract class file_system {
      * @param bool $fetchifnotfound Whether to attempt to fetch from the remote path if not found.
      * @return string full path to pool file with file content
      */
-    protected function get_local_path_from_storedfile(stored_file $file, $fetchifnotfound = false) {
+    public function get_local_path_from_storedfile(stored_file $file, $fetchifnotfound = false) {
         return $this->get_local_path_from_hash($file->get_contenthash(), $fetchifnotfound);
     }
 
@@ -94,7 +94,7 @@ abstract class file_system {
      * @param stored_file $file The file to serve.
      * @return string full path to pool file with file content
      */
-    protected function get_remote_path_from_storedfile(stored_file $file) {
+    public function get_remote_path_from_storedfile(stored_file $file) {
         return $this->get_remote_path_from_hash($file->get_contenthash(), false);
     }
 

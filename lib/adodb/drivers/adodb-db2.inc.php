@@ -1,6 +1,6 @@
 <?php
 /**
-  @version   v5.20.9  21-Dec-2016
+  @version   v5.20.14  06-Jan-2019
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
@@ -71,8 +71,6 @@ class ADODB_db2 extends ADOConnection {
 		// returns true or false
 	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
-		global $php_errormsg;
-
 		if (!function_exists('db2_connect')) {
 			ADOConnection::outp("Warning: The old ODBC based DB2 driver has been renamed 'odbc_db2'. This ADOdb driver calls PHP's native db2 extension which is not installed.");
 			return null;
@@ -90,7 +88,6 @@ class ADODB_db2 extends ADOConnection {
 			if (stripos($argDSN,'UID=') && stripos($argDSN,'PWD=')) $this->_connectionID = db2_connect($argDSN,null,null);
 			else $this->_connectionID = db2_connect($argDSN,$argUsername,$argPassword);
 		}
-		if (isset($php_errormsg)) $php_errormsg = '';
 
 		// For db2_connect(), there is an optional 4th arg.  If present, it must be
 		// an array of valid options.  So far, we don't use them.
@@ -105,16 +102,13 @@ class ADODB_db2 extends ADOConnection {
 	// returns true or false
 	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
-		global $php_errormsg;
-
 		if (!function_exists('db2_connect')) return null;
 
 		// This needs to be set before the connect().
 		// Replaces the odbc_binmode() call that was in Execute()
 		ini_set('ibm_db2.binmode', $this->binmode);
 
-		if (isset($php_errormsg)) $php_errormsg = '';
-		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+		$this->_errorMsg = '';
 
 		if ($argDatabasename && empty($argDSN)) {
 
@@ -125,7 +119,6 @@ class ADODB_db2 extends ADOConnection {
 			if (stripos($argDSN,'UID=') && stripos($argDSN,'PWD=')) $this->_connectionID = db2_pconnect($argDSN,null,null);
 			else $this->_connectionID = db2_pconnect($argDSN,$argUsername,$argPassword);
 		}
-		if (isset($php_errormsg)) $php_errormsg = '';
 
 		$this->_errorMsg = @db2_conn_errormsg();
 		if ($this->_connectionID && $this->autoRollback) @db2_rollback($this->_connectionID);
@@ -243,7 +236,8 @@ class ADODB_db2 extends ADOConnection {
 
 	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputArr = false, $secs2cache = 0)
 	{
-		$nrows = (integer) $nrows;
+		$nrows = (int) $nrows;
+		$offset = (int) $offset;
 		if ($offset <= 0) {
 		// could also use " OPTIMIZE FOR $nrows ROWS "
 			if ($nrows >= 0) $sql .=  " FETCH FIRST $nrows ROWS ONLY ";
@@ -627,9 +621,8 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 	/* returns queryID or false */
 	function _query($sql,$inputarr=false)
 	{
-	GLOBAL $php_errormsg;
-		if (isset($php_errormsg)) $php_errormsg = '';
-		$this->_error = '';
+		$last_php_error = $this->resetLastError();
+		$this->_errorMsg = '';
 
 		if ($inputarr) {
 			if (is_array($sql)) {
@@ -638,7 +631,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 				$stmtid = db2_prepare($this->_connectionID,$sql);
 
 				if ($stmtid == false) {
-					$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+					$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
 					return false;
 				}
 			}
@@ -675,15 +668,16 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 			if ($this->_haserrorfunctions) {
 				$this->_errorMsg = '';
 				$this->_errorCode = 0;
-			} else
-				$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+			} else {
+				$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
+			}
 		} else {
 			if ($this->_haserrorfunctions) {
 				$this->_errorMsg = db2_stmt_errormsg();
 				$this->_errorCode = db2_stmt_error();
-			} else
-				$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
-
+			} else {
+				$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
+			}
 		}
 		return $stmtid;
 	}

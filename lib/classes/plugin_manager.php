@@ -511,10 +511,10 @@ class core_plugin_manager {
 
     /**
      * Returns list of plugins that define their subplugins and the information
-     * about them from the db/subplugins.php file.
+     * about them from the db/subplugins.json file.
      *
      * @return array with keys like 'mod_quiz', and values the data from the
-     *      corresponding db/subplugins.php file.
+     *      corresponding db/subplugins.json file.
      */
     public function get_subplugins() {
 
@@ -2233,6 +2233,11 @@ class core_plugin_manager {
      * @return bool
      */
     protected function common_uninstall_check(\core\plugininfo\base $pluginfo) {
+        global $CFG;
+        // Check if uninstall is allowed from the GUI.
+        if (!empty($CFG->uninstallclionly) && (!CLI_SCRIPT)) {
+            return false;
+        }
 
         if (!$pluginfo->is_uninstall_allowed()) {
             // The plugin's plugininfo class declares it should not be uninstalled.

@@ -38,6 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @author    Russell Smith <mr-russ@smith2001.net>
  * @copyright 2016 Russell Smith
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runClassInSeparateProcess
  */
 class core_session_redis_testcase extends advanced_testcase {
 
@@ -267,6 +268,24 @@ class core_session_redis_testcase extends advanced_testcase {
         $this->assertEquals(3, $DB->count_records('sessions'), 'Moodle handles session database, plugin must not change it.');
         $this->assertSessionNoLocks();
         $this->assertEmpty($this->redis->keys($this->keyprefix.'*'), 'There should be no session data left.');
+    }
+
+    public function test_exception_when_connection_attempts_exceeded() {
+        global $CFG;
+
+        $CFG->session_redis_port = 111111;
+        $actual = '';
+
+        $sess = new \core\session\redis();
+        try {
+            $sess->init();
+        } catch (RedisException $e) {
+            $actual = $e->getMessage();
+        }
+
+        $expected = 'Failed to connect (try 5 out of 5) to redis at ' . TEST_SESSION_REDIS_HOST . ':111111';
+        $this->assertDebuggingCalledCount(5);
+        $this->assertContains($expected, $actual);
     }
 
     /**

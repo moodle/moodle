@@ -3028,6 +3028,14 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 }
 
+/**
+ * A convenience function for where we must be logged in as admin
+ * @return void
+ */
+function require_admin() {
+    require_login(null, false);
+    require_capability('moodle/site:config', context_system::instance());
+}
 
 /**
  * This function just makes sure a user is logged out.
@@ -4818,7 +4826,12 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
     $field = core_text::strtolower($field);
 
     // List of case insensitive fields.
-    $caseinsensitivefields = ['username', 'email'];
+    $caseinsensitivefields = ['email'];
+
+    // Username input is forced to lowercase and should be case sensitive.
+    if ($field == 'username') {
+        $value = core_text::strtolower($value);
+    }
 
     // Build the WHERE clause for an SQL query.
     $params = array('fieldval' => $value);
@@ -4926,9 +4939,10 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
  *
  * @param string $password the password to be checked against the password policy
  * @param string $errmsg the error message to display when the password doesn't comply with the policy.
+ * @param stdClass $user the user object to perform password validation against. Defaults to null if not provided
  * @return bool true if the password is valid according to the policy. false otherwise.
  */
-function check_password_policy($password, &$errmsg) {
+function check_password_policy($password, &$errmsg, $user = null) {
     global $CFG;
 
     if (!empty($CFG->passwordpolicy)) {
@@ -4958,7 +4972,7 @@ function check_password_policy($password, &$errmsg) {
     $pluginsfunction = get_plugins_with_function('check_password_policy');
     foreach ($pluginsfunction as $plugintype => $plugins) {
         foreach ($plugins as $pluginfunction) {
-            $pluginerr = $pluginfunction($password);
+            $pluginerr = $pluginfunction($password, $user);
             if ($pluginerr) {
                 $errmsg .= '<div>'. $pluginerr .'</div>';
             }
@@ -5762,7 +5776,7 @@ function get_mailer($action='get') {
         } else {
             // Use SMTP directly.
             $mailer->isSMTP();
-            if (!empty($CFG->debugsmtp)) {
+            if (!empty($CFG->debugsmtp) && (!empty($CFG->debugdeveloper))) {
                 $mailer->SMTPDebug = 3;
             }
             // Specify main and backup servers.
@@ -8610,7 +8624,7 @@ function format_float($float, $decimalpoints=1, $localized=true, $stripzeros=fal
     $result = number_format($float, $decimalpoints, $separator, '');
     if ($stripzeros) {
         // Remove zeros and final dot if not needed.
-        $result = preg_replace('~(' . preg_quote($separator) . ')?0+$~', '', $result);
+        $result = preg_replace('~(' . preg_quote($separator, '~') . ')?0+$~', '', $result);
     }
     return $result;
 }

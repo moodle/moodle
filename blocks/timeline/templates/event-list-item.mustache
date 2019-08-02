@@ -50,13 +50,16 @@
         </div>
         <div class="w-100 event-name-container text-truncate line-height-3">
             <a href="{{url}}"
-               title="{{name}}"
-               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": "{{name}}", "course": "{{course.fullnamedisplay}}", "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
-            ><h6 class="event-name text-truncate mb-0">{{{name}}}</h6></a>
-            <small class="text-muted text-truncate mb-0">{{{course.fullnamedisplay}}}</small>
+               title={{#quote}}{{{name}}}{{/quote}}
+               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{name}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
+            ><h6 class="event-name text-truncate mb-0">{{#quote}}{{{name}}}{{/quote}}</h6></a>
+            <small class="text-muted text-truncate mb-0">{{#quote}}{{{course.fullnamedisplay}}}{{/quote}}</small>
             {{#action.actionable}}
             <h6 class="mb-0 pt-2">
                 <a href="{{{action.url}}}" aria-label="{{{action.name}}}" title="{{{action.name}}}" class="list-group-item-action">{{{action.name}}}</a>
+                {{#action.showitemcount}}
+                <span class="badge badge-secondary">{{action.itemcount}}</span>
+                {{/action.showitemcount}}
             </h6>
             {{/action.actionable}}
         </div>

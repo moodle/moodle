@@ -279,8 +279,10 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         // Status.
         if ($summary->teamsubmission) {
-            if ($summary->warnofungroupedusers) {
+            if ($summary->warnofungroupedusers === assign_grading_summary::WARN_GROUPS_REQUIRED) {
                 $o .= $this->output->notification(get_string('ungroupedusers', 'assign'));
+            } else if ($summary->warnofungroupedusers === assign_grading_summary::WARN_GROUPS_OPTIONAL) {
+                $o .= $this->output->notification(get_string('ungroupedusersoptional', 'assign'));
             }
 
             $this->add_table_row_tuple($t, get_string('numberofteams', 'assign'),

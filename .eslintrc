@@ -1,5 +1,6 @@
 {
   'plugins': [
+    'babel',
     'promise',
   ],
   'env': {
@@ -203,11 +204,45 @@
       }
     },
     {
-      files: ["**/amd/src/*.js"],
+      files: ["**/amd/src/*.js", "**/amd/src/**/*.js"],
+      // We support es6 now. Woot!
+      env: {
+        es6: true
+      },
+      // We're using babel transpiling so use their parser
+      // for linting.
+      parser: 'babel-eslint',
       // Check AMD with some slightly stricter rules.
       rules: {
         'no-unused-vars': 'error',
-        'no-implicit-globals': 'error'
+        'no-implicit-globals': 'error',
+        // Disable all of the rules that have babel versions.
+        'new-cap': 'off',
+        // Not using this rule for the time being because it isn't
+        // compatible with jQuery and ES6.
+        'no-invalid-this': 'off',
+        'object-curly-spacing': 'off',
+        'quotes': 'off',
+        'semi': 'off',
+        'no-unused-expressions': 'off',
+        // Enable all of the babel version of these rules.
+        'babel/new-cap': ['warn', { 'properties': false }],
+        // Not using this rule for the time being because it isn't
+        // compatible with jQuery and ES6.
+        'babel/no-invalid-this': 'off',
+        'babel/object-curly-spacing': 'warn',
+        // This is off in the original style int.
+        'babel/quotes': 'off',
+        'babel/semi': 'error',
+        'babel/no-unused-expressions': 'error',
+        // === Promises ===
+        // We have Promise now that we're using ES6.
+        'promise/no-native': 'off',
+        'promise/avoid-new': 'off'
+      },
+      parserOptions: {
+        'ecmaVersion': 9,
+        'sourceType': 'module'
       }
     }
   ]

@@ -360,6 +360,7 @@ function uu_allowed_roles() {
  */
 function uu_allowed_roles_cache() {
     $allowedroles = get_assignable_roles(context_course::instance(SITEID), ROLENAME_SHORT);
+    $rolecache = [];
     foreach ($allowedroles as $rid=>$rname) {
         $rolecache[$rid] = new stdClass();
         $rolecache[$rid]->id   = $rid;
@@ -379,6 +380,7 @@ function uu_allowed_roles_cache() {
  */
 function uu_allowed_sysroles_cache() {
     $allowedroles = get_assignable_roles(context_system::instance(), ROLENAME_SHORT);
+    $rolecache = [];
     foreach ($allowedroles as $rid => $rname) {
         $rolecache[$rid] = new stdClass();
         $rolecache[$rid]->id   = $rid;

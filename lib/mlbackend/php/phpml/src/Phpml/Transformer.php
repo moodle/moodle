@@ -7,12 +7,9 @@ namespace Phpml;
 interface Transformer
 {
     /**
-     * @param array $samples
+     * most transformers don't require targets to train so null allow to use fit method without setting targets
      */
-    public function fit(array $samples);
+    public function fit(array $samples, ?array $targets = null): void;
 
-    /**
-     * @param array $samples
-     */
-    public function transform(array &$samples);
+    public function transform(array &$samples): void;
 }

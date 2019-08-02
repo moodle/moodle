@@ -2,9 +2,11 @@
 
 namespace Sabberworm\CSS\RuleSet;
 
-use Sabberworm\CSS\Rule\Rule;
-use Sabberworm\CSS\Renderable;
 use Sabberworm\CSS\Comment\Commentable;
+use Sabberworm\CSS\Parsing\ParserState;
+use Sabberworm\CSS\Parsing\UnexpectedTokenException;
+use Sabberworm\CSS\Renderable;
+use Sabberworm\CSS\Rule\Rule;
 
 /**
  * RuleSet is a generic superclass denoting rules. The typical example for rule sets are declaration block.
@@ -20,6 +22,41 @@ abstract class RuleSet implements Renderable, Commentable {
 		$this->aRules = array();
 		$this->iLineNo = $iLineNo;
 		$this->aComments = array();
+	}
+
+	public static function parseRuleSet(ParserState $oParserState, RuleSet $oRuleSet) {
+		while ($oParserState->comes(';')) {
+			$oParserState->consume(';');
+		}
+		while (!$oParserState->comes('}')) {
+			$oRule = null;
+			if($oParserState->getSettings()->bLenientParsing) {
+				try {
+					$oRule = Rule::parse($oParserState);
+				} catch (UnexpectedTokenException $e) {
+					try {
+						$sConsume = $oParserState->consumeUntil(array("\n", ";", '}'), true);
+						// We need to “unfind” the matches to the end of the ruleSet as this will be matched later
+						if($oParserState->streql(substr($sConsume, -1), '}')) {
+							$oParserState->backtrack(1);
+						} else {
+							while ($oParserState->comes(';')) {
+								$oParserState->consume(';');
+							}
+						}
+					} catch (UnexpectedTokenException $e) {
+						// We’ve reached the end of the document. Just close the RuleSet.
+						return;
+					}
+				}
+			} else {
+				$oRule = Rule::parse($oParserState);
+			}
+			if($oRule) {
+				$oRuleSet->addRule($oRule);
+			}
+		}
+		$oParserState->consume('}');
 	}
 
 	/**
@@ -52,6 +89,7 @@ abstract class RuleSet implements Renderable, Commentable {
 	 * @param (null|string|Rule) $mRule pattern to search for. If null, returns all rules. if the pattern ends with a dash, all rules starting with the pattern are returned as well as one matching the pattern with the dash excluded. passing a Rule behaves like calling getRules($mRule->getRule()).
 	 * @example $oRuleSet->getRules('font-') //returns an array of all rules either beginning with font- or matching font.
 	 * @example $oRuleSet->getRules('font') //returns array(0 => $oRule, …) or array().
+	 * @return Rule[] Rules.
 	 */
 	public function getRules($mRule = null) {
 		if ($mRule instanceof Rule) {
@@ -69,7 +107,7 @@ abstract class RuleSet implements Renderable, Commentable {
 
 	/**
 	 * Override all the rules of this set.
-	 * @param array $aRules The rules to override with.
+	 * @param Rule[] $aRules The rules to override with.
 	 */
 	public function setRules(array $aRules) {
 		$this->aRules = array();
@@ -82,6 +120,7 @@ abstract class RuleSet implements Renderable, Commentable {
 	 * Returns all rules matching the given pattern and returns them in an associative array with the rule’s name as keys. This method exists mainly for backwards-compatibility and is really only partially useful.
 	 * @param (string) $mRule pattern to search for. If null, returns all rules. if the pattern ends with a dash, all rules starting with the pattern are returned as well as one matching the pattern with the dash excluded. passing a Rule behaves like calling getRules($mRule->getRule()).
 	 * Note: This method loses some information: Calling this (with an argument of 'background-') on a declaration block like { background-color: green; background-color; rgba(0, 127, 0, 0.7); } will only yield an associative array containing the rgba-valued rule while @link{getRules()} would yield an indexed array containing both.
+	 * @return Rule[] Rules.
 	 */
 	public function getRulesAssoc($mRule = null) {
 		$aResult = array();
@@ -92,9 +131,9 @@ abstract class RuleSet implements Renderable, Commentable {
 	}
 
 	/**
-	* Remove a rule from this RuleSet. This accepts all the possible values that @link{getRules()} accepts. If given a Rule, it will only remove this particular rule (by identity). If given a name, it will remove all rules by that name. Note: this is different from pre-v.2.0 behaviour of PHP-CSS-Parser, where passing a Rule instance would remove all rules with the same name. To get the old behvaiour, use removeRule($oRule->getRule()).
- * @param (null|string|Rule) $mRule pattern to remove. If $mRule is null, all rules are removed. If the pattern ends in a dash, all rules starting with the pattern are removed as well as one matching the pattern with the dash excluded. Passing a Rule behaves matches by identity.
-	*/
+	 * Remove a rule from this RuleSet. This accepts all the possible values that @link{getRules()} accepts. If given a Rule, it will only remove this particular rule (by identity). If given a name, it will remove all rules by that name. Note: this is different from pre-v.2.0 behaviour of PHP-CSS-Parser, where passing a Rule instance would remove all rules with the same name. To get the old behvaiour, use removeRule($oRule->getRule()).
+	 * @param (null|string|Rule) $mRule pattern to remove. If $mRule is null, all rules are removed. If the pattern ends in a dash, all rules starting with the pattern are removed as well as one matching the pattern with the dash excluded. Passing a Rule behaves matches by identity.
+	 */
 	public function removeRule($mRule) {
 		if($mRule instanceof Rule) {
 			$sRule = $mRule->getRule();

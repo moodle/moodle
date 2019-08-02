@@ -986,6 +986,13 @@ class core_user {
                 global $USER;
                 return $USER->id == $user->id && has_capability('moodle/blog:view', context_system::instance());
             });
+        $preferences['user_home_page_preference'] = array('type' => PARAM_INT, 'null' => NULL_ALLOWED, 'default' => HOMEPAGE_MY,
+            'choices' => array(HOMEPAGE_SITE, HOMEPAGE_MY),
+            'permissioncallback' => function ($user, $preferencename) {
+                global $CFG;
+                return (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
+            }
+        );
 
         // Core components that may want to define their preferences.
         // List of core components implementing callback is hardcoded here for performance reasons.

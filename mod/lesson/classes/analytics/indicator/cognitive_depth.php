@@ -70,7 +70,7 @@ class cognitive_depth extends activity_base {
         }
 
         // Multiple lesson attempts completed counts as submitted after feedback.
-        return (2 >= count($this->activitylogs[$contextid][$userid]['\mod_lesson\event\lesson_ended']));
+        return (2 >= count($this->activitylogs[$contextid][$userid]['\mod_lesson\event\lesson_ended']->timecreated));
     }
 
     /**

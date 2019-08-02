@@ -105,4 +105,50 @@ class helper {
         $PAGE->reset_theme_and_output();
         $PAGE->set_context(\context_system::instance());
     }
+    /**
+     * Convert a list of contexts to an associative array where the value is the context name.
+     *
+     * @param  array            $contexts
+     * @param  \moodle_url      $url
+     * @param  \renderer_base   $output
+     * @param  int|null         $selected
+     * @param  bool             $includeall
+     * @param  bool             $shortentext
+     * @return \stdClass
+     */
+    public static function prediction_context_selector(array $contexts, \moodle_url $url, \renderer_base $output,
+            ?int $selected = null, ?bool $includeall = false, ?bool $shortentext = true): \stdClass {
+
+        foreach ($contexts as $contextid => $unused) {
+            // We prepare this to be used as single_select template options.
+            $context = \context::instance_by_id($contextid);
+
+            // Special name for system level predictions as showing "System is not visually nice".
+            if ($contextid == SYSCONTEXTID) {
+                $contextname = get_string('allpredictions', 'tool_analytics');
+            } else {
+                if ($shortentext) {
+                    $contextname = shorten_text($context->get_context_name(false, true), 40);
+                } else {
+                    $contextname = $context->get_context_name(false, true);
+                }
+            }
+            $contexts[$contextid] = $contextname;
+        }
+
+        if ($includeall) {
+            $contexts[0] = get_string('all');
+            $nothing = '';
+        } else {
+            $nothing = array('' => 'choosedots');
+        }
+
+        \core_collator::asort($contexts);
+
+        if (!$selected) {
+            $selected = '';
+        }
+        $singleselect = new \single_select($url, 'contextid', $contexts, $selected, $nothing);
+        return $singleselect->export_for_template($output);
+    }
 }

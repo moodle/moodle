@@ -245,7 +245,6 @@ class core_outputcomponents_testcase extends advanced_testcase {
 
         // TODO MDL-44792 Rewrite those tests to use a fixture.
         // Now test gravatar with one theme having own images (afterburner).
-        // $CFG->httpswwwroot = $CFG->wwwroot;
         // $this->assertFileExists("$CFG->dirroot/theme/afterburner/config.php");
         // set_config('theme', 'afterburner');
         // $page = new moodle_page();
@@ -256,9 +255,6 @@ class core_outputcomponents_testcase extends advanced_testcase {
         // $up2 = new user_picture($user2);
         // $this->assertEquals('http://www.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=http%3A%2F%2Fwww.example.com%2Fmoodle%2Ftheme%2Fafterburner%2Fpix_core%2Fu%2Ff2.png', $up2->get_url($page, $renderer)->out(false));
 
-        // // Https version.
-        // $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-
         // $up2 = new user_picture($user2);
         // $this->assertSame('https://secure.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=https%3A%2F%2Fwww.example.com%2Fmoodle%2Ftheme%2Fafterburner%2Fpix_core%2Fu%2Ff2.png', $up2->get_url($page, $renderer)->out(false));
         // End of gravatar tests.
@@ -267,7 +263,6 @@ class core_outputcomponents_testcase extends advanced_testcase {
         // set_config('enablegravatar', 0);
         // $this->assertFileExists("$CFG->dirroot/theme/formal_white/config.php"); // Use any other theme.
         // set_config('theme', 'formal_white');
-        // $CFG->httpswwwroot = $CFG->wwwroot;
         // $page = new moodle_page();
         // $page->set_url('/user/profile.php');
         // $page->set_context(context_system::instance());

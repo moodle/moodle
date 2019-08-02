@@ -29,8 +29,9 @@
                 {{> block_myoverview/nav-grouping-selector }}
 
                 {{> block_myoverview/nav-sort-selector }}
-
-                {{> block_myoverview/nav-display-selector }}
+                {{#displaydropdown}}
+                    {{> block_myoverview/nav-display-selector }}
+                {{/displaydropdown}}
             </div>
 
     <div class="container-fluid p-0">

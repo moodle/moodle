@@ -72,6 +72,8 @@ class login implements renderable, templatable {
     public $username;
     /** @var string The csrf token to limit login to requests that come from the login form. */
     public $logintoken;
+    /** @var string Maintenance message, if Maintenance is enabled. */
+    public $maintenance;
 
     /**
      * Constructor.
@@ -107,6 +109,10 @@ class login implements renderable, templatable {
             $this->instructions = get_string('loginstepsnone');
         } else if ($CFG->registerauth == 'email' && empty($this->instructions)) {
             $this->instructions = get_string('loginsteps', 'core', 'signup.php');
+        }
+
+        if ($CFG->maintenance_enabled == true && !empty($CFG->maintenance_message)) {
+            $this->maintenance = $CFG->maintenance_message;
         }
 
         // Identity providers.
@@ -145,6 +151,7 @@ class login implements renderable, templatable {
         $data->signupurl = $this->signupurl->out(false);
         $data->username = $this->username;
         $data->logintoken = $this->logintoken;
+        $data->maintenance = format_text($this->maintenance, FORMAT_MOODLE);
 
         return $data;
     }

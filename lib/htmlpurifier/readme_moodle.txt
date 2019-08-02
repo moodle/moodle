@@ -1,4 +1,4 @@
-Description of HTML Purifier v4.9.3 library import into Moodle
+Description of HTML Purifier v4.10.0 library import into Moodle
 
 * Make new (or delete contents of) /lib/htmlpurifier/
 * Copy everything from /library/ folder to /lib/htmlpurifier/
@@ -11,6 +11,7 @@ Description of HTML Purifier v4.9.3 library import into Moodle
     HTMLPurifier.composer.php
     HTMLPurifier.includes.php
     HTMLPurifier.path.php
+    HTMLPurifier.autoload-legacy.php
 * add locallib.php with Moodle specific extensions to /lib/htmlpurifier/
 * add this readme_moodle.txt to /lib/htmlpurifier/
 

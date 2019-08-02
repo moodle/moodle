@@ -2,6 +2,11 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.8 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+  * section_edit_controls()
+
 === 3.6 ===
 * New method validate_format_options() cleans the values of the course/section format options before inserting them
   in the database. Course format options can now be set in tool_uploadcourse and validation of user-submitted data is important.

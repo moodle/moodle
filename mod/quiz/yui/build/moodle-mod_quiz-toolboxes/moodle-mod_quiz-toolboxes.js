@@ -47,7 +47,6 @@ var CSS = {
         CONTENTAFTERLINK: 'div.contentafterlink',
         CONTENTWITHOUTLINK: 'div.contentwithoutlink',
         DELETESECTIONICON: 'a.editing_delete .icon',
-        DESELECTALL: '#questiondeselectall',
         EDITMAXMARK: 'a.editing_maxmark',
         EDITSECTION: 'a.editing_section',
         EDITSECTIONICON: 'a.editing_section .icon',
@@ -322,28 +321,8 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             Y.one('body').removeClass(CSS.SELECTMULTIPLE);
         });
 
-        // Click select all link to check all the checkboxes.
-        Y.one(SELECTOR.SELECTALL).on('click', function(e) {
-            e.preventDefault();
-            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
-        });
-
-        // Click deselect all link to show the select all checkboxes.
-        Y.one(SELECTOR.DESELECTALL).on('click', function(e) {
-            e.preventDefault();
-            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
-        });
-
-        // Disable delete multiple button by default.
-        Y.one(SELECTOR.SELECTMULTIPLEDELETEBUTTON).setAttribute('disabled', 'disabled');
-
         // Assign the delete method to the delete multiple button.
         Y.delegate('click', this.delete_multiple_action, BODY, SELECTOR.SELECTMULTIPLEDELETEBUTTON, this);
-
-        // Enable the delete all button only when at least one slot is selected.
-        Y.delegate('click', this.toggle_select_all_buttons_enabled, BODY, SELECTOR.SELECTMULTIPLECHECKBOX, this);
-        Y.delegate('click', this.toggle_select_all_buttons_enabled, BODY, SELECTOR.SELECTALL, this);
-        Y.delegate('click', this.toggle_select_all_buttons_enabled, BODY, SELECTOR.DESELECTALL, this);
     },
 
     /**
@@ -414,22 +393,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             return M.util.add_spinner(Y, actionarea);
         }
         return null;
-    },
-
-    /**
-     * If a select multiple checkbox is checked enable the buttons in the select multiple
-     * toolbar otherwise disable it.
-     *
-     * @method toggle_select_all_buttons_enabled
-     */
-    toggle_select_all_buttons_enabled: function() {
-        var checked = Y.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':checked');
-        var deletebutton = Y.one(SELECTOR.SELECTMULTIPLEDELETEBUTTON);
-        if (checked && !checked.isEmpty()) {
-            deletebutton.removeAttribute('disabled');
-        } else {
-            deletebutton.setAttribute('disabled', 'disabled');
-        }
     },
 
     /**

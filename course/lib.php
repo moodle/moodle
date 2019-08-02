@@ -2201,7 +2201,8 @@ function move_courses($courseids, $categoryid) {
             'objectid' => $course->id,
             'context' => context_course::instance($course->id),
             'other' => array('shortname' => $dbcourse->shortname,
-                             'fullname' => $dbcourse->fullname)
+                             'fullname' => $dbcourse->fullname,
+                             'updatedfields' => array('category' => $category->id))
         ));
         $event->set_legacy_logdata(array($course->id, 'course', 'move', 'edit.php?id=' . $course->id, $course->id));
         $event->trigger();
@@ -2409,6 +2410,11 @@ function create_course($data, $editoroptions = NULL) {
         }
     }
 
+    if (empty($CFG->enablecourserelativedates)) {
+        // Make sure we're not setting the relative dates mode when the setting is disabled.
+        unset($data->relativedatesmode);
+    }
+
     if ($errorcode = course_validate_dates((array)$data)) {
         throw new moodle_exception($errorcode);
     }
@@ -2513,8 +2519,6 @@ function create_course($data, $editoroptions = NULL) {
 function update_course($data, $editoroptions = NULL) {
     global $DB, $CFG;
 
-    $data->timemodified = time();
-
     // Prevent changes on front page course.
     if ($data->id == SITEID) {
         throw new moodle_exception('invalidcourse', 'error');
@@ -2522,6 +2526,31 @@ function update_course($data, $editoroptions = NULL) {
 
     $oldcourse = course_get_format($data->id)->get_course();
     $context   = context_course::instance($oldcourse->id);
+
+    // Make sure we're not changing whatever the course's relativedatesmode setting is.
+    unset($data->relativedatesmode);
+
+    // Capture the updated fields for the log data.
+    $updatedfields = [];
+    foreach (get_object_vars($oldcourse) as $field => $value) {
+        if ($field == 'summary_editor') {
+            if (($data->$field)['text'] !== $value['text']) {
+                // The summary might be very long, we don't wan't to fill up the log record with the full text.
+                $updatedfields[$field] = '(updated)';
+            }
+        } else if ($field == 'tags') {
+            // Tags might not have the same array keys, just check the values.
+            if (array_values($data->$field) !== array_values($value)) {
+                $updatedfields[$field] = $data->$field;
+            }
+        } else {
+            if (isset($data->$field) && $data->$field != $value) {
+                $updatedfields[$field] = $data->$field;
+            }
+        }
+    }
+
+    $data->timemodified = time();
 
     if ($editoroptions) {
         $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course', 'summary', 0);
@@ -2629,7 +2658,8 @@ function update_course($data, $editoroptions = NULL) {
         'objectid' => $course->id,
         'context' => context_course::instance($course->id),
         'other' => array('shortname' => $course->shortname,
-                         'fullname' => $course->fullname)
+                         'fullname' => $course->fullname,
+                         'updatedfields' => $updatedfields)
     ));
 
     $event->set_legacy_logdata(array($course->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id));
@@ -4643,4 +4673,155 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
     }
 
     return $recentcourses;
+}
+
+/**
+ * Calculate the course start date and offset for the given user ids.
+ *
+ * If the course is a fixed date course then the course start date will be returned.
+ * If the course is a relative date course then the course date will be calculated and
+ * and offset provided.
+ *
+ * The dates are returned as an array with the index being the user id. The array
+ * contains the start date and start offset values for the user.
+ *
+ * If the user is not enrolled in the course then the course start date will be returned.
+ *
+ * If we have a course which starts on 1563244000 and 2 users, id 123 and 456, where the
+ * former is enrolled in the course at 1563244693 and the latter is not enrolled then the
+ * return value would look like:
+ * [
+ *      '123' => [
+ *          'start' => 1563244693,
+ *          'startoffset' => 693
+ *      ],
+ *      '456' => [
+ *          'start' => 1563244000,
+ *          'startoffset' => 0
+ *      ]
+ * ]
+ *
+ * @param stdClass $course The course to fetch dates for.
+ * @param array $userids The list of user ids to get dates for.
+ * @return array
+ */
+function course_get_course_dates_for_user_ids(stdClass $course, array $userids): array {
+    if (empty($course->relativedatesmode)) {
+        // This course isn't set to relative dates so we can early return with the course
+        // start date.
+        return array_reduce($userids, function($carry, $userid) use ($course) {
+            $carry[$userid] = [
+                'start' => $course->startdate,
+                'startoffset' => 0
+            ];
+            return $carry;
+        }, []);
+    }
+
+    // We're dealing with a relative dates course now so we need to calculate some dates.
+    $cache = cache::make('core', 'course_user_dates');
+    $dates = [];
+    $uncacheduserids = [];
+
+    // Try fetching the values from the cache so that we don't need to do a DB request.
+    foreach ($userids as $userid) {
+        $cachekey = "{$course->id}_{$userid}";
+        $cachedvalue = $cache->get($cachekey);
+
+        if ($cachedvalue === false) {
+            // Looks like we haven't seen this user for this course before so we'll have
+            // to fetch it.
+            $uncacheduserids[] = $userid;
+        } else {
+            [$start, $startoffset] = $cachedvalue;
+            $dates[$userid] = [
+                'start' => $start,
+                'startoffset' => $startoffset
+            ];
+        }
+    }
+
+    if (!empty($uncacheduserids)) {
+        // Load the enrolments for any users we haven't seen yet. Set the "onlyactive" param
+        // to false because it filters out users with enrolment start times in the future which
+        // we don't want.
+        $enrolments = enrol_get_course_users($course->id, false, $uncacheduserids);
+
+        foreach ($uncacheduserids as $userid) {
+            // Find the user enrolment that has the earliest start date.
+            $enrolment = array_reduce(array_values($enrolments), function($carry, $enrolment) use ($userid) {
+                // Only consider enrolments for this user if the user enrolment is active and the
+                // enrolment method is enabled.
+                if (
+                    $enrolment->uestatus == ENROL_USER_ACTIVE &&
+                    $enrolment->estatus == ENROL_INSTANCE_ENABLED &&
+                    $enrolment->id == $userid
+                ) {
+                    if (is_null($carry)) {
+                        // Haven't found an enrolment yet for this user so use the one we just found.
+                        $carry = $enrolment;
+                    } else {
+                        // We've already found an enrolment for this user so let's use which ever one
+                        // has the earliest start time.
+                        $carry = $carry->uetimestart < $enrolment->uetimestart ? $carry : $enrolment;
+                    }
+                }
+
+                return $carry;
+            }, null);
+
+            if ($enrolment) {
+                // The course is in relative dates mode so we calculate the student's start
+                // date based on their enrolment start date.
+                $start = $course->startdate > $enrolment->uetimestart ? $course->startdate : $enrolment->uetimestart;
+                $startoffset = $start - $course->startdate;
+            } else {
+                // The user is not enrolled in the course so default back to the course start date.
+                $start = $course->startdate;
+                $startoffset = 0;
+            }
+
+            $dates[$userid] = [
+                'start' => $start,
+                'startoffset' => $startoffset
+            ];
+
+            $cachekey = "{$course->id}_{$userid}";
+            $cache->set($cachekey, [$start, $startoffset]);
+        }
+    }
+
+    return $dates;
+}
+
+/**
+ * Calculate the course start date and offset for the given user id.
+ *
+ * If the course is a fixed date course then the course start date will be returned.
+ * If the course is a relative date course then the course date will be calculated and
+ * and offset provided.
+ *
+ * The return array contains the start date and start offset values for the user.
+ *
+ * If the user is not enrolled in the course then the course start date will be returned.
+ *
+ * If we have a course which starts on 1563244000. If a user's enrolment starts on 1563244693
+ * then the return would be:
+ * [
+ *      'start' => 1563244693,
+ *      'startoffset' => 693
+ * ]
+ *
+ * If the use was not enrolled then the return would be:
+ * [
+ *      'start' => 1563244000,
+ *      'startoffset' => 0
+ * ]
+ *
+ * @param stdClass $course The course to fetch dates for.
+ * @param int $userid The user id to get dates for.
+ * @return array
+ */
+function course_get_course_dates_for_user_id(stdClass $course, int $userid): array {
+    return (course_get_course_dates_for_user_ids($course, [$userid]))[$userid];
 }

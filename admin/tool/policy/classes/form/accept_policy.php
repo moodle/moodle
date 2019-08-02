@@ -111,7 +111,7 @@ class accept_policy extends \moodleform {
             }
         }
 
-        $PAGE->requires->js_call_amd('tool_policy/policyactions', 'init');
+        $PAGE->requires->js_call_amd('tool_policy/policyactions', 'init', ['[data-action="view"]']);
     }
 
     /**

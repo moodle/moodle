@@ -4,8 +4,36 @@ declare(strict_types=1);
 
 namespace Phpml\Metric;
 
+use Phpml\Exception\InvalidArgumentException;
+
 class ClassificationReport
 {
+    public const MICRO_AVERAGE = 1;
+
+    public const MACRO_AVERAGE = 2;
+
+    public const WEIGHTED_AVERAGE = 3;
+
+    /**
+     * @var array
+     */
+    private $truePositive = [];
+
+    /**
+     * @var array
+     */
+    private $falsePositive = [];
+
+    /**
+     * @var array
+     */
+    private $falseNegative = [];
+
+    /**
+     * @var array
+     */
+    private $support = [];
+
     /**
      * @var array
      */
@@ -24,24 +52,52 @@ class ClassificationReport
     /**
      * @var array
      */
-    private $support = [];
-
-    /**
-     * @var array
-     */
     private $average = [];
 
-    /**
-     * @param array $actualLabels
-     * @param array $predictedLabels
-     */
-    public function __construct(array $actualLabels, array $predictedLabels)
+    public function __construct(array $actualLabels, array $predictedLabels, int $average = self::MACRO_AVERAGE)
     {
-        $truePositive = $falsePositive = $falseNegative = $this->support = self::getLabelIndexedArray($actualLabels, $predictedLabels);
+        $averagingMethods = range(self::MICRO_AVERAGE, self::WEIGHTED_AVERAGE);
+        if (!in_array($average, $averagingMethods, true)) {
+            throw new InvalidArgumentException('Averaging method must be MICRO_AVERAGE, MACRO_AVERAGE or WEIGHTED_AVERAGE');
+        }
+
+        $this->aggregateClassificationResults($actualLabels, $predictedLabels);
+        $this->computeMetrics();
+        $this->computeAverage($average);
+    }
+
+    public function getPrecision(): array
+    {
+        return $this->precision;
+    }
+
+    public function getRecall(): array
+    {
+        return $this->recall;
+    }
+
+    public function getF1score(): array
+    {
+        return $this->f1score;
+    }
+
+    public function getSupport(): array
+    {
+        return $this->support;
+    }
+
+    public function getAverage(): array
+    {
+        return $this->average;
+    }
+
+    private function aggregateClassificationResults(array $actualLabels, array $predictedLabels): void
+    {
+        $truePositive = $falsePositive = $falseNegative = $support = self::getLabelIndexedArray($actualLabels, $predictedLabels);
 
         foreach ($actualLabels as $index => $actual) {
             $predicted = $predictedLabels[$index];
-            ++$this->support[$actual];
+            ++$support[$actual];
 
             if ($actual === $predicted) {
                 ++$truePositive[$actual];
@@ -51,85 +107,92 @@ class ClassificationReport
             }
         }
 
-        $this->computeMetrics($truePositive, $falsePositive, $falseNegative);
-        $this->computeAverage();
+        $this->truePositive = $truePositive;
+        $this->falsePositive = $falsePositive;
+        $this->falseNegative = $falseNegative;
+        $this->support = $support;
     }
 
-    /**
-     * @return array
-     */
-    public function getPrecision()
+    private function computeMetrics(): void
     {
-        return $this->precision;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRecall()
-    {
-        return $this->recall;
-    }
-
-    /**
-     * @return array
-     */
-    public function getF1score()
-    {
-        return $this->f1score;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSupport()
-    {
-        return $this->support;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAverage()
-    {
-        return $this->average;
-    }
-
-    /**
-     * @param array $truePositive
-     * @param array $falsePositive
-     * @param array $falseNegative
-     */
-    private function computeMetrics(array $truePositive, array $falsePositive, array $falseNegative)
-    {
-        foreach ($truePositive as $label => $tp) {
-            $this->precision[$label] = $this->computePrecision($tp, $falsePositive[$label]);
-            $this->recall[$label] = $this->computeRecall($tp, $falseNegative[$label]);
+        foreach ($this->truePositive as $label => $tp) {
+            $this->precision[$label] = $this->computePrecision($tp, $this->falsePositive[$label]);
+            $this->recall[$label] = $this->computeRecall($tp, $this->falseNegative[$label]);
             $this->f1score[$label] = $this->computeF1Score((float) $this->precision[$label], (float) $this->recall[$label]);
         }
     }
 
-    private function computeAverage()
+    private function computeAverage(int $average): void
+    {
+        switch ($average) {
+            case self::MICRO_AVERAGE:
+                $this->computeMicroAverage();
+
+                return;
+            case self::MACRO_AVERAGE:
+                $this->computeMacroAverage();
+
+                return;
+            case self::WEIGHTED_AVERAGE:
+                $this->computeWeightedAverage();
+
+                return;
+        }
+    }
+
+    private function computeMicroAverage(): void
+    {
+        $truePositive = (int) array_sum($this->truePositive);
+        $falsePositive = (int) array_sum($this->falsePositive);
+        $falseNegative = (int) array_sum($this->falseNegative);
+
+        $precision = $this->computePrecision($truePositive, $falsePositive);
+        $recall = $this->computeRecall($truePositive, $falseNegative);
+        $f1score = $this->computeF1Score((float) $precision, (float) $recall);
+
+        $this->average = compact('precision', 'recall', 'f1score');
+    }
+
+    private function computeMacroAverage(): void
     {
         foreach (['precision', 'recall', 'f1score'] as $metric) {
-            $values = array_filter($this->{$metric});
-            if (empty($values)) {
+            $values = $this->{$metric};
+            if (count($values) == 0) {
                 $this->average[$metric] = 0.0;
+
                 continue;
             }
+
             $this->average[$metric] = array_sum($values) / count($values);
         }
     }
 
+    private function computeWeightedAverage(): void
+    {
+        foreach (['precision', 'recall', 'f1score'] as $metric) {
+            $values = $this->{$metric};
+            if (count($values) == 0) {
+                $this->average[$metric] = 0.0;
+
+                continue;
+            }
+
+            $sum = 0;
+            foreach ($values as $i => $value) {
+                $sum += $value * $this->support[$i];
+            }
+
+            $this->average[$metric] = $sum / array_sum($this->support);
+        }
+    }
+
     /**
-     * @param int $truePositive
-     * @param int $falsePositive
-     *
      * @return float|string
      */
     private function computePrecision(int $truePositive, int $falsePositive)
     {
-        if (0 == ($divider = $truePositive + $falsePositive)) {
+        $divider = $truePositive + $falsePositive;
+        if ($divider == 0) {
             return 0.0;
         }
 
@@ -137,47 +200,33 @@ class ClassificationReport
     }
 
     /**
-     * @param int $truePositive
-     * @param int $falseNegative
-     *
      * @return float|string
      */
     private function computeRecall(int $truePositive, int $falseNegative)
     {
-        if (0 == ($divider = $truePositive + $falseNegative)) {
+        $divider = $truePositive + $falseNegative;
+        if ($divider == 0) {
             return 0.0;
         }
 
         return $truePositive / $divider;
     }
 
-    /**
-     * @param float $precision
-     * @param float $recall
-     *
-     * @return float
-     */
     private function computeF1Score(float $precision, float $recall): float
     {
-        if (0 == ($divider = $precision + $recall)) {
+        $divider = $precision + $recall;
+        if ($divider == 0) {
             return 0.0;
         }
 
         return 2.0 * (($precision * $recall) / $divider);
     }
 
-    /**
-     * @param array $actualLabels
-     * @param array $predictedLabels
-     *
-     * @return array
-     */
     private static function getLabelIndexedArray(array $actualLabels, array $predictedLabels): array
     {
         $labels = array_values(array_unique(array_merge($actualLabels, $predictedLabels)));
         sort($labels);
-        $labels = array_combine($labels, array_fill(0, count($labels), 0));
 
-        return $labels;
+        return (array) array_combine($labels, array_fill(0, count($labels), 0));
     }
 }

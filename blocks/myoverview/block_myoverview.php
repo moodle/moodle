@@ -74,7 +74,7 @@ class block_myoverview extends block_base {
     }
 
     /**
-     * Allow the block to have a configuration page
+     * Allow the block to have a configuration page.
      *
      * @return boolean
      */

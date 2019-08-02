@@ -66,7 +66,7 @@ implements CAS_Exception
      * @param string     $err_msg      the error message given by the CAS server
      */
     public function __construct($client,$failure,$cas_url,$no_response,
-        $bad_response='',$cas_response='',$err_code='',$err_msg=''
+        $bad_response=false,$cas_response='',$err_code=-1,$err_msg=''
     ) {
         $messages = array();
         phpCAS::traceBegin();
@@ -91,7 +91,7 @@ implements CAS_Exception
                     break;
                 case CAS_VERSION_2_0:
                 case CAS_VERSION_3_0:
-                    if ( empty($err_code) ) {
+                    if ( $err_code === -1 ) {
                         phpCAS::trace($messages[] = 'Reason: no CAS error');
                     } else {
                         phpCAS::trace($messages[] = 'Reason: ['.$err_code.'] CAS error: '.$err_msg);

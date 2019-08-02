@@ -4,6 +4,11 @@ namespace Sabberworm\CSS;
 
 use Sabberworm\CSS\Parsing\OutputException;
 
+/**
+ * Class OutputFormat
+ *
+ * @method OutputFormat setSemicolonAfterLastRule( bool $bSemicolonAfterLastRule ) Set whether semicolons are added after last rule.
+ */
 class OutputFormat {
 	/**
 	* Value format
@@ -35,6 +40,10 @@ class OutputFormat {
 	public $sSpaceAfterBlocks = '';
 	public $sSpaceBetweenBlocks = "\n";
 
+	// Content injected in and around @-rule blocks.
+	public $sBeforeAtRuleBlock = '';
+	public $sAfterAtRuleBlock = '';
+
 	// This is what’s printed before and after the comma if a declaration block contains multiple selectors.
 	public $sSpaceBeforeSelectorSeparator = '';
 	public $sSpaceAfterSelectorSeparator = ' ';
@@ -43,7 +52,12 @@ class OutputFormat {
 	public $sSpaceAfterListArgumentSeparator = '';
 	
 	public $sSpaceBeforeOpeningBrace = ' ';
-	
+
+	// Content injected in and around declaration blocks.
+	public $sBeforeDeclarationBlock = '';
+	public $sAfterDeclarationBlockSelectors = '';
+	public $sAfterDeclarationBlock = '';
+
 	/**
 	* Indentation
 	*/
@@ -141,17 +155,36 @@ class OutputFormat {
 	public function level() {
 		return $this->iIndentationLevel;
 	}
-	
+
+	/**
+	 * Create format.
+	 *
+	 * @return OutputFormat Format.
+	 */
 	public static function create() {
 		return new OutputFormat();
 	}
-	
+
+	/**
+	 * Create compact format.
+	 *
+	 * @return OutputFormat Format.
+	 */
 	public static function createCompact() {
-		return self::create()->set('Space*Rules', "")->set('Space*Blocks', "")->setSpaceAfterRuleName('')->setSpaceBeforeOpeningBrace('')->setSpaceAfterSelectorSeparator('');
+		$format = self::create();
+		$format->set('Space*Rules', "")->set('Space*Blocks', "")->setSpaceAfterRuleName('')->setSpaceBeforeOpeningBrace('')->setSpaceAfterSelectorSeparator('');
+		return $format;
 	}
-	
+
+	/**
+	 * Create pretty format.
+	 *
+	 * @return OutputFormat Format.
+	 */
 	public static function createPretty() {
-		return self::create()->set('Space*Rules', "\n")->set('Space*Blocks', "\n")->setSpaceBetweenBlocks("\n\n")->set('SpaceAfterListArgumentSeparator', array('default' => '', ',' => ' '));
+		$format = self::create();
+		$format->set('Space*Rules', "\n")->set('Space*Blocks', "\n")->setSpaceBetweenBlocks("\n\n")->set('SpaceAfterListArgumentSeparator', array('default' => '', ',' => ' '));
+		return $format;
 	}
 }
 

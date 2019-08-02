@@ -46,6 +46,7 @@ $string['cachedef_coursecattree'] = 'Course categories tree';
 $string['cachedef_coursecompletion'] = 'Course completion status';
 $string['cachedef_coursecontacts'] = 'List of course contacts';
 $string['cachedef_coursemodinfo'] = 'Accumulated information about modules and sections for each course';
+$string['cachedef_course_user_dates'] = 'The user dates for courses set to relative dates mode';
 $string['cachedef_completion'] = 'Activity completion status';
 $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
@@ -141,8 +142,9 @@ $string['plugin'] = 'Plugin';
 $string['pluginsummaries'] = 'Installed cache stores';
 $string['privacy:metadata:cachestore'] = 'The Cache subsystem stores data temporarily on behalf of other parts of Moodle. This data is not easily identifiable, and is very short lived. It serves as a cache of data stored elsewhere in Moodle, and should therefore already be handled by those Moodle components.';
 $string['purge'] = 'Purge';
-$string['purgedefinitionsuccess'] = 'Successfully purged the requested definition.';
-$string['purgestoresuccess'] = 'Successfully purged the requested store.';
+$string['purgeagain'] = 'Purge again';
+$string['purgexdefinitionsuccess'] = 'Successfully purged the "{$a->name}" cache ({$a->component}/{$a->area}).';
+$string['purgexstoresuccess'] = 'Successfully purged the "{$a->store}" store.';
 $string['requestcount'] = 'Test with {$a} requests';
 $string['rescandefinitions'] = 'Rescan definitions';
 $string['result'] = 'Result';
@@ -190,3 +192,7 @@ $string['unsupportedmode'] = 'Unsupported mode';
 $string['untestable'] = 'Untestable';
 $string['userinputsharingkey'] = 'Custom key for sharing';
 $string['userinputsharingkey_help'] = 'Enter your own private key here. When you set up other stores on other sites you wish to share data with make sure you set the exact same key there.';
+
+// Deprecated since Moodle 3.8.
+$string['purgedefinitionsuccess'] = 'Successfully purged the requested definition.';
+$string['purgestoresuccess'] = 'Successfully purged the requested store.';

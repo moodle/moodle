@@ -78,12 +78,15 @@ class quiz_override_form extends moodleform {
     }
 
     protected function definition() {
-        global $CFG, $DB;
+        global $DB;
 
         $cm = $this->cm;
         $mform = $this->_form;
 
         $mform->addElement('header', 'override', get_string('override', 'quiz'));
+
+        $quizgroupmode = groups_get_activity_groupmode($cm);
+        $accessallgroups = ($quizgroupmode == NOGROUPS) || has_capability('moodle/site:accessallgroups', $this->context);
 
         if ($this->groupmode) {
             // Group override.
@@ -96,7 +99,8 @@ class quiz_override_form extends moodleform {
                 $mform->freeze('groupid');
             } else {
                 // Prepare the list of groups.
-                $groups = groups_get_all_groups($cm->course);
+                // Only include the groups the current can access.
+                $groups = $accessallgroups ? groups_get_all_groups($cm->course) : groups_get_activity_allowed_groups($cm);
                 if (empty($groups)) {
                     // Generate an error.
                     $link = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
@@ -136,9 +140,17 @@ class quiz_override_form extends moodleform {
                             'This is unexpected, and a problem because there is no way to pass these ' .
                             'parameters to get_users_by_capability. See MDL-34657.');
                 }
-                $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
-                        'u.id, u.email, ' . get_all_user_name_fields(true, 'u'),
-                        $sort, '', '', '', '', false, true);
+
+                // Get the list of appropriate users, depending on whether and how groups are used.
+                if ($accessallgroups) {
+                    $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
+                            'u.id, u.email, ' . get_all_user_name_fields(true, 'u'),
+                            $sort);
+                } else if ($groups = groups_get_activity_allowed_groups($cm)) {
+                    $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
+                            'u.id, u.email, ' . get_all_user_name_fields(true, 'u'),
+                            $sort, '', '', array_keys($groups));
+                }
 
                 // Filter users based on any fixed restrictions (groups, profile).
                 $info = new \core_availability\info_module($cm);
@@ -220,7 +232,6 @@ class quiz_override_form extends moodleform {
     }
 
     public function validation($data, $files) {
-        global $COURSE, $DB;
         $errors = parent::validation($data, $files);
 
         $mform =& $this->_form;

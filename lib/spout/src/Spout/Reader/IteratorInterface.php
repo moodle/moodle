@@ -4,8 +4,6 @@ namespace Box\Spout\Reader;
 
 /**
  * Interface IteratorInterface
- *
- * @package Box\Spout\Reader
  */
 interface IteratorInterface extends \Iterator
 {

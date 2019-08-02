@@ -11,7 +11,8 @@ use Phpml\Math\Distance\Euclidean;
 
 class KNearestNeighbors implements Classifier
 {
-    use Trainable, Predictable;
+    use Trainable;
+    use Predictable;
 
     /**
      * @var int
@@ -24,12 +25,11 @@ class KNearestNeighbors implements Classifier
     private $distanceMetric;
 
     /**
-     * @param int           $k
      * @param Distance|null $distanceMetric (if null then Euclidean distance as default)
      */
-    public function __construct(int $k = 3, Distance $distanceMetric = null)
+    public function __construct(int $k = 3, ?Distance $distanceMetric = null)
     {
-        if (null === $distanceMetric) {
+        if ($distanceMetric === null) {
             $distanceMetric = new Euclidean();
         }
 
@@ -40,17 +40,14 @@ class KNearestNeighbors implements Classifier
     }
 
     /**
-     * @param array $sample
-     *
      * @return mixed
      */
     protected function predictSample(array $sample)
     {
         $distances = $this->kNeighborsDistances($sample);
+        $predictions = (array) array_combine(array_values($this->targets), array_fill(0, count($this->targets), 0));
 
-        $predictions = array_combine(array_values($this->targets), array_fill(0, count($this->targets), 0));
-
-        foreach ($distances as $index => $distance) {
+        foreach (array_keys($distances) as $index) {
             ++$predictions[$this->targets[$index]];
         }
 
@@ -61,13 +58,9 @@ class KNearestNeighbors implements Classifier
     }
 
     /**
-     * @param array $sample
-     *
-     * @return array
-     *
      * @throws \Phpml\Exception\InvalidArgumentException
      */
-    private function kNeighborsDistances(array $sample)
+    private function kNeighborsDistances(array $sample): array
     {
         $distances = [];
 

@@ -19,34 +19,44 @@ class ArrayDataset implements Dataset
     protected $targets = [];
 
     /**
-     * @param array $samples
-     * @param array $targets
-     *
      * @throws InvalidArgumentException
      */
     public function __construct(array $samples, array $targets)
     {
-        if (count($samples) != count($targets)) {
-            throw InvalidArgumentException::arraySizeNotMatch();
+        if (count($samples) !== count($targets)) {
+            throw new InvalidArgumentException('Size of given arrays does not match');
         }
 
         $this->samples = $samples;
         $this->targets = $targets;
     }
 
-    /**
-     * @return array
-     */
     public function getSamples(): array
     {
         return $this->samples;
     }
 
-    /**
-     * @return array
-     */
     public function getTargets(): array
     {
         return $this->targets;
+    }
+
+    /**
+     * @param int[] $columns
+     */
+    public function removeColumns(array $columns): void
+    {
+        foreach ($this->samples as &$sample) {
+            $this->removeColumnsFromSample($sample, $columns);
+        }
+    }
+
+    private function removeColumnsFromSample(array &$sample, array $columns): void
+    {
+        foreach ($columns as $index) {
+            unset($sample[$index]);
+        }
+
+        $sample = array_values($sample);
     }
 }

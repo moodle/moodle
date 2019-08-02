@@ -24,7 +24,7 @@
   padding: $navbar-padding-y $navbar-padding-x;
 
   // Because flex properties aren't inherited, we need to redeclare these first
-  // few properities so that content nested within behave properly.
+  // few properties so that content nested within behave properly.
   > .container,
   > .container-fluid {
     display: flex;
@@ -44,7 +44,7 @@
   padding-top: $navbar-brand-padding-y;
   padding-bottom: $navbar-brand-padding-y;
   margin-right: $navbar-padding-x;
-  font-size: $navbar-brand-font-size;
+  @include font-size($navbar-brand-font-size);
   line-height: inherit;
   white-space: nowrap;
 
@@ -94,7 +94,7 @@
 // Powered by the collapse Bootstrap JavaScript plugin.
 
 // When collapsed, prevent the toggleable navbar contents from appearing in
-// the default flexbox row orienation. Requires the use of `flex-wrap: wrap`
+// the default flexbox row orientation. Requires the use of `flex-wrap: wrap`
 // on the `.navbar` parent.
 .navbar-collapse {
   flex-basis: 100%;
@@ -107,7 +107,7 @@
 // Button for toggling the navbar when in its collapsed state
 .navbar-toggler {
   padding: $navbar-toggler-padding-y $navbar-toggler-padding-x;
-  font-size: $navbar-toggler-font-size;
+  @include font-size($navbar-toggler-font-size);
   line-height: 1;
   background-color: transparent; // remove default button style
   border: $border-width solid transparent; // remove default button style
@@ -115,11 +115,6 @@
 
   @include hover-focus {
     text-decoration: none;
-  }
-
-  // Opinionated: add "hand" cursor to non-disabled .navbar-toggler elements
-  &:not(:disabled):not(.disabled) {
-    cursor: pointer;
   }
 }
 
@@ -162,11 +157,6 @@
             position: absolute;
           }
 
-          .dropdown-menu-right {
-            right: 0;
-            left: auto; // Reset the default from `.dropdown-menu`
-          }
-
           .nav-link {
             padding-right: $navbar-nav-link-padding-x;
             padding-left: $navbar-nav-link-padding-x;
@@ -180,7 +170,7 @@
         }
 
         .navbar-collapse {
-          display: flex !important;  // stylelint-disable-line declaration-no-important
+          display: flex !important; // stylelint-disable-line declaration-no-important
 
           // Changes flex-bases to auto because of an IE10 bug
           flex-basis: auto;
@@ -188,13 +178,6 @@
 
         .navbar-toggler {
           display: none;
-        }
-
-        .dropup {
-          .dropdown-menu {
-            top: auto;
-            bottom: 100%;
-          }
         }
       }
     }
@@ -209,10 +192,10 @@
 // Dark links against a light background
 .navbar-light {
   .navbar-brand {
-    color: $navbar-light-active-color;
+    color: $navbar-light-brand-color;
 
     @include hover-focus {
-      color: $navbar-light-active-color;
+      color: $navbar-light-brand-hover-color;
     }
   }
 
@@ -261,10 +244,10 @@
 // White links against a dark background
 .navbar-dark {
   .navbar-brand {
-    color: $navbar-dark-active-color;
+    color: $navbar-dark-brand-color;
 
     @include hover-focus {
-      color: $navbar-dark-active-color;
+      color: $navbar-dark-brand-hover-color;
     }
   }
 

@@ -148,21 +148,40 @@ class core_analytics_targets_testcase extends advanced_testcase {
                 'courseend' => $now + (WEEKSECS * 8),
                 'timestart' => $now,
                 'timeend' => $now - DAYSECS,
-                'isvalid' => false
+                'isvalidfortraining' => false,
+                'isvalidforprediction' => false
             ],
             'enrolmenttoolong' => [
                 'coursestart' => $now,
                 'courseend' => $now + (WEEKSECS * 8),
                 'timestart' => $now - (YEARSECS + (WEEKSECS * 8)),
                 'timeend' => $now + (WEEKSECS * 8),
-                'isvalid' => false
+                'isvalidfortraining' => false,
+                'isvalidforprediction' => false
             ],
             'enrolmentstartaftercourse' => [
                 'coursestart' => $now,
                 'courseend' => $now + (WEEKSECS * 8),
                 'timestart' => $now + (WEEKSECS * 9),
                 'timeend' => $now + (WEEKSECS * 10),
-                'isvalid' => false
+                'isvalidfortraining' => false,
+                'isvalidforprediction' => false
+            ],
+            'enrolmentstartsafternow' => [
+                'coursestart' => $now,
+                'courseend' => $now + (WEEKSECS * 8),
+                'timestart' => $now + (WEEKSECS * 2),
+                'timeend' => $now + (WEEKSECS * 7),
+                'isvalidfortraining' => false,
+                'isvalidforprediction' => false
+            ],
+            'enrolmentfinishedbeforenow' => [
+                'coursestart' => $now - (WEEKSECS * 4),
+                'courseend' => $now - (WEEKSECS * 1),
+                'timestart' => $now - (WEEKSECS * 3),
+                'timeend' => $now - (WEEKSECS * 2),
+                'isvalidfortraining' => true,
+                'isvalidforprediction' => false
             ],
         ];
     }
@@ -228,9 +247,11 @@ class core_analytics_targets_testcase extends advanced_testcase {
      * @param int $courseend Course end date
      * @param int $timestart Enrol start date
      * @param int $timeend Enrol end date
-     * @param boolean $isvalid True when sample is valid, false when it is not
+     * @param boolean $isvalidfortraining True when sample is valid for training, false when it is not
+     * @param boolean $isvalidforprediction True when sample is valid for prediction, false when it is not
      */
-    public function test_core_target_course_completion_samples($coursestart, $courseend, $timestart, $timeend, $isvalid) {
+    public function test_core_target_course_completion_samples($coursestart, $courseend, $timestart, $timeend,
+            $isvalidfortraining, $isvalidforprediction) {
 
         $this->resetAfterTest(true);
 
@@ -254,7 +275,8 @@ class core_analytics_targets_testcase extends advanced_testcase {
         $target->add_sample_data($samplesdata);
         $sampleid = reset($sampleids);
 
-        $this->assertEquals($isvalid, $target->is_valid_sample($sampleid, $analysable));
+        $this->assertEquals($isvalidfortraining, $target->is_valid_sample($sampleid, $analysable, true));
+        $this->assertEquals($isvalidforprediction, $target->is_valid_sample($sampleid, $analysable, false));
     }
 
     /**

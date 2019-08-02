@@ -1,0 +1,163 @@
+@core @core_analytics @javascript
+Feature: Manage analytics models
+  In order to manage analytics models
+  As a manager
+  I need to create and use a model
+
+  Background:
+    Given the following config values are set as admin:
+      | onlycli  | 0 | analytics |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | manager1 | Manager   | 1        | manager1@example.com |
+      | student0 | Student   | 0        | student0@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+      | student2 | Student   | 2        | student2@example.com |
+      | student3 | Student   | 3        | student3@example.com |
+      | student4 | Student   | 4        | student4@example.com |
+      | student5 | Student   | 5        | student5@example.com |
+      | student6 | Student   | 6        | student6@example.com |
+    And the following "system role assigns" exist:
+      | user     | course               | role      |
+      | manager1 | Acceptance test site | manager   |
+    And the following "courses" exist:
+      | fullname | shortname | category | enddate         | startdate        | enablecompletion |
+      | Course 1 | C1        | 0        | ## yesterday ## | ## 2 days ago ## | 1                |
+      | Course 2 | C2        | 0        | ## yesterday ## | ## 2 days ago ## | 1                |
+      | Course 3 | C3        | 0        | ## tomorrow  ## | ## 2 days ago ## | 1                |
+    And the following "course enrolments" exist:
+      | user     | course | role           | timeend         | timestart         |
+      | teacher1 | C1     | editingteacher | ## 1 day ago ## | ## 2 days ago ##  |
+      | student0 | C1     | student        | ## 1 day ago ## | ## 2 days ago ##  |
+      | student1 | C1     | student        | ## 1 day ago ## | ## 2 days ago ##  |
+      | student2 | C1     | student        | ## 1 day ago ## | ## 2 days ago ##  |
+      | teacher1 | C2     | editingteacher | ## 1 day ago ## | ## 2 days ago ##  |
+      | student3 | C2     | student        | ## 1 day ago ## | ## 2 days ago ##  |
+      | student4 | C2     | student        | ## 1 day ago ## | ## 2 days ago ##  |
+      | teacher1 | C3     | editingteacher | 0               | ## 2 days ago ##  |
+      | manager1 | C3     | manager        | 0               | ## 2 days ago ##  |
+      | student5 | C3     | student        | 0               | ## 2 days ago ##  |
+      | student6 | C3     | student        | 0               | ## 2 days ago ##  |
+    And the following "activities" exist:
+      | activity   | name      | intro   | course | idnumber    | section | completion | completionview |
+      | assign     | assign1   | A1 desc | C1     | assign1     | 0       | 2          | 1              |
+      | assign     | assign2   | A2 desc | C2     | assign2     | 0       | 2          | 1              |
+      | assign     | assign3   | A3 desc | C3     | assign3     | 0       | 2          | 1              |
+    And the following "analytics model" exist:
+      | target                                   | indicators                                 | timesplitting                               | enabled |
+      | \core_course\analytics\target\course_completion | \core\analytics\indicator\any_write_action,\core\analytics\indicator\read_actions |  \core\analytics\time_splitting\single_range | true    |
+    And I log in as "manager1"
+    And I navigate to "Analytics > Analytics models" in site administration
+
+  Scenario: Create a model
+    When I click on "New model" "link"
+    And I click on "Create model" "link"
+    And I set the field "Enabled" to "Enable"
+    And I select "__core_course__analytics__target__course_completion" from the "target" singleselect
+    And I open the autocomplete suggestions list
+    And I click on "Read actions amount" item in the autocomplete list
+    And I open the autocomplete suggestions list
+    And I click on "Any write action in the course" item in the autocomplete list
+    And I select "__core__analytics__time_splitting__single_range" from the "timesplitting" singleselect
+    And I press "Save changes"
+    Then I should see "No predictions available yet" in the "Students at risk of not meeting the course completion conditions" "table_row"
+
+  Scenario: Evaluate a model
+    Given I am on "Course 1" course homepage
+    And I navigate to "Course completion" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Assignment - assign1 | 1 |
+    And I click on "Save changes" "button"
+    And I am on "Course 2" course homepage
+    And I navigate to "Course completion" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Assignment - assign2 | 1 |
+    And I click on "Save changes" "button"
+    And I am on "Course 3" course homepage
+    And I navigate to "Course completion" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Assignment - assign3 | 1 |
+    And I click on "Save changes" "button"
+    And I am on site homepage
+    And I navigate to "Analytics > Analytics models" in site administration
+    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Evaluate" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I press "Evaluate"
+    And I should see "Evaluate model"
+    And I press "Continue"
+    # Evaluation log
+    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Evaluation log" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I should see "Configuration"
+    And I click on "View" "link"
+    And I should see "Log extra info"
+    And I click on "Close" "button"
+    And I click on "Analytics models" "link"
+    # Execute scheduled analysis
+    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Execute scheduled analysis" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I should see "Training results"
+    And I press "Continue"
+    # Check notifications
+    Then I should see "1" in the "#nav-notification-popover-container [data-region='count-container']" "css_element"
+    And I open the notification popover
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
+    And I should see "Students at risk in Course 3 course"
+    When I am on site homepage
+    And I navigate to "Analytics > Analytics models" in site administration
+    # View predictions
+    When I select "C3" from the "contextid" singleselect
+    #And I click on "#dropdown-3" "css_element"
+    And I click on "Actions" "link" in the "Student 6" "table_row"
+    And I click on "View prediction details" "link"
+    And I should see "Prediction details"
+    And I should see "Any write action"
+    And I should see "Read actions amount"
+    And I click on "Actions" "link"
+    And I click on "Acknowledged" "link"
+    And I click on "Actions" "link"
+    And I click on "View prediction details" "link"
+    And I click on "Actions" "link"
+    And I click on "Not useful" "link"
+    And I should see "No insights reported"
+    # Clear predictions
+    When I am on site homepage
+    And I navigate to "Analytics > Analytics models" in site administration
+    And I should see "No insights reported" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Clear predictions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I press "Clear predictions"
+    Then I should see "No predictions available yet" in the "Students at risk of not meeting the course completion conditions" "table_row"
+
+  Scenario: Edit a model
+    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Edit" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Read actions amount" "text" in the ".form-autocomplete-selection" "css_element"
+    And I press "Save changes"
+    And I should not see "Read actions amount"
+
+  Scenario: Disable a model
+    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Disable" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    Then I should see "Disabled model" in the "Students at risk of not meeting the course completion conditions" "table_row"
+
+  Scenario: Export model
+    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Export" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And following "Export" should download between "100" and "500" bytes
+
+  Scenario: Check invalid site elements
+    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Invalid site elements" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    Then I should see "Invalid analysable elements"
+
+  Scenario: Delete model
+    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Delete" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I click on "Delete" "button" in the "Confirm" "dialogue"
+    Then I should not see "Students at risk of not meeting the course completion conditions"

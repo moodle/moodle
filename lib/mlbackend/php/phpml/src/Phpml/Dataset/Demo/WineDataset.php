@@ -16,7 +16,7 @@ class WineDataset extends CsvDataset
 {
     public function __construct()
     {
-        $filepath = __DIR__.'/../../../../data/wine.csv';
+        $filepath = __DIR__.'/../../../data/wine.csv';
         parent::__construct($filepath, 13, true);
     }
 }

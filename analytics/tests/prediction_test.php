@@ -436,6 +436,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     /**
      * Basic test to check that prediction processors work as expected.
      *
+     * @coversNothing
      * @dataProvider provider_ml_test_evaluation_configuration
      * @param string $modelquality
      * @param int $ncourses
@@ -486,6 +487,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     /**
      * Tests the evaluation of already trained models.
      *
+     * @coversNothing
      * @dataProvider provider_ml_processors
      * @param  string $predictionsprocessorclass
      * @return null

@@ -1,6 +1,15 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+* The following functions have been finally deprecated and can not be used anymore:
+  * calendar_wday_name()
+  * calendar_get_block_upcoming()
+  * calendar_print_month_selector()
+  * calendar_cron()
+  * calendar_get_mini()
+  * calendar_get_upcoming()
+
 === 3.6 ===
 * calendar_get_default_courses() function now has optional $userid parameter.
 * calendar_set_filters() function now has optional $user parameter.

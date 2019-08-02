@@ -1,4 +1,4 @@
-Copyright (c) 2015 Leaf Corcoran, http://leafo.github.io/scssphp
+Copyright (c) 2015 Leaf Corcoran, http://scssphp.github.io/scssphp
  
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

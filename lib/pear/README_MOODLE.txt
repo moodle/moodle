@@ -1,18 +1,6 @@
 MOODLE-SPECIFIC PEAR MODIFICATIONS
 ==================================
 
-Auth/RADIUS
-===========
-
-1/ Changed static call to correct alternative (MDL-38373):
-    - From: PEAR::loadExtension('radius'); (in global scope)
-    - To: $this->loadExtension('radius'); (in constructor)
-2/ Upgraded to version 1.1.0 (see MDL-51523).
-   Changes made to the lib/pear/Auth/RADIUS.php file that was downloaded.
-    - Added "require_once('PEAR.php')".
-    - Changed the 'Auth_RADIUS' class so that it extends the 'PEAR' class.
-    - Changed the function 'loadExtension' to public.
-
 XML/Parser
 =================
 1/ changed ereg_ to preg_
@@ -41,8 +29,3 @@ It was decided that we will not upgrade this library from upstream  any more, se
 
 Changed constructors in classes PEAR and PEAR_ERROR to be __construct().
 MDL-60281 - replaced deprecated function each() with foreach loop for PHP7.2 compatibility
-
-
-Crypt/CHAP
-==========
-MDL-52285 - made all constructors PHP7 compatible

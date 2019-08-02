@@ -238,7 +238,7 @@ class model {
         $indicators = \core_analytics\manager::get_all_indicators();
 
         if (empty($this->analyser)) {
-            $this->init_analyser(array('evaluation' => true));
+            $this->init_analyser(array('notimesplitting' => true));
         }
 
         foreach ($indicators as $classname => $indicator) {
@@ -281,15 +281,24 @@ class model {
             throw new \moodle_exception('errornotarget', 'analytics');
         }
 
+        $potentialtimesplittings = $this->get_potential_timesplittings();
+
         $timesplittings = array();
         if (empty($options['notimesplitting'])) {
             if (!empty($options['evaluation'])) {
                 // The evaluation process will run using all available time splitting methods unless one is specified.
                 if (!empty($options['timesplitting'])) {
                     $timesplitting = \core_analytics\manager::get_time_splitting($options['timesplitting']);
+
+                    if (empty($potentialtimesplittings[$timesplitting->get_id()])) {
+                        throw new \moodle_exception('errorcannotusetimesplitting', 'analytics');
+                    }
                     $timesplittings = array($timesplitting->get_id() => $timesplitting);
                 } else {
-                    $timesplittings = \core_analytics\manager::get_time_splitting_methods_for_evaluation();
+                    $timesplittingsforevaluation = \core_analytics\manager::get_time_splitting_methods_for_evaluation();
+
+                    // They both have the same objects, using $potentialtimesplittings as its items are sorted.
+                    $timesplittings = array_intersect_key($potentialtimesplittings, $timesplittingsforevaluation);
                 }
             } else {
 
@@ -325,6 +334,27 @@ class model {
             return false;
         }
         return \core_analytics\manager::get_time_splitting($this->model->timesplitting);
+    }
+
+    /**
+     * Returns the time-splitting methods that can be used by this model.
+     *
+     * @return \core_analytics\local\time_splitting\base[]
+     */
+    public function get_potential_timesplittings() {
+
+        $timesplittings = \core_analytics\manager::get_all_time_splittings();
+        uasort($timesplittings, function($a, $b) {
+            return strcasecmp($a->get_name(), $b->get_name());
+        });
+
+        foreach ($timesplittings as $key => $timesplitting) {
+            if (!$this->get_target()->can_use_timesplitting($timesplitting)) {
+                unset($timesplittings[$key]);
+                continue;
+            }
+        }
+        return $timesplittings;
     }
 
     /**
@@ -1349,6 +1379,30 @@ class model {
     }
 
     /**
+     * Returns the actions executed by users on the predictions.
+     *
+     * @param  \context|null $context
+     * @return \moodle_recordset
+     */
+    public function get_prediction_actions(?\context $context): \moodle_recordset {
+        global $DB;
+
+        $sql = "SELECT apa.id, apa.predictionid, apa.userid, apa.actionname, apa.timecreated,
+                       ap.contextid, ap.sampleid, ap.rangeindex, ap.prediction, ap.predictionscore
+                  FROM {analytics_prediction_actions} apa
+                  JOIN {analytics_predictions} ap ON ap.id = apa.predictionid
+                 WHERE ap.modelid = :modelid";
+        $params = ['modelid' => $this->model->id];
+
+        if ($context) {
+            $sql .= " AND ap.contextid = :contextid";
+            $params['contextid'] = $context->id;
+        }
+
+        return $DB->get_recordset_sql($sql, $params);
+    }
+
+    /**
      * Returns the sample data of a prediction.
      *
      * @param \stdClass $predictionobj
@@ -1743,6 +1797,26 @@ class model {
 
         return new \core\output\inplace_editable('core_analytics', 'modelname', $this->model->id,
             has_capability('moodle/analytics:managemodels', \context_system::instance()), $displayname, $this->model->name);
+    }
+
+    /**
+     * Returns true if the time-splitting method used by this model is invalid for this model.
+     * @return  bool
+     */
+    public function invalid_timesplitting_selected(): bool {
+        $currenttimesplitting = $this->model->timesplitting;
+        if (empty($currenttimesplitting)) {
+            // Not set is different from invalid. This function is used to identify invalid
+            // time-splittings.
+            return false;
+        }
+
+        $potentialtimesplittings = $this->get_potential_timesplittings();
+        if ($currenttimesplitting && empty($potentialtimesplittings[$currenttimesplitting])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

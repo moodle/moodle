@@ -1,6 +1,11 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.8 ===
+
+* The PHP Less compilier has now been removed from the core library.
+  Please consider migrating your theme to use SCSS.
+
 === 3.7 ===
 * The core/form_autocompelte_input template now has a `data-tags` attribute.
 * Boost theme renderer overrides have now been migrated to core.

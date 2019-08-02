@@ -529,15 +529,6 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_course_get_activities_overview' => array(
-        'classname' => 'core_course_external',
-        'methodname' => 'get_activities_overview',
-        'classpath' => 'course/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Return activities overview for the given courses.',
-        'type' => 'read',
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
     'core_course_get_user_navigation_options' => array(
         'classname' => 'core_course_external',
         'methodname' => 'get_user_navigation_options',
@@ -675,6 +666,22 @@ $functions = array(
         'description' => 'Return a list of notifications for the current session',
         'type' => 'read',
         'loginrequired' => false,
+        'ajax' => true,
+    ),
+    'core_session_touch' => array(
+        'classname' => 'core\session\external',
+        'methodname' => 'touch_session',
+        'description' => 'Keep the users session alive',
+        'type' => 'read',
+        'loginrequired' => true,
+        'ajax' => true,
+    ),
+    'core_session_time_remaining' => array(
+        'classname' => 'core\session\external',
+        'methodname' => 'time_remaining',
+        'description' => 'Count the seconds remaining in this session',
+        'type' => 'read',
+        'loginrequired' => true,
         'ajax' => true,
     ),
     'core_files_get_files' => array(
@@ -1957,6 +1964,24 @@ $functions = array(
         'description'  => 'Re-order a competency.',
         'type'         => 'write',
         'capabilities' => 'moodle/competency:competencymanage',
+        'ajax'         => true,
+    ),
+    'core_competency_list_course_module_competencies' => array(
+        'classname'    => 'core_competency\external',
+        'methodname'   => 'list_course_module_competencies',
+        'classpath'    => '',
+        'description'  => 'List the competencies in a course module',
+        'type'         => 'read',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
+        'ajax'         => true,
+    ),
+    'core_competency_count_course_module_competencies' => array(
+        'classname'    => 'core_competency\external',
+        'methodname'   => 'count_course_module_competencies',
+        'classpath'    => '',
+        'description'  => 'Count the competencies in a course module',
+        'type'         => 'read',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
         'ajax'         => true,
     ),
     'core_competency_list_course_competencies' => array(

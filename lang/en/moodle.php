@@ -194,7 +194,7 @@ $string['backuplogdetailed'] = 'Detailed execution log';
 $string['backuploglaststatus'] = 'Last execution log';
 $string['backupmissinguserinfoperms'] = 'Note: This backup contains no user data. Exercise and Workshop activities will not be included in the backup, since these modules are not compatible with this type of backup.';
 $string['backupnext'] = 'Next backup';
-$string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode version of Moodle (pre 1.6).  If this backup contains any non-ISO-8859-1 texts then they may be CORRUPTED if you try to restore them to this Unicode version of Moodle.  See the <a href="http://docs.moodle.org/en/Backup_FAQ">Backup FAQ</a> for more information about how to recover this backup correctly.';
+$string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode version of Moodle (pre 1.6). If this backup contains any non-ISO-8859-1 texts then they may be CORRUPTED if you try to restore them to this Unicode version of Moodle. See the <a href="https://docs.moodle.org/en/Backup_FAQ">Backup FAQ</a> for more information about how to recover this backup correctly.';
 $string['backupnotyetrun'] = 'Automated backup pending';
 $string['backuporiginalname'] = 'Backup name';
 $string['backuproleassignments'] = 'Backup role assignments for these roles';
@@ -467,6 +467,8 @@ $string['defaultcoursesummary'] = 'Write a concise and interesting paragraph her
 $string['defaultcourseteacher'] = 'Teacher';
 $string['defaultcourseteacherdescription'] = 'Teachers can do anything within a course, including changing the activities and grading students.';
 $string['defaultcourseteachers'] = 'Teachers';
+$string['defaulthomepageuser'] = 'Default home page';
+$string['defaulthomepageuser_help'] = 'This determines the home page for your account';
 $string['delete'] = 'Delete';
 $string['deleteablock'] = 'Delete a block';
 $string['deleteall'] = 'Delete all';
@@ -802,6 +804,7 @@ $string['existingcoursedeleting'] = 'Existing course, deleting it first';
 $string['existingcreators'] = 'Existing course creators';
 $string['existingstudents'] = 'Enrolled students';
 $string['existingteachers'] = 'Existing teachers';
+$string['extendsession'] = 'Extend session';
 $string['expand'] = 'Expand';
 $string['expandall'] = 'Expand all';
 $string['expandcategory'] = 'Expand {$a}';
@@ -885,36 +888,24 @@ $string['general'] = 'General';
 $string['geolocation'] = 'latitude - longitude';
 $string['gettheselogs'] = 'Get these logs';
 $string['go'] = 'Go';
-$string['gpl'] = 'Copyright (C) 1999 onwards  Martin Dougiamas  (http://moodle.com)
+$string['gpl'] = 'Copyright (C) 1999 onwards Martin Dougiamas (https://moodle.com)
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-See the Moodle License information page for full details:
-http://docs.moodle.org/dev/License';
+See the Moodle License information page for full details: https://docs.moodle.org/dev/License';
 $string['gpllicense'] = 'GPL license';
-$string['gpl3'] = 'Copyright (C) 1999 onwards Martin Dougiamas (http://moodle.com)
+$string['gpl3'] = 'Copyright (C) 1999 onwards Martin Dougiamas (https://moodle.com)
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-See the Moodle License information page for full details:
-http://docs.moodle.org/dev/License';
+See the Moodle License information page for full details: https://docs.moodle.org/dev/License';
 $string['grade'] = 'Grade';
 $string['grades'] = 'Grades';
-$string['gravatarenabled'] = '<a href="http://www.gravatar.com/">Gravatar</a> has been enabled for this site. If you don\'t upload a profile picture Moodle will attempt to load a profile picture for you from Gravatar.';
+$string['gravatarenabled'] = '<a href="https://www.gravatar.com/">Gravatar</a> has been enabled for this site. If you don\'t upload a profile picture Moodle will attempt to load a profile picture for you from Gravatar.';
 $string['group'] = 'Group';
 $string['groupadd'] = 'Add new group';
 $string['groupaddusers'] = 'Add selected to group';
@@ -1644,6 +1635,9 @@ $string['registrationsend'] = 'Send registration information to moodle.org';
 $string['registrationyes'] = 'Yes, notify me about important news (e.g. security issues or releases) ';
 $string['reject'] = 'Reject';
 $string['rejectdots'] = 'Reject...';
+$string['relativedatesmode'] = 'Relative dates mode';
+$string['relativedatesmode_help'] = 'Display course or activity dates relative to the user\'s start date in the course.<br />The user\'s course start date will be their enrolment start date, unless they are enrolled before the course begins in which case their start date will be the course start date.<br/><strong>WARNING: This is an experimental feature and not all activities may support it. Once the course has been created, this course setting can no longer be changed.</strong>';
+$string['relativedatesmode_warning'] = '<strong>Warning:</strong> Relative dates mode cannot be changed once the course has been created.';
 $string['reload'] = 'Reload';
 $string['remoteappuser'] = 'Remote {$a} User';
 $string['remove'] = 'Remove';
@@ -1707,6 +1701,7 @@ $string['restoreuserinfofailed'] = 'The restore process has stopped because you 
 $string['restoreusersprecheck'] = 'Checking user data';
 $string['restoreusersprecheckerror'] = 'Some problems were detected when checking user data';
 $string['restricted'] = 'Restricted';
+$string['retry'] = 'Retry';
 $string['returningtosite'] = 'Returning to this web site?';
 $string['returntooriginaluser'] = 'Return to {$a}';
 $string['revert'] = 'Revert';
@@ -1807,7 +1802,8 @@ $string['separateandconnected'] = 'Separate and Connected ways of knowing';
 $string['separateandconnectedinfo'] = 'The scale based on the theory of separate and connected knowing. This theory describes two different ways that we can evaluate and learn about the things we see and hear.<ul><li><strong>Separate knowers</strong> remain as objective as possible without including feelings and emotions. In a discussion with other people, they like to defend their own ideas, using logic to find holes in opponent\'s ideas.</li><li><strong>Connected knowers</strong> are more sensitive to other people. They are skilled at empathy and tend to listen and ask questions until they feel they can connect and "understand things from their point of view". They learn by trying to share the experiences that led to the knowledge they find in other people.</li></ul>';
 $string['servererror'] = 'An error occurred whilst communicating with the server';
 $string['serverlocaltime'] = 'Server\'s local time';
-$string['sessionforceclean'] = 'As a security precaution, user-generated scripts have been disabled within this session.';
+$string['sessionforceclean'] = 'As a security precaution, user-generated scripts have been disabled within this session';
+$string['sessiontimeoutsoon'] = 'Your session is about to timeout. Do you want to extend your current session?';
 $string['setcategorytheme'] = 'Set category theme';
 $string['setpassword'] = 'Set password';
 $string['setpasswordinstructions'] = 'Please enter your new password below, then save changes.';
@@ -1833,7 +1829,7 @@ $string['showcommentsnonjs'] = 'Show comments';
 $string['showdescription'] = 'Display description on course page';
 $string['showdescription_help'] = 'If enabled, the description above will be displayed on the course page just below the link to the activity or resource.';
 $string['showgrades'] = 'Show gradebook to students';
-$string['showgrades_help'] = 'Many activities in the course allow grades to be set. This setting determines whether a student can view a list of all their grades for the course via a grades link in the course administration block.';
+$string['showgrades_help'] = 'Many activities in the course allow grades to be set. This setting determines whether a student can view a list of all their grades for the course via a grades link in the navigation drawer or block.';
 $string['showingacourses'] = 'Showing all {$a} courses';
 $string['showingxofycourses'] = 'Showing courses {$a->start} to {$a->end} of {$a->total} courses';
 $string['showlistofcourses'] = 'Show list of courses';
@@ -1981,24 +1977,24 @@ If \'plain text area\' is selected, a format for text input areas such as HTML o
 The list of available text editors is determined by the site administrator.';
 $string['texteditor'] = 'Use standard web forms';
 $string['textformat'] = 'Plain text format';
-$string['timesplitting:deciles'] = 'Tenths';
-$string['timesplitting:deciles_help'] = 'This time-splitting method divides the course into tenths (10 equal parts), with each prediction being based on the data of only the most recent previous tenth.';
-$string['timesplitting:decilesaccum'] = 'Tenths accumulative';
-$string['timesplitting:decilesaccum_help'] = 'This time-splitting method divides the course into tenths (10 equal parts), with each prediction being based on the data of all previous tenths.';
-$string['timesplitting:nosplitting'] = 'No time splitting';
-$string['timesplitting:nosplitting_help'] = 'No time-splitting method is defined for this model.';
-$string['timesplitting:quarters'] = 'Quarters';
-$string['timesplitting:quarters_help'] = 'This time-splitting method divides the course into quarters (4 equal parts), with each prediction being based on the data of only the most recent previous quarter.';
-$string['timesplitting:quartersaccum'] = 'Quarters accumulative';
-$string['timesplitting:quartersaccum_help'] = 'This time-splitting method divides the course into quarters (4 equal parts), with each prediction being based on the data of all previous quarters.';
-$string['timesplitting:singlerange'] = 'Single range';
-$string['timesplitting:singlerange_help'] = 'This time-splitting method considers the entire course as a single span.';
+$string['timesplitting:deciles'] = 'Last tenth';
+$string['timesplitting:deciles_help'] = 'This analysis interval divides the course into tenths (10 equal parts), with each prediction being based on the data of only the most recent previous tenth.';
+$string['timesplitting:decilesaccum'] = 'All previous tenths';
+$string['timesplitting:decilesaccum_help'] = 'This analysis interval divides the course into tenths (10 equal parts), with each prediction being based on the accumulated data of all previous tenths.';
+$string['timesplitting:nosplitting'] = 'No time limits';
+$string['timesplitting:nosplitting_help'] = 'No analysis interval is defined for this model.';
+$string['timesplitting:quarters'] = 'Last quarter';
+$string['timesplitting:quarters_help'] = 'This analysis interval divides the course into quarters (4 equal parts), with each prediction being based on the data of only the most recent previous quarter.';
+$string['timesplitting:quartersaccum'] = 'All previous quarters';
+$string['timesplitting:quartersaccum_help'] = 'This analysis interval divides the course into quarters (4 equal parts), with each prediction being based on the accumulated data of all previous quarters.';
+$string['timesplitting:singlerange'] = 'From start to end';
+$string['timesplitting:singlerange_help'] = 'This analysis interval considers the entire course as a single span.';
 $string['timesplitting:upcoming3days'] = 'Upcoming 3 days';
-$string['timesplitting:upcoming3days_help'] = 'This time-splitting method generates predictions every 3 days. The indicators calculations will be based on the upcoming 3 days.';
+$string['timesplitting:upcoming3days_help'] = 'This analysis interval generates predictions every 3 days. The indicators calculations will be based on the upcoming 3 days.';
 $string['timesplitting:upcomingfortnight'] = 'Upcoming fortnight';
-$string['timesplitting:upcomingfortnight_help'] = 'This time-splitting method generates predictions every fortnight. The indicators calculations will be based on the upcoming fortnight.';
+$string['timesplitting:upcomingfortnight_help'] = 'This analysis interval generates predictions every fortnight. The indicators calculations will be based on the upcoming fortnight.';
 $string['timesplitting:upcomingweek'] = 'Upcoming week';
-$string['timesplitting:upcomingweek_help'] = 'This time-splitting method generates predictions every week. The indicators calculations will be based on the upcoming week.';
+$string['timesplitting:upcomingweek_help'] = 'This analysis interval generates predictions every week. The indicators calculations will be based on the upcoming week.';
 $string['thanks'] = 'Thanks';
 $string['theme'] = 'Theme';
 $string['themes'] = 'Themes';

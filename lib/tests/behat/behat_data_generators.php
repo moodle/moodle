@@ -120,7 +120,7 @@ class behat_data_generators extends behat_base {
         'activities' => array(
             'datagenerator' => 'activity',
             'required' => array('activity', 'idnumber', 'course'),
-            'switchids' => array('course' => 'course', 'gradecategory' => 'gradecat')
+            'switchids' => array('course' => 'course', 'gradecategory' => 'gradecat', 'grouping' => 'groupingid')
         ),
         'blocks' => array(
             'datagenerator' => 'block_instance',
@@ -208,9 +208,28 @@ class behat_data_generators extends behat_base {
             'required' => array('user', 'contact'),
             'switchids' => array('user' => 'userid', 'contact' => 'contactid')
         ),
+        'group messages' => array(
+            'datagenerator' => 'group_messages',
+            'required' => array('user', 'group', 'message'),
+            'switchids' => array('user' => 'userid', 'group' => 'groupid')
+        ),
+        'muted group conversations' => array(
+            'datagenerator' => 'mute_group_conversations',
+            'required' => array('user', 'group', 'course'),
+            'switchids' => array('user' => 'userid', 'group' => 'groupid', 'course' => 'courseid')
+        ),
+        'muted private conversations' => array(
+            'datagenerator' => 'mute_private_conversations',
+            'required' => array('user', 'contact'),
+            'switchids' => array('user' => 'userid', 'contact' => 'contactid')
+        ),
         'language customisations' => array(
             'datagenerator' => 'customlang',
             'required' => array('component', 'stringid', 'value'),
+        ),
+        'analytics model' => array (
+            'datagenerator' => 'analytics_model',
+            'required' => array('target', 'indicators', 'timesplitting', 'enabled'),
         ),
     );
 
@@ -791,6 +810,11 @@ class behat_data_generators extends behat_base {
     protected function get_grouping_id($idnumber) {
         global $DB;
 
+        // Do not fetch grouping ID for empty grouping idnumber.
+        if (empty($idnumber)) {
+            return null;
+        }
+
         if (!$id = $DB->get_field('groupings', 'id', array('idnumber' => $idnumber))) {
             throw new Exception('The specified grouping with idnumber "' . $idnumber . '" does not exist');
         }
@@ -956,6 +980,10 @@ class behat_data_generators extends behat_base {
      * @return void
      */
     protected function process_private_messages(array $data) {
+        if (empty($data['format'])) {
+            $data['format'] = 'FORMAT_PLAIN';
+        }
+
         if (!$conversationid = \core_message\api::get_conversation_between_users([$data['userid'], $data['contactid']])) {
             $conversation = \core_message\api::create_conversation(
                 \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -963,7 +991,48 @@ class behat_data_generators extends behat_base {
             );
             $conversationid = $conversation->id;
         }
-        \core_message\api::send_message_to_conversation($data['userid'], $conversationid, $data['message'], FORMAT_PLAIN);
+        \core_message\api::send_message_to_conversation(
+            $data['userid'],
+            $conversationid,
+            $data['message'],
+            constant($data['format'])
+        );
+    }
+
+    /**
+     * Send a new message from user to a group conversation
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_group_messages(array $data) {
+        global $DB;
+
+        if (empty($data['format'])) {
+            $data['format'] = 'FORMAT_PLAIN';
+        }
+
+        $group = $DB->get_record('groups', ['id' => $data['groupid']]);
+        $coursecontext = context_course::instance($group->courseid);
+        if (!$conversation = \core_message\api::get_conversation_by_area('core_group', 'groups', $data['groupid'],
+            $coursecontext->id)) {
+            $members = $DB->get_records_menu('groups_members', ['groupid' => $data['groupid']], '', 'userid, id');
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+                array_keys($members),
+                $group->name,
+                \core_message\api::MESSAGE_CONVERSATION_ENABLED,
+                'core_group',
+                'groups',
+                $group->id,
+                $coursecontext->id);
+        }
+        \core_message\api::send_message_to_conversation(
+            $data['userid'],
+            $conversation->id,
+            $data['message'],
+            constant($data['format'])
+        );
     }
 
     /**
@@ -981,5 +1050,64 @@ class behat_data_generators extends behat_base {
             $conversationid = $conversation->id;
         }
         \core_message\api::set_favourite_conversation($conversationid, $data['userid']);
+    }
+
+    /**
+     * Mute an existing group conversation for user
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_mute_group_conversations(array $data) {
+        if (groups_is_member($data['groupid'], $data['userid'])) {
+            $context = context_course::instance($data['courseid']);
+            $conversation = \core_message\api::get_conversation_by_area(
+                'core_group',
+                'groups',
+                $data['groupid'],
+                $context->id
+            );
+            if ($conversation) {
+                \core_message\api::mute_conversation($data['userid'], $conversation->id);
+            }
+        }
+    }
+
+    /**
+     * Mute a private conversation for user
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_mute_private_conversations(array $data) {
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$data['userid'], $data['contactid']])) {
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                [$data['userid'], $data['contactid']]
+            );
+            $conversationid = $conversation->id;
+        }
+        \core_message\api::mute_conversation($data['userid'], $conversationid);
+    }
+
+    /**
+     * Transform indicators string into array.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_analytics_model($data) {
+        $data['indicators'] = explode(',', $data['indicators']);
+        return $data;
+    }
+
+    /**
+     * Creates an analytics model
+     *
+     * @param target $data
+     * @return void
+     */
+    protected function process_analytics_model($data) {
+        \core_analytics\manager::create_declared_model($data);
     }
 }

@@ -482,6 +482,30 @@ class core_externallib_testcase extends advanced_testcase {
     }
 
     /**
+     * Validate courses, but still return courses even if they fail validation.
+     */
+    public function test_validate_courses_keepfails() {
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+        $c3 = $this->getDataGenerator()->create_course();
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+        $courseids = array($c1->id, $c2->id, $c3->id);
+
+        $this->setUser($u1);
+        list($courses, $warnings) = external_util::validate_courses($courseids, [], false, true);
+        $this->assertCount(2, $warnings);
+        $this->assertEquals($c2->id, $warnings[0]['itemid']);
+        $this->assertEquals($c3->id, $warnings[1]['itemid']);
+        $this->assertCount(3, $courses);
+        $this->assertTrue($courses[$c1->id]->contextvalidated);
+        $this->assertFalse($courses[$c2->id]->contextvalidated);
+        $this->assertFalse($courses[$c3->id]->contextvalidated);
+    }
+
+    /**
      * Validate courses can re-use an array of prefetched courses.
      */
     public function test_validate_courses_prefetch() {

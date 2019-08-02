@@ -44,6 +44,13 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_plan_builder.class.php');
 class core_backup_renderer extends plugin_renderer_base {
 
     /**
+     * Same site notification display.
+     *
+     * @var string
+     */
+    private $samesitenotification = '';
+
+    /**
      * Renderers a progress bar for the backup or restore given the items that make it up.
      *
      * @param array $items An array of items
@@ -78,6 +85,22 @@ class core_backup_renderer extends plugin_renderer_base {
         $out .= html_writer::end_div();
         $out .= html_writer::end_div();
         return $out;
+    }
+
+    /**
+     * Set the same site backup notification.
+     *
+     */
+    public function set_samesite_notification() {
+        $this->samesitenotification = $this->output->notification(get_string('samesitenotification', 'backup'), 'info');
+    }
+
+    /**
+     * Get the same site backup notification.
+     *
+     */
+    public function get_samesite_notification() {
+        return $this->samesitenotification;
     }
 
     /**

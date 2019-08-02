@@ -364,7 +364,106 @@ class backup_cron_helper_testcase extends advanced_testcase {
         // Updated courses should be backed up.
         $this->assertTrue(testable_backup_cron_automated_helper::testable_is_course_modified($course->id, $timepriortobackup));
     }
+
+    /**
+     * Create courses and backup records for tests.
+     *
+     * @return array Created courses.
+     */
+    private function course_setup() {
+        global $DB;
+
+        // Create test courses.
+        $course1 = $this->getDataGenerator()->create_course(array('timecreated' => 1553402000)); // Newest.
+        $course2 = $this->getDataGenerator()->create_course(array('timecreated' => 1552179600));
+        $course3 = $this->getDataGenerator()->create_course(array('timecreated' => 1552179600));
+        $course4 = $this->getDataGenerator()->create_course(array('timecreated' => 1552179600));
+
+        // Create backup course records for the courses that need them.
+        $backupcourse3 = new stdClass;
+        $backupcourse3->courseid = $course3->id;
+        $backupcourse3->laststatus = testable_backup_cron_automated_helper::BACKUP_STATUS_OK;
+        $backupcourse3->nextstarttime = 1554858160;
+        $DB->insert_record('backup_courses', $backupcourse3);
+
+        $backupcourse4 = new stdClass;
+        $backupcourse4->courseid = $course4->id;
+        $backupcourse4->laststatus = testable_backup_cron_automated_helper::BACKUP_STATUS_OK;
+        $backupcourse4->nextstarttime = 1554858160;
+        $DB->insert_record('backup_courses', $backupcourse4);
+
+        return array($course1, $course2, $course3, $course4);
+    }
+
+    /**
+     * Test the selection and ordering of courses to be backed up.
+     */
+    public function test_get_courses() {
+        $this->resetAfterTest();
+
+        list($course1, $course2, $course3, $course4) = $this->course_setup();
+
+        $now = 1559215025;
+
+        // Get the courses in order.
+        $courseset = testable_backup_cron_automated_helper::testable_get_courses($now);
+
+        $coursearray = array();
+        foreach ($courseset as $course) {
+            if ($course->id != SITEID) { // Skip system course for test.
+                $coursearray[] = $course->id;
+            }
+
+        }
+        $courseset->close();
+
+        // First should be course 1, it is the more recently modified without a backup.
+        $this->assertEquals($course1->id, $coursearray[0]);
+
+        // Second should be course 2, it is the next more recently modified without a backup.
+        $this->assertEquals($course2->id, $coursearray[1]);
+
+        // Third should be course 3, it is the course with the oldest backup.
+        $this->assertEquals($course3->id, $coursearray[2]);
+
+        // Fourth should be course 4, it is the course with the newest backup.
+        $this->assertEquals($course4->id, $coursearray[3]);
+    }
+
+    /**
+     * Test the selection and ordering of courses to be backed up.
+     * Where it is not yet time to start backups for courses with existing backups.
+     */
+    public function test_get_courses_starttime() {
+        $this->resetAfterTest();
+
+        list($course1, $course2, $course3, $course4) = $this->course_setup();
+
+        $now = 1554858000;
+
+        // Get the courses in order.
+        $courseset = testable_backup_cron_automated_helper::testable_get_courses($now);
+
+        $coursearray = array();
+        foreach ($courseset as $course) {
+            if ($course->id != SITEID) { // Skip system course for test.
+                $coursearray[] = $course->id;
+            }
+
+        }
+        $courseset->close();
+
+        // Should only be two courses.
+        // First should be course 1, it is the more recently modified without a backup.
+        $this->assertEquals($course1->id, $coursearray[0]);
+
+        // Second should be course 2, it is the next more recently modified without a backup.
+        $this->assertEquals($course2->id, $coursearray[1]);
+    }
+
 }
+
+
 
 /**
  * Provides access to protected methods we want to explicitly test
@@ -397,4 +496,15 @@ class testable_backup_cron_automated_helper extends backup_cron_automated_helper
     public static function testable_is_course_modified($courseid, $since) {
         return parent::is_course_modified($courseid, $since);
     }
+
+    /**
+     * Provides access to protected method get_courses.
+     *
+     * @param int $now Timestamp to use.
+     * @return moodle_recordset The returned courses as a Moodle recordest.
+     */
+    public static function testable_get_courses($now) {
+        return parent::get_courses($now);
+    }
+
 }

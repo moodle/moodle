@@ -76,26 +76,17 @@ class SimplePie_Parser
 
 	public function parse(&$data, $encoding, $url = '')
 	{
-		if (function_exists('Mf2\parse')) {
+		if (class_exists('DOMXpath') && function_exists('Mf2\parse')) {
+			$doc = new DOMDocument();
+			@$doc->loadHTML($data);
+			$xpath = new DOMXpath($doc);
 			// Check for both h-feed and h-entry, as both a feed with no entries
 			// and a list of entries without an h-feed wrapper are both valid.
-			$position = 0;
-			while ($position = strpos($data, 'h-feed', $position)) {
-				$start = $position < 200 ? 0 : $position - 200;
-				$check = substr($data, $start, 400);
-				if (preg_match('/class="[^"]*h-feed/', $check)) {
-					return $this->parse_microformats($data, $url);
-				}
-				$position += 7;
-			}
-			$position = 0;
-			while ($position = strpos($data, 'h-entry', $position)) {
-				$start = $position < 200 ? 0 : $position - 200;
-				$check = substr($data, $start, 400);
-				if (preg_match('/class="[^"]*h-entry/', $check)) {
-					return $this->parse_microformats($data, $url);
-				}
-				$position += 7;
+			$query = '//*[contains(concat(" ", @class, " "), " h-feed ") or '.
+				'contains(concat(" ", @class, " "), " h-entry ")]';
+			$result = $xpath->query($query);
+			if ($result->length !== 0) {
+				return $this->parse_microformats($data, $url);
 			}
 		}
 
@@ -185,76 +176,72 @@ class SimplePie_Parser
 			xml_parser_free($xml);
 			return $return;
 		}
-		else
+
+		libxml_clear_errors();
+		$xml = new XMLReader();
+		$xml->xml($data);
+		while (@$xml->read())
 		{
-			libxml_clear_errors();
-			$xml = new XMLReader();
-			$xml->xml($data);
-			while (@$xml->read())
+			switch ($xml->nodeType)
 			{
-				switch ($xml->nodeType)
-				{
 
-					case constant('XMLReader::END_ELEMENT'):
+				case constant('XMLReader::END_ELEMENT'):
+					if ($xml->namespaceURI !== '')
+					{
+						$tagName = $xml->namespaceURI . $this->separator . $xml->localName;
+					}
+					else
+					{
+						$tagName = $xml->localName;
+					}
+					$this->tag_close(null, $tagName);
+					break;
+				case constant('XMLReader::ELEMENT'):
+					$empty = $xml->isEmptyElement;
+					if ($xml->namespaceURI !== '')
+					{
+						$tagName = $xml->namespaceURI . $this->separator . $xml->localName;
+					}
+					else
+					{
+						$tagName = $xml->localName;
+					}
+					$attributes = array();
+					while ($xml->moveToNextAttribute())
+					{
 						if ($xml->namespaceURI !== '')
 						{
-							$tagName = $xml->namespaceURI . $this->separator . $xml->localName;
+							$attrName = $xml->namespaceURI . $this->separator . $xml->localName;
 						}
 						else
 						{
-							$tagName = $xml->localName;
+							$attrName = $xml->localName;
 						}
+						$attributes[$attrName] = $xml->value;
+					}
+					$this->tag_open(null, $tagName, $attributes);
+					if ($empty)
+					{
 						$this->tag_close(null, $tagName);
-						break;
-					case constant('XMLReader::ELEMENT'):
-						$empty = $xml->isEmptyElement;
-						if ($xml->namespaceURI !== '')
-						{
-							$tagName = $xml->namespaceURI . $this->separator . $xml->localName;
-						}
-						else
-						{
-							$tagName = $xml->localName;
-						}
-						$attributes = array();
-						while ($xml->moveToNextAttribute())
-						{
-							if ($xml->namespaceURI !== '')
-							{
-								$attrName = $xml->namespaceURI . $this->separator . $xml->localName;
-							}
-							else
-							{
-								$attrName = $xml->localName;
-							}
-							$attributes[$attrName] = $xml->value;
-						}
-						$this->tag_open(null, $tagName, $attributes);
-						if ($empty)
-						{
-							$this->tag_close(null, $tagName);
-						}
-						break;
-					case constant('XMLReader::TEXT'):
+					}
+					break;
+				case constant('XMLReader::TEXT'):
 
-					case constant('XMLReader::CDATA'):
-						$this->cdata(null, $xml->value);
-						break;
-				}
-			}
-			if ($error = libxml_get_last_error())
-			{
-				$this->error_code = $error->code;
-				$this->error_string = $error->message;
-				$this->current_line = $error->line;
-				$this->current_column = $error->column;
-				return false;
-			}
-			else
-			{
-				return true;
+				case constant('XMLReader::CDATA'):
+					$this->cdata(null, $xml->value);
+					break;
 			}
 		}
+		if ($error = libxml_get_last_error())
+		{
+			$this->error_code = $error->code;
+			$this->error_string = $error->message;
+			$this->current_line = $error->line;
+			$this->current_column = $error->column;
+			return false;
+		}
+
+		return true;
 	}
 
 	public function get_error_code()
@@ -465,12 +452,19 @@ class SimplePie_Parser
 				$h_feed = $mf_item;
 				break;
 			}
-			// Also look for an h-feed in the children of each top level item.
+			// Also look for h-feed or h-entry in the children of each top level item.
 			if (!isset($mf_item['children'][0]['type'])) continue;
 			if (in_array('h-feed', $mf_item['children'][0]['type'])) {
 				$h_feed = $mf_item['children'][0];
 				// In this case the parent of the h-feed may be an h-card, so use it as
 				// the feed_author.
+				if (in_array('h-card', $mf_item['type'])) $feed_author = $mf_item;
+				break;
+			}
+			else if (in_array('h-entry', $mf_item['children'][0]['type'])) {
+				$entries = $mf_item['children'];
+				// In this case the parent of the h-entry list may be an h-card, so use
+				// it as the feed_author.
 				if (in_array('h-card', $mf_item['type'])) $feed_author = $mf_item;
 				break;
 			}
@@ -485,7 +479,7 @@ class SimplePie_Parser
 				$feed_author = $mf['items'][0]['properties']['author'][0];
 			}
 		}
-		else {
+		else if (count($entries) === 0) {
 			$entries = $mf['items'];
 		}
 		for ($i = 0; $i < count($entries); $i++) {
@@ -554,18 +548,21 @@ class SimplePie_Parser
 					$photo_list = array();
 					for ($j = 0; $j < count($entry['properties']['photo']); $j++) {
 						$photo = $entry['properties']['photo'][$j];
-						if (strpos($content, $photo) === false) {
+						if (!empty($photo) && strpos($content, $photo) === false) {
 							$photo_list[] = $photo;
 						}
 					}
 					// When there's more than one photo show the first and use a lightbox.
+					// Need a permanent, unique name for the image set, but don't have
+					// anything unique except for the content itself, so use that.
 					$count = count($photo_list);
 					if ($count > 1) {
+						$image_set_id = preg_replace('/[[:^alnum:]]/', '', $photo_list[0]);
 						$description = '<p>';
 						for ($j = 0; $j < $count; $j++) {
 							$hidden = $j === 0 ? '' : 'class="hidden" ';
 							$description .= '<a href="'.$photo_list[$j].'" '.$hidden.
-								'data-lightbox="image-set-'.$i.'">'.
+								'data-lightbox="image-set-'.$image_set_id.'">'.
 								'<img src="'.$photo_list[$j].'"></a>';
 						}
 						$description .= '<br><b>'.$count.' photos</b></p>';
@@ -583,10 +580,18 @@ class SimplePie_Parser
 						$item['title'] = array(array('data' => $title));
 					}
 					$description .= $entry['properties']['content'][0]['html'];
-					if (isset($entry['properties']['in-reply-to'][0]['value'])) {
-						$in_reply_to = $entry['properties']['in-reply-to'][0]['value'];
-						$description .= '<p><span class="in-reply-to"></span> '.
-							'<a href="'.$in_reply_to.'">'.$in_reply_to.'</a><p>';
+					if (isset($entry['properties']['in-reply-to'][0])) {
+						$in_reply_to = '';
+						if (is_string($entry['properties']['in-reply-to'][0])) {
+							$in_reply_to = $entry['properties']['in-reply-to'][0];
+						}
+						else if (isset($entry['properties']['in-reply-to'][0]['value'])) {
+							$in_reply_to = $entry['properties']['in-reply-to'][0]['value'];
+						}
+						if ($in_reply_to !== '') {
+							$description .= '<p><span class="in-reply-to"></span> '.
+								'<a href="'.$in_reply_to.'">'.$in_reply_to.'</a><p>';
+						}
 					}
 					$item['description'] = array(array('data' => $description));
 				}
@@ -627,7 +632,7 @@ class SimplePie_Parser
 			$image = array(array('child' => array('' => array('url' =>
 				array(array('data' => $feed_author['properties']['photo'][0]))))));
 		}
-		// Use the a name given for the h-feed, or get the title from the html.
+		// Use the name given for the h-feed, or get the title from the html.
 		if ($feed_title !== '') {
 			$feed_title = array(array('data' => htmlspecialchars($feed_title)));
 		}

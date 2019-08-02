@@ -30,26 +30,17 @@ define([
 function($, Ajax, Notification, ModalFactory, ModalEvents) {
 
     /**
-     * List of action selectors.
-     *
-     * @type {{VIEW_POLICY: string}}
-     */
-    var ACTIONS = {
-        VIEW_POLICY: '[data-action="view"]'
-    };
-
-    /**
      * PolicyActions class.
      */
-    var PolicyActions = function() {
-        this.registerEvents();
+    var PolicyActions = function(root) {
+        this.registerEvents(root);
     };
 
     /**
      * Register event listeners.
      */
-    PolicyActions.prototype.registerEvents = function() {
-        $(ACTIONS.VIEW_POLICY).click(function(e) {
+    PolicyActions.prototype.registerEvents = function(root) {
+        root.on("click", function(e) {
             e.preventDefault();
 
             var versionid = $(this).data('versionid');
@@ -127,8 +118,9 @@ function($, Ajax, Notification, ModalFactory, ModalEvents) {
          * @method init
          * @return {PolicyActions}
          */
-        'init': function() {
-            return new PolicyActions();
+        'init': function(root) {
+            root = $(root);
+            return new PolicyActions(root);
         }
     };
 });

@@ -16,7 +16,7 @@ class IrisDataset extends CsvDataset
 {
     public function __construct()
     {
-        $filepath = __DIR__.'/../../../../data/iris.csv';
+        $filepath = __DIR__.'/../../../data/iris.csv';
         parent::__construct($filepath, 4, true);
     }
 }

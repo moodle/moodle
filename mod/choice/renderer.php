@@ -133,7 +133,7 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_publish_name_vertical($choices) {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
         $html ='';
         $html .= html_writer::tag('h3',format_string(get_string("responses", "choice")));
 
@@ -179,22 +179,42 @@ class mod_choice_renderer extends plugin_renderer_base {
         foreach ($choices->options as $optionid => $options) {
             $celloption = clone($celldefault);
             $cellusernumber = clone($celldefault);
-            $cellusernumber->style = 'text-align: center;';
 
-            $celltext = '';
             if ($choices->showunanswered && $optionid == 0) {
-                $celltext = get_string('notanswered', 'choice');
+                $headertitle = get_string('notanswered', 'choice');
             } else if ($optionid > 0) {
-                $celltext = format_string($choices->options[$optionid]->text);
+                $headertitle = format_string($choices->options[$optionid]->text);
+            }
+            $celltext = $headertitle;
+
+            // Render select/deselect all checkbox for this option.
+            if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
+
+                // Build the select/deselect all for this option.
+                $selectallid = 'select-response-option-' . $optionid;
+                $togglegroup = 'responses response-option-' . $optionid;
+                $selectalltext = get_string('selectalloption', 'choice', $headertitle);
+                $deselectalltext = get_string('deselectalloption', 'choice', $headertitle);
+                $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
+                    'id' => $selectallid,
+                    'name' => $selectallid,
+                    'value' => 1,
+                    'selectall' => $selectalltext,
+                    'deselectall' => $deselectalltext,
+                    'label' => $selectalltext,
+                    'labelclasses' => 'accesshide',
+                ]);
+
+                $celltext .= html_writer::div($OUTPUT->render($mastercheckbox));
             }
             $numberofuser = 0;
             if (!empty($options->user) && count($options->user) > 0) {
                 $numberofuser = count($options->user);
             }
 
-            $celloption->text = $celltext;
+            $celloption->text = html_writer::div($celltext, 'text-center');
             $optionsnames[$optionid] = $celltext;
-            $cellusernumber->text = $numberofuser;
+            $cellusernumber->text = html_writer::div($numberofuser, 'text-center');
 
             $columns['options'][] = $celloption;
             $columns['usernumber'][] = $cellusernumber;
@@ -230,8 +250,6 @@ class mod_choice_renderer extends plugin_renderer_base {
                         $checkbox = '';
                         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
                             $checkboxid = 'attempt-user' . $user->id . '-option' . $optionid;
-                            $checkbox .= html_writer::label($userfullname . ' ' . $optionsnames[$optionid],
-                                $checkboxid, false, array('class' => 'accesshide'));
                             if ($optionid > 0) {
                                 $checkboxname = 'attemptid[]';
                                 $checkboxvalue = $user->answerid;
@@ -239,8 +257,17 @@ class mod_choice_renderer extends plugin_renderer_base {
                                 $checkboxname = 'userid[]';
                                 $checkboxvalue = $user->id;
                             }
-                            $checkbox .= html_writer::checkbox($checkboxname, $checkboxvalue, '', null,
-                                array('id' => $checkboxid, 'class' => 'mr-1'));
+
+                            $togglegroup = 'responses response-option-' . $optionid;
+                            $slavecheckbox = new \core\output\checkbox_toggleall($togglegroup, false, [
+                                'id' => $checkboxid,
+                                'name' => $checkboxname,
+                                'classes' => 'mr-1',
+                                'value' => $checkboxvalue,
+                                'label' => $userfullname . ' ' . $options->text,
+                                'labelclasses' => 'accesshide',
+                            ]);
+                            $checkbox = $OUTPUT->render($slavecheckbox);
                         }
                         $userimage = $this->output->user_picture($user, array('courseid' => $choices->courseid, 'link' => false));
                         $profileurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $choices->courseid));
@@ -262,14 +289,17 @@ class mod_choice_renderer extends plugin_renderer_base {
 
         $actiondata = '';
         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
-            $selecturl = new moodle_url('#');
-
-            $actiondata .= html_writer::start_div('selectallnone');
-            $actiondata .= html_writer::link($selecturl, get_string('selectall'), ['data-select-info' => true]) . ' / ';
-
-            $actiondata .= html_writer::link($selecturl, get_string('deselectall'), ['data-select-info' => false]);
-
-            $actiondata .= html_writer::end_div();
+            // Build the select/deselect all for all of options.
+            $selectallid = 'select-all-responses';
+            $togglegroup = 'responses';
+            $selectallcheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
+                'id' => $selectallid,
+                'name' => $selectallid,
+                'value' => 1,
+                'label' => get_string('selectall'),
+                'classes' => 'mr-1'
+            ], true);
+            $actiondata .= $OUTPUT->render($selectallcheckbox);
 
             $actionurl = new moodle_url($PAGE->url, array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
             $actionoptions = array('delete' => get_string('delete'));
@@ -278,11 +308,16 @@ class mod_choice_renderer extends plugin_renderer_base {
                     $actionoptions['choose_'.$optionid] = get_string('chooseoption', 'choice', $option->text);
                 }
             }
-            $select = new single_select($actionurl, 'action', $actionoptions, null,
-                    array('' => get_string('chooseaction', 'choice')), 'attemptsform');
+            $selectattributes = [
+                'data-action' => 'toggle',
+                'data-togglegroup' => 'responses',
+                'data-toggle' => 'action',
+            ];
+            $selectnothing = ['' => get_string('chooseaction', 'choice')];
+            $select = new single_select($actionurl, 'action', $actionoptions, null, $selectnothing, 'attemptsform');
             $select->set_label(get_string('withselected', 'choice'));
-
-            $PAGE->requires->js_call_amd('mod_choice/select_all_choices', 'init');
+            $select->disabled = true;
+            $select->attributes = $selectattributes;
 
             $actiondata .= $this->output->render($select);
         }

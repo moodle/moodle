@@ -1,7 +1,48 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+
+* The yui checknet module is removed. Call \core\session\manager::keepalive instead.
+* The generate_uuid() function has been deprecated. Please use \core\uuid::generate() instead.
+* Remove lib/pear/auth/RADIUS.php (MDL-65746)
+* Core components are now defined in /lib/components.json instead of coded into /lib/classes/component.php
+* Subplugins should now be defined using /db/subplugins.json instead of /db/subplugins.php
+* The following functions have been finally deprecated and can not be used anymore:
+    * allow_override()
+    * allow_assign()
+    * allow_switch()
+    * https_required()
+    * verify_https_required()
+* Remove duplicate font-awesome SCSS, Please see /theme/boost/scss/fontawesome for usage (MDL-65936)
+* Remove lib/pear/Crypt/CHAP.php (MDL-65747)
+* New output component available: \core\output\checkbox_toggleall
+  - This allows developers to easily output groups of checkboxes that can be toggled by master controls in the form of a checkbox or
+    a button. Action elements which perform actions on the selected checkboxes can also be enabled/disabled depending on whether
+    at least a single checkbox item is selected or not.
+* Final deprecation (removal) of the core/modal_confirm dialogue.
+* Upgrade scssphp to v1.0.2, This involves renaming classes from Leafo => ScssPhp as the repo has changed.
+* The methods get_local_path_from_storedfile and get_remote_path_from_storedfile in lib/filestore/file_system.php
+  are now public. If you are overriding these then you will need to change your methods to public in your class.
+* $CFG->httpswwwroot has been removed. It is no longer necessary as loginhttps has already been removed and it's no longer being
+  used anywhere in core.
+* It is now possible to use sub-directories for AMD modules.
+  The standard rules for Level 2 namespaces also apply to AMD modules.
+  The sub-directory used must be either an valid component, or placed inside a 'local' directory to ensure that it does not conflict with other components.
+
+    The following are all valid module names and locations in your plugin:
+      mod_forum/view: mod/forum/amd/src/view.js
+      mod_forum/local/views/post: mod/forum/amd/src/local/views/post
+      mod_forum/form/checkbox-toggle: mod/forum/amd/src/form/checkbox-toggle.js
+
+    The following are all invalid module names and locations in your plugin:
+      mod_forum/views/post: mod/forum/amd/src/views/post
+* The 'xxxx_check_password_policy' method now has an extra parameter: $user. It contains the user object to perform password
+validation against and defaults to null (so, no user needed) if not provided.
+
+
 === 3.7 ===
+
 * Nodes in the navigation api can have labels for each group. See set/get_collectionlabel().
 * The method core_user::is_real_user() now returns false for userid = 0 parameter
 * 'mform1' dependencies (in themes, js...) will stop working because a randomly generated string has been added to the id

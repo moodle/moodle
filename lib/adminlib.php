@@ -132,17 +132,26 @@ function uninstall_plugin($type, $name) {
     $subplugintypes = core_component::get_plugin_types_with_subplugins();
     if (isset($subplugintypes[$type])) {
         $base = core_component::get_plugin_directory($type, $name);
-        if (file_exists("$base/db/subplugins.php")) {
-            $subplugins = array();
-            include("$base/db/subplugins.php");
-            foreach ($subplugins as $subplugintype=>$dir) {
+
+        $subpluginsfile = "{$base}/db/subplugins.json";
+        if (file_exists($subpluginsfile)) {
+            $subplugins = (array) json_decode(file_get_contents($subpluginsfile))->plugintypes;
+        } else if (file_exists("{$base}/db/subplugins.php")) {
+            debugging('Use of subplugins.php has been deprecated. ' .
+                    'Please update your plugin to provide a subplugins.json file instead.',
+                    DEBUG_DEVELOPER);
+            $subplugins = [];
+            include("{$base}/db/subplugins.php");
+        }
+
+        if (!empty($subplugins)) {
+            foreach (array_keys($subplugins) as $subplugintype) {
                 $instances = core_component::get_plugin_list($subplugintype);
                 foreach ($instances as $subpluginname => $notusedpluginpath) {
                     uninstall_plugin($subplugintype, $subpluginname);
                 }
             }
         }
-
     }
 
     $component = $type . '_' . $name;  // eg. 'qtype_multichoice' or 'workshopgrading_accumulative' or 'mod_forum'
@@ -2573,6 +2582,19 @@ class admin_setting_confightmleditor extends admin_setting_configtextarea {
         $editor->set_text($data);
         $editor->use_editor($this->get_id(), array('noclean'=>true));
         return parent::output_html($data, $query);
+    }
+
+    /**
+     * Checks if data has empty html.
+     *
+     * @param string $data
+     * @return string Empty when no errors.
+     */
+    public function write_setting($data) {
+        if (trim(html_to_text($data)) === '') {
+            $data = '';
+        }
+        return parent::write_setting($data);
     }
 }
 
@@ -8236,7 +8258,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
     $PAGE->set_context(null); // hack - set context to something, by default to system context
 
     $site = get_site();
-    require_login();
+    require_login(null, false);
 
     if (!empty($options['pagelayout'])) {
         // A specific page layout has been requested.
@@ -10852,9 +10874,9 @@ class admin_setting_scsscode extends admin_setting_configtextarea {
         $scss = new core_scss();
         try {
             $scss->compile($data);
-        } catch (Leafo\ScssPhp\Exception\ParserException $e) {
+        } catch (ScssPhp\ScssPhp\Exception\ParserException $e) {
             return get_string('scssinvalid', 'admin', $e->getMessage());
-        } catch (Leafo\ScssPhp\Exception\CompilerException $e) {
+        } catch (ScssPhp\ScssPhp\Exception\CompilerException $e) {
             // Silently ignore this - it could be a scss variable defined from somewhere
             // else which we are not examining here.
             return true;

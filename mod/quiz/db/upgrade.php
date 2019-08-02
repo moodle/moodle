@@ -141,10 +141,20 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018040800, 'quiz');
     }
 
+    if ($oldversion < 2019062400) {
+        // Delete orphaned group overrides.
+        $DB->delete_records_select('quiz_overrides', 'groupid = 0 AND userid IS NULL');
+
+        upgrade_mod_savepoint(true, 2019062400, 'quiz');
+    }
+
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     // Automatically generated Moodle v3.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

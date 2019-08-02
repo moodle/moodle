@@ -3375,5 +3375,94 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019051300.01);
     }
 
+    // Automatically generated Moodle v3.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2019060600.02) {
+        // Renaming 'opentogoogle' config to 'opentowebcrawlers'.
+        $opentogooglevalue = get_config('core', 'opentogoogle');
+
+        // Move the value over if it was previously configured.
+        if ($opentogooglevalue !== false) {
+            set_config('opentowebcrawlers', $opentogooglevalue);
+        }
+
+        // Remove the now unused value.
+        unset_config('opentogoogle');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019060600.02);
+    }
+
+    if ($oldversion < 2019062900.00) {
+        // Debugsmtp is now only available via config.php.
+        $DB->delete_records('config', array('name' => 'debugsmtp'));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019062900.00);
+    }
+
+    if ($oldversion < 2019070400.01) {
+
+        $basecolors = ['#81ecec', '#74b9ff', '#a29bfe', '#dfe6e9', '#00b894',
+            '#0984e3', '#b2bec3', '#fdcb6e', '#fd79a8', '#6c5ce7'];
+
+        $colornr = 1;
+        foreach ($basecolors as $color) {
+            set_config('coursecolor' .  $colornr, $color, 'core_admin');
+            $colornr++;
+        }
+
+        upgrade_main_savepoint(true, 2019070400.01);
+    }
+
+    if ($oldversion < 2019072200.00) {
+
+        // Define field relativedatesmode to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('relativedatesmode', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'enddate');
+
+        // Conditionally launch add field relativedatesmode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019072200.00);
+    }
+
+    if ($oldversion < 2019072500.01) {
+        // Remove the "popup" processor from the list of default processors for the messagecontactrequests notification.
+        $oldloggedinconfig = get_config('message', 'message_provider_moodle_messagecontactrequests_loggedin');
+        $oldloggedoffconfig = get_config('message', 'message_provider_moodle_messagecontactrequests_loggedoff');
+        $newloggedinconfig = implode(',', array_filter(explode(',', $oldloggedinconfig), function($value) {
+            return $value != 'popup';
+        }));
+        $newloggedoffconfig = implode(',', array_filter(explode(',', $oldloggedoffconfig), function($value) {
+            return $value != 'popup';
+        }));
+        set_config('message_provider_moodle_messagecontactrequests_loggedin', $newloggedinconfig, 'message');
+        set_config('message_provider_moodle_messagecontactrequests_loggedoff', $newloggedoffconfig, 'message');
+
+        upgrade_main_savepoint(true, 2019072500.01);
+    }
+
+    if ($oldversion < 2019072500.03) {
+        unset_config('httpswwwroot');
+
+        upgrade_main_savepoint(true, 2019072500.03);
+    }
+
+    if ($oldversion < 2019073100.00) {
+        // Update the empty tag instructions to null.
+        $instructions = get_config('core', 'auth_instructions');
+
+        if (trim(html_to_text($instructions)) === '') {
+            set_config('auth_instructions', '');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019073100.00);
+    }
     return true;
 }

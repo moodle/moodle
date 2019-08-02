@@ -43,15 +43,14 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
      */
     draw: function() {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
-            drawingregion = this.editor.get_dialogue_element(SELECTOR.DRAWINGREGION),
+            drawingcanvas = this.editor.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             node,
             position;
 
         position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node = Y.Node.create('<div/>');
-        // If these are absolutely positioned, they escape their scroll container.
         node.setStyles({
-            'position': 'relative',
+            'position': 'absolute',
             'display': 'inline-block',
             'backgroundImage': 'url(' + this.editor.get_stamp_image_url(this.path) + ')',
             'width': (this.endx - this.x),
@@ -60,7 +59,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
             'zIndex': 50
         });
 
-        drawingregion.append(node);
+        drawingcanvas.append(node);
         node.setX(position.x);
         node.setY(position.y);
         drawable.store_position(node, position.x, position.y);

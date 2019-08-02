@@ -36,6 +36,7 @@ if (empty($CFG->messaging)) {
 
 // The id of the user we want to view messages from.
 $id = optional_param('id', 0, PARAM_INT);
+$view = optional_param('view', null, PARAM_ALPHANUM);
 // It's possible a user may come from a link where these parameters are specified.
 // We no longer support viewing another user's messaging area (that can be achieved
 // via the 'Log-in as' feature). The 'user2' value takes preference over 'id'.
@@ -56,9 +57,7 @@ if ($userid) {
 }
 
 if ($userid) {
-    $recipient = new stdClass();
-    $recipient->id = $userid;
-    if (!\core_message\api::can_post_message($recipient)) {
+    if (!\core_message\api::can_send_message($userid, $USER->id)) {
         throw new moodle_exception('Can not contact user');
     }
 }
@@ -90,5 +89,5 @@ if (!get_user_preferences('core_message_migrate_data', false)) {
         \core\output\notification::NOTIFY_WARNING);
     echo $OUTPUT->render($notify);
 }
-echo \core_message\helper::render_messaging_widget(false, $userid, $conversationid);
+echo \core_message\helper::render_messaging_widget(false, $userid, $conversationid, $view);
 echo $OUTPUT->footer();

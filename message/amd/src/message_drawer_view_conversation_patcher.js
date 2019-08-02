@@ -45,7 +45,8 @@ function(
      */
     var sortMessagesByDay = function(messages, midnight) {
         var messagesByDay = messages.reduce(function(carry, message) {
-            var dayTimestamp = UserDate.getUserMidnightForTimestamp(message.timeCreated, midnight);
+            var timeCreated = message.timeCreated ? message.timeCreated : midnight;
+            var dayTimestamp = UserDate.getUserMidnightForTimestamp(timeCreated, midnight);
 
             if (carry.hasOwnProperty(dayTimestamp)) {
                 carry[dayTimestamp].push(message);
@@ -145,6 +146,9 @@ function(
      * @return {Boolean} Are arrays equal.
      */
     var isArrayEqual = function(a, b) {
+        // Make shallow copies so that we don't mess with the array sorting.
+        a = a.slice();
+        b = b.slice();
         a.sort();
         b.sort();
         var aLength = a.length;
@@ -164,16 +168,83 @@ function(
     };
 
     /**
+     * Do a shallow check to see if two objects appear to be equal. This should
+     * only be used for pretty basic objects.
+     *
+     * @param {Object} a First object to compare.
+     * @param {Object} b Second object to compare
+     * @return {Bool}
+     */
+    var isObjectEqual = function(a, b) {
+        var aKeys = Object.keys(a);
+        var bKeys = Object.keys(b);
+
+        if (aKeys.length != bKeys.length) {
+            return false;
+        }
+
+        return aKeys.every(function(key) {
+            var aVal = a[key];
+            var bVal = b[key];
+            var aType = typeof aVal;
+            var bType = typeof bVal;
+            aType = (aVal === null) ? 'null' : aType;
+            bType = (aVal === null) ? 'null' : bType;
+            aType = (aType === 'object' && Array.isArray(aType)) ? 'array' : aType;
+            bType = (bType === 'object' && Array.isArray(bType)) ? 'array' : bType;
+
+            if (aType !== bType) {
+                return false;
+            }
+
+            switch (aType) {
+                case 'object':
+                    return isObjectEqual(aVal, bVal);
+                case 'array':
+                    return isArrayEqual(aVal, bVal);
+                default:
+                    return a[key] == b[key];
+            }
+        });
+    };
+
+    /**
+     * Compare two messages to check if they are equal. This function only checks a subset
+     * of the message properties which we know will change rather than all properties.
+     *
+     * @param {Object} a The first message
+     * @param {Object} b The second message
+     * @return {Bool}
+     */
+    var isMessageEqual = function(a, b) {
+        return isObjectEqual(
+            {
+                id: a.id,
+                state: a.sendState,
+                text: a.text,
+                timeCreated: a.timeCreated
+            },
+            {
+                id: b.id,
+                state: b.sendState,
+                text: b.text,
+                timeCreated: b.timeCreated
+            }
+        );
+    };
+
+    /**
      * Build a patch based on days.
      *
      * @param  {Object} current Current list current items.
-     * @param  {Object} daysDiff Difference between current and new.
+     * @param  {Array} remove List of days to remove.
+     * @param  {Array} add List of days to add.
      * @return {Object} Patch with elements to add and remove.
      */
-    var buildDaysPatch = function(current, daysDiff) {
+    var buildDaysPatch = function(current, remove, add) {
         return {
-            remove: daysDiff.missingFromB,
-            add: daysDiff.missingFromA.map(function(day) {
+            remove: remove,
+            add: add.map(function(day) {
                 // Any days left over in the "next" list weren't in the "current" list
                 // so they will need to be added.
                 var before = findPositionInArray(current, function(candidate) {
@@ -197,24 +268,61 @@ function(
     var buildMessagesPatch = function(matchingDays) {
         var remove = [];
         var add = [];
+        var update = [];
 
+        // Iterate over the list of days and determine which messages in those days
+        // have been changed.
         matchingDays.forEach(function(days) {
             var dayCurrent = days.a;
             var dayNext = days.b;
-            var messagesDiff = diffArrays(dayCurrent.messages, dayNext.messages, function(messageCurrent, messageNext) {
-                return messageCurrent.id == messageNext.id;
-            });
+            // Find out which messages have changed in this day. This will return a list of messages
+            // from the current state that couldn't be found in the next state and a list of messages in
+            // the next state which couldn't be count in the current state.
+            var messagesDiff = diffArrays(dayCurrent.messages, dayNext.messages, isMessageEqual);
+            // Take the two arrays (list of messages changed from dayNext and list of messages changed
+            // from dayCurrent) any work out which messages have been added/removed from the list and
+            // which messages were just updated.
+            var patch = diffArrays(
+                // The messages from dayCurrent.message that weren't in dayNext.messages.
+                messagesDiff.missingFromB,
+                // The messages from dayNext.message that weren't in dayCurrent.messages.
+                messagesDiff.missingFromA,
+                function(a, b) {
+                    // This function is going to determine if the messages were
+                    // added/removed from either list or if they were simply an updated.
+                    //
+                    // If the IDs match or it was a state change (i.e. message with a temp
+                    // ID goes from pending to sent and receives an actual id) then they are
+                    // the same message which should be an update not an add/remove.
+                    return a.id == b.id || (a.sendState != b.sendState && a.timeAdded == b.timeAdded);
+                }
+            );
 
-            remove = remove.concat(messagesDiff.missingFromB);
+            // Any messages from the current state for this day which aren't in the next state
+            // for this day (i.e. the user deleted the message) means we need to remove them from
+            // the UI.
+            remove = remove.concat(patch.missingFromB);
 
-            messagesDiff.missingFromA.forEach(function(message) {
-                var before = findPositionInArray(dayCurrent.messages, function(candidate) {
-                    if (message.timeCreated == candidate.timeCreated) {
-                        return message.id < candidate.id;
-                    } else {
-                        return message.timeCreated < candidate.timeCreated;
-                    }
-                });
+            // Any messages not in the current state for this day which are in the next state
+            // for this day (i.e. it's a new message) means we need to add it to the UI so work
+            // out where in the list of messages it should appear (it could be a new message the
+            // user has sent or older messages loaded as part of the conversation scroll back).
+            patch.missingFromA.forEach(function(message) {
+                // By default a null value for before will render the message at the bottom of
+                // the message UI (i.e. it's the newest message).
+                var before = null;
+
+                if (message.timeCreated) {
+                    // If this message has a time created then find where it sits in the list of
+                    // message to insert it into the correct position.
+                    before = findPositionInArray(dayCurrent.messages, function(candidate) {
+                        if (message.timeCreated == candidate.timeCreated) {
+                            return message.id < candidate.id;
+                        } else {
+                            return message.timeCreated < candidate.timeCreated;
+                        }
+                    });
+                }
 
                 add.push({
                     before: before,
@@ -222,11 +330,21 @@ function(
                     day: dayCurrent
                 });
             });
+
+            // Any message that appears in both the current state for this day and the next state
+            // for this day means something in the message was updated.
+            update = update.concat(patch.matches.map(function(message) {
+                return {
+                    before: message.a,
+                    after: message.b
+                };
+            }));
         });
 
         return {
             add: add,
-            remove: remove
+            remove: remove,
+            update: update
         };
     };
 
@@ -238,22 +356,24 @@ function(
      * @return {Object} Patch with days and messsages for each day.
      */
     var buildConversationPatch = function(state, newState) {
-        var oldMessageIds = state.messages.map(function(message) {
-            return message.id;
-        });
-        var newMessageIds = newState.messages.map(function(message) {
-            return message.id;
-        });
+        var diff = diffArrays(state.messages, newState.messages, isMessageEqual);
 
-        if (!isArrayEqual(oldMessageIds, newMessageIds)) {
+        if (diff.missingFromA.length || diff.missingFromB.length) {
+            // Some messages have changed so let's work out which ones by sorting
+            // them into their respective days.
             var current = sortMessagesByDay(state.messages, state.midnight);
             var next = sortMessagesByDay(newState.messages, newState.midnight);
+            // This diffs the arrays to work out if there are any missing days that need
+            // to be added (i.e. we've got some new messages on a new day) or if there
+            // are any days that need to be deleted (i.e. the user has deleted some old messages).
             var daysDiff = diffArrays(current, next, function(dayCurrent, dayNext) {
                 return dayCurrent.timestamp == dayNext.timestamp;
             });
 
             return {
-                days: buildDaysPatch(current, daysDiff),
+                // Handle adding or removing whole days.
+                days: buildDaysPatch(current, daysDiff.missingFromB, daysDiff.missingFromA),
+                // Handle updating messages that don't require adding/removing a whole day.
                 messages: buildMessagesPatch(daysDiff.matches)
             };
         } else {
@@ -458,23 +578,6 @@ function(
         if (!state.loadingMessages && newState.loadingMessages) {
             return true;
         } else if (state.loadingMessages && !newState.loadingMessages) {
-            return false;
-        } else {
-            return null;
-        }
-    };
-
-    /**
-     * Check if the messages are still being send
-     *
-     * @param  {Object} state The current state.
-     * @param  {Object} newState The new state.
-     * @return {Bool|Null} User Object if Object.
-     */
-    var buildSendingMessage = function(state, newState) {
-        if (!state.sendingMessage && newState.sendingMessage) {
-            return true;
-        } else if (state.sendingMessage && !newState.sendingMessage) {
             return false;
         } else {
             return null;
@@ -854,6 +957,11 @@ function(
      * @return {Bool}
      */
     var requiresContactRequest = function(loggedInUserId, user) {
+        // If a user can message then no contact request is required.
+        if (user.canmessage) {
+            return false;
+        }
+
         var contactRequests = user.contactrequests.filter(function(request) {
             return request.userid == loggedInUserId || request.requesteduserid;
         });
@@ -1036,7 +1144,7 @@ function(
                         type: 'add-contact',
                         user: otherUser
                     };
-                } else if (!otherUser.canmessage || (otherUser.requirescontact && !otherUser.iscontact)) {
+                } else if (!otherUser.canmessage && (otherUser.requirescontact && !otherUser.iscontact)) {
                     return {type: 'unable-to-message'};
                 }
             }
@@ -1223,7 +1331,6 @@ function(
                 loadingMembers: buildLoadingMembersPatch,
                 loadingFirstMessages: buildLoadingFirstMessages,
                 loadingMessages: buildLoadingMessages,
-                sendingMessage: buildSendingMessage,
                 confirmDeleteSelectedMessages: buildConfirmDeleteSelectedMessages,
                 inEditMode: buildInEditMode,
                 selectedMessages: buildSelectedMessages,
