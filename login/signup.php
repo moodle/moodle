@@ -86,6 +86,9 @@ if ($mform_signup->is_cancelled()) {
     // Add missing required fields.
     $user = signup_setup_new_user($user);
 
+    // Plugins can perform post sign up actions once data has been validated.
+    core_login_post_signup_requests($user);
+
     $authplugin->user_signup($user, true); // prints notice and link to login/index.php
     exit; //never reached
 }
