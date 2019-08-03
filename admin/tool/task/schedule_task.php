@@ -91,7 +91,6 @@ if(\tool_task\run_from_cli::execute($task)){
     $runnow = '';
     $runnow = html_writer::div(html_writer::link(
         new moodle_url('/admin/tool/task/schedule_task.php',
-            //array('task' => get_class($task))),
             array('task' => get_class($task), 'confirm' => 1, 'sesskey' => sesskey())),
         get_string('runagain', 'tool_task')), 'task-runnow');
     echo $runnow;
