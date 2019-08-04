@@ -1426,8 +1426,6 @@ class quiz_attempt {
      * @param int $slot if speified, the slot number of a specific question to link to.
      * @param int $page if specified, a particular page to link to. If not givem deduced
      *      from $slot, or goes to the first page.
-     * @param int $questionid a question id. If set, will add a fragment to the URL
-     * to jump to a particuar question on the page.
      * @param int $thispage if not -1, the current page. Will cause links to other things on
      * this page to be output as only a fragment.
      * @return string the URL to continue this attempt.
