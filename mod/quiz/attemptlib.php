@@ -1403,6 +1403,26 @@ class quiz_attempt {
     }
 
     /**
+     * Generates the title of the attempt page.
+     *
+     * @param int $page the page number (starting with 0) in the attempt.
+     * @return string
+     */
+    public function attempt_page_title(int $page) : string {
+        if ($this->get_num_pages() > 1) {
+            $a = new stdClass();
+            $a->name = $this->get_quiz_name();
+            $a->currentpage = $page + 1;
+            $a->totalpages = $this->get_num_pages();
+            $title = get_string('attempttitlepaged', 'quiz', $a);
+        } else {
+            $title = get_string('attempttitle', 'quiz', $this->get_quiz_name());
+        }
+
+        return $title;
+    }
+
+    /**
      * @param int $slot if speified, the slot number of a specific question to link to.
      * @param int $page if specified, a particular page to link to. If not givem deduced
      *      from $slot, or goes to the first page.
@@ -1417,6 +1437,15 @@ class quiz_attempt {
     }
 
     /**
+     * Generates the title of the summary page.
+     *
+     * @return string
+     */
+    public function summary_page_title() : string {
+        return get_string('attemptsummarytitle', 'quiz', $this->get_quiz_name());
+    }
+
+    /**
      * @return string the URL of this quiz's summary page.
      */
     public function summary_url() {
@@ -1428,6 +1457,27 @@ class quiz_attempt {
      */
     public function processattempt_url() {
         return new moodle_url('/mod/quiz/processattempt.php');
+    }
+
+    /**
+     * Generates the title of the review page.
+     *
+     * @param int $page the page number (starting with 0) in the attempt.
+     * @param bool $showall whether the review page contains the entire attempt on one page.
+     * @return string
+     */
+    public function review_page_title(int $page, bool $showall = false) : string {
+        if (!$showall && $this->get_num_pages() > 1) {
+            $a = new stdClass();
+            $a->name = $this->get_quiz_name();
+            $a->currentpage = $page + 1;
+            $a->totalpages = $this->get_num_pages();
+            $title = get_string('attemptreviewtitlepaged', 'quiz', $a);
+        } else {
+            $title = get_string('attemptreviewtitle', 'quiz', $this->get_quiz_name());
+        }
+
+        return $title;
     }
 
     /**
