@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function xmldb_filter_activitynames_install() {
+function xmldb_filter_kaltura_install() {
     global $CFG;
     require_once("$CFG->libdir/filterlib.php");
 
