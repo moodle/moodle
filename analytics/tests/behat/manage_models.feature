@@ -51,8 +51,8 @@ Feature: Manage analytics models
     And I navigate to "Analytics > Analytics models" in site administration
 
   Scenario: Create a model
-    When I click on "New model" "link"
-    And I click on "Create model" "link"
+    When I open the action menu in ".top-nav" "css_element"
+    And I choose "Create model" in the open action menu
     And I set the field "Enabled" to "Enable"
     And I select "__core_course__analytics__target__course_completion" from the "target" singleselect
     And I open the autocomplete suggestions list
@@ -84,22 +84,22 @@ Feature: Manage analytics models
     And I click on "Save changes" "button"
     And I am on site homepage
     And I navigate to "Analytics > Analytics models" in site administration
-    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Evaluate" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Evaluate" in the open action menu
     And I press "Evaluate"
     And I should see "Evaluate model"
     And I press "Continue"
     # Evaluation log
-    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Evaluation log" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Evaluation log" in the open action menu
     And I should see "Configuration"
     And I click on "View" "link"
     And I should see "Log extra info"
     And I click on "Close" "button"
     And I click on "Analytics models" "link"
     # Execute scheduled analysis
-    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Execute scheduled analysis" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Execute scheduled analysis" in the open action menu
     And I should see "Training results"
     And I press "Continue"
     # Check notifications
@@ -111,53 +111,52 @@ Feature: Manage analytics models
     And I navigate to "Analytics > Analytics models" in site administration
     # View predictions
     When I select "C3" from the "contextid" singleselect
-    #And I click on "#dropdown-3" "css_element"
-    And I click on "Actions" "link" in the "Student 6" "table_row"
-    And I click on "View prediction details" "link"
+    And I open the action menu in "Student 6" "table_row"
+    And I choose "View prediction details" in the open action menu
     And I should see "Prediction details"
     And I should see "Any write action"
     And I should see "Read actions amount"
-    And I click on "Actions" "link"
-    And I click on "Acknowledged" "link"
-    And I click on "Actions" "link"
-    And I click on "View prediction details" "link"
-    And I click on "Actions" "link"
-    And I click on "Not useful" "link"
+    And I open the action menu in "Student 6" "table_row"
+    And I choose "Acknowledged" in the open action menu
+    And I open the action menu in "Student 5" "table_row"
+    And I choose "View prediction details" in the open action menu
+    And I open the action menu in "Student 5" "table_row"
+    And I choose "Not useful" in the open action menu
     And I should see "No insights reported"
     # Clear predictions
     When I am on site homepage
     And I navigate to "Analytics > Analytics models" in site administration
     And I should see "No insights reported" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Clear predictions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    And I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Clear predictions" in the open action menu
     And I press "Clear predictions"
     Then I should see "No predictions available yet" in the "Students at risk of not meeting the course completion conditions" "table_row"
 
   Scenario: Edit a model
-    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Edit" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    When I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Edit" in the open action menu
     And I click on "Read actions amount" "text" in the ".form-autocomplete-selection" "css_element"
     And I press "Save changes"
     And I should not see "Read actions amount"
 
   Scenario: Disable a model
-    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Disable" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    When I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Disable" in the open action menu
     Then I should see "Disabled model" in the "Students at risk of not meeting the course completion conditions" "table_row"
 
   Scenario: Export model
-    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Export" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    When I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Export" in the open action menu
     And I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
     And following "Export" should download between "100" and "500" bytes
 
   Scenario: Check invalid site elements
-    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Invalid site elements" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    When I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Invalid site elements" in the open action menu
     Then I should see "Invalid analysable elements"
 
   Scenario: Delete model
-    When I click on "Actions" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
-    And I click on "Delete" "link" in the "Students at risk of not meeting the course completion conditions" "table_row"
+    When I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
+    And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     Then I should not see "Students at risk of not meeting the course completion conditions"
