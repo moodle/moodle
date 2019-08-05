@@ -440,6 +440,9 @@ class purpose extends persistent {
         }
         if (!empty($data->sensitivedatareasons) && is_array($data->sensitivedatareasons)) {
             $data->sensitivedatareasons = implode(',', $data->sensitivedatareasons);
+        } else {
+            // Nothing selected. Set default value of null.
+            $data->sensitivedatareasons = null;
         }
 
         // A single value.
