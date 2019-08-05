@@ -1702,6 +1702,33 @@ function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfi
 }
 
 /**
+ * Get the list of options for the enrolment period dropdown
+ *
+ * @return array List of options for the enrolment period dropdown
+ */
+function enrol_get_period_list() {
+    $periodmenu = [];
+    $periodmenu[''] = get_string('unlimited');
+    for ($i = 1; $i <= 365; $i++) {
+        $seconds = $i * DAYSECS;
+        $periodmenu[$seconds] = get_string('numdays', '', $i);
+    }
+    return $periodmenu;
+}
+
+/**
+ * Calculate duration base on start time and end time
+ *
+ * @param int $timestart Time start
+ * @param int $timeend Time end
+ * @return float|int Calculated duration
+ */
+function enrol_calculate_duration($timestart, $timeend) {
+    $duration = floor(($timeend - $timestart) / DAYSECS) * DAYSECS;
+    return $duration;
+}
+
+/**
  * Enrolment plugins abstract class.
  *
  * All enrol plugins should be based on this class,

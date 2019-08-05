@@ -294,6 +294,12 @@ define(['core/templates',
                 params.timeend = timeEnd.getTime() / 1000;
             }
 
+            // Enrol duration.
+            var enrolDuration = $(form).find('[name="duration"]');
+            if (enrolDuration.is(':enabled')) {
+                params.timeend = params.timestart + parseInt(enrolDuration.val());
+            }
+
             var request = {
                 methodname: 'core_enrol_edit_user_enrolment',
                 args: params

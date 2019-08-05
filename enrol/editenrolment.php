@@ -87,6 +87,9 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data()) {
+    if ($data->duration && $data->timeend == 0) {
+        $data->timeend = $data->timestart + $data->duration;
+    }
     if ($manager->edit_enrolment($ue, $data)) {
         redirect($returnurl);
     }
