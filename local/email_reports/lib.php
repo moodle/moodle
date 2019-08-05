@@ -82,6 +82,8 @@ function email_reports_cron() {
 
     $DB->execute($populatesql);
 
+    mtrace("sending user completion warning emails");
+
     // Email all of the users.
     $allusers = $DB->get_records($tempcomptablename);
 
@@ -144,6 +146,7 @@ function email_reports_cron() {
         company::send_supervisor_warning_email($user, $course);
     }
 
+    mtrace("sending completion warning emails to the managers");
     // Email the managers
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename . "}");
@@ -259,6 +262,8 @@ function email_reports_cron() {
 
     $dbman->drop_table($table);
 
+    mtrace("sending course not started emails");
+
     // Deal with courses where users have not yet started.
     $warnnotstartedcourses = $DB->get_records_sql("SELECT * FROM {iomad_courses}
                                                    WHERE warnnotstarted != 0");
@@ -283,6 +288,8 @@ function email_reports_cron() {
             }
         }
     }
+
+    mtrace("sending expiry warning courses");
 
     // Deal with courses which have expiry warnings
     $tempcomptablename = uniqid('emailrep');
@@ -340,6 +347,7 @@ function email_reports_cron() {
 
     $DB->execute($populatesql);
 
+    mtrace("sending to users");
     // Email all of the users
     $allusers = $DB->get_records($tempcomptablename);
 
@@ -407,6 +415,7 @@ function email_reports_cron() {
         $DB->set_field('local_iomad_track', 'expirysent', $runtime, array('userid' =>$compuser->userid, 'courseid' => $compuser->courseid, 'timecompleted' => $compuser->timecompleted));
     }
 
+    mtrace("sending to managers");
     // Email the managers
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename ."}");
@@ -523,24 +532,26 @@ function email_reports_cron() {
         }
     }
 
+    mtrace("getting expiry courses");
     // Deal with users who have passed the expired threshold.
-    $completionexpirycourses = $DB->get_records_sql("SELECT * FROM {iomad_courses)
+    $completionexpirycourses = $DB->get_records_sql("SELECT * FROM {iomad_courses}
                                                      WHERE expireafter > 0");
-    foreach ($completionexpirecourses as $completionexpirecourse) {
+    foreach ($completionexpirycourses as $completionexpirecourse) {
         // Get all of the users who have a time completed time > this time.
         $expiretime = 24 * 60 * 60 * $completionexpirecourse->expireafter;
         $userlist = $DB->get_records_sql("SELECT lit.* FROM
-                                          {local_iomad_track) lit
+                                          {local_iomad_track} lit
                                           JOIN {user_enrolments} ue ON (lit.userid = ue.userid)
                                           JOIN {enrol} e ON (lit.courseid = e.courseid AND ue.enrolid = e.id)
                                           WHERE lit.courseid = :courseid
                                           AND lit.timecompleted + :expiretime < :runtime",
-                                          array('courseid' => $completionexpirycourse->courseid,
+                                          array('courseid' => $completionexpirecourse->courseid,
                                                 'expiretime' => $expiretime,
                                                 'runtime' => $runtime));
 
         //  Cycle through any found users.
         foreach ($userlist as $founduser) {
+            mtrace("expiring user $founduser->userid from course $founduser->courseid");
             // Expire the user from the course.
             $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($founduser->courseid),
                                                                                         'courseid' => $founduser->courseid,
@@ -551,6 +562,7 @@ function email_reports_cron() {
         }
     }
 
+    mtrace("sending manager completion digests");
     // Deal with manager completion digests.
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT id FROM {company}
@@ -674,4 +686,5 @@ function email_reports_cron() {
 
     // Drop the temp database table.
     $dbman->drop_table($table);
+    mtrace("email reporting cron completed at " . date('D M Y h:m:s', time()));
 }
