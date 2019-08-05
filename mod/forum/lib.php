@@ -5379,6 +5379,9 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $userid, "mod_forum", $forumobject->id));
         $forumnode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
+
+    $url = new moodle_url('/mod/forum/export.php', ['id' => $forumobject->id]);
+    $forumnode->add(get_string('export', 'mod_forum'), $url, navigation_node::TYPE_SETTING);
 }
 
 /**
