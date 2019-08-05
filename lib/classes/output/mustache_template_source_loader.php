@@ -158,7 +158,7 @@ class mustache_template_source_loader {
         // Get the requested template source.
         $templatesource = $this->load($templatecomponent, $templatename, $themename, $includecomments);
         // This is a helper function to save a value in one of the result arrays (either $templates or $strings).
-        $save = function(array $results, array $seenlist, string $component, string $id, $value) {
+        $save = function(array $results, array $seenlist, string $component, string $id, $value) use ($lang) {
             if (!isset($results[$component])) {
                 // If the results list doesn't already contain this component then initialise it.
                 $results[$component] = [];
@@ -173,7 +173,7 @@ class mustache_template_source_loader {
         };
         // This is a helper function for processing a dependency. Does stuff like ignore duplicate processing,
         // common result formatting etc.
-        $handler = function(array $dependency, array $ignorelist, callable $processcallback) {
+        $handler = function(array $dependency, array $ignorelist, callable $processcallback) use ($lang) {
             foreach ($dependency as $component => $ids) {
                 foreach ($ids as $id) {
                     $dependencyid = "$component/$id";
@@ -223,7 +223,8 @@ class mustache_template_source_loader {
                 &$seenstrings,
                 &$templates,
                 &$strings,
-                $save
+                $save,
+                $lang
             ) {
                 // We haven't seen this template yet so load it and it's dependencies.
                 $subdependencies = $this->load_with_dependencies(
@@ -232,7 +233,8 @@ class mustache_template_source_loader {
                     $themename,
                     $includecomments,
                     $seentemplates,
-                    $seenstrings
+                    $seenstrings,
+                    $lang
                 );
 
                 foreach ($subdependencies['templates'] as $component => $ids) {
