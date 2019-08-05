@@ -2821,10 +2821,10 @@ class mod_assign_external extends external_api {
             'requiregrading' => $participant->requiregrading,
             'grantedextension' => $participant->grantedextension,
             'blindmarking' => $assign->is_blind_marking(),
-            'allowsubmissionsfromdate' => $assign->get_instance()->allowsubmissionsfromdate,
-            'duedate' => $assign->get_instance()->duedate,
-            'cutoffdate' => $assign->get_instance()->cutoffdate,
-            'duedatestr' => userdate($assign->get_instance()->duedate, get_string('strftimedatetime', 'langconfig')),
+            'allowsubmissionsfromdate' => $assign->get_instance($userid)->allowsubmissionsfromdate,
+            'duedate' => $assign->get_instance($userid)->duedate,
+            'cutoffdate' => $assign->get_instance($userid)->cutoffdate,
+            'duedatestr' => userdate($assign->get_instance($userid)->duedate, get_string('strftimedatetime', 'langconfig')),
         );
 
         if (!empty($participant->groupid)) {
