@@ -70,6 +70,8 @@ class train_models extends \core\task\scheduled_task {
                 continue;
             }
 
+            $renderer = $PAGE->get_renderer('tool_analytics');
+
             $result = $model->train();
 
             // Reset the page as some indicators may call external functions that overwrite the page context.
@@ -77,8 +79,6 @@ class train_models extends \core\task\scheduled_task {
 
             if ($result) {
                 echo $OUTPUT->heading(get_string('modelresults', 'tool_analytics', $model->get_name()));
-
-                $renderer = $PAGE->get_renderer('tool_analytics');
                 echo $renderer->render_get_predictions_results($result, $model->get_analyser()->get_logs());
             }
         }

@@ -102,6 +102,8 @@ if ($options['reuse-prev-analysed']) {
     mtrace(get_string('evaluationinbatches', 'tool_analytics'));
 }
 
+$renderer = $PAGE->get_renderer('tool_analytics');
+
 $analyseroptions = array(
     'filter' => $options['filter'],
     'timesplitting' => $options['analysisinterval'],
@@ -114,7 +116,6 @@ $results = $model->evaluate($analyseroptions);
 // Reset the page as some indicators may call external functions that overwrite the page context.
 \tool_analytics\output\helper::reset_page();
 
-$renderer = $PAGE->get_renderer('tool_analytics');
 echo $renderer->render_evaluate_results($results, $model->get_analyser()->get_logs());
 
 // Check that we have, at leasa,t 1 valid dataset (not necessarily good) to use.

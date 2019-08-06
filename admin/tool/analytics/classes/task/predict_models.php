@@ -59,6 +59,9 @@ class predict_models extends \core\task\scheduled_task {
         }
 
         foreach ($models as $model) {
+
+            $renderer = $PAGE->get_renderer('tool_analytics');
+
             $result = $model->predict();
 
             // Reset the page as some indicators may call external functions that overwrite the page context.
@@ -66,7 +69,6 @@ class predict_models extends \core\task\scheduled_task {
 
             if ($result) {
                 echo $OUTPUT->heading(get_string('modelresults', 'tool_analytics', $model->get_name()));
-                $renderer = $PAGE->get_renderer('tool_analytics');
                 echo $renderer->render_get_predictions_results(false, array(), $result, $model->get_analyser()->get_logs());
             }
         }
