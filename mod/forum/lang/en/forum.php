@@ -66,6 +66,7 @@ $string['cannotcreateinstanceforteacher'] = 'Could not create new course module 
 $string['cannotdeletepost'] = 'You can\'t delete this post!';
 $string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';
 $string['cannoteditposts'] = 'You can\'t edit other people\'s posts!';
+$string['cannotexportforum'] = 'You cannot export this forum';
 $string['cannotfinddiscussion'] = 'Could not find the discussion in this forum';
 $string['cannotfindfirstpost'] = 'Could not find the first post in this forum';
 $string['cannotfindorcreateforum'] = 'Could not find or create a main announcements forum for the site';
