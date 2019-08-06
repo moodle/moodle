@@ -803,6 +803,12 @@ class company_user {
                                  'userid' =>$userid,
                                  'isusing' => 1);
             }
+
+            // Deal with Iomad track table stuff.
+            if ($action == 'delete') {
+                $DB->delete_records('local_iomad_track', array('userid' => $userid, 'courseid' => $courseid, 'timecompleted' => null));
+            }
+
             // Fix company licenses
             if ($licenses = $DB->get_records('companylicense_users', $params)) {
                 $license = array_pop($licenses);
