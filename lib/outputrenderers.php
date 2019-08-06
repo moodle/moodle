@@ -383,7 +383,7 @@ class renderer_base {
     /**
      * Whether we should display the main logo.
      *
-     * @param int $headinglevel
+     * @param int $headinglevel The heading level we want to check against.
      * @return bool
      */
     public function should_display_main_logo($headinglevel = 1) {

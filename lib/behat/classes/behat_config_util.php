@@ -1232,7 +1232,7 @@ class behat_config_util {
      * Return the theme config for a given theme name.
      * This is done so we can mock it in PHPUnit.
      *
-     * @param $themename name of theme
+     * @param string $themename name of theme
      * @return theme_config
      */
     public function get_theme_config($themename) {
