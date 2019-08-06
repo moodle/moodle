@@ -160,12 +160,27 @@ switch ($forum->get_type()) {
                 $orderpostsby
             );
         echo $discussionsrenderer->render($USER, $post, $replies);
+
+        if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forumrecord, $USER)) {
+            $postids = array_map(function($post) {
+                return $post->get_id();
+            }, array_merge([$post], array_values($replies)));
+            forum_tp_mark_posts_read($USER, $postids);
+        }
         break;
     case 'blog':
         $discussionsrenderer = $rendererfactory->get_blog_discussion_list_renderer($forum);
         // Blog forums always show discussions newest first.
         echo $discussionsrenderer->render($USER, $cm, $groupid, $discussionlistvault::SORTORDER_CREATED_DESC,
             $pageno, $pagesize);
+
+        if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forumrecord, $USER)) {
+            $discussions = mod_forum_get_discussion_summaries($forum, $USER, $groupid, null, $pageno, $pagesize);
+            $firstpostids = array_map(function($discussion) {
+                return $discussion->get_first_post()->get_id();
+            }, array_values($discussions));
+            forum_tp_mark_posts_read($USER, $firstpostids);
+        }
         break;
     default:
         $discussionsrenderer = $rendererfactory->get_discussion_list_renderer($forum);
