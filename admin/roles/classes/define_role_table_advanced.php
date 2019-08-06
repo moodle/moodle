@@ -434,7 +434,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     public function save_changes() {
-        global $DB;
+        global $DB, $USER;
 
         if (!$this->roleid) {
             // Creating role.
@@ -443,6 +443,20 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         } else {
             // Updating role.
             $DB->update_record('role', $this->role);
+
+            // Trigger role updated event.
+            \core\event\role_updated::create([
+                'userid' => $USER->id,
+                'objectid' => $this->role->id,
+                'context' => $this->context,
+                'other' => [
+                    'name' => $this->role->name,
+                    'shortname' => $this->role->shortname,
+                    'description' => $this->role->description,
+                    'archetype' => $this->role->archetype,
+                    'contextlevels' => $this->contextlevels
+                ]
+            ])->trigger();
 
             // This will ensure the course contacts cache is purged so name changes get updated in
             // the UI. It would be better to do this only when we know that fields affected are
@@ -473,10 +487,17 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $addfunction = "core_role_set_{$type}_allowed";
         $deltable = 'role_allow_'.$type;
         $field = 'allow'.$type;
+        $eventclass = "\\core\\event\\role_allow_" . $type . "_updated";
+        $context = context_system::instance();
 
         foreach ($current as $roleid) {
             if (!in_array($roleid, $wanted)) {
                 $DB->delete_records($deltable, array('roleid'=>$this->roleid, $field=>$roleid));
+                $eventclass::create([
+                    'context' => $context,
+                    'objectid' => $this->roleid,
+                    'other' => ['targetroleid' => $roleid, 'allow' => false]
+                ])->trigger();
                 continue;
             }
             $key = array_search($roleid, $wanted);
@@ -488,6 +509,14 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
                 $roleid = $this->roleid;
             }
             $addfunction($this->roleid, $roleid);
+
+            if (in_array($roleid, $wanted)) {
+                $eventclass::create([
+                    'context' => $context,
+                    'objectid' => $this->roleid,
+                    'other' => ['targetroleid' => $roleid, 'allow' => true]
+                ])->trigger();
+            }
         }
     }
 

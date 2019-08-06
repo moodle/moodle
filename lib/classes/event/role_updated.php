@@ -18,8 +18,7 @@
  * Role updated event.
  *
  * @package    core
- * @since      Moodle 2.6
- * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @copyright  2019 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,21 +26,15 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-debugging('core\\event\\role_capabilities_updated has been deprecated. Please use
-        core\\event\\capability_assigned instead', DEBUG_DEVELOPER);
-
 /**
  * Role updated event class.
  *
  * @package    core
- * @since      Moodle 2.6
- * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @since      Moodle 3.8
+ * @copyright  2019 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class role_capabilities_updated extends base {
-    /** @var array Legacy log data */
-    protected $legacylogdata = null;
-
+class role_updated extends base {
     /**
      * Initialise event parameters.
      */
@@ -57,7 +50,7 @@ class role_capabilities_updated extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventrolecapabilitiesupdated', 'role');
+        return get_string('eventroleupdated', 'role');
     }
 
     /**
@@ -66,7 +59,7 @@ class role_capabilities_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' updated the capabilities for the role with id '$this->objectid'.";
+        return "The user with id '$this->userid' updated the role with id '$this->objectid'.";
     }
 
     /**
@@ -75,44 +68,30 @@ class role_capabilities_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        if ($this->contextlevel == CONTEXT_SYSTEM) {
-            return new \moodle_url('/admin/roles/define.php', array('action' => 'view', 'roleid' => $this->objectid));
-        } else {
-            return new \moodle_url('/admin/roles/override.php', array('contextid' => $this->contextid,
-                'roleid' => $this->objectid));
-        }
-    }
-
-    /**
-     * Sets legacy log data.
-     *
-     * @param array $legacylogdata
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
+        return new \moodle_url('/admin/roles/define.php', ['action' => 'edit', 'roleid' => $this->objectid]);
     }
 
     /**
      * Returns array of parameters to be passed to legacy add_to_log() function.
      *
-     * @return null|array
+     * @return array
      */
     protected function get_legacy_logdata() {
-        return $this->legacylogdata;
+        return [SITEID, 'role', 'update', 'admin/roles/manage.php?action=edit&roleid=' . $this->objectid,
+            $this->other['shortname'], ''];
     }
-
-    public static function get_objectid_mapping() {
-        return array('db' => 'role', 'restore' => 'role');
-    }
-
 
     /**
-     * This event has been deprecated.
+     * Custom validation.
      *
-     * @return boolean
+     * @throws \coding_exception
+     * @return void
      */
-    public static function is_deprecated() {
-        return true;
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['shortname'])) {
+            throw new \coding_exception('The \'shortname\' value must be set in other.');
+        }
     }
 }

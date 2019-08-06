@@ -59,12 +59,36 @@ abstract class core_role_allow_role_page {
      */
     public function process_submission() {
         global $DB;
+
+        $context = context_system::instance();
+        $this->load_current_settings();
+
         // Delete all records, then add back the ones that should be allowed.
         $DB->delete_records($this->tablename);
         foreach ($this->roles as $fromroleid => $notused) {
             foreach ($this->roles as $targetroleid => $alsonotused) {
+                $isallowed = $this->allowed[$fromroleid][$targetroleid];
                 if (optional_param('s_' . $fromroleid . '_' . $targetroleid, false, PARAM_BOOL)) {
                     $this->set_allow($fromroleid, $targetroleid);
+                    // Only trigger events if this role allow relationship did not exist and the checkbox element
+                    // has been submitted.
+                    if (!$isallowed) {
+                        $eventclass = $this->get_eventclass();
+                        $eventclass::create([
+                            'context' => $context,
+                            'objectid' => $fromroleid,
+                            'other' => ['targetroleid' => $targetroleid, 'allow' => true]
+                        ])->trigger();
+                    }
+                } else if ($isallowed) {
+                    // When the user has deselect an existing role allow checkbox but it is in the list of roles
+                    // allowances.
+                    $eventclass = $this->get_eventclass();
+                    $eventclass::create([
+                        'context' => $context,
+                        'objectid' => $fromroleid,
+                        'other' => ['targetroleid' => $targetroleid, 'allow' => false]
+                    ])->trigger();
                 }
             }
         }
@@ -161,4 +185,10 @@ abstract class core_role_allow_role_page {
      * @return string
      */
     public abstract function get_intro_text();
+
+    /**
+     * Returns the allow class respective event class name.
+     * @return string
+     */
+    protected abstract function get_eventclass();
 }
