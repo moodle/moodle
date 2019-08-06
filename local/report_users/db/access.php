@@ -27,5 +27,14 @@ $capabilities = array(
             'clientreporter' => CAP_ALLOW,
             'companyreporter' => CAP_ALLOW
         ),
+    ),
+
+    'local/report_users:deleteentries' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW,
+        ),
     )
 );

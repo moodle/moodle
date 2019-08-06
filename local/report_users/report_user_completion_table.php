@@ -150,7 +150,7 @@ class local_report_user_completion_table extends table_sql {
         }
 
         // Get the buttons.
-        if (!empty($row->action) || (!empty($row->licenseallocated) && !empty($row->timeenrolled) && empty($row->timecompleted))) {
+        if (!empty($row->action) || (!empty($row->licenseallocated) && empty($row->timecompleted))) {
             // Link for user delete
             $dellink = new moodle_url('/local/report_users/userdisplay.php', array(
                     'userid' => $row->userid,
@@ -164,7 +164,9 @@ class local_report_user_completion_table extends table_sql {
                     'courseid' => $row->courseid,
                     'action' => 'clear'
                 ));
-            if (has_capability('block/iomad_company_admin:editusers', context_system::instance())) {
+            $delaction = '';
+
+            if (has_capability('local/report_users:deleteentries', context_system::instance())) {
                 // Its from the course_completions table.  Check the license type.
                 if ($DB->get_record_sql("SELECT cl.* FROM {companylicense} cl
                                          JOIN {companylicense_users} clu
@@ -174,13 +176,13 @@ class local_report_user_completion_table extends table_sql {
                                          AND clu.licensecourseid = :courseid",
                                          array('userid' => $row->userid,
                                                'courseid' => $row->courseid))) {
-                    $delaction = '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                    $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
                 } else {
-                    $delaction = '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>' .
-                                 '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                    $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>';
+                    if (!empty($row->timeenrolled)) {
+                        $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                    }
                 }
-            } else {
-                $delaction = '';
             }
 
             return $delaction;

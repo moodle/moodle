@@ -37,6 +37,7 @@ $string['pluginname'] = 'Users report';
 $string['privacy:metadata'] = 'The Local Iomad user completion report only shows data stored in other locations.';
 $string['report_users_title'] = 'User report';
 $string['report_users:view'] = 'View the users report';
+$string['report_users:deleteentries'] = 'Delete or clear the users information from a course.';
 $string['repusercompletion'] = 'Completion report by user';
 $string['scormattempts'] = 'Number of attempts';
 $string['scormnotstarted'] = 'User enrolled on course.  Module not started';
