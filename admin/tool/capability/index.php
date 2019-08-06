@@ -66,6 +66,7 @@ $capabilities = array();
 $rolestoshow = array();
 $roleids = array('0');
 $cleanedroleids = array();
+$onlydiff = false;
 if ($data = $form->get_data()) {
 
     $roleids = array();
@@ -90,6 +91,10 @@ if ($data = $form->get_data()) {
             }
         }
     }
+
+    if (isset($data->onlydiff)) {
+        $onlydiff = $data->onlydiff;
+    }
 }
 
 \tool_capability\event\report_viewed::create()->trigger();
@@ -103,7 +108,7 @@ $form->display();
 // If we have a capability, generate the report.
 if (count($capabilities) && count($rolestoshow)) {
     /* @var tool_capability_renderer $renderer */
-    echo $renderer->capability_comparison_table($capabilities, $context->id, $rolestoshow);
+    echo $renderer->capability_comparison_table($capabilities, $context->id, $rolestoshow, $onlydiff);
 }
 
 // Footer.
