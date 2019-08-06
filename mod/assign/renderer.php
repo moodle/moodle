@@ -312,15 +312,30 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($summary->duedate) {
             // Due date.
             $duedate = $summary->duedate;
+            if ($summary->courserelativedatesmode) {
+                // Returns a formatted string, in the format '10d 10h 45m'.
+                $diffstr = get_time_interval_string($duedate, $summary->coursestartdate);
+                if ($duedate >= $summary->coursestartdate) {
+                    $userduedate = get_string('relativedatessubmissionduedateafter', 'mod_assign', ['datediffstr' => $diffstr]);
+                } else {
+                    $userduedate = get_string('relativedatessubmissionduedatebefore', 'mod_assign', ['datediffstr' => $diffstr]);
+                }
+            } else {
+                $userduedate = userdate($duedate);
+            }
             $this->add_table_row_tuple($t, get_string('duedate', 'assign'),
-                                       userdate($duedate));
+                                       $userduedate);
 
             // Time remaining.
-            $due = '';
-            if ($duedate - $time <= 0) {
-                $due = get_string('assignmentisdue', 'assign');
+            if ($summary->courserelativedatesmode) {
+                $due = get_string('relativedatessubmissiontimeleft', 'mod_assign');
             } else {
-                $due = format_time($duedate - $time);
+                $due = '';
+                if ($duedate - $time <= 0) {
+                    $due = get_string('assignmentisdue', 'assign');
+                } else {
+                    $due = format_time($duedate - $time);
+                }
             }
             $this->add_table_row_tuple($t, get_string('timeremaining', 'assign'), $due);
 

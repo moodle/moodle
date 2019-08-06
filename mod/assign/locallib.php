@@ -5562,8 +5562,9 @@ class assign {
      */
     public function get_assign_grading_summary_renderable($activitygroup = null) {
 
-        $instance = $this->get_instance();
+        $instance = $this->get_default_instance(); // Grading summary requires the raw dates, regardless of relativedates mode.
         $cm = $this->get_course_module();
+        $course = $this->get_course();
 
         $draft = ASSIGN_SUBMISSION_STATUS_DRAFT;
         $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
@@ -5584,35 +5585,43 @@ class assign {
                 }
             }
 
-            $summary = new assign_grading_summary($this->count_teams($activitygroup),
-                                                  $instance->submissiondrafts,
-                                                  $this->count_submissions_with_status($draft, $activitygroup),
-                                                  $this->is_any_submission_plugin_enabled(),
-                                                  $this->count_submissions_with_status($submitted, $activitygroup),
-                                                  $instance->cutoffdate,
-                                                  $instance->duedate,
-                                                  $this->get_course_module()->id,
-                                                  $this->count_submissions_need_grading($activitygroup),
-                                                  $instance->teamsubmission,
-                                                  $warnofungroupedusers,
-                                                  $this->can_grade(),
-                                                  $isvisible);
+            $summary = new assign_grading_summary(
+                $this->count_teams($activitygroup),
+                $instance->submissiondrafts,
+                $this->count_submissions_with_status($draft, $activitygroup),
+                $this->is_any_submission_plugin_enabled(),
+                $this->count_submissions_with_status($submitted, $activitygroup),
+                $instance->cutoffdate,
+                $instance->duedate,
+                $this->get_course_module()->id,
+                $this->count_submissions_need_grading($activitygroup),
+                $instance->teamsubmission,
+                $warnofungroupedusers,
+                $course->relativedatesmode,
+                $course->startdate,
+                $this->can_grade(),
+                $isvisible
+            );
         } else {
             // The active group has already been updated in groups_print_activity_menu().
             $countparticipants = $this->count_participants($activitygroup);
-            $summary = new assign_grading_summary($countparticipants,
-                                                  $instance->submissiondrafts,
-                                                  $this->count_submissions_with_status($draft, $activitygroup),
-                                                  $this->is_any_submission_plugin_enabled(),
-                                                  $this->count_submissions_with_status($submitted, $activitygroup),
-                                                  $instance->cutoffdate,
-                                                  $instance->duedate,
-                                                  $this->get_course_module()->id,
-                                                  $this->count_submissions_need_grading($activitygroup),
-                                                  $instance->teamsubmission,
-                                                  assign_grading_summary::WARN_GROUPS_NO,
-                                                  $this->can_grade(),
-                                                  $isvisible);
+            $summary = new assign_grading_summary(
+                $countparticipants,
+                $instance->submissiondrafts,
+                $this->count_submissions_with_status($draft, $activitygroup),
+                $this->is_any_submission_plugin_enabled(),
+                $this->count_submissions_with_status($submitted, $activitygroup),
+                $instance->cutoffdate,
+                $instance->duedate,
+                $this->get_course_module()->id,
+                $this->count_submissions_need_grading($activitygroup),
+                $instance->teamsubmission,
+                assign_grading_summary::WARN_GROUPS_NO,
+                $course->relativedatesmode,
+                $course->startdate,
+                $this->can_grade(),
+                $isvisible
+            );
         }
 
         return $summary;
