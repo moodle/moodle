@@ -575,6 +575,10 @@ class company {
      **/
     public static function remove_course($course, $companyid, $departmentid=0) {
         global $DB;
+
+        $errors = false;
+        $transaction = $DB->start_delegated_transaction();
+
         if ($departmentid == 0) {
             // Deal with the company departments.
             $companydepartments = $DB->get_records('department', array ('company' => $companyid));
@@ -582,21 +586,157 @@ class company {
             if ($companycourse = $DB->get_record('company_created_courses',
                                                  array('companyid' => $companyid,
                                                        'courseid' => $course->id))) {
-                $DB->delete_records('company_created_courses', array('id' => $companycourse->id));
+                if (!$DB->delete_records('company_created_courses', array('id' => $companycourse->id))) {
+                    $errors=true;
+                }
             }
             // Check if its an unshared course in iomad.
             if ($DB->get_record('iomad_courses', array('courseid' => $course->id, 'shared' => 0))) {
-                $DB->delete_records('iomad_courses', array('courseid' => $course->id, 'shared' => 0));
+                if (!$DB->delete_records('iomad_courses', array('courseid' => $course->id, 'shared' => 0))) {
+                    $errors = true;
+                }
             }
-            $DB->delete_records('company_course', array('companyid' => $companyid,
-                                                       'courseid' => $course->id));
+            if (!$DB->delete_records('company_course', array('companyid' => $companyid,
+                                                       'courseid' => $course->id))) {
+                $errors = true;
+            }
         } else {
             // Put course in default company department.
             $companydepartment = self::get_company_parentnode($companyid);
-            self::assign_course_to_department($companydepartment->id, $course->id, $companyid);
+            if (!self::assign_course_to_department($companydepartment->id, $course->id, $companyid)) {
+                $errors = true;
+            }
         }
 
-        return true;
+        if ($errors) {
+            try {
+                throw new Exception('Could not delete course');
+            } catch (\Exception $e) {
+                $transaction->rollback(get_string('couldnotremovecoursefromcompany', 'block_iomad_company_admin'));
+            }
+            return false;
+        } else {
+            $transaction->allow_commit();
+            return true;
+        }
+    }
+
+    /**
+     * Deletes a course from a company
+     *
+     * Parameters -
+     *              $companyid = stdclass();
+     *              $courseid = int;
+     *              $destroy = boolean; True removes all entries from the {local_iomad_track} table
+     *
+     **/
+    public static function delete_course($companyid, $courseid, $destroy = false) {
+        global $DB, $USER, $CFG;
+
+        $errors = false;
+        $gone = false;
+        $transaction = $DB->start_delegated_transaction();
+
+        if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+            try {
+                throw new Exception(get_string('couldnotdeletecourse', 'block_iomad_Company_admin'));
+            } catch (\Exception $e) {
+                $transaction->rollback($e);
+            }
+            return false;
+        }
+
+        if ($iomadcourse = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
+            try {
+                throw new Exception(get_string('couldnotdeletecourse', 'block_iomad_Company_admin'));
+            } catch (\Exception $e) {
+                $transaction->rollback($e);
+            }
+            return false;
+        }
+
+        // Remove the course from the company.
+        if ($iomadcourse->shared != 1 && !self::remove_course($course, $companyid)) {
+            $errors = true;
+        }
+
+        // Remove the course from any licenses
+        if ($licenses = $DB->get_records_sql("SELECT cl.* FROM {companylicense} cl
+                                              JOIN {companylicense_courses} clc ON (cl.id = clc.licenseid)
+                                              WHERE clc.courseid = :courseid
+                                              AND cl.companyid = :companyid",
+                                              array('courseid' => $courseid,
+                                                    'companyid' => $companyid))) {
+            foreach ($licenses as $license) {
+                // Delete anyone using the license for that course.
+                if (!$DB->delete_records('companylicense_users', array('licenseid' => $license->id, 'licensecourseid' => $courseid))) {
+                    $errors = true;
+                }
+                // Delete the course from the license.
+                if (!$DB->delete_records('companylicense_courses', array('licenseid' => $license->id, 'courseid' => $courseid))) {
+                    $errors = true;
+                }
+
+                // Fire an event for this.
+                $eventother = array('licenseid' => $license->id,
+                                    'parentid' => $license->parentid);
+
+                $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
+                                                                                                'userid' => $USER->id,
+                                                                                                'objectid' => $license->id,
+                                                                                                'other' => $eventother));
+                $event->trigger();
+            }
+        }
+
+        // Is the course a shared course?
+        if ($iomadcourses->shared == 0) {
+            // Call the moodle course delete function.
+            if (!delete_course($courseid)) {
+                $errors = true;
+            }
+            if (!$DB->delete_records('iomad_courses', array('id' => $iomadcourse->id))) {
+                $errors = true;
+            }
+            $gone=true;
+        } else {
+            // Check if it belongs to a company now?
+            if ($DB->count_records('company_courses', array('courseid' => $courseid)) == 0) {
+                // Call the moodle course delete function.
+                if (!delete_course($courseid)) {
+                    $errors = true;
+                }
+                if (!$DB->delete_records('iomad_courses', array('id' => $iomadcourse->id))) {
+                    $errors = true;
+                }
+                $gone = true;
+            }
+        }
+
+        // remove all entries from the {local_iomad_track_table} if destroy is true.
+        if ($destroy) {
+            if (!$gone) {
+                if (!$DB->delete_records('local_iomad_track', array('companyid' => $companyid, 'courseid' => $courseid))) {
+                    $errors = true;
+                }
+            } else {
+                if (!$DB->delete_records('local_iomad_track', array('courseid' => $courseid))) {
+                    $errors = true;
+                }
+            }
+        }
+
+        if ($errors) {
+            try {
+                throw new Exception('Could not delete course');
+            } catch (\Exception $e) {
+                $transaction->rollback($e);
+            }
+            return false;
+        } else {
+            $transaction->allow_commit();
+            return true;
+        }
     }
 
     /**

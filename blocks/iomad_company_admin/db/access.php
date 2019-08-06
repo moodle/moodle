@@ -278,7 +278,43 @@ $capabilities = array(
         ),
     ),
 
+    'block/iomad_company_admin:deletecourses' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_company_admin:deleteallcourses' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_company_admin:destroycourses' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
     'block/iomad_company_admin:managecourses' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_company_admin:viewcourses' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,

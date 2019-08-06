@@ -85,22 +85,34 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_licensed($row) {
-        global $OUTPUT, $params;
+        global $OUTPUT, $params, $systemcontext;
 
-        $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
-        $licenseselectbutton = array('0' => get_string('no'), '1' => get_string('yes'), '3' => get_string('pluginname', 'enrol_self'));
+        $licenseselectoutput = "";
 
-        $linkparams = $params;
-        if (!empty($params['coursesearchtext'])) {
-            $linkparams['coursesearch'] = $params['coursesearchtext'];
+        if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
+            $licenseselectbutton = array('0' => get_string('no'), '1' => get_string('yes'), '3' => get_string('pluginname', 'enrol_self'));
+
+            $linkparams = $params;
+            if (!empty($params['coursesearchtext'])) {
+                $linkparams['coursesearch'] = $params['coursesearchtext'];
+            }
+            $linkparams['courseid'] = $row->courseid;
+            $linkparams['update'] = 'license';
+            $licenseurl = new moodle_url($linkurl, $linkparams);
+            $licenseselect = new single_select($licenseurl, 'license', $licenseselectbutton, $row->licensed);
+            $licenseselect->label = '';
+            $licenseselect->formid = 'licenseselect'.$row->courseid;
+            $licenseselectoutput = html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'license_selector'.$row->courseid));
+        } else {
+            if ($row->licenseid == 0) {
+                $licenseselectoutput = get_string('no');
+            } else if ($row->licenseid == 1) {
+                $licenseselectoutput = get_string('yes');
+            } else if ($row->licenseid == 2) {
+                $licenseselectoutput = get_string('pluginname', 'enrol_self');
+            }
         }
-        $linkparams['courseid'] = $row->courseid;
-        $linkparams['update'] = 'license';
-        $licenseurl = new moodle_url($linkurl, $linkparams);
-        $licenseselect = new single_select($licenseurl, 'license', $licenseselectbutton, $row->licensed);
-        $licenseselect->label = '';
-        $licenseselect->formid = 'licenseselect'.$row->courseid;
-        $licenseselectoutput = html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'license_selector'.$row->courseid));
 
         return $licenseselectoutput;
     }
@@ -140,23 +152,27 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_validlength($row) {
-        global $output, $CFG, $DB, $params;
+        global $output, $CFG, $DB, $params, $systemcontext;
 
-        if (!empty($params['coursesearchtext'])) {
-            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            if (!empty($params['coursesearchtext'])) {
+                $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+            } else {
+                $coursesearch = '';
+            }
+
+            return '<form action="iomad_courses_form.php" method="get">
+                    <input type="hidden" name="courseid" value="' . $row->courseid . '" />
+                    <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                    $coursesearch .'
+                   <input type="hidden" name="update" value="validfor" />
+                   <input type="text" name="validfor" id="id_validfor" value="'.$row->validlength.'" size="10"/>
+                   <input type="submit" value="' . get_string('submit') . '" />
+                   </form>';
+
         } else {
-            $coursesearch = '';
+            return $row->validlength;
         }
-
-        return '<form action="iomad_courses_form.php" method="get">
-                <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
-                $coursesearch .'
-               <input type="hidden" name="update" value="validfor" />
-               <input type="text" name="validfor" id="id_validfor" value="'.$row->validlength.'" size="10"/>
-               <input type="submit" value="' . get_string('submit') . '" />
-               </form>';
-
     }
 
     /**
@@ -165,47 +181,54 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_expireafter($row) {
-        global $output, $CFG, $DB, $params;
+        global $output, $CFG, $DB, $params, $systemcontext;
 
-        if (!empty($params['coursesearchtext'])) {
-            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            if (!empty($params['coursesearchtext'])) {
+                $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+            } else {
+                $coursesearch = '';
+            }
+
+            return '<form action="iomad_courses_form.php" method="get">
+                    <input type="hidden" name="courseid" value="' . $row->courseid . '" />
+                    <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                    $coursesearch .'
+                    <input type="hidden" name="update" value="expireafter" />
+                    <input type="text" name="expireafter" id="id_expire" value="'.$row->expireafter.'" size="10"/>
+                    <input type="submit" value="' . get_string('submit') . '" />
+                    </form>';
         } else {
-            $coursesearch = '';
+            return $row->expireafter;
         }
-
-        return '<form action="iomad_courses_form.php" method="get">
-                <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
-                $coursesearch .'
-                <input type="hidden" name="update" value="expireafter" />
-                <input type="text" name="expireafter" id="id_expire" value="'.$row->expireafter.'" size="10"/>
-                <input type="submit" value="' . get_string('submit') . '" />
-                </form>';
-
     }
 
     /**
-     * Generate the display of the user's license allocated timestamp
+     * Generate the display of the warn expiry time.
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_warnexpire($row) {
-        global $output, $CFG, $DB, $params;
+        global $output, $CFG, $DB, $params, $systemcontext;
 
-        if (!empty($params['coursesearchtext'])) {
-            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            if (!empty($params['coursesearchtext'])) {
+                $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+            } else {
+                $coursesearch = '';
+            }
+
+            return '<form action="iomad_courses_form.php" method="get">
+                    <input type="hidden" name="courseid" value="' . $row->courseid . '" />
+                    <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                    $coursesearch .'
+                    <input type="hidden" name="update" value="warnexpire" />
+                    <input type="text" name="warnexpire" id="id_warnexpire" value="'.$row->warnexpire.'" size="10"/>
+                    <input type="submit" value="' . get_string('submit') . '" />
+                    </form>';
         } else {
-            $coursesearch = '';
+            return $row->warnexpire;
         }
-
-        return '<form action="iomad_courses_form.php" method="get">
-                <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
-                $coursesearch .'
-                <input type="hidden" name="update" value="warnexpire" />
-                <input type="text" name="warnexpire" id="id_warnexpire" value="'.$row->warnexpire.'" size="10"/>
-                <input type="submit" value="' . get_string('submit') . '" />
-                </form>';
 
     }
 
@@ -215,23 +238,26 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_warnnotstarted($row) {
-        global $output, $CFG, $DB, $params;
+        global $output, $CFG, $DB, $params, $systemcontext;
 
-        if (!empty($params['coursesearchtext'])) {
-            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            if (!empty($params['coursesearchtext'])) {
+                $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+            } else {
+                $coursesearch = '';
+            }
+
+            return '<form action="iomad_courses_form.php" method="get">
+                    <input type="hidden" name="courseid" value="' . $row->courseid . '" />
+                    <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                    $coursesearch .'
+                    <input type="hidden" name="update" value="warnnotstarted" />
+                    <input type="text" name="warnnotstarted" id="id_warnnotstarted" value="'.$row->warnnotstarted.'" size="10"/>
+                    <input type="submit" value="' . get_string('submit') . '" />
+                    </form>';
         } else {
-            $coursesearch = '';
+            return $row->warnnotstarted;
         }
-
-        return '<form action="iomad_courses_form.php" method="get">
-                <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
-                $coursesearch .'
-                <input type="hidden" name="update" value="warnnotstarted" />
-                <input type="text" name="warnnotstarted" id="id_warnnotstarted" value="'.$row->warnnotstarted.'" size="10"/>
-                <input type="submit" value="' . get_string('submit') . '" />
-                </form>';
-
     }
 
     /**
@@ -240,23 +266,26 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_warncompletion($row) {
-        global $output, $CFG, $DB, $params;
+        global $output, $CFG, $DB, $params, $systemcontext;
 
-        if (!empty($params['coursesearchtext'])) {
-            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            if (!empty($params['coursesearchtext'])) {
+                $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+            } else {
+                $coursesearch = '';
+            }
+
+            return '<form action="iomad_courses_form.php" method="get">
+                    <input type="hidden" name="courseid" value="' . $row->courseid . '" />
+                    <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                    $coursesearch .'
+                    <input type="hidden" name="update" value="warncompletion" />
+                    <input type="text" name="warncompletion" id="id_warncompletion" value="'.$row->warncompletion.'" size="10"/>
+                    <input type="submit" value="' . get_string('submit') . '" />
+                    </form>';
         } else {
-            $coursesearch = '';
+            return $row->warncompletion;
         }
-
-        return '<form action="iomad_courses_form.php" method="get">
-                <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
-                $coursesearch .'
-                <input type="hidden" name="update" value="warncompletion" />
-                <input type="text" name="warncompletion" id="id_warncompletion" value="'.$row->warncompletion.'" size="10"/>
-                <input type="submit" value="' . get_string('submit') . '" />
-                </form>';
-
     }
 
     /**
@@ -265,50 +294,106 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_notifyperiod($row) {
-        global $output, $CFG, $DB, $params;
+        global $output, $CFG, $DB, $params, $systemcontext;
 
-        if (!empty($params['coursesearchtext'])) {
-            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            if (!empty($params['coursesearchtext'])) {
+                $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+            } else {
+                $coursesearch = '';
+            }
+
+            return '<form action="iomad_courses_form.php" method="get">
+                    <input type="hidden" name="courseid" value="' . $row->courseid . '" />
+                    <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                    $coursesearch .'
+                    <input type="hidden" name="update" value="notifyperiod" />
+                    <input type="text" name="notifyperiod" id="id_notifyperiod" value="'.$row->notifyperiod.'" size="10"/>
+                    <input type="submit" value="' . get_string('submit') . '" />
+                    </form>';
         } else {
-            $coursesearch = '';
+            return $row->notifyperiod;
         }
-
-        return '<form action="iomad_courses_form.php" method="get">
-                <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
-                $coursesearch .'
-                <input type="hidden" name="update" value="notifyperiod" />
-                <input type="text" name="notifyperiod" id="id_notifyperiod" value="'.$row->notifyperiod.'" size="10"/>
-                <input type="submit" value="' . get_string('submit') . '" />
-                </form>';
-
     }
 
     /**
-     * Generate the display of the user's license allocated timestamp
+     * Generate the display of the ucourses has grade column.
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_hasgrade($row) {
-        global $OUTPUT, $params;
+        global $OUTPUT, $params, $systemcontext;
 
-        $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
-        $hasgradeselectbutton = array('0' => get_string('no'),
-                                      '1' => get_string('yes'));
+        $hasgradeselectoutput = "";
 
-        $linkparams = $params;
-        if (!empty($params['coursesearchtext'])) {
-            $linkparams['coursesearch'] = $params['coursesearchtext'];
+        if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
+            $hasgradeselectbutton = array('0' => get_string('no'),
+                                          '1' => get_string('yes'));
+
+            $linkparams = $params;
+            if (!empty($params['coursesearchtext'])) {
+                $linkparams['coursesearch'] = $params['coursesearchtext'];
+            }
+            $linkparams['courseid'] = $row->courseid;
+            $linkparams['update'] = 'hasgrade';
+            $hasgradeurl = new moodle_url($linkurl, $linkparams);
+            $hasgradeselect = new single_select($hasgradeurl, 'hasgrade', $hasgradeselectbutton, $row->hasgrade);
+            $hasgradeselect->label = '';
+            $hasgradeselect->formid = 'hasgradeselect'.$row->courseid;
+            $hasgradeselectoutput = html_writer::tag('div', $OUTPUT->render($hasgradeselect), array('id' => 'hasgrade_selector'.$row->courseid));
+
+        } else {
+            if ($row->hasgrade) {
+                $hasgradeselectoutput = get_string('yes');
+            } else {
+                $hasgradeselectoutput = get_string('no');
+            }
         }
-        $linkparams['courseid'] = $row->courseid;
-        $linkparams['update'] = 'hasgrade';
-        $hasgradeurl = new moodle_url($linkurl, $linkparams);
-        $hasgradeselect = new single_select($hasgradeurl, 'hasgrade', $hasgradeselectbutton, $row->hasgrade);
-        $hasgradeselect->label = '';
-        $hasgradeselect->formid = 'hasgradeselect'.$row->courseid;
-        $hasgradeselectoutput = html_writer::tag('div', $OUTPUT->render($hasgradeselect), array('id' => 'hasgrade_selector'.$row->courseid));
-
         return $hasgradeselectoutput;
+
+    }
+
+    /**
+     * Generate the display of the ucourses has grade column.
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_actions($row) {
+        global $OUTPUT, $params, $systemcontext;
+
+        $actionsoutput = "";
+
+        if ($row->shared == 0 && 
+            (iomad::has_capability('block/iomad_company_admin:deletecourses', $systemcontext) ||
+            iomad::has_capability('block/iomad_company_admin:deletecourses', $systemcontext))) {
+            $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
+            $linkparams = $params;
+            if (!empty($params['coursesearchtext'])) {
+                $linkparams['coursesearch'] = $params['coursesearchtext'];
+            }
+            $linkparams['deleteid'] = $row->courseid;
+            $linkparams['sesskey'] = sesskey();
+            $deleteurl = new moodle_url($linkurl, $linkparams);
+            $actionsoutput = html_writer::start_tag('div');
+            $actionsoutput .= "<a class='btn btn-sm btn-warning' href='$deleteurl'>" . get_string('delete') . "</a>";
+            $actionsoutput .= html_writer::end_tag('div');
+
+        } else if (iomad::has_capability('block/iomad_company_admin:deleteallcourses', $systemcontext)) {
+            $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
+            $linkparams = $params;
+            if (!empty($params['coursesearchtext'])) {
+                $linkparams['coursesearch'] = $params['coursesearchtext'];
+            }
+            $linkparams['deleteid'] = $row->courseid;
+            $linkparams['sesskey'] = sesskey();
+            $deleteurl = new moodle_url($linkurl, $linkparams);
+            $actionsoutput = html_writer::start_tag('div');
+            $actionsoutput .= "<a class='btn btn-sm btn-warning' href='$deleteurl'>" . get_string('delete') . "</a>";
+            $actionsoutput .= html_writer::end_tag('div');
+        }
+
+        return $actionsoutput;
 
     }
 }

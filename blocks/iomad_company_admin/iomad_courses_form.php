@@ -35,6 +35,8 @@ $warncompletion = optional_param('warncompletion', 0, PARAM_INTEGER);
 $notifyperiod = optional_param('notifyperiod', 0, PARAM_INTEGER);
 $expireafter = optional_param('expireafter', 0, PARAM_INTEGER);
 $hasgrade = optional_param('hasgrade', 1, PARAM_INTEGER);
+$deleteid = optional_param('deleteid', 0, PARAM_INT);
+$confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 
 $params = array();
 
@@ -46,7 +48,7 @@ if ($courseid) {
 
 $systemcontext = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:managecourses', $systemcontext);
+iomad::require_capability('block/iomad_company_admin:viewcourses', $systemcontext);
 
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/iomad_courses_form.php');
@@ -238,6 +240,79 @@ if (!empty($update)) {
     }
 }
 
+// Delete any valid departments.
+if (!empty($deleteid)) {
+    if (!$course = $DB->get_record('course', array('id' => $deleteid))) {
+        print_error('invalidcourse');
+    }
+    if (confirm_sesskey() && $confirm == md5($deleteid)) {
+        $destroy = optional_param('destroy', 0, PARAM_INT);
+        // delete the course and all of the data.
+        if (company::delete_course($companyid, $deleteid, $destroy)) {
+            redirect($linkurl,
+                get_string("deletecourse_successful", 'block_iomad_company_admin'),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS);
+
+        }
+        die;
+    } else {
+        echo $OUTPUT->header();
+        $confirmurl = new moodle_url('iomad_courses_form.php',
+                                     array('confirm' => md5($deleteid),
+                                           'deleteid' => $deleteid,
+                                           'sesskey' => sesskey()
+                                           ));
+        $continue = new single_button($confirmurl, get_string('continue'), 'post', true);
+        $destroyurl = new moodle_url('iomad_courses_form.php',
+                                     array('confirm' => md5($deleteid),
+                                           'deleteid' => $deleteid,
+                                           'destroy' => true,
+                                           'sesskey' => sesskey()
+                                           ));
+        $destroy = new single_button($destroyurl, get_string('destroy', 'block_iomad_company_admin'), 'post', true);
+        $cancel = new single_button($linkurl, get_string('cancel'), 'post', true);
+
+        $attributes = [
+            'role'=>'alertdialog',
+            'aria-labelledby'=>'modal-header',
+            'aria-describedby'=>'modal-body',
+            'aria-modal'=>'true'
+        ];
+
+        // Which message are we showing?
+        if (iomad::has_capability('block/iomad_company_admin:destroycourses', $systemcontext)) {
+            $message = get_string('deleteanddestroycoursesfull', 'block_iomad_company_admin', $course->fullname);
+        } else {
+            $message = get_string('deleteacoursesfull', 'block_iomad_company_admin', $course->fullname);
+        }
+        $confirmhtml = $OUTPUT->box_start('generalbox modal modal-dialog modal-in-page show', 'notice', $attributes);
+        $confirmhtml .= $OUTPUT->box_start('modal-content', 'modal-content');
+        $confirmhtml .= $OUTPUT->box_start('modal-header p-x-1', 'modal-header');
+        $confirmhtml .= html_writer::tag('h4', get_string('confirm'));
+        $confirmhtml .= $OUTPUT->box_end();
+        $attributes = [
+            'role'=>'alert',
+            'data-aria-autofocus'=>'true'
+        ];
+        $confirmhtml .= $OUTPUT->box_start('modal-body', 'modal-body', $attributes);
+        $confirmhtml .= html_writer::tag('p', $message);
+        $confirmhtml .= $OUTPUT->box_end();
+        $confirmhtml .= $OUTPUT->box_start('modal-footer', 'modal-footer');
+        if (iomad::has_capability('block/iomad_company_admin:destroycourses', $systemcontext)) {
+            $confirmhtml .= html_writer::tag('div', $OUTPUT->render($continue) . $OUTPUT->render($destroy) . $OUTPUT->render($cancel), array('class' => 'buttons'));
+        } else {
+            $confirmhtml .= html_writer::tag('div', $OUTPUT->render($continue) . $OUTPUT->render($cancel), array('class' => 'buttons'));
+        }
+        $confirmhtml .= $OUTPUT->box_end();
+        $confirmhtml .= $OUTPUT->box_end();
+        $confirmhtml .= $OUTPUT->box_end();
+
+        echo $confirmhtml;
+        echo $OUTPUT->footer();
+        die;
+    }
+}
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
@@ -294,31 +369,58 @@ $fromsql = "{iomad_courses} ic JOIN {course} c ON (ic.courseid = c.id)";
 $wheresql = "$companysql $searchsql";
 $sqlparams = $params;
 
+// Can we manage the courses or just see them?
+if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+    // Set up the headers for the table.
+    $tableheaders = array(
+        get_string('company', 'block_iomad_company_admin'),
+        get_string('course'),
+        get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
+        get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin'),
+        get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
+        get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
+        get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
+        get_string('warnnotstarted', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnnotstarted', 'block_iomad_company_admin'),
+        get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
+        get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
+        get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin'),
+        get_string('actions', 'block_iomad_company_admin'));
+    $tablecolumns = array('company',
+                          'coursename',
+                          'licensed',
+                          'shared',
+                          'validlength',
+                          'expireafter',
+                          'warnexpire',
+                          'warnnotstarted',
+                          'warncompletion',
+                          'notifyperiod',
+                          'hasgrade',
+                          'actions');
+} else {
 // Set up the headers for the table.
 $tableheaders = array(
-    get_string('company', 'block_iomad_company_admin'),
     get_string('course'),
     get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
-    get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin'),
     get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
     get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
     get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
     get_string('warnnotstarted', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnnotstarted', 'block_iomad_company_admin'),
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
     get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
-    get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin'));
-$tablecolumns = array('company',
-                 'coursename',
-                 'licensed',
-                 'shared',
-                 'validlength',
-                 'expireafter',
-                 'warnexpire',
-                 'warnnotstarted',
-                 'warncompletion',
-                 'notifyperiod',
-                 'hasgrade');
-
+    get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin'),
+        get_string('actions', 'block_iomad_company_admin'));
+$tablecolumns = array('coursename',
+                      'licensed',
+                      'validlength',
+                      'expireafter',
+                      'warnexpire',
+                      'warnnotstarted',
+                      'warncompletion',
+                      'notifyperiod',
+                      'hasgrade',
+                      'actions');
+}
 $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
 $table->define_baseurl($baseurl);
 $table->define_columns($tablecolumns);

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+$string['actions'] = 'Actions';
 $string['addnewchildcompany'] = 'Add a new child company';
 $string['addnewcompany'] = 'Add a new company';
 $string['allcourses'] = 'All courses';
@@ -105,6 +106,8 @@ $string['companymaxusers'] = 'Maximum active users';
 $string['companymaxusers_help'] = 'This sets the maximum number of active users allowed for this company.';
 $string['compfrom'] = 'Start date';
 $string['compto'] = 'End date';
+$string['couldnotdeletecourse'] = 'Course could not be deleted';
+$string['couldnotremovecoursefromcompany'] = 'Course could not be removed from the company';
 $string['currcompanyframeworks'] = 'Assigned frameworks';
 $string['currcompanyframeworksmatching'] = 'Assigned frameworks matching\'{$a}\'';
 $string['companylicensecreated'] = 'Company license created';
@@ -207,6 +210,9 @@ $string['curusersmatching'] = 'Users matching \'{$a}\'';
 $string['curusers'] = 'Users';
 $string['customcss'] = 'Custom company CSS';
 $string['dashboard'] = 'Iomad Dashboard';
+$string['deleteanddestroycoursesfull'] = 'Are you sure you want to delete course {$a}? Clicking continue will remove all current user enrolments, any license allocations and the course from the company. If you click destroy, it will also remove all of the user reords from the all reports. <b>There is no recovery from this without backup</b>';
+$string['deletecoursesfull'] = 'Are you sure you want to delete course {$a}? Clicking continue will remove all current user enrolments, any license allocations and the course from the company. <b>There is no recovery from this without backup</b>';
+$srting['deletecourse_successful'] = 'Course was successfully removed';
 $string['deletecheckfull'] = 'Do you really want to delete this user';
 $string['deletecompany'] = 'Delete company';
 $string['deletedepartment'] = 'Delete departments';
@@ -230,6 +236,7 @@ $string['departmentusersmatching'] = 'Users in this department matching \'{$a}\'
 $string['departmentusers'] = 'Users in this department';
 $string['designatedcompany'] = 'Designated company';
 $string['disableecommerce'] = 'Disable shop access';
+$string['destroy'] = 'Destroy';
 $string['downloadusers'] = 'Download to file';
 $string['ecommerce'] ='ecommerce';
 $string['ecommerce_help'] ='ecommerce help text  ';
@@ -322,7 +329,11 @@ $string['iomad_company_admin:deleteuser'] = 'Delete users in own company';
 $string['iomad_company_admin:suspenduser'] = 'Suspend users in own company';
 $string['iomad_company_admin:company_license_users'] = 'Modify user license allocations';
 $string['iomad_company_admin:licensemanagement_view'] = 'View the license management tab';
-$string['iomad_company_admin:managecourses'] = 'Designate course as licensed or shared';
+$string['iomad_company_admin:deleteallcourses'] = 'Delete any course';
+$string['iomad_company_admin:deletecourses'] = 'Delete a non-shared company course';
+$string['iomad_company_admin:destroycourses'] = 'Delete a non-shared company course and remove all held user data for it.';
+$string['iomad_company_admin:managecourses'] = 'Mage Iomad course settings';
+$string['iomad_company_admin:viewcourses'] = 'View company courses';
 $string['iomad_company_admin:manageframeworks'] = 'Manage Iomad competency framework settings';
 $string['iomad_company_admin:managetemplates'] = 'Manage Iomad learning plan template settings';
 $string['iomad_company_admin:myaddinstance'] = 'Add a new Iomad company admin block to the users dashboard';
