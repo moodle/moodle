@@ -343,7 +343,8 @@ ul.assignfeedback_editpdf_menu {
 
 .assignfeedback_editpdf_widget .commentdrawable {
     display: flex;
-    z-index: 1;
+    z-index: 50;
+    height: 0;
 }
 
 .assignfeedback_editpdf_widget .commentdrawable label {
