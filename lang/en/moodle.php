@@ -1638,6 +1638,7 @@ $string['rejectdots'] = 'Reject...';
 $string['relativedatesmode'] = 'Relative dates mode';
 $string['relativedatesmode_help'] = 'Display course or activity dates relative to the user\'s start date in the course.<br />The user\'s course start date will be their enrolment start date, unless they are enrolled before the course begins in which case their start date will be the course start date.<br/><strong>WARNING: This is an experimental feature and not all activities may support it. Once the course has been created, this course setting can no longer be changed.</strong>';
 $string['relativedatesmode_warning'] = '<strong>Warning:</strong> Relative dates mode cannot be changed once the course has been created.';
+$string['relativedatestimediffformat'] = '%ad %hh %im';
 $string['reload'] = 'Reload';
 $string['remoteappuser'] = 'Remote {$a} User';
 $string['remove'] = 'Remove';

@@ -2375,6 +2375,29 @@ function usertime($date, $timezone=99) {
 }
 
 /**
+ * Get a formatted string representation of an interval between two unix timestamps.
+ *
+ * E.g.
+ * $intervalstring = get_time_interval_string(12345600, 12345660);
+ * Will produce the string:
+ * '0d 0h 1m'
+ *
+ * @param int $time1 unix timestamp
+ * @param int $time2 unix timestamp
+ * @param string $format string (can be lang string) containing format chars: https://www.php.net/manual/en/dateinterval.format.php.
+ * @return string the formatted string describing the time difference, e.g. '10d 11h 45m'.
+ */
+function get_time_interval_string(int $time1, int $time2, string $format = ''): string {
+    $dtdate = new DateTime();
+    $dtdate->setTimeStamp($time1);
+    $dtdate2 = new DateTime();
+    $dtdate2->setTimeStamp($time2);
+    $interval = $dtdate2->diff($dtdate);
+    $format = empty($format) ? get_string('relativedatestimediffformat', 'moodle') : $format;
+    return $interval->format($format);
+}
+
+/**
  * Given a time, return the GMT timestamp of the most recent midnight
  * for the current user.
  *
