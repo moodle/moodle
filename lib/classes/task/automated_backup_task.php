@@ -43,7 +43,6 @@ class automated_backup_task extends scheduled_task {
      */
     public function execute() {
         global $CFG;
-
         // Run automated backups if required - these may take a long time to execute.
         require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
         require_once($CFG->dirroot.'/backup/util/helper/backup_cron_helper.class.php');

@@ -9739,13 +9739,16 @@ a.dimmed_text:visited,
 
 .tag-success, .statusok, #page-admin-report-backups-index .backup-skipped,
 #page-admin-report-backups-index .backup-ok,
-#page-admin-report-backups-index .backup-notyetrun {
+#page-admin-report-backups-index .backup-notyetrun,
+#page-admin-report-backups-index .backup-queued {
   background-color: #5cb85c; }
   .tag-success[href]:hover, .statusok[href]:hover, #page-admin-report-backups-index .backup-skipped[href]:hover,
   #page-admin-report-backups-index .backup-ok[href]:hover,
-  #page-admin-report-backups-index .backup-notyetrun[href]:hover, .tag-success[href]:focus, .statusok[href]:focus, #page-admin-report-backups-index .backup-skipped[href]:focus,
+  #page-admin-report-backups-index .backup-notyetrun[href]:hover,
+  #page-admin-report-backups-index .backup-queued[href]:hover, .tag-success[href]:focus, .statusok[href]:focus, #page-admin-report-backups-index .backup-skipped[href]:focus,
   #page-admin-report-backups-index .backup-ok[href]:focus,
-  #page-admin-report-backups-index .backup-notyetrun[href]:focus {
+  #page-admin-report-backups-index .backup-notyetrun[href]:focus,
+  #page-admin-report-backups-index .backup-queued[href]:focus {
     background-color: #449d44; }
 
 .tag-info, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
