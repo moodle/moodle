@@ -1414,10 +1414,6 @@ $string['cachesessionhelp'] = 'User specific cache that expires when the user\'s
 $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
 
-// Deprecated since Moodle 3.3.
-$string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
-$string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';
-$string['unoconvwarning'] = 'The version of unoconv you have installed is not supported.';
 // Deprecated since Moodle 3.4
 $string['moodleorghubname'] = 'Moodle';
 $string['hubs'] = 'Hubs';

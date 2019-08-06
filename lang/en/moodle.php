@@ -2197,10 +2197,6 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
-// Deprecated since Moodle 3.3.
-$string['deletecomment'] = 'Delete this comment';
-$string['sectionusedefaultname'] = 'Use default section name';
-
 // Deprecated since Moodle 3.4.
 $string['publish'] = 'Publish';
 $string['extendenrol'] = 'Extend enrolment (individual)';
