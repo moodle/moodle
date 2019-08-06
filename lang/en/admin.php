@@ -660,6 +660,7 @@ $string['intlrecommended'] = 'Intl extension is used to improve internationaliza
 $string['intlrequired'] = 'Intl extension is required to improve internationalization support, such as locale aware sorting and international domain names.';
 $string['invalidagedigitalconsent'] = 'The digital age of consent is not valid: {$a}';
 $string['invalidforgottenpasswordurl'] = 'The forgotten password URL is not a valid URL.';
+$string['invalidthemepreset'] = 'The chosen preset file is not compatible with this theme. The SCSS compile error was: "{$a}"';
 $string['invalidsection'] = 'Invalid section.';
 $string['invaliduserchangeme'] = 'Username "changeme" is reserved -- you cannot create an account with it.';
 $string['ipblocked'] = 'This site is not available currently.';
