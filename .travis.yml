@@ -11,7 +11,10 @@ notifications:
 
 language: php
 
-dist: trusty
+dist: xenial
+
+services:
+    - mysql
 
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
@@ -20,10 +23,6 @@ php:
 
 addons:
   postgresql: "9.6"
-  packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
 
 env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
@@ -71,10 +70,10 @@ install:
         then
             sudo mkdir /mnt/ramdisk
             sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
-            sudo stop mysql
+            sudo service mysql stop
             sudo mv /var/lib/mysql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/mysql /var/lib/mysql
-            sudo start mysql
+            sudo service mysql restart
         fi
     - >
         if [ "$DB" = 'pgsql' ];
