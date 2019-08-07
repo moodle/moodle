@@ -23,9 +23,6 @@ $drawer-offscreen-gutter: 20px !default;
 #nav-drawer.closed {
     left: -($drawer-width + $drawer-offscreen-gutter);
 }
-#page {
-    margin-top: $navbar-height;
-}
 
 /* Use a variable for the drawer background colors. */
 $drawer-bg: $gray-lighter !default;
