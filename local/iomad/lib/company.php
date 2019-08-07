@@ -840,9 +840,17 @@ class company {
             $managertype = 0;
         }
 
-        // if this is the only company, set the theme.
+        // if this is the only company, set the theme and any company profile info.
         if (!$DB->get_records('company_users', array('userid' => $userid))) {
             $DB->set_field('user', 'theme', $this->get_theme(), array('id' => $userid));
+            if (!empty($CFG->iomad_sync_institution)) {
+                $institution = $this->get('shortname');
+                $DB->set_field('user', 'institution', $institution, array('id' => $userid));
+            }
+            if (!empty($CFG->iomad_sync_department)) {
+                $deptrec = $DB->get_record('department', array('id' => $departmentid));
+                $DB->set_field('user', 'department', $deptrec->name, array('id' => $userid));
+            }
         }
 
         // Create the record.
