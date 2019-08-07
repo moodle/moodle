@@ -6519,22 +6519,27 @@ class core_course_courselib_testcase extends advanced_testcase {
      */
     public function provider_course_modules_pending_deletion() {
         return [
-            ['forum', false, true],
-            ['assign', false, true],
-            ['forum', true, false],
-            ['assign', true, true],
+            'Non-gradable activity, check all'              => [['forum'], 0, false, true],
+            'Gradable activity, check all'                  => [['assign'], 0, false, true],
+            'Non-gradable activity, check gradables'        => [['forum'], 0, true, false],
+            'Gradable activity, check gradables'            => [['assign'], 0, true, true],
+            'Non-gradable within multiple, check all'       => [['quiz', 'forum', 'assign'], 1, false, true],
+            'Non-gradable within multiple, check gradables' => [['quiz', 'forum', 'assign'], 1, true, false],
+            'Gradable within multiple, check all'           => [['quiz', 'forum', 'assign'], 2, false, true],
+            'Gradable within multiple, check gradables'     => [['quiz', 'forum', 'assign'], 2, true, true],
         ];
     }
 
     /**
      * Tests the function course_modules_pending_deletion.
      *
-     * @param string $module The module we want to test with
+     * @param string[] $modules A complete list aff all available modules before deletion
+     * @param int $indextodelete The index of the module in the $modules array that we want to test with
      * @param bool $gradable The value to pass to the gradable argument of the course_modules_pending_deletion function
      * @param bool $expected The expected result
      * @dataProvider provider_course_modules_pending_deletion
      */
-    public function test_course_modules_pending_deletion(string $module, bool $gradable, bool $expected) {
+    public function test_course_modules_pending_deletion(array $modules, int $indextodelete, bool $gradable, bool $expected) {
         $this->resetAfterTest();
 
         // Ensure recyclebin is enabled.
@@ -6544,9 +6549,12 @@ class core_course_courselib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
 
-        $moduleinstance = $generator->create_module($module, array('course' => $course->id));
+        $moduleinstances = [];
+        foreach ($modules as $module) {
+            $moduleinstances[] = $generator->create_module($module, array('course' => $course->id));
+        }
 
-        course_delete_module($moduleinstance->cmid, true); // Try to delete the instance asynchronously.
+        course_delete_module($moduleinstances[$indextodelete]->cmid, true); // Try to delete the instance asynchronously.
         $this->assertEquals($expected, course_modules_pending_deletion($course->id, $gradable));
     }
 }
