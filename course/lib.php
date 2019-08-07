@@ -1289,16 +1289,36 @@ function course_module_flag_for_async_deletion($cmid) {
  * Checks whether the given course has any course modules scheduled for adhoc deletion.
  *
  * @param int $courseid the id of the course.
+ * @param bool $onlygradable whether to check only gradable modules or all modules.
  * @return bool true if the course contains any modules pending deletion, false otherwise.
  */
-function course_modules_pending_deletion($courseid) {
+function course_modules_pending_deletion($courseid, bool $onlygradable = false) : bool {
     if (empty($courseid)) {
         return false;
     }
+
+    if ($onlygradable) {
+        // Fetch modules with grade items.
+        if (!$coursegradeitems = grade_item::fetch_all(['itemtype' => 'mod', 'courseid' => $courseid])) {
+            // Return early when there is none.
+            return false;
+        }
+    }
+
     $modinfo = get_fast_modinfo($courseid);
     foreach ($modinfo->get_cms() as $module) {
         if ($module->deletioninprogress == '1') {
-            return true;
+            if ($onlygradable) {
+                // Check if the module being deleted is in the list of course modules with grade items.
+                foreach ($coursegradeitems as $coursegradeitem) {
+                    if ($coursegradeitem->itemmodule == $module->modname && $coursegradeitem->iteminstance == $module->instance) {
+                        // The module being deleted is within the gradable  modules.
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
         }
     }
     return false;
