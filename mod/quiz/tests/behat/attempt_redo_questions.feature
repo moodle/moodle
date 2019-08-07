@@ -33,10 +33,8 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   @javascript
   Scenario: After completing a question, there is a redo question button that restarts the question
-    Given I log in as "student"
-    And I am on "Course 1" course homepage
-    When I follow "Quiz 1"
-    And I press "Attempt quiz now"
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    When I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Try another question like this one"
@@ -45,26 +43,20 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   @javascript
   Scenario: The redo question button is visible but disabled for teachers
-    Given I log in as "student"
-    And I am on "Course 1" course homepage
-    When I follow "Quiz 1"
-    And I press "Attempt quiz now"
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    When I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I log out
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
     And I follow "Attempts: 1"
     And I follow "Review attempt"
     Then the "Try another question like this one" "button" should be disabled
 
   @javascript
   Scenario: The redo question buttons are no longer visible after the attempt is submitted.
-    Given I log in as "student"
-    And I am on "Course 1" course homepage
-    When I follow "Quiz 1"
-    And I press "Attempt quiz now"
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    When I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Finish attempt ..."
@@ -73,11 +65,9 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     Then "Try another question like this one" "button" should not exist
 
   @javascript @_switch_window
-  Scenario: Teachers reviewing can see all the qestions attempted in a slot
-    Given I log in as "student"
-    And I am on "Course 1" course homepage
-    When I follow "Quiz 1"
-    And I press "Attempt quiz now"
+  Scenario: Teachers reviewing can see all the questions attempted in a slot
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    When I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Try another question like this one"
@@ -85,9 +75,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
     And I log out
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
     And I follow "Attempts: 1"
     And I follow "Review attempt"
     And I click on "1" "link" in the "First question" "question"
@@ -106,10 +94,8 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   @javascript
   Scenario: Redoing question 1 should save any changes to question 2 on the same page
-    Given I log in as "student"
-    And I am on "Course 1" course homepage
-    When I follow "Quiz 1"
-    And I press "Attempt quiz now"
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    When I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I click on "True" "radio" in the "Second question" "question"
@@ -131,10 +117,8 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And user "student" has started an attempt at quiz "Quiz 2" randomised as follows:
       | slot | actualquestion |
       | 1    | TF1            |
-    And I log in as "student"
-    And I am on "Course 1" course homepage
-    When I follow "Quiz 2"
-    And I press "Continue the last attempt"
+    And I am on the "Quiz 2" "mod_quiz > View" page logged in as "student"
+    When I press "Continue the last attempt"
     And I should see "First question"
     And I click on "False" "radio"
     And I click on "Check" "button"

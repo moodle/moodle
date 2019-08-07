@@ -35,9 +35,7 @@ Feature: Attempt a quiz
       | slot | response |
       |   1  | True     |
       |   2  | False    |
-    When I log in as "student"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     And I follow "Review"
     Then I should see "25.00 out of 100.00"
 
@@ -66,9 +64,7 @@ Feature: Attempt a quiz
       |           | 4         | 1       |
       | Section 3 | 5         | 0       |
 
-    When I log in as "student"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     And I press "Attempt quiz now"
 
     Then I should see "Section 1" in the "Quiz navigation" "block"
@@ -109,9 +105,7 @@ Feature: Attempt a quiz
       | question | page |
       | TF1      | 1    |
       | TF2      | 2    |
-    When I log in as "student"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     And I press "Attempt quiz now"
     Then I should see "Text of the first question"
     And I should not see "Text of the second question"
