@@ -41,6 +41,115 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException;
 class behat_mod_quiz extends behat_question_base {
 
     /**
+     * Convert page names to URLs for steps like 'When I am on the "[page name]" page'.
+     *
+     * Recognised page names are:
+     * | None so far!      |                                                              |
+     *
+     * @param string $page name of the page, with the component name removed e.g. 'Admin notification'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_url(string $page): moodle_url {
+        switch ($page) {
+            default:
+                throw new Exception('Unrecognised quiz page type "' . $page . '."');
+        }
+    }
+
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * Recognised page names are:
+     * | pagetype          | name meaning                                | description                                  |
+     * | View              | Quiz name                                   | The quiz info page (view.php)                |
+     * | Edit              | Quiz name                                   | The edit quiz page (edit.php)                |
+     * | Group overrides   | Quiz name                                   | The manage group overrides page              |
+     * | User overrides    | Quiz name                                   | The manage user overrides page               |
+     * | Grades report     | Quiz name                                   | The overview report for a quiz               |
+     * | Responses report  | Quiz name                                   | The responses report for a quiz              |
+     * | Statistics report | Quiz name                                   | The statistics report for a quiz             |
+     * | Attempt review    | Quiz name > username > [Attempt] attempt no | Review page for a given attempt (review.php) |
+     *
+     * @param string $type identifies which type of page this is, e.g. 'Attempt review'.
+     * @param string $identifier identifies the particular page, e.g. 'Test quiz > student > Attempt 1'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        global $DB;
+
+        switch ($type) {
+            case 'View':
+                return new moodle_url('/mod/quiz/view.php',
+                        ['id' => $this->get_cm_by_quiz_name($identifier)->id]);
+
+            case 'Edit':
+                return new moodle_url('/mod/quiz/edit.php',
+                        ['cmid' => $this->get_cm_by_quiz_name($identifier)->id]);
+
+            case 'Group overrides':
+                return new moodle_url('/mod/quiz/overrides.php',
+                    ['cmid' => $this->get_cm_by_quiz_name($identifier)->id, 'mode' => 'group']);
+
+            case 'User overrides':
+                return new moodle_url('/mod/quiz/overrides.php',
+                    ['cmid' => $this->get_cm_by_quiz_name($identifier)->id, 'mode' => 'user']);
+
+            case 'Grades report':
+                return new moodle_url('/mod/quiz/report.php',
+                    ['id' => $this->get_cm_by_quiz_name($identifier)->id, 'mode' => 'overview']);
+
+            case 'Responses report':
+                return new moodle_url('/mod/quiz/report.php',
+                    ['id' => $this->get_cm_by_quiz_name($identifier)->id, 'mode' => 'responses']);
+
+            case 'Statistics report':
+                return new moodle_url('/mod/quiz/report.php',
+                    ['id' => $this->get_cm_by_quiz_name($identifier)->id, 'mode' => 'statistics']);
+
+            case 'Attempt review':
+                if (substr_count($identifier, ' > ') !== 2) {
+                    throw new coding_exception('For "attempt review", name must be ' .
+                            '"{Quiz name} > {username} > Attempt {attemptnumber}", ' .
+                            'for example "Quiz 1 > student > Attempt 1".');
+                }
+                list($quizname, $username, $attemptno) = explode(' > ', $identifier);
+                $attemptno = (int) trim(str_replace ('Attempt', '', $attemptno));
+                $quiz = $this->get_quiz_by_name($quizname);
+                $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
+                $attempt = $DB->get_record('quiz_attempts',
+                        ['quiz' => $quiz->id, 'userid' => $user->id, 'attempt' => $attemptno], '*', MUST_EXIST);
+                return new moodle_url('/mod/quiz/review.php', ['attempt' => $attempt->id]);
+
+            default:
+                throw new Exception('Unrecognised quiz page type "' . $type . '."');
+        }
+    }
+
+    /**
+     * Get a quiz by name.
+     *
+     * @param string $name quiz name.
+     * @return stdClass the corresponding DB row.
+     */
+    protected function get_quiz_by_name(string $name): stdClass {
+        global $DB;
+        return $DB->get_record('quiz', array('name' => $name), '*', MUST_EXIST);
+    }
+
+    /**
+     * Get a quiz cmid from the quiz name.
+     *
+     * @param string $name quiz name.
+     * @return stdClass cm from get_coursemodule_from_instance.
+     */
+    protected function get_cm_by_quiz_name(string $name): stdClass {
+        $quiz = $this->get_quiz_by_name($name);
+        return get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+    }
+
+    /**
      * Put the specified questions on the specified pages of a given quiz.
      *
      * The first row should be column names:
@@ -67,7 +176,7 @@ class behat_mod_quiz extends behat_question_base {
     public function quiz_contains_the_following_questions($quizname, TableNode $data) {
         global $DB;
 
-        $quiz = $DB->get_record('quiz', array('name' => $quizname), '*', MUST_EXIST);
+        $quiz = $this->get_quiz_by_name($quizname);
 
         // Deal with backwards-compatibility, optional first row.
         $firstrow = $data->getRow(0);
