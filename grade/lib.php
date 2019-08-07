@@ -986,7 +986,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
 
     // Put a warning on all gradebook pages if the course has modules currently scheduled for background deletion.
     require_once($CFG->dirroot . '/course/lib.php');
-    if (course_modules_pending_deletion($courseid)) {
+    if (course_modules_pending_deletion($courseid, true)) {
         \core\notification::add(get_string('gradesmoduledeletionpendingwarning', 'grades'),
             \core\output\notification::NOTIFY_WARNING);
     }
