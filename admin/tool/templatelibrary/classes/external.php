@@ -105,7 +105,7 @@ class external extends external_api {
     public static function load_canonical_template_parameters() {
         return new external_function_parameters(
                 array('component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
-                      'template' => new external_value(PARAM_ALPHANUMEXT, 'name of the template'))
+                      'template' => new external_value(PARAM_SAFEPATH, 'name of the template'))
             );
     }
 
