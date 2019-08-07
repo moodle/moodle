@@ -37,7 +37,7 @@
 }}
 {{#showSuggestions}}
 <div class="d-inline-block position-relative">
-    <input type="text" id="{{inputId}}" list="{{suggestionsId}}" placeholder="{{placeholder}}" role="combobox" aria-expanded="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-autocomplete="list" aria-owns="{{suggestionsId}} {{selectionId}}" {{#tags}}data-tags="1"{{/tags}}/>
+    <input type="text" id="{{inputId}}" class="form-control" list="{{suggestionsId}}" placeholder="{{placeholder}}" role="combobox" aria-expanded="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-autocomplete="list" aria-owns="{{suggestionsId}} {{selectionId}}" {{#tags}}data-tags="1"{{/tags}}/>
     <span class="form-autocomplete-downarrow position-absolute p-1" id="{{downArrowId}}">&#x25BC;</span>
 </div>
 {{/showSuggestions}}
