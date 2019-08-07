@@ -949,9 +949,9 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="file-picker fp-dlg">
     <p class="fp-dlg-text"></p>
     <div class="fp-dlg-buttons">
-        <button class="fp-dlg-butoverwrite btn">'.get_string('overwrite', 'repository').'</button>
-        <button class="fp-dlg-butrename btn"></button>
-        <button class="fp-dlg-butcancel btn btn-cancel">'.get_string('cancel').'</button>
+        <button class="fp-dlg-butoverwrite btn mb-1">'.get_string('overwrite', 'repository').'</button>
+        <button class="fp-dlg-butrename btn mb-1"></button>
+        <button class="fp-dlg-butcancel btn btn-cancel mb-1">'.get_string('cancel').'</button>
     </div>
 </div>';
         return $rv;
