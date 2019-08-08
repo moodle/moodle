@@ -143,6 +143,11 @@ class manager {
     protected static $instance = null;
 
     /**
+     * @var array IDs (as keys) of course deletions in progress in this requuest, if any.
+     */
+    protected static $coursedeleting = [];
+
+    /**
      * @var \core_search\engine
      */
     protected $engine = null;
@@ -1789,4 +1794,76 @@ class manager {
         $engine->delete($areaid);
     }
 
+    /**
+     * Informs the search system that a context has been deleted.
+     *
+     * This will clear the data from the search index, where the search engine supports that.
+     *
+     * This function does not usually throw an exception (so as not to get in the way of the
+     * context deletion finishing).
+     *
+     * This is called for all types of context deletion.
+     *
+     * @param \context $context Context object that has just been deleted
+     */
+    public static function context_deleted(\context $context) {
+        if (self::is_indexing_enabled()) {
+            try {
+                // Hold on, are we deleting a course? If so, and this context is part of the course,
+                // then don't bother to send a delete because we delete the whole course at once
+                // later.
+                if (!empty(self::$coursedeleting)) {
+                    $coursecontext = $context->get_course_context(false);
+                    if ($coursecontext && array_key_exists($coursecontext->instanceid, self::$coursedeleting)) {
+                        // Skip further processing.
+                        return;
+                    }
+                }
+
+                $engine = self::instance()->get_engine();
+                $engine->delete_index_for_context($context->id);
+            } catch (\moodle_exception $e) {
+                debugging('Error deleting search index data for context ' . $context->id . ': ' . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Informs the search system that a course is about to be deleted.
+     *
+     * This prevents it from sending hundreds of 'delete context' updates for all the individual
+     * contexts that are deleted.
+     *
+     * If you call this, you must call course_deleting_finish().
+     *
+     * @param int $courseid Course id that is being deleted
+     */
+    public static function course_deleting_start(int $courseid) {
+        self::$coursedeleting[$courseid] = true;
+    }
+
+    /**
+     * Informs the search engine that a course has now been deleted.
+     *
+     * This causes the search engine to actually delete the index for the whole course.
+     *
+     * @param int $courseid Course id that no longer exists
+     */
+    public static function course_deleting_finish(int $courseid) {
+        if (!array_key_exists($courseid, self::$coursedeleting)) {
+            // Show a debug warning. It doesn't actually matter very much, as we will now delete
+            // the course data anyhow.
+            debugging('course_deleting_start not called before deletion of ' . $courseid, DEBUG_DEVELOPER);
+        }
+        unset(self::$coursedeleting[$courseid]);
+
+        if (self::is_indexing_enabled()) {
+            try {
+                $engine = self::instance()->get_engine();
+                $engine->delete_index_for_course($courseid);
+            } catch (\moodle_exception $e) {
+                debugging('Error deleting search index data for course ' . $courseid . ': ' . $e->getMessage());
+            }
+        }
+    }
 }

@@ -5390,6 +5390,9 @@ abstract class context extends stdClass implements IteratorAggregate {
         $DB->delete_records('context', array('id'=>$this->_id));
         // purge static context cache if entry present
         context::cache_remove($this);
+
+        // Inform search engine to delete data related to this context.
+        \core_search\manager::context_deleted($this);
     }
 
     // ====== context level related methods ======

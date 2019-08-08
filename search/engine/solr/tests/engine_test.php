@@ -1250,4 +1250,73 @@ class search_solr_engine_testcase extends advanced_testcase {
         $record->contextid = $contextid;
         $this->generator->create_record($record);
     }
+
+    /**
+     * Tries out deleting data for a context or a course.
+     *
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
+    public function test_deleted_contexts_and_courses() {
+        // Create some courses and activities.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1']);
+        $course1context = \context_course::instance($course1->id);
+        $course1page1 = $generator->create_module('page', ['course' => $course1]);
+        $course1page1context = \context_module::instance($course1page1->cmid);
+        $course1page2 = $generator->create_module('page', ['course' => $course1]);
+        $course1page2context = \context_module::instance($course1page2->cmid);
+        $course2 = $generator->create_course(['fullname' => 'Course 2']);
+        $course2context = \context_course::instance($course2->id);
+        $course2page = $generator->create_module('page', ['course' => $course2]);
+        $course2pagecontext = \context_module::instance($course2page->cmid);
+
+        // Create one search record in each activity and course.
+        $this->create_search_record($course1->id, $course1context->id, 'C1', 'Xyzzy');
+        $this->create_search_record($course1->id, $course1page1context->id, 'C1P1', 'Xyzzy');
+        $this->create_search_record($course1->id, $course1page2context->id, 'C1P2', 'Xyzzy');
+        $this->create_search_record($course2->id, $course2context->id, 'C2', 'Xyzzy');
+        $this->create_search_record($course2->id, $course2pagecontext->id, 'C2P', 'Xyzzy plugh');
+        $this->search->index();
+
+        // By default we have all results.
+        $this->assert_raw_solr_query_result('content:xyzzy', ['C1', 'C1P1', 'C1P2', 'C2', 'C2P']);
+
+        // Say we delete the course2pagecontext...
+        $this->engine->delete_index_for_context($course2pagecontext->id);
+        $this->assert_raw_solr_query_result('content:xyzzy', ['C1', 'C1P1', 'C1P2', 'C2']);
+
+        // Now delete the second course...
+        $this->engine->delete_index_for_course($course2->id);
+        $this->assert_raw_solr_query_result('content:xyzzy', ['C1', 'C1P1', 'C1P2']);
+
+        // Finally let's delete using Moodle functions to check that works. Single context first.
+        course_delete_module($course1page1->cmid);
+        $this->assert_raw_solr_query_result('content:xyzzy', ['C1', 'C1P2']);
+        delete_course($course1, false);
+        $this->assert_raw_solr_query_result('content:xyzzy', []);
+    }
+
+    /**
+     * Carries out a raw Solr query using the Solr basic query syntax.
+     *
+     * This is used to test data contained in the index without going through Moodle processing.
+     *
+     * @param string $q Search query
+     * @param string[] $expected Expected titles of results, in alphabetical order
+     */
+    protected function assert_raw_solr_query_result(string $q, array $expected) {
+        $solr = $this->engine->get_search_client_public();
+        $query = new SolrQuery($q);
+        $results = $solr->query($query)->getResponse()->response->docs;
+        if ($results) {
+            $titles = array_map(function($x) {
+                return $x->title;
+            }, $results);
+            sort($titles);
+        } else {
+            $titles = [];
+        }
+        $this->assertEquals($expected, $titles);
+    }
 }

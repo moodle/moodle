@@ -7,6 +7,10 @@ information provided here is intended especially for developers.
   this to work, search engine plugins will need to implement the 'stopat' parameter if they
   override the add_documents() function, and return an extra parameter from this function (see base
   class in engine.php). Unmodified plugins will not work anymore.
+* New search engine functions delete_index_for_context and delete_index_for_course are called by
+  the search manager to inform the search engine it can remove some documents from its index.
+  (Otherwise, documents from delete courses are never removed unless you reindex.) It is optional
+  for search engines to support these; if they don't implement them then behaviour is unchanged.
 
 === 3.7 ===
 
