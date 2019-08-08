@@ -34,7 +34,7 @@ Feature: Select users when searching for user-created content
       | activity | PAGE1    |
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
-    And I set the field with xpath "//select[@id='id_userids']/../input[@type='text']" to "Anne"
+    And I set the field with xpath "//select[@id='id_userids']/..//input[@type='text']" to "Anne"
     # Alphabetical surname order.
     Then "Anne Additional" "text" should appear before "Anne Ditin" "text"
     And "Anne Ditin" "text" should appear before "Anne Other" "text"
@@ -49,7 +49,7 @@ Feature: Select users when searching for user-created content
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
     And I select "Course: Frogs" from the "Search within" singleselect
-    And I set the field with xpath "//select[@id='id_userids']/../input[@type='text']" to "Anne"
+    And I set the field with xpath "//select[@id='id_userids']/..//input[@type='text']" to "Anne"
     # Users in selected course appear first.
     And "Anne Additional" "text" should appear after "Anne Other" "text"
 
@@ -62,6 +62,6 @@ Feature: Select users when searching for user-created content
       | activity | PAGE1    |
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
-    And I set the field with xpath "//select[@id='id_userids']/../input[@type='text']" to "A"
+    And I set the field with xpath "//select[@id='id_userids']/..//input[@type='text']" to "A"
     Then "Anne Ditin" "text" should appear before "Anne Other" "text"
     And "Anne Additional" "text" should not exist
