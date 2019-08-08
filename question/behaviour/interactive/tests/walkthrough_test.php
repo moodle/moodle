@@ -18,8 +18,7 @@
  * This file contains tests that walks a question through the interactive
  * behaviour.
  *
- * @package    qbehaviour
- * @subpackage interactive
+ * @package    qbehaviour_interactive
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -482,5 +481,53 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         // you get attempting a question like this without regrading being involved,
         // and I am currently interested in testing regrading here.
         $this->check_current_mark(1);
+    }
+
+    public function test_review_of_interactive_questions_before_finished() {
+        // Create a multichoice multiple question.
+        $q = test_question_maker::make_question('shortanswer');
+        $q->hints = array(
+                new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
+                new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),
+        );
+        $this->start_attempt_at_question($q, 'interactive', 3);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_tries_remaining_expectation(3),
+                $this->get_does_not_contain_try_again_button_expectation());
+
+        // Now check what the teacher sees when they review the question.
+        $this->displayoptions->readonly = true;
+        $this->check_current_output(
+                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_tries_remaining_expectation(3),
+                $this->get_does_not_contain_try_again_button_expectation());
+        $this->displayoptions->readonly = false;
+
+        // Submit a wrong answer.
+        $this->process_submission(array('answer' => 'cat', '-submit' => 1));
+
+        // Check the Try again button now shows up correctly.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_does_not_contain_submit_button_expectation(),
+                $this->get_contains_hint_expectation('This is the first hint.'),
+                $this->get_tries_remaining_expectation(2),
+                $this->get_contains_try_again_button_expectation(true));
+
+        // And check that a disabled Try again button shows up when the question is reviewed.
+        $this->displayoptions->readonly = true;
+        $this->check_current_output(
+                $this->get_does_not_contain_submit_button_expectation(),
+                $this->get_contains_hint_expectation('This is the first hint.'),
+                $this->get_tries_remaining_expectation(2),
+                $this->get_contains_try_again_button_expectation(false));
     }
 }
