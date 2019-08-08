@@ -508,27 +508,28 @@ if ($showactivity) {
             }
 
             if ($mode != 'single' && $canmanageentries) {
-                echo html_writer::empty_tag('input', array(
-                        'type' => 'button',
-                        'id' => 'checkall',
-                        'value' => get_string('selectall'),
-                        'class' => 'btn btn-secondary mr-1'
-                    ));
-                echo html_writer::empty_tag('input', array(
-                        'type' => 'button',
-                        'id' => 'checknone',
-                        'value' => get_string('deselectall'),
-                        'class' => 'btn btn-secondary mr-1'
-                    ));
-                echo html_writer::empty_tag('input', array(
-                        'class' => 'form-submit',
-                        'type' => 'submit',
-                        'value' => get_string('deleteselected'),
-                        'class' => 'btn btn-secondary mr-1'
-                    ));
+                // Build the select/deselect all control.
+                $selectallid = 'selectall-listview-entries';
+                $togglegroup = 'listview-entries';
+                $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
+                    'id' => $selectallid,
+                    'name' => $selectallid,
+                    'value' => 1,
+                    'label' => get_string('selectall'),
+                    'classes' => 'mr-1',
+                ], true);
+                echo $OUTPUT->render($mastercheckbox);
 
-                $module = array('name' => 'mod_data', 'fullpath' => '/mod/data/module.js');
-                $PAGE->requires->js_init_call('M.mod_data.init_view', null, false, $module);
+                $deleteselected = html_writer::empty_tag('input', array(
+                    'class' => 'btn btn-secondary',
+                    'type' => 'submit',
+                    'value' => get_string('deleteselected'),
+                    'disabled' => true,
+                    'data-action' => 'toggle',
+                    'data-togglegroup' => $togglegroup,
+                    'data-toggle' => 'action',
+                ));
+                echo $deleteselected;
             }
 
             echo html_writer::end_tag('form');
