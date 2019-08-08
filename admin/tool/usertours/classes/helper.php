@@ -204,6 +204,21 @@ class helper {
     }
 
     /**
+     * Get the link used to duplicate the tour.
+     *
+     * @param   int         $tourid     The ID of the tour to duplicate.
+     * @return  moodle_url              The URL.
+     */
+    public static function get_duplicate_tour_link($tourid) {
+        $link = new \moodle_url('/admin/tool/usertours/configure.php', [
+                'action'    => manager::ACTION_DUPLICATETOUR,
+                'id'        => $tourid,
+        ]);
+
+        return $link;
+    }
+
+    /**
      * Get the link used to delete the tour.
      *
      * @param   int         $tourid     The ID of the tour to delete.
