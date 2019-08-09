@@ -127,9 +127,9 @@ class local_report_course_completion_user_table extends table_sql {
     public function col_timeexpires($row) {
         global $CFG, $DB;
 
-        if ($icourserec = $DB->get_record_sql("SELECT * FROM {iomad_courses} WHERE courseid = :courseid AND expireafter !=0", array('courseid' => $row->courseid))) {
-            if (!empty($row->timeexpires)) {
-                $expiredate = $row->timecompleted + $icourserec->timeexpires * 24 * 60 * 60;
+        if ($icourserec = $DB->get_record_sql("SELECT * FROM {iomad_courses} WHERE courseid = :courseid AND validlength !=0", array('courseid' => $row->courseid))) {
+            if (!empty($row->timecompleted)) {
+                $expiredate = $row->timecompleted + $icourserec->validlength * 24 * 60 * 60;
                 return date($CFG->iomad_date_format, $expiredate);
             } else {
                 return;
