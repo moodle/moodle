@@ -33,6 +33,7 @@ $doexport = optional_param('export', false, PARAM_BOOL);
 
 $vaultfactory = mod_forum\local\container::get_vault_factory();
 $managerfactory = mod_forum\local\container::get_manager_factory();
+$legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
 
 $forumvault = $vaultfactory->get_forum_vault();
 
@@ -87,18 +88,11 @@ if ($form->is_cancelled()) {
         $capabilitymanager->can_view_any_private_reply($USER)
     );
 
-    $builderfactory = mod_forum\local\container::get_builder_factory();
-    $exportedpostsbuilder = $builderfactory->get_exported_posts_builder();
-    $exportedposts = $exportedpostsbuilder->build(
-        $USER,
-        [$forum],
-        $discussions,
-        $posts
-    );
+    $fields = ['id', 'discussion', 'parent', 'userid', 'created', 'modified', 'mailed', 'subject', 'message',
+                'messageformat', 'messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto'];
 
-    $fields = ['id', 'subject', 'message'];
-
-    $exportdata = new ArrayObject($exportedposts);
+    $datamapper = $legacydatamapperfactory->get_post_data_mapper();
+    $exportdata = new ArrayObject($datamapper->to_legacy_objects($posts));
     $iterator = $exportdata->getIterator();
 
     require_once($CFG->libdir . '/dataformatlib.php');
