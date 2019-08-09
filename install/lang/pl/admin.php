@@ -40,6 +40,6 @@ $string['cliunknowoption'] = 'Nieznana opcja:
   {$a}
 Proszę użyć pomocy.';
 $string['cliyesnoprompt'] = 'wpisz y (czyli tak) lub n (czyli nie)';
-$string['environmentrequireinstall'] = 'jest niezbędnę, żeby było zainstalowane/włączone';
+$string['environmentrequireinstall'] = 'jest niezbędne, aby było zainstalowane i włączone';
 $string['environmentrequireversion'] = 'wersja {$a->needed} jest niezbędna a ty używasz wersji {$a->current}';
 $string['upgradekeyset'] = 'Zaktualizuj klucz (pozostaw puste jeśli nie jest to skonfigurowane)';
