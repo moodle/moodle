@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2019082000;
+$plugin->version  = 2019090200;
 $plugin->requires = 2019071900;
 $plugin->component = 'forumreport_summary';

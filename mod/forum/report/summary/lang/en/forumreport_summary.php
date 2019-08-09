@@ -24,6 +24,9 @@
 
 $string['attachmentcount'] = 'Number of attachments';
 $string['earliestpost'] = 'Earliest post';
+$string['filter:groupsname'] = 'Groups';
+$string['filter:groupscountall'] = 'Groups (all)';
+$string['filter:groupscountnumber'] = 'Groups ({$a})';
 $string['latestpost'] = 'Most recent post';
 $string['nodetitle'] = 'Summary report';
 $string['pluginname'] = 'Forum summary report';

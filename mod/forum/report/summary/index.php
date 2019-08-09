@@ -31,6 +31,12 @@ if (isguestuser()) {
 $courseid = required_param('courseid', PARAM_INT);
 $forumid = required_param('forumid', PARAM_INT);
 $perpage = optional_param('perpage', 25, PARAM_INT);
+$filters = [];
+
+// Establish filter values.
+$filters['forums'] = [$forumid];
+$filters['groups'] = optional_param_array('filtergroups', [], PARAM_INT);
+
 $cm = null;
 $modinfo = get_fast_modinfo($courseid);
 
@@ -47,9 +53,9 @@ if ($forumid > 0) {
 }
 
 require_login($courseid, false, $cm);
+$context = \context_module::instance($cm->id);
 
 // This capability is required to view any version of the report.
-$context = \context_module::instance($cm->id);
 if (!has_capability("forumreport/summary:view", $context)) {
     $redirecturl = new moodle_url("/mod/forum/view.php");
     $redirecturl->param('id', $forumid);
@@ -73,7 +79,11 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $forumname), 2, 'p-b-2');
 
-$table = new \forumreport_summary\summary_table($courseid, $forumid);
-$table->baseurl = $url;
-$table->out($perpage, false);
+// Render the report filters form.
+$renderer = $PAGE->get_renderer('forumreport_summary');
+echo $renderer->render_filters_form($cm, $url, $filters);
+
+// Prepare and display the report.
+echo $renderer->render_report($courseid, $url, $filters, $perpage);
+
 echo $OUTPUT->footer();

@@ -41,6 +41,9 @@ class summary_table extends table_sql {
     /** Forum filter type */
     const FILTER_FORUM = 1;
 
+    /** Groups filter type */
+    const FILTER_GROUPS = 2;
+
     /** @var \stdClass The various SQL segments that will be combined to form queries to fetch various information. */
     public $sql;
 
@@ -53,6 +56,9 @@ class summary_table extends table_sql {
     /** @var int The forum ID being reported on. */
     protected $forumid;
 
+    /** @var \stdClass The course module object of the forum being reported on. */
+    protected $cm;
+
     /**
      * @var int The user ID if only one user's summary will be generated.
      * This will apply to users without permission to view others' summaries.
@@ -60,18 +66,26 @@ class summary_table extends table_sql {
     protected $userid;
 
     /**
+     * @var bool Whether the table should be overridden to show the 'nothing to display' message.
+     * False unless checks confirm there will be nothing to display.
+     */
+    protected $nothingtodisplay = false;
+
+    /**
      * Forum report table constructor.
      *
      * @param int $courseid The ID of the course the forum(s) exist within.
-     * @param int $forumid The ID of the forum being summarised.
+     * @param array $filters Report filters in the format 'type' => [values].
      */
-    public function __construct(int $courseid, int $forumid) {
+    public function __construct(int $courseid, array $filters) {
         global $USER;
+
+        $forumid = $filters['forums'][0];
 
         parent::__construct("summaryreport_{$courseid}_{$forumid}");
 
-        $cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
-        $context = \context_module::instance($cm->id);
+        $this->cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
+        $context = \context_module::instance($this->cm->id);
 
         // Only show their own summary unless they have permission to view all.
         if (!has_capability('forumreport/summary:viewall', $context)) {
@@ -98,8 +112,8 @@ class summary_table extends table_sql {
         // Define the basic SQL data and object format.
         $this->define_base_sql();
 
-        // Set the forum ID.
-        $this->add_filter(self::FILTER_FORUM, [$forumid]);
+        // Apply relevant filters.
+        $this->apply_filters($filters);
     }
 
     /**
@@ -111,6 +125,7 @@ class summary_table extends table_sql {
     public function get_filter_name(int $filtertype): string {
         $filternames = [
             self::FILTER_FORUM => 'Forum',
+            self::FILTER_GROUPS => 'Groups',
         ];
 
         return $filternames[$filtertype];
@@ -232,6 +247,8 @@ class summary_table extends table_sql {
      * @throws coding_exception
      */
     public function add_filter(int $filtertype, array $values = []): void {
+        global $DB;
+
         $paramcounterror = false;
 
         switch($filtertype) {
@@ -244,6 +261,68 @@ class summary_table extends table_sql {
                     // No extra joins required, forum is already joined.
                     $this->sql->filterwhere .= ' AND f.id = :forumid';
                     $this->sql->params['forumid'] = $values[0];
+                }
+
+                break;
+
+            case self::FILTER_GROUPS:
+                // Find total number of options available (groups plus 'no groups').
+                $availablegroups = groups_get_activity_allowed_groups($this->cm);
+                $alloptionscount = 1 + count($availablegroups);
+
+                // Skip adding filter if not applied, or all options are selected.
+                if (!empty($values) && count($values) < $alloptionscount) {
+                    // Include users without groups if that option (-1) is selected.
+                    $nonekey = array_search(-1, $values, true);
+
+                    // Users within selected groups or not in any groups are included.
+                    if ($nonekey !== false && count($values) > 1) {
+                        unset($values[$nonekey]);
+                        list($groupidin, $groupidparams) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, 'groupid');
+
+                        // No select fields required.
+                        // No joins required (handled by where to prevent data duplication).
+                        $this->sql->filterwhere .= "
+                            AND (u.id =
+                                (SELECT gm.userid
+                                   FROM {groups_members} gm
+                                  WHERE gm.userid = u.id
+                                    AND gm.groupid {$groupidin}
+                               GROUP BY gm.userid
+                                  LIMIT 1)
+                            OR
+                                (SELECT nogm.userid
+                                   FROM mdl_groups_members nogm
+                                  WHERE nogm.userid = u.id
+                               GROUP BY nogm.userid
+                                  LIMIT 1)
+                            IS NULL)";
+                        $this->sql->params += $groupidparams;
+
+                    } else if ($nonekey !== false) {
+                        // Only users within no groups are included.
+                        unset($values[$nonekey]);
+
+                        // No select fields required.
+                        $this->sql->filterfromjoins .= " LEFT JOIN {groups_members} nogm ON nogm.userid = u.id";
+                        $this->sql->filterwhere .= " AND nogm.id IS NULL";
+
+                    } else if (!empty($values)) {
+                        // Only users within selected groups are included.
+                        list($groupidin, $groupidparams) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, 'groupid');
+
+                        // No select fields required.
+                        // No joins required (handled by where to prevent data duplication).
+                        $this->sql->filterwhere .= "
+                            AND u.id = (
+                                 SELECT gm.userid
+                                   FROM {groups_members} gm
+                                  WHERE gm.userid = u.id
+                                    AND gm.groupid {$groupidin}
+                               GROUP BY gm.userid
+                                  LIMIT 1)";
+                        $this->sql->params += $groupidparams;
+                    }
                 }
 
                 break;
@@ -361,6 +440,12 @@ class summary_table extends table_sql {
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = ''): void {
         global $DB;
 
+        // If there is nothing to display, print the relevant string and return, no further action is required.
+        if ($this->nothingtodisplay) {
+            $this->print_nothing_to_display();
+            return;
+        }
+
         if (!$this->columns) {
             $sql = $this->get_full_sql();
 
@@ -376,6 +461,20 @@ class summary_table extends table_sql {
         $this->build_table();
         $this->close_recordset();
         $this->finish_output();
+    }
+
+    /**
+     * Apply the relevant filters to the report.
+     *
+     * @param array $filters Report filters in the format 'type' => [values].
+     * @return void.
+     */
+    protected function apply_filters(array $filters): void {
+        // Apply the forums filter.
+        $this->add_filter(self::FILTER_FORUM, $filters['forums']);
+
+        // Apply groups filter.
+        $this->add_filter(self::FILTER_GROUPS, $filters['groups']);
     }
 
     /**
