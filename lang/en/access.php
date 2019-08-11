@@ -39,7 +39,3 @@ $string['skipto'] = 'Skip to {$a}';
 $string['tocontent'] = 'Skip to main content';
 $string['tonavigation'] = 'Go to navigation';
 $string['youarehere'] = 'You are here';
-
-// Deprecated since Moodle 3.4.
-$string['monthnext'] = 'Next month';
-$string['monthprev'] = 'Previous month';

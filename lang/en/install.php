@@ -247,4 +247,3 @@ $string['welcomep60'] = 'The following pages will lead you through some easy to 
 $string['welcomep70'] = 'Click the "Next" button below to continue with the set up of <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The \'Web Address\' does not appear to be valid - this Moodle installation doesn\'t appear to be there. The value below has been reset.';
-// Deprecated since 3.4.

@@ -421,7 +421,3 @@ $string['workshop:viewreviewernames'] = 'View reviewer names';
 $string['yourassessmentfor'] = 'Your assessment for {$a}';
 $string['yourgrades'] = 'Your grades';
 $string['yoursubmission'] = 'Your submission';
-
-// Deprecated since Moodle 3.4.
-$string['err_unknownfileextension'] = 'Unknown file extension: {$a}';
-$string['err_wrongfileextension'] = 'Some files ({$a->wrongfiles}) cannot be uploaded. Only file types {$a->whitelist} are allowed.';

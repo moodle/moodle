@@ -2197,11 +2197,6 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
-// Deprecated since Moodle 3.4.
-$string['publish'] = 'Publish';
-$string['extendenrol'] = 'Extend enrolment (individual)';
-$string['groupextendenrol'] = 'Extend enrolment (common)';
-
 // Deprecated since Moodle 3.6.
 $string['addedrecip'] = 'Added {$a} new recipient';
 $string['addedrecips'] = 'Added {$a} new recipients';

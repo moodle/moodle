@@ -164,8 +164,4 @@ $string['diag_toooldversion'] = 'It is very unlikely a modern LDAP server uses L
 $string['diag_emptycontext'] = 'Empty context found.';
 $string['diag_contextnotfound'] = 'Context {$a} doesn\'t exist or can\'t be read by bind DN.';
 $string['diag_rolegroupnotfound'] = 'Group {$a->group} for role {$a->localname} doesn\'t exist or can\'t be read by bind DN.';
-
-// Deprecated since Moodle 3.4.
-$string['auth_ldap_creators'] = 'List of groups or contexts whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
-$string['auth_ldap_creators_key'] = 'Creators';
 $string['privacy:metadata'] = 'The LDAP server authentication plugin does not store any personal data.';

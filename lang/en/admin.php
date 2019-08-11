@@ -1414,11 +1414,6 @@ $string['cachesessionhelp'] = 'User specific cache that expires when the user\'s
 $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
 
-// Deprecated since Moodle 3.4
-$string['moodleorghubname'] = 'Moodle';
-$string['hubs'] = 'Hubs';
-$string['configloginhttps'] = 'Turning this on will make Moodle use a secure https connection just for the login page (providing a secure login), and then afterwards revert back to the normal http URL for general speed.  CAUTION: this setting REQUIRES https to be specifically enabled on the web server - if it is not then YOU COULD LOCK YOURSELF OUT OF YOUR SITE.';
-$string['loginhttps'] = 'Use HTTPS for logins';
 // Deprecated since Moodle 3.7.
 $string['allowblockstodock'] = 'Allow blocks to use the dock';
 $string['configallowblockstodock'] = 'If enabled and supported by the selected theme users can choose to move blocks to a special dock.';
