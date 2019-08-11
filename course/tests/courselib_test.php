@@ -54,6 +54,9 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->blockperiod = 60*60*24;
         $moduleinfo->blockafter = 10;
         $moduleinfo->warnafter = 5;
+
+        // Grading of whole forum settings.
+        $moduleinfo->grade_forum = 0;
     }
 
     /**
@@ -395,6 +398,9 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->blockperiod = 60*60*24;
         $moduleinfo->blockafter = 10;
         $moduleinfo->warnafter = 5;
+
+        // Grading of whole forum settings.
+        $moduleinfo->grade_forum = 0;
     }
 
     /**

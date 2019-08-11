@@ -86,6 +86,7 @@ class entity {
             $record->assesstimestart,
             $record->assesstimefinish,
             $record->scale,
+            $record->grade_forum,
             $record->maxbytes,
             $record->maxattachments,
             $record->forcesubscribe,
