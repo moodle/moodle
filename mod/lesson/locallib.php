@@ -686,7 +686,7 @@ function lesson_process_group_deleted_in_course($courseid, $groupid = null) {
  * @since  Moodle 3.3
  */
 function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup) {
-    global $DB, $CFG;
+    global $DB, $CFG, $OUTPUT;
     require_once($CFG->dirroot . '/mod/lesson/pagetypes/branchtable.php');
 
     $context = $lesson->context;
@@ -902,7 +902,25 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
         $headers[] = get_user_field_name($field);
     }
 
-    $headers [] = get_string('attempts', 'lesson');
+    $caneditlesson = has_capability('mod/lesson:edit', $context);
+    $attemptsheader = get_string('attempts', 'lesson');
+    if ($caneditlesson) {
+        $selectall = get_string('selectallattempts', 'lesson');
+        $deselectall = get_string('deselectallattempts', 'lesson');
+        // Build the select/deselect all control.
+        $selectallid = 'selectall-attempts';
+        $mastercheckbox = new \core\output\checkbox_toggleall('lesson-attempts', true, [
+            'id' => $selectallid,
+            'name' => $selectallid,
+            'value' => 1,
+            'label' => $selectall,
+            'selectall' => $selectall,
+            'deselectall' => $deselectall,
+            'labelclasses' => 'form-check-label'
+        ]);
+        $attemptsheader = $OUTPUT->render($mastercheckbox);
+    }
+    $headers [] = $attemptsheader;
 
     // Set up the table object.
     if ($data->lessonscored) {
@@ -924,7 +942,7 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
     $table->wrap = [];
     $table->wrap = array_pad($table->wrap, $colcount, 'nowrap');
 
-    $table->attributes['class'] = 'standardtable generaltable';
+    $table->attributes['class'] = 'table table-striped';
 
     // print out the $studentdata array
     // going through each student that has attempted the lesson, so, each student should have something to be displayed
@@ -937,7 +955,7 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
             $dataforstudent->attempts = array();
             // gather the data for each user attempt
             $bestgrade = 0;
-            $bestgradefound = false;
+
             // $tries holds all the tries/retries a student has done
             $tries = $studentdata[$student->id];
             $studentname = fullname($student, true);
@@ -946,44 +964,65 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
                 $dataforstudent->attempts[] = $try;
 
                 // Start to build up the checkbox and link.
-                if (has_capability('mod/lesson:edit', $context)) {
-                    $temp = '<input type="checkbox" id="attempts" name="attempts['.$try['userid'].']['.$try['try'].']" /> ';
-                } else {
-                    $temp = '';
-                }
+                $attempturlparams = [
+                    'id' => $cm->id,
+                    'action' => 'reportdetail',
+                    'userid' => $try['userid'],
+                    'try' => $try['try'],
+                ];
 
-                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid']
-                        .'&amp;try='.$try['try'].'" class="lesson-attempt-link">';
                 if ($try["grade"] !== null) { // if null then not done yet
                     // this is what the link does when the user has completed the try
                     $timetotake = $try["timeend"] - $try["timestart"];
 
-                    $temp .= $try["grade"]."%";
-                    $bestgradefound = true;
                     if ($try["grade"] > $bestgrade) {
                         $bestgrade = $try["grade"];
                     }
-                    $temp .= "&nbsp;".userdate($try["timestart"]);
-                    $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+
+                    $attemptdata = (object)[
+                        'grade' => $try["grade"],
+                        'timestart' => userdate($try["timestart"]),
+                        'duration' => format_time($timetotake),
+                    ];
+                    $attemptlinkcontents = get_string('attemptinfowithgrade', 'lesson', $attemptdata);
+
                 } else {
                     if ($try["end"]) {
                         // User finished the lesson but has no grade. (Happens when there are only content pages).
-                        $temp .= "&nbsp;".userdate($try["timestart"]);
                         $timetotake = $try["timeend"] - $try["timestart"];
-                        $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+                        $attemptdata = (object)[
+                            'timestart' => userdate($try["timestart"]),
+                            'duration' => format_time($timetotake),
+                        ];
+                        $attemptlinkcontents = get_string('attemptinfonograde', 'lesson', $attemptdata);
                     } else {
                         // This is what the link does/looks like when the user has not completed the attempt.
-                        $temp .= get_string("notcompleted", "lesson");
                         if ($try['timestart'] !== 0) {
                             // Teacher previews do not track time spent.
-                            $temp .= "&nbsp;".userdate($try["timestart"]);
+                            $attemptlinkcontents = get_string("notcompletedwithdate", "lesson", userdate($try["timestart"]));
+                        } else {
+                            $attemptlinkcontents = get_string("notcompleted", "lesson");
                         }
-                        $temp .= "</a>";
                         $timetotake = null;
                     }
                 }
+                $attempturl = new moodle_url('/mod/lesson/report.php', $attempturlparams);
+                $attemptlink = html_writer::link($attempturl, $attemptlinkcontents, ['class' => 'lesson-attempt-link']);
+
+                if ($caneditlesson) {
+                    $attemptid = 'attempt-' . $try['userid'] . '-' . $try['try'];
+                    $attemptname = 'attempts[' . $try['userid'] . '][' . $try['try'] . ']';
+
+                    $checkbox = new \core\output\checkbox_toggleall('lesson-attempts', false, [
+                        'id' => $attemptid,
+                        'name' => $attemptname,
+                        'label' => $attemptlink
+                    ]);
+                    $attemptlink = $OUTPUT->render($checkbox);
+                }
+
                 // build up the attempts array
-                $attempts[] = $temp;
+                $attempts[] = $attemptlink;
 
                 // Run these lines for the stats only if the user finnished the lesson.
                 if ($try["end"]) {
