@@ -1,6 +1,11 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+    * forum_scale_used()
+
 === 3.7 ===
   * Changed the forum discussion rendering to use templates rather than print functions.
   * Added new forum entities, factories, exporters, renderers, and vaults in the local namespace to better encapsulate the forum data.

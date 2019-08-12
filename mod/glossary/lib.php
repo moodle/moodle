@@ -865,24 +865,11 @@ function glossary_grade_item_delete($glossary) {
 }
 
 /**
- * @global object
- * @param int $gloassryid
- * @param int $scaleid
- * @return bool
+ * @deprecated since Moodle 3.8
  */
-function glossary_scale_used ($glossaryid,$scaleid) {
-//This function returns if a scale is being used by one glossary
-    global $DB;
-
-    $return = false;
-
-    $rec = $DB->get_record("glossary", array("id"=>$glossaryid, "scale"=>-$scaleid));
-
-    if (!empty($rec)  && !empty($scaleid)) {
-        $return = true;
-    }
-
-    return $return;
+function glossary_scale_used() {
+    throw new coding_exception('glossary_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**

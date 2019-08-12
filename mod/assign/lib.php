@@ -901,24 +901,11 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
 }
 
 /**
- * Checks if a scale is being used by an assignment.
- *
- * This is used by the backup code to decide whether to back up a scale
- * @param int $assignmentid
- * @param int $scaleid
- * @return boolean True if the scale is used by the assignment
+ * @deprecated since Moodle 3.8
  */
-function assign_scale_used($assignmentid, $scaleid) {
-    global $DB;
-
-    $return = false;
-    $rec = $DB->get_record('assign', array('id'=>$assignmentid, 'grade'=>-$scaleid));
-
-    if (!empty($rec) && !empty($scaleid)) {
-        $return = true;
-    }
-
-    return $return;
+function assign_scale_used() {
+    throw new coding_exception('assign_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**

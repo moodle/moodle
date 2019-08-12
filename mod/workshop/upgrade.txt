@@ -1,6 +1,11 @@
 This files describes API changes in /mod/workshop - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+    * workshop_scale_used()
+
 === 3.7 ===
 
 * workshop_cron() has been removed. Sub-plugins should now implement scheduled tasks.

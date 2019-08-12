@@ -1,5 +1,10 @@
 This files describes API changes in the book code.
 
+=== 3.8 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+    * book_scale_used()
+
 === 3.7 ===
 
 * book_export_contents() callback now returns tags information for every chapter.

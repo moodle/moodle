@@ -1651,3 +1651,11 @@ function forum_count_replies($post, $children = true) {
             true
         );
 }
+
+/**
+ * @deprecated since Moodle 3.8
+ */
+function forum_scale_used() {
+    throw new coding_exception('forum_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
+}
