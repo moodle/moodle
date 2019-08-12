@@ -834,7 +834,23 @@ abstract class moodle_database {
      * @return string The sql with tablenames being prefixed with $CFG->prefix
      */
     protected function fix_table_names($sql) {
-        return preg_replace('/\{([a-z][a-z0-9_]*)\}/', $this->prefix.'$1', $sql);
+        return preg_replace_callback(
+            '/\{([a-z][a-z0-9_]*)\}/',
+            function($matches) {
+                return $this->fix_table_name($matches[1]);
+            },
+            $sql
+        );
+    }
+
+    /**
+     * Adds the prefix to the table name.
+     *
+     * @param string $tablename The table name
+     * @return string The prefixed table name
+     */
+    protected function fix_table_name($tablename) {
+        return $this->prefix . $tablename;
     }
 
     /**
