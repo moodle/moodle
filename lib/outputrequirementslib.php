@@ -331,7 +331,8 @@ class page_requirements_manager {
                 'svgicons'            => $page->theme->use_svg_icons(),
                 'usertimezone'        => usertimezone(),
                 'contextid'           => $contextid,
-                'langrev'             => get_string_manager()->get_revision()
+                'langrev'             => get_string_manager()->get_revision(),
+                'templaterev'         => $this->get_templaterev()
             );
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;
