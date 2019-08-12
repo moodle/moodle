@@ -64,6 +64,11 @@ class core_htmlpurifier_testcase extends basic_testcase {
         $text = '<nolink>xxx<em>xx</em><div>xxx</div></nolink>';
         $result = purify_html($text, array());
         $this->assertSame($text, $result);
+
+        // Ensure nolink doesn't force open tags to be closed, so can be virtually everywhere.
+        $text = '<p><nolink><div>no filters</div></nolink></p>';
+        $result = purify_html($text, array());
+        $this->assertSame($text, $result);
     }
 
     /**
