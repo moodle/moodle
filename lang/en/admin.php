@@ -1390,6 +1390,7 @@ $string['userpreference'] = 'User preference';
 $string['userpolicies'] = 'User policies';
 $string['users'] = 'Users';
 $string['userquota'] = 'User quota';
+$string['userquota_desc'] = 'The maximum number of bytes that a user can store in their own private file area.';
 $string['usesitenameforsitepages'] = 'Use site name for site pages';
 $string['usetags'] = 'Enable tags functionality';
 $string['validateemptylineerror'] = 'Empty lines are not valid';

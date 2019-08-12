@@ -1,5 +1,7 @@
 <?php
 
+use core_admin\local\settings\filesize as filesize;
+
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // "ip blocker" settingpage
@@ -36,12 +38,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // maxbytes set to 0 will allow the maximum server limit for uploads
     $temp->add(new admin_setting_configselect('maxbytes', new lang_string('maxbytes', 'admin'), new lang_string('configmaxbytes', 'admin'), 0, $max_upload_choices));
     // 100MB
-    $defaultuserquota = 104857600;
-    $params = new stdClass();
-    $params->bytes = $defaultuserquota;
-    $params->displaysize = display_size($defaultuserquota);
-    $temp->add(new admin_setting_configtext('userquota', new lang_string('userquota', 'admin'),
-                new lang_string('configuserquota', 'admin', $params), $defaultuserquota, PARAM_INT, 30));
+    $defaultuserquota = 100 * filesize::UNIT_MB;
+    $temp->add(new filesize('userquota', new lang_string('userquota', 'admin'),
+            new lang_string('userquota_desc', 'admin'), $defaultuserquota));
 
     $temp->add(new admin_setting_configcheckbox('allowobjectembed', new lang_string('allowobjectembed', 'admin'), new lang_string('configallowobjectembed', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enabletrusttext', new lang_string('enabletrusttext', 'admin'), new lang_string('configenabletrusttext', 'admin'), 0));
