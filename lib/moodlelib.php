@@ -1648,7 +1648,7 @@ function purge_all_caches() {
  *        'other'  Purge all other caches?
  */
 function purge_caches($options = []) {
-    $defaults = array_fill_keys(['muc', 'theme', 'lang', 'js', 'filter', 'other'], false);
+    $defaults = array_fill_keys(['muc', 'theme', 'lang', 'js', 'template', 'filter', 'other'], false);
     if (empty(array_filter($options))) {
         $options = array_fill_keys(array_keys($defaults), true); // Set all options to true.
     } else {
@@ -1665,6 +1665,9 @@ function purge_caches($options = []) {
     }
     if ($options['js']) {
         js_reset_all_caches();
+    }
+    if ($options['template']) {
+        template_reset_all_caches();
     }
     if ($options['filter']) {
         reset_text_filters_cache();

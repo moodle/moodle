@@ -1043,6 +1043,7 @@ $string['purgemuc'] = 'All MUC caches';
 $string['purgeothercaches'] = 'All file and miscellaneous caches';
 $string['purgeselectedcaches'] = 'Purge selected caches';
 $string['purgeselectedcachesfinished'] = 'The selected caches were purged.';
+$string['purgetemplates'] = 'Templates';
 $string['purgethemecache'] = 'Themes';
 $string['requestcategoryselection'] = 'Enable category selection';
 $string['restorecourse'] = 'Restore course';

@@ -277,6 +277,7 @@ preferences,moodle|/user/preferences.php|t/preferences',
 
     $setting = new admin_setting_configcheckbox('cachetemplates', new lang_string('cachetemplates', 'admin'),
         new lang_string('cachetemplates_help', 'admin'), 1);
+    $setting->set_updatedcallback('template_reset_all_caches');
     $temp = new admin_settingpage('templates', new lang_string('templates', 'admin'));
     $temp->add($setting);
     $ADMIN->add('appearance', $temp);
