@@ -268,24 +268,3 @@ $string['weekthis'] = 'This week';
 $string['when'] = 'When';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
-
-// Deprecated since Moodle 3.4.
-$string['quickdownloadcalendar'] = 'Quick download / subscribe to calendar';
-$string['ical'] = 'iCal';
-$string['tt_hidecourse'] = 'Course events are shown (click to hide)';
-$string['tt_hideglobal'] = 'Global events are shown (click to hide)';
-$string['tt_hidegroups'] = 'Group events are shown (click to hide)';
-$string['tt_hideuser'] = 'User events are shown (click to hide)';
-$string['tt_showcourse'] = 'Course events are hidden (click to show)';
-$string['tt_showglobal'] = 'Global events are hidden (click to show)';
-$string['tt_showgroups'] = 'Group events are hidden (click to show)';
-$string['tt_showuser'] = 'User events are hidden (click to show)';
-$string['hidecourseevents'] = 'Hide course events';
-$string['hideglobalevents'] = 'Hide global events';
-$string['hidegroupsevents'] = 'Hide group events';
-$string['hideuserevents'] = 'Hide user events';
-$string['showcourseevents'] = 'Show course events';
-$string['showglobalevents'] = 'Show global events';
-$string['showgroupsevents'] = 'Show group events';
-$string['showuserevents'] = 'Show user events';
-$string['subsource'] = 'Event source: {$a->name}';

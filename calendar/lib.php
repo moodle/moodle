@@ -1651,9 +1651,9 @@ function calendar_top_controls($type, $data) {
 
     switch ($type) {
         case 'frontpage':
-            $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), $urlbase, false, false, false,
+            $prevlink = calendar_get_link_previous(get_string('monthprev', 'calendar'), $urlbase, false, false, false,
                 true, $prevmonthtime);
-            $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), $urlbase, false, false, false, true,
+            $nextlink = calendar_get_link_next(get_string('monthnext', 'calendar'), $urlbase, false, false, false, true,
                 $nextmonthtime);
             $calendarlink = calendar_get_link_href(new \moodle_url(CALENDAR_URL . 'view.php', array('view' => 'month')),
                 false, false, false, $time);
@@ -1675,9 +1675,9 @@ function calendar_top_controls($type, $data) {
 
             break;
         case 'course':
-            $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), $urlbase, false, false, false,
+            $prevlink = calendar_get_link_previous(get_string('monthprev', 'calendar'), $urlbase, false, false, false,
                 true, $prevmonthtime);
-            $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), $urlbase, false, false, false,
+            $nextlink = calendar_get_link_next(get_string('monthnext', 'calendar'), $urlbase, false, false, false,
                 true, $nextmonthtime);
             $calendarlink = calendar_get_link_href(new \moodle_url(CALENDAR_URL . 'view.php', array('view' => 'month')),
                 false, false, false, $time);

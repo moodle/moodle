@@ -74,7 +74,3 @@ $string['publishstate_help'] = 'A note\'s context determines who can see the not
 $string['site'] = 'site';
 $string['sitenotes'] = 'Site notes';
 $string['unknown'] = 'unknown';
-
-// Deprecated since Moodle 3.4
-$string['groupaddnewnote'] = 'Add a common note';
-$string['selectnotestate'] = "Select note state";
