@@ -167,6 +167,22 @@ class assign_grading_table extends table_sql implements renderable {
                          ON u.id = uf.userid
                         AND uf.assignment = :assignmentid3 ';
 
+        if ($this->assignment->get_course()->relativedatesmode) {
+            $params['courseid1'] = $this->assignment->get_course()->id;
+            $from .= ' LEFT JOIN (
+            SELECT ue1.userid as enroluserid,
+              CASE WHEN MIN(ue1.timestart - c2.startdate) < 0 THEN 0 ELSE MIN(ue1.timestart - c2.startdate) END as enrolstartoffset
+              FROM {enrol} e1
+              JOIN {user_enrolments} ue1
+                ON (ue1.enrolid = e1.id AND ue1.status = 0)
+              JOIN {course} c2
+                ON c2.id = e1.courseid
+             WHERE e1.courseid = :courseid1 AND e1.status = 0
+             GROUP BY ue1.userid
+            ) enroloffset
+            ON (enroloffset.enroluserid = u.id) ';
+        }
+
         $hasoverrides = $this->assignment->has_overrides();
 
         if ($hasoverrides) {
@@ -242,6 +258,14 @@ class assign_grading_table extends table_sql implements renderable {
               )
 
             ) effective ON effective.priority = priority.priority AND effective.userid = priority.userid ';
+        } else if ($this->assignment->get_course()->relativedatesmode) {
+            // In relative dates mode and when we don't have overrides, include the
+            // duedate, cutoffdate and allowsubmissionsfrom date anyway as this information is useful and can vary.
+            $params['assignmentid5'] = (int)$this->assignment->get_instance()->id;
+            $fields .= ', a.duedate + enroloffset.enrolstartoffset as duedate, ';
+            $fields .= 'a.allowsubmissionsfromdate, ';
+            $fields .= 'a.cutoffdate ';
+            $from .= 'JOIN {assign} a ON a.id = :assignmentid5 ';
         }
 
         if (!empty($this->assignment->get_instance()->blindmarking)) {
@@ -377,7 +401,7 @@ class assign_grading_table extends table_sql implements renderable {
         $columns[] = 'status';
         $headers[] = get_string('status', 'assign');
 
-        if ($hasoverrides) {
+        if ($hasoverrides || $this->assignment->get_course()->relativedatesmode) {
             // Allowsubmissionsfromdate.
             $columns[] = 'allowsubmissionsfromdate';
             $headers[] = get_string('allowsubmissionsfromdate', 'assign');
@@ -1034,7 +1058,7 @@ class assign_grading_table extends table_sql implements renderable {
     public function col_status(stdClass $row) {
         $o = '';
 
-        $instance = $this->assignment->get_instance();
+        $instance = $this->assignment->get_instance($row->userid);
 
         $due = $instance->duedate;
         if ($row->extensionduedate) {
