@@ -50,6 +50,8 @@ validation against and defaults to null (so, no user needed) if not provided.
 
     The following are _invalid_ template names and locations:
       mod_forum/post/user: mod/forum/templates/local/post/user.mustache
+* Following behat steps have been removed from core:
+    - I go to "<gradepath_string>" in the course gradebook
 
 === 3.7 ===
 
