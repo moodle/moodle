@@ -152,7 +152,15 @@ if (!empty($instanceid) && !empty($roleid)) {
         $table->define_headers(array(get_string('user'), $actionheader));
     } else {
         $table->define_columns(array('fullname', 'count', 'select'));
-        $table->define_headers(array(get_string('user'), $actionheader, get_string('select')));
+        $mastercheckbox = new \core\output\checkbox_toggleall('participants-table', true, [
+            'id' => 'select-all-participants',
+            'name' => 'select-all-participants',
+            'label' => get_string('select'),
+            // Consistent labels to prevent select column from resizing.
+            'selectall' => get_string('select'),
+            'deselectall' => get_string('select'),
+        ]);
+        $table->define_headers(array(get_string('user'), $actionheader, $OUTPUT->render($mastercheckbox)));
     }
     $table->define_baseurl($baseurl);
 
@@ -317,7 +325,16 @@ if (!empty($instanceid) && !empty($roleid)) {
         $data[] = !empty($u->count) ? get_string('yes').' ('.$u->count.') ' : get_string('no');
 
         if (!empty($CFG->messaging)) {
-            $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$u->userid.'" value="'.$u->count.'" />';
+            $togglegroup = 'participants-table';
+            if (empty($u->count)) {
+                $togglegroup .= ' no';
+            }
+            $checkbox = new \core\output\checkbox_toggleall($togglegroup, false, [
+                'classes' => 'usercheckbox',
+                'name' => 'user' . $u->userid,
+                'value' => $u->count,
+            ]);
+            $data[] = $OUTPUT->render($checkbox);
         }
         $table->add_data($data);
     }
@@ -337,18 +354,29 @@ if (!empty($instanceid) && !empty($roleid)) {
     }
 
     if (!empty($CFG->messaging)) {
-        $buttonclasses = 'btn btn-secondary';
         echo '<div class="selectbuttons btn-group">';
-        echo '<input type="button" id="checkallonpage" value="'.get_string('selectall').'" class="'. $buttonclasses .'"> '."\n";
-        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" class="'. $buttonclasses .'"> '."\n";
         if ($perpage >= $matchcount) {
-            echo '<input type="button" id="checkallnos" value="'.get_string('selectnos').'" class="'. $buttonclasses .'">'."\n";
+            $checknos = new \core\output\checkbox_toggleall('participants-table no', true, [
+                'id' => 'select-nos',
+                'name' => 'select-nos',
+                'label' => get_string('selectnos'),
+                'selectall' => get_string('selectnos'),
+                'deselectall' => get_string('deselectnos'),
+            ], true);
+            echo $OUTPUT->render($checknos);
         }
         echo '</div>';
         echo '<div class="p-y-1">';
         echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
         $displaylist['#messageselect'] = get_string('messageselectadd');
-        echo html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionid'));
+        $withselectedparams = array(
+            'id' => 'formactionid',
+            'data-action' => 'toggle',
+            'data-togglegroup' => 'participants-table',
+            'data-toggle' => 'action',
+            'disabled' => true
+        );
+        echo html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), $withselectedparams);
         echo '</div>';
         echo '</div>'."\n";
         echo '</form>'."\n";
