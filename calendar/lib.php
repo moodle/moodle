@@ -3482,6 +3482,9 @@ function calendar_output_fragment_event_form($args) {
     if ($starttime) {
         $formoptions['starttime'] = $starttime;
     }
+    // Let's check first which event types user can add.
+    $eventtypes = calendar_get_allowed_event_types($courseid);
+    $formoptions['eventtypes'] = $eventtypes;
 
     if (is_null($eventid)) {
         if (!empty($courseid)) {
@@ -3492,9 +3495,6 @@ function calendar_output_fragment_event_form($args) {
             }
         }
 
-        // Let's check first which event types user can add.
-        $eventtypes = calendar_get_allowed_event_types($courseid);
-        $formoptions['eventtypes'] = $eventtypes;
         $mform = new \core_calendar\local\event\forms\create(
             null,
             $formoptions,
