@@ -279,8 +279,11 @@ class participants_table extends \table_sql {
 
         $checkbox = new \core\output\checkbox_toggleall('participants-table', false, [
             'classes' => 'usercheckbox m-1',
+            'id' => 'user' . $data->id,
             'name' => 'user' . $data->id,
-            'checked' => $this->selectall
+            'checked' => $this->selectall,
+            'label' => get_string('selectitem', 'moodle', fullname($data)),
+            'labelclasses' => 'accesshide',
         ]);
 
         return $OUTPUT->render($checkbox);
