@@ -147,9 +147,11 @@ class participants_table extends \table_sql {
      */
     public function __construct($courseid, $currentgroup, $accesssince, $roleid, $enrolid, $status, $search,
             $bulkoperations, $selectall) {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         parent::__construct('user-index-participants-' . $courseid);
+
+        $this->selectall = $selectall;
 
         // Get the context.
         $this->course = get_course($courseid);
@@ -161,7 +163,15 @@ class participants_table extends \table_sql {
         $columns = [];
 
         if ($bulkoperations) {
-            $headers[] = get_string('select');
+            $mastercheckbox = new \core\output\checkbox_toggleall('participants-table', true, [
+                'id' => 'select-all-participants',
+                'name' => 'select-all-participants',
+                'label' => $this->selectall ? get_string('deselectall') : get_string('selectall'),
+                'labelclasses' => 'sr-only',
+                'classes' => 'm-1',
+                'checked' => $this->selectall
+            ]);
+            $headers[] = $OUTPUT->render($mastercheckbox);
             $columns[] = 'select';
         }
 
@@ -228,7 +238,6 @@ class participants_table extends \table_sql {
         $this->search = $search;
         $this->enrolid = $enrolid;
         $this->status = $status;
-        $this->selectall = $selectall;
         $this->countries = get_string_manager()->get_list_of_countries(true);
         $this->extrafields = $extrafields;
         $this->context = $context;
@@ -266,12 +275,18 @@ class participants_table extends \table_sql {
      * @return string
      */
     public function col_select($data) {
-        if ($this->selectall) {
-            $checked = 'checked="true"';
-        } else {
-            $checked = '';
-        }
-        return '<input type="checkbox" class="usercheckbox" name="user' . $data->id . '" ' . $checked . '/>';
+        global $OUTPUT;
+
+        $checkbox = new \core\output\checkbox_toggleall('participants-table', false, [
+            'classes' => 'usercheckbox m-1',
+            'id' => 'user' . $data->id,
+            'name' => 'user' . $data->id,
+            'checked' => $this->selectall,
+            'label' => get_string('selectitem', 'moodle', fullname($data)),
+            'labelclasses' => 'accesshide',
+        ]);
+
+        return $OUTPUT->render($checkbox);
     }
 
     /**
@@ -468,6 +483,20 @@ class participants_table extends \table_sql {
         if ($useinitialsbar) {
             $this->initialbars(true);
         }
+    }
+
+    /**
+     * Override the table show_hide_link to not show for select column.
+     *
+     * @param string $column the column name, index into various names.
+     * @param int $index numerical index of the column.
+     * @return string HTML fragment.
+     */
+    protected function show_hide_link($column, $index) {
+        if ($index > 0) {
+            return parent::show_hide_link($column, $index);
+        }
+        return '';
     }
 }
 
