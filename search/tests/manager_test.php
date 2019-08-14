@@ -78,6 +78,20 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertFalse(\core_search\manager::is_global_search_enabled());
     }
 
+    public function test_course_search_url() {
+
+        $this->resetAfterTest();
+
+        // URL is course/search.php by default.
+        $this->assertEquals(new moodle_url("/course/search.php"), \core_search\manager::get_course_search_url());
+
+        set_config('enableglobalsearch', true);
+        $this->assertEquals(new moodle_url("/search/index.php"), \core_search\manager::get_course_search_url());
+
+        set_config('enableglobalsearch', false);
+        $this->assertEquals(new moodle_url("/course/search.php"), \core_search\manager::get_course_search_url());
+    }
+
     public function test_search_areas() {
         global $CFG;
 
