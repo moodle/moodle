@@ -83,8 +83,11 @@ if ($action === 'pollconversions') {
 
     if (in_array($response->status, $readystatuslist)) {
         $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
-        $response->pagecount = $combineddocument->get_page_count();
-    } else if (in_array($response->status, $completestatuslist)) {
+        $response->status = $combineddocument->get_status();
+        $response->filecount = $combineddocument->get_document_count();
+    }
+
+    if (in_array($response->status, $completestatuslist)) {
         $pages = document_services::get_page_images_for_attempt($assignment,
                                                                 $userid,
                                                                 $attemptnumber,
