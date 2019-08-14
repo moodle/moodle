@@ -14,11 +14,12 @@ class cron_task extends \core\task\scheduled_task {
     }
 
     /**
-     * Run email cron.
+     * Run local_iomad cron.
      */
     public function execute() {
         global $DB, $CFG;
 
+        $runtime = time();
         // Are we copying Company to institution?
         if (!empty($CFG->iomad_sync_institution)) {
             mtrace("Copying company shortnames to user institution fields\n");
@@ -60,6 +61,30 @@ mtrace("setting user id " . $user->id . " department to " .  $departments[$user-
             }
             $companies = array();
             $users = array();
+        }
+
+        // Suspend any companies which need it.
+        if ($suspendcompanies = $DB->get_records_sql("SELECT * FROM {company}
+                                                      WHERE suspended = 0
+                                                      AND validto IS NOT NULL
+                                                      AND validto + suspendafter < :runtime",
+                                                      array('runtime' => $runtime))) {
+            foreach ($suspendcompanies as $suspendcompany) {
+                $target = new company($suspendcompany->id);
+                $target->suspend(true);
+            }
+        }
+
+        // Terminate any companies which need it.
+        if ($terminatecompanies = $DB->get_records_sql("SELECT * FROM {company}
+                                                        WHERE terminated = 0
+                                                        AND validto IS NOT NULL
+                                                        AND validto < :runtime",
+                                                        array('runtime' => $runtime))) {
+            foreach ($suspendcompanies as $suspendcompany) {
+                $target = new company($suspendcompany->id);
+                $target->terminate();
+            }
         }
     }
 }

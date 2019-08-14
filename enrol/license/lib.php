@@ -238,8 +238,13 @@ class enrol_license_plugin extends enrol_plugin {
                 $timestart = time();
 
                 if ($license->type == 0 || $license->type == 2) {
-                    // Set the timeend to be time start + the valid length for the license in days.
-                    $timeend = $timestart + ($license->validlength * 24 * 60 * 60 );
+                    if (empty($license->cutoffdate)) {
+                        // Set the timeend to be time start + the valid length for the license in days.
+                        $timeend = $timestart + ($license->validlength * 24 * 60 * 60 );
+                    } else {
+                        // Set the timeend to be the cutt off date.
+                        $timeend = $license->cutoffdate;
+                    }
                 } else {
                     // Set the timeend to be when the license runs out.
                     $timeend = $license->expirydate;

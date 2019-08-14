@@ -64,6 +64,9 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('companyid', PARAM_INT);
         $mform->addElement('hidden', 'currentparentid', $this->parentcompanyid);
         $mform->setType('currentparentid', PARAM_INT);
+        $mform->addElement('hidden', 'terminated');
+        $mform->setType('terminated', PARAM_INT);
+        $mform->setDefault('terminated', 0);
 
         // Then show the fields about where this block appears.
         if ($this->isadding) {
@@ -190,15 +193,6 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('hostname', PARAM_NOTAGS);
         $mform->addHelpButton('hostname', 'companyhostname', 'block_iomad_company_admin');
 
-        // Add the ecommerce selector.
-        if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
-            $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
-            $mform->setDefault('ecommerce', 0);
-            $mform->addHelpButton('ecommerce', 'ecommerce', 'block_iomad_company_admin');
-        } else {
-            $mform->addElement('hidden', 'ecommerce');
-        }
-
         if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             // Add the parent company selector.
             $companies = $DB->get_records_sql_menu("SELECT id,name FROM {company}
@@ -239,6 +233,11 @@ class company_edit_form extends \company_moodleform {
         } else {
             $mform->addElement('hidden', 'ecommerce');
         }
+
+        $mform->addElement('date_time_selector', 'validto', get_string('companyvalidto', 'block_iomad_company_admin'), array('optional' => true));
+        $mform->addElement('duration', 'suspendafter', get_string('companysuspendafter', 'block_iomad_company_admin'));
+        $mform->addHelpButton('validto', 'companyvalidto', 'block_iomad_company_admin');
+        $mform->addHelpButton('suspendafter', 'companysuspendafter', 'block_iomad_company_admin');
 
         $mform->setType('parentid', PARAM_INT);
         $mform->setType('ecommerce', PARAM_INT);

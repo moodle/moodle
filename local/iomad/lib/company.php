@@ -2904,6 +2904,78 @@ class company {
     }
 
     /**
+     * Terminates a company's contract,
+     * removing all course access and licenses for
+     * all of their users.
+     *
+     **/
+    public function terminate() {
+        global $DB;
+
+        $runtime = time();
+
+        try {
+            $transaction = $DB->start_delegated_transaction();
+
+            // Update all of the company licenes to have an end-date of now.
+            $DB->set_field('companylicense', 'expirydate', time(), array('companyid' => $this->id));
+
+            // Get the company users.
+            $users = $this->get_all_user_ids();
+
+            // Update the users.
+            foreach ($users as $userid) {
+                if ($user = $DB->get_record('user', array('id' => $userid))) {
+                    // Does the user belong to another company?
+                    if ($DB->count_records('company_users', array('userid' => $userid)) > 1 ) {
+                        // Belongs to more than one company.  Skip.
+                        continue;
+                    }
+                    // Terminate all of their enrolments.
+                    $usercourses = enrol_get_users_courses($userid);
+                    foreach ($usercourses as $courseid => $usercourse) {
+                        company_user::delete_user_course($userid, $courseid, 'autodelete');
+                    }
+                }
+            }
+
+            // Set the terminated field for the company.
+            $DB->set_field('company', 'terminated', true, array('id' => $this->id));
+
+            // Deal with local_iomad_track lines too.
+            $DB-set_field('local_iomad_track', 'timeenrolled', $runtime, array('companyid' => $this->id, 'timeenrolled' => null));
+            $DB-set_field('local_iomad_track', 'timestarted', $runtime, array('companyid' => $this->id, 'timestarted' => null));
+            $DB-set_field('local_iomad_track', 'timecompleted', $runtime, array('companyid' => $this->id, 'timecompleted' => null));
+
+            // Deal with child companies.
+            $childcompanies = $this->get_child_companies_recursive();
+            if (!empty($childcompanies)) {
+                foreach ($childcompanies as $childcomprec) {
+
+                    $childcompany = new company($childcomprec->id);
+                    $childcompany->terminate();
+                }
+            }
+
+            // All OK commit the transaction.
+            $transaction->allow_commit();
+            return true;
+
+            // Create an event for this.  This handles the actual lifting.
+            $eventother = array('companyid' => $company->id);
+            $event = \block_iomad_company_admin\event\company_terminated::create(array('context' => context_system::instance(),
+                                                                                       'objectid' => $company->id,
+                                                                                       'userid' => $USER->id,
+                                                                                       'other' => $eventother));
+            $event->trigger();
+
+        } catch(Exception $e) {
+            $transaction->rollback($e);
+            return false;
+        }
+    }
+
+    /**
      * Enables or disables ecommerce for a company.
      *
      * Parameters -

@@ -287,6 +287,9 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     $data->userid = $USER->id;
 
+    if (empty($data->validto)) {
+        $data->validto = null;
+    }
     if ($isadding) {
         // Set up a profiles field category for this company.
         $catdata = new stdclass();
@@ -329,7 +332,6 @@ if ($mform->is_cancelled()) {
         $DB->update_record('company', $companydetails);
         $redirectmessage = get_string('companycreatedok', 'block_iomad_company_admin');
 
-echo "322</br>";
         // Deal with any parent company assignments.
         if (!empty($companydetails->parentid)) {
             $company = new company($companydetails->id);
@@ -359,6 +361,13 @@ echo "322</br>";
         $oldcompany = $DB->get_record('company', array('id' => $companyid));
         $oldtheme = $company->get_theme();
         $themechanged = $oldtheme != $data->theme;
+
+        // Check if we have a new expiration date.
+        if (!empty($data->validto)) {
+            if (!empty($oldcompany->terminated) && $data->validto > $oldcompany->validto) {
+                $data->terminated = 0;
+            }
+        }
 
         if ($themechanged) {
             $company->update_theme($data->theme);

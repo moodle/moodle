@@ -2054,5 +2054,47 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030104, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030106) {
+
+        // Define field cutoffdate to be added to companylicense.
+        $table = new xmldb_table('companylicense');
+        $field = new xmldb_field('cutoffdate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'instant');
+
+        // Conditionally launch add field cutoffdate.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field validto to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('validto', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'maxusers');
+
+        // Conditionally launch add field validto.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field suspendafter to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('suspendafter', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'validto');
+
+        // Conditionally launch add field suspendafter.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field terminated to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('terminated', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'suspendafter');
+
+        // Conditionally launch add field terminated.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030106, 'local', 'iomad');
+    }
+
     return $result;
 }

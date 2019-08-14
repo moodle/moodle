@@ -55,6 +55,8 @@ class block_iomad_company_admin_external extends external_api {
                             'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
                             'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                             'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
+                            'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
+                            'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
                         )
                     )
                 )
@@ -165,6 +167,8 @@ class block_iomad_company_admin_external extends external_api {
                      'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
                      'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                      'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
+                     'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
+                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
                 )
             )
         );
@@ -332,7 +336,11 @@ class block_iomad_company_admin_external extends external_api {
                          'lang' => new external_value(PARAM_TEXT, 'User default language'),
                          'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
                          'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
-                         'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0)
+                         'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
+                         'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
+                         'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
+                         'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
+                         'terminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
                          )
                      )
                  ),
@@ -370,6 +378,10 @@ class block_iomad_company_admin_external extends external_api {
                             'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_DEFAULT, 0),
                             'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
                             'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
+                            'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
+                            'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
+                            'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
+                            'terminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
                         )
                     )
                 )
@@ -402,6 +414,13 @@ class block_iomad_company_admin_external extends external_api {
             // does this company exist
             if (!$oldcompany = $DB->get_record('company', array('id' => $id))) {
                 throw new invalid_parameter_exception("Company id=$id does not exist");
+            }
+
+            // Have we changed the contract end date?
+            if (!empty($company->validto)) {
+                if (!empty($oldcompany->terminated) && $company->validto > $oldcompany->validto) {
+                    $company->terminated = 0;
+                }
             }
 
             // Store this for reporting purposes.
