@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A secure layout for the iomad theme.
+ * The columns layout for the iomad theme.
  *
  * @package   theme_iomad
  * @copyright 2018 Bas Brands
@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $bodyattributes = $OUTPUT->body_attributes();
-
 $blockspre = $OUTPUT->blocks('side-pre');
 $blockspost = $OUTPUT->blocks('side-post');
 
@@ -42,5 +41,5 @@ $templatecontext = [
     'bodyattributes' => $bodyattributes
 ];
 
-echo $OUTPUT->render_from_template('theme_iomad/secure', $templatecontext);
+echo $OUTPUT->render_from_template('theme_iomad/columns', $templatecontext);
 

@@ -15,106 +15,98 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * iomad config.
+ *
  * @package   theme_iomad
- * @copyright 2013 Howard Miller
+ * @copyright 2018 Bas Brands
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// This line protects the file from being accessed by a URL directly.
+defined('MOODLE_INTERNAL') || die();
+
 $THEME->name = 'iomad';
 
-/////////////////////////////////
-// The only thing you need to change in this file when copying it to
-// create a new theme is the name above. You also need to change the name
-// in version.php and lang/en/theme_clean.php as well.
-//////////////////////////////////
-//
-$THEME->doctype = 'html5';
-$THEME->parents = array('bootstrapbase');
-$THEME->sheets = array('iomad', 'custom', 'company');
-$THEME->supportscssoptimisation = false;
-$THEME->yuicssmodules = array();
+$THEME->sheets = ['iomad'];
 
-$THEME->editor_sheets = array();
-
-$THEME->plugins_exclude_sheets = array(
-    'block' => array(
-        'html',
-    ),
-);
-
-$THEME->rendererfactory = 'theme_overridden_renderer_factory';
-$THEME->csspostprocess = 'theme_iomad_process_css';
-
-$THEME->blockrtlmanipulations = array(
-    'side-pre' => 'side-post',
-    'side-post' => 'side-pre'
-);
-
-$THEME->layouts = array(
+$THEME->layouts = [
+    // Most backwards compatible layout without the blocks - this is the layout used by default.
     'base' => array(
-        'file' => 'iomad.php',
+        'file' => 'columns.php',
         'regions' => array(),
     ),
+    // Standard layout with blocks, this is recommended for most pages with general information.
     'standard' => array(
-        'file' => 'iomad.php',
+        'file' => 'columns.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
     ),
+    // Main course page.
     'course' => array(
-        'file' => 'iomad.php',
+        'file' => 'columns.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
-        'options' => array('langmenu'=>true),
+        'options' => array('langmenu' => true),
     ),
     'coursecategory' => array(
-        'file' => 'iomad.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-    ),
-    'incourse' => array(
-        'file' => 'iomad.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-    ),
-    'frontpage' => array(
-        'file' => 'iomad.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-        'options' => array('nonavbar'=>true),
-    ),
-    'admin' => array(
-        'file' => 'iomad2.php',
+        'file' => 'columns.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
-    'mydashboard' => array(
-        'file' => 'dashboard.php',
+    // Part of course, typical for modules - default page layout if $cm specified in require_login().
+    'incourse' => array(
+        'file' => 'columns.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    // The site home page.
+    'frontpage' => array(
+        'file' => 'columns.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
-        'options' => array('langmenu'=>true),
+        'options' => array('nofullheader' => true),
     ),
-    'mypublic' => array(
-        'file' => 'iomad.php',
+    // Server administration scripts.
+    'admin' => array(
+        'file' => 'columns.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    // My dashboard page.
+    'mydashboard' => array(
+        'file' => 'columns.php',
         'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre',
+        'options' => array('nonavbar' => true, 'langmenu' => true, 'nocontextheader' => true),
+    ),
+    // My public page.
+    'mypublic' => array(
+        'file' => 'columns.php',
+        'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
     'login' => array(
-        'file' => 'iomad.php',
+        'theme' => 'boost',
+        'file' => 'login.php',
         'regions' => array(),
-        'options' => array('langmenu'=>true),
+        'options' => array('langmenu' => true),
     ),
 
+    // Pages that appear in pop-up windows - no navigation, no blocks, no header.
     'popup' => array(
-        'file' => 'iomad.php',
+        'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+        'options' => array('nofooter' => true, 'nonavbar' => true),
     ),
+    // No blocks and minimal footer - used for legacy frame layouts only!
     'frametop' => array(
-        'file' => 'iomad.php',
+        'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nocoursefooter'=>true),
+        'options' => array('nofooter' => true, 'nocoursefooter' => true),
     ),
+    // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible.
     'embedded' => array(
+        'theme' => 'boost',
         'file' => 'embedded.php',
         'regions' => array()
     ),
@@ -122,30 +114,45 @@ $THEME->layouts = array(
     // This must not have any blocks, links, or API calls that would lead to database or cache interaction.
     // Please be extremely careful if you are modifying this layout.
     'maintenance' => array(
+        'theme' => 'boost',
         'file' => 'maintenance.php',
         'regions' => array(),
     ),
     // Should display the content and basic headers only.
     'print' => array(
-        'file' => 'iomad.php',
+        'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>false),
+        'options' => array('nofooter' => true, 'nonavbar' => false),
     ),
     // The pagelayout used when a redirection is occuring.
     'redirect' => array(
-        'file' => 'iomad.php',
+        'theme' => 'boost',
+        'file' => 'embedded.php',
         'regions' => array(),
     ),
     // The pagelayout used for reports.
     'report' => array(
-        'file' => 'iomad2.php',
+        'file' => 'columns.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
     // The pagelayout used for safebrowser and securewindow.
     'secure' => array(
         'file' => 'secure.php',
-        'regions' => array('side-pre', 'side-post'),
+        'regions' => array('side-pre'),
         'defaultregion' => 'side-pre'
-    ),
-);
+    )
+];
+
+$THEME->editor_sheets = [];
+$THEME->parents = ['boost'];
+$THEME->enable_dock = false;
+$THEME->extrascsscallback = 'theme_iomad_get_extra_scss';
+$THEME->prescsscallback = 'theme_iomad_get_pre_scss';
+$THEME->precompiledcsscallback = 'theme_iomad_get_precompiled_css';
+$THEME->yuicssmodules = array();
+$THEME->rendererfactory = 'theme_overridden_renderer_factory';
+$THEME->scss = function($theme) {
+    return theme_iomad_get_main_scss_content($theme);
+};
+$THEME->usefallback = true;

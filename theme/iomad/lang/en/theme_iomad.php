@@ -15,33 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'theme_iomad', language 'en'
+ * Language file.
  *
- * @package   theme_clean
- * @copyright 2013 Howard Miller
+ * @package   theme_iomad
+ * @copyright 2018 Bas Brands
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['choosereadme'] = 'IOMAD legacy theme. No longer supported. Not recommended for new sites or for new child themes.';
-$string['configtitle'] = 'IOMAD';
+// This line protects the file from being accessed by a URL directly.
+defined('MOODLE_INTERNAL') || die();
 
-$string['customcss'] = 'Custom CSS';
-$string['customcssdesc'] = 'Whatever CSS rules you add to this textarea will be reflected in every page, making for easier customization of this theme.';
-
-$string['footnote'] = 'Footnote';
-$string['footnotedesc'] = 'Whatever you add to this textarea will be displayed in the footer throughout your Moodle site.';
-
-$string['invert'] = 'Invert navbar';
-$string['invertdesc'] = 'Swaps text and background for the navbar at the top of the page between black and white.';
-
-$string['logo'] = 'Logo';
-$string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header.<br>
-If the height of your logo is more than 75px add the following CSS rule to the Custom CSS box below.<br>
-a.logo {height: 100px;} or whatever height in pixels the logo is.';
-
-$string['privacy:metadata'] = 'The Iomad theme only shows data stored in other locations.';
-$string['pluginname'] = 'Iomad Clean';
-
+// Raw SCSS setting.
+$string['choosereadme'] = 'Iomad is a highly-customisable theme, based on Boost, with an alternative navigation layout. This theme is intended to be used directly, or as a parent theme when creating or updating custom themes to utilise Bootstrap 4.';
+$string['configtitle'] = 'Iomad';
+$string['navbardark'] = 'Use a dark style navbar';
+$string['navbardarkdesc'] = 'Swaps text and background colours for the navbar at the top of the page between dark and light.';
+$string['pluginname'] = 'Iomad';
+$string['presetfiles'] = 'Additional theme preset files';
+$string['presetfiles_desc'] = 'Preset files can be used to dramatically alter the appearance of the theme. See <a href=https://docs.moodle.org/dev/Boost_Presets>Boost presets</a> for information on creating and sharing your own preset files, and see the <a href=https://moodle.net/boost>Presets repository</a> for presets that others have shared.';
+$string['preset'] = 'Theme preset';
+$string['preset_desc'] = 'Pick a preset to broadly change the look of the theme.';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
-
+$string['sitetitle'] = 'Site title';
+$string['privacy:metadata'] = 'The Iomad theme does not store any personal data.';

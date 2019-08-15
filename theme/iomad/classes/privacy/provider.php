@@ -17,8 +17,8 @@
 /**
  * Privacy Subsystem implementation for theme_iomad.
  *
- * @package    theme_iomad
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @package   theme_iomad
+ * @copyright 2018 Bas Brands
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,9 +27,9 @@ namespace theme_iomad\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for theme_iomad implementing null_provider.
+ * The iomad theme does not store any data.
  *
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright 2018 Bas Brands
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\null_provider {

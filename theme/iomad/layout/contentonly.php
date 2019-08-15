@@ -14,12 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->libdir . '/filelib.php');
-require_once("lib.php");
+/**
+ * A one column layout for the iomad theme.
+ *
+ * @package   theme_iomad
+ * @copyright 2018 Bas Brands
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-header('Content-type: text/css');
+defined('MOODLE_INTERNAL') || die();
 
-$css = file_get_contents("style/company.css");
+$bodyattributes = $OUTPUT->body_attributes([]);
 
-echo iomad_process_company_css($css, null);
+$templatecontext = [
+    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
+    'output' => $OUTPUT,
+    'bodyattributes' => $bodyattributes
+];
+
+echo $OUTPUT->render_from_template('theme_iomad/contentonly', $templatecontext);
+

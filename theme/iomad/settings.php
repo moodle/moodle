@@ -15,46 +15,92 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomad
- * @copyright 2013 Moodle, moodle.org
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Iomad theme settings file.
+ *
+ * @package    theme_iomad
+ * @copyright  2018 Bas Brands
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
-    // Invert Navbar to dark background.
-    $name = 'theme_iomad/invert';
-    $title = get_string('invert', 'theme_iomad');
-    $description = get_string('invertdesc', 'theme_iomad');
+    $settings = new theme_boost_admin_settingspage_tabs('themesettingiomad', get_string('configtitle', 'theme_iomad'));
+    $page = new admin_settingpage('theme_iomad_general', get_string('generalsettings', 'theme_boost'));
+
+    $name = 'theme_iomad/navbardark';
+    $title = get_string('navbardark', 'theme_iomad');
+    $description = get_string('navbardarkdesc', 'theme_iomad');
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
     $setting->set_updatedcallback('theme_reset_all_caches');
-    $settings->add($setting);
+    $page->add($setting);
 
-    // Logo file setting.
-    $name = 'theme_iomad/logo';
-    $title = get_string('logo','theme_iomad');
-    $description = get_string('logodesc', 'theme_iomad');
-    $setting = new admin_setting_configstoredfile($name, $title, $description, 'logo');
-    $setting->set_updatedcallback('theme_reset_all_caches');
-    $settings->add($setting);
+    // Preset.
+    $name = 'theme_iomad/preset';
+    $title = get_string('preset', 'theme_iomad');
+    $description = get_string('preset_desc', 'theme_iomad');
+    $default = 'default.scss';
 
-    // Custom CSS file.
-    $name = 'theme_iomad/customcss';
-    $title = get_string('customcss', 'theme_iomad');
-    $description = get_string('customcssdesc', 'theme_iomad');
-    $default = '';
-    $setting = new admin_setting_configtextarea($name, $title, $description, $default);
-    $setting->set_updatedcallback('theme_reset_all_caches');
-    $settings->add($setting);
+    $context = context_system::instance();
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'theme_iomad', 'preset', 0, 'itemid, filepath, filename', false);
 
-    // Footnote setting.
-    $name = 'theme_iomad/footnote';
-    $title = get_string('footnote', 'theme_iomad');
-    $description = get_string('footnotedesc', 'theme_iomad');
-    $default = '';
-    $setting = new admin_setting_confightmleditor($name, $title, $description, $default);
+    $choices = [];
+    foreach ($files as $file) {
+        $choices[$file->get_filename()] = $file->get_filename();
+    }
+
+    // These are the built in presets.
+    $choices['default.scss'] = 'default.scss';
+    $choices['plain.scss'] = 'plain.scss';
+
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $setting->set_updatedcallback('theme_reset_all_caches');
-    $settings->add($setting);
+    $page->add($setting);
+
+    // Preset files setting.
+    $name = 'theme_iomad/presetfiles';
+    $title = get_string('presetfiles', 'theme_iomad');
+    $description = get_string('presetfiles_desc', 'theme_iomad');
+
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'preset', 0,
+        array('maxfiles' => 20, 'accepted_types' => array('.scss')));
+    $page->add($setting);
+
+    // Background image setting.
+    $name = 'theme_iomad/backgroundimage';
+    $title = get_string('backgroundimage', 'theme_boost');
+    $description = get_string('backgroundimage_desc', 'theme_boost');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'backgroundimage');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    // Variable $body-color.
+    // We use an empty default value because the default colour should come from the preset.
+    $name = 'theme_iomad/brandcolor';
+    $title = get_string('brandcolor', 'theme_boost');
+    $description = get_string('brandcolor_desc', 'theme_boost');
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    // Must add the page after definiting all the settings!
+    $settings->add($page);
+
+    // Advanced settings.
+    $page = new admin_settingpage('theme_iomad_advanced', get_string('advancedsettings', 'theme_boost'));
+
+    // Raw SCSS to include before the content.
+    $setting = new admin_setting_scsscode('theme_iomad/scsspre',
+        get_string('rawscsspre', 'theme_boost'), get_string('rawscsspre_desc', 'theme_boost'), '', PARAM_RAW);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    // Raw SCSS to include after the content.
+    $setting = new admin_setting_scsscode('theme_iomad/scss', get_string('rawscss', 'theme_boost'),
+        get_string('rawscss_desc', 'theme_boost'), '', PARAM_RAW);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    $settings->add($page);
 }
