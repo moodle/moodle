@@ -269,9 +269,9 @@ function xmldb_main_install() {
                                          'Iomad Client Course Editor - can edit course content; add, delete, modify etc..', 'companycourseeditor');
     $companycoursenoneditorid = create_role('Client Course Access', 'companycoursenoneditor',
                                             'Iomad Client Course Access - similar to the non-editing teacher role for client admin', 'companycoursenoneditor');
-    $clientreporterid = create_role('Client Repoter Only', 'clientreporter',
+    $clientreporterid = create_role('Client Reporter Only', 'clientreporter',
                                             'Iomad Client Report Only  - Similar to the client admin roles but allows for access to the reports only', 'clientreporter');
-    $companyreporter = create_role('Compny Reporter Only', 'companyreporter',
+    $companyreporterid = create_role('Company Reporter Only', 'companyreporter',
                                             'Iomad Company Report Only - similar to the company manager role but allows for access to the company reports only', 'companyreporter');
 
 
