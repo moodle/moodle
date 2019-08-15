@@ -46,14 +46,10 @@ class behat_user extends behat_base {
      * @param string $nodetext The menu item to select.
      */
     public function i_choose_from_the_participants_page_bulk_action_menu($nodetext) {
-        $nodetext = behat_context_helper::escape($nodetext);
-
-        // Open the select.
-        $this->execute("behat_general::i_click_on", array("//select[@id='formactionid']", "xpath_element"));
-
-        // Click on the option.
-        $this->execute("behat_general::i_click_on", array("//select[@id='formactionid']" .
-                                                          "/option[contains(., " . $nodetext . ")]", "xpath_element"));
+        $this->execute("behat_forms::i_set_the_field_to", [
+            "With selected users...",
+            $this->escape($nodetext)
+        ]);
     }
 
     /**
