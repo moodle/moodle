@@ -579,6 +579,7 @@ function book_export_contents($cm, $baseurl) {
             "title"     => format_string($chapter->title, true, array('context' => $context)),
             "href"      => $chapter->id . "/index.html",
             "level"     => 0,
+            "hidden"    => $chapter->hidden,
             "subitems"  => array()
         );
 
@@ -612,7 +613,6 @@ function book_export_contents($cm, $baseurl) {
         $chapterindexfile['author']       = null;
         $chapterindexfile['license']      = null;
         $chapterindexfile['tags']         = \core_tag\external\util::get_item_tags('mod_book', 'book_chapters', $chapter->id);
-        $chapterindexfile['ishidden']     = (bool) $chapter->hidden;
         $contents[] = $chapterindexfile;
 
         // Chapter files (images usually).
