@@ -433,7 +433,10 @@ class engine extends \core_search\engine {
             $query->addField($key);
             if ($dismax && !empty($field['mainquery'])) {
                 // Add fields the main query should be run against.
-                $query->addQueryField($key);
+                // Due to a regression in the PECL solr extension, https://bugs.php.net/bug.php?id=72740,
+                // a boost value is required, even if it is optional; to avoid boosting one among other fields,
+                // the explicit boost value will be the default one, for every field.
+                $query->addQueryField($key, 1);
             }
         }
     }
