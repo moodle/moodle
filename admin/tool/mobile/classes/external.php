@@ -369,12 +369,12 @@ class external extends external_api {
 
     /**
      * Returns a piece of content to be displayed in the Mobile app, it usually returns a template, javascript and
-     * other structured data that will be used to render a view in the Mobile app..
+     * other structured data that will be used to render a view in the Mobile app.
      *
      * Callbacks (placed in \$component\output\mobile) that are called by this web service are responsible for doing the
      * appropriate security checks to access the information to be returned.
      *
-     * @param string $component fame of the component.
+     * @param string $component name of the component.
      * @param string $method function method name in class \$component\output\mobile.
      * @param array $args optional arguments for the method.
      * @return array HTML, JavaScript and other required data and information to create a view in the app.
@@ -423,6 +423,7 @@ class external extends external_api {
             'otherdata'  => $otherdata,
             'files'      => !empty($result['files']) ? $result['files'] : array(),
             'restrict'   => !empty($result['restrict']) ? $result['restrict'] : array(),
+            'disabled'   => !empty($result['disabled']) ? true : false,
         );
     }
 
@@ -465,7 +466,8 @@ class external extends external_api {
                         ),
                     ),
                     'Restrict this content to certain users or courses.'
-                )
+                ),
+                'disabled' => new external_value(PARAM_BOOL, 'Whether we consider this disabled or not.', VALUE_OPTIONAL),
             )
         );
     }

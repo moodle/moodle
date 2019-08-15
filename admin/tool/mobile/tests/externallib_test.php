@@ -371,6 +371,19 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(array(1, 2), $result['restrict']['users']);
         $this->assertEquals(array(3, 4), $result['restrict']['courses']);
         $this->assertEmpty($result['files']);
+        $this->assertFalse($result['disabled']);
+    }
+
+    /**
+     * Test get_content disabled.
+     */
+    public function test_get_content_disabled() {
+
+        $paramval = 16;
+        $result = external::get_content('tool_mobile', 'test_view_disabled',
+            array(array('name' => 'param1', 'value' => $paramval)));
+        $result = external_api::clean_returnvalue(external::get_content_returns(), $result);
+        $this->assertTrue($result['disabled']);
     }
 
     /**
