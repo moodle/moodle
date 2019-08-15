@@ -1,42 +1,49 @@
+a {
+    color: #666;
+}
+
+a:hover {
+    color: #d30000
+}
+
 .navbar {
     margin-bottom : 3px;
 }
-.navbar .brand {
+.navbar-light .navbar-brand  {
   font-family: Ubuntu;
-  font-size: 36px;
-  color: red;
+  background-color: #d30000;
 }
 .moodleheader h1 {
     font-family: Ubuntu;
-    color: #f75701;
+    color: #d30000;
     margin: 10px 0;
 }
 .dashboard-section .headingblock {
   display: none;
 }
-.iomadlink {
+.iomadlink, .iomadlinkreports {
   font-family: Ubuntu;
   font-size: 12px;
   font-weight: normal;
   text-align: center;
   line-height: 120%;
 }
-.iomadlink a {
+.iomadlink a, .iomadlinkreports a {
   color: #337ab7;
   padding: 0 10px;
 }
 .navbar-text a {
-  color: #f75701;
+  color: #d30000;
 }
 #page-header h1 {
   font-family: Ubuntu;
   font-size: 40px;
   font-weight: normal;
-  color: #f75701;
+  color: #d30000;
 }
 #region-main {
   background-color: #ffffff;
-  padding: 5px 5px 5px 5px;
+  padding: 15px;
   border: 2px solid #A8A8A8;
   -webkit-box-shadow: rgba(0, 0, 0, 0.0470588) 0 1px 1px inset;
   border-bottom-left-radius: 4px;
@@ -46,20 +53,20 @@
   box-shadow: rgba(0, 0, 0, 0.0470588) 0 1px 1px inset;
 }
 .iomad_block_title {
-  color: #f75701;
+  color: #d30000;
   font-size: 14px;
   text-transform: uppercase;
   font-family: Ubuntu;
   font-weight: normal;
 }
-.block .header .title h2 {
-  color: #f75701;
+.block .card-block h3 {
+  color: #d30000;
   font-size: 16px;
   font-family: Ubuntu;
   font-weight: normal;
 }
 .block .content h3 {
-  color: #f75701;
+  color: #d30000;
   font-size: 18px;
   font-family: Ubuntu;
   font-weight: normal;
@@ -71,12 +78,30 @@
 body {
   background-color: #eeeeee;
 }
-#page-footer a {
-  color: #333333;
+
+ {
+  background-color: #ddd !important;
 }
-#page-footer {
-  color: #f75701;
-  border-top-width: 0px;
+
+#page-footer, #nav-drawer, .navbar {
+  background-color: #ddd !important;
+  color: #666 !important;
+}
+#page-footer a, #page-footer a.icon, ul.navbar-nav a {
+  color: #666 !important;
+  font-style: none;
+}
+
+#page-footer a:hover, #page-footer a.icon:hover, ul.navbar-nav a:hover {
+  color: #d30000 !important;
+}
+
+.navbar a {
+    color: #fff !important;
+}
+
+.navbar a:hover {
+    color: #ddd !important;
 }
 
 #sitelogo {
@@ -115,23 +140,23 @@ body {
   margin: 10px;
   min-height: 155px;
 }
-.iomadlink_container .iomadlink {
+.iomadlink_container .iomadlink, .iomadlink_container .iomadlinkreports {
   text-align: center;
 }
-.iomadlink_container .iomadlink .iomadicon {
+.iomadlink_container .iomadlink .iomadicon, .iomadlink_container .iomadlink .iomadiconreports {
   display: block;
   position: relative;
   margin: 10px 0;
 }
-.iomadlink_container .iomadlink .iomadicon .fa-topic {
+.iomadlink_container .iomadlink .iomadicon .fa-topic, .iomadlink_container .iomadlinkreports .iomadicon .fa-topic {
   font-size: 54px;
   margin-bottom: 10px;
-  color: #17859b;
+  color: #666;
 }
-.iomadlink_container .iomadlink .iomadicon .fa-action {
+.iomadlink_container .iomadlink .iomadicon .fa-action, .iomadlink_container .iomadlinkreports .iomadicon .fa-action {
   border-radius: 15px;
   color: #FFFFFF;
-  background-color: #83d411;
+  background-color: #93d800;
   font-size: 20px;
   height: 30px;
   line-height: 30px;
@@ -140,17 +165,17 @@ body {
   position: absolute;
   bottom: 0;
 }
-.iomadlink_container .iomadlink .linkname {
+.iomadlink_container .iomadlink .linkname, .iomadlink_container .iomadlinkreports .linkname {
   display: block;
   width: 100%;
 }
 .block_iomad_reports .iomadlink_container {
   border-top-color: #DDD;
 }
-div.iomadlink {
+div.iomadlink, div.iomadlinkreports {
     min-height: 130px;
     background-color: #ffec70;
-    background-color: #d2ff70;
+    background-color: #ddd;
     border-radius: 5px;
     box-shadow: 5px 5px 5px #888888;
 }
@@ -159,77 +184,82 @@ div.iomadlink {
 }
 
 /* block icons */
-.block_navigation h2:before {
+.block_navigation h3:before {
     font-family: FontAwesome;
     content: "\f018  ";
 }
-.block_settings h2:before {
+.block_settings h3:before {
     font-family: FontAwesome;
     content: "\f013  ";
 }
-.block_news_items h2:before {
+.block_news_items h3:before {
     font-family: FontAwesome;
     content: "\f130  ";
 }
-.block_course_list h2:before {
+.block_course_list h3:before {
     font-family: FontAwesome;
     content: "\f0eb  ";
 }
-.block_private_files h2:before {
+.block_private_files h3:before {
     font-family: FontAwesome;
     content: "\f07b  ";
 }
-.block_online_users h2:before {
+.block_online_users h3:before {
     font-family: FontAwesome;
     content: "\f0c0  ";
 }
-.block_badges h2:before {
+.block_badges h3:before {
     font-family: FontAwesome;
     content: "\f2bd  ";
 }
-.block_calendar_month h2:before {
+.block_calendar_month h3:before {
     font-family: FontAwesome;
     content: "\f073  ";
 }
-.block_calendar_upcoming h2:before {
+.block_calendar_upcoming h3:before {
     font-family: FontAwesome;
     content: "\f1fd  ";
 }
-.block_iomad_approve_access h2:before {
+.block_iomad_approve_access h3:before {
     font-family: FontAwesome;
     content: "\f234  ";
 }
-.block_iomad_company_selector h2:before {
+.block_iomad_company_selector h3:before {
     font-family: FontAwesome;
     content: "\f1ad  ";
 }
-.block_iomad_onlineusers h2:before {
+.block_iomad_onlineusers h3:before {
     font-family: FontAwesome;
     content: "\f2bd  ";
 }
-.block_completionstatus h2:before {
+.block_completionstatus h3:before {
     font-family: FontAwesome;
     content: "\f14a  ";
 }
-.block_mycourses h2:before {
+.block_mycourses h3:before {
     font-family: FontAwesome;
     content: "\f0eb  ";
 }
-.block_iomad_welcome h2:before {
+.block_iomad_welcome h3:before {
     font-family: FontAwesome;
     content: "\f2b5  ";
 }
-.block_lp h2:before {
+.block_lp h3:before {
     font-family: FontAwesome;
     content: "\f0ea  ";
 }
-.block_adminblock h2:before {
+.block_adminblock h3:before {
     font-family: FontAwesome;
     content: "\f0fe  ";
 }
+
 .block_iomad_reports h3:before {
     font-family: FontAwesome;
     content: "\f200  ";
+}
+.block_course_overview h3:before {
+    font-family: FontAwesome;
+    content: "\f06e  ";
 }
 
 /* header icons */
@@ -238,14 +268,55 @@ div.iomadlink {
     content: "\f0e4  ";
 }
 
-/* company admin block */
-div.block_iomad_company_admin div.iomadlink_container {
-    top: 0px;
-    opacity: 100;
+.btn {
+    border-radius: 0.25rem;
 }
 
-/* My courses block */
-#mycourses_available_view, #mycourses_inprogress_view, #mycourses_completed_view {
-    opacity: 1;
+.alert {
+    border-radius: 0.25rem;
+}
+.site-name {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.25rem;
 }
 
+.list-group-item.active {
+    z-index: 2;
+    color: #ddd;
+    background-color: #d30000;
+    border-color: #d30000;
+}
+
+.tag-info, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release, .assignfeedback_editpdf_widget .label {
+    background-color: #666;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #666;
+    border-color: #666;
+}
+
+.page-item.active .page-link {
+    color: #fff;
+    background-color: #666;
+    border-color: #666;
+}
+
+.page-link {
+    color: #666;
+    background-color: #ddd;
+    border: 1px solid #ddd;
+}
+
+.progress {
+    background-color: #666;
+}
+.progress-bar {
+    background-color: green;
+}
+
+#page-blocks-iomad_company_admin-company_groups_create_form #region-main {
+    height: 100%;
+}

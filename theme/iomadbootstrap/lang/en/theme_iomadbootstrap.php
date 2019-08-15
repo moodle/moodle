@@ -13,62 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Strings for component 'theme_bootstrap', language 'en', branch 'MOODLE_31_STABLE'
+ * Language file.
  *
- * @package   Bootstrap theme
- * @copyright 2012 Bas Brands, www.basbrands.nl
+ * @package   theme_iomadbootstrap
+ * @copyright 2018 Bas Brands
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// This line protects the file from being accessed by a URL directly.
+defined('MOODLE_INTERNAL') || die();
+
+// Raw SCSS setting.
+$string['choosereadme'] = 'Iomad Bootstrap is a highly-customisable theme, based on Boost, with an alternative navigation layout. This theme is intended to be used directly, or as a parent theme when creating or updating custom themes to utilise Bootstrap 4.';
+$string['configtitle'] = 'Iomad Bootstrap';
+$string['navbardark'] = 'Use a dark style navbar';
+$string['navbardarkdesc'] = 'Swaps text and background colours for the navbar at the top of the page between dark and light.';
 $string['pluginname'] = 'Iomad Bootstrap';
-$string['privacy:metadata'] = 'The Iomad Bootstrap theme only shows data stored in other locations.';
+$string['presetfiles'] = 'Additional theme preset files';
+$string['presetfiles_desc'] = 'Preset files can be used to dramatically alter the appearance of the theme. See <a href=https://docs.moodle.org/dev/Boost_Presets>Boost presets</a> for information on creating and sharing your own preset files, and see the <a href=https://moodle.net/boost>Presets repository</a> for presets that others have shared.';
+$string['preset'] = 'Theme preset';
+$string['preset_desc'] = 'Pick a preset to broadly change the look of the theme.';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
-$string['fullscreen'] = 'Full screen';
-$string['closefullscreen'] = 'Close full screen';
-$string['togglenav'] = 'Toggle navigation';
-
-$string['choosereadme'] = '
-<div class="clearfix"><div class="theme_screenshot"><h2>Bootstrap Base</h2>
-<img class=img-polaroid src="bootstrap/pix/screenshot.jpg" />
-<h3>Theme Credits</h3>
-<p>
-<h3>Iomad bootstrap theme</h3>
-<p>
-This theme is based on the Bootstrap CSS framework, version 3.1
-</p>
-<p>
-<a href="http://getbootstrap.com">http://getbootstrap.com</a>
-</p>
-<p>
-This is a GPL theme that is available on GitHub:
-</p>
-<p>
-<a href="https://github.com/bmbrands/theme_bootstrap">https://github.com/bmbrands/theme_bootstrap</a>
-</p>
-<p>
-Feel free to modify / improve / share
-</p>
-<p>
-This theme has been created with the help of:
-Joby Harding, Gareth J Barnard.
-</p>
-<p>
-Authors: Bas Brands, David Scotson<br>
-Contact: bas@sonsbeekmedia.nl<br>
-Website: <a href="http://www.basbrands.nl">www.basbrands.nl</a><br>
-</p>
-
-<h3>Reporting bugs</h3>
-
-<p>You can report bugs on the <a href="https://github.com/bmbrands/theme_bootstrap/issues">github page</a> for this theme or
-on the Moodle tracker</p>
-
-<h3>More information</h3>
-<ul>
-<li><a href="https://github.com/bmbrands/theme_bootstrap/wiki">Wiki page for this theme</a>
-<li><a href="http://docs.moodle.org/23/en/bootstrap-Theme">Bootstrap on Moodle docs</a></li>
-<li><a href="http://theming.sonsbeekmedia.nl/">Theme testing playground </a></li>
-</ul>';
-
+$string['sitetitle'] = 'Site title';
+$string['privacy:metadata'] = 'The Iomad Bootstrap theme does not store any personal data.';

@@ -1,5 +1,5 @@
 <?php
-// This file is part of The Bootstrap Moodle theme
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,52 +14,137 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Renderers to align Moodle's HTML with that expected by Bootstrap
+ * Iomad Bootstrap theme callbacks.
  *
- * @package    theme_bootstrap
- * @copyright  2014 Bas Brands, www.basbrands.nl
- * @authors    Bas Brands, David Scotson
+ * @package    theme_iomadbootstrap
+ * @copyright  2018 Bas Brands
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// This line protects the file from being accessed by a URL directly.
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Returns the main SCSS content.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return string
+ */
+function theme_iomadbootstrap_get_main_scss_content($theme) {
+    global $CFG;
 
-function iomadbootstrap_grid($hassidepre, $hassidepost) {
+    $scss = '';
+    $filename = !empty($theme->settings->preset) ? $theme->settings->preset : null;
+    $fs = get_file_storage();
 
-    if ($hassidepre && $hassidepost) {
-        $regions = array('content' => 'col-sm-6 col-sm-push-3 col-lg-8 col-lg-push-2');
-        $regions['pre'] = 'col-sm-3 col-sm-pull-6 col-lg-2 col-lg-pull-8';
-        $regions['post'] = 'col-sm-3 col-lg-2';
-    } else if ($hassidepre && !$hassidepost) {
-        $regions = array('content' => 'col-sm-9 col-sm-push-3 col-lg-10 col-lg-push-2');
-        $regions['pre'] = 'col-sm-3 col-sm-pull-9 col-lg-2 col-lg-pull-10';
-        $regions['post'] = 'emtpy';
-    } else if (!$hassidepre && $hassidepost) {
-        $regions = array('content' => 'col-sm-9 col-lg-10');
-        $regions['pre'] = 'empty';
-        $regions['post'] = 'col-sm-3 col-lg-2';
-    } else if (!$hassidepre && !$hassidepost) {
-        $regions = array('content' => 'col-md-12');
-        $regions['pre'] = 'empty';
-        $regions['post'] = 'empty';
+    $context = context_system::instance();
+    $scss .= file_get_contents($CFG->dirroot . '/theme/iomadbootstrap/scss/iomadbootstrap/pre.scss');
+    if ($filename && ($presetfile = $fs->get_file($context->id, 'theme_iomadbootstrap', 'preset', 0, '/', $filename))) {
+        $scss .= $presetfile->get_content();
+    } else {
+        // Safety fallback - maybe new installs etc.
+        $scss .= file_get_contents($CFG->dirroot . '/theme/iomadbootstrap/scss/preset/default.scss');
     }
+    $scss .= file_get_contents($CFG->dirroot . '/theme/iomadbootstrap/scss/iomadbootstrap/post.scss');
 
-    if ('rtl' === get_string('thisdirection', 'langconfig')) {
-        if ($hassidepre && $hassidepost) {
-            $regions['pre'] = 'col-sm-3  col-sm-push-3 col-lg-2 col-lg-push-2';
-            $regions['post'] = 'col-sm-3 col-sm-pull-9 col-lg-2 col-lg-pull-10';
-        } else if ($hassidepre && !$hassidepost) {
-            $regions = array('content' => 'col-sm-9 col-lg-10');
-            $regions['pre'] = 'col-sm-3 col-lg-2';
-            $regions['post'] = 'empty';
-        } else if (!$hassidepre && $hassidepost) {
-            $regions = array('content' => 'col-sm-9 col-sm-push-3 col-lg-10 col-lg-push-2');
-            $regions['pre'] = 'empty';
-            $regions['post'] = 'col-sm-3 col-sm-pull-9 col-lg-2 col-lg-pull-10';
+    return $scss;
+}
+
+/**
+ * Get SCSS to prepend.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return array
+ */
+function theme_iomadbootstrap_get_pre_scss($theme) {
+    $scss = '';
+    $configurable = [
+        // Config key => [variableName, ...].
+        'brandcolor' => ['primary'],
+    ];
+
+    // Prepend variables first.
+    foreach ($configurable as $configkey => $targets) {
+        $value = isset($theme->settings->{$configkey}) ? $theme->settings->{$configkey} : null;
+        if (empty($value)) {
+            continue;
         }
+        array_map(function($target) use (&$scss, $value) {
+            $scss .= '$' . $target . ': ' . $value . ";\n";
+        }, (array) $targets);
     }
-    return $regions;
+
+    // Prepend pre-scss.
+    if (!empty($theme->settings->scsspre)) {
+        $scss .= $theme->settings->scsspre;
+    }
+
+    return $scss;
+}
+
+/**
+ * Inject additional SCSS.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return string
+ */
+function theme_iomadbootstrap_get_extra_scss($theme) {
+    global $CFG;
+    $content = '';
+
+    // Set the page background image.
+    $imageurl = $theme->setting_file_url('backgroundimage', 'backgroundimage');
+    if (!empty($imageurl)) {
+        $content .= '$imageurl: "' . $imageurl . '";';
+        $content .= file_get_contents($CFG->dirroot .
+            '/theme/iomadbootstrap/scss/iomadbootstrap/body-background.scss');
+    }
+
+    if (!empty($theme->settings->navbardark)) {
+        $content .= file_get_contents($CFG->dirroot .
+            '/theme/iomadbootstrap/scss/iomadbootstrap/navbar-dark.scss');
+    } else {
+        $content .= file_get_contents($CFG->dirroot .
+            '/theme/iomadbootstrap/scss/iomadbootstrap/navbar-light.scss');
+    }
+    if (!empty($theme->settings->scss)) {
+        $content .= $theme->settings->scss;
+    }
+    return $content;
+}
+
+/**
+ * Get compiled css.
+ *
+ * @return string compiled css
+ */
+function theme_iomadbootstrap_get_precompiled_css() {
+    global $CFG;
+    return file_get_contents($CFG->dirroot . '/theme/iomadbootstrap/style/moodle.css');
+}
+
+/**
+ * Serves any files associated with the theme settings.
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @return bool
+ */
+function theme_iomadbootstrap_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'backgroundimage')) {
+        $theme = theme_config::load('iomadbootstrap');
+        // By default, theme files must be cache-able by both browsers and proxies.
+        if (!array_key_exists('cacheability', $options)) {
+            $options['cacheability'] = 'public';
+        }
+        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
+    } else {
+        send_file_not_found();
+    }
 }

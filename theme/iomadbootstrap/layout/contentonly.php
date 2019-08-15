@@ -15,32 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for theme_iomadbootstrap.
+ * A one column layout for the iomadbootstrap theme.
  *
  * @package   theme_iomadbootstrap
  * @copyright 2018 Bas Brands
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace theme_iomadbootstrap\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * The iomadbootstrap theme does not store any data.
- *
- * @copyright 2018 Bas Brands
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class provider implements \core_privacy\local\metadata\null_provider {
+$bodyattributes = $OUTPUT->body_attributes([]);
 
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
-    }
-}
+$templatecontext = [
+    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
+    'output' => $OUTPUT,
+    'bodyattributes' => $bodyattributes
+];
+
+echo $OUTPUT->render_from_template('theme_iomadbootstrap/contentonly', $templatecontext);
+
