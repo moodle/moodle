@@ -64,9 +64,9 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('companyid', PARAM_INT);
         $mform->addElement('hidden', 'currentparentid', $this->parentcompanyid);
         $mform->setType('currentparentid', PARAM_INT);
-        $mform->addElement('hidden', 'terminated');
-        $mform->setType('terminated', PARAM_INT);
-        $mform->setDefault('terminated', 0);
+        $mform->addElement('hidden', 'companyterminated');
+        $mform->setType('companyterminated', PARAM_INT);
+        $mform->setDefault('companyterminated', 0);
 
         // Then show the fields about where this block appears.
         if ($this->isadding) {

@@ -364,8 +364,8 @@ if ($mform->is_cancelled()) {
 
         // Check if we have a new expiration date.
         if (!empty($data->validto)) {
-            if (!empty($oldcompany->terminated) && $data->validto > $oldcompany->validto) {
-                $data->terminated = 0;
+            if (!empty($oldcompany->companyterminated) && $data->validto > $oldcompany->validto) {
+                $data->companyterminated = 0;
             }
         }
 

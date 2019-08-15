@@ -77,7 +77,7 @@ mtrace("setting user id " . $user->id . " department to " .  $departments[$user-
 
         // Terminate any companies which need it.
         if ($terminatecompanies = $DB->get_records_sql("SELECT * FROM {company}
-                                                        WHERE terminated = 0
+                                                        WHERE companyterminated = 0
                                                         AND validto IS NOT NULL
                                                         AND validto < :runtime",
                                                         array('runtime' => $runtime))) {

@@ -2939,8 +2939,8 @@ class company {
                 }
             }
 
-            // Set the terminated field for the company.
-            $DB->set_field('company', 'terminated', true, array('id' => $this->id));
+            // Set the companyterminated field for the company.
+            $DB->set_field('company', 'companyterminated', true, array('id' => $this->id));
 
             // Deal with local_iomad_track lines too.
             $DB-set_field('local_iomad_track', 'timeenrolled', $runtime, array('companyid' => $this->id, 'timeenrolled' => null));

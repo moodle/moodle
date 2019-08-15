@@ -2096,5 +2096,18 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030106, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030107) {
+
+        // Rename field terminated on table company to companyterminated.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('terminated', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'suspendafter');
+
+        // Launch rename field companyterminated.
+        $dbman->rename_field($table, $field, 'companyterminated');
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030107, 'local', 'iomad');
+    }
+
     return $result;
 }

@@ -15,6 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $plugin->component  = 'local_iomad';
-$plugin->version  = 2019030106;   // The (date) version of this plugin.
+$plugin->version  = 2019030107;   // The (date) version of this plugin.
 $plugin->release  = '3.7 (Build: 20190527)'; // Human-friendly version name
 $plugin->requires = 2019052000;   // Requires this Moodle version.
