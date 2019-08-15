@@ -862,6 +862,7 @@ $functions = array(
         'classpath' => 'group/externallib.php',
         'description' => 'Returns all groupings in specified course.',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_group_get_course_groups' => array(
         'classname' => 'core_group_external',
@@ -870,7 +871,8 @@ $functions = array(
         'description' => 'Returns all groups in specified course.',
         'type' => 'read',
         'ajax' => true,
-        'capabilities' => 'moodle/course:managegroups'
+        'capabilities' => 'moodle/course:managegroups',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_group_get_course_user_groups' => array(
         'classname' => 'core_group_external',
