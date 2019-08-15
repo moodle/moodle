@@ -382,6 +382,8 @@ class api {
         $features = array(
             'NoDelegate_CoreOffline' => new lang_string('offlineuse', 'tool_mobile'),
             '$mmLoginEmailSignup' => new lang_string('startsignup'),
+            'NoDelegate_CoreComments' => new lang_string('comments'),
+            'NoDelegate_CoreRating' => new lang_string('ratings', 'rating'),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmCourses' => new lang_string('mycourses'),
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),
@@ -390,6 +392,7 @@ class api {
                 '$mmSideMenuDelegate_mmaNotifications' => new lang_string('notifications', 'message'),
                 '$mmSideMenuDelegate_mmaMessages' => new lang_string('messages', 'message'),
                 '$mmSideMenuDelegate_mmaCalendar' => new lang_string('calendar', 'calendar'),
+                'CoreMainMenuDelegate_AddonBlog' => new lang_string('blog', 'blog'),
                 '$mmSideMenuDelegate_mmaFiles' => new lang_string('files'),
                 '$mmSideMenuDelegate_website' => new lang_string('webpage'),
                 '$mmSideMenuDelegate_help' => new lang_string('help'),
@@ -403,6 +406,7 @@ class api {
                 '$mmCoursesDelegate_mmaNotes' => new lang_string('notes', 'notes'),
                 'NoDelegate_CoreCourseDownload' => new lang_string('downloadcourse', 'tool_mobile'),
                 'NoDelegate_CoreCoursesDownload' => new lang_string('downloadcourses', 'tool_mobile'),
+                'CoreCourseOptionsDelegate_AddonBlog' => new lang_string('blog', 'blog'),
             ),
             "$user" => array(
                 '$mmUserDelegate_mmaBadges' => new lang_string('badges', 'badges'),
@@ -414,6 +418,7 @@ class api {
                 '$mmUserDelegate_mmaMessages:blockContact' => new lang_string('blockcontact', 'message'),
                 '$mmUserDelegate_mmaNotes:addNote' => new lang_string('addnewnote', 'notes'),
                 '$mmUserDelegate_picture' => new lang_string('userpic'),
+                'CoreCourseOptionsDelegate_AddonBlog' => new lang_string('blog', 'blog'),
             ),
             "$files" => array(
                 'files_privatefiles' => new lang_string('privatefiles'),
