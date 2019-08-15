@@ -87,7 +87,7 @@ Feature: We can use Single view
     And the field "Grade for james (Student) 1" matches value "12.05"
     And the field "Exclude for holly (Student) 2" matches value "1"
     And I select "new grade item 1" from the "Select grade item..." singleselect
-    And I click on "Very good" "option"
+    And I set the field "Grade for james (Student) 1" to "Very good"
     And I press "Save"
     Then I should see "Grades were set for 1 items"
     And I press "Continue"
