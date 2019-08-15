@@ -6298,7 +6298,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Test verifying that messages can be sent to existing linked group conversations.
      */
     public function test_send_message_to_conversation_linked_group_conversation() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
@@ -6349,9 +6349,12 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasAttribute('notificationsendericonurl', $customdata);
         $this->assertEquals($groupimageurl, $customdata->notificationiconurl);
         $this->assertEquals($group->name, $customdata->conversationname);
-
+        $userpicture = new \user_picture($user1);
+        $userpicture->size = 1; // Use f1 size.
+        $this->assertEquals($userpicture->get_url($PAGE)->out(false), $customdata->notificationsendericonurl);
     }
 
     /**
