@@ -771,20 +771,9 @@ class behat_general extends behat_base {
      * @param string $postselectortype The selector type of the latest element
      */
     public function should_appear_before($preelement, $preselectortype, $postelement, $postselectortype) {
-
-        // We allow postselectortype as a non-text based selector.
-        list($preselector, $prelocator) = $this->transform_selector($preselectortype, $preelement);
-        list($postselector, $postlocator) = $this->transform_selector($postselectortype, $postelement);
-
-        $prexpath = $this->find($preselector, $prelocator)->getXpath();
-        $postxpath = $this->find($postselector, $postlocator)->getXpath();
-
-        // Using following xpath axe to find it.
-        $msg = '"'.$preelement.'" "'.$preselectortype.'" does not appear before "'.$postelement.'" "'.$postselectortype.'"';
-        $xpath = $prexpath.'/following::*[contains(., '.$postxpath.')]';
-        if (!$this->getSession()->getDriver()->find($xpath)) {
-            throw new ExpectationException($msg, $this->getSession());
-        }
+        $msg = '"' . $preelement . '" "' . $preselectortype .
+                '" does not appear before "' . $postelement . '" "' . $postselectortype . '"';
+        $this->check_element_order($preelement, $preselectortype, $postelement, $postselectortype, $msg);
     }
 
     /**
@@ -798,18 +787,37 @@ class behat_general extends behat_base {
      * @param string $preselectortype The locator of the preceding element
      */
     public function should_appear_after($postelement, $postselectortype, $preelement, $preselectortype) {
+        $msg = '"' . $postelement . '" "' . $postselectortype .
+                '" does not appear after "' . $preelement . '" "' . $preselectortype . '"';
+        $this->check_element_order($preelement, $preselectortype, $postelement, $postselectortype, $msg);
+    }
 
-        // We allow postselectortype as a non-text based selector.
-        list($postselector, $postlocator) = $this->transform_selector($postselectortype, $postelement);
+    /**
+     * Shared code to check whether an element is before or after another one.
+     *
+     * @param string $preelement The locator of the preceding element
+     * @param string $preselectortype The locator of the preceding element
+     * @param string $postelement The locator of the following element
+     * @param string $postselectortype The selector type of the following element
+     * @param string $msg Message to output if this fails
+     */
+    protected function check_element_order(string $preelement, string $preselectortype,
+            string $postelement, string $postselectortype, string $msg) {
         list($preselector, $prelocator) = $this->transform_selector($preselectortype, $preelement);
+        list($postselector, $postlocator) = $this->transform_selector($postselectortype, $postelement);
 
-        $postxpath = $this->find($postselector, $postlocator)->getXpath();
         $prexpath = $this->find($preselector, $prelocator)->getXpath();
+        $postxpath = $this->find($postselector, $postlocator)->getXpath();
 
-        // Using preceding xpath axe to find it.
-        $msg = '"'.$postelement.'" "'.$postselectortype.'" does not appear after "'.$preelement.'" "'.$preselectortype.'"';
-        $xpath = $postxpath.'/preceding::*[contains(., '.$prexpath.')]';
-        if (!$this->getSession()->getDriver()->find($xpath)) {
+        // The xpath to do this was running really slowly on certain Chrome versions so we are using
+        // this DOM method instead.
+        $ok = $this->getSession()->getDriver()->evaluateScript('return (function() { ' .
+                'var a = document.evaluate("' . $prexpath . '", document).iterateNext();' .
+                'var b = document.evaluate("' . $postxpath . '", document).iterateNext();' .
+                'return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING;})()'
+        );
+
+        if (!$ok) {
             throw new ExpectationException($msg, $this->getSession());
         }
     }
