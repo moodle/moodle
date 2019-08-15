@@ -131,9 +131,10 @@ abstract class base {
      * to ease to implementation of get_analysables_iterator: get_iterator_sql and order_sql.
      *
      * @param string|null $action 'prediction', 'training' or null if no specific action needed.
+     * @param \context[] $contexts Only analysables that depend on the provided contexts. All analysables in the system if empty.
      * @return \Iterator
      */
-    public function get_analysables_iterator(?string $action = null) {
+    public function get_analysables_iterator(?string $action = null, array $contexts = []) {
 
         debugging('Please overwrite get_analysables_iterator with your own implementation, we only keep this default
             implementation for backwards compatibility purposes with get_analysables(). note that $action param will
@@ -431,9 +432,12 @@ abstract class base {
      * @param  int         $contextlevel The context level of the analysable
      * @param  string|null $action
      * @param  string|null $tablealias   The table alias
+     * @param  \context[]  $contexts     Only analysables that depend on the provided contexts. All analysables if empty.
      * @return array                     [0] => sql and [1] => params array
      */
-    protected function get_iterator_sql(string $tablename, int $contextlevel, ?string $action = null, ?string $tablealias = null) {
+    protected function get_iterator_sql(string $tablename, int $contextlevel, ?string $action = null, ?string $tablealias = null,
+            array $contexts = []) {
+        global $DB;
 
         if (!$tablealias) {
             $tablealias = 'analysable';
@@ -452,13 +456,30 @@ abstract class base {
             $params = $params + ['action' => $action];
         }
 
-        // Adding the 1 = 1 just to have the WHERE part so that all further conditions added by callers can be
-        // appended to $sql with and ' AND'.
         $sql = 'SELECT ' . $select . '
                   FROM {' . $tablename . '} ' . $tablealias . '
                   ' . $usedanalysablesjoin . '
-                  JOIN {context} ctx ON (ctx.contextlevel = :contextlevel AND ctx.instanceid = ' . $tablealias . '.id)
-                  WHERE 1 = 1';
+                  JOIN {context} ctx ON (ctx.contextlevel = :contextlevel AND ctx.instanceid = ' . $tablealias . '.id) ';
+
+        if (!$contexts) {
+            // Adding the 1 = 1 just to have the WHERE part so that all further conditions
+            // added by callers can be appended to $sql with and ' AND'.
+            $sql .= 'WHERE 1 = 1';
+        } else {
+
+            $contextsqls = [];
+            foreach ($contexts as $context) {
+                $paramkey1 = 'paramctxlike' . $context->id;
+                $paramkey2 = 'paramctxeq' . $context->id;
+                $contextsqls[] = $DB->sql_like('ctx.path', ':' . $paramkey1);
+                $contextsqls[] = 'ctx.path = :' . $paramkey2;
+
+                // This includes the context itself.
+                $params[$paramkey1] = $context->path . '/%';
+                $params[$paramkey2] = $context->path;
+            }
+            $sql .= 'WHERE (' . implode(' OR ', $contextsqls) . ')';
+        }
 
         return [$sql, $params];
     }
