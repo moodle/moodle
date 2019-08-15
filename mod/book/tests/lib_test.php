@@ -79,17 +79,14 @@ class mod_book_lib_testcase extends advanced_testcase {
         $this->assertEquals('structure', $contents[0]['filename']);
         $this->assertEquals('index.html', $contents[1]['filename']);
         $this->assertEquals('Chapter 1', $contents[1]['content']);
-        $this->assertFalse($contents[1]['ishidden']);
         $this->assertCount(2, $contents[1]['tags']);
         $this->assertEquals('Cats', $contents[1]['tags'][0]['rawname']);
         $this->assertEquals($tag->id, $contents[1]['tags'][0]['id']);
         $this->assertEquals('Dogs', $contents[1]['tags'][1]['rawname']);
         $this->assertEquals('index.html', $contents[2]['filename']);
         $this->assertEquals('Chapter 2', $contents[2]['content']);
-        $this->assertFalse($contents[2]['ishidden']);
         $this->assertEquals('index.html', $contents[3]['filename']);
         $this->assertEquals('Chapter 3', $contents[3]['content']);
-        $this->assertFalse($contents[3]['ishidden']);
 
         // Now, test the function via the external API.
         $contents = core_course_external::get_course_contents($course->id, array());
@@ -102,15 +99,12 @@ class mod_book_lib_testcase extends advanced_testcase {
 
         $this->assertEquals('file', $contents[0]['modules'][0]['contents'][1]['type']);
         $this->assertEquals('Chapter 1', $contents[0]['modules'][0]['contents'][1]['content']);
-        $this->assertFalse($contents[0]['modules'][0]['contents'][1]['ishidden']);
 
         $this->assertEquals('file', $contents[0]['modules'][0]['contents'][2]['type']);
         $this->assertEquals('Chapter 2', $contents[0]['modules'][0]['contents'][2]['content']);
-        $this->assertFalse($contents[0]['modules'][0]['contents'][2]['ishidden']);
 
         $this->assertEquals('file', $contents[0]['modules'][0]['contents'][3]['type']);
         $this->assertEquals('Chapter 3', $contents[0]['modules'][0]['contents'][3]['content']);
-        $this->assertFalse($contents[0]['modules'][0]['contents'][3]['ishidden']);
 
         $this->assertEquals('book', $contents[0]['modules'][0]['modname']);
         $this->assertEquals($cm->id, $contents[0]['modules'][0]['id']);
@@ -122,26 +116,32 @@ class mod_book_lib_testcase extends advanced_testcase {
         $this->setUser($teacher);
 
         $contents = book_export_contents($cm, '');
-        // As a teacher, the hidden chapter must be included, and additional page with the structure must be included.
+        // As a teacher, the hidden chapter must be included in the structure.
         $this->assertCount(5, $contents);
 
         $this->assertEquals('structure', $contents[0]['filename']);
+        // Check structure is correct.
+        $foundhiddenchapter = false;
+        $chapters = json_decode($contents[0]['content']);
+        foreach ($chapters as $chapter) {
+            if ($chapter->title == 'Chapter 4' && $chapter->hidden == 1) {
+                $foundhiddenchapter = true;
+            }
+        }
+        $this->assertTrue($foundhiddenchapter);
+
         $this->assertEquals('index.html', $contents[1]['filename']);
         $this->assertEquals('Chapter 1', $contents[1]['content']);
-        $this->assertFalse($contents[1]['ishidden']);
         $this->assertCount(2, $contents[1]['tags']);
         $this->assertEquals('Cats', $contents[1]['tags'][0]['rawname']);
         $this->assertEquals($tag->id, $contents[1]['tags'][0]['id']);
         $this->assertEquals('Dogs', $contents[1]['tags'][1]['rawname']);
         $this->assertEquals('index.html', $contents[2]['filename']);
         $this->assertEquals('Chapter 2', $contents[2]['content']);
-        $this->assertFalse($contents[2]['ishidden']);
         $this->assertEquals('index.html', $contents[3]['filename']);
         $this->assertEquals('Chapter 3', $contents[3]['content']);
-        $this->assertFalse($contents[3]['ishidden']);
         $this->assertEquals('index.html', $contents[4]['filename']);
         $this->assertEquals('Chapter 4', $contents[4]['content']);
-        $this->assertTrue($contents[4]['ishidden']);
 
         // Now, test the function via the external API.
         $contents = core_course_external::get_course_contents($course->id, array());
@@ -151,22 +151,27 @@ class mod_book_lib_testcase extends advanced_testcase {
 
         $this->assertEquals('content', $contents[0]['modules'][0]['contents'][0]['type']);
         $this->assertEquals('structure', $contents[0]['modules'][0]['contents'][0]['filename']);
+        // Check structure is correct.
+        $foundhiddenchapter = false;
+        $chapters = json_decode($contents[0]['modules'][0]['contents'][0]['content']);
+        foreach ($chapters as $chapter) {
+            if ($chapter->title == 'Chapter 4' && $chapter->hidden == 1) {
+                $foundhiddenchapter = true;
+            }
+        }
+        $this->assertTrue($foundhiddenchapter);
 
         $this->assertEquals('file', $contents[0]['modules'][0]['contents'][1]['type']);
         $this->assertEquals('Chapter 1', $contents[0]['modules'][0]['contents'][1]['content']);
-        $this->assertFalse($contents[0]['modules'][0]['contents'][1]['ishidden']);
 
         $this->assertEquals('file', $contents[0]['modules'][0]['contents'][2]['type']);
         $this->assertEquals('Chapter 2', $contents[0]['modules'][0]['contents'][2]['content']);
-        $this->assertFalse($contents[0]['modules'][0]['contents'][2]['ishidden']);
 
         $this->assertEquals('file', $contents[0]['modules'][0]['contents'][3]['type']);
         $this->assertEquals('Chapter 3', $contents[0]['modules'][0]['contents'][3]['content']);
-        $this->assertFalse($contents[0]['modules'][0]['contents'][3]['ishidden']);
 
         $this->assertEquals('file', $contents[0]['modules'][0]['contents'][4]['type']);
         $this->assertEquals('Chapter 4', $contents[0]['modules'][0]['contents'][4]['content']);
-        $this->assertTrue($contents[0]['modules'][0]['contents'][4]['ishidden']);
 
         $this->assertEquals('book', $contents[0]['modules'][0]['modname']);
         $this->assertEquals($cm->id, $contents[0]['modules'][0]['id']);
