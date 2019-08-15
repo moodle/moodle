@@ -400,4 +400,48 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
         $this->assertEquals(true, $quizobj->is_participant($USER->id),
             'Admin is enrolled, suspended and can participate');
     }
+
+    /**
+     * Create quiz and attempt data with layout.
+     *
+     * @param string $layout layout to set. Like quiz attempt.layout. E.g. '1,2,0,3,4,0,'.
+     * @return quiz_attempt the new quiz_attempt object
+     */
+    protected function create_quiz_and_attempt_with_layout($layout) {
+        $this->resetAfterTest(true);
+
+        // Make a user to do the quiz.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        // Make a quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id,
+            'grade' => 100.0, 'sumgrades' => 2, 'layout' => $layout]);
+
+        $quizobj = quiz::create($quiz->id, $user->id);
+
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+
+        $page = 1;
+        foreach (explode(',', $layout) as $slot) {
+            if ($slot == 0) {
+                $page += 1;
+                continue;
+            }
+
+            $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+            quiz_add_quiz_question($question->id, $quiz, $page);
+        }
+
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        return quiz_attempt::create($attempt->id);
+    }
 }
