@@ -216,6 +216,67 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
         $this->assertEquals(new moodle_url($url, $params), $attempt->review_url(11, -1, false, 0));
     }
 
+    /**
+     * Tests attempt page titles when all questions are on a single page.
+     */
+    public function test_attempt_titles_single() {
+        $attempt = $this->create_quiz_and_attempt_with_layout('1,2,0');
+
+        // Attempt page.
+        $this->assertEquals('Quiz 1', $attempt->attempt_page_title(0));
+
+        // Summary page.
+        $this->assertEquals('Quiz 1: Attempt summary', $attempt->summary_page_title());
+
+        // Review page.
+        $this->assertEquals('Quiz 1: Attempt review', $attempt->review_page_title(0));
+    }
+
+    /**
+     * Tests attempt page titles when questions are on multiple pages, but are reviewed on a single page.
+     */
+    public function test_attempt_titles_multiple_single() {
+        $attempt = $this->create_quiz_and_attempt_with_layout('1,2,0,3,4,0,5,6,0');
+
+        // Attempt page.
+        $this->assertEquals('Quiz 1 (page 1 of 3)', $attempt->attempt_page_title(0));
+        $this->assertEquals('Quiz 1 (page 2 of 3)', $attempt->attempt_page_title(1));
+        $this->assertEquals('Quiz 1 (page 3 of 3)', $attempt->attempt_page_title(2));
+
+        // Summary page.
+        $this->assertEquals('Quiz 1: Attempt summary', $attempt->summary_page_title());
+
+        // Review page.
+        $this->assertEquals('Quiz 1: Attempt review', $attempt->review_page_title(0, true));
+    }
+
+    /**
+     * Tests attempt page titles when questions are on multiple pages, and they are reviewed on multiple pages as well.
+     */
+    public function test_attempt_titles_multiple_multiple() {
+        $attempt = $this->create_quiz_and_attempt_with_layout(
+                '1,2,3,4,5,6,7,8,9,10,0,11,12,13,14,15,16,17,18,19,20,0,' .
+                '21,22,23,24,25,26,27,28,29,30,0,31,32,33,34,35,36,37,38,39,40,0,' .
+                '41,42,43,44,45,46,47,48,49,50,0,51,52,53,54,55,56,57,58,59,60,0');
+
+        // Attempt page.
+        $this->assertEquals('Quiz 1 (page 1 of 6)', $attempt->attempt_page_title(0));
+        $this->assertEquals('Quiz 1 (page 2 of 6)', $attempt->attempt_page_title(1));
+        $this->assertEquals('Quiz 1 (page 6 of 6)', $attempt->attempt_page_title(5));
+
+        // Summary page.
+        $this->assertEquals('Quiz 1: Attempt summary', $attempt->summary_page_title());
+
+        // Review page.
+        $this->assertEquals('Quiz 1: Attempt review (page 1 of 6)', $attempt->review_page_title(0));
+        $this->assertEquals('Quiz 1: Attempt review (page 2 of 6)', $attempt->review_page_title(1));
+        $this->assertEquals('Quiz 1: Attempt review (page 6 of 6)', $attempt->review_page_title(5));
+
+        // When all questions are shown.
+        $this->assertEquals('Quiz 1: Attempt review', $attempt->review_page_title(0, true));
+        $this->assertEquals('Quiz 1: Attempt review', $attempt->review_page_title(1, true));
+    }
+
     public function test_is_participant() {
         global $USER;
         $this->resetAfterTest();
