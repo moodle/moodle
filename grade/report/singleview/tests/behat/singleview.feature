@@ -98,7 +98,7 @@ Feature: We can use Single view
     And I log in as "teacher2"
     And I am on "Course 1" course homepage
     Given I navigate to "View > Single view" in the course gradebook
-    And I click on "Student 4" "option"
+    And I select "Student 4" from the "Select user..." singleselect
     And the "Exclude for Test assignment one" "checkbox" should be disabled
     And the "Override for Test assignment one" "checkbox" should be enabled
 
