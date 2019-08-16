@@ -21,6 +21,9 @@
  * @copyright 2019 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace mod_forum\form;
+
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->dirroot.'/mod/forum/lib.php');
@@ -33,7 +36,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright 2019 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL Juv3 or later
  */
-class export extends moodleform {
+class export_form extends \moodleform {
 
     /**
      * Define the form - called by parent constructor
@@ -51,7 +54,7 @@ class export extends moodleform {
         $mform->setDefault('id', $forum->get_id());
 
         // Export formats.
-        $formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+        $formats = \core_plugin_manager::instance()->get_plugins_of_type('dataformat');
         $options = [];
         foreach ($formats as $format) {
             $options[$format->name] = $format->displayname;

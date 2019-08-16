@@ -26,7 +26,6 @@ define('NO_OUTPUT_BUFFERING', true);
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/dataformatlib.php');
-require_once($CFG->dirroot . '/mod/forum/export_form.php');
 
 $forumid = optional_param('id', 0, PARAM_INT);
 $doexport = optional_param('export', false, PARAM_BOOL);
@@ -39,7 +38,7 @@ $forumvault = $vaultfactory->get_forum_vault();
 
 $forum = $forumvault->get_from_id($forumid);
 if (empty($forum)) {
-    throw new \moodle_exception('Unable to find forum with id ' . $forumid);
+    throw new moodle_exception('Unable to find forum with id ' . $forumid);
 }
 
 $capabilitymanager = $managerfactory->get_capability_manager($forum);
@@ -49,7 +48,7 @@ if (!$capabilitymanager->can_export_forum($USER)) {
 
 $course = $forum->get_course_record();
 $coursemodule = $forum->get_course_module_record();
-$cm = \cm_info::create($coursemodule);
+$cm = cm_info::create($coursemodule);
 
 require_course_login($course, true, $cm);
 
@@ -65,7 +64,7 @@ if ($doexport == false) {
     $PAGE->set_heading($pagetitle);
 }
 
-$form = new export($url->out(false), [
+$form = new mod_forum\form\export_form($url->out(false), [
     'forum' => $forum
 ]);
 
