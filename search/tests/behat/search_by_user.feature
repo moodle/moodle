@@ -34,10 +34,10 @@ Feature: Select users when searching for user-created content
       | activity | PAGE1    |
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
-    And I set the field with xpath "//select[@id='id_userids']/..//input[@type='text']" to "Anne"
+    When I expand the "Users" autocomplete
     # Alphabetical surname order.
-    Then "Anne Additional" "text" should appear before "Anne Ditin" "text"
-    And "Anne Ditin" "text" should appear before "Anne Other" "text"
+    Then "Anne Additional" "text" should appear before "Anne Ditin" "text" in the "Users" "autocomplete"
+    And "Anne Ditin" "text" should appear before "Anne Other" "text" in the "Users" "autocomplete"
 
   @javascript
   Scenario: As administrator, search for users within course
@@ -49,9 +49,9 @@ Feature: Select users when searching for user-created content
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
     And I select "Course: Frogs" from the "Search within" singleselect
-    And I set the field with xpath "//select[@id='id_userids']/..//input[@type='text']" to "Anne"
+    When I expand the "Users" autocomplete
     # Users in selected course appear first.
-    And "Anne Additional" "text" should appear after "Anne Other" "text"
+    Then "Anne Additional" "text" should appear after "Anne Other" "text" in the "Users" "autocomplete"
 
   @javascript
   Scenario: As student, cannot see users on other courses
@@ -62,6 +62,6 @@ Feature: Select users when searching for user-created content
       | activity | PAGE1    |
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
-    And I set the field with xpath "//select[@id='id_userids']/..//input[@type='text']" to "A"
-    Then "Anne Ditin" "text" should appear before "Anne Other" "text"
+    When I expand the "Users" autocomplete
+    Then "Anne Ditin" "text" should appear before "Anne Other" "text" in the "Users" "autocomplete"
     And "Anne Additional" "text" should not exist
