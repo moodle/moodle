@@ -88,7 +88,7 @@ if ($switchrole > 0 && has_capability('moodle/role:switchroles', $context)) {
         $roles[0] = get_string('switchrolereturn');
         $assumedrole = $USER->access['rsw'][$context->path];
     }
-    $availableroles = get_switchable_roles($context);
+    $availableroles = get_switchable_roles($context, ROLENAME_BOTH);
     if (is_array($availableroles)) {
         foreach ($availableroles as $key => $role) {
             if ($assumedrole == (int)$key) {
