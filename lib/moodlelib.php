@@ -3230,6 +3230,8 @@ function require_user_key_login($script, $instance = null, $keyvalue = null) {
         print_error('invaliduserid');
     }
 
+    core_user::require_active_user($user, true, true);
+
     // Emulate normal session.
     enrol_check_plugins($user);
     \core\session\manager::set_user($user);

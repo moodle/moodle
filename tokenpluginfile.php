@@ -37,6 +37,7 @@ if (0 == strpos($relativepath, '/token/')) {
     $relativepath = ltrim($relativepath, '/');
     $pathparts = explode('/', $relativepath, 2);
     $token = $pathparts[0];
+    $token = clean_param($token, PARAM_ALPHANUM);
     $relativepath = "/{$pathparts[1]}";
 }
 
