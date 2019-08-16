@@ -27,7 +27,7 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/dataformatlib.php');
 
-$forumid = optional_param('id', 0, PARAM_INT);
+$forumid = required_param('id', PARAM_INT);
 $doexport = optional_param('export', false, PARAM_BOOL);
 
 $vaultfactory = mod_forum\local\container::get_vault_factory();
@@ -69,7 +69,7 @@ $form = new mod_forum\form\export_form($url->out(false), [
 ]);
 
 if ($form->is_cancelled()) {
-    redirect($url);
+    redirect(new moodle_url('/mod/forum/view.php', ['id' => $cm->id]));
 } else if ($data = $form->get_data()) {
     require_sesskey();
 
