@@ -691,8 +691,9 @@ class mod_scorm_external extends external_api {
                 $module['coursemodule'] = $scorm->coursemodule;
                 $module['course'] = $scorm->course;
                 $module['name']  = external_format_string($scorm->name, $context->id);
+                $options = array('noclean' => true);
                 list($module['intro'], $module['introformat']) =
-                    external_format_text($scorm->intro, $scorm->introformat, $context->id, 'mod_scorm', 'intro', null);
+                    external_format_text($scorm->intro, $scorm->introformat, $context->id, 'mod_scorm', 'intro', null, $options);
                 $module['introfiles'] = external_util::get_area_files($context->id, 'mod_scorm', 'intro', false, false);
 
                 // Check if the SCORM open and return warnings if so.

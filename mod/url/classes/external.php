@@ -157,8 +157,9 @@ class mod_url_external extends external_api {
                 // Entry to return.
                 $url->name = external_format_string($url->name, $context->id);
 
-                list($url->intro, $url->introformat) = external_format_text($url->intro,
-                                                                $url->introformat, $context->id, 'mod_url', 'intro', null);
+                $options = array('noclean' => true);
+                list($url->intro, $url->introformat) =
+                    external_format_text($url->intro, $url->introformat, $context->id, 'mod_url', 'intro', null, $options);
                 $url->introfiles = external_util::get_area_files($context->id, 'mod_url', 'intro', false, false);
 
                 $returnedurls[] = $url;
