@@ -764,20 +764,27 @@ class behat_general extends behat_base {
      * Checks, that the first specified element appears before the second one.
      *
      * @Then :preelement :preselectortype should appear before :postelement :postselectortype
+     * @Then :preelement :preselectortype should appear before :postelement :postselectortype in the :containerelement :containerselectortype
      * @throws ExpectationException
      * @param string $preelement The locator of the preceding element
      * @param string $preselectortype The locator of the preceding element
      * @param string $postelement The locator of the latest element
      * @param string $postselectortype The selector type of the latest element
+     * @param string $containerelement
+     * @param string $containerselectortype
      */
     public function should_appear_before(
         string $preelement,
         string $preselectortype,
         string $postelement,
-        string $postselectortype
+        string $postselectortype,
+        $containerelement = null,
+        $containerselectortype = null
     ) {
         $msg = "'{$preelement}' '{$preselectortype}' does not appear after '{$postelement}' '{$postselectortype}'";
         $this->check_element_order(
+            $containerelement,
+            $containerselectortype,
             $preelement,
             $preselectortype,
             $postelement,
@@ -790,20 +797,27 @@ class behat_general extends behat_base {
      * Checks, that the first specified element appears after the second one.
      *
      * @Then :postelement :postselectortype should appear after :preelement :preselectortype
+     * @Then :postelement :postselectortype should appear after :preelement :preselectortype in the :containerelement :containerselectortype
      * @throws ExpectationException
      * @param string $postelement The locator of the latest element
      * @param string $postselectortype The selector type of the latest element
      * @param string $preelement The locator of the preceding element
      * @param string $preselectortype The locator of the preceding element
+     * @param string $containerelement
+     * @param string $containerselectortype
      */
     public function should_appear_after(
         string $postelement,
         string $postselectortype,
         string $preelement,
-        string $preselectortype
+        string $preselectortype,
+        $containerelement = null,
+        $containerselectortype = null
     ) {
         $msg = "'{$postelement}' '{$postselectortype}' does not appear after '{$preelement}' '{$preselectortype}'";
         $this->check_element_order(
+            $containerelement,
+            $containerselectortype,
             $preelement,
             $preselectortype,
             $postelement,
@@ -815,6 +829,8 @@ class behat_general extends behat_base {
     /**
      * Shared code to check whether an element is before or after another one.
      *
+     * @param string $containerelement
+     * @param string $containerselectortype
      * @param string $preelement The locator of the preceding element
      * @param string $preselectortype The locator of the preceding element
      * @param string $postelement The locator of the following element
@@ -822,17 +838,26 @@ class behat_general extends behat_base {
      * @param string $msg Message to output if this fails
      */
     protected function check_element_order(
+        $containerelement,
+        $containerselectortype,
         string $preelement,
         string $preselectortype,
         string $postelement,
         string $postselectortype,
         string $msg
     ) {
+        $containernode = false;
+        if ($containerselectortype && $containerelement) {
+            // Get the container node.
+            $containernode = $this->get_selected_node($containerselectortype, $containerelement);
+            $msg .= " in the '{$containerelement}' '{$containerselectortype}'";
+        }
+
         list($preselector, $prelocator) = $this->transform_selector($preselectortype, $preelement);
         list($postselector, $postlocator) = $this->transform_selector($postselectortype, $postelement);
 
-        $prexpath = $this->find($preselector, $prelocator)->getXpath();
-        $postxpath = $this->find($postselector, $postlocator)->getXpath();
+        $prexpath = $this->find($preselector, $prelocator, false, $containernode)->getXpath();
+        $postxpath = $this->find($postselector, $postlocator, false, $containernode)->getXpath();
 
         if ($this->running_javascript()) {
             // The xpath to do this was running really slowly on certain Chrome versions so we are using
