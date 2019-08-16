@@ -123,11 +123,34 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['comments']);
+        $this->assertEquals(2, $result['count']);
+        $this->assertEquals(15, $result['perpage']);
 
         $this->assertEquals($user->id, $result['comments'][0]['userid']);
         $this->assertEquals($user->id, $result['comments'][1]['userid']);
 
-        $this->assertEquals($cmtid2, $result['comments'][0]['id']);
+        $this->assertEquals($cmtid2, $result['comments'][0]['id']); // Default ordering newer first.
         $this->assertEquals($cmtid1, $result['comments'][1]['id']);
+
+        // Test sort direction and pagination.
+        $CFG->commentsperpage = 1;
+        $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page, 'ASC');
+        $result = external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['comments']); // Only one per page.
+        $this->assertEquals(2, $result['count']);
+        $this->assertEquals($CFG->commentsperpage, $result['perpage']);
+        $this->assertEquals($cmtid1, $result['comments'][0]['id']); // Comments order older first.
+
+        // Next page.
+        $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page + 1, 'ASC');
+        $result = external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['comments']);
+        $this->assertEquals(2, $result['count']);
+        $this->assertEquals($CFG->commentsperpage, $result['perpage']);
+        $this->assertEquals($cmtid2, $result['comments'][0]['id']);
     }
 }

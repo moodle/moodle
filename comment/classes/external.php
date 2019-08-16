@@ -49,12 +49,13 @@ class core_comment_external extends external_api {
 
         return new external_function_parameters(
             array(
-                'contextlevel' => new external_value(PARAM_ALPHA, 'contextlevel system, course, user...'),
-                'instanceid'   => new external_value(PARAM_INT, 'the Instance id of item associated with the context level'),
-                'component'    => new external_value(PARAM_COMPONENT, 'component'),
-                'itemid'       => new external_value(PARAM_INT, 'associated id'),
-                'area'         => new external_value(PARAM_AREA, 'string comment area', VALUE_DEFAULT, ''),
-                'page'         => new external_value(PARAM_INT, 'page number (0 based)', VALUE_DEFAULT, 0),
+                'contextlevel'  => new external_value(PARAM_ALPHA, 'contextlevel system, course, user...'),
+                'instanceid'    => new external_value(PARAM_INT, 'the Instance id of item associated with the context level'),
+                'component'     => new external_value(PARAM_COMPONENT, 'component'),
+                'itemid'        => new external_value(PARAM_INT, 'associated id'),
+                'area'          => new external_value(PARAM_AREA, 'string comment area', VALUE_DEFAULT, ''),
+                'page'          => new external_value(PARAM_INT, 'page number (0 based)', VALUE_DEFAULT, 0),
+                'sortdirection' => new external_value(PARAM_ALPHA, 'Sort direction: ASC or DESC', VALUE_DEFAULT, 'DESC'),
             )
         );
     }
@@ -68,21 +69,32 @@ class core_comment_external extends external_api {
      * @param int $itemid the item id
      * @param string $area comment area
      * @param int $page page number
+     * @param string $sortdirection sort direction
      * @return array of comments and warnings
      * @since Moodle 2.9
      */
-    public static function get_comments($contextlevel, $instanceid, $component, $itemid, $area = '', $page = 0) {
+    public static function get_comments($contextlevel, $instanceid, $component, $itemid, $area = '', $page = 0,
+            $sortdirection = 'DESC') {
+        global $CFG;
 
         $warnings = array();
         $arrayparams = array(
-            'contextlevel' => $contextlevel,
-            'instanceid'   => $instanceid,
-            'component'    => $component,
-            'itemid'       => $itemid,
-            'area'         => $area,
-            'page'         => $page
+            'contextlevel'  => $contextlevel,
+            'instanceid'    => $instanceid,
+            'component'     => $component,
+            'itemid'        => $itemid,
+            'area'          => $area,
+            'page'          => $page,
+            'sortdirection' => $sortdirection,
         );
         $params = self::validate_parameters(self::get_comments_parameters(), $arrayparams);
+
+        $sortdirection = strtoupper($params['sortdirection']);
+        $directionallowedvalues = array('ASC', 'DESC');
+        if (!in_array($sortdirection, $directionallowedvalues)) {
+            throw new invalid_parameter_exception('Invalid value for sortdirection parameter (value: ' . $sortdirection . '),' .
+                'allowed values are: ' . implode(',', $directionallowedvalues));
+        }
 
         $context = self::get_context_from_params($params);
         self::validate_context($context);
@@ -96,7 +108,7 @@ class core_comment_external extends external_api {
         $args->component = $params['component'];
 
         $commentobject = new comment($args);
-        $comments = $commentobject->get_comments($params['page']);
+        $comments = $commentobject->get_comments($params['page'], $sortdirection);
 
         // False means no permissions to see comments.
         if ($comments === false) {
@@ -117,6 +129,8 @@ class core_comment_external extends external_api {
 
         $results = array(
             'comments' => $comments,
+            'count' => $commentobject->count(),
+            'perpage' => (!empty($CFG->commentsperpage)) ? $CFG->commentsperpage : 15,
             'warnings' => $warnings
         );
         return $results;
@@ -148,6 +162,8 @@ class core_comment_external extends external_api {
                         ), 'comment'
                     ), 'List of comments'
                 ),
+                'count' => new external_value(PARAM_INT,  'Total number of comments.', VALUE_OPTIONAL),
+                'perpage' => new external_value(PARAM_INT,  'Number of comments per page.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings()
             )
         );
