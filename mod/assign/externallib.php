@@ -462,9 +462,10 @@ class mod_assign_external extends external_api {
 
                     // Return or not intro and file attachments depending on the plugin settings.
                     if ($assign->show_intro()) {
-
-                        list($assignment['intro'], $assignment['introformat']) = external_format_text($module->intro,
-                            $module->introformat, $context->id, 'mod_assign', 'intro', null);
+                        $options = array('noclean' => true);
+                        list($assignment['intro'], $assignment['introformat']) =
+                            external_format_text($module->intro, $module->introformat, $context->id, 'mod_assign', 'intro', null,
+                                $options);
                         $assignment['introfiles'] = external_util::get_area_files($context->id, 'mod_assign', 'intro', false,
                                                                                     false);
 

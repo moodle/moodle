@@ -237,6 +237,7 @@ class database_summary_exporter extends exporter {
         return [
             'component' => 'mod_data',
             'filearea' => 'intro',
+            'options' => array('noclean' => true),
         ];
     }
 }
