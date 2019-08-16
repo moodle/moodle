@@ -181,7 +181,7 @@ class format_singleactivity extends format_base {
                 ),
             );
 
-            if (!isset($availabletypes[$config->activitytype])) {
+            if (!empty($availabletypes) && !isset($availabletypes[$config->activitytype])) {
                 $courseformatoptions['activitytype']['default'] = array_keys($availabletypes)[0];
             }
         }
