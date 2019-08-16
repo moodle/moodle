@@ -532,6 +532,35 @@ class course_enrolment_manager {
     }
 
     /**
+     * Searches through the enrolled users in this course.
+     *
+     * @param string $search The search term.
+     * @param bool $searchanywhere Can the search term be anywhere, or must it be at the start.
+     * @param int $page Starting at 0.
+     * @param int $perpage Number of users returned per page.
+     * @param bool $returnexactcount Return the exact total users using count_record or not.
+     * @return array with two or three elements:
+     *      int totalusers Number users matching the search. (This element only exist if $returnexactcount was set to true)
+     *      array users List of user objects returned by the query.
+     *      boolean moreusers True if there are still more users, otherwise is False.
+     */
+    public function search_users(string $search = '', bool $searchanywhere = false, int $page = 0, int $perpage = 25,
+            bool $returnexactcount = false) {
+        list($ufields, $params, $wherecondition) = $this->get_basic_search_conditions($search, $searchanywhere);
+
+        $fields      = 'SELECT ' . $ufields;
+        $countfields = 'SELECT COUNT(u.id)';
+        $sql = " FROM {user} u
+                 JOIN {user_enrolments} ue ON ue.userid = u.id
+                 JOIN {enrol} e ON ue.enrolid = e.id
+                WHERE $wherecondition
+                  AND e.courseid = :courseid";
+        $params['courseid'] = $this->course->id;
+
+        return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage, 0, $returnexactcount);
+    }
+
+    /**
      * Gets an array containing some SQL to user for when selecting, params for
      * that SQL, and the filter that was used in constructing the sql.
      *
