@@ -2330,6 +2330,8 @@ class mod_assign_external extends external_api {
             throw new required_capability_exception($context, 'mod/assign:viewgrades', 'nopermission', '');
         }
 
+        $assign->update_effective_access($user->id);
+
         $gradingsummary = $lastattempt = $feedback = $previousattempts = null;
 
         // Get the renderable since it contais all the info we need.
