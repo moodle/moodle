@@ -2354,4 +2354,130 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 ],
             ]);
     }
+
+    /**
+     * Test trusted text enabled.
+     */
+    public function test_trusted_text_enabled() {
+        global $USER, $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->enabletrusttext = 1;
+
+        $dangeroustext = '<button>Untrusted text</button>';
+        $cleantext = 'Untrusted text';
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+        $user1 = self::getDataGenerator()->create_user();
+
+        // First forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->type = 'qanda';
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+        $context = context_module::instance($forum->cmid);
+
+        // Add discussions to the forums.
+        $discussionrecord = new stdClass();
+        $discussionrecord->course = $course->id;
+        $discussionrecord->userid = $user1->id;
+        $discussionrecord->forum = $forum->id;
+        $discussionrecord->message = $dangeroustext;
+        $discussionrecord->messagetrust  = trusttext_trusted($context);
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($discussionrecord);
+
+        self::setAdminUser();
+        $discussionrecord->userid = $USER->id;
+        $discussionrecord->messagetrust  = trusttext_trusted($context);
+        $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($discussionrecord);
+
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+
+        $this->assertCount(2, $discussions['discussions']);
+        $this->assertCount(0, $discussions['warnings']);
+        // Admin message is fully trusted.
+        $this->assertEquals(1, $discussions['discussions'][0]['messagetrust']);
+        $this->assertEquals($dangeroustext, $discussions['discussions'][0]['message']);
+        // Student message is not trusted.
+        $this->assertEquals(0, $discussions['discussions'][1]['messagetrust']);
+        $this->assertEquals($cleantext, $discussions['discussions'][1]['message']);
+
+        // Get posts now.
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion2->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // Admin message is fully trusted.
+        $this->assertEquals(1, $posts['posts'][0]['messagetrust']);
+        $this->assertEquals($dangeroustext, $posts['posts'][0]['message']);
+
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // Student message is not trusted.
+        $this->assertEquals(0, $posts['posts'][0]['messagetrust']);
+        $this->assertEquals($cleantext, $posts['posts'][0]['message']);
+    }
+
+    /**
+     * Test trusted text disabled.
+     */
+    public function test_trusted_text_disabled() {
+        global $USER, $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->enabletrusttext = 0;
+
+        $dangeroustext = '<button>Untrusted text</button>';
+        $cleantext = 'Untrusted text';
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+        $user1 = self::getDataGenerator()->create_user();
+
+        // First forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->type = 'qanda';
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+        $context = context_module::instance($forum->cmid);
+
+        // Add discussions to the forums.
+        $discussionrecord = new stdClass();
+        $discussionrecord->course = $course->id;
+        $discussionrecord->userid = $user1->id;
+        $discussionrecord->forum = $forum->id;
+        $discussionrecord->message = $dangeroustext;
+        $discussionrecord->messagetrust  = trusttext_trusted($context);
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($discussionrecord);
+
+        self::setAdminUser();
+        $discussionrecord->userid = $USER->id;
+        $discussionrecord->messagetrust  = trusttext_trusted($context);
+        $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($discussionrecord);
+
+        $discussions = mod_forum_external::get_forum_discussions($forum->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+
+        $this->assertCount(2, $discussions['discussions']);
+        $this->assertCount(0, $discussions['warnings']);
+        // Admin message is not trusted because enabletrusttext is disabled.
+        $this->assertEquals(0, $discussions['discussions'][0]['messagetrust']);
+        $this->assertEquals($cleantext, $discussions['discussions'][0]['message']);
+        // Student message is not trusted.
+        $this->assertEquals(0, $discussions['discussions'][1]['messagetrust']);
+        $this->assertEquals($cleantext, $discussions['discussions'][1]['message']);
+
+        // Get posts now.
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion2->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // Admin message is not trusted because enabletrusttext is disabled.
+        $this->assertEquals(0, $posts['posts'][0]['messagetrust']);
+        $this->assertEquals($cleantext, $posts['posts'][0]['message']);
+
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // Student message is not trusted.
+        $this->assertEquals(0, $posts['posts'][0]['messagetrust']);
+        $this->assertEquals($cleantext, $posts['posts'][0]['message']);
+    }
 }
