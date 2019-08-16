@@ -49,6 +49,26 @@ class export_form extends \moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $forum->get_id());
 
+        $options = [
+            'ajax' => 'mod_forum/form-user-selector',
+            'multiple' => true,
+            'noselectionstring' => get_string('allusers', 'mod_forum'),
+            'courseid' => $forum->get_course_id(),
+        ];
+        $mform->addElement('autocomplete', 'userids', get_string('users'), [], $options);
+
+        // Get the discussions on this forum.
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussions = array_map(function($discussion) {
+            return $discussion->get_name();
+        }, $discussionvault->get_all_discussions_in_forum($forum));
+        $options = [
+            'multiple' => true,
+            'noselectionstring' => get_string('alldiscussions', 'mod_forum'),
+        ];
+        $mform->addElement('autocomplete', 'discussionids', get_string('discussions', 'mod_forum'), $discussions, $options);
+
         // Export formats.
         $formats = \core_plugin_manager::instance()->get_plugins_of_type('dataformat');
         $options = [];
