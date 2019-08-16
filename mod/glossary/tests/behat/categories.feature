@@ -80,8 +80,8 @@ Feature: Glossary entries can be organised in categories
     And I follow "Browse by category"
     And "//h3[contains(.,'CATEGORYAUTOLINKS')]" "xpath_element" should appear before "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
     And "//h4[contains(.,'EntryCategoryAL')]" "xpath_element" should appear before "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
-    And "//h4[contains(.,'EntryCategoryBoth')]" "xpath_element" should appear before "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
-    And "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element" should appear before "//h4[contains(.,'EntryCategoryBoth')]" "xpath_element"
+    And "(//h4[contains(.,'EntryCategoryBoth')])[1]" "xpath_element" should appear before "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
+    And "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element" should appear before "(//h4[contains(.,'EntryCategoryBoth')])[2]" "xpath_element"
     And "//h4[contains(.,'EntryCategoryNL')]" "xpath_element" should appear after "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
     And I should not see "EntryNoCategory"
     And I set the field "hook" to "Not categorised"
@@ -116,4 +116,3 @@ Feature: Glossary entries can be organised in categories
     And I should see "EntryNoCategory"
     And I should see "EntryCategoryAL"
     And I should not see "EntryCategoryBoth"
-    And I log out
