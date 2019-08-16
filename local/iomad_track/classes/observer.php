@@ -492,9 +492,19 @@ class observer {
                                                       array('userid' => $userid,
                                                             'courseid' => $courseid))) {
 
+                    // Searching by company and allocated course.
+                    $company = array_shift($companies);
+                    $companyid = $company->companyid;
+                } else if ($companies = $DB->get_records_sql("SELECT cu.* FROM {company_users} cu
+                                                      WHERE cu.userid = :userid
+                                                      ORDER BY cu.id DESC",
+                                                      array('userid' => $userid))) {
+
+                    // Searching by company only as could be open shared course.
                     $company = array_shift($companies);
                     $companyid = $company->companyid;
                 } else {
+                    // Need a default.
                     $companyid = 0;
                 }
                 $entry = array('userid' => $userid,
