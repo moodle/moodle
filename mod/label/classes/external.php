@@ -91,9 +91,9 @@ class mod_label_external extends external_api {
                 $context = context_module::instance($label->coursemodule);
                 // Entry to return.
                 $label->name = external_format_string($label->name, $context->id);
-
-                list($label->intro, $label->introformat) = external_format_text($label->intro,
-                                                                $label->introformat, $context->id, 'mod_label', 'intro', null);
+                $options = array('noclean' => true);
+                list($label->intro, $label->introformat) =
+                    external_format_text($label->intro, $label->introformat, $context->id, 'mod_label', 'intro', null, $options);
                 $label->introfiles = external_util::get_area_files($context->id, 'mod_label', 'intro', false, false);
 
                 $returnedlabels[] = $label;
