@@ -856,8 +856,13 @@ class behat_general extends behat_base {
         list($preselector, $prelocator) = $this->transform_selector($preselectortype, $preelement);
         list($postselector, $postlocator) = $this->transform_selector($postselectortype, $postelement);
 
-        $prexpath = $this->find($preselector, $prelocator, false, $containernode)->getXpath();
-        $postxpath = $this->find($postselector, $postlocator, false, $containernode)->getXpath();
+        $newlines = [
+            "\r\n",
+            "\r",
+            "\n",
+        ];
+        $prexpath = str_replace($newlines, ' ', $this->find($preselector, $prelocator, false, $containernode)->getXpath());
+        $postxpath = str_replace($newlines, ' ', $this->find($postselector, $postlocator, false, $containernode)->getXpath());
 
         if ($this->running_javascript()) {
             // The xpath to do this was running really slowly on certain Chrome versions so we are using
