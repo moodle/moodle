@@ -112,22 +112,7 @@ class post extends db_table_vault {
         bool $canseeprivatereplies,
         string $orderby = 'created ASC'
     ) : array {
-        $alias = $this->get_table_alias();
-
-        [
-            'where' => $privatewhere,
-            'params' => $privateparams,
-        ] = $this->get_private_reply_sql($user, $canseeprivatereplies);
-
-        $wheresql = "{$alias}.discussion = :discussionid {$privatewhere}";
-        $orderbysql = $alias . '.' . $orderby;
-
-        $sql = $this->generate_get_records_sql($wheresql, $orderbysql);
-        $records = $this->get_db()->get_records_sql($sql, array_merge([
-            'discussionid' => $discussionid,
-        ], $privateparams));
-
-        return $this->transform_db_records_to_entities($records);
+        return $this->get_from_discussion_ids($user, [$discussionid], $canseeprivatereplies, $orderby);
     }
 
     /**
@@ -136,9 +121,15 @@ class post extends db_table_vault {
      * @param stdClass $user The user to check the unread count for
      * @param int[] $discussionids The list of discussion ids to load posts for
      * @param bool $canseeprivatereplies Whether this user can see all private replies or not
+     * @param string $orderby Order the results
      * @return post_entity[]
      */
-    public function get_from_discussion_ids(stdClass $user, array $discussionids, bool $canseeprivatereplies) : array {
+    public function get_from_discussion_ids(
+        stdClass $user,
+        array $discussionids,
+        bool $canseeprivatereplies,
+        string $orderby = ''
+    ) : array {
         if (empty($discussionids)) {
             return [];
         }
@@ -153,7 +144,13 @@ class post extends db_table_vault {
 
         $wheresql = "{$alias}.discussion {$insql} {$privatewhere}";
 
-        $sql = $this->generate_get_records_sql($wheresql, '');
+        if ($orderby) {
+            $orderbysql = $alias . '.' . $orderby;
+        } else {
+            $orderbysql = '';
+        }
+
+        $sql = $this->generate_get_records_sql($wheresql, $orderbysql);
         $records = $this->get_db()->get_records_sql($sql, array_merge($params, $privateparams));
 
         return $this->transform_db_records_to_entities($records);
