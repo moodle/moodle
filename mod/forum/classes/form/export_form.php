@@ -45,10 +45,6 @@ class export_form extends \moodleform {
         $mform = $this->_form;
         $forum = $this->_customdata['forum'];
 
-        $mform->addElement('hidden', 'export');
-        $mform->setType('export', PARAM_BOOL);
-        $mform->setDefault('export', true);
-
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $forum->get_id());

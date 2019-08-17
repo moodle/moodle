@@ -28,7 +28,6 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/dataformatlib.php');
 
 $forumid = required_param('id', PARAM_INT);
-$doexport = optional_param('export', false, PARAM_BOOL);
 
 $vaultfactory = mod_forum\local\container::get_vault_factory();
 $managerfactory = mod_forum\local\container::get_manager_factory();
@@ -55,14 +54,6 @@ require_course_login($course, true, $cm);
 $url = new moodle_url('/mod/forum/export.php');
 $pagetitle = get_string('export', 'mod_forum');
 $context = $forum->get_context();
-
-if ($doexport == false) {
-    $PAGE->set_context($context);
-    $PAGE->set_url($url);
-    $PAGE->set_title($pagetitle);
-    $PAGE->set_pagelayout('admin');
-    $PAGE->set_heading($pagetitle);
-}
 
 $form = new mod_forum\form\export_form($url->out(false), [
     'forum' => $forum
@@ -99,12 +90,16 @@ if ($form->is_cancelled()) {
     download_as_dataformat($filename, $dataformat, $fields, $iterator);
     die();
 }
-if ($doexport == false) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($pagetitle);
 
-    $form->display();
+$PAGE->set_context($context);
+$PAGE->set_url($url);
+$PAGE->set_title($pagetitle);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_heading($pagetitle);
 
-    echo $OUTPUT->footer();
-}
+echo $OUTPUT->header();
+echo $OUTPUT->heading($pagetitle);
 
+$form->display();
+
+echo $OUTPUT->footer();
