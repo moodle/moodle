@@ -273,7 +273,7 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
             get_string('fielddescription', 'data'),
             get_string('action', 'data'),
         );
-        $table->align = array('left','left','left', 'center');
+        $table->align = array('left', 'left', 'left', 'left');
         $table->wrap = array(false,false,false,false);
 
         if ($fff = $DB->get_records('data_fields', array('dataid'=>$data->id),'id')){
