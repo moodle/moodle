@@ -33,8 +33,12 @@ define(['jquery',
         'tool_lp/menubar',
         'tool_lp/competencypicker',
         'tool_lp/competency_outcomes',
-        'tool_lp/competencyruleconfig'],
-       function($, url, templates, notification, str, ajax, dragdrop, Ariatree, Dialogue, menubar, Picker, Outcomes, RuleConfig) {
+        'tool_lp/competencyruleconfig',
+        'core/pending',
+        ],
+       function(
+            $, url, templates, notification, str, ajax, dragdrop, Ariatree, Dialogue, menubar, Picker, Outcomes, RuleConfig, Pending
+        ) {
 
     // Private variables and functions.
     /** @var {Object} treeModel - This is an object representing the nodes in the tree. */
@@ -412,6 +416,7 @@ define(['jquery',
         if (!pickerInstance) {
             pickerInstance = new Picker(pageContextId, relatedTarget.competencyframeworkid);
             pickerInstance.on('save', function(e, data) {
+                var pendingPromise = new Pending();
                 var compIds = data.competencyIds;
 
                 var calls = [];
@@ -436,7 +441,9 @@ define(['jquery',
                     templates.runTemplateJS(js);
                     updatedRelatedCompetencies();
                     return;
-                }).catch(notification.exception);
+                })
+                .then(pendingPromise.resolve)
+                .catch(notification.exception);
             });
         }
 
