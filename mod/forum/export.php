@@ -67,16 +67,28 @@ if ($form->is_cancelled()) {
     $dataformat = $data->format;
 
     $discussionvault = $vaultfactory->get_discussion_vault();
-    $discussions = $discussionvault->get_all_discussions_in_forum($forum);
+    $postvault = $vaultfactory->get_post_vault();
+
+    if ($data->discussionids) {
+        $discussions = $discussionvault->get_from_ids($data->discussionids);
+    } else {
+        $discussions = $discussionvault->get_all_discussions_in_forum($forum);
+    }
+
     $discussionids = array_map(function ($discussion) {
         return $discussion->get_id();
     }, $discussions);
-    $postvault = $vaultfactory->get_post_vault();
-    $posts = $postvault->get_from_discussion_ids(
-        $USER,
-        $discussionids,
-        $capabilitymanager->can_view_any_private_reply($USER)
-    );
+
+    if ($data->userids) {
+        $posts = $postvault->get_from_discussion_ids_and_user_ids($USER,
+                                                                  $discussionids,
+                                                                  $data->userids,
+                                                                  $capabilitymanager->can_view_any_private_reply($USER));
+    } else {
+        $posts = $postvault->get_from_discussion_ids($USER,
+                                                     $discussionids,
+                                                     $capabilitymanager->can_view_any_private_reply($USER));
+    }
 
     $fields = ['id', 'discussion', 'parent', 'userid', 'created', 'modified', 'mailed', 'subject', 'message',
                 'messageformat', 'messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto'];
