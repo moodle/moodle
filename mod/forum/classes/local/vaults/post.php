@@ -157,6 +157,53 @@ class post extends db_table_vault {
     }
 
     /**
+     * Get the list of posts for the given users in the given discussions.
+     *
+     * @param stdClass $user The user to check the unread count for
+     * @param int[] $discussionids The list of discussion ids to load posts for
+     * @param int[] $userids The list of user ids to load posts for
+     * @param bool $canseeprivatereplies Whether this user can see all private replies or not
+     * @param string $orderby Order the results
+     * @return post_entity[]
+     */
+    public function get_from_discussion_ids_and_user_ids(
+            stdClass $user,
+            array $discussionids,
+            array $userids,
+            bool $canseeprivatereplies,
+            string $orderby = ''
+    ): array {
+        if (empty($discussionids) || empty($userids)) {
+            return [];
+        }
+
+        $alias = $this->get_table_alias();
+
+        list($indiscussionssql, $indiscussionsparams) = $this->get_db()->get_in_or_equal($discussionids, SQL_PARAMS_NAMED);
+        list($inuserssql, $inusersparams) = $this->get_db()->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        [
+            'where' => $privatewhere,
+            'params' => $privateparams,
+        ] = $this->get_private_reply_sql($user, $canseeprivatereplies);
+
+        $wheresql = "{$alias}.discussion {$indiscussionssql}
+                 AND {$alias}.userid {$inuserssql}
+                     {$privatewhere}";
+
+        if ($orderby) {
+            $orderbysql = $alias . '.' . $orderby;
+        } else {
+            $orderbysql = '';
+        }
+
+        $sql = $this->generate_get_records_sql($wheresql, $orderbysql);
+        $records = $this->get_db()->get_records_sql($sql, array_merge($indiscussionsparams, $inusersparams, $privateparams));
+
+        return $this->transform_db_records_to_entities($records);
+    }
+
+    /**
      * Load a list of replies to the given post. This will load all descendants of the post.
      * That is, all direct replies and replies to those replies etc.
      *
