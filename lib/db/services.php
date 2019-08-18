@@ -634,6 +634,15 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'moodle/course:enrolreview'
     ),
+    'core_enrol_search_users' => [
+        'classname' => 'core_enrol_external',
+        'methodname' => 'search_users',
+        'classpath' => 'enrol/externallib.php',
+        'description' => 'Search within the list of course participants',
+        'ajax' => true,
+        'type' => 'read',
+        'capabilities' => 'moodle/course:viewparticipants',
+    ],
     'core_enrol_get_users_courses' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_users_courses',
