@@ -3551,9 +3551,11 @@ class company {
         }
 
         $complete = false;
-        if ($licenses = $DB->get_records_sql("SELECT * FROM {companylicense_users}
-                                              WHERE userid = :userid
-                                              AND licenseid = (
+        if ($licenses = $DB->get_records_sql("SELECT * FROM {companylicense_users} clu
+                                              JOIN {companylicense} cl
+                                              ON (clu.licenseid = cl.id and cl.program = 1)
+                                              WHERE clu.userid = :userid
+                                              AND clu.licenseid = (
                                                   SELECT licenseid FROM {companylicense_users}
                                                   WHERE userid = :userid2
                                                   AND licensecourseid = :courseid)",
