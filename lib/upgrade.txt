@@ -52,6 +52,7 @@ validation against and defaults to null (so, no user needed) if not provided.
       mod_forum/post/user: mod/forum/templates/local/post/user.mustache
 * Following behat steps have been removed from core:
     - I go to "<gradepath_string>" in the course gradebook
+* A new admin setting widget 'core_admin\local\settings\filesize' is added.
 
 === 3.7 ===
 

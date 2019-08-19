@@ -47,3 +47,4 @@ error:nogroups,core_badges
 purgedefinitionsuccess,core_cache
 purgestoresuccess,core_cache
 eventrolecapabilitiesupdated,core_role
+configuserquota,core_admin

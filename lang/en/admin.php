@@ -319,7 +319,6 @@ $string['configrequestedstudentname'] = 'Word for student used in requested cour
 $string['configrequestedstudentsname'] = 'Word for students used in requested courses';
 $string['configrequestedteachername'] = 'Word for teacher used in requested courses';
 $string['configrequestedteachersname'] = 'Word for teachers used in requested courses';
-$string['configuserquota'] = 'The maximum number of bytes that a user can store in their own private file area. {$a->bytes} bytes == {$a->displaysize}';
 $string['configsectioninterface'] = 'Interface';
 $string['configsectionmail'] = 'Mail';
 $string['configsectionmaintenance'] = 'Maintenance';
@@ -568,6 +567,7 @@ $string['filescleanupperiod'] = 'Clean trash pool files';
 $string['filescleanupperiod_help'] = 'How often trash files are removed. These are files that are associated with a context that no longer exists';
 $string['fileconversioncleanuptask'] = 'Cleanup of temporary records for file conversions.';
 $string['filecreated'] = 'New file created';
+$string['filesizeunits'] = 'file size units';
 $string['filestoredin'] = 'Save file into folder :';
 $string['filestoredinhelp'] = 'Where the file will be stored';
 $string['filterall'] = 'Filter all strings';
@@ -1389,6 +1389,7 @@ $string['userpreference'] = 'User preference';
 $string['userpolicies'] = 'User policies';
 $string['users'] = 'Users';
 $string['userquota'] = 'User quota';
+$string['userquota_desc'] = 'The maximum number of bytes that a user can store in their own private file area.';
 $string['usesitenameforsitepages'] = 'Use site name for site pages';
 $string['usetags'] = 'Enable tags functionality';
 $string['validateemptylineerror'] = 'Empty lines are not valid';
@@ -1417,3 +1418,5 @@ $string['cacheapplicationhelp'] = 'Cached items are shared among all users and e
 // Deprecated since Moodle 3.7.
 $string['allowblockstodock'] = 'Allow blocks to use the dock';
 $string['configallowblockstodock'] = 'If enabled and supported by the selected theme users can choose to move blocks to a special dock.';
+// Deprecated since Moodle 3.8.
+$string['configuserquota'] = 'The maximum number of bytes that a user can store in their own private file area. {$a->bytes} bytes == {$a->displaysize}';
