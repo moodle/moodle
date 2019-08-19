@@ -1914,7 +1914,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
 
     if ($oldversion < 2019030101) {
 
-        $validcourseids = $DB->get_fieldset_select('course', 'id', 'true');
+        $validcourseids = $DB->get_fieldset_select('course', 'id', true);
         if ($validcourseids) {
             list($sql, $params) = $DB->get_in_or_equal($validcourseids);
 
