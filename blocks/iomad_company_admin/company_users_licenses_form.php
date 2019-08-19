@@ -193,17 +193,18 @@ class company_users_course_form extends moodleform {
 
                 $mform->addElement('html', $this->currentcourses->display(true));
 
-                $mform->addElement('html', '
-                      </td>
-                      <td id="buttonscell">
-                          <p class="arrow_button">
-                            <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('enrol', 'block_iomad_company_admin') . '"
-                                   title="' . get_string('enrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
-                            <input name="remove" id="remove" type="submit" value="'. get_string('unenrol', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
-                                   title="'. get_string('unenrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
-                         </p>
-                      </td>
-                      <td id="potentialcell" style="text-align:center;">'); //maybe put this in the block CSS?
+                $enrolbuttonshtml = '</td> <td id="buttonscell"><p class="arrow_button">';
+                if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', context_system::instance())) {
+                    $enrolbuttonshtml .= '<input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('enrol', 'block_iomad_company_admin') . '"
+                                          title="' . get_string('enrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />';
+                }
+                if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', context_system::instance())) {
+                    $enrolbuttonshtml .= '<input name="remove" id="remove" type="submit" value="'. get_string('unenrol', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
+                                          title="'. get_string('unenrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />';
+                }
+                $enrolbuttonshtml .= '</p> </td> <td id="potentialcell" style="text-align:center;">'; //maybe put this in the block CSS?
+
+                $mform->addElement('html', $enrolbuttonshtml);
 
                 $mform->addElement('html', $this->potentialcourses->display(true));
 
