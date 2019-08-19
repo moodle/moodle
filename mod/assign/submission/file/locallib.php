@@ -314,12 +314,18 @@ class assign_submission_file extends assign_submission_plugin {
      * @return boolean
      */
     public function remove(stdClass $submission) {
+        global $DB;
         $fs = get_file_storage();
 
         $fs->delete_area_files($this->assignment->get_context()->id,
                                'assignsubmission_file',
                                ASSIGNSUBMISSION_FILE_FILEAREA,
                                $submission->id);
+
+        $currentsubmission = $this->get_file_submission($submission->id);
+        $currentsubmission->numfiles = 0;
+        $DB->update_record('assignsubmission_file', $currentsubmission);
+
         return true;
     }
 
