@@ -1,0 +1,17 @@
+.attoh5poverlay {
+    display: none;
+}
+.editor_atto_content_wrap .attoh5poverlay {
+    display: block;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: url([[pix:atto_h5p|icon]]) center center / 100px auto no-repeat #adb5bd;
+}
+.h5p-embed-placeholder .attoh5poverlay + br {
+    display: none;
+}
