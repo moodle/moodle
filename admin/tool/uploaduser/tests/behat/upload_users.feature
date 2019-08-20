@@ -171,4 +171,3 @@ Feature: Upload users
     And I should see "12 January 2020" in the "Enrolment ends" "table_row"
     And I click on "Close" "button"
     And I log out
-
