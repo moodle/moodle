@@ -87,7 +87,7 @@ Feature: We can use Single view
     And the field "Grade for james (Student) 1" matches value "12.05"
     And the field "Exclude for holly (Student) 2" matches value "1"
     And I select "new grade item 1" from the "Select grade item..." singleselect
-    And I click on "Very good" "option"
+    And I set the field "Grade for james (Student) 1" to "Very good"
     And I press "Save"
     Then I should see "Grades were set for 1 items"
     And I press "Continue"
@@ -98,7 +98,7 @@ Feature: We can use Single view
     And I log in as "teacher2"
     And I am on "Course 1" course homepage
     Given I navigate to "View > Single view" in the course gradebook
-    And I click on "Student 4" "option"
+    And I select "Student 4" from the "Select user..." singleselect
     And the "Exclude for Test assignment one" "checkbox" should be disabled
     And the "Override for Test assignment one" "checkbox" should be enabled
 
