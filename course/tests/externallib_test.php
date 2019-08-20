@@ -2065,7 +2065,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $outcomegradeitem->cmid = 0;
         $outcomegradeitem->courseid = $course->id;
         $outcomegradeitem->aggregationcoef = 0;
-        $outcomegradeitem->itemnumber = 1; // The activity's original grade item will be 0.
+        $outcomegradeitem->itemnumber = 1000; // Outcomes start at 1000.
         $outcomegradeitem->gradetype = GRADE_TYPE_SCALE;
         $outcomegradeitem->scaleid = $outcome->scaleid;
         $outcomegradeitem->insert();

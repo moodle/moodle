@@ -217,7 +217,7 @@ Feature: We can set the grade to pass value
     And I am on "Course 1" course homepage
     And I follow "Test Forum 1"
     And I follow "Edit settings"
-    And the field "Grade to pass" matches value "80"
+    And the field "Ratings > Grade to pass" matches value "80"
 
   Scenario: Set a valid grade to pass for glossary activity
     When I turn editing mode on
