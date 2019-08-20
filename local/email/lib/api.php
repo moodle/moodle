@@ -222,7 +222,6 @@ class EmailTemplate {
                     }
                 }
             }
-            echo "<pre>";print_r($this->attachment);echo "</pre>";
         }
     }
 
@@ -426,6 +425,10 @@ class EmailTemplate {
                 $supportuser = self::get_user(self::get_sender($user));
             }
 
+            if (empty($supportuser)) {
+                $supportuser = new stdclass();
+            }
+
             if (!empty($email->headers)) {
                 $supportuser->customheaders = unserialize($email->headers);
             } else {
@@ -615,6 +618,10 @@ class EmailTemplate {
                 $supportuser->customheaders = array();
             }
 
+            if (empty($supportuser)) {
+                $supportuser = new stdclass();
+            }
+
         } else {
             if (isset($this->emailfromother) && validate_email($this->emailfromother)) {
                 $supportuser == core_user::get_support_user();
@@ -637,7 +644,7 @@ class EmailTemplate {
                     $supportuser->customheaders = array();
                 }
             } else {
-                $supportuser = self::get_user(self::get_sender($this->userid));
+                $supportuser = self::get_user(self::get_sender($this->user->id));
                 if (isset($email->headers)) {
                     $supportuser->customheaders = unserialize($email->headers);
                 } else {
@@ -729,8 +736,14 @@ class EmailTemplate {
         if (isset($this->sender->id)) {
             $supportuser = self::get_user($this->sender->id);
         } else {
-            $supportuser = self::get_user(self::get_sender($this->userid));
+            $supportuser = self::get_user(self::get_sender($this->user->id));
         }
+
+        if (empty($supportuser)) {
+            $supportuser = new stdclass();
+            $supportuser->firstname = "";
+        }
+
         if (isset($email->headers)) {
             $supportuser->customheaders = unserialize($email->headers);
         } else {
@@ -771,13 +784,13 @@ class EmailTemplate {
                 $mail->Sender = $CFG->noreplyaddress;
                 $mail->FromName = $supportuser->firstname;
                 $mail->From     = $CFG->noreplyaddress;
-                $mail->addAddress($supervisoremail, '');
                 if (empty($CFG->divertallemailsto)) {
                     $mail->Subject = substr($subject, 0, 900);
                 } else {
                     $mail->Subject = substr('[DIVERTED ' . $supervisoremail . '] ' . $subject, 0, 900);
                     $supervisoremail = $CFG->divertallemailsto;
                 }
+                $mail->addAddress($supervisoremail, '');
 
                 // Set word wrap.
                 $mail->WordWrap = 79;
@@ -1051,20 +1064,20 @@ class EmailTemplate {
         global $DB;
 
         // Is this template enabled for the company.
-        if ($DB->get_records('email_templates', array('templatename' => $this->templatename, 'companyid' => $this->company->id, 'disabled' =>1))) {
+        if ($DB->get_records('email_template', array('name' => $this->templatename, 'companyid' => $this->company->id, 'disabled' =>1))) {
             return false;
         }
 
         if ($type == 2 || strpos('supervisor', $this->templatename) !== false) {
             // Is this template enabled for the supervisor.
-            if ($DB->get_records('email_templates', array('templatename' => $this->templatename, 'companyid' => $this->company->id, 'disabledsupervisor' =>1))) {
+            if ($DB->get_records('email_template', array('name' => $this->templatename, 'companyid' => $this->company->id, 'disabledsupervisor' =>1))) {
                 return false;
             }
         }
 
         if ($type == 3 || strpos('manager', $this->templatename) !== false) {
             // Is this template enabled for the supervisor.
-            if ($DB->get_records('email_templates', array('templatename' => $this->templatename, 'companyid' => $this->company->id, 'disabledmanager' =>1))) {
+            if ($DB->get_records('email_template', array('name' => $this->templatename, 'companyid' => $this->company->id, 'disabledmanager' =>1))) {
                 return false;
             }
         }

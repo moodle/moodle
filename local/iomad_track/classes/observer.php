@@ -244,7 +244,7 @@ class observer {
                 // Its a licensed course, get the last license.
                 $licenserecs = $DB->get_records_sql("SELECT * FROM {companylicense_users}
                                                      WHERE userid = :userid AND licensecourseid = :licensecourseid AND issuedate < :issuedate
-                                                     AND licensid IN (SELECT id from {companylicense} WHERE companyid = :companyid)
+                                                     AND licenseid IN (SELECT id from {companylicense} WHERE companyid = :companyid)
                                                      ORDER BY issuedate DESC",
                                                      array('licensecourseid' => $courseid, 'userid' => $userid, 'companyid' => $companyrec->id, 'issuedate' => $comprec->timecompleted),
                                                      0,1);
