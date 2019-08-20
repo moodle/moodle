@@ -1160,6 +1160,7 @@
         width: auto;
         display: inline-block;
         margin: 0 auto;
+        height: auto;
     }
 
     .path-mod-assign [data-region="user-selector"] .alignment {
