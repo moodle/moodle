@@ -1,3 +1,4 @@
+cannotdeletediscussioninsinglediscussion,mod_forum
 inpagereplysubject,mod_forum
 overviewnumpostssince,mod_forum
 overviewnumunread,mod_forum
