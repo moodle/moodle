@@ -3509,9 +3509,13 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
             $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
         }
 
-        $porfoliohtml = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
-        if (!empty($porfoliohtml)) {
-            $commands[] = $porfoliohtml;
+        $exporturl = $button->to_html(PORTFOLIO_ADD_FAKE_URL);
+        if (!empty($exporturl)) {
+            $exportcommand = [
+                'url' => $exporturl,
+                'text' => get_string('addtoportfolio', 'portfolio')
+            ];
+            $commands[] = $exportcommand;
         }
     }
     // Finished building commands
