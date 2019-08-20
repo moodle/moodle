@@ -30,4 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['moodlelogo'] = 'Logo Moodle';
+$string['next'] = 'Următoarea';
 $string['previous'] = 'Anterior';
