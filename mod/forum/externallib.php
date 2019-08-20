@@ -137,6 +137,7 @@ class mod_forum_external extends external_api {
                     'assesstimestart' => new external_value(PARAM_INT, 'Assess start time'),
                     'assesstimefinish' => new external_value(PARAM_INT, 'Assess finish time'),
                     'scale' => new external_value(PARAM_INT, 'Scale'),
+                    'grade_forum' => new external_value(PARAM_INT, 'Whole forum grade'),
                     'maxbytes' => new external_value(PARAM_INT, 'Maximum attachment size'),
                     'maxattachments' => new external_value(PARAM_INT, 'Maximum number of attachments'),
                     'forcesubscribe' => new external_value(PARAM_INT, 'Force users to subscribe'),

@@ -19,15 +19,16 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Coverage information for the grades component.
  *
- * @package    grades
- * @category   phpunit
+ * @package    core_grades
+ * @category   test
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Coverage information for the core subsystem.
+ * Coverage information for the core_grades subsystem.
  *
+ * @package    core_grades
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

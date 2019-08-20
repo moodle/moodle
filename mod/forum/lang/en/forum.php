@@ -331,6 +331,7 @@ $string['forum:viewrating'] = 'View the total rating you received';
 $string['forum:viewsubscribers'] = 'View subscribers';
 $string['generalforum'] = 'Standard forum for general use';
 $string['generalforums'] = 'General forums';
+$string['gradeitem:forum'] = 'Forum';
 $string['hiddenforumpost'] = 'Hidden forum post';
 $string['hidepreviousrepliescount'] = 'Hide previous replies ({$a})';
 $string['indicator:cognitivedepth'] = 'Forum cognitive';
@@ -713,6 +714,15 @@ $string['gradeusers'] = 'Grade users';
 $string['forumgrader'] = 'Forum grader';
 $string['grading'] = 'Grading';
 $string['viewconversation'] = 'View conversation';
+
+$string['grade_forum_header'] = 'Whole forum grading';
+$string['grade_forum_title'] = 'Grade';
+$string['gradeforrating'] = 'Grade for rating: {$a->str_long_grade}';
+$string['gradeforratinghidden'] = 'Grade for rating hidden';
+$string['gradeforwholeforum'] = 'Grade for forum: {$a->str_long_grade}';
+$string['gradeforwholeforumhidden'] = 'Grade for forum hidden';
+$string['gradeitemnameforwholeforum'] = 'Whole forum grade for {$a->name}';
+$string['gradeitemnameforrating'] = 'Rating grade for {$a->name}';
 
 // Deprecated since Moodle 3.8.
 $string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';
