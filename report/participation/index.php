@@ -367,7 +367,7 @@ if (!empty($instanceid) && !empty($roleid)) {
         }
         echo '</div>';
         echo '<div class="p-y-1">';
-        echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
+        echo html_writer::label(get_string('withselectedusers'), 'formactionid');
         $displaylist['#messageselect'] = get_string('messageselectadd');
         $withselectedparams = array(
             'id' => 'formactionid',

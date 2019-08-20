@@ -702,11 +702,11 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         switch ($windowsize) {
             case "small":
-                $width = 640;
-                $height = 480;
+                $width = 1024;
+                $height = 768;
                 break;
             case "medium":
-                $width = 1024;
+                $width = 1366;
                 $height = 768;
                 break;
             case "large":
