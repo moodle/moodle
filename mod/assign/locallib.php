@@ -909,7 +909,7 @@ class assign {
         $keys = array('duedate', 'cutoffdate', 'allowsubmissionsfromdate');
         foreach ($keys as $key) {
             if (isset($override->{$key})) {
-                $this->get_instance()->{$key} = $override->{$key};
+                $this->get_instance($userid)->{$key} = $override->{$key};
             }
         }
 

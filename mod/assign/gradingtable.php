@@ -184,6 +184,7 @@ class assign_grading_table extends table_sql implements renderable {
         }
 
         $hasoverrides = $this->assignment->has_overrides();
+        $inrelativedatesmode = $this->assignment->get_course()->relativedatesmode;
 
         if ($hasoverrides) {
             $params['assignmentid5'] = (int)$this->assignment->get_instance()->id;
@@ -202,7 +203,17 @@ class assign_grading_table extends table_sql implements renderable {
 
             $fields .= ', priority.priority, ';
             $fields .= 'effective.allowsubmissionsfromdate, ';
-            $fields .= 'effective.duedate, ';
+
+            if ($inrelativedatesmode) {
+                // If the priority is less than the 9999999 constant value it means it's an override
+                // and we should use that value directly. Otherwise we need to apply the uesr's course
+                // start date offset.
+                $fields .= 'CASE WHEN priority.priority < 9999999 THEN effective.duedate ELSE' .
+                           ' effective.duedate + enroloffset.enrolstartoffset END as duedate, ';
+            } else {
+                $fields .= 'effective.duedate, ';
+            }
+
             $fields .= 'effective.cutoffdate ';
 
             $from .= ' LEFT JOIN (
@@ -258,7 +269,7 @@ class assign_grading_table extends table_sql implements renderable {
               )
 
             ) effective ON effective.priority = priority.priority AND effective.userid = priority.userid ';
-        } else if ($this->assignment->get_course()->relativedatesmode) {
+        } else if ($inrelativedatesmode) {
             // In relative dates mode and when we don't have overrides, include the
             // duedate, cutoffdate and allowsubmissionsfrom date anyway as this information is useful and can vary.
             $params['assignmentid5'] = (int)$this->assignment->get_instance()->id;
@@ -401,7 +412,7 @@ class assign_grading_table extends table_sql implements renderable {
         $columns[] = 'status';
         $headers[] = get_string('status', 'assign');
 
-        if ($hasoverrides || $this->assignment->get_course()->relativedatesmode) {
+        if ($hasoverrides || $inrelativedatesmode) {
             // Allowsubmissionsfromdate.
             $columns[] = 'allowsubmissionsfromdate';
             $headers[] = get_string('allowsubmissionsfromdate', 'assign');
