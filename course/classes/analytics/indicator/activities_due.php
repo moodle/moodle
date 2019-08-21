@@ -68,8 +68,10 @@ class activities_due extends \core_analytics\local\indicator\binary {
      */
     protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
 
+        $user = $this->retrieve('user', $sampleid);
+
         $actionevents = \core_calendar_external::get_calendar_action_events_by_timesort($starttime, $endtime, 0, 1,
-            true, $sampleid);
+            true, $user->id);
 
         if ($actionevents->events) {
 
