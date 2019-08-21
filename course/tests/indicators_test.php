@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once(__DIR__ . '/../../lib/completionlib.php');
 require_once(__DIR__ . '/../../completion/criteria/completion_criteria_self.php');
+require_once(__DIR__ . '/../../analytics/tests/fixtures/test_target_course_users.php');
 
 /**
  * Unit tests for core_course indicators.
@@ -312,5 +313,31 @@ class core_course_indicators_testcase extends advanced_testcase {
         $this->assertEquals($indicator::get_max_value(), $values[$cm1->id][0]);
         // Page social is level 1 (the lower level).
         $this->assertEquals($indicator::get_min_value(), $values[$cm2->id][0]);
+    }
+
+    /**
+     * test_activities_due
+     *
+     * @return void
+     */
+    public function test_activities_due() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $user1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'student');
+
+        $target = \core_analytics\manager::get_target('test_target_course_users');
+        $indicators = array('\core_course\analytics\indicator\activities_due');
+        foreach ($indicators as $key => $indicator) {
+            $indicators[$key] = \core_analytics\manager::get_indicator($indicator);
+        }
+
+        $model = \core_analytics\model::create($target, $indicators);
+        $model->enable('\core\analytics\time_splitting\single_range');
+        $model->train();
     }
 }
