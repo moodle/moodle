@@ -478,6 +478,13 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $message = 'The returned status code ' . $result->status . ' should include ' . $expected[$timesplitting];
             $filtered = $result->status & $expected[$timesplitting];
             $this->assertEquals($expected[$timesplitting], $filtered, $message);
+
+            $options = ['evaluation' => true, 'reuseprevanalysed' => true];
+            $result = new \core_analytics\local\analysis\result_file($model->get_id(), true, $options);
+            $timesplittingobj = \core_analytics\manager::get_time_splitting($timesplitting);
+            $analysable = new \core_analytics\site();
+            $cachedanalysis = $result->retrieve_cached_result($timesplittingobj, $analysable);
+            $this->assertInstanceOf(\stored_file::class, $cachedanalysis);
         }
 
         set_config('enabled_stores', '', 'tool_log');
