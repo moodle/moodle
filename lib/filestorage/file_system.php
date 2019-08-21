@@ -444,6 +444,15 @@ abstract class file_system {
     }
 
     /**
+     * Returns true if filesystem is configured to support xsendfile.
+     *
+     * @return bool
+     */
+    public function supports_xsendfile() {
+        return false;
+    }
+
+    /**
      * Validate that the content hash matches the content hash of the file on disk.
      *
      * @param string $contenthash The current content hash to validate

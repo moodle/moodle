@@ -2158,7 +2158,8 @@ function readfile_accel($file, $mimetype, $accelerate) {
         }
     }
 
-    if ($accelerate and !empty($CFG->xsendfile)) {
+    $fs = get_file_storage();
+    if ($accelerate and (!empty($CFG->xsendfile) || (is_object($file) && $fs->supports_xsendfile()))) {
         if (empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
             header('Accept-Ranges: bytes');
         } else {
@@ -2166,7 +2167,6 @@ function readfile_accel($file, $mimetype, $accelerate) {
         }
 
         if (is_object($file)) {
-            $fs = get_file_storage();
             if ($fs->xsendfile($file->get_contenthash())) {
                 return;
             }
