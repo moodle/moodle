@@ -4549,7 +4549,7 @@ abstract class lesson_page extends lesson_base {
                     $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
                 }
 
-                if (isset($this->answers[$i]->answer) && $this->answers[$i]->answer != '') {
+                if ($this->answers[$i]->answer !== null && $this->answers[$i]->answer !== '') {
                     if (isset($properties->jumpto[$i])) {
                         $this->answers[$i]->jumpto = $properties->jumpto[$i];
                     }
