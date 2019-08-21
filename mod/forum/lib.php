@@ -804,28 +804,6 @@ function forum_grade_item_delete($forum) {
     return grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, NULL, array('deleted'=>1));
 }
 
-
-/**
- * This function returns if a scale is being used by one forum
- *
- * @global object
- * @param int $forumid
- * @param int $scaleid negative number
- * @return bool
- */
-function forum_scale_used ($forumid,$scaleid) {
-    global $DB;
-    $return = false;
-
-    $rec = $DB->get_record("forum",array("id" => "$forumid","scale" => "-$scaleid"));
-
-    if (!empty($rec) && !empty($scaleid)) {
-        $return = true;
-    }
-
-    return $return;
-}
-
 /**
  * Checks if scale is being used by any instance of forum
  *

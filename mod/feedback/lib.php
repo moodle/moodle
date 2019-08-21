@@ -586,10 +586,11 @@ function feedback_cron () {
 }
 
 /**
- * @return bool false
+ * @deprecated since Moodle 3.8
  */
-function feedback_scale_used ($feedbackid, $scaleid) {
-    return false;
+function feedback_scale_used() {
+    throw new coding_exception('feedback_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**

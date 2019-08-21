@@ -1,3 +1,8 @@
+=== 3.8 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+    * feedback_scale_used()
+
 === 3.6 ===
 
 * The following functions have been finally deprecated and can not be used anymore:

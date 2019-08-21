@@ -1057,37 +1057,11 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
 }
 
 /**
- * Is a given scale used by the instance of workshop?
- *
- * The function asks all installed grading strategy subplugins. The workshop
- * core itself does not use scales. Both grade for submission and grade for
- * assessments do not use scales.
- *
- * @param int $workshopid id of workshop instance
- * @param int $scaleid id of the scale to check
- * @return bool
+ * @deprecated since Moodle 3.8
  */
-function workshop_scale_used($workshopid, $scaleid) {
-    global $CFG; // other files included from here
-
-    $strategies = core_component::get_plugin_list('workshopform');
-    foreach ($strategies as $strategy => $strategypath) {
-        $strategylib = $strategypath . '/lib.php';
-        if (is_readable($strategylib)) {
-            require_once($strategylib);
-        } else {
-            throw new coding_exception('the grading forms subplugin must contain library ' . $strategylib);
-        }
-        $classname = 'workshop_' . $strategy . '_strategy';
-        if (method_exists($classname, 'scale_used')) {
-            if (call_user_func_array(array($classname, 'scale_used'), array($scaleid, $workshopid))) {
-                // no need to include any other files - scale is used
-                return true;
-            }
-        }
-    }
-
-    return false;
+function workshop_scale_used() {
+    throw new coding_exception('workshop_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**

@@ -1,6 +1,10 @@
 This files describes API changes in /mod/wiki/*,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+* The following functions have been finally deprecated and can not be used anymore:
+    * wiki_scale_used()
+
 === 3.7 ===
 * External functions get_subwiki_pages and get_page_contents now return an additional field "tags" returning the entry tags.
 
