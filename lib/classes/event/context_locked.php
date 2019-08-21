@@ -28,7 +28,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Context locked event class.
+ * Event triggered after a context has been frozen.
  *
  * @package    core_access
  * @since      Moodle 3.8
