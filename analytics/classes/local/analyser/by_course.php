@@ -50,12 +50,11 @@ abstract class by_course extends base {
         if (!empty($this->options['filter'])) {
             $courses = array();
             foreach ($this->options['filter'] as $courseid) {
-                $courses[$courseid] = new \stdClass();
-                $courses[$courseid]->id = $courseid;
+                $courses[$courseid] = intval($courseid);
             }
 
             list($coursesql, $courseparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
-            $sql .= " AND c.id IN $coursesql";
+            $sql .= " AND c.id $coursesql";
             $params = $params + $courseparams;
         }
 
