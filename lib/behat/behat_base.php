@@ -197,27 +197,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                     return $context->getSession()->getPage()->findAll($args['selector'], $args['locator']);
                 }
 
-                // For nodes contained in other nodes we can not use the basic named selectors
-                // as they include unions and they would look for matches in the DOM root.
-                $elementxpath = $context->getSession()->getSelectorsHandler()->selectorToXpath($args['selector'], $args['locator']);
-
-                // Split the xpath in unions and prefix them with the container xpath.
-                $unions = explode('|', $elementxpath);
-                foreach ($unions as $key => $union) {
-                    $union = trim($union);
-
-                    // We are in the container node.
-                    if (strpos($union, '.') === 0) {
-                        $union = substr($union, 1);
-                    } else if (strpos($union, '/') !== 0) {
-                        // Adding the path separator in case it is not there.
-                        $union = '/' . $union;
-                    }
-                    $unions[$key] = $args['node']->getXpath() . $union;
-                }
-
-                // We can not use usual Element::find() as it prefixes with DOM root.
-                return $context->getSession()->getDriver()->find(implode('|', $unions));
+                return $args['node']->findAll($args['selector'], $args['locator']);
             },
             $params,
             $timeout,
