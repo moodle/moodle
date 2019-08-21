@@ -1215,6 +1215,7 @@ EOF;
      *
      * @throws ExpectationException
      * @Then /^I change (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
+     * @Then /^I change the (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
      * @param string $windowsize size of the window (small|medium|large|wxh).
      */
     public function i_change_window_size_to($windowviewport, $windowsize) {
