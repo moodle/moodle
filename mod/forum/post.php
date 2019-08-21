@@ -408,7 +408,7 @@ if (!empty($forum)) {
         } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {
             redirect(
                     $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
-                    get_string('couldnotdeletereplies', 'rating'),
+                    get_string('couldnotdeletereplies', 'forum'),
                     null,
                     \core\output\notification::NOTIFY_ERROR
                 );
@@ -418,7 +418,7 @@ if (!empty($forum)) {
                 if ($forum->type == 'single') {
                     redirect(
                             $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
-                            get_string('cannotdeletediscussioninsinglediscussion', 'rating'),
+                            get_string('cannotdeletediscussioninsinglediscussion', 'forum'),
                             null,
                             \core\output\notification::NOTIFY_ERROR
                         );
@@ -485,7 +485,7 @@ if (!empty($forum)) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
                 redirect(
                         forum_go_back_to($urlfactory->get_view_post_url_from_post($postentity)),
-                        get_string('couldnotdeletereplies', 'rating'),
+                        get_string('couldnotdeletereplies', 'forum'),
                         null,
                         \core\output\notification::NOTIFY_ERROR
                     );
