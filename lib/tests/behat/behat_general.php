@@ -869,8 +869,8 @@ class behat_general extends behat_base {
             // this DOM method instead.
             $js = <<<EOF
 (function() {
-    var a = document.evaluate("{$prexpath}", document).iterateNext();
-    var b = document.evaluate("{$postxpath}", document).iterateNext();
+    var a = document.evaluate("{$prexpath}", document, null, XPathResult.ANY_TYPE, null).iterateNext();
+    var b = document.evaluate("{$postxpath}", document, null, XPathResult.ANY_TYPE, null).iterateNext();
     return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING;
 })()
 EOF;
@@ -1215,6 +1215,7 @@ EOF;
      *
      * @throws ExpectationException
      * @Then /^I change (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
+     * @Then /^I change the (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
      * @param string $windowsize size of the window (small|medium|large|wxh).
      */
     public function i_change_window_size_to($windowviewport, $windowsize) {
