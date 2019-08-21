@@ -5254,6 +5254,15 @@ abstract class context extends stdClass implements IteratorAggregate {
         $this->_locked = $locked;
         $DB->set_field('context', 'locked', (int) $locked, ['id' => $this->id]);
         $this->mark_dirty();
+
+        if ($locked) {
+            $eventname = '\\core\\event\\context_locked';
+        } else {
+            $eventname = '\\core\\event\\context_unlocked';
+        }
+        $event = $eventname::create(['context' => $this, 'objectid' => $this->id]);
+        $event->trigger();
+
         self::reset_caches();
 
         return $this;
