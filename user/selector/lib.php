@@ -327,7 +327,9 @@ abstract class user_selector_base {
      * @param array $fields a list of field names that exist in the user table.
      */
     public function set_extra_fields($fields) {
-        $this->extrafields = $fields;
+        debugging('The user_selector classes do not support custom list of extra identity fields any more. '.
+            'Instead, the user identity fields defined by the site administrator will be used to respect '.
+            'the configured privacy setting.', DEBUG_DEVELOPER);
     }
 
     /**
@@ -370,7 +372,6 @@ abstract class user_selector_base {
             'class' => get_class($this),
             'name' => $this->name,
             'exclude' => $this->exclude,
-            'extrafields' => $this->extrafields,
             'multiselect' => $this->multiselect,
             'accesscontext' => $this->accesscontext,
         );
