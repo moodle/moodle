@@ -259,6 +259,7 @@ $string['urlforical'] = 'URL for iCalendar export, for subscribing to calendar';
 $string['user'] = 'User';
 $string['userevent'] = 'User event';
 $string['userevents'] = 'User events';
+$string['viewupcomingactivitiesdue'] = 'View the upcoming activities due';
 $string['wed'] = 'Wed';
 $string['wednesday'] = 'Wednesday';
 $string['weekly'] = 'Weekly';

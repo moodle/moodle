@@ -33,7 +33,8 @@
                 "text": "Moodle"
             }, {
                 "url": "https://en.wikipedia.org/wiki/Noodle",
-                "text": "Noodle"
+                "text": "Noodle",
+                "opentoblank": 1
             }
         ]
     }
@@ -65,5 +66,5 @@ body:not(.dir-ltr):not(.dir-rtl) .btn-insight {
 
 <br/>
 {{#actions}}
-    <a class="btn btn-default m-r-1 m-b-1 btn-insight" href="{{url}}">{{text}}</a>
+    <a class="btn btn-default m-r-1 m-b-1 btn-insight" {{#opentoblank}}target="_blank" {{/opentoblank}}href="{{url}}">{{text}}</a>
 {{/actions}}
