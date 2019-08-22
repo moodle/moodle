@@ -869,6 +869,11 @@ class core_filelib_testcase extends advanced_testcase {
         // Save without merge.
         file_save_draft_area_files(IGNORE_FILE_MERGE, $usercontext->id, 'user', 'private', 0);
         $this->assertCount(2, $fs->get_area_files($usercontext->id, 'user', 'private'));
+        // Save again, this time including some inline text.
+        $inlinetext = 'Some text <img src="@@PLUGINFILE@@/file.png">';
+        $text = file_save_draft_area_files(IGNORE_FILE_MERGE, $usercontext->id, 'user', 'private', 0, null, $inlinetext);
+        $this->assertCount(2, $fs->get_area_files($usercontext->id, 'user', 'private'));
+        $this->assertEquals($inlinetext, $text);
     }
 
     /**

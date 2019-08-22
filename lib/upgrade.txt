@@ -23,6 +23,7 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   and get_reduced_timeout(). These allow for timeouts to be increased by a setting in config.php.
 * The $draftitemid parameter of file_save_draft_area_files() function now supports the constant IGNORE_FILE_MERGE:
   When the parameter is set to that constant, the function won't process file merging, keeping the original state of the file area.
+  Notice also than when $text is set, pluginfile rewrite won't be processed so the text will not be modified.
 * Introduced new callback for plugin developers '<component>_pre_processor_message_send($procname, $proceventdata)':
   This will allow any plugin to manipulate messages or notifications before they are sent by a processor (email, mobile...)
 * New capability 'moodle/category:viewcourselist' in category context that controls whether user is able to browse list of courses
