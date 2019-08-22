@@ -20,3 +20,10 @@
         {{/element.frozen}}
     {{/element}}
 {{/ core_form/element-template }}
+{{# js }}
+    {{^element.frozen}}
+        require(['core_form/submit'], function(Submit) {
+            Submit.init("{{ element.id }}");
+        });
+    {{/element.frozen}}
+{{/ js }}
