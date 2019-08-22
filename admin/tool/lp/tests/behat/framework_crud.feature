@@ -6,6 +6,7 @@ Feature: Manage competency frameworks
 
   Background:
     Given I log in as "admin"
+    And I change window size to "small"
     And I am on site homepage
 
   Scenario: Create a new framework
