@@ -309,6 +309,20 @@ class behat_data_generators extends behat_base {
     }
 
     /**
+     * Remove any empty custom fields, to avoid errors when creating the course.
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_course($data) {
+        foreach ($data as $fieldname => $value) {
+            if ($value === '' && strpos($fieldname, 'customfield_') === 0) {
+                unset($data[$fieldname]);
+            }
+        }
+        return $data;
+    }
+
+    /**
      * If password is not set it uses the username.
      * @param array $data
      * @return array

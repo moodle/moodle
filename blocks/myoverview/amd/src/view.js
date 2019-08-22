@@ -102,6 +102,8 @@ function(
             grouping: courseRegion.attr('data-grouping'),
             sort: courseRegion.attr('data-sort'),
             displaycategories: courseRegion.attr('data-displaycategories'),
+            customfieldname: courseRegion.attr('data-customfieldname'),
+            customfieldvalue: courseRegion.attr('data-customfieldvalue'),
         };
     };
 
@@ -126,7 +128,9 @@ function(
             offset: courseOffset,
             limit: limit,
             classification: filters.grouping,
-            sort: filters.sort
+            sort: filters.sort,
+            customfieldname: filters.customfieldname,
+            customfieldvalue: filters.customfieldvalue
         });
     };
 

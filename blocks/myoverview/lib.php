@@ -34,6 +34,12 @@ define('BLOCK_MYOVERVIEW_GROUPING_FUTURE', 'future');
 define('BLOCK_MYOVERVIEW_GROUPING_PAST', 'past');
 define('BLOCK_MYOVERVIEW_GROUPING_FAVOURITES', 'favourites');
 define('BLOCK_MYOVERVIEW_GROUPING_HIDDEN', 'hidden');
+define('BLOCK_MYOVERVIEW_GROUPING_CUSTOMFIELD', 'customfield');
+
+/**
+ * Allows selection of all courses without a value for the custom field.
+ */
+define('BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY', -1);
 
 /**
  * Constants for the user preferences sorting options
@@ -81,9 +87,17 @@ function block_myoverview_user_preferences() {
             BLOCK_MYOVERVIEW_GROUPING_FUTURE,
             BLOCK_MYOVERVIEW_GROUPING_PAST,
             BLOCK_MYOVERVIEW_GROUPING_FAVOURITES,
-            BLOCK_MYOVERVIEW_GROUPING_HIDDEN
+            BLOCK_MYOVERVIEW_GROUPING_HIDDEN,
+            BLOCK_MYOVERVIEW_GROUPING_CUSTOMFIELD,
         )
     );
+
+    $preferences['block_myoverview_user_grouping_customfieldvalue_preference'] = [
+        'null' => NULL_ALLOWED,
+        'default' => null,
+        'type' => PARAM_RAW,
+    ];
+
     $preferences['block_myoverview_user_sort_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_MYOVERVIEW_SORTING_TITLE,

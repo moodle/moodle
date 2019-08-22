@@ -50,6 +50,7 @@
             {{#past}}{{#str}} past, block_myoverview {{/str}}{{/past}}
             {{#favourites}}{{#str}} favourites, block_myoverview {{/str}}{{/favourites}}
             {{#hidden}}{{#str}} hiddencourses, block_myoverview {{/str}}{{/hidden}}
+            {{selectedcustomfield}}
         </span>
     </button>
     <ul class="dropdown-menu" data-show-active-item data-active-item-text aria-labelledby="groupingdropdown">
@@ -106,6 +107,21 @@
             </a>
         </li>
         {{/displaygroupingpast}}
+        {{#displaygroupingcustomfield}}
+            <li class="dropdown-divider" role="presentation">
+                <span class="filler">&nbsp;</span>
+            </li>
+            {{#customfieldvalues}}
+                <li>
+                    <a class="dropdown-item {{#active}}active{{/active}}" href="#" data-filter="grouping"
+                       data-value="customfield" data-pref="customfield" data-customfieldvalue="{{value}}"
+                       aria-label="{{#str}}aria:customfield, block_myoverview, {{name}}{{/str}}"
+                       aria-controls="courses-view-{{uniqid}}">
+                        {{name}}
+                    </a>
+                </li>
+            {{/customfieldvalues}}
+        {{/displaygroupingcustomfield}}
         {{#displaygroupingstarred}}
         <li class="dropdown-divider" role="presentation">
             <span class="filler">&nbsp;</span>
