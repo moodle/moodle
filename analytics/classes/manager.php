@@ -484,6 +484,9 @@ class manager {
     /**
      * Returns the models with insights at the provided context.
      *
+     * Note that this method is used for display purposes. It filters out models whose insights
+     * are not linked from the reports page.
+     *
      * @param \context $context
      * @return \core_analytics\model[]
      */
@@ -494,7 +497,7 @@ class manager {
         $models = self::get_all_models(true, true, $context);
         foreach ($models as $key => $model) {
             // Check that it not only have predictions but also generates insights from them.
-            if (!$model->uses_insights()) {
+            if (!$model->uses_insights() || !$model->get_target()->link_insights_report()) {
                 unset($models[$key]);
             }
         }
