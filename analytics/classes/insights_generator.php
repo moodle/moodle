@@ -195,7 +195,8 @@ class insights_generator {
             $actionurl = $action->get_url();
             if (!$actionurl->get_param('forwardurl')) {
 
-                $actiondoneurl = new \moodle_url('/report/insights/done.php');
+                $params = ['actionvisiblename' => $action->get_text(), 'target' => '_blank'];
+                $actiondoneurl = new \moodle_url('/report/insights/done.php', $params);
                 // Set the forward url to the 'done' script.
                 $actionurl->param('forwardurl', $actiondoneurl->out(false));
             }
