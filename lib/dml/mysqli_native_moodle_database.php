@@ -326,9 +326,10 @@ class mysqli_native_moodle_database extends moodle_database {
         $rowformat = null;
         if (isset($table)) {
             $table = $this->mysqli->real_escape_string($table);
+            $fixedtable = $this->fix_table_name($table);
             $sql = "SELECT row_format
                       FROM INFORMATION_SCHEMA.TABLES
-                     WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}$table'";
+                     WHERE table_schema = DATABASE() AND table_name = '$fixedtable'";
         } else {
             if ($this->is_antelope_file_format_no_more_supported()) {
                 // Breaking change: Antelope file format support has been removed, only Barracuda.
@@ -675,7 +676,8 @@ class mysqli_native_moodle_database extends moodle_database {
      */
     public function get_indexes($table) {
         $indexes = array();
-        $sql = "SHOW INDEXES FROM {$this->prefix}$table";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "SHOW INDEXES FROM $fixedtable";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         try {
@@ -719,10 +721,11 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $structure = array();
 
+        $fixedtable = $this->fix_table_name($table);
         $sql = "SELECT column_name, data_type, character_maximum_length, numeric_precision,
                        numeric_scale, is_nullable, column_type, column_default, column_key, extra
                   FROM information_schema.columns
-                 WHERE table_name = '" . $this->prefix.$table . "'
+                 WHERE table_name = '" . $fixedtable . "'
                        AND table_schema = '" . $this->dbname . "'
               ORDER BY ordinal_position";
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -746,7 +749,7 @@ class mysqli_native_moodle_database extends moodle_database {
         } else {
             // temporary tables are not in information schema, let's try it the old way
             $result->close();
-            $sql = "SHOW COLUMNS FROM {$this->prefix}$table";
+            $sql = "SHOW COLUMNS FROM $fixedtable";
             $this->query_start($sql, null, SQL_QUERY_AUX);
             $result = $this->mysqli->query($sql);
             $this->query_end(true);
@@ -1317,8 +1320,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $fields = implode(',', array_keys($params));
         $qms    = array_fill(0, count($params), '?');
         $qms    = implode(',', $qms);
-
-        $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "INSERT INTO $fixedtable ($fields) VALUES($qms)";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
@@ -1483,7 +1486,8 @@ class mysqli_native_moodle_database extends moodle_database {
             }
         }
 
-        $sql = "INSERT INTO {$this->prefix}$table $fieldssql VALUES $valuessql";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "INSERT INTO $fixedtable $fieldssql VALUES $valuessql";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
@@ -1547,7 +1551,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $params[] = $id; // last ? in WHERE condition
 
         $sets = implode(',', $sets);
-        $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "UPDATE $fixedtable SET $sets WHERE id=?";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
@@ -1621,7 +1626,8 @@ class mysqli_native_moodle_database extends moodle_database {
             $newfield = "$newfield = ?";
             array_unshift($params, $normalised_value);
         }
-        $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "UPDATE $fixedtable SET $newfield $select";
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
@@ -1644,7 +1650,8 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($select) {
             $select = "WHERE $select";
         }
-        $sql = "DELETE FROM {$this->prefix}$table $select";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "DELETE FROM $fixedtable $select";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
