@@ -103,8 +103,12 @@ if (!$model->uses_insights()) {
     exit(0);
 }
 
+if ($context->id == SYSCONTEXTID) {
+    $PAGE->set_heading(get_site()->shortname);
+} else {
+    $PAGE->set_heading($insightinfo->contextname);
+}
 $PAGE->set_title($insightinfo->insightname);
-$PAGE->set_heading($insightinfo->contextname);
 
 // Some models generate one single prediction per context. We can directly show the prediction details in this case.
 if ($model->get_analyser()::one_sample_per_analysable()) {
