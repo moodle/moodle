@@ -43,9 +43,9 @@ function mycourses_get_my_completion($datefrom = 0) {
                                        AND c.visible = 1
                                        AND cc.timecompleted IS NOT NULL",
                                        array('userid' => $USER->id));
-    $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.course as courseid, c.fullname as coursefullname, c.summary as coursesummary
-                                          FROM {course_completions} cc
-                                          JOIN {course} c ON (c.id = cc.course)
+    $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary
+                                          FROM {local_iomad_track} cc
+                                          JOIN {course} c ON (c.id = cc.courseid)
                                           JOIN {user_enrolments} ue ON (ue.userid = cc.userid)
                                           JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = c.id)
                                           WHERE cc.userid = :userid
