@@ -191,4 +191,12 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_forum_prepare_draft_area_for_post' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'prepare_draft_area_for_post',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Prepares a draft area for editing a post.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

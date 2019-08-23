@@ -2703,4 +2703,82 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue($result['post']['hasparent']);
         $this->assertEquals($post->message, $result['post']['message']);
     }
+
+    /**
+     * Test prepare_draft_area_for_post a different user post.
+     */
+    public function test_prepare_draft_area_for_post() {
+        global $DB;
+        $this->resetAfterTest(true);
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $user = $this->getDataGenerator()->create_user();
+        $role = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+        // Add a discussion.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        $parentpost = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
+        // Add a post.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $record->discussion = $discussion->id;
+        $record->parent = $parentpost->id;
+        $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        // Add some files only in the attachment area.
+        $filename = 'faketxt.txt';
+        $filerecordinline = array(
+            'contextid' => context_module::instance($forum->cmid)->id,
+            'component' => 'mod_forum',
+            'filearea'  => 'attachment',
+            'itemid'    => $post->id,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecordinline, 'fake txt contents 1.');
+        $filerecordinline['filename'] = 'otherfaketxt.txt';
+        $fs->create_file_from_string($filerecordinline, 'fake txt contents 2.');
+
+        $this->setUser($user);
+
+        // Check attachment area.
+        $result = mod_forum_external::prepare_draft_area_for_post($post->id, 'attachment');
+        $result = external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
+        $this->assertCount(2, $result['files']);
+        $this->assertEquals($filename, $result['files'][0]['filename']);
+        $this->assertCount(5, $result['areaoptions']);
+        $this->assertEmpty($result['messagetext']);
+
+        // Check again using existing draft item id.
+        $result = mod_forum_external::prepare_draft_area_for_post($post->id, 'attachment', $result['draftitemid']);
+        $result = external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
+        $this->assertCount(2, $result['files']);
+
+        // Keep only certain files in the area.
+        $filestokeep = array(array('filename' => $filename, 'filepath' => '/'));
+        $result = mod_forum_external::prepare_draft_area_for_post($post->id, 'attachment', $result['draftitemid'], $filestokeep);
+        $result = external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
+        $this->assertCount(1, $result['files']);
+        $this->assertEquals($filename, $result['files'][0]['filename']);
+
+        // Check editor (post) area.
+        $filerecordinline['filearea'] = 'post';
+        $filerecordinline['filename'] = 'fakeimage.png';
+        $fs->create_file_from_string($filerecordinline, 'fake image.');
+        $result = mod_forum_external::prepare_draft_area_for_post($post->id, 'post');
+        $result = external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
+        $this->assertCount(1, $result['files']);
+        $this->assertEquals($filerecordinline['filename'], $result['files'][0]['filename']);
+        $this->assertCount(5, $result['areaoptions']);
+        $this->assertEquals($post->message, $result['messagetext']);
+    }
+
 }

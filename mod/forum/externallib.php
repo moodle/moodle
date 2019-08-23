@@ -2232,4 +2232,166 @@ class mod_forum_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.8
+     */
+    public static function prepare_draft_area_for_post_parameters() {
+        return new external_function_parameters(
+            array(
+                'postid' => new external_value(PARAM_INT, 'Post to prepare the draft area for.'),
+                'area' => new external_value(PARAM_ALPHA, 'Area to prepare: attachment or post.'),
+                'draftitemid' => new external_value(PARAM_INT, 'The draft item id to use. 0 to generate one.',
+                    VALUE_DEFAULT, 0),
+                'filestokeep' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'filename' => new external_value(PARAM_FILE, 'File name.'),
+                            'filepath' => new external_value(PARAM_PATH, 'File path.'),
+                        )
+                    ), 'Only keep these files in the draft file area. Empty for keeping all.', VALUE_DEFAULT, []
+                ),
+            )
+        );
+    }
+    /**
+     * Prepares a draft area for editing a post.
+     *
+     * @param int $postid post to prepare the draft area for
+     * @param string $area area to prepare attachment or post
+     * @param int $draftitemid the draft item id to use. 0 to generate a new one.
+     * @param array $filestokeep only keep these files in the draft file area. Empty for keeping all.
+     * @return array of files in the area, the area options and the draft item id
+     * @since Moodle 3.8
+     * @throws moodle_exception
+     */
+    public static function prepare_draft_area_for_post($postid, $area, $draftitemid = 0, $filestokeep = []) {
+        global $USER;
+
+        $params = self::validate_parameters(
+            self::prepare_draft_area_for_post_parameters(),
+            array(
+                'postid' => $postid,
+                'area' => $area,
+                'draftitemid' => $draftitemid,
+                'filestokeep' => $filestokeep,
+            )
+        );
+        $directionallowedvalues = ['ASC', 'DESC'];
+
+        $allowedareas = ['attachment', 'post'];
+        if (!in_array($params['area'], $allowedareas)) {
+            throw new invalid_parameter_exception('Invalid value for area parameter
+                (value: ' . $params['area'] . '),' . 'allowed values are: ' . implode(', ', $allowedareas));
+        }
+
+        $warnings = array();
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $postvault = $vaultfactory->get_post_vault();
+
+        $postentity = $postvault->get_from_id($params['postid']);
+        if (empty($postentity)) {
+            throw new moodle_exception('invalidpostid', 'forum');
+        }
+        $discussionentity = $discussionvault->get_from_id($postentity->get_discussion_id());
+        if (empty($discussionentity)) {
+            throw new moodle_exception('notpartofdiscussion', 'forum');
+        }
+        $forumentity = $forumvault->get_from_id($discussionentity->get_forum_id());
+        if (empty($forumentity)) {
+            throw new moodle_exception('invalidforumid', 'forum');
+        }
+
+        $context = $forumentity->get_context();
+        self::validate_context($context);
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forumentity);
+
+        if (!$capabilitymanager->can_edit_post($USER, $discussionentity, $postentity)) {
+            throw new moodle_exception('noviewdiscussionspermission', 'forum');
+        }
+
+        if ($params['area'] == 'attachment') {
+            $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+            $forumdatamapper = $legacydatamapperfactory->get_forum_data_mapper();
+            $forum = $forumdatamapper->to_legacy_object($forumentity);
+
+            $areaoptions = mod_forum_post_form::attachment_options($forum);
+            $messagetext = null;
+        } else {
+            $areaoptions = mod_forum_post_form::editor_options($context, $postentity->get_id());
+            $messagetext = $postentity->get_message();
+        }
+
+        $draftitemid = empty($params['draftitemid']) ? 0 : $params['draftitemid'];
+        $messagetext = file_prepare_draft_area($draftitemid, $context->id, 'mod_forum', $params['area'],
+            $postentity->get_id(), $areaoptions, $messagetext);
+
+        // Just get a structure compatible with external API.
+        array_walk($areaoptions, function(&$item, $key) {
+            $item = ['name' => $key, 'value' => $item];
+        });
+
+        // Do we need to keep only the given files?
+        $usercontext = context_user::instance($USER->id);
+        if (!empty($params['filestokeep'])) {
+            $fs = get_file_storage();
+
+            if ($areafiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid)) {
+                $filestokeep = [];
+                foreach ($params['filestokeep'] as $ftokeep) {
+                    $filestokeep[$ftokeep['filepath']][$ftokeep['filename']] = $ftokeep;
+                }
+
+                foreach ($areafiles as $file) {
+                    if ($file->is_directory()) {
+                        continue;
+                    }
+                    if (!isset($filestokeep[$file->get_filepath()][$file->get_filename()])) {
+                        $file->delete();    // Not in the list to be kept.
+                    }
+                }
+            }
+        }
+
+        $result = array(
+            'draftitemid' => $draftitemid,
+            'files' => external_util::get_area_files($usercontext->id, 'user', 'draft',
+                $draftitemid),
+            'areaoptions' => $areaoptions,
+            'messagetext' => $messagetext,
+            'warnings' => $warnings,
+        );
+        return $result;
+    }
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.8
+     */
+    public static function prepare_draft_area_for_post_returns() {
+        return new external_single_structure(
+            array(
+                'draftitemid' => new external_value(PARAM_INT, 'Draft item id for the file area.'),
+                'files' => new external_files('Draft area files.', VALUE_OPTIONAL),
+                'areaoptions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'Name of option.'),
+                            'value' => new external_value(PARAM_RAW, 'Value of option.'),
+                        )
+                    ), 'Draft file area options.'
+                ),
+                'messagetext' => new external_value(PARAM_RAW, 'Message text with URLs rewritten.'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
