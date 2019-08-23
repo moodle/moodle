@@ -950,11 +950,9 @@ class model {
             // the database, and we need to do it using one single database query (for performance reasons as well).
             $predictionrecords = $this->add_prediction_ids($predictionrecords);
 
-            // Get \core_analytics\prediction objects also fetching the samplesdata. This costs us
-            // 1 db read, but we have to pay it if we want that our insights include links to the
-            // suggested actions.
-            $predictions = array_map(function($predictionobj) {
-                $prediction = new \core_analytics\prediction($predictionobj, $this->prediction_sample_data($predictionobj));
+            $samplesdata = $this->predictions_sample_data($predictionrecords);
+            $predictions = array_map(function($predictionobj) use ($samplesdata) {
+                $prediction = new \core_analytics\prediction($predictionobj, $samplesdata[$predictionobj->sampleid]);
                 return $prediction;
             }, $predictionrecords);
         } else {
@@ -1409,6 +1407,23 @@ class model {
         }
 
         return $samplesdata[$predictionobj->sampleid];
+    }
+
+    /**
+     * Returns the samples data of the provided predictions.
+     *
+     * @param \stdClass[] $predictionrecords
+     * @return array
+     */
+    public function predictions_sample_data(array $predictionrecords): array {
+
+        $sampleids = [];
+        foreach ($predictionrecords as $predictionobj) {
+            $sampleids[] = $predictionobj->sampleid;
+        }
+        list($sampleids, $samplesdata) = $this->get_analyser()->get_samples($sampleids);
+
+        return $samplesdata;
     }
 
     /**
