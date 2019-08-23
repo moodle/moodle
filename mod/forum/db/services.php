@@ -183,4 +183,12 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'mod_forum_get_discussion_post' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'get_discussion_post',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Get a particular discussion post.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

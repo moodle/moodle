@@ -2152,4 +2152,84 @@ class mod_forum_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.8
+     */
+    public static function get_discussion_post_parameters() {
+        return new external_function_parameters(
+            array(
+                'postid' => new external_value(PARAM_INT, 'Post to fetch.'),
+            )
+        );
+    }
+    /**
+     * Get a particular discussion post.
+     *
+     * @param int $postid post to fetch
+     * @return array of post and warnings (if any)
+     * @since Moodle 3.8
+     * @throws moodle_exception
+     */
+    public static function get_discussion_post($postid) {
+        global $USER, $CFG;
+
+        $params = self::validate_parameters(self::get_discussion_post_parameters(),
+                                            array(
+                                                'postid' => $postid,
+                                            ));
+        $warnings = array();
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $postvault = $vaultfactory->get_post_vault();
+
+        $postentity = $postvault->get_from_id($params['postid']);
+        if (empty($postentity)) {
+            throw new moodle_exception('invalidpostid', 'forum');
+        }
+        $discussionentity = $discussionvault->get_from_id($postentity->get_discussion_id());
+        if (empty($discussionentity)) {
+            throw new moodle_exception('notpartofdiscussion', 'forum');
+        }
+        $forumentity = $forumvault->get_from_id($discussionentity->get_forum_id());
+        if (empty($forumentity)) {
+            throw new moodle_exception('invalidforumid', 'forum');
+        }
+        self::validate_context($forumentity->get_context());
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forumentity);
+
+        if (!$capabilitymanager->can_view_post($USER, $discussionentity, $postentity)) {
+            throw new moodle_exception('noviewdiscussionspermission', 'forum');
+        }
+
+        $builderfactory = mod_forum\local\container::get_builder_factory();
+        $postbuilder = $builderfactory->get_exported_posts_builder();
+        $posts = $postbuilder->build($USER, [$forumentity], [$discussionentity], [$postentity]);
+        $post = empty($posts) ? array() : reset($posts);
+
+        $result = array();
+        $result['post'] = $post;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.8
+     */
+    public static function get_discussion_post_returns() {
+        return new external_single_structure(
+            array(
+                'post' => \mod_forum\local\exporters\post::get_read_structure(),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
