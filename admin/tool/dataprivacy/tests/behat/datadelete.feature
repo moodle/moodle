@@ -89,6 +89,12 @@ Feature: Data delete from the privacy API
     And I should see "Deleted"
 
   @javascript
+  Scenario: As a primary admin, the link to create a data deletion request should not be shown.
+    Given I log in as "admin"
+    When I follow "Profile" in the user menu
+    Then I should not see "Delete my account"
+
+  @javascript
   Scenario: As a parent, request account and data deletion for my child
     Given I log in as "parent"
     And I follow "Profile" in the user menu

@@ -134,6 +134,10 @@ class tool_dataprivacy_data_request_form extends moodleform {
             $errors['type'] = get_string('errorrequestalreadyexists', 'tool_dataprivacy');
         }
 
+        if ($data['type'] == api::DATAREQUEST_TYPE_DELETE && is_primary_admin($data['userid'])) {
+            $errors['type'] = get_string('errorcannotdeleteadmin', 'tool_dataprivacy');
+        }
+
         return $errors;
     }
 }

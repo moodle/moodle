@@ -124,6 +124,7 @@ $string['editpurposes'] = 'Edit purposes';
 $string['effectiveretentionperiodcourse'] = '{$a} (after the course end date)';
 $string['effectiveretentionperioduser'] = '{$a} (since the last time the user accessed the site)';
 $string['emailsalutation'] = 'Dear {$a},';
+$string['errorcannotdeleteadmin'] = 'Cannot create deletion request for the primary site admin';
 $string['errorinvalidrequestcreationmethod'] = 'Invalid request creation method!';
 $string['errorinvalidrequeststatus'] = 'Invalid request status!';
 $string['errorinvalidrequesttype'] = 'Invalid request type!';

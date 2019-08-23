@@ -304,6 +304,29 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that deletion requests for the primary admin are rejected
+     */
+    public function test_reject_data_deletion_request_primary_admin() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $datarequest = api::create_data_request(get_admin()->id, api::DATAREQUEST_TYPE_DELETE);
+
+        // Approve the request and execute the ad-hoc process task.
+        ob_start();
+        api::approve_data_request($datarequest->get('id'));
+        $this->runAdhocTasks('\tool_dataprivacy\task\process_data_request_task');
+        ob_end_clean();
+
+        $request = api::get_request($datarequest->get('id'));
+        $this->assertEquals(api::DATAREQUEST_STATUS_REJECTED, $request->get('status'));
+
+        // Confirm they weren't deleted.
+        $user = core_user::get_user($request->get('userid'));
+        core_user::require_active_user($user);
+    }
+
+    /**
      * Test for api::can_contact_dpo()
      */
     public function test_can_contact_dpo() {
