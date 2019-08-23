@@ -39,6 +39,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Add setuplib in case it has not been loaded yet as it's required by \xml_format_exception.
+require_once($CFG->libdir.'/setuplib.php');
+
 class xml_format_exception extends moodle_exception {
     /** @var string */
     public $errorstring;
