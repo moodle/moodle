@@ -73,6 +73,7 @@ class activities_due extends \core_analytics\local\indicator\binary {
         $actionevents = \core_calendar_external::get_calendar_action_events_by_timesort($starttime, $endtime, 0, 1,
             true, $user->id);
 
+        $useractionevents = [];
         if ($actionevents->events) {
 
             // We first need to check that at least one of the core_calendar_provide_event_action
@@ -80,8 +81,20 @@ class activities_due extends \core_analytics\local\indicator\binary {
             foreach ($actionevents->events as $event) {
                 $nparams = $this->get_provide_event_action_num_params($event->modulename);
                 if ($nparams > 2) {
-                    return self::get_max_value();
+                    // Just the basic info for the insight as we want a low memory usage.
+                    $useractionevents[$event->id] = (object)[
+                        'name' => $event->name,
+                        'url' => $event->url,
+                        'time' => $event->timesort,
+                        'coursename' => $event->course->fullnamedisplay,
+                        'icon' => $event->icon,
+                    ];
                 }
+            }
+
+            if (!empty($useractionevents)) {
+                $this->add_shared_calculation_info($sampleid, $useractionevents);
+                return self::get_max_value();
             }
         }
 

@@ -951,6 +951,8 @@ class model {
             $predictionrecords = $this->add_prediction_ids($predictionrecords);
 
             $samplesdata = $this->predictions_sample_data($predictionrecords);
+            $samplesdata = $this->append_calculations_info($predictionrecords, $samplesdata);
+
             $predictions = array_map(function($predictionobj) use ($samplesdata) {
                 $prediction = new \core_analytics\prediction($predictionobj, $samplesdata[$predictionobj->sampleid]);
                 return $prediction;
@@ -1423,6 +1425,24 @@ class model {
         }
         list($sampleids, $samplesdata) = $this->get_analyser()->get_samples($sampleids);
 
+        return $samplesdata;
+    }
+
+    /**
+     * Appends the calculation info to the samples data.
+     *
+     * @param   \stdClass[] $predictionrecords
+     * @param   array $samplesdata
+     * @return  array
+     */
+    public function append_calculations_info(array $predictionrecords, array $samplesdata): array {
+
+        if ($extrainfo = calculation_info::pull_info($predictionrecords)) {
+            foreach ($samplesdata as $sampleid => $data) {
+                // The extra info come prefixed by extra: so we will not have overwrites here.
+                $samplesdata[$sampleid] = $samplesdata[$sampleid] + $extrainfo[$sampleid];
+            }
+        }
         return $samplesdata;
     }
 

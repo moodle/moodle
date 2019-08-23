@@ -15,9 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_analytics/insight_info_message
+    @template core_analytics/notification_styles
 
-    HTML message for insights
+    Styles for insights' notifications (only for email).
+
+    These styles are not applied to Moodle's web UI as there is a body:not(.dir-ltr):not(.dir-rtl)
 
     Classes required for JS:
     * none
@@ -27,13 +29,28 @@
 
     Example context (json):
     {
-        "url": "https://moodle.org",
-        "insightinfomessage": "This insight is very <strong>useful</strong> because bla bla bla."
     }
 }}
 
-{{> core_analytics/notification_styles}}
-
-{{{insightinfomessage}}}
-<br/><br/>
-<a class="btn btn-outline-primary btn-insight" href="{{url}}">{{#str}} viewinsight, analytics {{/str}}</a>
+<style>
+body:not(.dir-ltr):not(.dir-rtl) {
+    font-family: 'Open Sans', sans-serif;
+}
+body:not(.dir-ltr):not(.dir-rtl) .btn-insight {
+    color: #007bff;
+    background-color: transparent;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid #007bff;
+    padding: .375rem .75rem;
+    font-size: .9375rem;
+    line-height: 1.5;
+    border-radius: 0;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>

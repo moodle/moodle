@@ -2190,6 +2190,9 @@ $string['yes'] = 'Yes';
 $string['youareabouttocreatezip'] = 'You are about to create a zip file containing';
 $string['youaregoingtorestorefrom'] = 'You are about to start the restore process for';
 $string['youhaveupcomingactivitiesdue'] = 'You have upcoming activities due';
+$string['youhaveupcomingactivitiesdueinfo'] = 'Hi {$a},
+
+<br/><br/>You have upcoming activities due:';
 $string['youneedtoenrol'] = 'To perform that action you need to enrol in this course.';
 $string['yourlastlogin'] = 'Your last login was';
 $string['yourself'] = 'yourself';

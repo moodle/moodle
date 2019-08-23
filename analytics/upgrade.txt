@@ -8,6 +8,10 @@ information provided here is intended especially for developers.
   to the new description of the field.
 * A new target::can_use_timesplitting method must be implemented to discard time-splitting methods that can not
   be used on a target.
+* Targets can now implement get_insight_body and get_insight_body_for_prediction to set the body of the insight.
+* Indicators can add information about calculated values by calling add_shared_calculation_info(). This
+  data is later available for targets in get_insight_body_for_prediction(), it can be accessed
+  appending ':extradata' to the indicator name (e.g. $sampledata['\mod_yeah\analytics\indicator\ou:extradata')
 
 === 3.7 ===
 

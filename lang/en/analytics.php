@@ -150,3 +150,4 @@ $string['viewdetails'] = 'View details';
 $string['viewinsight'] = 'View insight';
 $string['viewinsightdetails'] = 'View insight details';
 $string['viewprediction'] = 'View prediction details';
+$string['washelpful'] = 'Was this helpful?';
