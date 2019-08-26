@@ -134,8 +134,9 @@ class analytics_manager_testcase extends advanced_testcase {
         $model->train();
         $model->predict();
 
-        $npredictsamples = $DB->count_records('analytics_predict_samples');
-        $ntrainsamples = $DB->count_records('analytics_train_samples');
+        $this->assertNotEmpty($DB->count_records('analytics_predict_samples'));
+        $this->assertNotEmpty($DB->count_records('analytics_train_samples'));
+        $this->assertNotEmpty($DB->count_records('analytics_used_analysables'));
 
         // Now we delete an analysable, stored predict and training samples should be deleted.
         $deletedcontext = \context_course::instance($coursepredict1->id);
@@ -145,6 +146,7 @@ class analytics_manager_testcase extends advanced_testcase {
 
         $this->assertEmpty($DB->count_records('analytics_predict_samples', array('analysableid' => $coursepredict1->id)));
         $this->assertEmpty($DB->count_records('analytics_train_samples', array('analysableid' => $coursepredict1->id)));
+        $this->assertEmpty($DB->count_records('analytics_used_analysables', array('analysableid' => $coursepredict1->id)));
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
