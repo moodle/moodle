@@ -575,8 +575,22 @@ class manager {
         }
 
         // Clean up stuff that depends on analysable ids that do not exist anymore.
+
         $models = self::get_all_models();
         foreach ($models as $model) {
+
+            // We first dump into memory the list of analysables we have in the database (we could probably do this with 1 single
+            // query for the 3 tables, but it may be safer to do it separately).
+            $predictsamplesanalysableids = $DB->get_fieldset_select('analytics_predict_samples', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $predictsamplesanalysableids = array_flip($predictsamplesanalysableids);
+            $trainsamplesanalysableids = $DB->get_fieldset_select('analytics_train_samples', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $trainsamplesanalysableids = array_flip($trainsamplesanalysableids);
+            $usedanalysablesanalysableids = $DB->get_fieldset_select('analytics_used_analysables', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $usedanalysablesanalysableids = array_flip($usedanalysablesanalysableids);
+
             $analyser = $model->get_analyser(array('notimesplitting' => true));
             $analysables = $analyser->get_analysables_iterator();
 
@@ -585,17 +599,37 @@ class manager {
                 if (!$analysable) {
                     continue;
                 }
-                $analysableids[] = $analysable->get_id();
-            }
-            if (empty($analysableids)) {
-                continue;
+                unset($predictsamplesanalysableids[$analysable->get_id()]);
+                unset($trainsamplesanalysableids[$analysable->get_id()]);
+                unset($usedanalysablesanalysableids[$analysable->get_id()]);
             }
 
-            list($notinsql, $params) = $DB->get_in_or_equal($analysableids, SQL_PARAMS_NAMED, 'param', false);
-            $params['modelid'] = $model->get_id();
+            $param = ['modelid' => $model->get_id()];
 
-            $DB->delete_records_select('analytics_predict_samples', "modelid = :modelid AND analysableid $notinsql", $params);
-            $DB->delete_records_select('analytics_train_samples', "modelid = :modelid AND analysableid $notinsql", $params);
+            if ($predictsamplesanalysableids) {
+                $chunks = array_chunk(array_flip($predictsamplesanalysableids), 1000);
+                foreach ($chunks as $chunk) {
+                    list($idssql, $idsparams) = $DB->get_in_or_equal($chunk, SQL_PARAMS_NAMED);
+                    $DB->delete_records_select('analytics_predict_samples', "modelid = :modelid AND analysableid $idssql",
+                        $param + $idsparams);
+                }
+            }
+            if ($trainsamplesanalysableids) {
+                $chunks = array_chunk(array_flip($trainsamplesanalysableids), 1000);
+                foreach ($chunks as $chunk) {
+                    list($idssql, $idsparams) = $DB->get_in_or_equal($chunk, SQL_PARAMS_NAMED);
+                    $DB->delete_records_select('analytics_train_samples', "modelid = :modelid AND analysableid $idssql",
+                        $param + $idsparams);
+                }
+            }
+            if ($usedanalysablesanalysableids) {
+                $chunks = array_chunk(array_flip($usedanalysablesanalysableids), 1000);
+                foreach ($chunks as $chunk) {
+                    list($idssql, $idsparams) = $DB->get_in_or_equal($chunk, SQL_PARAMS_NAMED);
+                    $DB->delete_records_select('analytics_used_analysables', "modelid = :modelid AND analysableid $idssql",
+                        $param + $idsparams);
+                }
+            }
         }
     }
 
