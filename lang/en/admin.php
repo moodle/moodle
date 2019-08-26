@@ -1231,6 +1231,7 @@ $string['unbookmarkthispage'] = 'Unbookmark this page';
 $string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['uninstallplugin'] = 'Uninstall';
 $string['unlockaccount'] = 'Unlock account';
+$string['unoconvwarning'] = 'The version of unoconv you have installed is not supported.';
 $string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
 $string['unsupporteddbfileformat'] = 'Your database uses Antelope as the file format. Full UTF-8 support in MySQL and MariaDB requires the Barracuda file format. Please switch to the Barracuda file format. See the documentation <a href="https://docs.moodle.org/en/admin/environment/custom check/mysql full unicode support">MySQL full unicode support</a> for details.';
@@ -1346,7 +1347,6 @@ $string['cacheapplicationhelp'] = 'Cached items are shared among all users and e
 // Deprecated since Moodle 3.3.
 $string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
 $string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';
-$string['unoconvwarning'] = 'The version of unoconv you have installed is not supported.';
 // Deprecated since Moodle 3.4
 $string['moodleorghubname'] = 'Moodle';
 $string['hubs'] = 'Hubs';
