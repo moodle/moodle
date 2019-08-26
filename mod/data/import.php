@@ -109,24 +109,37 @@ if (!$formdata = $form->get_data()) {
         if (!$fieldnames = $cir->get_columns()) {
             print_error('cannotreadtmpfile', 'error');
         }
-        $fieldnames = array_flip($fieldnames);
+
         // check the fieldnames are valid
         $rawfields = $DB->get_records('data_fields', array('dataid' => $data->id), '', 'name, id, type');
         $fields = array();
         $errorfield = '';
-        $safetoskipfields = array(get_string('user'), get_string('username'), get_string('email'),
+        $usernamestring = get_string('username');
+        $safetoskipfields = array(get_string('user'), get_string('email'),
             get_string('timeadded', 'data'), get_string('timemodified', 'data'),
             get_string('approved', 'data'), get_string('tags', 'data'));
-        foreach ($fieldnames as $name => $id) {
+        $userfieldid = null;
+        foreach ($fieldnames as $id => $name) {
             if (!isset($rawfields[$name])) {
-                if (!in_array($name, $safetoskipfields)) {
+                if ($name == $usernamestring) {
+                    $userfieldid = $id;
+                } else if (!in_array($name, $safetoskipfields)) {
                     $errorfield .= "'$name' ";
                 }
             } else {
-                $field = $rawfields[$name];
-                require_once("$CFG->dirroot/mod/data/field/$field->type/field.class.php");
-                $classname = 'data_field_' . $field->type;
-                $fields[$name] = new $classname($field, $data, $cm);
+                // If this is the second time, a field with this name comes up, it must be a field not provided by the user...
+                // like the username.
+                if (isset($fields[$name])) {
+                    if($name == $usernamestring) {
+                        $userfieldid = $id;
+                    }
+                    unset($fieldnames[$id]); // To ensure the user provided content fields remain in the array once flipped.
+                } else {
+                    $field = $rawfields[$name];
+                    require_once("$CFG->dirroot/mod/data/field/$field->type/field.class.php");
+                    $classname = 'data_field_' . $field->type;
+                    $fields[$name] = new $classname($field, $data, $cm);
+                }
             }
         }
 
@@ -134,10 +147,18 @@ if (!$formdata = $form->get_data()) {
             print_error('fieldnotmatched','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}",$errorfield);
         }
 
+        $fieldnames = array_flip($fieldnames);
+
         $cir->init();
         $recordsadded = 0;
         while ($record = $cir->next()) {
-            if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
+            $authorid = null;
+            if ($userfieldid) {
+                if (!($authorid = core_user::get_user_by_username($record[$userfieldid], 'id')->id)) {
+                    $authorid = null;
+                }
+            }
+            if ($recordid = data_add_record($data, 0, $authorid)) {  // Add instance to data_record.
                 foreach ($fields as $field) {
                     $fieldid = $fieldnames[$field->field->name];
                     if (isset($record[$fieldid])) {

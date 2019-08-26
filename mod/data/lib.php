@@ -973,16 +973,17 @@ function data_numentries($data, $userid=null) {
  * @global object
  * @param object $data
  * @param int $groupid
+ * @param int $userid
  * @return bool
  */
-function data_add_record($data, $groupid=0){
+function data_add_record($data, $groupid=0, $userid=null) {
     global $USER, $DB;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
 
     $record = new stdClass();
-    $record->userid = $USER->id;
+    $record->userid = $userid ?? $USER->id;
     $record->dataid = $data->id;
     $record->groupid = $groupid;
     $record->timecreated = $record->timemodified = time();
