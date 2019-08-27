@@ -21,17 +21,30 @@
 
     Example context (json):
     {
+        "allincludinghidden": false,
         "all": true,
         "inprogress": false,
         "future": false,
-        "past": false
+        "past": false,
+        "favourites": false,
+        "hidden": false,
+        "displaygroupingallincludinghidden": false,
+        "displaygroupingall": true,
+        "displaygroupinginprogress": true,
+        "displaygroupingfuture": true,
+        "displaygroupingpast": true,
+        "displaygroupingstarred": true,
+        "displaygroupinghidden": true,
+        "displaygroupingselector": true
     }
 }}
+{{#displaygroupingselector}}
 <div class="dropdown mb-1 mr-auto">
     <button id="groupingdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:groupingdropdown, block_myoverview {{/str}}">
         {{#pix}} i/filter {{/pix}}
         <span class="d-sm-inline-block" data-active-item-text>
-            {{#all}}{{#str}} allexcepthidden, block_myoverview {{/str}}{{/all}}
+            {{#allincludinghidden}}{{#str}} allincludinghidden, block_myoverview {{/str}}{{/allincludinghidden}}
+            {{#all}}{{#str}} all, block_myoverview {{/str}}{{/all}}
             {{#inprogress}}{{#str}} inprogress, block_myoverview {{/str}}{{/inprogress}}
             {{#future}}{{#str}} future, block_myoverview {{/str}}{{/future}}
             {{#past}}{{#str}} past, block_myoverview {{/str}}{{/past}}
@@ -40,11 +53,24 @@
         </span>
     </button>
     <ul class="dropdown-menu" data-show-active-item data-active-item-text aria-labelledby="groupingdropdown">
+        {{#displaygroupingallincludinghidden}}
         <li>
-            <a class="dropdown-item {{#all}}active{{/all}}" href="#" data-filter="grouping" data-value="all" data-pref="all" aria-label="{{#str}} aria:allcoursesexcepthidden, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
-                {{#str}} allexcepthidden, block_myoverview {{/str}}
+            <a class="dropdown-item {{#allincludinghidden}}active{{/allincludinghidden}}" href="#" data-filter="grouping" data-value="allincludinghidden" data-pref="allincludinghidden" aria-label="{{#str}} aria:allcoursesincludinghidden, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                {{#str}} allincludinghidden, block_myoverview {{/str}}
             </a>
         </li>
+        {{/displaygroupingallincludinghidden}}
+        {{#displaygroupingall}}
+        <li class="dropdown-divider" role="presentation">
+            <span class="filler">&nbsp;</span>
+        </li>
+        <li>
+            <a class="dropdown-item {{#all}}active{{/all}}" href="#" data-filter="grouping" data-value="all" data-pref="all" aria-label="{{#str}} aria:allcourses, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                {{#str}} all, block_myoverview {{/str}}
+            </a>
+        </li>
+        {{/displaygroupingall}}
+        {{#displaygroupinginprogress}}
         <li class="dropdown-divider" role="presentation">
             <span class="filler">&nbsp;</span>
         </li>
@@ -53,16 +79,34 @@
                 {{#str}} inprogress, block_myoverview {{/str}}
             </a>
         </li>
+        {{/displaygroupinginprogress}}
+        {{#displaygroupingfuture}}
+            {{^displaygroupinginprogress}}
+            <li class="dropdown-divider" role="presentation">
+                <span class="filler">&nbsp;</span>
+            </li>
+            {{/displaygroupinginprogress}}
         <li>
             <a class="dropdown-item {{#future}}active{{/future}}" href="#" data-filter="grouping" data-value="future" data-pref="future" aria-label="{{#str}} aria:future, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
                 {{#str}} future, block_myoverview {{/str}}
             </a>
         </li>
+        {{/displaygroupingfuture}}
+        {{#displaygroupingpast}}
+            {{^displaygroupinginprogress}}
+                {{^displaygroupingfuture}}
+                <li class="dropdown-divider" role="presentation">
+                    <span class="filler">&nbsp;</span>
+                </li>
+                {{/displaygroupingfuture}}
+            {{/displaygroupinginprogress}}
         <li>
             <a class="dropdown-item {{#past}}active{{/past}}" href="#" data-filter="grouping" data-value="past" data-pref="past" aria-label="{{#str}} aria:past, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
                 {{#str}} past, block_myoverview {{/str}}
             </a>
         </li>
+        {{/displaygroupingpast}}
+        {{#displaygroupingstarred}}
         <li class="dropdown-divider" role="presentation">
             <span class="filler">&nbsp;</span>
         </li>
@@ -70,7 +114,8 @@
             <a class="dropdown-item {{#favourites}}active{{/favourites}}" href="#" data-filter="grouping" data-value="favourites"  data-pref="favourites" aria-label="{{#str}} aria:favourites, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
                 {{#str}} favourites, block_myoverview {{/str}}
             </a>
-        </li>
+        {{/displaygroupingstarred}}
+        {{#displaygroupinghidden}}
         <li class="dropdown-divider" role="presentation">
             <span class="filler">&nbsp;</span>
         </li>
@@ -79,5 +124,12 @@
                 {{#str}} hiddencourses, block_myoverview {{/str}}
             </a>
         </li>
+        {{/displaygroupinghidden}}
     </ul>
 </div>
+{{/displaygroupingselector}}
+{{^displaygroupingselector}}
+<div class="mb-1 mr-auto">
+    <span class="filler">&nbsp;</span>
+</div>
+{{/displaygroupingselector}}

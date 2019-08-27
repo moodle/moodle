@@ -27,22 +27,74 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
 
+    // Presentation options heading.
+    $settings->add(new admin_setting_heading('block_myoverview/appearance',
+            get_string('appearance', 'admin'),
+            ''));
+
     // Display Course Categories on Dashboard course items (cards, lists, summary items).
     $settings->add(new admin_setting_configcheckbox(
-        'block_myoverview/displaycategories',
-        get_string('displaycategories', 'block_myoverview'),
-        get_string('displaycategories_help', 'block_myoverview'),
-        1));
+            'block_myoverview/displaycategories',
+            get_string('displaycategories', 'block_myoverview'),
+            get_string('displaycategories_help', 'block_myoverview'),
+            1));
 
-       $choices = array(BLOCK_MYOVERVIEW_VIEW_CARD => get_string('card', 'block_myoverview'),
-        BLOCK_MYOVERVIEW_VIEW_LIST => get_string('list', 'block_myoverview'),
-        BLOCK_MYOVERVIEW_VIEW_SUMMARY => get_string('summary', 'block_myoverview'));
-
+    // Enable / Disable available layouts.
+    $choices = array(BLOCK_MYOVERVIEW_VIEW_CARD => get_string('card', 'block_myoverview'),
+            BLOCK_MYOVERVIEW_VIEW_LIST => get_string('list', 'block_myoverview'),
+            BLOCK_MYOVERVIEW_VIEW_SUMMARY => get_string('summary', 'block_myoverview'));
     $settings->add(new admin_setting_configmulticheckbox(
-        'block_myoverview/layouts',
-        get_string('layouts', 'block_myoverview'),
-        get_string('layouts_help', 'block_myoverview'),
-        $choices,
-        $choices));
+            'block_myoverview/layouts',
+            get_string('layouts', 'block_myoverview'),
+            get_string('layouts_help', 'block_myoverview'),
+            $choices,
+            $choices));
+    unset ($choices);
 
+    // Enable / Disable course filter items.
+    $settings->add(new admin_setting_heading('block_myoverview/availablegroupings',
+            get_string('availablegroupings', 'block_myoverview'),
+            get_string('availablegroupings_desc', 'block_myoverview')));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingallincludinghidden',
+            get_string('allincludinghidden', 'block_myoverview'),
+            '',
+            0));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingall',
+            get_string('all', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupinginprogress',
+            get_string('inprogress', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingpast',
+            get_string('past', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingfuture',
+            get_string('future', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupingstarred',
+            get_string('favourites', 'block_myoverview'),
+            '',
+            1));
+
+    $settings->add(new admin_setting_configcheckbox(
+            'block_myoverview/displaygroupinghidden',
+            get_string('hiddencourses', 'block_myoverview'),
+            '',
+            1));
 }

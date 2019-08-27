@@ -56,6 +56,7 @@ define('FIRSTUSEDEXCELROW', 3);
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
 
+define('COURSE_TIMELINE_ALLINCLUDINGHIDDEN', 'allincludinghidden');
 define('COURSE_TIMELINE_ALL', 'all');
 define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
@@ -4320,9 +4321,9 @@ function course_filter_courses_by_timeline_classification(
 ) : array {
 
     if (!in_array($classification,
-            [COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS,
+            [COURSE_TIMELINE_ALLINCLUDINGHIDDEN, COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS,
                 COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_HIDDEN])) {
-        $message = 'Classification must be one of COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
+        $message = 'Classification must be one of COURSE_TIMELINE_ALLINCLUDINGHIDDEN, COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
             . 'COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_FUTURE';
         throw new moodle_exception($message);
     }
@@ -4336,7 +4337,7 @@ function course_filter_courses_by_timeline_classification(
         $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
 
         // Added as of MDL-63457 toggle viewability for each user.
-        if (($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
+        if ($classification == COURSE_TIMELINE_ALLINCLUDINGHIDDEN || ($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
             (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) {
             $filteredcourses[] = $course;
             $filtermatches++;

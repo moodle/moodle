@@ -22,12 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['all'] = 'All';
-$string['allexcepthidden'] = 'All (except hidden)';
+$string['allincludinghidden'] = 'All';
+$string['all'] = 'All (except hidden)';
 $string['addtofavourites'] = 'Star this course';
 $string['aria:addtofavourites'] = 'Star for';
-$string['aria:allcourses'] = 'All courses';
-$string['aria:allcoursesexcepthidden'] = 'All courses except hidden courses';
+$string['aria:allcoursesincludinghidden'] = 'All courses';
+$string['aria:allcourses'] = 'All courses except hidden courses';
 $string['aria:card'] = 'Switch to card view';
 $string['aria:controls'] = 'Course overview controls';
 $string['aria:courseactions'] = 'Actions for current course';
@@ -45,6 +45,8 @@ $string['aria:past'] = 'Show past courses';
 $string['aria:removefromfavourites'] = 'Remove star for';
 $string['aria:summary'] = 'Switch to summary view';
 $string['aria:sortingdropdown'] = 'Sorting drop-down menu';
+$string['availablegroupings'] = 'Available filters';
+$string['availablegroupings_desc'] = 'Course filters which are available for selection by users. If none are selected, all courses will be displayed.';
 $string['card'] = 'Card';
 $string['cards'] = 'Cards';
 $string['courseprogress'] = 'Course progress:';

@@ -67,6 +67,16 @@ function(
         NOCOURSES: 'core_course/no-courses'
     };
 
+    var GROUPINGS = {
+        GROUPING_ALLINCLUDINGHIDDEN: 'allincludinghidden',
+        GROUPING_ALL: 'all',
+        GROUPING_INPROGRESS: 'inprogress',
+        GROUPING_FUTURE: 'future',
+        GROUPING_PAST: 'past',
+        GROUPING_FAVOURITES: 'favourites',
+        GROUPING_HIDDEN: 'hidden'
+    };
+
     var NUMCOURSES_PERPAGE = [12, 24, 48, 96, 0];
 
     var loadedPages = [];
@@ -253,14 +263,103 @@ function(
     };
 
     /**
+     * Get the action menu item
+     *
+     * @param {Object} root  root The course overview container
+     * @param {Number} courseId Course id.
+     * @return {Object} The hide course menu item.
+     */
+    var getHideCourseMenuItem = function(root, courseId) {
+        return root.find('[data-action="hide-course"][data-course-id="' + courseId + '"]');
+    };
+
+    /**
+     * Get the action menu item
+     *
+     * @param {Object} root  root The course overview container
+     * @param {Number} courseId Course id.
+     * @return {Object} The show course menu item.
+     */
+    var getShowCourseMenuItem = function(root, courseId) {
+        return root.find('[data-action="show-course"][data-course-id="' + courseId + '"]');
+    };
+
+    /**
+     * Hide course
+     *
+     * @param  {Object} root The course overview container
+     * @param  {Number} courseId Course id number
+     */
+    var hideCourse = function(root, courseId) {
+        var hideAction = getHideCourseMenuItem(root, courseId);
+        var showAction = getShowCourseMenuItem(root, courseId);
+        var filters = getFilterValues(root);
+
+        setCourseHiddenState(courseId, true);
+
+        // Remove the course from this view as it is now hidden and thus not covered by this view anymore.
+        // Do only if we are not in "All" view mode where really all courses are shown.
+        if (filters.grouping != GROUPINGS.GROUPING_ALLINCLUDINGHIDDEN) {
+            hideElement(root, courseId);
+        }
+
+        hideAction.addClass('hidden');
+        showAction.removeClass('hidden');
+    };
+
+    /**
+     * Show course
+     *
+     * @param  {Object} root The course overview container
+     * @param  {Number} courseId Course id number
+     */
+    var showCourse = function(root, courseId) {
+        var hideAction = getHideCourseMenuItem(root, courseId);
+        var showAction = getShowCourseMenuItem(root, courseId);
+        var filters = getFilterValues(root);
+
+        setCourseHiddenState(courseId, null);
+
+        // Remove the course from this view as it is now shown again and thus not covered by this view anymore.
+        // Do only if we are not in "All" view mode where really all courses are shown.
+        if (filters.grouping != GROUPINGS.GROUPING_ALLINCLUDINGHIDDEN) {
+            hideElement(root, courseId);
+        }
+
+        hideAction.removeClass('hidden');
+        showAction.addClass('hidden');
+    };
+
+    /**
+     * Set the courses hidden status and push to repository
+     *
+     * @param  {Number} courseId Course id to favourite.
+     * @param  {Bool} status new hidden status.
+     * @return {Promise} Repository promise.
+     */
+    var setCourseHiddenState = function(courseId, status) {
+
+        // If the given status is not hidden, the preference has to be deleted with a null value.
+        if (status === false) {
+            status = null;
+        }
+        return Repository.updateUserPreferences({
+            preferences: [
+                {
+                    type: 'block_myoverview_hidden_course_' + courseId,
+                    value: status
+                }
+            ]
+        });
+    };
+
+    /**
      * Reset the loadedPages dataset to take into account the hidden element
      *
      * @param {Object} root The course overview container
-     * @param {Object} target The course that you want to hide
+     * @param {Number} id The course id number
      */
-    var hideElement = function(root, target) {
-        var id = getCourseId(target);
-
+    var hideElement = function(root, id) {
         var pagingBar = root.find('[data-region="paging-bar"]');
         var jumpto = parseInt(pagingBar.attr('data-active-page-number'));
 
@@ -570,38 +669,15 @@ function(
 
         root.on(CustomEvents.events.activate, SELECTORS.ACTION_HIDE_COURSE, function(e, data) {
             var target = $(e.target).closest(SELECTORS.ACTION_HIDE_COURSE);
-            var id = getCourseId(target);
-
-            var request = {
-                preferences: [
-                    {
-                        type: 'block_myoverview_hidden_course_' + id,
-                        value: true
-                    }
-                ]
-            };
-            Repository.updateUserPreferences(request);
-
-            hideElement(root, target);
+            var courseId = getCourseId(target);
+            hideCourse(root, courseId);
             data.originalEvent.preventDefault();
         });
 
         root.on(CustomEvents.events.activate, SELECTORS.ACTION_SHOW_COURSE, function(e, data) {
             var target = $(e.target).closest(SELECTORS.ACTION_SHOW_COURSE);
-            var id = getCourseId(target);
-
-            var request = {
-                preferences: [
-                    {
-                        type: 'block_myoverview_hidden_course_' + id,
-                        value: null
-                    }
-                ]
-            };
-
-            Repository.updateUserPreferences(request);
-
-            hideElement(root, target);
+            var courseId = getCourseId(target);
+            showCourse(root, courseId);
             data.originalEvent.preventDefault();
         });
     };
