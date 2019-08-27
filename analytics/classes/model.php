@@ -1722,12 +1722,8 @@ class model {
             $predictor->clear_model($this->get_unique_id(), $this->get_output_dir());
         }
 
-        $predictionids = $DB->get_fieldset_select('analytics_predictions', 'id', 'modelid = :modelid',
-            array('modelid' => $this->get_id()));
-        if ($predictionids) {
-            list($sql, $params) = $DB->get_in_or_equal($predictionids);
-            $DB->delete_records_select('analytics_prediction_actions', "predictionid $sql", $params);
-        }
+        $DB->delete_records_select('analytics_prediction_actions', "predictionid IN
+            (SELECT id FROM {analytics_predictions} WHERE modelid = :modelid)", ['modelid' => $this->get_id()]);
 
         $DB->delete_records('analytics_predictions', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_predict_samples', array('modelid' => $this->model->id));
@@ -1833,25 +1829,31 @@ class model {
         $contextids = array_map(function($predictionobj) {
             return $predictionobj->contextid;
         }, $predictionrecords);
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
 
-        // We select the fields that will allow us to map ids to $predictionrecords. Given that we already filter by modelid
-        // we have enough with sampleid and rangeindex. The reason is that the sampleid relation to a site is N - 1.
-        $fields = 'id, sampleid, rangeindex';
+        // Limited to 30000 records as a middle point between the ~65000 params limit in pgsql and the size limit for mysql which
+        // can be increased if required up to a reasonable point.
+        $chunks = array_chunk($contextids, 30000);
+        foreach ($chunks as $contextidschunk) {
+            list($contextsql, $contextparams) = $DB->get_in_or_equal($contextidschunk, SQL_PARAMS_NAMED);
 
-        // We include the contextid and the timecreated filter to reduce the number of records in $dbpredictions. We can not
-        // add as many OR conditions as records in $predictionrecords.
-        $sql = "SELECT $fields
-                  FROM {analytics_predictions}
-                 WHERE modelid = :modelid
-                       AND contextid $contextsql
-                       AND timecreated >= :firsttimecreated";
-        $params = $contextparams + ['modelid' => $this->model->id, 'firsttimecreated' => $firstprediction->timecreated];
-        $dbpredictions = $DB->get_recordset_sql($sql, $params);
-        foreach ($dbpredictions as $id => $dbprediction) {
-            // The append_rangeindex implementation is the same regardless of the time splitting method in use.
-            $uniqueid = $this->get_time_splitting()->append_rangeindex($dbprediction->sampleid, $dbprediction->rangeindex);
-            $predictionrecords[$uniqueid]->id = $dbprediction->id;
+            // We select the fields that will allow us to map ids to $predictionrecords. Given that we already filter by modelid
+            // we have enough with sampleid and rangeindex. The reason is that the sampleid relation to a site is N - 1.
+            $fields = 'id, sampleid, rangeindex';
+
+            // We include the contextid and the timecreated filter to reduce the number of records in $dbpredictions. We can not
+            // add as many OR conditions as records in $predictionrecords.
+            $sql = "SELECT $fields
+                      FROM {analytics_predictions}
+                     WHERE modelid = :modelid
+                           AND contextid $contextsql
+                           AND timecreated >= :firsttimecreated";
+            $params = $contextparams + ['modelid' => $this->model->id, 'firsttimecreated' => $firstprediction->timecreated];
+            $dbpredictions = $DB->get_recordset_sql($sql, $params);
+            foreach ($dbpredictions as $id => $dbprediction) {
+                // The append_rangeindex implementation is the same regardless of the time splitting method in use.
+                $uniqueid = $this->get_time_splitting()->append_rangeindex($dbprediction->sampleid, $dbprediction->rangeindex);
+                $predictionrecords[$uniqueid]->id = $dbprediction->id;
+            }
         }
 
         return $predictionrecords;
