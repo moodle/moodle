@@ -69,6 +69,7 @@ define([], function() {
             item: '[data-region="discussion-list-item"]',
             lockedLabel: "[data-region='locked-label']",
             subscribedLabel: "[data-region='subscribed-label']",
+            timedLabel: "[data-region='timed-label']",
         },
     };
 });

@@ -119,6 +119,11 @@ define([
 
             e.preventDefault();
         });
+
+        root.on('click', Selectors.discussion.timedLabel, function(e) {
+            // Prevent clicking on the timed discussion label from causing the page to jump.
+            e.preventDefault();
+        });
     };
 
     return {
