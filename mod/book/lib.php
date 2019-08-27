@@ -564,7 +564,7 @@ function book_export_contents($cm, $baseurl) {
     $currentchapter = 0;
 
     foreach ($chapters as $chapter) {
-        if ($chapter->hidden) {
+        if ($chapter->hidden && !has_capability('mod/book:viewhiddenchapters', $context)) {
             continue;
         }
 
@@ -573,6 +573,7 @@ function book_export_contents($cm, $baseurl) {
             "title"     => format_string($chapter->title, true, array('context' => $context)),
             "href"      => $chapter->id . "/index.html",
             "level"     => 0,
+            "hidden"    => $chapter->hidden,
             "subitems"  => array()
         );
 
