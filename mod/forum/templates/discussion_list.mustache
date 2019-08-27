@@ -83,12 +83,46 @@
                         <th scope="col">
                             <span class="accesshide">{{#str}}status{{/str}}</span>
                         </th>
-                        <th scope="col" class="p-l-0">{{#str}}discussion, mod_forum{{/str}}</th>
+                        <th scope="col" class="p-l-0">
+                            {{#state.sortorder.isdiscussiondesc}}
+                                <a href="{{{forum.urls.sortdiscussionasc}}}" aria-label="{{#str}}discussionlistsortbydiscussionasc, mod_forum{{/str}}">{{#str}}discussion, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.isdiscussiondesc}}
+                            {{#state.sortorder.isdiscussionasc}}
+                                <a href="{{{forum.urls.sortdiscussiondesc}}}" aria-label="{{#str}}discussionlistsortbydiscussiondesc, mod_forum{{/str}}">{{#str}}discussion, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/uplong, core, {{#str}}asc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.isdiscussionasc}}
+                            {{^state.sortorder.isdiscussiondesc}}
+                                {{^state.sortorder.isdiscussionasc}}
+                                    <a href="{{{forum.urls.sortdiscussiondesc}}}" aria-label="{{#str}}discussionlistsortbydiscussiondesc, mod_forum{{/str}}">{{#str}}discussion, mod_forum{{/str}}</a>
+                                {{/state.sortorder.isdiscussionasc}}
+                            {{/state.sortorder.isdiscussiondesc}}
+                        </th>
                         {{#forum.state.groupmode}}
-                            <th scope="col" class="group">{{#str}}group{{/str}}</th>
+                        <th scope="col" class="group">
+                            {{#state.sortorder.isgroupdesc}}
+                                <a href="{{{forum.urls.sortgroupasc}}}" aria-label="{{#str}}discussionlistsortbygroupasc, mod_forum{{/str}}">{{#str}}group{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.isgroupdesc}}
+                            {{#state.sortorder.isgroupasc}}
+                                <a href="{{{forum.urls.sortgroupdesc}}}" aria-label="{{#str}}discussionlistsortbygroupdesc, mod_forum{{/str}}">{{#str}}group{{/str}}</a> <span class="text-primary">{{#pix}}t/uplong, core, {{#str}}asc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.isgroupasc}}
+                            {{^state.sortorder.isgroupdesc}}
+                                {{^state.sortorder.isgroupasc}}
+                                    <a href="{{{forum.urls.sortgroupdesc}}}" aria-label="{{#str}}discussionlistsortbygroupdesc, mod_forum{{/str}}">{{#str}}group{{/str}}</a>
+                                {{/state.sortorder.isgroupasc}}
+                            {{/state.sortorder.isgroupdesc}}
+                        </th>
                         {{/forum.state.groupmode}}
                         <th scope="col" class="author">
-                            {{#str}}startedby, mod_forum{{/str}}
+                            {{#state.sortorder.isstarterdesc}}
+                                <a href="{{{forum.urls.sortstarterasc}}}" aria-label="{{#str}}discussionlistsortbystarterasc, mod_forum{{/str}}">{{#str}}startedby, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.isstarterdesc}}
+                            {{#state.sortorder.isstarterasc}}
+                                <a href="{{{forum.urls.sortstarterdesc}}}" aria-label="{{#str}}discussionlistsortbystarterdesc, mod_forum{{/str}}">{{#str}}startedby, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/uplong, core, {{#str}}asc, core{{/str}}{{/pix}}</span>
+                            {{/state.sortorder.isstarterasc}}
+                            {{^state.sortorder.isstarterdesc}}
+                                {{^state.sortorder.isstarterasc}}
+                                    <a href="{{{forum.urls.sortstarterdesc}}}" aria-label="{{#str}}discussionlistsortbystarterdesc, mod_forum{{/str}}">{{#str}}startedby, mod_forum{{/str}}</a>
+                                {{/state.sortorder.isstarterasc}}
+                            {{/state.sortorder.isstarterdesc}}
                         </th>
                         <th scope="col" class="lastpost">
                             {{#state.sortorder.islastpostdesc}}

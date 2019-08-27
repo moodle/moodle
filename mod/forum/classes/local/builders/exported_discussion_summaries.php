@@ -180,7 +180,13 @@ class exported_discussion_summaries {
             'isrepliesdesc' => $sortorder == $discussionlistvault::SORTORDER_REPLIES_DESC,
             'isrepliesasc' => $sortorder == $discussionlistvault::SORTORDER_REPLIES_ASC,
             'iscreateddesc' => $sortorder == $discussionlistvault::SORTORDER_CREATED_DESC,
-            'iscreatedasc' => $sortorder == $discussionlistvault::SORTORDER_CREATED_ASC
+            'iscreatedasc' => $sortorder == $discussionlistvault::SORTORDER_CREATED_ASC,
+            'isdiscussiondesc' => $sortorder == $discussionlistvault::SORTORDER_DISCUSSION_DESC,
+            'isdiscussionasc' => $sortorder == $discussionlistvault::SORTORDER_DISCUSSION_ASC,
+            'isstarterdesc' => $sortorder == $discussionlistvault::SORTORDER_STARTER_DESC,
+            'isstarterasc' => $sortorder == $discussionlistvault::SORTORDER_STARTER_ASC,
+            'isgroupdesc' => $sortorder == $discussionlistvault::SORTORDER_GROUP_DESC,
+            'isgroupasc' => $sortorder == $discussionlistvault::SORTORDER_GROUP_ASC,
         );
 
         $exportedposts['state']['sortorder'] = $sortoptions;
