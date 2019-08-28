@@ -414,6 +414,7 @@ class api {
                 'NoDelegate_CoreRating' => new lang_string('ratings', 'rating'),
                 'NoDelegate_CoreTag' => new lang_string('tags'),
                 '$mmLoginEmailSignup' => new lang_string('startsignup'),
+                'NoDelegate_ForgottenPassword' => new lang_string('forgotten'),
                 'NoDelegate_ResponsiveMainMenuItems' => new lang_string('responsivemainmenuitems', 'tool_mobile'),
             ),
             "$mainmenu" => array(
