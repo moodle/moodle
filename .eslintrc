@@ -203,7 +203,7 @@
       }
     },
     {
-      files: ["**/amd/src/*.js"],
+      files: ["**/amd/src/*.js", "*.js"],
       // Check AMD with some slightly stricter rules.
       rules: {
         'no-unused-vars': 'error',
