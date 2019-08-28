@@ -4309,6 +4309,9 @@ function delete_user(stdClass $user) {
     // Delete all content associated with the user context, but not the context itself.
     $usercontext->delete_content();
 
+    // Delete any search data.
+    \core_search\manager::context_deleted($usercontext);
+
     // Any plugin that needs to cleanup should register this event.
     // Trigger event.
     $event = \core\event\user_deleted::create(
@@ -5061,6 +5064,10 @@ function delete_course($courseorid, $showfeedback = true) {
         }
     }
 
+    // Tell the search manager we are about to delete a course. This prevents us sending updates
+    // for each individual context being deleted.
+    \core_search\manager::course_deleting_start($courseid);
+
     $handler = core_course\customfield\course_handler::create();
     $handler->delete_instance($courseid);
 
@@ -5077,6 +5084,9 @@ function delete_course($courseorid, $showfeedback = true) {
     if (class_exists('format_base', false)) {
         format_base::reset_course_cache($courseid);
     }
+
+    // Tell search that we have deleted the course so it can delete course data from the index.
+    \core_search\manager::course_deleting_finish($courseid);
 
     // Trigger a course deleted event.
     $event = \core\event\course_deleted::create(array(

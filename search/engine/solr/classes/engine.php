@@ -1445,4 +1445,40 @@ class engine extends \core_search\engine {
     public function supports_users() {
         return true;
     }
+
+    /**
+     * Solr supports deleting the index for a context.
+     *
+     * @param int $oldcontextid Context that has been deleted
+     * @return bool True to indicate that any data was actually deleted
+     * @throws \core_search\engine_exception
+     */
+    public function delete_index_for_context(int $oldcontextid) {
+        $client = $this->get_search_client();
+        try {
+            $client->deleteByQuery('contextid:' . $oldcontextid);
+            $client->commit(true);
+            return true;
+        } catch (\Exception $e) {
+            throw new \core_search\engine_exception('error_solr', 'search_solr', '', $e->getMessage());
+        }
+    }
+
+    /**
+     * Solr supports deleting the index for a course.
+     *
+     * @param int $oldcourseid
+     * @return bool True to indicate that any data was actually deleted
+     * @throws \core_search\engine_exception
+     */
+    public function delete_index_for_course(int $oldcourseid) {
+        $client = $this->get_search_client();
+        try {
+            $client->deleteByQuery('courseid:' . $oldcourseid);
+            $client->commit(true);
+            return true;
+        } catch (\Exception $e) {
+            throw new \core_search\engine_exception('error_solr', 'search_solr', '', $e->getMessage());
+        }
+    }
 }
