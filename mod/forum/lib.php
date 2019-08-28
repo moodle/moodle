@@ -32,6 +32,7 @@ define('FORUM_MODE_FLATOLDEST', 1);
 define('FORUM_MODE_FLATNEWEST', -1);
 define('FORUM_MODE_THREADED', 2);
 define('FORUM_MODE_NESTED', 3);
+define('FORUM_MODE_MODERN', 4);
 
 define('FORUM_CHOOSESUBSCRIBE', 0);
 define('FORUM_FORCESUBSCRIBE', 1);
@@ -5191,7 +5192,8 @@ function forum_get_layout_modes() {
     return array (FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
                   FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
                   FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
-                  FORUM_MODE_NESTED     => get_string('modenested', 'forum'));
+                  FORUM_MODE_NESTED     => get_string('modenested', 'forum'),
+                  FORUM_MODE_MODERN        => get_string('modemodern', 'forum'));
 }
 
 /**

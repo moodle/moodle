@@ -291,13 +291,20 @@ if ($node && $post->get_id() != $discussion->get_first_post_id()) {
     $node->add(format_string($post->get_subject()), $PAGE->url);
 }
 
+$ismoderndisplaymode = $displaymode == FORUM_MODE_MODERN;
 $PAGE->set_title("$course->shortname: " . format_string($discussion->get_name()));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button(forum_search_form($course));
+if ($ismoderndisplaymode) {
+    $PAGE->add_body_class('modern-display-mode reset-style');
+} else {
+    $PAGE->set_button(forum_search_form($course));
+}
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($forum->get_name()), 2);
-echo $OUTPUT->heading(format_string($discussion->get_name()), 3, 'discussionname');
+if (!$ismoderndisplaymode) {
+    echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+    echo $OUTPUT->heading(format_string($discussion->get_name()), 3, 'discussionname');
+}
 
 $rendererfactory = mod_forum\local\container::get_renderer_factory();
 $discussionrenderer = $rendererfactory->get_discussion_renderer($forum, $discussion, $displaymode);

@@ -365,6 +365,7 @@ $string['messageprovider:posts'] = 'Subscribed forum posts';
 $string['missingsearchterms'] = 'The following search terms occur only in the HTML markup of this message:';
 $string['modeflatnewestfirst'] = 'Display replies flat, with newest first';
 $string['modeflatoldestfirst'] = 'Display replies flat, with oldest first';
+$string['modemodern'] = 'Display replies in modern form';
 $string['modenested'] = 'Display replies in nested form';
 $string['modethreaded'] = 'Display replies in threaded form';
 $string['modulename'] = 'Forum';
