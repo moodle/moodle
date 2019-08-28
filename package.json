@@ -27,6 +27,7 @@
     "grunt-eslint": "20.1.0",
     "grunt-sass": "2.1.0",
     "grunt-stylelint": "0.6.0",
+    "jshint": "^2.10.2",
     "semver": "5.3.0",
     "shifter": "0.5.0",
     "stylelint": "8.0.0",
