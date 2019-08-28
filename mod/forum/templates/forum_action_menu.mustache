@@ -84,5 +84,8 @@
             {{/istimelocked}}
         {{/capabilities.manage}}
         {{> forum/discussion_subscription_toggle }}
+        {{#unread}}
+            {{> forum/mark_as_read }}
+        {{/unread}}
     </div>
 </div>
