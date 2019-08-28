@@ -238,11 +238,6 @@ class enrol_license_plugin extends enrol_plugin {
             return get_string('canntenrollate', 'enrol_license', userdate($instance->enrolenddate));
         }
 
-        if (!$instance->customint6) {
-            // New enrols not allowed.
-            return get_string('canntenrol', 'enrol_license');
-        }
-
         if ($DB->record_exists('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
             return get_string('canntenrol', 'enrol_license');
         }

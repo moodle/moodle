@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['canntenrol'] = 'Enrolment is disabled or inactive';
 $string['customwelcomemessage'] = 'Custom welcome message';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during license enrolment';
