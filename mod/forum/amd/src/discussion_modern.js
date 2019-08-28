@@ -44,6 +44,27 @@ const getPostContainer = (element) => {
 };
 
 /**
+ * Get the closest post container element from the given element.
+ *
+ * @param {Object} element jQuery element to search from
+ * @param {Number} id Id of the post to find.
+ * @return {Object} jQuery element
+ */
+const getPostContainerById = (element, id) => {
+    return element.find(`${Selectors.post.post}[data-post-id=${id}]`);
+};
+
+/**
+ * Get the parent post container elements from the given element.
+ *
+ * @param {Object} element jQuery element to search from
+ * @return {Object} jQuery element
+ */
+const getParentPostContainers = (element) => {
+    return element.parents(Selectors.post.post);
+};
+
+/**
  * Get the post content container element from the post container element.
  *
  * @param {Object} postContainer jQuery element for the post container
@@ -64,36 +85,210 @@ const getInPageReplyContainer = (postContainer) => {
 };
 
 /**
- * Show the in page reply form in the given in page reply container. The form
- * display will be animated.
+ * Get the in page reply form element from the post container element.
  *
- * @param {Object} inPageReplyContainer jQuery element for the in page reply container
- * @param {Function} afterAnimationCallback Callback after animation completes
+ * @param {Object} postContainer jQuery element for the post container
+ * @return {Object} jQuery element
  */
-const showInPageReplyForm = (inPageReplyContainer, afterAnimationCallback) => {
-    const form = inPageReplyContainer.find(Selectors.post.inpageReplyContent);
+const getInPageReplyForm = (postContainer) => {
+    return getInPageReplyContainer(postContainer).find(Selectors.post.inpageReplyContent);
+};
 
-    form.slideDown({
+/**
+ * Get the in page reply create (reply) button element from the post container element.
+ *
+ * @param {Object} postContainer jQuery element for the post container
+ * @return {Object} jQuery element
+ */
+const getInPageReplyCreateButton = (postContainer) => {
+    return getPostContentContainer(postContainer).find(Selectors.post.inpageReplyCreateButton);
+};
+
+/**
+ * Get the replies visibility toggle container (show/hide replies button container) element
+ * from the post container element.
+ *
+ * @param {Object} postContainer jQuery element for the post container
+ * @return {Object} jQuery element
+ */
+const getRepliesVisibilityToggleContainer = (postContainer) => {
+    return postContainer.children(Selectors.post.repliesVisibilityToggleContainer);
+};
+
+/**
+ * Get the replies container element from the post container element.
+ *
+ * @param {Object} postContainer jQuery element for the post container
+ * @return {Object} jQuery element
+ */
+const getRepliesContainer = (postContainer) => {
+    return postContainer.children(Selectors.post.repliesContainer);
+};
+
+/**
+ * Check if the post has any replies.
+ *
+ * @param {Object} postContainer jQuery element for the post container
+ * @return {Bool}
+ */
+const hasReplies = (postContainer) => {
+    return getRepliesContainer(postContainer).children().length > 0;
+};
+
+/**
+ * Get the show replies button element from the replies visibility toggle container element.
+ *
+ * @param {Object} replyVisibilityToggleContainer jQuery element for the toggle container
+ * @return {Object} jQuery element
+ */
+const getShowRepliesButton = (replyVisibilityToggleContainer) => {
+    return replyVisibilityToggleContainer.find(Selectors.post.showReplies);
+};
+
+/**
+ * Get the hide replies button element from the replies visibility toggle container element.
+ *
+ * @param {Object} replyVisibilityToggleContainer jQuery element for the toggle container
+ * @return {Object} jQuery element
+ */
+const getHideRepliesButton = (replyVisibilityToggleContainer) => {
+    return replyVisibilityToggleContainer.find(Selectors.post.hideReplies);
+};
+
+/**
+ * Check if the replies are visible.
+ *
+ * @param {Object} postContainer jQuery element for the post container
+ * @return {Bool}
+ */
+const repliesVisible = (postContainer) => {
+    const repliesContainer = getRepliesContainer(postContainer);
+    return repliesContainer.is(':visible');
+};
+
+/**
+ * Show the post replies.
+ *
+ * @param {Object} postContainer jQuery element for the post container
+ * @param {Number|null} postIdToSee Id of the post to scroll into view (if any)
+ */
+const showReplies = (postContainer, postIdToSee = null) => {
+    const repliesContainer = getRepliesContainer(postContainer);
+    const replyVisibilityToggleContainer = getRepliesVisibilityToggleContainer(postContainer);
+    const showButton = getShowRepliesButton(replyVisibilityToggleContainer);
+    const hideButton = getHideRepliesButton(replyVisibilityToggleContainer);
+
+    showButton.addClass('hidden');
+    hideButton.removeClass('hidden');
+
+    repliesContainer.slideDown({
         duration: ANIMATION_DURATION,
         queue: false,
-        complete: afterAnimationCallback
+        complete: () => {
+            if (postIdToSee) {
+                const postContainerToSee = getPostContainerById(repliesContainer, postIdToSee);
+                if (postContainerToSee.length) {
+                    postContainerToSee[0].scrollIntoView();
+                }
+            }
+        }
     }).css('display', 'none').fadeIn(ANIMATION_DURATION);
+};
+
+/**
+ * Hide the post replies.
+ *
+ * @param {Object} postContainer jQuery element for the post container
+ */
+const hideReplies = (postContainer) => {
+    const repliesContainer = getRepliesContainer(postContainer);
+    const replyVisibilityToggleContainer = getRepliesVisibilityToggleContainer(postContainer);
+    const showButton = getShowRepliesButton(replyVisibilityToggleContainer);
+    const hideButton = getHideRepliesButton(replyVisibilityToggleContainer);
+
+    showButton.removeClass('hidden');
+    hideButton.addClass('hidden');
+
+    repliesContainer.slideUp({
+        duration: ANIMATION_DURATION,
+        queue: false
+    }).fadeOut(ANIMATION_DURATION);
+};
+
+/** Variable to hold the showInPageReplyForm function after it's built. */
+let showInPageReplyForm = null;
+
+/**
+ * Build the showInPageReplyForm function with the given additional template context.
+ *
+ * @param {Object} additionalTemplateContext Additional render context for the in page reply template.
+ * @return {Function}
+ */
+const buildShowInPageReplyFormFunction = (additionalTemplateContext) => {
+    /**
+     * Show the in page reply form in the given in page reply container. The form
+     * display will be animated.
+     *
+     * @param {Object} postContainer jQuery element for the post container
+     */
+    return async (postContainer) => {
+
+        const inPageReplyContainer = getInPageReplyContainer(postContainer);
+        const repliesVisibilityToggleContainer = getRepliesVisibilityToggleContainer(postContainer);
+        const inPageReplyCreateButton = getInPageReplyCreateButton(postContainer);
+
+        if (!hasInPageReplyForm(inPageReplyContainer)) {
+            try {
+                const html = await renderInPageReplyTemplate(additionalTemplateContext, inPageReplyCreateButton, postContainer);
+                Templates.appendNodeContents(inPageReplyContainer, html, '');
+            } catch (e) {
+                Notification.exception(e);
+            }
+        }
+
+        inPageReplyCreateButton.fadeOut(ANIMATION_DURATION, () => {
+            const inPageReplyForm = getInPageReplyForm(postContainer);
+            inPageReplyForm.slideDown({
+                duration: ANIMATION_DURATION,
+                queue: false,
+                complete: () => {
+                    inPageReplyForm.find('textarea').focus();
+                }
+            }).css('display', 'none').fadeIn(ANIMATION_DURATION);
+
+            if (repliesVisibilityToggleContainer.length && hasReplies(postContainer)) {
+                repliesVisibilityToggleContainer.fadeIn(ANIMATION_DURATION);
+                hideReplies(postContainer);
+            }
+        });
+    };
 };
 
 /**
  * Hide the in page reply form in the given in page reply container. The form
  * display will be animated.
  *
- * @param {Object} inPageReplyContainer jQuery element for the in page reply container
- * @param {Function} afterAnimationCallback Callback after animation completes
+ * @param {Object} postContainer jQuery element for the post container
+ * @param {Number|null} postIdToSee Id of the post to scroll into view (if any)
  */
-const hideInPageReplyForm = (inPageReplyContainer, afterAnimationCallback) => {
-    const form = inPageReplyContainer.find(Selectors.post.inpageReplyContent);
+const hideInPageReplyForm = (postContainer, postIdToSee = null) => {
+    const inPageReplyForm = getInPageReplyForm(postContainer);
+    const inPageReplyCreateButton = getInPageReplyCreateButton(postContainer);
+    const repliesVisibilityToggleContainer = getRepliesVisibilityToggleContainer(postContainer);
 
-    form.slideUp({
+    if (repliesVisibilityToggleContainer.length && hasReplies(postContainer)) {
+        repliesVisibilityToggleContainer.fadeOut(ANIMATION_DURATION);
+        if (!repliesVisible(postContainer)) {
+            showReplies(postContainer, postIdToSee);
+        }
+    }
+
+    inPageReplyForm.slideUp({
         duration: ANIMATION_DURATION,
         queue: false,
-        complete: afterAnimationCallback
+        complete: () => {
+            inPageReplyCreateButton.fadeIn(ANIMATION_DURATION);
+        }
     }).fadeOut(200);
 };
 
@@ -134,51 +329,64 @@ const renderInPageReplyTemplate = (additionalTemplateContext, button, postContai
 };
 
 /**
+ * Increment the total reply count in the show/hide replies buttons for the post.
+ *
+ * @param {Object} postContainer jQuery element for the post container
+ */
+const incrementTotalReplyCount = (postContainer) => {
+    getRepliesVisibilityToggleContainer(postContainer).find(Selectors.post.replyCount).each((index, element) => {
+        const currentCount = parseInt(element.innerText, 10);
+        element.innerText = currentCount + 1;
+    });
+};
+
+/**
  * Create all of the event listeners for the discussion.
  *
  * @param {Object} root jQuery element for the discussion container
- * @param {Object} additionalTemplateContext Additional render context for the in page reply template
  */
-const registerEventListeners = (root, additionalTemplateContext) => {
+const registerEventListeners = (root) => {
     CustomEvents.define(root, [CustomEvents.events.activate]);
     // Auto expanding text area for in page reply.
     AutoRows.init(root);
 
     // Reply button is clicked.
-    root.on(CustomEvents.events.activate, Selectors.post.inpageReplyCreateButton, async (e, data) => {
+    root.on(CustomEvents.events.activate, Selectors.post.inpageReplyCreateButton, (e, data) => {
         data.originalEvent.preventDefault();
-
-        const button = $(e.currentTarget);
-        const postContainer = getPostContainer(button);
-        const inPageReplyContainer = getInPageReplyContainer(postContainer);
-
-        if (!hasInPageReplyForm(inPageReplyContainer)) {
-            try {
-                const html = await renderInPageReplyTemplate(additionalTemplateContext, button, postContainer);
-                Templates.appendNodeContents(inPageReplyContainer, html, '');
-            } catch (e) {
-                Notification.exception(e);
-            }
-        }
-
-        button.fadeOut(ANIMATION_DURATION, () => {
-            showInPageReplyForm(inPageReplyContainer, () => {
-                inPageReplyContainer.find(Selectors.post.inpageReplyContent).find('textarea').focus();
-            });
-        });
+        const postContainer = getPostContainer($(e.currentTarget));
+        showInPageReplyForm(postContainer);
     });
 
     // Cancel in page reply button.
     root.on(CustomEvents.events.activate, Selectors.post.inpageReplyCancelButton, (e, data) => {
         data.originalEvent.preventDefault();
+        const postContainer = getPostContainer($(e.currentTarget));
+        hideInPageReplyForm(postContainer);
+    });
 
-        const button = $(e.currentTarget);
-        const postContainer = getPostContainer(button);
-        const postContentContainer = getPostContentContainer(postContainer);
-        const inPageReplyContainer = getInPageReplyContainer(postContainer);
-        const inPageReplyCreateButton = postContentContainer.find(Selectors.post.inpageReplyCreateButton);
-        hideInPageReplyForm(inPageReplyContainer, () => {
-            inPageReplyCreateButton.fadeIn(ANIMATION_DURATION);
+    // Show replies button clicked.
+    root.on(CustomEvents.events.activate, Selectors.post.showReplies, (e, data) => {
+        data.originalEvent.preventDefault();
+        const postContainer = getPostContainer($(e.target));
+        showReplies(postContainer);
+    });
+
+    // Hide replies button clicked.
+    root.on(CustomEvents.events.activate, Selectors.post.hideReplies, (e, data) => {
+        data.originalEvent.preventDefault();
+        const postContainer = getPostContainer($(e.target));
+        hideReplies(postContainer);
+    });
+
+    // Post created with in page reply.
+    root.on(InPageReply.EVENTS.POST_CREATED, Selectors.post.inpageSubmitBtn, (e, newPostId) => {
+        const currentTarget = $(e.currentTarget);
+        const postContainer = getPostContainer(currentTarget);
+        const postContainers = getParentPostContainers(currentTarget);
+        hideInPageReplyForm(postContainer, newPostId);
+
+        postContainers.each((index, container) => {
+            incrementTotalReplyCount($(container));
         });
     });
 };
@@ -190,15 +398,17 @@ const registerEventListeners = (root, additionalTemplateContext) => {
  * @param {Object} context Additional render context for the in page reply template
  */
 export const init = (root, context) => {
+    // Build the showInPageReplyForm function with the additional render context.
+    showInPageReplyForm = buildShowInPageReplyFormFunction(context);
     // Add discussion event listeners.
-    registerEventListeners(root, context);
-    // Add default discussion javascript (keyboard nav etc).
+    registerEventListeners(root);
+    // Initialise default discussion javascript (keyboard nav etc).
     Discussion.init(root);
     // Add in page reply javascript.
     InPageReply.init(root);
 
     // Initialise the settings menu javascript.
-    const discussionToolsContainer = root.find('[data-container="discussion-tools"]');
+    const discussionToolsContainer = root.find(Selectors.discussion.tools);
     LockToggle.init(discussionToolsContainer);
     FavouriteToggle.init(discussionToolsContainer);
     Pin.init(discussionToolsContainer);

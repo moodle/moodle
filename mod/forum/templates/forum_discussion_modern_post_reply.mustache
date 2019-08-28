@@ -53,6 +53,22 @@
         {{/isdeleted}}
     {{/footer}}
     {{$replies}}
+        <div class="indent my-4" data-region="replies-visibility-toggle-container" style="display: none">
+            <button class="btn btn-link pl-0" data-action="show-replies">
+                {{#str}}
+                    showpreviousrepliescount,
+                    mod_forum,
+                    <span data-region="reply-count">{{#totalreplycount}}{{.}}{{/totalreplycount}}{{^totalreplycount}}0{{/totalreplycount}}</span>
+                {{/str}}
+            </button>
+            <button class="btn btn-link hidden pl-0" data-action="hide-replies">
+                {{#str}}
+                    hidepreviousrepliescount,
+                    mod_forum,
+                    <span data-region="reply-count">{{#totalreplycount}}{{.}}{{/totalreplycount}}{{^totalreplycount}}0{{/totalreplycount}}</span>
+                {{/str}}
+            </button>
+        </div>
         <div class="indent replies-container" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}

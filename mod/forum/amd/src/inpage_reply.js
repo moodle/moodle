@@ -43,6 +43,10 @@ define([
         FLAT_NEWEST_FIRST: -1
     };
 
+    var EVENTS = {
+        POST_CREATED: 'mod_forum-post-created'
+    };
+
      /**
       * Moodle formats taken from the FORMAT_* constants declared in lib/weblib.php.
       * @type {Object}
@@ -156,6 +160,7 @@ define([
                         }
                     })
                     .then(function() {
+                        submitButton.trigger(EVENTS.POST_CREATED, newid);
                         hideSubmitButtonLoadingIcon(submitButton);
                         allButtons.prop('disabled', false);
                         return currentRoot.find(Selectors.post.inpageReplyContent).hide();
@@ -177,6 +182,7 @@ define([
         init: function(root) {
             registerEventListeners(root);
         },
-        CONTENT_FORMATS: CONTENT_FORMATS
+        CONTENT_FORMATS: CONTENT_FORMATS,
+        EVENTS: EVENTS
     };
 });
