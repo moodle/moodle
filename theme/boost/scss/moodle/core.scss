@@ -2158,13 +2158,13 @@ div.editor_atto_toolbar button .icon {
     }
 }
 
-$switch-height: (1rem * .8) !default;
+$switch-height: 1.25rem !default;
 $switch-height-half: ($switch-height / 2) !default;
 $switch-border-radius: $switch-height !default;
-$switch-bg: $custom-control-indicator-bg !default;
+$switch-bg: $gray-300 !default;
 $switch-checked-bg: map-get($theme-colors, 'primary') !default;
-$switch-disabled-bg: $custom-control-indicator-disabled-bg !default;
-$switch-disabled-color: $custom-control-label-disabled-color !default;
+$switch-disabled-bg: $gray-200 !default;
+$switch-disabled-color: $gray-600 !default;
 $switch-thumb-bg: $white !default;
 $switch-thumb-border-radius: 50% !default;
 $switch-thumb-padding: 2px !default;
