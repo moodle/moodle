@@ -156,7 +156,7 @@ if (!empty($forum)) {
                 $urlfactory->get_course_url_from_forum($forumentity),
                 get_string('activityiscurrentlyhidden'),
                 null,
-                \core\output\notice::NOTIFY_ERROR
+                \core\output\notification::NOTIFY_ERROR
             );
     }
 
@@ -387,7 +387,7 @@ if (!empty($forum)) {
                 $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
                 get_string('cannotdeletepost', 'forum'),
                 null,
-                \core\output\notice::NOTIFY_ERROR
+                \core\output\notification::NOTIFY_ERROR
             );
     }
 
@@ -403,14 +403,14 @@ if (!empty($forum)) {
                     $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
                     get_string('couldnotdeleteratings', 'rating'),
                     null,
-                    \core\output\notice::NOTIFY_ERROR
+                    \core\output\notification::NOTIFY_ERROR
                 );
         } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {
             redirect(
                     $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
-                    get_string('couldnotdeletereplies', 'rating'),
+                    get_string('couldnotdeletereplies', 'forum'),
                     null,
-                    \core\output\notice::NOTIFY_ERROR
+                    \core\output\notification::NOTIFY_ERROR
                 );
         } else {
             if (!$postentity->has_parent()) {
@@ -418,9 +418,9 @@ if (!empty($forum)) {
                 if ($forum->type == 'single') {
                     redirect(
                             $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
-                            get_string('cannotdeletediscussioninsinglediscussion', 'rating'),
+                            get_string('cannotdeletediscussioninsinglediscussion', 'forum'),
                             null,
-                            \core\output\notice::NOTIFY_ERROR
+                            \core\output\notification::NOTIFY_ERROR
                         );
                 }
                 forum_delete_discussion($discussion, false, $course, $cm, $forum);
@@ -452,7 +452,7 @@ if (!empty($forum)) {
                             $urlfactory->get_discussion_view_url_from_post($postentity),
                             get_string('errorwhiledelete', 'forum'),
                             null,
-                            \core\output\notice::NOTIFY_ERROR
+                            \core\output\notification::NOTIFY_ERROR
                         );
                 }
 
@@ -485,9 +485,9 @@ if (!empty($forum)) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
                 redirect(
                         forum_go_back_to($urlfactory->get_view_post_url_from_post($postentity)),
-                        get_string('couldnotdeletereplies', 'rating'),
+                        get_string('couldnotdeletereplies', 'forum'),
                         null,
-                        \core\output\notice::NOTIFY_ERROR
+                        \core\output\notification::NOTIFY_ERROR
                     );
             }
 
