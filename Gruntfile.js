@@ -576,6 +576,7 @@ module.exports = function(grunt) {
                 };
 
                 if (relativePath) {
+                    /* eslint-disable camelcase */
                     sub.relative_root = relativePath;
                 }
 
