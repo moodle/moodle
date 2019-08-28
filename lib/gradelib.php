@@ -1619,3 +1619,22 @@ function grade_floats_different($f1, $f2) {
 function grade_floats_equal($f1, $f2) {
     return (grade_floatval($f1) === grade_floatval($f2));
 }
+
+/**
+ * Get the most appropriate grade date for a grade item given the user that the grade relates to.
+ *
+ * @param \stdClass $grade
+ * @param \stdClass $user
+ * @return int
+ */
+function grade_get_date_for_user_grade(\stdClass $grade, \stdClass $user): int {
+    // The `datesubmitted` is the time that the grade was created.
+    // The `dategraded` is the time that it was modified or overwritten.
+    // If the grade was last modified by the user themselves use the date graded.
+    // Otherwise use date submitted.
+    if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
+        return $grade->dategraded;
+    } else {
+        return $grade->datesubmitted;
+    }
+}

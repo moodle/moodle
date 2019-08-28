@@ -151,4 +151,70 @@ class core_gradelib_testcase extends advanced_testcase {
         // Now because of the failure, two things need updating.
         $this->assertEquals(2, $DB->count_records('grade_items', ['courseid' => $course->id, 'needsupdate' => 1]));
     }
+
+    /**
+     * Tests for the grade_get_date_for_user_grade function.
+     *
+     * @dataProvider grade_get_date_for_user_grade_provider
+     * @param stdClass $grade
+     * @param stdClass $user
+     * @param int $expected
+     */
+    public function test_grade_get_date_for_user_grade(stdClass $grade, stdClass $user, int $expected): void {
+        $this->assertEquals($expected, grade_get_date_for_user_grade($grade, $user));
+    }
+
+    /**
+     * Data provider for tests of the grade_get_date_for_user_grade function.
+     *
+     * @return array
+     */
+    public function grade_get_date_for_user_grade_provider(): array {
+        $u1 = (object) [
+            'id' => 42,
+        ];
+        $u2 = (object) [
+            'id' => 930,
+        ];
+
+        $d1 = 1234567890;
+        $d2 = 9876543210;
+
+        $g1 = (object) [
+            'usermodified' => $u1->id,
+            'dategraded' => $d1,
+            'datesubmitted' => $d2,
+        ];
+        $g2 = (object) [
+            'usermodified' => $u1->id,
+            'dategraded' => $d1,
+            'datesubmitted' => 0,
+        ];
+
+        return [
+            'If the user is the last person to have modified the grade_item then show the date that it was graded' => [
+                $g1,
+                $u1,
+                $d1,
+            ],
+            'If the user is not the last person to have modified the grade_item, ' .
+            'and there is no submission date, then show the date that it was submitted' => [
+                $g1,
+                $u2,
+                $d2,
+            ],
+            'If the user is not the last person to have modified the grade_item, ' .
+            'but there is no submission date, then show the date that it was graded' => [
+                $g2,
+                $u2,
+                $d1,
+            ],
+            'If the user is the last person to have modified the grade_item, ' .
+            'and there is no submission date, then still show the date that it was graded' => [
+                $g2,
+                $u1,
+                $d1,
+            ],
+        ];
+    }
 }
