@@ -27,6 +27,7 @@ require_once(__DIR__ . '/exact_named_selector.php');
 require_once(__DIR__ . '/partial_named_selector.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Mink\Element\Element;
 
 /**
  * Moodle selectors manager.
@@ -92,6 +93,28 @@ class behat_selectors {
         return [
             $selector,
             behat_context_helper::escape($locator),
+        ];
+    }
+
+    /**
+     * Transform the selector for a field.
+     *
+     * @param string $label The label to find
+     * @param Element $container The container to look within
+     * @return array The selector, locator, and container to search within
+     */
+    public static function transform_find_for_field(behat_base $context, string $label, Element $container): array {
+        $hasfieldset = strpos($label, '>');
+        if (false !== $hasfieldset) {
+            [$containerlabel, $label] = explode(">", $label, 2);
+            $container = $context->find_fieldset(trim($containerlabel), $container);
+            $label = trim($label);
+        }
+
+        return [
+            'selector' => 'named_partial',
+            'locator' => self::normalise_named_selector('field', $label),
+            'container' => $container,
         ];
     }
 }
