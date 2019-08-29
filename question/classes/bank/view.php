@@ -177,9 +177,9 @@ class view {
 
         if (empty($CFG->questionbankcolumns)) {
             $questionbankcolumns = array('checkbox_column', 'question_type_column',
-                                     'question_name_column', 'tags_action_column', 'edit_action_column',
-                                     'copy_action_column', 'preview_action_column', 'delete_action_column',
-                                     'creator_name_column', 'modifier_name_column');
+                    'question_name_idnumber_tags_column', 'tags_action_column', 'edit_action_column',
+                    'copy_action_column', 'preview_action_column', 'delete_action_column',
+                    'creator_name_column', 'modifier_name_column');
         } else {
              $questionbankcolumns = explode(',', $CFG->questionbankcolumns);
         }
@@ -467,9 +467,9 @@ class view {
     protected function load_page_questions($page, $perpage) {
         global $DB;
         $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams, $page * $perpage, $perpage);
-        if (!$questions->valid()) {
-            // No questions on this page. Reset to page 0.
+        if (empty($questions)) {
             $questions->close();
+            // No questions on this page. Reset to page 0.
             $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams, 0, $perpage);
         }
         return $questions;
@@ -784,7 +784,15 @@ class view {
         if ($totalnumber == 0) {
             return;
         }
-        $questions = $this->load_page_questions($page, $perpage);
+        $questionsrs = $this->load_page_questions($page, $perpage);
+        $questions = [];
+        foreach ($questionsrs as $question) {
+            $questions[$question->id] = $question;
+        }
+        $questionsrs->close();
+        foreach ($this->requiredcolumns as $name => $column) {
+            $column->load_additional_data($questions);
+        }
 
         echo '<div class="categorypagingbarcontainer">';
         $pageingurl = new \moodle_url('edit.php', $pageurl->params());
@@ -805,7 +813,6 @@ class view {
             $this->print_table_row($question, $rowcount);
             $rowcount += 1;
         }
-        $questions->close();
         $this->end_table();
         echo "</div>\n";
 

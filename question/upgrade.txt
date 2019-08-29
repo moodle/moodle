@@ -1,5 +1,13 @@
 This files describes API changes for code that uses the question API.
 
+=== 3.8 ===
+
+If you have customised the display of the question bank (using $CFG->questionbankcolumns)
+then be aware that the default configuration has changed, and you may wish to make
+equivalent changes in your customised version. The old column question_name_column
+has been replaced by question_name_idnumber_tags_column. The old question_name_column
+still exists, so it is safe to continue using it.
+
 === 3.7 ===
 
 The code for the is_valid_number function that was duplicated in the

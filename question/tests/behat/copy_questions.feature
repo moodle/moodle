@@ -34,7 +34,7 @@ Feature: A teacher can duplicate questions in the question bank
     Then I should see "Duplicated question name"
     And I should see "Test question to be copied"
     And "Duplicated question name" row "Last modified by" column of "categoryquestions" table should contain "Teacher 1"
-    And "Test question to be copied" row "Created by" column of "categoryquestions" table should contain "Admin User"
+    And "Test question to be copied ID number qid" row "Created by" column of "categoryquestions" table should contain "Admin User"
 
   @javascript
   Scenario: Duplicated questions automatically get a new name suggested

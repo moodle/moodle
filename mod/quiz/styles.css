@@ -968,8 +968,7 @@ table.quizreviewsummary td.cell {
     border: 0 none;
 }
 
-#categoryquestions th.modifiername .sorters,
-#categoryquestions th.creatorname .sorters {
+#categoryquestions th .sorters {
     font-weight: normal;
     font-size: 0.8em;
 }

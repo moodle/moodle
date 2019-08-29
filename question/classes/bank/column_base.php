@@ -258,13 +258,49 @@ abstract class column_base {
     }
 
     /**
+     * If this column needs extra data (e.g. tags) then load that here.
+     *
+     * The extra data should be added to the question object in the array.
+     * Probably a good idea to check that another column has not already
+     * loaded the data you want.
+     *
+     * @param \stdClass[] $questions the questions that will be displayed.
+     */
+    public function load_additional_data(array $questions) {
+    }
+
+    /**
+     * Load the tags for each question.
+     *
+     * Helper that can be used from {@link load_additional_data()};
+     *
+     * @param array $questions
+     */
+    public function load_question_tags(array $questions) {
+        $firstquestion = reset($questions);
+        if (isset($firstquestion->tags)) {
+            // Looks like tags are already loaded, so don't do it again.
+            return;
+        }
+
+        // Load the tags.
+        $tagdata = \core_tag_tag::get_items_tags('core_question', 'question',
+                array_keys($questions));
+
+        // Add them to the question objects.
+        foreach ($tagdata as $questionid => $tags) {
+            $questions[$questionid]->tags = $tags;
+        }
+    }
+
+    /**
      * Can this column be sorted on? You can return either:
      *  + false for no (the default),
      *  + a field name, if sorting this column corresponds to sorting on that datbase field.
      *  + an array of subnames to sort on as follows
      *  return array(
      *      'firstname' => array('field' => 'uc.firstname', 'title' => get_string('firstname')),
-     *      'lastname' => array('field' => 'uc.lastname', 'field' => get_string('lastname')),
+     *      'lastname' => array('field' => 'uc.lastname', 'title' => get_string('lastname')),
      *  );
      * As well as field, and field, you can also add 'revers' => 1 if you want the default sort
      * order to be DESC.
