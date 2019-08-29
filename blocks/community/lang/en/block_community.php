@@ -64,7 +64,7 @@ $string['enroldownload_help'] = 'Some courses listed in the selected hub are bei
 Others are course templates provided for you to download and use on your own Moodle site.';
 $string['enrollable'] = 'courses I can enrol in';
 $string['enrollablecourses'] = 'Enrollable courses';
-$string['errorcourselisting'] = 'An error occurred when retrieving the course listing from the selected hub, please try again later. ({$a})';
+$string['errorcourselisting'] = 'Please note: It is no longer possible to search for community courses on moodle.net. Previously shared courses for download are now available on archive.moodle.net. See <a href="https://docs.moodle.org/en/Sunsetting_moodle.net">Sunsetting moodle.net</a> for further details.';
 $string['errorhublisting'] = 'An error occurred when retrieving the hub listing from Moodle.org, please try again later. ({$a})';
 $string['fileinfo'] = 'Language: {$a->lang} - License: {$a->license} -  Time updated: {$a->timeupdated}';
 $string['hideall'] = 'Hide hubs';
