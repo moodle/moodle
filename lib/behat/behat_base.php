@@ -32,6 +32,7 @@ use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Element\Element;
 use Behat\Mink\Session;
 
 /**
@@ -103,14 +104,6 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return NodeElement
      */
     protected function find($selector, $locator, $exception = false, $node = false, $timeout = false) {
-
-        // Throw exception, so dev knows it is not supported.
-        if ($selector === 'named') {
-            $exception = 'Using the "named" selector is deprecated as of 3.1. '
-                .' Use the "named_partial" or use the "named_exact" selector instead.';
-            throw new ExpectationException($exception, $this->getSession());
-        }
-
         // Returns the first match.
         $items = $this->find_all($selector, $locator, $exception, $node, $timeout);
         return count($items) ? reset($items) : null;
@@ -125,12 +118,11 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @param string $selector The selector type (css, xpath, named...)
      * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
      * @param Exception $exception Otherwise we throw expcetion with generic info
-     * @param NodeElement $node Spins around certain DOM node instead of the whole page
+     * @param NodeElement $container Restrict the search to just children of the specified container
      * @param int $timeout Forces a specific time out (in seconds). If 0 is provided the default timeout will be applied.
      * @return array NodeElements list
      */
-    protected function find_all($selector, $locator, $exception = false, $node = false, $timeout = false) {
-
+    protected function find_all($selector, $locator, $exception = false, $container = false, $timeout = false) {
         // Throw exception, so dev knows it is not supported.
         if ($selector === 'named') {
             $exception = 'Using the "named" selector is deprecated as of 3.1. '
@@ -140,7 +132,6 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         // Generic info.
         if (!$exception) {
-
             // With named selectors we can be more specific.
             if (($selector == 'named_exact') || ($selector == 'named_partial')) {
                 $exceptiontype = $locator[0];
@@ -159,12 +150,6 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             $exception = new ElementNotFoundException($this->getSession(), $exceptiontype, null, $exceptionlocator);
         }
 
-        $params = array('selector' => $selector, 'locator' => $locator);
-        // Pushing $node if required.
-        if ($node) {
-            $params['node'] = $node;
-        }
-
         // How much we will be waiting for the element to appear.
         if (!$timeout) {
             $timeout = self::get_timeout();
@@ -176,22 +161,62 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             $microsleep = true;
         }
 
+        // Normalise the values in order to perform the search.
+        $normalised = $this->normalise_selector($selector, $locator, $container ?: $this->getSession()->getPage());
+        $selector = $normalised['selector'];
+        $locator = $normalised['locator'];
+        $container = $normalised['container'];
+
+        if (empty($container)) {
+            $container = $this->getSession()->getPage();
+        }
+
         // Waits for the node to appear if it exists, otherwise will timeout and throw the provided exception.
         return $this->spin(
-            function($context, $args) {
-
-                // If no DOM node provided look in all the page.
-                if (empty($args['node'])) {
-                    return $context->getSession()->getPage()->findAll($args['selector'], $args['locator']);
-                }
-
-                return $args['node']->findAll($args['selector'], $args['locator']);
-            },
-            $params,
-            $timeout,
-            $exception,
-            $microsleep
+            function() use ($selector, $locator, $container) {
+                return $container->findAll($selector, $locator);
+            }, [], $timeout, $exception, $microsleep
         );
+    }
+
+    /**
+     * Normalise the locator and selector.
+     *
+     * @param string $selector The type of thing to search
+     * @param mixed $locator The locator value. Can be an array, but is more likely a string.
+     * @param Element $container An optional container to search within
+     * @return array The selector, locator, and container to search within
+     */
+    public function normalise_selector(string $selector, $locator, Element $container): array {
+        // Normalise the css and xpath selector types.
+        if ('css_element' === $selector) {
+            $selector = 'css';
+        } else if ('xpath_element' === $selector) {
+            $selector = 'xpath';
+        }
+
+        // Convert to named_partial where the selector type is not named_partial, named_exact, xpath, or css.
+        $converttonamed = !$this->getSession()->getSelectorsHandler()->isSelectorRegistered($selector);
+        $converttonamed = $converttonamed && 'xpath' !== $selector;
+        if ($converttonamed) {
+            $allowedpartialselectors = behat_partial_named_selector::get_allowed_selectors();
+            $allowedexactselectors = behat_exact_named_selector::get_allowed_selectors();
+            if (isset($allowedpartialselectors[$selector])) {
+                $locator = behat_selectors::normalise_named_selector($allowedpartialselectors[$selector], $locator);
+                $selector = 'named_partial';
+            } else if (isset($allowedexactselectors[$selector])) {
+                $locator = behat_selectors::normalise_named_selector($allowedexactselectors[$selector], $locator);
+                $selector = 'named_exact';
+            } else {
+                throw new ExpectationException("The '{$selector}' selector type is not registered.", $this);
+            }
+        }
+
+        return [
+            'selector' => $selector,
+            'locator' => $locator,
+            'container' => $container,
+        ];
     }
 
     /**
@@ -217,27 +242,14 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return NodeElement
      */
     public function __call($name, $arguments) {
-
-        if (substr($name, 0, 5) !== 'find_') {
-            throw new coding_exception('The "' . $name . '" method does not exist');
+        if (substr($name, 0, 5) === 'find_') {
+            return call_user_func_array([$this, 'find'], array_merge(
+                [substr($name, 5)],
+                $arguments
+            ));
         }
 
-        // Only the named selector identifier.
-        $cleanname = substr($name, 5);
-
-        // All named selectors shares the interface.
-        if (count($arguments) !== 1) {
-            throw new coding_exception('The "' . $cleanname . '" named selector needs the locator as it\'s single argument');
-        }
-
-        // Redirecting execution to the find method with the specified selector.
-        // It will detect if it's pointing to an unexisting named selector.
-        return $this->find('named_partial',
-            array(
-                $cleanname,
-                behat_context_helper::escape($arguments[0])
-            )
-        );
+        throw new coding_exception("The '{$name}' method does not exist");
     }
 
     /**
@@ -421,7 +433,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             throw new ExpectationException('The "' . $selectortype . '" selector type does not exist', $this->getSession());
         }
 
-        return behat_selectors::get_behat_selector($selectortype, $element, $this->getSession());
+        $normalised = $this->normalise_selector($selectortype, $element, $this->getSession()->getPage());
+        return [$normalised['selector'], $normalised['locator']];
     }
 
     /**
