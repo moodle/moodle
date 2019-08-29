@@ -3464,5 +3464,23 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019073100.00);
     }
+
+    if ($oldversion < 2019083000.01) {
+        // Delete "orphaned" subscriptions.
+        $sql = "SELECT DISTINCT es.userid
+                  FROM {event_subscriptions} es
+             LEFT JOIN {user} u ON u.id = es.userid
+                 WHERE u.deleted = 1 OR u.id IS NULL";
+        $deletedusers = $DB->get_field_sql($sql);
+        if ($deletedusers) {
+            list($sql, $params) = $DB->get_in_or_equal($deletedusers);
+
+            // Delete orphaned subscriptions.
+            $DB->execute("DELETE FROM {event_subscriptions} WHERE userid " . $sql, $params);
+        }
+
+        upgrade_main_savepoint(true, 2019083000.01);
+    }
+
     return true;
 }
