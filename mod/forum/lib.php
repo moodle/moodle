@@ -2433,7 +2433,7 @@ function forum_get_discussion_subscription_icon($forum, $discussionid, $returnur
 
         return html_writer::link($subscriptionlink, $output, array(
                 'title' => get_string('clicktounsubscribe', 'forum'),
-                'class' => 'discussiontoggle iconsmall',
+                'class' => 'discussiontoggle btn btn-link',
                 'data-forumid' => $forum->id,
                 'data-discussionid' => $discussionid,
                 'data-includetext' => $includetext,
@@ -2447,7 +2447,7 @@ function forum_get_discussion_subscription_icon($forum, $discussionid, $returnur
 
         return html_writer::link($subscriptionlink, $output, array(
                 'title' => get_string('clicktosubscribe', 'forum'),
-                'class' => 'discussiontoggle iconsmall',
+                'class' => 'discussiontoggle btn btn-link',
                 'data-forumid' => $forum->id,
                 'data-discussionid' => $discussionid,
                 'data-includetext' => $includetext,

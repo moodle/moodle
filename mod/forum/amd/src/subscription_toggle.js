@@ -28,12 +28,16 @@ define([
         'core/notification',
         'mod_forum/repository',
         'mod_forum/selectors',
+        'core/pubsub',
+        'mod_forum/forum_events',
     ], function(
         $,
         Templates,
         Notification,
         Repository,
-        Selectors
+        Selectors,
+        PubSub,
+        ForumEvents
     ) {
 
     /**
@@ -50,6 +54,10 @@ define([
 
             Repository.setDiscussionSubscriptionState(forumId, discussionId, subscriptionState)
                 .then(function(context) {
+                    PubSub.publish(ForumEvents.SUBSCRIPTION_TOGGLED, {
+                        discussionId: discussionId,
+                        subscriptionState: subscriptionState
+                    });
                     return Templates.render('mod_forum/discussion_subscription_toggle', context);
                 })
                 .then(function(html, js) {

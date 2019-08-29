@@ -65,7 +65,10 @@ define([], function() {
             toggle: "[data-type='pin-toggle'][data-action='toggle']",
         },
         discussion: {
-            tools: '[data-container="discussion-tools"]'
-        }
+            tools: '[data-container="discussion-tools"]',
+            item: '[data-region="discussion-list-item"]',
+            lockedLabel: "[data-region='locked-label']",
+            subscribedLabel: "[data-region='subscribed-label']",
+        },
     };
 });

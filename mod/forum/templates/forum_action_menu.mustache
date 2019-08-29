@@ -24,6 +24,7 @@
       * manage boolean - Whether to render the lock action.
       * favourite boolean - Whether to render the star/unstar action.
       * pin boolean - Whether to render the star/unstar action.
+      * subscribe boolean - Whether to render the subscribe action.
     * id int - The discussion ID.
     * forumid int - The forum ID.
     * istimelocked boolean - Whether this forum is time locked.
@@ -36,7 +37,8 @@
         "capabilities": {
             "manage": true,
             "favourite": true,
-            "pin": true
+            "pin": true,
+            "subscribe": true
         },
         "id": 1,
         "forumid": 1,
@@ -56,7 +58,7 @@
         aria-controls="forum-action-menu-{{id}}-menu"
         aria-expanded="false">
         {{#settings.togglemoreicon}}
-            {{#pix}} i/moremenu, core{{/pix}}
+            {{#pix}} i/menu, core{{/pix}}
         {{/settings.togglemoreicon}}
         {{^settings.togglemoreicon}}
             {{#pix}} i/settings, core{{/pix}}
@@ -64,9 +66,8 @@
         {{^settings.excludetext}}
             {{#str}} settings, mod_forum {{/str}}
         {{/settings.excludetext}}
-
     </a>
-    <div class="dropdown-menu dropdown-menu-right menu"
+    <div class="dropdown-menu dropdown-menu-right"
          aria-labelledby="forum-action-menu-{{id}}-menu"
          data-rel="menu-content"
          role="menu"
@@ -78,9 +79,10 @@
             {{> mod_forum/discussion_pin_toggle}}
         {{/capabilities.pin}}
         {{#capabilities.manage}}
-        {{^istimelocked}}
-            {{> forum/discussion_lock_toggle }}
-        {{/istimelocked}}
+            {{^istimelocked}}
+                {{> forum/discussion_lock_toggle }}
+            {{/istimelocked}}
         {{/capabilities.manage}}
+        {{> forum/discussion_subscription_toggle }}
     </div>
 </div>

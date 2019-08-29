@@ -26,16 +26,26 @@
     * none
 
     Context variables required for this template:
-    * TODO
+    * capabilities Object - Uses the "subscribe" attribute to determine whether to render the subscribe action.
+    * urls Object - Uses the "subscribe" attribute for the subscription URl.
+    * id int - The discussion ID.
+    * forumid int - The forum ID.
+    * userstate Object - Uses the "subscribed" attribute to determine the action that will be performed upon toggling.
 
     Example context (json):
     {
+        "capabilities": { "subscribe": true },
+        "urls": { "subscribe": "#" },
+        "id": 1,
+        "forumid": 1,
+        "userstate": { "subscribed": true }
     }
 }}
 {{#capabilities.subscribe}}
     <a
         href="{{{urls.subscribe}}}"
-        class="py-3 btn btn-link"
+        class="dropdown-item"
+        role="menuitem"
         data-type="subscription-toggle"
         data-action="toggle"
         data-discussionid="{{id}}"
@@ -50,10 +60,10 @@
         {{/userstate.subscribed}}
     >
         {{#userstate.subscribed}}
-            {{#pix}}t/subscribed, mod_forum, {{#str}}clicktounsubscribe, mod_forum{{/str}}{{/pix}}
+            {{#str}}unsubscribediscussion, forum{{/str}}
         {{/userstate.subscribed}}
         {{^userstate.subscribed}}
-            {{#pix}}t/unsubscribed, mod_forum, {{#str}}clicktosubscribe, mod_forum{{/str}}{{/pix}}
+            {{#str}}subscribediscussion, forum{{/str}}
         {{/userstate.subscribed}}
     </a>
 {{/capabilities.subscribe}}
