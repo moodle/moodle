@@ -269,6 +269,7 @@ class core_course_external extends external_api {
                         $module['afterlink'] = $cm->afterlink;
                         $module['customdata'] = json_encode($cm->customdata);
                         $module['completion'] = $cm->completion;
+                        $module['noviewlink'] = plugin_supports('mod', $cm->modname, FEATURE_NO_VIEW_LINK, false);
 
                         // Check module completion.
                         $completion = $completioninfo->is_enabled($cm);
@@ -282,7 +283,7 @@ class core_course_external extends external_api {
                             );
                         }
 
-                        if (!empty($cm->showdescription) or $cm->modname == 'label') {
+                        if (!empty($cm->showdescription) or $module['noviewlink']) {
                             // We want to use the external format. However from reading get_formatted_content(), $cm->content format is always FORMAT_HTML.
                             $options = array('noclean' => true);
                             list($module['description'], $descriptionformat) = external_format_text($cm->content,
@@ -458,6 +459,8 @@ class core_course_external extends external_api {
                                     'afterlink' => new external_value(PARAM_RAW, 'After link info to be displayed.',
                                         VALUE_OPTIONAL),
                                     'customdata' => new external_value(PARAM_RAW, 'Custom data (JSON encoded).', VALUE_OPTIONAL),
+                                    'noviewlink' => new external_value(PARAM_BOOL, 'Whether the module has no view page',
+                                        VALUE_OPTIONAL),
                                     'completion' => new external_value(PARAM_INT, 'Type of completion tracking:
                                         0 means none, 1 manual, 2 automatic.', VALUE_OPTIONAL),
                                     'completiondata' => new external_single_structure(

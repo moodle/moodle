@@ -942,6 +942,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($formattedtext, $module['description']);
                 $this->assertEquals($forumcm->instance, $module['instance']);
                 $this->assertContains('1 unread post', $module['afterlink']);
+                $this->assertFalse($module['noviewlink']);
+                $this->assertNotEmpty($module['description']);  // Module showdescription is on.
                 $testexecuted = $testexecuted + 2;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
@@ -949,9 +951,13 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                     array('noclean' => true, 'para' => false, 'filter' => false));
                 $this->assertEquals($formattedtext, $module['description']);
                 $this->assertEquals($labelcm->instance, $module['instance']);
+                $this->assertTrue($module['noviewlink']);
+                $this->assertNotEmpty($module['description']);  // Label always prints the description.
                 $testexecuted = $testexecuted + 1;
             } else if ($module['id'] == $datacm->id and $module['modname'] == 'data') {
                 $this->assertContains('customcompletionrules', $module['customdata']);
+                $this->assertFalse($module['noviewlink']);
+                $this->assertArrayNotHasKey('description', $module);
                 $testexecuted = $testexecuted + 1;
             }
         }
