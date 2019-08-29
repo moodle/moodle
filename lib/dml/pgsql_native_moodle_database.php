@@ -187,6 +187,17 @@ class pgsql_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        if (!empty($this->dboptions['dbpersist'])) {
+            // There are rare situations (such as PHP out of memory errors) when open cursors may
+            // not be closed at the end of a connection. When using persistent connections, the
+            // cursors remain open and 'get in the way' of future connections. To avoid this
+            // problem, close all cursors here.
+            $result = pg_query($this->pgsql, 'CLOSE ALL');
+            if ($result) {
+                pg_free_result($result);
+            }
+        }
+
         if (!empty($this->dboptions['dbhandlesoptions'])) {
             /* We don't trust people who just set the dbhandlesoptions, this code checks up on them.
              * These functions do not talk to the server, they use the client library knowledge to determine state.
