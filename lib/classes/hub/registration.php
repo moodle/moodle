@@ -418,19 +418,6 @@ class registration {
             return true;
         }
 
-        // Unpublish the courses.
-        try {
-            publication::delete_all_publications($unpublishalladvertisedcourses, $unpublishalluploadedcourses);
-        } catch (moodle_exception $e) {
-            $errormessage = $e->getMessage();
-            $errormessage .= \html_writer::empty_tag('br') .
-                get_string('errorunpublishcourses', 'hub');
-
-            \core\notification::add(get_string('unregistrationerror', 'hub', $errormessage),
-                \core\output\notification::NOTIFY_ERROR);
-            return false;
-        }
-
         // Course unpublish went ok, unregister the site now.
         try {
             api::unregister_site();
