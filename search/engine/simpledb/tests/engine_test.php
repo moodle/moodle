@@ -380,14 +380,14 @@ class search_simpledb_engine_testcase extends advanced_testcase {
     /**
      * Check the contents of the index.
      *
-     * @param string $searchword Word to search for within the content field
+     * @param string $searchword Word to match within the content field
      * @param string[] $expected Array of expected result titles, in alphabetical order
      * @throws dml_exception
      */
     protected function assert_raw_index_contents(string $searchword, array $expected) {
         global $DB;
         $results = $DB->get_records_select('search_simpledb_index',
-                $DB->sql_like('content', '?'), ['%' . $searchword . '%'], 'id, title');
+                $DB->sql_like('content', '?'), ['%' . $searchword . '%'], "id, {$DB->sql_order_by_text('title')}");
         $titles = array_map(function($x) {
             return $x->title;
         }, $results);
