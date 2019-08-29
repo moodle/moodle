@@ -371,12 +371,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return NodeElement
      */
     protected function get_selected_node($selectortype, $element) {
-
-        // Getting Mink selector and locator.
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-
-        // Returns the NodeElement.
-        return $this->find($selector, $locator);
+        return $this->find($selectortype, $element);
     }
 
     /**
@@ -388,7 +383,6 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return NodeElement
      */
     protected function get_text_selector_node($selectortype, $element) {
-
         // Getting Mink selector and locator.
         list($selector, $locator) = $this->transform_text_selector($selectortype, $element);
 
@@ -407,18 +401,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return NodeElement
      */
     protected function get_node_in_container($selectortype, $element, $containerselectortype, $containerelement) {
-
         // Gets the container, it will always be text based.
         $containernode = $this->get_text_selector_node($containerselectortype, $containerelement);
 
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-
-        // Specific exception giving info about where can't we find the element.
         $locatorexceptionmsg = $element . '" in the "' . $containerelement. '" "' . $containerselectortype. '"';
         $exception = new ElementNotFoundException($this->getSession(), $selectortype, null, $locatorexceptionmsg);
 
-        // Looks for the requested node inside the container node.
-        return $this->find($selector, $locator, $exception, $containernode);
+        return $this->find($selectortype, $element, $exception, $containernode);
     }
 
     /**
@@ -437,7 +426,6 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return array Contains the selector and the locator expected by Mink.
      */
     protected function transform_selector($selectortype, $element) {
-
         // Here we don't know if an allowed text selector is being used.
         $selectors = behat_selectors::get_allowed_selectors();
         if (!isset($selectors[$selectortype])) {
@@ -482,63 +470,66 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * Spins around an element until it exists
      *
      * @throws ExpectationException
-     * @param string $element
+     * @param string $locator
      * @param string $selectortype
      * @return void
      */
-    protected function ensure_element_exists($element, $selectortype) {
-
-        // Getting the behat selector & locator.
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-
+    protected function ensure_element_exists($locator, $selectortype) {
         // Exception if it timesout and the element is still there.
-        $msg = 'The "' . $element . '" element does not exist and should exist';
+        $msg = "The '{$locator}' element does not exist and should";
         $exception = new ExpectationException($msg, $this->getSession());
+
+        // Normalise the values in order to perform the search.
+        $normalised = $this->normalise_selector($selectortype, $locator, $this->getSession()->getPage());
+        $selector = $normalised['selector'];
+        $locator = $normalised['locator'];
+        $container = $normalised['container'];
 
         // It will stop spinning once the find() method returns true.
         $this->spin(
-            function($context, $args) {
-                // We don't use behat_base::find as it is already spinning.
-                if ($context->getSession()->getPage()->find($args['selector'], $args['locator'])) {
+            function() use ($selector, $locator, $container) {
+                if ($container->find($selector, $locator)) {
                     return true;
                 }
                 return false;
             },
-            array('selector' => $selector, 'locator' => $locator),
+            [],
             self::get_extended_timeout(),
             $exception,
             true
         );
-
     }
 
     /**
      * Spins until the element does not exist
      *
      * @throws ExpectationException
-     * @param string $element
+     * @param string $locator
      * @param string $selectortype
      * @return void
      */
-    protected function ensure_element_does_not_exist($element, $selectortype) {
-
-        // Getting the behat selector & locator.
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-
+    protected function ensure_element_does_not_exist($locator, $selectortype) {
         // Exception if it timesout and the element is still there.
-        $msg = 'The "' . $element . '" element exists and should not exist';
+        $msg = "The '{$locator}' element exists and should not exist";
         $exception = new ExpectationException($msg, $this->getSession());
+
+        // Normalise the values in order to perform the search.
+        $normalised = $this->normalise_selector($selectortype, $locator, $this->getSession()->getPage());
+        $selector = $normalised['selector'];
+        $locator = $normalised['locator'];
+        $container = $normalised['container'];
 
         // It will stop spinning once the find() method returns false.
         $this->spin(
-            function($context, $args) {
-                // We don't use behat_base::find() as we are already spinning.
-                if (!$context->getSession()->getPage()->find($args['selector'], $args['locator'])) {
-                    return true;
+            function() use ($selector, $locator, $container) {
+                if ($container->find($selector, $locator)) {
+                    return false;
                 }
-                return false;
+                return true;
             },
-            array('selector' => $selector, 'locator' => $locator),
+            // Note: We cannot use $this because the find will then be $this->find(), which leads us to a nested spin().
+            // We cannot nest spins because the outer spin times out before the inner spin completes.
+            [],
             self::get_extended_timeout(),
             $exception,
             true
