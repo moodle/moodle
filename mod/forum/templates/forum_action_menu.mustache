@@ -15,18 +15,40 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum-action-menu
+    @template mod_forum/forum_action_menu
 
-    This template renders action menu for each course.
+    This template renders action menu for a forum discussion.
+
+    Context variables required for this template:
+    * capabilities Object - Uses the following attributes:
+      * manage boolean - Whether to render the lock action.
+      * favourite boolean - Whether to render the star/unstar action.
+      * pin boolean - Whether to render the star/unstar action.
+    * id int - The discussion ID.
+    * forumid int - The forum ID.
+    * istimelocked boolean - Whether this forum is time locked.
+    * settings Object - Uses the following attributes:
+      * excludetext boolean - Whether to show an icon only.
+      * togglemoreicon - Whether to show a toggle-more icon or not.
 
     Example context (json):
     {
-
+        "capabilities": {
+            "manage": true,
+            "favourite": true,
+            "pin": true
+        },
+        "id": 1,
+        "forumid": 1,
+        "istimelocked": false,
+        "settings": {
+            "excludetext": false,
+            "togglemoreicon": false
+        }
     }
 }}
 <div class="ml-auto dropdown">
-    <button class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} m-t-0 p-t-0 btn btn-link"
-        type="button"
+    <a href="#" class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} btn btn-link"
         role="button"
         data-toggle="dropdown"
         aria-haspopup="true"
@@ -43,7 +65,7 @@
             {{#str}} settings, mod_forum {{/str}}
         {{/settings.excludetext}}
 
-    </button>
+    </a>
     <div class="dropdown-menu dropdown-menu-right menu"
          aria-labelledby="forum-action-menu-{{id}}-menu"
          data-rel="menu-content"
