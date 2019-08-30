@@ -52,6 +52,9 @@ $string['privacy:favouritespath'] = 'Course starred information';
 $string['privacy:metadata:completionsummary'] = 'The course contains completion information about the user.';
 $string['privacy:metadata:favouritessummary'] = 'The course contains information relating to the course being starred by the user.';
 $string['studentsatriskincourse'] = 'Students at risk in {$a} course';
+$string['studentsatriskinfomessage'] = 'Hi {$a->userfirstname},
+
+</br><br/>Students in the {$a->coursename} course have been identified as being at risk.';
 $string['target:coursecompletion'] = 'Students at risk of not meeting the course completion conditions';
 $string['target:coursecompletion_help'] = 'This target describes whether the student is considered at risk of not meeting the course completion conditions.';
 $string['target:coursecompetencies'] = 'Students at risk of not achieving the competencies assigned to a course';
