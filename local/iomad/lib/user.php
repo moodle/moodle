@@ -830,9 +830,18 @@ class company_user {
                     $newlicense->timecompleted = null;
                     $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
                     if ($licenserecord->used < $licenserecord->allocation) {
-                        $DB->insert_record('companylicense_users', (array) $newlicense);
-                        $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
-                        $DB->update_record('companylicense', $licenserecord);
+                        $newlicenseid = $DB->insert_record('companylicense_users', (array) $newlicense);
+
+                        // Create an event.
+                        $eventother = array('licenseid' => $licenserecord->id,
+                                            'issuedate' => time(),
+                                            'duedate' => 0);
+                        $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
+                                                                                                      'objectid' => $newlicenseid,
+                                                                                                      'courseid' => $courseid,
+                                                                                                      'userid' => $userid,
+                                                                                                      'other' => $eventother));
+                        $event->trigger();
                    }
                 }
             }
