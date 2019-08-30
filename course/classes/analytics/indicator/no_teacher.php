@@ -65,23 +65,6 @@ class no_teacher extends \core_analytics\local\indicator\binary {
     }
 
     /**
-     * Reversed because the indicator is in 'negative' and the max returned value means teacher present.
-     *
-     * @param float $value
-     * @param string $subtype
-     * @return string
-     */
-    public function get_display_value($value, $subtype = false) {
-
-        // No subtypes for binary values by default.
-        if ($value == -1) {
-            return get_string('yes');
-        } else if ($value == 1) {
-            return get_string('no');
-        }
-    }
-
-    /**
      * calculate_sample
      *
      * @param int $sampleid
