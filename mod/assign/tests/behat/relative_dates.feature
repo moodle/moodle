@@ -8,21 +8,22 @@ So that students can enter the course at any time and have a fixed period in whi
       | enablecourserelativedates | 1 |
     And the following "courses" exist:
       | fullname | shortname | category | groupmode | relativedatesmode | startdate |
-      | Course 1 | C1 | 0 | 1 | 1 | ##first day of -2 months##                     |
+      | Course 1 | C1 | 0 | 1 | 1 | ##first day of -4 months##                     |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student1@example.com |
     And the following "course enrolments" exist:
-     # Two students, one started 2 months ago and one this month.
+     # Two students, one started 4 months ago and one this month.
       | user | course | role | timestart |
       | teacher1 | C1 | editingteacher | ##first day of last month## |
-      | student1 | C1 | student | ##first day of -2 months##        |
+      | student1 | C1 | student | ##first day of -4 months##        |
       | student2 | C1 | student | ##first day of this month##        |
+     # One assignment, valid for 2 months.
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    | assignsubmission_onlinetext_enabled | timeopen | duedate |
-      | assign     | Test assignment name   | Test assignment description   | C1     | assign0     | 1                                   |##first day of -2 months## | ##last day of -2 months## |
+      | assign     | Test assignment name   | Test assignment description   | C1     | assign0     | 1                                   |##first day of -4 months## | ##last day of -3 months## |
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
@@ -39,21 +40,22 @@ So that students can enter the course at any time and have a fixed period in whi
       | enablecourserelativedates | 1 |
     And the following "courses" exist:
       | fullname | shortname | category | groupmode | relativedatesmode | startdate |
-      | Course 1 | C1 | 0 | 1 | 1 | ##first day of 3 months ago##                     |
+      | Course 1 | C1 | 0 | 1 | 1 | ##first day of 4 months ago##                     |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student1@example.com |
     And the following "course enrolments" exist:
-   # Two students, one started 3 months ago and one this month.
+     # Two students, one started 4 months ago and one this month.
       | user | course | role | timestart |
-      | teacher1 | C1 | editingteacher | ##first day of 3 months ago## |
-      | student1 | C1 | student | ##first day of 3 months ago##        |
+      | teacher1 | C1 | editingteacher | ##first day of 4 months ago## |
+      | student1 | C1 | student | ##first day of 4 months ago##        |
       | student2 | C1 | student | ##first day of this month##        |
+     # One assignment, valid for 2 months.
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    | assignsubmission_onlinetext_enabled | timeopen | duedate |
-      | assign     | Test assignment name   | Test assignment description   | C1     | assign0     | 1                                   |##first day of 3 months ago## | ##first day of 2 months ago## |
+      | assign     | Test assignment name   | Test assignment description   | C1     | assign0     | 1                                   |##first day of 4 months ago## | ##last day of 3 months ago## |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
