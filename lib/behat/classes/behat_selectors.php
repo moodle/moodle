@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once(__DIR__ . '/named_selector.php');
 require_once(__DIR__ . '/exact_named_selector.php');
 require_once(__DIR__ . '/partial_named_selector.php');
 
