@@ -33,6 +33,9 @@
  */
 class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSelector {
 
+    // Use the named selector trait.
+    use behat_named_selector;
+
     /**
      * Creates selector instance.
      */
@@ -246,6 +249,10 @@ XPATH
         '%ariaLabelMatch%' => [
             'moodle' => 'contains(./@aria-label, %locator%)',
         ],
+    ];
+
+    /** @var List of deprecated selectors */
+    protected static $deprecatedselectors = [
     ];
 
     /**
