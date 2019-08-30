@@ -35,6 +35,9 @@ use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Element\Element;
 use Behat\Mink\Session;
 
+require_once(__DIR__ . '/classes/component_named_selector.php');
+require_once(__DIR__ . '/classes/component_named_replacement.php');
+
 /**
  * Steps definitions base class.
  *
@@ -216,10 +219,22 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             $selector = 'xpath';
         }
 
-        // Convert to named_partial where the selector type is not named_partial, named_exact, xpath, or css.
+        // Convert to a named selector where the selector type is not a known selector.
         $converttonamed = !$this->getSession()->getSelectorsHandler()->isSelectorRegistered($selector);
         $converttonamed = $converttonamed && 'xpath' !== $selector;
         if ($converttonamed) {
+            if (behat_partial_named_selector::is_deprecated_selector($selector)) {
+                if ($replacement = behat_partial_named_selector::get_deprecated_replacement($selector)) {
+                    error_log("The '{$selector}' selector has been replaced with {$replacement}");
+                    $selector = $replacement;
+                }
+            } else if (behat_exact_named_selector::is_deprecated_selector($selector)) {
+                if ($replacement = behat_exact_named_selector::get_deprecated_replacement($selector)) {
+                    error_log("The '{$selector}' selector has been replaced with {$replacement}");
+                    $selector = $replacement;
+                }
+            }
+
             $allowedpartialselectors = behat_partial_named_selector::get_allowed_selectors();
             $allowedexactselectors = behat_exact_named_selector::get_allowed_selectors();
             if (isset($allowedpartialselectors[$selector])) {
@@ -229,7 +244,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 $locator = behat_selectors::normalise_named_selector($allowedexactselectors[$selector], $locator);
                 $selector = 'named_exact';
             } else {
-                throw new ExpectationException("The '{$selector}' selector type is not registered.", $this);
+                throw new ExpectationException("The '{$selector}' selector type is not registered.", $this->getSession()->getDriver());
             }
         }
 
@@ -1091,5 +1106,32 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     public static function get_extended_timeout() : int {
         return self::get_real_timeout(10);
+    }
+
+    /**
+     * Return a list of the exact named selectors for the component.
+     *
+     * @return behat_component_named_selector[]
+     */
+    public static function get_exact_named_selectors(): array {
+        return [];
+    }
+
+    /**
+     * Return a list of the partial named selectors for the component.
+     *
+     * @return behat_component_named_selector[]
+     */
+    public static function get_partial_named_selectors(): array {
+        return [];
+    }
+
+    /**
+     * Return a list of the named replacements for the component.
+     *
+     * @return behat_component_named_replacement[]
+     */
+    public static function get_named_replacements(): array {
+        return [];
     }
 }
