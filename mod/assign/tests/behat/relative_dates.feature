@@ -1,7 +1,8 @@
 @mod @mod_assign
-Feature: As a teacher in course with relative dates mode enabled
+Feature: Relative assignment due dates
+In order for students to be able to enter the course at any time and have a fixed period in which to submit the assignment
+As a teacher in course with relative dates mode enabled
 I should be able to create an assignment with a due date relative to the course start date
-So that students can enter the course at any time and have a fixed period in which to submit the assignment
 
   Scenario: As a student the due date for submitting my assignment is relative to my course start date
     Given the following config values are set as admin:
@@ -13,13 +14,13 @@ So that students can enter the course at any time and have a fixed period in whi
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 2 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "course enrolments" exist:
-     # Two students, one started 4 months ago and one this month.
+     # Two students, one started 4 months ago and one yesterday.
       | user | course | role | timestart |
       | teacher1 | C1 | editingteacher | ##first day of last month## |
-      | student1 | C1 | student | ##first day of -4 months##        |
-      | student2 | C1 | student | ##first day of this month##        |
+      | student1 | C1 | student | ##first day of -4 months## |
+      | student2 | C1 | student | ##yesterday## |
      # One assignment, valid for 2 months.
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    | assignsubmission_onlinetext_enabled | timeopen | duedate |
@@ -40,18 +41,18 @@ So that students can enter the course at any time and have a fixed period in whi
       | enablecourserelativedates | 1 |
     And the following "courses" exist:
       | fullname | shortname | category | groupmode | relativedatesmode | startdate |
-      | Course 1 | C1 | 0 | 1 | 1 | ##first day of 4 months ago##                     |
+      | Course 1 | C1 | 0 | 1 | 1 | ##first day of 4 months ago## |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 2 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "course enrolments" exist:
-     # Two students, one started 4 months ago and one this month.
+     # Two students, one started 4 months ago and one yesterday.
       | user | course | role | timestart |
       | teacher1 | C1 | editingteacher | ##first day of 4 months ago## |
-      | student1 | C1 | student | ##first day of 4 months ago##        |
-      | student2 | C1 | student | ##first day of this month##        |
+      | student1 | C1 | student | ##first day of 4 months ago## |
+      | student2 | C1 | student | ##yesterday## |
      # One assignment, valid for 2 months.
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    | assignsubmission_onlinetext_enabled | timeopen | duedate |
