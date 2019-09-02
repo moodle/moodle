@@ -78,7 +78,7 @@ class behat_message extends behat_base {
      */
     public function i_view_contact_in_messages($userfullname) {
         // Visit home page and follow messages.
-        $this->i_select_user_in_messaging($userfullname);
+        $this->execute('behat_message::i_select_user_in_messaging', [$userfullname]);
 
         $this->execute('behat_general::i_click_on_in_the',
             array(
@@ -107,9 +107,9 @@ class behat_message extends behat_base {
      * @param string $userfullname
      */
     public function i_select_user_in_messaging($userfullname) {
-        $this->i_open_messaging();
+        $this->execute('behat_message::i_open_messaging', []);
 
-        $this->i_search_for_string_in_messaging($userfullname);
+        $this->execute('behat_message::i_search_for_string_in_messaging', [$userfullname]);
 
         // Need to limit the click to the search results because the 'view-contact-profile' elements
         // can occur in two separate divs on the page.
@@ -154,7 +154,7 @@ class behat_message extends behat_base {
      * @param string $userfullname
      */
     public function i_send_message_to_user($messagecontent, $userfullname) {
-        $this->i_select_user_in_messaging($userfullname);
+        $this->execute('behat_message::i_select_user_in_messaging', [$userfullname]);
 
         $this->execute('behat_forms::i_set_the_field_with_xpath_to',
             array("//textarea[@data-region='send-message-txt']", $this->escape($messagecontent))
