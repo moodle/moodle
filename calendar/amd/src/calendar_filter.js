@@ -67,6 +67,9 @@ function(
         return Str.get_string('eventtype' + data.eventtype, 'calendar')
         .then(function(nameStr) {
             data.name = nameStr;
+            data.icon = true;
+            data.key = 'i/' + data.eventtype + 'event';
+            data.component = 'core';
 
             return data;
         })
