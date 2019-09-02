@@ -24,6 +24,7 @@
 
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['backupnameformat'] = '%Y%m%d-%H%M';
+$string['dateintervaldayshoursmins'] = '%ad %hh %im'; // See https://www.php.net/manual/en/dateinterval.format.php for format.
 $string['decsep'] = '.';
 $string['firstdayofweek'] = '1';
 $string['iso6391'] = 'en';

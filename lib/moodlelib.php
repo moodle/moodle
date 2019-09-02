@@ -2393,7 +2393,7 @@ function get_time_interval_string(int $time1, int $time2, string $format = ''): 
     $dtdate2 = new DateTime();
     $dtdate2->setTimeStamp($time2);
     $interval = $dtdate2->diff($dtdate);
-    $format = empty($format) ? get_string('relativedatestimediffformat', 'moodle') : $format;
+    $format = empty($format) ? get_string('dateintervaldayshoursmins', 'langconfig') : $format;
     return $interval->format($format);
 }
 
