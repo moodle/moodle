@@ -271,6 +271,14 @@ $temp->add(
         ]
     )
 );
+$temp->add(
+    new admin_setting_configcheckbox(
+        'task_logtostdout',
+        new lang_string('task_logtostdout', 'admin'),
+        new lang_string('task_logtostdout_desc', 'admin'),
+        1
+    )
+);
 
 if (\core\task\logmanager::uses_standard_settings()) {
     $temp->add(

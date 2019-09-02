@@ -77,12 +77,17 @@ class logmanager {
     protected static $oblevel = null;
 
     /**
+     * @var bool Output logged content to screen.
+     */
+    protected static $outputloggedcontent = true;
+
+    /**
      * Create a new task logger for the specified task, and prepare for logging.
      *
      * @param   \core\task\task_base    $task The task being run
      */
     public static function start_logging(task_base $task) {
-        global $DB;
+        global $CFG, $DB;
 
         if (!self::should_log()) {
             return;
@@ -128,6 +133,8 @@ class logmanager {
         } else {
             self::$oblevel = null;
         }
+
+        self::$outputloggedcontent = !empty($CFG->task_logtostdout);
 
         // Start capturing output.
         ob_start([\core\task\logmanager::class, 'add_line'], self::CHUNKSIZE);
@@ -336,6 +343,10 @@ class logmanager {
             fwrite(self::$fh, $log);
         }
 
-        return $log;
+        if (self::$outputloggedcontent) {
+            return $log;
+        } else {
+            return '';
+        }
     }
 }
