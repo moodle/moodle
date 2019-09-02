@@ -923,7 +923,7 @@ class model {
         }
 
         // Get all samples data.
-        list($sampleids, $samplesdata) = $this->get_analyser()->get_samples($sampleids);
+        list($sampleids, $samplesdata) = $this->get_samples($sampleids);
 
         // Calculate the targets.
         $predictions = array();
@@ -1233,7 +1233,7 @@ class model {
             return $prediction->sampleid;
         }, $predictions);
 
-        list($unused, $samplesdata) = $this->get_analyser()->get_samples($sampleids);
+        list($unused, $samplesdata) = $this->get_samples($sampleids);
 
         $current = 0;
 
@@ -1275,7 +1275,7 @@ class model {
      */
     public function prediction_sample_data($predictionobj) {
 
-        list($unused, $samplesdata) = $this->get_analyser()->get_samples(array($predictionobj->sampleid));
+        list($unused, $samplesdata) = $this->get_samples(array($predictionobj->sampleid));
 
         if (empty($samplesdata[$predictionobj->sampleid])) {
             throw new \moodle_exception('errorsamplenotavailable', 'analytics');
@@ -1531,6 +1531,64 @@ class model {
         $this->model->timemodified = time();
         $this->model->usermodified = $USER->id;
         $DB->update_record('analytics_models', $this->model);
+    }
+
+    /**
+     * Wrapper around analyser's get_samples to skip DB's max-number-of-params exception.
+     *
+     * @param  array  $sampleids
+     * @return array
+     */
+    public function get_samples(array $sampleids): array {
+
+        if (empty($sampleids)) {
+            throw new \coding_exception('No sample ids provided');
+        }
+
+        $chunksize = count($sampleids);
+
+        // We start with just 1 chunk, if it is too large for the db we split the list of sampleids in 2 and we
+        // try again. We repeat this process until the chunk is small enough for the db engine to process. The
+        // >= has been added in case there are other \dml_read_exceptions unrelated to the max number of params.
+        while (empty($done) && $chunksize >= 1) {
+
+            $chunks = array_chunk($sampleids, $chunksize);
+            $allsampleids = [];
+            $allsamplesdata = [];
+
+            foreach ($chunks as $index => $chunk) {
+
+                try {
+                    list($chunksampleids, $chunksamplesdata) = $this->get_analyser()->get_samples($chunk);
+                } catch (\dml_read_exception $e) {
+
+                    // Reduce the chunksize, we use floor() so the $chunksize is always less than the previous $chunksize value.
+                    $chunksize = floor($chunksize / 2);
+                    break;
+                }
+
+                // We can sum as these two arrays are indexed by sampleid and there are no collisions.
+                $allsampleids = $allsampleids + $chunksampleids;
+                $allsamplesdata = $allsamplesdata + $chunksamplesdata;
+
+                if ($index === count($chunks) - 1) {
+                    // We successfully processed all the samples in all chunks, we are done.
+                    $done = true;
+                }
+            }
+        }
+
+        if (empty($done)) {
+            if (!empty($e)) {
+                // Throw the last exception we caught, the \dml_read_exception we have been catching is unrelated to the max number
+                // of param's exception.
+                throw new \dml_read_exception($e);
+            } else {
+                throw new \coding_exception('We should never reach this point, there is a bug in ' .
+                    'core_analytics\\model::get_samples\'s code');
+            }
+        }
+        return [$allsampleids, $allsamplesdata];
     }
 
     /**

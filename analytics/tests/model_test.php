@@ -342,6 +342,59 @@ class analytics_model_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests model::get_samples()
+     *
+     * @return null
+     */
+    public function test_get_samples() {
+        $this->resetAfterTest();
+
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
+        // 10000 should be enough to make oracle and mssql fail, if we want pgsql to fail we need around 70000
+        // users, that is a few minutes just to create the users.
+        $nusers = 10000;
+
+        $userids = [];
+        for ($i = 0; $i < $nusers; $i++) {
+            $user = $this->getDataGenerator()->create_user();
+            $userids[] = $user->id;
+        }
+
+        $target = \core_analytics\manager::get_target('test_target_site_users');
+        $indicator = \core_analytics\manager::get_indicator('test_indicator_max');
+        $model = \core_analytics\model::create($target, ['test_indicator_max' => $indicator],
+            '\core\analytics\time_splitting\single_range');
+
+        list($sampleids, $samplesdata) = $model->get_samples($userids);
+        $this->assertCount($nusers, $sampleids);
+        $this->assertCount($nusers, $samplesdata);
+
+        $subset = array_slice($userids, 0, 100);
+        list($sampleids, $samplesdata) = $model->get_samples($subset);
+        $this->assertCount(100, $sampleids);
+        $this->assertCount(100, $samplesdata);
+
+        $subset = array_slice($userids, 0, 2);
+        list($sampleids, $samplesdata) = $model->get_samples($subset);
+        $this->assertCount(2, $sampleids);
+        $this->assertCount(2, $samplesdata);
+
+        $subset = array_slice($userids, 0, 1);
+        list($sampleids, $samplesdata) = $model->get_samples($subset);
+        $this->assertCount(1, $sampleids);
+        $this->assertCount(1, $samplesdata);
+
+        // Unexisting, so nothing returned, but still 2 arrays.
+        list($sampleids, $samplesdata) = $model->get_samples([1231231231231231]);
+        $this->assertEmpty($sampleids);
+        $this->assertEmpty($samplesdata);
+
+    }
+
+    /**
      * Generates a model log record.
      */
     private function add_fake_log() {
