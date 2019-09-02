@@ -122,6 +122,8 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         // covered below for admin user. This test is for user not allowed to ignore limits.
         $this->assertEquals(get_max_upload_file_size($maxbytes), $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
+        $userkey = get_user_key('core_files', $USER->id);
+        $this->assertEquals($userkey, $siteinfo['userprivateaccesskey']);
 
         $this->assertEquals(HOMEPAGE_MY, $siteinfo['userhomepage']);
         $this->assertEquals($CFG->calendartype, $siteinfo['sitecalendartype']);
