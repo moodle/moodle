@@ -20,7 +20,7 @@
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery'], function($) {
+define(['jquery', 'core/pending'], function($, Pending) {
     var moduleTransitions = {
         alert: [
             // Alert.
@@ -92,14 +92,46 @@ define(['jquery'], function($) {
         ],
     };
 
+    var getTransitionDurationFromElement = function(element) {
+        var MILLISECONDS_MULTIPLIER = 1000;
+        if (!element) {
+            return 0;
+        }
+        // Get transition-duration of the element
+
+        var transitionDuration = $(element).css('transition-duration');
+        var transitionDelay = $(element).css('transition-delay');
+        var floatTransitionDuration = parseFloat(transitionDuration);
+        var floatTransitionDelay = parseFloat(transitionDelay);
+
+        // Return 0 if element or transition duration is not found
+        if (!floatTransitionDuration && !floatTransitionDelay) {
+            return 0;
+        }
+
+        // If multiple durations are defined, take the first
+        transitionDuration = transitionDuration.split(',')[0];
+        transitionDelay = transitionDelay.split(',')[0];
+        return (parseFloat(transitionDuration) + parseFloat(transitionDelay)) * MILLISECONDS_MULTIPLIER;
+    };
+
     Object.keys(moduleTransitions).forEach(function(key) {
         moduleTransitions[key].forEach(function(pair) {
-            $(document.body).on(pair.start, pair.classMatch, function() {
-                M.util.js_pending(pair.end);
-            });
+            $(document.body).on(pair.start, pair.classMatch, function(e) {
+                var element = $(e.target);
+                var pendingPromise = new Pending(pair.start);
 
-            $(document.body).on(pair.end, pair.classMatch, function() {
-                M.util.js_complete(pair.end);
+                var called = false;
+                $(document.body).one(pair.end, pair.classMatch, function() {
+                    called = true;
+                    pendingPromise.resolve();
+                });
+
+                setTimeout(function() {
+                     if (!called) {
+                        element.trigger(pair.end);
+                     }
+                }, getTransitionDurationFromElement(element));
             });
         });
     });
