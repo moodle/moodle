@@ -567,13 +567,8 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
     $offset = 0, $excludecourses = []) {
     global $DB, $USER, $CFG;
 
-    if ($sort === null) {
-        if (empty($CFG->navsortmycoursessort)) {
-            $sort = 'visible DESC, sortorder ASC';
-        } else {
-            $sort = 'visible DESC, '.$CFG->navsortmycoursessort.' ASC';
-        }
-    }
+    // Re-Arrange the course sorting according to the admin settings.
+    $sort = enrol_get_courses_sortingsql($sort);
 
     // Guest account does not have any enrolled courses.
     if (!$allaccessible && (isguestuser() or !isloggedin())) {
@@ -805,6 +800,41 @@ function enrol_get_course_info_icons($course, array $instances = NULL) {
 }
 
 /**
+ * Returns SQL ORDER arguments which reflect the admin settings to sort my courses.
+ *
+ * @param string|null $sort SQL ORDER arguments which were originally requested (optionally).
+ * @return string SQL ORDER arguments.
+ */
+function enrol_get_courses_sortingsql($sort = null) {
+    global $CFG;
+
+    // Prepare the visible SQL fragment as empty.
+    $visible = '';
+    // Only create a visible SQL fragment if the caller didn't already pass a sort order which contains the visible field.
+    if ($sort === null || strpos($sort, 'visible') === false) {
+        // If the admin did not explicitly want to have shown and hidden courses sorted as one list, we will sort hidden
+        // courses to the end of the course list.
+        if (!isset($CFG->navsortmycourseshiddenlast) || $CFG->navsortmycourseshiddenlast == true) {
+            $visible = 'visible DESC, ';
+        }
+    }
+
+    // Only create a sortorder SQL fragment if the caller didn't already pass one.
+    if ($sort === null) {
+        // If the admin has configured a course sort order, we will use this.
+        if (!empty($CFG->navsortmycoursessort)) {
+            $sort = $CFG->navsortmycoursessort . ' ASC';
+
+            // Otherwise we will fall back to the sortorder sorting.
+        } else {
+            $sort = 'sortorder ASC';
+        }
+    }
+
+    return $visible . $sort;
+}
+
+/**
  * Returns course enrolment detailed information.
  *
  * @param object $course
@@ -955,15 +985,10 @@ function enrol_user_sees_own_courses($user = null) {
  * @return array
  */
 function enrol_get_all_users_courses($userid, $onlyactive = false, $fields = null, $sort = null) {
-    global $CFG, $DB;
+    global $DB;
 
-    if ($sort === null) {
-        if (empty($CFG->navsortmycoursessort)) {
-            $sort = 'visible DESC, sortorder ASC';
-        } else {
-            $sort = 'visible DESC, '.$CFG->navsortmycoursessort.' ASC';
-        }
-    }
+    // Re-Arrange the course sorting according to the admin settings.
+    $sort = enrol_get_courses_sortingsql($sort);
 
     // Guest account does not have any courses
     if (isguestuser($userid) or empty($userid)) {

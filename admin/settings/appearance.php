@@ -197,6 +197,10 @@ preferences,moodle|/user/preferences.php|t/preferences',
         'idnumber' => new lang_string('sort_idnumber', 'admin'),
     );
     $temp->add(new admin_setting_configselect('navsortmycoursessort', new lang_string('navsortmycoursessort', 'admin'), new lang_string('navsortmycoursessort_help', 'admin'), 'sortorder', $sortoptions));
+    $temp->add(new admin_setting_configcheckbox('navsortmycourseshiddenlast',
+            new lang_string('navsortmycourseshiddenlast', 'admin'),
+            new lang_string('navsortmycourseshiddenlast_help', 'admin'),
+            1));
     $temp->add(new admin_setting_configtext('navcourselimit', new lang_string('navcourselimit', 'admin'),
         new lang_string('confignavcourselimit', 'admin'), 10, PARAM_INT));
     $temp->add(new admin_setting_configcheckbox('usesitenameforsitepages', new lang_string('usesitenameforsitepages', 'admin'), new lang_string('configusesitenameforsitepages', 'admin'), 0));
