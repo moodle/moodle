@@ -868,16 +868,23 @@ class single_button implements renderable {
     public $actionid;
 
     /**
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
      * Constructor
      * @param moodle_url $url
      * @param string $label button text
      * @param string $method get or post submit method
+     * @param array $attributes Attributes for the HTML button tag
      */
-    public function __construct(moodle_url $url, $label, $method='post', $primary=false) {
+    public function __construct(moodle_url $url, $label, $method='post', $primary=false, $attributes = []) {
         $this->url    = clone($url);
         $this->label  = $label;
         $this->method = $method;
         $this->primary = $primary;
+        $this->attributes = $attributes;
     }
 
     /**
@@ -899,6 +906,17 @@ class single_button implements renderable {
     }
 
     /**
+     * Sets an attribute for the HTML button tag.
+     *
+     * @param  string $name  The attribute name
+     * @param  mixed  $value The value
+     * @return null
+     */
+    public function set_attribute($name, $value) {
+        $this->attributes[$name] = $value;
+    }
+
+    /**
      * Export data.
      *
      * @param renderer_base $output Renderer.
@@ -917,6 +935,11 @@ class single_button implements renderable {
         $data->disabled = $this->disabled;
         $data->tooltip = $this->tooltip;
         $data->primary = $this->primary;
+
+        $data->attributes = [];
+        foreach ($this->attributes as $key => $value) {
+            $data->attributes[] = ['name' => $key, 'value' => $value];
+        }
 
         // Form parameters.
         $params = $this->url->params();

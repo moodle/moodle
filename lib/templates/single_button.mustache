@@ -42,7 +42,13 @@
       "url" : "#",
       "primary" : true,
       "tooltip" : "This is a tooltip",
-      "label" : "This is a the button text"
+      "label" : "This is a the button text",
+      "attributes": [
+        {
+          "name": "data-attribute",
+          "value": "yeah"
+        }
+      ]
     }
 }}
 <div class="{{classes}}">
@@ -53,7 +59,8 @@
         <button type="submit" class="btn {{#primary}}btn-primary{{/primary}}{{^primary}}btn-secondary{{/primary}}"
             id="{{id}}"
             title={{#quote}}{{tooltip}}{{/quote}}
-            {{#disabled}}disabled{{/disabled}}>{{label}}</button>
+            {{#disabled}}disabled{{/disabled}}
+            {{#attributes}} {{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}>{{label}}</button>
     </form>
 </div>
 {{#hasactions}}

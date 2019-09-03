@@ -1998,6 +1998,8 @@ class core_renderer extends renderer_base {
         foreach ((array)$options as $key=>$value) {
             if (array_key_exists($key, $button)) {
                 $button->$key = $value;
+            } else {
+                $button->set_attribute($key, $value);
             }
         }
 
