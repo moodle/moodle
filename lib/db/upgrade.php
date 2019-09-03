@@ -3464,5 +3464,54 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019073100.00);
     }
+
+    if ($oldversion < 2019082400.01) {
+
+        // If block_community is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/blocks/community/communitycourse.php')) {
+            // Drop table that is no longer needed.
+            $table = new xmldb_table('block_community');
+            if ($dbman->table_exists($table)) {
+                $dbman->drop_table($table);
+            }
+
+            // Delete instances.
+            $instances = $DB->get_records_list('block_instances', 'blockname', ['community']);
+            $instanceids = array_keys($instances);
+
+            if (!empty($instanceids)) {
+                $DB->delete_records_list('block_positions', 'blockinstanceid', $instanceids);
+                $DB->delete_records_list('block_instances', 'id', $instanceids);
+                list($sql, $params) = $DB->get_in_or_equal($instanceids, SQL_PARAMS_NAMED);
+                $params['contextlevel'] = CONTEXT_BLOCK;
+                $DB->delete_records_select('context', "contextlevel=:contextlevel AND instanceid " . $sql, $params);
+
+                $preferences = array();
+                foreach ($instances as $instanceid => $instance) {
+                    $preferences[] = 'block' . $instanceid . 'hidden';
+                    $preferences[] = 'docked_block_instance_' . $instanceid;
+                }
+                $DB->delete_records_list('user_preferences', 'name', $preferences);
+            }
+
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'community'));
+
+            // Remove capabilities.
+            capabilities_cleanup('block_community');
+            // Clean config.
+            unset_all_config_for_plugin('block_community');
+
+            // Remove Moodle-level community based capabilities.
+            $capabilitiestoberemoved = ['block/community:addinstance', 'block/community:myaddinstance'];
+            // Delete any role_capabilities for the old roles.
+            $DB->delete_records_list('role_capabilities', 'capability', $capabilitiestoberemoved);
+            // Delete the capability itself.
+            $DB->delete_records_list('capabilities', 'name', $capabilitiestoberemoved);
+        }
+
+        upgrade_main_savepoint(true, 2019082400.01);
+    }
+
     return true;
 }

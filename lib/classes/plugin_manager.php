@@ -1647,7 +1647,7 @@ class core_plugin_manager {
         $plugins = array(
             'qformat' => array('blackboard', 'learnwise'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
-            'block' => array('course_overview', 'messages'),
+            'block' => array('course_overview', 'messages', 'community'),
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
             'report' => array('search'),
@@ -1714,7 +1714,7 @@ class core_plugin_manager {
             'block' => array(
                 'activity_modules', 'activity_results', 'admin_bookmarks', 'badges',
                 'blog_menu', 'blog_recent', 'blog_tags', 'calendar_month',
-                'calendar_upcoming', 'comments', 'community',
+                'calendar_upcoming', 'comments',
                 'completionstatus', 'course_list', 'course_summary',
                 'feedback', 'globalsearch', 'glossary_random', 'html',
                 'login', 'lp', 'mentees', 'mnet_hosts', 'myoverview', 'myprofile',
