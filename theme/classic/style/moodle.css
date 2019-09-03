@@ -13849,6 +13849,29 @@ body.drawer-ease {
   body.drawer-open-right {
     margin-right: 285px; } }
 
+[data-region=right-hand-drawer] {
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-region=right-hand-drawer] {
+      transition: none; } }
+  [data-region=right-hand-drawer].drawer {
+    z-index: 1020;
+    position: fixed;
+    top: 50px;
+    right: 0;
+    height: calc(100% - 50px);
+    width: 320px;
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
+    padding: 0; }
+  [data-region=right-hand-drawer].hidden {
+    display: block;
+    right: -320px; }
+
+.dir-rtl [data-region=right-hand-drawer] {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
+
 #page-my-index {
   background-color: #f8f9fa; }
 

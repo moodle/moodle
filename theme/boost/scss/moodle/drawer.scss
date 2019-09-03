@@ -94,3 +94,32 @@ body.drawer-open-right {
         margin-right: $drawer-width;
     }
 }
+
+$right-drawer-width: 320px;
+
+[data-region=right-hand-drawer] {
+    display: flex;
+    flex-direction: column;
+    @include transition();
+
+    &.drawer {
+        z-index: $zindex-sticky;
+        position: fixed;
+        top: $navbar-height;
+        right: 0;
+        height: calc(100% - #{$navbar-height});
+        width: $right-drawer-width;
+        box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+        padding: 0;
+    }
+
+    &.hidden {
+        display: block;
+        right: $right-drawer-width * -1;
+    }
+}
+.dir-rtl {
+    [data-region=right-hand-drawer] {
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
+    }
+}
