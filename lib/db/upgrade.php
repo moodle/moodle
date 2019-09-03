@@ -3465,7 +3465,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019073100.00);
     }
 
-    if ($oldversion < 2019082400.01) {
+    if ($oldversion < 2019083000.01) {
 
         // If block_community is no longer present, remove it.
         if (!file_exists($CFG->dirroot . '/blocks/community/communitycourse.php')) {
@@ -3510,7 +3510,7 @@ function xmldb_main_upgrade($oldversion) {
             $DB->delete_records_list('capabilities', 'name', $capabilitiestoberemoved);
         }
 
-        upgrade_main_savepoint(true, 2019082400.01);
+        upgrade_main_savepoint(true, 2019083000.01);
     }
 
     return true;
