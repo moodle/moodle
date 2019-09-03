@@ -146,18 +146,20 @@ class core_rating_external extends external_api {
                     $rating->rating = $maxrating;
                 }
 
-                // The rating object has all the required fields for generating the picture url.
-                $userpicture = new user_picture($rating);
-                $userpicture->size = 1; // Size f1.
-                $profileimageurl = $userpicture->get_url($PAGE)->out(false);
-
                 $result = array();
                 $result['id'] = $rating->id;
                 $result['userid'] = $rating->userid;
-                $result['userpictureurl'] = $profileimageurl;
                 $result['userfullname'] = fullname($rating);
                 $result['rating'] = $scalemenu[$rating->rating];
                 $result['timemodified'] = $rating->timemodified;
+
+                // The rating object has all the required fields for generating the picture url.
+                // Undo the aliasing of the user id column from user_picture::fields().
+                $rating->id = $rating->userid;
+                $userpicture = new user_picture($rating);
+                $userpicture->size = 1; // Size f1.
+                $result['userpictureurl'] = $userpicture->get_url($PAGE)->out(false);
+
                 $results[] = $result;
             }
         }
