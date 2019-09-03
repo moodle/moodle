@@ -88,7 +88,6 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
-$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid

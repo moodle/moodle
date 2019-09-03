@@ -53,7 +53,6 @@ $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 $PAGE->requires->jquery();
-$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Require javascript

@@ -478,7 +478,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 'mform1', $departmentid));
 
 // Add in the manage license page if we are allowed.
-$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 if (iomad::has_capability('block/iomad_company_admin:view_licenses', $context)) {
     $PAGE->navbar->add(get_string('company_license_list_title', 'block_iomad_company_admin'),
                        new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));

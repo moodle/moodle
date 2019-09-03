@@ -61,7 +61,6 @@ if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }
 
-$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 $PAGE->navbar->add($strcompletion, $url);
 
 // Create data for form.
