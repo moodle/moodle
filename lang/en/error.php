@@ -263,6 +263,7 @@ $string['filternotactive'] = 'Filter {$a} is not currently active';
 $string['filternotenabled'] = 'Filter not enabled!';
 $string['filternotinstalled'] = 'Filter {$a} is not currently installed';
 $string['forumblockingtoomanyposts'] = 'You have exceeded the posting threshold set for this forum';
+$string['functionalityremoved'] = 'You are trying to access functionality that has been removed.';
 $string['generalexceptionmessage'] = 'Exception - {$a}';
 $string['gradepubdisable'] = 'Grade publishing disabled';
 $string['gradesneedregrading'] = 'The course grades need to be recalculated';
