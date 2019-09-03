@@ -84,6 +84,7 @@ class summary_table extends table_sql {
             'fullname' => get_string('fullnameuser'),
             'postcount' => get_string('postcount', 'forumreport_summary'),
             'replycount' => get_string('replycount', 'forumreport_summary'),
+            'attachmentcount' => get_string('attachmentcount', 'forumreport_summary'),
         ];
 
         $this->define_columns(array_keys($columnheaders));
@@ -143,6 +144,16 @@ class summary_table extends table_sql {
      */
     public function col_replycount(\stdClass $data): int {
         return $data->replycount;
+    }
+
+    /**
+     * Generate the attachmentcount column.
+     *
+     * @param \stdClass $data The row data.
+     * @return int number of files attached to posts by user.
+     */
+    public function col_attachmentcount(\stdClass $data): int {
+        return $data->attachmentcount;
     }
 
     /**
@@ -232,6 +243,7 @@ class summary_table extends table_sql {
         $this->sortable(true, 'firstname', SORT_ASC);
         $this->pageable(true);
         $this->no_sorting('select');
+        $this->set_attribute('id', 'forumreport_summary_table');
     }
 
     /**
@@ -250,7 +262,8 @@ class summary_table extends table_sql {
                                     SUM(CASE WHEN p.parent = 0 THEN 1 ELSE 0 END) AS postcount,
                                     SUM(CASE WHEN p.parent != 0 THEN 1 ELSE 0 END) AS replycount,
                                     u.firstname,
-                                    u.lastname';
+                                    u.lastname,
+                                    SUM(CASE WHEN att.attcount IS NULL THEN 0 ELSE att.attcount END) AS attachmentcount';
 
         $this->sql->basefromjoins = '    {enrol} e
                                     JOIN {user_enrolments} ue ON ue.enrolid = e.id
@@ -259,13 +272,24 @@ class summary_table extends table_sql {
                                     JOIN {forum_discussions} d ON d.forum = f.id
                                LEFT JOIN {forum_posts} p ON p.discussion =  d.id
                                      AND p.userid = ue.userid
-                                     AND p.privatereplyto = 0';
+                                     AND p.privatereplyto = 0
+                               LEFT JOIN (
+                                            SELECT COUNT(fi.id) AS attcount, fi.itemid AS postid, fi.userid
+                                              FROM {files} fi
+                                             WHERE fi.component = :component
+                                               AND fi.filesize > 0
+                                          GROUP BY fi.itemid, fi.userid
+                                         ) att ON att.postid = p.id
+                                         AND att.userid = ue.userid';
 
         $this->sql->basewhere = 'e.courseid = :courseid';
 
         $this->sql->basegroupby = 'ue.userid, e.courseid, f.id, u.firstname, u.lastname';
 
-        $this->sql->params = ['courseid' => $this->courseid];
+        $this->sql->params = [
+            'component' => 'mod_forum',
+            'courseid' => $this->courseid,
+        ];
 
         // Handle if a user is limited to viewing their own summary.
         if (!empty($this->userid)) {
