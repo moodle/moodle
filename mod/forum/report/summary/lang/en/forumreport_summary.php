@@ -23,6 +23,8 @@
  */
 
 $string['attachmentcount'] = 'Number of attachments';
+$string['earliestpost'] = 'Earliest post';
+$string['latestpost'] = 'Most recent post';
 $string['nodetitle'] = 'Summary report';
 $string['pluginname'] = 'Forum summary report';
 $string['postcount'] = 'Number of discussions posted';

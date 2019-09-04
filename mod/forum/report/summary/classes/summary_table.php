@@ -85,6 +85,8 @@ class summary_table extends table_sql {
             'postcount' => get_string('postcount', 'forumreport_summary'),
             'replycount' => get_string('replycount', 'forumreport_summary'),
             'attachmentcount' => get_string('attachmentcount', 'forumreport_summary'),
+            'earliestpost' => get_string('earliestpost', 'forumreport_summary'),
+            'latestpost' => get_string('latestpost', 'forumreport_summary'),
         ];
 
         $this->define_columns(array_keys($columnheaders));
@@ -154,6 +156,30 @@ class summary_table extends table_sql {
      */
     public function col_attachmentcount(\stdClass $data): int {
         return $data->attachmentcount;
+    }
+
+    /**
+     * Generate the earliestpost column.
+     *
+     * @param \stdClass $data The row data.
+     * @return string Timestamp of user's earliest post, or a dash if no posts exist.
+     */
+    public function col_earliestpost(\stdClass $data): string {
+        global $USER;
+
+        return empty($data->earliestpost) ? '-' : userdate($data->earliestpost, "", \core_date::get_user_timezone($USER));
+    }
+
+    /**
+     * Generate the latestpost column.
+     *
+     * @param \stdClass $data The row data.
+     * @return string Timestamp of user's most recent post, or a dash if no posts exist.
+     */
+    public function col_latestpost(\stdClass $data): string {
+        global $USER;
+
+        return empty($data->latestpost) ? '-' : userdate($data->latestpost, "", \core_date::get_user_timezone($USER));
     }
 
     /**
@@ -263,7 +289,9 @@ class summary_table extends table_sql {
                                     SUM(CASE WHEN p.parent != 0 THEN 1 ELSE 0 END) AS replycount,
                                     u.firstname,
                                     u.lastname,
-                                    SUM(CASE WHEN att.attcount IS NULL THEN 0 ELSE att.attcount END) AS attachmentcount';
+                                    SUM(CASE WHEN att.attcount IS NULL THEN 0 ELSE att.attcount END) AS attachmentcount,
+                                    MIN(p.created) AS earliestpost,
+                                    MAX(p.created) AS latestpost';
 
         $this->sql->basefromjoins = '    {enrol} e
                                     JOIN {user_enrolments} ue ON ue.enrolid = e.id
