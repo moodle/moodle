@@ -129,8 +129,6 @@ class no_teaching extends \core_analytics\local\target\binary {
         }
 
         $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
-        // No need to show details as there is only 1 indicator.
-        unset($parentactions[\core_analytics\prediction::ACTION_PREDICTION_DETAILS]);
 
         return array_merge($actions, $parentactions);
     }
