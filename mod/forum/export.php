@@ -99,8 +99,14 @@ if ($form->is_cancelled()) {
 
     require_once($CFG->libdir . '/dataformatlib.php');
     $filename = clean_filename('discussion');
-    download_as_dataformat($filename, $dataformat, $fields, $iterator);
-    die();
+    download_as_dataformat($filename, $dataformat, $fields, $iterator, function($exportdata) use ($fields) {
+        $data = new stdClass();
+        foreach ($fields as $field) {
+            $data->$field = !empty($exportdata->$field) ? $exportdata->$field : '';
+        }
+        return $data;
+    });
+    die;
 }
 
 $PAGE->set_context($context);
