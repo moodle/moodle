@@ -433,24 +433,34 @@ class assign_events_testcase extends advanced_testcase {
         $assign->testable_process_set_batch_marking_workflow_state($student->id, ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW);
 
         $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
-        $this->assertInstanceOf('\mod_assign\event\workflow_state_updated', $event);
-        $this->assertEquals($assign->get_context(), $event->get_context());
-        $this->assertEquals($assign->get_instance()->id, $event->objectid);
-        $this->assertEquals($student->id, $event->relateduserid);
-        $this->assertEquals($teacher->id, $event->userid);
-        $this->assertEquals(ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW, $event->other['newstate']);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'set marking workflow state',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $student->id,
-                'fullname' => fullname($student), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW)),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
+        $eventcount = 0;
+        foreach ($events as $event) {
+            if ($event instanceof \mod_assign\event\submission_graded) {
+                $eventcount++;
+                $this->assertInstanceOf('\mod_assign\event\submission_graded', $event);
+                $this->assertEquals($assign->get_context(), $event->get_context());
+            }
+            if ($event instanceof \mod_assign\event\workflow_state_updated) {
+                $eventcount++;
+                $this->assertInstanceOf('\mod_assign\event\workflow_state_updated', $event);
+                $this->assertEquals($assign->get_context(), $event->get_context());
+                $this->assertEquals($assign->get_instance()->id, $event->objectid);
+                $this->assertEquals($student->id, $event->relateduserid);
+                $this->assertEquals($teacher->id, $event->userid);
+                $this->assertEquals(ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW, $event->other['newstate']);
+                $expected = array(
+                    $assign->get_course()->id,
+                    'assign',
+                    'set marking workflow state',
+                    'view.php?id=' . $assign->get_course_module()->id,
+                    get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $student->id,
+                        'fullname' => fullname($student), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW)),
+                    $assign->get_course_module()->id
+                );
+                $this->assertEventLegacyLogData($expected, $event);
+            }
+        }
+        $this->assertEquals(2, $eventcount);
         $sink->close();
 
         // Test setting workflow state in apply_grade_to_user.
