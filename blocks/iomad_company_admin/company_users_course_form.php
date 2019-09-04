@@ -159,7 +159,7 @@ class company_users_course_form extends moodleform {
                         } else {
                             $duedate = 0;
                         }
-                        company_user::enrol($this->user, array($addcourse->id));
+                        company_user::enrol($this->user, array($addcourse->id), $this->selectedcompany);
                         EmailTemplate::send('user_added_to_course', array('course' => $addcourse, 'user' => $this->user, 'due' => $duedate));
                     }
                 }

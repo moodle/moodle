@@ -336,7 +336,7 @@ class company_user {
                 }
                 if ($shared || $grouped) {
                     if (!empty($companyid)) {
-                        company::add_user_to_shared_course($courseid, $user->id, $companyid, $groupid);
+                        company::add_user_to_shared_course($courseid, $user->id, $companyid);
                     }
                 }
 
