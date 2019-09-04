@@ -425,6 +425,7 @@ $table->define_baseurl($baseurl);
 $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
 $table->sort_default_column = 'coursename';
+$table->no_sorting('company');
 $table->out($CFG->iomad_max_list_courses, true);
 
 echo html_writer::end_tag('div');
