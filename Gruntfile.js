@@ -24,6 +24,7 @@
  * Grunt configuration
  */
 
+/* eslint-env node */
 module.exports = function(grunt) {
     var path = require('path'),
         tasks = {},
@@ -575,6 +576,7 @@ module.exports = function(grunt) {
                 };
 
                 if (relativePath) {
+                    /* eslint-disable camelcase */
                     sub.relative_root = relativePath;
                 }
 
