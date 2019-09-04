@@ -25,7 +25,6 @@ Feature: Course overview block show users their progress on courses
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "All (except removed from view)" "link" in the "Course overview" "block"
     Then I should not see "0%" in the "Course overview" "block"
-    And I log out
 
   Scenario: User complete activity and verify his progress
     Given I log in as "teacher1"
@@ -46,4 +45,3 @@ Feature: Course overview block show users their progress on courses
     And I follow "Dashboard" in the user menu
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     And I should see "100%" in the "Course overview" "block"
-    And I log out

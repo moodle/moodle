@@ -31,7 +31,6 @@ Feature: The my overview block allows users to hide their courses
     And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I reload the page
     Then I should not see "Course 2" in the "Course overview" "block"
-    And I log out
 
   Scenario: Test hide toggle functionality w/ favorites
     Given I log in as "student1"
@@ -49,7 +48,6 @@ Feature: The my overview block allows users to hide their courses
     And I click on "Starred" "button" in the "Course overview" "block"
     And I click on "Removed from view" "link" in the "Course overview" "block"
     Then I should see "Course 2" in the "Course overview" "block"
-    And I log out
 
   Scenario: Test show toggle functionality
     Given I log in as "student1"
@@ -65,7 +63,6 @@ Feature: The my overview block allows users to hide their courses
     And I click on "Removed from view" "button" in the "Course overview" "block"
     When I click on "All (except removed from view)" "link" in the "Course overview" "block"
     Then I should see "Course 2" in the "Course overview" "block"
-    And I log out
 
   Scenario: Test show toggle functionality w/ favorites
     Given I log in as "student1"
@@ -88,7 +85,6 @@ Feature: The my overview block allows users to hide their courses
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     And I click on "Starred" "link" in the "Course overview" "block"
     Then I should see "Course 2" in the "Course overview" "block"
-    And I log out
 
   Scenario: Test a course is hidden directly with "All (except removed from view)" courses
     Given I log in as "student1"
@@ -97,7 +93,6 @@ Feature: The my overview block allows users to hide their courses
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     Then I should not see "Course 2" in the "Course overview" "block"
-    And I log out
 
   Scenario: Test a course is never hidden with "All (including removed)" courses
     Given the following config values are set as admin:
@@ -118,4 +113,3 @@ Feature: The my overview block allows users to hide their courses
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I should see "Remove from view" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I should not see "Restore to view" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
-    And I log out

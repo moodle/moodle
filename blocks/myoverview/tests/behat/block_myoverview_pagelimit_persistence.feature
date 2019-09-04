@@ -44,7 +44,6 @@ Feature: The my overview block allows users to persistence of their page limits
     And I reload the page
     Then I should see "Course 13"
     And I should see "All" in the "[data-action='limit-toggle']" "css_element"
-    And I log out
 
   Scenario: Toggle the page limit between grouping changes
     Given I log in as "student1"
@@ -54,4 +53,3 @@ Feature: The my overview block allows users to persistence of their page limits
     And I click on "In progress" "link" in the "Course overview" "block"
     Then I should see "Course 13"
     And I should see "All" in the "[data-action='limit-toggle']" "css_element"
-    And I log out

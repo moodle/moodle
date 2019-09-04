@@ -35,7 +35,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should not see "Course 3" in the "Course overview" "block"
     And I should not see "Course 4" in the "Course overview" "block"
     And I should not see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View future courses
     Given I log in as "student1"
@@ -46,7 +45,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should not see "Course 2" in the "Course overview" "block"
     And I should not see "Course 3" in the "Course overview" "block"
     And I should not see "Course 4" in the "Course overview" "block"
-    And I log out
 
   Scenario: View inprogress courses
     Given I log in as "student1"
@@ -57,7 +55,6 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Course 4" in the "Course overview" "block"
     And I should not see "Course 1" in the "Course overview" "block"
     And I should not see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View all (except removed) courses
     Given I log in as "student1"
@@ -68,7 +65,6 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Course 3" in the "Course overview" "block"
     Then I should see "Course 4" in the "Course overview" "block"
     Then I should see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View all (including removed) courses
     Given the following config values are set as admin:
@@ -83,7 +79,6 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Course 3" in the "Course overview" "block"
     Then I should see "Course 4" in the "Course overview" "block"
     Then I should see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View inprogress courses - test persistence
     Given I log in as "student1"
@@ -96,7 +91,6 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Course 4" in the "Course overview" "block"
     And I should not see "Course 1" in the "Course overview" "block"
     And I should not see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View all (except removed) courses - w/ persistence
     Given I log in as "student1"
@@ -109,7 +103,6 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Course 3" in the "Course overview" "block"
     Then I should see "Course 4" in the "Course overview" "block"
     Then I should see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View past courses - w/ persistence
     Given I log in as "student1"
@@ -122,7 +115,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should not see "Course 3" in the "Course overview" "block"
     And I should not see "Course 4" in the "Course overview" "block"
     And I should not see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View future courses - w/ persistence
     Given I log in as "student1"
@@ -135,7 +127,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should not see "Course 2" in the "Course overview" "block"
     And I should not see "Course 3" in the "Course overview" "block"
     And I should not see "Course 4" in the "Course overview" "block"
-    And I log out
 
   Scenario: List display  persistence
     Given I log in as "student1"
@@ -189,7 +180,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should not see "Course 2" in the "Course overview" "block"
     And I should not see "Course 1" in the "Course overview" "block"
     And I should not see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View past courses with hide persistent functionality
     Given I log in as "student1"
@@ -203,7 +193,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should not see "Course 3" in the "Course overview" "block"
     And I should not see "Course 4" in the "Course overview" "block"
     And I should not see "Course 5" in the "Course overview" "block"
-    And I log out
 
   Scenario: View future courses with hide persistent functionality
     Given I log in as "student1"
@@ -217,7 +206,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should not see "Course 2" in the "Course overview" "block"
     And I should not see "Course 3" in the "Course overview" "block"
     And I should not see "Course 4" in the "Course overview" "block"
-    And I log out
 
   Scenario: View all (except hidden) courses with hide persistent functionality
     Given I log in as "student1"
@@ -231,7 +219,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should see "Course 2" in the "Course overview" "block"
     And I should see "Course 3" in the "Course overview" "block"
     And I should see "Course 4" in the "Course overview" "block"
-    And I log out
 
   Scenario: View all (including removed) courses with hide persistent functionality
     Given the following config values are set as admin:
@@ -249,7 +236,6 @@ Feature: The my overview block allows users to easily access their courses
     And I should see "Course 2" in the "Course overview" "block"
     And I should see "Course 3" in the "Course overview" "block"
     And I should see "Course 4" in the "Course overview" "block"
-    And I log out
 
   Scenario: Show course category in cards display
     Given I log in as "student1"
