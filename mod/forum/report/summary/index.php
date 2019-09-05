@@ -84,8 +84,15 @@ $renderer = $PAGE->get_renderer('forumreport_summary');
 echo $renderer->render_filters_form($cm, $url, $filters);
 
 // Prepare and display the report.
-$table = new \forumreport_summary\summary_table($courseid, $filters);
+$bulkoperations = !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
+
+$table = new \forumreport_summary\summary_table($courseid, $filters, $bulkoperations);
 $table->baseurl = $url;
+
 echo $renderer->render_summary_table($table, $perpage);
+
+if ($bulkoperations) {
+    echo $renderer->render_bulk_action_menu();
+}
 
 echo $OUTPUT->footer();

@@ -69,4 +69,39 @@ class forumreport_summary_renderer extends plugin_renderer_base {
 
         return $this->render_from_template('forumreport_summary/report', ['tablehtml' => $tablehtml, 'placeholdertext' => false]);
     }
+
+    /**
+     * Render the bulk action menu for the forum summary report.
+     * @return string
+     */
+    public function render_bulk_action_menu(): string {
+        $data = new stdClass();
+        $data->id = 'formactionid';
+        $data->attributes = [
+            [
+                'name' => 'data-action',
+                'value' => 'toggle'
+            ],
+            [
+                'name' => 'data-togglegroup',
+                'value' => 'summaryreport-table'
+            ],
+            [
+                'name' => 'data-toggle',
+                'value' => 'action'
+            ],
+            [
+                'name' => 'disabled',
+                'value' => true
+            ]
+        ];
+        $data->actions = [
+            [
+                'value' => '#messageselect',
+                'name' => get_string('messageselectadd')
+            ]
+        ];
+
+        return $this->render_from_template('forumreport_summary/bulk_action_menu', $data);
+    }
 }

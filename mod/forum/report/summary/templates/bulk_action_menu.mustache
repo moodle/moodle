@@ -1,0 +1,31 @@
+<br /><div class="buttons"><div class="form-inline">
+    <label for="{{id}}">{{#str}}withselectedusers{{/str}}</label>
+    <select id="{{id}}" class="select custom-select ml-2" {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
+        <option value="">{{#str}}choosedots{{/str}}</option>
+    {{#actions}}
+        <option value="{{value}}">{{name}}</option>
+    {{/actions}}
+    </select>
+</div></div>
+{{#js}}
+require(['jquery', 'core_message/message_send_bulk'], function($, BulkSender) {
+    $('#{{id}}').on('change', function(e) {
+        var action = $(e.target).val();
+        if (action.indexOf('#') !== -1) {
+            e.preventDefault();
+
+            var ids = $('#summaryreport input.usercheckbox:checked').map(function(index, element) {
+                return element.name.replace('user', '');
+            }).get();
+
+            if (action == '#messageselect') {
+                BulkSender.showModal(ids, function() {
+                    $('#{{id}}').focus();
+                });
+            }
+
+            $('#{{id}} option[value=""]').prop('selected', 'selected');
+        }
+    });
+});
+{{/js}}
