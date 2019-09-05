@@ -54,6 +54,13 @@ validation against and defaults to null (so, no user needed) if not provided.
     - I go to "<gradepath_string>" in the course gradebook
 * A new admin setting widget 'core_admin\local\settings\filesize' is added.
 * Core capabilities 'moodle/community:add' and 'moodle/community:download' have been removed from core as part of Moodle.net sunsetting.
+* As part of Moodle.net sunsetting process the following hub api functions have been deprecated:
+    - get_courses
+    - unregister_courses
+    - register_course
+    - add_screenshot
+    - download_course_backup
+    - upload_course_backup
 
 === 3.7 ===
 

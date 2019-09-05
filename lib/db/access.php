@@ -181,20 +181,6 @@ $capabilities = array(
         'clonepermissionsfrom' =>  'moodle/backup:backupcourse'
     ),
 
-    'moodle/backup:backuptargethub' => array(
-
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' =>  'moodle/backup:backupcourse'
-    ),
-
     'moodle/backup:backuptargetimport' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
@@ -309,20 +295,6 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ),
-    ),
-
-    'moodle/restore:restoretargethub' => array(
-
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' =>  'moodle/restore:restorecourse'
     ),
 
     'moodle/restore:restoretargetimport' => array(
@@ -1985,15 +1957,6 @@ $capabilities = array(
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-     'moodle/course:publish' => array(
-
-        'captype' => 'write',
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
             'manager' => CAP_ALLOW
         )
     ),
