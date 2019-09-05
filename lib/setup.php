@@ -1049,4 +1049,3 @@ foreach ($pluginswithfunction as $plugins) {
         }
     }
 }
-
