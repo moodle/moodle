@@ -30,6 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['language'] = 'Limbă';
 $string['moodlelogo'] = 'Logo Moodle';
 $string['next'] = 'Următoarea';
 $string['previous'] = 'Anterior';
