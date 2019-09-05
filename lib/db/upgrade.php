@@ -3413,5 +3413,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019052001.13);
     }
 
+    if ($oldversion < 2019052002.01) {
+
+        // Define index analysableid (not unique) to be added to analytics_used_analysables.
+        $table = new xmldb_table('analytics_used_analysables');
+        $index = new xmldb_index('analysableid', XMLDB_INDEX_NOTUNIQUE, ['analysableid']);
+
+        // Conditionally launch add index analysableid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019052002.01);
+    }
+
     return true;
 }
