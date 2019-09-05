@@ -128,15 +128,6 @@ abstract class backup_check {
         // Now, if backup mode is hub or import, check userid has permissions for those modes
         // other modes will perform common checks only (backupxxxx capabilities in $typecapstocheck)
         switch ($mode) {
-            case backup::MODE_HUB:
-                if (!has_capability('moodle/backup:backuptargethub', $coursectx, $userid)) {
-                    $a = new stdclass();
-                    $a->userid = $userid;
-                    $a->courseid = $courseid;
-                    $a->capability = 'moodle/backup:backuptargethub';
-                    throw new backup_controller_exception('backup_user_missing_capability', $a);
-                }
-                break;
             case backup::MODE_IMPORT:
                 if (!has_capability('moodle/backup:backuptargetimport', $coursectx, $userid)) {
                     $a = new stdclass();
