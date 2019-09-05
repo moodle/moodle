@@ -210,7 +210,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/lock' => 'fa-lock',
             'core:i/categoryevent' => 'fa-cubes',
             'core:i/course' => 'fa-graduation-cap',
-            'core:i/courseevent' => 'fa-university',
+            'core:i/courseevent' => 'fa-graduation-cap',
             'core:i/customfield' => 'fa-hand-o-right',
             'core:i/db' => 'fa-database',
             'core:i/delete' => 'fa-trash',
