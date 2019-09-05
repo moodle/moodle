@@ -18326,6 +18326,9 @@ div#dock {
 .backup-restore > .singlebutton {
   text-align: right;
 }
+.backup-restore .ics-search > input[name="searchcourses"] {
+  margin-bottom: 0;
+}
 .path-backup .mform .fgroup .proceedbutton {
   float: right;
   margin-right: 5%;
