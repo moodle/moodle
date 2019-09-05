@@ -160,9 +160,9 @@ class summary_table extends table_sql {
      * @return string User's full name.
      */
     public function col_fullname($data): string {
-        $fullname = $data->firstname . ' ' . $data->lastname;
+        global $OUTPUT;
 
-        return $fullname;
+        return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->cm->course, 'includefullname' => true));
     }
 
     /**
@@ -377,18 +377,20 @@ class summary_table extends table_sql {
     protected function define_base_sql(): void {
         $this->sql = new \stdClass();
 
+        $userfields = get_extra_user_fields($this->context);
+        $userfieldssql = \user_picture::fields('u', $userfields);
+
         // Define base SQL query format.
         // Ignores private replies as they are not visible to all participants.
         $this->sql->basefields = ' ue.userid AS userid,
-                                    e.courseid AS courseid,
-                                    f.id as forumid,
-                                    SUM(CASE WHEN p.parent = 0 THEN 1 ELSE 0 END) AS postcount,
-                                    SUM(CASE WHEN p.parent != 0 THEN 1 ELSE 0 END) AS replycount,
-                                    u.firstname,
-                                    u.lastname,
-                                    SUM(CASE WHEN att.attcount IS NULL THEN 0 ELSE att.attcount END) AS attachmentcount,
-                                    MIN(p.created) AS earliestpost,
-                                    MAX(p.created) AS latestpost';
+                                   e.courseid AS courseid,
+                                   f.id as forumid,
+                                   SUM(CASE WHEN p.parent = 0 THEN 1 ELSE 0 END) AS postcount,
+                                   SUM(CASE WHEN p.parent != 0 THEN 1 ELSE 0 END) AS replycount,
+                                   ' . $userfieldssql . ',
+                                   SUM(CASE WHEN att.attcount IS NULL THEN 0 ELSE att.attcount END) AS attachmentcount,
+                                   MIN(p.created) AS earliestpost,
+                                   MAX(p.created) AS latestpost';
 
         $this->sql->basefromjoins = '    {enrol} e
                                     JOIN {user_enrolments} ue ON ue.enrolid = e.id
@@ -409,7 +411,7 @@ class summary_table extends table_sql {
 
         $this->sql->basewhere = 'e.courseid = :courseid';
 
-        $this->sql->basegroupby = 'ue.userid, e.courseid, f.id, u.firstname, u.lastname';
+        $this->sql->basegroupby = 'ue.userid, e.courseid, f.id, u.id';
 
         if ($this->logreader) {
             $this->fill_log_summary_temp_table($this->context->id);
