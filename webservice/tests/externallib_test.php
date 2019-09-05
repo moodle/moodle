@@ -132,6 +132,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         } else {
             $this->assertEquals($CFG->calendartype, $siteinfo['usercalendartype']);
         }
+        $this->assertFalse($siteinfo['userissiteadmin']);
         $this->assertEquals($CFG->calendartype, $siteinfo['sitecalendartype']);
         $this->assertEquals($user['theme'], $siteinfo['theme']);
 
@@ -162,6 +163,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(0, $siteinfo['userquota']);
         $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
+        $this->assertTrue($siteinfo['userissiteadmin']);
         $this->assertEmpty($USER->theme);
         $this->assertEquals($PAGE->theme->name, $siteinfo['theme']);
     }

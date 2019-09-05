@@ -12,6 +12,8 @@ This information is intended for authors of webservices, not people writing webs
 * External function core_webservice_external::get_site_info() now returns the user private access key "userprivateaccesskey".
   This key could be used for fetching files via the tokenpluginfile.php script instead webservice/pluginfile.php to avoid
   multiple GET requests that include the WS token as a visible parameter.
+* External function core_webservice_external::get_site_info() now returns a new field "userissiteadmin" indicating if
+  the current user is a site administrator.
 
 === 3.7 ===
 

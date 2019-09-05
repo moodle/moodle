@@ -206,6 +206,7 @@ class core_webservice_external extends external_api {
         } else {
             $siteinfo['usercalendartype'] = $USER->calendartype;
         }
+        $siteinfo['userissiteadmin'] = is_siteadmin();
 
         // User key, to avoid using the WS token for fetching assets.
         $siteinfo['userprivateaccesskey'] = get_user_key('core_files', $USER->id);
@@ -280,6 +281,7 @@ class core_webservice_external extends external_api {
                 'siteid'  => new external_value(PARAM_INT, 'Site course ID', VALUE_OPTIONAL),
                 'sitecalendartype'  => new external_value(PARAM_PLUGIN, 'Calendar type set in the site.', VALUE_OPTIONAL),
                 'usercalendartype'  => new external_value(PARAM_PLUGIN, 'Calendar typed used by the user.', VALUE_OPTIONAL),
+                'userissiteadmin'  => new external_value(PARAM_BOOL, 'Whether the user is a site admin or not.', VALUE_OPTIONAL),
                 'theme'  => new external_value(PARAM_THEME, 'Current theme for the user.', VALUE_OPTIONAL),
             )
         );
