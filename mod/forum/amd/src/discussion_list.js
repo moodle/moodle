@@ -46,7 +46,7 @@ define([
         PubSub.subscribe(ForumEvents.SUBSCRIPTION_TOGGLED, function(data) {
             var discussionId = data.discussionId;
             var subscribed = data.subscriptionState;
-            var subscribedLabel = $(Selectors.discussion.item + '[data-discussionid= ' + discussionId + '] '
+            var subscribedLabel = root.find(Selectors.discussion.item + '[data-discussionid= ' + discussionId + '] '
                 + Selectors.discussion.subscribedLabel);
             if (subscribed) {
                 subscribedLabel.removeAttr('hidden');
@@ -117,11 +117,6 @@ define([
                 })
                 .catch(Notification.exception);
 
-            e.preventDefault();
-        });
-
-        root.on('click', Selectors.discussion.timedLabel, function(e) {
-            // Prevent clicking on the timed discussion label from causing the page to jump.
             e.preventDefault();
         });
     };
