@@ -676,7 +676,7 @@ class core_calendar_external extends external_api {
     }
 
     /**
-     * Delete Calendar events.
+     * Create calendar events.
      *
      * @param array $events A list of events to create.
      * @return array array of events created.
