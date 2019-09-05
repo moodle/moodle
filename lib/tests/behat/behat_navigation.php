@@ -549,14 +549,42 @@ class behat_navigation extends behat_base {
      * @throws Exception if the specified page cannot be determined.
      */
     public function i_am_on_page(string $page) {
+        $this->getSession()->visit($this->locate_path(
+                $this->resolve_page_helper($page)->out_as_local_url()));
+    }
+
+    /**
+     * Open a given page logged in as a given user.
+     *
+     * This is like the combination
+     *   When I log in as "..."
+     *   And I am on the "..." page
+     * but with the advantage that you go straight to the desired page, without
+     * having to wait for the Dashboard to load.
+     *
+     * @When I am on the :page page logged in as :username
+     * @param string $page the type of page. E.g. 'Admin notifications' or 'core_user > Preferences'.
+     * @param string $username the name of the user to log in as. E.g. 'admin'.
+     * @throws Exception if the specified page cannot be determined.
+     */
+    public function i_am_on_page_logged_in_as(string $page, string $username) {
+        self::execute('behat_auth::i_log_in_as', [$username, $this->resolve_page_helper($page)]);
+    }
+
+    /**
+     * Helper used by i_am_on_page() and i_am_on_page_logged_in_as().
+     *
+     * @param string $page the type of page. E.g. 'Admin notifications' or 'core_user > Preferences'.
+     * @return moodle_url the corresponding URL.
+     */
+    protected function resolve_page_helper(string $page): moodle_url {
         list($component, $name) = $this->parse_page_name($page);
         if ($component === 'core') {
-            $url = $this->resolve_core_page_url($name);
+            return $this->resolve_core_page_url($name);
         } else {
             $context = behat_context_helper::get('behat_' . $component);
-            $url = $context->resolve_page_url($name);
+            return $context->resolve_page_url($name);
         }
-        $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
     }
 
     /**
@@ -602,13 +630,46 @@ class behat_navigation extends behat_base {
      */
     public function i_am_on_page_instance(string $identifier, string $type) {
         list($component, $type) = $this->parse_page_name($type);
+        $this->getSession()->visit($this->locate_path(
+                $this->resolve_page_instance_helper($identifier, $type)->out_as_local_url()));
+    }
+
+    /**
+     * Open a given page logged in as a given user.
+     *
+     * This is like the combination
+     *   When I log in as "..."
+     *   And I am on the "..." "..." page
+     * but with the advantage that you go straight to the desired page, without
+     * having to wait for the Dashboard to load.
+     *
+     * @When I am on the :identifier :type page logged in as :username
+     * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
+     * @param string $type the component and page type. E.g. 'mod_quiz > View'.
+     * @param string $username the name of the user to log in as. E.g. 'student'.
+     * @throws Exception if the specified page cannot be determined.
+     */
+    public function i_am_on_page_instance_logged_in_as(string $identifier,
+            string $type, string $username) {
+        self::execute('behat_auth::i_log_in_as',
+                [$username, $this->resolve_page_instance_helper($identifier, $type)]);
+    }
+
+    /**
+     * Helper used by i_am_on_page() and i_am_on_page_logged_in_as().
+     *
+     * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
+     * @param string $pagetype the component and page type. E.g. 'mod_quiz > View'.
+     * @return moodle_url the corresponding URL.
+     */
+    protected function resolve_page_instance_helper(string $identifier, string $pagetype): moodle_url {
+        list($component, $type) = $this->parse_page_name($pagetype);
         if ($component === 'core') {
-            $url = $this->resolve_core_page_instance_url($type, $identifier);
+            return $this->resolve_core_page_instance_url($type, $identifier);
         } else {
             $context = behat_context_helper::get('behat_' . $component);
-            $url = $context->resolve_page_instance_url($type, $identifier);
+            return $context->resolve_page_instance_url($type, $identifier);
         }
-        $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
     }
 
     /**
