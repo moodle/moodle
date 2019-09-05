@@ -61,6 +61,9 @@ validation against and defaults to null (so, no user needed) if not provided.
     - add_screenshot
     - download_course_backup
     - upload_course_backup
+* A new setting 'Cache templates' was added (see MDL-66367). This setting determines if templates are cached or not.
+  This setting can be set via the UI or by defining $CFG->cachetemplates in your config.php file. It is a boolean
+  and should be set to either false or true. Developers will probably want to set this to false.
 
 === 3.7 ===
 

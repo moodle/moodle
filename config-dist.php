@@ -654,6 +654,9 @@ $CFG->admin = 'admin';
 // Prevent JS caching
 // $CFG->cachejs = false; // NOT FOR PRODUCTION SERVERS!
 //
+// Prevent Template caching
+// $CFG->cachetemplates = false; // NOT FOR PRODUCTION SERVERS!
+//
 // Restrict which YUI logging statements are shown in the browser console.
 // For details see the upstream documentation:
 //   http://yuilibrary.com/yui/docs/api/classes/config.html#property_logInclude
