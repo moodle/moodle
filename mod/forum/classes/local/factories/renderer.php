@@ -192,12 +192,17 @@ class renderer {
             // Post process the exported posts for our template. This function will add the "replies"
             // and "hasreplies" properties to the exported posts. It will also sort them into the
             // reply tree structure if the display mode requires it.
-            function($exportedposts, $forums) use ($displaymode, $readonly, $exportedpostssorter) {
+            function($exportedposts, $forums, $discussions) use ($displaymode, $readonly, $exportedpostssorter) {
                 $forum = array_shift($forums);
                 $seenfirstunread = false;
                 $postcount = count($exportedposts);
+                $discussionsbyid = array_reduce($discussions, function($carry, $discussion) {
+                    $carry[$discussion->get_id()] = $discussion;
+                    return $carry;
+                }, []);
                 $exportedposts = array_map(
-                    function($exportedpost) use ($forum, $readonly, $seenfirstunread) {
+                    function($exportedpost) use ($forum, $discussionsbyid, $readonly, $seenfirstunread) {
+                        $discussion = $discussionsbyid[$exportedpost->discussionid] ?? null;
                         if ($forum->get_type() == 'single' && !$exportedpost->hasparent) {
                             // Remove the author from any posts that don't have a parent.
                             unset($exportedpost->author);
@@ -209,6 +214,7 @@ class renderer {
                         $exportedpost->hasreplycount = false;
                         $exportedpost->hasreplies = false;
                         $exportedpost->replies = [];
+                        $exportedpost->discussionlocked = $discussion ? $discussion->is_locked() : null;
 
                         $exportedpost->isfirstunread = false;
                         if (!$seenfirstunread && $exportedpost->unread) {

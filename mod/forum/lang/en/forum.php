@@ -24,6 +24,7 @@
  */
 
 $string['activityoverview'] = 'There are new forum posts';
+$string['actionsforpost'] = 'Actions for post';
 $string['addanewdiscussion'] = 'Add a new discussion topic';
 $string['addanewquestion'] = 'Add a new question';
 $string['addanewtopic'] = 'Add a new topic';
@@ -41,10 +42,13 @@ $string['areaattachment'] = 'Attachments';
 $string['areapost'] = 'Messages';
 $string['attachment'] = 'Attachment';
 $string['attachmentname'] = 'Attachment {$a}';
+$string['attachmentnameandfilesize'] = '{$a->name} ({$a->size})';
 $string['attachment_help'] = 'You can optionally attach one or more files to a forum post. If you attach an image, it will be displayed after the message.';
 $string['attachmentnopost'] = 'You cannot export attachments without a post id';
 $string['attachments'] = 'Attachments';
 $string['attachmentswordcount'] = 'Attachments and word count';
+$string['authorreplyingprivatelytoauthor'] = '{$a->respondant} replying privately to {$a->author}';
+$string['authorreplyingtoauthor'] = '{$a->respondant} replying to {$a->author}';
 $string['availability'] = 'Availability';
 $string['blockafter'] = 'Post threshold for blocking';
 $string['blockafter_help'] = 'This setting specifies the maximum number of posts which a user can post in the given time period. Users with the capability mod/forum:postwithoutthrottling are exempt from post limits.';
@@ -645,6 +649,7 @@ If set to optional, participants can choose whether to turn tracking on or off v
 If \'Allow forced read tracking\' is enabled in the site administration, then a further option is available - forced. This means that tracking is always on, regardless of users\' forum preferences.';
 $string['unlockdiscussion'] = 'Unlock this discussion';
 $string['unread'] = 'Unread';
+$string['unreadpost'] = 'Unread post';
 $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';
 $string['unreadpostsone'] = '1 unread post';
