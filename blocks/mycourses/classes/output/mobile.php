@@ -61,6 +61,7 @@ class mobile {
                 $availableview = new available_view($mycompletion, $cutoffdate);
                 $data['pagecontent'] = $availableview->export_for_template($renderer);
                 $data['nocourses'] = get_string('noavailable', 'block_mycourses');
+                $data['availablepage'] = true;
                 break;
 
             case 'completed':

@@ -44,7 +44,8 @@ $addons = [
             ['pluginname', 'block_mycourses'],
             ['availableheader', 'block_mycourses'],
             ['inprogressheader', 'block_mycourses'],
-            ['completedheader', 'block_mycourses']
+            ['completedheader', 'block_mycourses'],
+            ['startcourse', 'block_mycourses']
         ],
     ]
 ];

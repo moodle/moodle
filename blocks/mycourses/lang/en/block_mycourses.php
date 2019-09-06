@@ -50,4 +50,5 @@ $string['pluginname'] = 'My Courses';
 $string['privacy:metadata'] = 'The My Courses block only shows data stored in other locations.';
 $string['showsummarylabel'] = 'Show course summary';
 $string['showsummarydesc'] = 'Show the course summary in the listing';
+$string['startcourse'] = 'Click \'ok\' to start this course';
 $string['title'] = 'My courses';

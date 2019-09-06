@@ -55,12 +55,24 @@
                 <%/pages%>
             </ion-select>
             <%#pagecontent.courses%>
+            <%#availablepage%>
+            <ion-item>
+                <img item-start src="<% image %>" class="mycourseimage" />
+                <button ion-item core-site-plugins-call-ws-new-content name="enrol_license_enrol_user"
+                        [params]="{courseid: <%id%>}" confirmMessage="{{ 'plugin.block_mycourses.startcourse' | translate }}"
+                        samePage="true" (onSuccess)="CoreCourseHelperProvider.getAndOpenCourse(undefined, <%id%>)">
+                    <%fullname%>
+                </button>
+            </ion-item>
+            <%/availablepage%>
+            <%^availablepage%>
             <ion-item>
                 <a ion-item href="<%url%>" core-link capture="true">
                     <img item-start src="<% image %>" class="mycourseimage" />
                     <%fullname%><%#progress%> <ion-badge item-end><%progress%>%</ion-badge><%/progress%>
                 </a>
             </ion-item>
+            <%/availablepage%>
             <%/pagecontent.courses%>
             <%^pagecontent.courses%>
             <ion-item>
