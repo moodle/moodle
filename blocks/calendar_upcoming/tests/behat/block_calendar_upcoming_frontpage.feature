@@ -10,7 +10,7 @@ Feature: View a site event on the frontpage
       | teacher1 | Teacher | 1 | teacher1@example.com | T1 |
 
   @javascript
-  Scenario: View a global event in the upcoming events block on the frontpage
+  Scenario: View a site event in the upcoming events block on the frontpage
     Given I log in as "admin"
     And I create a calendar event with form data:
       | id_eventtype | Site |

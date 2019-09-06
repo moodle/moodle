@@ -115,3 +115,7 @@ completeregistration,core_hub
 registersite,core_hub
 updatesite,core_hub
 unregisterexplained,core_hub
+global,core_calendar
+globalevent,core_calendar
+globalevents,core_calendar
+eventtypeglobal,core_calendar

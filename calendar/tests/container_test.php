@@ -532,7 +532,7 @@ class core_calendar_container_testcase extends advanced_testcase {
     protected function create_event($properties = []) {
         $record = new \stdClass();
         $record->name = 'event name';
-        $record->eventtype = 'global';
+        $record->eventtype = 'site';
         $record->timestart = time();
         $record->timeduration = 0;
         $record->timesort = 0;

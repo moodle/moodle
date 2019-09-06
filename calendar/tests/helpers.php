@@ -48,7 +48,7 @@ use core_calendar\local\event\factories\event_factory_interface;
 function create_event($properties) {
     $record = new \stdClass();
     $record->name = 'event name';
-    $record->eventtype = 'global';
+    $record->eventtype = 'site';
     $record->repeat = 0;
     $record->repeats = 0;
     $record->timestart = time();

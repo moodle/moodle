@@ -147,7 +147,7 @@ class core_calendar_external extends external_api {
                                              "Set to true to return current user's user events",
                                              VALUE_DEFAULT, true, NULL_ALLOWED),
                                     'siteevents' => new external_value(PARAM_BOOL,
-                                             "Set to true to return global events",
+                                             "Set to true to return site events",
                                              VALUE_DEFAULT, true, NULL_ALLOWED),
                                     'timestart' => new external_value(PARAM_INT,
                                              "Time from which events should be returned",
