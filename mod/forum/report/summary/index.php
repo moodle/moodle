@@ -36,6 +36,8 @@ $filters = [];
 // Establish filter values.
 $filters['forums'] = [$forumid];
 $filters['groups'] = optional_param_array('filtergroups', [], PARAM_INT);
+$filters['datefrom'] = optional_param_array('datefrom', ['enabled' => 0], PARAM_INT);
+$filters['dateto'] = optional_param_array('dateto', ['enabled' => 0], PARAM_INT);
 
 $download = optional_param('download', '', PARAM_ALPHA);
 

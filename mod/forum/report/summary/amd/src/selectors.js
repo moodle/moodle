@@ -31,6 +31,14 @@ export default {
             save: '[data-region="filter-groups"] .filter-save',
             selectall: '[data-region="filter-groups"] .select-all',
             trigger: '#filter-groups-button',
+        },
+        date: {
+            calendar: '#dateselector-calendar-panel',
+            calendariconfrom: '#id_filterdatefrompopover_calendar',
+            calendariconto: '#id_filterdatetopopover_calendar',
+            popover: '#filter-dates-popover',
+            save: '[data-region="filter-dates"] .filter-save',
+            trigger: '#filter-dates-button',
         }
     }
 };

@@ -29,6 +29,7 @@ use renderable;
 use renderer_base;
 use stdClass;
 use templatable;
+use forumreport_summary;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -70,6 +71,20 @@ class filters implements renderable, templatable {
     protected $groupsselected = [];
 
     /**
+     * HTML for dates filter.
+     *
+     * @var array $datesdata
+     */
+    protected $datesdata = [];
+
+    /**
+     * Text to display on the dates filter button.
+     *
+     * @var string $datesbuttontext
+     */
+    protected $datesbuttontext;
+
+    /**
      * Builds renderable filter data.
      *
      * @param stdClass $cm The course module object.
@@ -84,6 +99,11 @@ class filters implements renderable, templatable {
         // Prepare groups filter data.
         $groupsdata = $filterdata['groups'] ?? [];
         $this->prepare_groups_data($groupsdata);
+
+        // Prepare dates filter data.
+        $datefromdata = $filterdata['datefrom'] ?? [];
+        $datetodata = $filterdata['dateto'] ?? [];
+        $this->prepare_dates_data($datefromdata, $datetodata);
     }
 
     /**
@@ -130,6 +150,78 @@ class filters implements renderable, templatable {
     }
 
     /**
+     * Prepares from date, to date and button text.
+     * Empty data will default to a disabled filter with today's date.
+     *
+     * @param array $datefromdata From date selected for filtering, and whether the filter is enabled.
+     * @param array $datetodata To date selected for filtering, and whether the filter is enabled.
+     * @return void.
+     */
+    private function prepare_dates_data(array $datefromdata, array $datetodata): void {
+        $timezone = \core_date::get_user_timezone_object();
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
+        $timestamptoday = time();
+        $datetoday  = $calendartype->timestamp_to_date_array($timestamptoday, $timezone);
+
+        // Prepare date/enabled data.
+        if (empty($datefromdata['enabled'])) {
+            $fromdate = $datetoday;
+            $fromtimestamp = $timestamptoday;
+            $fromenabled = false;
+        } else {
+            $fromdate = $calendartype->timestamp_to_date_array($datefromdata['timestamp'], $timezone);
+            $fromtimestamp = $datefromdata['timestamp'];
+            $fromenabled = true;
+        }
+
+        if (empty($datetodata['enabled'])) {
+            $todate = $datetoday;
+            $totimestamp = $timestamptoday;
+            $toenabled = false;
+        } else {
+            $todate = $calendartype->timestamp_to_date_array($datetodata['timestamp'], $timezone);
+            $totimestamp = $datetodata['timestamp'];
+            $toenabled = true;
+        }
+
+        $this->datesdata = [
+            'from' => [
+                'day'       => $fromdate['mday'],
+                'month'     => $fromdate['mon'],
+                'year'      => $fromdate['year'],
+                'timestamp' => $fromtimestamp,
+                'enabled'   => $fromenabled,
+            ],
+            'to' => [
+                'day'       => $todate['mday'],
+                'month'     => $todate['mon'],
+                'year'      => $todate['year'],
+                'timestamp' => $totimestamp,
+                'enabled'   => $toenabled,
+            ],
+        ];
+
+        // Prepare button string data.
+        $displayformat = get_string('strftimedatemonthabbr', 'langconfig');
+        $fromdatestring = $calendartype->timestamp_to_date_string($fromtimestamp, $displayformat, $timezone, true, true);
+        $todatestring = $calendartype->timestamp_to_date_string($totimestamp, $displayformat, $timezone, true, true);
+
+        if ($fromenabled && $toenabled) {
+            $datestrings = [
+                'datefrom' => $fromdatestring,
+                'dateto'   => $todatestring,
+            ];
+            $this->datesbuttontext = get_string('filter:datesfromto', 'forumreport_summary', $datestrings);
+        } else if ($fromenabled) {
+            $this->datesbuttontext = get_string('filter:datesfrom', 'forumreport_summary', $fromdatestring);
+        } else if ($toenabled) {
+            $this->datesbuttontext = get_string('filter:datesto', 'forumreport_summary', $todatestring);
+        } else {
+            $this->datesbuttontext = get_string('filter:datesname', 'forumreport_summary');
+        }
+    }
+
+    /**
      * Export data for use as the context of a mustache template.
      *
      * @param renderer_base $renderer The renderer to be used to display report filters.
@@ -170,6 +262,33 @@ class filters implements renderable, templatable {
         } else {
             $output->hasgroups = false;
         }
+
+        // Set date button and generate dates popover mform.
+        $datesformdata = [];
+
+        if ($this->datesdata['from']['enabled']) {
+            $datesformdata['filterdatefrompopover'] = $this->datesdata['from'];
+        }
+
+        if ($this->datesdata['to']['enabled']) {
+            $datesformdata['filterdatetopopover'] = $this->datesdata['to'];
+        }
+
+        $output->filterdatesname = $this->datesbuttontext;
+        $datesform = new forumreport_summary\form\dates_filter_form();
+        $datesform->set_data($datesformdata);
+        $output->filterdatesform = $datesform->render();
+
+         // Set dates filter data within filters form.
+        $disableddate = [
+            'day' => '',
+            'month' => '',
+            'year' => '',
+            'enabled' => '0',
+        ];
+        $datefromdata = ['type' => 'from'] + ($this->datesdata['from']['enabled'] ? $this->datesdata['from'] : $disableddate);
+        $datetodata = ['type' => 'to'] + ($this->datesdata['to']['enabled'] ? $this->datesdata['to'] : $disableddate);
+        $output->filterdatesdata = [$datefromdata, $datetodata];
 
         return $output;
     }

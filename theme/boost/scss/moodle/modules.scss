@@ -390,6 +390,16 @@ $author-image-margin-sm: 8px;
     margin-bottom: 1em;
 }
 
+// Required to fit a date mform into a filter popover.
+.filter-dates-popover {
+    width: 100%;
+    max-width: 41.5em;
+
+    .mform {
+        margin-left: -3em;
+    }
+}
+
 // End styling for mod_forum.
 
 .maincalendar .calendarmonth td,

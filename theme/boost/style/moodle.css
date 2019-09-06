@@ -16387,6 +16387,12 @@ select {
   max-height: 25em;
   margin-bottom: 1em; }
 
+.filter-dates-popover {
+  width: 100%;
+  max-width: 41.5em; }
+  .filter-dates-popover .mform {
+    margin-left: -3em; }
+
 .maincalendar .calendarmonth td,
 .maincalendar .calendarmonth th {
   border: 1px dotted #dee2e6; }
