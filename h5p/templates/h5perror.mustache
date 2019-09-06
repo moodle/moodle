@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/h5perror
+
+    This template will render the embed code shown in the H5P content embed popup.
+
+    Variables required for this template:
+    * h5picon - The icon
+    * message - The error message to display.
+
+    Example context (json):
+    {
+        "embedurl": "http://example.com/h5p/embed.php?url=testurl"
+    }
+
+}}
+
+<div class="d-flex h-100 position-relative align-items-center bg-light h5pmessages">
+   <div class="position-absolute py-2 bg-secondary" style="top: 0px; left: 0px; right: 0px;">
+      <div class="container">
+         <img src="{{{h5picon}}}" class="h5picon" alt="{{#str}}h5p, core_h5p{{/str}}" style="width: 50px; height: auto; opacity: 0.5">
+      </div>
+   </div>
+   <div class="container mt-5">
+      {{#exception}}
+      <div class="alert alert-block fade in alert-danger my-2" role="alert">
+         {{{ exception }}}
+      </div>
+      {{/exception}}
+      {{#error}}
+      <div class="alert alert-block fade in alert-warning my-2" role="alert">
+         {{{code}}} : {{{ message }}}
+      </div>
+      {{/error}}
+   </div>
+</div>
