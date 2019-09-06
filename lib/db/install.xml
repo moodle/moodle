@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20190905" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20191015" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -4132,6 +4132,86 @@
         <INDEX NAME="fieldid-shortcharvalue" UNIQUE="false" FIELDS="fieldid, shortcharvalue"/>
         <INDEX NAME="fieldid-decvalue" UNIQUE="false" FIELDS="fieldid, decvalue"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="h5p_libraries" COMMENT="Stores information about libraries used by H5P content.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key: The id of the library"/>
+        <FIELD NAME="machinename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The library machine name"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The human readable name of this library"/>
+        <FIELD NAME="majorversion" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="minorversion" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="patchversion" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="runnable" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Can this library be started by the module? i.e. not a dependency."/>
+        <FIELD NAME="fullscreen" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Display fullscreen button"/>
+        <FIELD NAME="embedtypes" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="List of supported embed types"/>
+        <FIELD NAME="preloadedjs" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated list of scripts to load."/>
+        <FIELD NAME="preloadedcss" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated list of stylesheets to load."/>
+        <FIELD NAME="droplibrarycss" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="List of libraries that should not have CSS included if this library is used. Comma separated list."/>
+        <FIELD NAME="semantics" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The semantics definition in json format"/>
+        <FIELD NAME="addto" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Plugin configuration data"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="machinemajorminorpatch" UNIQUE="false" FIELDS="machinename, majorversion, minorversion, patchversion, runnable"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="h5p_library_dependencies" COMMENT="Stores H5P library dependencies">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="libraryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of a H5P library."/>
+        <FIELD NAME="requiredlibraryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The dependent library to load"/>
+        <FIELD NAME="dependencytype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="preloaded, dynamic, or editor"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="libraryid" TYPE="foreign" FIELDS="libraryid" REFTABLE="h5p_libraries" REFFIELDS="id"/>
+        <KEY NAME="requiredlibraryid" TYPE="foreign" FIELDS="requiredlibraryid" REFTABLE="h5p_libraries" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="h5p" COMMENT="Stores H5P content information">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="jsoncontent" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The content in json format"/>
+        <FIELD NAME="mainlibraryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The library we first instanciate for this node"/>
+        <FIELD NAME="displayoptions" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="H5P Button display options"/>
+        <FIELD NAME="pathnamehash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Defines the complete unique hash for the file path where the H5P content was added."/>
+        <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Defines the hash for the file content."/>
+        <FIELD NAME="filtered" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Filtered version of json_content"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="mainlibraryid" TYPE="foreign" FIELDS="mainlibraryid" REFTABLE="h5p_libraries" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="h5p_contents_libraries" COMMENT="Store which library is used in which content.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="h5pid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Identifier for the h5p content"/>
+        <FIELD NAME="libraryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The identifier of a H5P library this content uses"/>
+        <FIELD NAME="dependencytype" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="dynamic, preloaded or editor"/>
+        <FIELD NAME="dropcss" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="1 if the preloaded css from the dependency is to be excluded"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Determines the order in which the preloaded libraries will be loaded"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="h5pid" TYPE="foreign" FIELDS="h5pid" REFTABLE="h5p" REFFIELDS="id"/>
+        <KEY NAME="libraryid" TYPE="foreign" FIELDS="libraryid" REFTABLE="h5p_libraries" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="h5p_libraries_cachedassets" COMMENT="H5P cached library assets">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="libraryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="hash" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Cache hash key that this library is part of."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="libraryid" TYPE="foreign" FIELDS="libraryid" REFTABLE="h5p_libraries" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>
