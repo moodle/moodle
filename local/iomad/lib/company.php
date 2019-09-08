@@ -3524,6 +3524,28 @@ class company {
         $userid = $data['relateduserid'];
         $courseid = $data['courseid'];
         $timecompleted = $data['timecreated'];
+
+        // Get the enrolment record as the completion record isn't fully formed at this point.
+        $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                                         JOIN {enrol} e ON (ue.enrolid = e.id)
+                                         WHERE ue.userid = :userid
+                                         AND e.courseid = :courseid
+                                         AND e.status = 0",
+                                         array('userid' => $userid,
+                                               'courseid' => $courseid));
+
+        // Do not send if this is already recorded.
+        if ($DB->get_record_sql("SELECT id FROM {local_iomad_track}
+                                 WHERE userid=:userid
+                                 AND courseid = :courseid
+                                 AND timeenrolled = :timeenrolled
+                                 AND timecompleted IS NOT NULL",
+                                 array('userid' => $userid,
+                                       'courseid' => $courseid,
+                                       'timeenrolled' => $enrolrec->timestart))) {
+            return true;
+        }
+
         // Need to make sure any certificate is created.
         sleep(9);
 

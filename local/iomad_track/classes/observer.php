@@ -182,13 +182,22 @@ class observer {
         $comprec = $DB->get_record('course_completions', array('userid' => $userid,
                                                                'course' => $courseid));
 
+        // Get the enrolment record as sometime the completion record isn't fully formed after a completion reset.
+        $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                                         JOIN {enrol} e ON (ue.enrolid = e.id)
+                                         WHERE ue.userid = :userid
+                                         AND e.courseid = :courseid
+                                         AND e.status = 0",
+                                         array('userid' => $userid,
+                                               'courseid' => $courseid));
+
         // Is this a duplicate event?
         if ($DB->get_record_sql("SELECT id FROM {local_iomad_track}
                                  WHERE userid = :userid
                                  AND courseid = :courseid
                                  AND timeenrolled = :timeenrolled
                                  AND timecompleted IS NOT NULL",
-                                 array('userid' => $userid, 'courseid' => $courseid, 'timeenrolled' => $comprec->timeenrolled))) {
+                                 array('userid' => $userid, 'courseid' => $courseid, 'timeenrolled' => $enrolrec->timestart))) {
 
             // It is so we don't record it.
             return true;
@@ -208,15 +217,6 @@ class observer {
 
         if (!$current = $DB->get_record('local_iomad_track', array('courseid' => $courseid, 'userid' => $userid, 'timecompleted' => null))) {
             // For some reason we don't already have a record.
-            // Get the enrolment time for the user on the course.
-            $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
-                                             JOIN {enrol} e ON (ue.enrolid = e.id)
-                                             WHERE ue.userid = :userid
-                                             AND e.courseid = :courseid
-                                             AND e.status = 0",
-                                             array('userid' => $userid,
-                                                   'courseid' => $courseid));
-
             // Is the record broken?
             $broken = false;
             if (empty($comprec->timeenrolled)) {
