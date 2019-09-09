@@ -312,7 +312,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         $pairs = [];
         foreach ($keyvaluearray as $pair) {
             $key = $pair['key'];
-            $pairs[$key] = $this->compress($pairs[$key]);
+            $pairs[$key] = $this->compress($pair['value']);
         }
         if ($this->redis->hMSet($this->hash, $pairs)) {
             return count($pairs);
