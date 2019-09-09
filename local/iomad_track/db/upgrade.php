@@ -422,5 +422,38 @@ mtrace("enrol end " . time());
         upgrade_plugin_savepoint(true, 2019070200, 'local', 'iomad_track');
     }
 
+    if ($oldversion < 2019090800) {
+
+        // Define field notstartedstop to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $field = new xmldb_field('notstartedstop', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'expirysent');
+
+        // Conditionally launch add field notstartedstop.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field completedstop to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $field = new xmldb_field('completedstop', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'notstartedstop');
+
+        // Conditionally launch add field completedstop.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field expiredstop to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $field = new xmldb_field('expiredstop', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'completedstop');
+
+        // Conditionally launch add field expiredstop.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2019090800, 'local', 'iomad_track');
+    }
+
     return $result;
 }

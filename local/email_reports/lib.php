@@ -23,7 +23,7 @@ function email_reports_cron() {
     // Set some defaults.
     $runtime = time();
     $courses = array();
-    $dayofweek = date('N', $runtime) + 1;
+    $dayofweek = date('w', $runtime) + 1;
 
     // We only want the student role.
     $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -31,62 +31,27 @@ function email_reports_cron() {
     mtrace("Running email report cron at ".date('D M Y h:m:s', $runtime));
 
     // Deal with courses which have completed by warnings
-    // Generate the Temp table for storing the users.
-    $tempcomptablename = uniqid('emailrep');
-
-    $dbman = $DB->get_manager();
-
-    // Define table user to be created.
-    // We need, companyid, company name, departmentid, department name, userid, course id, course name, timeenrolled, lastrun.
-    $table = new xmldb_table($tempcomptablename);
-    $table->add_field('id', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-    $table->add_field('departmentid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-    $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-    $table->add_field('courseid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('notifyperiod', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('timeenrolled', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('companyname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('departmentname', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('coursename', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('firstname', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('lastname', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('email', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('username', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
-    $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-    $dbman->create_temp_table($table);
-
-    // Populate this table.
-    $populatesql = "INSERT INTO {" . $tempcomptablename . "} (companyid, companyname, departmentid, departmentname, courseid,
-                    coursename, notifyperiod, timeenrolled, userid, firstname, lastname, username, email)
-                    SELECT co.id, co.name, d.id, d.name, c.id, c.fullname, ic.notifyperiod, cc.timeenrolled, u.id, u.firstname, u.lastname, u.username, u.email
-                    FROM {iomad_courses} ic
-                    JOIN {course_completions} cc
-                    ON (ic.courseid = cc.course
-                        AND cc.timecompleted IS NULL
-                        AND ic.warncompletion > 0
-                        AND cc.timeenrolled < " . $runtime . " - ic.warncompletion * 86400)
-                    JOIN {company_users} cu
-                    ON (cc.userid = cu.userid)
-                    JOIN {company} co
-                    ON (cu.companyid = co.id)
-                    JOIN {department} d
-                    ON (cu.departmentid = d.id)
-                    JOIN {course} c
-                    ON (ic.courseid = c.id)
-                    JOIN {user} u
-                    ON (cc.userid = u.id
+    $notcompletedsql = "SELECT lit.*, c.name AS companyname, ic.notifyperiod, u.firstname,u.lastname,u.username,u.email,u.lang
+                        FROM {local_iomad_track} lit
+                        JOIN {company} c ON (lit.companyid = c.id)
+                        JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
+                        JOIN {user} u ON (lit.userid = u.id)
+                        WHERE ic.warncompletion > 0
+                        AND lit.timecompleted IS NULL
+                        AND lit.timeenrolled < " . $runtime . " - (ic.warncompletion * 86400)
                         AND u.deleted = 0
-                        AND u.suspended = 0)";
-
-    $DB->execute($populatesql);
+                        AND u.suspended = 0
+                        AND lit.completedstop = 0";
 
     mtrace("sending user completion warning emails");
 
     // Email all of the users.
-    $allusers = $DB->get_records($tempcomptablename);
+    $allusers = $DB->get_records_sql($notcompletedsql);
 
+    $periods = array(1 => " day",
+                     2 => " week",
+                     3 => " fortnight",
+                     4 => " month");
     foreach ($allusers as $compuser) {
         if (!$user = $DB->get_record('user', array('id' => $compuser->userid))) {
             continue;
@@ -110,6 +75,7 @@ function email_reports_cron() {
             }
         }
 
+        // Needs to be a student and enrolled.
         if (!$DB->get_record_sql("SELECT ra.id FROM
                                  {user_enrolments} ue
                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
@@ -122,15 +88,41 @@ function email_reports_cron() {
                                  array('courseid' => $compuser->courseid,
                                        'userid' => $compuser->userid,
                                        'studentrole' => $studentrole->id))) {
+
+            // We want to remove them from the future list.
+            $DB->set_field('local_iomad_track', 'completedstop', 1, array('id' => $compuser->id));
             continue;
         }
+
+        // get the company template info.
+        // Check against per company template repeat instead.
+        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $compuser->companyid, 'lang' => $compuser->lang, 'templatename' => 'completion_warn_user'))) {
+            // Check if its the correct day, if not continue.
+            if (!empty($templateinfo->repeatday) && $templateinfo->repeatday != 99 && $templateinfo->repeatday != $dayofweek - 1) {
+                continue;
+            }
+
+            // otherwise set the notifyperiod
+            if ($templateinfo->repeatperiod == 0) {
+                $notifyperiod = "";
+            } else if ($templateinfo->repeatperiond == 99) {
+                $notifyperiod = "";
+            } else {
+                $notifyperiod = "OR sent > " . strtotime("- " . $templateinfo->repeatvalue . $periods[$templateinfo->repeatperiod], $runtime);
+            }
+        } else {
+            // use the default notify period.
+            $notifyperiod = "OR sent > " . $runtime - $compuser->notifyperiod * 86400;
+        }
+
+        // Check if we are within the period.
         if ($DB->get_records_sql("SELECT id FROM {email}
                                   WHERE userid = :userid
                                   AND courseid = :courseid
                                   AND templatename = :templatename
                                   AND (
                                      sent IS NULL
-                                  OR sent > " . $runtime . " - " . $compuser->notifyperiod . " * 86400
+                                  $notifyperiod
                                   )",
                                   array('userid' => $compuser->userid,
                                         'courseid' => $compuser->courseid,
@@ -144,12 +136,40 @@ function email_reports_cron() {
         // Send the supervisor email too.
         mtrace("Sending completion warning email to $user->email supervisor");
         company::send_supervisor_warning_email($user, $course);
+
+        // Do we have a value for the template repeat?
+        if (!empty($templateinfo->repeatvalue)) {
+            $sentcount = $DB->count_records_sql("SELECT count(id) FROM {email}
+                                                 WHERE userid =:userid
+                                                 AND courseid = :courseid
+                                                 AND templatename = :templatename
+                                                 AND modifiedtime > :timesent",
+                                                 array('userid' => $compuser->userid,
+                                                       'courseid' => $compuser->courseid,
+                                                       'templatename' => $templateinfo->name,
+                                                       'timesent' => $compuser->timestarted));
+            if ($sentcount >= $templateinfo->repeatvalue) {
+                $DB->set_field('local_iomad_track', 'completedstop', 1, array('id', $compuser->id));
+            }
+        }
     }
 
     mtrace("sending completion warning emails to the managers");
     // Email the managers
     // Get the companies from the list of users in the temp table.
-    $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename . "}");
+    $notcompletedcompanysql = "SELECT DISTINCT lit.companyid
+                               FROM {local_iomad_track} lit
+                               JOIN {company} c ON (lit.companyid = c.id)
+                               JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
+                               JOIN {user} u ON (lit.userid = u.id)
+                               WHERE ic.warncompletion > 0
+                               AND lit.timecompleted IS NULL
+                               AND lit.timeenrolled < " . $runtime . " - (ic.warncompletion * 86400)
+                               AND u.deleted = 0
+                               AND u.suspended = 0
+                               AND lit.completedstop = 0";
+
+    $companies = $DB->get_records_sql($nocompletedcompanysql);
     foreach ($companies as $company) {
         if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
             continue;
@@ -161,7 +181,7 @@ function email_reports_cron() {
                 // Deal with parent companies as we only want manager of this company.
                 $companyobj = new company($company->companyid);
                 if ($parentslist = $companyobj->get_parent_companies_recursive()) {
-                    $companysql = " AND userid NOT IN (
+                    $companysql = " AND lit.userid NOT IN (
                                     SELECT userid FROM {company_users}
                                     WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
                 } else {
@@ -174,7 +194,7 @@ function email_reports_cron() {
                                                   AND managertype != 0
                                                   $companysql", array('companyid' => $company->companyid));
                 foreach ($managers as $manager) {
-                    // Deparment managers dont get reports on company manager users.
+                    // Department managers dont get reports on company manager users.
                     if ($manager->managertype == 2) {
                         $departmentmanager = true;
                     } else {
@@ -202,11 +222,25 @@ function email_reports_cron() {
                             $departmentids .= $departmentuser->userid;
                         }
                     }
-                    $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
-                                                          WHERE userid IN (" . $departmentids . ")
-                                                          AND userid != :managerid
-                                                          $companysql",
-                                                          array('managerid' => $manager->userid));
+                    $notcompleteddigestsql = "SELECT lit.*, c.name AS companyname, ic.notifyperiod, u.firstname,u.lastname,u.username,u.email,u.lang
+                                              FROM {local_iomad_track} lit
+                                              JOIN {company} c ON (lit.companyid = c.id)
+                                              JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
+                                              JOIN {user} u ON (lit.userid = u.id)
+                                              WHERE lit.companyid = :companyid
+                                              AND lit.userid IN (" . $departmentids . ")
+                                              AND lit.userid != :managerid
+                                              $companysql
+                                              AND ic.warncompletion > 0
+                                              AND lit.timecompleted IS NULL
+                                              AND lit.timeenrolled < " . $runtime . " - (ic.warncompletion * 86400)
+                                              AND u.deleted = 0
+                                              AND u.suspended = 0
+                                              AND lit.completedstop = 0";
+
+                    $managerusers = $DB->get_records_sql($notcompleteddigestsql,
+                                                         array('managerid' => $manager->userid,
+                                                               'companyid' => $companyid));
 
                     $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
                                "<th>" . get_string('lastname') . "</th>" .
@@ -260,8 +294,6 @@ function email_reports_cron() {
         }
     }
 
-    $dbman->drop_table($table);
-
     mtrace("sending course not started emails");
 
     // Deal with courses where users have not yet started.
@@ -285,12 +317,65 @@ function email_reports_cron() {
             if ($userrec = $DB->get_record('user', array('id' => $notstarteduser->userid, 'suspended' => 0, 'deleted' => 0))) {
                 if ($courserec = $DB->get_record('course', array('id' => $notstarteduser->courseid))) {
                     if ($companyrec = $DB->get_record('company', array('id' => $notstarteduser->companyid))) {
+
+                        // Get the company template info.
+                        // Check against per company template repeat instead.
+                        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $notstarteduser->companyid, 'lang' => $userrec->lang, 'templatename' => 'course_not_started_warning'))) {
+                            // Check if its the correct day, if not continue.
+                            if (!empty($templateinfo->repeatday) && $templateinfo->repeatday != 99 && $templateinfo->repeatday != $dayofweek - 1) {
+                                continue;
+                            }
+
+                            // otherwise set the notifyperiod
+                            if ($templateinfo->repeatperiod == 0) {
+                                $notifyperiod = "";
+                            } else if ($templateinfo->repeatperiond == 99) {
+                                $notifyperiod = "";
+                            } else {
+                                $notifyperiod = "OR sent > " . strtotime("- " . $templateinfo->repeatvalue . $periods[$templateinfo->repeatperiod], $runtime);
+                            }
+                        } else {
+                            // use the default notify period.
+                            $notifyperiod = "OR sent > " . $runtime - $warnnotstartedcourse->notifyperiod * 86400;
+                        }
+
+                        // Check if we are within the period.
+                        if ($DB->get_records_sql("SELECT id FROM {email}
+                                                  WHERE userid = :userid
+                                                  AND courseid = :courseid
+                                                  AND templatename = :templatename
+                                                  AND (
+                                                     sent IS NULL
+                                                  $notifyperiod
+                                                  )",
+                                                  array('userid' => $notstarteduser->userid,
+                                                        'courseid' => $notstarteduser->courseid,
+                                                        'templatename' => 'course_not_started_warning'))) {
+                            continue;
+                        }
+
                         // Passed all checks, send the email.
                         EmailTemplate::send('course_not_started_warning', array('user' => $userrec, 'course' => $courserec, 'company' => $companyrec));
 
                         // Send the supervisor email too.
                         mtrace("Sending not started warning email to $userrec->email supervisor");
                         company::send_supervisor_not_started_warning_email($userrec, $courserec);
+
+                        // Do we have a value for the template repeat?
+                        if (!empty($templateinfo->repeatvalue)) {
+                            $sentcount = $DB->count_records_sql("SELECT count(id) FROM {email}
+                                                                 WHERE userid =:userid
+                                                                 AND courseid = :courseid
+                                                                 AND templatename = :templatename
+                                                                 AND modifiedtime > :timesent",
+                                                                 array('userid' => $notstarteduser->userid,
+                                                                       'courseid' => $notstarteduser->courseid,
+                                                                       'templatename' => $templateinfo->name,
+                                                                       'timesent' => $notstarteduser->timeenrolled));
+                            if ($sentcount >= $templateinfo->repeatvalue) {
+                                $DB->set_field('local_iomad_track', 'notstartedstop', 1, array('id', $notstarteduser->id));
+                            }
+                        }
                     }
                 }
             }
@@ -300,64 +385,25 @@ function email_reports_cron() {
     mtrace("sending expiry warning courses");
 
     // Deal with courses which have expiry warnings
-    $tempcomptablename = uniqid('emailrep');
-    // Generate the Temp table for storing the users.
-
-    $dbman = $DB->get_manager();
-
-    // Define table user to be created.
-    // We need, companyid, company name, departmentid, department name, userid, course id, course name, timeenrolled, lastrun.
-    $table = new xmldb_table($tempcomptablename);
-    $table->add_field('id', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-    $table->add_field('departmentid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-    $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-    $table->add_field('courseid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('notifyperiod', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('timecompleted', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('companyname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('departmentname', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('coursename', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('firstname', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('lastname', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('email', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('username', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
-    $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-    $dbman->create_temp_table($table);
-
-    // Populate this table.
-    $populatesql = "INSERT INTO {" . $tempcomptablename . "} (companyid, companyname, departmentid, departmentname, courseid,
-                    coursename, notifyperiod, timecompleted, userid, firstname, lastname, username, email)
-                    SELECT co.id, co.name, d.id, d.name, c.id, c.fullname, ic.notifyperiod, cc.timecompleted, u.id, u.firstname, u.lastname, u.username, u.email
-                    FROM {iomad_courses} ic
-                    JOIN {local_iomad_track} cc
-                    ON (ic.courseid = cc.courseid
-                        AND ic.validlength > 0
+    $notcompletedsql = "SELECT lit.*, c.name AS companyname, ic.notifyperiod, u.firstname,u.lastname,u.username,u.email,u.lang
+                        FROM {local_iomad_track} lit
+                        JOIN {company} c ON (lit.companyid = c.id)
+                        JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
+                        JOIN {user} u ON (lit.userid = u.id)
+                        WHERE ic.validlength > 0
                         AND ic.warnexpire > 0
-                        AND (cc.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . ")
-                    JOIN {company_users} cu
-                    ON (cc.userid = cu.userid)
-                    JOIN {company} co
-                    ON (cu.companyid = co.id)
-                    JOIN {department} d
-                    ON (cu.departmentid = d.id)
-                    JOIN {course} c
-                    ON (ic.courseid = c.id)
-                    JOIN {user} u
-                    ON (cc.userid = u.id
+                        AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . "
                         AND u.deleted = 0
-                        AND u.suspended = 0)
-                    WHERE cc.expirysent IS NULL
-                    AND cc.id IN (
-                        SELECT max(id) FROM {local_iomad_track}
-                        GROUP BY userid,courseid)";
-
-    $DB->execute($populatesql);
+                        AND u.suspended = 0
+                        AND lit.expirystop = 0
+                        AND cc.id IN (
+                            SELECT max(id) FROM {local_iomad_track}
+                            GROUP BY userid,courseid)";
 
     mtrace("sending to users");
+
     // Email all of the users
-    $allusers = $DB->get_records($tempcomptablename);
+    $allusers = $DB->get_records_sql($notcompletedsql);
 
     foreach ($allusers as $compuser) {
         if (!$user = $DB->get_record('user', array('id' => $compuser->userid))) {
@@ -401,13 +447,35 @@ function email_reports_cron() {
                                                                                         'userid' => $user->id));
             $event->trigger();
         }
+
+        // Get the company template info.
+        // Check against per company template repeat instead.
+        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $notstarteduser->companyid, 'lang' => $userrec->lang, 'templatename' => 'expiry_warn_user'))) {
+            // Check if its the correct day, if not continue.
+            if (!empty($templateinfo->repeatday) && $templateinfo->repeatday != 99 && $templateinfo->repeatday != $dayofweek - 1) {
+                continue;
+            }
+
+            // otherwise set the notifyperiod
+            if ($templateinfo->repeatperiod == 0) {
+                $notifyperiod = "";
+            } else if ($templateinfo->repeatperiond == 99) {
+                $notifyperiod = "";
+            } else {
+                $notifyperiod = "OR sent > " . strtotime("- " . $templateinfo->repeatvalue . $periods[$templateinfo->repeatperiod], $runtime);
+            }
+        } else {
+            // use the default notify period.
+            $notifyperiod = "OR sent > " . $runtime - $warnnotstartedcourse->notifyperiod * 86400;
+        }
+
         // Check if we have recently sent the email.
         if ($DB->get_records_sql("SELECT id FROM {email}
                                   WHERE userid = :userid
                                   AND courseid = :courseid
                                   AND templatename = :templatename
                                   AND sent IS NULL
-                                  OR sent > " . $runtime . " - " . $compuser->notifyperiod . " * 86400",
+                                  $notifyperiod",
                                   array('userid' => $compuser->userid,
                                         'courseid' => $compuser->courseid,
                                         'templatename' => 'expiry_warn_user'))) {
@@ -419,8 +487,22 @@ function email_reports_cron() {
         mtrace("Sending supervisor warning email for $user->email");
         company::send_supervisor_expiry_warning_email($user, $course);
 
-        // Update the tracking table.
-        $DB->set_field('local_iomad_track', 'expirysent', $runtime, array('userid' =>$compuser->userid, 'courseid' => $compuser->courseid, 'timecompleted' => $compuser->timecompleted));
+
+        // Do we have a value for the template repeat?
+        if (!empty($templateinfo->repeatvalue)) {
+            $sentcount = $DB->count_records_sql("SELECT count(id) FROM {email}
+                                                 WHERE userid =:userid
+                                                 AND courseid = :courseid
+                                                 AND templatename = :templatename
+                                                 AND modifiedtime > :timesent",
+                                                 array('userid' => $compuser->userid,
+                                                       'courseid' => $compuser->courseid,
+                                                       'templatename' => $templateinfo->name,
+                                                       'timesent' => $compuser->timecompleted));
+            if ($sentcount >= $templateinfo->repeatvalue) {
+                $DB->set_field('local_iomad_track', 'expirystop', 1, array('id', $compuser->id));
+            }
+        }
     }
 
     mtrace("sending to managers");
@@ -692,7 +774,5 @@ function email_reports_cron() {
         }
     }
 
-    // Drop the temp database table.
-    $dbman->drop_table($table);
     mtrace("email reporting cron completed at " . date('D M Y h:m:s', time()));
 }
