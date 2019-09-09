@@ -45,6 +45,8 @@ class author {
     private $fullname;
     /** @var string $email Email */
     private $email;
+    /** @var bool $deleted Deleted */
+    private $deleted;
     /** @var string $middlename Middle name */
     private $middlename;
     /** @var string $firstnamephonetic Phonetic spelling of first name */
@@ -78,6 +80,7 @@ class author {
         string $lastname,
         string $fullname,
         string $email,
+        bool $deleted,
         string $middlename = null,
         string $firstnamephonetic = null,
         string $lastnamephonetic = null,
@@ -90,6 +93,7 @@ class author {
         $this->lastname = $lastname;
         $this->fullname = $fullname;
         $this->email = $email;
+        $this->deleted = $deleted;
         $this->middlename = $middlename;
         $this->firstnamephonetic = $firstnamephonetic;
         $this->lastnamephonetic = $lastnamephonetic;
@@ -149,6 +153,15 @@ class author {
      */
     public function get_email() : string {
         return $this->email;
+    }
+
+    /**
+     * Is the author deleted?
+     *
+     * @return bool
+     */
+    public function is_deleted() : bool {
+        return !empty($this->deleted);
     }
 
     /**

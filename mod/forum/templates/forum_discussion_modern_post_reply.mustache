@@ -31,7 +31,11 @@
 }}
 {{< mod_forum/forum_discussion_modern_first_post }}
     {{$subject}}
-        <h3 class="sr-only" data-region-content="forum-post-core-subject">{{{subject}}}</h3>
+        <h3
+            {{#isdeleted}}class="h6 font-weight-bold"{{/isdeleted}}
+            {{^isdeleted}}class="sr-only"{{/isdeleted}}
+            data-region-content="forum-post-core-subject"
+        >{{{subject}}}</h3>
     {{/subject}}
     {{$footer}}
         {{^isdeleted}}

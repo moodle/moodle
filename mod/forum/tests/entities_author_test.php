@@ -47,6 +47,7 @@ class mod_forum_entities_author_testcase extends advanced_testcase {
             'person',
             'test person',
             'test@example.com',
+            false,
             'middle',
             'tteeeeest',
             'ppppeeerssson',
@@ -60,6 +61,7 @@ class mod_forum_entities_author_testcase extends advanced_testcase {
         $this->assertEquals('person', $author->get_last_name());
         $this->assertEquals('test person', $author->get_full_name());
         $this->assertEquals('test@example.com', $author->get_email());
+        $this->assertEquals(false, $author->is_deleted());
         $this->assertEquals('middle', $author->get_middle_name());
         $this->assertEquals('tteeeeest', $author->get_first_name_phonetic());
         $this->assertEquals('ppppeeerssson', $author->get_last_name_phonetic());

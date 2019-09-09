@@ -57,7 +57,8 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
             'test',
             'user',
             'test user',
-            'test@example.com'
+            'test@example.com',
+            false
         );
 
         $exporter = new author_exporter($author, 1, [], true, [
@@ -95,7 +96,8 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
             'test',
             'user',
             'test user',
-            'test@example.com'
+            'test@example.com',
+            false
         );
 
         $group = $datagenerator->create_group(['courseid' => $course->id]);
@@ -132,7 +134,8 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
             'test',
             'user',
             'test user',
-            'test@example.com'
+            'test@example.com',
+            false
         );
 
         $group = $datagenerator->create_group(['courseid' => $course->id]);

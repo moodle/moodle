@@ -236,14 +236,14 @@
                             {{/readonly}}
                             </div>
                     </div>
-                    {{$subject}}
-                        <h2
-                            class="h1 font-weight-bold post-subject mt-n2"
-                            data-region-content="forum-post-core-subject"
-                            data-reply-subject="{{replysubject}}"
-                        >{{{subject}}}</h2>
-                    {{/subject}}
                 {{/isdeleted}}
+                {{$subject}}
+                    <h2
+                        class="h1 font-weight-bold post-subject mt-n2"
+                        data-region-content="forum-post-core-subject"
+                        data-reply-subject="{{replysubject}}"
+                    >{{{subject}}}</h2>
+                {{/subject}}
                 {{#hasreplycount}}
                     <span class="sr-only">{{#str}} numberofreplies, mod_forum, {{replycount}} {{/str}}</span>
                 {{/hasreplycount}}
