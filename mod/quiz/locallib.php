@@ -2403,22 +2403,29 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
  *      to force the choice of a particular actual question. Intended for testing purposes only.
  * @param array $forcedvariants slot number => variant. Used for questions with variants,
  *      to force the choice of a particular variant. Intended for testing purposes only.
+ * @param int $userid Specific user id to create an attempt for that user, null for current logged in user
  * @return object the new attempt
  * @since  Moodle 3.1
  */
 function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt,
-        $offlineattempt = false, $forcedrandomquestions = [], $forcedvariants = []) {
+        $offlineattempt = false, $forcedrandomquestions = [], $forcedvariants = [], $userid = null) {
     global $DB, $USER;
 
+    $ispreviewuser = false;
+
     // Delete any previous preview attempts belonging to this user.
-    quiz_delete_previews($quizobj->get_quiz(), $USER->id);
+    if ($userid === null) {
+        $userid = $USER->id;
+        $ispreviewuser = $quizobj->is_preview_user();
+    }
+    quiz_delete_previews($quizobj->get_quiz(), $userid);
 
     $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
     $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
     // Create the new attempt and initialize the question sessions
     $timenow = time(); // Update time now, in case the server is running really slowly.
-    $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $quizobj->is_preview_user());
+    $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $ispreviewuser, $userid);
 
     if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
         $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,

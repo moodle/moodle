@@ -311,4 +311,52 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
         $this->assertEquals(true, $quizobj->is_participant($USER->id),
             'Admin is enrolled, suspended and can participate');
     }
+
+    /**
+     * Test quiz_prepare_and_start_new_attempt function
+     */
+    public function test_quiz_prepare_and_start_new_attempt() {
+        $this->resetAfterTest();
+
+        // Create course.
+        $course = $this->getDataGenerator()->create_course();
+        // Create students.
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'grade' => 100.0, 'sumgrades' => 2, 'layout' => '1,0']);
+        // Create question and add it to quiz.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        quiz_add_quiz_question($question->id, $quiz, 1);
+
+        $quizobj = quiz::create($quiz->id);
+
+        // Login as student1.
+        $this->setUser($student1);
+        // Create attempt for student1.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null, false, [], []);
+        $this->assertEquals($student1->id, $attempt->userid);
+        $this->assertEquals(0, $attempt->preview);
+
+        // Login as student2.
+        $this->setUser($student2);
+        // Create attempt for student2.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null, false, [], []);
+        $this->assertEquals($student2->id, $attempt->userid);
+        $this->assertEquals(0, $attempt->preview);
+
+        // Login as admin.
+        $this->setAdminUser();
+        // Create attempt for student1.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 2, null, false, [], [], $student1->id);
+        $this->assertEquals($student1->id, $attempt->userid);
+        $this->assertEquals(0, $attempt->preview);
+        // Create attempt for student2.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 2, null, false, [], [], $student2->id);
+        $this->assertEquals($student2->id, $attempt->userid);
+        $this->assertEquals(0, $attempt->preview);
+    }
 }
