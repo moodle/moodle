@@ -184,7 +184,6 @@ class discussion {
         $capabilitymanager = $this->capabilitymanager;
         $urlfactory = $this->urlfactory;
         $entityfactory = $this->entityfactory;
-        $loggedinauthor = $entityfactory->get_author_from_stdClass($user);
 
         // Make sure we can render.
         if (!$capabilitymanager->can_view_discussions($user)) {
@@ -205,11 +204,6 @@ class discussion {
         $hasanyactions = $hasanyactions || $capabilitymanager->can_manage_forum($user);
 
         $exporteddiscussion = array_merge($exporteddiscussion, [
-            'loggedinuser' => [
-                'firstname' => $loggedinauthor->get_first_name(),
-                'fullname' => $loggedinauthor->get_full_name(),
-                'profileimageurl' => ($urlfactory->get_author_profile_image_url($loggedinauthor, null))->out(false)
-            ],
             'notifications' => $this->get_notifications($user),
             'html' => [
                 'hasanyactions' => $hasanyactions,
@@ -231,6 +225,15 @@ class discussion {
 
         if ($capabilities['move']) {
             $exporteddiscussion['html']['movediscussion'] = $this->get_move_discussion_html();
+        }
+
+        if (!empty($user->id)) {
+            $loggedinuser = $entityfactory->get_author_from_stdClass($user);
+            $exporteddiscussion['loggedinuser'] = [
+                'firstname' => $loggedinuser->get_first_name(),
+                'fullname' => $loggedinuser->get_full_name(),
+                'profileimageurl' => ($urlfactory->get_author_profile_image_url($loggedinuser, null))->out(false)
+            ];
         }
 
         if ($this->displaymode === FORUM_MODE_MODERN) {

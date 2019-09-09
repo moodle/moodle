@@ -36,6 +36,7 @@ define([
     ) {
 
     var DISPLAYCONSTANTS = {
+        MODERN: 4,
         THREADED: 2,
         NESTED: 3,
         FLAT_OLDEST_FIRST: 1,
@@ -97,9 +98,10 @@ define([
             var topreferredformat = true;
             var postid = form.elements.reply.value;
             var subject = form.elements.subject.value;
-            var currentRoot = submitButton.parents(Selectors.post.forumContent);
+            var currentRoot = submitButton.closest(Selectors.post.post);
             var isprivatereply = form.elements.privatereply != undefined ? form.elements.privatereply.checked : false;
-            var mode = parseInt(root.find(Selectors.post.modeSelect).get(0).value);
+            var modeSelector = root.find(Selectors.post.modeSelect);
+            var mode = modeSelector.length ? parseInt(modeSelector.get(0).value) : null;
             var newid;
 
             if (message.length) {
@@ -125,7 +127,17 @@ define([
                         form.reset();
                         var post = context.post;
                         newid = post.id;
+
                         switch (mode) {
+                            case DISPLAYCONSTANTS.MODERN:
+                                var capabilities = post.capabilities;
+                                post.showactionmenu = capabilities.controlreadstatus ||
+                                                      capabilities.edit ||
+                                                      capabilities.split ||
+                                                      capabilities.delete ||
+                                                      capabilities.export ||
+                                                      post.urls.viewparent;
+                                return Templates.render('mod_forum/forum_discussion_modern_post_reply', post);
                             case DISPLAYCONSTANTS.THREADED:
                                 return Templates.render('mod_forum/forum_discussion_threaded_post', post);
                             case DISPLAYCONSTANTS.NESTED:
@@ -135,16 +147,7 @@ define([
                         }
                     })
                     .then(function(html, js) {
-                        var repliesnode;
-
-                        // Try and get the replies-container which can either be a sibling OR parent if it's flat
-                        if (mode == DISPLAYCONSTANTS.FLAT_OLDEST_FIRST || mode == DISPLAYCONSTANTS.FLAT_NEWEST_FIRST) {
-                            repliesnode = currentRoot.parents(Selectors.post.repliesContainer).children().get(0);
-                        }
-
-                        if (repliesnode == undefined) {
-                            repliesnode = currentRoot.siblings(Selectors.post.repliesContainer).children().get(0);
-                        }
+                        var repliesnode = currentRoot.find(Selectors.post.repliesContainer).first();
 
                         if (mode == DISPLAYCONSTANTS.FLAT_NEWEST_FIRST) {
                             return Templates.prependNodeContents(repliesnode, html, js);

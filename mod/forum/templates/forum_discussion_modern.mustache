@@ -57,6 +57,14 @@
 {{#js}}
 require(['jquery', 'mod_forum/discussion_modern'], function($, Discussion) {
     var root = $('#discussion-container-{{uniqid}}');
-    Discussion.init(root);
+    Discussion.init(root, {
+        {{#loggedinuser}}
+        loggedinuser: {
+            profileimageurl: '{{{profileimageurl}}}',
+            fullname: '{{fullname}}',
+            firstname: '{{firstname}}'
+        }
+        {{/loggedinuser}}
+    });
 });
 {{/js}}

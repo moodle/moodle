@@ -1,0 +1,104 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/inpage_reply_modern
+
+    In page reply HTML for the "modern" discussion display mode.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+        "postid": 0,
+        "reply_url": "",
+        "sesskey": "",
+        "parentsubject": ""
+    }
+}}
+<div
+    class="mt-4 mb-4"
+    data-content="inpage-reply-content"
+    style="display: none;"
+>
+    <div class="d-flex">
+        <div class="author-image-container">
+            {{#loggedinuser}}
+                <img
+                    class="rounded-circle w-100"
+                    src="{{{profileimageurl}}}"
+                    alt="{{#str}} pictureof, core, {{fullname}} {{/str}}"
+                    aria-hidden="true"
+                >
+            {{/loggedinuser}}
+        </div>
+        <div class="w-100">
+            {{#loggedinuser}}
+                <h4 class="h5 font-weight-bold reply-author">{{#str}} replyauthorself, mod_forum, {{firstname}}{{/str}}</h4>
+            {{/loggedinuser}}
+            <form data-post-id="{{postid}}" data-content="inpage-reply-form" action="{{{reply_url}}}">
+                <textarea
+                    name="post"
+                    rows="3"
+                    class="w-100"
+                    {{#parentauthorname}}
+                    placeholder="{{#str}} replyingtoauthor, forum, {{.}} {{/str}}"
+                    {{/parentauthorname}}
+                    {{^parentauthorname}}
+                    placeholder="{{#str}} replyplaceholder, forum {{/str}}"
+                    {{/parentauthorname}}
+                    data-auto-rows
+                    data-min-rows="3"
+                    data-max-rows="10"
+                ></textarea>
+                <input type="hidden" name="postformat" value="{{postformat}}"/>
+                <input type="hidden" name="subject" value="{{#str}} inpagereplysubject, forum, {{parentsubject}} {{/str}}"/>
+                <input type="hidden" name="reply" value="{{postid}}"/>
+                <input type="hidden" name="sesskey" value="{{sesskey}}"/>
+                <div class="d-flex mt-3 align-items-center flex-wrap">
+                    <button class="btn btn-primary" data-action="forum-inpage-submit">
+                        <span data-region="submit-text">{{#str}} post, core {{/str}}</span>
+                        <span data-region="loading-icon-container" class="hidden">{{> core/loading }}</span>
+                    </button>
+                    <button data-action="forum-advanced-reply" class="btn btn-link mr-auto" type="submit">
+                        {{#str}} advanced, core {{/str}}
+                    </button>
+                    {{#canreplyprivately}}
+                    <div class="form-check form-check-inline">
+                        <span class="switch">
+                            <input name="privatereply" type="checkbox" id="private-reply-checkbox-{{uniqid}}">
+                            <label class="mb-0" for="private-reply-checkbox-{{uniqid}}">
+                                {{#str}} privatereply, forum {{/str}}
+                            </label>
+                        </span>
+                    </div>
+                    {{/canreplyprivately}}
+                    <button
+                        class="btn btn-icon icon-no-margin icon-size-4 text-muted"
+                        title="{{#str}} cancelreply, mod_forum {{/str}}"
+                        data-action="cancel-inpage-reply"
+                    >
+                        {{#pix}} i/delete, core {{/pix}}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -325,7 +325,7 @@
                                     class="btn btn-primary btn-lg"
                                     data-href="{{{urls.reply}}}"
                                     data-post-id="{{id}}"
-                                    data-action="collapsible-link"
+                                    data-action="create-inpage-reply"
                                     data-can-reply-privately="{{capabilities.canreplyprivately}}"
                                 >
                                     {{#str}} reply, mod_forum {{/str}}
@@ -354,9 +354,7 @@
         <div class="indent replies-container" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
-                    <div class="mt-4">
-                        {{> mod_forum/forum_discussion_modern_post_reply }}
-                    </div>
+                    {{> mod_forum/forum_discussion_modern_post_reply }}
                 {{/replies}}
             {{/hasreplies}}
         </div>
