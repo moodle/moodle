@@ -4,47 +4,74 @@
 ?>
 <div class="boxaligncenter">
 <form id="form" method="post" action="editcategories.php">
-<div>
-<table  class="generalbox" cellpadding="5">
-<tr valign="top">
-    <td align="right"><label for="name"><?php echo get_string("name") ?>:</label></td>
-    <td>
-        <input type="text" name="name" id="name" size="30" value="<?php p($name) ?>" />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><label for="usedynalink"><?php echo get_string("linkcategory","glossary") ?>:</label></td>
-    <td>
-      <select size="1" id="usedynalink" name="usedynalink">
-      <option value="1" <?php
+    <div id="fitem_id_name" class="form-group row fitem">
+        <div class="col-md-3">
+            <label class="col-form-label d-inline " for="name">
+                <?php echo get_string("name") ?>
+            </label>
+        </div>
+        <div class="col-md-9 form-inline felement" data-fieldtype="select">
+            <input type="text" name="name" id="name" class="form-control" size="30" value="<?php p($name) ?>" />
+        </div>
+    </div>
+    <div id="fitem_id_usedynalink" class="form-group row fitem">
+        <div class="col-md-3">
+            <span class="float-sm-right text-nowrap">
+                <?php echo $OUTPUT->help_icon('linkcategory', 'glossary') ?>
+            </span>
+            <label class="col-form-label d-inline " for="usedynalink">
+                <?php echo get_string("linkcategory","glossary") ?>
+            </label>
+        </div>
+        <div class="col-md-9 form-inline felement" data-fieldtype="select">
+            <select size="1" id="usedynalink" name="usedynalink" class="custom-select">
+                <option value="1" <?php
        if ( $usedynalink ) {
           echo "selected=\"selected\"";
        }
        ?>><?php echo get_string("yes") ?></option>
-      <option value="0" <?php
+                <option value="0" <?php
        if ( !$usedynalink ) {
           echo "selected=\"selected\"";
        }
        ?>><?php echo get_string("no") ?>
-      </option>
-      </select> <?php echo $OUTPUT->help_icon('linkcategory', 'glossary') ?>
-    </td>
-</tr>
-<tr>
-<td colspan="2">
-    <div class="buttons">
-    <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-    <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
-    <input type="hidden" name="action" value="<?php p($action) ?>" />
-    <input type="hidden" name="confirm" value="1" />
-    <input type="hidden" name="mode" value='cat' />
-    <input type="hidden" name="hook" value="<?php p($hook) ?>" />
-    <input type="submit" value="<?php print_string("savechanges") ?>" />
-    <input type="reset" value="<?php print_string("back","glossary") ?>"  onclick="javascript:history.go(-1);" />
+                </option>
+            </select>
+        </div>
     </div>
-</td>
-</tr>
-</table>
+    <div id="fgroup_id_buttonar" class="form-group row fitem femptylabel" data-groupname="buttonar">
+        <div class="col-md-3">
+            <span class="float-sm-right text-nowrap">
+            </span>
+            <label class="col-form-label d-inline " for="fgroup_id_buttonar">
+            </label>
+        </div>
+        <div class="col-md-9 form-inline felement" data-fieldtype="group">
+            <div class="form-group fitem form-submit mr-1">
+                <label class="col-form-label" for="id_save">
+                </label>
+                <span data-fieldtype="submit">
+                    <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+                    <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
+                    <input type="hidden" name="action" value="<?php p($action) ?>" />
+                    <input type="hidden" name="confirm" value="1" />
+                    <input type="hidden" name="mode" value='cat' />
+                    <input type="hidden" name="hook" value="<?php p($hook) ?>" />
+                    <input type="submit" class="btn btn-primary" name="save" id="id_save"
+                           value="<?php echo get_string("savechanges") ?>" />
+                </span>
+            </div>
+            <div class="form-group fitem btn-cancel">
+                <label class="col-form-label" for="id_back">
+                </label>
+                <span data-fieldtype="submit">
+                    <input type="reset" class="btn btn-secondary" name="back" id="id_back"
+                           value="<?php print_string("back", "glossary") ?>"  onclick="javascript:history.go(-1);" />
+                </span>
+            </div>
+        </div>
+    </div>
+    <div>
 </div>
 </form>
 </div>
