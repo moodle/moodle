@@ -178,6 +178,20 @@
     -webkit-box-shadow: none;
 }
 
+.assignfeedback_editpdf_widget .toolbar > button.rotateleftbutton {
+    /*rtl:raw:
+    border-right: 1px solid #ccc;
+    border-left: 0;
+    */
+    /*rtl:ignore*/
+    float: left;
+}
+
+.assignfeedback_editpdf_widget .toolbar > button.rotaterightbutton {
+    /*rtl:ignore*/
+    float: right;
+}
+
 .assignfeedback_editpdf_widget .toolbar {
     float: left;
 }
