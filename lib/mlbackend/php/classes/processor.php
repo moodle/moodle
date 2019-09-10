@@ -132,8 +132,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
             $nsamples = count($samples);
             if ($nsamples === self::BATCH_SIZE) {
                 // Training it batches to avoid running out of memory.
-
-                $classifier->partialTrain($samples, $targets, array(0, 1));
+                $classifier->partialTrain($samples, $targets, json_decode($metadata['targetclasses']));
                 $samples = array();
                 $targets = array();
             }
@@ -152,7 +151,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
 
         // Train the remaining samples.
         if ($samples) {
-            $classifier->partialTrain($samples, $targets, array(0, 1));
+            $classifier->partialTrain($samples, $targets, json_decode($metadata['targetclasses']));
         }
 
         $resultobj = new \stdClass();
