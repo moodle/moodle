@@ -23,11 +23,11 @@
  */
 
 $string['allincludinghidden'] = 'All';
-$string['all'] = 'All (except hidden)';
+$string['all'] = 'All (except removed from view)';
 $string['addtofavourites'] = 'Star this course';
 $string['aria:addtofavourites'] = 'Star for';
-$string['aria:allcoursesincludinghidden'] = 'All courses';
-$string['aria:allcourses'] = 'All courses except hidden courses';
+$string['aria:allcoursesincludinghidden'] = 'Show all courses';
+$string['aria:allcourses'] = 'Show all courses except courses removed from view';
 $string['aria:card'] = 'Switch to card view';
 $string['aria:controls'] = 'Course overview controls';
 $string['aria:courseactions'] = 'Actions for current course';
@@ -70,13 +70,13 @@ $string['privacy:metadata:overviewpagingpreference'] = 'The Course overview bloc
 $string['removefromfavourites'] = 'Unstar this course';
 $string['summary'] = 'Summary';
 $string['title'] = 'Course name';
-$string['aria:hidecourse'] = 'Hide {$a} from view';
-$string['aria:showcourse'] = 'Show {$a} in view';
-$string['aria:hiddencourses'] = 'Show hidden courses';
-$string['hidden'] = 'Hidden courses';
-$string['hidecourse'] = 'Hide from view';
-$string['hiddencourses'] = 'Hidden';
-$string['show'] = 'Show this course';
+$string['aria:hidecourse'] = 'Remove {$a} from view';
+$string['aria:showcourse'] = 'Restore {$a} to view';
+$string['aria:hiddencourses'] = 'Show courses removed from view';
+$string['hidden'] = 'Courses removed from view';
+$string['hidecourse'] = 'Remove from view';
+$string['hiddencourses'] = 'Removed from view';
+$string['show'] = 'Restore to view';
 $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
 
 // Deprecated since Moodle 3.6.

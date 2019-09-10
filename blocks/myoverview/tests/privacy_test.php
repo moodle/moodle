@@ -77,6 +77,8 @@ class block_myoverview_privacy_testcase extends \core_privacy\tests\provider_tes
             array('block_myoverview_user_grouping_preference', 'inprogress', ''),
             array('block_myoverview_user_grouping_preference', 'future', ''),
             array('block_myoverview_user_grouping_preference', 'past', ''),
+            array('block_myoverview_user_grouping_preference', 'hidden', ''),
+            array('block_myoverview_user_grouping_preference', 'favourites', ''),
             array('block_myoverview_user_view_preference', 'card', ''),
             array('block_myoverview_user_view_preference', 'list', ''),
             array('block_myoverview_user_view_preference', 'summary', ''),
