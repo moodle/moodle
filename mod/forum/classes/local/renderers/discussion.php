@@ -330,9 +330,15 @@ class discussion {
             }
             if (!empty($forummenu)) {
                 $html = '<div class="movediscussionoption">';
+
+                $movebutton = get_string('move');
+                if ($this->displaymode === FORUM_MODE_MODERN) {
+                    // Move discussion selector will be rendered on the settings drawer. We won't output the button in this mode.
+                    $movebutton = null;
+                }
                 $select = new url_select($forummenu, '',
                         ['/mod/forum/discuss.php?d=' . $discussion->get_id() => get_string("movethisdiscussionto", "forum")],
-                        'forummenu', get_string('move'));
+                        'forummenu', $movebutton);
                 $html .= $this->renderer->render($select);
                 $html .= "</div>";
                 return $html;

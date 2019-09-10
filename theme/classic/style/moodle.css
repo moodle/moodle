@@ -16377,6 +16377,15 @@ select {
   color: #373a3c;
   font-weight: bold; }
 
+.discussion-settings-trigger .icon {
+  height: 32px;
+  font-size: 32px;
+  width: auto; }
+
+.discussion-settings-container .custom-select,
+.discussion-settings-container input {
+  max-width: 100%; }
+
 .forumpost {
   border: 1px solid #dee2e6;
   display: block;

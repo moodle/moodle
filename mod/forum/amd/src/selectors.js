@@ -25,6 +25,7 @@ define([], function() {
     return {
         subscription: {
             toggle: "[data-type='subscription-toggle'][data-action='toggle']",
+            toggleSwitch: "[data-type='subscription-toggle-switch'][data-action='toggle']",
         },
         summary: {
             actions: "[data-container='discussion-summary-actions']"
@@ -56,13 +57,16 @@ define([], function() {
         },
         lock: {
             toggle: "[data-action='toggle'][data-type='lock-toggle']",
+            toggleSwitch: "[data-action='toggle'][data-type='lock-toggle-switch']",
             icon: "[data-region='locked-icon']"
         },
         favourite: {
             toggle: "[data-type='favorite-toggle'][data-action='toggle']",
+            toggleSwitch: "[data-type='favorite-toggle-switch'][data-action='toggle']",
         },
         pin: {
             toggle: "[data-type='pin-toggle'][data-action='toggle']",
+            toggleSwitch: "[data-type='pin-toggle-switch'][data-action='toggle']",
         },
         discussion: {
             tools: '[data-container="discussion-tools"]',

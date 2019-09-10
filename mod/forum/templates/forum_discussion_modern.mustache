@@ -32,20 +32,7 @@
 
 <div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
     {{#html}}
-        <div class="mb-5">
-            <div class="d-flex flex-wrap">
-                <div>{{{modeselectorform}}}</div>
-                <div class="ml-auto d-flex align-items-middle" data-container="discussion-tools">
-                    <div>{{{subscribe}}}</div>
-                    <div class="pl-1">{{> mod_forum/forum_action_menu}}</div>
-                </div>
-            </div>
-
-            <div class="d-flex mt-2">
-                <div>{{{movediscussion}}}</div>
-                <div {{#movediscussion}}class="ml-2"{{/movediscussion}}>{{{exportdiscussion}}}</div>
-            </div>
-        </div>
+        {{> mod_forum/discussion_settings_drawer}}
     {{/html}}
 
     {{#notifications}}

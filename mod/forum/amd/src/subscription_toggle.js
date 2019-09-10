@@ -30,6 +30,7 @@ define([
         'mod_forum/selectors',
         'core/pubsub',
         'mod_forum/forum_events',
+        'core/custom_interaction_events',
     ], function(
         $,
         Templates,
@@ -37,7 +38,8 @@ define([
         Repository,
         Selectors,
         PubSub,
-        ForumEvents
+        ForumEvents,
+        CustomEvents
     ) {
 
     /**
@@ -62,6 +64,26 @@ define([
                 })
                 .then(function(html, js) {
                     return Templates.replaceNode(toggleElement, html, js);
+                })
+                .catch(Notification.exception);
+
+            e.preventDefault();
+        });
+
+        root.on(CustomEvents.events.activate, Selectors.subscription.toggleSwitch, function(e) {
+            var toggleElement = $(this);
+            var forumId = toggleElement.data('forumid');
+            var discussionId = toggleElement.data('discussionid');
+            var subscriptionState = toggleElement.data('targetstate');
+
+            Repository.setDiscussionSubscriptionState(forumId, discussionId, subscriptionState)
+                .then(function(context) {
+                    var newTargetState = context.userstate.subscribed ? 0 : 1;
+                    toggleElement.data('targetstate', newTargetState);
+                    return PubSub.publish(ForumEvents.SUBSCRIPTION_TOGGLED, {
+                        discussionId: discussionId,
+                        subscriptionState: context.userstate.subscribed
+                    });
                 })
                 .catch(Notification.exception);
 

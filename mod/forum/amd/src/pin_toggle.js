@@ -34,6 +34,7 @@ define([
     'mod_forum/repository',
     'mod_forum/selectors',
     'core/str',
+    'core/custom_interaction_events',
 ], function(
     $,
     Ajax,
@@ -42,7 +43,8 @@ define([
     Notification,
     Repository,
     Selectors,
-    String
+    String,
+    CustomEvents
 ) {
 
     /**
@@ -71,6 +73,30 @@ define([
                                 type: "info"
                             });
                         });
+                })
+                .fail(Notification.exception);
+
+            e.preventDefault();
+        });
+
+        root.on(CustomEvents.events.activate, Selectors.pin.toggleSwitch, function(e) {
+            var toggleElement = $(this);
+            var forumid = toggleElement.data('forumid');
+            var discussionid = toggleElement.data('discussionid');
+            var pinstate = toggleElement.data('targetstate');
+            Repository.setPinDiscussionState(forumid, discussionid, pinstate)
+                .then(function(context) {
+                    var newTargetState = context.pinned ? 0 : 1;
+                    return toggleElement.data('targetstate', newTargetState);
+                })
+                .then(function() {
+                    return String.get_string("pinupdated", "forum");
+                })
+                .then(function(s) {
+                    return Notification.addNotification({
+                        message: s,
+                        type: "info"
+                    });
                 })
                 .fail(Notification.exception);
 

@@ -30,6 +30,7 @@ import LockToggle from 'mod_forum/lock_toggle';
 import FavouriteToggle from 'mod_forum/favourite_toggle';
 import Pin from 'mod_forum/pin_toggle';
 import Selectors from 'mod_forum/selectors';
+import Subscribe from 'mod_forum/subscription_toggle';
 
 const ANIMATION_DURATION = 150;
 
@@ -412,4 +413,5 @@ export const init = (root, context) => {
     LockToggle.init(discussionToolsContainer);
     FavouriteToggle.init(discussionToolsContainer);
     Pin.init(discussionToolsContainer);
+    Subscribe.init(discussionToolsContainer);
 };

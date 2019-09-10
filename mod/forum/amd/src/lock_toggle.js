@@ -27,13 +27,33 @@ define([
         'core/notification',
         'mod_forum/repository',
         'mod_forum/selectors',
+        'core/custom_interaction_events',
     ], function(
         $,
         Templates,
         Notification,
         Repository,
-        Selectors
+        Selectors,
+        CustomEvents
     ) {
+
+    /**
+     * Toggles the locked state of a discussion and refreshes the page.
+     *
+     * @param {Object} toggleElement
+     */
+    var toggleLockState = function(toggleElement) {
+        var toggleElement = $(toggleElement);
+        var forumId = toggleElement.data('forumid');
+        var discussionId = toggleElement.data('discussionid');
+        var state = toggleElement.data('state');
+
+        Repository.setDiscussionLockState(forumId, discussionId, state)
+            .then(function() {
+                return location.reload();
+            })
+            .catch(Notification.exception);
+    };
 
     /**
      * Register event listeners for the subscription toggle.
@@ -42,16 +62,13 @@ define([
      */
     var registerEventListeners = function(root) {
         root.on('click', Selectors.lock.toggle, function(e) {
-            var toggleElement = $(this);
-            var forumId = toggleElement.data('forumid');
-            var discussionId = toggleElement.data('discussionid');
-            var state = toggleElement.data('state');
+            toggleLockState(this);
 
-            Repository.setDiscussionLockState(forumId, discussionId, state)
-                .then(function() {
-                    return location.reload();
-                })
-                .catch(Notification.exception);
+            e.preventDefault();
+        });
+
+        root.on(CustomEvents.events.activate, Selectors.lock.toggleSwitch, function(e) {
+            toggleLockState(this);
 
             e.preventDefault();
         });

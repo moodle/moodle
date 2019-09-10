@@ -1,0 +1,62 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/settings_header
+
+    This template will render the header for the discussion/forum settings drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {}
+
+}}
+
+<div class="border-bottom px-2 py-3" aria-hidden="true" data-region="view-settings">
+    <div class="d-flex align-items-center">
+        <div class="align-self-stretch" >
+            <button id="settings-drawer-close-{{uniqid}}" class="h-100 d-flex mr-2 align-items-center btn btn-icon"
+                    data-toggle="discussion-settings">
+                <span class="dir-ltr-hide">{{#pix}} t/left, core {{/pix}}</span>
+                <span class="dir-rtl-hide">{{#pix}} t/right, core {{/pix}}</span>
+            </button>
+        </div>
+        <div class="lead font-weight-bolder">
+            {{#str}} settings, core {{/str}}
+        </div>
+    </div>
+</div>
+{{#js}}
+require(
+    ['jquery', 'mod_forum/forum_events', 'core/custom_interaction_events', 'core/pubsub'],
+    function($, ForumEvents, CustomEvents, PubSub) {
+        var root = $('#settings-drawer-close-{{uniqid}}');
+        CustomEvents.define(root, [CustomEvents.events.activate]);
+
+        root.on(CustomEvents.events.activate, function(e) {
+            PubSub.publish(ForumEvents.TOGGLE_SETTINGS_DRAWER);
+        });
+    }
+);
+{{/js}}

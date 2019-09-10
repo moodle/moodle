@@ -109,6 +109,19 @@ select {
     }
 }
 
+.discussion-settings-trigger .icon {
+    height: $icon-height * 2;
+    font-size: $icon-height * 2;
+    width: auto;
+}
+
+.discussion-settings-container {
+    .custom-select,
+    input {
+        max-width: 100%;
+    }
+}
+
 .forumpost {
     border: $border-width solid $border-color;
     display: block;

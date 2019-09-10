@@ -29,13 +29,15 @@ define([
         'mod_forum/repository',
         'mod_forum/selectors',
         'core/str',
+        'core/custom_interaction_events',
     ], function(
         $,
         Templates,
         Notification,
         Repository,
         Selectors,
-        String
+        String,
+        CustomEvents
     ) {
 
     /**
@@ -67,6 +69,28 @@ define([
                         });
                 })
                 .catch(Notification.exception);
+
+            e.preventDefault();
+        });
+
+        root.on(CustomEvents.events.activate, Selectors.favourite.toggleSwitch, function(e) {
+            var toggleElement = $(this);
+            var forumId = toggleElement.data('forumid');
+            var discussionId = toggleElement.data('discussionid');
+            var subscriptionState = toggleElement.data('targetstate');
+
+            Repository.setFavouriteDiscussionState(forumId, discussionId, subscriptionState)
+                .then(function(context) {
+                    var newTargetState = context.userstate.favourited ? 0 : 1;
+                    return toggleElement.data('targetstate', newTargetState);
+                }).then(function() {
+                    return String.get_string("favouriteupdated", "forum");
+                }).then(function(s) {
+                    return Notification.addNotification({
+                        message: s,
+                        type: "info"
+                    });
+                }).catch(Notification.exception);
 
             e.preventDefault();
         });

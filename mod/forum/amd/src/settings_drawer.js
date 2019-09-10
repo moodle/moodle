@@ -14,14 +14,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Events for the forum activity.
+ * Controls the forum/discussion settings drawer.
  *
- * @module     mod_forum/forum_events
- * @package    mod_forum
+ * @module     mod_forum/settings_drawer
  * @copyright  2019 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-export default {
-    SUBSCRIPTION_TOGGLED: 'mod_forum/subscription_toggle:subscriptionToggled',
-    TOGGLE_SETTINGS_DRAWER: 'mod_forum/toggle:settings_drawer'
+import $ from 'jquery';
+import * as PubSub from 'core/pubsub';
+import Drawer from 'core/drawer';
+import Events from 'mod_forum/forum_events';
+
+const registerEventListeners = (root) => {
+    PubSub.subscribe(Events.TOGGLE_SETTINGS_DRAWER, function() {
+        const drawerRoot = Drawer.getDrawerRoot(root);
+        if (Drawer.isVisible(drawerRoot)) {
+            Drawer.hide(drawerRoot);
+        } else {
+            Drawer.show(drawerRoot);
+        }
+    });
+};
+
+/**
+ * Initialise the settings drawer.
+ *
+ * @param {Object} root The settings drawer container.
+ */
+export const init = (root) => {
+    root = $(root);
+    registerEventListeners(root);
 };
