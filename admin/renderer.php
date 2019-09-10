@@ -1469,9 +1469,11 @@ class core_admin_renderer extends plugin_renderer_base {
                     $class = 'requires-failed';
                     $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'badge badge-danger');
                 }
-                $requires[] = html_writer::tag('li',
-                    html_writer::span(get_string('moodleversion', 'core_plugin', $plugin->versionrequires), 'dep dep-core').
-                    ' '.$label, array('class' => $class));
+                if ($reqinfo->reqver != ANY_VERSION) {
+                    $requires[] = html_writer::tag('li',
+                        html_writer::span(get_string('moodleversion', 'core_plugin', $plugin->versionrequires), 'dep dep-core').
+                        ' '.$label, array('class' => $class));
+                }
 
             } else {
                 $actions = array();
