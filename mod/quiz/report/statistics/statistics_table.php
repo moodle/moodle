@@ -469,7 +469,7 @@ class quiz_statistics_table extends flexible_table {
         } else if (!is_numeric($questionstat->discriminativeefficiency)) {
             return '';
         } else {
-            return $this->format_percentage($questionstat->discriminativeefficiency);
+            return $this->format_percentage($questionstat->discriminativeefficiency, false);
         }
     }
 
