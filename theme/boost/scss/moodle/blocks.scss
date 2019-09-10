@@ -69,6 +69,20 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
     }
 }
 
+.header-action {
+    #region-main-settings-menu {
+        position: unset;
+        float: none;
+        width: auto;
+
+        & > div {
+            position: unset;
+            right: auto;
+            margin: 0;
+        }
+    }
+}
+
 [data-region="blocks-column"] {
     @include media-breakpoint-down(lg) {
         width: 100%;

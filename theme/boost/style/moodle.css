@@ -12164,6 +12164,15 @@ div.editor_atto_toolbar button .icon {
         If modifying make sure block-region is horizontally stacked when in full screen */
       display: block; } }
 
+.header-action #region-main-settings-menu {
+  position: unset;
+  float: none;
+  width: auto; }
+  .header-action #region-main-settings-menu > div {
+    position: unset;
+    right: auto;
+    margin: 0; }
+
 @media (max-width: 1199.98px) {
   [data-region="blocks-column"] {
     width: 100%; } }

@@ -4261,6 +4261,14 @@ EOD;
     public function full_header() {
         global $PAGE;
 
+        if ($PAGE->include_region_main_settings_in_header_actions()) {
+            $PAGE->add_header_action(html_writer::div(
+                $this->region_main_settings_menu(),
+                'd-print-none',
+                ['id' => 'region-main-settings-menu']
+            ));
+        }
+
         $header = new stdClass();
         $header->settingsmenu = $this->context_header_settings_menu();
         $header->contextheader = $this->context_header();
@@ -4268,6 +4276,7 @@ EOD;
         $header->navbar = $this->navbar();
         $header->pageheadingbutton = $this->page_heading_button();
         $header->courseheader = $this->course_header();
+        $header->headeractions = $PAGE->get_header_actions();
         return $this->render_from_template('core/full_header', $header);
     }
 

@@ -31,9 +31,14 @@
     <div class="col-12 pt-3 pb-3">
         <div class="card {{^contextheader}}border-0 bg-transparent{{/contextheader}}">
             <div class="card-body {{^contextheader}}p-2{{/contextheader}}">
-                <div class="d-flex">
+                <div class="d-flex align-items-center">
                     <div class="mr-auto">
                     {{{contextheader}}}
+                    </div>
+                    <div class="header-actions-container flex-shrink-0" data-region="header-actions-container">
+                        {{#headeractions}}
+                            <div class="header-action ml-2">{{{.}}}</div>
+                        {{/headeractions}}
                     </div>
                 </div>
                 <div class="d-flex flex-wrap">
