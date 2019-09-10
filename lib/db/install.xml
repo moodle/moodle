@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20190717" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20190905" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -4019,6 +4019,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelid-action" UNIQUE="false" FIELDS="modelid, action"/>
+        <INDEX NAME="analysableid" UNIQUE="false" FIELDS="analysableid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="search_index_requests" COMMENT="Records requests for (re)indexing of specific contexts. Entries will be removed from this table when indexing of that context is complete. (This table is not used for normal time-based indexing of new content.)">
