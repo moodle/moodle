@@ -647,7 +647,16 @@ $functions = array(
         'classname' => 'core_enrol_external',
         'methodname' => 'edit_user_enrolment',
         'classpath' => 'enrol/externallib.php',
-        'description' => 'External function that updates a given user enrolment',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          External function that updates a given user enrolment',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+    'core_enrol_submit_user_enrolment_form' => array(
+        'classname' => 'core_enrol_external',
+        'methodname' => 'submit_user_enrolment_form',
+        'classpath' => 'enrol/externallib.php',
+        'description' => 'Submit form data for enrolment form',
         'type' => 'write',
         'ajax' => true,
     ),

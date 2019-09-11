@@ -261,48 +261,12 @@ define(['core/templates',
 
             // User enrolment ID.
             var ueid = $(form).find('[name="ue"]').val();
-            // Status.
-            var status = $(form).find('[name="status"]').val();
-
-            var params = {
-                'courseid': this.courseid,
-                'ueid': ueid,
-                'status': status
-            };
-
-            // Enrol time start.
-            var timeStartEnabled = $(form).find('[name="timestart[enabled]"]');
-            if (timeStartEnabled.is(':checked')) {
-                var timeStartYear = $(form).find('[name="timestart[year]"]').val();
-                var timeStartMonth = $(form).find('[name="timestart[month]"]').val() - 1;
-                var timeStartDay = $(form).find('[name="timestart[day]"]').val();
-                var timeStartHour = $(form).find('[name="timestart[hour]"]').val();
-                var timeStartMinute = $(form).find('[name="timestart[minute]"]').val();
-                var timeStart = new Date(timeStartYear, timeStartMonth, timeStartDay, timeStartHour, timeStartMinute);
-                params.timestart = timeStart.getTime() / 1000;
-            }
-
-            // Enrol time end.
-            var timeEndEnabled = $(form).find('[name="timeend[enabled]"]');
-            if (timeEndEnabled.is(':checked')) {
-                var timeEndYear = $(form).find('[name="timeend[year]"]').val();
-                var timeEndMonth = $(form).find('[name="timeend[month]"]').val() - 1;
-                var timeEndDay = $(form).find('[name="timeend[day]"]').val();
-                var timeEndHour = $(form).find('[name="timeend[hour]"]').val();
-                var timeEndMinute = $(form).find('[name="timeend[minute]"]').val();
-                var timeEnd = new Date(timeEndYear, timeEndMonth, timeEndDay, timeEndHour, timeEndMinute);
-                params.timeend = timeEnd.getTime() / 1000;
-            }
-
-            // Enrol duration.
-            var enrolDuration = $(form).find('[name="duration"]');
-            if (enrolDuration.is(':enabled')) {
-                params.timeend = params.timestart + parseInt(enrolDuration.val());
-            }
 
             var request = {
-                methodname: 'core_enrol_edit_user_enrolment',
-                args: params
+                methodname: 'core_enrol_submit_user_enrolment_form',
+                args: {
+                    formdata: form.serialize()
+                }
             };
 
             Ajax.call([request])[0].done(function(data) {
@@ -323,7 +287,7 @@ define(['core/templates',
             }).fail(Notification.exception);
         };
 
-         /**
+        /**
          * Private method
          *
          * @method submitUnenrolFormAjax

@@ -919,6 +919,7 @@ class core_enrol_external extends external_api {
     /**
      * Returns description of edit_user_enrolment() parameters
      *
+     * @deprecated since 3.8
      * @return external_function_parameters
      */
     public static function edit_user_enrolment_parameters() {
@@ -936,6 +937,7 @@ class core_enrol_external extends external_api {
     /**
      * External function that updates a given user enrolment.
      *
+     * @deprecated since 3.8
      * @param int $courseid The course ID.
      * @param int $ueid The user enrolment ID.
      * @param int $status The enrolment status.
@@ -1002,6 +1004,7 @@ class core_enrol_external extends external_api {
     /**
      * Returns description of edit_user_enrolment() result value
      *
+     * @deprecated since 3.8
      * @return external_description
      */
     public static function edit_user_enrolment_returns() {
@@ -1018,6 +1021,82 @@ class core_enrol_external extends external_api {
                 ),
             )
         );
+    }
+
+    /**
+     * Mark the edit_user_enrolment web service as deprecated.
+     *
+     * @return  bool
+     */
+    public static function edit_user_enrolment_is_deprecated() {
+        return true;
+    }
+
+    /**
+     * Returns description of submit_user_enrolment_form parameters.
+     *
+     * @return external_function_parameters.
+     */
+    public static function submit_user_enrolment_form_parameters() {
+        return new external_function_parameters([
+            'formdata' => new external_value(PARAM_RAW, 'The data from the event form'),
+        ]);
+    }
+
+    /**
+     * External function that handles the user enrolment form submission.
+     *
+     * @param string $formdata The user enrolment form data in s URI encoded param string
+     * @return array An array consisting of the processing result and error flag, if available
+     */
+    public static function submit_user_enrolment_form($formdata) {
+        global $CFG, $DB, $PAGE;
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::submit_user_enrolment_form_parameters(), ['formdata' => $formdata]);
+
+        $data = [];
+        parse_str($params['formdata'], $data);
+
+        $userenrolment = $DB->get_record('user_enrolments', ['id' => $data['ue']], '*', MUST_EXIST);
+        $instance = $DB->get_record('enrol', ['id' => $userenrolment->enrolid], '*', MUST_EXIST);
+        $plugin = enrol_get_plugin($instance->enrol);
+        $course = get_course($instance->courseid);
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        require_once("$CFG->dirroot/enrol/editenrolment_form.php");
+        $customformdata = [
+            'ue' => $userenrolment,
+            'modal' => true,
+            'enrolinstancename' => $plugin->get_instance_name($instance)
+        ];
+        $mform = new enrol_user_enrolment_form(null, $customformdata, 'post', '', null, true, $data);
+
+        if ($validateddata = $mform->get_data()) {
+            if (!empty($validateddata->duration) && $validateddata->timeend == 0) {
+                $validateddata->timeend = $validateddata->timestart + $validateddata->duration;
+            }
+            require_once($CFG->dirroot . '/enrol/locallib.php');
+            $manager = new course_enrolment_manager($PAGE, $course);
+            $result = $manager->edit_enrolment($userenrolment, $validateddata);
+
+            return ['result' => $result];
+        } else {
+            return ['result' => false, 'validationerror' => true];
+        }
+    }
+
+    /**
+     * Returns description of submit_user_enrolment_form() result value
+     *
+     * @return external_description
+     */
+    public static function submit_user_enrolment_form_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'True if the user\'s enrolment was successfully updated'),
+            'validationerror' => new external_value(PARAM_BOOL, 'Indicates invalid form data', VALUE_DEFAULT, false),
+        ]);
     }
 
     /**
