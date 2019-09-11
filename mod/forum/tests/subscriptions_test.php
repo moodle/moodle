@@ -1036,7 +1036,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Create a course, with a forum.
         $course = $this->getDataGenerator()->create_course();
 
-        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
         // Create some users.
@@ -1045,6 +1045,8 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Post some discussions to the forum.
         $discussions = array();
         $author = $users[0];
+        $userwithnosubs = $users[1];
+
         for ($i = 0; $i < 20; $i++) {
             list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
             $discussions[] = $discussion;
@@ -1053,19 +1055,43 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Unsubscribe half the users from the half the discussions.
         $forumcount = 0;
         $usercount = 0;
+        $userwithsubs = null;
         foreach ($discussions as $data) {
+            // Unsubscribe user from all discussions.
+            \mod_forum\subscriptions::unsubscribe_user_from_discussion($userwithnosubs->id, $data);
+
             if ($forumcount % 2) {
                 continue;
             }
             foreach ($users as $user) {
                 if ($usercount % 2) {
+                    $userwithsubs = $user;
                     continue;
                 }
-                \mod_forum\subscriptions::unsubscribe_user_from_discussion($user->id, $discussion);
+                \mod_forum\subscriptions::unsubscribe_user_from_discussion($user->id, $data);
                 $usercount++;
             }
             $forumcount++;
         }
+
+        // Reset the subscription caches.
+        \mod_forum\subscriptions::reset_forum_cache();
+        \mod_forum\subscriptions::reset_discussion_cache();
+
+        // A user with no subscriptions should only be fetched once.
+        $this->assertNull(\mod_forum\subscriptions::fill_discussion_subscription_cache($forum->id, $userwithnosubs->id));
+        $startcount = $DB->perf_get_reads();
+        $this->assertNull(\mod_forum\subscriptions::fill_discussion_subscription_cache($forum->id, $userwithnosubs->id));
+        $this->assertEquals($startcount, $DB->perf_get_reads());
+
+        // Confirm subsequent calls properly tries to fetch subs.
+        $this->assertNull(\mod_forum\subscriptions::fill_discussion_subscription_cache($forum->id, $userwithsubs->id));
+        $this->assertNotEquals($startcount, $DB->perf_get_reads());
+
+        // Another read should be performed to get all subscriptions for the forum.
+        $startcount = $DB->perf_get_reads();
+        $this->assertNull(\mod_forum\subscriptions::fill_discussion_subscription_cache($forum->id));
+        $this->assertNotEquals($startcount, $DB->perf_get_reads());
 
         // Reset the subscription caches.
         \mod_forum\subscriptions::reset_forum_cache();
