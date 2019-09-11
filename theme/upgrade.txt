@@ -3,6 +3,9 @@ information provided here is intended especially for theme designer.
 
 === 3.8 ===
 
+* Moodle does not produce chunked CSS anymore, instead an unique css fils is generated and served (MDL-55751). This implies:
+  * css_chunk_by_selector_count() has been removed.
+  * css_store_css(), theme_styles_get_filename() and theme_styles_get_etag() don't accept any chunk-related param anymore.
 * The PHP Less compilier has now been removed from the core library.
   Please consider migrating your theme to use SCSS.
 * It is now possible to use sub-directories when creating mustache templates.
