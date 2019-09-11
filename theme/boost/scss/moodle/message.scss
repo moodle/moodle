@@ -419,10 +419,19 @@
 }
 
 $message-drawer-width: 320px;
+$message-send-bg: $gray-300 !default;
+$message-send-color: color-yiq($message-send-bg) !default;
+$message-send-time-color: mix($message-send-color, $message-send-bg, 100%) !default;
+$message-received-bg: $body-bg !default;
+$message-received-color: color-yiq($message-received-bg) !default;
+$message-received-color-muted: mix($message-received-color, $message-received-bg, 70%) !default;
+$message-app-bg: mix($message-send-bg, $message-received-bg, 50%) !default;
+$message-day-color: color-yiq($message-app-bg) !default;
 
 .message-app {
     display: flex;
     flex-direction: column;
+    background-color: $message-app-bg;
     @include transition();
 
     .icon-back-in-drawer {
@@ -485,6 +494,7 @@ $message-drawer-width: 320px;
         color: $body-color;
         height: 1.5rem;
     }
+
     .contact-status {
         position: absolute;
         left: 39px;
@@ -508,7 +518,7 @@ $message-drawer-width: 320px;
         cursor: pointer;
 
         &:hover {
-            box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05), 3px 3px 5px -2px rgba(0, 0, 0, .1), 1px 1px 5px 0 rgba(0, 0, 0, 0.03);
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
         }
     }
 
@@ -600,7 +610,32 @@ $message-drawer-width: 320px;
             overflow: hidden;
         }
     }
+
     .message {
+        &.send {
+            background-color: $message-send-bg;
+            color: $message-send-color;
+            .time {
+                color: $message-send-time-color;
+            }
+            .tail {
+                right: 0;
+                margin-right: -0.5rem;
+                border-bottom-color: $message-send-bg;
+            }
+        }
+        &.received {
+            background-color: $message-received-bg;
+            color: $message-received-color;
+            .time {
+                color: $message-received-color-muted;
+            }
+            .tail {
+                left: 0;
+                margin-left: -0.5rem;
+                border-bottom-color: $message-received-bg;
+            }
+        }
         .tail {
             content: '';
             bottom: 0;
@@ -609,16 +644,9 @@ $message-drawer-width: 320px;
             border: 0.5rem solid transparent;
             position: relative;
         }
-        &.send .tail {
-            right: 0;
-            margin-right: -0.5rem;
-            border-bottom-color: map-get($theme-colors, 'secondary');
-        }
-        &.received .tail {
-            left: 0;
-            margin-left: -0.5rem;
-            border-bottom-color: $white;
-        }
+    }
+    .day {
+        color: $message-day-color;
     }
     .lazy-load-list {
         overflow-y: auto;

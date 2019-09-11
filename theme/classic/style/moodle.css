@@ -14868,6 +14868,7 @@ a.ygtvspacer:hover {
 .message-app {
   display: flex;
   flex-direction: column;
+  background-color: #eff1f3;
   transition: all 0.2s ease-in-out; }
   @media (prefers-reduced-motion: reduce) {
     .message-app {
@@ -14926,7 +14927,7 @@ a.ygtvspacer:hover {
   .message-app .clickable {
     cursor: pointer; }
     .message-app .clickable:hover {
-      box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05), 3px 3px 5px -2px rgba(0, 0, 0, 0.1), 1px 1px 5px 0 rgba(0, 0, 0, 0.03); }
+      filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3)); }
   .message-app a,
   .message-app .btn-link {
     color: inherit; }
@@ -14998,6 +14999,24 @@ a.ygtvspacer:hover {
     min-height: 1.5rem; }
   .message-app .section .collapsing {
     overflow: hidden; }
+  .message-app .message.send {
+    background-color: #dee2e6;
+    color: #212529; }
+    .message-app .message.send .time {
+      color: #212529; }
+    .message-app .message.send .tail {
+      right: 0;
+      margin-right: -0.5rem;
+      border-bottom-color: #dee2e6; }
+  .message-app .message.received {
+    background-color: #fff;
+    color: #212529; }
+    .message-app .message.received .time {
+      color: #646669; }
+    .message-app .message.received .tail {
+      left: 0;
+      margin-left: -0.5rem;
+      border-bottom-color: #fff; }
   .message-app .message .tail {
     content: '';
     bottom: 0;
@@ -15005,14 +15024,8 @@ a.ygtvspacer:hover {
     height: 0;
     border: 0.5rem solid transparent;
     position: relative; }
-  .message-app .message.send .tail {
-    right: 0;
-    margin-right: -0.5rem;
-    border-bottom-color: #e9ecef; }
-  .message-app .message.received .tail {
-    left: 0;
-    margin-left: -0.5rem;
-    border-bottom-color: #fff; }
+  .message-app .day {
+    color: #212529; }
   .message-app .lazy-load-list {
     overflow-y: auto; }
 
