@@ -27,6 +27,7 @@ require_once(__DIR__ . '/exact_named_selector.php');
 require_once(__DIR__ . '/partial_named_selector.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Mink\Element\Element;
 
 /**
  * Moodle selectors manager.
@@ -47,32 +48,14 @@ class behat_selectors {
      * @return array Contains the selector and the locator expected by Mink.
      */
     public static function get_behat_selector($selectortype, $element, Behat\Mink\Session $session) {
+        // Note: This function is not deprecated, but not the recommended way of doing things.
+        [
+            'selector' => $selector,
+            'locator' => $locator,
+        ] = $session->normalise_selector($selectortype, $element, $session->getPage());
 
         // CSS and XPath selectors locator is one single argument.
-        if ($selectortype == 'css_element' || $selectortype == 'xpath_element') {
-            $selector = str_replace('_element', '', $selectortype);
-            $locator = $element;
-        } else {
-            // Named selectors uses arrays as locators including the type of named selector.
-            $allowedselectors = self::get_allowed_selectors();
-            if (!isset($allowedselectors[$selectortype])) {
-                throw new ExpectationException('The "' . $selectortype . '" selector not registered.', $session);
-            }
-            $locator = array($allowedselectors[$selectortype], behat_context_helper::escape($element));
-
-            // Get the selector which should be used.
-            $allowedpartialselectors = behat_partial_named_selector::get_allowed_selectors();
-            $allowedexactselectors = behat_exact_named_selector::get_allowed_selectors();
-            if (isset($allowedpartialselectors[$selectortype])) {
-                $selector = 'named_partial';
-            } else if (isset($allowedexactselectors[$selectortype])) {
-                $selector = 'named_exact';
-            } else {
-                throw new ExpectationException('The "' . $selectortype . '" selector not registered.', $session);
-            }
-        }
-
-        return array($selector, $locator);
+        return [$selector, $locator];
     }
 
     /**
@@ -97,5 +80,41 @@ class behat_selectors {
             behat_partial_named_selector::get_allowed_text_selectors(),
             behat_exact_named_selector::get_allowed_text_selectors()
         );
+    }
+
+    /**
+     * Normalise the selector and locator for a named partial.
+     *
+     * @param string $selector The selector name
+     * @param string $locator The value to normalise
+     * @return array
+     */
+    public static function normalise_named_selector(string $selector, string $locator): array {
+        return [
+            $selector,
+            behat_context_helper::escape($locator),
+        ];
+    }
+
+    /**
+     * Transform the selector for a field.
+     *
+     * @param string $label The label to find
+     * @param Element $container The container to look within
+     * @return array The selector, locator, and container to search within
+     */
+    public static function transform_find_for_field(behat_base $context, string $label, Element $container): array {
+        $hasfieldset = strpos($label, '>');
+        if (false !== $hasfieldset) {
+            [$containerlabel, $label] = explode(">", $label, 2);
+            $container = $context->find_fieldset(trim($containerlabel), $container);
+            $label = trim($label);
+        }
+
+        return [
+            'selector' => 'named_partial',
+            'locator' => self::normalise_named_selector('field', $label),
+            'container' => $container,
+        ];
     }
 }
