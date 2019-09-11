@@ -615,6 +615,14 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
+    'core_enrol_submit_user_enrolment_form' => array(
+        'classname' => 'core_enrol_external',
+        'methodname' => 'submit_user_enrolment_form',
+        'classpath' => 'enrol/externallib.php',
+        'description' => 'Submit form data for enrolment form',
+        'type' => 'write',
+        'ajax' => true,
+    ),
     'core_enrol_unenrol_user_enrolment' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'unenrol_user_enrolment',
