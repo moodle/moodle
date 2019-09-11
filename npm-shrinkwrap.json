@@ -1327,6 +1327,17 @@
         "babel-helper-is-void-0": "^0.4.3"
       }
     },
+    "babel-plugin-system-import-transformer": {
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/babel-plugin-system-import-transformer/-/babel-plugin-system-import-transformer-4.0.0.tgz",
+      "integrity": "sha512-l+xJk+z1U8tWX1FZfBCd/ebKOZa7JLAQ91YBmtNO0e/e5v/RwIM+8IGBkliXcSoP7xd+CF7L6Yu4O3wmQrya8g==",
+      "dev": true,
+      "requires": {
+        "@babel/core": "^7.0.0",
+        "@babel/helper-plugin-utils": "^7.0.0",
+        "@babel/plugin-syntax-dynamic-import": "^7.0.0"
+      }
+    },
     "babel-plugin-transform-es2015-modules-amd-lazy": {
       "version": "2.0.1",
       "resolved": "https://registry.npmjs.org/babel-plugin-transform-es2015-modules-amd-lazy/-/babel-plugin-transform-es2015-modules-amd-lazy-2.0.1.tgz",
