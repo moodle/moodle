@@ -63,6 +63,7 @@ class core_grade_category_testcase extends grade_base_testcase {
         $this->sub_test_grade_category_is_hidden();
         $this->sub_test_grade_category_set_hidden();
         $this->sub_test_grade_category_can_control_visibility();
+        $this->sub_test_grade_category_total_visibility();
 
         // This won't work until MDL-11837 is complete.
         // $this->sub_test_grade_category_generate_grades();
@@ -784,7 +785,7 @@ class core_grade_category_testcase extends grade_base_testcase {
     protected function sub_test_grade_category_set_hidden() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'set_hidden'));
-        $category->set_hidden(1);
+        $category->set_hidden(1, true);
         $category->load_grade_item();
         $this->assertEquals(true, $category->grade_item->is_hidden());
     }
@@ -857,5 +858,44 @@ class core_grade_category_testcase extends grade_base_testcase {
         $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_MEDIAN));
         $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_MIN));
         $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_MODE));
+    }
+
+    /**
+     * Test for category total visibility.
+     */
+    protected function sub_test_grade_category_total_visibility() {
+        // 15 is a manual grade item in grade_categories[5].
+        $category = new grade_category($this->grade_categories[5], true);
+        $gradeitem = new grade_item($this->grade_items[15], true);
+
+        // Hide grade category.
+        $category->set_hidden(true, true);
+        $this->assertTrue($category->is_hidden());
+        // Category total is hidden.
+        $categorytotal = $category->get_grade_item();
+        $this->assertTrue($categorytotal->is_hidden());
+        // Manual grade is hidden.
+        $gradeitem->update_from_db();
+        $this->assertTrue($gradeitem->is_hidden());
+
+        // Unhide manual grade item.
+        $gradeitem->set_hidden(false);
+        $this->assertFalse($gradeitem->is_hidden());
+        // Category is unhidden.
+        $category->update_from_db();
+        $this->assertFalse($category->is_hidden());
+        // Category total remain hidden.
+        $categorytotal = $category->get_grade_item();
+        $this->assertTrue($categorytotal->is_hidden());
+
+        // Edit manual grade item.
+        $this->assertFalse($gradeitem->is_locked());
+        $gradeitem->set_locked(true);
+        $gradeitem->update_from_db();
+        $this->assertTrue($gradeitem->is_locked());
+        // Category total should still be hidden.
+        $category->update_from_db();
+        $categorytotal = $category->get_grade_item();
+        $this->assertTrue($categorytotal->is_hidden());
     }
 }
