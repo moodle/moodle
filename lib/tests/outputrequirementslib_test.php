@@ -125,8 +125,13 @@ class core_outputrequirementslib_testcase extends advanced_testcase {
 
         $html = $page->requires->get_end_code();
 
-        $this->assertContains('require(["theme_foobar/lightbox"]);', $html);
-        $this->assertContains('require(["theme_foobar/demo_one"], function(amd) { amd.init(); });', $html);
-        $this->assertContains('require(["theme_foobar/demo_two"], function(amd) { amd.init("foo", "baz", [42,"xyz"]); });', $html);
+        $modname = 'theme_foobar/lightbox';
+        $this->assertContains("M.util.js_pending('{$modname}'); require(['{$modname}'], function(amd) {M.util.js_complete('{$modname}');});", $html);
+
+        $modname = 'theme_foobar/demo_one';
+        $this->assertContains("M.util.js_pending('{$modname}'); require(['{$modname}'], function(amd) {amd.init(); M.util.js_complete('{$modname}');});", $html);
+
+        $modname = 'theme_foobar/demo_two';
+        $this->assertContains("M.util.js_pending('{$modname}'); require(['{$modname}'], function(amd) {amd.init(\"foo\", \"baz\", [42,\"xyz\"]); M.util.js_complete('{$modname}');});", $html);
     }
 }
