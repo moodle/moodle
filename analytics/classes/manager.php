@@ -547,45 +547,62 @@ class manager {
     public static function cleanup() {
         global $DB;
 
-        // Clean up stuff that depends on contexts that do not exist anymore.
-        $sql = "SELECT DISTINCT ap.contextid FROM {analytics_predictions} ap
-                  LEFT JOIN {context} ctx ON ap.contextid = ctx.id
-                 WHERE ctx.id IS NULL";
-        $apcontexts = $DB->get_records_sql($sql);
+        $DB->execute("DELETE FROM {analytics_prediction_actions} WHERE predictionid IN
+                          (SELECT ap.id FROM {analytics_predictions} ap
+                        LEFT JOIN {context} ctx ON ap.contextid = ctx.id
+                            WHERE ctx.id IS NULL)");
 
-        $sql = "SELECT DISTINCT aic.contextid FROM {analytics_indicator_calc} aic
-                  LEFT JOIN {context} ctx ON aic.contextid = ctx.id
-                 WHERE ctx.id IS NULL";
-        $indcalccontexts = $DB->get_records_sql($sql);
-
-        $contexts = $apcontexts + $indcalccontexts;
-        if ($contexts) {
-            list($sql, $params) = $DB->get_in_or_equal(array_keys($contexts));
-            $DB->execute("DELETE FROM {analytics_prediction_actions} WHERE predictionid IN
-                (SELECT ap.id FROM {analytics_predictions} ap WHERE ap.contextid $sql)", $params);
-
-            $DB->delete_records_select('analytics_predictions', "contextid $sql", $params);
-            $DB->delete_records_select('analytics_indicator_calc', "contextid $sql", $params);
-        }
+        $contextsql = "SELECT id FROM {context} ctx";
+        $DB->delete_records_select('analytics_predictions', "contextid NOT IN ($contextsql)");
+        $DB->delete_records_select('analytics_indicator_calc', "contextid NOT IN ($contextsql)");
 
         // Clean up stuff that depends on analysable ids that do not exist anymore.
+
         $models = self::get_all_models();
         foreach ($models as $model) {
+
+            // We first dump into memory the list of analysables we have in the database (we could probably do this with 1 single
+            // query for the 3 tables, but it may be safer to do it separately).
+            $predictsamplesanalysableids = $DB->get_fieldset_select('analytics_predict_samples', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $predictsamplesanalysableids = array_flip($predictsamplesanalysableids);
+            $trainsamplesanalysableids = $DB->get_fieldset_select('analytics_train_samples', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $trainsamplesanalysableids = array_flip($trainsamplesanalysableids);
+            $usedanalysablesanalysableids = $DB->get_fieldset_select('analytics_used_analysables', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $usedanalysablesanalysableids = array_flip($usedanalysablesanalysableids);
+
             $analyser = $model->get_analyser(array('notimesplitting' => true));
+
             $analysables = $analyser->get_analysables();
             if (!$analysables) {
                 continue;
             }
 
-            $analysableids = array_map(function($analysable) {
-                return $analysable->get_id();
-            }, $analysables);
+            foreach ($analysables as $analysable) {
+                unset($predictsamplesanalysableids[$analysable->get_id()]);
+                unset($trainsamplesanalysableids[$analysable->get_id()]);
+                unset($usedanalysablesanalysableids[$analysable->get_id()]);
+            }
 
-            list($notinsql, $params) = $DB->get_in_or_equal($analysableids, SQL_PARAMS_NAMED, 'param', false);
-            $params['modelid'] = $model->get_id();
+            $param = ['modelid' => $model->get_id()];
 
-            $DB->delete_records_select('analytics_predict_samples', "modelid = :modelid AND analysableid $notinsql", $params);
-            $DB->delete_records_select('analytics_train_samples', "modelid = :modelid AND analysableid $notinsql", $params);
+            if ($predictsamplesanalysableids) {
+                list($idssql, $idsparams) = $DB->get_in_or_equal(array_flip($predictsamplesanalysableids), SQL_PARAMS_NAMED);
+                $DB->delete_records_select('analytics_predict_samples', "modelid = :modelid AND analysableid $idssql",
+                    $param + $idsparams);
+            }
+            if ($trainsamplesanalysableids) {
+                list($idssql, $idsparams) = $DB->get_in_or_equal(array_flip($trainsamplesanalysableids), SQL_PARAMS_NAMED);
+                $DB->delete_records_select('analytics_train_samples', "modelid = :modelid AND analysableid $idssql",
+                    $param + $idsparams);
+            }
+            if ($usedanalysablesanalysableids) {
+                list($idssql, $idsparams) = $DB->get_in_or_equal(array_flip($usedanalysablesanalysableids), SQL_PARAMS_NAMED);
+                $DB->delete_records_select('analytics_used_analysables', "modelid = :modelid AND analysableid $idssql",
+                    $param + $idsparams);
+            }
         }
     }
 
