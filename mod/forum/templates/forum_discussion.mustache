@@ -34,13 +34,11 @@
 {{#html}}
     {{#hasanyactions}}
     <div class="d-flex flex-wrap flex-row-reverse m-b-1 text-right" data-container="discussion-tools">
-
         <div class="pl-1">
             <div class="discussion-settings-menu">
                 {{> mod_forum/forum_action_menu}}
             </div>
         </div>
-        <div class="pl-1">{{{subscribe}}}</div>
     </div>
     {{/hasanyactions}}
     {{{neighbourlinks}}}
@@ -61,8 +59,9 @@
 {{#html.neighbourlinks}}{{{.}}}{{/html.neighbourlinks}}
 </div>
 {{#js}}
-require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lock_toggle', 'mod_forum/favourite_toggle', 'mod_forum/pin_toggle'],
-    function($, Discussion, PostsList, LockToggle, FavouriteToggle, Pin) {
+require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lock_toggle', 'mod_forum/favourite_toggle',
+        'mod_forum/pin_toggle', 'mod_forum/subscription_toggle'],
+    function($, Discussion, PostsList, LockToggle, FavouriteToggle, Pin, SubscribeToggle) {
         var root = $("[data-content='forum-discussion']");
         Discussion.init(root);
         PostsList.init(root);
@@ -70,5 +69,6 @@ require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lo
         LockToggle.init(root);
         FavouriteToggle.init(root);
         Pin.init(root);
+        SubscribeToggle.init(root);
 });
 {{/js}}
