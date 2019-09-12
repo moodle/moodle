@@ -27,6 +27,7 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
 
     window.jQuery = jQuery;
     window.Tether = Tether;
+    M.util.js_pending('theme_boost/loader:children');
 
     require(['theme_boost/aria',
             'theme_boost/pending',
@@ -87,6 +88,7 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
         });
 
         Aria.init();
+        M.util.js_complete('theme_boost/loader:children');
     });
 
 

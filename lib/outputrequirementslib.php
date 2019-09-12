@@ -1038,7 +1038,9 @@ class page_requirements_manager {
 
         $component = clean_param($component, PARAM_COMPONENT);
         $module = clean_param($module, PARAM_ALPHANUMEXT);
+        $modname = "{$component}/{$module}";
 
+        $functioncode = [];
         if ($func !== null) {
             $func = clean_param($func, PARAM_ALPHANUMEXT);
 
@@ -1057,11 +1059,13 @@ class page_requirements_manager {
                 }
             }
 
-            $js = 'require(["' . $component . '/' . $module . '"], function(amd) { amd.' . $func . '(' . $strparams . '); });';
-
-        } else {
-            $js = 'require(["' . $component . '/' . $module . '"]);';
+            $functioncode[] = "amd.{$func}({$strparams});";
         }
+
+        $functioncode[] = "M.util.js_complete('{$modname}');";
+
+        $initcode = implode(' ', $functioncode);
+        $js = "M.util.js_pending('{$modname}'); require(['{$modname}'], function(amd) {{$initcode}});";
 
         $this->js_amd_inline($js);
     }
@@ -1384,8 +1388,10 @@ class page_requirements_manager {
         }
 
         // First include must be to a module with no dependencies, this prevents multiple requests.
-        $prefix = "require(['core/first'], function() {\n";
-        $suffix = "\n});";
+        $prefix = 'M.util.js_pending("core/first");';
+        $prefix .= "require(['core/first'], function() {\n";
+        $suffix = 'M.util.js_complete("core/first");';
+        $suffix .= "\n});";
         $output .= html_writer::script($prefix . implode(";\n", $this->amdjscode) . $suffix);
         return $output;
     }
