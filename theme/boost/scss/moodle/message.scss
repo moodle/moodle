@@ -418,7 +418,6 @@
     }
 }
 
-$message-drawer-width: 320px;
 $message-send-bg: $gray-300 !default;
 $message-send-color: color-yiq($message-send-bg) !default;
 $message-send-time-color: mix($message-send-color, $message-send-bg, 100%) !default;
@@ -428,24 +427,9 @@ $message-received-color-muted: mix($message-received-color, $message-received-bg
 $message-app-bg: mix($message-send-bg, $message-received-bg, 50%) !default;
 $message-day-color: color-yiq($message-app-bg) !default;
 
-.message-app {
-    display: flex;
-    flex-direction: column;
-    background-color: $message-app-bg;
-    @include transition();
-
-    .icon-back-in-drawer {
-        display: none;
-    }
-
-    &.drawer {
-        z-index: $zindex-sticky;
-        position: fixed;
-        top: $navbar-height;
-        right: 0;
-        height: calc(100% - #{$navbar-height});
-        width: $message-drawer-width;
-        box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+.drawer {
+    .message-app {
+        height: 100%;
         .icon-back-in-app {
             display: none;
         }
@@ -453,14 +437,19 @@ $message-day-color: color-yiq($message-app-bg) !default;
             display: inherit;
         }
     }
+}
+
+.message-app {
+    display: flex;
+    flex-direction: column;
+    background-color: $message-app-bg;
+
+    .icon-back-in-drawer {
+        display: none;
+    }
 
     &.main {
         min-height: 400px;
-    }
-
-    &.hidden {
-        display: block;
-        right: $message-drawer-width * -1;
     }
 
     .header-container {
