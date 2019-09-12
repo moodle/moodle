@@ -48,12 +48,8 @@ class behat_theme_boost_behat_admin extends behat_admin {
             $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', [get_string('administrationsite')]);
 
             // Search by label.
-            $searchbox = $this->find_field(get_string('query', 'admin'));
-            $searchbox->setValue($label);
-            $submitsearch = $this->find('css', 'form input[type=submit][name=search]');
-            $submitsearch->press();
-
-            $this->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
+            $this->execute('behat_forms::i_set_the_field_to', [get_string('query', 'admin'), $label]);
+            $this->execute("behat_general::i_click_on", [get_string('search', 'admin'), 'button']);
 
             // Admin settings does not use the same DOM structure than other moodle forms
             // but we also need to use lib/behat/form_field/* to deal with the different moodle form elements.
@@ -69,11 +65,6 @@ class behat_theme_boost_behat_admin extends behat_admin {
                     "[@id=//label[contains(normalize-space(.), $label)]/@for or " .
                     "@id=//span[contains(normalize-space(.), $label)]/preceding-sibling::label[1]/@for]";
                 $fieldnode = $this->find('xpath', $fieldxpath, $exception);
-
-                $formfieldtypenode = $this->find('xpath', $fieldxpath .
-                    "/ancestor::div[contains(concat(' ', @class, ' '), ' form-setting ')]" .
-                    "/child::div[contains(concat(' ', @class, ' '),  ' form-')]/child::*/parent::div");
-
             } catch (ElementNotFoundException $e) {
 
                 // Multi element settings, interacting only the first one.
@@ -83,25 +74,11 @@ class behat_theme_boost_behat_admin extends behat_admin {
                     "/descendant::*[self::input | self::textarea | self::select]" .
                     "[not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]";
                 $fieldnode = $this->find('xpath', $fieldxpath);
-
-                // It is the same one that contains the type.
-                $formfieldtypenode = $fieldnode;
             }
 
-            // Getting the class which contains the field type.
-            $classes = explode(' ', $formfieldtypenode->getAttribute('class'));
-            $type = false;
-            foreach ($classes as $class) {
-                if (substr($class, 0, 5) == 'form-') {
-                    $type = substr($class, 5);
-                }
-            }
+            $this->execute('behat_forms::i_set_the_field_with_xpath_to', [$fieldxpath, $value]);
 
-            // Instantiating the appropiate field type.
-            $field = behat_field_manager::get_field_instance($type, $fieldnode, $this->getSession());
-            $field->set_value($value);
-
-            $this->find_button(get_string('savechanges'))->press();
+            $this->execute("behat_general::i_click_on", [get_string('savechanges'), 'button']);
         }
     }
 
