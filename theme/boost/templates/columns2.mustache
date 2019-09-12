@@ -95,8 +95,13 @@
 </body>
 </html>
 {{#js}}
-require(['theme_boost/loader']);
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+  M.util.js_complete('theme_boost/loader');
+});
+M.util.js_pending('theme_boost/drawer');
 require(['theme_boost/drawer'], function(mod) {
     mod.init();
+  M.util.js_complete('theme_boost/drawer');
 });
 {{/js}}

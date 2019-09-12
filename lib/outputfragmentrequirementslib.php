@@ -57,8 +57,10 @@ class fragment_requirements_manager extends page_requirements_manager {
         $output = '';
 
         // First include must be to a module with no dependencies, this prevents multiple requests.
-        $prefix = "require(['core/first'], function() {\n";
+        $prefix = 'M.util.js_pending("core/first");';
+        $prefix .= "require(['core/first'], function() {\n";
         $suffix = "\n});";
+        $suffix .= 'M.util.js_complete("core/first");';
         $output .= html_writer::script($prefix . implode(";\n", $this->amdjscode) . $suffix);
         return $output;
     }
