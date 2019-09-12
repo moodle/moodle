@@ -240,6 +240,22 @@
     }
 }
 
+.criterion button.collapse[aria-expanded="true"]:before {
+    content: $fa-var-angle-down;
+    margin-right: 0;
+    @include fa-icon();
+    font-size: 16px;
+    width: 16px;
+}
+
+.criterion button.collapse[aria-expanded="false"]:before {
+    content: $fa-var-angle-up;
+    margin-right: 0;
+    @include fa-icon();
+    font-size: 16px;
+    width: 16px;
+}
+
 // Set up grades layout.
 .path-grade-edit-tree .setup-grades {
     h4 {

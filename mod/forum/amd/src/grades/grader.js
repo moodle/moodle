@@ -65,7 +65,7 @@ const getWholeForumFunctions = (cmid) => {
 
     return {
         getContentForUserId: getContentForUserIdFunction(),
-        getUsers: getUsersForCmidFunction()
+        getUsers: getUsersForCmidFunction(),
     };
 };
 
@@ -77,7 +77,6 @@ const discussionPostMapper = discussion => {
     // Map postid => post.
     const parentMap = new Map();
     discussion.posts.parentposts.forEach(post => parentMap.set(post.id, post));
-
     const userPosts = discussion.posts.userposts.map(post => {
         post.subject = null;
         post.readonly = true;

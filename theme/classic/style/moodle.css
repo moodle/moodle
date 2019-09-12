@@ -17643,6 +17643,30 @@ p.arrow_button {
     margin-left: 5px;
     margin-right: 12px; }
 
+.criterion button.collapse[aria-expanded="true"]:before {
+  content: "";
+  margin-right: 0;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  width: 16px; }
+
+.criterion button.collapse[aria-expanded="false"]:before {
+  content: "";
+  margin-right: 0;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  width: 16px; }
+
 .path-grade-edit-tree .setup-grades h4 {
   margin: 0; }
 
