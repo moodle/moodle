@@ -9701,6 +9701,9 @@ input[disabled] {
   content: "/";
   /* stylelint-disable-line declaration-block-no-duplicate-properties */ }
 
+.dir-rtl .custom-select {
+  background-position: 0.75rem center; }
+
 /*rtl:raw:
 .dropdown-menu {
     right: auto;
