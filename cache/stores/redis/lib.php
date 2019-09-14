@@ -261,10 +261,6 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
     public function get($key) {
         $value = $this->redis->hGet($this->hash, $key);
 
-        if ($this->compressor == self::COMPRESSOR_NONE) {
-            return $value;
-        }
-
         return $this->uncompress($value);
     }
 
@@ -276,10 +272,6 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      */
     public function get_many($keys) {
         $values = $this->redis->hMGet($this->hash, $keys);
-
-        if ($this->compressor == self::COMPRESSOR_NONE) {
-            return $values;
-        }
 
         foreach ($values as &$value) {
             $value = $this->uncompress($value);
