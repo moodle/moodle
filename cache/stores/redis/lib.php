@@ -622,11 +622,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             return false;
         }
 
-        if ($this->compressor == self::COMPRESSOR_NONE) {
-            return $value;
-        }
-
         switch ($this->compressor) {
+            case self::COMPRESSOR_NONE:
+                break;
             case self::COMPRESSOR_PHP_GZIP:
                 $value = gzdecode($value);
                 break;
