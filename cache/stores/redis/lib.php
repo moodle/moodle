@@ -649,7 +649,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
                 return $value;
             case Redis::SERIALIZER_PHP:
                 return serialize($value);
-            case Redis::SERIALIZER_IGBINARY:
+            case defined('Redis::SERIALIZER_IGBINARY') && Redis::SERIALIZER_IGBINARY:
                 return igbinary_serialize($value);
             default:
                 debugging("Invalid serializer: {$this->serializer}");
@@ -669,7 +669,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
                 return $value;
             case Redis::SERIALIZER_PHP:
                 return unserialize($value);
-            case Redis::SERIALIZER_IGBINARY:
+            case defined('Redis::SERIALIZER_IGBINARY') && Redis::SERIALIZER_IGBINARY:
                 return igbinary_unserialize($value);
             default:
                 debugging("Invalid serializer: {$this->serializer}");
