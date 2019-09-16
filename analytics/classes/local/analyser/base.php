@@ -267,38 +267,42 @@ abstract class base {
     /**
      * Returns labelled data (training and evaluation).
      *
+     * @param \context[] $contexts Restrict the analysis to these contexts. No context restrictions if null.
      * @return \stored_file[]
      */
-    public function get_labelled_data() {
+    public function get_labelled_data(array $contexts = []) {
         // Delegates all processing to the analysis.
         $result = new \core_analytics\local\analysis\result_file($this->get_modelid(), true, $this->get_options());
         $analysis = new \core_analytics\analysis($this, true, $result);
-        $analysis->run();
+        $analysis->run($contexts);
         return $result->get();
     }
 
     /**
      * Returns unlabelled data (prediction).
      *
+     * @param \context[] $contexts Restrict the analysis to these contexts. No context restrictions if null.
      * @return \stored_file[]
      */
-    public function get_unlabelled_data() {
+    public function get_unlabelled_data(array $contexts = []) {
         // Delegates all processing to the analysis.
         $result = new \core_analytics\local\analysis\result_file($this->get_modelid(), false, $this->get_options());
         $analysis = new \core_analytics\analysis($this, false, $result);
-        $analysis->run();
+        $analysis->run($contexts);
         return $result->get();
     }
 
     /**
      * Returns indicator calculations as an array.
+     *
+     * @param \context[] $contexts Restrict the analysis to these contexts. No context restrictions if null.
      * @return array
      */
-    public function get_static_data() {
+    public function get_static_data(array $contexts = []) {
         // Delegates all processing to the analysis.
         $result = new \core_analytics\local\analysis\result_array($this->get_modelid(), false, $this->get_options());
         $analysis = new \core_analytics\analysis($this, false, $result);
-        $analysis->run();
+        $analysis->run($contexts);
         return $result->get();
     }
 
@@ -421,6 +425,33 @@ abstract class base {
      */
     public static function one_sample_per_analysable() {
         return false;
+    }
+
+    /**
+     * Returns an array of context levels that can be used to restrict the contexts used during analysis.
+     *
+     * The contexts provided to self::get_analysables_iterator will match these contextlevels.
+     *
+     * @return array Array of context levels or an empty array if context restriction is not supported.
+     */
+    public static function context_restriction_support(): array {
+        return [];
+    }
+
+    /**
+     * Returns the possible contexts used by the analyser.
+     *
+     * This method uses separate logic for each context level because to iterate through
+     * the list of contexts calling get_context_name for each of them would be expensive
+     * in performance terms.
+     *
+     * This generic implementation returns all the contexts in the site for the provided context level.
+     * Overwrite it for specific restrictions in your analyser.
+     *
+     * @return int[]
+     */
+    public static function potential_context_restrictions() {
+        return \core_analytics\manager::get_potential_context_restrictions(static::context_restriction_support());
     }
 
     /**

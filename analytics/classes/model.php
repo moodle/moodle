@@ -121,6 +121,11 @@ class model {
     protected $indicators = null;
 
     /**
+     * @var \context[]
+     */
+    protected $contexts = null;
+
+    /**
      * Unique Model id created from site info and last model modification.
      *
      * @var string
@@ -459,9 +464,11 @@ class model {
      * @param \core_analytics\local\indicator\base[]|false $indicators False to respect current indicators
      * @param string|false $timesplittingid False to respect current time splitting method
      * @param string|false $predictionsprocessor False to respect current predictors processor value
+     * @param int[]|false $contextids List of context ids for this model. False to respect the current list of contexts.
      * @return void
      */
-    public function update($enabled, $indicators = false, $timesplittingid = '', $predictionsprocessor = false) {
+    public function update($enabled, $indicators = false, $timesplittingid = '', $predictionsprocessor = false,
+            $contextids = false) {
         global $USER, $DB;
 
         \core_analytics\manager::check_can_manage_models();
@@ -484,6 +491,15 @@ class model {
         if ($predictionsprocessor === false) {
             // Respect current value.
             $predictionsprocessor = $this->model->predictionsprocessor;
+        }
+
+        if ($contextids !== false) {
+            $contextsstr = json_encode($contextids);
+
+            // Reset the internal cache.
+            $this->contexts = null;
+        } else {
+            $contextsstr = $this->model->contextids;
         }
 
         if ($this->model->timesplitting !== $timesplittingid ||
@@ -514,6 +530,7 @@ class model {
         $this->model->indicators = $indicatorsstr;
         $this->model->timesplitting = $timesplittingid;
         $this->model->predictionsprocessor = $predictionsprocessor;
+        $this->model->contextids = $contextsstr;
         $this->model->timemodified = $now;
         $this->model->usermodified = $USER->id;
 
@@ -603,7 +620,7 @@ class model {
         // Before get_labelled_data call so we get an early exception if it is not ready.
         $predictor = $this->get_predictions_processor();
 
-        $datasets = $this->get_analyser()->get_labelled_data();
+        $datasets = $this->get_analyser()->get_labelled_data($this->get_contexts());
 
         // No datasets generated.
         if (empty($datasets)) {
@@ -695,7 +712,7 @@ class model {
         // Before get_labelled_data call so we get an early exception if it is not ready.
         $predictor = $this->get_predictions_processor();
 
-        $datasets = $this->get_analyser()->get_labelled_data();
+        $datasets = $this->get_analyser()->get_labelled_data($this->get_contexts());
 
         // No training if no files have been provided.
         if (empty($datasets) || empty($datasets[$this->model->timesplitting])) {
@@ -766,7 +783,7 @@ class model {
             // Before get_unlabelled_data call so we get an early exception if it is not ready.
             $predictor = $this->get_predictions_processor();
 
-            $samplesdata = $this->get_analyser()->get_unlabelled_data();
+            $samplesdata = $this->get_analyser()->get_unlabelled_data($this->get_contexts());
 
             // Get the prediction samples file.
             if (empty($samplesdata) || empty($samplesdata[$this->model->timesplitting])) {
@@ -802,7 +819,7 @@ class model {
         } else {
             // Predictions based on assumptions.
 
-            $indicatorcalculations = $this->get_analyser()->get_static_data();
+            $indicatorcalculations = $this->get_analyser()->get_static_data($this->get_contexts());
             // Get the prediction samples file.
             if (empty($indicatorcalculations) || empty($indicatorcalculations[$this->model->timesplitting])) {
 
@@ -1954,6 +1971,30 @@ class model {
             }
         }
         return [$allsampleids, $allsamplesdata];
+    }
+
+    /**
+     * Contexts where this model should be active.
+     *
+     * @return \context[] Empty array if there are no context restrictions.
+     */
+    public function get_contexts() {
+        if ($this->contexts !== null) {
+            return $this->contexts;
+        }
+
+        if (!$this->model->contextids) {
+            $this->contexts = [];
+            return $this->contexts;
+        }
+        $contextids = json_decode($this->model->contextids);
+
+        // We don't expect this list to be massive as contexts need to be selected manually using the edit model form.
+        $this->contexts = array_map(function($contextid) {
+            return \context::instance_by_id($contextid, IGNORE_MISSING);
+        }, $contextids);
+
+        return $this->contexts;
     }
 
     /**

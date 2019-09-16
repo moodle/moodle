@@ -65,4 +65,13 @@ abstract class by_course extends base {
             return \core_analytics\course::instance($record, $context);
         });
     }
+
+    /**
+     * Can be limited to course categories or specific courses.
+     *
+     * @return array
+     */
+    public static function context_restriction_support(): array {
+        return [CONTEXT_COURSE, CONTEXT_COURSECAT];
+    }
 }
