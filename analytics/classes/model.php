@@ -936,19 +936,8 @@ class model {
         if ($this->get_target()->link_insights_report()) {
 
             // Update cache.
-            $cache = \cache::make('core', 'contextwithinsights');
             foreach ($samplecontexts as $context) {
-                $modelids = $cache->get($context->id);
-                if (!$modelids) {
-                    // The cache is empty, but we don't know if it is empty because there are no insights
-                    // in this context or because cache/s have been purged, we need to be conservative and
-                    // "pay" 1 db read to fill up the cache.
-                    $models = \core_analytics\manager::get_models_with_insights($context);
-                    $cache->set($context->id, array_keys($models));
-                } else if (!in_array($this->get_id(), $modelids)) {
-                    array_push($modelids, $this->get_id());
-                    $cache->set($context->id, $modelids);
-                }
+                \core_analytics\manager::cached_models_with_insights($context, $this->get_id());
             }
         }
     }
