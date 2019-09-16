@@ -151,4 +151,39 @@ class helper {
         $singleselect = new \single_select($url, 'contextid', $contexts, $selected, $nothing);
         return $singleselect->export_for_template($output);
     }
+
+    /**
+     * Converts a list of contexts to an array of options that can be used in a autocomplete moodleform field.
+     *
+     * @param array $contexts Array of context ids.
+     * @param bool $includeall Wether to include the "all" context option (the system context).
+     * @param bool $shortentext Wether to shorten the context names.
+     * @return array Associative array with context ids as keys and context names as values.
+     */
+    public static function contexts_to_options(array $contexts, ?bool $includeall = false, ?bool $shortentext = true): array {
+
+        foreach ($contexts as $contextid) {
+            $context = \context::instance_by_id($contextid);
+
+            // Special name for system level predictions as showing "System is not visually nice".
+            if ($contextid == SYSCONTEXTID) {
+                $contextname = get_string('allpredictions', 'tool_analytics');
+            } else {
+                if ($shortentext) {
+                    $contextname = shorten_text($context->get_context_name(false, true), 40);
+                } else {
+                    $contextname = $context->get_context_name(false, true);
+                }
+            }
+            $contexts[$contextid] = $contextname;
+        }
+
+        if ($includeall) {
+            $contexts[0] = get_string('all');
+        }
+
+        \core_collator::asort($contexts);
+
+        return $contexts;
+    }
 }

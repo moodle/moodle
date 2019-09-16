@@ -89,6 +89,18 @@ class edit_model extends \moodleform {
             $mform->addHelpButton('indicators', 'indicators', 'tool_analytics');
         }
 
+        // Contexts restriction.
+        $contexts = array();
+        if ($this->_customdata['contexts']) {
+            $contexts = \tool_analytics\output\helper::contexts_to_options($this->_customdata['contexts']);
+        }
+        $options = array(
+            'multiple' => true
+        );
+        $mform->addElement('autocomplete', 'contexts', get_string('contexts', 'tool_analytics'), $contexts, $options);
+        $mform->setType('contexts', PARAM_ALPHANUMEXT);
+        $mform->addHelpButton('contexts', 'indicators', 'tool_analytics');
+
         // Time-splitting methods.
         if (!empty($this->_customdata['invalidcurrenttimesplitting'])) {
             $mform->addElement('html', $OUTPUT->notification(
