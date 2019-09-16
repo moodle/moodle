@@ -54,6 +54,9 @@ function download_as_dataformat($filename, $dataformat, $columns, $iterator, $ca
     // Close the session so that the users other tabs in the same session are not blocked.
     \core\session\manager::write_close();
 
+    // If this file was requested from a form, then mark download as complete (before sending headers).
+    \core_form\util::form_download_complete();
+
     $format->set_filename($filename);
     $format->send_http_headers();
     // This exists to support all dataformats - see MDL-56046.

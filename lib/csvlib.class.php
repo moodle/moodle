@@ -503,6 +503,9 @@ class csv_export_writer {
      * Download the csv file.
      */
     public function download_file() {
+        // If this file was requested from a form, then mark download as complete.
+        \core_form\util::form_download_complete();
+
         $this->send_header();
         $this->print_csv_data();
         exit;
