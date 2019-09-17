@@ -92,7 +92,14 @@ class insights_list implements \renderable, \templatable {
         $data = new \stdClass();
         $data->modelid = $this->model->get_id();
         $data->contextid = $this->context->id;
-        $data->insightname = format_string($target->get_name());
+
+        $targetname = $target->get_name();
+        $data->insightname = format_string($targetname);
+
+        $targetinfostr = $targetname->get_identifier() . 'info';
+        if (get_string_manager()->string_exists($targetinfostr, $targetname->get_component())) {
+            $data->insightdescription = get_string($targetinfostr, $targetname->get_component());
+        }
 
         $data->showpredictionheading = true;
         if (!$target->is_linear()) {

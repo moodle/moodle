@@ -80,6 +80,7 @@ $string['target:norecentaccesses_help'] = 'This target identifies students who h
 $string['target:norecentaccessesinfo'] = 'The following students have not accessed a course they are enrolled in within the set analysis interval (by default the past month).';
 $string['target:noteachingactivity'] = 'Courses at risk of not starting';
 $string['target:noteachingactivity_help'] = 'This target describes whether courses due to start in the coming week will have teaching activity.';
+$string['target:noteachingactivityinfo'] = 'The following courses due to start in the upcoming days are at risk of not starting because they don\'t have teachers or students enroled';
 $string['targetlabelstudentcompletionno'] = 'Student who is likely to meet the course completion conditions';
 $string['targetlabelstudentcompletionyes'] = 'Student at risk of not meeting the course completion conditions';
 $string['targetlabelstudentcompetenciesno'] = 'Student who is likely to achieve the competencies assigned to a course';
