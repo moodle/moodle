@@ -190,6 +190,12 @@ Feature: Data delete from the privacy API
     Then I should not see "Delete my account"
 
   @javascript
+  Scenario: As a primary admin, the link to create a data deletion request should not be shown.
+    Given I log in as "admin"
+    When I follow "Profile" in the user menu
+    Then I should not see "Delete my account"
+
+  @javascript
   Scenario: As a Privacy Officer, I cannot Approve to Deny deletion data request without permission.
     Given the following "permission overrides" exist:
       | capability                                 | permission | role    | contextlevel | reference |
