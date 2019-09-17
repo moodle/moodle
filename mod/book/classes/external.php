@@ -205,8 +205,9 @@ class mod_book_external extends external_api {
                 $bookdetails['course']            = $book->course;
                 $bookdetails['name']              = external_format_string($book->name, $context->id);
                 // Format intro.
+                $options = array('noclean' => true);
                 list($bookdetails['intro'], $bookdetails['introformat']) =
-                    external_format_text($book->intro, $book->introformat, $context->id, 'mod_book', 'intro', null);
+                    external_format_text($book->intro, $book->introformat, $context->id, 'mod_book', 'intro', null, $options);
                 $bookdetails['introfiles'] = external_util::get_area_files($context->id, 'mod_book', 'intro', false, false);
                 $bookdetails['numbering']         = $book->numbering;
                 $bookdetails['navstyle']          = $book->navstyle;

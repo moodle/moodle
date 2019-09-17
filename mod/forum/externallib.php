@@ -90,8 +90,9 @@ class mod_forum_external extends external_api {
 
                 $forum->name = external_format_string($forum->name, $context->id);
                 // Format the intro before being returning using the format setting.
-                list($forum->intro, $forum->introformat) = external_format_text($forum->intro, $forum->introformat,
-                                                                                $context->id, 'mod_forum', 'intro', null);
+                $options = array('noclean' => true);
+                list($forum->intro, $forum->introformat) =
+                    external_format_text($forum->intro, $forum->introformat, $context->id, 'mod_forum', 'intro', null, $options);
                 $forum->introfiles = external_util::get_area_files($context->id, 'mod_forum', 'intro', false, false);
                 // Discussions count. This function does static request cache.
                 $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
