@@ -254,10 +254,8 @@ class core_comment_external extends external_api {
         foreach ($params['comments'] as $comment) {
             $manager = $comment['preparedcomment'];
             $newcomment = $manager->add($comment['content']);
-            if (!empty($newcomment) && is_object($newcomment)) {
-                $results[] = $newcomment;
-            }
             $newcomment->delete = true; // USER created the comment, so they can delete it.
+            $results[] = $newcomment;
         }
 
         return $results;
