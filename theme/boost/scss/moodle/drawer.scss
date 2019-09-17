@@ -100,7 +100,7 @@ $right-drawer-width: 320px;
 [data-region=right-hand-drawer] {
     display: flex;
     flex-direction: column;
-    @include transition();
+    @include transition(right .2s ease-in-out);
 
     &.drawer {
         z-index: $zindex-sticky;
@@ -111,11 +111,19 @@ $right-drawer-width: 320px;
         width: $right-drawer-width;
         box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
         padding: 0;
+        visibility: visible;
+        opacity: 1;
     }
 
     &.hidden {
         display: block;
         right: $right-drawer-width * -1;
+        // Turn off visibility so that nothing in the drawer can receive focus when
+        // it is hidden.
+        visibility: hidden;
+        opacity: 0;
+        // Delay visibility changes until after the slide right animation has completed.
+        @include transition(right .2s ease-in-out, visibility 0s ease-in-out .2s, opacity 0s ease-in-out .2s);
     }
 }
 .dir-rtl {
