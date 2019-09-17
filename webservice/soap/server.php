@@ -43,3 +43,14 @@ $server = new webservice_soap_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
 $server->run();
 die;
 
+/**
+ * Raises Early WS Exception in SOAP format.
+ *
+ * @param  Exception $ex Raised exception.
+ */
+function raise_early_ws_exception(Exception $ex): void {
+    global $CFG;
+    require_once("$CFG->dirroot/webservice/soap/locallib.php");
+    $server = new webservice_soap_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
+    $server->exception_handler($ex);
+}
