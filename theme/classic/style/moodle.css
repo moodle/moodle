@@ -11708,6 +11708,10 @@ div.editor_atto_toolbar button .icon {
   text-decoration: none !important;
   /* stylelint-disable-line declaration-no-important */ }
 
+.colour-inherit {
+  color: inherit !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
 .position-right {
   right: 0 !important;
   /* stylelint-disable-line declaration-no-important */ }
@@ -17200,8 +17204,10 @@ p.arrow_button {
   margin: 0 0 10px 5px; }
 
 .btn.btn-icon, #page-grade-grading-manage .actions .btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion {
-  height: 16px;
-  width: 16px;
+  height: 36px;
+  width: 36px;
+  font-size: 16px;
+  line-height: 16px;
   padding: 0;
   border-radius: 50%;
   flex-shrink: 0; }
@@ -17211,31 +17217,55 @@ p.arrow_button {
     height: 20px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 20px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 0 !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 0 !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-1, #page-grade-grading-manage .actions .btn-icon.icon-size-1.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-1.addcriterion {
     height: 24px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 24px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 4px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 4px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-2, #page-grade-grading-manage .actions .btn-icon.icon-size-2.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-2.addcriterion {
     height: 28px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 28px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 8px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 8px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-3, #page-grade-grading-manage .actions .btn-icon.icon-size-3.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-3.addcriterion {
     height: 36px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 36px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 16px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 16px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-4, #page-grade-grading-manage .actions .btn-icon.icon-size-4.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-4.addcriterion {
     height: 44px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 44px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 24px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 24px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-5, #page-grade-grading-manage .actions .btn-icon.icon-size-5.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-5.addcriterion {
     height: 68px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 68px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 48px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 48px !important;
     /* stylelint-disable-line declaration-no-important */ }
 
 .gradetreebox h4 {
