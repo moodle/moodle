@@ -227,3 +227,59 @@ function cli_logo($padding=2, $return=false) {
         cli_write($logo);
     }
 }
+
+/**
+ * Substitute cursor, colour, and bell placeholders in a CLI output to ANSI escape characters when ANSI is available.
+ *
+ * @param string $message
+ * @return string
+ */
+function cli_ansi_format(string $message): string {
+    global $CFG;
+
+    $replacements = [
+        "<newline>" => "\n",
+        "<bell>" => "\007",
+
+        // Cursor movement: https://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x361.html.
+        "<cursor:save>" => "\033[s",
+        "<cursor:restore>" => "\033[u",
+        "<cursor:up>" => "\033[1A",
+        "<cursor:down>" => "\033[1B",
+        "<cursor:forward>" => "\033[1C",
+        "<cursor:back>" => "\033[1D",
+    ];
+
+    $colours = [
+        'normal' => '0;0',
+        'black' => '0;30',
+        'darkGray' => '1;30',
+        'blue' => '0;34',
+        'lightBlue' => '1;34',
+        'green' => '0;32',
+        'lightGreen' => '1;32',
+        'cyan' => '0;36',
+        'lightCyan' => '1;36',
+        'red' => '0;31',
+        'lightRed' => '1;31',
+        'purple' => '0;35',
+        'lightPurple' => '1;35',
+        'brown' => '0;33',
+        'yellow' => '1;33',
+        'lightYellow' => '0;93',
+        'lightGray' => '0;37',
+        'white' => '1;37',
+    ];
+
+    foreach ($colours as $colour => $code) {
+        $replacements["<colour:{$colour}>"] = "\033[{$code}m";
+    }
+
+    // Windows don't support ANSI code by default, but does if ANSICON is available.
+    $isansicon = getenv('ANSICON');
+    if (($CFG->ostype === 'WINDOWS') && empty($isansicon)) {
+        return str_replace(array_keys($replacements), '', $message);
+    }
+
+    return str_replace(array_keys($replacements), array_values($replacements), $message);
+}
