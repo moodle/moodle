@@ -33,6 +33,10 @@ $string['deleteerrors'] = 'Delete errors';
 $string['encoding'] = 'Encoding';
 $string['errormnetadd'] = 'Can not add remote users';
 $string['errors'] = 'Errors';
+$string['examplecsv'] = 'Example text file';
+$string['examplecsv_help'] = 'To use the example text file, download it then open it with a text or spreadsheet editor. Leave the first line unchanged, then edit the following lines (records) and add your user data, adding more lines as necessary. Save the file as CSV then upload it.
+
+The example text file may also be used for testing, as you are able to preview user data and can choose to cancel the action before user accounts are created.';
 $string['invalidupdatetype'] = 'This option cannot be selected with the chosen upload type.';
 $string['invaliduserdata'] = 'Invalid data detected for user {$a} and it has been automatically cleaned.';
 $string['invalidtheme'] = 'Theme "{$a}" is not installed and will be ignored.';
@@ -63,7 +67,9 @@ $string['uploadusers_help'] = 'Users may be uploaded (and optionally enrolled in
 * Each line of the file contains one record
 * Each record is a series of data separated by commas (or other delimiters)
 * The first record contains a list of fieldnames defining the format of the rest of the file
-* Required fieldnames are username, password, firstname, lastname, email';
+* Required fieldnames are username, password, firstname, lastname, email
+
+<a href="https://docs.moodle.org/en/Upload_users" target="_blank">More help</a>';
 $string['uploaduserspreview'] = 'Upload users preview';
 $string['uploadusersresult'] = 'Upload users results';
 $string['uploaduser:uploaduserpictures'] = 'Upload user pictures';
