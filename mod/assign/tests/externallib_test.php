@@ -2229,6 +2229,65 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_submission_status with override for student.
+     */
+    public function test_get_submission_status_with_override() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status();
+
+        $overridedata = new \stdClass();
+        $overridedata->assignid = $assign->get_instance()->id;
+        $overridedata->userid = $student1->id;
+        $overridedata->allowsubmissionsfromdate = time() + YEARSECS;
+        $DB->insert_record('assign_overrides', $overridedata);
+
+        $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
+        // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
+        $this->assertDebuggingCalled();
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertFalse(isset($result['gradingsummary']));
+        $this->assertFalse(isset($result['feedback']));
+        $this->assertFalse(isset($result['previousattempts']));
+
+        $this->assertTrue($result['lastattempt']['submissionsenabled']);
+        $this->assertFalse($result['lastattempt']['canedit']);  // False because of override.
+        $this->assertFalse($result['lastattempt']['cansubmit']);
+        $this->assertFalse($result['lastattempt']['locked']);
+        $this->assertFalse($result['lastattempt']['graded']);
+        $this->assertEmpty($result['lastattempt']['extensionduedate']);
+        $this->assertFalse($result['lastattempt']['blindmarking']);
+        $this->assertCount(0, $result['lastattempt']['submissiongroupmemberswhoneedtosubmit']);
+        $this->assertEquals('notgraded', $result['lastattempt']['gradingstatus']);
+
+        // Same assignment but user without override.
+        $this->setUser($student2);
+
+        $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+
+        // The submission is now in draft mode.
+        $this->assertCount(0, $result['warnings']);
+        $this->assertFalse(isset($result['gradingsummary']));
+        $this->assertFalse(isset($result['feedback']));
+        $this->assertFalse(isset($result['previousattempts']));
+
+        $this->assertTrue($result['lastattempt']['submissionsenabled']);
+        $this->assertTrue($result['lastattempt']['canedit']);  // True because there is not override for this user.
+        $this->assertFalse($result['lastattempt']['cansubmit']);
+        $this->assertFalse($result['lastattempt']['locked']);
+        $this->assertFalse($result['lastattempt']['graded']);
+        $this->assertEmpty($result['lastattempt']['extensionduedate']);
+        $this->assertFalse($result['lastattempt']['blindmarking']);
+        $this->assertCount(0, $result['lastattempt']['submissiongroupmemberswhoneedtosubmit']);
+        $this->assertEquals('notgraded', $result['lastattempt']['gradingstatus']);
+    }
+
+    /**
      * get_participant should throw an excaption if the requested assignment doesn't exist.
      *
      * @expectedException moodle_exception
