@@ -470,13 +470,11 @@ function(
             currentTemplate = TEMPLATES.COURSES_SUMMARY;
         }
 
-        // Delete the course category if it is not to be displayed
-        if (filters.displaycategories != 'on') {
-            coursesData.courses = coursesData.courses.map(function(course) {
-                delete course.coursecategory;
-                return course;
-            });
-        }
+        // Whether the course category should be displayed in the course item.
+        coursesData.courses = coursesData.courses.map(function(course) {
+            course.showcoursecategory = filters.displaycategories == 'on' ? true : false;
+            return course;
+        });
 
         if (coursesData.courses.length) {
             return Templates.render(currentTemplate, {
