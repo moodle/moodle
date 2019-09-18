@@ -1,0 +1,3 @@
+username,password,firstname,lastname,email,emailstop
+jbloggs,hunter42,Joe,Bloggs,jbloggs@example.com,1
+fbloggs,hunter42,Fred,Bloggs,fbloggs@example.com,0

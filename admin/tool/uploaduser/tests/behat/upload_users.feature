@@ -51,6 +51,7 @@ Feature: Upload users
     And I navigate to "Users > Accounts > Upload users" in site administration
     When I upload "lib/tests/fixtures/upload_users.csv" file to "File" filemanager
     And I press "Upload users"
+    And I should see "Upload users preview"
     And I set the following fields to these values:
       | City/town  | Brighton   |
       | Department | Purchasing |
@@ -77,12 +78,28 @@ Feature: Upload users
     When I navigate to "Users > Accounts > Upload users" in site administration
     And I upload "lib/tests/fixtures/upload_users_profile.csv" file to "File" filemanager
     And I press "Upload users"
+    And I should see "Upload users preview"
     And I press "Upload users"
     # Check that users were created and the superfield is filled.
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I follow "Tom Jones"
     And I should see "Super field"
     And I should see "The big guy"
+    And I log out
+
+  @javascript
+  Scenario: Upload users setting their email stop value
+    Given I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_emailstop.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And the following should exist in the "uupreview" table:
+      | CSV line | username | emailstop |
+      | 2        | jbloggs  | 1         |
+      | 3        | fbloggs  | 0         |
+    And I press "Upload users"
+    And I should see "Users created: 2"
     And I log out
 
   @javascript
