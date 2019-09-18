@@ -127,3 +127,14 @@ function block_myoverview_user_preferences() {
 
     return $preferences;
 }
+
+/**
+ * Pre-delete course hook to cleanup any records with references to the deleted course.
+ *
+ * @param stdClass $course The deleted course
+ */
+function block_myoverview_pre_course_delete(\stdClass $course) {
+    // Removing any starred courses which have been created for users, for this course.
+    $service = \core_favourites\service_factory::get_service_for_component('core_course');
+    $service->delete_favourites_by_type_and_item('courses', $course->id);
+}
