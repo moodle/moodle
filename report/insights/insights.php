@@ -40,10 +40,24 @@ if ($context->contextlevel < CONTEXT_COURSE) {
     // Only for higher levels than course.
     $PAGE->set_context($context);
 }
+
 \core_analytics\manager::check_can_list_insights($context);
 
 // Get all models that are enabled, trained and have predictions at this context.
 $othermodels = \core_analytics\manager::get_all_models(true, true, $context);
+array_filter($othermodels, function($model) use ($context) {
+
+    // Discard insights that are not linked unless you are a manager.
+    if (!$model->get_target()->link_insights_report()) {
+        try {
+            \core_analytics\manager::check_can_manage_models();
+        } catch (\required_capability_exception $e) {
+            return false;
+        }
+    }
+    return true;
+});
+
 if (!$modelid && count($othermodels)) {
     // Autoselect the only available model.
     $model = reset($othermodels);
@@ -89,6 +103,12 @@ if (!$modelid) {
 
 $model = new \core_analytics\model($modelid);
 
+if (!$model->get_target()->link_insights_report()) {
+
+    // Only manager access if this target does not link the insights report.
+    \core_analytics\manager::check_can_manage_models();
+}
+
 $insightinfo = new stdClass();
 $insightinfo->contextname = $context->get_context_name();
 $insightinfo->insightname = $model->get_target()->get_name();
@@ -103,8 +123,12 @@ if (!$model->uses_insights()) {
     exit(0);
 }
 
+if ($context->id == SYSCONTEXTID) {
+    $PAGE->set_heading(get_site()->shortname);
+} else {
+    $PAGE->set_heading($insightinfo->contextname);
+}
 $PAGE->set_title($insightinfo->insightname);
-$PAGE->set_heading($insightinfo->contextname);
 
 // Some models generate one single prediction per context. We can directly show the prediction details in this case.
 if ($model->get_analyser()::one_sample_per_analysable()) {

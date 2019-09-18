@@ -193,18 +193,23 @@ class insights_generator {
         $insighturl = null;
         foreach ($predictionactions as $action) {
             $actionurl = $action->get_url();
+            $opentoblank = false;
             if (!$actionurl->get_param('forwardurl')) {
 
-                $actiondoneurl = new \moodle_url('/report/insights/done.php');
+                $params = ['actionvisiblename' => $action->get_text(), 'target' => '_blank'];
+                $actiondoneurl = new \moodle_url('/report/insights/done.php', $params);
                 // Set the forward url to the 'done' script.
                 $actionurl->param('forwardurl', $actiondoneurl->out(false));
+
+                $opentoblank = true;
             }
 
             if (empty($insighturl)) {
                 // We use the primary action url as insight url so we log that the user followed the provided link.
                 $insighturl = $action->get_url();
             }
-            $actiondata = (object)['url' => $action->get_url()->out(false), 'text' => $action->get_text()];
+            $actiondata = (object)['url' => $action->get_url()->out(false), 'text' => $action->get_text(),
+                'opentoblank' => $opentoblank];
             $fullmessageplaintext .= get_string('insightinfomessageaction', 'analytics', $actiondata) . PHP_EOL;
             $messageactions[] = $actiondata;
         }

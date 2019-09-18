@@ -22,11 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['actionsaved'] = 'Your action has been saved.';
-$string['calculatedvalue'] = 'Calculated value';
+$string['actionsaved'] = 'Your feedback of \'{$a}\' has been saved.';
 $string['disabledmodel'] = 'Sorry, this model has been disabled by the administrator';
-$string['indicator'] = 'Indicator';
-$string['insightprediction'] = '{$a} prediction';
+$string['indicators'] = 'Indicators';
 $string['insight'] = 'Insight';
 $string['insights'] = 'Insights';
 $string['justpredictions'] = 'Please note that the following insights are only predictions. It is not possible to predict the future with any certainty. The insights are provided so that action can be taken as necessary to prevent any negative predictions becoming reality.';
@@ -39,7 +37,6 @@ $string['outcomeverypositive'] = 'Very positive outcome';
 $string['outcomeverynegative'] = 'Very negative outcome';
 $string['pluginname'] = 'Insights';
 $string['prediction'] = 'Prediction';
-$string['predictioncalculations'] = 'Indicator calculations';
 $string['predictiondetails'] = 'Prediction details';
 $string['nodetailsavailable'] = 'No prediction details are relevant.';
 $string['timecreated'] = 'Time predicted';
