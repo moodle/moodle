@@ -2975,6 +2975,38 @@ function forum_add_new_post($post, $mform, $unused = null) {
 }
 
 /**
+ * Trigger post updated event.
+ *
+ * @param object $post forum post object
+ * @param object $discussion discussion object
+ * @param object $context forum context object
+ * @param object $forum forum object
+ * @since Moodle 3.8
+ * @return void
+ */
+function forum_trigger_post_updated_event($post, $discussion, $context, $forum) {
+    global $USER;
+
+    $params = array(
+        'context' => $context,
+        'objectid' => $post->id,
+        'other' => array(
+            'discussionid' => $discussion->id,
+            'forumid' => $forum->id,
+            'forumtype' => $forum->type,
+        )
+    );
+
+    if ($USER->id !== $post->userid) {
+        $params['relateduserid'] = $post->userid;
+    }
+
+    $event = \mod_forum\event\post_updated::create($params);
+    $event->add_record_snapshot('forum_discussions', $discussion);
+    $event->trigger();
+}
+
+/**
  * Update a post.
  *
  * @param   stdClass    $newpost    The post to update
@@ -3026,6 +3058,13 @@ function forum_update_post($newpost, $mform, $unused = null) {
     $DB->update_record('forum_discussions', $discussion);
 
     forum_add_attachment($post, $forum, $cm, $mform);
+
+    if ($forum->type == 'single' && $post->parent == '0') {
+        // Updating first post of single discussion type -> updating forum intro.
+        $forum->intro = $post->message;
+        $forum->timemodified = time();
+        $DB->update_record("forum", $forum);
+    }
 
     if (isset($newpost->tags)) {
         core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, $context, $newpost->tags);

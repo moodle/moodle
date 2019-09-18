@@ -2394,4 +2394,208 @@ class mod_forum_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.8
+     */
+    public static function update_discussion_post_parameters() {
+        return new external_function_parameters(
+            [
+                'postid' => new external_value(PARAM_INT, 'Post to be updated. It can be a discussion topic post.'),
+                'subject' => new external_value(PARAM_TEXT, 'Updated post subject', VALUE_DEFAULT, ''),
+                'message' => new external_value(PARAM_RAW, 'Updated post message (HTML assumed if messageformat is not provided)',
+                    VALUE_DEFAULT, ''),
+                'messageformat' => new external_format_value('message', VALUE_DEFAULT),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        [
+                            'name' => new external_value(
+                                PARAM_ALPHANUM,
+                                'The allowed keys (value format) are:
+                                pinned (bool); (only for discussions) whether to pin this discussion or not
+                                discussionsubscribe (bool); whether to subscribe to the post or not
+                                inlineattachmentsid (int); the draft file area id for inline attachments in the text
+                                attachmentsid (int); the draft file area id for attachments'
+                            ),
+                            'value' => new external_value(PARAM_RAW, 'The value of the option.')
+                        ]
+                    ),
+                    'Configuration options for the post.',
+                    VALUE_DEFAULT,
+                    []
+                ),
+            ]
+        );
+    }
+
+    /**
+     * Updates a post or a discussion post topic.
+     *
+     * @param int $postid post to be updated, it can be a discussion topic post.
+     * @param string $subject updated post subject
+     * @param string $message updated post message (HTML assumed if messageformat is not provided)
+     * @param int $messageformat The format of the message, defaults to FORMAT_HTML
+     * @param array $options different configuration options for the post to be updated.
+     * @return array of warnings and the status (true if the post/discussion was deleted)
+     * @since Moodle 3.8
+     * @throws moodle_exception
+     * @todo support more options: timed posts, groups change and tags.
+     */
+    public static function update_discussion_post($postid, $subject = '', $message = '', $messageformat = FORMAT_HTML,
+            $options = []) {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . "/mod/forum/lib.php");
+
+        $params = self::validate_parameters(self::add_discussion_post_parameters(),
+            [
+                'postid' => $postid,
+                'subject' => $subject,
+                'message' => $message,
+                'options' => $options,
+                'messageformat' => $messageformat,
+            ]
+        );
+        $warnings = [];
+
+        // Validate options.
+        $options = [];
+        foreach ($params['options'] as $option) {
+            $name = trim($option['name']);
+            switch ($name) {
+                case 'pinned':
+                    $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
+                case 'discussionsubscribe':
+                    $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
+                case 'inlineattachmentsid':
+                    $value = clean_param($option['value'], PARAM_INT);
+                    break;
+                case 'attachmentsid':
+                    $value = clean_param($option['value'], PARAM_INT);
+                    break;
+                default:
+                    throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
+            }
+            $options[$name] = $value;
+        }
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $postvault = $vaultfactory->get_post_vault();
+        $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+        $forumdatamapper = $legacydatamapperfactory->get_forum_data_mapper();
+        $discussiondatamapper = $legacydatamapperfactory->get_discussion_data_mapper();
+        $postdatamapper = $legacydatamapperfactory->get_post_data_mapper();
+
+        $postentity = $postvault->get_from_id($params['postid']);
+        if (empty($postentity)) {
+            throw new moodle_exception('invalidpostid', 'forum');
+        }
+        $discussionentity = $discussionvault->get_from_id($postentity->get_discussion_id());
+        if (empty($discussionentity)) {
+            throw new moodle_exception('notpartofdiscussion', 'forum');
+        }
+        $forumentity = $forumvault->get_from_id($discussionentity->get_forum_id());
+        if (empty($forumentity)) {
+            throw new moodle_exception('invalidforumid', 'forum');
+        }
+        $forum = $forumdatamapper->to_legacy_object($forumentity);
+        $capabilitymanager = $managerfactory->get_capability_manager($forumentity);
+
+        $modcontext = $forumentity->get_context();
+        self::validate_context($modcontext);
+
+        if (!$capabilitymanager->can_edit_post($USER, $discussionentity, $postentity)) {
+            throw new moodle_exception('cannotupdatepost', 'forum');
+        }
+
+        // Get the original post.
+        $updatepost = $postdatamapper->to_legacy_object($postentity);
+        $updatepost->itemid = IGNORE_FILE_MERGE;
+        $updatepost->attachments = IGNORE_FILE_MERGE;
+
+        // Prepare the post to be updated.
+        if (!empty($params['subject'])) {
+            $updatepost->subject = $params['subject'];
+        }
+
+        if (!empty($params['message']) && !empty($params['messageformat'])) {
+            $updatepost->message       = $params['message'];
+            $updatepost->messageformat = $params['messageformat'];
+            $updatepost->messagetrust  = trusttext_trusted($modcontext);
+            // Clean message text.
+            $updatepost = trusttext_pre_edit($updatepost, 'message', $modcontext);
+        }
+
+        if (isset($options['discussionsubscribe'])) {
+            // No need to validate anything here, forum_post_subscription will do.
+            $updatepost->discussionsubscribe = $options['discussionsubscribe'];
+        }
+
+        // When editing first post/discussion.
+        if (!$postentity->has_parent()) {
+            // Defaults for discussion topic posts.
+            $updatepost->name = $discussionentity->get_name();
+            $updatepost->timestart = $discussionentity->get_time_start();
+            $updatepost->timeend = $discussionentity->get_time_end();
+
+            if (isset($options['pinned'])) {
+                if ($capabilitymanager->can_pin_discussions($USER)) {
+                    // Can change pinned if we have capability.
+                    $updatepost->pinned = !empty($options['pinned']) ? FORUM_DISCUSSION_PINNED : FORUM_DISCUSSION_UNPINNED;
+                }
+            }
+        }
+
+        if (isset($options['inlineattachmentsid'])) {
+            $updatepost->itemid = $options['inlineattachmentsid'];
+        }
+
+        if (isset($options['attachmentsid']) && forum_can_create_attachment($forum, $modcontext)) {
+            $updatepost->attachments = $options['attachmentsid'];
+        }
+
+        // Update the post.
+        $fakemform = $updatepost->id;
+        if (forum_update_post($updatepost, $fakemform)) {
+            $discussion = $discussiondatamapper->to_legacy_object($discussionentity);
+
+            forum_trigger_post_updated_event($updatepost, $discussion, $modcontext, $forum);
+
+            forum_post_subscription(
+                $updatepost,
+                $forum,
+                $discussion
+            );
+            $status = true;
+        } else {
+            $status = false;
+        }
+
+        return [
+            'status' => $status,
+            'warnings' => $warnings,
+        ];
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.8
+     */
+    public static function update_discussion_post_returns() {
+        return new external_single_structure(
+            [
+                'status' => new external_value(PARAM_BOOL, 'True if the post/discussion was updated, false otherwise.'),
+                'warnings' => new external_warnings()
+            ]
+        );
+    }
 }

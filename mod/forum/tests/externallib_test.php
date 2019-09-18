@@ -2781,4 +2781,170 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($post->message, $result['messagetext']);
     }
 
+    /**
+     * Test update_discussion_post with a discussion.
+     */
+    public function test_update_discussion_post_discussion() {
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+
+        $this->setAdminUser();
+
+        // Add a discussion.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $USER->id;
+        $record->forum = $forum->id;
+        $record->pinned = FORUM_DISCUSSION_UNPINNED;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $subject = 'Hey subject updated';
+        $message = 'Hey message updated';
+        $messageformat = FORMAT_HTML;
+        $options = [
+            ['name' => 'pinned', 'value' => true],
+        ];
+
+        $result = mod_forum_external::update_discussion_post($discussion->firstpost, $subject, $message, $messageformat,
+            $options);
+        $result = external_api::clean_returnvalue(mod_forum_external::update_discussion_post_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        // Get the post from WS.
+        $result = mod_forum_external::get_discussion_post($discussion->firstpost);
+        $result = external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
+        $this->assertEquals($subject, $result['post']['subject']);
+        $this->assertEquals($message, $result['post']['message']);
+        $this->assertEquals($messageformat, $result['post']['messageformat']);
+
+        // Get discussion object from DB.
+        $discussion = $DB->get_record('forum_discussions', ['id' => $discussion->id]);
+        $this->assertEquals($subject, $discussion->name);   // Check discussion subject.
+        $this->assertEquals(FORUM_DISCUSSION_PINNED, $discussion->pinned);  // Check discussion pinned.
+    }
+
+    /**
+     * Test update_discussion_post with a post.
+     */
+    public function test_update_discussion_post_post() {
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $cm = get_coursemodule_from_id('forum', $forum->cmid, 0, false, MUST_EXIST);
+        $user = $this->getDataGenerator()->create_user();
+        $role = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+
+        $this->setUser($user);
+        // Enable auto subscribe discussion.
+        $USER->autosubscribe = true;
+
+        // Add a discussion.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add a post via WS (so discussion subscription works).
+        $result = mod_forum_external::add_discussion_post($discussion->firstpost, 'some subject', 'some text here...');
+        $newpost = $result['post'];
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion->id, $cm));
+
+        // Add files in the different areas.
+        $draftidattach = file_get_unused_draft_itemid();
+        $filerecordinline = array(
+            'contextid' => context_user::instance($user->id)->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidattach,
+            'filepath'  => '/',
+            'filename'  => 'faketxt.txt',
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecordinline, 'fake txt contents 1.');
+
+        // Create files in post area (inline).
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $filerecordinline['itemid'] = $draftidinlineattach;
+        $filerecordinline['filename'] = 'fakeimage.png';
+        $fs->create_file_from_string($filerecordinline, 'img...');
+
+        // Do not update subject.
+        $message = 'Hey message updated';
+        $messageformat = FORMAT_HTML;
+        $options = [
+            ['name' => 'discussionsubscribe', 'value' => false],
+            ['name' => 'inlineattachmentsid', 'value' => $draftidinlineattach],
+            ['name' => 'attachmentsid', 'value' => $draftidattach],
+        ];
+
+        $result = mod_forum_external::update_discussion_post($newpost->id, '', $message, $messageformat, $options);
+        $result = external_api::clean_returnvalue(mod_forum_external::update_discussion_post_returns(), $result);
+        $this->assertTrue($result['status']);
+        // Check subscription status.
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion->id, $cm));
+
+        // Get the post from WS.
+        $result = mod_forum_external::get_forum_discussion_posts($discussion->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $result);
+        $found = false;
+        foreach ($result['posts'] as $post) {
+            if ($post['id'] == $newpost->id) {
+                $this->assertEquals($newpost->subject, $post['subject']);
+                $this->assertEquals($message, $post['message']);
+                $this->assertEquals($messageformat, $post['messageformat']);
+                $this->assertCount(1, $post['messageinlinefiles']);
+                $this->assertEquals('fakeimage.png', $post['messageinlinefiles'][0]['filename']);
+                $this->assertCount(1, $post['attachments']);
+                $this->assertEquals('faketxt.txt', $post['attachments'][0]['filename']);
+                $found = true;
+            }
+        }
+        $this->assertTrue($found);
+    }
+
+    /**
+     * Test update_discussion_post with other user post (no permissions).
+     */
+    public function test_update_discussion_post_other_user_post() {
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $user = $this->getDataGenerator()->create_user();
+        $role = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+
+        $this->setAdminUser();
+        // Add a discussion.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $USER->id;
+        $record->forum = $forum->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add a post.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $USER->id;
+        $record->forum = $forum->id;
+        $record->discussion = $discussion->id;
+        $record->parent = $discussion->firstpost;
+        $newpost = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $this->setUser($user);
+        $subject = 'Hey subject updated';
+        $message = 'Hey message updated';
+        $messageformat = FORMAT_HTML;
+
+        $this->expectExceptionMessage(get_string('cannotupdatepost', 'forum'));
+        mod_forum_external::update_discussion_post($newpost->id, $subject, $message, $messageformat);
+    }
 }

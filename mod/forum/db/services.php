@@ -199,4 +199,12 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_forum_update_discussion_post' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'update_discussion_post',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Updates a post or a discussion topic post.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

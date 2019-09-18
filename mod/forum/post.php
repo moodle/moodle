@@ -846,12 +846,7 @@ if ($mformpost->is_cancelled()) {
             print_error("couldnotupdate", "forum", $errordestination);
         }
 
-        if ('single' == $forumentity->get_type() && !$postentity->has_parent()) {
-            // Updating first post of single discussion type -> updating forum intro.
-            $forum->intro = $updatepost->message;
-            $forum->timemodified = time();
-            $DB->update_record("forum", $forum);
-        }
+        forum_trigger_post_updated_event($post, $discussion, $modcontext, $forum);
 
         if ($USER->id === $postentity->get_author_id()) {
             $message .= get_string("postupdated", "forum");
@@ -868,24 +863,6 @@ if ($mformpost->is_cancelled()) {
         } else {
             $discussionurl = $urlfactory->get_view_post_url_from_post($postentity);
         }
-
-        $params = array(
-            'context' => $modcontext,
-            'objectid' => $fromform->id,
-            'other' => array(
-                'discussionid' => $discussion->id,
-                'forumid' => $forum->id,
-                'forumtype' => $forum->type,
-            )
-        );
-
-        if ($USER->id !== $postentity->get_author_id()) {
-            $params['relateduserid'] = $postentity->get_author_id();
-        }
-
-        $event = \mod_forum\event\post_updated::create($params);
-        $event->add_record_snapshot('forum_discussions', $discussion);
-        $event->trigger();
 
         redirect(
             forum_go_back_to($discussionurl),
