@@ -480,6 +480,9 @@ class manager {
     /**
      * Returns the models with insights at the provided context.
      *
+     * Note that this method is used for display purposes. It filters out models whose insights
+     * are not linked from the reports page.
+     *
      * @param \context $context
      * @return \core_analytics\model[]
      */
@@ -490,11 +493,50 @@ class manager {
         $models = self::get_all_models(true, true, $context);
         foreach ($models as $key => $model) {
             // Check that it not only have predictions but also generates insights from them.
-            if (!$model->uses_insights()) {
+            if (!$model->uses_insights() || !$model->get_target()->link_insights_report()) {
                 unset($models[$key]);
             }
         }
         return $models;
+    }
+
+    /**
+     * Returns the models that generated insights in the provided context. It can also be used to add new models to the context.
+     *
+     * Note that if you use this function with $newmodelid is the caller responsibility to ensure that the
+     * provided model id generated insights for the provided context.
+     *
+     * @throws \coding_exception
+     * @param  \context $context
+     * @param  int|null $newmodelid A new model to add to the list of models with insights in the provided context.
+     * @return int[]
+     */
+    public static function cached_models_with_insights(\context $context, int $newmodelid = null) {
+
+        $cache = \cache::make('core', 'contextwithinsights');
+        $modelids = $cache->get($context->id);
+        if ($modelids === false) {
+            // The cache is empty, but we don't know if it is empty because there are no insights
+            // in this context or because cache/s have been purged, we need to be conservative and
+            // "pay" 1 db read to fill up the cache.
+
+            $models = \core_analytics\manager::get_models_with_insights($context);
+
+            if ($newmodelid && empty($models[$newmodelid])) {
+                throw new \coding_exception('The provided modelid ' . $newmodelid . ' did not generate any insights');
+            }
+
+            $modelids = array_keys($models);
+            $cache->set($context->id, $modelids);
+
+        } else if ($newmodelid && !in_array($newmodelid, $modelids)) {
+            // We add the context we got as an argument to the cache.
+
+            array_push($modelids, $newmodelid);
+            $cache->set($context->id, $modelids);
+        }
+
+        return $modelids;
     }
 
     /**

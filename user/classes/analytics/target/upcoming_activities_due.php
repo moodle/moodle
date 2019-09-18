@@ -151,6 +151,15 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
     }
 
     /**
+     * No need to link to the insights report in this case.
+     *
+     * @return bool
+     */
+    public function link_insights_report(): bool {
+        return false;
+    }
+
+    /**
      * Adds a view upcoming events action.
      *
      * @param \core_analytics\prediction $prediction
@@ -170,9 +179,9 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
 
         // We force a lookahead of 30 days so we are sure that the upcoming activities due are shown.
         $url = new \moodle_url('/calendar/view.php', ['view' => 'upcoming', 'lookahead' => '30']);
-        $pix = new \pix_icon('i/calendar', get_string('upcomingevents', 'calendar'));
+        $pix = new \pix_icon('i/calendar', get_string('viewupcomingactivitiesdue', 'calendar'));
         $action = new \core_analytics\prediction_action('viewupcoming', $prediction,
-            $url, $pix, get_string('upcomingevents', 'calendar'));
+            $url, $pix, get_string('viewupcomingactivitiesdue', 'calendar'));
 
         return array_merge([$action], $parentactions);
     }

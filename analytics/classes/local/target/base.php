@@ -96,6 +96,15 @@ abstract class base extends \core_analytics\calculable {
     }
 
     /**
+     * Should the insights of this model be linked from reports?
+     *
+     * @return bool
+     */
+    public function link_insights_report(): bool {
+        return true;
+    }
+
+    /**
      * Based on facts (processed by machine learning backends) by default.
      *
      * @return bool
@@ -137,7 +146,7 @@ abstract class base extends \core_analytics\calculable {
 
         $actions = array();
 
-        if ($includedetailsaction) {
+        if ($this->link_insights_report() && $includedetailsaction) {
 
             $predictionurl = new \moodle_url('/report/insights/prediction.php', array('id' => $predictionid));
             $detailstext = $this->get_view_details_text();

@@ -73,7 +73,7 @@
     }
 }}
 
-<h2 class="mb-2">{{#str}}insightprediction, report_insights, {{insightname}} {{/str}}</h2>
+<h2 class="mb-2">{{insightname}}</h2>
 <table class="generaltable insights-list">
     {{#showpredicionheading}}
         <caption>
@@ -101,29 +101,23 @@
     <caption>{{#str}}predictiondetails, report_insights{{/str}}</caption>
     <tbody>
         <tr>
-            <td scope="row">{{#str}}timecreated, report_insights{{/str}}</td>
+            <th scope="row">{{#str}}timecreated, report_insights{{/str}}</td>
             <td>{{timecreated}}</td>
         </tr>
         {{#timerange}}
             <tr>
-                <td scope="row">{{#str}}timerange, report_insights{{/str}}</td>
+                <th scope="row">{{#str}}timerange, report_insights{{/str}}</td>
                 <td>{{.}}</td>
             </tr>
         {{/timerange}}
     </tbody>
 </table>
 <table class="generaltable prediction-calculations">
-    <caption class="accesshide">{{#str}}predictioncalculations, report_insights{{/str}}</caption>
-    <thead>
-        <tr>
-            <th scope="col">{{#str}}indicator, report_insights{{/str}}</th>
-            <th scope="col">{{#str}}calculatedvalue, report_insights{{/str}}</th>
-        </tr>
-    </thead>
+    <caption>{{#str}}indicators, report_insights{{/str}}</caption>
     <tbody>
     {{#calculations}}
         <tr>
-            <td class="{{#style}}table-{{style}}{{/style}}">{{name}}</td>
+            <th scope="row" class="{{#style}}table-{{style}}{{/style}}">{{name}}</td>
             <td class="{{#style}}table-{{style}}{{/style}}">{{#outcomeicon}}{{> core/pix_icon}}{{/outcomeicon}} {{displayvalue}}</td>
         </tr>
     {{/calculations}}

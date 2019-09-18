@@ -71,8 +71,12 @@ if (!$model->uses_insights()) {
     exit(0);
 }
 
+if ($context->id == SYSCONTEXTID) {
+    $PAGE->set_heading(get_site()->shortname);
+} else {
+    $PAGE->set_heading($insightinfo->contextname);
+}
 $PAGE->set_title($insightinfo->insightname);
-$PAGE->set_heading($insightinfo->contextname);
 
 echo $OUTPUT->header();
 
