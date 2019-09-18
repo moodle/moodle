@@ -17619,46 +17619,6 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
  * - Make the content region flex grow so it pushes things like the
  *   next activity selector to the bottom of the page.
  */
-body.reset-style #page-header .card, body.reset-style #page-header #page-enrol-users #filterform, #page-enrol-users body.reset-style #page-header #filterform, body.reset-style #page-header .que .history, .que body.reset-style #page-header .history, body.reset-style #page-header .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header section, body.reset-style #page-header .groupinfobox, body.reset-style #page-header .well {
-  border: none; }
-  body.reset-style #page-header .card .page-header-headings h1, body.reset-style #page-header #page-enrol-users #filterform .page-header-headings h1, #page-enrol-users body.reset-style #page-header #filterform .page-header-headings h1, body.reset-style #page-header .que .history .page-header-headings h1, .que body.reset-style #page-header .history .page-header-headings h1, body.reset-style #page-header .userprofile .profile_tree section .page-header-headings h1, .userprofile .profile_tree body.reset-style #page-header section .page-header-headings h1, body.reset-style #page-header .groupinfobox .page-header-headings h1, body.reset-style #page-header .well .page-header-headings h1 {
-    margin-bottom: 0; }
-
-body.reset-style #page-header > div {
-  padding-top: 0 !important;
-  /* stylelint-disable-line declaration-no-important */
-  padding-bottom: 0 !important;
-  /* stylelint-disable-line declaration-no-important */ }
-
-body.reset-style #page-content {
-  padding-bottom: 0 !important;
-  /* stylelint-disable-line declaration-no-important */ }
-  body.reset-style #page-content #region-main-box {
-    display: flex; }
-    body.reset-style #page-content #region-main-box #region-main {
-      border: none;
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      padding-left: 1.25rem;
-      padding-right: 1.25rem; }
-      body.reset-style #page-content #region-main-box #region-main div[role="main"] {
-        flex: 1; }
-      body.reset-style #page-content #region-main-box #region-main .activity-navigation {
-        overflow: hidden; }
-      body.reset-style #page-content #region-main-box #region-main.has-blocks {
-        width: calc(100% - 375px); }
-        @media (max-width: 1199.98px) {
-          body.reset-style #page-content #region-main-box #region-main.has-blocks {
-            width: 100%; } }
-    body.reset-style #page-content #region-main-box [data-region="blocks-column"] {
-      margin-left: auto; }
-    @media (max-width: 1199.98px) {
-      body.reset-style #page-content #region-main-box {
-        flex-direction: column; } }
-
 body.behat-site .fixed-top {
   position: absolute; }
 
