@@ -1595,7 +1595,7 @@ EOF;
      *
      * @Then /^(?:|I )pause(?:| scenario execution)$/
      */
-    public function i_pause_scenario_executon() {
+    public function i_pause_scenario_execution() {
         $message = "<colour:lightYellow>Paused. Press <colour:lightRed>Enter/Return<colour:lightYellow> to continue.";
         behat_util::pause($this->getSession(), $message);
     }
