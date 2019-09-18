@@ -131,6 +131,13 @@ class provider implements
             'timemodified' => 'privacy:metadata:forum_queue:timemodified'
         ], 'privacy:metadata:forum_queue');
 
+        //The 'forum_grades' table stores grade data.
+        $items->add_database_table('forum_grades', [
+            'userid' => 'privacy:metadata:forum_grades:userid',
+            'forum' => 'privacy:metadata:forum_grades:forum',
+            'grade' => 'privacy:metadata:forum_grades:grade',
+        ], 'privacy:metadata:forum_grades');
+
         // Forum posts can be tagged and rated.
         $items->link_subsystem('core_tag', 'privacy:metadata:core_tag');
         $items->link_subsystem('core_rating', 'privacy:metadata:core_rating');
@@ -255,6 +262,8 @@ class provider implements
         ";
         $params += $ratingsql->params;
         $contextlist->add_from_sql($sql, $params);
+
+        // TODO MDL-66358 forum_grades
 
         return $contextlist;
     }
