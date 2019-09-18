@@ -72,4 +72,13 @@ class block_starredcourses extends block_base {
     public function applicable_formats() {
         return array('my' => true);
     }
+
+    /**
+     * Allow the block to have a configuration page
+     *
+     * @return boolean
+     */
+    public function has_config() {
+        return true;
+    }
 }
