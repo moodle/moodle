@@ -68,16 +68,15 @@ if ($form->is_cancelled()) {
 
     $discussionvault = $vaultfactory->get_discussion_vault();
     $postvault = $vaultfactory->get_post_vault();
-
+    $discussionids = [];
     if ($data->discussionids) {
-        $discussions = $discussionvault->get_from_ids($data->discussionids);
+        $discussionids = $data->discussionids;
     } else {
         $discussions = $discussionvault->get_all_discussions_in_forum($forum);
+        $discussionids = array_map(function ($discussion) {
+            return $discussion->get_id();
+        }, $discussions);
     }
-
-    $discussionids = array_map(function ($discussion) {
-        return $discussion->get_id();
-    }, $discussions);
 
     if ($data->userids) {
         $posts = $postvault->get_from_discussion_ids_and_user_ids($USER,
@@ -100,9 +99,12 @@ if ($form->is_cancelled()) {
     require_once($CFG->libdir . '/dataformatlib.php');
     $filename = clean_filename('discussion');
     download_as_dataformat($filename, $dataformat, $fields, $iterator, function($exportdata) use ($fields) {
-        $data = new stdClass();
+        $data = $exportdata;
         foreach ($fields as $field) {
-            $data->$field = !empty($exportdata->$field) ? $exportdata->$field : '';
+            // Convert any boolean fields to their integer equivalent for output.
+            if (is_bool($data->$field)) {
+                $data->$field = (int) $data->$field;
+            }
         }
         return $data;
     });

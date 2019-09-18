@@ -363,7 +363,8 @@ class core_course_enrolment_manager_testcase extends advanced_testcase {
             true,
             0,
             $perpage,
-            $returnexactcount);
+            $returnexactcount
+        );
 
         $this->assertCount($expectedusers, $users['users']);
         $this->assertEquals($expectedmoreusers, $users['moreusers']);

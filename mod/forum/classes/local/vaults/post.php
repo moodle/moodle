@@ -118,7 +118,7 @@ class post extends db_table_vault {
     /**
      * Get the list of posts for the given discussions.
      *
-     * @param stdClass $user The user to check the unread count for
+     * @param stdClass $user The user to load posts for.
      * @param int[] $discussionids The list of discussion ids to load posts for
      * @param bool $canseeprivatereplies Whether this user can see all private replies or not
      * @param string $orderby Order the results
@@ -157,11 +157,11 @@ class post extends db_table_vault {
     }
 
     /**
-     * Get the list of posts for the given users in the given discussions.
+     * The method returns posts made by the supplied users in the supplied discussions.
      *
-     * @param stdClass $user The user to check the unread count for
+     * @param stdClass $user Only used when restricting private replies
      * @param int[] $discussionids The list of discussion ids to load posts for
-     * @param int[] $userids The list of user ids to load posts for
+     * @param int[] $userids Only return posts made by these users
      * @param bool $canseeprivatereplies Whether this user can see all private replies or not
      * @param string $orderby Order the results
      * @return post_entity[]

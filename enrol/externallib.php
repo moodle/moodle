@@ -639,7 +639,7 @@ class core_enrol_external extends external_api {
         }
         course_require_view_participants($context);
 
-        $course = $DB->get_record('course', ['id' => $params['courseid']]);
+        $course = get_course($params['courseid']);
         $manager = new course_enrolment_manager($PAGE, $course);
 
         $users = $manager->search_users($params['search'],
@@ -654,10 +654,6 @@ class core_enrol_external extends external_api {
                 get_extra_user_fields($context)
         );
         foreach ($users['users'] as $user) {
-            // Note: We pass the course here to validate that the current user can at least view user details in this course.
-            // The user we are looking at is not in this course yet though - but we only fetch the minimal set of
-            // user records, and the user has been validated to have course:enrolreview in this course. Otherwise
-            // there is no way to find users who aren't in the course in order to enrol them.
             if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {
                 $results[] = $userdetails;
             }
