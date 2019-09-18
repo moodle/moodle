@@ -194,6 +194,20 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->assertArrayHasKey($post2->id, $entities);
         $this->assertArrayHasKey($post3->id, $entities);
         $this->assertArrayHasKey($post4->id, $entities);
+
+        // Test ordering by id descending.
+        $entities = $this->vault->get_from_discussion_ids($user, [$discussion1->id, $discussion2->id], false, 'id DESC');
+        $this->assertEquals($post4->id, array_values($entities)[0]->get_id());
+        $this->assertEquals($post3->id, array_values($entities)[1]->get_id());
+        $this->assertEquals($post2->id, array_values($entities)[2]->get_id());
+        $this->assertEquals($post1->id, array_values($entities)[3]->get_id());
+
+        // Test ordering by id ascending.
+        $entities = $this->vault->get_from_discussion_ids($user, [$discussion1->id, $discussion2->id], false, 'id ASC');
+        $this->assertEquals($post1->id, array_values($entities)[0]->get_id());
+        $this->assertEquals($post2->id, array_values($entities)[1]->get_id());
+        $this->assertEquals($post3->id, array_values($entities)[2]->get_id());
+        $this->assertEquals($post4->id, array_values($entities)[3]->get_id());
     }
 
     /**
