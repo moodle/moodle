@@ -289,6 +289,49 @@ abstract class base extends \core_analytics\calculable {
     }
 
     /**
+     * Returns the body message for an insight with multiple predictions.
+     *
+     * This default method is executed when the analysable used by the model generates multiple insight
+     * for each analysable (one_sample_per_analysable === false)
+     *
+     * @param  \context     $context
+     * @param  string       $contextname
+     * @param  \stdClass    $user
+     * @param  \moodle_url  $insighturl
+     * @return string[]                     The plain text message and the HTML message
+     */
+    public function get_insight_body(\context $context, string $contextname, \stdClass $user, \moodle_url $insighturl): array {
+        global $OUTPUT;
+
+        $fullmessage = get_string('insightinfomessageplain', 'analytics', $insighturl->out(false));
+        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message',
+            ['url' => $insighturl->out(false), 'insightinfomessage' => get_string('insightinfomessagehtml', 'analytics')]
+        );
+
+        return [$fullmessage, $fullmessagehtml];
+    }
+
+    /**
+     * Returns the body message for an insight for a single prediction.
+     *
+     * This default method is executed when the analysable used by the model generates one insight
+     * for each analysable (one_sample_per_analysable === true)
+     *
+     * @param  \context                             $context
+     * @param  \stdClass                            $user
+     * @param  \core_analytics\prediction           $prediction
+     * @param  \core_analytics\prediction_action[]  $predictionactions  Passed by reference to remove duplicate links to actions.
+     * @return array                                                    Plain text msg, HTML message and the main URL for this
+     *                                                                  insight (you can return null if you are happy with the
+     *                                                                  default insight URL calculated in prediction_info())
+     */
+    public function get_insight_body_for_prediction(\context $context, \stdClass $user, \core_analytics\prediction $prediction,
+            array &$predictionactions): array {
+        // No extra message by default.
+        return [FORMAT_PLAIN => '', FORMAT_HTML => '', 'url' => null];
+    }
+
+    /**
      * Returns an instance of the child class.
      *
      * Useful to reset cached data.

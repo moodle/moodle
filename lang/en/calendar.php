@@ -268,5 +268,6 @@ $string['weekly'] = 'Weekly';
 $string['weeknext'] = 'Next week';
 $string['weekthis'] = 'This week';
 $string['when'] = 'When';
+$string['whendate'] = 'When: {$a}';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';

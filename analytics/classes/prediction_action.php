@@ -68,10 +68,7 @@ class prediction_action {
         $this->actionname = $actionname;
         $this->text = $text;
 
-        // We want to track how effective are our suggested actions, we pass users through a script that will log these actions.
-        $params = array('action' => $this->actionname, 'predictionid' => $prediction->get_prediction_data()->id,
-            'forwardurl' => $actionurl->out(false));
-        $this->url = new \moodle_url('/report/insights/action.php', $params);
+        $this->url = self::transform_to_forward_url($actionurl, $actionname, $prediction->get_prediction_data()->id);
 
         if ($primary === false) {
             $this->actionlink = new \action_menu_link_secondary($this->url, $icon, $this->text, $attributes);
@@ -113,5 +110,23 @@ class prediction_action {
      */
     public function get_text() {
         return $this->text;
+    }
+
+    /**
+     * Transforms the provided url to an action url so we can record the user actions.
+     *
+     * Note that it is the caller responsibility to check that the provided actionname is valid for the prediction target.
+     *
+     * @param  \moodle_url $actionurl
+     * @param  string      $actionname
+     * @param  int         $predictionid
+     * @return \moodle_url
+     */
+    public static function transform_to_forward_url(\moodle_url $actionurl, string $actionname, int $predictionid): \moodle_url {
+
+        // We want to track how effective are our suggested actions, we pass users through a script that will log these actions.
+        $params = ['action' => $actionname, 'predictionid' => $predictionid,
+            'forwardurl' => $actionurl->out(false)];
+        return new \moodle_url('/report/insights/action.php', $params);
     }
 }

@@ -72,6 +72,27 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Returns the body message for the insight.
+     *
+     * @param  \context     $context
+     * @param  string       $contextname
+     * @param  \stdClass    $user
+     * @param  \moodle_url  $insighturl
+     * @return string[]                     The plain text message and the HTML message
+     */
+    public function get_insight_body(\context $context, string $contextname, \stdClass $user, \moodle_url $insighturl): array {
+        global $OUTPUT;
+
+        $a = (object)['coursename' => $contextname, 'userfirstname' => $user->firstname];
+        $fullmessage = get_string('studentsatriskinfomessage', 'course', $a) . PHP_EOL . PHP_EOL . $insighturl->out(false);
+        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message',
+            ['url' => $insighturl->out(false), 'insightinfomessage' => get_string('studentsatriskinfomessage', 'course', $a)]
+        );
+
+        return [$fullmessage, $fullmessagehtml];
+    }
+
+    /**
      * Discards courses that are not yet ready to be used for training or prediction.
      *
      * @param \core_analytics\analysable $course
