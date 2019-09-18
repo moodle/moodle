@@ -1171,4 +1171,92 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $ue = $DB->count_records('user_enrolments', ['id' => $ueid]);
         $this->assertEquals(0, $ue);
     }
+
+    /**
+     * Test for core_enrol_external::test_search_users().
+     */
+    public function test_search_users() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $datagen = $this->getDataGenerator();
+
+        /** @var enrol_manual_plugin $manualplugin */
+        $manualplugin = enrol_get_plugin('manual');
+        $this->assertNotNull($manualplugin);
+
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+
+        $course1 = $datagen->create_course();
+        $course2 = $datagen->create_course();
+
+        $user1 = $datagen->create_user(['firstname' => 'user 1']);
+        $user2 = $datagen->create_user(['firstname' => 'user 2']);
+        $user3 = $datagen->create_user(['firstname' => 'user 3']);
+        $teacher = $datagen->create_user(['firstname' => 'user 4']);
+
+        $instanceid = null;
+        $instances = enrol_get_instances($course1->id, true);
+        foreach ($instances as $inst) {
+            if ($inst->enrol == 'manual') {
+                $instanceid = (int)$inst->id;
+                break;
+            }
+        }
+        if (empty($instanceid)) {
+            $instanceid = $manualplugin->add_default_instance($course1);
+            if (empty($instanceid)) {
+                $instanceid = $manualplugin->add_instance($course1);
+            }
+        }
+        $this->assertNotNull($instanceid);
+
+        $instance = $DB->get_record('enrol', ['id' => $instanceid], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance, $user1->id, $studentroleid, 0, 0, ENROL_USER_ACTIVE);
+        $manualplugin->enrol_user($instance, $user2->id, $studentroleid, 0, 0, ENROL_USER_ACTIVE);
+        $manualplugin->enrol_user($instance, $user3->id, $studentroleid, 0, 0, ENROL_USER_ACTIVE);
+        $manualplugin->enrol_user($instance, $teacher->id, $teacherroleid, 0, 0, ENROL_USER_ACTIVE);
+
+        $this->setUser($teacher);
+
+        // Search for users in a course with enrolled users.
+        $result = core_enrol_external::search_users($course1->id, 'user', true, 0, 30);
+        $this->assertCount(4, $result);
+
+        $this->expectException('moodle_exception');
+        // Search for users in a course without any enrolled users, shouldn't return anything.
+        $result = core_enrol_external::search_users($course2->id, 'user', true, 0, 30);
+        $this->assertCount(0, $result);
+
+        // Search for invalid first name.
+        $result = core_enrol_external::search_users($course1->id, 'yada yada', true, 0, 30);
+        $this->assertCount(0, $result);
+
+        // Test pagination, it should return only 3 users.
+        $result = core_enrol_external::search_users($course1->id, 'user', true, 0, 3);
+        $this->assertCount(3, $result);
+
+        // Test pagination, it should return only 3 users.
+        $result = core_enrol_external::search_users($course1->id, 'user 1', true, 0, 1);
+        $result = $result[0];
+        $this->assertEquals($user1->id, $result['id']);
+        $this->assertEquals($user1->email, $result['email']);
+        $this->assertEquals(fullname($user1), $result['fullname']);
+
+        $this->setUser($user1);
+
+        // Search for users in a course with enrolled users.
+        $result = core_enrol_external::search_users($course1->id, 'user', true, 0, 30);
+        $this->assertCount(4, $result);
+
+        $this->expectException('moodle_exception');
+        // Search for users in a course without any enrolled users, shouldn't return anything.
+        $result = core_enrol_external::search_users($course2->id, 'user', true, 0, 30);
+        $this->assertCount(0, $result);
+
+        // Search for invalid first name.
+        $result = core_enrol_external::search_users($course1->id, 'yada yada', true, 0, 30);
+        $this->assertCount(0, $result);
+    }
 }
