@@ -1313,7 +1313,7 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
     // Default filter settings. We only show active by default, especially if the user has no capability to review enrolments.
     $onlyactive = true;
     $onlysuspended = false;
-    if (has_capability('moodle/course:enrolreview', $context)) {
+    if (has_capability('moodle/course:enrolreview', $context) && (has_capability('moodle/course:viewsuspendedusers', $context))) {
         switch ($statusid) {
             case ENROL_USER_ACTIVE:
                 // Nothing to do here.
