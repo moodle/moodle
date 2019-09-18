@@ -13,15 +13,22 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Version details for the Recently accessed courses block.
+ * Settings for the starredcourses block
  *
- * @package    block_recentlyaccessedcourses
- * @copyright  2018 Victor Deniz <victor@moodle.com>
+ * @package    block_starredcourses
+ * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019052001;            // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2019051100;            // Requires this Moodle version.
-$plugin->component = 'block_recentlyaccessedcourses'; // Full name of the plugin (used for diagnostics).
+defined('MOODLE_INTERNAL') || die;
+
+if ($ADMIN->fulltree) {
+    // Display Course Categories on the starred courses block items.
+    $settings->add(new admin_setting_configcheckbox(
+        'block_starredcourses/displaycategories',
+        get_string('displaycategories', 'block_starredcourses'),
+        get_string('displaycategories_help', 'block_starredcourses'),
+        1));
+}

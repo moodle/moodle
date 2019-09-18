@@ -238,19 +238,49 @@ Feature: The my overview block allows users to easily access their courses
     And I should see "Course 4" in the "Course overview" "block"
 
   Scenario: Show course category in cards display
-    Given I log in as "student1"
+    Given the following config values are set as admin:
+      | displaycategories | 1 | block_myoverview |
+    And I log in as "student1"
     And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     When I click on "Card" "link" in the "Course overview" "block"
     Then I should see "Category 1" in the "Course overview" "block"
 
   Scenario: Show course category in list display
-    Given I log in as "student1"
+    Given the following config values are set as admin:
+      | displaycategories | 1 | block_myoverview |
+    And I log in as "student1"
     And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     When I click on "List" "link" in the "Course overview" "block"
     Then I should see "Category 1" in the "Course overview" "block"
 
   Scenario: Show course category in summary display
-    Given I log in as "student1"
+    Given the following config values are set as admin:
+      | displaycategories | 1 | block_myoverview |
+    And I log in as "student1"
     And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     When I click on "Summary" "link" in the "Course overview" "block"
     Then I should see "Category 1" in the "Course overview" "block"
+
+  Scenario: Hide course category in cards display
+    Given the following config values are set as admin:
+      | displaycategories | 0 | block_myoverview |
+    And I log in as "student1"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
+    When I click on "Card" "link" in the "Course overview" "block"
+    Then I should not see "Category 1" in the "Course overview" "block"
+
+  Scenario: Hide course category in list display
+    Given the following config values are set as admin:
+      | displaycategories | 0 | block_myoverview |
+    And I log in as "student1"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
+    When I click on "List" "link" in the "Course overview" "block"
+    Then I should not see "Category 1" in the "Course overview" "block"
+
+  Scenario: Show course category in summary display
+    Given the following config values are set as admin:
+      | displaycategories | 0 | block_myoverview |
+    And I log in as "student1"
+    And I click on "Display drop-down menu" "button" in the "Course overview" "block"
+    When I click on "Summary" "link" in the "Course overview" "block"
+    Then I should not see "Category 1" in the "Course overview" "block"
