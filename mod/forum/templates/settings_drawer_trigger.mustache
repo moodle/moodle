@@ -32,24 +32,21 @@
     {}
 
 }}
-<div class="float-right">
-    <button id="discussion-settings-drawer-trigger-{{uniqid}}"
-            class="btn btn-link btn-lg discussion-settings-trigger icon-no-margin position-relative"
-            data-toggle="discussion-settings">
-        {{#pix}} i/settings, core, {{#str}} togglesettingsdrawer, mod_forum {{/str}} {{/pix}}
-    </button>
-</div>
+<button
+    id="toggle-discussion-settings-drawer-{{uniqid}}"
+    class="btn btn-icon icon-size-4 icon-no-margin colour-inherit"
+    aria-controls="discussion-settings-drawer"
+    aria-expanded="false"
+    title="{{#str}} togglesettingsdrawer, mod_forum {{/str}}"
+>
+    {{#pix}} i/settings, core, {{#str}} togglesettingsdrawer, mod_forum {{/str}} {{/pix}}
+</button>
 
 {{#js}}
-require(
-    ['jquery', 'mod_forum/forum_events', 'core/custom_interaction_events', 'core/pubsub'],
-    function($, ForumEvents, CustomEvents, PubSub) {
-        var root = $('#discussion-settings-drawer-trigger-{{uniqid}}');
-        CustomEvents.define(root, [CustomEvents.events.activate]);
-
-        root.on(CustomEvents.events.activate, function(e) {
-            PubSub.publish(ForumEvents.TOGGLE_SETTINGS_DRAWER);
-        });
-    }
-);
+require(['jquery', 'core/drawer'], function($, Drawer) {
+    var drawer = $('#discussion-settings-drawer');
+    var toggles = drawer.find('[data-action="toggle-settings-drawer"]');
+    toggles = toggles.add('#toggle-discussion-settings-drawer-{{uniqid}}');
+    Drawer.registerToggles(drawer, toggles);
+});
 {{/js}}

@@ -34,21 +34,13 @@
 
 }}
 {{<core/drawer}}
+    {{$drawerid}}discussion-settings-drawer{{/drawerid}}
     {{$drawercontent}}
-        <div id="discussion-settings-drawer-{{uniqid}}" data-region="message-drawer" role="region">
-            <div class="header-container position-relative" data-region="header-container">
-                {{> mod_forum/settings_header}}
-            </div>
+        <div class="h-100 w-100 bg-white d-flex flex-column p-2">
+            {{> mod_forum/settings_header}}
             <div class="body-container position-relative" data-region="body-container">
                 {{> mod_forum/discussion_settings_body_content}}
             </div>
         </div>
     {{/drawercontent}}
 {{/core/drawer}}
-
-{{#js}}
-require(['jquery', 'mod_forum/settings_drawer'], function($, SettingsDrawer) {
-    var root = $('#discussion-settings-drawer-{{uniqid}}');
-    SettingsDrawer.init(root);
-});
-{{/js}}

@@ -27,56 +27,40 @@ define([
         'core/notification',
         'mod_forum/repository',
         'mod_forum/selectors',
-        'core/custom_interaction_events',
     ], function(
         $,
         Templates,
         Notification,
         Repository,
-        Selectors,
-        CustomEvents
+        Selectors
     ) {
-
-    /**
-     * Toggles the locked state of a discussion and refreshes the page.
-     *
-     * @param {Object} toggleElement
-     */
-    var toggleLockState = function(toggleElement) {
-        var toggleElement = $(toggleElement);
-        var forumId = toggleElement.data('forumid');
-        var discussionId = toggleElement.data('discussionid');
-        var state = toggleElement.data('state');
-
-        Repository.setDiscussionLockState(forumId, discussionId, state)
-            .then(function() {
-                return location.reload();
-            })
-            .catch(Notification.exception);
-    };
 
     /**
      * Register event listeners for the subscription toggle.
      *
      * @param {object} root The discussion list root element
+     * @param {boolean} preventDefault Should the default action of the event be prevented
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, preventDefault) {
         root.on('click', Selectors.lock.toggle, function(e) {
-            toggleLockState(this);
+            var toggleElement = $(this);
+            var forumId = toggleElement.data('forumid');
+            var discussionId = toggleElement.data('discussionid');
+            var state = toggleElement.data('state');
 
-            e.preventDefault();
-        });
+            Repository.setDiscussionLockState(forumId, discussionId, state)
+                .then(function() {
+                    return location.reload();
+                })
+                .catch(Notification.exception);
 
-        root.on(CustomEvents.events.activate, Selectors.lock.toggleSwitch, function(e) {
-            toggleLockState(this);
-
-            e.preventDefault();
+            if (preventDefault) {
+                e.preventDefault();
+            }
         });
     };
 
     return {
-        init: function(root) {
-            registerEventListeners(root);
-        }
+        init: registerEventListeners
     };
 });

@@ -410,8 +410,17 @@ export const init = (root, context) => {
 
     // Initialise the settings menu javascript.
     const discussionToolsContainer = root.find(Selectors.discussion.tools);
-    LockToggle.init(discussionToolsContainer);
-    FavouriteToggle.init(discussionToolsContainer);
-    Pin.init(discussionToolsContainer);
-    Subscribe.init(discussionToolsContainer);
+    LockToggle.init(discussionToolsContainer, false);
+    FavouriteToggle.init(discussionToolsContainer, false, (toggleElement, response) => {
+        const newTargetState = response.userstate.favourited ? 0 : 1;
+        return toggleElement.data('targetstate', newTargetState);
+    });
+    Pin.init(discussionToolsContainer, false, (toggleElement, response) => {
+        const newTargetState = response.pinned ? 0 : 1;
+        return toggleElement.data('targetstate', newTargetState);
+    });
+    Subscribe.init(discussionToolsContainer, false, (toggleElement, response) => {
+        const newTargetState = response.userstate.subscribed ? 0 : 1;
+        toggleElement.data('targetstate', newTargetState);
+    });
 };

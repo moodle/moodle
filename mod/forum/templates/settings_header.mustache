@@ -33,30 +33,18 @@
 
 }}
 
-<div class="border-bottom px-2 py-3" aria-hidden="true" data-region="view-settings">
-    <div class="d-flex align-items-center">
-        <div class="align-self-stretch" >
-            <button id="settings-drawer-close-{{uniqid}}" class="h-100 d-flex mr-2 align-items-center btn btn-icon"
-                    data-toggle="discussion-settings">
-                <span class="dir-ltr-hide">{{#pix}} t/left, core {{/pix}}</span>
-                <span class="dir-rtl-hide">{{#pix}} t/right, core {{/pix}}</span>
-            </button>
-        </div>
-        <div class="lead font-weight-bolder">
-            {{#str}} settings, core {{/str}}
-        </div>
-    </div>
+<div class="d-flex align-items-center mb-2">
+    <button
+        class="btn btn-icon icon-size-3 icon-no-margin mr-1 colour-inherit"
+        data-action="toggle-settings-drawer"
+        aria-controls="discussion-settings-drawer"
+        aria-expanded="false"
+        title="{{#str}} closebuttontitle, core {{/str}}"
+    >
+        <span class="dir-ltr-hide">{{#pix}} t/left, core {{/pix}}</span>
+        <span class="dir-rtl-hide">{{#pix}} t/right, core {{/pix}}</span>
+    </button>
+    <h2 class="font-weight-bold h3 mb-0">
+        {{#str}} settings, core {{/str}}
+    </h2>
 </div>
-{{#js}}
-require(
-    ['jquery', 'mod_forum/forum_events', 'core/custom_interaction_events', 'core/pubsub'],
-    function($, ForumEvents, CustomEvents, PubSub) {
-        var root = $('#settings-drawer-close-{{uniqid}}');
-        CustomEvents.define(root, [CustomEvents.events.activate]);
-
-        root.on(CustomEvents.events.activate, function(e) {
-            PubSub.publish(ForumEvents.TOGGLE_SETTINGS_DRAWER);
-        });
-    }
-);
-{{/js}}

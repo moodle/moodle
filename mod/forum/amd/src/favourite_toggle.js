@@ -29,23 +29,23 @@ define([
         'mod_forum/repository',
         'mod_forum/selectors',
         'core/str',
-        'core/custom_interaction_events',
     ], function(
         $,
         Templates,
         Notification,
         Repository,
         Selectors,
-        String,
-        CustomEvents
+        String
     ) {
 
     /**
      * Register event listeners for the subscription toggle.
      *
      * @param {object} root The discussion list root element
+     * @param {boolean} preventDefault Should the default action of the event be prevented
+     * @param {function} callback Success callback
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, preventDefault, callback) {
         root.on('click', Selectors.favourite.toggle, function(e) {
             var toggleElement = $(this);
             var forumId = toggleElement.data('forumid');
@@ -54,10 +54,7 @@ define([
 
             Repository.setFavouriteDiscussionState(forumId, discussionId, subscriptionState)
                 .then(function(context) {
-                    return Templates.render('mod_forum/discussion_favourite_toggle', context);
-                })
-                .then(function(html, js) {
-                    return Templates.replaceNode(toggleElement, html, js);
+                    return callback(toggleElement, context);
                 })
                 .then(function() {
                     return String.get_string("favouriteupdated", "forum")
@@ -70,35 +67,13 @@ define([
                 })
                 .catch(Notification.exception);
 
-            e.preventDefault();
-        });
-
-        root.on(CustomEvents.events.activate, Selectors.favourite.toggleSwitch, function(e) {
-            var toggleElement = $(this);
-            var forumId = toggleElement.data('forumid');
-            var discussionId = toggleElement.data('discussionid');
-            var subscriptionState = toggleElement.data('targetstate');
-
-            Repository.setFavouriteDiscussionState(forumId, discussionId, subscriptionState)
-                .then(function(context) {
-                    var newTargetState = context.userstate.favourited ? 0 : 1;
-                    return toggleElement.data('targetstate', newTargetState);
-                }).then(function() {
-                    return String.get_string("favouriteupdated", "forum");
-                }).then(function(s) {
-                    return Notification.addNotification({
-                        message: s,
-                        type: "info"
-                    });
-                }).catch(Notification.exception);
-
-            e.preventDefault();
+            if (preventDefault) {
+                e.preventDefault();
+            }
         });
     };
 
     return {
-        init: function(root) {
-            registerEventListeners(root);
-        }
+        init: registerEventListeners
     };
 });

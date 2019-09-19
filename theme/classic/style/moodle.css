@@ -16389,12 +16389,9 @@ select {
   color: #373a3c;
   font-weight: bold; }
 
-.discussion-settings-trigger .icon {
-  height: 32px;
-  font-size: 32px;
-  width: auto; }
+.discussion-settings-container .custom-select {
+  width: 100%; }
 
-.discussion-settings-container .custom-select,
 .discussion-settings-container input {
   max-width: 100%; }
 

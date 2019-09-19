@@ -34,67 +34,61 @@
 
 }}
 
-<div data-region="settings" class="p-3 discussion-settings-container" data-container="discussion-tools">
+<div class="p-2 discussion-settings-container" data-container="discussion-tools">
     <h3 class="mb-2 mt-2 h6 font-weight-bold">{{#str}} general, core {{/str}}</h3>
     {{#capabilities.subscribe}}
-        <div data-region="subscribe">
-            {{< mod_forum/setting_switch}}
-                {{$switchid}}subscription-toggle-{{uniqid}}{{/switchid}}
-                {{$type}}subscription-toggle-switch{{/type}}
-                {{$otherattributes}}
-                    data-discussionid="{{id}}"
-                    data-forumid="{{forumid}}"
-                    {{#userstate.subscribed}}data-targetstate="0" checked{{/userstate.subscribed}}
-                    {{^userstate.subscribed}}data-targetstate="1"{{/userstate.subscribed}}
-                {{/otherattributes}}
-                {{$labeltext}}
-                    {{#str}} subscribediscussion, mod_forum {{/str}}
-                {{/labeltext}}
-            {{/mod_forum/setting_switch}}
-        </div>
+        {{< mod_forum/setting_switch}}
+            {{$switchid}}subscription-toggle-{{uniqid}}{{/switchid}}
+            {{$type}}subscription-toggle{{/type}}
+            {{$otherattributes}}
+                data-discussionid="{{id}}"
+                data-forumid="{{forumid}}"
+                {{#userstate.subscribed}}data-targetstate="0" checked{{/userstate.subscribed}}
+                {{^userstate.subscribed}}data-targetstate="1"{{/userstate.subscribed}}
+            {{/otherattributes}}
+            {{$labeltext}}
+                {{#str}} subscribediscussion, mod_forum {{/str}}
+            {{/labeltext}}
+        {{/mod_forum/setting_switch}}
     {{/capabilities.subscribe}}
 
     {{#capabilities.favourite}}
-        <div data-region="favourite">
-            {{< mod_forum/setting_switch}}
-                {{$switchid}}favorite-toggle-{{uniqid}}{{/switchid}}
-                {{$type}}favorite-toggle-switch{{/type}}
-                {{$otherattributes}}
-                    data-discussionid="{{id}}"
-                    data-forumid="{{forumid}}"
-                    {{#userstate.favourited}}data-targetstate="0" checked{{/userstate.favourited}}
-                    {{^userstate.favourited}}data-targetstate="1"{{/userstate.favourited}}
-                {{/otherattributes}}
-                {{$labeltext}}
-                    {{#str}} addtofavourites, mod_forum {{/str}}
-                {{/labeltext}}
-            {{/mod_forum/setting_switch}}
-        </div>
+        {{< mod_forum/setting_switch}}
+            {{$switchid}}favorite-toggle-{{uniqid}}{{/switchid}}
+            {{$type}}favorite-toggle{{/type}}
+            {{$otherattributes}}
+                data-discussionid="{{id}}"
+                data-forumid="{{forumid}}"
+                {{#userstate.favourited}}data-targetstate="0" checked{{/userstate.favourited}}
+                {{^userstate.favourited}}data-targetstate="1"{{/userstate.favourited}}
+            {{/otherattributes}}
+            {{$labeltext}}
+                {{#str}} addtofavourites, mod_forum {{/str}}
+            {{/labeltext}}
+        {{/mod_forum/setting_switch}}
     {{/capabilities.favourite}}
 
     {{#capabilities.pin}}
-        <div data-region="pin">
-            {{< mod_forum/setting_switch}}
-                {{$switchid}}pin-toggle-{{uniqid}}{{/switchid}}
-                {{$type}}pin-toggle-switch{{/type}}
-                {{$otherattributes}}
-                    data-discussionid="{{id}}"
-                    data-forumid="{{forumid}}"
-                    {{#pinned}}data-targetstate="0" checked{{/pinned}}
-                    {{^pinned}}data-targetstate="1"{{/pinned}}
-                {{/otherattributes}}
-                {{$labeltext}}
-                    {{#str}} pindiscussion, mod_forum {{/str}}
-                {{/labeltext}}
-            {{/mod_forum/setting_switch}}
-        </div>
+        {{< mod_forum/setting_switch}}
+            {{$switchid}}pin-toggle-{{uniqid}}{{/switchid}}
+            {{$type}}pin-toggle{{/type}}
+            {{$otherattributes}}
+                data-discussionid="{{id}}"
+                data-forumid="{{forumid}}"
+                {{#pinned}}data-targetstate="0" checked{{/pinned}}
+                {{^pinned}}data-targetstate="1"{{/pinned}}
+            {{/otherattributes}}
+            {{$labeltext}}
+                {{#str}} pindiscussion, mod_forum {{/str}}
+            {{/labeltext}}
+        {{/mod_forum/setting_switch}}
     {{/capabilities.pin}}
 
     {{#capabilities.manage}}
         {{^istimelocked}}
             {{< mod_forum/setting_switch}}
                 {{$switchid}}lock-toggle-{{uniqid}}{{/switchid}}
-                {{$type}}lock-toggle-switch{{/type}}
+                {{$type}}lock-toggle{{/type}}
                 {{$otherattributes}}
                     data-discussionid="{{id}}"
                     data-forumid="{{forumid}}"
@@ -109,23 +103,17 @@
     {{/capabilities.manage}}
 
     {{#modeselectorform}}
-        <h3 class="h6 mt-2 font-weight-bold">{{#str}} view, core {{/str}}</h3>
-        <div data-region="view" class="mb-3">
-            {{{.}}}
-        </div>
+        <h3 class="h6 mt-4 font-weight-bold">{{#str}} view, core {{/str}}</h3>
+        {{{.}}}
     {{/modeselectorform}}
 
     {{#movediscussion}}
-        <h3 class="h6 mt-2 font-weight-bold">{{#str}} move, core {{/str}}</h3>
-        <div data-region="move" class="mb-3">
-            {{{.}}}
-        </div>
+        <h3 class="h6 mt-4 font-weight-bold">{{#str}} move, core {{/str}}</h3>
+        {{{.}}}
     {{/movediscussion}}
 
     {{#exportdiscussion}}
-        <h3 class="h6 mt-2 font-weight-bold">{{#str}} portfolio, portfolio {{/str}}</h3>
-        <div data-region="export" class="mb-3">
-            {{{.}}}
-        </div>
+        <h3 class="h6 mt-4 font-weight-bold">{{#str}} portfolio, portfolio {{/str}}</h3>
+        {{{.}}}
     {{/exportdiscussion}}
 </div>

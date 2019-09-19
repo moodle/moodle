@@ -21,7 +21,8 @@
  * @copyright  2019 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-export default {
-    SUBSCRIPTION_TOGGLED: 'mod_forum/subscription_toggle:subscriptionToggled',
-    TOGGLE_SETTINGS_DRAWER: 'mod_forum/toggle:settings_drawer'
-};
+define([], function() {
+    return {
+        SUBSCRIPTION_TOGGLED: 'mod_forum/subscription_toggle:subscriptionToggled',
+    };
+});

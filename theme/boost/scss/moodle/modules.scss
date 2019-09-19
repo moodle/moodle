@@ -109,14 +109,11 @@ select {
     }
 }
 
-.discussion-settings-trigger .icon {
-    height: $icon-height * 2;
-    font-size: $icon-height * 2;
-    width: auto;
-}
-
 .discussion-settings-container {
-    .custom-select,
+    .custom-select {
+        width: 100%;
+    }
+
     input {
         max-width: 100%;
     }

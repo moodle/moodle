@@ -34,7 +34,6 @@ define([
     'mod_forum/repository',
     'mod_forum/selectors',
     'core/str',
-    'core/custom_interaction_events',
 ], function(
     $,
     Ajax,
@@ -43,16 +42,17 @@ define([
     Notification,
     Repository,
     Selectors,
-    String,
-    CustomEvents
+    String
 ) {
 
     /**
      * Registery event listeners for the pin toggle.
      *
      * @param {object} root The calendar root element
+     * @param {boolean} preventDefault Should the default action of the event be prevented
+     * @param {function} callback Success callback
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, preventDefault, callback) {
         root.on('click', Selectors.pin.toggle, function(e) {
             var toggleElement = $(this);
             var forumid = toggleElement.data('forumid');
@@ -60,10 +60,7 @@ define([
             var pinstate = toggleElement.data('targetstate');
             Repository.setPinDiscussionState(forumid, discussionid, pinstate)
                 .then(function(context) {
-                    return Templates.render('mod_forum/discussion_pin_toggle', context);
-                })
-                .then(function(html, js) {
-                    return Templates.replaceNode(toggleElement, html, js);
+                    return callback(toggleElement, context);
                 })
                 .then(function() {
                     return String.get_string("pinupdated", "forum")
@@ -76,37 +73,13 @@ define([
                 })
                 .fail(Notification.exception);
 
-            e.preventDefault();
-        });
-
-        root.on(CustomEvents.events.activate, Selectors.pin.toggleSwitch, function(e) {
-            var toggleElement = $(this);
-            var forumid = toggleElement.data('forumid');
-            var discussionid = toggleElement.data('discussionid');
-            var pinstate = toggleElement.data('targetstate');
-            Repository.setPinDiscussionState(forumid, discussionid, pinstate)
-                .then(function(context) {
-                    var newTargetState = context.pinned ? 0 : 1;
-                    return toggleElement.data('targetstate', newTargetState);
-                })
-                .then(function() {
-                    return String.get_string("pinupdated", "forum");
-                })
-                .then(function(s) {
-                    return Notification.addNotification({
-                        message: s,
-                        type: "info"
-                    });
-                })
-                .fail(Notification.exception);
-
-            e.preventDefault();
+            if (preventDefault) {
+                e.preventDefault();
+            }
         });
     };
 
     return {
-        init: function(root) {
-            registerEventListeners(root);
-        }
+        init: registerEventListeners
     };
 });

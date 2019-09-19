@@ -123,7 +123,12 @@ define([
 
     return {
         init: function(root) {
-            SubscriptionToggle.init(root);
+            SubscriptionToggle.init(root, true, function(toggleElement, context) {
+                return Templates.render('mod_forum/discussion_subscription_toggle', context)
+                    .then(function(html, js) {
+                        return Templates.replaceNode(toggleElement, html, js);
+                    });
+            });
             registerEventListeners(root);
         }
     };
