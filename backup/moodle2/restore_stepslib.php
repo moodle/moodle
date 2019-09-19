@@ -5734,6 +5734,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     }
 }
 
+
 /**
  * Restore completion defaults for each module type
  *

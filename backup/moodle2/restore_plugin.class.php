@@ -34,12 +34,24 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class restore_plugin {
 
+    /** @var string */
     protected $plugintype;
+    /** @var string */
     protected $pluginname;
+    /** @var string */
     protected $connectionpoint;
+    /** @var restore_structure_step */
     protected $step;
+    /** @var restore_course_task|restore_activity_task */
     protected $task;
 
+    /**
+     * restore_plugin constructor.
+     *
+     * @param string $plugintype
+     * @param string $pluginname
+     * @param restore_structure_step $step
+     */
     public function __construct($plugintype, $pluginname, $step) {
         $this->plugintype = $plugintype;
         $this->pluginname = $pluginname;
