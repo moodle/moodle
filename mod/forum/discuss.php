@@ -307,7 +307,7 @@ if (!empty($CFG->enableportfolios) && has_capability('mod/forum:exportdiscussion
         $button = '&nbsp;';
         $buttonextraclass = ' noavailable';
     }
-    echo html_writer::tag('div', $button, array('class' => 'discussioncontrol exporttoportfolio'.$buttonextraclass));
+    echo html_writer::tag('div', $button, array('class' => 'discussioncontrol exporttoportfolio mr-1' . $buttonextraclass));
 } else {
     echo html_writer::tag('div', '&nbsp;', array('class'=>'discussioncontrol nullcontrol'));
 }
