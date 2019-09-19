@@ -34,8 +34,7 @@
 
 }}
 {{< core/drawer}}
-    {{$rootId}}message-drawer-{{uniqid}}{{/rootId}}
-    {{$drawerContent}}
+    {{$drawercontent}}
         <div id="message-drawer-{{uniqid}}" class="message-app" data-region="message-drawer" role="region">
             <div class="header-container position-relative" data-region="header-container">
                 {{> core_message/message_drawer_view_contacts_header }}
@@ -58,7 +57,7 @@
                 {{> core_message/message_drawer_view_overview_footer }}
             </div>
         </div>
-    {{/drawerContent}}
+    {{/drawercontent}}
 {{/core/drawer}}
 
 {{#js}}

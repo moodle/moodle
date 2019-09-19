@@ -137,7 +137,7 @@ function(
         }
 
         var drawerRoot = Drawer.getDrawerRoot(root);
-        if (drawerRoot) {
+        if (drawerRoot.length) {
             Drawer.show(drawerRoot);
         }
     };
@@ -149,7 +149,7 @@ function(
      */
     var hide = function(root) {
         var drawerRoot = Drawer.getDrawerRoot(root);
-        if (drawerRoot) {
+        if (drawerRoot.length) {
             Drawer.hide(drawerRoot);
         }
     };
@@ -162,7 +162,7 @@ function(
      */
     var isVisible = function(root) {
         var drawerRoot = Drawer.getDrawerRoot(root);
-        if (drawerRoot) {
+        if (drawerRoot.length) {
             return Drawer.isVisible(drawerRoot);
         }
         return true;

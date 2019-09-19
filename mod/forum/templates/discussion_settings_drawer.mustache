@@ -34,8 +34,7 @@
 
 }}
 {{<core/drawer}}
-    {{$rootId}}discussion-settings-drawer-{{uniqid}}{{/rootId}}
-    {{$drawerContent}}
+    {{$drawercontent}}
         <div id="discussion-settings-drawer-{{uniqid}}" data-region="message-drawer" role="region">
             <div class="header-container position-relative" data-region="header-container">
                 {{> mod_forum/settings_header}}
@@ -44,7 +43,7 @@
                 {{> mod_forum/discussion_settings_body_content}}
             </div>
         </div>
-    {{/drawerContent}}
+    {{/drawercontent}}
 {{/core/drawer}}
 
 {{#js}}
