@@ -1,0 +1,19 @@
+/* The button used to display a filter. */
+.filter-button {
+    border-radius: 0.25em;
+    padding: 0.2em;
+}
+
+.filter-header {
+    @extend .popover-header;
+}
+
+.filter-body {
+    @extend .popover-body;
+}
+
+.filter-scrollable {
+    overflow-y: scroll;
+    max-height: 25em;
+    margin-bottom: 1em;
+}
