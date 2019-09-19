@@ -736,11 +736,12 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
 function forum_update_grades($forum, $userid = 0): void {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
+    $cm = get_coursemodule_from_instance('forum', $forum->id);
+    $forum->cmidnumber = $cm->idnumber;
 
     $ratings = null;
     if ($forum->assessed) {
         require_once($CFG->dirroot.'/rating/lib.php');
-        $cm = get_coursemodule_from_instance('forum', $forum->id);
 
         $rm = new rating_manager();
         $ratings = $rm->get_user_grades((object) [
@@ -760,8 +761,35 @@ function forum_update_grades($forum, $userid = 0): void {
 
     $forumgrades = null;
     if ($forum->grade_forum) {
-        // TODO MDL-66080.
-        // Need to create a new table for forum_grades with userid, forumid, rawgrade, etc.
+        $sql = <<<EOF
+SELECT
+    g.userid,
+    0 as datesubmitted,
+    g.grade as rawgrade,
+    g.timemodified as dategraded
+  FROM {forum} f
+  JOIN {forum_grades} g ON g.forum = f.id
+ WHERE f.id = :forumid
+EOF;
+
+        $params = [
+            'forumid' => $forum->id,
+        ];
+
+        if ($userid) {
+            $sql .= "AND g.userid = :userid";
+            $params['userid'] = $userid;
+        }
+
+        $forumgrades = [];
+        if ($grades = $DB->get_recordset_sql($sql, $params)) {
+            foreach ($grades as $userid => $grade) {
+                if ($grade->rawgrade != -1) {
+                    $forumgrades[$userid] = $grade;
+                }
+            }
+            $grades->close();
+        }
     }
 
     forum_grade_item_update($forum, $ratings, $forumgrades);
