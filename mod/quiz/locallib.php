@@ -2411,13 +2411,13 @@ function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $last
         $offlineattempt = false, $forcedrandomquestions = [], $forcedvariants = [], $userid = null) {
     global $DB, $USER;
 
-    $ispreviewuser = false;
-
-    // Delete any previous preview attempts belonging to this user.
     if ($userid === null) {
         $userid = $USER->id;
         $ispreviewuser = $quizobj->is_preview_user();
+    } else {
+        $ispreviewuser = has_capability('mod/quiz:preview', $quizobj->get_context(), $userid);
     }
+    // Delete any previous preview attempts belonging to this user.
     quiz_delete_previews($quizobj->get_quiz(), $userid);
 
     $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());

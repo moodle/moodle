@@ -316,6 +316,7 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
      * Test quiz_prepare_and_start_new_attempt function
      */
     public function test_quiz_prepare_and_start_new_attempt() {
+        global $USER;
         $this->resetAfterTest();
 
         // Create course.
@@ -358,5 +359,9 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 2, null, false, [], [], $student2->id);
         $this->assertEquals($student2->id, $attempt->userid);
         $this->assertEquals(0, $attempt->preview);
+        // Create attempt for user id that the same with current $USER->id.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 2, null, false, [], [], $USER->id);
+        $this->assertEquals($USER->id, $attempt->userid);
+        $this->assertEquals(1, $attempt->preview);
     }
 }
