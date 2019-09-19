@@ -198,7 +198,7 @@ abstract class base extends \core_analytics\calculable {
                 $message->component = 'moodle';
                 $message->name = 'insights';
 
-                $message->userfrom = \core_user::get_noreply_user();
+                $message->userfrom = \core_user::get_support_user();
                 $message->userto = $user;
 
                 $insighturl = new \moodle_url('/report/insights/insights.php?modelid=' . $modelid . '&contextid=' . $context->id);
