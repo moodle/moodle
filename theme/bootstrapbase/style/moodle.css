@@ -21415,6 +21415,9 @@ span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow
     padding-right: 0;
   }
 }
+#page-mod-forum-discuss select[name="mode"] {
+  margin-bottom: 10px;
+}
 @media (max-width: 768px) {
   .fp-forminset .control-group .controls {
     margin-left: 0;
