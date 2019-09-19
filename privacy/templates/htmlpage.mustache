@@ -75,12 +75,12 @@
                 "paths": {
                     "app": "./",
                     "jquery": "./js/jquery-3.4.1.min",
-                    "tree": "./js/tree.min"
+                    "core/tree": "./js/tree.min"
                 }
             });
             var tree;
 
-            require(['tree'], function(t) {
+            require(['core/tree'], function(t) {
                 var tree = new t('#my-tree');
                 tree.registerEnterCallback(function(item) {
                     var basenode = $(item[0].childNodes[0]);
