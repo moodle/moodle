@@ -10444,6 +10444,8 @@ function site_is_public() {
         $ispublic = false;
     } else if (\core\ip_utils::is_ip_address($host) && !ip_is_public($host)) {
         $ispublic = false;
+    } else if (($address = \core\ip_utils::get_ip_address($host)) && !ip_is_public($address)) {
+        $ispublic = false;
     } else {
         $ispublic = true;
     }
