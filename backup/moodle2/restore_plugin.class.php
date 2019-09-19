@@ -70,9 +70,11 @@ abstract class restore_plugin {
         $methodname = 'define_' . basename($this->connectionpoint->get_path()) . '_plugin_structure';
 
         if (method_exists($this, $methodname)) {
-            if ($bluginpaths = $this->$methodname()) {
-                foreach ($bluginpaths as $path) {
-                    $path->set_processing_object($this);
+            if ($pluginpaths = $this->$methodname()) {
+                foreach ($pluginpaths as $path) {
+                    if ($path->get_processing_object() === null && !$this->step->grouped_parent_exists($path, $paths)) {
+                        $path->set_processing_object($this);
+                    }
                     $paths[] = $path;
                 }
             }
@@ -269,5 +271,14 @@ abstract class restore_plugin {
         return $this->connectionpoint->get_path() . '/' .
                'plugin_' . $this->plugintype . '_' .
                $this->pluginname . '_' . basename($this->connectionpoint->get_path()) . $path;
+    }
+
+    /**
+     * Get the task we are part of.
+     *
+     * @return restore_activity_task|restore_course_task the task.
+     */
+    protected function get_task() {
+        return $this->task;
     }
 }
