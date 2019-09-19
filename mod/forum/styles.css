@@ -197,6 +197,11 @@
     padding-right: 10px;
 }
 
+#page-mod-forum-discuss .discussioncontrol.movediscussion {
+    padding-right: 10px;
+}
+margin-bottom: 10px;
+
 /** Styles for view.php **/
 #page-mod-forum-view .forumaddnew {
     margin-bottom: 20px;
