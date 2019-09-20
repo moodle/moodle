@@ -1,4 +1,4 @@
-VideoJS 7.5.5
+VideoJS 7.6.5
 -------------
 https://github.com/videojs/video.js
 
@@ -13,11 +13,11 @@ Instructions to import VideoJS player into Moodle:
      define(['./window', './document']
 3. copy 'font/' into 'fonts/' folder
 4. copy 'video-js.css' into 'styles.css'
-   Add stylelint-disable in the beginning.
-   Add "Modifications of player made by Moodle" to the end of the styles file.
+   Add /* stylelint-disable */ in the beginning.
+   Maintain the css after  "/* Modifications of player made by Moodle: */" to the end of the styles file.
    Check status of:
    https://github.com/videojs/video.js/issues/2777
-6. copy 'LICENSE' and 'lang/' into 'videojs/' subfolder
+6. copy 'lang/' into 'videojs/' subfolder (so the result will be media/player/videojs/videojs/lang).
 
 Import plugins:
 
@@ -25,7 +25,7 @@ Import plugins:
    In the beginning of the js file replace
      define(['videojs']
    with
-     define(['./video-lazy']
+     define(['media_videojs/video-lazy']
 
 2. Download the latest release from https://github.com/videojs/videojs-flash
    Run "npm install"
@@ -33,7 +33,7 @@ Import plugins:
    In the beginning of the js file replace
      define(['videojs']
    with
-     define(['./video-lazy']
+     define(['media_videojs/video-lazy']
 
 3. Download https://github.com/videojs/video-js-swf/blob/master/dist/video-js.swf
    and place it into 'videojs/video-js.swf'

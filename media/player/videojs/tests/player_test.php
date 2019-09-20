@@ -61,14 +61,14 @@ class media_videojs_testcase extends advanced_testcase {
      * Test method get_supported_extensions()
      */
     public function test_supported_extensions() {
+        $msextensions = array('.m3u8', '.mpd');
         $nativeextensions = array_merge(file_get_typegroup('extension', 'html_video'),
-            file_get_typegroup('extension', 'html_audio'));
+            file_get_typegroup('extension', 'html_audio'), $msextensions);
 
         set_config('useflash', 0, 'media_videojs');
 
         // Make sure that the list of extensions from the setting is filtered to HTML5 natively supported extensions.
         $player = new media_videojs_plugin();
-        $this->assertNotEmpty($player->get_supported_extensions());
         $this->assertTrue(in_array('.mp3', $player->get_supported_extensions()));
         $this->assertEmpty(array_diff($player->get_supported_extensions(), $nativeextensions));
 
