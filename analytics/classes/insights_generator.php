@@ -136,7 +136,7 @@ class insights_generator {
         $message->component = 'moodle';
         $message->name = 'insights';
 
-        $message->userfrom = \core_user::get_noreply_user();
+        $message->userfrom = \core_user::get_support_user();
         $message->userto = $user;
 
         $message->subject = $this->target->get_insight_subject($this->modelid, $context);
