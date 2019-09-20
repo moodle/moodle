@@ -4180,6 +4180,9 @@ class restore_module_structure_step extends restore_structure_step {
         // Apply for 'format' plugins optional paths at module level
         $this->add_plugin_structure('format', $module);
 
+        // Apply for 'report' plugins optional paths at module level.
+        $this->add_plugin_structure('report', $module);
+
         // Apply for 'plagiarism' plugins optional paths at module level
         $this->add_plugin_structure('plagiarism', $module);
 
