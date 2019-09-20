@@ -212,6 +212,7 @@ $string['fixrescalednullgrades'] = 'This assignment contains some erroneous grad
 $string['fixrescalednullgradesconfirm'] = 'Are you sure you want to fix erroneous grades? All affected grades will be removed. This may affect course totals.';
 $string['fixrescalednullgradesdone'] = 'Grades fixed.';
 $string['gradecanbechanged'] = 'Grade can be changed';
+$string['gradeitem:submissions'] = 'Submissions';
 $string['gradersubmissionupdatedtext'] = '{$a->username} has updated their assignment submission
 for \'{$a->assignment}\' at {$a->timeupdated}
 
@@ -528,7 +529,6 @@ $string['submissionreceipthtml'] = '<p>You have submitted an assignment submissi
 $string['submissionreceiptsmall'] = 'You have submitted your assignment submission for {$a->assignment}';
 $string['submissionslocked'] = 'This assignment is not accepting submissions';
 $string['submissionslockedshort'] = 'Submission changes not allowed';
-$string['submissions'] = 'Submissions';
 $string['submissionsclosed'] = 'Submissions closed';
 $string['submissionsettings'] = 'Submission settings';
 $string['submissionstatement'] = 'Submission statement';
