@@ -172,16 +172,30 @@ class cachestore_redis_compressor_test extends advanced_testcase {
      */
     public function provider_for_test_it_can_use_serializers() {
         $data = [
-            ['none', Redis::SERIALIZER_NONE, gzencode('value1'), gzencode('value2')],
-            ['php', Redis::SERIALIZER_PHP, gzencode(serialize('value1')), gzencode(serialize('value2'))],
+            ['none, none',
+                Redis::SERIALIZER_NONE, cachestore_redis::COMPRESSOR_NONE,
+                'value1', 'value2'],
+            ['none, gzip',
+                Redis::SERIALIZER_NONE, cachestore_redis::COMPRESSOR_PHP_GZIP,
+                gzencode('value1'), gzencode('value2')],
+            ['php, none',
+                Redis::SERIALIZER_PHP, cachestore_redis::COMPRESSOR_NONE,
+                serialize('value1'), serialize('value2')],
+            ['php, gzip',
+                Redis::SERIALIZER_PHP, cachestore_redis::COMPRESSOR_PHP_GZIP,
+                gzencode(serialize('value1')), gzencode(serialize('value2'))],
         ];
 
         if (defined('Redis::SERIALIZER_IGBINARY')) {
             $data[] = [
-                'igbinary',
-                Redis::SERIALIZER_IGBINARY,
-                gzencode(igbinary_serialize('value1')),
-                gzencode(igbinary_serialize('value2')),
+                'igbinary, none',
+                    Redis::SERIALIZER_IGBINARY, cachestore_redis::COMPRESSOR_NONE,
+                    igbinary_serialize('value1'), igbinary_serialize('value2'),
+            ];
+            $data[] = [
+                'igbinary, gzip',
+                    Redis::SERIALIZER_IGBINARY, cachestore_redis::COMPRESSOR_PHP_GZIP,
+                    gzencode(igbinary_serialize('value1')), gzencode(igbinary_serialize('value2')),
             ];
         }
 
@@ -194,12 +208,13 @@ class cachestore_redis_compressor_test extends advanced_testcase {
      * @dataProvider provider_for_test_it_can_use_serializers
      * @param string $name
      * @param int $serializer
+     * @param int $compressor
      * @param string $rawexpected1
      * @param string $rawexpected2
      */
-    public function test_it_can_use_serializers_getset($name, $serializer, $rawexpected1, $rawexpected2) {
+    public function test_it_can_use_serializers_getset($name, $serializer, $compressor, $rawexpected1, $rawexpected2) {
         // Create a connection with the desired serialisation.
-        $store = $this->create_store(cachestore_redis::COMPRESSOR_PHP_GZIP, $serializer);
+        $store = $this->create_store($compressor, $serializer);
         $store->set('key', 'value1');
 
         // Disable compressor and serializer to check the actual stored value.
@@ -217,10 +232,11 @@ class cachestore_redis_compressor_test extends advanced_testcase {
      * @dataProvider provider_for_test_it_can_use_serializers
      * @param string $name
      * @param int $serializer
+     * @param int $compressor
      * @param string $rawexpected1
      * @param string $rawexpected2
      */
-    public function test_it_can_use_serializers_getsetmany($name, $serializer, $rawexpected1, $rawexpected2) {
+    public function test_it_can_use_serializers_getsetmany($name, $serializer, $compressor, $rawexpected1, $rawexpected2) {
         $many = [
             ['key' => 'key1', 'value' => 'value1'],
             ['key' => 'key2', 'value' => 'value2'],
@@ -230,7 +246,7 @@ class cachestore_redis_compressor_test extends advanced_testcase {
         $rawexpectations = ['key1' => $rawexpected1, 'key2' => $rawexpected2];
 
         // Create a connection with the desired serialisation.
-        $store = $this->create_store(cachestore_redis::COMPRESSOR_PHP_GZIP, $serializer);
+        $store = $this->create_store($compressor, $serializer);
         $store->set_many($many);
 
         // Disable compressor and serializer to check the actual stored value.
