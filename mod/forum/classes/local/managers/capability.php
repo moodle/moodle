@@ -633,4 +633,14 @@ class capability {
 
         return $canstart;
     }
+
+    /**
+     * Checks whether the user can export the whole forum (discussions and posts).
+     *
+     * @param stdClass $user The user object.
+     * @return bool True if the user can export the forum or false otherwise.
+     */
+    public function can_export_forum(stdClass $user) : bool {
+        return has_capability('mod/forum:exportforum', $this->get_context(), $user);
+    }
 }

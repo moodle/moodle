@@ -589,6 +589,94 @@ class core_enrol_external extends external_api {
      *
      * @return external_function_parameters
      */
+    public static function search_users_parameters(): external_function_parameters {
+        return new external_function_parameters(
+            [
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'search' => new external_value(PARAM_RAW, 'query'),
+                'searchanywhere' => new external_value(PARAM_BOOL, 'find a match anywhere, or only at the beginning'),
+                'page' => new external_value(PARAM_INT, 'Page number'),
+                'perpage' => new external_value(PARAM_INT, 'Number per page'),
+            ]
+        );
+    }
+
+    /**
+     * Search course participants.
+     *
+     * @param int $courseid Course id
+     * @param string $search The query
+     * @param bool $searchanywhere Match anywhere in the string
+     * @param int $page Page number
+     * @param int $perpage Max per page
+     * @return array An array of users
+     * @throws moodle_exception
+     */
+    public static function search_users(int $courseid, string $search, bool $searchanywhere, int $page, int $perpage): array {
+        global $PAGE, $DB, $CFG;
+
+        require_once($CFG->dirroot.'/enrol/locallib.php');
+        require_once($CFG->dirroot.'/user/lib.php');
+
+        $params = self::validate_parameters(
+                self::search_users_parameters(),
+                [
+                    'courseid'       => $courseid,
+                    'search'         => $search,
+                    'searchanywhere' => $searchanywhere,
+                    'page'           => $page,
+                    'perpage'        => $perpage
+                ]
+        );
+        $context = context_course::instance($params['courseid']);
+        try {
+            self::validate_context($context);
+        } catch (Exception $e) {
+            $exceptionparam = new stdClass();
+            $exceptionparam->message = $e->getMessage();
+            $exceptionparam->courseid = $params['courseid'];
+            throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+        }
+        course_require_view_participants($context);
+
+        $course = get_course($params['courseid']);
+        $manager = new course_enrolment_manager($PAGE, $course);
+
+        $users = $manager->search_users($params['search'],
+                                        $params['searchanywhere'],
+                                        $params['page'],
+                                        $params['perpage']);
+
+        $results = [];
+        // Add also extra user fields.
+        $requiredfields = array_merge(
+                ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'],
+                get_extra_user_fields($context)
+        );
+        foreach ($users['users'] as $user) {
+            if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {
+                $results[] = $userdetails;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_multiple_structure
+     */
+    public static function search_users_returns(): external_multiple_structure {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/externallib.php');
+        return new external_multiple_structure(core_user_external::user_description());
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
     public static function get_enrolled_users_parameters() {
         return new external_function_parameters(
             array(

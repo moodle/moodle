@@ -325,7 +325,7 @@ class core_course_enrolment_manager_testcase extends advanced_testcase {
     }
 
     /**
-     * Test case for test_get_potential_users and test_search_other_users tests.
+     * Test case for test_get_potential_users, test_search_other_users and test_search_users tests.
      *
      * @return array Dataset
      */
@@ -336,5 +336,43 @@ class core_course_enrolment_manager_testcase extends advanced_testcase {
                 [2, true, 2, 3, true],
                 [5, true, 3, 3, false]
         ];
+    }
+
+    /**
+     * Test search_users function.
+     *
+     * @dataProvider search_users_provider
+     *
+     * @param int $perpage Number of users per page.
+     * @param bool $returnexactcount Return the exact count or not.
+     * @param int $expectedusers Expected number of users return.
+     * @param int $expectedtotalusers Expected total of users in database.
+     * @param bool $expectedmoreusers Expected for more users return or not.
+     */
+    public function test_search_users($perpage, $returnexactcount, $expectedusers, $expectedtotalusers, $expectedmoreusers) {
+        global $PAGE;
+        $this->resetAfterTest();
+
+        $this->getDataGenerator()->create_and_enrol($this->course, 'student', ['firstname' => 'sutest 1']);
+        $this->getDataGenerator()->create_and_enrol($this->course, 'student', ['firstname' => 'sutest 2']);
+        $this->getDataGenerator()->create_and_enrol($this->course, 'student', ['firstname' => 'sutest 3']);
+
+        $manager = new course_enrolment_manager($PAGE, $this->course);
+        $users = $manager->search_users(
+            'sutest',
+            true,
+            0,
+            $perpage,
+            $returnexactcount
+        );
+
+        $this->assertCount($expectedusers, $users['users']);
+        $this->assertEquals($expectedmoreusers, $users['moreusers']);
+        if ($returnexactcount) {
+            $this->assertArrayHasKey('totalusers', $users);
+            $this->assertEquals($expectedtotalusers, $users['totalusers']);
+        } else {
+            $this->assertArrayNotHasKey('totalusers', $users);
+        }
     }
 }
