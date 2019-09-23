@@ -545,12 +545,18 @@ ORDER BY
      *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      *                                  in the query. See {@link qubaid_condition}.
-     * @param array            $slots   A list of slots for the questions you want to know about.
+     * @param array|null       $slots   (optional) list of slots for which to return information. Default all slots.
      * @param string|null      $fields
      * @return array of records. See the SQL in this function to see the fields available.
      */
-    public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots, $fields = null) {
-        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
+    public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots = null, $fields = null) {
+        if ($slots !== null) {
+            [$slottest, $params] = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
+            $slotwhere = " AND qa.slot {$slottest}";
+        } else {
+            $slotwhere = '';
+            $params = [];
+        }
 
         if ($fields === null) {
             $fields = "qas.id,
@@ -586,8 +592,8 @@ JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
         AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
 
 WHERE
-    {$qubaids->where()} AND
-    qa.slot $slottest
+    {$qubaids->where()}
+    $slotwhere
         ", $params + $qubaids->from_where_params());
 
         return $records;
@@ -602,14 +608,19 @@ WHERE
      *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
-     * @param array $slots A list of slots for the questions you want to konw about.
-     * @return array The array keys are slot,qestionid. The values are objects with
+     * @param array|null $slots (optional) list of slots for which to return information. Default all slots.
+     * @return array The array keys are 'slot,questionid'. The values are objects with
      * fields $slot, $questionid, $inprogress, $name, $needsgrading, $autograded,
      * $manuallygraded and $all.
      */
-    public function load_questions_usages_question_state_summary(
-            qubaid_condition $qubaids, $slots) {
-        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
+    public function load_questions_usages_question_state_summary(qubaid_condition $qubaids, $slots = null) {
+        if ($slots !== null) {
+            [$slottest, $params] = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
+            $slotwhere = " AND qa.slot {$slottest}";
+        } else {
+            $slotwhere = '';
+            $params = [];
+        }
 
         $rs = $this->db->get_recordset_sql("
 SELECT
@@ -627,8 +638,8 @@ JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
 JOIN {question} q ON q.id = qa.questionid
 
 WHERE
-    {$qubaids->where()} AND
-    qa.slot $slottest
+    {$qubaids->where()}
+    $slotwhere
 
 GROUP BY
     qa.slot,
@@ -768,7 +779,7 @@ $sqlorderby
      *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
-     * @param array $slots if null, load info for all quesitions, otherwise only
+     * @param array|null $slots if null, load info for all quesitions, otherwise only
      * load the averages for the specified questions.
      * @return array of objects with fields ->slot, ->averagefraction and ->numaveraged.
      */
