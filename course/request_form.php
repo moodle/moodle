@@ -69,7 +69,7 @@ class course_request_form extends moodleform {
         $mform->setType('shortname', PARAM_TEXT);
 
         if (!empty($CFG->requestcategoryselection)) {
-            $displaylist = core_course_category::make_categories_list();
+            $displaylist = core_course_category::make_categories_list('moodle/course:request');
             $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist);
             $mform->setDefault('category', $CFG->defaultrequestcategory);
             $mform->addHelpButton('category', 'coursecategory');
