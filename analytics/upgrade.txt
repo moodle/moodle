@@ -12,6 +12,9 @@ information provided here is intended especially for developers.
 * Indicators can add information about calculated values by calling add_shared_calculation_info(). This
   data is later available for targets in get_insight_body_for_prediction(), it can be accessed
   appending ':extradata' to the indicator name (e.g. $sampledata['\mod_yeah\analytics\indicator\ou:extradata')
+* A new \core_analytics\local\time_splitting\past_periodic abstract class has been added. Time-splitting
+  methods extending \core_analytics\local\time_splitting\periodic directly should be extending past_periodic
+  now. 'periodic' can still be directly extended by implementing get_next_range and get_first_start methods.
 
 === 3.7 ===
 
