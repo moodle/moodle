@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/grade/grading/tests/fixtures/marking_guide.php');
 
 use \core_privacy\tests\provider_testcase;
 use \core_privacy\local\request\approved_contextlist;
@@ -268,32 +267,25 @@ class core_grading_privacy_testcase extends provider_testcase {
         $course = $this->getDataGenerator()->create_course();
         $module = $this->getDataGenerator()->create_module('assign', ['course' => $course]);
         $user = $this->getDataGenerator()->create_user();
+        $guidegenerator = \testing_util::get_data_generator()->get_plugin_generator('gradingform_guide');
 
         $this->setUser($user);
 
         $modulecontext = context_module::instance($module->cmid);
-        $guide = new test_guide($modulecontext, 'testrubrib', 'Description text');
-        $guide->add_criteria(
-            'Spelling mistakes',
-            'Full marks will be given for no spelling mistakes.',
-            'Deduct 5 points per spelling mistake made.',
-            25
-        );
-        $guide->add_criteria(
-            'Pictures',
-            'Full marks will be given for including 3 pictures.',
-            'Give 5 points for each picture present',
-            15
-        );
-        $guide->create_guide();
+        $controller = $guidegenerator->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
         $itemid = 1;
-        $gradedata = [
-            ['remark' => 'This user made several mistakes.', 'score' => 5],
-            ['remark' => 'This user has two pictures.', 'score' => 10]
-        ];
-        $instance = $guide->grade_item($user->id, $itemid, $gradedata);
+        $instance = $controller->create_instance($user->id, $itemid);
+        $data = $guidegenerator->get_test_form_data(
+            $controller,
+            $itemid,
+            5, 'This user made several mistakes.',
+            10, 'This user has two pictures.'
+        );
+
+        $instance->update($data);
+        $instanceid = $instance->get_data('id');
 
         provider::export_item_data($modulecontext, $itemid, ['Test']);
         $data = (array) writer::with_context($modulecontext)->get_data(['Test', 'Marking guide', $instance->get_data('id')]);
@@ -313,39 +305,33 @@ class core_grading_privacy_testcase extends provider_testcase {
         $course = $this->getDataGenerator()->create_course();
         $module = $this->getDataGenerator()->create_module('assign', ['course' => $course]);
         $user = $this->getDataGenerator()->create_user();
+        $guidegenerator = \testing_util::get_data_generator()->get_plugin_generator('gradingform_guide');
 
         $this->setUser($user);
 
         $modulecontext = context_module::instance($module->cmid);
-        $guide = new test_guide($modulecontext, 'testrubrib', 'Description text');
-        $guide->add_criteria(
-            'Spelling mistakes',
-            'Full marks will be given for no spelling mistakes.',
-            'Deduct 5 points per spelling mistake made.',
-            25
-        );
-        $guide->add_criteria(
-            'Pictures',
-            'Full marks will be given for including 3 pictures.',
-            'Give 5 points for each picture present',
-            15
-        );
-        $guide->create_guide();
+        $controller = $guidegenerator->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
         $itemid = 1;
-        $gradedata = [
-            ['remark' => 'This user made several mistakes.', 'score' => 5],
-            ['remark' => 'This user has two pictures.', 'score' => 10]
-        ];
-        $instance = $guide->grade_item($user->id, $itemid, $gradedata);
+        $instance = $controller->create_instance($user->id, $itemid);
+        $data = $guidegenerator->get_test_form_data(
+            $controller,
+            $itemid,
+            5, 'This user made several mistakes.',
+            10, 'This user has two pictures.'
+        );
+        $instance->update($data);
 
         $itemid = 2;
-        $gradedata = [
-            ['remark' => 'This user made no mistakes.', 'score' => 25],
-            ['remark' => 'This user has one picture.', 'score' => 5]
-        ];
-        $instance = $guide->grade_item($user->id, $itemid, $gradedata);
+        $instance = $controller->create_instance($user->id, $itemid);
+        $data = $guidegenerator->get_test_form_data(
+            $controller,
+            $itemid,
+            25, 'This user made no mistakes.',
+            5, 'This user has one picture.'
+        );
+        $instance->update($data);
 
         // Check how many records we have in the fillings table.
         $records = $DB->get_records('gradingform_guide_fillings');
@@ -374,52 +360,50 @@ class core_grading_privacy_testcase extends provider_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
+        $guidegenerator = \testing_util::get_data_generator()->get_plugin_generator('gradingform_guide');
 
         $this->setUser($user1);
 
         $modulecontext = context_module::instance($module->cmid);
-        $guide = new test_guide($modulecontext, 'testrubrib', 'Description text');
-        $guide->add_criteria(
-            'Spelling mistakes',
-            'Full marks will be given for no spelling mistakes.',
-            'Deduct 5 points per spelling mistake made.',
-            25
-        );
-        $guide->add_criteria(
-            'Pictures',
-            'Full marks will be given for including 3 pictures.',
-            'Give 5 points for each picture present',
-            15
-        );
-        $guide->create_guide();
+        $controller = $guidegenerator->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
         $itemid1 = 1;
-        $gradedata = [
-            ['remark' => 'This user made several mistakes.', 'score' => 5],
-            ['remark' => 'This user has two pictures.', 'score' => 10]
-        ];
-        $instance1 = $guide->grade_item($user1->id, $itemid1, $gradedata);
+        $instance1 = $controller->create_instance($user1->id, $itemid1);
+        $data = $guidegenerator->get_test_form_data(
+            $controller,
+            $itemid1,
+            5, 'This user made several mistakes.',
+            10, 'This user has two pictures.'
+        );
+        $instance1->update($data);
 
         $itemid2 = 2;
-        $gradedata = [
-            ['remark' => 'This user made a couple of mistakes.', 'score' => 15],
-            ['remark' => 'This user has one picture.', 'score' => 10]
-        ];
-        $instance2 = $guide->grade_item($user2->id, $itemid2, $gradedata);
+        $instance2 = $controller->create_instance($user2->id, $itemid2);
+        $data = $guidegenerator->get_test_form_data(
+            $controller,
+            $itemid2,
+            15, 'This user made a couple of mistakes.',
+            10, 'This user has one picture.'
+        );
+        $instance2->update($data);
 
         $itemid3 = 3;
-        $gradedata = [
-            ['remark' => 'This user made one mistakes.', 'score' => 20],
-            ['remark' => 'This user has one picture.', 'score' => 10]
-        ];
-        $instance3 = $guide->grade_item($user3->id, $itemid3, $gradedata);
+        $instance3 = $controller->create_instance($user3->id, $itemid3);
+        $data = $guidegenerator->get_test_form_data(
+            $controller,
+            $itemid3,
+            20, 'This user made one mistakes.',
+            10, 'This user has one picture.'
+        );
+        $instance3->update($data);
 
         $records = $DB->get_records('gradingform_guide_fillings');
         $this->assertCount(6, $records);
 
         // Delete all user data for items 1 and 3.
         provider::delete_data_for_instances($modulecontext, [$itemid1, $itemid3]);
+
         $records = $DB->get_records('gradingform_guide_fillings');
         $this->assertCount(2, $records);
         $instanceid = $instance2->get_data('id');
