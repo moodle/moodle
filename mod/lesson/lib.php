@@ -412,14 +412,7 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
                 $return->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
             }
 
-            // Datesubmitted == time created. dategraded == time modified or time overridden.
-            // If grade was last modified by the user themselves use date graded. Otherwise use date submitted.
-            // TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704.
-            if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
-                $return->time = $grade->dategraded;
-            } else {
-                $return->time = $grade->datesubmitted;
-            }
+            $return->time = grade_get_date_for_user_grade($grade, $user);
         }
     }
     return $return;
