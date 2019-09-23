@@ -36,7 +36,7 @@
     Example context (json):
     { "message": "Your pants are on fire!", "closebutton": 1, "announce": 1, "extraclasses": "foo bar"}
 }}
-<div class="alert alert-success alert-block fade in {{ extraclasses }}" {{!
+<div class="alert alert-success alert-block fade in {{ extraclasses }}" id="notification-{{uniqid}}"{{!
     }}{{# announce }} role="alert"{{/ announce }}{{!
     }}>
     {{# closebutton }}<button type="button" class="close" data-dismiss="alert">&times;</button>{{/ closebutton }}
@@ -46,5 +46,13 @@
 require(['jquery', 'theme_bootstrapbase/bootstrap'], function($) {
     // Setup closing of bootstrap alerts.
     $().alert();
+});
+
+window.addEventListener('load', function() {
+    // This is a hack to ensure that the role="alert" is read out.
+    var alert = document.querySelector('#notification-{{uniqid}}[role="alert"]');
+    if (alert) {
+        alert.innerHTML += ' ';
+    }
 });
 {{/ js }}
