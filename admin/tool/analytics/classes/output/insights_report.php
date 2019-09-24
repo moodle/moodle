@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Effectiveness report renderable.
+ * Insights report renderable.
  *
  * @package    tool_analytics
  * @copyright  2019 David Monllao {@link http://www.davidmonllao.com}
@@ -27,13 +27,13 @@ namespace tool_analytics\output;
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Effectiveness report renderable.
+ * Insights report renderable.
  *
  * @package    tool_analytics
  * @copyright  2019 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class effectiveness_report implements \renderable, \templatable {
+class insights_report implements \renderable, \templatable {
 
     /**
      * @var \core_analytics\model
@@ -46,7 +46,7 @@ class effectiveness_report implements \renderable, \templatable {
     private $context = null;
 
     /**
-     * Inits the effectiveness report renderable.
+     * Inits the insights report renderable.
      *
      * @param \core_analytics\model $model
      * @param int|null $contextid
@@ -79,7 +79,7 @@ class effectiveness_report implements \renderable, \templatable {
         $predictioncontexts = $this->model->get_predictions_contexts(false);
         if ($predictioncontexts && count($predictioncontexts) > 1) {
             $url = new \moodle_url('/admin/tool/analytics/model.php', ['id' => $this->model->get_id(),
-                'action' => 'effectivenessreport']);
+                'action' => 'insightsreport']);
 
             if ($this->context) {
                 $selected = $this->context->id;
