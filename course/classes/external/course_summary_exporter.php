@@ -105,6 +105,9 @@ class course_summary_exporter extends \core\external\exporter {
             ),
             'enddate' => array(
                 'type' => PARAM_INT,
+            ),
+            'visible' => array(
+                'type' => PARAM_BOOL,
             )
         );
     }

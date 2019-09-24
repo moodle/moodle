@@ -28,7 +28,8 @@
                 "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
                 "fullname": "course 3",
                 "hasprogress": true,
-                "progress": 10
+                "progress": 10,
+                "visible": true
             }
         ]
     }
@@ -63,6 +64,11 @@
                         </span>
                     {{$coursename}}{{/coursename}}
                 </a>
+                {{^visible}}
+                    <div class="d-flex flex-wrap">
+                        <span class="tag tag-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                    </div>
+                {{/visible}}
             </div>
             {{$menu}}{{/menu}}
         </div>
