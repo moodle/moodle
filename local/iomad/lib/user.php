@@ -900,7 +900,35 @@ class company_user {
                                                                                                       'userid' => $userid,
                                                                                                       'other' => $eventother));
                         $event->trigger();
-                   }
+                   } else {
+                        // Can we get a newer license?
+                        if ($latestlicenses = $DB->get_records_sql("SELECT cl.* FROM {companylicense} cl
+                                                                    JOIN {companylicense_courses} clc ON (cl.id = clc.licenseid)
+                                                                    WHERE clc.courseid = :courseid
+                                                                    AND cl.companyid = :companyid
+                                                                    AND cl.expirydate > :date
+                                                                    AND cl.allocation > cl.used
+                                                                    ORDER BY cl.expirydate DESC
+                                                                    LIMIT 1",
+                                                                    array('courseid' => $courseid,
+                                                                          'companyid' => $licenserecord->companyid,
+                                                                          'date' => time()))) {
+                            $latestlicense = array_pop($latestlicenses);
+                            $newlicense->licenseid = $latestlicense->id;
+                            $newlicenseid = $DB->insert_record('companylicense_users', (array) $newlicense);
+
+                            // Create an event.
+                            $eventother = array('licenseid' => $licenserecord->id,
+                                                'issuedate' => time(),
+                                                'duedate' => 0);
+                            $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
+                                                                                                          'objectid' => $newlicenseid,
+                                                                                                          'courseid' => $courseid,
+                                                                                                          'userid' => $userid,
+                                                                                                          'other' => $eventother));
+                            $event->trigger();
+                        }
+                    }
                 }
             }
             // All OK commit the transaction.
