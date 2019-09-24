@@ -28,7 +28,8 @@
                 "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
                 "fullname": "course 3",
                 "hasprogress": true,
-                "progress": 10
+                "progress": 10,
+                "visible": true
             }
         ]
     }
@@ -63,6 +64,11 @@
                 </a>
                 {{$menu}}{{/menu}}
             </div>
+            {{^visible}}
+                <div class="hiddenmessage">
+                    <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                </div>
+            {{/visible}}
         </div>
         {{$progress}}{{/progress}}
     </div>
