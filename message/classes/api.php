@@ -2676,6 +2676,7 @@ class api {
         $message->smallmessage = '';
         $message->contexturl = $url->out(false);
         $userpicture = new \user_picture($userfrom);
+        $userpicture->size = 1; // Use f1 size.
         $userpicture->includetoken = $userto->id; // Generate an out-of-session token for the user receiving the message.
         $message->customdata = [
             'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),

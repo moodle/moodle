@@ -353,6 +353,7 @@ function message_post_message($userfrom, $userto, $message, $format) {
     $eventdata->notification    = 0;
     // User image.
     $userpicture = new user_picture($userfrom);
+    $userpicture->size = 1; // Use f1 size.
     $userpicture->includetoken = $userto->id; // Generate an out-of-session token for the user receiving the message.
     $eventdata->customdata = [
         'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),

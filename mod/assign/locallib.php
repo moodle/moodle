@@ -6335,6 +6335,7 @@ class assign {
         // Check if the userfrom is real and visible.
         if (!empty($userfrom->id) && core_user::is_real_user($userfrom->id)) {
             $userpicture = new user_picture($userfrom);
+            $userpicture->size = 1; // Use f1 size.
             $userpicture->includetoken = $userto->id; // Generate an out-of-session token for the user receiving the message.
             $customdata['notificationiconurl'] = $userpicture->get_url($PAGE)->out(false);
         }
