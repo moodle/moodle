@@ -679,4 +679,19 @@ class capability {
     public function can_export_forum(stdClass $user) : bool {
         return has_capability('mod/forum:exportforum', $this->get_context(), $user);
     }
+
+    /**
+     * Check whether the supplied grader can grade the gradee.
+     *
+     * @param stdClass $grader The user grading
+     * @param stdClass $gradee The user being graded
+     * @return bool
+     */
+    public function can_grade(stdClass $grader, stdClass $gradee = null): bool {
+        if (!has_capability('mod/forum:grade', $this->get_context(), $grader)) {
+            return false;
+        }
+
+        return true;
+    }
 }
