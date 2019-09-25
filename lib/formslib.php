@@ -2470,14 +2470,16 @@ require(["core/event", "jquery"], function(Event, $) {
 ';
                 }
             }
+            // This handles both randomised (MDL-65217) and non-randomised IDs.
+            $errorid = preg_replace('/^id_/', 'id_error_', $this->_attributes['id']);
             $validateJS .= '
       ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
       if (!ret && !first_focus) {
         first_focus = true;
         Y.use(\'moodle-core-event\', function() {
             Y.Global.fire(M.core.globalEvents.FORM_ERROR, {formid: \'' . $this->_attributes['id'] . '\',
-                                                           elementid: \'id_error_' . $escapedElementName . '\'});
-            document.getElementById(\'id_error_' . $escapedElementName . '\').focus();
+                                                           elementid: \'' . $errorid. '\'});
+            document.getElementById(\'' . $errorid . '\').focus();
         });
       }
 ';
