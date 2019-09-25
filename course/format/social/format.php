@@ -50,7 +50,7 @@ if (trim($forum->intro) != '') {
         $streditsummary  = get_string('editsummary');
         $introcontent .= html_writer::start_div('editinglink');
         $introcontent .= html_writer::link(
-            new moodle_url('/modedit.php', [
+            new moodle_url('/course/modedit.php', [
                 'update' => $coursemodule->id,
                 'sesskey' => sesskey(),
             ]),
