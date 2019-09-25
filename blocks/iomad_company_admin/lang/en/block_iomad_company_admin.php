@@ -433,6 +433,7 @@ $string['licenseusedwarning'] = '<center>* Users who are marked with an asterix 
 $string['licenseuserinuse'] = 'License in use';
 $string['license_users_for'] = 'Users for license \'{$a}\' ';
 $string['licenseusers'] = 'User license allocations';
+$string['licenseusersmatching'] = 'Current users matching \'{$a}\' ';
 $string['listroles'] = 'Show Iomad roles';
 $string['loginfrom'] = 'Logged in from';
 $string['loginto'] = 'Logged in to';
