@@ -69,6 +69,12 @@ class export_form extends \moodleform {
         ];
         $mform->addElement('autocomplete', 'discussionids', get_string('discussions', 'mod_forum'), $discussions, $options);
 
+        // Date fields.
+        $mform->addElement('date_time_selector', 'from', get_string('postsfrom', 'mod_forum'),
+                ['optional' => true]);
+        $mform->addElement('date_time_selector', 'to', get_string('poststo', 'mod_forum'),
+                ['optional' => true]);
+
         // Export formats.
         $formats = \core_plugin_manager::instance()->get_plugins_of_type('dataformat');
         $options = [];

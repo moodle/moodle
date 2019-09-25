@@ -78,16 +78,19 @@ if ($form->is_cancelled()) {
         }, $discussions);
     }
 
+    $filters = ['discussionids' => $discussionids];
     if ($data->userids) {
-        $posts = $postvault->get_from_discussion_ids_and_user_ids($USER,
-                                                                  $discussionids,
-                                                                  $data->userids,
-                                                                  $capabilitymanager->can_view_any_private_reply($USER));
-    } else {
-        $posts = $postvault->get_from_discussion_ids($USER,
-                                                     $discussionids,
-                                                     $capabilitymanager->can_view_any_private_reply($USER));
+        $filters['userids'] = $data->userids;
     }
+    if ($data->from) {
+        $filters['from'] = $data->from;
+    }
+    if ($data->to) {
+        $filters['to'] = $data->to;
+    }
+
+    // Retrieve posts based on the selected filters.
+    $posts = $postvault->get_from_filters($USER, $filters, $capabilitymanager->can_view_any_private_reply($USER));
 
     $fields = ['id', 'discussion', 'parent', 'userid', 'created', 'modified', 'mailed', 'subject', 'message',
                 'messageformat', 'messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto'];

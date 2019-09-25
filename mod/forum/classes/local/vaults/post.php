@@ -157,39 +157,70 @@ class post extends db_table_vault {
     }
 
     /**
-     * The method returns posts made by the supplied users in the supplied discussions.
+     * The method returns posts based on a set of filters.
      *
      * @param stdClass $user Only used when restricting private replies
-     * @param int[] $discussionids The list of discussion ids to load posts for
-     * @param int[] $userids Only return posts made by these users
+     * @param array $filters Export filters, valid filters are:
+     *
+     * 'discussionids' => array of discussion ids eg [1,2,3]
+     * 'userids' => array of user ids eg [1,2,3]
+     * 'from' => timestamp to filter posts from this date.
+     *  'to' => timestamp to filter posts till this date.
+     *
      * @param bool $canseeprivatereplies Whether this user can see all private replies or not
      * @param string $orderby Order the results
      * @return post_entity[]
      */
-    public function get_from_discussion_ids_and_user_ids(
+    public function get_from_filters(
             stdClass $user,
-            array $discussionids,
-            array $userids,
+            array $filters,
             bool $canseeprivatereplies,
             string $orderby = ''
     ): array {
-        if (empty($discussionids) || empty($userids)) {
+        if (count($filters) == 0) {
             return [];
         }
-
+        $wheresql = [];
+        $params = [];
         $alias = $this->get_table_alias();
 
-        list($indiscussionssql, $indiscussionsparams) = $this->get_db()->get_in_or_equal($discussionids, SQL_PARAMS_NAMED);
-        list($inuserssql, $inusersparams) = $this->get_db()->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        // Filter by discussion ids.
+        if (!empty($filters['discussionids'])) {
+            list($indiscussionssql, $indiscussionsparams) = $this->get_db()->get_in_or_equal($filters['discussionids'],
+                SQL_PARAMS_NAMED);
+            $wheresql[] = "{$alias}.discussion {$indiscussionssql}";
+            $params += $indiscussionsparams;
+        }
 
+        // Filter by user ids.
+        if (!empty($filters['userids'])) {
+            list($inuserssql, $inusersparams) = $this->get_db()->get_in_or_equal($filters['userids'],
+                SQL_PARAMS_NAMED);
+            $wheresql[] = "{$alias}.userid {$inuserssql}";
+            $params += $inusersparams;
+        }
+
+        // Filter posts by from and to dates.
+        if (isset($filters['from'])) {
+            $wheresql[] = "{$alias}.created >= :from";
+            $params['from'] = $filters['from'];
+        }
+
+        if (isset($filters['to'])) {
+            $wheresql[] = "{$alias}.created < :to";
+            $params['to'] = $filters['to'];
+        }
+
+        // We need to build the WHERE here, because get_private_reply_sql returns the query with the AND clause.
+        $wheresql = implode(' AND ', $wheresql);
+
+        // Build private replies sql.
         [
             'where' => $privatewhere,
             'params' => $privateparams,
         ] = $this->get_private_reply_sql($user, $canseeprivatereplies);
-
-        $wheresql = "{$alias}.discussion {$indiscussionssql}
-                 AND {$alias}.userid {$inuserssql}
-                     {$privatewhere}";
+        $wheresql .= "{$privatewhere}";
+        $params += $privateparams;
 
         if ($orderby) {
             $orderbysql = $alias . '.' . $orderby;
@@ -198,7 +229,7 @@ class post extends db_table_vault {
         }
 
         $sql = $this->generate_get_records_sql($wheresql, $orderbysql);
-        $records = $this->get_db()->get_records_sql($sql, array_merge($indiscussionsparams, $inusersparams, $privateparams));
+        $records = $this->get_db()->get_records_sql($sql, $params);
 
         return $this->transform_db_records_to_entities($records);
     }
