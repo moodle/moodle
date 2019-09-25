@@ -136,12 +136,7 @@
                                 {{$content}}
                                     {{#events}}
                                         <div data-popover-eventtype-{{normalisedeventtype}}="1">
-                                            {{#modulename}}
-                                                {{#pix}} icon, {{modulename}} {{/pix}}
-                                            {{/modulename}}
-                                            {{^modulename}}
-                                                {{#pix}} i/{{eventtype}}event, core {{/pix}}
-                                            {{/modulename}}
+                                            {{> core_calendar/event_icon}}
                                             {{{popupname}}}
                                         </div>
                                     {{/events}}

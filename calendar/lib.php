@@ -3672,6 +3672,9 @@ function calendar_get_filter_types() {
         return [
             'eventtype' => $type,
             'name' => get_string("eventtype{$type}", "calendar"),
+            'icon' => true,
+            'key' => 'i/' . $type . 'event',
+            'component' => 'core'
         ];
     }, $types);
 }
