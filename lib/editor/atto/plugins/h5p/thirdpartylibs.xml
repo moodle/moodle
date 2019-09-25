@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>js/h5p-resizer.js</location>
+    <name>H5P Resizer</name>
+    <license>GPL-3.0</license>
+    <version>1.23.1</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

@@ -17,13 +17,13 @@
 /**
  * Atto text editor integration version file.
  *
- * @package    editor_atto
- * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
+ * @package    atto_h5p
+ * @copyright  2019 Bas Brands  <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019090900;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2019081900;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2019051100;        // Requires this Moodle version.
-$plugin->component = 'editor_atto';  // Full name of the plugin (used for diagnostics).
+$plugin->component = 'atto_h5p';  // Full name of the plugin (used for diagnostics).

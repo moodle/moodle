@@ -15,15 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Atto text editor integration version file.
+ * Privacy Subsystem implementation for atto_h5p.
  *
- * @package    editor_atto
- * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
+ * @package    atto_h5p
+ * @copyright  2019 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace atto_h5p\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019090900;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2019051100;        // Requires this Moodle version.
-$plugin->component = 'editor_atto';  // Full name of the plugin (used for diagnostics).
+/**
+ * Privacy Subsystem for atto_h5p implementing null_provider.
+ *
+ * @copyright  2019 Bas Brands <bas@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
