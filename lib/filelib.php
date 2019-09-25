@@ -2159,23 +2159,26 @@ function readfile_accel($file, $mimetype, $accelerate) {
         }
     }
 
-    if ($accelerate and !empty($CFG->xsendfile)) {
-        if (empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
-            header('Accept-Ranges: bytes');
-        } else {
-            header('Accept-Ranges: none');
-        }
+    if ($accelerate and empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
+        header('Accept-Ranges: bytes');
+    } else {
+        header('Accept-Ranges: none');
+    }
 
+    if ($accelerate) {
         if (is_object($file)) {
             $fs = get_file_storage();
-            if ($fs->xsendfile($file->get_contenthash())) {
-                return;
+            if ($fs->supports_xsendfile()) {
+                if ($fs->xsendfile($file->get_contenthash())) {
+                    return;
+                }
             }
-
         } else {
-            require_once("$CFG->libdir/xsendfilelib.php");
-            if (xsendfile($file)) {
-                return;
+            if (!empty($CFG->xsendfile)) {
+                require_once("$CFG->libdir/xsendfilelib.php");
+                if (xsendfile($file)) {
+                    return;
+                }
             }
         }
     }
@@ -2185,7 +2188,6 @@ function readfile_accel($file, $mimetype, $accelerate) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
 
     if ($accelerate and empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
-        header('Accept-Ranges: bytes');
 
         if (!empty($_SERVER['HTTP_RANGE']) and strpos($_SERVER['HTTP_RANGE'],'bytes=') !== FALSE) {
             // byteserving stuff - for acrobat reader and download accelerators
@@ -2223,9 +2225,6 @@ function readfile_accel($file, $mimetype, $accelerate) {
                 byteserving_send_file($handle, $mimetype, $ranges, $filesize);
             }
         }
-    } else {
-        // Do not byteserve
-        header('Accept-Ranges: none');
     }
 
     header('Content-Length: '.$filesize);
