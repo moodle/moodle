@@ -188,18 +188,16 @@ $author-image-margin-sm: 8px;
     }
 }
 
-#page-mod-forum-discuss.modern-display-mode {
-    &.path-mod-forum {
-        .discussionsubscription {
-            margin-top: 0;
-            text-align: inherit;
-            margin-bottom: 0;
-        }
+.path-mod-forum.modern-display-mode {
+    .discussionsubscription {
+        margin-top: 0;
+        text-align: inherit;
+        margin-bottom: 0;
+    }
 
-        .preload-subscribe,
-        .preload-unsubscribe {
-            display: none;
-        }
+    .preload-subscribe,
+    .preload-unsubscribe {
+        display: none;
     }
 
     .post-message {

@@ -217,17 +217,16 @@ $allow-reset-style: true !default;
             padding-bottom: 0 !important;  /* stylelint-disable-line declaration-no-important */
 
             #region-main-box {
-                display: flex;
-
                 #region-main {
                     border: none;
-                    display: flex;
+                    display: inline-flex;
                     flex-direction: column;
                     padding: 0;
                     height: 100%;
                     width: 100%;
                     padding-left: $card-spacer-x;
                     padding-right: $card-spacer-x;
+                    vertical-align: top;
 
                     div[role="main"] {
                         flex: 1;
@@ -251,6 +250,7 @@ $allow-reset-style: true !default;
                 }
 
                 @include media-breakpoint-down(lg) {
+                    display: flex;
                     flex-direction: column;
                 }
             }
