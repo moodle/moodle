@@ -983,7 +983,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML code
      */
     public function plugins_check_table(core_plugin_manager $pluginman, $version, array $options = array()) {
-
+        global $CFG;
         $plugininfo = $pluginman->get_plugins();
 
         if (empty($plugininfo)) {
@@ -1069,8 +1069,10 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
 
                 $coredependency = $plugin->is_core_dependency_satisfied($version);
+                $incompatibledependency = $plugin->is_core_compatible_satisfied($CFG->branch);
+
                 $otherpluginsdependencies = $pluginman->are_dependencies_satisfied($plugin->get_other_required_plugins());
-                $dependenciesok = $coredependency && $otherpluginsdependencies;
+                $dependenciesok = $coredependency && $otherpluginsdependencies && $incompatibledependency;
 
                 $statuscode = $plugin->get_status();
                 $row->attributes['class'] .= ' status-' . $statuscode;
@@ -1120,8 +1122,11 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
 
                 $status = new html_table_cell($sourcelabel.' '.$status);
-
-                $requires = new html_table_cell($this->required_column($plugin, $pluginman, $version));
+                if ($plugin->pluginsupported != null) {
+                    $requires = new html_table_cell($this->required_column($plugin, $pluginman, $version, $CFG->branch));
+                } else {
+                    $requires = new html_table_cell($this->required_column($plugin, $pluginman, $version));
+                }
 
                 $statusisboring = in_array($statuscode, array(
                         core_plugin_manager::PLUGIN_STATUS_NODB, core_plugin_manager::PLUGIN_STATUS_UPTODATE));
@@ -1452,15 +1457,17 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param \core\plugininfo\base $plugin the plugin we are rendering the row for.
      * @param core_plugin_manager $pluginman provides data on all the plugins.
      * @param string $version
+     * @param int $branch the current Moodle branch
      * @return string HTML code
      */
-    protected function required_column(\core\plugininfo\base $plugin, core_plugin_manager $pluginman, $version) {
+    protected function required_column(\core\plugininfo\base $plugin, core_plugin_manager $pluginman, $version, $branch = null) {
 
         $requires = array();
         $displayuploadlink = false;
         $displayupdateslink = false;
 
-        foreach ($pluginman->resolve_requirements($plugin, $version) as $reqname => $reqinfo) {
+        $requirements = $pluginman->resolve_requirements($plugin, $version, $branch);
+        foreach ($requirements as $reqname => $reqinfo) {
             if ($reqname === 'core') {
                 if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_OK) {
                     $class = 'requires-ok';
@@ -1469,7 +1476,19 @@ class core_admin_renderer extends plugin_renderer_base {
                     $class = 'requires-failed';
                     $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'badge badge-danger');
                 }
-                if ($reqinfo->reqver != ANY_VERSION) {
+
+                if ($branch != null && !$plugin->is_core_compatible_satisfied($branch)) {
+                    $requires[] = html_writer::tag('li',
+                    html_writer::span(get_string('incompatibleversion', 'core_plugin', $branch), 'dep dep-core').
+                    ' '.$label, array('class' => $class));
+
+                } else if ($branch != null && $plugin->pluginsupported != null) {
+                    $requires[] = html_writer::tag('li',
+                        html_writer::span(get_string('moodlebranch', 'core_plugin',
+                        array('min' => $plugin->pluginsupported[0], 'max' => $plugin->pluginsupported[1])), 'dep dep-core').
+                        ' '.$label, array('class' => $class));
+
+                } else if ($reqinfo->reqver != ANY_VERSION) {
                     $requires[] = html_writer::tag('li',
                         html_writer::span(get_string('moodleversion', 'core_plugin', $plugin->versionrequires), 'dep dep-core').
                         ' '.$label, array('class' => $class));
@@ -1554,6 +1573,13 @@ class core_admin_renderer extends plugin_renderer_base {
                 ),
                 'checkforupdates'
             );
+        }
+
+        // Check if supports is present, and $branch is not in, only if $incompatible check was ok.
+        if ($plugin->pluginsupported != null && $class == 'requires-ok' && $branch != null) {
+            if ($pluginman->check_explicitly_supported($plugin, $branch) == $pluginman::VERSION_NOT_SUPPORTED) {
+                $out .= html_writer::div(get_string('notsupported', 'core_plugin', $branch));
+            }
         }
 
         return $out;

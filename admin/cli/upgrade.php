@@ -137,7 +137,7 @@ if (!$envstatus) {
 
 // Test plugin dependencies.
 $failed = array();
-if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed, $CFG->branch)) {
     cli_problem(get_string('pluginscheckfailed', 'admin', array('pluginslist' => implode(', ', array_unique($failed)))));
     cli_error(get_string('pluginschecktodo', 'admin'));
 }
