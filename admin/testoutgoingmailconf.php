@@ -52,7 +52,7 @@ if ($data) {
     // Manage Moodle debugging options.
     $debuglevel = $CFG->debug;
     $debugdisplay = $CFG->debugdisplay;
-    $debugsmtp = $CFG->debugsmtp;
+    $debugsmtp = $CFG->debugsmtp ?? null; // This might not be set as it's optional.
     $CFG->debugdisplay = true;
     $CFG->debugsmtp = true;
     $CFG->debug = 15;
@@ -66,7 +66,12 @@ if ($data) {
     // Restore Moodle debugging options.
     $CFG->debug = $debuglevel;
     $CFG->debugdisplay = $debugdisplay;
-    $CFG->debugsmtp = $debugsmtp;
+
+    // Restore the debugsmtp config, if it was set originally.
+    unset($CFG->debugsmtp);
+    if (!is_null($debugsmtp)) {
+        $CFG->debugsmtp = $debugsmtp;
+    }
 
     if ($success) {
         $msgparams = new stdClass();
