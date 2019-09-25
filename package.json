@@ -12,6 +12,7 @@
     "ajv": "6.9.1",
     "async": "1.5.2",
     "babel-eslint": "10.0.1",
+    "babel-plugin-system-import-transformer": "^4.0.0",
     "babel-plugin-transform-es2015-modules-amd-lazy": "2.0.1",
     "babel-preset-minify": "0.5.0",
     "eslint": "4.12.1",
