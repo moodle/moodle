@@ -44,6 +44,9 @@ class summary_table extends table_sql {
     /** Groups filter type */
     const FILTER_GROUPS = 2;
 
+    /** Table to store summary data extracted from the log table */
+    const LOG_SUMMARY_TEMP_TABLE = 'forum_report_summary_counts';
+
     /** @var \stdClass The various SQL segments that will be combined to form queries to fetch various information. */
     public $sql;
 
@@ -72,6 +75,16 @@ class summary_table extends table_sql {
     protected $nothingtodisplay = false;
 
     /**
+     * @var \core\log\sql_reader|null
+     */
+    protected $logreader = null;
+
+    /**
+     * @var \context|null
+     */
+    protected $context = null;
+
+    /**
      * Forum report table constructor.
      *
      * @param int $courseid The ID of the course the forum(s) exist within.
@@ -85,10 +98,10 @@ class summary_table extends table_sql {
         parent::__construct("summaryreport_{$courseid}_{$forumid}");
 
         $this->cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
-        $context = \context_module::instance($this->cm->id);
+        $this->context = \context_module::instance($this->cm->id);
 
         // Only show their own summary unless they have permission to view all.
-        if (!has_capability('forumreport/summary:viewall', $context)) {
+        if (!has_capability('forumreport/summary:viewall', $this->context)) {
             $this->userid = $USER->id;
         }
 
@@ -99,9 +112,18 @@ class summary_table extends table_sql {
             'postcount' => get_string('postcount', 'forumreport_summary'),
             'replycount' => get_string('replycount', 'forumreport_summary'),
             'attachmentcount' => get_string('attachmentcount', 'forumreport_summary'),
-            'earliestpost' => get_string('earliestpost', 'forumreport_summary'),
-            'latestpost' => get_string('latestpost', 'forumreport_summary'),
         ];
+
+        // Only include viewcount column when no groups filter is applied.
+        if (empty($filters['groups'])) {
+            $this->logreader = $this->get_internal_log_reader();
+            if ($this->logreader) {
+                $columnheaders['viewcount'] = get_string('viewcount', 'forumreport_summary');
+            }
+        }
+
+        $columnheaders['earliestpost'] = get_string('earliestpost', 'forumreport_summary');
+        $columnheaders['latestpost'] = get_string('latestpost', 'forumreport_summary');
 
         $this->define_columns(array_keys($columnheaders));
         $this->define_headers(array_values($columnheaders));
@@ -393,6 +415,14 @@ class summary_table extends table_sql {
 
         $this->sql->basegroupby = 'ue.userid, e.courseid, f.id, u.firstname, u.lastname';
 
+        if ($this->logreader) {
+            $this->fill_log_summary_temp_table($this->context->id);
+
+            $this->sql->basefields .= ', CASE WHEN tmp.viewcount IS NOT NULL THEN tmp.viewcount ELSE 0 END AS viewcount';
+            $this->sql->basefromjoins .= ' LEFT JOIN {' . self::LOG_SUMMARY_TEMP_TABLE . '} tmp ON tmp.userid = u.id';
+            $this->sql->basegroupby .= ', tmp.viewcount';
+        }
+
         $this->sql->params = [
             'component' => 'mod_forum',
             'courseid' => $this->courseid,
@@ -511,5 +541,77 @@ class summary_table extends table_sql {
                        {$orderby}";
 
         return $sql;
+    }
+
+    /**
+     * Returns an internal and enabled log reader.
+     *
+     * @return \core\log\sql_reader|false
+     */
+    protected function get_internal_log_reader(): ?\core\log\sql_reader {
+        global $DB;
+
+        $readers = get_log_manager()->get_readers('core\log\sql_reader');
+        foreach ($readers as $reader) {
+
+            // If reader is not a sql_internal_table_reader and not legacy store then return.
+            if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
+                continue;
+            }
+            $logreader = $reader;
+        }
+
+        if (empty($logreader)) {
+            return null;
+        }
+
+        return $logreader;
+    }
+
+    /**
+     * Fills the log summary temp table.
+     *
+     * @param int $contextid
+     * @return null
+     */
+    protected function fill_log_summary_temp_table(int $contextid) {
+        global $DB;
+
+        $this->create_log_summary_temp_table();
+
+        if ($this->logreader instanceof logstore_legacy\log\store) {
+            $logtable = 'log';
+            // Anonymous actions are never logged in legacy log.
+            $nonanonymous = '';
+        } else {
+            $logtable = $this->logreader->get_internal_log_table_name();
+            $nonanonymous = 'AND anonymous = 0';
+        }
+        $params = ['contextid' => $contextid];
+        $sql = "INSERT INTO {" . self::LOG_SUMMARY_TEMP_TABLE . "} (userid, viewcount)
+                     SELECT userid, COUNT(*) AS viewcount
+                       FROM {" . $logtable . "}
+                      WHERE contextid = :contextid
+                            $nonanonymous
+                   GROUP BY userid";
+        $DB->execute($sql, $params);
+    }
+
+    /**
+     * Creates a temp table to store summary data from the log table for this request.
+     *
+     * @return null
+     */
+    protected function create_log_summary_temp_table() {
+        global $DB;
+
+        $dbman = $DB->get_manager();
+        $temptablename = self::LOG_SUMMARY_TEMP_TABLE;
+        $xmldbtable = new \xmldb_table($temptablename);
+        $xmldbtable->add_field('userid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+        $xmldbtable->add_field('viewcount', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+        $xmldbtable->add_key('primary', XMLDB_KEY_PRIMARY, array('userid'));
+
+        $dbman->create_temp_table($xmldbtable);
     }
 }
