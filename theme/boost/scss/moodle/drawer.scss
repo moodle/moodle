@@ -55,6 +55,22 @@ $drawer-bg: $gray-lighter !default;
     .list-group-item.active + .list-group-item {
         border-top: none;
     }
+
+    .list-group {
+        // Remove default list styling in nav menus.
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        // Add margin to be consistent with `.list-group-item` spacing.
+        li {
+            margin-bottom: -1px;
+        }
+        li:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 #page {
     margin-top: $fixed-header-y;

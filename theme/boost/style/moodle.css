@@ -13545,6 +13545,14 @@ span.editinstructions {
   #nav-drawer .list-group-item-action.active + .list-group-item,
   #nav-drawer .list-group-item.active + .list-group-item {
     border-top: none; }
+  #nav-drawer .list-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; }
+  #nav-drawer .list-group li {
+    margin-bottom: -1px; }
+  #nav-drawer .list-group li:last-child {
+    margin-bottom: 0; }
 
 #page {
   margin-top: 50px; }
