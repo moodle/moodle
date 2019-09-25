@@ -810,6 +810,23 @@ $functions = array(
         'description' => 'Update a grade item and associated student grades.',
         'type' => 'write',
     ),
+    'core_grades_grader_gradingpanel_point_fetch' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\point\\external\\fetch',
+        'methodname' => 'execute',
+        'description' => 'Fetch the data required to display the grader grading panel for simple grading, ' .
+            'creating the grade item if required',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_grader_gradingpanel_point_store' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\point\\external\\store',
+        'methodname' => 'execute',
+        'description' => 'Store the data required to display the grader grading panel for simple grading',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',
