@@ -1635,27 +1635,9 @@ EOF;
      *
      * @Then /^(?:|I )pause(?:| scenario execution)$/
      */
-    public function i_pause_scenario_executon() {
-        global $CFG;
-
-        $posixexists = function_exists('posix_isatty');
-
-        // Make sure this step is only used with interactive terminal (if detected).
-        if ($posixexists && !@posix_isatty(STDOUT)) {
-            $session = $this->getSession();
-            throw new ExpectationException('Break point should only be used with interative terminal.', $session);
-        }
-
-        // Windows don't support ANSI code by default, but with ANSICON.
-        $isansicon = getenv('ANSICON');
-        if (($CFG->ostype === 'WINDOWS') && empty($isansicon)) {
-            fwrite(STDOUT, "Paused. Press Enter/Return to continue.");
-            fread(STDIN, 1024);
-        } else {
-            fwrite(STDOUT, "\033[s\n\033[0;93mPaused. Press \033[1;31mEnter/Return\033[0;93m to continue.\033[0m");
-            fread(STDIN, 1024);
-            fwrite(STDOUT, "\033[2A\033[u\033[2B");
-        }
+    public function i_pause_scenario_execution() {
+        $message = "<colour:lightYellow>Paused. Press <colour:lightRed>Enter/Return<colour:lightYellow> to continue.";
+        behat_util::pause($this->getSession(), $message);
     }
 
     /**

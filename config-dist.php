@@ -847,6 +847,10 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_faildump_path = '/my/path/to/save/failure/dumps';
 //
+// You can make behat pause upon failure to help you diagnose and debug problems with your tests.
+//
+//   $CFG->behat_pause_on_fail = true;
+//
 // You can specify db, selenium wd_host etc. for behat parallel run by setting following variable.
 // Example:
 //   $CFG->behat_parallel_run = array (

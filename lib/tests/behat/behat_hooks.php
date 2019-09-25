@@ -500,11 +500,7 @@ class behat_hooks extends behat_base {
             throw new coding_exception("Step '" . $scope->getStep()->getText() . "'' is undefined.");
         }
 
-        // Save the page content if the step failed.
-        if (!empty($CFG->behat_faildump_path) &&
-            $scope->getTestResult()->getResultCode() === Behat\Testwork\Tester\Result\TestResult::FAILED) {
-            $this->take_contentdump($scope);
-        }
+        $isfailed = $scope->getTestResult()->getResultCode() === Behat\Testwork\Tester\Result\TestResult::FAILED;
 
         // Abort any open transactions to prevent subsequent tests hanging.
         // This does the same as abort_all_db_transactions(), but doesn't call error_log() as we don't
@@ -516,15 +512,28 @@ class behat_hooks extends behat_base {
             }
         }
 
+        if ($isfailed && !empty($CFG->behat_faildump_path)) {
+            // Save the page content (html).
+            $this->take_contentdump($scope);
+
+            if ($this->running_javascript()) {
+                // Save a screenshot.
+                $this->take_screenshot($scope);
+            }
+        }
+
+        if ($isfailed && !empty($CFG->behat_pause_on_fail)) {
+            $exception = $scope->getTestResult()->getException();
+            $message = "<colour:lightRed>Scenario failed. ";
+            $message .= "<colour:lightYellow>Paused for inspection. Press <colour:lightRed>Enter/Return<colour:lightYellow> to continue.<newline>";
+            $message .= "<colour:lightRed>Exception follows:<newline>";
+            $message .= trim($exception->getMessage());
+            behat_util::pause($this->getSession(), $message);
+        }
+
         // Only run if JS.
         if (!$this->running_javascript()) {
             return;
-        }
-
-        // Save a screenshot if the step failed.
-        if (!empty($CFG->behat_faildump_path) &&
-            $scope->getTestResult()->getResultCode() === Behat\Testwork\Tester\Result\TestResult::FAILED) {
-            $this->take_screenshot($scope);
         }
 
         try {
