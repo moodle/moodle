@@ -45,7 +45,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @dataProvider export_data_provider
      * @param   \stdClass  $data Data
      * @covers ::export_data
-     * @covers ::<!public>
      */
     public function test_export_data($data) {
         $context = \context_system::instance();
@@ -71,7 +70,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @dataProvider export_data_provider
      * @param   \stdClass  $data Data
      * @covers ::export_data
-     * @covers ::<!public>
      */
     public function test_export_data_different_context($data) {
         $context = \context_user::instance(\core_user::get_user_by_username('admin')->id);
@@ -95,7 +93,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * Test that exported is saved within the correct directory locations.
      *
      * @covers ::export_data
-     * @covers ::<!public>
      */
     public function test_export_data_writes_to_multiple_context() {
         $subcontext = ['sub', 'context'];
@@ -140,7 +137,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * Test that multiple writes to the same location cause the latest version to be written.
      *
      * @covers ::export_data
-     * @covers ::<!public>
      */
     public function test_export_data_multiple_writes_same_context() {
         $subcontext = ['sub', 'context'];
@@ -197,7 +193,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param   string  $value Value
      * @param   string  $description Description
      * @covers ::export_metadata
-     * @covers ::<!public>
      */
     public function test_export_metadata($key, $value, $description) {
         $context = \context_system::instance();
@@ -223,7 +218,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * Test that metadata can be set additively.
      *
      * @covers ::export_metadata
-     * @covers ::<!public>
      */
     public function test_export_metadata_additive() {
         $context = \context_system::instance();
@@ -260,7 +254,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * Test that metadata can be set additively.
      *
      * @covers ::export_metadata
-     * @covers ::<!public>
      */
     public function test_export_metadata_to_multiple_contexts() {
         $systemcontext = \context_system::instance();
@@ -339,7 +332,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * Exporting a single stored_file should cause that file to be output in the files directory.
      *
      * @covers ::export_area_files
-     * @covers ::<!public>
      */
     public function test_export_area_files() {
         $this->resetAfterTest();
@@ -446,7 +438,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param   string  $content Content
      *
      * @covers ::export_file
-     * @covers ::<!public>
      */
     public function test_export_file($filearea, $itemid, $filepath, $filename, $content) {
         $this->resetAfterTest();
@@ -544,7 +535,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param   string      $value Value
      * @param   string      $desc Description
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_context_user($component, $key, $value, $desc) {
         $admin = \core_user::get_user_by_username('admin');
@@ -578,7 +568,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param   string      $value Value
      * @param   string      $desc Description
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_context_coursecat($component, $key, $value, $desc) {
         global $DB;
@@ -613,7 +602,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param   string      $value Value
      * @param   string      $desc Description
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_context_course($component, $key, $value, $desc) {
         global $DB;
@@ -649,7 +637,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param   string      $value Value
      * @param   string      $desc Description
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_context_module($component, $key, $value, $desc) {
         global $DB;
@@ -686,7 +673,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param   string      $value Value
      * @param   string      $desc Description
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_context_block($component, $key, $value, $desc) {
         global $DB;
@@ -718,7 +704,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * files.
      *
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_context_block_multiple_instances() {
         $this->resetAfterTest();
@@ -781,7 +766,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param   string      $desc Description
      *
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_context_system($component, $key, $value, $desc) {
         $context = \context_system::instance();
@@ -806,7 +790,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * User preferences can be exported against the system.
      *
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_multiple_user_preference_context_system() {
         $context = \context_system::instance();
@@ -841,7 +824,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * User preferences can be exported against the system.
      *
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_replace() {
         $context = \context_system::instance();
@@ -905,7 +887,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @dataProvider unescaped_unicode_export_provider
      * @param string $text
      * @covers ::export_data
-     * @covers ::<!public>
      */
     public function test_export_data_unescaped_unicode($text) {
         $context = \context_system::instance();
@@ -933,7 +914,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @dataProvider unescaped_unicode_export_provider
      * @param string $text
      * @covers ::export_metadata
-     * @covers ::<!public>
      */
     public function test_export_metadata_unescaped_unicode($text) {
         $context = \context_system::instance();
@@ -962,7 +942,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @dataProvider unescaped_unicode_export_provider
      * @param string $text
      * @covers ::export_related_data
-     * @covers ::<!public>
      */
     public function test_export_related_data_unescaped_unicode($text) {
         $context = \context_system::instance();
@@ -990,7 +969,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @dataProvider unescaped_unicode_export_provider
      * @param string $text
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_unescaped_unicode($text) {
         $context = \context_system::instance();
@@ -1033,7 +1011,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param string $text
      *
      * @covers ::export_data
-     * @covers ::<!public>
      */
     public function test_export_data_long_filename($longtext, $expected, $text) {
         $context = \context_system::instance();
@@ -1066,7 +1043,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param string $text
      *
      * @covers ::export_related_data
-     * @covers ::<!public>
      */
     public function test_export_related_data_long_filename($longtext, $expected, $text) {
         $context = \context_system::instance();
@@ -1246,7 +1222,6 @@ class moodle_content_writer_test extends advanced_testcase {
      * @param string $input Raw text as stored in the database.
      * @param string $expectedoutput Expected output of URL rewriting.
      * @covers ::rewrite_pluginfile_urls
-     * @covers ::<!public>
      */
     public function test_rewrite_pluginfile_urls($filearea, $itemid, $input, $expectedoutput) {
 

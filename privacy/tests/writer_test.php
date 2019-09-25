@@ -53,7 +53,6 @@ class writer_test extends advanced_testcase {
      * Test that calling with_context multiple times will return the same write instance.
      *
      * @covers ::with_context
-     * @covers ::<!public>
      */
     public function test_with_context() {
         $writer = writer::with_context(\context_system::instance());
@@ -65,7 +64,6 @@ class writer_test extends advanced_testcase {
      * Test that calling with_context multiple times will return the same write instance.
      *
      * @covers ::with_context
-     * @covers ::<!public>
      */
     public function test_with_context_different_context_same_instance() {
         $writer = writer::with_context(\context_system::instance());
@@ -77,7 +75,6 @@ class writer_test extends advanced_testcase {
      * Test that calling writer::reset() causes a new copy of the writer to be returned.
      *
      * @covers ::reset
-     * @covers ::<!public>
      */
     public function test_reset() {
         $writer = writer::with_context(\context_system::instance());
@@ -90,7 +87,6 @@ class writer_test extends advanced_testcase {
      * Test that the export_user_preference calls the writer against the system context.
      *
      * @covers ::export_user_preference
-     * @covers ::<!public>
      */
     public function test_export_user_preference_sets_system_context() {
         $writer = writer::with_context(\context_user::instance(\core_user::get_user_by_username('admin')->id));

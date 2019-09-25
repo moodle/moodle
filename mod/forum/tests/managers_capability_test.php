@@ -36,7 +36,6 @@ use mod_forum\local\managers\capability as capability_manager;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_forum\local\managers\capability
- * @covers ::<!public>
  */
 class mod_forum_managers_capability_testcase extends advanced_testcase {
     // Make use of the test generator trait.
