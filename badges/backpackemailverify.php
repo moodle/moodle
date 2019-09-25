@@ -54,15 +54,15 @@ if (!is_null($storedsecret)) {
                 null, \core\output\notification::NOTIFY_ERROR);
         }
 
-        $obj = new stdClass();
-        $obj->userid = $USER->id;
-        $obj->email = $data->email;
-        $obj->externalbackpackid = $backpackid;
-        $obj->backpackuid = $backpackuid;
-        $obj->autosync = 0;
-        $obj->password = $password;
-
-        $DB->insert_record('badge_backpack', $obj);
+        $values = [
+            'userid' => $USER->id,
+            'backpackemail' => $data->email,
+            'externalbackpackid' => $backpackid,
+            'backpackuid' => $backpackuid,
+            'autosync' => 0,
+            'password' => $password
+        ];
+        badges_save_backpack_credentials((object) $values);
 
         // Remove the verification vars and redirect to the mypackpack page.
         unset_user_preference('badges_email_verify_secret');

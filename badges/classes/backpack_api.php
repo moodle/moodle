@@ -570,9 +570,10 @@ class backpack_api {
      *
      * @param integer $userid The user in Moodle
      * @param integer $backpackid The backpack to disconnect
+     * @param integer $externalbackupid The external backpack to disconnect
      * @return boolean
      */
-    public function disconnect_backpack($userid, $backpackid) {
+    public function disconnect_backpack($userid, $backpackid, $externalbackupid) {
         global $DB, $USER;
 
         if (\core\session\manager::is_loggedinas() || $userid != $USER->id) {
@@ -584,6 +585,7 @@ class backpack_api {
 
         $DB->delete_records('badge_external', array('backpackid' => $backpackid));
         $DB->delete_records('badge_backpack', array('userid' => $userid));
+        $DB->delete_records('badge_external_backpack', array('id' => $externalbackupid));
         $badgescache->delete($userid);
         return true;
     }

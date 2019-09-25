@@ -64,7 +64,7 @@ if ($disconnect && $backpack) {
     } else {
         // If backpack is connected, need to select collections.
         $bp = new \core_badges\backpack_api($sitebackpack, $backpack);
-        $bp->disconnect_backpack($USER->id, $backpack->id);
+        $bp->disconnect_backpack($USER->id, $backpack->id, $sitebackpack->id);
         redirect(new moodle_url('/badges/mybackpack.php'));
     }
 }
@@ -72,10 +72,6 @@ $warning = '';
 if ($backpack) {
 
     $sitebackpack = badges_get_site_backpack($backpack->externalbackpackid);
-
-    if ($sitebackpack->id != $CFG->badges_site_backpack) {
-        $warning = $OUTPUT->notification(get_string('backpackneedsupdate', 'badges'), 'warning');
-    }
 
     // If backpack is connected, need to select collections.
     $bp = new \core_badges\backpack_api($sitebackpack, $backpack);
@@ -145,11 +141,12 @@ if ($backpack) {
         if (isset($data->revertbutton)) {
             badges_disconnect_user_backpack($USER->id);
             redirect(new moodle_url('/badges/mybackpack.php'));
-        } else if (isset($data->email)) {
-            if (badges_send_verification_email($data->email, $data->backpackid, $data->backpackpassword)) {
+        } else if (isset($data->backpackemail)) {
+            $newid = badges_create_site_backpack($data, true);
+            if (badges_send_verification_email($data->backpackemail, $newid, $data->password)) {
                 $a = get_user_preferences('badges_email_verify_backpackid');
                 redirect(new moodle_url('/badges/mybackpack.php'),
-                    get_string('backpackemailverifypending', 'badges', $data->email),
+                    get_string('backpackemailverifypending', 'badges', $data->backpackemail),
                     null, \core\output\notification::NOTIFY_INFO);
             } else {
                 print_error ('backpackcannotsendverification', 'badges');
