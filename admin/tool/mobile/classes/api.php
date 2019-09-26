@@ -177,6 +177,7 @@ class api {
             'langmenu' => $CFG->langmenu,
             'langlist' => $CFG->langlist,
             'locale' => $CFG->locale,
+            'tool_mobile_minimumversion' => get_config('tool_mobile', 'minimumversion'),
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');

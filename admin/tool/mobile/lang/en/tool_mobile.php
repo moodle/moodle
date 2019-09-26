@@ -75,6 +75,8 @@ $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
 $string['mainmenu'] = 'Main menu';
+$string['minimumversion'] = 'Require users to upgrade their apps to the minimum version indicated. Those using previous versions of the app will not be able to access to the site. This works since app version 3.8.0 onward.';
+$string['minimumversion_key'] = 'Minimum app version required';
 $string['mobileapp'] = 'Mobile app';
 $string['mobileappconnected'] = 'Mobile app connected';
 $string['mobileappenabled'] = 'This site has mobile app access enabled.<br /><a href="{$a}">Download the mobile app</a>.';
