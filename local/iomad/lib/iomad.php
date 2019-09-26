@@ -572,8 +572,16 @@ class iomad {
         $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page?
         $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
         $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
-        $compfromraw = optional_param('compfrom', null, PARAM_RAW);
-        $comptoraw = optional_param('compto', null, PARAM_RAW);
+        $compfrom = optional_param_array('compfromraw', null, PARAM_INT);
+        $compto = optional_param_array('comptoraw', null, PARAM_INT);
+        $loginfrom = optional_param_array('loginfromraw', null, PARAM_INT);
+        $loginto = optional_param_array('logintoraw', null, PARAM_INT);
+        $emailfrom = optional_param_array('emailfromraw', null, PARAM_INT);
+        $emailto = optional_param_array('emailtoraw', null, PARAM_INT);
+        $licenseallocatedfrom = optional_param_array('licenseallocatedfromraw', null, PARAM_INT);
+        $licenseallocatedto = optional_param_array('licenseallocatedtoraw', null, PARAM_INT);
+        $licenseunallocatedfrom = optional_param_array('licenseunallocatedfromraw', null, PARAM_INT);
+        $licenseunallocatedto = optional_param_array('licenseunallocatedtoraw', null, PARAM_INT);
 
         // Process the params.
         $paramlist = array('firstname',
@@ -711,21 +719,77 @@ class iomad {
         }
         if (!empty($params['compfrom'])) {
             $params['courseid2'] = $params['courseid'];
-            if ($compfromids = $DB->get_records_sql("SELECT userid FROM {course_completions}
-                                                     WHERE (course = :courseid
+            if ($compfromids = $DB->get_records_sql("SELECT id FROM {local_iomad_track}
+                                                     WHERE (courseid = :courseid
                                                      AND timecompleted < :compfrom
                                                      AND timecompleted IS NOT NULL)
                                                      OR (
-                                                     course = :courseid2
+                                                     courseid = :courseid2
                                                      AND timecompleted IS NULL)", $params)) {
-                $sqlsearch .= " AND u.id NOT IN (".implode(',', array_keys($compfromids)).") ";
+                $sqlsearch .= " AND lit.id NOT IN (".implode(',', array_keys($compfromids)).") ";
             }
         }
 
         if (!empty($params['compto'])) {
-            if ($comptoids = $DB->get_records_sql("SELECT userid FROM {course_completions}
-                                                   WHERE course = :courseid AND timecompleted > :compto", $params)) {
-                $sqlsearch .= " AND u.id NOT IN (".implode(',', array_keys($comptoids)).") ";
+            if ($comptoids = $DB->get_records_sql("SELECT id FROM {local_iomad_track}
+                                                   WHERE courseid = :courseid AND timecompleted > :compto", $params)) {
+                $sqlsearch .= " AND lit.id NOT IN (".implode(',', array_keys($comptoids)).") ";
+            }
+        }
+
+        if (!empty($params['emailfrom'])) {
+            $sqlsearch .= " AND e.sent > :emailfrom ";
+            $searchparams['emailfrom'] = $params['emailfrom'];
+        }
+
+        if (!empty($params['emailto'])) {
+            $sqlsearch .= " AND e.sent < :emailto ";
+            $searchparams['emailto'] = $params['emailto'];
+        }
+
+        if (!empty($params['loginfrom'])) {
+            $sqlsearch .= " AND url.lastlogin > :loginfrom ";
+            $searchparams['loginfrom'] = $params['loginfrom'];
+        }
+
+        if (!empty($params['loginto'])) {
+            $sqlsearch .= " AND url.lastlogin < :loginto ";
+            $searchparams['loginto'] = $params['loginto'];
+        }
+
+        if (!empty($params['licenseallocatedfrom'])) {
+            if ($licallocfromids = $DB->get_records_sql("SELECT id FROM {local_report_user_lic_allocs}
+                                                     WHERE issuedate > :licenseallocatedfrom
+                                                     AND action = 1
+                                                     ", $params)) {
+                $sqlsearch .= " AND urla.id NOT IN (".implode(',', array_keys($licallocfromids)).") ";
+            }
+        }
+
+        if (!empty($params['licenseallocatedto'])) {
+            if ($licalloctoids = $DB->get_records_sql("SELECT id FROM {local_report_user_lic_allocs}
+                                                     WHERE issuedate < :licenseallocatedto
+                                                     AND action = 1
+                                                     ", $params)) {
+                $sqlsearch .= " AND urla.id NOT IN (".implode(',', array_keys($licalloctoids)).") ";
+            }
+        }
+
+        if (!empty($params['licenseunallocatedfrom'])) {
+            if ($licunallocfromids = $DB->get_records_sql("SELECT id FROM {local_report_user_lic_allocs}
+                                                     WHERE issuedate > :licenseunallocatedfrom
+                                                     AND action = 0
+                                                     ", $params)) {
+                $sqlsearch .= " AND urla.id NOT IN (".implode(',', array_keys($licunallocfromids)).") ";
+            }
+        }
+
+        if (!empty($params['licenseunallocatedto'])) {
+            if ($licunalloctoids = $DB->get_records_sql("SELECT id FROM {local_report_user_lic_allocs}
+                                                     WHERE issuedate < :licenseunallocatedto
+                                                     AND action = 0
+                                                     ", $params)) {
+                $sqlsearch .= " AND urla.id NOT IN (".implode(',', array_keys($licunalloctoids)).") ";
             }
         }
 

@@ -36,8 +36,8 @@ $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user t
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $templateid = optional_param('templateid', 0, PARAM_CLEAN);
-$emailfromraw = optional_param_array('emailfrom', null, PARAM_INT);
-$emailtoraw = optional_param_array('emailto', null, PARAM_INT);
+$emailfromraw = optional_param_array('emailfromraw', null, PARAM_INT);
+$emailtoraw = optional_param_array('emailtoraw', null, PARAM_INT);
 $confirm = optional_param('confirm', '', PARAM_CLEAN);
 $emailid = optional_param('emailid', 0, PARAM_INT);
 
@@ -88,6 +88,10 @@ if ($emailfromraw) {
         $emailfrom = $emailfromraw;
     }
     $params['emailfrom'] = $emailfrom;
+    $params['emailfromraw[day]'] = $emailfromraw['day'];
+    $params['emailfromraw[month]'] = $emailfromraw['month'];
+    $params['emailfromraw[year]'] = $emailfromraw['year'];
+    $params['emailfromraw[enabled]'] = $emailfromraw['enabled'];
 } else {
     $emailfrom = null;
 }
@@ -99,8 +103,12 @@ if ($emailtoraw) {
         $emailto = $emailtoraw;
     }
     $params['emailto'] = $emailto;
+    $params['emailtoraw[day]'] = $emailtoraw['day'];
+    $params['emailtoraw[month]'] = $emailtoraw['month'];
+    $params['emailtoraw[year]'] = $emailtoraw['year'];
+    $params['emailtoraw[enabled]'] = $emailtoraw['enabled'];
 } else {
-    if (!empty($comptfrom)) {
+    if (!empty($emailfrom)) {
         $emailto = time();
         $params['emailto'] = $emailto;
     } else {
@@ -358,7 +366,6 @@ if ($allemails and confirm_sesskey()) {
 
 // Create data for form.
 $customdata = null;
-$options = $params;
 
 // Set up the table.
 $table = new local_report_emails_table('user_report_logins');
@@ -393,13 +400,16 @@ if (!$table->is_downloading()) {
             echo html_writer::end_tag('div');
 
             // Set up the filter form.
-            $params['companyid'] = $companyid;
-            $params['addfrom'] = 'emailfrom';
-            $params['addto'] = 'emailto';
-            $params['adddodownload'] = false;
-            $mform = new iomad_user_filter_form(null, $params);
+            $options = $params;
+            $options['companyid'] = $companyid;
+            $options['addfrom'] = 'emailfromraw';
+            $options['addto'] = 'emailtoraw';
+            $options['adddodownload'] = false;
+            $options['emailfromraw'] = $emailfrom;
+            $options['emailtoraw'] = $emailto;
+            $mform = new iomad_user_filter_form(null, $options);
             $mform->set_data(array('departmentid' => $departmentid));
-            $mform->set_data($params);
+            $mform->set_data($options);
             $mform->get_data();
 
             // Display the user filter form.

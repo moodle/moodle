@@ -33,8 +33,8 @@ $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT)
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
-$loginfromraw = optional_param_array('loginfrom', null, PARAM_INT);
-$logintoraw = optional_param_array('loginto', null, PARAM_INT);
+$loginfromraw = optional_param_array('loginfromraw', null, PARAM_INT);
+$logintoraw = optional_param_array('logintoraw', null, PARAM_INT);
 
 require_login($SITE);
 $systemcontext = context_system::instance();
@@ -83,6 +83,10 @@ if ($loginfromraw) {
         $loginfrom = $loginfromraw;
     }
     $params['loginfrom'] = $loginfrom;
+    $params['loginfromraw[day]'] = $loginfromraw['day'];
+    $params['loginfromraw[month]'] = $loginfromraw['month'];
+    $params['loginfromraw[year]'] = $loginfromraw['year'];
+    $params['loginfromraw[enabled]'] = $loginfromraw['enabled'];
 } else {
     $loginfrom = null;
 }
@@ -94,6 +98,10 @@ if ($logintoraw) {
         $loginto = $logintoraw;
     }
     $params['loginto'] = $loginto;
+    $params['logintoraw[day]'] = $logintoraw['day'];
+    $params['logintoraw[month]'] = $logintoraw['month'];
+    $params['logintoraw[year]'] = $logintoraw['year'];
+    $params['logintoraw[enabled]'] = $logintoraw['enabled'];
 } else {
     if (!empty($comptfrom)) {
         $loginto = time();
@@ -251,6 +259,7 @@ $table->is_downloading($download, 'user_report_logins', 'user_report_logins123')
 
 if (!$table->is_downloading()) {
     echo $output->header();
+
     // Display the search form and department picker.
     if (!empty($companyid)) {
         if (empty($table->is_downloading())) {
@@ -264,13 +273,15 @@ if (!$table->is_downloading()) {
             echo html_writer::end_tag('div');
 
             // Set up the filter form.
-            $params['companyid'] = $companyid;
-            $params['addfrom'] = 'loginfrom';
-            $params['addto'] = 'loginto';
-            $params['adddodownload'] = false;
-            $mform = new iomad_user_filter_form(null, $params);
+            $options['companyid'] = $companyid;
+            $options['addfrom'] = 'loginfromraw';
+            $options['addto'] = 'logintoraw';
+            $options['adddodownload'] = false;
+            $options['loginfromraw'] = $loginfrom;
+            $options['logintoraw'] = $loginto;
+            $mform = new iomad_user_filter_form(null, $options);
             $mform->set_data(array('departmentid' => $departmentid));
-            $mform->set_data($params);
+            $mform->set_data($options);
             $mform->get_data();
 
             // Display the user filter form.

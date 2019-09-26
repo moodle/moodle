@@ -28,8 +28,8 @@ $perpage      = optional_param('perpage', 30, PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $licenseid    = optional_param('licenseid', 0, PARAM_INTEGER);
-$fromraw = optional_param_array('compfrom', null, PARAM_INT);
-$toraw = optional_param_array('compto', null, PARAM_INT);
+$fromraw = optional_param_array('compfromraw', null, PARAM_INT);
+$toraw = optional_param_array('comptoraw', null, PARAM_INT);
 
 $params = array();
 
@@ -73,7 +73,7 @@ if ($toraw) {
     }
     $params['to'] = $to;
 } else {
-    if (!empty($comptfrom)) {
+    if (!empty($from)) {
         $to = time();
         $params['to'] = $to;
     } else {
@@ -199,7 +199,10 @@ $treehtml = $output->department_tree($departmenttree, optional_param('department
 // Set up the filter form.
 $mform = new iomad_date_filter_form($baseurl, $params);
 $mform->set_data(array('departmentid' => $departmentid));
-$mform->set_data($params);
+$options = $params;
+$options['compfromraw'] = $from;
+$options['comptoraw'] = $to;
+$mform->set_data($options);
 $mform->get_data();
 
 // Display the tree selector thing.

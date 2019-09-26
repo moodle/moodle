@@ -28,8 +28,8 @@ $perpage      = optional_param('perpage', 30, PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $courseid    = optional_param('courseid', 1, PARAM_INTEGER);
-$fromraw = optional_param_array('compfrom', null, PARAM_INT);
-$toraw = optional_param_array('compto', null, PARAM_INT);
+$fromraw = optional_param_array('compfromraw', null, PARAM_INT);
+$toraw = optional_param_array('comptoraw', null, PARAM_INT);
 $yearfrom = optional_param_array('fromarray', null, PARAM_INT);
 $yearto = optional_param_array('toarray', null, PARAM_INT);
 
@@ -63,6 +63,10 @@ if ($fromraw) {
         $from = $fromraw;
     }
     $params['from'] = $from;
+    $params['fromraw[day]'] = $fromraw['day'];
+    $params['fromraw[month]'] = $fromraw['month'];
+    $params['fromraw[year]'] = $fromraw['year'];
+    $params['fromraw[enabled]'] = $fromraw['enabled'];
 } else {
     $from = null;
 }
@@ -74,8 +78,12 @@ if ($toraw) {
         $to = $toraw;
     }
     $params['to'] = $to;
+    $params['toraw[day]'] = $toraw['day'];
+    $params['toraw[month]'] = $toraw['month'];
+    $params['toraw[year]'] = $toraw['year'];
+    $params['toraw[enabled]'] = $toraw['enabled'];
 } else {
-    if (!empty($comptfrom)) {
+    if (!empty($from)) {
         $to = time();
         $params['to'] = $to;
     } else {
@@ -224,7 +232,10 @@ $treehtml = $output->department_tree($departmenttree, optional_param('department
 $params['yearonly'] = true;
 $mform = new iomad_date_filter_form($baseurl, $params);
 $mform->set_data(array('departmentid' => $departmentid));
-$mform->set_data($params);
+$options = $params;
+$options['compfromraw'] = $from;
+$options['comptoraw'] = $to;
+$mform->set_data($options);
 $mform->get_data();
 
 // Display the tree selector thing.

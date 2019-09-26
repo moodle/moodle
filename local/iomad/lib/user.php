@@ -1135,20 +1135,19 @@ class iomad_date_filter_form extends moodleform {
         }
 
         if (empty($this->params['yearonly'])) {
-            $mform->addElement('date_selector', 'compfrom', get_string('compfrom', 'local_report_completion'), array('optional' => 'yes'));
-            $mform->addElement('date_selector', 'compto', get_string('compto', 'local_report_completion'), array('optional' => 'yes'));
-            $mform->setDefault('compfrom', 0);
+            $mform->addElement('date_selector', 'compfromraw', get_string('compfromraw', 'block_iomad_company_admin'), array('optional' => 'yes'));
+            $mform->addElement('date_selector', 'comptoraw', get_string('comptoraw', 'block_iomad_company_admin'), array('optional' => 'yes'));
         } else {
             // Get the calendar type used - see MDL-18375.
             $calendartype = \core_calendar\type_factory::get_calendar_instance();
             $dateformat = $calendartype->get_date_order();
             $from = array();
-            $from[] = $mform->createElement('select', 'yearfrom', get_string('compfrom', 'local_report_completion'), $dateformat['year']);
+            $from[] = $mform->createElement('select', 'yearfrom', get_string('compfromraw', 'block_iomad_company_admin'), $dateformat['year']);
             $from[] = $mform->createElement('checkbox', 'yearfromoptional', '', get_string('optional', 'form'));
-            $mform->addGroup($from, 'fromarray', get_string('compfrom', 'local_report_completion'));
-            $to[] = $mform->createElement('select', 'yearto', get_string('compfrom', 'local_report_completion'), $dateformat['year']);
+            $mform->addGroup($from, 'fromarray', get_string('compfromraw', 'block_iomad_company_admin'));
+            $to[] = $mform->createElement('select', 'yearto', get_string('comptoraw', 'block_iomad_company_admin'), $dateformat['year']);
             $to[] = $mform->createElement('checkbox', 'yeartooptional', '', get_string('optional', 'form'));
-            $mform->addGroup($to, 'toarray', get_string('compto', 'local_report_completion'));
+            $mform->addGroup($to, 'toarray', get_string('comptoraw', 'block_iomad_company_admin'));
 
             if (!empty($this->params['yearto'])) {
                 $mform->setDefault('toarray[yearto]', $this->params['yearto']);

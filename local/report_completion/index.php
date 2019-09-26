@@ -44,8 +44,8 @@ $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT)
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $coursesearch = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
-$compfromraw = optional_param_array('compfrom', null, PARAM_INT);
-$comptoraw = optional_param_array('compto', null, PARAM_INT);
+$compfromraw = optional_param_array('compfromraw', null, PARAM_INT);
+$comptoraw = optional_param_array('comptoraw', null, PARAM_INT);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
 $showchart = optional_param('showchart', false, PARAM_BOOL);
@@ -101,6 +101,10 @@ if ($compfromraw) {
         $compfrom = $compfromraw;
     }
     $params['compfrom'] = $compfrom;
+    $params['compfromraw[day]'] = $compfromraw['day'];
+    $params['compfromraw[month]'] = $compfromraw['month'];
+    $params['compfromraw[year]'] = $compfromraw['year'];
+    $params['compfromraw[enabled]'] = $compfromraw['enabled'];
 } else {
     $compfrom = 0;
 }
@@ -111,6 +115,10 @@ if ($comptoraw) {
         $compto = $comptoraw;
     }
     $params['compto'] = $compto;
+    $params['comptoraw[day]'] = $comptoraw['day'];
+    $params['comptoraw[month]'] = $comptoraw['month'];
+    $params['comptoraw[year]'] = $comptoraw['year'];
+    $params['comptoraw[enabled]'] = $comptoraw['enabled'];
 } else {
     if (!empty($compfrom)) {
         $compto = time();
@@ -197,7 +205,6 @@ if ($courseid == 1) {
 
 // Create data for filter form.
 $customdata = null;
-$options = $params;
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -350,13 +357,16 @@ if (empty($courseid)) {
                 echo html_writer::end_tag('div');
 
                 // Set up the filter form.
-                $params['companyid'] = $companyid;
-                $params['addfrom'] = 'compfrom';
-                $params['addto'] = 'compto';
-                $params['adddodownload'] = false;
-                $mform = new iomad_user_filter_form(null, $params);
+                $options = $params;
+                $options['companyid'] = $companyid;
+                $options['addfrom'] = 'compfromraw';
+                $options['addto'] = 'comptoraw';
+                $options['adddodownload'] = false;
+                $options['compfromraw'] = $compfrom;
+                $options['comptoraw'] = $compto;
+                $mform = new iomad_user_filter_form(null, $options);
                 $mform->set_data(array('departmentid' => $departmentid));
-                $mform->set_data($params);
+                $mform->set_data($options);
                 $mform->get_data();
 
                 // Display the user filter form.

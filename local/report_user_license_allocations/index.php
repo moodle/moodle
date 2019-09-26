@@ -37,10 +37,10 @@ $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $licenseid    = optional_param('licenseid', 0, PARAM_INTEGER);
 $download  = optional_param('download', '', PARAM_CLEAN);
-$licenseallocatedfromraw = optional_param_array('licenseallocatedfrom', null, PARAM_INT);
-$licenseallocatedtoraw = optional_param_array('licenseallocatedto', null, PARAM_INT);
-$licenseunallocatedfromraw = optional_param_array('licenseunallocatedfrom', null, PARAM_INT);
-$licenseunallocatedtoraw = optional_param_array('licenseunallocatedto', null, PARAM_INT);
+$licenseallocatedfromraw = optional_param_array('licenseallocatedfromraw', null, PARAM_INT);
+$licenseallocatedtoraw = optional_param_array('licenseallocatedtoraw', null, PARAM_INT);
+$licenseunallocatedfromraw = optional_param_array('licenseunallocatedfromraw', null, PARAM_INT);
+$licenseunallocatedtoraw = optional_param_array('licenseunallocatedtoraw', null, PARAM_INT);
 $licenseusage = optional_param('licenseusage', 0, PARAM_INTEGER);
 
 $params = array();
@@ -92,6 +92,10 @@ if ($licenseallocatedfromraw) {
         $licenseallocatedfrom = $licenseallocatedfromraw;
     }
     $params['licenseallocatedfrom'] = $licenseallocatedfrom;
+    $params['licenseallocatedfromraw[day]'] = $licenseallocatedfromraw['day'];
+    $params['licenseallocatedfromraw[month]'] = $licenseallocatedfromraw['month'];
+    $params['licenseallocatedfromraw[year]'] = $licenseallocatedfromraw['year'];
+    $params['licenseallocatedfromraw[enabled]'] = $licenseallocatedfromraw['enabled'];
 } else {
     $licenseallocatedfrom = null;
 }
@@ -103,6 +107,10 @@ if ($licenseallocatedtoraw) {
         $licenseallocatedto = $licenseallocatedtoraw;
     }
     $params['licenseallocatedto'] = $licenseallocatedto;
+    $params['licenseallocatedtoraw[day]'] = $licenseallocatedtoraw['day'];
+    $params['licenseallocatedtoraw[month]'] = $licenseallocatedtoraw['month'];
+    $params['licenseallocatedtoraw[year]'] = $licenseallocatedtoraw['year'];
+    $params['licenseallocatedtoraw[enabled]'] = $licenseallocatedtoraw['enabled'];
 } else {
     $licenseallocatedto = null;
 }
@@ -114,6 +122,10 @@ if ($licenseunallocatedfromraw) {
         $licenseunallocatedfrom = $licenseunallocatedfromraw;
     }
     $params['licenseunallocatedfrom'] = $licenseunallocatedfrom;
+    $params['licenseunallocatedfromraw[day]'] = $licenseunallocatedfromraw['day'];
+    $params['licenseunallocatedfromraw[month]'] = $licenseunallocatedfromraw['month'];
+    $params['licenseunallocatedfromraw[year]'] = $licenseunallocatedfromraw['year'];
+    $params['licenseunallocatedfromraw[enabled]'] = $licenseunallocatedfromraw['enabled'];
 } else {
     $licenseunallocatedfrom = null;
 }
@@ -125,6 +137,10 @@ if ($licenseunallocatedtoraw) {
         $licenseunallocatedto = $licenseunallocatedtoraw;
     }
     $params['licenseunallocatedto'] = $licenseunallocatedto;
+    $params['licenseunallocatedtoraw[day]'] = $licenseunallocatedtoraw['day'];
+    $params['licenseunallocatedtoraw[month]'] = $licenseunallocatedtoraw['month'];
+    $params['licenseunallocatedtoraw[year]'] = $licenseunallocatedtoraw['year'];
+    $params['licenseunallocatedtoraw[enabled]'] = $licenseunallocatedtoraw['enabled'];
 } else {
     $licenseunallocatedto = null;
 }
@@ -159,7 +175,7 @@ if ($parentslist = $company->get_parent_companies_recursive()) {
 $linktext = get_string('report_user_license_allocations_title', 'local_report_user_license_allocations');
 
 // Set the url.
-$linkurl = new moodle_url('/local/report_user_license_allocations/index.php');
+$linkurl = new moodle_url('/local/report_user_license_allocations/index.php', $params);
 
 // Print the page header.
 $PAGE->set_context($systemcontext);
@@ -287,15 +303,21 @@ if (!$table->is_downloading()) {
             echo html_writer::end_tag('div');
 
             // Set up the filter form.
-            $params['companyid'] = $companyid;
-            $params['addlicenseusage'] = true;
-            $params['addfrom'] = 'licenseallocatedfrom';
-            $params['addto'] = 'licenseallocatedto';
-            $params['addfromb'] = 'licenseunallocatedfrom';
-            $params['addtob'] = 'licenseunallocatedto';
-            $mform = new iomad_user_filter_form(null, $params);
+            $options = $params;
+            $options['companyid'] = $companyid;
+            $options['addlicenseusage'] = true;
+            $options['addfrom'] = 'licenseallocatedfromraw';
+            $options['addto'] = 'licenseallocatedtoraw';
+            $options['addfromb'] = 'licenseunallocatedfromraw';
+            $options['addtob'] = 'licenseunallocatedtoraw';
+            $options['licenseallocatedfromraw'] = $licenseallocatedfrom;
+            $options['licenseallocatedtoraw'] = $licenseallocatedto;
+            $options['licenseunallocatedfromraw'] = $licenseunallocatedfrom;
+            $options['licenseunallocatedtoraw'] = $licenseunallocatedto;
+            $mform = new iomad_user_filter_form(null, $options);
             $mform->set_data(array('departmentid' => $departmentid));
-            $mform->set_data($params);
+
+            $mform->set_data($options);
             $mform->get_data();
 
             // Display the user filter form.
@@ -349,7 +371,7 @@ if (!empty($licenseid) && $licenseid != 1) {
 // Set up the initial SQL for the form.
 $selectsql = "DISTINCT concat(u.id, concat('-', concat(urla.licenseid, concat('-', urla.courseid)))) AS cindex,u.id,u.firstname,u.lastname,d.name AS department,u.email, c.id AS courseid, c.fullname AS coursename, urla.licenseid";
 $fromsql = " {local_report_user_lic_allocs} urla JOIN {user} u ON (urla.userid = u.id) JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id and cu.companyid = d.company) JOIN {course} c ON (urla.courseid = c.id)";
-$wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $licensesql $coursesql AND urla.action = 1";
+$wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $licensesql $coursesql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
 
 // Set up the headers for the form.
