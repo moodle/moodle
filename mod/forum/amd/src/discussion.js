@@ -25,12 +25,20 @@ define(
 [
     'jquery',
     'core/custom_interaction_events',
-    'mod_forum/selectors'
+    'mod_forum/selectors',
+    'core/pubsub',
+    'mod_forum/forum_events',
+    'core/str',
+    'core/notification',
 ],
 function(
     $,
     CustomEvents,
-    Selectors
+    Selectors,
+    PubSub,
+    ForumEvents,
+    String,
+    Notification
 ) {
 
     /**
@@ -260,6 +268,19 @@ function(
 
             e.stopPropagation();
             data.originalEvent.preventDefault();
+        });
+
+        PubSub.subscribe(ForumEvents.SUBSCRIPTION_TOGGLED, function(data) {
+            var subscribed = data.subscriptionState;
+            var updateMessage = subscribed ? 'discussionsubscribed' : 'discussionunsubscribed';
+            String.get_string(updateMessage, "forum")
+                .then(function(s) {
+                    return Notification.addNotification({
+                        message: s,
+                        type: "info"
+                    });
+                })
+                .catch(Notification.exception);
         });
     };
 

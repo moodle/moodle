@@ -86,7 +86,7 @@ $displaymode = get_user_preferences('forum_displaymode', $CFG->forum_displaymode
 
 $PAGE->set_context($forum->get_context());
 $PAGE->set_title($forum->get_name());
-$PAGE->add_body_class('forumtype-' . $forum->get_type());
+$PAGE->add_body_class('forumtype-' . $forum->get_type() . ' reset-style');
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button(forum_search_form($course, $search));
 
