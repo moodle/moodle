@@ -71,7 +71,7 @@ class analytics_manager_testcase extends advanced_testcase {
         $predictions = $DB->get_records('analytics_predictions');
         $prediction = reset($predictions);
         $prediction = new \core_analytics\prediction($prediction, array('whatever' => 'not used'));
-        $prediction->action_executed(\core_analytics\prediction::ACTION_FIXED, $model->get_target());
+        $prediction->action_executed(\core_analytics\prediction::ACTION_USEFUL, $model->get_target());
 
         $predictioncontextid = $prediction->get_prediction_data()->contextid;
 

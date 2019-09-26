@@ -141,7 +141,8 @@ abstract class base extends \core_analytics\calculable {
      *
      * @param \core_analytics\prediction $prediction
      * @param bool $includedetailsaction
-     * @param bool $isinsightuser
+     * @param bool $isinsightuser                       Force all the available actions to be returned as it the user who
+     *                                                  receives the insight is the one logged in.
      * @return \core_analytics\prediction_action[]
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false,
@@ -152,8 +153,6 @@ abstract class base extends \core_analytics\calculable {
         $contextid = $prediction->get_prediction_data()->contextid;
         $modelid = $prediction->get_prediction_data()->modelid;
 
-        $PAGE->requires->js_call_amd('report_insights/actions', 'init', array($predictionid, $contextid, $modelid));
-
         $actions = array();
 
         if ($this->link_insights_report() && $includedetailsaction) {
@@ -163,28 +162,51 @@ abstract class base extends \core_analytics\calculable {
 
             $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_PREDICTION_DETAILS, $prediction,
                 $predictionurl, new \pix_icon('t/preview', $detailstext),
-                $detailstext);
+                $detailstext, false, [], \core_analytics\action::TYPE_NEUTRAL);
         }
 
-        // Flag as fixed / solved.
-        $fixedattrs = array(
-            'data-prediction-id' => $predictionid,
-            'data-prediction-methodname' => 'report_insights_set_fixed_prediction'
-        );
-        $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_FIXED,
-            $prediction, new \moodle_url(''), new \pix_icon('t/check', get_string('fixedack', 'analytics')),
-            get_string('fixedack', 'analytics'), false, $fixedattrs);
+        return $actions;
+    }
 
-        // Flag as not useful.
-        $notusefulattrs = array(
-            'data-prediction-id' => $predictionid,
-            'data-prediction-methodname' => 'report_insights_set_notuseful_prediction'
-        );
-        $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_NOT_USEFUL,
-            $prediction, new \moodle_url(''), new \pix_icon('t/delete', get_string('notuseful', 'analytics')),
-            get_string('notuseful', 'analytics'), false, $notusefulattrs);
+    /**
+     * Suggested bulk actions for a user.
+     *
+     * @param  \core_analytics\prediction[]     $predictions List of predictions suitable for the bulk actions to use.
+     * @return \core_analytics\bulk_action[]                 The list of bulk actions.
+     */
+    public function bulk_actions(array $predictions) {
+
+        $analyserclass = $this->get_analyser_class();
+        if ($analyserclass::one_sample_per_analysable()) {
+            // Default actions are useful / not useful.
+            $actions = [
+                \core_analytics\default_bulk_actions::useful(),
+                \core_analytics\default_bulk_actions::not_useful()
+            ];
+
+        } else {
+            // Accept and not applicable.
+
+            $actions = [
+                \core_analytics\default_bulk_actions::accept(),
+                \core_analytics\default_bulk_actions::not_applicable()
+            ];
+
+            if (!self::based_on_assumptions()) {
+                // We include incorrectly flagged.
+                $actions[] = \core_analytics\default_bulk_actions::incorrectly_flagged();
+            }
+        }
 
         return $actions;
+    }
+
+    /**
+     * Adds the JS required to run the bulk actions.
+     */
+    public function add_bulk_actions_js() {
+        global $PAGE;
+        $PAGE->requires->js_call_amd('report_insights/actions', 'initBulk', ['.insights-bulk-actions']);
     }
 
     /**
@@ -320,13 +342,13 @@ abstract class base extends \core_analytics\calculable {
      * @param  \context                             $context
      * @param  \stdClass                            $user
      * @param  \core_analytics\prediction           $prediction
-     * @param  \core_analytics\prediction_action[]  $predictionactions  Passed by reference to remove duplicate links to actions.
-     * @return array                                                    Plain text msg, HTML message and the main URL for this
-     *                                                                  insight (you can return null if you are happy with the
-     *                                                                  default insight URL calculated in prediction_info())
+     * @param  \core_analytics\action[]             $actions        Passed by reference to remove duplicate links to actions.
+     * @return array                                                Plain text msg, HTML message and the main URL for this
+     *                                                              insight (you can return null if you are happy with the
+     *                                                              default insight URL calculated in prediction_info())
      */
     public function get_insight_body_for_prediction(\context $context, \stdClass $user, \core_analytics\prediction $prediction,
-            array &$predictionactions): array {
+            array &$actions) {
         // No extra message by default.
         return [FORMAT_PLAIN => '', FORMAT_HTML => '', 'url' => null];
     }

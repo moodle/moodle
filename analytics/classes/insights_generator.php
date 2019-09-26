@@ -187,8 +187,11 @@ class insights_generator {
         global $OUTPUT;
 
         // The prediction actions get passed to the target so that it can show them in its preferred way.
-        $predictionactions = $this->target->prediction_actions($prediction, true, true);
-        $predictioninfo = $this->target->get_insight_body_for_prediction($context, $user, $prediction, $predictionactions);
+        $actions = array_merge(
+            $this->target->prediction_actions($prediction, true, true),
+            $this->target->bulk_actions([$prediction])
+        );
+        $predictioninfo = $this->target->get_insight_body_for_prediction($context, $user, $prediction, $actions);
 
         // For FORMAT_PLAIN.
         $fullmessageplaintext = '';
@@ -200,18 +203,23 @@ class insights_generator {
 
         // For FORMAT_HTML.
         $messageactions  = [];
-        foreach ($predictionactions as $action) {
-            $actionurl = $action->get_url();
-            if (!$actionurl->get_param('forwardurl')) {
+        foreach ($actions as $action) {
+            if (!$action->get_url()->get_param('forwardurl')) {
 
                 $params = ['actionvisiblename' => $action->get_text(), 'target' => '_blank'];
                 $actiondoneurl = new \moodle_url('/report/insights/done.php', $params);
                 // Set the forward url to the 'done' script.
-                $actionurl->param('forwardurl', $actiondoneurl->out(false));
+                $action->get_url()->param('forwardurl', $actiondoneurl->out(false));
+            }
+
+            if ($action->get_url()->param('predictionid') === null) {
+                // Bulk actions do not include the prediction id by default.
+                $action->get_url()->param('predictionid', $prediction->get_prediction_data()->id);
             }
 
             if (empty($insighturl)) {
-                // We use the primary action url as insight url so we log that the user followed the provided link.
+                // Ideally the target provides us with the best URL for the insight, if it doesn't we default
+                // to the first actions.
                 $insighturl = $action->get_url();
             }
 
@@ -221,7 +229,7 @@ class insights_generator {
             $fullmessageplaintext .= get_string('insightinfomessageaction', 'analytics', $actiondata) . PHP_EOL;
 
             // We now process the HTML version actions, with a special treatment for useful/notuseful.
-            if ($action->get_action_name() === 'fixed') {
+            if ($action->get_action_name() === 'useful') {
                 $usefulurl = $actiondata->url;
             } else if ($action->get_action_name() === 'notuseful') {
                 $notusefulurl = $actiondata->url;
@@ -236,11 +244,12 @@ class insights_generator {
         }
 
         $contextinfo = [
-            'usefulbuttons' => $usefulbuttons,
+            'usefulbuttons' => !empty($usefulbuttons) ? $usefulbuttons : false,
             'actions' => $messageactions,
             'body' => $predictioninfo[FORMAT_HTML] ?? ''
         ];
         $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message_prediction', $contextinfo);
+
         return [$insighturl, $fullmessageplaintext, $fullmessagehtml];
     }
 

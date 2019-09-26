@@ -108,7 +108,7 @@ class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider
 
         $this->setUser($this->u3);
         $prediction = reset($predictions);
-        $prediction->action_executed('notuseful', $this->model2->get_target());
+        $prediction->action_executed(\core_analytics\prediction::ACTION_INCORRECTLY_FLAGGED, $this->model2->get_target());
 
         $this->setAdminUser();
     }
@@ -381,7 +381,7 @@ class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider
             }
         }
         $this->setUser($this->u3);
-        $otheruserprediction->action_executed('notuseful', $this->model1->get_target());
+        $otheruserprediction->action_executed(\core_analytics\prediction::ACTION_INCORRECTLY_FLAGGED, $this->model1->get_target());
         $this->setAdminUser();
 
         $this->export_context_data_for_user($this->u3->id, $system, 'core_analytics');
@@ -411,7 +411,7 @@ class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider
             get_string('privacy:metadata:analytics:predictionactions', 'analytics'), $u3action->id]);
         $this->assertEquals(get_string('adminhelplogs'), $data->target);
         $this->assertEquals(get_string('coresystem'), $data->context);
-        $this->assertEquals('notuseful', $data->action);
+        $this->assertEquals(\core_analytics\prediction::ACTION_INCORRECTLY_FLAGGED, $data->action);
 
     }
 }

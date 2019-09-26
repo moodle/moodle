@@ -42,6 +42,16 @@ $functions = array(
         'type'        => 'write',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax'          => true,
+    ),
+
+    'report_insights_action_executed' => array(
+        'classname'   => 'report_insights\external',
+        'methodname'  => 'action_executed',
+        'description' => 'Stores an action executed over a group of predictions.',
+        'type'        => 'write',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax'          => true,
     )
+
 );
 

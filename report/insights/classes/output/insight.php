@@ -51,17 +51,26 @@ class insight implements \renderable, \templatable {
     protected $includedetailsaction = false;
 
     /**
+     * @var \context
+     */
+    protected $context;
+
+    /**
      * Constructor
      *
      * @param \core_analytics\prediction $prediction
      * @param \core_analytics\model $model
      * @param bool $includedetailsaction
+     * @param \context $context
      * @return void
      */
-    public function __construct(\core_analytics\prediction $prediction, \core_analytics\model $model, $includedetailsaction = false) {
+    public function __construct(\core_analytics\prediction $prediction, \core_analytics\model $model, $includedetailsaction = false,
+            \context $context) {
+
         $this->prediction = $prediction;
         $this->model = $model;
         $this->includedetailsaction = $includedetailsaction;
+        $this->context = $context;
     }
 
     /**
@@ -77,6 +86,9 @@ class insight implements \renderable, \templatable {
         $target = $this->model->get_target();
 
         $data = new \stdClass();
+        $data->modelid = $this->model->get_id();
+        $data->contextid = $this->context->id;
+        $data->predictionid = $predictiondata->id;
         $data->insightname = format_string($target->get_name());
 
         $data->showpredictionheading = true;
@@ -110,26 +122,13 @@ class insight implements \renderable, \templatable {
 
         // Prediction info.
         $predictedvalue = $predictiondata->prediction;
-        $predictionid = $predictiondata->id;
         $data->predictiondisplayvalue = $target->get_display_value($predictedvalue);
         list($data->style, $data->outcomeicon) = self::get_calculation_display($target,
             floatval($predictedvalue), $output);
 
-        $actions = $target->prediction_actions($this->prediction, $this->includedetailsaction);
-        if ($actions) {
-            $actionsmenu = new \action_menu();
-            $actionsmenu->set_menu_trigger(get_string('actions'));
-            $actionsmenu->set_owner_selector('prediction-actions-' . $predictionid);
-            $actionsmenu->set_alignment(\action_menu::TL, \action_menu::BL);
-
-            // Add all actions defined by the target.
-            foreach ($actions as $action) {
-                $actionsmenu->add($action->get_action_link());
-            }
-            $data->actions = $actionsmenu->export_for_template($output);
-        } else {
-            $data->actions = false;
-        }
+        $data->actions = actions_exporter::add_prediction_actions($target, $output, $this->prediction,
+            $this->includedetailsaction);
+        $data->bulkactions = actions_exporter::add_bulk_actions($target, $output, [$this->prediction], $this->context);
 
         // Calculated indicators values.
         $data->calculations = array();
@@ -161,6 +160,26 @@ class insight implements \renderable, \templatable {
                 'closebutton' => false
             );
         }
+
+        // This is only rendered in report_insights/insight_details template. We need it to automatically enable
+        // the bulk action buttons in report/insights/prediction.php.
+        $toggleall = new \core\output\checkbox_toggleall('insight-bulk-action-' . $predictedvalue, true, [
+            'id' => 'id-toggle-all-' . $predictedvalue,
+            'name' => 'toggle-all-' . $predictedvalue,
+            'classes' => 'hidden',
+            'label' => get_string('selectall'),
+            'labelclasses' => 'sr-only',
+            'checked' => false
+        ]);
+        $data->hiddencheckboxtoggleall = $output->render($toggleall);
+
+        $toggle = new \core\output\checkbox_toggleall('insight-bulk-action-' . $predictedvalue, false, [
+            'id' => 'id-select-' . $data->predictionid,
+            'name' => 'select-' . $data->predictionid,
+            'label' => get_string('selectprediction', 'report_insights', $data->sampledescription),
+            'labelclasses' => 'accesshide',
+        ]);
+        $data->toggleslave = $output->render($toggle);
 
         return $data;
     }
@@ -210,5 +229,14 @@ class insight implements \renderable, \templatable {
         }
         $icon = new \pix_icon($icon, $text);
         return array($style, $icon->export_for_template($output));
+    }
+
+    /**
+     * Model getter.
+     *
+     * @return \core_analytics\model
+     */
+    public function get_model(): \core_analytics\model {
+        return $this->model;
     }
 }

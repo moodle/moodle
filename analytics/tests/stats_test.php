@@ -156,7 +156,7 @@ class analytics_stats_testcase extends advanced_testcase {
         $this->assertEquals(0, \core_analytics\stats::actions_not_useful());
 
         // The user has marked the other prediction as not useful.
-        $p2->action_executed(\core_analytics\prediction::ACTION_NOT_USEFUL, $model->get_target());
+        $p2->action_executed(\core_analytics\prediction::ACTION_INCORRECTLY_FLAGGED, $model->get_target());
         $this->assertEquals(2, \core_analytics\stats::actions());
         $this->assertEquals(1, \core_analytics\stats::actions_not_useful());
     }

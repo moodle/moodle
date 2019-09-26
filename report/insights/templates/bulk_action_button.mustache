@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_insights/bulk_action_button
+
+    Extension of core/single_button to show the label with HTML
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * classes - a list of classes to wrap the form.
+    * url - the action url to submit to
+    * params - array of params with name and value attributes
+    * primary - true if this is a primary action button
+    * id - id for the element
+    * tooltip - tooltip text for the button
+    * disabled - true if this element is disabled
+    * label - text to show on the button
+
+    Example context (json):
+    {
+      "url" : "#",
+      "primary" : true,
+      "tooltip" : "This is a tooltip",
+      "label" : "This is a the button text, it can include HTML",
+      "attributes": [
+        {
+          "name": "data-attribute",
+          "value": "yeah"
+        }
+      ]
+    }
+}}
+<div class="{{classes}}">
+    {{#params}}
+        <input type="hidden" name="{{name}}" value="{{value}}">
+    {{/params}}
+    <button type="submit" class="btn {{#primary}}btn-primary{{/primary}}{{^primary}}btn-outline-primary{{/primary}}"
+        id="{{id}}"
+        title={{#quote}}{{tooltip}}{{/quote}}
+        {{#disabled}}disabled{{/disabled}}
+        {{#attributes}} {{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}>{{{label}}}</button>
+</div>

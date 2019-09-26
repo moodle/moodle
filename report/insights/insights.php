@@ -82,7 +82,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
 if ($context->contextlevel === CONTEXT_SYSTEM) {
-    admin_externalpage_setup('reportinsights', '', null, '', array('pagelayout' => 'report'));
+    admin_externalpage_setup('reportinsights', '', $url->params(), $url->out(false), array('pagelayout' => 'report'));
 } else if ($context->contextlevel === CONTEXT_USER) {
     $user = \core_user::get_user($context->instanceid, '*', MUST_EXIST);
     $PAGE->navigation->extend_for_user($user);

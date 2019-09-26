@@ -36,6 +36,11 @@ defined('MOODLE_INTERNAL') || die();
 abstract class course_enrolments extends \core_analytics\local\target\binary {
 
     /**
+     * @var string
+     */
+    const MESSAGE_ACTION_NAME = 'studentmessage';
+
+    /**
      * Students in the course.
      * @var int[]
      */
@@ -204,28 +209,62 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false,
             $isinsightuser = false) {
-        global $USER;
 
         $actions = array();
 
         $sampledata = $prediction->get_sample_data();
         $studentid = $sampledata['user']->id;
 
-        $attrs = array('target' => '_blank');
-
-        // Send a message.
-        $url = new \moodle_url('/message/index.php', array('user' => $USER->id, 'id' => $studentid));
-        $pix = new \pix_icon('t/message', get_string('sendmessage', 'message'));
-        $actions[] = new \core_analytics\prediction_action('studentmessage', $prediction, $url, $pix,
-                get_string('sendmessage', 'message'), false, $attrs);
-
         // View outline report.
         $url = new \moodle_url('/report/outline/user.php', array('id' => $studentid, 'course' => $sampledata['course']->id,
                 'mode' => 'outline'));
         $pix = new \pix_icon('i/report', get_string('outlinereport'));
         $actions[] = new \core_analytics\prediction_action('viewoutlinereport', $prediction, $url, $pix,
-                get_string('outlinereport'), false, $attrs);
+                get_string('outlinereport'), false, ['target' => '_blank']);
 
-        return array_merge($actions, parent::prediction_actions($prediction, $includedetailsaction));
+        return array_merge(parent::prediction_actions($prediction, $includedetailsaction, $isinsightuser), $actions);
+    }
+
+    /**
+     * Suggested bulk actions for a user.
+     *
+     * @param  \core_analytics\prediction[]     $predictions List of predictions suitable for the bulk actions to use.
+     * @return \core_analytics\bulk_action[]                 The list of bulk actions.
+     */
+    public function bulk_actions(array $predictions) {
+
+        $actions = [];
+
+        $userids = [];
+        foreach ($predictions as $prediction) {
+            $sampledata = $prediction->get_sample_data();
+            $userid = $sampledata['user']->id;
+
+            // Indexed by prediction id because we want the predictionid-userid
+            // mapping later when sending the message.
+            $userids[$prediction->get_prediction_data()->id] = $userid;
+        }
+
+        // Send a message for all the students.
+        $attrs = array(
+            'data-bulk-sendmessage' => '1',
+            'data-prediction-to-user-id' => json_encode($userids)
+        );
+        $actions[] = new \core_analytics\bulk_action(self::MESSAGE_ACTION_NAME, new \moodle_url(''),
+            new \pix_icon('t/message', get_string('sendmessage', 'message')),
+            get_string('sendmessage', 'message'), true, $attrs);
+
+        return array_merge($actions, parent::bulk_actions($predictions));
+    }
+
+    /**
+     * Adds the JS required to run the bulk actions.
+     */
+    public function add_bulk_actions_js() {
+        global $PAGE;
+
+        $PAGE->requires->js_call_amd('report_insights/message_users', 'init',
+            ['.insights-bulk-actions', self::MESSAGE_ACTION_NAME]);
+        parent::add_bulk_actions_js();
     }
 }

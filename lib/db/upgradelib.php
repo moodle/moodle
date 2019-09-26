@@ -566,3 +566,46 @@ function upgrade_delete_orphaned_file_records() {
 
     $DB->delete_records_list('files_reference', 'id', $deletedfileids);
 }
+
+/**
+ * Updates the existing prediction actions in the database according to the new suggested actions.
+ * @return null
+ */
+function upgrade_rename_prediction_actions_useful_incorrectly_flagged() {
+    global $DB;
+
+    // The update depends on the analyser class used by each model so we need to iterate through the models in the system.
+    $modelids = $DB->get_records_sql("SELECT DISTINCT am.id, am.target
+                                        FROM {analytics_models} am
+                                        JOIN {analytics_predictions} ap ON ap.modelid = am.id
+                                        JOIN {analytics_prediction_actions} apa ON ap.id = apa.predictionid");
+    foreach ($modelids as $model) {
+        $targetname = $model->target;
+        if (!class_exists($targetname)) {
+            // The plugin may not be available.
+            continue;
+        }
+        $target = new $targetname();
+
+        $analyserclass = $target->get_analyser_class();
+        if (!class_exists($analyserclass)) {
+            // The plugin may not be available.
+            continue;
+        }
+
+        if ($analyserclass::one_sample_per_analysable()) {
+            // From 'fixed' to 'useful'.
+            $params = ['oldaction' => 'fixed', 'newaction' => 'useful'];
+        } else {
+            // From 'notuseful' to 'incorrectlyflagged'.
+            $params = ['oldaction' => 'notuseful', 'newaction' => 'incorrectlyflagged'];
+        }
+
+        $subsql = "SELECT id FROM {analytics_predictions} WHERE modelid = :modelid";
+        $updatesql = "UPDATE {analytics_prediction_actions}
+                         SET actionname = :newaction
+                       WHERE predictionid IN ($subsql) AND actionname = :oldaction";
+
+        $DB->execute($updatesql, $params + ['modelid' => $model->id]);
+    }
+}

@@ -111,17 +111,17 @@ Feature: Manage analytics models
     And I navigate to "Analytics > Analytics models" in site administration
     # View predictions
     When I select "C3" from the "contextid" singleselect
-    And I open the action menu in "Student 6" "table_row"
-    And I choose "View prediction details" in the open action menu
+    And I click on "View prediction details" "icon" in the "Student 6" "table_row"
     And I should see "Prediction details"
     And I should see "Any write action"
     And I should see "Read actions amount"
-    And I open the action menu in "Student 6" "table_row"
-    And I choose "Acknowledged" in the open action menu
-    And I open the action menu in "Student 5" "table_row"
-    And I choose "View prediction details" in the open action menu
-    And I open the action menu in "Student 5" "table_row"
-    And I choose "Not useful" in the open action menu
+    And I click on "Select Student 6 for bulk action" "checkbox" in the "Student 6" "table_row"
+    And I click on "Accept" "button"
+    And I click on "Confirm" "button" in the "Accept" "dialogue"
+    And I click on "View prediction details" "icon" in the "Student 5" "table_row"
+    And I click on "Select Student 5 for bulk action" "checkbox" in the "Student 5" "table_row"
+    And I click on "Not applicable" "button"
+    And I click on "Confirm" "button" in the "Not applicable" "dialogue"
     And I should see "No insights reported"
     # Clear predictions
     When I am on site homepage

@@ -178,13 +178,13 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
      * @param  \context                             $context
      * @param  \stdClass                            $user
      * @param  \core_analytics\prediction           $prediction
-     * @param  \core_analytics\prediction_action[]  $predictionactions  Passed by reference to remove duplicate links to actions.
-     * @return array                                                    Plain text msg, HTML message and the main URL for this
-     *                                                                  insight (you can return null if you are happy with the
-     *                                                                  default insight URL calculated in prediction_info())
+     * @param  \core_analytics\action[]             $actions        Passed by reference to remove duplicate links to actions.
+     * @return array                                                Plain text msg, HTML message and the main URL for this
+     *                                                              insight (you can return null if you are happy with the
+     *                                                              default insight URL calculated in prediction_info())
      */
     public function get_insight_body_for_prediction(\context $context, \stdClass $user, \core_analytics\prediction $prediction,
-            array &$predictionactions): array {
+            array &$actions) {
         global $OUTPUT;
 
         $fullmessageplaintext = get_string('youhaveupcomingactivitiesdueinfo', 'moodle', $user->firstname);
@@ -193,6 +193,8 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
         $activitiesdue = $sampledata['core_course\analytics\indicator\activities_due:extradata'];
 
         if (empty($activitiesdue)) {
+            // We can throw an exception here because this is a target based on assumptions and we require the
+            // activities_due indicator.
             throw new \coding_exception('The activities_due indicator must be part of the model indicators.');
         }
 
@@ -216,7 +218,7 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
             $activitiestext[] = $activitydue->name . ': ' . $activitiesdue[$key]->url;
         }
 
-        foreach ($predictionactions as $key => $action) {
+        foreach ($actions as $key => $action) {
             if ($action->get_action_name() === 'viewupcoming') {
 
                 // Use it as the main URL of the insight if there are multiple activities due.
@@ -226,7 +228,7 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
 
                 // Remove the 'viewupcoming' action from the list of actions for this prediction as the action has
                 // been included in the link to the activity.
-                unset($predictionactions[$key]);
+                unset($actions[$key]);
                 break;
             }
         }
@@ -255,7 +257,7 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
             $isinsightuser = false) {
         global $CFG, $USER;
 
-        $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
+        $parentactions = parent::prediction_actions($prediction, $includedetailsaction, $isinsightuser);
 
         if (!$isinsightuser && $USER->id != $prediction->get_prediction_data()->sampleid) {
             return $parentactions;

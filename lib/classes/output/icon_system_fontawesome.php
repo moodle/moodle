@@ -241,6 +241,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/hide' => 'fa-eye',
             'core:i/hierarchylock' => 'fa-lock',
             'core:i/import' => 'fa-level-up',
+            'core:i/incorrect' => 'fa-exclamation',
             'core:i/info' => 'fa-info',
             'core:i/invalid' => 'fa-times text-danger',
             'core:i/item' => 'fa-circle',

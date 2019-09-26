@@ -128,7 +128,7 @@ class no_teaching extends \core_analytics\local\target\binary {
                 $url, $pix, get_string('participants'));
         }
 
-        $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
+        $parentactions = parent::prediction_actions($prediction, $includedetailsaction, $isinsightuser);
 
         return array_merge($actions, $parentactions);
     }
