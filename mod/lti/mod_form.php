@@ -50,6 +50,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
+use ltiservice_gradebookservices\local\service\gradebookservices;
 
 class mod_lti_mod_form extends moodleform_mod {
 
@@ -207,6 +208,12 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'urlmatchedtypeid', '', array( 'id' => 'id_urlmatchedtypeid' ));
         $mform->setType('urlmatchedtypeid', PARAM_INT);
 
+        $mform->addElement('hidden', 'lineitemresourceid', '', array( 'id' => 'id_lineitemresourceid' ));
+        $mform->setType('lineitemresourceid', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'lineitemtag', '', array( 'id' => 'id_lineitemtag'));
+        $mform->setType('lineitemtag', PARAM_TEXT);
+
         $launchoptions = array();
         $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
@@ -331,4 +338,22 @@ class mod_lti_mod_form extends moodleform_mod {
         $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
     }
 
+    /**
+     * Sets the current values for resource and tag in case of update.
+     *
+     * @param object $defaultvalues default values to populate the form with.
+     */
+    public function set_data($defaultvalues) {
+        $defaultvalues->lineitemresourceid = '';
+        $defaultvalues->lineitemtag = '';
+        if (is_object($defaultvalues) && $defaultvalues->instance) {
+            $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lti($defaultvalues->instance);
+            if ($gbs) {
+                $defaultvalues->lineitemresourceid = $gbs->resourceid;
+                $defaultvalues->lineitemtag = $gbs->tag;
+            }
+        }
+
+        parent::set_data($defaultvalues);
+    }
 }

@@ -97,6 +97,10 @@ class restore_ltiservice_gradebookservices_subplugin extends restore_subplugin {
         } else {
             $ltilinkid = null;
         }
+        $resourceid = null;
+        if (property_exists( $data, 'resourceid' )) {
+            $resourceid = $data->resourceid;
+        }
         // If this has not been restored before.
         if ($this->get_mappingid('gbsgradeitemrestored',  $data->id, 0) == 0) {
             $newgbsid = $DB->insert_record('ltiservice_gradebookservices', (object) array(
@@ -106,6 +110,7 @@ class restore_ltiservice_gradebookservices_subplugin extends restore_subplugin {
                     'ltilinkid' => $ltilinkid,
                     'typeid' => $newtypeid,
                     'baseurl' => $data->baseurl,
+                    'resourceid' => $resourceid,
                     'tag' => $data->tag
             ));
             $this->set_mapping('gbsgradeitemoldid', $newgbsid, $data->gradeitemid);

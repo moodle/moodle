@@ -266,33 +266,23 @@ class lineitems extends resource_base {
             $toolproxyid = null;
             $baseurl = lti_get_type_type_config($typeid)->lti_toolurl;
         }
-        $params = array();
-        $params['itemname'] = $json->label;
-        $params['gradetype'] = GRADE_TYPE_VALUE;
-        $params['grademax']  = $max;
-        $params['grademin']  = 0;
-        $item = new \grade_item(array('id' => 0, 'courseid' => $contextid));
-        \grade_item::set_properties($item, $params);
-        $item->itemtype = 'manual';
-        $item->idnumber = $resourceid;
-        $item->grademax = $max;
-        $id = $item->insert('mod/ltiservice_gradebookservices');
-        $DB->insert_record('ltiservice_gradebookservices', (object)array(
-                'gradeitemid' => $id,
-                'courseid' => $contextid,
-                'toolproxyid' => $toolproxyid,
-                'typeid' => $typeid,
-                'baseurl' => $baseurl,
-                'ltilinkid' => $ltilinkid,
-                'tag' => $tag
-        ));
+        $gradebookservices = new gradebookservices();
+        $id = $gradebookservices->add_standalone_lineitem($contextid,
+                                                         $json->label,
+                                                         $max,
+                                                         $baseurl,
+                                                         $ltilinkid,
+                                                         $resourceid,
+                                                         $tag,
+                                                         $typeid,
+                                                         $toolproxyid);
+
         if (is_null($typeid)) {
             $json->id = parent::get_endpoint() . "/{$id}/lineitem";
         } else {
             $json->id = parent::get_endpoint() . "/{$id}/lineitem?type_id={$typeid}";
         }
         return json_encode($json, JSON_UNESCAPED_SLASHES);
-
     }
 
     /**

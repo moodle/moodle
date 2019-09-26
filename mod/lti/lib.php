@@ -47,6 +47,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
+use ltiservice_gradebookservices\local\service\gradebookservices;
 
 /**
  * List of features supported in URL module
@@ -118,6 +119,8 @@ function lti_add_instance($lti, $mform) {
         lti_grade_item_update($lti);
     }
 
+    gradebookservices::update_coupled_gradebookservices($lti, $lti->lineitemresourceid ?? '', $lti->lineitemtag ?? '');
+
     $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
     \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
 
@@ -164,6 +167,8 @@ function lti_update_instance($lti, $mform) {
     if ($lti->typeid == 0 && isset($lti->urlmatchedtypeid)) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
+
+    gradebookservices::update_coupled_gradebookservices($lti, $lti->lineitemresourceid, $lti->lineitemtag);
 
     $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
     \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
