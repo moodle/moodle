@@ -33,11 +33,11 @@ class company_license_users_form extends \moodleform {
     protected $subhierarchieslist = null;
     protected $parentlevel = null;
     protected $license = array();
-    protected $selectedcourse = array();
+    protected $selectedcourses = array();
     protected $courseselect = array();
     protected $firstcourseid = 0;
 
-    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourse, $error, $output, $chosenid=0) {
+    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output, $chosenid=0) {
         global $USER, $DB;
         $this->selectedcompany = $companyid;
         $this->context = $context;
@@ -46,7 +46,7 @@ class company_license_users_form extends \moodleform {
         $this->companydepartment = $this->parentlevel->id;
         $this->licenseid = $licenseid;
         $this->license = $DB->get_record('companylicense', array('id' => $licenseid));
-        $this->selectedcourse = $selectedcourse;
+        $this->selectedcourses = $selectedcourses;
         $this->error = $error;
 
         // Get the courses to send to if emails are configured.
@@ -55,7 +55,7 @@ class company_license_users_form extends \moodleform {
         } else {
             $courses = array();
         }
-        $courseselect = array(0 => get_string('all'));
+        $courseselect = array();
         $first = true;
         foreach ($courses as $courseid => $course) {
             $courseselect[$course->id] = $course->fullname;
@@ -64,6 +64,8 @@ class company_license_users_form extends \moodleform {
                 $first = false;
             }
         }
+        natsort($courseselect);
+        $courseselect = array(0 => get_string('all')) + $courseselect;
         $this->courseselect = $courseselect;
 
         if (\iomad::has_capability('block/iomad_company_admin:allocate_licenses', \context_system::instance())) {
@@ -105,7 +107,7 @@ class company_license_users_form extends \moodleform {
                              'subdepartments' => $this->subhierarchieslist,
                              'parentdepartmentid' => $this->parentlevel,
                              'program' => $this->license->program,
-                             'selectedcourse' => $this->selectedcourse,
+                             'selectedcourses' => $this->selectedcourses,
                              'courses' => $this->courseselect,
                              'multiple' => $multiple);
             if (empty($this->potentialusers)) {
@@ -172,9 +174,8 @@ class company_license_users_form extends \moodleform {
                                                      array('id' => 'courseselector',
                                                            'multiple' => false,
                                                            'onchange' => 'this.form.submit()'));
-/*                $courseselector->setMultiple(true);
-                $courseselector->setSelected($this->firstcourseid);
-*/
+                $courseselector->setMultiple(true);
+                $courseselector->setSelected(0);
             } else {
                 $mform->addElement('hidden', 'courses');
                 $mform->setType('courses', PARAM_INT);
@@ -278,11 +279,12 @@ class company_license_users_form extends \moodleform {
         if ($this->is_validated()) {
             $this->create_user_selectors();
             $courses = array();
-            if (empty($this->selectedcourse)) {
-                $courses = $this->courseselect;
-                unset($courses[0]);
+            if (in_array(0, $this->selectedcourses)) {
+                $temp = $this->courseselect;
+                unset($temp[0]);
+                $courses = array_keys($temp);
             } else {
-                $courses = array($this->selectedcourse => $this->selectedcourse);
+                $courses = $this->selectedcourses;
             }
             $addall = false;
             $add = false;
@@ -315,7 +317,7 @@ class company_license_users_form extends \moodleform {
                         if (!\company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
                             print_error('invaliduserdepartment', 'block_iomad_company_management');
                         }
-                        foreach ($courses as $courseid => $coursename) {
+                        foreach ($courses as $courseid) {
                             $allow = true;
                             if ($allow) {
                                 $recordarray = array('licensecourseid' => $courseid,

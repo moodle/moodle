@@ -741,7 +741,7 @@ class potential_license_user_selector extends user_selector_base {
     protected $program;
     protected $multiple;
     protected $license;
-    protected $selectedcourse;
+    protected $selectedcourses;
 
     public function __construct($name, $options) {
         global $CFG, $DB;
@@ -754,7 +754,7 @@ class potential_license_user_selector extends user_selector_base {
         $this->program = $options['program'];
         $this->multiple = $options['multiple'];
         $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
-        $this->selectedcourse = $options['selectedcourse'];
+        $this->selectedcourses = $options['selectedcourses'];
         $this->courses = $options['courses'];
         unset($this->courses[0]);
 
@@ -771,7 +771,7 @@ class potential_license_user_selector extends user_selector_base {
         $options['program'] = $this->parentdepartmentid;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         $options['multiple']    = $this->multiple;
-        $options['selectedcourse'] = $this->selectedcourse;
+        $options['selectedcourses'] = $this->selectedcourses;
         $options['courses'] = $this->courses;
 
         return $options;
@@ -783,11 +783,11 @@ class potential_license_user_selector extends user_selector_base {
         if (!isset( $this->license->id) ) {
             return array();
         } else {
-            if (!empty($this->selectedcourse)) {
-                $coursesql = " AND licensecourseid = " . $this->selectedcourse;
-                $countsql = "";
+            if (!empty($this->selectedcourses) && !in_array(0, $this->selectedcourses)) {
+                $coursesql = " AND licensecourseid IN (" . implode(',', array_values($this->selectedcourses)) . ") ";
+                $countsql = " HAVING count(licensecourseid) = " . count($this->selectedcourses);
             } else {
-                $coursesql = "";
+                $coursesql = " AND licensecourseid IN (" . implode(',', array_keys($this->courses)) . ") ";
                 $countsql = " HAVING count(licensecourseid) = " . count($this->courses);
             }
             if ($this->program) {
@@ -979,7 +979,7 @@ class current_license_user_selector extends user_selector_base {
     protected $parentdepartmentid;
     protected $program;
     protected $license;
-    protected $selectedcourse;
+    protected $selectedcourses;
 
     public function __construct($name, $options) {
         global $CFG, $DB;
@@ -990,7 +990,7 @@ class current_license_user_selector extends user_selector_base {
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
         $this->program = $options['program'];
-        $this->selectedcourse = $options['selectedcourse'];
+        $this->selectedcourses = $options['selectedcourses'];
         $this->courses = $options['courses'];
         unset($this->courses[0]);
         $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
@@ -1006,7 +1006,7 @@ class current_license_user_selector extends user_selector_base {
         $options['subdepartments'] = $this->subdepartments;
         $options['parentdepartmentid'] = $this->parentdepartmentid;
         $options['program'] = $this->program;
-        $options['selectedcourse'] = $this->selectedcourse;
+        $options['selectedcourses'] = $this->selectedcourses;
         $options['courses'] = $this->courses;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         return $options;
@@ -1018,9 +1018,9 @@ class current_license_user_selector extends user_selector_base {
         if (!isset( $this->licenseid) ) {
             return array();
         } else {
-            if (!empty($this->selectedcourse)) {
-                $coursesql = " AND licensecourseid = " . $this->selectedcourse;
-                $countsql = "";
+            if (!empty($this->selectedcourses) && !in_array(0, $this->selectedcourses)) {
+                $coursesql = " AND licensecourseid IN (" . implode(',', array_values($this->selectedcourses)) . ") ";
+                $countsql = " HAVING count(licensecourseid) = " . count($this->selectedcourses);
             } else {
                 return array();
                 $coursesql = "";
@@ -1043,6 +1043,7 @@ class current_license_user_selector extends user_selector_base {
                             "))
                             GROUP BY userid
                             $countsql";
+
             if ($users = $DB->get_records_sql($usersql, array('licenseid' => $this->licenseid))) {
                 // Only return the keys (user ids).
                 return array_values($users);
@@ -1101,8 +1102,8 @@ class current_license_user_selector extends user_selector_base {
 
         // Are we dealing with a program?
         if (empty($this->program)) {
-            if (!empty($this->selectedcourse)) {
-                $coursesql = " AND clu.licensecourseid = " . $this->selectedcourse;
+            if (!empty($this->selectedcourses) && !in_array(0, $this->selectedcourses)) {
+                $coursesql = " AND clu.licensecourseid IN (" . implode(',', array_values($this->selectedcourses)) . ") ";
             } else {
                 $coursesql = "";
             }
@@ -1152,6 +1153,7 @@ class current_license_user_selector extends user_selector_base {
                 $potentialmemberscount = 0;
             }
         }
+
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
 
         if (empty($availableusers)) {
@@ -1168,7 +1170,7 @@ class current_license_user_selector extends user_selector_base {
         }
 
         foreach ($availableusers as $id => $rawuser) {
-            if (empty($this->program) && empty($this->selectedcourse)) {
+            if (empty($this->program) && (in_array(0, $this->selectedcourses) || count($this->selectedcourses) > 1)) {
                 $availableusers[$id]->email .= ' (' . $rawuser->fullname . ')';
             }
 

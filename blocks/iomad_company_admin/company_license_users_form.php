@@ -25,7 +25,7 @@ $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 $error = optional_param('error', 0, PARAM_INTEGER);
-$selectedcourse = optional_param('courses', 0, PARAM_INT);
+$selectedcourses = optional_param_array('courses', array(0), PARAM_INT);
 $chosenid = optional_param('chosenid', 0, PARAM_INT);
 
 $context = context_system::instance();
@@ -132,7 +132,7 @@ if (empty($departmentid)) {
     $departmentid = $userhierarchylevel;
 }
 
-$usersform = new block_iomad_company_admin\forms\company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourse, $error, $output);
+$usersform = new block_iomad_company_admin\forms\company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
 
 echo $output->header();
 
@@ -177,7 +177,7 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
         }
 
         // Reload the form.
-        $usersform = new block_iomad_company_admin\forms\company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourse, $error, $output);
+        $usersform = new block_iomad_company_admin\forms\company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
         $usersform->get_data();
         echo $usersform->display();
     }
