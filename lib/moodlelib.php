@@ -9090,11 +9090,11 @@ function mtrace($string, $eol="\n", $sleep=0) {
         $fn($string, $eol);
         return;
     } else if (defined('STDOUT') && !PHPUNIT_TEST && !defined('BEHAT_TEST')) {
-        fwrite(STDOUT, $string.$eol);
-
         // We must explicitly call the add_line function here.
         // Uses of fwrite to STDOUT are not picked up by ob_start.
-        \core\task\logmanager::add_line("{$string}{$eol}");
+        if ($output = \core\task\logmanager::add_line("{$string}{$eol}")) {
+            fwrite(STDOUT, $output);
+        }
     } else {
         echo $string . $eol;
     }
