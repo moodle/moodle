@@ -33,8 +33,11 @@
     }
 }}
 <div id="discussion-list-{{uniqid}}" {{!
+    }}data-contextid="{{contextid}}" {{!
     }}data-cmid="{{cmid}}" {{!
     }}data-group="{{forum.groupid}}" {{!
+    }}data-grading-component="{{gradingcomponent}}" {{!
+    }}data-grading-component-subtype="{{gradingcomponentsubtype}}" {{!
     }}data-gradable-itemtype="forum" {{!
     }}{{#firstgradeduserid}}data-initialuserid="{{firstgradeduserid}}" {{/firstgradeduserid}}{{!
     }}>
