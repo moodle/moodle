@@ -184,3 +184,76 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 .active.carousel-item-left {
     transform: translateX(-100%);
 }
+
+/**
+ * Reset all of the forced style on the page.
+ * - Remove borders on header and content.
+ * - Remove most of the vertical padding.
+ * - Make the content region flex grow so it pushes things like the
+ *   next activity selector to the bottom of the page.
+ */
+$allow-reset-style: true !default;
+
+@if $allow-reset-style {
+    body.reset-style {
+        #page-header {
+            .card {
+                border: none;
+
+                .page-header-headings {
+                    h1 {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+
+            & > div {
+                padding-top: 0 !important;  /* stylelint-disable-line declaration-no-important */
+                padding-bottom: 0 !important;  /* stylelint-disable-line declaration-no-important */
+            }
+        }
+
+        #page-content {
+            padding-bottom: 0 !important;  /* stylelint-disable-line declaration-no-important */
+
+            #region-main-box {
+                #region-main {
+                    border: none;
+                    display: inline-flex;
+                    flex-direction: column;
+                    padding: 0;
+                    height: 100%;
+                    width: 100%;
+                    padding-left: $card-spacer-x;
+                    padding-right: $card-spacer-x;
+                    vertical-align: top;
+
+                    div[role="main"] {
+                        flex: 1;
+                    }
+
+                    .activity-navigation {
+                        overflow: hidden;
+                    }
+
+                    &.has-blocks {
+                        width: calc(100% - #{$blocks-plus-gutter});
+
+                        @include media-breakpoint-down(lg) {
+                            width: 100%;
+                        }
+                    }
+                }
+
+                [data-region="blocks-column"] {
+                    margin-left: auto;
+                }
+
+                @include media-breakpoint-down(lg) {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+        }
+    }
+}

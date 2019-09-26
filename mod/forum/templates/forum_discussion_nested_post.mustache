@@ -31,7 +31,7 @@
 }}
 {{< mod_forum/forum_discussion_post }}
     {{$replies}}
-        <div class="indent">
+        <div class="indent" data-region="replies-container">
             {{#replies}}
                 {{> mod_forum/forum_discussion_nested_post }}
             {{/replies}}

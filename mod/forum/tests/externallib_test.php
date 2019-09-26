@@ -548,6 +548,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $exporteduser2 = [
             'id' => (int) $user2->id,
             'fullname' => fullname($user2),
+            'isdeleted' => false,
             'groups' => [],
             'urls' => [
                 'profile' => $urlfactory->get_author_profile_url($user2entity),
@@ -562,6 +563,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'id' => (int) $user3->id,
             'fullname' => fullname($user3),
             'groups' => [],
+            'isdeleted' => false,
             'urls' => [
                 'profile' => $urlfactory->get_author_profile_url($user3entity),
                 'profileimage' => $urlfactory->get_author_profile_image_url($user3entity),
@@ -642,6 +644,16 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Delete one user, to test that we still receive posts by this user.
         delete_user($user3);
+        $exporteduser3 = [
+            'id' => (int) $user3->id,
+            'fullname' => get_string('deleteduser', 'mod_forum'),
+            'groups' => [],
+            'isdeleted' => true,
+            'urls' => [
+                'profile' => $urlfactory->get_author_profile_url($user3entity),
+                'profileimage' => $urlfactory->get_author_profile_image_url($user3entity),
+            ]
+        ];
 
         // Create what we expect to be returned when querying the discussion.
         $expectedposts = array(

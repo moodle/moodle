@@ -314,15 +314,13 @@
         </div>
     </div>
 
-    <div data-region="replies-container">
     {{$replies}}
-        <div>
-        {{#hasreplies}}
-            {{#replies}}
-                {{> mod_forum/forum_discussion_post }}
-            {{/replies}}
-        {{/hasreplies}}
+        <div data-region="replies-container">
+            {{#hasreplies}}
+                {{#replies}}
+                    {{> mod_forum/forum_discussion_post }}
+                {{/replies}}
+            {{/hasreplies}}
         </div>
     {{/replies}}
-    </div>
 </article>

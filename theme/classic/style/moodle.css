@@ -2308,7 +2308,11 @@
 .fa-meetup:before {
   content: ""; }
 
-.sr-only {
+.sr-only, .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink,
+.path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning,
+.path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode .discussionlocked.formulation,
+.path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode .discussionlocked.outcome,
+.path-mod-forum.modern-display-mode .que .discussionlocked.comment, .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .path-mod-forum.modern-display-mode .tag_list > b {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -4485,17 +4489,17 @@ fieldset:disabled #rubric-rubric.gradingform_rubric a.addcriterion,
     .show > .btn-outline-dark.dropdown-toggle:focus {
       box-shadow: 0 0 0 0.2rem rgba(55, 58, 60, 0.5); }
 
-.btn-link {
+.btn-link, .btn.btn-icon, #page-grade-grading-manage .actions .btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion {
   font-weight: 400;
   color: #1177d1;
   text-decoration: none; }
-  .btn-link:hover {
+  .btn-link:hover, .btn.btn-icon:hover, #page-grade-grading-manage .actions .btn-icon.action:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover {
     color: #0b4f8a;
     text-decoration: underline; }
-  .btn-link:focus, .btn-link.focus {
+  .btn-link:focus, .btn.btn-icon:focus, #page-grade-grading-manage .actions .btn-icon.action:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, .btn-link.focus, .focus.btn.btn-icon, #page-grade-grading-manage .actions .focus.btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.focus.btn-icon, #rubric-rubric.gradingform_rubric .focus.btn-icon.addcriterion {
     text-decoration: underline;
     box-shadow: none; }
-  .btn-link:disabled, .btn-link.disabled {
+  .btn-link:disabled, .btn.btn-icon:disabled, #page-grade-grading-manage .actions .btn-icon.action:disabled, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:disabled, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:disabled, .btn-link.disabled, .disabled.btn.btn-icon, .fp-viewbar.disabled a.btn-icon, #page-grade-grading-manage .actions .disabled.btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.disabled.btn-icon, #rubric-rubric.gradingform_rubric .disabled.btn-icon.addcriterion {
     color: #868e96;
     pointer-events: none; }
 
@@ -7965,7 +7969,11 @@ button.bg-dark:focus {
     top: 0;
     z-index: 1020; } }
 
-.sr-only {
+.sr-only, .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink,
+.path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning,
+.path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode .discussionlocked.formulation,
+.path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode .discussionlocked.outcome,
+.path-mod-forum.modern-display-mode .que .discussionlocked.comment, .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .path-mod-forum.modern-display-mode .tag_list > b {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -11647,43 +11655,43 @@ div.editor_atto_toolbar button .icon {
     opacity: 0; }
     .switch input + label {
       position: relative;
-      min-height: 0.8rem;
-      min-width: 1.6rem;
-      line-height: 0.8rem;
-      border-radius: 0.8rem;
+      min-height: 1.25rem;
+      min-width: 2.5rem;
+      line-height: 1.25rem;
+      border-radius: 1.25rem;
       display: inline-block;
       cursor: pointer;
       outline: none;
       user-select: none;
       vertical-align: middle;
-      padding-left: 2.1rem; }
+      padding-left: 3rem; }
     .switch input + label::before,
     .switch input + label::after {
       content: '';
       position: absolute;
-      top: calc(50% - 0.4rem);
+      top: calc(50% - 0.625rem);
       left: 0;
-      width: 1.6rem;
-      height: 0.8rem;
+      width: 2.5rem;
+      height: 1.25rem;
       bottom: 0;
       display: block; }
     .switch input + label::before {
       right: 0;
-      background-color: #fff;
-      border-radius: 0.8rem;
+      background-color: #dee2e6;
+      border-radius: 1.25rem;
       transition: 0.2s all; }
     .switch input + label::after {
       margin-top: 2px;
       left: 2px;
-      width: calc(0.8rem - 4px);
-      height: calc(0.8rem - 4px);
+      width: calc(1.25rem - 4px);
+      height: calc(1.25rem - 4px);
       border-radius: 50%;
       background-color: #fff;
       transition: 0.2s all; }
     .switch input:checked + label::before {
       background-color: #1177d1; }
     .switch input:checked + label::after {
-      margin-left: 0.8rem; }
+      margin-left: 1.25rem; }
     .switch input:focus + label::before {
       outline: none;
       box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.25); }
@@ -12437,18 +12445,25 @@ div.editor_atto_toolbar button .icon {
 
 .block .block-cards a.coursename,
 .block .block-cards span.categoryname,
-.block .block-cards .btn-link {
+.block .block-cards .btn-link,
+.block .block-cards .btn.btn-icon,
+.block .block-cards #page-grade-grading-manage .actions .btn-icon.action,
+#page-grade-grading-manage .actions .block .block-cards .btn-icon.action,
+.block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon,
+#rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon,
+.block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion,
+#rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion {
   color: inherit; }
 
 .block .block-cards .multiline {
   white-space: normal; }
 
-.block .block-cards .btn.btn-link.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion {
+.block .block-cards .btn.btn-link.btn-icon, .block .block-cards .btn.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion {
   height: 36px;
   width: 36px;
   padding: 0;
   border-radius: 50%; }
-  .block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:hover, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:hover, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:hover, .block .block-cards .btn.btn-link.btn-icon:focus, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:focus, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:focus, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:focus {
+  .block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards .btn.btn-icon:hover, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action:hover, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon:hover, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion:hover, .block .block-cards .btn.btn-link.btn-icon:focus, .block .block-cards .btn.btn-icon:focus, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action:focus, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon:focus, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion:focus {
     background-color: #e9ecef; }
 
 .dashboard-card-deck.one-row {
@@ -14937,9 +14952,16 @@ a.ygtvspacer:hover {
     .message-app .clickable:hover {
       filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3)); }
   .message-app a,
-  .message-app .btn-link {
+  .message-app .btn-link,
+  .message-app .btn.btn-icon,
+  .message-app #page-grade-grading-manage .actions .btn-icon.action,
+  #page-grade-grading-manage .actions .message-app .btn-icon.action,
+  .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon,
+  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon,
+  .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion,
+  #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion {
     color: inherit; }
-  .message-app .btn-link:hover, .message-app .btn-link:focus {
+  .message-app .btn-link:hover, .message-app .btn.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:hover, .message-app .btn-link:focus, .message-app .btn.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:focus {
     background-color: rgba(0, 0, 0, 0.035);
     text-decoration: none; }
   .message-app .icon {
@@ -14952,40 +14974,40 @@ a.ygtvspacer:hover {
     display: inline-block; }
   .message-app .overview-section-toggle.collapsed .expanded-icon-container {
     display: none; }
-  .message-app .btn.btn-link.btn-icon, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion {
+  .message-app .btn.btn-link.btn-icon, .message-app .btn.btn-icon, .message-app #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions .message-app .btn-icon.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion {
     height: 16px;
     width: 16px;
     padding: 0;
     border-radius: 50%;
     flex-shrink: 0; }
-    .message-app .btn.btn-link.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion:hover, .message-app .btn.btn-link.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion:focus {
+    .message-app .btn.btn-link.btn-icon:hover, .message-app .btn.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:hover, .message-app .btn.btn-link.btn-icon:focus, .message-app .btn.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:focus {
       background-color: #e9ecef; }
-    .message-app .btn.btn-link.btn-icon.icon-size-0, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-0.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-0.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-0, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-0.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-0.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-0, .message-app .btn.btn-icon.icon-size-0, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-0.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-0.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-0, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-0.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-0.addcriterion {
       height: 20px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 20px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-1, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-1.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-1.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-1, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-1.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-1.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-1, .message-app .btn.btn-icon.icon-size-1, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-1.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-1.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-1, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-1.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-1.addcriterion {
       height: 24px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 24px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-2, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-2.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-2.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-2, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-2.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-2.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-2, .message-app .btn.btn-icon.icon-size-2, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-2.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-2.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-2, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-2.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-2.addcriterion {
       height: 28px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 28px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-3, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-3.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-3.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-3, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-3.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-3.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-3, .message-app .btn.btn-icon.icon-size-3, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-3.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-3.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-3, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-3.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-3.addcriterion {
       height: 36px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 36px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-4, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-4.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-4.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-4, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-4.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-4.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-4, .message-app .btn.btn-icon.icon-size-4, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-4.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-4.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-4, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-4.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-4.addcriterion {
       height: 44px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 44px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-5, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-5.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-5.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-5, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-5.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-5.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-5, .message-app .btn.btn-icon.icon-size-5, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-5.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-5.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-5, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-5.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-5.addcriterion {
       height: 68px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 68px !important;
@@ -15220,7 +15242,27 @@ body.path-question-type {
     font: inherit;
     position: static;
     padding-right: .3em; }
-  body.path-question-type .form-group .sr-only, body.path-question-type .form-buttons .sr-only, body.path-question-type .path-admin .buttons .sr-only, .path-admin body.path-question-type .buttons .sr-only, body.path-question-type .fp-content-center form + div .sr-only, .fp-content-center body.path-question-type form + div .sr-only, body.path-question-type div.backup-section + form .sr-only {
+  body.path-question-type .form-group .sr-only, body.path-question-type .form-buttons .sr-only, body.path-question-type .path-admin .buttons .sr-only, .path-admin body.path-question-type .buttons .sr-only, body.path-question-type .fp-content-center form + div .sr-only, .fp-content-center body.path-question-type form + div .sr-only, body.path-question-type div.backup-section + form .sr-only, body.path-question-type .form-group .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode body.path-question-type .form-group .alert.discussionlocked, body.path-question-type .form-buttons .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .alert.discussionlocked, body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .alert.discussionlocked, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .alert.discussionlocked, body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .alert.discussionlocked, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .alert.discussionlocked, body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode .alert.discussionlocked, .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.releasenoteslink, body.path-question-type .form-buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.releasenoteslink, body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.releasenoteslink, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.modern-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.releasenoteslink, body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.releasenoteslink, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.modern-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.releasenoteslink, body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.releasenoteslink, body.path-question-type .form-group #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .form-group .discussionlocked.releasenoteslink, body.path-question-type .form-buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .discussionlocked.releasenoteslink, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .discussionlocked.releasenoteslink, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .discussionlocked.releasenoteslink, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.releasenoteslink, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.releasenoteslink, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .discussionlocked.releasenoteslink,
+  body.path-question-type .form-group .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.adminwarning,
+  body.path-question-type .form-buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.adminwarning,
+  body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.adminwarning, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.modern-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.adminwarning,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.adminwarning, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.modern-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.adminwarning,
+  body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.adminwarning, body.path-question-type .form-group #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .form-group .discussionlocked.adminwarning, body.path-question-type .form-buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .discussionlocked.adminwarning, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .discussionlocked.adminwarning, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .discussionlocked.adminwarning, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.adminwarning, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.adminwarning, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .discussionlocked.adminwarning,
+  body.path-question-type .form-group .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.adminerror,
+  body.path-question-type .form-buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.adminerror,
+  body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.adminerror, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.modern-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.adminerror,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.adminerror, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.modern-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.adminerror,
+  body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.modern-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.adminerror, body.path-question-type .form-group #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .form-group .discussionlocked.adminerror, body.path-question-type .form-buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .discussionlocked.adminerror, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .discussionlocked.adminerror, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .discussionlocked.adminerror, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.adminerror, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.adminerror, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum.modern-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .discussionlocked.adminerror, body.path-question-type .form-group .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .path-mod-forum.modern-display-mode .que body.path-question-type .form-group .discussionlocked.formulation, body.path-question-type .form-buttons .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .path-mod-forum.modern-display-mode .que body.path-question-type .form-buttons .discussionlocked.formulation, body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .path-mod-forum.modern-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.formulation, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .path-mod-forum.modern-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.formulation, body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .path-mod-forum.modern-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.formulation, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .path-mod-forum.modern-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.formulation, body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode .que .discussionlocked.formulation, .path-mod-forum.modern-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.formulation, body.path-question-type .form-group .que .path-mod-forum.modern-display-mode .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode body.path-question-type .form-group .discussionlocked.formulation, body.path-question-type .form-buttons .que .path-mod-forum.modern-display-mode .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .discussionlocked.formulation, body.path-question-type .path-admin .buttons .que .path-mod-forum.modern-display-mode .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .discussionlocked.formulation, .path-admin body.path-question-type .buttons .que .path-mod-forum.modern-display-mode .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .discussionlocked.formulation, body.path-question-type .fp-content-center form + div .que .path-mod-forum.modern-display-mode .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.formulation, .fp-content-center body.path-question-type form + div .que .path-mod-forum.modern-display-mode .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.formulation, body.path-question-type div.backup-section + form .que .path-mod-forum.modern-display-mode .discussionlocked.formulation, .que .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .discussionlocked.formulation,
+  body.path-question-type .form-group .path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .path-mod-forum.modern-display-mode .que body.path-question-type .form-group .discussionlocked.outcome,
+  body.path-question-type .form-buttons .path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .path-mod-forum.modern-display-mode .que body.path-question-type .form-buttons .discussionlocked.outcome,
+  body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .path-mod-forum.modern-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.outcome, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .path-mod-forum.modern-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.outcome,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .path-mod-forum.modern-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.outcome, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .path-mod-forum.modern-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.outcome,
+  body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode .que .discussionlocked.outcome, .path-mod-forum.modern-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.outcome, body.path-question-type .form-group .que .path-mod-forum.modern-display-mode .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode body.path-question-type .form-group .discussionlocked.outcome, body.path-question-type .form-buttons .que .path-mod-forum.modern-display-mode .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .discussionlocked.outcome, body.path-question-type .path-admin .buttons .que .path-mod-forum.modern-display-mode .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .discussionlocked.outcome, .path-admin body.path-question-type .buttons .que .path-mod-forum.modern-display-mode .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .discussionlocked.outcome, body.path-question-type .fp-content-center form + div .que .path-mod-forum.modern-display-mode .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.outcome, .fp-content-center body.path-question-type form + div .que .path-mod-forum.modern-display-mode .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.outcome, body.path-question-type div.backup-section + form .que .path-mod-forum.modern-display-mode .discussionlocked.outcome, .que .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .discussionlocked.outcome,
+  body.path-question-type .form-group .path-mod-forum.modern-display-mode .que .discussionlocked.comment, .path-mod-forum.modern-display-mode .que body.path-question-type .form-group .discussionlocked.comment,
+  body.path-question-type .form-buttons .path-mod-forum.modern-display-mode .que .discussionlocked.comment, .path-mod-forum.modern-display-mode .que body.path-question-type .form-buttons .discussionlocked.comment,
+  body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode .que .discussionlocked.comment, .path-mod-forum.modern-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.comment, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode .que .discussionlocked.comment, .path-mod-forum.modern-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.comment,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode .que .discussionlocked.comment, .path-mod-forum.modern-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.comment, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode .que .discussionlocked.comment, .path-mod-forum.modern-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.comment,
+  body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode .que .discussionlocked.comment, .path-mod-forum.modern-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.comment, body.path-question-type .form-group .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .que .path-mod-forum.modern-display-mode body.path-question-type .form-group .discussionlocked.comment, body.path-question-type .form-buttons .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .que .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .discussionlocked.comment, body.path-question-type .path-admin .buttons .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .que .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .discussionlocked.comment, .path-admin body.path-question-type .buttons .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .que .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .discussionlocked.comment, body.path-question-type .fp-content-center form + div .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .que .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.comment, .fp-content-center body.path-question-type form + div .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .que .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.comment, body.path-question-type div.backup-section + form .que .path-mod-forum.modern-display-mode .discussionlocked.comment, .que .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .discussionlocked.comment, body.path-question-type .form-group .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-buttons .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-buttons .discussionlocked.label, body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget body.path-question-type .path-admin .buttons .discussionlocked.label, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .path-admin body.path-question-type .buttons .discussionlocked.label, body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget body.path-question-type .fp-content-center form + div .discussionlocked.label, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .fp-content-center body.path-question-type form + div .discussionlocked.label, body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.modern-display-mode .assignfeedback_editpdf_widget body.path-question-type div.backup-section + form .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-buttons .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .discussionlocked.label, body.path-question-type .path-admin .buttons .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .discussionlocked.label, .path-admin body.path-question-type .buttons .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .discussionlocked.label, body.path-question-type .fp-content-center form + div .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.label, .fp-content-center body.path-question-type form + div .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.label, body.path-question-type div.backup-section + form .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .discussionlocked.label, body.path-question-type .form-group .path-mod-forum.modern-display-mode .tag_list > b, .path-mod-forum.modern-display-mode body.path-question-type .form-group .tag_list > b, body.path-question-type .form-buttons .path-mod-forum.modern-display-mode .tag_list > b, .path-mod-forum.modern-display-mode body.path-question-type .form-buttons .tag_list > b, body.path-question-type .path-admin .buttons .path-mod-forum.modern-display-mode .tag_list > b, .path-mod-forum.modern-display-mode body.path-question-type .path-admin .buttons .tag_list > b, .path-admin body.path-question-type .buttons .path-mod-forum.modern-display-mode .tag_list > b, .path-mod-forum.modern-display-mode .path-admin body.path-question-type .buttons .tag_list > b, body.path-question-type .fp-content-center form + div .path-mod-forum.modern-display-mode .tag_list > b, .path-mod-forum.modern-display-mode body.path-question-type .fp-content-center form + div .tag_list > b, .fp-content-center body.path-question-type form + div .path-mod-forum.modern-display-mode .tag_list > b, .path-mod-forum.modern-display-mode .fp-content-center body.path-question-type form + div .tag_list > b, body.path-question-type div.backup-section + form .path-mod-forum.modern-display-mode .tag_list > b, .path-mod-forum.modern-display-mode body.path-question-type div.backup-section + form .tag_list > b {
     position: static;
     width: auto;
     height: auto;
@@ -16355,6 +16397,136 @@ select {
   #page-mod-forum-discuss .discussioncontrols .form-inline input {
     margin-top: -1px; }
 
+/** Gently highlight the selected post by changing it's background to blue and then fading it out. */
+@keyframes background-highlight {
+  from {
+    background-color: rgba(0, 123, 255, 0.5); }
+  to {
+    background-color: inherit; } }
+
+.path-mod-forum.modern-display-mode {
+  /** Reset the badge styling back to pill style. */
+  /** Style the ratings like a badge. */
+  /** Don't show the discussion locked alert in this mode because it's already indicated with a badge. */
+  /** Fix muted text contrast ratios for accessibility. */
+  /** Make the tag list text screen reader visible only */ }
+  .path-mod-forum.modern-display-mode .discussionsubscription {
+    margin-top: 0;
+    text-align: inherit;
+    margin-bottom: 0; }
+  .path-mod-forum.modern-display-mode .preload-subscribe,
+  .path-mod-forum.modern-display-mode .preload-unsubscribe {
+    display: none; }
+  .path-mod-forum.modern-display-mode .post-message {
+    line-height: 1.6; }
+  .path-mod-forum.modern-display-mode .indent {
+    margin-left: 0; }
+  .path-mod-forum.modern-display-mode .badge {
+    font-size: inherit;
+    font-weight: inherit;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    border-radius: 10rem; }
+  .path-mod-forum.modern-display-mode .badge-light {
+    background-color: #f6f6f6;
+    color: #5b5b5b; }
+  .path-mod-forum.modern-display-mode .rating-aggregate-container {
+    background-color: #f6f6f6;
+    color: #5b5b5b;
+    padding: .25em .5em;
+    line-height: 1;
+    margin-right: .5rem;
+    vertical-align: middle;
+    border-radius: 10rem;
+    text-align: center; }
+  .path-mod-forum.modern-display-mode .ratinginput {
+    padding: .25em 1.75rem 0.25em .75em;
+    line-height: 1;
+    height: auto;
+    border-radius: 10rem; }
+  .path-mod-forum.modern-display-mode .group-image {
+    width: 35px;
+    height: 35px;
+    margin-right: 0;
+    float: none;
+    display: inline-block; }
+  .path-mod-forum.modern-display-mode .text-muted, .path-mod-forum.modern-display-mode a.dimmed,
+  .path-mod-forum.modern-display-mode .dimmed_text,
+  .path-mod-forum.modern-display-mode .dimmed_text a, .dimmed_text .path-mod-forum.modern-display-mode a,
+  .path-mod-forum.modern-display-mode .usersuspended,
+  .path-mod-forum.modern-display-mode .usersuspended a, .usersuspended .path-mod-forum.modern-display-mode a,
+  .path-mod-forum.modern-display-mode .dimmed_category,
+  .path-mod-forum.modern-display-mode .dimmed_category a, .dimmed_category .path-mod-forum.modern-display-mode a, .path-mod-forum.modern-display-mode .tag_feed .media .muted a, .tag_feed .media .muted .path-mod-forum.modern-display-mode a, .path-mod-forum.modern-display-mode #page-admin-qtypes .disabled, #page-admin-qtypes .path-mod-forum.modern-display-mode .disabled,
+  .path-mod-forum.modern-display-mode #page-admin-qbehaviours .disabled, #page-admin-qbehaviours .path-mod-forum.modern-display-mode .disabled, .path-mod-forum.modern-display-mode #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .pluginname .path-mod-forum.modern-display-mode .componentname, .path-mod-forum.modern-display-mode #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .version .path-mod-forum.modern-display-mode .versionnumber, .path-mod-forum.modern-display-mode #page-admin-plugins #plugins-control-panel .notes .requiredby, #page-admin-plugins #plugins-control-panel .notes .path-mod-forum.modern-display-mode .requiredby, .path-mod-forum.modern-display-mode #plugins-check-page .page-description, #plugins-check-page .path-mod-forum.modern-display-mode .page-description, .path-mod-forum.modern-display-mode #plugins-check-page #plugins-check .requires-ok, #plugins-check-page #plugins-check .path-mod-forum.modern-display-mode .requires-ok, .path-mod-forum.modern-display-mode #plugins-check-page #plugins-check .displayname .plugindir, #plugins-check-page #plugins-check .displayname .path-mod-forum.modern-display-mode .plugindir, .path-mod-forum.modern-display-mode #plugins-check-page #plugins-check-available-dependencies .displayname .component, #plugins-check-page #plugins-check-available-dependencies .displayname .path-mod-forum.modern-display-mode .component, .path-mod-forum.modern-display-mode #page-admin-search .adminpagepath li, #page-admin-search .adminpagepath .path-mod-forum.modern-display-mode li, .path-mod-forum.modern-display-mode .block .minicalendar td.weekend, .block .minicalendar .path-mod-forum.modern-display-mode td.weekend, .path-mod-forum.modern-display-mode .section .activity .stealth, .section .activity .path-mod-forum.modern-display-mode .stealth, .path-mod-forum.modern-display-mode .course-content .section-summary .section-summary-activities .activity-count, .course-content .section-summary .section-summary-activities .path-mod-forum.modern-display-mode .activity-count, .path-mod-forum.modern-display-mode .course-content ul li.section.hidden .sectionname > span, .course-content ul li.section.hidden .path-mod-forum.modern-display-mode .sectionname > span,
+  .path-mod-forum.modern-display-mode .course-content ul li.section.hidden .content > div.summary, .course-content ul li.section.hidden .path-mod-forum.modern-display-mode .content > div.summary,
+  .path-mod-forum.modern-display-mode .course-content ul li.section.hidden .activity .activityinstance, .course-content ul li.section.hidden .activity .path-mod-forum.modern-display-mode .activityinstance, .path-mod-forum.modern-display-mode #course-category-listings .listitem[data-visible="0"], #course-category-listings .path-mod-forum.modern-display-mode .listitem[data-visible="0"], .path-mod-forum.modern-display-mode #course-category-listings .listitem[data-visible="0"] > div > a, #course-category-listings .path-mod-forum.modern-display-mode .listitem[data-visible="0"] > div > a, .path-mod-forum.modern-display-mode #course-category-listings .listing-pagination-totals.dimmed, #course-category-listings .path-mod-forum.modern-display-mode .listing-pagination-totals.dimmed, .path-mod-forum.modern-display-mode .fitem.disabled .fp-btn-choose, .fitem.disabled .path-mod-forum.modern-display-mode .fp-btn-choose, .path-mod-forum.modern-display-mode .form-defaultinfo,
+  .path-mod-forum.modern-display-mode .form-label .form-shortname, .form-label .path-mod-forum.modern-display-mode .form-shortname, .path-mod-forum.modern-display-mode .formsettingheading .form-horizontal, .formsettingheading .path-mod-forum.modern-display-mode .form-horizontal, .path-mod-forum.modern-display-mode .no-felement.fstatic, .path-mod-forum.modern-display-mode .path-backup .backup_progress .backup_stage, .path-backup .backup_progress .path-mod-forum.modern-display-mode .backup_stage,
+  .path-mod-forum.modern-display-mode .dimmed_text {
+    color: #707070 !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .path-mod-forum.modern-display-mode .author-header {
+    font-style: italic; }
+    .path-mod-forum.modern-display-mode .author-header .author-name {
+      font-style: normal; }
+  .path-mod-forum.modern-display-mode :target > .focus-target {
+    animation-name: background-highlight;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1; }
+  .path-mod-forum.modern-display-mode .forum-post-container .replies-container .forum-post-container {
+    border-top: 1px solid #dee2e6;
+    padding-top: 1.5rem; }
+    .path-mod-forum.modern-display-mode .forum-post-container .replies-container .forum-post-container .replies-container .forum-post-container {
+      border-top: none;
+      padding-top: 0; }
+  .path-mod-forum.modern-display-mode .forum-post-container .replies-container .inline-reply-container .reply-author {
+    display: none; }
+  .path-mod-forum.modern-display-mode .forum-post-container .post-message p:last-of-type {
+    margin-bottom: 0; }
+  .path-mod-forum.modern-display-mode .forum-post-container .author-image-container {
+    width: 70px;
+    margin-right: 24px;
+    flex-shrink: 0; }
+  .path-mod-forum.modern-display-mode .forum-post-container .inline-reply-container textarea {
+    border: 0;
+    resize: none; }
+  .path-mod-forum.modern-display-mode .forum-post-container .indent {
+    /**
+             * The first post and first set of replies have a larger author image so offset the 2nd
+             * set of replies by the image width + margin to ensure they align.
+             */ }
+    .path-mod-forum.modern-display-mode .forum-post-container .indent .indent {
+      padding-left: 94px;
+      /**
+                 * Reduce the size of the the author image for all second level replies (and below).
+                 */
+      /**
+                 * Adjust the indentation offset for all 3rd level replies and below for the smaller author image.
+                 */ }
+      .path-mod-forum.modern-display-mode .forum-post-container .indent .indent .author-image-container {
+        width: 30px;
+        margin-right: 8px; }
+      .path-mod-forum.modern-display-mode .forum-post-container .indent .indent .indent {
+        padding-left: 38px;
+        /**
+                     * Stop indenting the replies after the 5th reply.
+                     */ }
+        .path-mod-forum.modern-display-mode .forum-post-container .indent .indent .indent .indent .indent .indent {
+          padding-left: 0; }
+
+/** Extra small devices (portrait phones, less than 576px). */
+@media (max-width: 767.98px) {
+  #page-mod-forum-discuss.modern-display-mode .forum-post-container .author-image-container {
+    width: 30px;
+    margin-right: 8px; }
+  #page-mod-forum-discuss.modern-display-mode .forum-post-container .indent .indent {
+    padding-left: 38px; }
+    #page-mod-forum-discuss.modern-display-mode .forum-post-container .indent .indent .indent .indent {
+      padding-left: 0; }
+  #page-mod-forum-discuss.modern-display-mode .group-image {
+    width: 30px;
+    height: 30px; } }
+
 .maincalendar .calendarmonth td,
 .maincalendar .calendarmonth th {
   border: 1px dotted #dee2e6; }
@@ -16518,7 +16690,7 @@ div#dock {
   display: inline-block;
   min-height: 12rem; }
 
-#page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
+#page-mod-quiz-mod #id_reviewoptionshdr .btn-link, #page-mod-quiz-mod #id_reviewoptionshdr .btn.btn-icon, #page-mod-quiz-mod #id_reviewoptionshdr #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions #page-mod-quiz-mod #id_reviewoptionshdr .btn-icon.action, #page-mod-quiz-mod #id_reviewoptionshdr #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-mod-quiz-mod #id_reviewoptionshdr input.btn-icon, #page-mod-quiz-mod #id_reviewoptionshdr #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric #page-mod-quiz-mod #id_reviewoptionshdr .btn-icon.addcriterion {
   line-height: 1.5;
   vertical-align: bottom; }
 
@@ -16990,6 +17162,45 @@ p.arrow_button {
 .btn-lineup {
   margin: 0 0 10px 5px; }
 
+.btn.btn-icon, #page-grade-grading-manage .actions .btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion {
+  height: 16px;
+  width: 16px;
+  padding: 0;
+  border-radius: 50%;
+  flex-shrink: 0; }
+  .btn.btn-icon:hover, #page-grade-grading-manage .actions .btn-icon.action:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, .btn.btn-icon:focus, #page-grade-grading-manage .actions .btn-icon.action:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus {
+    background-color: #e9ecef; }
+  .btn.btn-icon.icon-size-0, #page-grade-grading-manage .actions .btn-icon.icon-size-0.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-0.addcriterion {
+    height: 20px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 20px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-1, #page-grade-grading-manage .actions .btn-icon.icon-size-1.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-1.addcriterion {
+    height: 24px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 24px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-2, #page-grade-grading-manage .actions .btn-icon.icon-size-2.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-2.addcriterion {
+    height: 28px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 28px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-3, #page-grade-grading-manage .actions .btn-icon.icon-size-3.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-3.addcriterion {
+    height: 36px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 36px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-4, #page-grade-grading-manage .actions .btn-icon.icon-size-4.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-4.addcriterion {
+    height: 44px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 44px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-5, #page-grade-grading-manage .actions .btn-icon.icon-size-5.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-5.addcriterion {
+    height: 68px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 68px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+
 .gradetreebox h4 {
   font-size: 0.9375rem; }
 
@@ -17409,6 +17620,13 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 .active.carousel-item-left {
   transform: translateX(-100%); }
 
+/**
+ * Reset all of the forced style on the page.
+ * - Remove borders on header and content.
+ * - Remove most of the vertical padding.
+ * - Make the content region flex grow so it pushes things like the
+ *   next activity selector to the bottom of the page.
+ */
 body.behat-site .fixed-top {
   position: absolute; }
 

@@ -172,6 +172,7 @@ class entity {
             $record->lastname,
             fullname($record),
             $record->email,
+            $record->deleted,
             $record->middlename,
             $record->firstnamephonetic,
             $record->lastnamephonetic,

@@ -173,6 +173,208 @@ select {
     }
 }
 
+$author-image-width: 70px;
+$author-image-margin: 24px;
+$author-image-width-sm: 30px;
+$author-image-margin-sm: 8px;
+
+/** Gently highlight the selected post by changing it's background to blue and then fading it out. */
+@keyframes background-highlight {
+    from {
+        background-color: rgba(0, 123, 255, 0.5);
+    }
+    to {
+        background-color: inherit;
+    }
+}
+
+.path-mod-forum.modern-display-mode {
+    .discussionsubscription {
+        margin-top: 0;
+        text-align: inherit;
+        margin-bottom: 0;
+    }
+
+    .preload-subscribe,
+    .preload-unsubscribe {
+        display: none;
+    }
+
+    .post-message {
+        line-height: 1.6;
+    }
+
+    .indent {
+        margin-left: 0;
+    }
+
+    /** Reset the badge styling back to pill style. */
+    .badge {
+        font-size: inherit;
+        font-weight: inherit;
+        padding-left: .5rem;
+        padding-right: .5rem;
+        border-radius: 10rem;
+    }
+
+    .badge-light {
+        background-color: #f6f6f6;
+        color: #5b5b5b;
+    }
+
+    /** Style the ratings like a badge. */
+    .rating-aggregate-container {
+        background-color: #f6f6f6;
+        color: #5b5b5b;
+        padding: .25em .5em;
+        line-height: 1;
+        margin-right: .5rem;
+        vertical-align: middle;
+        border-radius: 10rem;
+        text-align: center;
+    }
+
+    .ratinginput {
+        padding: .25em 1.75rem 0.25em .75em;
+        line-height: 1;
+        height: auto;
+        border-radius: 10rem;
+    }
+
+    .group-image {
+        width: 35px;
+        height: 35px;
+        margin-right: 0;
+        float: none;
+        display: inline-block;
+    }
+
+    /** Don't show the discussion locked alert in this mode because it's already indicated with a badge. */
+    .alert.discussionlocked {
+        @extend .sr-only;
+    }
+
+    /** Fix muted text contrast ratios for accessibility. */
+    .text-muted,
+    .dimmed_text {
+        color: #707070 !important; /* stylelint-disable-line declaration-no-important */
+    }
+
+    .author-header {
+        font-style: italic;
+
+        .author-name {
+            font-style: normal;
+        }
+    }
+
+    /** Make the tag list text screen reader visible only */
+    .tag_list > b {
+        @extend .sr-only;
+    }
+
+    :target > .focus-target {
+        animation-name: background-highlight;
+        animation-duration: 1s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: 1;
+    }
+
+    .forum-post-container {
+        .replies-container {
+            .forum-post-container {
+                border-top: 1px solid #dee2e6;
+                padding-top: 1.5rem;
+
+                .replies-container .forum-post-container {
+                    border-top: none;
+                    padding-top: 0;
+                }
+            }
+
+            .inline-reply-container .reply-author {
+                display: none;
+            }
+        }
+
+        .post-message p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .author-image-container {
+            width: $author-image-width;
+            margin-right: $author-image-margin;
+            flex-shrink: 0;
+        }
+
+        .inline-reply-container textarea {
+            border: 0;
+            resize: none;
+        }
+
+        .indent {
+            /**
+             * The first post and first set of replies have a larger author image so offset the 2nd
+             * set of replies by the image width + margin to ensure they align.
+             */
+            .indent {
+                padding-left: $author-image-width + $author-image-margin;
+
+                /**
+                 * Reduce the size of the the author image for all second level replies (and below).
+                 */
+                .author-image-container {
+                    width: $author-image-width-sm;
+                    margin-right: $author-image-margin-sm;
+                }
+
+                /**
+                 * Adjust the indentation offset for all 3rd level replies and below for the smaller author image.
+                 */
+                .indent {
+                    padding-left: $author-image-width-sm + $author-image-margin-sm;
+
+                    /**
+                     * Stop indenting the replies after the 5th reply.
+                     */
+                    .indent .indent .indent {
+                        padding-left: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Extra small devices (portrait phones, less than 576px). */
+@include media-breakpoint-down(sm) {
+    #page-mod-forum-discuss.modern-display-mode {
+        .forum-post-container {
+            .author-image-container {
+                width: $author-image-width-sm;
+                margin-right: $author-image-margin-sm;
+            }
+
+            .indent {
+                .indent {
+                    padding-left: $author-image-width-sm + $author-image-margin-sm;
+
+                    .indent .indent {
+                        padding-left: 0;
+                    }
+                }
+            }
+        }
+
+        .group-image {
+            width: 30px;
+            height: 30px;
+        }
+    }
+}
+
+// End styling for mod_forum.
+
 .maincalendar .calendarmonth td,
 .maincalendar .calendarmonth th {
     border: 1px dotted $table-border-color;

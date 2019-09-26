@@ -120,8 +120,8 @@ class discussion_list extends db_table_vault {
         // - Most recent editor.
         $thistable = new dml_table(self::TABLE, $alias, $alias);
         $posttable = new dml_table('forum_posts', 'fp', 'p_');
-        $firstauthorfields = \user_picture::fields('fa', null, self::FIRST_AUTHOR_ID_ALIAS, self::FIRST_AUTHOR_ALIAS);
-        $latestuserfields = \user_picture::fields('la', null, self::LATEST_AUTHOR_ID_ALIAS, self::LATEST_AUTHOR_ALIAS);
+        $firstauthorfields = \user_picture::fields('fa', ['deleted'], self::FIRST_AUTHOR_ID_ALIAS, self::FIRST_AUTHOR_ALIAS);
+        $latestuserfields = \user_picture::fields('la', ['deleted'], self::LATEST_AUTHOR_ID_ALIAS, self::LATEST_AUTHOR_ALIAS);
 
         $fields = implode(', ', [
             $thistable->get_field_select(),

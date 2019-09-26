@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum_discussion_threaded_posts
+    @template mod_forum/forum_discussion_modern_posts
 
-    Template to render a list of posts in a threaded format.
+    Template to render a list of posts for a discussion.
 
     Classes required for JS:
     * none
@@ -29,16 +29,6 @@
     {
     }
 }}
-
 {{#posts}}
-    {{< mod_forum/forum_discussion_post }}
-        {{$replies}}
-            <!-- The forumthread class is only added for behat -->
-            <div class="indent forumthread post-replies" data-region="replies-container">
-                {{#replies}}
-                    {{> mod_forum/forum_discussion_threaded_post }}
-                {{/replies}}
-            </div>
-        {{/replies}}
-    {{/ mod_forum/forum_discussion_post }}
+    {{> mod_forum/forum_discussion_modern_first_post }}
 {{/posts}}

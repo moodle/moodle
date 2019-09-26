@@ -59,6 +59,11 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
             }
         });
 
+        jQuery("html").tooltip({
+            container: "body",
+            selector: '[data-toggle="tooltip"]'
+        });
+
         // Disables flipping the dropdowns up and getting hidden behind the navbar.
         jQuery.fn.dropdown.Constructor.Default.flip = false;
 

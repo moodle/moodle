@@ -51,6 +51,7 @@ class author {
                 'lastname' => $author->get_last_name(),
                 'fullname' => $author->get_full_name(),
                 'email' => $author->get_email(),
+                'deleted' => $author->is_deleted(),
                 'middlename' => $author->get_middle_name(),
                 'firstnamephonetic' => $author->get_first_name_phonetic(),
                 'lastnamephonetic' => $author->get_last_name_phonetic(),
