@@ -226,32 +226,14 @@ class media_videojs_plugin extends core_media_player_native {
             $filetypes = preg_split('/\s*,\s*/',
                 strtolower(trim(get_config('media_videojs', 'videoextensions') . ',' .
                 get_config('media_videojs', 'audioextensions'))));
-            $configuredextensions =  file_get_typegroup('extension', $filetypes);
 
-            // If Flash is disabled get extensions natively supported by browsers,
-            if (!get_config('media_videojs', 'useflash')) {
-                $nativeextensions = array_merge(file_get_typegroup('extension', 'html_video'),
-                    file_get_typegroup('extension', 'html_audio'));
-            } else {
-                // If we have Flash fallback enabled pass through all configured extensions.
-                $nativeextensions = $configuredextensions;
+            $this->extensions = file_get_typegroup('extension', $filetypes);
+            if ($this->extensions && !get_config('media_videojs', 'useflash')) {
+                // If Flash is disabled get extensions supported by player that don't rely on flash.
+                $supportedextensions = array_merge(file_get_typegroup('extension', 'html_video'),
+                    file_get_typegroup('extension', 'html_audio'), file_get_typegroup('extension', 'media_source'));
+                $this->extensions = array_intersect($this->extensions, $supportedextensions);
             }
-
-            // Handle HLS and MPEG-DASH if in configured extensions.
-            // This is a bit of a hassle because of browser compatibility differences.
-            $msextensions = array();
-            if (in_array('.m3u8', $configuredextensions) && core_useragent::supports_media_source_extensions('.m3u8')) {
-                $msextensions[] = '.m3u8';
-            }
-
-            if (in_array('.mpd', $configuredextensions) && core_useragent::supports_media_source_extensions('.mpd')) {
-                $msextensions[] = '.mpd';
-            }
-
-            // Final supported extensions are intersection of user configured extensions
-            // and extensions the browser and videoJS support based on player configuration.
-            $supportedextensions = array_merge($nativeextensions, $msextensions);
-            $this->extensions = array_intersect($configuredextensions, $supportedextensions);
         }
         return $this->extensions;
     }
@@ -270,7 +252,6 @@ class media_videojs_plugin extends core_media_player_native {
             }
         }
 
-        // If Flash fallback is enabled we can not check if/when browser supports flash.
         $extensions = $this->get_supported_extensions();
         $rtmpallowed = get_config('media_videojs', 'rtmp') && get_config('media_videojs', 'useflash');
         foreach ($urls as $url) {
@@ -279,6 +260,7 @@ class media_videojs_plugin extends core_media_player_native {
             if (!$rtmpallowed && ($url->get_scheme() === 'rtmp')) {
                 continue;
             }
+
             // If RTMP support is allowed, URL with RTMP scheme is supported irrespective to extension.
             if ($rtmpallowed && ($url->get_scheme() === 'rtmp')) {
                 $result[] = $url;
@@ -286,26 +268,23 @@ class media_videojs_plugin extends core_media_player_native {
             }
 
             $ext = '.' . core_media_manager::instance()->get_extension($url);
+            // Handle HLS and MPEG-DASH if supported.
+            $isstream = in_array($ext, file_get_typegroup('extension', 'media_source'));
+            if ($isstream && in_array($ext, $extensions) && core_useragent::supports_media_source_extensions($ext)) {
+                $result[] = $url;
+                continue;
+            }
 
             if (!get_config('media_videojs', 'useflash')) {
-                $result = parent::list_supported_urls($urls, $options);
+                return parent::list_supported_urls($urls, $options);
             } else {
+                // If Flash fallback is enabled we can not check if/when browser supports flash.
+                // We assume it will be able to handle any other extensions that player supports.
                 if (in_array($ext, $extensions)) {
                     $result[] = $url;
                 }
             }
-
-            // Handle HLS and MPEG-DASH if in configured extensions.
-            // This is a bit of a hassle because of browser compatibility differences.
-            if ($ext == '.m3u8' && core_useragent::supports_media_source_extensions('.m3u8')) {
-                $result[] = $url;
-            }
-
-            if ($ext == '.mpd' && core_useragent::supports_media_source_extensions('.mpd')) {
-                $result[] = $url;
-            }
         }
-
         return $result;
     }
 

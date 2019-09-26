@@ -1167,14 +1167,13 @@ class core_useragent {
     }
 
     /**
-     * Checks if current browser supports the HLS and MPEG-DASH video
+     * Checks if current browser supports the HLS and MPEG-DASH media
      * streaming formats. Most browsers get this from Media Source Extensions.
      * Safari on iOS, doesn't support MPEG-DASH at all.
      *
      * Note, the check here is not 100% accurate!
      *
      * Also we assume that users of Firefox/Chrome/Safari do not use the ancient versions of browsers.
-     *
      * We check the exact version for IE/Edge though. We know that there are still users of very old
      * versions that are afraid to upgrade or have slow IT department.
      *
@@ -1183,6 +1182,7 @@ class core_useragent {
      * https://caniuse.com/#search=mpeg-dash
      * https://caniuse.com/#search=hls
      *
+     * @param string $extension
      * @return bool
      */
     public static function supports_media_source_extensions(string $extension) : bool {
@@ -1192,7 +1192,7 @@ class core_useragent {
         }
 
         if ($extension == '.mpd') {
-            // Not supported is iOS on Safari.
+            // Not supported in Safari on iOS.
             if (self::is_safari_ios()) {
                 return false;
             }

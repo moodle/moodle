@@ -29,8 +29,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_filetypes('media_videojs/videoextensions',
         new lang_string('videoextensions', 'media_videojs'),
         new lang_string('configvideoextensions', 'media_videojs'),
-        'html_video,.f4v,.flv,.m3u8,.mpd',
-        array('onlytypes' => array('video', 'web_video', 'html_video', 'html_track'))));
+        'html_video,media_source,.f4v,.flv',
+        array('onlytypes' => array('video', 'web_video', 'html_video', 'media_source'))));
 
     $settings->add(new admin_setting_filetypes('media_videojs/audioextensions',
         new lang_string('audioextensions', 'media_videojs'),
