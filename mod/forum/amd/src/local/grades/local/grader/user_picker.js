@@ -44,17 +44,18 @@ const showUser = async(root, users, currentUserIndex, showUserCallback) => {
     Templates.replaceNodeContents(userRegion, html, '');
 };
 
-const bindEvents = (root, users, currentUserIndex, showUserCallback) => {
+const bindEvents = (root, users, currentUserIndex, showUserCallback, saveUserCallback) => {
     root.addEventListener('click', (e) => {
         const button = e.target.closest(Selectors.actions.changeUser);
         if (button) {
+            saveUserCallback(users[currentUserIndex]);
             currentUserIndex += parseInt(button.dataset.direction);
             showUser(root, users, currentUserIndex, showUserCallback);
         }
     });
 };
 
-export const buildPicker = async(users, currentUserID, showUserCallback) => {
+export const buildPicker = async(users, currentUserID, showUserCallback, saveUserCallback) => {
     let root = document.createElement('div');
 
     const [html] = await Promise.all([renderNavigator()]);
@@ -66,7 +67,7 @@ export const buildPicker = async(users, currentUserID, showUserCallback) => {
 
     await showUser(root, users, currentUserIndex, showUserCallback);
 
-    bindEvents(root, users, currentUserIndex, showUserCallback);
+    bindEvents(root, users, currentUserIndex, showUserCallback, saveUserCallback);
 
     return root;
 };

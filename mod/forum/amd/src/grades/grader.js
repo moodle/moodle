@@ -94,8 +94,11 @@ const discussionPostMapper = discussion => {
     };
 };
 
+/**
+ * Register listeners to launch the grading panel.
+ */
 export const registerLaunchListeners = () => {
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', async(e) => {
         if (e.target.matches(Selectors.launch)) {
             const rootNode = findGradableNode(e.target);
 
@@ -104,14 +107,30 @@ export const registerLaunchListeners = () => {
             }
 
             if (rootNode.matches(Selectors.gradableItems.wholeForum)) {
-                const wholeForumFunctions = getWholeForumFunctions(rootNode.dataset.cmid);
-
-                Grader.launch(wholeForumFunctions.getUsers, wholeForumFunctions.getContentForUserId, {
-                    groupid: rootNode.dataset.groupid,
-                    initialUserId: rootNode.dataset.initialuserid,
-                });
-
+                // Note: The preventDefault must be before any async function calls because the function becomes async
+                // at that point and the default action is implemented.
                 e.preventDefault();
+
+                const data = rootNode.dataset;
+                const wholeForumFunctions = getWholeForumFunctions(data.cmid);
+                const gradingPanelFunctions = await Grader.getGradingPanelFunctions(
+                    'mod_forum',
+                    data.contextid,
+                    data.gradingComponent,
+                    data.gradingComponentSubtype,
+                    data.gradableItemtype
+                );
+
+                Grader.launch(
+                    wholeForumFunctions.getUsers,
+                    wholeForumFunctions.getContentForUserId,
+                    gradingPanelFunctions.getter,
+                    gradingPanelFunctions.setter,
+                    {
+                        groupid: data.groupid,
+                        initialUserId: data.initialuserid,
+                    }
+                );
             } else {
                 throw Error('Unable to find a valid gradable item');
             }

@@ -26,6 +26,7 @@ import Templates from 'core/templates';
 import Selectors from './local/grader/selectors';
 import * as UserPicker from './local/grader/user_picker';
 import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/fullscreen';
+import getGradingPanelFunctions from './local/grader/gradingpanel';
 
 const templateNames = {
     grader: {
@@ -38,16 +39,26 @@ const displayUserPicker = (root, html) => {
     Templates.replaceNodeContents(pickerRegion, html, '');
 };
 
-const getUpdateUserContentFunction = (root, getContentForUser) => {
+const fetchContentFromRender = (html, js) => {
+    return [html, js];
+};
+
+const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) => {
     return async(user) => {
         const [
-            {html, js},
+            [html, js],
+            userGrade,
         ] = await Promise.all([
-            getContentForUser(user.id).then((html, js) => {
-                return {html, js};
-            }),
+            getContentForUser(user.id).then(fetchContentFromRender),
+            getGradeForUser(user.id),
         ]);
         Templates.replaceNodeContents(root.querySelector(Selectors.regions.moduleReplace), html, js);
+
+        const [
+            gradingPanelHtml,
+            gradingPanelJS
+        ] = await Templates.render(userGrade.templatename, userGrade.grade).then(fetchContentFromRender);
+        Templates.replaceNodeContents(root.querySelector(Selectors.regions.gradingPanel), gradingPanelHtml, gradingPanelJS);
     };
 };
 
@@ -67,8 +78,14 @@ const registerEventListeners = (graderLayout) => {
     });
 };
 
+const getSaveUserGradeFunction = (root, setGradeForUser) => {
+    return user => {
+        return setGradeForUser(user.id, root.querySelector(Selectors.regions.gradingPanel));
+    };
+};
+
 // Make this explicit rather than object
-export const launch = async(getListOfUsers, getContentForUser, {
+export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
     initialUserId = 0,
 } = {}) => {
 
@@ -85,8 +102,16 @@ export const launch = async(getListOfUsers, getContentForUser, {
 
     Templates.replaceNodeContents(graderContainer, graderHTML, '');
     registerEventListeners(graderLayout);
-    const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser);
+    const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser);
 
-    const pickerHTML = await UserPicker.buildPicker(userList, initialUserId, updateUserContent);
+    const pickerHTML = await UserPicker.buildPicker(
+        userList,
+        initialUserId,
+        updateUserContent,
+        getSaveUserGradeFunction(graderContainer, setGradeForUser)
+    );
+
     displayUserPicker(graderContainer, pickerHTML);
 };
+
+export {getGradingPanelFunctions};

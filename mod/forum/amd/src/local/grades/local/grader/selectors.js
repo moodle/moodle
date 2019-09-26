@@ -34,6 +34,7 @@ export default {
     regions: {
         moduleReplace: getDataSelector('region', 'module_content'),
         pickerRegion: getDataSelector('region', 'user_picker'),
+        gradingPanel: getDataSelector('region', 'grade'),
     },
 };
 
