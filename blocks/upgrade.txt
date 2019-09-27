@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.8 ===
 * Block block_community is no longer a part of core.
+* Block block_participants is no longer a part of core.
 
 === 3.7 ===
 * The block:addinstance capability is no longer required if the block can only be added to a dashboard.
