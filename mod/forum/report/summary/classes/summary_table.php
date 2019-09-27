@@ -115,7 +115,7 @@ class summary_table extends table_sql {
         ];
 
         // Only include viewcount column when no groups filter is applied.
-        if (empty($filters['groups'])) {
+        if (!$this->is_filtered_by_groups($filters['groups'])) {
             $this->logreader = $this->get_internal_log_reader();
             if ($this->logreader) {
                 $columnheaders['viewcount'] = get_string('viewcount', 'forumreport_summary');
@@ -288,12 +288,8 @@ class summary_table extends table_sql {
                 break;
 
             case self::FILTER_GROUPS:
-                // Find total number of options available (groups plus 'no groups').
-                $availablegroups = groups_get_activity_allowed_groups($this->cm);
-                $alloptionscount = 1 + count($availablegroups);
-
                 // Skip adding filter if not applied, or all options are selected.
-                if (!empty($values) && count($values) < $alloptionscount) {
+                if ($this->is_filtered_by_groups($values)) {
                     // Include users without groups if that option (-1) is selected.
                     $nonekey = array_search(-1, $values, true);
 
@@ -613,5 +609,27 @@ class summary_table extends table_sql {
         $xmldbtable->add_key('primary', XMLDB_KEY_PRIMARY, array('userid'));
 
         $dbman->create_temp_table($xmldbtable);
+    }
+
+    /**
+     * Check whether the groups filter will be applied by checking whether the number of groups selected
+     * matches the total number of options available (all groups plus no groups option).
+     *
+     * @param array $groups The group IDs selected.
+     * @return bool
+     */
+    protected function is_filtered_by_groups(array $groups): bool {
+        static $groupsavailablecount = null;
+
+        if (empty($groups)) {
+            return false;
+        }
+
+        // Find total number of options available (groups plus 'no groups'), if not already fetched.
+        if (is_null($groupsavailablecount)) {
+            $groupsavailablecount = 1 + count(groups_get_activity_allowed_groups($this->cm));
+        }
+
+        return (count($groups) < $groupsavailablecount);
     }
 }
