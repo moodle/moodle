@@ -54,7 +54,7 @@ Feature: Data export from the privacy API
     And I reload the page
     And I should see "Download ready" in the "Victim User 1" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
-    And following "Download" should download between "1" and "135000" bytes
+    And following "Download" should download between "1" and "140000" bytes
     And the following config values are set as admin:
       | privacyrequestexpiry | 1 | tool_dataprivacy |
     And I wait "1" seconds
@@ -89,7 +89,7 @@ Feature: Data export from the privacy API
     And I reload the page
     And I should see "Download ready" in the "Export all of my personal data" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
-    And following "Download" should download between "1" and "135000" bytes
+    And following "Download" should download between "1" and "140000" bytes
 
     And the following config values are set as admin:
       | privacyrequestexpiry | 1 | tool_dataprivacy |
@@ -126,7 +126,7 @@ Feature: Data export from the privacy API
     And I reload the page
     And I should see "Download ready" in the "Victim User 1" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
-    And following "Download" should download between "1" and "135000" bytes
+    And following "Download" should download between "1" and "140000" bytes
 
     And the following config values are set as admin:
       | privacyrequestexpiry | 1 | tool_dataprivacy |
