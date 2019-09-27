@@ -53,12 +53,6 @@ class summary_table extends table_sql {
     /** @var int The number of rows to be displayed per page. */
     protected $perpage = 25;
 
-    /** @var int The course ID being reported on. */
-    protected $courseid;
-
-    /** @var int The forum ID being reported on. */
-    protected $forumid;
-
     /** @var \stdClass The course module object of the forum being reported on. */
     protected $cm;
 
@@ -67,12 +61,6 @@ class summary_table extends table_sql {
      * This will apply to users without permission to view others' summaries.
      */
     protected $userid;
-
-    /**
-     * @var bool Whether the table should be overridden to show the 'nothing to display' message.
-     * False unless checks confirm there will be nothing to display.
-     */
-    protected $nothingtodisplay = false;
 
     /**
      * @var \core\log\sql_reader|null
@@ -105,8 +93,6 @@ class summary_table extends table_sql {
         if (!has_capability('forumreport/summary:viewall', $this->context)) {
             $this->userid = $USER->id;
         }
-
-        $this->courseid = intval($courseid);
 
         $columnheaders = [];
 
@@ -459,7 +445,7 @@ class summary_table extends table_sql {
 
         $this->sql->params = [
             'component' => 'mod_forum',
-            'courseid' => $this->courseid,
+            'courseid' => $this->cm->course,
         ];
 
         // Handle if a user is limited to viewing their own summary.
@@ -503,12 +489,6 @@ class summary_table extends table_sql {
      */
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = ''): void {
         global $DB;
-
-        // If there is nothing to display, print the relevant string and return, no further action is required.
-        if ($this->nothingtodisplay) {
-            $this->print_nothing_to_display();
-            return;
-        }
 
         if (!$this->columns) {
             $sql = $this->get_full_sql();

@@ -40,17 +40,13 @@ $filters['groups'] = optional_param_array('filtergroups', [], PARAM_INT);
 $cm = null;
 $modinfo = get_fast_modinfo($courseid);
 
-if ($forumid > 0) {
-    if (!isset($modinfo->instances['forum'][$forumid])) {
-        throw new \moodle_exception("A valid forum ID is required to generate a summary report.");
-    }
-
-    $foruminfo = $modinfo->instances['forum'][$forumid];
-    $forumname = $foruminfo->name;
-    $cm = $foruminfo->get_course_module_record();
-} else {
+if (!isset($modinfo->instances['forum'][$forumid])) {
     throw new \moodle_exception("A valid forum ID is required to generate a summary report.");
 }
+
+$foruminfo = $modinfo->instances['forum'][$forumid];
+$forumname = $foruminfo->name;
+$cm = $foruminfo->get_course_module_record();
 
 require_login($courseid, false, $cm);
 $context = \context_module::instance($cm->id);
@@ -75,6 +71,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($forumname);
 $PAGE->set_heading($course->fullname);
+$PAGE->navbar->add(get_string('nodetitle', "forumreport_summary"));
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $forumname), 2, 'p-b-2');
