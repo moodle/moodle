@@ -26,6 +26,7 @@ require_once('thread_table.php');
 
 $threadid = optional_param('threadid', 0, PARAM_INT);
 $deleteid = optional_param('deleteid', 0, PARAM_INT);
+$cloneid = optional_param('cloneid', 0, PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 $search = optional_param('search', '', PARAM_ALPHANUM);
 $page = optional_param('page', 0, PARAM_INT);
@@ -84,6 +85,36 @@ if ($deleteid) {
         echo $output->heading(get_string('deletethread', 'block_iomad_microlearning'));
         $optionsyes = array('deleteid' => $deleteid, 'confirm' => md5($deleteid), 'sesskey' => sesskey());
         echo $output->confirm(get_string('deletethreadcheckfull', 'block_iomad_microlearning', "'$threadinfo->name'"),
+                              new moodle_url('threads.php', $optionsyes), 'threads.php');
+    }
+    echo $output->footer();
+    die;
+}
+
+// clone any valid threads.
+if ($cloneid) {
+    // Check the thread is valid.
+    if (!$threadinfo = $DB->get_record('microlearning_thread', array('id' => $cloneid))) {
+        print_error('invalidthread', 'block_iomad_microlearning');
+    }
+
+    // Have we confirmed it?
+    if(confirm_sesskey() && $confirm == md5($cloneid)) {
+        // Get the list of thread ids which are to be removed..
+        if (!empty($cloneid)) {
+            // Check if thread is valid.
+            if (microlearning::check_valid_thread($companyid, $cloneid)) {
+                // If it is then delete it.
+                microlearning::clone_thread($cloneid, $cloneid);
+                redirect($linkurl);
+            }
+        }
+    } else {
+        // No so show the confirmation question.
+        echo $output->header();
+        echo $output->heading(get_string('deletethread', 'block_iomad_microlearning'));
+        $optionsyes = array('cloneid' => $cloneid, 'confirm' => md5($cloneid), 'sesskey' => sesskey());
+        echo $output->confirm(get_string('clonethreadcheckfull', 'block_iomad_microlearning', "'$threadinfo->name'"),
                               new moodle_url('threads.php', $optionsyes), 'threads.php');
     }
     echo $output->footer();

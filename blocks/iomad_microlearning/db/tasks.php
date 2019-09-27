@@ -14,9 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Task definition for block_recent_activity.
+ * @author    Farhan Karmali <farhan6318@gmail.com>
+ * @copyright Farhan Karmali 2018
+ * @package   block_recent_activity
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2019091802;   // The (date) version of this plugin.
-$plugin->requires = 2010021900;   // Requires this Moodle version.
-$plugin->release  = '3.6.4+ (Build: 20190620)'; // Human-friendly version name
-$plugin->component = 'block_iomad_microlearning';
+$tasks = array(
+    array(
+        'classname' => '\block_iomad_microlearning\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 0
+    )
+);
+

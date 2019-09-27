@@ -22,9 +22,9 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once('lib.php');
 
 
-$nuggetid = required_param('nuggetid', 0, PARAM_INT);
-$userid = required_param('userid', 0, PARAM_INT);
-$accesskey = required_param('accesskey', 0, PARAM_INT);
+$nuggetid = required_param('nuggetid', PARAM_INT);
+$userid = required_param('userid', PARAM_INT);
+$accesskey = required_param('accesskey', PARAM_CLEAN);
 
 // Check the user id still valid.
 if (!$user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
@@ -40,11 +40,11 @@ if (!$nugget = $DB->get_record('microlearning_nugget', array('id' => $nuggetid))
 $allowcontinue = false;
 if (isloggedin() and !isguestuser()) {
     $allowcontinue = true;
-} else if ($DB->get_record_sql("SELECT id FROM {microlearning_tread_user}
+} else if ($DB->get_record_sql("SELECT id FROM {microlearning_thread_user}
                          WHERE userid = :userid
                          AND nuggetid = :nuggetid
                          AND accesskey = :accesskey
-                         AND timecreated < :expirytime",
+                         AND timecreated > :expirytime",
                          array('userid' => $userid,
                                'nuggetid' => $nuggetid,
                                'accesskey' => $accesskey,
@@ -80,5 +80,5 @@ if ($allowcontinue) {
 } else {
     // Got to log in first.
     $SESSION->wantsurl = $linkurl;
-    redirect(new moodle_url('/login/indexx.php'));
+    redirect(new moodle_url('/login/index.php'));
 }

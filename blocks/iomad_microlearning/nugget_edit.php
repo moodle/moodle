@@ -65,6 +65,8 @@ if (!empty($nuggetid)) {
 } else {
     $nugget = new stdclass();
     $nugget->threadid = $threadid;
+    $threadrec = $DB->get_record('microlearning_thread', array('id' => $threadid));
+    $nugget->halt_until_fulfilled = $threadrec->halt_until_fulfilled;
 }
 $editform->set_data($nugget);
 
@@ -82,6 +84,11 @@ if ($editform->is_cancelled()) {
         // We are creating a new nugget.
         $createdata->timecreated = time();
         $createdata->threadid = $threadid;
+
+        // Set the order;
+        $nuggetcount = $DB->count_records('microlearning_nugget', array('threadid' => $threadid));
+        $createdata->nuggetorder = $nuggetcount - 1;
+
 
         $nuggetid = $DB->insert_record('microlearning_nugget', $createdata);
         $redirectmessage = get_string('nuggetcreatedok', 'block_iomad_microlearning');

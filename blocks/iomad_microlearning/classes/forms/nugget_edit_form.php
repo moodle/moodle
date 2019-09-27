@@ -75,7 +75,8 @@ class nugget_edit_form extends \moodleform {
                             get_string('halt_until_fulfilled', 'block_iomad_microlearning'));
         $mform->addHelpButton('halt_until_fulfilled', 'halt_until_fulfilled', 'block_iomad_microlearning');
 
-        $mform->addElement('select', 'nuggetorder', get_string('nuggetorder', 'block_iomad_microlearning'), $this->orderselect);
+        $mform->addElement('hidden', 'nuggetorder');
+        $mform->setType('nuggetorder', PARAM_INT);
 
         $this->add_action_buttons();
     }

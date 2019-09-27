@@ -32,6 +32,7 @@ class EmailTemplate {
     protected $event = null;
     protected $activity = null;
     protected $due = null;
+    protected $nugget = null;
     protected $attachment = null;
 
     /**
@@ -152,6 +153,7 @@ class EmailTemplate {
         $this->headers = array_key_exists('headers', $options) ? $options['headers'] : null;
         $this->company = array_key_exists('company', $options) ? $options['company'] : null;
         $this->activity = array_key_exists('activity', $options) ? $options['activity'] : null;
+        $this->nugget = array_key_exists('nugget', $options) ? $options['nugget'] : null;
         $this->attachment = array_key_exists('attachment', $options) ? $options['attachment'] : null;
 
         if (!isset($user)) {
@@ -1017,6 +1019,7 @@ class EmailTemplate {
                               $this->license,
                               $this->sender,
                               $this->approveuser,
+                              $this->nugget,
                               $this->event);
 
         foreach ($amethods as $funcname) {

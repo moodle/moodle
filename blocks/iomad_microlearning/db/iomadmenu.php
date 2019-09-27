@@ -25,7 +25,7 @@ function block_iomad_microlearning_menu() {
             'name' => get_string('threads', 'block_iomad_microlearning'),
             'url' => '/blocks/iomad_microlearning/threads.php',
             'cap' => 'block/iomad_microlearning:edit_threads',
-            'icondefault' => 'microthreads',
+            'icondefault' => 'learningpath',
             'style' => 'micro',
             'icon' => 'fa-file-text',
             'iconsmall' => 'fa-microchip'

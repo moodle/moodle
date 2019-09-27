@@ -41,8 +41,8 @@ class cron_task extends \core\task\scheduled_task {
      */
     public function execute() {
         global $CFG;
-        require_once($CFG->dirroot . '/block/iomad_microlearning/lib.php');
-        microlearning::cron();
+        require_once($CFG->dirroot . '/blocks/iomad_microlearning/lib.php');
+        \microlearning::cron();
     }
 
 }

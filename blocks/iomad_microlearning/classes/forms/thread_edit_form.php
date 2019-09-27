@@ -59,7 +59,7 @@ class thread_edit_form extends \moodleform {
         foreach ($ten as $t) {
             foreach ($unit as $u) {
                 if ($t == 2 and $u == 4) {
-                    break;
+                    break 2;
                 }
                 $hourarray[$t.$u] = $t.$u;
             }
@@ -81,6 +81,14 @@ class thread_edit_form extends \moodleform {
         $mform->addElement('selectyesno', 'send_reminder',
                             get_string('send_reminder', 'block_iomad_microlearning'));
         $mform->addHelpButton('send_reminder', 'send_reminder', 'block_iomad_microlearning');
+
+        $mform->addElement('duration', 'releaseinterval',
+                            get_string('interval', 'block_iomad_microlearning'));
+        $mform->addHelpButton('releaseinterval', 'interval', 'block_iomad_microlearning');
+
+        $mform->addElement('duration', 'defaultdue',
+                            get_string('defaultdue', 'block_iomad_microlearning'));
+        $mform->addHelpButton('defaultdue', 'defaultdue', 'block_iomad_microlearning');
 
         $mform->addElement('selectyesno', 'halt_until_fulfilled',
                             get_string('halt_until_fulfilled', 'block_iomad_microlearning'));

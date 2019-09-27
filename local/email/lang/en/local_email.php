@@ -398,62 +398,62 @@ $string['completion_warn_supervisor_body'] = '<p>{User_FirstName} {User_LastName
 $string['completion_expiry_warn_supervisor_subject'] = 'Notice: Course {Course_FullName} training expiry';
 $string['completion_expiry_warn_supervisor_body'] = '<p>The training for {User_FirstName} {User_LastName} in course {Course_FullName} will expiry shortly.  Please arrange for them to retake this training if appropriate.</p>';
 $string['licensepoolwarning_subject'] = "90% License pool used {License_Name}, {License_ID}";
-$string['licensepoolwarning_body'] = "<p>Hi {User_Firstname} {User_Lastname}</p>
+$string['licensepoolwarning_body'] = "<p>Hi {User_FirstName} {User_LastName}</p>
 <p>This message is to notify your company account {Company_Name} has used 90% of the license pool {License_Name}, {License_ID} . You will not be able to allocate further licenses once you reach 100% usage.</p>
 <p>Please contact your Fletdefense Program Manager for details</p>";
 $string['licensepoolexpiring_subject'] = "Alert: License pool expiration {License_Name}  {License_Expirydate}, {License_ID}";
-$string['licensepoolexpiring_body'] = "<p>Hi {User_Firstname} {User_Lastname}</p>
+$string['licensepoolexpiring_body'] = "<p>Hi {User_FirstName} {User_LastName}</p>
 <p>This message is to notify your company account {Company_Name} that that your program license {License_Name}, {License_ID} is expiring on  {License_Expirydate}.
 You will not be able to allocate further licenses to users once you reach expiration date. Please contact your Program Manager if you have further questions</p>";
 $string['user_promoted_subject'] = 'New role granted';
-$string['user_promoted_body'] = "<p>Hello {User_Firstname} {User_Lastname},</p>
+$string['user_promoted_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
 <p>You have been granted admin privilidges. To access the administrative suite, tracking and reporting tools please click the following link or copy and paste the link into your browser to set your password and login
  {SiteURL}</p>
 <p>On the login page, Click Activate button to activate your account for first time login.</p>
 <p>Your email: {User_Email}</p>";
 $string['user_deleted_subject'] = "Account has been deleted";
-$string['user_deleted_body'] = "<p>Hello {User_Firstname} {User_Lastname},</p>
+$string['user_deleted_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
 <p>Your account has been deleted on {SiteURL}. You no longer have access to any of your training courses</p>
 <p>If you feel that this is in error, please contact your manager</p>
 <p>Your email: {User_Email}</p>";
 $string['admin_deleted_subject'] = "Account has been deleted";
-$string['admin_deleted_body'] = "<p>Hello {User_Firstname} {User_Lastname},</p>
+$string['admin_deleted_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
 <p>Your account has been deleted on {SiteURL}. You no longer have access to manage your company</p>
 <p>Your email: {User_Email}</p><p>If you feel that this is in error, please contact your manager.</p>";
 $string['user_suspended_subject'] = "Account has been suspended";
-$string['user_suspended_body'] = "<p>Hello {User_Firstname} {User_Lastname},</p>
+$string['user_suspended_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
 <p>Your account has been suspended on {SiteURL}. You no longer have access to any of your training courses</p>
 <p>If you feel that this is in error, please contact your manager</p>
 <p>Your email: {User_Email}</p>";
 $string['user_unsuspended_subject'] = "Account has been unsuspended";
-$string['user_unsuspended_body'] = "<p>Hello {User_Firstname} {User_Lastname},</p>
+$string['user_unsuspended_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
 <p>Your account has been unsuspended on {SiteURL}. You now have access to any of your training courses</p>
 <p>If you have any further questions, please contact your manager</p>
 <p>Your email: {User_Email}</p>";
 $string['company_suspended_subject'] = "Company account has been suspended";
-$string['company_suspended_body'] = "<p>Hello {User_Firstname} {User_Lastname},</p>
+$string['company_suspended_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
 <p>Your company account has been suspended on {SiteURL}. You no longer have access to manage your company</p>
 <p>Your email: {User_Email}</p><p>If you feel that this is in error, please contact support</p>";
 $string['company_unsuspended_subject'] = "Company account has been unsuspended";
-$string['company_unsuspended_body'] = "<p>Hello {User_Firstname} {User_Lastname},</p>
+$string['company_unsuspended_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
 <p>Your company account has been unsuspended on {SiteURL}. You now have access to manage your company</p>
 <p>Your email: {User_Email}</p><p>If you have any further questions, please contact support</p>";
 $string['company_licenseassigned_subject'] = "New Training assigned to {Company_Name}";
-$string['company_licenseassigned_body'] = "<p>Dear {User_Firstname} {User_Lastname},</p>
+$string['company_licenseassigned_body'] = "<p>Dear {User_FirstName} {User_LastName},</p>
 <p>New courses have been allocated to your company on {SiteURL}.</p>
 <p>Please log in using your username {User_Username} to manage this.</p>";
 $string['microlearning_nugget_scheduled_name'] = 'Microlearning nugget scheduled for user';
 $string['microlearning_nugget_scheduled_name_help'] = 'This email is sent out to a user when a microlearning nugget within a microlearning thread is scheduled.';
 $string['microlearning_nugget_scheduled_subject'] = 'New microlearning nugget for you.';
-$string['microlearning_nugget_scheduled_body'] = "<p>Hi {User_Firstname}</p>
+$string['microlearning_nugget_scheduled_body'] = "<p>Hi {User_FirstName}</p>
 <p>You have a new Microlearning Nugget to complete.  You can access this by clicking on <a href='{Nugget_URL}'>{Nugget_Name}</a></p>";
 $string['microlearning_nugget_reminder1_name'] = 'Microlearning nugget first reminder for user';
 $string['microlearning_nugget_reminder1_name_help'] = 'This email is sent out to a user when a microlearning nugget within a microlearning thread reaches the frst reminder and has not yet been completed.';
-$string['microlearning_nugget_reminder1_subject'] = 'New microlearning nugget for you.';
-$string['microlearning_nugget_reminder1_body'] = "<p>Hi {User_Firstname}</p>
-<p>You have not yet completed your Microlearning Nugget.  You can access this by clicking on <a href='{Nugget_URL}'>{Nugget_Name}</a> or by logging into the <a href='{Site_URL}'>Site</a></p>";
-$string['microlearning_nugget_reminder1_name'] = 'Microlearning nugget first reminder for user';
-$string['microlearning_nugget_reminder1_name_help'] = 'This email is sent out to a user when a microlearning nugget within a microlearning thread reaches the frst reminder and has not yet been completed.';
-$string['microlearning_nugget_reminder1_subject'] = 'New microlearning nugget for you.';
-$string['microlearning_nugget_reminder1_body'] = "<p>Hi {User_Firstname}</p>
-<p>You have not yet completed your Microlearning Nugget.  You can access this by clicking on <a href='{Nugget_URL}'>{Nugget_Name}</a> or by logging into the <a href='{Site_URL}'>Site</a></p>";
+$string['microlearning_nugget_reminder1_subject'] = 'Reminder - New microlearning nugget for you.';
+$string['microlearning_nugget_reminder1_body'] = "<p>Hi {User_FirstName}</p>
+<p>You have not yet completed your Microlearning Nugget.  You can access this by clicking on <a href='{Nugget_URL}'>{Nugget_Name}</a> or by logging into the <a href='{SiteURL}'>Site</a></p>";
+$string['microlearning_nugget_reminder2_name'] = 'Microlearning nugget second reminder for user';
+$string['microlearning_nugget_reminder2_name_help'] = 'This email is sent out to a user when a microlearning nugget within a microlearning thread reaches the frst reminder and has not yet been completed.';
+$string['microlearning_nugget_reminder2_subject'] = 'Reminder - New microlearning nugget for you.';
+$string['microlearning_nugget_reminder2_body'] = "<p>Hi {User_FirstName}</p>
+<p>You have not yet completed your Microlearning Nugget.  You can access this by clicking on <a href='{Nugget_URL}'>{Nugget_Name}</a> or by logging into the <a href='{SiteURL}'>Site</a></p>";

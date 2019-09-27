@@ -1491,7 +1491,7 @@ class current_company_thread_user_selector extends company_user_selector_base {
 
         $sql = " FROM {user} u
                  INNER JOIN {company_users} cu
-                 ON (cu.userid = u.id AND managertype = 0 $departmentsql)
+                 ON (cu.userid = u.id $departmentsql)
                 WHERE $wherecondition AND u.suspended = 0
                     AND cu.companyid = :companyid
                     AND cu.userid IN
@@ -1553,6 +1553,7 @@ class potential_company_thread_user_selector extends company_user_selector_base 
      */
     public function find_users($search, $all = false) {
         global $CFG, $DB;
+
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -1584,6 +1585,9 @@ class potential_company_thread_user_selector extends company_user_selector_base 
         } else {
             $userfilter = "";
         }
+
+        // No site admins.
+        $userfilter .= " AND u.id NOT IN (" .$CFG->siteadmins .") ";
 
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';

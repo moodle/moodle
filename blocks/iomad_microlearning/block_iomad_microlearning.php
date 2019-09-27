@@ -40,7 +40,7 @@ class block_iomad_microlearning extends block_base {
                                            JOIN {microlearning_thread} mt ON (mtu.threadid = mt.id)
                                            WHERE mtu.userid = :userid
                                            AND mtu.timecompleted IS NULL
-                                           ORDER BY mt.nameid,mtu.scheduledate",
+                                           ORDER BY mn.name,mtu.schedule_date",
                                            array('userid' => $USER->id));
         if (empty($mynuggets)) {
             $nuggetout = get_string('nolearningthreads', 'block_microlearning');

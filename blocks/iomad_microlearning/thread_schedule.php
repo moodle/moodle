@@ -70,9 +70,9 @@ if ($deleteid && confirm_sesskey() && $confirm == md5($deleteid)) {
     // Get the list of thread ids which are to be removed..
     if (!empty($deleteid)) {
         microlearning::reset_thread_schedule($threadinfo);
-        $redirectmessage = get_string('threadscheduleresetok', 'block_iomad_microlearning');
-        redirect($threadlist, $redirectmessage, null, \core\output\notification::NOTIFY_SUCCESS);
-        die;
+        //$redirectmessage = get_string('threadscheduleresetok', 'block_iomad_microlearning');
+        //redirect($threadlist, $redirectmessage, null, \core\output\notification::NOTIFY_SUCCESS);
+        //die;
     }
 }
 
@@ -115,8 +115,6 @@ if ($scheduledata = $editform->get_data()) {
 
 // Display the form.
 echo $output->header();
-
-echo "<pre>";print_r($scheduledata);echo"</pre>";
 
 $editform->display();
 

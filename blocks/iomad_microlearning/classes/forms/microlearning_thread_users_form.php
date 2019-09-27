@@ -206,7 +206,7 @@ class microlearning_thread_users_form extends \company_moodleform {
                 $this->currentusers->invalidate_selected_users();
             }
         }
-        $removeall = false;;
+        $removeall = false;
         $remove = false;
         $userstounassign = array();
 

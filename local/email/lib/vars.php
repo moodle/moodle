@@ -29,6 +29,7 @@ class EmailVars {
     protected $url = null;
     protected $sender = null;
     protected $approveuser = null;
+    protected $nugget = null;
 
     protected $blank = "[blank]";
 
@@ -38,7 +39,7 @@ class EmailVars {
      * Sets up and retrieves the API objects
      *
      **/
-    public function __construct($company, $user, $course, $invoice, $classroom, $license, $sender, $approveuser) {
+    public function __construct($company, $user, $course, $invoice, $classroom, $license, $sender, $approveuser, $nugget) {
         $this->company =& $company;
         $this->user =& $user;
         $this->invoice =& $invoice;
@@ -46,6 +47,7 @@ class EmailVars {
         $this->license =& $license;
         $this->sender =& $sender;
         $this->approveuser =& $approveuser;
+        $this->nugget =& $nugget;
 
         if (!isset($this->company)) {
             if (isset($user->id)) {
@@ -112,7 +114,7 @@ class EmailVars {
             // Activity information fields .
                         'Activity_Name', 'Activity_Duedate',
             // Miscellaneouss fields.
-                        'LinkURL', 'SiteURL',
+                        'LinkURL', 'SiteURL', 'Event_Name',
             // Microlearning fields.
                         'Nugget_Name', 'Nugget_URL'
         );

@@ -104,7 +104,7 @@ $selectsql = "*";
 $fromsql = "{microlearning_nugget}";
 $wheresql = "threadid = :threadid";
 
-$headers = array(get_string('threadname', 'block_iomad_microlearning'),
+$headers = array(get_string('nuggetname', 'block_iomad_microlearning'),
                  get_string('nuggetorder', 'block_iomad_microlearning'),
                  get_string('timecreated', 'block_iomad_microlearning'),
                  get_string('updown', 'block_iomad_microlearning'),
