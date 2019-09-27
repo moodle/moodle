@@ -175,7 +175,6 @@ class company_license_users_form extends \moodleform {
                                                            'multiple' => false,
                                                            'onchange' => 'this.form.submit()'));
                 $courseselector->setMultiple(true);
-                $courseselector->setSelected(0);
             } else {
                 $mform->addElement('hidden', 'courses');
                 $mform->setType('courses', PARAM_INT);

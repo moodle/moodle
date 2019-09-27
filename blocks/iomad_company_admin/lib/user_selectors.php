@@ -879,6 +879,12 @@ class potential_license_user_selector extends user_selector_base {
 
     public function find_users($search, $all = false) {
         global $CFG, $DB, $USER;
+
+        // If there are no courses we can't display any users.
+        if (empty($this->selectedcourses)) {
+            return array();
+        }
+
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -1075,6 +1081,11 @@ class current_license_user_selector extends user_selector_base {
 
     public function find_users($search, $all = false) {
         global $CFG, $DB, $USER;
+
+        // If there are no courses we can't display any users.
+        if (empty($this->selectedcourses)) {
+            return array();
+        }
 
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
