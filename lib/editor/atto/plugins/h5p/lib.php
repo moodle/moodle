@@ -61,7 +61,7 @@ function atto_h5p_strings_for_js() {
     );
 
     $PAGE->requires->strings_for_js($strings, 'atto_h5p');
-    $PAGE->requires->js(new moodle_url('/lib/editor/atto/plugins/h5p/js/h5p-resizer.js'));
+    $PAGE->requires->js(new moodle_url('/lib/h5p/js/h5p-resizer.js'));
 }
 
 
