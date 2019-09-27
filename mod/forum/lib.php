@@ -5235,15 +5235,16 @@ function forum_get_extra_capabilities() {
 function forum_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $forumnode) {
     global $USER, $PAGE, $CFG, $DB, $OUTPUT;
 
-    $forumobject = $DB->get_record("forum", array("id" => $PAGE->cm->instance));
     if (empty($PAGE->cm->context)) {
         $PAGE->cm->context = context_module::instance($PAGE->cm->instance);
     }
 
     $vaultfactory = mod_forum\local\container::get_vault_factory();
     $managerfactory = mod_forum\local\container::get_manager_factory();
+    $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
     $forumvault = $vaultfactory->get_forum_vault();
-    $forumentity = $forumvault->get_from_id($forumobject->id);
+    $forumentity = $forumvault->get_from_id($PAGE->cm->instance);
+    $forumobject = $legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forumentity);
 
     $params = $PAGE->url->params();
     if (!empty($params['d'])) {
