@@ -1778,7 +1778,7 @@ class core_plugin_manager {
 
             'filter' => array(
                 'activitynames', 'algebra', 'censor', 'emailprotect',
-                'emoticon', 'mathjaxloader', 'mediaplugin', 'multilang', 'tex', 'tidy',
+                'emoticon', 'h5p', 'mathjaxloader', 'mediaplugin', 'multilang', 'tex', 'tidy',
                 'urltolink', 'data', 'glossary'
             ),
 
