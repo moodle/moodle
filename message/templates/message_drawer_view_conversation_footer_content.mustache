@@ -49,12 +49,28 @@
         placeholder="{{#str}} writeamessage, core_message {{/str}}"
         style="resize: none"
     ></textarea>
-    <button
-        class="btn btn-link btn-icon icon-size-3 ml-1 mt-auto"
-        aria-label="{{#str}} sendmessage, core_message {{/str}}"
-        data-action="send-message"
-    >
-        <span data-region="send-icon-container">{{#pix}} i/sendmessage, core {{/pix}}</span>
-        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
-    </button>
+
+    <div class="position-relative d-flex flex-column">
+        <div
+            data-region="emoji-picker-container"
+            class="emoji-picker-container hidden"
+            aria-hidden="true"
+        >
+            {{> core/emoji/picker }}
+        </div>
+        <button
+            class="btn btn-link btn-icon icon-size-3 ml-1"
+            data-action="toggle-emoji-picker"
+        >
+            {{#pix}} e/emoticons, core{{/pix}}
+        </button>
+        <button
+            class="btn btn-link btn-icon icon-size-3 ml-1 mt-auto"
+            aria-label="{{#str}} sendmessage, core_message {{/str}}"
+            data-action="send-message"
+        >
+            <span data-region="send-icon-container">{{#pix}} i/sendmessage, core {{/pix}}</span>
+            <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+        </button>
+    </div>
 </div>

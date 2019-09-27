@@ -14736,8 +14736,7 @@ a.ygtvspacer:hover {
       top: 0;
       bottom: 0; }
   .message-app .footer-container {
-    flex-shrink: 0;
-    overflow-x: hidden; }
+    flex-shrink: 0; }
     .message-app .footer-container textarea {
       direction: ltr; }
   .message-app .matchtext {
@@ -14879,6 +14878,18 @@ a.ygtvspacer:hover {
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
+
+.message-app .emoji-picker-container {
+  position: absolute;
+  top: -5px;
+  right: 5px;
+  transform: translateY(-100%); }
+  .message-app .emoji-picker-container .emoji-picker .picker-row .emoji-button {
+    height: 40px;
+    width: 40px; }
+  @media (max-width: 575.98px) {
+    .message-app .emoji-picker-container {
+      right: -0.5rem; } }
 
 /* Question */
 .questionbank h2 {

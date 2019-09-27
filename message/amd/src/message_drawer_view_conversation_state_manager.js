@@ -144,7 +144,8 @@ define(['jquery'], function($) {
             pendingDeleteMessageIds: [],
             pendingSendMessageIds: [],
             pendingDeleteConversation: false,
-            selectedMessageIds: []
+            selectedMessageIds: [],
+            showEmojiPicker: false
         };
     };
 
@@ -528,6 +529,19 @@ define(['jquery'], function($) {
     };
 
     /**
+     * Set the visibility of the emoji picker.
+     *
+     * @param  {Object} state Current state.
+     * @param  {Bool} show Should the emoji picker be shown.
+     * @return {Object} New state with array of pending delete message ids.
+     */
+    var setShowEmojiPicker = function(state, show) {
+        var newState = cloneState(state);
+        newState.showEmojiPicker = show;
+        return newState;
+    };
+
+    /**
      * Set the state pending block userids.
      *
      * @param  {Object} state Current state.
@@ -831,6 +845,7 @@ define(['jquery'], function($) {
         setMessagesSendPendingById: setMessagesSendPendingById,
         setMessagesSendSuccessById: setMessagesSendSuccessById,
         setMessagesSendFailById: setMessagesSendFailById,
+        setShowEmojiPicker: setShowEmojiPicker,
         addPendingBlockUsersById: addPendingBlockUsersById,
         addPendingRemoveContactsById: addPendingRemoveContactsById,
         addPendingUnblockUsersById: addPendingUnblockUsersById,

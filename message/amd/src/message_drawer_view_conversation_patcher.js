@@ -585,6 +585,23 @@ function(
     };
 
     /**
+     * Determine if we should show the emoji picker.
+     *
+     * @param  {Object} state The current state.
+     * @param  {Object} newState The new state.
+     * @return {Bool|Null}
+     */
+    var buildShowEmojiPicker = function(state, newState) {
+        if (!state.showEmojiPicker && newState.showEmojiPicker) {
+            return true;
+        } else if (state.showEmojiPicker && !newState.showEmojiPicker) {
+            return false;
+        } else {
+            return null;
+        }
+    };
+
+    /**
      * Get the user Object of user to be blocked if pending.
      *
      * @param  {Object} state The current state.
@@ -1335,7 +1352,8 @@ function(
                 inEditMode: buildInEditMode,
                 selectedMessages: buildSelectedMessages,
                 isFavourite: buildIsFavourite,
-                isMuted: buildIsMuted
+                isMuted: buildIsMuted,
+                showEmojiPicker: buildShowEmojiPicker
             }
         };
         // These build functions are only applicable to private conversations.

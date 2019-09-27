@@ -471,7 +471,6 @@ $message-day-color: color-yiq($message-app-bg) !default;
 
     .footer-container {
         flex-shrink: 0;
-        overflow-x: hidden;
 
         textarea {
             direction: ltr;
@@ -656,5 +655,28 @@ $message-day-color: color-yiq($message-app-bg) !default;
 .dir-rtl {
     .message-drawer {
         box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
+    }
+}
+
+.message-app {
+    .emoji-picker-container {
+        position: absolute;
+        top: -5px;
+        right: 5px;
+        transform: translateY(-100%);
+
+        .emoji-picker {
+            .picker-row {
+                // To override the button styling for the message app.
+                .emoji-button {
+                    height: $picker-emoji-button-size;
+                    width: $picker-emoji-button-size;
+                }
+            }
+        }
+
+        @include media-breakpoint-down(xs) {
+            right: -1 * map-get($spacers, 2);
+        }
     }
 }
