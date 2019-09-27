@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use forumreport_summary\summary_table;
+
 /**
  * Renderer for the forum summary report.
  *
@@ -50,17 +52,11 @@ class forumreport_summary_renderer extends plugin_renderer_base {
     /**
      * Render the summary report table.
      *
-     * @param int $courseid ID of the course where the forum is located.
-     * @param string $url Base URL for the report page.
-     * @param array $filters Values of filters to be applied.
+     * @param summary_table $table The summary table to be rendered.
      * @param int $perpage Number of results to render per page.
      * @return string The report table HTML.
      */
-    public function render_report($courseid, $url, $filters, $perpage) {
-        // Initialise table.
-        $table = new \forumreport_summary\summary_table($courseid, $filters);
-        $table->baseurl = $url;
-
+    public function render_summary_table(summary_table $table, int $perpage): string {
         // Buffer so calling script can output the report as required.
         ob_start();
 
