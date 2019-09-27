@@ -134,12 +134,29 @@ define(['core/ajax'], function(Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get the posts for the discussion ID provided.
+     *
+     * @param {number} discussionId
+     * @return {*|Promise}
+     */
+    var getDiscussionPosts = function(discussionId) {
+        var request = {
+            methodname: 'mod_forum_get_discussion_posts',
+            args: {
+                discussionid: discussionId,
+            },
+        };
+        return Ajax.call([request])[0];
+    };
+
     return {
         setDiscussionSubscriptionState: setDiscussionSubscriptionState,
         addDiscussionPost: addDiscussionPost,
         setDiscussionLockState: setDiscussionLockState,
         setFavouriteDiscussionState: setFavouriteDiscussionState,
         setPinDiscussionState: setPinDiscussionState,
-        getDiscussionByUserID: getDiscussionByUserID
+        getDiscussionByUserID: getDiscussionByUserID,
+        getDiscussionPosts: getDiscussionPosts,
     };
 });

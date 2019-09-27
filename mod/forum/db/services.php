@@ -43,6 +43,7 @@ $functions = array(
         'classpath' => 'mod/forum/externallib.php',
         'description' => 'Returns a list of forum posts for a discussion.',
         'type' => 'read',
+        'ajax' => true,
         'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),

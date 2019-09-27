@@ -188,6 +188,8 @@ class mod_forum_external extends external_api {
 
         $forumvault = $vaultfactory->get_forum_vault();
         $forum = $forumvault->get_from_id($discussion->get_forum_id());
+        $context = $forum->get_context();
+        self::validate_context($context);
 
         $sortby = $params['sortby'];
         $sortdirection = $params['sortdirection'];

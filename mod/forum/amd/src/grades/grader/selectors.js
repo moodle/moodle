@@ -27,4 +27,6 @@ export default {
     gradableItems: {
         wholeForum: '[data-gradable-itemtype="forum"]',
     },
+    expandConversation: '[data-action="view-context"]',
+    posts: '[data-region="posts"]',
 };

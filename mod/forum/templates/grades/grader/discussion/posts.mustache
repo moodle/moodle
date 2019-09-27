@@ -29,7 +29,7 @@
     {
     }
 }}
-<div data-region="posts">
+<div data-region="posts" id="post-region-{{uniqid}}">
     {{#discussions}}
         <div class="hr-sect mt-0">{{name}}</div>
         {{#posts}}
@@ -66,7 +66,6 @@
                     </div>
                 </div>
             {{/starter}}
-
             <hr>
         {{/posts}}
     {{/discussions}}
@@ -76,6 +75,6 @@
 </div>
 {{#js}}
     require(['mod_forum/grades/expandconversation'], function(Conversation) {
-    Conversation.registerEventListeners();
+        Conversation.registerEventListeners(document.querySelector('#post-region-{{uniqid}}'));
     });
 {{/js}}
