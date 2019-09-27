@@ -40,6 +40,7 @@ redirect_if_major_upgrade_required();
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
 $cancel      = optional_param('cancel', 0, PARAM_BOOL);      // redirect to frontpage, needed for loginhttps
 $anchor      = optional_param('anchor', '', PARAM_RAW);      // Used to restore hash anchor to wantsurl.
+$wantsurl    = optional_param('wantsurl', '', PARAM_RAW);    // Used to set a URL to go to.
 
 if ($cancel) {
     redirect(new moodle_url('/'));
@@ -53,6 +54,11 @@ if (!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'short
 // Set the page theme.
 $SESSION->currenteditingcompany = $company->id;
 $SESSION->theme = $company->theme;
+
+// Set the redirect if there is one.
+if (!empty($wantsurl)) {
+    $SESSION->wantsurl = urldecode($wantsurl);
+}
 
 $context = context_system::instance();
 $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
@@ -263,7 +269,6 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         unset($SESSION->loginerrormsg);
 
         // test the session actually works by redirecting to self
-        $SESSION->wantsurl = $urltogo;
         redirect(new moodle_url(get_login_url(), array('testsession'=>$USER->id)));
 
     } else {
