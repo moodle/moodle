@@ -61,6 +61,7 @@ class forum extends exporter {
     protected static function define_other_properties() {
         return [
             'id' => ['type' => PARAM_INT],
+            'name' => ['type' => PARAM_RAW],
             'state' => [
                 'type' => [
                     'groupmode' => ['type' => PARAM_INT],
@@ -116,6 +117,7 @@ class forum extends exporter {
 
         return [
             'id' => $this->forum->get_id(),
+            'name' => $this->forum->get_name(),
             'state' => [
                 'groupmode' => $this->forum->get_effective_group_mode(),
             ],

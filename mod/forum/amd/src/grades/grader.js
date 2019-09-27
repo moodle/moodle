@@ -129,6 +129,7 @@ export const registerLaunchListeners = () => {
                     {
                         groupid: data.groupid,
                         initialUserId: data.initialuserid,
+                        moduleName: data.name
                     }
                 );
             } else {

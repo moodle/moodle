@@ -86,7 +86,7 @@ const getSaveUserGradeFunction = (root, setGradeForUser) => {
 
 // Make this explicit rather than object
 export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
-    initialUserId = 0,
+    initialUserId = 0, moduleName
 } = {}) => {
 
     const [
@@ -95,7 +95,7 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
         userList,
     ] = await Promise.all([
         createFullScreenWindow({fullscreen: false, showLoader: false}),
-        Templates.render(templateNames.grader.app, {}),
+        Templates.render(templateNames.grader.app, {moduleName: moduleName}),
         getListOfUsers(),
     ]);
     const graderContainer = graderLayout.getContainer();
