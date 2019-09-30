@@ -4511,10 +4511,12 @@ EOD;
      * @param int $limit limit the number of tags to display, if size of $tags is more than this limit the "more" link
      *               will be appended to the end, JS will toggle the rest of the tags
      * @param context $pagecontext specify if needed to overwrite the current page context for the view tag link
+     * @param bool $accesshidelabel if true, the label should have class="accesshide" added.
      * @return string
      */
-    public function tag_list($tags, $label = null, $classes = '', $limit = 10, $pagecontext = null) {
-        $list = new \core_tag\output\taglist($tags, $label, $classes, $limit, $pagecontext);
+    public function tag_list($tags, $label = null, $classes = '', $limit = 10,
+            $pagecontext = null, $accesshidelabel = false) {
+        $list = new \core_tag\output\taglist($tags, $label, $classes, $limit, $pagecontext, $accesshidelabel);
         return $this->render_from_template('core_tag/taglist', $list->export_for_template($this));
     }
 
