@@ -39,6 +39,14 @@ use \core_customfield\field_controller;
 class core_customfield_field_controller_testcase extends advanced_testcase {
 
     /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass() {
+        $handler = core_course\customfield\course_handler::create();
+        $handler->delete_all();
+    }
+
+    /**
      * Tests set up.
      */
     public function setUp() {
