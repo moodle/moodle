@@ -487,16 +487,9 @@ define('HOMEPAGE_MY', 1);
 define('HOMEPAGE_USER', 2);
 
 /**
- * Hub directory url (should be moodle.org)
- */
-define('HUB_HUBDIRECTORYURL', "https://hubdirectory.moodle.org");
-
-
-/**
  * Moodle.net url (should be moodle.net)
  */
 define('HUB_MOODLEORGHUBURL', "https://moodle.net");
-define('HUB_OLDMOODLEORGHUBURL', "http://hub.moodle.org");
 
 /**
  * Moodle mobile app service name
