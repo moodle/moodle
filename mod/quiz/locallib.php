@@ -2048,17 +2048,43 @@ class qubaids_for_quiz_user extends qubaid_join {
  * @param bool $showicon If true, show the question's icon with the question. False by default.
  * @param bool $showquestiontext If true (default), show question text after question name.
  *       If false, show only question name.
- * @return string
+ * @param bool $showidnumber If true, show the question's idnumber, if any. False by default.
+ * @param core_tag_tag[]|bool $showtags if array passed, show those tags. Else, if true, get and show tags,
+ *       else, don't show tags (which is the default).
+ * @return string HTML fragment.
  */
-function quiz_question_tostring($question, $showicon = false, $showquestiontext = true) {
+function quiz_question_tostring($question, $showicon = false, $showquestiontext = true,
+        $showidnumber = false, $showtags = false) {
+    global $OUTPUT;
     $result = '';
 
+    // Question name.
     $name = shorten_text(format_string($question->name), 200);
     if ($showicon) {
         $name .= print_question_icon($question) . ' ' . $name;
     }
     $result .= html_writer::span($name, 'questionname');
 
+    // Question idnumber.
+    if ($showidnumber && $question->idnumber !== null && $question->idnumber !== '') {
+        $result .= ' ' . html_writer::span(
+                html_writer::span(get_string('idnumber', 'question'), 'accesshide') .
+                ' ' . $question->idnumber, 'badge badge-primary');
+    }
+
+    // Question tags.
+    if (is_array($showtags)) {
+        $tags = $showtags;
+    } else if ($showtags) {
+        $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+    } else {
+        $tags = [];
+    }
+    if ($tags) {
+        $result .= $OUTPUT->tag_list($tags, null, 'd-inline', 0, null, true);
+    }
+
+    // Question text.
     if ($showquestiontext) {
         $questiontext = question_utils::to_plain_text($question->questiontext,
                 $question->questiontextformat, array('noclean' => true, 'para' => false));
