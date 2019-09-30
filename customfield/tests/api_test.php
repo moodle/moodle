@@ -38,6 +38,14 @@ use \core_customfield\category_controller;
 class core_customfield_api_testcase extends advanced_testcase {
 
     /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass() {
+        $handler = core_course\customfield\course_handler::create();
+        $handler->delete_all();
+    }
+
+    /**
      * Tests set up.
      */
     public function setUp() {
