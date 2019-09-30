@@ -69,7 +69,8 @@ function mycourses_get_my_completion($datefrom = 0) {
     // Get courses which are available as self sign up and assigned to the company.
     // First we discount everything else we have in progress.
     $myusedcourses = array();
-    foreach ($myinprogress as $inprogress) {
+    foreach ($myinprogress as $id => $inprogress) {
+        $myinprogress[$id]->coursefullname = format_string($inprogress->coursefullname);
         $myusedcourses[$inprogress->courseid] = $inprogress->courseid;
     }
     if (!empty($myusedcourses)) {
@@ -104,13 +105,16 @@ function mycourses_get_my_completion($datefrom = 0) {
                                                         $inprogresssql",
                                                         array('enrol' => 'self'));
         foreach ($companyselfenrolcourses as $companyselfenrolcourse) {
+            $companyselfenrolecourse->coursefullname = format_string($companyselfenrolcourse->coursefullname);
             $myavailablecourses[$companyselfenrolcourse->coursefullname] = $companyselfenrolcourse;
         }
         foreach ($sharedselfenrolcourses as $sharedselfenrolcourse) {
+            $sharedselfenrolcourse->coursefullname = format_string($sharedselfenrolcourse->coursefullname);
             $myavailablecourses[$sharedselfenrolcourse->coursefullname] = $sharedselfenrolcourse;
         }
     }
     foreach($mynotstartedlicense as $licensedcourse) {
+        $licensedcourse->coursefullname = format_string($licensedcourse->coursefullname);
         $myavailablecourses[$licensedcourse->coursefullname] = $licensedcourse;
     }
 
@@ -119,6 +123,7 @@ function mycourses_get_my_completion($datefrom = 0) {
 
     // Deal with completed course scores and links for certificates.
     foreach ($mycompleted as $id => $completed) {
+	$mycompleted[$id]->coursefullname = format_string($completed->coursefullname);
         // Deal with the iomadcertificate info.
         if ($hasiomadcertificate) {
             if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
@@ -181,6 +186,7 @@ function mycourses_get_my_archive($dateto = 0) {
 
     // Deal with completed course scores and links for certificates.
     foreach ($myarchive as $id => $archive) {
+	$myarchive[$id]->coursefullname = format_string($archive->coursefullname);
         // Deal with the iomadcertificate info.
         if ($hasiomadcertificate) {
             if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
