@@ -900,15 +900,12 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         // We need to test all prediction processors in the system.
         $predictionprocessors = \core_analytics\manager::get_all_prediction_processors();
         foreach ($predictionprocessors as $classfullname => $predictionsprocessor) {
-
             foreach ($cases as $key => $case) {
-                $return[$key . '-' . $classfullname] = $case + ['predictionsprocessor' => $classfullname, 'forcedconfig' => null];
-            }
 
-            if ($predictionsprocessor instanceof \mlbackend_python\processor && !empty($testpythonserver)) {
-                // We also want to test the python processor using the server.
-
-                foreach ($cases as $key => $case) {
+                if (!$predictionsprocessor instanceof \mlbackend_python\processor || empty($testpythonserver)) {
+                    $extraparams = ['predictionsprocessor' => $classfullname, 'forcedconfig' => null];
+                    $return[$key . '-' . $classfullname] = $case + $extraparams;
+                } else {
 
                     // We want the configuration to be forced during the test as things like importing models create new
                     // instances of ML backend processors during the process.
