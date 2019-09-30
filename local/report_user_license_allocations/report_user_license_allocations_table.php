@@ -155,23 +155,23 @@ class local_report_user_license_allocations_table extends table_sql {
         if ($row->licenseid == null) {
             $row->licenseid = 0;
         }
-        if ($trackrec = $DB->get_records_sql("SELECT id,licensename FROM {local_iomad_track}
-                                              WHERE userid = :userid
-                                              AND licenseid = :licenseid",
-                                              array('userid' => $row->id,
-                                                    'licenseid' => $row->licenseid),
-                                                    0, 1)) {
-            $licenseurl = $CFG->wwwroot . "/local/report_license_usage/index.php";
-            $license = array_pop($trackrec);
-            if (!$this->is_downloading() && iomad::has_capability('local/report_license_usage:view', context_system::instance())) {
-                return  "<a href='".
-                        new moodle_url($licenseurl, array('licenseid' => $row->licenseid)).
-                        "'>" . $license->licensename . "</a>";
+        $licenseurl = $CFG->wwwroot . "/local/report_license_usage/index.php";
+	// Is the name valid?
+	if (empty($row->licensename)) {
+            // Try and get it from local_iomad_track table.
+            if (!empty($row->licenseid) && $litinfos = $DB->get_records('local_iomad_track', array('licenseid' => $row->licenseid), '', '*', 0, 1)) {
+                $litinfo = array_pop($litinfos);
+                $row->licensename = $litinfo->licensename;
             } else {
-                return $license->licensename;
+                $row->licensename = "-"; 
             }
+        }
+        if (!$this->is_downloading() && iomad::has_capability('local/report_license_usage:view', context_system::instance())) {
+            return  "<a href='".
+                    new moodle_url($licenseurl, array('licenseid' => $row->licenseid)).
+                    "'>" . format_string($row->licensename) . "</a>";
         } else {
-            return null;
+            return format_string($row->licensename);
         }
     }
 
