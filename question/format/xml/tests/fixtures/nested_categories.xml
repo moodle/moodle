@@ -8,6 +8,7 @@
     <info format="plain_text">
       <text>This is Delta category for test</text>
     </info>
+    <idnumber></idnumber>
   </question>
 
 <!-- question: 0  -->
@@ -18,6 +19,7 @@
     <info format="markdown">
       <text>This is Epsilon category for test</text>
     </info>
+    <idnumber></idnumber>
   </question>
 
 <!-- question: 0  -->
@@ -28,6 +30,7 @@
     <info format="moodle_auto_format">
       <text>This is Zeta category for test</text>
     </info>
+    <idnumber></idnumber>
   </question>
 
 <!-- question: 93  -->
