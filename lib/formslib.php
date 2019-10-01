@@ -77,7 +77,12 @@ function form_init_date_js() {
     global $PAGE;
     static $done = false;
     if (!$done) {
+        $done = true;
         $calendar = \core_calendar\type_factory::get_calendar_instance();
+        if ($calendar->get_name() !== 'gregorian') {
+            // The YUI2 calendar only supports the gregorian calendar type.
+            return;
+        }
         $module   = 'moodle-form-dateselector';
         $function = 'M.form.dateselector.init_date_selectors';
         $defaulttimezone = date_default_timezone_get();
@@ -105,7 +110,6 @@ function form_init_date_js() {
             'december'          => date_format_string(strtotime("December 1"), '%B', $defaulttimezone)
         ));
         $PAGE->requires->yui_module($module, $function, $config);
-        $done = true;
     }
 }
 
