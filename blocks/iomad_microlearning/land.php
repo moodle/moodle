@@ -44,11 +44,13 @@ if (isloggedin() and !isguestuser()) {
                          WHERE userid = :userid
                          AND nuggetid = :nuggetid
                          AND accesskey = :accesskey
-                         AND timecreated > :expirytime",
+                         AND scheduledate > :expirytime
+                         AND scheduledate < :time",
                          array('userid' => $userid,
                                'nuggetid' => $nuggetid,
                                'accesskey' => $accesskey,
-                               'expirytime' => time() - 30 * 24 * 60 * 60))) {
+                               'time' => time(),
+                               'expirytime' => time() - $CFG->microlearninglinkexpires * 24 * 60 * 60))) {
 
     // Valid access token.  Log in the user.
     $allowcontinue = true;
