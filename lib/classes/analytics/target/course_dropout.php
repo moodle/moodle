@@ -130,6 +130,10 @@ class course_dropout extends \core_analytics\local\target\binary {
             return get_string('coursenotyetstarted');
         }
 
+        if (!$fortraining && !$course->get_course_data()->visible) {
+            return get_string('hiddenfromstudents');
+        }
+
         if (!$students = $course->get_students()) {
             return get_string('nocoursestudents');
         }
