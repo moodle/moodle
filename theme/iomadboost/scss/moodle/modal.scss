@@ -1,0 +1,18 @@
+.modal {
+    .modal-body {
+        & > .loading-icon {
+            display: block;
+            position: relative;
+            width: 100%;
+            height: 100%;
+
+            .icon {
+                position: absolute;
+                top: 50%;
+                /*rtl:ignore*/
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    }
+}

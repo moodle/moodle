@@ -1,0 +1,106 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/initials_bar
+
+    Initials bar.
+
+    Example context (json):
+    {
+        "title": "First name",
+        "class": "firstinitial",
+        "current": "A",
+        "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst",
+        "all": "All",
+        "group": [
+           {
+              "letter": [
+                 {
+                    "name": "A",
+                    "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst=A"
+                 },
+                 {
+                    "name": "B",
+                    "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst=B"
+                 },
+                 {
+                    "name": "C",
+                    "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst=C"
+                 },
+                 {
+                    "name": "D",
+                    "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst=D"
+                 }
+
+              ]
+           },
+           {
+              "letter": [
+                 {
+                    "name": "W",
+                    "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst=W",
+                    "selected": "W"
+                 },
+                 {
+                    "name": "X",
+                    "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst=X"
+                 },
+                 {
+                    "name": "Y",
+                    "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst=Y"
+                 },
+                 {
+                    "name": "Z",
+                    "url": "http://moodle.generic32/report/progress/index.php?course=2&sifirst=Z"
+                 }
+
+              ]
+           }
+         ]
+    }
+}}
+<div class="initialbar {{class}} d-flex flex-wrap justify-content-center justify-content-md-start">
+    <span class="initialbarlabel mr-2">{{title}}</span>
+
+    <div class="initialbargroups d-flex flex-wrap justify-content-center justify-content-md-start">
+        <ul class="pagination pagination-sm">
+        {{#current}}
+            <li class="initialbarall page-item">
+                <a class="page-link" href="{{url}}">{{all}}</a>
+            </li>
+        {{/current}}
+        {{^current}}
+            <li class="initialbarall page-item active">
+                <a class="page-link">{{all}}</a>
+            </li>
+        {{/current}}
+        </ul>
+        {{#group}}
+            <ul class="pagination pagination-sm">
+                {{#letter}}
+                    {{#selected}}
+                        <li class="page-item active {{name}}"><span class="page-link">{{name}}</span></li>
+                    {{/selected}}
+                    {{^selected}}
+                        <li class="page-item {{name}}"><a class="page-link" href="{{url}}">{{name}}</a></li>
+                    {{/selected}}
+                {{/letter}}
+            </ul>
+        {{/group}}
+    </div>
+</div>
+

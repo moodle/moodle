@@ -1,0 +1,25 @@
+{{!
+    @template core/help_icon
+
+    Help icon.
+
+    Example context (json):
+    {
+        "title": "Help with something",
+        "url": "http://example.org/help",
+        "linktext": "",
+        "icon":{
+            "attributes": [
+                {"name": "class", "value": "iconhelp"},
+                {"name": "src", "value": "../../../pix/help.svg"},
+                {"name": "alt", "value": "Help icon"}
+            ]
+        }
+    }
+}}
+<a class="btn btn-link p-0" role="button"
+    data-container="body" data-toggle="popover"
+    data-placement="{{#ltr}}right{{/ltr}}{{^ltr}}left{{/ltr}}" data-content="{{text}} {{completedoclink}}"
+    data-html="true" tabindex="0" data-trigger="focus">
+  {{#pix}}help, core, {{{alt}}}{{/pix}}
+</a>

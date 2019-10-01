@@ -1,0 +1,18 @@
+// Import font awesome.
+
+$fa-version: "4.7.0" !default;
+
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('[[font:core|fontawesome-webfont.eot]]?v=#{$fa-version}');
+    src:
+        url('[[font:core|fontawesome-webfont.eot]]?#iefix&v=#{$fa-version}') format('embedded-opentype'),
+        url('[[font:core|fontawesome-webfont.woff2]]?v=#{$fa-version}') format('woff2'),
+        url('[[font:core|fontawesome-webfont.woff]]?v=#{$fa-version}') format('woff'),
+        url('[[font:core|fontawesome-webfont.ttf]]?v=#{$fa-version}') format('truetype'),
+        url('[[font:core|fontawesome-webfont.svg]]?v=#{$fa-version}#fontawesomeregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@import "fontawesome/font-awesome";
