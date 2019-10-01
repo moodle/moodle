@@ -48,6 +48,9 @@ if (!empty($CFG->forcelogin)) {
     require_login();
 }
 
+// Unlock the session during a search.
+\core\session\manager::write_close();
+
 require_capability('moodle/search:query', $context);
 
 $searchrenderer = $PAGE->get_renderer('core_search');
