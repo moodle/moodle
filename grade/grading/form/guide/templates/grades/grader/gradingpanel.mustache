@@ -1,0 +1,74 @@
+<form id="gradingform_guide-{{uniqid}}">
+  <input type="hidden" name="instanceid" value="{{instanceid}}">
+  {{#criterion}}
+    <div data-gradingform-guide-role="criterion">
+      <h5>
+        {{name}}
+        <a 
+          href="#gradingform_guide-{{uniqid}}-criteria-{{id}}-description" 
+          aria-controls="gradingform_guide-{{uniqid}}-criteria-{{id}}-description" 
+          aria-expanded="false" 
+          data-toggle="collapse" 
+          role="button" 
+          >
+            {{# pix }} info, gradingform_guide {{/ pix }}
+        </a>
+      </h5>
+      <div class="collapse" id="gradingform_guide-{{uniqid}}-criteria-{{id}}-description">
+          <div class="border p-3 mb-3 bg-white rounded">
+              {{{description}}}
+              {{#descriptionmarkers}}
+                  <hr>
+                  {{{descriptionmarkers}}}
+              {{/descriptionmarkers}}
+          </div>
+      </div>
+      <div class="form-group">
+        <label for="gradingform_guide-{{uniqid}}-criteria-{{id}}-score">{{#str}}outof, gradingform_guide, {{maxscore}}{{/str}}</label>
+        <input class="form-control" type="number" name="advancedgrading[criteria][{{id}}][score]" value="{{score}}" 
+            id="gradingform_guide-{{uniqid}}-criteria-{{id}}-score" 
+            aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-score">
+        <small id="gradingform_guide-{{uniqid}}-help-{{id}}-score" class="sr-only">{{#str}}grade_help, gradingform_guide{{/str}}</small>
+      </div>
+      <div class="form-group ">
+        <label for="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark">{{#str}}additionalcomments, gradingform_guide{{/str}}</label>
+        <div class="input-group mb-3 form-inset form-inset-right">
+          <textarea class="form-control" type="text" name="advancedgrading[criteria][{{id}}][remark]" 
+              id="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark" 
+              aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-remark" 
+              data-gradingform-guide-role="remark" 
+              >{{remark}}</textarea>
+          {{#hascomments}}
+            <a 
+              class="form-inset-item" 
+              href="#gradingform_guide-{{uniqid}}-criteria-{{id}}-remark-frequent-comments" 
+              aria-controls="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark-frequent-comments" 
+              aria-expanded="false" 
+              data-toggle="collapse" 
+              role="button" 
+              >
+                {{#pix}}plus, gradingform_guide{{/pix}}
+            </a>
+          {{/hascomments}}
+        </div>
+        {{#hascomments}}
+          <div class="collapse" id="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark-frequent-comments">
+            <div data-gradingform_guide-frequent-comments="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark">
+              <div class="list-group">
+                {{#comments}}
+                  <button type="button" class="list-group-item list-group-item-action" data-gradingform_guide-role="frequent-comment">{{description}}</button>
+                {{/comments}}
+              </div>
+            </div>
+          </div>
+        {{/hascomments}}
+        <small id="gradingform_guide-{{uniqid}}-help-{{id}}-remark" class="sr-only">{{#str}}grade_help, gradingform_guide{{/str}}</small>
+      </div>
+    </div>
+  {{/criterion}}
+</form>
+{{#js}}
+require(['gradingform_guide/grades/grader/gradingpanel/comments'], function(Comments) {
+  Comments.init('gradingform_guide-{{uniqid}}');
+});
+{{/js}}
