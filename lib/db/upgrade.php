@@ -3107,5 +3107,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018120305.13);
     }
 
+    if ($oldversion < 2018120306.06) {
+        // Rename the official moodle sites directory the site is registered with.
+        $DB->execute("UPDATE {registration_hubs}
+                         SET hubname = ?, huburl = ?
+                       WHERE huburl = ?", ['moodle', 'https://stats.moodle.org', 'https://moodle.net']);
+
+        // Convert the hub site specific settings to the new naming format without the hub URL in the name.
+        $hubconfig = get_config('hub');
+
+        if (!empty($hubconfig)) {
+            foreach (upgrade_convert_hub_config_site_param_names($hubconfig, 'https://moodle.net') as $name => $value) {
+                set_config($name, $value, 'hub');
+            }
+        }
+
+        upgrade_main_savepoint(true, 2018120306.06);
+    }
+
     return true;
 }

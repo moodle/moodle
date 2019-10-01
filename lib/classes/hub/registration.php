@@ -156,9 +156,8 @@ class registration {
         require_once($CFG->dirroot . "/course/lib.php");
 
         $siteinfo = array();
-        $cleanhuburl = clean_param(HUB_MOODLEORGHUBURL, PARAM_ALPHANUMEXT);
         foreach (self::FORM_FIELDS as $field) {
-            $siteinfo[$field] = get_config('hub', 'site_'.$field.'_' . $cleanhuburl);
+            $siteinfo[$field] = get_config('hub', 'site_'.$field);
             if ($siteinfo[$field] === false) {
                 $siteinfo[$field] = array_key_exists($field, $defaults) ? $defaults[$field] : null;
             }
@@ -252,13 +251,12 @@ class registration {
      * @param stdClass $formdata data from {@link site_registration_form}
      */
     public static function save_site_info($formdata) {
-        $cleanhuburl = clean_param(HUB_MOODLEORGHUBURL, PARAM_ALPHANUMEXT);
         foreach (self::FORM_FIELDS as $field) {
-            set_config('site_' . $field . '_' . $cleanhuburl, $formdata->$field, 'hub');
+            set_config('site_' . $field, $formdata->$field, 'hub');
         }
         // Even if the the connection with moodle.net fails, admin has manually submitted the form which means they don't need
         // to be redirected to the site registration page any more.
-        set_config('site_regupdateversion_' . $cleanhuburl, max(array_keys(self::CONFIRM_NEW_FIELDS)), 'hub');
+        set_config('site_regupdateversion', max(array_keys(self::CONFIRM_NEW_FIELDS)), 'hub');
     }
 
     /**
@@ -525,8 +523,7 @@ class registration {
             return $fieldsneedconfirm;
         }
 
-        $cleanhuburl = clean_param(HUB_MOODLEORGHUBURL, PARAM_ALPHANUMEXT);
-        $lastupdated = (int)get_config('hub', 'site_regupdateversion_' . $cleanhuburl);
+        $lastupdated = (int)get_config('hub', 'site_regupdateversion');
         foreach (self::CONFIRM_NEW_FIELDS as $version => $fields) {
             if ($version > $lastupdated) {
                 $fieldsneedconfirm = array_merge($fieldsneedconfirm, $fields);
