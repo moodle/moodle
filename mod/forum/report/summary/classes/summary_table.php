@@ -310,58 +310,35 @@ class summary_table extends table_sql {
                 break;
 
             case self::FILTER_GROUPS:
+                // Filter data to only include content within specified groups (and/or no groups).
+                // Additionally, only display users who can post within the selected option(s).
+
                 // Skip adding filter if not applied, or all options are selected.
                 if ($this->is_filtered_by_groups($values)) {
-                    // Include users without groups if that option (-1) is selected.
-                    $nonekey = array_search(-1, $values, true);
-
-                    // Users within selected groups or not in any groups are included.
-                    if ($nonekey !== false && count($values) > 1) {
-                        unset($values[$nonekey]);
+                    // Posts within selected groups and/or not in any groups (group ID -1) are included.
+                    // No user filtering as anyone enrolled can potentially post to unrestricted discussions.
+                    if (array_search(-1, $values, true) !== false) {
                         list($groupidin, $groupidparams) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, 'groupid');
 
-                        // No select fields required.
-                        // No joins required (handled by where to prevent data duplication).
-                        $this->sql->filterwhere .= "
-                            AND (u.id =
-                                (SELECT gm.userid
-                                   FROM {groups_members} gm
-                                  WHERE gm.userid = u.id
-                                    AND gm.groupid {$groupidin}
-                               GROUP BY gm.userid
-                                  LIMIT 1)
-                            OR
-                                (SELECT nogm.userid
-                                   FROM mdl_groups_members nogm
-                                  WHERE nogm.userid = u.id
-                               GROUP BY nogm.userid
-                                  LIMIT 1)
-                            IS NULL)";
+                        $this->sql->filterwhere .= " AND d.groupid {$groupidin}";
                         $this->sql->params += $groupidparams;
 
-                    } else if ($nonekey !== false) {
-                        // Only users within no groups are included.
-                        unset($values[$nonekey]);
-
-                        // No select fields required.
-                        $this->sql->filterfromjoins .= " LEFT JOIN {groups_members} nogm ON nogm.userid = u.id";
-                        $this->sql->filterwhere .= " AND nogm.id IS NULL";
-
                     } else if (!empty($values)) {
-                        // Only users within selected groups are included.
+                        // Only posts and users within selected groups are included.
+                        list($groupusersin, $groupusersparams) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, 'groupusers');
                         list($groupidin, $groupidparams) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, 'groupid');
 
-                        // No select fields required.
                         // No joins required (handled by where to prevent data duplication).
                         $this->sql->filterwhere .= "
                             AND u.id = (
                                  SELECT gm.userid
                                    FROM {groups_members} gm
                                   WHERE gm.userid = u.id
-                                    AND gm.groupid {$groupidin}
+                                    AND gm.groupid {$groupusersin}
                                GROUP BY gm.userid
-                                  LIMIT 1)";
-                        $this->sql->params += $groupidparams;
+                                  LIMIT 1)
+                            AND d.groupid {$groupidin}";
+                        $this->sql->params += $groupusersparams + $groupidparams;
                     }
                 }
 
