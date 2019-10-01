@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  *
- * This page displays the site registration form for Moodle.net.
+ * This page displays the site registration form.
  * It handles redirection to the hub to continue the registration workflow process.
  * It also handles update operation by web service.
  */
@@ -48,7 +48,7 @@ if ($unregistration && \core\hub\registration::is_registered()) {
     }
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('unregisterfrom', 'hub', 'Moodle.net'), 3, 'main');
+    echo $OUTPUT->heading(get_string('registerwithmoodleorgremove', 'core_hub'), 3, 'main');
     $siteunregistrationform->display();
     echo $OUTPUT->footer();
     exit;
@@ -82,7 +82,7 @@ if ($fromform = $siteregistrationform->get_data()) {
 
 echo $OUTPUT->header();
 
-// Current status of registration on Moodle.net.
+// Current status of registration.
 
 $notificationtype = \core\output\notification::NOTIFY_ERROR;
 if (\core\hub\registration::is_registered()) {
@@ -104,11 +104,11 @@ if (\core\hub\registration::is_registered()) {
 
 // Heading.
 if (\core\hub\registration::is_registered()) {
-    echo $OUTPUT->heading(get_string('updatesite', 'hub', 'Moodle.net'));
+    echo $OUTPUT->heading(get_string('registerwithmoodleorgupdate', 'core_hub'));
 } else if ($isinitialregistration) {
-    echo $OUTPUT->heading(get_string('completeregistration', 'hub'));
+    echo $OUTPUT->heading(get_string('registerwithmoodleorgcomplete', 'core_hub'));
 } else {
-    echo $OUTPUT->heading(get_string('registerwithmoodleorg', 'admin'));
+    echo $OUTPUT->heading(get_string('registerwithmoodleorg', 'core_hub'));
 }
 
 $renderer = $PAGE->get_renderer('core', 'admin');
