@@ -144,9 +144,35 @@ if (($launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW) &&
         $content = lti_initiate_login($cm->course, $id, $lti, $config);
     }
 
+    // Build the allowed URL, since we know what it will be from $lti->toolurl,
+    // If the specified toolurl is invalid the iframe won't load, but we still want to avoid parse related errors here.
+    // So we set an empty default allowed url, and only build a real one if the parse is successful.
+    $ltiallow = '';
+    $urlparts = parse_url($lti->toolurl);
+    if ($urlparts && array_key_exists('scheme', $urlparts) && array_key_exists('host', $urlparts)) {
+        $ltiallow = $urlparts['scheme'] . '://' . $urlparts['host'];
+        // If a port has been specified we append that too.
+        if (array_key_exists('port', $urlparts)) {
+            $ltiallow .= ':' . $urlparts['port'];
+        }
+    }
+
     // Request the launch content with an iframe tag.
-    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id=' . $cm->id .
-         "&triggerview=0\" webkitallowfullscreen mozallowfullscreen allowfullscreen>{$content}</iframe>";
+    $attributes = [];
+    $attributes['id'] = "contentframe";
+    $attributes['height'] = '600px';
+    $attributes['width'] = '100%';
+    $attributes['src'] = 'launch.php?id=' . $cm->id . '&triggerview=0';
+    $attributes['allow'] = "microphone $ltiallow; " .
+        "camera $ltiallow; " .
+        "geolocation $ltiallow; " .
+        "midi $ltiallow; " .
+        "encrypted-media $ltiallow; " .
+        "autoplay $ltiallow";
+    $attributes['allowfullscreen'] = 1;
+    $iframehtml = html_writer::tag('iframe', $content, $attributes);
+    echo $iframehtml;
+
 
     // Output script to make the iframe tag be as large as possible.
     $resize = '
