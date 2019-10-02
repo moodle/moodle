@@ -96,6 +96,9 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'langlist' => $CFG->langlist,
             'locale' => $CFG->locale,
             'tool_mobile_minimumversion' => '',
+            'tool_mobile_iosappid' => get_config('tool_mobile', 'iosappid'),
+            'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
+            'tool_mobile_setuplink' => get_config('tool_mobile', 'setuplink'),
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);

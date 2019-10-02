@@ -181,6 +181,11 @@ class external extends external_api {
                 'locale' => new external_value(PARAM_RAW, 'Sitewide locale.', VALUE_OPTIONAL),
                 'tool_mobile_minimumversion' => new external_value(PARAM_NOTAGS, 'Minimum required version to access.',
                     VALUE_OPTIONAL),
+                'tool_mobile_iosappid' => new external_value(PARAM_ALPHANUM, 'iOS app\'s unique identifier.',
+                    VALUE_OPTIONAL),
+                'tool_mobile_androidappid' => new external_value(PARAM_NOTAGS, 'Android app\'s unique identifier.',
+                    VALUE_OPTIONAL),
+                'tool_mobile_setuplink' => new external_value(PARAM_URL, 'App download page.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );
