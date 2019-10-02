@@ -181,5 +181,20 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019071901, 'forum');
     }
 
+    if ($oldversion < 2019071902) {
+        // Create adhoc task for upgrading of existing forum_posts.
+        $record = new \stdClass();
+        $record->classname = '\mod_forum\task\refresh_forum_post_counts';
+        $record->component = 'mod_forum';
+
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $record->nextruntime = $nextruntime;
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2019071902, 'forum');
+    }
+
     return true;
 }

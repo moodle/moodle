@@ -6727,3 +6727,26 @@ function mod_forum_user_preferences() {
 
     return $preferences;
 }
+
+/**
+ * Updates null forum post counts according to the post message.
+ *
+ * @param  int  $limit  The number of records to update
+ * @return null
+ */
+function mod_forum_update_null_forum_post_counts(int $limit) {
+    global $DB;
+
+    $select = 'wordcount IS NULL OR charcount IS NULL';
+    $recordset = $DB->get_recordset_select('forum_posts', $select, null, 'discussion', 'id, message', 0, $limit);
+    if (!$recordset->valid()) {
+        $recordset->close();
+        return;
+    }
+
+    foreach ($recordset as $record) {
+        $countsupdate = \mod_forum\local\entities\post::add_message_counts($record);
+        $DB->update_record('forum_posts', $countsupdate);
+    }
+    $recordset->close();
+}
