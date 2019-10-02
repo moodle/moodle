@@ -539,7 +539,7 @@ class model {
             debugging('Prediction processor ' . $predictorname . ' is not ready to be used. Model ' .
                 $this->model->id . ' could not be deleted.');
         } else {
-            $predictor->delete_output_dir($this->get_output_dir(array(), true));
+            $predictor->delete_output_dir($this->get_output_dir(array(), true), $this->get_unique_id());
         }
 
         $DB->delete_records('analytics_models', array('id' => $this->model->id));

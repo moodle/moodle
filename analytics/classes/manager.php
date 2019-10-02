@@ -48,7 +48,7 @@ class manager {
     /**
      * @var \core_analytics\predictor[]
      */
-    protected static $predictionprocessors = null;
+    protected static $predictionprocessors = [];
 
     /**
      * @var \core_analytics\local\target\base[]
@@ -211,6 +211,14 @@ class manager {
             $predictionprocessors[$classfullpath] = self::get_predictions_processor($classfullpath, false);
         }
         return $predictionprocessors;
+    }
+
+    /**
+     * Resets the cached prediction processors.
+     * @return null
+     */
+    public static function reset_prediction_processors() {
+        self::$predictionprocessors = [];
     }
 
     /**

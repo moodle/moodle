@@ -29,6 +29,7 @@ information provided here is intended especially for developers.
       analysable (e.g. upcoming activities due) have been updated to "Useful" flag.
     * Predictions flagged as "Not useful" in models whose targets use analysers that provide multiple samples
       per analysable (e.g. students at risk or no teaching) have been updated to "Incorrectly flagged".
+* \core_analytics\predictor::delete_output_dir has a new 2nd parameter, $uniquemodelid.
 
 === 3.7 ===
 
