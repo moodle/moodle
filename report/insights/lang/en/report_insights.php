@@ -23,6 +23,7 @@
  */
 
 $string['actionsaved'] = 'Your feedback of \'{$a}\' has been saved.';
+$string['confirmbulkaction'] = 'Are you use you want to flag the {$a->nitems} selected predictions as "{$a->action}"?';
 $string['disabledmodel'] = 'Sorry, this model has been disabled by the administrator';
 $string['indicators'] = 'Indicators';
 $string['insight'] = 'Insight';
@@ -39,6 +40,7 @@ $string['pluginname'] = 'Insights';
 $string['prediction'] = 'Prediction';
 $string['predictiondetails'] = 'Prediction details';
 $string['nodetailsavailable'] = 'No prediction details are relevant.';
+$string['selectprediction'] = 'Select {$a} for bulk action';
 $string['timecreated'] = 'Time predicted';
 $string['timerange'] = 'Analysis interval';
 $string['timerangewithdata'] = '{$a->timestart} to {$a->timeend}';

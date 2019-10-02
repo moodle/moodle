@@ -30,11 +30,24 @@
 
     Example context (json):
     {
+        "contextid": 123,
+        "modelid": 321,
         "insightname": "Best insight ever",
         "timecreated": "Thursday, 5 October 2017, 4:16 PM",
         "timerange": "Monday, 4 September 2017, 6:00 PM to Thursday, 5 October 2017, 12:00 AM",
         "sampleimage": "<a href=\"#\">Link</a>",
         "sampledescription": "Sample description",
+        "actions": [
+            {
+                "classes": "",
+                "primary": {
+                    "items": [{"rawhtml": "<p>View details</p>"}]
+                },
+                "secondary": {
+                    "items": [{"rawhtml": "<p>Not useful</p>"}]
+                }
+            }
+        ],
         "style": "success",
         "outcomeicon": {
             "attributes": [
@@ -73,56 +86,64 @@
     }
 }}
 
-<h2 class="mb-2">{{insightname}}</h2>
-<table class="generaltable insights-list">
-    {{#showpredicionheading}}
-        <caption>
-            {{#str}}prediction, report_insights{{/str}}:
-            <span class="{{#style}}table-{{style}}{{/style}}">
-                {{#outcomeicon}}
-                    {{> core/pix_icon}}
-                {{/outcomeicon}}
-                {{predictiondisplayvalue}}
-            </span>
-        </caption>
-    {{/showpredicionheading}}
-    <thead>
-        <tr>
-            <th scope="col">{{#str}}name{{/str}}</th>
-            <th scope="col">{{#str}}actions{{/str}}</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{> report_insights/insight}}
-    </tbody>
-</table>
+<div class="insight-container" data-context-id="{{contextid}}" data-model-id="{{modelid}}">
 
-<table class="generaltable prediction-timedetails">
-    <caption>{{#str}}predictiondetails, report_insights{{/str}}</caption>
-    <tbody>
-        <tr>
-            <th scope="row">{{#str}}timecreated, report_insights{{/str}}</td>
-            <td>{{timecreated}}</td>
-        </tr>
-        {{#timerange}}
-            <tr>
-                <th scope="row">{{#str}}timerange, report_insights{{/str}}</td>
-                <td>{{.}}</td>
+    <h2 class="mb-2">{{insightname}}</h2>
+
+    {{> report_insights/bulk_actions }}
+
+    <table class="generaltable insights-list mt-3">
+        {{#showpredictionheading}}
+            <caption>
+                {{#str}}prediction, report_insights{{/str}}:
+                <span class="{{#style}}table-{{style}}{{/style}}">
+                    {{#outcomeicon}}
+                        {{> core/pix_icon}}
+                    {{/outcomeicon}}
+                    {{predictiondisplayvalue}}
+                </span>
+            </caption>
+        {{/showpredictionheading}}
+        <thead>
+            <tr class="d-flex">
+                <th scope="col" class="col-xs-1{{^bulkactions}} hidden{{/bulkactions}}">{{{hiddencheckboxtoggleall}}}</th>
+                <th scope="col" class="col-xs-8">{{#str}}description{{/str}}</th>
+                <th scope="col" class="col-xs-3{{^actions}} hidden{{/actions}}">{{#str}}actions{{/str}}</th>
             </tr>
-        {{/timerange}}
-    </tbody>
-</table>
-<table class="generaltable prediction-calculations">
-    <caption>{{#str}}indicators, report_insights{{/str}}</caption>
-    <tbody>
-    {{#calculations}}
-        <tr>
-            <th scope="row" class="{{#style}}table-{{style}}{{/style}}">{{name}}</td>
-            <td class="{{#style}}table-{{style}}{{/style}}">{{#outcomeicon}}{{> core/pix_icon}}{{/outcomeicon}} {{displayvalue}}</td>
-        </tr>
-    {{/calculations}}
-    </tbody>
-</table>
-{{#nocalculations}}
-    {{> core/notification_info}}
-{{/nocalculations}}
+        </thead>
+        <tbody>
+            {{> report_insights/insight}}
+        </tbody>
+    </table>
+
+    <table class="generaltable prediction-timedetails">
+        <caption>{{#str}}predictiondetails, report_insights{{/str}}</caption>
+        <tbody>
+            <tr>
+                <th scope="row">{{#str}}timecreated, report_insights{{/str}}</td>
+                <td>{{timecreated}}</td>
+            </tr>
+            {{#timerange}}
+                <tr>
+                    <th scope="row">{{#str}}timerange, report_insights{{/str}}</td>
+                    <td>{{.}}</td>
+                </tr>
+            {{/timerange}}
+        </tbody>
+    </table>
+    <table class="generaltable prediction-calculations">
+        <caption>{{#str}}indicators, report_insights{{/str}}</caption>
+        <tbody>
+        {{#calculations}}
+            <tr>
+                <th scope="row" class="{{#style}}table-{{style}}{{/style}}">{{name}}</td>
+                <td class="{{#style}}table-{{style}}{{/style}}">{{#outcomeicon}}{{> core/pix_icon}}{{/outcomeicon}} {{displayvalue}}</td>
+            </tr>
+        {{/calculations}}
+        </tbody>
+    </table>
+    {{#nocalculations}}
+        {{> core/notification_info}}
+    {{/nocalculations}}
+
+</div>

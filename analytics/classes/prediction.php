@@ -41,6 +41,11 @@ class prediction {
     const ACTION_PREDICTION_DETAILS = 'predictiondetails';
 
     /**
+     * Prediction useful (one of the default prediction actions)
+     */
+    const ACTION_USEFUL = 'useful';
+
+    /**
      * Prediction not useful (one of the default prediction actions)
      */
     const ACTION_NOT_USEFUL = 'notuseful';
@@ -49,6 +54,16 @@ class prediction {
      * Prediction already fixed (one of the default prediction actions)
      */
     const ACTION_FIXED = 'fixed';
+
+    /**
+     * Prediction not applicable.
+     */
+    const ACTION_NOT_APPLICABLE = 'notapplicable';
+
+    /**
+     * Prediction incorrectly flagged.
+     */
+    const ACTION_INCORRECTLY_FLAGGED = 'incorrectlyflagged';
 
     /**
      * @var \stdClass
@@ -132,6 +147,12 @@ class prediction {
         // Check that the provided action exists.
         $actions = $target->prediction_actions($this, true);
         foreach ($actions as $action) {
+            if ($action->get_action_name() === $actionname) {
+                $found = true;
+            }
+        }
+        $bulkactions = $target->bulk_actions([$this]);
+        foreach ($bulkactions as $action) {
             if ($action->get_action_name() === $actionname) {
                 $found = true;
             }

@@ -15,6 +15,20 @@ information provided here is intended especially for developers.
 * A new \core_analytics\local\time_splitting\past_periodic abstract class has been added. Time-splitting
   methods extending \core_analytics\local\time_splitting\periodic directly should be extending past_periodic
   now. 'periodic' can still be directly extended by implementing get_next_range and get_first_start methods.
+* Targets can now specify a list of bulk actions in bulk_actions(). core_analytics\prediction_action is now
+  extending core_analytics\action and a new core_analytics\bulk_action class has been added. Actions can now
+  specify a type in its constructor: core_analytics\action::TYPE_POSITIVE, TYPE_NEUTRAL or TYPE_NEGATIVE. A list
+  of default bulk actions is available in \core_analytics\default_bulk_actions.
+* The default suggested actions provided to users changed:
+    * For targets with one single sample per analysable (e.g. upcoming activities due) the default actions are
+      Useful and Not useful.
+    * For targets with multiple samples per analysable (e.g. students at risk) the default actions are
+      Accept, Not applicable and Incorrectly flagged.
+* The suggested actions for the existing models have been reworded:
+    * Predictions flagged as "Acknowledged" in models whose targets use analysers that provide one sample per
+      analysable (e.g. upcoming activities due) have been updated to "Useful" flag.
+    * Predictions flagged as "Not useful" in models whose targets use analysers that provide multiple samples
+      per analysable (e.g. students at risk or no teaching) have been updated to "Incorrectly flagged".
 
 === 3.7 ===
 

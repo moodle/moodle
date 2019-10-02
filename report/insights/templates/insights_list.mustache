@@ -30,10 +30,13 @@
 
     Example context (json):
     {
+        "contextid": 123,
+        "modelid": 321,
         "insightname": "Best insight ever",
         "nostaticmodelnotification": {
             "message": "This is just a prediction."
         },
+        "showpredictionheading": "true",
         "predictions": [
             {
                 "predictiondisplayvalue": "This dev will understand it",
@@ -43,10 +46,36 @@
                         {"name": "src", "value": "https://moodle.org/logo/moodle-logo.svg" }
                     ]
                 },
+                "multiplepredictions": "true",
                 "insights": [
                     {
                         "sampleimage": "<a href=\"#\">Link</a>",
-                        "sampledescription": "Sample description"
+                        "sampledescription": "Sample description",
+                        "actions": [
+                            {
+                                "classes": "",
+                                "primary": {
+                                    "items": [{"rawhtml": "<p>View details</p>"}]
+                                },
+                                "secondary": {
+                                    "items": [{"rawhtml": "<p>Not useful</p>"}]
+                                }
+                            }
+                        ]
+                    }, {
+                        "sampleimage": "<a href=\"#\">Link</a>",
+                        "sampledescription": "Sample description",
+                        "actions": [
+                            {
+                                "classes": "",
+                                "primary": {
+                                    "items": [{"rawhtml": "<p>View details</p>"}]
+                                },
+                                "secondary": {
+                                    "items": [{"rawhtml": "<p>Not useful</p>"}]
+                                }
+                            }
+                        ]
                     }
                 ]
             }, {
@@ -75,46 +104,68 @@
     </div>
 {{/modelselector}}
 
-<h2 class="mb-2">{{{insightname}}}</h2>
+<div class="insight-container" data-context-id="{{contextid}}" data-model-id="{{modelid}}">
 
-{{^noinsights}}
-{{#nostaticmodelnotification}}
-    <div class="mt-2">
-        {{> core/notification_info}}
-    </div>
-{{/nostaticmodelnotification}}
+    <h2 class="mb-2">{{{insightname}}}</h2>
 
-{{{ pagingbar }}}
-{{#predictions}}
-    <table class="generaltable insights-list">
-        {{#showpredicionheading}}
-            <caption>
-                {{#str}}prediction, report_insights{{/str}}:
-                <span class="{{#style}}table-{{style}}{{/style}}">
-                    {{#outcomeicon}}
-                        {{> core/pix_icon}}
-                    {{/outcomeicon}}
-                    {{predictiondisplayvalue}}
-                </span>
-            </caption>
-        {{/showpredicionheading}}
-        <thead>
-            <tr>
-                <th scope="col">{{#str}}name{{/str}}</th>
-                <th scope="col">{{#str}}actions{{/str}}</th>
-            </tr>
-        </thead>
-    {{#insights}}
-        <tbody>
-            {{> report_insights/insight}}
-        </tbody>
-    {{/insights}}
-    </table>
-{{/predictions}}
-{{{ pagingbar }}}
-{{/noinsights}}
-{{#noinsights}}
-    <div class="mt-2">
-        {{> core/notification_info}}
-    </div>
-{{/noinsights}}
+    {{^noinsights}}
+    {{#nostaticmodelnotification}}
+        <div class="mt-2">
+            {{> core/notification_info}}
+        </div>
+    {{/nostaticmodelnotification}}
+
+    {{{ pagingbar }}}
+
+    {{> report_insights/bulk_actions}}
+
+    {{#predictions}}
+
+        <table class="generaltable insights-list mt-3">
+            {{#showpredictionheading}}
+                <caption>
+                    {{#str}}prediction, report_insights{{/str}}:
+                    <span class="{{#style}}table-{{style}}{{/style}}">
+                        {{#outcomeicon}}
+                            {{> core/pix_icon}}
+                        {{/outcomeicon}}
+                        {{predictiondisplayvalue}}
+                    </span>
+                </caption>
+            {{/showpredictionheading}}
+            <thead>
+                <tr class="d-flex">
+                    {{#multiplepredictions}}
+                        <th class="col-xs-1{{^bulkactions}} hidden{{/bulkactions}}">
+                            {{{checkboxtoggleall}}}
+                        </th>
+                    {{/multiplepredictions}}
+                    {{^multiplepredictions}}
+                        <th class="col-xs-1{{^bulkactions}} hidden{{/bulkactions}}">
+                    {{/multiplepredictions}}
+                    <th scope="col" class="col-xs-8">{{#str}}description{{/str}}</th>
+                    <th scope="col" class="col-xs-3">{{#str}}actions{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#insights}}
+                    {{> report_insights/insight}}
+                {{/insights}}
+            </tbody>
+        </table>
+
+    {{/predictions}}
+
+    {{#multiplepredictions}}
+        {{> report_insights/bulk_actions}}
+    {{/multiplepredictions}}
+
+    {{{ pagingbar }}}
+    {{/noinsights}}
+    {{#noinsights}}
+        <div class="mt-2">
+            {{> core/notification_info}}
+        </div>
+    {{/noinsights}}
+
+</div>

@@ -128,9 +128,7 @@ class no_teaching extends \core_analytics\local\target\binary {
                 $url, $pix, get_string('participants'));
         }
 
-        $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
-        // No need to show details as there is only 1 indicator.
-        unset($parentactions[\core_analytics\prediction::ACTION_PREDICTION_DETAILS]);
+        $parentactions = parent::prediction_actions($prediction, $includedetailsaction, $isinsightuser);
 
         return array_merge($actions, $parentactions);
     }

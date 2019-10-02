@@ -65,6 +65,7 @@ validation against and defaults to null (so, no user needed) if not provided.
   This setting can be set via the UI or by defining $CFG->cachetemplates in your config.php file. It is a boolean
   and should be set to either false or true. Developers will probably want to set this to false.
 * The core_enrol_edit_user_enrolment webservice has been deprecated. Please use core_enrol_submit_user_enrolment_form instead.
+* \single_button constructor has a new attributes param to add attributes to the button HTML tag.
 
 === 3.7 ===
 

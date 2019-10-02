@@ -98,20 +98,15 @@ class effectiveness_report implements \renderable, \templatable {
                 // Using this unusual execution flow to init the chart data because $predictionactionrecords
                 // is a \moodle_recordset.
                 if (empty($actionlabels)) {
-                    list($actionlabels, $actionvalues) = $this->init_action_labels($record);
+                    list($actionlabels, $actionvalues, $actiontypes) = $this->init_action_labels($record);
                 }
 
                 // One value for each action.
                 $actionvalues['separated'][$record->actionname]++;
 
-                // Data grouped in three boxes.
-                if ($record->actionname == 'notuseful') {
-                    $actionvalues['grouped']['negative']++;
-                } else if ($record->actionname == 'predictiondetails') {
-                    $actionvalues['grouped']['neutral']++;
-                } else {
-                    $actionvalues['grouped']['positive']++;
-                }
+                // Grouped value.
+                $actiontype = $actiontypes[$record->actionname];
+                $actionvalues['grouped'][$actiontype]++;
             }
             $predictionactionrecords->close();
 
@@ -162,18 +157,28 @@ class effectiveness_report implements \renderable, \templatable {
 
         $actionlabels = [];
         $actionvalues = ['separated' => [], 'grouped' => []];
+        $actiontypes = [];
         foreach ($predictionactions as $action) {
             $actionlabels['separated'][$action->get_action_name()] = $action->get_text();
             $actionvalues['separated'][$action->get_action_name()] = 0;
+            $actiontypes[$action->get_action_name()] = $action->get_type();
         }
 
-        $actionlabels['grouped']['positive'] = get_string('useful', 'analytics');
-        $actionlabels['grouped']['neutral'] = get_string('neutral', 'analytics');
-        $actionlabels['grouped']['negative'] = get_string('notuseful', 'analytics');
-        $actionvalues['grouped']['positive'] = 0;
-        $actionvalues['grouped']['neutral'] = 0;
-        $actionvalues['grouped']['negative'] = 0;
+        $bulkactions = $this->model->get_target()->bulk_actions($predictions);
+        foreach ($bulkactions as $action) {
+            $actionlabels['separated'][$action->get_action_name()] = $action->get_text();
+            $actionvalues['separated'][$action->get_action_name()] = 0;
+            $actiontypes[$action->get_action_name()] = $action->get_type();
+        }
 
-        return [$actionlabels, $actionvalues];
+        $actionlabels['grouped'][\core_analytics\action::TYPE_POSITIVE] = get_string('useful', 'analytics');
+        $actionlabels['grouped'][\core_analytics\action::TYPE_NEUTRAL] = get_string('neutral', 'analytics');
+        $actionlabels['grouped'][\core_analytics\action::TYPE_NEGATIVE] = get_string('notuseful', 'analytics');
+
+        $actionvalues['grouped'][\core_analytics\action::TYPE_POSITIVE] = 0;
+        $actionvalues['grouped'][\core_analytics\action::TYPE_NEUTRAL] = 0;
+        $actionvalues['grouped'][\core_analytics\action::TYPE_NEGATIVE] = 0;
+
+        return [$actionlabels, $actionvalues, $actiontypes];
     }
 }

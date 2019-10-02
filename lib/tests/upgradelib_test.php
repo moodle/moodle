@@ -1005,4 +1005,123 @@ class core_upgradelib_testcase extends advanced_testcase {
         $file = reset($files);
         $this->assertEquals($file, $newstoredfile[1]);
     }
+
+    /**
+     * Test that the previous records are updated according to the reworded actions.
+     * @return null
+     */
+    public function test_upgrade_rename_prediction_actions_useful_incorrectly_flagged() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $models = $DB->get_records('analytics_models');
+        $upcomingactivitiesdue = null;
+        $noteaching = null;
+        foreach ($models as $model) {
+            if ($model->target === '\\core_user\\analytics\\target\\upcoming_activities_due') {
+                $upcomingactivitiesdue = new \core_analytics\model($model);
+            }
+            if ($model->target === '\\core_course\\analytics\\target\\no_teaching') {
+                $noteaching = new \core_analytics\model($model);
+            }
+        }
+
+        // Upcoming activities due generating some insights.
+        $course1 = $this->getDataGenerator()->create_course();
+        $attrs = ['course' => $course1, 'duedate' => time() + WEEKSECS - DAYSECS];
+        $assign = $this->getDataGenerator()->get_plugin_generator('mod_assign')->create_instance($attrs);
+        $student = $this->getDataGenerator()->create_user();
+        $usercontext = \context_user::instance($student->id);
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, 'student');
+        $upcomingactivitiesdue->predict();
+        list($ignored, $predictions) = $upcomingactivitiesdue->get_predictions($usercontext, true);
+        $prediction = reset($predictions);
+
+        $predictionaction = (object)[
+            'predictionid' => $prediction->get_prediction_data()->id,
+            'userid' => 2,
+            'actionname' => 'fixed',
+            'timecreated' => time()
+        ];
+        $DB->insert_record('analytics_prediction_actions', $predictionaction);
+        $predictionaction->actionname = 'notuseful';
+        $DB->insert_record('analytics_prediction_actions', $predictionaction);
+
+        upgrade_rename_prediction_actions_useful_incorrectly_flagged();
+
+        $this->assertEquals(0, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_FIXED]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_USEFUL]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_NOT_USEFUL]));
+        $this->assertEquals(0, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_INCORRECTLY_FLAGGED]));
+
+        // No teaching generating some insights.
+        $course2 = $this->getDataGenerator()->create_course(['startdate' => time() + (2 * DAYSECS)]);
+        $noteaching->predict();
+        list($ignored, $predictions) = $noteaching->get_predictions(\context_system::instance(), true);
+        $prediction = reset($predictions);
+
+        $predictionaction = (object)[
+            'predictionid' => $prediction->get_prediction_data()->id,
+            'userid' => 2,
+            'actionname' => 'notuseful',
+            'timecreated' => time()
+        ];
+        $DB->insert_record('analytics_prediction_actions', $predictionaction);
+        $predictionaction->actionname = 'fixed';
+        $DB->insert_record('analytics_prediction_actions', $predictionaction);
+
+        upgrade_rename_prediction_actions_useful_incorrectly_flagged();
+
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_FIXED]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_USEFUL]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_NOT_USEFUL]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_INCORRECTLY_FLAGGED]));
+
+        // We also check that there are no records incorrectly switched in upcomingactivitiesdue.
+        $upcomingactivitiesdue->clear();
+
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_FIXED]));
+        $this->assertEquals(0, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_USEFUL]));
+        $this->assertEquals(0, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_NOT_USEFUL]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_INCORRECTLY_FLAGGED]));
+
+        $upcomingactivitiesdue->predict();
+        list($ignored, $predictions) = $upcomingactivitiesdue->get_predictions($usercontext, true);
+        $prediction = reset($predictions);
+
+        $predictionaction = (object)[
+            'predictionid' => $prediction->get_prediction_data()->id,
+            'userid' => 2,
+            'actionname' => 'fixed',
+            'timecreated' => time()
+        ];
+        $DB->insert_record('analytics_prediction_actions', $predictionaction);
+        $predictionaction->actionname = 'notuseful';
+        $DB->insert_record('analytics_prediction_actions', $predictionaction);
+
+        upgrade_rename_prediction_actions_useful_incorrectly_flagged();
+
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_FIXED]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_USEFUL]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_NOT_USEFUL]));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions',
+            ['actionname' => \core_analytics\prediction::ACTION_INCORRECTLY_FLAGGED]));
+    }
 }

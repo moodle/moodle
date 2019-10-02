@@ -73,6 +73,9 @@ class stats {
     public static function actions_not_useful() : int {
         global $DB;
 
-        return $DB->count_records('analytics_prediction_actions', ['actionname' => prediction::ACTION_NOT_USEFUL]);
+        // Simple version using core's TYPE_NEGATIVE actions.
+        return $DB->count_records_select('analytics_prediction_actions',
+            'actionname = :notuseful OR actionname = :incorrectlyflagged',
+            ['notuseful' => prediction::ACTION_NOT_USEFUL, 'incorrectlyflagged' => prediction::ACTION_INCORRECTLY_FLAGGED]);
     }
 }

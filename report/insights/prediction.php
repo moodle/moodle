@@ -80,7 +80,7 @@ $PAGE->set_title($insightinfo->insightname);
 
 echo $OUTPUT->header();
 
-$renderable = new \report_insights\output\insight($prediction, $model, false);
+$renderable = new \report_insights\output\insight($prediction, $model, false, $context);
 echo $renderer->render($renderable);
 
 echo $OUTPUT->footer();

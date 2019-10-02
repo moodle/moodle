@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/single_button
+    @template report_insights/bulk_action_button
 
-    Moodle template for a single button submit form.
+    Extension of core/single_button to show the label with HTML
 
     Classes required for JS:
     * none
@@ -27,9 +27,7 @@
 
     Context variables required for this template:
     * classes - a list of classes to wrap the form.
-    * method - get or post
     * url - the action url to submit to
-    * formid - optional id value for the form
     * params - array of params with name and value attributes
     * primary - true if this is a primary action button
     * id - id for the element
@@ -38,11 +36,11 @@
     * label - text to show on the button
 
     Example context (json):
-    { "method" : "get",
+    {
       "url" : "#",
       "primary" : true,
       "tooltip" : "This is a tooltip",
-      "label" : "This is a the button text",
+      "label" : "This is a the button text, it can include HTML",
       "attributes": [
         {
           "name": "data-attribute",
@@ -52,17 +50,12 @@
     }
 }}
 <div class="{{classes}}">
-    <form method="{{method}}" action="{{url}}" {{#formid}}id="{{formid}}"{{/formid}}>
-        {{#params}}
-            <input type="hidden" name="{{name}}" value="{{value}}">
-        {{/params}}
-        <button type="submit" class="btn {{#primary}}btn-primary{{/primary}}{{^primary}}btn-secondary{{/primary}}"
-            id="{{id}}"
-            title={{#quote}}{{tooltip}}{{/quote}}
-            {{#disabled}}disabled{{/disabled}}
-            {{#attributes}} {{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}>{{label}}</button>
-    </form>
+    {{#params}}
+        <input type="hidden" name="{{name}}" value="{{value}}">
+    {{/params}}
+    <button type="submit" class="btn {{#primary}}btn-primary{{/primary}}{{^primary}}btn-outline-primary{{/primary}}"
+        id="{{id}}"
+        title={{#quote}}{{tooltip}}{{/quote}}
+        {{#disabled}}disabled{{/disabled}}
+        {{#attributes}} {{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}>{{{label}}}</button>
 </div>
-{{#hasactions}}
-    {{> core/actions }}
-{{/hasactions}}
