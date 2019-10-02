@@ -157,5 +157,29 @@ function xmldb_forum_upgrade($oldversion) {
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019071901) {
+
+        // Define field wordcount to be added to forum_posts.
+        $table = new xmldb_table('forum_posts');
+        $field = new xmldb_field('wordcount', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'privatereplyto');
+
+        // Conditionally launch add field wordcount.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field charcount to be added to forum_posts.
+        $table = new xmldb_table('forum_posts');
+        $field = new xmldb_field('charcount', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'wordcount');
+
+        // Conditionally launch add field charcount.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2019071901, 'forum');
+    }
+
     return true;
 }

@@ -73,6 +73,11 @@ class summary_table extends table_sql {
     protected $context = null;
 
     /**
+     * @var bool
+     */
+    private $showwordcharcounts = null;
+
+    /**
      * Forum report table constructor.
      *
      * @param int $courseid The ID of the course the forum(s) exist within.
@@ -118,6 +123,11 @@ class summary_table extends table_sql {
         $this->logreader = $this->get_internal_log_reader();
         if ($this->logreader) {
             $columnheaders['viewcount'] = get_string('viewcount', 'forumreport_summary');
+        }
+
+        if ($this->show_word_char_counts()) {
+            $columnheaders['wordcount'] = get_string('wordcount', 'forumreport_summary');
+            $columnheaders['charcount'] = get_string('charcount', 'forumreport_summary');
         }
 
         $columnheaders['earliestpost'] = get_string('earliestpost', 'forumreport_summary');
@@ -440,8 +450,14 @@ class summary_table extends table_sql {
             $this->fill_log_summary_temp_table($this->context->id);
 
             $this->sql->basefields .= ', CASE WHEN tmp.viewcount IS NOT NULL THEN tmp.viewcount ELSE 0 END AS viewcount';
-            $this->sql->basefromjoins .= ' LEFT JOIN {' . self::LOG_SUMMARY_TEMP_TABLE . '} tmp ON tmp.userid = u.id';
+            $this->sql->basefromjoins .= ' LEFT JOIN {' . self::LOG_SUMMARY_TEMP_TABLE . '} tmp ON tmp.userid = u.id ';
             $this->sql->basegroupby .= ', tmp.viewcount';
+        }
+
+        if ($this->show_word_char_counts()) {
+            // All p.wordcount values should be NOT NULL, this CASE WHEN is an extra just-in-case.
+            $this->sql->basefields .= ', SUM(CASE WHEN p.wordcount IS NOT NULL THEN p.wordcount ELSE 0 END) AS wordcount';
+            $this->sql->basefields .= ', SUM(CASE WHEN p.charcount IS NOT NULL THEN p.charcount ELSE 0 END) AS charcount';
         }
 
         $this->sql->params = [
@@ -662,5 +678,34 @@ class summary_table extends table_sql {
 
         $this->is_downloading($format, $filename);
         $this->out($this->perpage, false);
+    }
+
+    /*
+     * Should the word / char counts be displayed?
+     *
+     * We don't want to show word/char columns if there is any null value because this means
+     * that they have not been calculated yet.
+     * @return bool
+     */
+    private function show_word_char_counts(): bool {
+        global $DB;
+
+        if (!is_null($this->showwordcharcounts)) {
+            return $this->showwordcharcounts;
+        }
+
+        // This should be really fast.
+        $sql = "SELECT 'x'
+                  FROM {forum_posts} fp
+                  JOIN {forum_discussions} fd ON fd.id = fp.discussion
+                 WHERE fd.forum = :forumid AND (fp.wordcount IS NULL OR fp.charcount IS NULL)";
+
+        if ($DB->record_exists_sql($sql, ['forumid' => $this->cm->instance])) {
+            $this->showwordcharcounts = false;
+        } else {
+            $this->showwordcharcounts = true;
+        }
+
+        return $this->showwordcharcounts;
     }
 }
