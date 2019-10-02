@@ -134,26 +134,7 @@ class post extends db_table_vault {
             return [];
         }
 
-        $alias = $this->get_table_alias();
-
-        list($insql, $params) = $this->get_db()->get_in_or_equal($discussionids, SQL_PARAMS_NAMED);
-        [
-            'where' => $privatewhere,
-            'params' => $privateparams,
-        ] = $this->get_private_reply_sql($user, $canseeprivatereplies);
-
-        $wheresql = "{$alias}.discussion {$insql} {$privatewhere}";
-
-        if ($orderby) {
-            $orderbysql = $alias . '.' . $orderby;
-        } else {
-            $orderbysql = '';
-        }
-
-        $sql = $this->generate_get_records_sql($wheresql, $orderbysql);
-        $records = $this->get_db()->get_records_sql($sql, array_merge($params, $privateparams));
-
-        return $this->transform_db_records_to_entities($records);
+        return $this->get_from_filters($user, ['discussionids' => $discussionids], $canseeprivatereplies, $orderby);
     }
 
     /**
