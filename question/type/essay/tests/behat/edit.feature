@@ -27,7 +27,7 @@ Feature: Test editing an Essay question
     And I navigate to "Question bank" in current page administration
 
   Scenario: Edit an Essay question
-    When I click on "Edit" "link" in the "essay-001" "table_row"
+    When I choose "Edit question" action for "essay-001" in the question bank
     And I set the following fields to these values:
       | Question name | |
     And I press "id_submitbutton"
