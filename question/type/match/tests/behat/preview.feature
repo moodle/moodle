@@ -26,11 +26,11 @@ Feature: Preview a Matching question
 
   @javascript @_switch_window
   Scenario: Preview a Matching question and submit a correct response.
-    When I click on "Edit" "link" in the "matching-001" "table_row"
+    When I choose "Edit question" action for "matching-001" in the question bank
     And I set the following fields to these values:
       | Shuffle    | 0   |
     And I press "id_submitbutton"
-    When I click on "Preview" "link" in the "matching-001" "table_row"
+    When I choose "Preview" action for "matching-001" in the question bank
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
@@ -44,11 +44,11 @@ Feature: Preview a Matching question
 
   @javascript @_switch_window
   Scenario: Preview a Matching question and submit a partially correct response.
-    When I click on "Edit" "link" in the "matching-001" "table_row"
+    When I choose "Edit question" action for "matching-001" in the question bank
     And I set the following fields to these values:
       | Shuffle    | 0   |
     And I press "id_submitbutton"
-    When I click on "Preview" "link" in the "matching-001" "table_row"
+    When I choose "Preview" action for "matching-001" in the question bank
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
@@ -62,11 +62,11 @@ Feature: Preview a Matching question
 
   @javascript @_switch_window
   Scenario: Preview a Matching question and submit an incorrect response.
-    When I click on "Edit" "link" in the "matching-001" "table_row"
+    When I choose "Edit question" action for "matching-001" in the question bank
     And I set the following fields to these values:
       | Shuffle    | 0   |
     And I press "id_submitbutton"
-    When I click on "Preview" "link" in the "matching-001" "table_row"
+    When I choose "Preview" action for "matching-001" in the question bank
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"

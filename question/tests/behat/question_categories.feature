@@ -76,7 +76,7 @@ Feature: A teacher can put questions in categories in the question bank
   Scenario: Move a question between categories via the question settings page
     When I navigate to "Questions" node in "Course administration > Question bank"
     And I set the field "Select a category" to "Used category"
-    And I click on "Edit" "link" in the "Test question to be moved" "table_row"
+    And I choose "Edit question" action for "Test question to be moved" in the question bank
     And I click on "Use this category" "checkbox"
     And I set the field "Save in category" to "Subcategory"
     And I press "id_submitbutton"
