@@ -7699,7 +7699,7 @@ button.bg-dark:focus {
 .position-relative {
   position: relative !important; }
 
-.position-absolute {
+.position-absolute, .input-group.form-inset .form-inset-item {
   position: absolute !important; }
 
 .position-fixed {
@@ -8024,7 +8024,7 @@ button.bg-dark:focus {
 .py-4 {
   padding-top: 1.5rem !important; }
 
-.pr-4,
+.pr-4, .input-group.form-inset.form-inset-right .form-control,
 .px-4 {
   padding-right: 1.5rem !important; }
 
@@ -8032,7 +8032,7 @@ button.bg-dark:focus {
 .py-4 {
   padding-bottom: 1.5rem !important; }
 
-.pl-4,
+.pl-4, .input-group.form-inset.form-inset-left .form-control,
 .px-4 {
   padding-left: 1.5rem !important; }
 
@@ -16169,6 +16169,13 @@ textarea[data-auto-rows] {
     /*rtl:remove*/
     background-image: url([[pix:t/collapsed]]); } }
 
+.input-group.form-inset .form-inset-item {
+  padding-top: calc(0.375rem + 1px);
+  z-index: 3; }
+
+.input-group.form-inset.form-inset-right .form-inset-item {
+  right: 0; }
+
 .pagelayout-login .card-title h2 img {
   max-width: 100%;
   max-height: 100px; }
@@ -18220,7 +18227,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1050;
+  z-index: 1040;
   overflow-x: hidden;
   transition: 0.5s;
   width: 100%;
