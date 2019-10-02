@@ -566,7 +566,7 @@ class comment {
                        c.commentarea = :commentarea AND
                        c.itemid = :itemid AND
                        $componentwhere
-              ORDER BY c.timecreated $sortdirection";
+              ORDER BY c.timecreated $sortdirection, c.id $sortdirection";
         $params['contextid'] = $this->contextid;
         $params['commentarea'] = $this->commentarea;
         $params['itemid'] = $this->itemid;

@@ -334,6 +334,20 @@ $functions = array(
         'capabilities' => 'moodle/comment:view',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_comment_add_comments' => array(
+        'classname' => 'core_comment_external',
+        'methodname' => 'add_comments',
+        'description' => 'Adds a comment or comments.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_comment_delete_comments' => array(
+        'classname' => 'core_comment_external',
+        'methodname' => 'delete_comments',
+        'description' => 'Deletes a comment or comments.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_completion_get_activities_completion_status' => array(
         'classname' => 'core_completion_external',
         'methodname' => 'get_activities_completion_status',
