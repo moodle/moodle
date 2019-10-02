@@ -122,9 +122,14 @@ class no_recent_accesses extends course_enrolments {
      * @param \core_analytics\analysable $analysable
      * @param int $starttime
      * @param int $endtime
-     * @return float 0 -> accesses, 1 -> no accesses.
+     * @return float|null 0 -> accesses, 1 -> no accesses.
      */
     protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
+
+        if (!$this->enrolment_active_during_analysis_time($sampleid, $starttime, $endtime)) {
+            // We should not use this sample as the analysis results could be misleading.
+            return null;
+        }
 
         $readactions = $this->retrieve('\core\analytics\indicator\any_course_access', $sampleid);
         if ($readactions == \core\analytics\indicator\any_course_access::get_min_value()) {

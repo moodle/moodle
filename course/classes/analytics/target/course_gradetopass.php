@@ -160,9 +160,14 @@ class course_gradetopass extends course_enrolments {
      * @param \core_analytics\analysable $course
      * @param int $starttime
      * @param int $endtime
-     * @return float 0 -> course grade to pass achieved, 1 -> course grade to pass not achieved
+     * @return float|null 0 -> course grade to pass achieved, 1 -> course grade to pass not achieved
      */
     protected function calculate_sample($sampleid, \core_analytics\analysable $course, $starttime = false, $endtime = false) {
+
+        if (!$this->enrolment_active_during_analysis_time($sampleid, $starttime, $endtime)) {
+            // We should not use this sample as the analysis results could be misleading.
+            return null;
+        }
 
         $userenrol = $this->retrieve('user_enrolments', $sampleid);
 

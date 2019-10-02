@@ -17,8 +17,7 @@
 /**
  * Unit tests for core targets.
  *
- * @package   core
- * @category  analytics
+ * @package   core_course
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,8 +35,7 @@ require_once($CFG->dirroot . '/lib/grade/constants.php');
 /**
  * Unit tests for core targets.
  *
- * @package   core
- * @category  analytics
+ * @package   core_course
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -187,6 +185,116 @@ class core_analytics_targets_testcase extends advanced_testcase {
     }
 
     /**
+     * Provides enrolment params for the {@link self::test_core_target_course_completion_samples()} method.
+     *
+     * @return array
+     */
+    public function active_during_analysis_time_provider() {
+        $now = time();
+
+        return [
+            'enrol-after-end' => [
+                'starttime' => $now,
+                'endtime' => $now + WEEKSECS,
+                'timestart' => $now + (WEEKSECS * 2),
+                'timeend' => $now + (WEEKSECS * 3),
+                'nullcalculation' => true,
+            ],
+            'enrol-before-start' => [
+                'starttime' => $now + (WEEKSECS * 2),
+                'endtime' => $now + (WEEKSECS * 3),
+                'timestart' => $now,
+                'timeend' => $now + WEEKSECS,
+                'nullcalculation' => true,
+            ],
+            'enrol-active-exact-match' => [
+                'starttime' => $now,
+                'endtime' => $now + (WEEKSECS * 1),
+                'timestart' => $now,
+                'timeend' => $now + (WEEKSECS * 1),
+                'nullcalculation' => false,
+            ],
+            'enrol-active' => [
+                'starttime' => $now + WEEKSECS,
+                'endtime' => $now + (WEEKSECS * 2),
+                'timestart' => $now,
+                'timeend' => $now + (WEEKSECS * 3),
+                'nullcalculation' => false,
+            ],
+            'enrol-during-analysis-active-just-for-a-while' => [
+                'starttime' => $now,
+                'endtime' => $now + (WEEKSECS * 10),
+                'timestart' => $now + WEEKSECS,
+                'timeend' => $now + (WEEKSECS * 2),
+                'nullcalculation' => true,
+            ],
+            'enrol-during-analysis-mostly-active' => [
+                'starttime' => $now,
+                'endtime' => $now + (WEEKSECS * 20),
+                'timestart' => $now + WEEKSECS,
+                'timeend' => $now + (WEEKSECS * 19),
+                'nullcalculation' => false,
+            ],
+            'enrol-partly-active-starts-before' => [
+                'starttime' => $now + WEEKSECS,
+                'endtime' => $now + (WEEKSECS * 10),
+                'timestart' => $now,
+                'timeend' => $now + (WEEKSECS * 2),
+                'nullcalculation' => true,
+            ],
+            'enrol-mostly-active-starts-before' => [
+                'starttime' => $now + WEEKSECS,
+                'endtime' => $now + (WEEKSECS * 10),
+                'timestart' => $now,
+                'timeend' => $now + (WEEKSECS * 9),
+                'nullcalculation' => false,
+            ],
+            'enrol-partly-active-ends-afterwards' => [
+                'starttime' => $now,
+                'endtime' => $now + (WEEKSECS * 9),
+                'timestart' => $now + (WEEKSECS * 10),
+                'timeend' => $now + (WEEKSECS * 11),
+                'nullcalculation' => true,
+            ],
+            'enrol-mostly-active-ends-afterwards' => [
+                'starttime' => $now,
+                'endtime' => $now + (WEEKSECS * 10),
+                'timestart' => $now + WEEKSECS,
+                'timeend' => $now + (WEEKSECS * 11),
+                'nullcalculation' => false,
+            ],
+            'enrol-partly-active-no-enrolment-end' => [
+                'starttime' => $now,
+                'endtime' => $now + (WEEKSECS * 10),
+                'timestart' => $now + (WEEKSECS * 9),
+                'timeend' => false,
+                'nullcalculation' => true,
+            ],
+            'enrol-mostly-active-no-enrolment-end' => [
+                'starttime' => $now,
+                'endtime' => $now + (WEEKSECS * 10),
+                'timestart' => $now + WEEKSECS,
+                'timeend' => false,
+                'nullcalculation' => true,
+            ],
+            'no-start' => [
+                'starttime' => 0,
+                'endtime' => $now + (WEEKSECS * 2),
+                'timestart' => $now + WEEKSECS,
+                'timeend' => $now + (WEEKSECS * 3),
+                'nullcalculation' => false,
+            ],
+            'no-end' => [
+                'starttime' => $now,
+                'endtime' => 0,
+                'timestart' => $now + (WEEKSECS * 2),
+                'timeend' => $now + (WEEKSECS * 3),
+                'nullcalculation' => false,
+            ]
+        ];
+    }
+
+    /**
      * Test the conditions of a valid analysable, both common and specific to this target (course_completion).
      *
      * @dataProvider analysable_provider
@@ -277,6 +385,48 @@ class core_analytics_targets_testcase extends advanced_testcase {
 
         $this->assertEquals($isvalidfortraining, $target->is_valid_sample($sampleid, $analysable, true));
         $this->assertEquals($isvalidforprediction, $target->is_valid_sample($sampleid, $analysable, false));
+    }
+
+    /**
+     * Test the conditions of a valid calculation (course_completion).
+     *
+     * @dataProvider active_during_analysis_time_provider
+     * @param int $starttime Analysis start time
+     * @param int $endtime Analysis end time
+     * @param int $timestart Enrol start date
+     * @param int $timeend Enrol end date
+     * @param boolean $nullcalculation Whether the calculation should be null or not
+     */
+    public function test_core_target_course_completion_active_during_analysis_time($starttime, $endtime, $timestart, $timeend,
+            $nullcalculation) {
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, null, 'manual', $timestart, $timeend);
+
+        $target = new \core_course\analytics\target\course_completion();
+        $analyser = new \core\analytics\analyser\student_enrolments(1, $target, [], [], []);
+        $analysable = new \core_analytics\course($course);
+
+        $class = new ReflectionClass('\core\analytics\analyser\student_enrolments');
+        $method = $class->getMethod('get_all_samples');
+        $method->setAccessible(true);
+
+        list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
+        $target->add_sample_data($samplesdata);
+        $sampleid = reset($sampleids);
+
+        $reftarget = new ReflectionObject($target);
+        $refmethod = $reftarget->getMethod('calculate_sample');
+        $refmethod->setAccessible(true);
+
+        if ($nullcalculation) {
+            $this->assertNull($refmethod->invoke($target, $sampleid, $analysable, $starttime, $endtime));
+        } else {
+            $this->assertNotNull($refmethod->invoke($target, $sampleid, $analysable, $starttime, $endtime));
+        }
     }
 
     /**
