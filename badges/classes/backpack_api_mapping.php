@@ -209,6 +209,8 @@ class backpack_api_mapping {
                 } else if ($value == '[PASSWORD]') {
                     $value = $password;
                     $request[$key] = $value;
+                } else if ($value == '[PARAM]') {
+                    $request[$key] = is_array($param) ? $param[0] : $param;
                 }
             }
         }
@@ -312,6 +314,7 @@ class backpack_api_mapping {
         return array(
             'FRESH_CONNECT'     => true,
             'RETURNTRANSFER'    => true,
+            'FOLLOWLOCATION'    => true,
             'FORBID_REUSE'      => true,
             'HEADER'            => 0,
             'CONNECTTIMEOUT'    => 3,

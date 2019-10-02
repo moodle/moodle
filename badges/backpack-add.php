@@ -48,7 +48,8 @@ if (!empty($issuedbadge->recipient->id)) {
     $badgeid = $issuedbadge->badgeid;
     $badge = new badge($badgeid);
     $backpack = $DB->get_record('badge_backpack', array('userid' => $USER->id));
-    $sitebackpack = badges_get_site_backpack($backpack->externalbackpackid);
+    $sitebackpack = badges_get_site_primary_backpack();
+    $userbackpack = badges_get_site_backpack($backpack->externalbackpackid);
     $assertion = new core_badges_assertion($id, $sitebackpack->apiversion);
     $api = new \core_badges\backpack_api($sitebackpack);
     $api->authenticate();
@@ -61,7 +62,8 @@ if (!empty($issuedbadge->recipient->id)) {
             throw new moodle_exception('invalidrequest', 'error');
         }
         $issuerentityid = $response->id;
-        badges_external_create_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_ISSUER, $issuer['email'], $issuerentityid);
+        badges_external_create_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_ISSUER, $issuer['email'],
+            $issuerentityid, $response->openBadgeId);
     }
     // Create badge.
     $badge = $assertion->get_badge_class(false);
@@ -72,25 +74,55 @@ if (!empty($issuedbadge->recipient->id)) {
             throw new moodle_exception('invalidrequest', 'error');
         }
         $badgeentityid = $response->id;
-        badges_external_create_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_BADGE, $badgeid, $badgeentityid);
+        badges_external_create_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_BADGE, $badgeid,
+            $badgeentityid, $response->hostedUrl);
     }
 
     // Create assertion (Award the badge!).
     $assertiondata = $assertion->get_badge_assertion(false, false);
 
     $assertionid = $assertion->get_assertion_hash();
+    $assertionentityid = badges_external_get_mapping(
+        $sitebackpack->id,
+        OPEN_BADGES_V2_TYPE_ASSERTION,
+        $assertionid
+    );
 
-    if (!($assertionentityid = badges_external_get_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_ASSERTION, $assertionid))) {
+    if ($assertionentityid && strpos($sitebackpack->backpackapiurl, 'badgr')) {
+        $assertionentityid = badges_generate_badgr_open_url(
+            $sitebackpack,
+            OPEN_BADGES_V2_TYPE_ASSERTION,
+            $assertionentityid
+        );
+    }
+
+    // Create an assertion for the recipient in the issuer's account.
+    if (!$assertionentityid) {
         $response = $api->put_badgeclass_assertion($badgeentityid, $assertiondata);
         if (!$response) {
             throw new moodle_exception('invalidrequest', 'error');
         }
+        $assertionentityid = badges_generate_badgr_open_url($sitebackpack, OPEN_BADGES_V2_TYPE_ASSERTION, $response->id);
+        badges_external_create_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_ASSERTION, $assertionid,
+            $response->id);
+    }
+
+    // Now award/upload the badge to the user's account.
+    if ($assertionentityid && !badges_external_get_mapping($userbackpack->id, OPEN_BADGES_V2_TYPE_ASSERTION, $assertionid)) {
+        $userapi = new \core_badges\backpack_api($userbackpack, $backpack);
+        $userapi->authenticate();
+        $response = $userapi->import_badge_assertion($assertionentityid);
+        if (!$response) {
+            throw new moodle_exception('invalidrequest', 'error');
+        }
         $assertionentityid = $response->id;
-        badges_external_create_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_ASSERTION, $assertionid, $assertionentityid);
+        badges_external_create_mapping($userbackpack->id, OPEN_BADGES_V2_TYPE_ASSERTION, $assertionid,
+            $assertionentityid);
         $response = ['success' => 'addedtobackpack'];
     } else {
         $response = ['warning' => 'existsinbackpack'];
     }
+
     redirect(new moodle_url('/badges/mybadges.php', $response));
 } else {
     redirect(new moodle_url('/badges/mybadges.php'));

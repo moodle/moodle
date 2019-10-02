@@ -937,6 +937,17 @@ function badges_get_site_backpack($id) {
 }
 
 /**
+ * Get the primary backpack for the site
+ *
+ * @return array(stdClass)
+ */
+function badges_get_site_primary_backpack() {
+    global $CFG;
+
+    return badges_get_site_backpack($CFG->badges_site_backpack);
+}
+
+/**
  * List the backpacks at site level.
  *
  * @return array(stdClass)
@@ -1026,9 +1037,10 @@ function badges_disconnect_user_backpack($userid) {
  * @param integer $sitebackpackid The site backpack to connect to.
  * @param string $type The type of this remote object.
  * @param string $internalid The id for this object on the Moodle site.
+ * @param string $param The param we need to return. Defaults to the externalid.
  * @return mixed The id or false if it doesn't exist.
  */
-function badges_external_get_mapping($sitebackpackid, $type, $internalid) {
+function badges_external_get_mapping($sitebackpackid, $type, $internalid, $param = 'externalid') {
     global $DB;
     // Return externalid if it exists.
     $params = [
@@ -1037,9 +1049,9 @@ function badges_external_get_mapping($sitebackpackid, $type, $internalid) {
         'internalid' => $internalid
     ];
 
-    $record = $DB->get_record('badge_external_identifier', $params, 'externalid', IGNORE_MISSING);
+    $record = $DB->get_record('badge_external_identifier', $params, $param, IGNORE_MISSING);
     if ($record) {
-        return $record->externalid;
+        return $record->$param;
     }
     return false;
 }
@@ -1319,4 +1331,27 @@ function badges_get_oauth2_service_options() {
     }
 
     return $options;
+}
+
+/**
+ * Generate a public badgr URL that conforms to OBv2. This is done because badgr responses do not currently conform to
+ * the spec.
+ *
+ * WARNING: This is an extremely hacky way of implementing this and should be removed once the standards are conformed to.
+ *
+ * @param stdClass $backpack The Badgr backpack we are pushing to
+ * @param string $type The type of object we are dealing with either Issuer, Assertion OR Badge.
+ * @param string $externalid The externalid as provided by the backpack
+ * @return string The public URL to access Badgr objects
+ */
+function badges_generate_badgr_open_url($backpack, $type, $externalid) {
+    if (badges_open_badges_backpack_api($backpack->id) == OPEN_BADGES_V2) {
+        $entity = strtolower($type);
+        if ($type == OPEN_BADGES_V2_TYPE_BADGE) {
+            $entity = "badge";
+        }
+        $url = new moodle_url($backpack->backpackapiurl);
+        return "{$url->get_scheme()}://{$url->get_host()}/public/{$entity}s/$externalid";
+
+    }
 }

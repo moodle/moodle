@@ -2868,9 +2868,6 @@ function xmldb_main_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $table->deleteKey('backpackapiurlkey');
-        $table->deleteKey('backpackweburlkey');
-        $table->add_key('backpackapiurlkey', XMLDB_KEY_UNIQUE, ['backpackapiurl', 'backpackemail']);
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2021052500.32);
