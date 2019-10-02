@@ -73,13 +73,19 @@ class summary_table extends table_sql {
     protected $context = null;
 
     /**
+     * @var bool Whether the user can see all private replies or not.
+     */
+    protected $canseeprivatereplies;
+
+    /**
      * Forum report table constructor.
      *
      * @param int $courseid The ID of the course the forum(s) exist within.
      * @param array $filters Report filters in the format 'type' => [values].
      * @param bool $bulkoperations Is the user allowed to perform bulk operations?
+     * @param bool $canseeprivatereplies Whether the user can see all private replies or not.
      */
-    public function __construct(int $courseid, array $filters, bool $bulkoperations) {
+    public function __construct(int $courseid, array $filters, bool $bulkoperations, bool $canseeprivatereplies) {
         global $USER, $OUTPUT;
 
         $forumid = $filters['forums'][0];
@@ -88,6 +94,7 @@ class summary_table extends table_sql {
 
         $this->cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
         $this->context = \context_module::instance($this->cm->id);
+        $this->canseeprivatereplies = $canseeprivatereplies;
 
         // Only show their own summary unless they have permission to view all.
         if (!has_capability('forumreport/summary:viewall', $this->context)) {
@@ -398,13 +405,14 @@ class summary_table extends table_sql {
      * @return void.
      */
     protected function define_base_sql(): void {
+        global $USER;
+
         $this->sql = new \stdClass();
 
         $userfields = get_extra_user_fields($this->context);
         $userfieldssql = \user_picture::fields('u', $userfields);
 
         // Define base SQL query format.
-        // Ignores private replies as they are not visible to all participants.
         $this->sql->basefields = ' ue.userid AS userid,
                                    e.courseid AS courseid,
                                    f.id as forumid,
@@ -415,6 +423,17 @@ class summary_table extends table_sql {
                                    MIN(p.created) AS earliestpost,
                                    MAX(p.created) AS latestpost';
 
+        // Handle private replies.
+        $privaterepliessql = '';
+        $privaterepliesparams = [];
+        if (!$this->canseeprivatereplies) {
+            $privaterepliessql = ' AND (p.privatereplyto = :privatereplyto
+                                        OR p.userid = :privatereplyfrom
+                                        OR p.privatereplyto = 0)';
+            $privaterepliesparams['privatereplyto'] = $USER->id;
+            $privaterepliesparams['privatereplyfrom'] = $USER->id;
+        }
+
         $this->sql->basefromjoins = '    {enrol} e
                                     JOIN {user_enrolments} ue ON ue.enrolid = e.id
                                     JOIN {user} u ON u.id = ue.userid
@@ -422,7 +441,7 @@ class summary_table extends table_sql {
                                     JOIN {forum_discussions} d ON d.forum = f.id
                                LEFT JOIN {forum_posts} p ON p.discussion =  d.id
                                      AND p.userid = ue.userid
-                                     AND p.privatereplyto = 0
+                                     ' . $privaterepliessql . '
                                LEFT JOIN (
                                             SELECT COUNT(fi.id) AS attcount, fi.itemid AS postid, fi.userid
                                               FROM {files} fi
@@ -447,7 +466,7 @@ class summary_table extends table_sql {
         $this->sql->params = [
             'component' => 'mod_forum',
             'courseid' => $this->cm->course,
-        ];
+        ] + $privaterepliesparams;
 
         // Handle if a user is limited to viewing their own summary.
         if (!empty($this->userid)) {
