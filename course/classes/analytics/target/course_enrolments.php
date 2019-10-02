@@ -36,6 +36,11 @@ defined('MOODLE_INTERNAL') || die();
 abstract class course_enrolments extends \core_analytics\local\target\binary {
 
     /**
+     * @var float
+     */
+    const ENROL_ACTIVE_PERCENT_REQUIRED = 0.7;
+
+    /**
      * Students in the course.
      * @var int[]
      */
@@ -146,6 +151,11 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
     /**
      * Discard student enrolments that are invalid.
      *
+     * Note that this method assumes that the target is only interested in enrolments that are/were active
+     * between the current course start and end times. Targets interested in predicting students at risk before
+     * their enrolment start and targets interested in getting predictions for students whose enrolment already
+     * finished should overwrite this method as these students are discarded by this method.
+     *
      * @param int $sampleid
      * @param \core_analytics\analysable $course
      * @param bool $fortraining
@@ -165,7 +175,7 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
         $limit = $course->get_start() - (YEARSECS + (WEEKSECS * 4));
         if (($userenrol->timestart && $userenrol->timestart < $limit) ||
                 (!$userenrol->timestart && $userenrol->timecreated < $limit)) {
-            // Following what we do in is_valid_sample, we will discard enrolments that last more than 1 academic year
+            // Following what we do in is_valid_analysable, we will discard enrolments that last more than 1 academic year
             // because they have incorrect start and end dates or because they are reused along multiple years
             // without removing previous academic years students. This may not be very accurate because some courses
             // can last just some months, but it is better than nothing.
@@ -175,7 +185,7 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
         if ($course->get_end()) {
             if (($userenrol->timestart && $userenrol->timestart > $course->get_end()) ||
                     (!$userenrol->timestart && $userenrol->timecreated > $course->get_end())) {
-                // Discard user enrolments that starts after the analysable official end.
+                // Discard user enrolments that start after the analysable official end.
                 return false;
             }
 
@@ -227,5 +237,102 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
                 get_string('outlinereport'), false, $attrs);
 
         return array_merge($actions, parent::prediction_actions($prediction, $includedetailsaction));
+    }
+
+    /**
+     * Is/was this user enrolment active during most of the analysis interval?
+     *
+     * This method discards enrolments that were not active during most of the analysis interval. It is
+     * important to discard these enrolments because the indicator calculations can lead to misleading
+     * results.
+     *
+     * Note that this method assumes that the target is interested in enrolments that are/were active
+     * during the analysis interval. Targets interested in predicting students at risk before
+     * their enrolment start should not call this method. Similarly, targets interested in getting
+     * predictions for students whose enrolment already finished should not call this method either.
+     *
+     * @param  int    $sampleid     The id of the sample that is being calculated
+     * @param  int    $starttime    The analysis interval start time
+     * @param  int    $endtime      The analysis interval end time
+     * @return bool
+     */
+    protected function enrolment_active_during_analysis_time(int $sampleid, int $starttime, int $endtime) {
+
+        $userenrol = $this->retrieve('user_enrolments', $sampleid);
+        $enrolstart = $userenrol->timestart ?? $userenrol->timecreated;
+        $enrolend = $userenrol->timeend ?? PHP_INT_MAX;
+
+        if ($endtime && $endtime < $enrolstart) {
+            /* The enrolment starts/ed after the analysis end time.
+             *   |=========|        |----------|
+             * A start    A end   E start     E end
+             */
+            return false;
+        }
+
+        if ($starttime && $enrolend < $starttime) {
+            /* The enrolment finishes/ed before the analysis start time.
+             *    |---------|        |==========|
+             * E start    E end   A start     A end
+             */
+            return false;
+        }
+
+        // Now we want to discard enrolments that were not active for most of the analysis interval. We
+        // need both a $starttime and an $endtime to calculate this.
+
+        if (!$starttime) {
+            // Early return. Nothing to discard if there is no start.
+            return true;
+        }
+
+        if (!$endtime) {
+            // We can not calculate in relative terms (percent) how far from the analysis start time
+            // this enrolment start is/was.
+            return true;
+        }
+
+        if ($enrolstart < $starttime && $endtime < $enrolend) {
+            /* The enrolment is active during all the analysis time.
+             *    |-----------------------------|
+             *               |========|
+             * E start    A start   A end     E end
+             */
+            return true;
+        }
+
+        // If we reach this point is because the enrolment is only active for a portion of the analysis interval.
+        // Therefore, we check that it was active for most of the analysis interval, a self::ENROL_ACTIVE_PERCENT_REQUIRED.
+
+        if ($starttime <= $enrolstart && $enrolend <= $endtime) {
+            /*    |=============================|
+             *               |--------|
+             * A start    E start   E end     A end
+             */
+            $activeenrolduration = $enrolend - $enrolstart;
+        } else if ($enrolstart <= $starttime && $enrolend <= $endtime) {
+            /*            |===================|
+             *    |------------------|
+             * E start  A start    E end    A end
+             */
+            $activeenrolduration = $enrolend - $starttime;
+        } else if ($starttime <= $enrolstart && $endtime <= $enrolend) {
+            /*   |===================|
+             *               |------------------|
+             * A start    E start  A end    E end
+             */
+            $activeenrolduration = $endtime - $enrolstart;
+        }
+
+        $analysisduration = $endtime - $starttime;
+
+        if (floatval($activeenrolduration) / floatval($analysisduration) < self::ENROL_ACTIVE_PERCENT_REQUIRED) {
+            // The student was not enroled in the course for most of the analysis interval.
+            return false;
+        }
+
+        // We happily return true if the enrolment was active for more than self::ENROL_ACTIVE_PERCENT_REQUIRED of
+        // the analysis interval.
+        return true;
     }
 }
