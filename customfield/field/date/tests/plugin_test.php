@@ -172,6 +172,35 @@ class customfield_date_plugin_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_parse_value}
+     *
+     * @return array
+     */
+    public function parse_value_provider() : array {
+        return [
+            // Valid times.
+            ['2019-10-01', strtotime('2019-10-01')],
+            ['2019-10-01 14:00', strtotime('2019-10-01 14:00')],
+            // Invalid times.
+            ['ZZZZZ', 0],
+            ['202-04-01', 0],
+            ['2019-15-15', 0],
+        ];
+    }
+    /**
+     * Test field parse_value method
+     *
+     * @param string $value
+     * @param int $expected
+     * @return void
+     *
+     * @dataProvider parse_value_provider
+     */
+    public function test_parse_value(string $value, int $expected) {
+        $this->assertSame($expected, $this->cfields[1]->parse_value($value));
+    }
+
+    /**
      * Deleting fields and data
      */
     public function test_delete() {
