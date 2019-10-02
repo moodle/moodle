@@ -88,7 +88,6 @@ class backpack_api {
         $admin = get_admin();
 
         $this->backpackapiurl = $sitebackpack->backpackapiurl;
-        $this->backpackapiurl = $sitebackpack->backpackapiurl;
         $this->backpackapiversion = $sitebackpack->apiversion;
         $this->password = $sitebackpack->password;
         $this->email = !empty($CFG->badges_defaultissuercontact) ? $CFG->badges_defaultissuercontact : '';
@@ -151,6 +150,21 @@ class backpack_api {
                     'get',                                      // Method.
                     true,                                       // JSON Encoded.
                     true                                        // Auth required.
+                ];
+                $mapping[] = [
+                    'importbadge',                                // Action.
+                    // Badgr.io does not return the public information about a badge
+                    // if the issuer is associated with another user. We need to pass
+                    // the expand parameters which are not in any specification to get
+                    // additional information about the assertion in a single request.
+                    '[URL]/backpack/import',
+                    ['url' => '[PARAM]'],  // Post params.
+                    '',                                             // Request exporter.
+                    'core_badges\external\assertion_exporter',      // Response exporter.
+                    false,                                          // Multiple.
+                    'post',                                         // Method.
+                    true,                                           // JSON Encoded.
+                    true                                            // Auth required.
                 ];
                 $mapping[] = [
                     'badges',                                   // Action.
@@ -409,6 +423,22 @@ class backpack_api {
     }
 
     /**
+     * Import a badge assertion into a backpack. This is used to handle cross domain backpacks.
+     *
+     * @param string $data The structure of the badge class assertion.
+     * @return mixed
+     * @throws coding_exception
+     */
+    public function import_badge_assertion(string $data) {
+        // V2 Only.
+        if ($this->backpackapiversion == OPEN_BADGES_V1) {
+            throw new coding_exception('Not supported in this backpack API');
+        }
+
+        return $this->curl_request('importbadge', null, null, $data);
+    }
+
+    /**
      * Select collections from a backpack.
      *
      * @param string $backpackid The id of the backpack
@@ -570,7 +600,6 @@ class backpack_api {
      *
      * @param integer $userid The user in Moodle
      * @param integer $backpackid The backpack to disconnect
-     * @param integer $externalbackupid The external backpack to disconnect
      * @return boolean
      */
     public function disconnect_backpack($userid, $backpackid, $externalbackupid) {
