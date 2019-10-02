@@ -296,6 +296,9 @@ $PAGE->set_title("$course->shortname: " . format_string($discussion->get_name())
 $PAGE->set_heading($course->fullname);
 if ($ismoderndisplaymode) {
     $PAGE->add_body_class('modern-display-mode reset-style');
+    $PAGE->set_include_region_main_settings_in_header_actions(true);
+    $settingstrigger = $OUTPUT->render_from_template('mod_forum/settings_drawer_trigger', null);
+    $PAGE->add_header_action($settingstrigger);
 } else {
     $PAGE->set_button(forum_search_form($course));
 }

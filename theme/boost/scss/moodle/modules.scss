@@ -109,6 +109,16 @@ select {
     }
 }
 
+.discussion-settings-container {
+    .custom-select {
+        width: 100%;
+    }
+
+    input {
+        max-width: 100%;
+    }
+}
+
 .forumpost {
     border: $border-width solid $border-color;
     display: block;

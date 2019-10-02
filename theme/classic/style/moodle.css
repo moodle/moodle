@@ -11708,6 +11708,10 @@ div.editor_atto_toolbar button .icon {
   text-decoration: none !important;
   /* stylelint-disable-line declaration-no-important */ }
 
+.colour-inherit {
+  color: inherit !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
 .position-right {
   right: 0 !important;
   /* stylelint-disable-line declaration-no-important */ }
@@ -12419,6 +12423,15 @@ div.editor_atto_toolbar button .icon {
       /* MDL-63102 - Remove extra space at bottom.
         If modifying make sure block-region is horizontally stacked when in full screen */
       display: block; } }
+
+.header-action #region-main-settings-menu {
+  position: unset;
+  float: none;
+  width: auto; }
+  .header-action #region-main-settings-menu > div {
+    position: unset;
+    right: auto;
+    margin: 0; }
 
 @media (max-width: 1199.98px) {
   [data-region="blocks-column"] {
@@ -13849,6 +13862,37 @@ body.drawer-ease {
   body.drawer-open-right {
     margin-right: 285px; } }
 
+[data-region=right-hand-drawer] {
+  display: flex;
+  flex-direction: column;
+  transition: right 0.2s ease-in-out; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-region=right-hand-drawer] {
+      transition: none; } }
+  [data-region=right-hand-drawer].drawer {
+    z-index: 1020;
+    position: fixed;
+    top: 50px;
+    right: 0;
+    height: calc(100% - 50px);
+    width: 320px;
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    visibility: visible;
+    opacity: 1; }
+  [data-region=right-hand-drawer].hidden {
+    display: block;
+    right: -320px;
+    visibility: hidden;
+    opacity: 0;
+    transition: right 0.2s ease-in-out, visibility 0s ease-in-out 0.2s, opacity 0s ease-in-out 0.2s; }
+    @media (prefers-reduced-motion: reduce) {
+      [data-region=right-hand-drawer].hidden {
+        transition: none; } }
+
+.dir-rtl [data-region=right-hand-drawer] {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
+
 #page-my-index {
   background-color: #f8f9fa; }
 
@@ -14888,33 +14932,21 @@ a.ygtvspacer:hover {
       visibility: visible;
       transition: right 0.25s; } }
 
+.drawer .message-app {
+  height: 100%; }
+  .drawer .message-app .icon-back-in-app {
+    display: none; }
+  .drawer .message-app .icon-back-in-drawer {
+    display: inherit; }
+
 .message-app {
   display: flex;
   flex-direction: column;
-  background-color: #eff1f3;
-  transition: all 0.2s ease-in-out; }
-  @media (prefers-reduced-motion: reduce) {
-    .message-app {
-      transition: none; } }
+  background-color: #eff1f3; }
   .message-app .icon-back-in-drawer {
     display: none; }
-  .message-app.drawer {
-    z-index: 1020;
-    position: fixed;
-    top: 50px;
-    right: 0;
-    height: calc(100% - 50px);
-    width: 320px;
-    box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08); }
-    .message-app.drawer .icon-back-in-app {
-      display: none; }
-    .message-app.drawer .icon-back-in-drawer {
-      display: inherit; }
   .message-app.main {
     min-height: 400px; }
-  .message-app.hidden {
-    display: block;
-    right: -320px; }
   .message-app .header-container {
     flex-shrink: 0; }
   .message-app .body-container {
@@ -16357,6 +16389,12 @@ select {
   color: #373a3c;
   font-weight: bold; }
 
+.discussion-settings-container .custom-select {
+  width: 100%; }
+
+.discussion-settings-container input {
+  max-width: 100%; }
+
 .forumpost {
   border: 1px solid #dee2e6;
   display: block;
@@ -17163,8 +17201,10 @@ p.arrow_button {
   margin: 0 0 10px 5px; }
 
 .btn.btn-icon, #page-grade-grading-manage .actions .btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion {
-  height: 16px;
-  width: 16px;
+  height: 36px;
+  width: 36px;
+  font-size: 16px;
+  line-height: 16px;
   padding: 0;
   border-radius: 50%;
   flex-shrink: 0; }
@@ -17174,31 +17214,55 @@ p.arrow_button {
     height: 20px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 20px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 0 !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 0 !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-1, #page-grade-grading-manage .actions .btn-icon.icon-size-1.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-1.addcriterion {
     height: 24px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 24px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 4px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 4px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-2, #page-grade-grading-manage .actions .btn-icon.icon-size-2.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-2.addcriterion {
     height: 28px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 28px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 8px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 8px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-3, #page-grade-grading-manage .actions .btn-icon.icon-size-3.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-3.addcriterion {
     height: 36px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 36px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 16px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 16px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-4, #page-grade-grading-manage .actions .btn-icon.icon-size-4.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-4.addcriterion {
     height: 44px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 44px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 24px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 24px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-5, #page-grade-grading-manage .actions .btn-icon.icon-size-5.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-5.addcriterion {
     height: 68px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 68px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 48px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 48px !important;
     /* stylelint-disable-line declaration-no-important */ }
 
 .gradetreebox h4 {

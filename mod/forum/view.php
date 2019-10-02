@@ -89,6 +89,7 @@ $PAGE->set_title($forum->get_name());
 $PAGE->add_body_class('forumtype-' . $forum->get_type() . ' reset-style');
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button(forum_search_form($course, $search));
+$PAGE->set_include_region_main_settings_in_header_actions(true);
 
 if ($istypesingle && $displaymode == FORUM_MODE_MODERN) {
     $PAGE->add_body_class('modern-display-mode reset-style');

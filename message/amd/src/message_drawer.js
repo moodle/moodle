@@ -36,6 +36,7 @@ define(
     'core_message/message_drawer_routes',
     'core_message/message_drawer_events',
     'core/pending',
+    'core/drawer',
 ],
 function(
     $,
@@ -51,7 +52,8 @@ function(
     Router,
     Routes,
     Events,
-    Pending
+    Pending,
+    Drawer
 ) {
 
     var SELECTORS = {
@@ -134,9 +136,10 @@ function(
             root.attr('data-shown', true);
         }
 
-        root.removeClass('hidden');
-        root.attr('aria-expanded', true);
-        root.attr('aria-hidden', false);
+        var drawerRoot = Drawer.getDrawerRoot(root);
+        if (drawerRoot.length) {
+            Drawer.show(drawerRoot);
+        }
     };
 
     /**
@@ -145,19 +148,24 @@ function(
      * @param {Object} root The message drawer container.
      */
     var hide = function(root) {
-        root.addClass('hidden');
-        root.attr('aria-expanded', false);
-        root.attr('aria-hidden', true);
+        var drawerRoot = Drawer.getDrawerRoot(root);
+        if (drawerRoot.length) {
+            Drawer.hide(drawerRoot);
+        }
     };
 
     /**
      * Check if the drawer is visible.
      *
      * @param {Object} root The message drawer container.
-     * @return {bool}
+     * @return {boolean}
      */
     var isVisible = function(root) {
-        return !root.hasClass('hidden');
+        var drawerRoot = Drawer.getDrawerRoot(root);
+        if (drawerRoot.length) {
+            return Drawer.isVisible(drawerRoot);
+        }
+        return true;
     };
 
     /**

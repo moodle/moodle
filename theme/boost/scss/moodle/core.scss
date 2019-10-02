@@ -2258,6 +2258,10 @@ $switch-transition: .2s all !default;
     text-decoration: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.colour-inherit {
+    color: inherit !important; /* stylelint-disable-line declaration-no-important */
+}
+
 .position-right {
     right: 0 !important; /* stylelint-disable-line declaration-no-important */
 }

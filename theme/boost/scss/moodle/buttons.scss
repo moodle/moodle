@@ -49,8 +49,10 @@ p.arrow_button {
 .btn.btn-icon {
     @extend .btn-link;
 
-    height: $icon-width;
-    width: $icon-width;
+    height: ($icon-width + 20px);
+    width: ($icon-width + 20px);
+    font-size: $icon-width;
+    line-height: $icon-width;
     padding: 0;
     border-radius: 50%;
     flex-shrink: 0;
@@ -63,6 +65,8 @@ p.arrow_button {
         &.icon-size-#{$size} {
             height: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
             width: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
+            font-size: $length !important; /* stylelint-disable-line declaration-no-important */
+            line-height: $length !important; /* stylelint-disable-line declaration-no-important */
         }
     }
 }

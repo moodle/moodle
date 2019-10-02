@@ -59,16 +59,49 @@
 {{#html.neighbourlinks}}{{{.}}}{{/html.neighbourlinks}}
 </div>
 {{#js}}
-require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list', 'mod_forum/lock_toggle', 'mod_forum/favourite_toggle',
-        'mod_forum/pin_toggle', 'mod_forum/subscription_toggle'],
-    function($, Discussion, PostsList, LockToggle, FavouriteToggle, Pin, SubscribeToggle) {
-        var root = $("[data-content='forum-discussion']");
-        Discussion.init(root);
-        PostsList.init(root);
-        root = $('[data-container="discussion-tools"]');
-        LockToggle.init(root);
-        FavouriteToggle.init(root);
-        Pin.init(root);
-        SubscribeToggle.init(root);
+require(
+[
+    'jquery',
+    'core/templates',
+    'mod_forum/discussion',
+    'mod_forum/posts_list',
+    'mod_forum/lock_toggle',
+    'mod_forum/favourite_toggle',
+    'mod_forum/pin_toggle',
+    'mod_forum/subscription_toggle'
+],
+function(
+    $,
+    Templates,
+    Discussion,
+    PostsList,
+    LockToggle,
+    FavouriteToggle,
+    Pin,
+    SubscribeToggle
+) {
+    var root = $("[data-content='forum-discussion']");
+    Discussion.init(root);
+    PostsList.init(root);
+    root = $('[data-container="discussion-tools"]');
+    LockToggle.init(root, true);
+    FavouriteToggle.init(root, true, function(toggleElement, context) {
+        return Templates.render('mod_forum/discussion_favourite_toggle', context)
+            .then(function(html, js) {
+                return Templates.replaceNode(toggleElement, html, js);
+            });
+    });
+    Pin.init(root, true, function(toggleElement, context) {
+        return Templates.render('mod_forum/discussion_pin_toggle', context)
+            .then(function(html, js) {
+                return Templates.replaceNode(toggleElement, html, js);
+            });
+    });
+    SubscribeToggle.init(root, true, function(toggleElement, context) {
+        return Templates.render('mod_forum/discussion_subscription_toggle', context)
+            .then(function(html, js) {
+                return Templates.replaceNode(toggleElement, html, js);
+            });
+    });
 });
 {{/js}}

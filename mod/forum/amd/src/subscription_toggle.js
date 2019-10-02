@@ -44,8 +44,10 @@ define([
      * Register event listeners for the subscription toggle.
      *
      * @param {object} root The discussion list root element
+     * @param {boolean} preventDefault Should the default action of the event be prevented
+     * @param {function} callback Success callback
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, preventDefault, callback) {
         root.on('click', Selectors.subscription.toggle, function(e) {
             var toggleElement = $(this);
             var forumId = toggleElement.data('forumid');
@@ -58,20 +60,17 @@ define([
                         discussionId: discussionId,
                         subscriptionState: subscriptionState
                     });
-                    return Templates.render('mod_forum/discussion_subscription_toggle', context);
-                })
-                .then(function(html, js) {
-                    return Templates.replaceNode(toggleElement, html, js);
+                    return callback(toggleElement, context);
                 })
                 .catch(Notification.exception);
 
-            e.preventDefault();
+            if (preventDefault) {
+                e.preventDefault();
+            }
         });
     };
 
     return {
-        init: function(root) {
-            registerEventListeners(root);
-        }
+        init: registerEventListeners
     };
 });

@@ -30,6 +30,7 @@ import LockToggle from 'mod_forum/lock_toggle';
 import FavouriteToggle from 'mod_forum/favourite_toggle';
 import Pin from 'mod_forum/pin_toggle';
 import Selectors from 'mod_forum/selectors';
+import Subscribe from 'mod_forum/subscription_toggle';
 
 const ANIMATION_DURATION = 150;
 
@@ -409,7 +410,17 @@ export const init = (root, context) => {
 
     // Initialise the settings menu javascript.
     const discussionToolsContainer = root.find(Selectors.discussion.tools);
-    LockToggle.init(discussionToolsContainer);
-    FavouriteToggle.init(discussionToolsContainer);
-    Pin.init(discussionToolsContainer);
+    LockToggle.init(discussionToolsContainer, false);
+    FavouriteToggle.init(discussionToolsContainer, false, (toggleElement, response) => {
+        const newTargetState = response.userstate.favourited ? 0 : 1;
+        return toggleElement.data('targetstate', newTargetState);
+    });
+    Pin.init(discussionToolsContainer, false, (toggleElement, response) => {
+        const newTargetState = response.pinned ? 0 : 1;
+        return toggleElement.data('targetstate', newTargetState);
+    });
+    Subscribe.init(discussionToolsContainer, false, (toggleElement, response) => {
+        const newTargetState = response.userstate.subscribed ? 0 : 1;
+        toggleElement.data('targetstate', newTargetState);
+    });
 };

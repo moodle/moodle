@@ -33,36 +33,33 @@
     {}
 
 }}
+{{< core/drawer}}
+    {{$drawercontent}}
+        <div id="message-drawer-{{uniqid}}" class="message-app" data-region="message-drawer" role="region">
+            <div class="header-container position-relative" data-region="header-container">
+                {{> core_message/message_drawer_view_contacts_header }}
+                {{> core_message/message_drawer_view_conversation_header }}
+                {{> core_message/message_drawer_view_overview_header }}
+                {{> core_message/message_drawer_view_search_header }}
+                {{> core_message/message_drawer_view_settings_header }}
+            </div>
+            <div class="body-container position-relative" data-region="body-container">
+                {{> core_message/message_drawer_view_contact_body }}
+                {{> core_message/message_drawer_view_contacts_body }}
+                {{> core_message/message_drawer_view_conversation_body }}
+                {{> core_message/message_drawer_view_group_info_body }}
+                {{> core_message/message_drawer_view_overview_body }}
+                {{> core_message/message_drawer_view_search_body }}
+                {{> core_message/message_drawer_view_settings_body }}
+            </div>
+            <div class="footer-container position-relative" data-region="footer-container">
+                {{> core_message/message_drawer_view_conversation_footer }}
+                {{> core_message/message_drawer_view_overview_footer }}
+            </div>
+        </div>
+    {{/drawercontent}}
+{{/core/drawer}}
 
-<div
-    id="message-drawer-{{uniqid}}"
-    class="message-app drawer hidden"
-    aria-expanded="false"
-    aria-hidden="true"
-    data-region="message-drawer"
-    role="region"
->
-    <div class="header-container position-relative" data-region="header-container">
-        {{> core_message/message_drawer_view_contacts_header }}
-        {{> core_message/message_drawer_view_conversation_header }}
-        {{> core_message/message_drawer_view_overview_header }}
-        {{> core_message/message_drawer_view_search_header }}
-        {{> core_message/message_drawer_view_settings_header }}
-    </div>
-    <div class="body-container position-relative" data-region="body-container">
-        {{> core_message/message_drawer_view_contact_body }}
-        {{> core_message/message_drawer_view_contacts_body }}
-        {{> core_message/message_drawer_view_conversation_body }}
-        {{> core_message/message_drawer_view_group_info_body }}
-        {{> core_message/message_drawer_view_overview_body }}
-        {{> core_message/message_drawer_view_search_body }}
-        {{> core_message/message_drawer_view_settings_body }}
-    </div>
-    <div class="footer-container position-relative" data-region="footer-container">
-        {{> core_message/message_drawer_view_conversation_footer }}
-        {{> core_message/message_drawer_view_overview_footer }}
-    </div>
-</div>
 {{#js}}
 require(['jquery', 'core_message/message_drawer'], function($, MessageDrawer) {
     var root = $('#message-drawer-{{uniqid}}');
