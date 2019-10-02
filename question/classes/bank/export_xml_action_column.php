@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A column type for the name of the question type.
+ * Question bank column export the question in Moodle XML format.
  *
  * @package   core_question
- * @copyright 2009 Tim Hunt
+ * @copyright 2019 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,33 +27,30 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * A column type for the name of the question type.
+ * Question bank column export the question in Moodle XML format.
  *
- * @copyright 2009 Tim Hunt
+ * @copyright 2019 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_type_column extends column_base {
+class export_xml_action_column extends menu_action_column_base {
+    /** @var string avoids repeated calls to get_string('duplicate'). */
+    protected $strexportasxml;
+
+    public function init() {
+        parent::init();
+        $this->strexportasxml = get_string('exportasxml', 'question');
+    }
+
     public function get_name() {
-        return 'qtype';
+        return 'exportasxmlaction';
     }
 
-    protected function get_title() {
-        return get_string('qtypeveryshort', 'question');
-    }
+    protected function get_url_icon_and_label(\stdClass $question): array {
+        if (!question_has_capability_on($question, 'view')) {
+            return [null, null, null];
+        }
 
-    protected function get_title_tip() {
-        return get_string('questiontype', 'question');
-    }
-
-    protected function display_content($question, $rowclasses) {
-        echo print_question_icon($question);
-    }
-
-    public function get_required_fields() {
-        return array('q.qtype');
-    }
-
-    public function is_sortable() {
-        return 'q.qtype';
+        return [question_get_export_single_question_url($question),
+                't/download', $this->strexportasxml];
     }
 }

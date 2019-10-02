@@ -14,15 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * A base class for actions that are an icon that lets you manipulate the question in some way.
+ *
+ * @package   core_question
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core_question\bank;
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * A base class for actions that are an icon that lets you manipulate the question in some way.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 abstract class action_column_base extends column_base {
 
     protected function get_title() {

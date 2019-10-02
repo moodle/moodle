@@ -14,13 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Base class for 'columns' that are actually displayed as a row following the main question row.
+ *
+ * @package   core_question
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core_question\bank;
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Base class for 'columns' that are actually displayed as a row following the main question row.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class row_base extends column_base {
     public function is_extra_row() {
