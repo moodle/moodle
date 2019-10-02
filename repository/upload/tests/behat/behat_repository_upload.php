@@ -27,7 +27,8 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/core_behat_file_helper.php');
 
-use Behat\Mink\Exception\ExpectationException as ExpectationException,
+use Behat\Mink\Exception\DriverException as DriverException,
+    Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
@@ -46,6 +47,7 @@ class behat_repository_upload extends behat_base {
      * Uploads a file to the specified filemanager leaving other fields in upload form default. The paths should be relative to moodle codebase.
      *
      * @When /^I upload "(?P<filepath_string>(?:[^"]|\\")*)" file to "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager$/
+     * @throws DriverException
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $filepath
      * @param string $filemanagerelement
@@ -58,6 +60,7 @@ class behat_repository_upload extends behat_base {
      * Uploads a file to the specified filemanager leaving other fields in upload form default and confirms to overwrite an existing file. The paths should be relative to moodle codebase.
      *
      * @When /^I upload and overwrite "(?P<filepath_string>(?:[^"]|\\")*)" file to "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager$/
+     * @throws DriverException
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $filepath
      * @param string $filemanagerelement
@@ -71,6 +74,7 @@ class behat_repository_upload extends behat_base {
      * Uploads a file to the specified filemanager and confirms to overwrite an existing file. The paths should be relative to moodle codebase.
      *
      * @When /^I upload "(?P<filepath_string>(?:[^"]|\\")*)" file to "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager as:$/
+     * @throws DriverException
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $filepath
      * @param string $filemanagerelement
@@ -84,6 +88,7 @@ class behat_repository_upload extends behat_base {
      * Uploads a file to the specified filemanager. The paths should be relative to moodle codebase.
      *
      * @When /^I upload and overwrite "(?P<filepath_string>(?:[^"]|\\")*)" file to "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager as:$/
+     * @throws DriverException
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $filepath
      * @param string $filemanagerelement
@@ -97,6 +102,7 @@ class behat_repository_upload extends behat_base {
     /**
      * Uploads a file to filemanager
      *
+     * @throws DriverException
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $filepath Normally a path relative to $CFG->dirroot, but can be an absolute path too.
      * @param string $filemanagerelement
@@ -106,6 +112,10 @@ class behat_repository_upload extends behat_base {
      */
     protected function upload_file_to_filemanager($filepath, $filemanagerelement, TableNode $data, $overwriteaction = false) {
         global $CFG;
+
+        if (!$this->has_tag('_file_upload')) {
+            throw new DriverException('File upload tests must have the @_file_upload tag on either the scenario or feature.');
+        }
 
         $filemanagernode = $this->get_filepicker_node($filemanagerelement);
 
