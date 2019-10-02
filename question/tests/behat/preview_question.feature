@@ -23,7 +23,7 @@ Feature: A teacher can preview questions in the question bank
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank > Questions" in current page administration
-    When I click on "Preview" "link" in the "Test question to be previewed" "table_row"
+    When I choose "Preview" action for "Test question to be previewed" in the question bank
     And I switch to "questionpreview" window
 
   @javascript @_switch_window

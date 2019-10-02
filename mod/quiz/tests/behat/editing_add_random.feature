@@ -30,11 +30,11 @@ Feature: Adding random questions to a quiz based on category and tags
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I navigate to "Question bank > Questions" in current page administration
-    And I click on "Edit" "link" in the "question 1 name" "table_row"
+    And I choose "Edit question" action for "question 1 name" in the question bank
     And I set the following fields to these values:
       | Tags | foo |
     And I press "id_submitbutton"
-    And I click on "Manage tags" "link" in the "question 2 name" "table_row"
+    And I choose "Manage tags" action for "question 2 name" in the question bank
     And I set the following fields to these values:
       | Tags | bar |
     And I press "Save changes"
