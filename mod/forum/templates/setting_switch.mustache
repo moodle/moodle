@@ -32,12 +32,14 @@
     {}
 
 }}
-<span class="switch">
-    <input type="checkbox" id="{{$switchid}}{{uniqid}}{{/switchid}}"
-           data-type="{{$type}}toggle-switch{{/type}}"
-           data-action="toggle"
-           {{$otherattributes}}{{/otherattributes}}/>
-    <label for="{{$switchid}}{{uniqid}}{{/switchid}}" class="line-height-4">
-        {{$labeltext}}{{/labeltext}}
-    </label>
-</span>
+<div>
+    <span class="switch">
+        <input type="checkbox" id="{{$switchid}}{{uniqid}}{{/switchid}}"
+               data-type="{{$type}}toggle-switch{{/type}}"
+               data-action="toggle" class="hidden"
+            {{$otherattributes}}{{/otherattributes}}/>
+        <label for="{{$switchid}}{{uniqid}}{{/switchid}}" class="line-height-4">
+            {{$labeltext}}{{/labeltext}}
+        </label>
+    </span>
+</div>
