@@ -990,6 +990,36 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->assertEquals($post4->id, array_values($entities)[3]->get_id());
     }
 
+    public function test_get_from_filters_from_to_dates() {
+        $this->resetAfterTest();
+
+        $datagenerator = $this->getDataGenerator();
+        $course = $datagenerator->create_course();
+        [$user, $user2] = $this->helper_create_users($course, 2, 'student');
+        $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
+
+        [$discussion1, $post1] = $this->helper_post_to_forum($forum, $user);
+
+        $date = new DateTime('2019-07-05');
+        $post2 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+        $post3 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+        $date->modify('+1 month');
+        $post4 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+        $post5 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+        $post6 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+
+        [$discussion2, $post4] = $this->helper_post_to_forum($forum, $user);
+
+        $datefilter = new DateTime('2019-07-01');
+        $filters = ['from' => $datefilter->getTimestamp()];
+        $entities = $this->vault->get_from_filters($user, $filters, false);
+        $this->assertCount(7, $entities);
+
+        $filters['to'] = $datefilter->modify('+1 month')->getTimestamp();
+        $entities = $this->vault->get_from_filters($user, $filters, false);
+        $this->assertCount(2, $entities);
+    }
+
     /**
      * Test get_from_filters when no discussion ids were provided.
      *
