@@ -60,13 +60,32 @@ class media_html5video_testcase extends advanced_testcase {
     /**
      * Test method get_supported_extensions()
      */
-    public function test_supported_extensions() {
+    public function test_get_supported_extensions() {
         $nativeextensions = file_get_typegroup('extension', 'html_video');
 
         // Make sure that the list of extensions from the setting is exactly the same as html_video group.
         $player = new media_html5video_plugin();
         $this->assertEmpty(array_diff($player->get_supported_extensions(), $nativeextensions));
         $this->assertEmpty(array_diff($nativeextensions, $player->get_supported_extensions()));
+    }
+
+    /**
+     * Test method list_supported_urls()
+     */
+    public function test_list_supported_urls() {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
+        $nativeextensions = file_get_typegroup('extension', 'html_video');
+
+        // Create list of URLs for each extension.
+        $urls = array_map(function($ext){
+            return new moodle_url('http://example.org/video.' . $ext);
+        }, $nativeextensions);
+
+        // Make sure that the list of supported URLs is not filtering permitted extensions.
+        $player = new media_html5video_plugin();
+        $this->assertCount(count($urls), $player->list_supported_urls($urls));
     }
 
     /**
