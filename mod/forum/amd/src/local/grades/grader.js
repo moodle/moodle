@@ -27,6 +27,8 @@ import Selectors from './local/grader/selectors';
 import * as UserPicker from './local/grader/user_picker';
 import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/fullscreen';
 import getGradingPanelFunctions from './local/grader/gradingpanel';
+import {add as addToast} from 'core/toast';
+import {get_string as getString} from 'core/str';
 
 const templateNames = {
     grader: {
@@ -78,9 +80,23 @@ const registerEventListeners = (graderLayout) => {
     });
 };
 
+/**
+ * Get the function used to save a user grade.
+ *
+ * @param {Element} root The contaienr
+ * @param {Function} setGradeForUser The function that will be called.
+ * @return {Function}
+ */
 const getSaveUserGradeFunction = (root, setGradeForUser) => {
-    return user => {
-        return setGradeForUser(user.id, root.querySelector(Selectors.regions.gradingPanel));
+    return async user => {
+        try {
+            const result = await setGradeForUser(user.id, root.querySelector(Selectors.regions.gradingPanel));
+            addToast(await getString('grades:gradesavedfor', 'mod_forum', user));
+
+            return result;
+        } catch (error) {
+            throw error;
+        }
     };
 };
 
