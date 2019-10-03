@@ -772,4 +772,72 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals(array($coursegroups[$courses[0]->id][1]->id), $groupids);
         $this->assertEquals($users[1]->id, $userid);
     }
+
+    /**
+     *  Test for calendar_view_event_allowed for course event types.
+     */
+    public function test_calendar_view_event_allowed_course_event() {
+        global $USER;
+
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+
+        // A student in a course.
+        $student = $generator->create_user();
+        // Some user not enrolled in any course.
+        $someuser = $generator->create_user();
+
+        // A course with manual enrolments.
+        $manualcourse = $generator->create_course();
+
+        // Enrol the student to the manual enrolment course.
+        $generator->enrol_user($student->id, $manualcourse->id);
+
+        // A course that allows guest access.
+        $guestcourse = $generator->create_course(
+            (object)[
+                'shortname' => 'guestcourse',
+                'enrol_guest_status_0' => ENROL_INSTANCE_ENABLED,
+                'enrol_guest_password_0' => ''
+            ]);
+
+        $manualevent = (object)[
+            'name' => 'Manual course event',
+            'description' => '',
+            'format' => 1,
+            'categoryid' => 0,
+            'courseid' => $manualcourse->id,
+            'groupid' => 0,
+            'userid' => $USER->id,
+            'modulename' => 0,
+            'instance' => 0,
+            'eventtype' => 'course',
+            'timestart' => time(),
+            'timeduration' => 86400,
+            'visible' => 1
+        ];
+        $caleventmanual = calendar_event::create($manualevent, false);
+
+        // Create a course event for the course with guest access.
+        $guestevent = clone $manualevent;
+        $guestevent->name = 'Guest course event';
+        $guestevent->courseid = $guestcourse->id;
+        $caleventguest = calendar_event::create($guestevent, false);
+
+        // Viewing as admin.
+        $this->assertTrue(calendar_view_event_allowed($caleventmanual));
+        $this->assertTrue(calendar_view_event_allowed($caleventguest));
+
+        // Viewing as someone enrolled in a course.
+        $this->setUser($student);
+        $this->assertTrue(calendar_view_event_allowed($caleventmanual));
+
+        // Viewing as someone not enrolled in any course.
+        $this->setUser($someuser);
+        // Viewing as someone not enrolled in a course without guest access on.
+        $this->assertFalse(calendar_view_event_allowed($caleventmanual));
+        // Viewing as someone not enrolled in a course with guest access on.
+        $this->assertTrue(calendar_view_event_allowed($caleventguest));
+    }
 }
