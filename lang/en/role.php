@@ -498,7 +498,9 @@ $string['course:togglecompletion'] = 'Manually mark activities as complete';
 
 // Iomad additions.
 $string['archetypeclientadministrator'] = 'Iomad client administrator';
+$string['archetypeclientreporter'] = 'Iomad client reporter';
 $string['archetypecompanymanager'] = 'Company manager';
 $string['archetypecompanydepartmentmanager'] = 'Company department manager';
 $string['archetypecompanycourseeditor'] = 'Company course editing teacher';
+$string['archetypecompanyreporter'] = 'Company reporter';
 $string['archetypecompanycoursenoneditor'] = 'Company course non editing teacher';
