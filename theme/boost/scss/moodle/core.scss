@@ -2254,6 +2254,15 @@ $switch-transition: .2s all !default;
     min-height: 3.125rem;
 }
 
+body.h5p-embed {
+    #maincontent {
+        display: none;
+    }
+    .h5pmessages {
+        min-height: 230px; // This should be the same height as default core_h5p iframes.
+    }
+}
+
 .text-decoration-none {
     text-decoration: none !important; /* stylelint-disable-line declaration-no-important */
 }
