@@ -462,6 +462,47 @@ class company {
     }
 
     /**
+     * Get company email templates
+     *
+     **/
+    public static function get_email_templates($companyid = 0) {
+        global $DB;
+
+        $context = context_system::instance();
+        $templates = $DB->get_records_menu('email_templateset', array(), 'templatesetname', 'id,templatesetname');
+
+        // Add the default.
+        $templates = array(0 => get_string('none')) + $templates;
+
+        return $templates;
+    }
+
+    /**
+     * Apply company email templates
+     *
+     **/
+    public function apply_email_templates($templatesetid = 0) {
+        global $DB;
+
+        if (!empty($templatesetid)) {
+            $templates = $DB->get_records('email_templateset_templates', array('templateset' => $templatesetid));
+        } else {
+            return false;
+        }
+
+        // Insert the restrictions.
+        // Remove them first.
+        $DB->delete_records('email_template', array('companyid' => $this->id));
+
+        // Add the template.
+        foreach ($templates as $template) {
+            unset($template->templateset);
+            $template->companyid = $this->id;
+            $DB->insert_record('email_template', $template);
+        }
+    }
+
+    /**
      * Associates a course to a company
      *
      * Parameters -

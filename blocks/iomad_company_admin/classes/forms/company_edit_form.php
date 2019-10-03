@@ -152,6 +152,13 @@ class company_edit_form extends \company_moodleform {
         $mform->setDefault('managerdigestday', 0);
         $mform->addHelpButton('managerdigestday', 'managerdigestday', 'block_iomad_company_admin');
 
+        if (iomad::has_capability('local/email:edit', $context)) {
+            // Add in the company email template selector.
+            $emailtemplates = \company::get_email_templates($this->companyid);
+            $mform->addElement('select', 'emailtemplate', get_string('applyemailtemplate', 'block_iomad_company_admin'), $emailtemplates);
+            $mform->addHelpButton('emailtemplate', 'applyemailtemplate', 'block_iomad_company_admin');
+        }
+
         // Get the company profile choices.
         $globalfields = $DB->get_records_sql_menu("SELECT id,name from {user_info_field} WHERE
                                               categoryid NOT IN (
@@ -176,11 +183,6 @@ class company_edit_form extends \company_moodleform {
         /* === end company email notifications === */
          $mform->addElement('header', 'companyadvanced', get_string('companyadvanced', 'block_iomad_company_admin'));
 
-        // Add in the company role template selector.
-        $templates = \company::get_role_templates($this->companyid);
-        $mform->addElement('select', 'roletemplate', get_string('applyroletemplate', 'block_iomad_company_admin', $templates[$this->previousroletemplateid]), $templates);
-        $mform->addHelpButton('roletemplate', 'roletemplate', 'block_iomad_company_admin');
-
         $mform->addElement('textarea', 'companydomains', get_string('companydomains', 'block_iomad_company_admin'), array('display' => 'noofficial'));
         $mform->setType('companydomains', PARAM_NOTAGS);
         $mform->addHelpButton('companydomains', 'companydomains', 'block_iomad_company_admin');
@@ -193,7 +195,17 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('hostname', PARAM_NOTAGS);
         $mform->addHelpButton('hostname', 'companyhostname', 'block_iomad_company_admin');
 
+        // Add in the company role template selector.
+        $templates = \company::get_role_templates($this->companyid);
+        $mform->addElement('select', 'roletemplate', get_string('applyroletemplate', 'block_iomad_company_admin', $templates[$this->previousroletemplateid]), $templates);
+        $mform->addHelpButton('roletemplate', 'roletemplate', 'block_iomad_company_admin');
+
         if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            // Add in the template selector for the company.
+            $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
+            $mform->addElement('autocomplete', 'templates', get_string('availabletemplates', 'block_iomad_company_admin'), $templates, array('multiple' => true));
+            $mform->addHelpButton('templates', 'availabletemplates', 'block_iomad_company_admin');
+
             // Add the parent company selector.
             $companies = $DB->get_records_sql_menu("SELECT id,name FROM {company}
                                             WHERE id != :companyid
@@ -202,11 +214,6 @@ class company_edit_form extends \company_moodleform {
             $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies, array('onchange' => 'this.form.submit()'));
             $mform->setDefault('parentid', 0);
             $mform->addHelpButton('parentid', 'parentcompany', 'block_iomad_company_admin');
-
-            // Add in the template selector for the company.
-            $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
-            $mform->addElement('autocomplete', 'templates', get_string('availabletemplates', 'block_iomad_company_admin'), $templates, array('multiple' => true));
-            $mform->addHelpButton('templates', 'availabletemplates', 'block_iomad_company_admin');
 
         } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && !empty($this->parentcompanyid)) {
             // Add it as a hidden field.
