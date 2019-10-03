@@ -1123,8 +1123,7 @@ class core_useragent {
         $extension = strtolower($extension);
 
         $supportedvideo = array('m4v', 'webm', 'ogv', 'mp4', 'mov');
-        $supportedaudio = array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav');
-        // TODO MDL-56549 Flac will be supported in Firefox 51 in January 2017.
+        $supportedaudio = array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav', 'flac');
 
         // Basic extension support.
         if (!in_array($extension, $supportedvideo) && !in_array($extension, $supportedaudio)) {
@@ -1156,6 +1155,11 @@ class core_useragent {
         // Ogg is not supported in IE, Edge and Safari.
         $isogg = in_array($extension, ['ogg', 'oga', 'ogv']);
         if ($isogg && (self::is_ie() || self::is_edge() || self::is_safari() || self::is_safari_ios())) {
+            return false;
+        }
+        // FLAC is not supported in IE and Edge (below 16.0).
+        if ($extension === 'flac' &&
+                (self::is_ie() || (self::is_edge() && !self::check_edge_version('16.0')))) {
             return false;
         }
         // Wave is not supported in IE.
