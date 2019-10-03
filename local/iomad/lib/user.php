@@ -400,6 +400,13 @@ class company_user {
                     }
                 }
             }
+
+            // Check if there is a user enroled email which hasn't been sent yet.
+            if ($emails = $DB->get_records('email', array('userid' => $user->id, 'courseid' => $courseid, 'templatename' => 'user_added_to_course', 'sent' => null))) {
+                foreach ($emails as $email) {
+                    $DB->delete_records('email', array('id' => $email->id));
+                }
+            }
         }
     }
 
