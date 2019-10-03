@@ -105,11 +105,11 @@ class iomad_courses_table extends table_sql {
             $licenseselect->formid = 'licenseselect'.$row->courseid;
             $licenseselectoutput = html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'license_selector'.$row->courseid));
         } else {
-            if ($row->licenseid == 0) {
+            if ($row->licensed == 0) {
                 $licenseselectoutput = get_string('no');
-            } else if ($row->licenseid == 1) {
+            } else if ($row->licensed == 1) {
                 $licenseselectoutput = get_string('yes');
-            } else if ($row->licenseid == 2) {
+            } else if ($row->licensed == 2) {
                 $licenseselectoutput = get_string('pluginname', 'enrol_self');
             }
         }

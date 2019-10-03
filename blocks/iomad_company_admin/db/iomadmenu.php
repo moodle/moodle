@@ -212,7 +212,7 @@ function block_iomad_company_admin_menu() {
                 'tab' => 3,
                 'name' => get_string('iomad_courses_title', 'block_iomad_company_admin'),
                 'url' => 'iomad_courses_form.php',
-                'cap' => 'block/iomad_company_admin:managecourses',
+                'cap' => 'block/iomad_company_admin:viewcourses',
                 'icondefault' => 'managecoursesettings',
                 'style' => 'course',
                 'icon' => 'fa-file-text',

@@ -50,6 +50,12 @@ $systemcontext = context_system::instance();
 require_login();
 iomad::require_capability('block/iomad_company_admin:viewcourses', $systemcontext);
 
+if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+    $canedit = true;
+} else {
+    $canedit = false;
+}
+
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/iomad_courses_form.php');
 $linktext = get_string('iomad_courses_title', 'block_iomad_company_admin');
@@ -321,15 +327,20 @@ $mform->set_data($params);
 echo $OUTPUT->header();
 
 // Get the list of companies and display it as a drop down select..
-$companyids = [
-        'none' => get_string('nocompany', 'block_iomad_company_admin'),
-        'all' => get_string('allcourses', 'block_iomad_company_admin')
-] + $DB->get_records_menu('company', array(), 'name');
+$companyids = company::get_companies_select(false);
+if ($canedit) {
+    $companyids = [
+            'none' => get_string('nocompany', 'block_iomad_company_admin'),
+            'all' => get_string('allcourses', 'block_iomad_company_admin')
+    ] + $companyids;
+}
 
 $companyselect = new single_select($linkurl, 'companyid', $companyids, $companyid);
 $companyselect->label = get_string('filtercompany', 'block_iomad_company_admin');
-echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
-echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'</br>';
+    echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+if ($canedit) {
+    echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'</br>';
+}
 $mform->display();
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'iomadclear'));
@@ -369,7 +380,7 @@ $wheresql = "$companysql $searchsql";
 $sqlparams = $params;
 
 // Can we manage the courses or just see them?
-if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+if ($canedit) {
     // Set up the headers for the table.
     $tableheaders = array(
         get_string('company', 'block_iomad_company_admin'),
