@@ -56,7 +56,11 @@ abstract class spout_base extends \core\dataformat\base {
             $this->writer->setTempFolder(make_request_directory());
         }
         $filename = $this->filename . $this->get_extension();
-        $this->writer->openToBrowser($filename);
+        if (PHPUNIT_TEST) {
+            $this->writer->openToFile('php://output');
+        } else {
+            $this->writer->openToBrowser($filename);
+        }
 
         // By default one sheet is always created, but we want to rename it when we call start_sheet().
         $this->renamecurrentsheet = true;
