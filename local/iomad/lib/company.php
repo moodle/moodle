@@ -3120,7 +3120,8 @@ class company {
                                                  JOIN {user} u ON (cu.userid = u.id)
                                                  WHERE cu.companyid = :companyid
                                                  AND u.deleted = 0
-                                                 AND u.suspended = 0",
+                                                 AND u.suspended = 0
+                                                 $companysql",
                                                  array('companyid' => $this->id));
             if ($usercount + $new > $this->companyrecord->maxusers) {
                 return false;

@@ -98,16 +98,7 @@ class company_edit_form extends \company_moodleform {
 
         $mform->addElement('hidden', 'previousroletemplateid');
 
-        // Add the ecommerce selector.
-        if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
-            $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
-            $mform->setDefault('ecommerce', 0);
-        } else {
-            $mform->addElement('hidden', 'ecommerce');
-        }
-
         $mform->setType('parentid', PARAM_INT);
-        $mform->setType('ecommerce', PARAM_INT);
         $mform->setType('templates', PARAM_RAW);
         $mform->setType('previousroletemplateid', PARAM_INT);
 
