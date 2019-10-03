@@ -25,10 +25,17 @@
 import {saveGrade, fetchGrade} from './repository';
 // Note: We use jQuery.serializer here until we can rewrite Ajax to use XHR.send()
 import jQuery from 'jquery';
+import {invalidResult} from './normalise';
 
 export const fetchCurrentGrade = (...args) => fetchGrade('scale')(...args);
 
 export const storeCurrentGrade = (component, context, itemname, userId, rootNode) => {
     const form = rootNode.querySelector('form');
+    const grade = form.querySelector('select[name="grade"]');
+
+    if (!grade.checkValidity() || !grade.value.trim()) {
+        return invalidResult;
+    }
+
     return saveGrade('scale')(component, context, itemname, userId, jQuery(form).serialize());
 };

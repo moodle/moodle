@@ -21,30 +21,47 @@
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {call as fetchMany} from 'core/ajax';
-import {normaliseResult} from './normalise';
 
-export const fetchGrade = type => (component, contextid, itemname, gradeduserid) => {
-    return fetchMany([{
-        methodname: `core_grades_grader_gradingpanel_${type}_fetch`,
-        args: {
-            component,
-            contextid,
-            itemname,
-            gradeduserid,
-        },
-    }])[0];
+/**
+ * Normalise a resultset for consumption by the grader.
+ *
+ * @param {Object} result The result returned from a grading web service
+ * @return {Object}
+ */
+export const normaliseResult = result => {
+    return {
+        result,
+        failed: !!result.warnings.length,
+        success: !result.warnings.length,
+        error: null,
+    };
 };
 
-export const saveGrade = type => async(component, contextid, itemname, gradeduserid, formdata) => {
-    return normaliseResult(await fetchMany([{
-        methodname: `core_grades_grader_gradingpanel_${type}_store`,
-        args: {
-            component,
-            contextid,
-            itemname,
-            gradeduserid,
-            formdata,
-        },
-    }])[0]);
+/**
+ * Return the resultset used to describe an invalid result.
+ *
+ * @return {Object}
+ */
+export const invalidResult = () => {
+    return {
+        success: false,
+        failed: false,
+        result: {},
+        error: null,
+    };
+};
+
+/**
+ * Return the resultset used to describe a failed update.
+ *
+ * @param {Object} error
+ * @return {Object}
+ */
+export const failedUpdate = error => {
+    return {
+        success: false,
+        failed: true,
+        result: {},
+        error,
+    };
 };

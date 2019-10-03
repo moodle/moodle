@@ -28,10 +28,14 @@ import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/ful
 import getGradingPanelFunctions from './local/grader/gradingpanel';
 import {add as addToast} from 'core/toast';
 import {get_string as getString} from 'core/str';
+import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
 
 const templateNames = {
     grader: {
         app: 'mod_forum/local/grades/grader',
+        gradingPanel: {
+            error: 'mod_forum/local/grades/local/grader/gradingpanel/error',
+        },
     },
 };
 
@@ -92,21 +96,49 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction) => 
 /**
  * Get the function used to save a user grade.
  *
- * @param {Element} root The contaienr
+ * @param {Element} root The container for the grader
  * @param {Function} setGradeForUser The function that will be called.
  * @return {Function}
  */
 const getSaveUserGradeFunction = (root, setGradeForUser) => {
     return async user => {
         try {
+            root.querySelector(Selectors.regions.gradingPanelErrors).innerHTML = '';
             const result = await setGradeForUser(user.id, root.querySelector(Selectors.regions.gradingPanel));
-            addToast(await getString('grades:gradesavedfor', 'mod_forum', user));
+            if (result.success) {
+                addToast(await getString('grades:gradesavedfor', 'mod_forum', user));
+            }
+            if (result.failed) {
+                displayGradingError(root, user, result.error);
+            }
 
             return result;
-        } catch (error) {
-            throw error;
+        } catch (err) {
+            displayGradingError(root, user, err);
+
+            return failedUpdate(err);
         }
     };
+};
+
+/**
+ * Display a grading error, typically from a failed save.
+ *
+ * @param {Element} root The container for the grader
+ * @param {Object} user The user who was errored
+ * @param {Object} err The details of the error
+ */
+const displayGradingError = async(root, user, err) => {
+    const [
+        {html, js},
+        errorString
+    ] = await Promise.all([
+        Templates.renderForPromise(templateNames.grader.gradingPanel.error, {error: err}),
+        await getString('grades:gradesavefailed', 'mod_forum', {error: err.message, ...user}),
+    ]);
+
+    Templates.replaceNodeContents(root.querySelector(Selectors.regions.gradingPanelErrors), html, js);
+    addToast(errorString);
 };
 
 /**

@@ -415,6 +415,11 @@ abstract class component_gradeitem {
             $instanceid = $formdata->instanceid;
             $gradinginstance = $this->get_advanced_grading_instance($grader, $grade, (int) $instanceid);
             $grade->grade = $gradinginstance->submit_and_get_grade($formdata->advancedgrading, $grade->id);
+
+            if ($grade->grade == -1) {
+                // In advanced grading, a value of -1 means no data.
+                return false;
+            }
         } else {
             // Handle the case when grade is set to No Grade.
             if (isset($formdata->grade)) {
