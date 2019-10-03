@@ -2203,8 +2203,8 @@ function calendar_view_event_allowed(calendar_event $event) {
         if (has_capability('moodle/calendar:manageentries', $event->context)) {
             return true;
         }
-        $mycourses = enrol_get_my_courses('id');
-        return isset($mycourses[$event->courseid]);
+
+        return can_access_course(get_course($event->courseid));
     } else if ($event->userid) {
         if ($event->userid != $USER->id) {
             // No-one can ever see another users events.
