@@ -1,0 +1,21 @@
+<div id="toast-{{uniqid}}" class="toast bg-dark text-white rounded mx-auto" data-delay="{{delay}}" {{^autohide}}data-autohide="false"{{/autohide}}>
+  <div class="toast-body">
+    <span>{{{message}}}</span>
+    {{#closeButton}}
+    <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="{{#str}}dismissnotification, core{{/str}}">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{/closeButton}}
+  </div>
+</div>
+{{#js}}
+require(['jquery', 'theme_boost/toast'], function(jQuery) {
+    // Show the toast.
+    // Bootstrap toast components are not shown automatically.
+    jQuery('#toast-{{uniqid}}').toast('show');
+
+    jQuery('#toast-{{uniqid}}').on('hidden.bs.toast', function(e) {
+        e.target.remove();
+    });
+});
+{{/js}}

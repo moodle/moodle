@@ -2286,7 +2286,6 @@ $switch-transition: .2s all !default;
     float: right !important; /* stylelint-disable-line declaration-no-important */
 }
 
-
 // Emoji picker.
 $picker-width: 350px !default;
 $picker-width-xs: 320px !default;
@@ -2369,4 +2368,10 @@ $picker-emojis-per-row: 7 !default;
             background-color: $gray-200;
         }
     }
+}
+
+.toast-wrapper {
+    max-width: $toast-max-width;
+    // Place these above any modals and other elements.
+    z-index: 1051;
 }

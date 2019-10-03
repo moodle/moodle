@@ -11545,6 +11545,10 @@ div.editor_atto_toolbar button .icon {
     .emoji-auto-complete .btn.btn-link.btn-icon.emoji-button.active, .emoji-auto-complete .btn.btn-icon.emoji-button.active, .emoji-auto-complete #page-grade-grading-manage .actions .btn-icon.emoji-button.active.action, #page-grade-grading-manage .actions .emoji-auto-complete .btn-icon.emoji-button.active.action, .emoji-auto-complete #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.emoji-button.active, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .emoji-auto-complete input.btn-icon.emoji-button.active, .emoji-auto-complete #rubric-rubric.gradingform_rubric .btn-icon.emoji-button.active.addcriterion, #rubric-rubric.gradingform_rubric .emoji-auto-complete .btn-icon.emoji-button.active.addcriterion {
       background-color: #e9ecef; }
 
+.toast-wrapper {
+  max-width: 350px;
+  z-index: 1051; }
+
 .icon {
   font-size: 16px;
   width: 16px;

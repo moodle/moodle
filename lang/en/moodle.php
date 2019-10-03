@@ -512,6 +512,7 @@ $string['digitalminor_desc'] = 'Please ask your parent/guardian to contact:';
 $string['directory'] = 'Directory';
 $string['disable'] = 'Disable';
 $string['disabledcomments'] = 'Comments are disabled';
+$string['dismissnotification'] = 'Dismiss this notification';
 $string['displayingfirst'] = 'Only the first {$a->count} {$a->things} are displayed';
 $string['displayingrecords'] = 'Displaying {$a} records';
 $string['displayingusers'] = 'Displaying users {$a->start} to {$a->end}';
