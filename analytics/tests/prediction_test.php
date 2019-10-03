@@ -55,6 +55,23 @@ require_once(__DIR__ . '/../../course/lib.php');
 class core_analytics_prediction_testcase extends advanced_testcase {
 
     /**
+     * Purge all the mlbackend outputs.
+     *
+     * This is done automatically for mlbackends using the web server dataroot but
+     * other mlbackends may store files elsewhere and these files need to be removed.
+     *
+     * @return null
+     */
+    public function tearDown() {
+        $this->setAdminUser();
+
+        $models = \core_analytics\manager::get_all_models();
+        foreach ($models as $model) {
+            $model->delete();
+        }
+    }
+
+    /**
      * test_static_prediction
      *
      * @return void
@@ -414,7 +431,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         // Training should work correctly if at least 1 sample of each class is included.
         $dir = make_request_directory();
-        $result = $predictionsprocessor->train_classification('whatever' . microtime(), $dataset, $dir);
+        $modeluniqueid = 'whatever' . microtime();
+        $result = $predictionsprocessor->train_classification($modeluniqueid, $dataset, $dir);
 
         switch ($success) {
             case 'yes':
@@ -429,6 +447,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                 // what we really want to check is that an exception was not thrown.
                 $this->assertInstanceOf(\stdClass::class, $result);
         }
+
+        // Purge the directory used in this test (useful in case the mlbackend is storing files
+        // somewhere out of the default moodledata/models dir.
+        $predictionsprocessor->delete_output_dir($dir, $modeluniqueid);
     }
 
     /**
