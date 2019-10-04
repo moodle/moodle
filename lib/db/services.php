@@ -827,6 +827,23 @@ $functions = array(
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_grades_grader_gradingpanel_scale_fetch' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\scale\\external\\fetch',
+        'methodname' => 'execute',
+        'description' => 'Fetch the data required to display the grader grading panel for scale-based grading, ' .
+            'creating the grade item if required',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_grader_gradingpanel_scale_store' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\scale\\external\\store',
+        'methodname' => 'execute',
+        'description' => 'Store the data required to display the grader grading panel for scale-based grading',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',
