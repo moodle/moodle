@@ -207,11 +207,10 @@ function(
         // Returns a promise which resolves to either a string, or null
         // (such as in the event of an empty personal space).
         var pending = new Pending();
-        var formatMessagePreview = function(lastMessage) {
+
+        var formatMessagePreview = async function(lastMessage) {
             if (!lastMessage) {
-                return new Promise(function(resolve) {
-                    resolve(null);
-                });
+                return null;
             }
             var isMedia = lastMessage.text.includes('src');
 
@@ -220,9 +219,7 @@ function(
                 // If that's not possible, we'll report it under the catch-all 'other media'.
                 var messagePreview = $(lastMessage.text).text();
                 if (messagePreview) {
-                    return new Promise(function(resolve) {
-                        resolve(messagePreview);
-                    });
+                    return messagePreview;
                 }
             }
 
@@ -241,14 +238,14 @@ function(
                 label = 'messagecontentaudio';
             }
 
-            var labelPromise = Str.get_string(label, 'core_message');
-            var pixPromise = labelPromise.then(function(string) {
-                return Templates.renderPix(pix, 'core', string);
-            });
-            return Promise.all([labelPromise, pixPromise])
-                .then(function([labelResult, pixResult]) {
-                    return pixResult + ' ' + labelResult;
-                }).catch(Notification.exception);
+            try {
+                var labelString = await Str.get_string(label, 'core_message');
+                var icon = await Templates.renderPix(pix, 'core', labelString);
+                return icon + ' ' + labelString;
+            } catch (error) {
+                Notification.exception(error);
+                return null;
+            }
         };
 
         var mapPromises = conversations.map(function(conversation) {
