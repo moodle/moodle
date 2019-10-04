@@ -27,6 +27,7 @@ define(
     'core/notification',
     'core/pubsub',
     'core/str',
+    'core/pending',
     'core/templates',
     'core/user_date',
     'core_message/message_repository',
@@ -42,6 +43,7 @@ function(
     Notification,
     PubSub,
     Str,
+    Pending,
     Templates,
     UserDate,
     MessageRepository,
@@ -204,6 +206,7 @@ function(
         // Helper to format the last message for rendering.
         // Returns a promise which resolves to either a string, or null
         // (such as in the event of an empty personal space).
+        var pending = new Pending();
         var formatMessagePreview = function(lastMessage) {
             if (!lastMessage) {
                 return new Promise(function(resolve) {
@@ -309,7 +312,13 @@ function(
                 });
 
                 return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: formattedConversations});
-            }).catch(Notification.exception);
+            }).then(function(html, js) {
+                pending.resolve();
+                return $.Deferred().resolve(html, js);
+            }).catch(function(error) {
+                pending.resolve();
+                Notification.exception(error);
+            });
     };
 
     /**
