@@ -692,7 +692,7 @@ class behat_hooks extends behat_base {
      *
      * @param string $component
      */
-    public function register_component_selectors_for_component(string $component): void {
+    public function register_component_selectors_for_component(string $component) {
         $componentclassname = "behat_{$component}";
 
         if (!behat_context_helper::has_context($componentclassname)) {
