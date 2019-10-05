@@ -25,49 +25,153 @@
 import Templates from 'core/templates';
 import Selectors from './user_picker/selectors';
 
-const renderNavigator = () => {
-    return Templates.render('mod_forum/local/grades/local/grader/user_picker', {});
-};
+const templatePath = 'mod_forum/local/grades/local/grader';
 
-const renderUserChange = (context) => {
-    return Templates.render('mod_forum/local/grades/local/grader/user_picker/user', context);
-};
+class UserPicker {
 
-const showUser = async(root, users, currentUserIndex, showUserCallback) => {
-    const user = {
-        ...users[currentUserIndex],
-        total: users.length,
-        displayIndex: currentUserIndex + 1,
-    };
-    const [html] = await Promise.all([renderUserChange(user), showUserCallback(user)]);
-    const userRegion = root.querySelector(Selectors.regions.userRegion);
-    Templates.replaceNodeContents(userRegion, html, '');
-};
+    /**
+     * Constructor for the User Picker.
+     *
+     * @param {Array} userList List of users
+     * @param {Number} initialUserId The ID of the initial user to display
+     * @param {Function} showUserCallback The callback used to display the user
+     * @param {Function} preChangeUserCallback The callback to use before changing user
+     * @param {Bool} render Whether to render on instantiation
+     */
+    constructor(userList, initialUserId, showUserCallback, preChangeUserCallback, render = true) {
+        this.userList = userList;
+        this.showUserCallback = showUserCallback;
+        this.preChangeUserCallback = preChangeUserCallback;
 
-const bindEvents = (root, users, currentUserIndex, showUserCallback, saveUserCallback) => {
-    root.addEventListener('click', (e) => {
-        const button = e.target.closest(Selectors.actions.changeUser);
-        if (button) {
-            saveUserCallback(users[currentUserIndex]);
-            currentUserIndex += parseInt(button.dataset.direction);
-            showUser(root, users, currentUserIndex, showUserCallback);
+        // Determine the current index.
+        this.currentUserIndex = userList.findIndex(user => {
+            return user.id === parseInt(initialUserId);
+        });
+
+        // Ensure that render is bound correctly.
+        this.render = this.render.bind(this);
+
+        if (render) {
+            this.render();
         }
-    });
-};
+    }
 
-export const buildPicker = async(users, currentUserID, showUserCallback, saveUserCallback) => {
-    let root = document.createElement('div');
+    /**
+     * Render the user picker.
+     */
+    async render() {
+        // Create the root node.
+        this.root = document.createElement('div');
 
-    const [html] = await Promise.all([renderNavigator()]);
-    Templates.replaceNodeContents(root, html, '');
+        const {html, js} = await this.renderNavigator();
+        Templates.replaceNodeContents(this.root, html, js);
 
-    const currentUserIndex = users.findIndex((user) => {
-        return user.id === parseInt(currentUserID);
-    });
+        // Call the showUser function to show the first user immediately.
+        await this.showUser(this.currentUser);
 
-    await showUser(root, users, currentUserIndex, showUserCallback);
+        // Ensure that the event listeners are all bound.
+        this.registerEventListeners();
+    }
 
-    bindEvents(root, users, currentUserIndex, showUserCallback, saveUserCallback);
+    /**
+     * Render the navigator itself.
+     *
+     * @returns {Promise}
+     */
+    renderNavigator() {
+        return Templates.renderForPromise(`${templatePath}/user_picker`, {});
+    }
 
-    return root;
+    /**
+     * Render the current user details for the picker.
+     *
+     * @param {Object} context The data used to render the user picker.
+     * @returns {Promise}
+     */
+    renderUserChange(context) {
+        return Templates.renderForPromise(`${templatePath}/user_picker/user`, context);
+    }
+
+    /**
+     * Show the specified user in the picker.
+     *
+     * @param {Object} user
+     */
+    async showUser(user) {
+        const [{html, js}] = await Promise.all([this.renderUserChange(user), this.showUserCallback(user)]);
+        const userRegion = this.root.querySelector(Selectors.regions.userRegion);
+        Templates.replaceNodeContents(userRegion, html, js);
+    }
+
+    /**
+     * Register the event listeners for the user picker.
+     */
+    registerEventListeners() {
+        this.root.addEventListener('click', (e) => {
+            const button = e.target.closest(Selectors.actions.changeUser);
+            if (button) {
+                this.preChangeUserCallback(this.currentUser);
+                this.updateIndex(parseInt(button.dataset.direction));
+                this.showUser(this.currentUser);
+            }
+        });
+    }
+
+    /**
+     * Update the current user index.
+     *
+     * @param {Number} direction
+     * @returns {Number}}
+     */
+    updateIndex(direction) {
+        this.currentUserIndex += direction;
+
+        // Loop around the edges.
+        if (this.currentUserIndex < 0) {
+            this.currentUserIndex = this.userList.length - 1;
+        } else if (this.currentUserIndex > this.userList.length - 1) {
+            this.currentUserIndex = 0;
+        }
+
+        return this.currentUserIndex;
+    }
+
+    /**
+     * Get the details of the user currently shown with the total number of users, and the 1-indexed count of the
+     * current user.
+     *
+     * @returns {Object}
+     */
+    get currentUser() {
+        return {
+            ...this.userList[this.currentUserIndex],
+            total: this.userList.length,
+            displayIndex: this.currentUserIndex + 1,
+        };
+    }
+
+    /**
+     * Get the root node for the User Picker.
+     *
+     * @returns {HTMLElement}
+     */
+    get rootNode() {
+        return this.root;
+    }
+}
+
+/**
+ * Create a new user picker.
+ *
+ * @param {Array} users The list of users
+ * @param {Number} currentUserID The userid of the current user
+ * @param {Function} showUserCallback The function to call to show a specific user
+ * @param {Function} preChangeUserCallback The fucntion to call to save the grade for the current user
+ * @returns {UserPicker}
+ */
+export default async(users, currentUserID, showUserCallback, preChangeUserCallback) => {
+    const userPicker = new UserPicker(users, currentUserID, showUserCallback, preChangeUserCallback, false);
+    await userPicker.render();
+
+    return userPicker;
 };

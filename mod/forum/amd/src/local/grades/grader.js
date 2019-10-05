@@ -24,7 +24,7 @@
 import Templates from 'core/templates';
 // TODO import Notification from 'core/notification';
 import Selectors from './local/grader/selectors';
-import * as UserPicker from './local/grader/user_picker';
+import getUserPicker from './local/grader/user_picker';
 import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/fullscreen';
 import getGradingPanelFunctions from './local/grader/gradingpanel';
 import {add as addToast} from 'core/toast';
@@ -116,18 +116,22 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     ]);
     const graderContainer = graderLayout.getContainer();
 
+    const saveGradeFunction = getSaveUserGradeFunction(graderContainer, setGradeForUser);
+
     Templates.replaceNodeContents(graderContainer, graderHTML, '');
     registerEventListeners(graderLayout);
     const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser);
 
-    const pickerHTML = await UserPicker.buildPicker(
+    // Fetch the userpicker for display.
+    const userPicker = await getUserPicker(
         userList,
         initialUserId,
         updateUserContent,
-        getSaveUserGradeFunction(graderContainer, setGradeForUser)
+        saveGradeFunction
     );
 
-    displayUserPicker(graderContainer, pickerHTML);
+    // Display the newly created user picker.
+    displayUserPicker(graderContainer, userPicker.rootNode);
 };
 
 export {getGradingPanelFunctions};
