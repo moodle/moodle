@@ -118,7 +118,7 @@ class behat_context_helper {
     }
 
     /**
-     * Return whether there is a context of the specified classnme.
+     * Return whether there is a context of the specified classname.
      *
      * @param string $classname
      * @return bool
