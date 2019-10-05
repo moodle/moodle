@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_forum\grades\forum_gradeitem;
+
 require_once('../../config.php');
 
 $managerfactory = mod_forum\local\container::get_manager_factory();
@@ -88,8 +90,26 @@ $PAGE->set_context($forum->get_context());
 $PAGE->set_title($forum->get_name());
 $PAGE->add_body_class('forumtype-' . $forum->get_type() . ' reset-style');
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button(forum_search_form($course, $search));
 $PAGE->set_include_region_main_settings_in_header_actions(true);
+
+$buttons = [];
+if ($capabilitymanager->can_grade($USER)) {
+    $forumgradeitem = forum_gradeitem::load_from_forum_entity($forum);
+    if ($forumgradeitem->is_grading_enabled()) {
+        $groupid = groups_get_activity_group($cm, true) ?: null;
+        $gradeobj = (object) [
+            'contextid' => $forum->get_context()->id,
+            'cmid' => $cmid,
+            'name' => $forum->get_name(),
+            'groupid' => $groupid,
+            'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
+            'gradingcomponentsubtype' => $forumgradeitem->get_grading_component_subtype(),
+        ];
+        $buttons[] = $OUTPUT->render_from_template('mod_forum/grades/grade_button', $gradeobj);
+    }
+}
+$buttons[] = forum_search_form($course, $search);
+$PAGE->set_button(implode('', $buttons));
 
 if ($istypesingle && $displaymode == FORUM_MODE_MODERN) {
     $PAGE->add_body_class('modern-display-mode reset-style');
