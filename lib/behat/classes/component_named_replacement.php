@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Moodle-specific Mink replacements.
+ * A class for recording the definition of Mink replacements.
  *
  * @package    core
  * @category   test
@@ -24,7 +24,34 @@
  */
 
 /**
- * Moodle-specific Mink replacements.
+ * A class for recording the definition of Mink replacements for use in Mink selectors.
+ *
+ * These are comprised of a source string, and a replacement.
+ *
+ * During use the source string is converted from the string to be in the format:
+ *
+ *      %[component]/[string]%
+ *
+ * For example:
+ *
+ *      %mod_forum/title%
+ *
+ * Mink replacements are used in xpath translation to translate regularly used items such as title.
+ * Here is an example from the upstream Mink project:
+ *
+ * '%tagTextMatch%' => 'contains(normalize-space(string(.)), %locator%)'
+ *
+ * And can be used in an xpath:
+ *
+ *      .//label[%tagTextMatch%]
+ *
+ * This would be expanded to:
+ *
+ *      .//label[contains(normalize-space(string(.)), %locator%)]
+ *
+ * Replacements can also be used in other replacements, as long as that replacement is defined later.
+ *
+ *      '%linkMatch%' => '(%idMatch% or %tagTextMatch% or %titleMatch% or %relMatch%)'
  *
  * @package    core
  * @category   test
@@ -41,8 +68,10 @@ class behat_component_named_replacement {
     /**
      * Create the replacement.
      *
-     * @param string $from
-     * @param string $to
+     * @param string $from this is the old selector that should no longer be used.
+     *      For example 'group_message'.
+     * @param string $to this is the new equivalent that should be used instead.
+     *      For example 'core_message > Message'.
      */
     public function __construct(string $from, string $to) {
         $this->from = $from;

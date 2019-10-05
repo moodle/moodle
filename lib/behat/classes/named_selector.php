@@ -26,6 +26,12 @@
 /**
  * Common functions for named selectors.
  *
+ * This has to be a trait, because we need this in both the classes
+ * behat_exact_named_selector and behat_partial_named_selector, and
+ * those classes have to be subclasses of \Behat\Mink\Selector\ExactNamedSelector
+ * and \Behat\Mink\Selector\PartialNamedSelector. This trait is a way achieve
+ * that without duplciated code.
+ *
  * @package    core
  * @category   test
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>

@@ -1111,6 +1111,21 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * Return a list of the exact named selectors for the component.
      *
+     * Named selectors are what make Behat steps like
+     *   Then I should see "Useful text" in the "General" "fieldset"
+     * work. Here, "fieldset" is the named selector, and "General" is the locator.
+     *
+     * If you override this method in your plugin (e.g. mod_mymod), to define
+     * new selectors specific to your plugin. For example, if you returned
+     *   new behat_component_named_selector('Thingy',
+     *           [".//some/xpath//img[contains(@alt, %locator%)]/.."])
+     * then
+     *   Then I should see "Useful text" in the "Whatever" "mod_mymod > Thingy"
+     * would work.
+     *
+     * This method should return a list of {@link behat_component_named_selector} and
+     * the docs on that class explain how it works.
+     *
      * @return behat_component_named_selector[]
      */
     public static function get_exact_named_selectors(): array {
@@ -1120,6 +1135,12 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * Return a list of the partial named selectors for the component.
      *
+     * Like the exact named selectors above, but the locator only
+     * needs to match part of the text. For example, the standard
+     * "button" is a partial selector, so:
+     *   When I click "Save" "button"
+     * will activate "Save changes".
+     *
      * @return behat_component_named_selector[]
      */
     public static function get_partial_named_selectors(): array {
@@ -1127,7 +1148,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
-     * Return a list of the named replacements for the component.
+     * Return a list of the Mink named replacements for the component.
+     *
+     * Named replacements allow you to define parts of an xpath that can be reused multiple times, or in multiple
+     * xpaths.
+     *
+     * This method should return a list of {@link behat_component_named_replacement} and the docs on that class explain
+     * how it works.
      *
      * @return behat_component_named_replacement[]
      */
