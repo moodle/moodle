@@ -95,10 +95,39 @@ const discussionPostMapper = discussion => {
 };
 
 /**
+ * Launch the Grader.
+ *
+ * @param {HTMLElement} rootNode the root HTML element describing what is to be graded
+ */
+const launchWholeForumGrading = async rootNode => {
+    const data = rootNode.dataset;
+    const wholeForumFunctions = getWholeForumFunctions(data.cmid);
+    const gradingPanelFunctions = await Grader.getGradingPanelFunctions(
+        'mod_forum',
+        data.contextid,
+        data.gradingComponent,
+        data.gradingComponentSubtype,
+        data.gradableItemtype
+    );
+
+    await Grader.launch(
+        wholeForumFunctions.getUsers,
+        wholeForumFunctions.getContentForUserId,
+        gradingPanelFunctions.getter,
+        gradingPanelFunctions.setter,
+        {
+            groupid: data.groupid,
+            initialUserId: data.initialuserid,
+            moduleName: data.name
+        }
+    );
+};
+
+/**
  * Register listeners to launch the grading panel.
  */
 export const registerLaunchListeners = () => {
-    document.addEventListener('click', async(e) => {
+    document.addEventListener('click', async e => {
         if (e.target.matches(Selectors.launch)) {
             const rootNode = findGradableNode(e.target);
 
@@ -110,28 +139,11 @@ export const registerLaunchListeners = () => {
                 // Note: The preventDefault must be before any async function calls because the function becomes async
                 // at that point and the default action is implemented.
                 e.preventDefault();
-
-                const data = rootNode.dataset;
-                const wholeForumFunctions = getWholeForumFunctions(data.cmid);
-                const gradingPanelFunctions = await Grader.getGradingPanelFunctions(
-                    'mod_forum',
-                    data.contextid,
-                    data.gradingComponent,
-                    data.gradingComponentSubtype,
-                    data.gradableItemtype
-                );
-
-                Grader.launch(
-                    wholeForumFunctions.getUsers,
-                    wholeForumFunctions.getContentForUserId,
-                    gradingPanelFunctions.getter,
-                    gradingPanelFunctions.setter,
-                    {
-                        groupid: data.groupid,
-                        initialUserId: data.initialuserid,
-                        moduleName: data.name
-                    }
-                );
+                try {
+                    await launchWholeForumGrading(rootNode);
+                } catch (error) {
+                    Notification.exception(error);
+                }
             } else {
                 throw Error('Unable to find a valid gradable item');
             }

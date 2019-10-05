@@ -30,6 +30,7 @@ export default {
     buttons: {
         toggleFullscreen: getDataSelector('action', 'togglefullscreen'),
         closeGrader: getDataSelector('action', 'closegrader'),
+        saveGrade: getDataSelector('action', 'savegrade'),
     },
     regions: {
         moduleReplace: getDataSelector('region', 'module_content'),

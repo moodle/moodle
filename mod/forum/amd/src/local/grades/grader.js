@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import Templates from 'core/templates';
-// TODO import Notification from 'core/notification';
 import Selectors from './local/grader/selectors';
 import getUserPicker from './local/grader/user_picker';
 import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/fullscreen';
@@ -64,18 +63,28 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
     };
 };
 
-const registerEventListeners = (graderLayout) => {
+const registerEventListeners = (graderLayout, userPicker, saveGradeFunction) => {
     const graderContainer = graderLayout.getContainer();
     graderContainer.addEventListener('click', (e) => {
         if (e.target.closest(Selectors.buttons.toggleFullscreen)) {
             e.stopImmediatePropagation();
             e.preventDefault();
             graderLayout.toggleFullscreen();
-        } else if (e.target.closest(Selectors.buttons.closeGrader)) {
+
+            return;
+        }
+
+        if (e.target.closest(Selectors.buttons.closeGrader)) {
             e.stopImmediatePropagation();
             e.preventDefault();
 
             graderLayout.close();
+
+            return;
+        }
+
+        if (e.target.closest(Selectors.buttons.saveGrade)) {
+            saveGradeFunction(userPicker.currentUser);
         }
     });
 };
@@ -100,7 +109,14 @@ const getSaveUserGradeFunction = (root, setGradeForUser) => {
     };
 };
 
-// Make this explicit rather than object
+/**
+ * Launch the grader interface with the specified parameters.
+ *
+ * @param {Function} getListOfUsers A function to get the list of users
+ * @param {Function} getContentForUser A function to get the content for a specific user
+ * @param {Function} getGradeForUser A function get the grade details for a specific user
+ * @param {Function} setGradeForUser A function to set the grade for a specific user
+ */
 export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
     initialUserId = 0, moduleName
 } = {}) => {
@@ -119,7 +135,6 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     const saveGradeFunction = getSaveUserGradeFunction(graderContainer, setGradeForUser);
 
     Templates.replaceNodeContents(graderContainer, graderHTML, '');
-    registerEventListeners(graderLayout);
     const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser);
 
     // Fetch the userpicker for display.
@@ -129,6 +144,9 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
         updateUserContent,
         saveGradeFunction
     );
+
+    // Register all event listeners.
+    registerEventListeners(graderLayout, userPicker, saveGradeFunction);
 
     // Display the newly created user picker.
     displayUserPicker(graderContainer, userPicker.rootNode);
