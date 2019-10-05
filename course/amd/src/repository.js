@@ -94,8 +94,26 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get the list of users enrolled in this cmid.
+     *
+     * @param {Number} cmid Course Module from which the users will be obtained
+     * @returns {Promise} Promise containing a list of users
+     */
+    var getEnrolledUsersFromCourseModuleID = function(cmid) {
+        var request = {
+            methodname: 'core_course_get_enrolled_users_by_cmid',
+            args: {
+                cmid: cmid,
+            },
+        };
+
+        return Ajax.call([request])[0];
+    };
+
     return {
         getEnrolledCoursesByTimelineClassification: getEnrolledCoursesByTimelineClassification,
-        getLastAccessedCourses: getLastAccessedCourses
+        getLastAccessedCourses: getLastAccessedCourses,
+        getUsersFromCourseModuleID: getEnrolledUsersFromCourseModuleID,
     };
 });

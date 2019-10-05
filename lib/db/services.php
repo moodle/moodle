@@ -613,6 +613,14 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_course_get_enrolled_users_by_cmid' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_enrolled_users_by_cmid',
+        'classpath' => 'course/externallib.php',
+        'description' => 'List users bycourse module id.',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',
