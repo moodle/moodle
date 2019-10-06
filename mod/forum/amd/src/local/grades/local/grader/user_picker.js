@@ -24,6 +24,7 @@
 
 import Templates from 'core/templates';
 import Selectors from './user_picker/selectors';
+import {addIconToContainerWithPromise} from 'core/loadingicon';
 
 const templatePath = 'mod_forum/local/grades/local/grader';
 
@@ -120,9 +121,14 @@ class UserPicker {
         this.root.addEventListener('click', async e => {
             const button = e.target.closest(Selectors.actions.changeUser);
             if (button) {
+                const whole = document.querySelector('[data-region="unified-grader"]');
+                const spinner = addIconToContainerWithPromise(whole);
+
                 await this.preChangeUserCallback(this.currentUser);
                 this.updateIndex(parseInt(button.dataset.direction));
                 await this.showUser(this.currentUser);
+
+                spinner.resolve();
             }
         });
     }
