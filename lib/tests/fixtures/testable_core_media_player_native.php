@@ -15,26 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Fixture for testing the functionality of core_media_player.
+ * Fixture for testing the functionality of core_media_player_native.
  *
  * @package     core
  * @subpackage  fixtures
  * @category    test
- * @copyright   2012 The Open University
+ * @copyright   2019 Ruslan Kabalin
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Media player stub for testing purposes.
+ * Native media player stub for testing purposes.
  *
- * @copyright   2012 The Open University
+ * @copyright   2019 Ruslan Kabalin
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class media_test_plugin extends core_media_player {
-    /** @var array Array of supported extensions */
-    public $ext;
+class media_test_native_plugin extends core_media_player_native {
     /** @var int Player rank */
     public $rank;
     /** @var int Arbitrary number */
@@ -45,10 +43,8 @@ class media_test_plugin extends core_media_player {
      *
      * @param int $num Number (used in output)
      * @param int $rank Player rank
-     * @param array $ext Array of supported extensions
      */
-    public function __construct($num = 1, $rank = 13, $ext = array('mp3', 'flv', 'f4v', 'mp4')) {
-        $this->ext = $ext;
+    public function __construct($num = 1, $rank = 13) {
         $this->rank = $rank;
         $this->num = $num;
     }
@@ -64,19 +60,22 @@ class media_test_plugin extends core_media_player {
      * @return string HTML code for embed
      */
     public function embed($urls, $name, $width, $height, $options) {
-        self::pick_video_size($width, $height);
-        $contents = "\ntestsource=". join("\ntestsource=", $urls) .
-            "\ntestname=$name\ntestwidth=$width\ntestheight=$height\n<!--FALLBACK-->\n";
-        return html_writer::span($contents, 'mediaplugin mediaplugin_test');
-    }
+        $sources = array();
+        foreach ($urls as $url) {
+            $params = ['src' => $url];
+            $sources[] = html_writer::empty_tag('source', $params);
+        }
 
-    /**
-     * Gets the list of file extensions supported by this media player.
-     *
-     * @return array Array of strings (extension not including dot e.g. '.mp3')
-     */
-    public function get_supported_extensions() {
-        return $this->ext;
+        $sources = implode("\n", $sources);
+        $title = $this->get_name($name, $urls);
+        // Escape title but prevent double escaping.
+        $title = s(preg_replace(['/&amp;/', '/&gt;/', '/&lt;/'], ['&', '>', '<'], $title));
+
+        return <<<OET
+<video class="mediaplugin mediaplugin_test" title="$title">
+    $sources
+</video>
+OET;
     }
 
     /**
