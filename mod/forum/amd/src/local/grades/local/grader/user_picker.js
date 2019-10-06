@@ -33,27 +33,37 @@ class UserPicker {
      * Constructor for the User Picker.
      *
      * @param {Array} userList List of users
-     * @param {Number} initialUserId The ID of the initial user to display
      * @param {Function} showUserCallback The callback used to display the user
      * @param {Function} preChangeUserCallback The callback to use before changing user
-     * @param {Bool} render Whether to render on instantiation
      */
-    constructor(userList, initialUserId, showUserCallback, preChangeUserCallback, render = true) {
+    constructor(userList, showUserCallback, preChangeUserCallback) {
         this.userList = userList;
         this.showUserCallback = showUserCallback;
         this.preChangeUserCallback = preChangeUserCallback;
-
-        // Determine the current index.
-        this.currentUserIndex = userList.findIndex(user => {
-            return user.id === parseInt(initialUserId);
-        });
+        this.currentUserIndex = 0;
 
         // Ensure that render is bound correctly.
         this.render = this.render.bind(this);
+        this.setUserId = this.setUserId.bind(this);
+    }
 
-        if (render) {
-            this.render();
+    /**
+     * Set the current userid without rendering the change.
+     * To show the user, call showUser too.
+     *
+     * @param {Number} userId
+     */
+    setUserId(userId) {
+        // Determine the current index based on the user ID.
+        const userIndex = this.userList.findIndex(user => {
+            return user.id === parseInt(userId);
+        });
+
+        if (userIndex === -1) {
+            throw Error(`User with id ${userId} not found`);
         }
+
+        this.currentUserIndex = userIndex;
     }
 
     /**
@@ -164,13 +174,19 @@ class UserPicker {
  * Create a new user picker.
  *
  * @param {Array} users The list of users
- * @param {Number} currentUserID The userid of the current user
  * @param {Function} showUserCallback The function to call to show a specific user
  * @param {Function} preChangeUserCallback The fucntion to call to save the grade for the current user
+ * @param {Number} [currentUserID] The userid of the current user
  * @returns {UserPicker}
  */
-export default async(users, currentUserID, showUserCallback, preChangeUserCallback) => {
-    const userPicker = new UserPicker(users, currentUserID, showUserCallback, preChangeUserCallback, false);
+export default async(users, showUserCallback, preChangeUserCallback, {
+        initialUserId = null,
+    } = {}
+) => {
+    const userPicker = new UserPicker(users, showUserCallback, preChangeUserCallback);
+    if (initialUserId) {
+        userPicker.setUserId(initialUserId);
+    }
     await userPicker.render();
 
     return userPicker;

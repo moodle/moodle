@@ -118,7 +118,7 @@ const getSaveUserGradeFunction = (root, setGradeForUser) => {
  * @param {Function} setGradeForUser A function to set the grade for a specific user
  */
 export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
-    initialUserId = 0, moduleName
+    initialUserId = null, moduleName
 } = {}) => {
 
     const [
@@ -140,9 +140,11 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     // Fetch the userpicker for display.
     const userPicker = await getUserPicker(
         userList,
-        initialUserId,
         updateUserContent,
-        saveGradeFunction
+        saveGradeFunction,
+        {
+            initialUserId,
+        },
     );
 
     // Register all event listeners.
