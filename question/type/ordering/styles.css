@@ -5,17 +5,18 @@
     overflow: auto;
 }
 
-.que.ordering ul.sortablelist {
+.que.ordering .sortablelist {
     float            : left;
     list-style-type  : none;
     margin           : 0 0 0 5px;
     padding          : 4px;
 }
-.que.ordering ul.sortablelist.orderingactive {
+.que.ordering .sortablelist.active {
     border           : 1px dotted #333;
     border-radius    : 4px;
 }
-.que.ordering ul.sortablelist li {
+
+.que.ordering .sortablelist li {
     background-color : #ffffff;
     border           : 1px solid #000;
     border-radius    : 4px;
@@ -23,40 +24,41 @@
     margin           : 4px;
     padding          : 6px 12px;
 }
-.que.ordering ul.sortablelist li.sortableitem {
+
+.que.ordering .sortablelist li.sortableitem {
     position         : relative;
     cursor           : move;
     margin-left      : 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
 }
-
-.que.ordering ul.sortablelist li.sortableitem.numberingnone {
-    list-style-type  : none;
-    margin-left: 0px;
-}
-.que.ordering ul.sortablelist li.sortableitem.numbering123 {
-    list-style-type  : decimal;
-}
-.que.ordering ul.sortablelist li.sortableitem.numberingabc {
-    list-style-type  : lower-alpha;
-}
-.que.ordering ul.sortablelist li.sortableitem.numberingABC {
-    list-style-type  : upper-alpha;
-}
-.que.ordering ul.sortablelist li.sortableitem.numberingiii  {
-    list-style-type  : lower-roman;
-}
-.que.ordering ul.sortablelist li.sortableitem.numberingIII {
-    list-style-type  : upper-roman;
-}
-
-.que.ordering ul.sortablelist li.sortableitem:focus {
+.que.ordering .sortablelist li.sortableitem:focus {
     border-color: #0a0;
     box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
 }
-.que.ordering ul.sortablelist li.horizontal {
+
+.que.ordering .sortablelist.numberingnone li {
+    list-style-type  : none;
+    margin-left: 0px;
+}
+.que.ordering .sortablelist.numbering123 li {
+    list-style-type  : decimal;
+}
+.que.ordering .sortablelist.numberingabc li {
+    list-style-type  : lower-alpha;
+}
+.que.ordering .sortablelist.numberingABC li {
+    list-style-type  : upper-alpha;
+}
+.que.ordering .sortablelist.numberingiii li  {
+    list-style-type  : lower-roman;
+}
+.que.ordering .sortablelist.numberingIII li {
+    list-style-type  : upper-roman;
+}
+
+.que.ordering .sortablelist.horizontal li {
     float            : left;
 }
-.que.ordering ul.sortablelist li.vertical {
+.que.ordering .sortablelist.vertical li {
     min-height       : 18px;
 }
 
@@ -66,15 +68,15 @@
     padding: 0;
     border: 0 none;
 }
-.que.ordering.dragproxy ul.sortablelist {
+.que.ordering.dragproxy .sortablelist {
     margin: 0;
     padding: 0;
     float: none;
 }
-.que.ordering.dragproxy ul.sortablelist li {
+.que.ordering.dragproxy .sortablelist li {
     margin: 0;
 }
-.que.ordering.dragproxy ul.sortablelist li.horizontal {
+.que.ordering.dragproxy .sortablelist li.horizontal {
     float: none;
 }
 .item-moving {
@@ -86,23 +88,23 @@
 
 
 /* Styles for feedback. */
-.que.ordering ul.sortablelist li.correct {
+.que.ordering .sortablelist.notactive li.correct {
     background-color : #dff4d8; /* light green */
     border-color     : #99ff66; /* gentle green */
 }
-.que.ordering ul.sortablelist li.partial66 {
+.que.ordering .sortablelist.notactive li.partial66 {
     background-color : #dff4d8; /* light green */
     border-color     : #ff9900; /* dark  orange */
 }
-.que.ordering ul.sortablelist li.partial33 {
+.que.ordering .sortablelist.notactive li.partial33 {
     background-color : #ffebcc; /* light orange */
     border-color     : #ff9900; /* dark orange */
 }
-.que.ordering ul.sortablelist li.partial00 {
+.que.ordering .sortablelist.notactive li.partial00 {
     background-color : #ffdddd; /* light red */
     border-color     : #ff9900; /* dark orange */
 }
-.que.ordering ul.sortablelist li.incorrect {
+.que.ordering .sortablelist.notactive li.incorrect {
     background-color : #ffdddd; /* light red */
     border-color     : #ff7373; /* gentle red */
 }

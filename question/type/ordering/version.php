@@ -29,5 +29,5 @@ $plugin->cron      = 0;
 $plugin->component = 'qtype_ordering';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2015051100; // Moodle 2.9.
-$plugin->version   = 2019073193;
-$plugin->release   = '2019-07-31 (93)';
+$plugin->version   = 2019100694;
+$plugin->release   = '2019-10-06 (94)';

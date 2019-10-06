@@ -58,6 +58,9 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $CFG, $DB, $PAGE;
 
+        // Initialize the return result.
+        $result = '';
+
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
         $question->update_current_response($response);
@@ -76,10 +79,26 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $sortableid        = 'id_sortable_'.$question->id;
         $ablockid          = 'id_ablock_'.$question->id;
 
-        $result = '';
+        // Set CSS classes for sortable list and sortable items.
+        $sortablelist = 'sortablelist';
+        if ($class = $question->get_ordering_layoutclass()) {
+            $sortablelist .= ' '.$class; // "vertical" or "horizontal"
+        }
+        if ($class = $question->options->numberingstyle) {
+            $sortablelist .= ' numbering'.$class;
+        }
+        if ($qa->get_state()->is_active()) {
+            $sortablelist .= ' active';
+        } else {
+            $sortablelist .= ' notactive';
+        }
 
-        // Initialise JavaScript if not in readonly mode (Items cannot be dragged in readonly mode).
-        if (!$options->readonly) {
+        // Initialise JavaScript if not in readonly mode
+        if ($options->readonly) {
+            // Items cannot be dragged in readonly mode.
+            $sortableitem = '';
+        } else {
+            $sortableitem = 'sortableitem';
             $params = array($sortableid, $responseid);
             $PAGE->requires->js_call_amd('qtype_ordering/reorder', 'init', $params);
         }
@@ -93,23 +112,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             // this represents the initial position of the items.
             $md5keys = array();
 
-            // Set CSS classes for sortable list and sortable items.
-            $sortablelist = 'sortablelist';
-            if ($qa->get_state()->is_active()) {
-                $sortablelist .= ' orderingactive';
-            }
-            if ($sortableitem = $question->get_ordering_layoutclass()) {
-                $sortableitem .= ' ';
-            }
-            $sortableitem .= 'numbering' . $question->options->numberingstyle;
-
             // Generate ordering items.
             foreach ($currentresponse as $position => $answerid) {
 
-                if (!array_key_exists($answerid, $question->answers)) {
+                if (! array_key_exists($answerid, $question->answers)) {
                     continue; // Shouldn't happen !!
                 }
-                if (!array_key_exists($position, $correctresponse)) {
+                if (! array_key_exists($position, $correctresponse)) {
                     continue; // Shouldn't happen !!
                 }
 
@@ -121,25 +130,23 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 }
 
                 // Set the CSS class and correctness img for this response.
+                // (correctness: HIDDEN=0, VISIBLE=1, EDITABLE=2)
                 switch ($options->correctness) {
-
-                    case question_display_options::HIDDEN: // HIDDEN=0.
-                    case question_display_options::EDITABLE: // EDITABLE=2.
-                        $class = 'sortableitem';
-                        $img = '';
-                        break;
-
-                    case question_display_options::VISIBLE: // VISIBLE=1.
+                    case question_display_options::VISIBLE:
                         $score = $this->get_ordering_item_score($question, $position, $answerid);
                         list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
+                        $class = trim("$sortableitem $class");
                         break;
-
-                    default: // Shouldn't happen !!
+                    case question_display_options::HIDDEN:
+                    case question_display_options::EDITABLE:
+                        $class = $sortableitem;
+                        $img = '';
+                        break;
+                    default:
                         $class = '';
                         $img = '';
                         break;
                 }
-                $class = trim("$class $sortableitem");
 
                 // Format the answer text.
                 $answer = $question->answers[$answerid];
