@@ -177,6 +177,10 @@ class api {
             'langmenu' => $CFG->langmenu,
             'langlist' => $CFG->langlist,
             'locale' => $CFG->locale,
+            'tool_mobile_minimumversion' => get_config('tool_mobile', 'minimumversion'),
+            'tool_mobile_iosappid' => get_config('tool_mobile', 'iosappid'),
+            'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
+            'tool_mobile_setuplink' => clean_param(get_config('tool_mobile', 'setuplink'), PARAM_URL),
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');

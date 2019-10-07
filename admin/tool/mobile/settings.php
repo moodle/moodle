@@ -65,6 +65,10 @@ if ($hassiteconfig) {
                     new lang_string('forcedurlscheme_key', 'tool_mobile'),
                     new lang_string('forcedurlscheme', 'tool_mobile'), 'moodlemobile', PARAM_ALPHANUM));
 
+        $temp->add(new admin_setting_configtext('tool_mobile/minimumversion',
+                    new lang_string('minimumversion_key', 'tool_mobile'),
+                    new lang_string('minimumversion', 'tool_mobile'), '', PARAM_NOTAGS));
+
         $ADMIN->add('mobileapp', $temp);
 
         // Appearance related settings.

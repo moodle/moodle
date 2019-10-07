@@ -95,6 +95,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'langmenu' => $CFG->langmenu,
             'langlist' => $CFG->langlist,
             'locale' => $CFG->locale,
+            'tool_mobile_minimumversion' => '',
+            'tool_mobile_iosappid' => get_config('tool_mobile', 'iosappid'),
+            'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
+            'tool_mobile_setuplink' => get_config('tool_mobile', 'setuplink'),
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
@@ -111,6 +115,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('autolang', 1);
         set_config('lang', 'a_b');  // Set invalid lang.
         set_config('disabledfeatures', 'myoverview', 'tool_mobile');
+        set_config('minimumversion', '3.8.0', 'tool_mobile');
 
         list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
@@ -123,6 +128,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $expected['autolang'] = '1';
         $expected['lang'] = ''; // Expect empty because it was set to an invalid lang.
         $expected['tool_mobile_disabledfeatures'] = 'myoverview';
+        $expected['tool_mobile_minimumversion'] = '3.8.0';
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $expected['logourl'] = $logourl->out(false);

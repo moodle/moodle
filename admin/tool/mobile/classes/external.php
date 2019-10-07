@@ -179,6 +179,13 @@ class external extends external_api {
                 'langmenu' => new external_value(PARAM_INT, 'Whether the language menu should be displayed.', VALUE_OPTIONAL),
                 'langlist' => new external_value(PARAM_RAW, 'Languages on language menu.', VALUE_OPTIONAL),
                 'locale' => new external_value(PARAM_RAW, 'Sitewide locale.', VALUE_OPTIONAL),
+                'tool_mobile_minimumversion' => new external_value(PARAM_NOTAGS, 'Minimum required version to access.',
+                    VALUE_OPTIONAL),
+                'tool_mobile_iosappid' => new external_value(PARAM_ALPHANUM, 'iOS app\'s unique identifier.',
+                    VALUE_OPTIONAL),
+                'tool_mobile_androidappid' => new external_value(PARAM_NOTAGS, 'Android app\'s unique identifier.',
+                    VALUE_OPTIONAL),
+                'tool_mobile_setuplink' => new external_value(PARAM_URL, 'App download page.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );
