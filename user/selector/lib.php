@@ -600,7 +600,7 @@ abstract class user_selector_base {
         if ($this->extrafields) {
             $displayfields = array();
             foreach ($this->extrafields as $field) {
-                $displayfields[] = $user->{$field};
+                $displayfields[] = s($user->{$field});
             }
             $out .= ' (' . implode(', ', $displayfields) . ')';
         }

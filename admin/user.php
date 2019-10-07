@@ -374,7 +374,7 @@
             $row = array ();
             $row[] = "<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>";
             foreach ($extracolumns as $field) {
-                $row[] = $user->{$field};
+                $row[] = s($user->{$field});
             }
             $row[] = $user->city;
             $row[] = $user->country;
