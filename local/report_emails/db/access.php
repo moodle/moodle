@@ -26,4 +26,15 @@ $capabilities = array(
             'clientadministrator' => CAP_ALLOW
         ),
     )
+
+    'local/report_emails:resend' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'companymanager' => CAP_ALLOW,
+            'companydepartmentmanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        ),
+    )
 );
