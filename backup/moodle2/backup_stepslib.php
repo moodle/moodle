@@ -285,6 +285,9 @@ class backup_module_structure_step extends backup_structure_step {
         // attach format plugin structure to $module element, only one allowed
         $this->add_plugin_structure('format', $module, false);
 
+        // Attach report plugin structure to $module element, multiple allowed.
+        $this->add_plugin_structure('report', $module, true);
+
         // attach plagiarism plugin structure to $module element, there can be potentially
         // many plagiarism plugins storing information about this course
         $this->add_plugin_structure('plagiarism', $module, true);
