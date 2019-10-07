@@ -724,7 +724,7 @@ class external extends external_api {
             foreach ($extrafields as $extrafield) {
                 $useroption->extrafields[] = (object)[
                     'name' => $extrafield,
-                    'value' => $user->$extrafield
+                    'value' => $user->{$extrafield}
                 ];
             }
             $useroptions[$user->id] = $useroption;
@@ -748,7 +748,7 @@ class external extends external_api {
                 'extrafields' => new external_multiple_structure(
                     new external_single_structure([
                             'name' => new external_value(PARAM_TEXT, 'Name of the extrafield.'),
-                            'value' => new external_value(PARAM_TEXT, 'Value of the extrafield.')
+                            'value' => new external_value(PARAM_RAW_TRIMMED, 'Value of the extrafield.')
                         ]
                     ), 'List of extra fields', VALUE_OPTIONAL
                 )
