@@ -687,23 +687,21 @@ class summary_table extends table_sql {
      * that they have not been calculated yet.
      * @return bool
      */
-    private function show_word_char_counts(): bool {
+    protected function show_word_char_counts(): bool {
         global $DB;
 
-        if (!is_null($this->showwordcharcounts)) {
-            return $this->showwordcharcounts;
-        }
+        if (is_null($this->showwordcharcounts)) {
+            // This should be really fast.
+            $sql = "SELECT 'x'
+                      FROM {forum_posts} fp
+                      JOIN {forum_discussions} fd ON fd.id = fp.discussion
+                     WHERE fd.forum = :forumid AND (fp.wordcount IS NULL OR fp.charcount IS NULL)";
 
-        // This should be really fast.
-        $sql = "SELECT 'x'
-                  FROM {forum_posts} fp
-                  JOIN {forum_discussions} fd ON fd.id = fp.discussion
-                 WHERE fd.forum = :forumid AND (fp.wordcount IS NULL OR fp.charcount IS NULL)";
-
-        if ($DB->record_exists_sql($sql, ['forumid' => $this->cm->instance])) {
-            $this->showwordcharcounts = false;
-        } else {
-            $this->showwordcharcounts = true;
+            if ($DB->record_exists_sql($sql, ['forumid' => $this->cm->instance])) {
+                $this->showwordcharcounts = false;
+            } else {
+                $this->showwordcharcounts = true;
+            }
         }
 
         return $this->showwordcharcounts;

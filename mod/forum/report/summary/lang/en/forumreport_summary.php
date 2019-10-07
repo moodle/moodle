@@ -23,7 +23,7 @@
  */
 
 $string['attachmentcount'] = 'Number of attachments';
-$string['charcount'] = 'Char count';
+$string['charcount'] = 'Character count';
 $string['viewcount'] = 'Number of views';
 $string['earliestpost'] = 'Earliest post';
 $string['filter:groupsbuttonlabel'] = 'Open the groups filter';
