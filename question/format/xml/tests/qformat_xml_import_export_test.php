@@ -38,8 +38,8 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Create object qformat_xml for test.
      * @param string $filename with name for testing file.
-     * @param object $course
-     * @return object qformat_xml.
+     * @param stdClass $course
+     * @return qformat_xml XML question format object.
      */
     public function create_qformat($filename, $course) {
         global $DB;
@@ -99,11 +99,12 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * @param string $info imported category info field (description of category).
      * @param int $infoformat imported category info field format.
      */
-    public function assert_category_imported($name, $info, $infoformat) {
+    public function assert_category_imported($name, $info, $infoformat, $idnumber = null) {
         global $DB;
         $category = $DB->get_record('question_categories', ['name' => $name], '*', MUST_EXIST);
         $this->assertEquals($info, $category->info);
         $this->assertEquals($infoformat, $category->infoformat);
+        $this->assertSame($idnumber, $category->idnumber);
     }
 
     /**
@@ -146,7 +147,8 @@ class qformat_xml_import_export_test extends advanced_testcase {
         $qformat = $this->create_qformat('category_with_description.xml', $course);
         $imported = $qformat->importprocess();
         $this->assertTrue($imported);
-        $this->assert_category_imported('Alpha', 'This is Alpha category for test', FORMAT_MOODLE);
+        $this->assert_category_imported('Alpha',
+                'This is Alpha category for test', FORMAT_MOODLE, 'alpha-idnumber');
         $this->assert_category_has_parent('Alpha', 'top');
     }
 
@@ -246,6 +248,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'contextid' => '2',
                 'info' => 'This is Alpha category for test',
                 'infoformat' => '0',
+                'idnumber' => 'alpha-idnumber',
                 'stamp' => make_unique_id_code(),
                 'parent' => '0',
                 'sortorder' => '999']);

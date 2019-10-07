@@ -575,14 +575,22 @@ class qformat_default {
                 $parent = $category->id;
             } else if ($category = $DB->get_record('question_categories',
                     array('name' => $catname, 'contextid' => $context->id, 'parent' => $parent))) {
-                // Do nothing unless the child category appears before the parent category
-                // in the imported xml file. Because the parent was created without info being available
-                // at that time, this allows the info to be added from the xml data.
-                if ($key == (count($catnames) - 1) && $lastcategoryinfo && isset($lastcategoryinfo->info) &&
-                        $lastcategoryinfo->info !== '' && $category->info === '') {
-                    $category->info = $lastcategoryinfo->info;
-                    if (isset($lastcategoryinfo->infoformat) && $lastcategoryinfo->infoformat !== '') {
-                        $category->infoformat = $lastcategoryinfo->infoformat;
+                // If this category is now the last one in the path we are processing ...
+                if ($key == (count($catnames) - 1) && $lastcategoryinfo) {
+                    // Do nothing unless the child category appears before the parent category
+                    // in the imported xml file. Because the parent was created without info being available
+                    // at that time, this allows the info to be added from the xml data.
+                    if (isset($lastcategoryinfo->info) && $lastcategoryinfo->info !== ''
+                            && $category->info === '') {
+                        $category->info = $lastcategoryinfo->info;
+                        if (isset($lastcategoryinfo->infoformat) && $lastcategoryinfo->infoformat !== '') {
+                            $category->infoformat = $lastcategoryinfo->infoformat;
+                        }
+                    }
+                    // Same for idnumber.
+                    if (isset($lastcategoryinfo->idnumber) && $lastcategoryinfo->idnumber !== ''
+                            && $category->idnumber === '') {
+                        $category->idnumber = $lastcategoryinfo->idnumber;
                     }
                     $DB->update_record('question_categories', $category);
                 }
@@ -603,11 +611,16 @@ class qformat_default {
                 $category->name = $catname;
                 $category->info = '';
                 // Only add info (category description) for the final category in the catpath.
-                if ($key == (count($catnames) - 1) && $lastcategoryinfo && isset($lastcategoryinfo->info) &&
-                        $lastcategoryinfo->info !== '') {
-                    $category->info = $lastcategoryinfo->info;
-                    if (isset($lastcategoryinfo->infoformat) && $lastcategoryinfo->infoformat !== '') {
-                        $category->infoformat = $lastcategoryinfo->infoformat;
+                if ($key == (count($catnames) - 1) && $lastcategoryinfo) {
+                    if (isset($lastcategoryinfo->info) && $lastcategoryinfo->info !== '') {
+                        $category->info = $lastcategoryinfo->info;
+                        if (isset($lastcategoryinfo->infoformat) && $lastcategoryinfo->infoformat !== '') {
+                            $category->infoformat = $lastcategoryinfo->infoformat;
+                        }
+                    }
+                    // Same for idnumber.
+                    if (isset($lastcategoryinfo->idnumber) && $lastcategoryinfo->idnumber !== '') {
+                        $category->idnumber = $lastcategoryinfo->idnumber;
                     }
                 }
                 $category->parent = $parent;
@@ -924,7 +937,7 @@ class qformat_default {
                         if (!count($DB->get_records('question', array('category' => $trackcategoryparent)))) {
                             $categoryname = $this->get_category_path($trackcategoryparent, $this->contexttofile);
                             $categoryinfo = $DB->get_record('question_categories', array('id' => $trackcategoryparent),
-                                'name, info, infoformat', MUST_EXIST);
+                                'name, info, infoformat, idnumber', MUST_EXIST);
                             if ($categoryinfo->name != 'top') {
                                 // Create 'dummy' question for parent category.
                                 $dummyquestion = $this->create_dummy_question_representing_category($categoryname, $categoryinfo);
@@ -937,7 +950,7 @@ class qformat_default {
                 if ($addnewcat && !in_array($trackcategory, $writtencategories)) {
                     $categoryname = $this->get_category_path($trackcategory, $this->contexttofile);
                     $categoryinfo = $DB->get_record('question_categories', array('id' => $trackcategory),
-                            'info, infoformat', MUST_EXIST);
+                            'info, infoformat, idnumber', MUST_EXIST);
                     // Create 'dummy' question for category.
                     $dummyquestion = $this->create_dummy_question_representing_category($categoryname, $categoryinfo);
                     $expout .= $this->writequestion($dummyquestion) . "\n";
@@ -986,6 +999,7 @@ class qformat_default {
         $dummyquestion->contextid = 0;
         $dummyquestion->info = $categoryinfo->info;
         $dummyquestion->infoformat = $categoryinfo->infoformat;
+        $dummyquestion->idnumber = $categoryinfo->idnumber;
         $dummyquestion->name = 'Switch category to ' . $categoryname;
         return $dummyquestion;
     }
