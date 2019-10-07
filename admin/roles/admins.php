@@ -36,15 +36,12 @@ if (!is_siteadmin()) {
 }
 
 $admisselector = new core_role_admins_existing_selector();
-$admisselector->set_extra_fields(array('username', 'email'));
-
 $potentialadmisselector = new core_role_admins_potential_selector();
-$potentialadmisselector->set_extra_fields(array('username', 'email'));
 
 if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
     if ($userstoadd = $potentialadmisselector->get_selected_users()) {
         $user = reset($userstoadd);
-        $username = fullname($user) . " ($user->username, $user->email)";
+        $username = $potentialadmisselector->output_user($user);
         echo $OUTPUT->header();
         $yesurl = new moodle_url('/admin/roles/admins.php', array('confirmadd'=>$user->id, 'sesskey'=>sesskey()));
         echo $OUTPUT->confirm(get_string('confirmaddadmin', 'core_role', $username), $yesurl, $PAGE->url);
@@ -58,7 +55,7 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
         if ($USER->id == $user->id) {
             // Can not remove self.
         } else {
-            $username = fullname($user) . " ($user->username, $user->email)";
+            $username = $admisselector->output_user($user);
             echo $OUTPUT->header();
             $yesurl = new moodle_url('/admin/roles/admins.php', array('confirmdel'=>$user->id, 'sesskey'=>sesskey()));
             echo $OUTPUT->confirm(get_string('confirmdeladmin', 'core_role', $username), $yesurl, $PAGE->url);

@@ -698,7 +698,7 @@ function report_security_check_riskadmin($detailed=false) {
     if ($detailed) {
         foreach ($admins as $uid=>$user) {
             $url = "$CFG->wwwroot/user/view.php?id=$user->id";
-            $admins[$uid] = '<li><a href="'.$url.'">'.fullname($user).' ('.$user->email.')</a></li>';
+            $admins[$uid] = '<li><a href="'.$url.'">' . fullname($user, true) . ' (' . s($user->email) . ')</a></li>';
         }
         $admins = '<ul>'.implode('', $admins).'</ul>';
     }
@@ -824,7 +824,7 @@ function report_security_check_riskbackup($detailed=false) {
         foreach ($rs as $user) {
             $context = context::instance_by_id($user->contextid);
             $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
-            $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>$user->email,
+            $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>s($user->email),
                                'contextname'=>$context->get_context_name());
             $users[] = '<li>'.get_string('check_riskbackup_unassign', 'report_security', $a).'</li>';
         }

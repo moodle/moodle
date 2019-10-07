@@ -193,7 +193,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
                     echo $OUTPUT->notification(get_string('emailconfirmsentsuccess'), \core\output\notification::NOTIFY_SUCCESS);
                 }
             }
-            echo $OUTPUT->box(get_string("emailconfirmsent", "", $user->email), "generalbox boxaligncenter");
+            echo $OUTPUT->box(get_string("emailconfirmsent", "", s($user->email)), "generalbox boxaligncenter");
             $resendconfirmurl = new moodle_url('/login/index.php',
                 [
                     'username' => $frm->username,
