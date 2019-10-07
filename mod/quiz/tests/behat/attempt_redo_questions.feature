@@ -128,11 +128,16 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And quiz "Quiz 2" contains the following questions:
       | question                | page |
       | Random (Test questions) | 1    |
+    And user "student" has started an attempt at quiz "Quiz 2" randomised as follows:
+      | slot | actualquestion |
+      | 1    | TF1            |
     And I log in as "student"
     And I am on "Course 1" course homepage
     When I follow "Quiz 2"
-    And I press "Attempt quiz now"
+    And I press "Continue the last attempt"
+    And I should see "First question"
     And I click on "False" "radio"
     And I click on "Check" "button"
     And I press "Try another question like this one"
-    Then "Check" "button" should exist
+    Then I should see "Second question"
+    And "Check" "button" should exist
