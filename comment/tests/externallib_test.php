@@ -96,17 +96,18 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
 
         // We need to add the comments manually, the comment API uses the global OUTPUT and this is going to make the WS to fail.
         $newcmt = new stdClass;
+        $timecreated = time();
         $newcmt->contextid    = $context->id;
         $newcmt->commentarea  = 'database_entry';
         $newcmt->itemid       = $recordid;
         $newcmt->content      = 'New comment';
         $newcmt->format       = 0;
         $newcmt->userid       = $user->id;
-        $newcmt->timecreated  = time();
+        $newcmt->timecreated  = $timecreated;
         $cmtid1 = $DB->insert_record('comments', $newcmt);
 
         $newcmt->content  = 'New comment 2';
-        $newcmt->timecreated  = time() + 1;
+        $newcmt->timecreated  = $timecreated;
         $cmtid2 = $DB->insert_record('comments', $newcmt);
 
         $contextlevel = 'module';
