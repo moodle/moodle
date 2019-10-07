@@ -55,6 +55,7 @@ class backup_controller extends base_controller {
 
     protected $status; // Current status of the controller (created, planned, configured...)
 
+    /** @var backup_plan */
     protected $plan;   // Backup execution plan
     protected $includefiles; // Whether this backup includes files or not.
 

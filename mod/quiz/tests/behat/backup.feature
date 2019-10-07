@@ -34,6 +34,37 @@ Feature: Backup and restore of quizzes
     Then I should see "TF1"
     And I should see "TF2"
 
+  @javascript
+  Scenario: Backup and restore a course containing a quiz with user data.
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber |
+      | quiz       | Quiz 1 | For testing backup | C1     | quiz1    |
+    And the following "questions" exist:
+      | questioncategory | qtype       | name | questiontext    |
+      | Test questions   | truefalse   | TF1  | First question  |
+      | Test questions   | truefalse   | TF2  | Second question |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+      | TF2      | 2    |
+    And the following "users" exist:
+      | username |
+      | student  |
+    And the following "course enrolments" exist:
+      | user    | course | role    |
+      | student | C1     | student |
+    And user "student" has attempted "Quiz 1" with responses:
+      | slot | response |
+      | 1    | True     |
+      | 2    | False    |
+    When I backup "Course 1" course using this options:
+      | Confirmation | Filename | test_backup.mbz |
+    And I restore "test_backup.mbz" backup into a new course using this options:
+      | Schema | Course name | Restored course |
+    Then I should see "Restored course"
+    And I follow "Quiz 1"
+    And I should see "Attempts: 1"
+
   @javascript @_file_upload
   Scenario: Restore a Moodle 2.8 quiz backup
     When I am on "Course 1" course homepage
