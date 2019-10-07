@@ -85,11 +85,15 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_licensed($row) {
-        global $OUTPUT, $params, $systemcontext;
+        global $OUTPUT, $DB, $params, $systemcontext;
 
         $licenseselectoutput = "";
 
         if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            // Set the value for a self enrol course.
+            if ($DB->get_record('enrol', array('courseid' => $row->courseid, 'enrol' => 'self', 'status' => 0))) {
+                $row->licensed = 3;
+            }
             $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
             $licenseselectbutton = array('0' => get_string('no'), '1' => get_string('yes'), '3' => get_string('pluginname', 'enrol_self'));
 
@@ -107,10 +111,11 @@ class iomad_courses_table extends table_sql {
         } else {
             if ($row->licensed == 0) {
                 $licenseselectoutput = get_string('no');
+                if ($DB->get_record('enrol', array('courseid' => $row->courseid, 'enrol' => 'self', 'status' => 0))) {
+                    $licenseselectoutput = get_string('pluginname', 'enrol_self');
+                }
             } else if ($row->licensed == 1) {
                 $licenseselectoutput = get_string('yes');
-            } else if ($row->licensed == 2) {
-                $licenseselectoutput = get_string('pluginname', 'enrol_self');
             }
         }
 
