@@ -288,12 +288,12 @@ class models_list implements \renderable, \templatable {
                 }
             }
 
-            // Effectivity report.
+            // Insights report.
             if (!empty($anypredictionobtained) && $model->uses_insights()) {
-                $urlparams['action'] = 'effectivenessreport';
+                $urlparams['action'] = 'insightsreport';
                 $url = new \moodle_url('/admin/tool/analytics/model.php', $urlparams);
-                $pix = new \pix_icon('i/report', get_string('effectivenessreport', 'tool_analytics'));
-                $icon = new \action_menu_link_secondary($url, $pix, get_string('effectivenessreport', 'tool_analytics'));
+                $pix = new \pix_icon('i/report', get_string('insightsreport', 'tool_analytics'));
+                $icon = new \action_menu_link_secondary($url, $pix, get_string('insightsreport', 'tool_analytics'));
                 $actionsmenu->add($icon);
             }
 
