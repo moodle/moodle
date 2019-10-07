@@ -460,8 +460,7 @@ class provider implements
             $params = array_merge($inparams, ['userid' => $userid]);
             $associds = $DB->get_fieldset_sql($sql, $params);
 
-            list($insql, $inparams) = $DB->get_in_or_equal($associds, SQL_PARAMS_NAMED, 'param', true);
-            $DB->delete_records_select('blog_association', "id $insql", $inparams);
+            $DB->delete_records_list('blog_association', 'id', $associds);
         }
     }
 
