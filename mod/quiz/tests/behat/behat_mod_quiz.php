@@ -631,7 +631,8 @@ class behat_mod_quiz extends behat_question_base {
      *                random questions. If so, this will let you control which actual
      *                question gets picked when this slot is 'randomised' at the
      *                start of the attempt. If you don't specify, then one will be picked
-     *                at random (which might make the reponse meaningless).
+     *                at random (which might make the response meaningless).
+     *                Give the question name.
      * variant        This column is similar, and also options. It is only needed if
      *                the question that ends up in this slot returns something greater
      *                than 1 for $question->get_num_variants(). Like with actualquestion,
@@ -708,7 +709,7 @@ class behat_mod_quiz extends behat_question_base {
      * @param string $username the username of the user that will attempt.
      * @param string $quizname the name of the quiz the user will attempt.
      * @param TableNode $attemptinfo information about the questions to add, as above.
-     * @Given /^user "([^"]*)" has started an attempt at quiz "([^"]*) randomised as follows:"$/
+     * @Given /^user "([^"]*)" has started an attempt at quiz "([^"]*)" randomised as follows:$/
      */
     public function user_has_started_an_attempt_at_quiz_with_details($username, $quizname, TableNode $attemptinfo) {
         global $DB;
