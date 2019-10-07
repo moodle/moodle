@@ -261,6 +261,10 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
     public function get($key) {
         $value = $this->redis->hGet($this->hash, $key);
 
+        if ($this->compressor == self::COMPRESSOR_NONE) {
+            return $value;
+        }
+
         return $this->uncompress($value);
     }
 
@@ -272,6 +276,10 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      */
     public function get_many($keys) {
         $values = $this->redis->hMGet($this->hash, $keys);
+
+        if ($this->compressor == self::COMPRESSOR_NONE) {
+            return $values;
+        }
 
         foreach ($values as &$value) {
             $value = $this->uncompress($value);
@@ -288,7 +296,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return bool True if the operation succeeded, false otherwise.
      */
     public function set($key, $value) {
-        $value = $this->compress($value);
+        if ($this->compressor != self::COMPRESSOR_NONE) {
+            $value = $this->compress($value);
+        }
 
         return ($this->redis->hSet($this->hash, $key, $value) !== false);
     }
@@ -304,7 +314,11 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         $pairs = [];
         foreach ($keyvaluearray as $pair) {
             $key = $pair['key'];
-            $pairs[$key] = $this->compress($pair['value']);
+            if ($this->compressor != self::COMPRESSOR_NONE) {
+                $pairs[$key] = $this->compress($pair['value']);
+            } else {
+                $pairs[$key] = $pair['value'];
+            }
         }
         if ($this->redis->hMSet($this->hash, $pairs)) {
             return count($pairs);
