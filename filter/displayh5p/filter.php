@@ -111,7 +111,8 @@ class filter_displayh5p extends moodle_text_filter {
 
         // We want to request the resizing script only once.
         if (self::$loadresizerjs) {
-            $tagend .= '<script src="https://h5p.org/sites/all/modules/h5p/library/js/h5p-resizer.js"></script>';
+            $resizerurl = new moodle_url('/lib/h5p/js/h5p-resizer.js');
+            $tagend .= '<script src="' . $resizerurl->out() . '"></script>';
             self::$loadresizerjs = false;
         }
 
