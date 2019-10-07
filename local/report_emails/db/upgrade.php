@@ -57,6 +57,8 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_local_report_emails_upgrade($oldversion) {
     global $CFG, $DB;
 
+    $result = true;
+
     return $result;
 
 }
