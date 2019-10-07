@@ -348,7 +348,7 @@ class post {
      * @param \stdClass $record A record ready to be inserted / updated in DB.
      * @return \stdClass The same record with 'wordcount' and 'charcount' attributes.
      */
-    public static function add_message_counts(\stdClass $record): \stdClass {
+    public static function add_message_counts(\stdClass $record) : \stdClass {
         if (!empty($record->message)) {
             $record->wordcount = count_words($record->message);
             $record->charcount = count_letters($record->message);

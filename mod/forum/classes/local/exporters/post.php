@@ -419,6 +419,10 @@ class post extends exporter {
         $showwordcount = $forum->should_display_word_count();
         if ($showwordcount) {
             $wordcount = $post->get_wordcount() ?? count_words($message);
+            $charcount = $post->get_charcount() ?? count_letters($message);
+        } else {
+            $wordcount = null;
+            $charcount = null;
         }
 
         return [
@@ -436,8 +440,8 @@ class post extends exporter {
             'isdeleted' => $isdeleted,
             'isprivatereply' => $isprivatereply,
             'haswordcount' => $showwordcount,
-            'wordcount' => $showwordcount ? $wordcount : null,
-            'charcount' => $post->get_charcount(),
+            'wordcount' => $wordcount,
+            'charcount' => $charcount,
             'capabilities' => [
                 'view' => $canview,
                 'edit' => $canedit,

@@ -240,6 +240,7 @@ function forum_update_instance($forum, $mform) {
             $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id, $options, $post->message);
         }
 
+        \mod_forum\local\entities\post::add_message_counts($post);
         $DB->update_record('forum_posts', $post);
         $discussion->name = $forum->name;
         $DB->update_record('forum_discussions', $discussion);
