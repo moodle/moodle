@@ -6732,7 +6732,7 @@ function mod_forum_user_preferences() {
  * Updates null forum post counts according to the post message.
  *
  * @param  int  $limit  The number of records to update
- * @return null
+ * @return bool Whether any records were found and updated
  */
 function mod_forum_update_null_forum_post_counts(int $limit) {
     global $DB;
@@ -6741,12 +6741,15 @@ function mod_forum_update_null_forum_post_counts(int $limit) {
     $recordset = $DB->get_recordset_select('forum_posts', $select, null, 'discussion', 'id, message', 0, $limit);
     if (!$recordset->valid()) {
         $recordset->close();
-        return;
+        return false;
     }
 
     foreach ($recordset as $record) {
         $countsupdate = \mod_forum\local\entities\post::add_message_counts($record);
         $DB->update_record('forum_posts', $countsupdate);
     }
+
     $recordset->close();
+
+    return true;
 }

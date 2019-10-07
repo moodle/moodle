@@ -39,10 +39,23 @@ class refresh_forum_post_counts extends \core\task\adhoc_task {
      * Run the task to refresh calendar events.
      */
     public function execute() {
-        global $CFG;
+        global $CFG, $DB;
 
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
-        mod_forum_update_null_forum_post_counts(5000);
+        $recordsfound = mod_forum_update_null_forum_post_counts(5000);
+
+        // Re-queue this adhoc task if records were found during the current run,
+        // since there may be more records to update.
+        if ($recordsfound) {
+            $record = new \stdClass();
+            $record->classname = '\mod_forum\task\refresh_forum_post_counts';
+            $record->component = 'mod_forum';
+
+            // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+            $nextruntime = time() - 1;
+            $record->nextruntime = $nextruntime;
+            $DB->insert_record('task_adhoc', $record);
+        }
     }
 }
