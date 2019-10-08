@@ -106,3 +106,12 @@ unpublishalluploadedcourses,core_hub
 unpublishconfirmation,core_hub
 unpublishcourse,core_hub
 updatestatus,core_hub
+registermoodlenet,core_admin
+registermoodleorg,core_admin
+registermoodleorgli1,core_admin
+registermoodleorgli2,core_admin
+registerwithmoodleorg,core_admin
+completeregistration,core_hub
+registersite,core_hub
+updatesite,core_hub
+unregisterexplained,core_hub

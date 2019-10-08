@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  *
- * This page displays the site registration form for Moodle.net.
+ * This page displays the site registration form.
  * It handles redirection to the hub to continue the registration workflow process.
  * It also handles update operation by web service.
  */
@@ -32,24 +32,25 @@ require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('registrationmoodleorg');
 
-$unregistration = optional_param('unregistration', 0, PARAM_INT);
+$unregistration = optional_param('unregistration', false, PARAM_BOOL);
+$confirm = optional_param('confirm', false, PARAM_BOOL);
 
 if ($unregistration && \core\hub\registration::is_registered()) {
-    $siteunregistrationform = new \core\hub\site_unregistration_form();
+    if ($confirm) {
+        require_sesskey();
+        \core\hub\registration::unregister(false, false);
 
-    if ($siteunregistrationform->is_cancelled()) {
-        redirect(new moodle_url('/admin/registration/index.php'));
-    } else if ($data = $siteunregistrationform->get_data()) {
-        \core\hub\registration::unregister($data->unpublishalladvertisedcourses,
-            $data->unpublishalluploadedcourses);
         if (!\core\hub\registration::is_registered()) {
             redirect(new moodle_url('/admin/registration/index.php'));
         }
     }
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('unregisterfrom', 'hub', 'Moodle.net'), 3, 'main');
-    $siteunregistrationform->display();
+    echo $OUTPUT->confirm(
+        get_string('registerwithmoodleorgremove', 'core_hub'),
+        new moodle_url(new moodle_url('/admin/registration/index.php', ['unregistration' => 1, 'confirm' => 1])),
+        new moodle_url(new moodle_url('/admin/registration/index.php'))
+    );
     echo $OUTPUT->footer();
     exit;
 }
@@ -82,7 +83,7 @@ if ($fromform = $siteregistrationform->get_data()) {
 
 echo $OUTPUT->header();
 
-// Current status of registration on Moodle.net.
+// Current status of registration.
 
 $notificationtype = \core\output\notification::NOTIFY_ERROR;
 if (\core\hub\registration::is_registered()) {
@@ -104,11 +105,11 @@ if (\core\hub\registration::is_registered()) {
 
 // Heading.
 if (\core\hub\registration::is_registered()) {
-    echo $OUTPUT->heading(get_string('updatesite', 'hub', 'Moodle.net'));
+    echo $OUTPUT->heading(get_string('registerwithmoodleorgupdate', 'core_hub'));
 } else if ($isinitialregistration) {
-    echo $OUTPUT->heading(get_string('completeregistration', 'hub'));
+    echo $OUTPUT->heading(get_string('registerwithmoodleorgcomplete', 'core_hub'));
 } else {
-    echo $OUTPUT->heading(get_string('registerwithmoodleorg', 'admin'));
+    echo $OUTPUT->heading(get_string('registerwithmoodleorg', 'core_hub'));
 }
 
 $renderer = $PAGE->get_renderer('core', 'admin');
@@ -119,8 +120,9 @@ $siteregistrationform->display();
 if (\core\hub\registration::is_registered()) {
     // Unregister link.
     $unregisterhuburl = new moodle_url("/admin/registration/index.php", ['unregistration' => 1]);
-    echo html_writer::div(html_writer::link($unregisterhuburl, get_string('unregister', 'hub')), 'unregister');
+    echo html_writer::div(html_writer::link($unregisterhuburl, get_string('unregister', 'hub')), 'unregister mt-2');
 } else if ($isinitialregistration) {
-    echo html_writer::div(html_writer::link(new moodle_url($returnurl), get_string('skipregistration', 'hub')), 'skipregistration');
+    echo html_writer::div(html_writer::link(new moodle_url($returnurl), get_string('skipregistration', 'hub')),
+        'skipregistration mt-2');
 }
 echo $OUTPUT->footer();

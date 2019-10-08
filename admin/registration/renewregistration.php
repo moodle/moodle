@@ -40,7 +40,7 @@ $token = optional_param('token', '', PARAM_TEXT);
 admin_externalpage_setup('registrationmoodleorg');
 
 if ($url !== HUB_MOODLEORGHUBURL) {
-    // Allow other plugins to renew registration on hubs other than moodle.net . Plugins implementing this
+    // Allow other plugins to renew registration on custom hubs. Plugins implementing this
     // callback need to redirect or exit. See https://docs.moodle.org/en/Hub_registration .
     $callbacks = get_plugins_with_function('hub_registration');
     foreach ($callbacks as $plugintype => $plugins) {
@@ -56,7 +56,7 @@ if ($url !== HUB_MOODLEORGHUBURL) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('renewregistration', 'hub'), 3, 'main');
-$hublink = html_writer::tag('a', 'Moodle.net', array('href' => HUB_MOODLEORGHUBURL));
+$hublink = html_writer::tag('a', HUB_MOODLEORGHUBURL, array('href' => HUB_MOODLEORGHUBURL));
 
 $deletedregmsg = get_string('previousregistrationdeleted', 'hub', $hublink);
 

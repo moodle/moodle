@@ -266,7 +266,7 @@ class manager {
                 'title' => get_string('importtour', 'tool_usertours'),
             ],
             (object) [
-                'link'  => new \moodle_url('https://moodle.net/tours'),
+                'link'  => new \moodle_url('https://archive.moodle.net/tours'),
                 'linkproperties' => [
                         'target' => '_blank',
                     ],
