@@ -37,14 +37,20 @@ export const init = (root) => {
 
     // Generic filter handlers.
 
-    // Event handler to clear filters.
-    $(root).on("click", ".filter-clear", function(event) {
+    // Called to clear filters.
+    var clearAll = (event) => {
         // Clear checkboxes.
         let selected = event.target.parentNode.parentNode.parentElement.querySelectorAll('input[type="checkbox"]:checked');
 
         selected.forEach(function(checkbox) {
             checkbox.checked = false;
         });
+    };
+
+    // Event handler for clearing filter by clicking option.
+    $(root).on("click", ".filter-clear", function(event) {
+        event.preventDefault();
+        clearAll(event);
     });
 
     // Called to override click event to trigger a proper generate request with filtering.
@@ -87,10 +93,20 @@ export const init = (root) => {
         });
     };
 
+    // Submit report via filter
+    var submitWithFilter = (containerelement) => {
+        // Close the container (eg popover).
+        $(containerelement).addClass('hidden');
+
+        // Submit the filter values and re-generate report.
+        generateWithFilters(false);
+    };
+
     // Groups filter specific handlers.
 
-    // Event to handle select all groups.
-    $('#filter-groups-popover .select-all').on('click', function() {
+    // Event handler for clicking select all groups.
+    $('#filter-groups-popover .select-all').on('click', function(event) {
+        event.preventDefault();
         selectAll('filter-groups-popover');
     });
 
@@ -102,16 +118,39 @@ export const init = (root) => {
 
         new Popper(referenceElement, popperContent, {placement: 'bottom'});
 
-        // Show popover.
-        $('#filter-groups-popover').removeClass('hidden');
+        // Show popover and switch focus.
+        var groupsbutton = document.getElementById('filter-groups-button'),
+            groupspopover = document.getElementById('filter-groups-popover');
+        groupspopover.classList.remove('hidden');
+        groupsbutton.setAttribute('aria-expanded', true);
+        groupsbutton.classList.add('btn-outline-primary');
+        groupsbutton.classList.remove('btn-primary');
+        groupspopover.querySelector('input').focus();
     });
 
-    // Event handler to save groups filter.
-    $(root).on("click", "#filter-groups-popover .filter-save", function() {
-        // Close the popover.
-        $('#filter-groups-popover').addClass('hidden');
+    // Event handler to click save groups filter.
+    $(root).on("click", "#filter-groups-popover .filter-save", function(event) {
+        event.preventDefault();
+        submitWithFilter('#filter-groups-popover');
+    });
 
-        // Submit the filter values and re-generate report.
-        generateWithFilters(false);
+    // Event handler to support pressing enter/space on groups filter popover actions.
+    $('#filter-groups-popover').on("keydown", ".filter-actions", function(event) {
+    if ((event.charCode === 13 || event.keyCode === 13 || event.charCode === 32 || event.keyCode === 32)
+                && event.target.classList.length > 0) {
+            event.preventDefault();
+
+            switch(event.target.classList[0]) {
+                case 'select-all':
+                    selectAll('filter-groups-popover');
+                    break;
+                case 'filter-clear':
+                    clearAll(event);
+                    break;
+                case 'filter-save':
+                    submitWithFilter('#filter-groups-popover');
+                    break;
+            }
+        }
     });
 };

@@ -44,7 +44,8 @@
         <input type="hidden" name="submitted" value="true">
         <div id="filtersbuttons">
             {{#hasgroups}}
-            <button type="button" id="filter-groups-button" class="btn btn-primary filter-button">
+            <button type="button" id="filter-groups-button" class="btn btn-primary rounded p-1" aria-expanded="false"
+                    aria-haspopup="true" aria-label="{{# str}} filter:groupsbuttonlabel, forumreport_summary {{/ str}}">
                 {{filtergroupsname}}
             </button>
 
@@ -61,10 +62,13 @@
                         {{/filtergroups}}
                         <br>
                     </div>
-                    <a href="#"><span class="select-all">{{# str}} selectall {{/ str}}</span></a>
-                    <div class="float-right">
-                        <a href="#"><span class="filter-clear p-1">{{# str}} clear {{/ str}}</span></a>
-                        <a href="#"><span class="filter-save"><strong>{{# str}} save {{/ str}}</strong></span></a>
+                    <div class="filter-actions">
+                        <button type="button" class="select-all btn btn-link p-0 p-r-1" aria-label="{{# str}} selectall {{/ str}}">{{# str}} selectall {{/ str}}</button>
+                        <div class="float-right">
+                            <button type="button" class="filter-clear btn btn-link p-0 p-r-1" aria-label="{{# str}} clear {{/ str}}">{{# str}} clear {{/ str}}</button>
+                            <button type="button" class="filter-save btn btn-link p-0" aria-label="{{# str}} save {{/ str}}">
+                                    <strong>{{# str}} save {{/ str}}</strong></button>
+                        </div>
                     </div>
                 </div>
             </div>
