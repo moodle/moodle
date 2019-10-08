@@ -51,6 +51,11 @@ if (!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'short
     print_error(get_string('unknown_company', 'local_iomad_signup'));
 }
 
+// Redirect if they are currently logged in and there is a wantsurl.
+if (isloggedin() && !empty($wantsurl)) {
+    redirect(urldecode($wantsurl));
+}
+
 // Set the page theme.
 $SESSION->currenteditingcompany = $company->id;
 $SESSION->theme = $company->theme;
