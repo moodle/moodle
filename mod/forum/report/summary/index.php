@@ -76,6 +76,10 @@ $PAGE->navbar->add(get_string('nodetitle', "forumreport_summary"));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $forumname), 2, 'p-b-2');
 
+if (!empty($filters['groups'])) {
+    \core\notification::info(get_string('viewsdisclaimer', 'forumreport_summary'));
+}
+
 // Render the report filters form.
 $renderer = $PAGE->get_renderer('forumreport_summary');
 echo $renderer->render_filters_form($cm, $url, $filters);

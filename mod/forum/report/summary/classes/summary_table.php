@@ -115,12 +115,9 @@ class summary_table extends table_sql {
             'attachmentcount' => get_string('attachmentcount', 'forumreport_summary'),
         ];
 
-        // Only include viewcount column when no groups filter is applied.
-        if (!$this->is_filtered_by_groups($filters['groups'])) {
-            $this->logreader = $this->get_internal_log_reader();
-            if ($this->logreader) {
-                $columnheaders['viewcount'] = get_string('viewcount', 'forumreport_summary');
-            }
+        $this->logreader = $this->get_internal_log_reader();
+        if ($this->logreader) {
+            $columnheaders['viewcount'] = get_string('viewcount', 'forumreport_summary');
         }
 
         $columnheaders['earliestpost'] = get_string('earliestpost', 'forumreport_summary');

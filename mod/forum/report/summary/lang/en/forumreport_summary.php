@@ -38,3 +38,4 @@ $string['replycount'] = 'Number of replies posted';
 $string['summary:viewall'] = 'Access summary report data for each user within a given forum or forums';
 $string['summary:view'] = 'Access summary report within a given forum or forums';
 $string['summarytitle'] = 'Summary report - {$a}';
+$string['viewsdisclaimer'] = 'Number of views column is not filtered by group';
