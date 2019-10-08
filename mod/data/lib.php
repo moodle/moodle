@@ -1444,7 +1444,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             $checkbox = new \core\output\checkbox_toggleall('listview-entries', false, [
                 'id' => "entry_{$record->id}",
                 'name' => 'delcheck[]',
-                'class' => 'recordcheckbox',
+                'classes' => 'recordcheckbox',
                 'value' => $record->id,
             ]);
             $replacement[] = $OUTPUT->render($checkbox);
