@@ -687,7 +687,7 @@ class company {
             return false;
         }
 
-        if ($iomadcourse = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
+        if (!$iomadcourse = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
             try {
                 throw new Exception(get_string('couldnotdeletecourse', 'block_iomad_Company_admin'));
             } catch (\Exception $e) {
@@ -731,7 +731,7 @@ class company {
         }
 
         // Is the course a shared course?
-        if ($iomadcourses->shared == 0) {
+        if ($iomadcourse->shared == 0) {
             // Call the moodle course delete function.
             if (!delete_course($courseid)) {
                 $errors = true;
