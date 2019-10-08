@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['compressor_none'] = 'No compression.';
 $string['compressor_php_gzip'] = 'Use gzip compression.';
+$string['compressor_php_zstd'] = 'Use Zstandard compression.';
 $string['pluginname'] = 'Redis';
 $string['prefix'] = 'Key prefix';
 $string['prefix_help'] = 'This prefix is used for all key names on the Redis server.

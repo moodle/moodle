@@ -166,11 +166,11 @@ class cachestore_redis_compressor_test extends advanced_testcase {
     }
 
     /**
-     * Provider for serializer tests.
+     * Provider for set/get combination tests.
      *
      * @return array
      */
-    public function provider_for_test_it_can_use_serializers() {
+    public function provider_for_tests_setget() {
         $data = [
             ['none, none',
                 Redis::SERIALIZER_NONE, cachestore_redis::COMPRESSOR_NONE,
@@ -199,20 +199,41 @@ class cachestore_redis_compressor_test extends advanced_testcase {
             ];
         }
 
+        if (extension_loaded('zstd')) {
+            $data[] = [
+                'none, zstd',
+                Redis::SERIALIZER_NONE, cachestore_redis::COMPRESSOR_PHP_ZSTD,
+                zstd_compress('value1'), zstd_compress('value2'),
+            ];
+            $data[] = [
+                'php, zstd',
+                Redis::SERIALIZER_PHP, cachestore_redis::COMPRESSOR_PHP_ZSTD,
+                zstd_compress(serialize('value1')), zstd_compress(serialize('value2')),
+            ];
+
+            if (defined('Redis::SERIALIZER_IGBINARY')) {
+                $data[] = [
+                    'igbinary, zstd',
+                    Redis::SERIALIZER_IGBINARY, cachestore_redis::COMPRESSOR_PHP_ZSTD,
+                    zstd_compress(igbinary_serialize('value1')), zstd_compress(igbinary_serialize('value2')),
+                ];
+            }
+        }
+
         return $data;
     }
 
     /**
-     * Test it can use  serializers with get and set.
+     * Test we can use get and set with all combinations.
      *
-     * @dataProvider provider_for_test_it_can_use_serializers
+     * @dataProvider provider_for_tests_setget
      * @param string $name
      * @param int $serializer
      * @param int $compressor
      * @param string $rawexpected1
      * @param string $rawexpected2
      */
-    public function test_it_can_use_serializers_getset($name, $serializer, $compressor, $rawexpected1, $rawexpected2) {
+    public function test_it_can_use_getset($name, $serializer, $compressor, $rawexpected1, $rawexpected2) {
         // Create a connection with the desired serialisation.
         $store = $this->create_store($compressor, $serializer);
         $store->set('key', 'value1');
@@ -227,16 +248,16 @@ class cachestore_redis_compressor_test extends advanced_testcase {
     }
 
     /**
-     * Test it can use  serializers with get and set many.
+     * Test we can use get and set many with all combinations.
      *
-     * @dataProvider provider_for_test_it_can_use_serializers
+     * @dataProvider provider_for_tests_setget
      * @param string $name
      * @param int $serializer
      * @param int $compressor
      * @param string $rawexpected1
      * @param string $rawexpected2
      */
-    public function test_it_can_use_serializers_getsetmany($name, $serializer, $compressor, $rawexpected1, $rawexpected2) {
+    public function test_it_can_use_getsetmany($name, $serializer, $compressor, $rawexpected1, $rawexpected2) {
         $many = [
             ['key' => 'key1', 'value' => 'value1'],
             ['key' => 'key2', 'value' => 'value2'],

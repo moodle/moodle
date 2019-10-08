@@ -49,6 +49,11 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
     const COMPRESSOR_PHP_GZIP = 1;
 
     /**
+     * Compressor: PHP Zstandard.
+     */
+    const COMPRESSOR_PHP_ZSTD = 2;
+
+    /**
      * Name of this store.
      *
      * @var string
@@ -597,10 +602,17 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return array
      */
     public static function config_get_compressor_options() {
-        return [
+        $arr = [
             self::COMPRESSOR_NONE     => get_string('compressor_none', 'cachestore_redis'),
             self::COMPRESSOR_PHP_GZIP => get_string('compressor_php_gzip', 'cachestore_redis'),
         ];
+
+        // Check if the Zstandard PHP extension is installed.
+        if (extension_loaded('zstd')) {
+            $arr[self::COMPRESSOR_PHP_ZSTD] = get_string('compressor_php_zstd', 'cachestore_redis');
+        }
+
+        return $arr;
     }
 
     /**
@@ -618,6 +630,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
 
             case self::COMPRESSOR_PHP_GZIP:
                 return gzencode($value);
+
+            case self::COMPRESSOR_PHP_ZSTD:
+                return zstd_compress($value);
 
             default:
                 debugging("Invalid compressor: {$this->compressor}");
@@ -641,6 +656,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
                 break;
             case self::COMPRESSOR_PHP_GZIP:
                 $value = gzdecode($value);
+                break;
+            case self::COMPRESSOR_PHP_ZSTD:
+                $value = zstd_uncompress($value);
                 break;
             default:
                 debugging("Invalid compressor: {$this->compressor}");
