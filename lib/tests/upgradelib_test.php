@@ -1006,4 +1006,52 @@ class core_upgradelib_testcase extends advanced_testcase {
         $file = reset($files);
         $this->assertEquals($file, $newstoredfile[1]);
     }
+
+    /**
+     * Test the functionality of the {@link upgrade_convert_hub_config_site_param_names()} function.
+     */
+    public function test_upgrade_convert_hub_config_site_param_names() {
+
+        $config = (object) [
+            // This is how site settings related to registration at https://moodle.net are stored.
+            'site_name_httpsmoodlenet' => 'Foo Site',
+            'site_language_httpsmoodlenet' => 'en',
+            'site_emailalert_httpsmoodlenet' => 1,
+            // These are unexpected relics of a value as registered at the old http://hub.moodle.org site.
+            'site_name_httphubmoodleorg' => 'Bar Site',
+            'site_description_httphubmoodleorg' => 'Old description',
+            // This is the target value we are converting to - here it already somehow exists.
+            'site_emailalert' => 0,
+            // This is a setting not related to particular hub.
+            'custom' => 'Do not touch this',
+            // A setting defined for multiple alternative hubs.
+            'site_foo_httpfirsthuborg' => 'First',
+            'site_foo_httpanotherhubcom' => 'Another',
+            'site_foo_httpyetanotherhubcom' => 'Yet another',
+            // A setting defined for multiple alternative hubs and one referential one.
+            'site_bar_httpfirsthuborg' => 'First',
+            'site_bar_httpanotherhubcom' => 'Another',
+            'site_bar_httpsmoodlenet' => 'One hub to rule them all!',
+            'site_bar_httpyetanotherhubcom' => 'Yet another',
+        ];
+
+        $converted = upgrade_convert_hub_config_site_param_names($config, 'https://moodle.net');
+
+        // Values defined for the moodle.net take precedence over the ones defined for other hubs.
+        $this->assertSame($converted->site_name, 'Foo Site');
+        $this->assertSame($converted->site_bar, 'One hub to rule them all!');
+        $this->assertNull($converted->site_name_httpsmoodlenet);
+        $this->assertNull($converted->site_bar_httpfirsthuborg);
+        $this->assertNull($converted->site_bar_httpanotherhubcom);
+        $this->assertNull($converted->site_bar_httpyetanotherhubcom);
+        // Values defined for alternative hubs only do not have any guaranteed value. Just for convenience, we use the first one.
+        $this->assertSame($converted->site_foo, 'First');
+        $this->assertNull($converted->site_foo_httpfirsthuborg);
+        $this->assertNull($converted->site_foo_httpanotherhubcom);
+        $this->assertNull($converted->site_foo_httpyetanotherhubcom);
+        // Values that are already defined with the new name format are kept.
+        $this->assertSame($converted->site_emailalert, 0);
+        // Eventual custom values not following the expected hub-specific naming format, are kept.
+        $this->assertSame($converted->custom, 'Do not touch this');
+    }
 }
