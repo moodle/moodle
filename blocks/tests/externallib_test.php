@@ -112,7 +112,7 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $CFG->defaultblocks_override = 'participants,search_forums,course_list:calendar_upcoming,recent_activity';
+        $CFG->defaultblocks_override = 'search_forums,course_list:calendar_upcoming,recent_activity';
 
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -126,10 +126,10 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
 
-        // Expect 5 default blocks.
-        $this->assertCount(5, $result['blocks']);
+        // Expect 4 default blocks.
+        $this->assertCount(4, $result['blocks']);
 
-        $expectedblocks = array('navigation', 'settings', 'participants', 'search_forums', 'course_list',
+        $expectedblocks = array('navigation', 'settings', 'search_forums', 'course_list',
                                 'calendar_upcoming', 'recent_activity');
         foreach ($result['blocks'] as $block) {
             if (!in_array($block['name'], $expectedblocks)) {
