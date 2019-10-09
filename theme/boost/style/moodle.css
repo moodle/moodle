@@ -15259,7 +15259,11 @@ fieldset.coursesearchbox label {
   min-height: 2.375rem; }
 
 .form-autocomplete-multiple [role=listitem] {
-  cursor: pointer; }
+  cursor: pointer;
+  white-space: inherit;
+  word-break: break-word;
+  line-height: 1.4;
+  text-align: left; }
 
 .form-autocomplete-suggestions {
   position: absolute;
