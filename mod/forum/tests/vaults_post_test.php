@@ -77,7 +77,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_from_discussion_id.
      *
      * @covers ::get_from_discussion_id
-     * @covers ::<!public>
      */
     public function test_get_from_discussion_id() {
         $this->resetAfterTest();
@@ -107,7 +106,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * replies.
      *
      * @covers ::get_from_discussion_id
-     * @covers ::<!public>
      */
     public function test_get_from_discussion_id_private_replies() {
         $this->resetAfterTest();
@@ -168,7 +166,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_from_discussion_ids.
      *
      * @covers ::get_from_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_from_discussion_ids() {
         $this->resetAfterTest();
@@ -201,7 +198,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * replies.
      *
      * @covers ::get_from_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_from_discussion_ids_private_replies() {
         $this->resetAfterTest();
@@ -251,7 +247,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_replies_to_post.
      *
      * @covers ::get_replies_to_post
-     * @covers ::<!public>
      */
     public function test_get_replies_to_post() {
         $this->resetAfterTest();
@@ -300,7 +295,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_replies_to_post with private replies.
      *
      * @covers ::get_replies_to_post
-     * @covers ::<!public>
      */
     public function test_get_replies_to_post_private_replies() {
         $this->resetAfterTest();
@@ -477,7 +471,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_reply_count_for_discussion_ids.
      *
      * @covers ::get_reply_count_for_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_reply_count_for_discussion_ids() {
         $this->resetAfterTest();
@@ -527,7 +520,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_reply_count_for_discussion_ids.
      *
      * @covers ::get_reply_count_for_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_reply_count_for_discussion_ids_private_replies() {
         $this->resetAfterTest();
@@ -578,7 +570,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_reply_count_for_discussion_id.
      *
      * @covers ::get_reply_count_for_post_id_in_discussion_id
-     * @covers ::<!public>
      */
     public function test_get_reply_count_for_post_id_in_discussion_id() {
         $this->resetAfterTest();
@@ -609,7 +600,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_reply_count_for_post_id_in_discussion_id.
      *
      * @covers ::get_reply_count_for_post_id_in_discussion_id
-     * @covers ::<!public>
      */
     public function test_get_reply_count_for_post_id_in_discussion_id_private_replies() {
         $this->resetAfterTest();
@@ -660,7 +650,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_unread_count_for_discussion_ids.
      *
      * @covers ::get_unread_count_for_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_unread_count_for_discussion_ids() {
         global $CFG;
@@ -737,7 +726,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_latest_posts_for_discussion_ids.
      *
      * @covers ::get_latest_posts_for_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_latest_posts_for_discussion_ids() {
         $this->resetAfterTest();
@@ -800,7 +788,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_latest_posts_for_discussion_ids when no discussion ids were provided.
      *
      * @covers ::get_latest_posts_for_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_latest_posts_for_discussion_ids_empty() {
         $this->resetAfterTest();
@@ -817,7 +804,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_first_post_for_discussion_ids.
      *
      * @covers ::get_first_post_for_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_first_post_for_discussion_ids() {
         $this->resetAfterTest();
@@ -865,7 +851,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
      * Test get_first_post_for_discussion_ids when no discussion ids were provided.
      *
      * @covers ::get_first_post_for_discussion_ids
-     * @covers ::<!public>
      */
     public function test_get_first_post_for_discussion_ids_empty() {
         $this->resetAfterTest();

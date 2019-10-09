@@ -33,7 +33,6 @@ use \core\dml\table;
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\dml\table
- * @covers ::<!public>
  */
 class core_dml_table_testcase extends database_driver_testcase {
 

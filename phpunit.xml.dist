@@ -9,7 +9,6 @@
         processIsolation="false"
         backupGlobals="false"
         backupStaticAttributes="false"
-        forceCoversAnnotation="true"
         stopOnError="false"
         stopOnFailure="false"
         stopOnIncomplete="false"
