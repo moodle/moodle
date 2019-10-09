@@ -45,7 +45,6 @@ class contextlist_base_test extends advanced_testcase {
      * @param   array   $expected list of contextids
      * @param   int     $count Expected count
      * @covers ::get_contextids
-     * @covers ::<!public>
      */
     public function test_get_contextids($input, $expected, $count) {
         $uit = new test_contextlist_base();
@@ -89,7 +88,6 @@ class contextlist_base_test extends advanced_testcase {
      * Ensure that get_contexts returns the correct list of contexts.
      *
      * @covers ::get_contexts
-     * @covers ::<!public>
      */
     public function test_get_contexts() {
         global $DB;
@@ -121,7 +119,6 @@ class contextlist_base_test extends advanced_testcase {
      * @param   array   $expected list of contextids
      * @param   int     $count Expected count
      * @covers ::count
-     * @covers ::<!public>
      */
     public function test_countable($input, $expected, $count) {
         $uit = new test_contextlist_base();
@@ -138,7 +135,6 @@ class contextlist_base_test extends advanced_testcase {
      * @covers ::next
      * @covers ::rewind
      * @covers ::valid
-     * @covers ::<!public>
      */
     public function test_context_iteration() {
         global $DB;
@@ -161,7 +157,6 @@ class contextlist_base_test extends advanced_testcase {
      * Test that deleting a context results in current returning nothing.
      *
      * @covers ::current
-     * @covers ::<!public>
      */
     public function test_current_context_one_context() {
         global $DB;
@@ -191,7 +186,6 @@ class contextlist_base_test extends advanced_testcase {
      * Test that deleting a context results in the next record being returned.
      *
      * @covers ::current
-     * @covers ::<!public>
      */
     public function test_current_context_two_contexts() {
         global $DB;
@@ -229,7 +223,6 @@ class contextlist_base_test extends advanced_testcase {
      * Test that if there are no non-deleted contexts that nothing is returned.
      *
      * @covers ::get_contexts
-     * @covers ::<!public>
      */
     public function test_get_contexts_all_deleted() {
         global $DB;
@@ -257,7 +250,6 @@ class contextlist_base_test extends advanced_testcase {
      * Test that get_contexts() returns only active contexts.
      *
      * @covers ::get_contexts
-     * @covers ::<!public>
      */
     public function test_get_contexts_one_deleted() {
         global $DB;

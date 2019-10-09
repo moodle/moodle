@@ -42,7 +42,6 @@ class contextlist_test extends advanced_testcase {
      * Ensure that valid SQL results in the relevant contexts being added.
      *
      * @covers ::add_from_sql
-     * @covers ::<!public>
      */
     public function test_add_from_sql() {
         global $DB;
@@ -61,7 +60,6 @@ class contextlist_test extends advanced_testcase {
      * Ensure that valid system context id is added.
      *
      * @covers ::add_system_context
-     * @covers ::<!public>
      */
     public function test_add_system_context() {
         $cl = new contextlist();
@@ -78,7 +76,6 @@ class contextlist_test extends advanced_testcase {
      * Ensure that a valid user context id is added.
      *
      * @covers ::add_user_context
-     * @covers ::<!public>
      */
     public function test_add_user_context() {
         $this->resetAfterTest();
@@ -100,7 +97,6 @@ class contextlist_test extends advanced_testcase {
      * Ensure that valid user contexts are added.
      *
      * @covers ::add_user_contexts
-     * @covers ::<!public>
      */
     public function test_add_user_contexts() {
         $this->resetAfterTest();
@@ -126,7 +122,6 @@ class contextlist_test extends advanced_testcase {
      * @param string $sql Input SQL we try to extract the context id field name from.
      * @param string $expected Expected detected value.
      * @covers ::guess_id_field_from_sql
-     * @covers ::<!public>
      */
     public function test_guess_id_field_from_sql($sql, $expected) {
 
