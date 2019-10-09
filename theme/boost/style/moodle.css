@@ -18022,6 +18022,18 @@ body.behat-site [data-region="drawer"] {
   transition: initial;
   position: absolute; }
 
+body.behat-site .custom-control,
+body.behat-site .custom-switch {
+  padding-left: 0; }
+
+body.behat-site .custom-control-input {
+  position: static;
+  z-index: 0;
+  opacity: 1; }
+
+body.behat-site .custom-control-label::before, body.behat-site .custom-control-label::after {
+  content: none; }
+
 .phpinfo table,
 .phpinfo th,
 .phpinfo h2 {
