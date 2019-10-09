@@ -24,6 +24,9 @@ abstract class company_user_selector_base extends user_selector_base {
     protected $companyid;
     protected $courseid;
     protected $departmentid;
+    protected $courses;
+    protected $company;
+    protected $selectedcourses;
 
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
@@ -36,6 +39,14 @@ abstract class company_user_selector_base extends user_selector_base {
         } else {
             $this->departmentid = $options['departmentid'];
         }
+        if (!empty($options['courses'])) {
+            $this->courses = $options['courses'];
+        }
+        if (!empty($options['selectedcourses'])) {
+            $this->selectedcourses = $options['selectedcourses'];
+        }
+        $this->company = new company($this->companyid);
+
         parent::__construct($name, $options);
     }
 
@@ -43,6 +54,13 @@ abstract class company_user_selector_base extends user_selector_base {
         $options = parent::get_options();
         $options['companyid'] = $this->companyid;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
+        if (!empty($this->courses)) {
+            $options['courses'] = $this->courses;
+        }
+        if (!empty($this->selectedcourses)) {
+            $options['selectedcourses'] = $this->selectedcourses;
+        }
+
         return $options;
     }
 
@@ -123,7 +141,7 @@ class potential_company_managers_user_selector extends company_user_selector_bas
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
-	                {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id AND cu.companyid = :companyid AND cu.managertype = 0)
+                    {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id AND cu.companyid = :companyid AND cu.managertype = 0)
                 WHERE $wherecondition AND u.suspended = 0 ";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
@@ -167,7 +185,7 @@ class current_company_users_user_selector extends company_user_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
-	                {user} u INNER JOIN {company_users} cu ON (cu.companyid = :companyid AND cu.userid = u.id )
+                    {user} u INNER JOIN {company_users} cu ON (cu.companyid = :companyid AND cu.userid = u.id )
                 WHERE $wherecondition AND u.suspended = 0 ";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
@@ -253,10 +271,25 @@ class current_company_course_user_selector extends company_user_selector_base {
      */
     public function find_users($search, $all = false) {
         global $CFG, $DB;
+
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
-        $params['courseid'] = $this->courseid;
+
+        if (in_array(0, $this->selectedcourses)) {
+            // Deal with all.
+            $companycourses = $this->company->get_menu_courses(true, true);
+            unset($companycourses[0]);
+            $params['courses'] = join (',', array_keys($companycourses));
+        } else {
+            $params['courses'] = join (',', array_values($this->selectedcourses));
+        }
+
+        if (!in_array(0, $this->selectedcourses) && count($this->selectedcourses) == 1) {
+            $single = true;
+        } else {
+            $single = false;
+        }
 
         // Deal with departments.
         $departmentlist = company::get_all_subdepartments($this->departmentid);
@@ -265,21 +298,19 @@ class current_company_course_user_selector extends company_user_selector_base {
             $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
         }
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT ' . $this->required_fields_sql('u') . ', c.id AS courseid, c.fullname';
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
-	                {user} u INNER JOIN {company_users} cu
-	                ON cu.userid = u.id AND managertype = 0 $departmentsql
+                    {user} u INNER JOIN {company_users} cu
+                    ON (cu.userid = u.id AND cu.managertype = 0 $departmentsql)
+                    JOIN {user_enrolments} ue ON (ue.userid = u.id)
+                    JOIN {enrol} e
+                    ON (ue.enrolid = e.id AND ".$DB->sql_compare_text('e.enrol')."='manual' AND e.status = 0)
+                    JOIN {course} c ON (e.courseid = c.id)
                 WHERE $wherecondition AND u.suspended = 0
                     AND cu.companyid = :companyid
-                    AND cu.userid IN
-                     (SELECT DISTINCT(ue.userid)
-                     FROM {user_enrolments} ue
-                     INNER JOIN {enrol} e
-                     ON ue.enrolid=e.id
-                     WHERE e.courseid=:courseid
-                     AND ".$DB->sql_compare_text('e.enrol')."='manual')";
+                    AND e.courseid in (:courses)";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
@@ -296,6 +327,12 @@ class current_company_course_user_selector extends company_user_selector_base {
             return array();
         }
 
+        // are we doing any post processing?
+        if (!$single) {
+            foreach ($availableusers as $id => $user) {
+                $availableusers[$id]->email = $user->email . "(" . $user->fullname . ")";
+            }
+        }
         if ($search) {
             $groupname = get_string('currentlyenrolledusersmatching', 'block_iomad_company_admin', $search);
         } else {
@@ -310,7 +347,6 @@ class potential_company_course_user_selector extends company_user_selector_base 
 
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
-        $this->courseid  = $options['courseid'];
         $this->departmentid = $options['departmentid'];
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
@@ -326,6 +362,36 @@ class potential_company_course_user_selector extends company_user_selector_base 
         $options['parentdepartmentid'] = $this->parentdepartmentid;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         return $options;
+    }
+
+    protected function get_courses_user_ids() {
+        global $CFG, $DB;
+
+        if (in_array(0, $this->selectedcourses)) {
+            $selectedcourses = $this->company->get_menu_courses(true, true);
+            unset ($selectedcourses[0]);
+            $coursesql = "e.courseid IN (" . implode(',', array_keys($selectedcourses)) . ") ";
+            $countsql = " HAVING count(ue.enrolid) = " . count($selectedcourses);
+        } else {
+            $selectedcourses = $this->selectedcourses;
+            $coursesql = "e.courseid IN (" . implode(',', array_values($selectedcourses)) . ") ";
+            $countsql = " HAVING count(ue.enrolid) = " . count($selectedcourses);
+        }
+        if (!isset( $this->selectedcourses) ) {
+            return array();
+        } else {
+            $usersql = "SELECT ue.userid,count(ue.enrolid) AS enrolcount FROM {user_enrolments} ue
+                        JOIN {enrol} e ON (ue.enrolid = e.id AND ".$DB->sql_compare_text('e.enrol')."='manual' AND e.status = 0)
+                        WHERE $coursesql
+                        GROUP BY ue.userid
+                        $countsql";
+            if ($users = $DB->get_records_sql($usersql)) {
+                // Only return the keys (user ids).
+                return array_keys($users);
+            } else {
+                return array();
+            }
+        }
     }
 
     /**
@@ -367,22 +433,21 @@ class potential_company_course_user_selector extends company_user_selector_base 
             $userfilter = "";
         }
 
+        // Get the current enrolled users.
+        $enrolledusers = $this->get_courses_user_ids();
+        if (count($enrolledusers) > 0) {
+            $userfilter .= " AND u.id NOT IN (" . implode(',', $enrolledusers) . ") ";
+        }
+
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
-	                {user} u INNER JOIN {company_users} cu ON cu.userid = u.id
+                    {user} u INNER JOIN {company_users} cu ON cu.userid = u.id
                 WHERE $wherecondition  AND u.suspended = 0 $departmentsql
                     AND
                     cu.companyid = :companyid
-                    $userfilter
-                    AND u.id NOT IN
-                     (SELECT DISTINCT(ue.userid)
-                     FROM {user_enrolments} ue
-                     INNER JOIN {enrol} e
-                     ON ue.enrolid=e.id
-                     WHERE e.courseid=:courseid
-                     AND ".$DB->sql_compare_text('e.enrol')."='manual')";
+                    $userfilter";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
@@ -1309,8 +1374,8 @@ class current_company_group_user_selector extends company_user_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
-	                {user} u INNER JOIN {company_users} cu
-	                ON cu.userid = u.id AND managertype = 0 $departmentsql
+                    {user} u INNER JOIN {company_users} cu
+                    ON cu.userid = u.id AND managertype = 0 $departmentsql
                 WHERE $wherecondition AND u.suspended = 0
                     AND cu.companyid = :companyid
                     AND cu.userid IN (
@@ -1408,7 +1473,7 @@ class potential_company_group_user_selector extends company_user_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
-	                {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id)
+                    {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id)
                 WHERE $wherecondition  AND u.suspended = 0 $departmentsql
                     AND
                     cu.companyid = :companyid
