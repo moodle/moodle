@@ -3361,7 +3361,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Add default backpacks.
-        require_once($CFG->libdir.'/badgeslib.php'); // Core Upgrade-related functions for badges only.
+        require_once($CFG->dirroot . '/badges/upgradelib.php'); // Core install and upgrade related functions only for badges.
         badges_install_default_backpacks();
 
         // Main savepoint reached.
