@@ -49,13 +49,13 @@ export const showModal = (users, callback = null) => {
 
     return ModalFactory.create({
         type: ModalFactory.types.SAVE_CANCEL,
-        body: Templates.render('core_user/send_bulk_message', {}),
+        body: Templates.render('core_message/send_bulk_message', {}),
         title: titlePromise,
     })
     .then(function(modal) {
         modal.setSaveButtonText(titlePromise);
 
-        // We want to focus on the action select when the dialog is closed.
+        // When the dialog is closed, perform the callback (if provided).
         modal.getRoot().on(ModalEvents.hidden, function() {
             if (callback) {
                 callback();
