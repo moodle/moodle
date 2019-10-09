@@ -32,7 +32,7 @@ use stdClass;
 use html_writer;
 
 /**
- * Methods to use when publishing and searching courses on moodle.net
+ * Methods to use when registering the site at the moodle sites directory.
  *
  * @package    core
  * @copyright  2017 Marina Glancy
@@ -147,7 +147,7 @@ class registration {
     }
 
     /**
-     * Calculates and prepares site information to send to moodle.net as part of registration or update
+     * Calculates and prepares site information to send to the sites directory as a part of registration.
      *
      * @param array $defaults default values for inputs in the registration form (if site was never registered before)
      * @return array site info
@@ -158,9 +158,8 @@ class registration {
         require_once($CFG->dirroot . "/course/lib.php");
 
         $siteinfo = array();
-        $cleanhuburl = clean_param(HUB_MOODLEORGHUBURL, PARAM_ALPHANUMEXT);
         foreach (self::FORM_FIELDS as $field) {
-            $siteinfo[$field] = get_config('hub', 'site_'.$field.'_' . $cleanhuburl);
+            $siteinfo[$field] = get_config('hub', 'site_'.$field);
             if ($siteinfo[$field] === false) {
                 $siteinfo[$field] = array_key_exists($field, $defaults) ? $defaults[$field] : null;
             }
@@ -210,7 +209,7 @@ class registration {
     }
 
     /**
-     * Human-readable summary of data that will be sent to moodle.net
+     * Human-readable summary of data that will be sent to the sites directory.
      *
      * @param array $siteinfo result of get_site_info()
      * @return string
@@ -264,13 +263,12 @@ class registration {
      * @param stdClass $formdata data from {@link site_registration_form}
      */
     public static function save_site_info($formdata) {
-        $cleanhuburl = clean_param(HUB_MOODLEORGHUBURL, PARAM_ALPHANUMEXT);
         foreach (self::FORM_FIELDS as $field) {
-            set_config('site_' . $field . '_' . $cleanhuburl, $formdata->$field, 'hub');
+            set_config('site_' . $field, $formdata->$field, 'hub');
         }
-        // Even if the the connection with moodle.net fails, admin has manually submitted the form which means they don't need
+        // Even if the connection with the sites directory fails, admin has manually submitted the form which means they don't need
         // to be redirected to the site registration page any more.
-        set_config('site_regupdateversion_' . $cleanhuburl, max(array_keys(self::CONFIRM_NEW_FIELDS)), 'hub');
+        set_config('site_regupdateversion', max(array_keys(self::CONFIRM_NEW_FIELDS)), 'hub');
     }
 
     /**
@@ -329,7 +327,7 @@ class registration {
     }
 
     /**
-     * Confirms registration by moodle.net
+     * Confirms registration by the sites directory.
      *
      * @param string $token
      * @param string $newtoken
@@ -375,8 +373,8 @@ class registration {
      * Registers a site
      *
      * This method will make sure that unconfirmed registration record is created and then redirect to
-     * registration script on https://moodle.net
-     * Moodle.net will check that the site is accessible, register it and redirect back
+     * registration script on the sites directory.
+     * The sites directory will check that the site is accessible, register it and redirect back
      * to /admin/registration/confirmregistration.php
      *
      * @param string $returnurl
@@ -397,7 +395,7 @@ class registration {
             $hub->token = get_site_identifier();
             $hub->secret = $hub->token;
             $hub->huburl = HUB_MOODLEORGHUBURL;
-            $hub->hubname = 'Moodle.net';
+            $hub->hubname = 'moodle';
             $hub->confirmed = 0;
             $hub->timemodified = time();
             $hub->id = $DB->insert_record('registration_hubs', $hub);
@@ -487,20 +485,20 @@ class registration {
     }
 
     /**
-     * Returns information about moodle.net
+     * Returns information about the sites directory.
      *
      * Example of the return array:
      * {
      *     "courses": 384,
-     *     "description": "Moodle.net connects you with free content and courses shared by Moodle ...",
-     *     "downloadablecourses": 190,
-     *     "enrollablecourses": 194,
+     *     "description": "Official moodle sites directory",
+     *     "downloadablecourses": 0,
+     *     "enrollablecourses": 0,
      *     "hublogo": 1,
      *     "language": "en",
-     *     "name": "Moodle.net",
+     *     "name": "moodle",
      *     "sites": 274175,
-     *     "url": "https://moodle.net",
-     *     "imgurl": moodle_url : "https://moodle.net/local/hub/webservice/download.php?filetype=hubscreenshot"
+     *     "url": "https://stats.moodle.org",
+     *     "imgurl": "https://stats.moodle.org/local/hub/webservice/download.php?filetype=hubscreenshot"
      * }
      *
      * @return array|null
@@ -509,8 +507,8 @@ class registration {
         try {
             return api::get_hub_info();
         } catch (moodle_exception $e) {
-            // Ignore error, we only need it for displaying information about moodle.net, if this request
-            // fails, it's not a big deal.
+            // Ignore error, we only need it for displaying information about the sites directory.
+            // If this request fails, it's not a big deal.
             return null;
         }
     }
@@ -555,8 +553,7 @@ class registration {
             return $fieldsneedconfirm;
         }
 
-        $cleanhuburl = clean_param(HUB_MOODLEORGHUBURL, PARAM_ALPHANUMEXT);
-        $lastupdated = (int)get_config('hub', 'site_regupdateversion_' . $cleanhuburl);
+        $lastupdated = (int)get_config('hub', 'site_regupdateversion');
         foreach (self::CONFIRM_NEW_FIELDS as $version => $fields) {
             if ($version > $lastupdated) {
                 $fieldsneedconfirm = array_merge($fieldsneedconfirm, $fields);
