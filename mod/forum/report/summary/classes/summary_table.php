@@ -430,7 +430,7 @@ class summary_table extends table_sql {
 
         $this->sql->basewhere = 'e.courseid = :courseid';
 
-        $this->sql->basegroupby = 'ue.userid, e.courseid, f.id, u.id';
+        $this->sql->basegroupby = 'ue.userid, e.courseid, f.id, u.id, ' . $userfieldssql;
 
         if ($this->logreader) {
             $this->fill_log_summary_temp_table($this->context->id);
@@ -526,7 +526,6 @@ class summary_table extends table_sql {
      * @return string The complete SQL statement.
      */
     protected function get_full_sql(bool $fullselect = true): string {
-        $selectfields = '';
         $groupby = '';
         $orderby = '';
 
