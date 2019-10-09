@@ -129,14 +129,16 @@ class block_online_users extends block_base {
                     $this->content->text .= $OUTPUT->user_picture($user, array('size'=>16, 'alttext'=>false, 'link'=>false)) .$user->fullname.'</a></div>';
 
                     if ($USER->id == $user->id) {
-                        $action = ($user->uservisibility != null && $user->uservisibility == 0) ? 'show' : 'hide';
-                        $anchortagcontents = $OUTPUT->pix_icon('t/' . $action,
-                            get_string('online_status:' . $action, 'block_online_users'));
-                        $anchortag = html_writer::link("", $anchortagcontents,
-                            array('title' => get_string('online_status:' . $action, 'block_online_users'),
-                                'data-action' => $action, 'data-userid' => $user->id, 'id' => 'change-user-visibility'));
+                        if ($CFG->block_online_users_onlinestatushiding) {
+                            $action = ($user->uservisibility != null && $user->uservisibility == 0) ? 'show' : 'hide';
+                            $anchortagcontents = $OUTPUT->pix_icon('t/' . $action,
+                                get_string('online_status:' . $action, 'block_online_users'));
+                            $anchortag = html_writer::link("", $anchortagcontents,
+                                array('title' => get_string('online_status:' . $action, 'block_online_users'),
+                                    'data-action' => $action, 'data-userid' => $user->id, 'id' => 'change-user-visibility'));
 
-                        $this->content->text .= '<div class="uservisibility">' . $anchortag . '</div>';
+                            $this->content->text .= '<div class="uservisibility">' . $anchortag . '</div>';
+                        }
                     } else {
                         if ($canshowicon) {  // Only when logged in and messaging active etc.
                             $anchortagcontents = $OUTPUT->pix_icon('t/message', get_string('messageselectadd'));

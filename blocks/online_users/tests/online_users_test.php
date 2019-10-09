@@ -155,6 +155,8 @@ class block_online_users_testcase extends advanced_testcase {
     public function test_user_visibility_course1_group1_members() {
         global $CFG;
 
+        // Enable users to set their visibility to others in the online users block.
+        $CFG->block_online_users_onlinestatushiding = true;
         $groupid = $this->data['group1']->id;
         $now = time();
         $timetoshowusers = $CFG->block_online_users_timetosee * 60;
@@ -190,6 +192,18 @@ class block_online_users_testcase extends advanced_testcase {
         // User1 should not be displayed in the online users block.
         $this->assertEquals(2, $usercount);
         $this->assertFalse(array_key_exists($user1->id, $users));
+
+        // Disable users to set their visibility to others in the online users block.
+        // All users should be displayed now and the visibility status of a users should be ignored,
+        // as the capability of setting the visibility to other user has been disabled.
+        $CFG->block_online_users_onlinestatushiding = false;
+        // Test if the fetcher gets all the users including user1.
+        $onlineusers = new fetcher($groupid, $now, $timetoshowusers, $context, false, $courseid);
+        $users = $onlineusers->get_users();
+        $usercount = $onlineusers->count_users();
+        // User1 should be displayed in the online users block.
+        $this->assertEquals(3, $usercount);
+        $this->assertTrue(array_key_exists($user1->id, $users));
     }
 
     /**
@@ -234,6 +248,18 @@ class block_online_users_testcase extends advanced_testcase {
         // User1 should not be displayed in the online users block.
         $this->assertEquals(8, $usercount);
         $this->assertFalse(array_key_exists($user1->id, $users));
+
+        // Disable users to set their visibility to others in the online users block.
+        // All users should be displayed now and the visibility status of a users should be ignored,
+        // as the capability of setting the visibility to other user has been disabled.
+        $CFG->block_online_users_onlinestatushiding = false;
+        // Test if the fetcher gets all the users including user1.
+        $onlineusers = new fetcher($currentgroup, $now, $timetoshowusers, $context, false, $courseid);
+        $users = $onlineusers->get_users();
+        $usercount = $onlineusers->count_users();
+        // User1 should be displayed in the online users block.
+        $this->assertEquals(9, $usercount);
+        $this->assertTrue(array_key_exists($user1->id, $users));
     }
 
     /**
@@ -277,5 +303,17 @@ class block_online_users_testcase extends advanced_testcase {
         // User1 should not be displayed in the online users block.
         $this->assertEquals(11, $usercount);
         $this->assertFalse(array_key_exists($user1->id, $users));
+
+        // Disable users to set their visibility to others in the online users block.
+        // All users should be displayed now and the visibility status of a users should be ignored,
+        // as the capability of setting the visibility to other user has been disabled.
+        $CFG->block_online_users_onlinestatushiding = false;
+        // Test if the fetcher gets all the users including user1.
+        $onlineusers = new fetcher($currentgroup, $now, $timetoshowusers, $context, true);
+        $users = $onlineusers->get_users();
+        $usercount = $onlineusers->count_users();
+        // User1 should be displayed in the online users block.
+        $this->assertEquals(12, $usercount);
+        $this->assertTrue(array_key_exists($user1->id, $users));
     }
 }
