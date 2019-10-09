@@ -6684,7 +6684,7 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
       top: 1px;
       border-width: 0 0.5rem 0.5rem 0.5rem;
       border-bottom-color: #fff; }
-  .bs-popover-bottom .popover-header::before, .bs-popover-auto[x-placement^="bottom"] .popover-header::before, .bs-popover-bottom .filter-header::before, .bs-popover-auto[x-placement^="bottom"] .filter-header::before {
+  .bs-popover-bottom .popover-header::before, .bs-popover-auto[x-placement^="bottom"] .popover-header::before {
     position: absolute;
     top: 0;
     left: 50%;
@@ -6710,16 +6710,16 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
       border-width: 0.5rem 0 0.5rem 0.5rem;
       border-left-color: #fff; }
 
-.popover-header, .filter-header {
+.popover-header {
   padding: 0.5rem 0.75rem;
   margin-bottom: 0;
   font-size: 0.9375rem;
   background-color: #f7f7f7;
   border-bottom: 1px solid #ebebeb; }
-  .popover-header:empty, .filter-header:empty {
+  .popover-header:empty {
     display: none; }
 
-.popover-body, .filter-body {
+.popover-body {
   padding: 0.5rem 0.75rem;
   color: #373a3c; }
 
@@ -14413,16 +14413,6 @@ a.ygtvspacer:hover {
   display: inline-block;
   padding-left: 5px; }
 
-/* The button used to display a filter. */
-.filter-button {
-  border-radius: 0.25em;
-  padding: 0.2em; }
-
-.filter-scrollable {
-  overflow-y: scroll;
-  max-height: 25em;
-  margin-bottom: 1em; }
-
 /** The message area **/
 .hidden {
   display: none; }
@@ -16302,6 +16292,11 @@ select {
   #page-mod-forum-discuss.modern-display-mode .group-image {
     width: 30px;
     height: 30px; } }
+
+.filter-scrollable {
+  overflow-y: auto;
+  max-height: 25em;
+  margin-bottom: 1em; }
 
 .maincalendar .calendarmonth td,
 .maincalendar .calendarmonth th {
