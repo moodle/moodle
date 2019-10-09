@@ -138,6 +138,18 @@ class core_useragent {
     }
 
     /**
+     * Get the MoodleBot UserAgent for this site.
+     *
+     * @return string UserAgent
+     */
+    public static function get_moodlebot_useragent() {
+        global $CFG;
+
+        $version = moodle_major_version(); // Only major version for security.
+        return "MoodleBot/$version (+{$CFG->wwwroot})";
+    }
+
+    /**
      * Returns the user agent string.
      * @return bool|string The user agent string or false if one isn't available.
      */
@@ -215,7 +227,8 @@ class core_useragent {
      * @return bool
      */
     protected function is_useragent_web_crawler() {
-        $regex = '/Googlebot|google\.com|Yahoo! Slurp|\[ZSEBOT\]|msnbot|bingbot|BingPreview|Yandex|AltaVista|Baiduspider|Teoma/i';
+        $regex = '/MoodleBot|Googlebot|google\.com|Yahoo! Slurp|\[ZSEBOT\]|msnbot|bingbot|BingPreview|Yandex|AltaVista'
+                .'|Baiduspider|Teoma/i';
         return (preg_match($regex, $this->useragent));
     }
 
