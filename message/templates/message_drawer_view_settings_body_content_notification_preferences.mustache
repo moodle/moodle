@@ -36,14 +36,16 @@
 
 <div data-preference="notifications" class="d-flex flex-column">
     {{#processors}}
-        <span class="switch">
-            <input type="checkbox"
-                id="{{name}}-{{uniqid}}"
+
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="{{name}}-{{uniqid}}"
                 data-name="{{name}}"
                 {{#checked}}checked{{/checked}}
                 {{#locked}}disabled{{/locked}}
             >
-            <label for="{{name}}-{{uniqid}}">{{displayname}}{{#locked}} ({{lockedmessage}}){{/locked}}</label>
-        </span>
+            <label class="custom-control-label" for="{{name}}-{{uniqid}}">
+                {{displayname}}{{#locked}} ({{lockedmessage}}){{/locked}}
+            </label>
+        </div>
     {{/processors}}
 </div>

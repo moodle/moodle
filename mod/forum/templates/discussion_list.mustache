@@ -308,26 +308,28 @@
                             {{#forum.capabilities.subscribe}}
                                 <td class="text-center align-middle fit-content px-2">
                                     {{#discussion}}
-                                        <span class="switch sr-only-label">
+                                        <div class="d-inline custom-control custom-switch mb-1">
                                             <input
                                                 type="checkbox"
+                                                class="custom-control-input"
                                                 id="subscription-toggle-{{id}}"
                                                 data-type="subscription-toggle"
                                                 data-action="toggle"
                                                 data-discussionid="{{id}}"
                                                 data-forumid="{{forumid}}"
                                                 {{#userstate.subscribed}}data-targetstate="0" checked{{/userstate.subscribed}}
-                                                {{^userstate.subscribed}}data-targetstate="1"{{/userstate.subscribed}}
-                                            >
-                                            <label for="subscription-toggle-{{id}}">
-                                                {{#userstate.subscribed}}
-                                                    {{#str}}unsubscribediscussion, forum{{/str}}
-                                                {{/userstate.subscribed}}
-                                                {{^userstate.subscribed}}
-                                                    {{#str}}subscribediscussion, forum{{/str}}
-                                                {{/userstate.subscribed}}
+                                                {{^userstate.subscribed}}data-targetstate="1"{{/userstate.subscribed}}>
+                                            <label class="custom-control-label" for="subscription-toggle-{{id}}">
+                                                <span class="sr-only">
+                                                    {{#userstate.subscribed}}
+                                                        {{#str}}unsubscribediscussion, forum{{/str}}
+                                                    {{/userstate.subscribed}}
+                                                    {{^userstate.subscribed}}
+                                                        {{#str}}subscribediscussion, forum{{/str}}
+                                                    {{/userstate.subscribed}}
+                                                </span>
                                             </label>
-                                        </span>
+                                        </div>
                                     {{/discussion}}
                                 </td>
                             {{/forum.capabilities.subscribe}}

@@ -37,15 +37,15 @@ Feature: A user can control their own subscription preferences for a discussion
     Then I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
     And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
     And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
     And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
@@ -80,15 +80,15 @@ Feature: A user can control their own subscription preferences for a discussion
     Then I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
     And I can unsubscribe from this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
     And I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
     And I can unsubscribe from this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
@@ -123,7 +123,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
     And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
@@ -168,7 +168,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
     And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"

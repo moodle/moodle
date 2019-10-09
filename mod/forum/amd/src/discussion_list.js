@@ -133,7 +133,7 @@ define([
                 var stringKey = context.userstate.subscribed ? 'unsubscribediscussion' : 'subscribediscussion';
                 return Str.get_string(stringKey, 'mod_forum')
                     .then(function(string) {
-                        toggleElement.closest('td').find('label[for="' + toggleId + '"]').text(string);
+                        toggleElement.closest('td').find('label[for="' + toggleId + '"]').find('span').text(string);
                         return string;
                     });
             });
