@@ -62,8 +62,6 @@ $form = new mod_forum\form\export_form($url->out(false), [
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/forum/view.php', ['id' => $cm->id]));
 } else if ($data = $form->get_data()) {
-    require_sesskey();
-
     $dataformat = $data->format;
 
     $discussionvault = $vaultfactory->get_discussion_vault();
@@ -89,8 +87,14 @@ if ($form->is_cancelled()) {
                                                      $capabilitymanager->can_view_any_private_reply($USER));
     }
 
-    $fields = ['id', 'discussion', 'parent', 'userid', 'created', 'modified', 'mailed', 'subject', 'message',
-                'messageformat', 'messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto'];
+    $striphtml = !empty($data->striphtml);
+    $humandates = !empty($data->humandates);
+
+    $fields = ['id', 'discussion', 'parent', 'userid', 'created', 'modified', 'mailed', 'subject', 'message'];
+    if (!$striphtml) {
+        $fields[] = 'messageformat';
+    }
+    $fields = array_merge($fields, ['messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto']);
 
     $datamapper = $legacydatamapperfactory->get_post_data_mapper();
     $exportdata = new ArrayObject($datamapper->to_legacy_objects($posts));
@@ -98,16 +102,34 @@ if ($form->is_cancelled()) {
 
     require_once($CFG->libdir . '/dataformatlib.php');
     $filename = clean_filename('discussion');
-    download_as_dataformat($filename, $dataformat, $fields, $iterator, function($exportdata) use ($fields) {
-        $data = $exportdata;
-        foreach ($fields as $field) {
-            // Convert any boolean fields to their integer equivalent for output.
-            if (is_bool($data->$field)) {
-                $data->$field = (int) $data->$field;
+    download_as_dataformat(
+        $filename,
+        $dataformat,
+        $fields,
+        $iterator,
+        function($exportdata) use ($fields, $striphtml, $humandates) {
+            $data = $exportdata;
+            if ($striphtml) {
+                // The following call to html_to_text uses the option that strips out
+                // all URLs, but format_text complains if it finds @@PLUGINFILE@@ tokens.
+                // So, we need to replace @@PLUGINFILE@@ with a real URL, but it doesn't
+                // matter what. We use http://example.com/.
+                $data->message = str_replace('@@PLUGINFILE@@/', 'http://example.com/', $data->message);
+                $data->message = html_to_text(format_text($data->message, $data->messageformat), 0, false);
+                unset($data->messageformat);
             }
-        }
-        return $data;
-    });
+            if ($humandates) {
+                $data->created = userdate($data->created);
+                $data->modified = userdate($data->modified);
+            }
+            foreach ($fields as $field) {
+                // Convert any boolean fields to their integer equivalent for output.
+                if (is_bool($data->$field)) {
+                    $data->$field = (int) $data->$field;
+                }
+            }
+            return $data;
+        });
     die;
 }
 
