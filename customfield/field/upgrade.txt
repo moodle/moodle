@@ -1,0 +1,5 @@
+This files describes API changes in /customfield/field/* - customfield field types,
+information provided here is intended especially for developers.
+
+=== 3.8 ===
+* supports_course_grouping() and course_grouping_format_values() functions added to support use of custom fields in block_myoverview

@@ -4867,6 +4867,262 @@ class core_course_courselib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test cases for the course_filter_courses_by_timeline_classification tests.
+     */
+    public function get_course_filter_courses_by_customfield_test_cases() {
+        global $CFG;
+        require_once($CFG->dirroot.'/blocks/myoverview/lib.php');
+        $coursedata = [
+            [
+                'shortname' => 'C1',
+                'customfield_checkboxfield' => 1,
+                'customfield_datefield' => strtotime('2001-02-01T12:00:00Z'),
+                'customfield_selectfield' => 1,
+                'customfield_textfield' => 'fish',
+            ],
+            [
+                'shortname' => 'C2',
+                'customfield_checkboxfield' => 0,
+                'customfield_datefield' => strtotime('1980-08-05T13:00:00Z'),
+            ],
+            [
+                'shortname' => 'C3',
+                'customfield_checkboxfield' => 0,
+                'customfield_datefield' => strtotime('2001-02-01T12:00:00Z'),
+                'customfield_selectfield' => 2,
+                'customfield_textfield' => 'dog',
+            ],
+            [
+                'shortname' => 'C4',
+                'customfield_checkboxfield' => 1,
+                'customfield_selectfield' => 3,
+                'customfield_textfield' => 'cat',
+            ],
+            [
+                'shortname' => 'C5',
+                'customfield_datefield' => strtotime('1980-08-06T13:00:00Z'),
+                'customfield_selectfield' => 2,
+                'customfield_textfield' => 'fish',
+            ],
+        ];
+
+        return [
+            'empty set' => [
+                'coursedata' => [],
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => 1,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => [],
+                'expectedprocessedcount' => 0
+            ],
+            'checkbox yes' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => 1,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C1', 'C4'],
+                'expectedprocessedcount' => 5
+            ],
+            'checkbox no' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C2', 'C3', 'C5'],
+                'expectedprocessedcount' => 5
+            ],
+            'date 1 Feb 2001' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'datefield',
+                'customfieldvalue' => strtotime('2001-02-01T12:00:00Z'),
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C1', 'C3'],
+                'expectedprocessedcount' => 5
+            ],
+            'date 6 Aug 1980' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'datefield',
+                'customfieldvalue' => strtotime('1980-08-06T13:00:00Z'),
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C5'],
+                'expectedprocessedcount' => 5
+            ],
+            'date no date' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'datefield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C4'],
+                'expectedprocessedcount' => 5
+            ],
+            'select Option 1' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'selectfield',
+                'customfieldvalue' => 1,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C1'],
+                'expectedprocessedcount' => 5
+            ],
+            'select Option 2' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'selectfield',
+                'customfieldvalue' => 2,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C3', 'C5'],
+                'expectedprocessedcount' => 5
+            ],
+            'select no select' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'selectfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C2'],
+                'expectedprocessedcount' => 5
+            ],
+            'text fish' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'textfield',
+                'customfieldvalue' => 'fish',
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C1', 'C5'],
+                'expectedprocessedcount' => 5
+            ],
+            'text dog' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'textfield',
+                'customfieldvalue' => 'dog',
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C3'],
+                'expectedprocessedcount' => 5
+            ],
+            'text no text' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'textfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C2'],
+                'expectedprocessedcount' => 5
+            ],
+            'checkbox limit no' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 2,
+                'offset' => 0,
+                'expectedcourses' => ['C2', 'C3'],
+                'expectedprocessedcount' => 3
+            ],
+            'checkbox limit offset no' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 2,
+                'offset' => 3,
+                'expectedcourses' => ['C5'],
+                'expectedprocessedcount' => 2
+            ],
+        ];
+    }
+
+    /**
+     * Test the course_filter_courses_by_customfield function.
+     *
+     * @dataProvider get_course_filter_courses_by_customfield_test_cases()
+     * @param array $coursedata Course test data to create.
+     * @param string $customfield Shortname of the customfield.
+     * @param string $customfieldvalue the value to filter by.
+     * @param int $limit Maximum number of results to return.
+     * @param int $offset Results to skip at the start of the result set.
+     * @param string[] $expectedcourses Expected courses in results.
+     * @param int $expectedprocessedcount Expected number of course records to be processed.
+     */
+    public function test_course_filter_courses_by_customfield(
+        $coursedata,
+        $customfield,
+        $customfieldvalue,
+        $limit,
+        $offset,
+        $expectedcourses,
+        $expectedprocessedcount
+    ) {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create the custom fields.
+        $generator->create_custom_field_category([
+            'name' => 'Course fields',
+            'component' => 'core_course',
+            'area' => 'course',
+            'itemid' => 0,
+        ]);
+        $generator->create_custom_field([
+            'name' => 'Checkbox field',
+            'category' => 'Course fields',
+            'type' => 'checkbox',
+            'shortname' => 'checkboxfield',
+        ]);
+        $generator->create_custom_field([
+            'name' => 'Date field',
+            'category' => 'Course fields',
+            'type' => 'date',
+            'shortname' => 'datefield',
+            'configdata' => '{"mindate":0, "maxdate":0}',
+        ]);
+        $generator->create_custom_field([
+            'name' => 'Select field',
+            'category' => 'Course fields',
+            'type' => 'select',
+            'shortname' => 'selectfield',
+            'configdata' => '{"options":"Option 1\nOption 2\nOption 3\nOption 4"}',
+        ]);
+        $generator->create_custom_field([
+            'name' => 'Text field',
+            'category' => 'Course fields',
+            'type' => 'text',
+            'shortname' => 'textfield',
+        ]);
+
+        $courses = array_map(function($coursedata) use ($generator) {
+            return $generator->create_course($coursedata);
+        }, $coursedata);
+
+        $student = $generator->create_user();
+
+        foreach ($courses as $course) {
+            $generator->enrol_user($student->id, $course->id, 'student');
+        }
+
+        $this->setUser($student);
+
+        $coursesgenerator = course_get_enrolled_courses_for_logged_in_user(0, $offset, 'shortname ASC', 'shortname');
+        list($result, $processedcount) = course_filter_courses_by_customfield(
+            $coursesgenerator,
+            $customfield,
+            $customfieldvalue,
+            $limit
+        );
+
+        $actual = array_map(function($course) {
+            return $course->shortname;
+        }, $result);
+
+        $this->assertEquals($expectedcourses, $actual);
+        $this->assertEquals($expectedprocessedcount, $processedcount);
+    }
+
+    /**
      * Test cases for the course_filter_courses_by_timeline_classification w/ hidden courses tests.
      */
     public function get_course_filter_courses_by_timeline_classification_hidden_courses_test_cases() {

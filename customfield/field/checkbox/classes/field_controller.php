@@ -68,4 +68,27 @@ class field_controller  extends \core_customfield\field_controller {
 
         return $errors;
     }
+
+    /**
+     * Does this custom field type support being used as part of the block_myoverview
+     * custom field grouping?
+     * @return bool
+     */
+    public function supports_course_grouping(): bool {
+        return true;
+    }
+
+    /**
+     * If this field supports course grouping, then this function needs overriding to
+     * return the formatted values for this.
+     * @param array $values the used values that need formatting
+     * @return array
+     */
+    public function course_grouping_format_values($values): array {
+        $name = $this->get_formatted_name();
+        return [
+            1 => $name.': '.get_string('yes'),
+            BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY => $name.': '.get_string('no'),
+        ];
+    }
 }

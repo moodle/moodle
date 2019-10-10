@@ -55,6 +55,8 @@ function(
             type = 'block_myoverview_user_view_preference';
         } else if (filter == 'sort') {
             type = 'block_myoverview_user_sort_preference';
+        } else if (filter == 'customfieldvalue') {
+            type = 'block_myoverview_user_grouping_customfieldvalue_preference';
         } else {
             type = 'block_myoverview_user_grouping_preference';
         }
@@ -92,9 +94,15 @@ function(
 
                 var filter = option.attr('data-filter');
                 var pref = option.attr('data-pref');
+                var customfieldvalue = option.attr('data-customfieldvalue');
 
                 root.find(Selectors.courseView.region).attr('data-' + filter, option.attr('data-value'));
                 updatePreferences(filter, pref);
+
+                if (customfieldvalue) {
+                    root.find(Selectors.courseView.region).attr('data-customfieldvalue', customfieldvalue);
+                    updatePreferences('customfieldvalue', customfieldvalue);
+                }
 
                 // Reset the views.
                 View.init(root);

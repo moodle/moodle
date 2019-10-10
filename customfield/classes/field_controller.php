@@ -249,4 +249,23 @@ abstract class field_controller {
         $context = $this->get_handler()->get_configuration_context();
         return format_string($this->get('name'), true, ['context' => $context]);
     }
+
+    /**
+     * Does this custom field type support being used as part of the block_myoverview
+     * custom field grouping?
+     * @return bool
+     */
+    public function supports_course_grouping(): bool {
+        return false;
+    }
+
+    /**
+     * If this field supports course filtering, then this function needs overriding to
+     * return the formatted values for this.
+     * @param array $values the used values that need grouping
+     * @return array
+     */
+    public function course_grouping_format_values($values): array {
+        return [];
+    }
 }
