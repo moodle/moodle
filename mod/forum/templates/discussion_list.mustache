@@ -42,11 +42,12 @@
     }}data-gradable-itemtype="forum" {{!
     }}{{#firstgradeduserid}}data-initialuserid="{{firstgradeduserid}}" {{/firstgradeduserid}}{{!
     }}>
-    {{{groupchangemenu}}}
 
     {{#notifications}}
         {{> core/notification}}
     {{/notifications}}
+
+    {{{groupchangemenu}}}
 
     {{#forum.capabilities.create}}
         <div class="p-t-1 p-b-1">
@@ -81,7 +82,7 @@
                 {{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}
             </span>
             <table
-                class="table table-hover discussion-list"
+                class="table discussion-list"
                 aria-label='{{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}'
                 aria-describedby="discussion-table-description-{{uniqid}}"
             >
@@ -105,7 +106,7 @@
                             {{/state.sortorder.isdiscussiondesc}}
                         </th>
                         {{#forum.state.groupmode}}
-                        <th scope="col" class="group">
+                        <th scope="col" class="group px-3">
                             {{#state.sortorder.isgroupdesc}}
                                 <a href="{{{forum.urls.sortgroupasc}}}" aria-label="{{#str}}discussionlistsortbygroupasc, mod_forum{{/str}}">{{#str}}group{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
                             {{/state.sortorder.isgroupdesc}}
@@ -119,7 +120,7 @@
                             {{/state.sortorder.isgroupdesc}}
                         </th>
                         {{/forum.state.groupmode}}
-                        <th scope="col" class="author">
+                        <th scope="col" class="author px-3">
                             {{#state.sortorder.isstarterdesc}}
                                 <a href="{{{forum.urls.sortstarterasc}}}" aria-label="{{#str}}discussionlistsortbystarterasc, mod_forum{{/str}}">{{#str}}startedby, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
                             {{/state.sortorder.isstarterdesc}}
@@ -132,7 +133,7 @@
                                 {{/state.sortorder.isstarterasc}}
                             {{/state.sortorder.isstarterdesc}}
                         </th>
-                        <th scope="col" class="lastpost">
+                        <th scope="col" class="lastpost px-3">
                             {{#state.sortorder.islastpostdesc}}
                                 <a href="{{{forum.urls.sortlastpostasc}}}" aria-label="{{#str}}discussionlistsortbylastpostasc, mod_forum{{/str}}">{{#str}}lastpost, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
                             {{/state.sortorder.islastpostdesc}}
@@ -146,7 +147,7 @@
                             {{/state.sortorder.islastpostdesc}}
                         </th>
                         {{#forum.capabilities.viewdiscussions}}
-                            <th scope="col" class="text-center">
+                            <th scope="col" class="text-center px-2">
                                 {{#state.sortorder.isrepliesdesc}}
                                     <a href="{{{forum.urls.sortrepliesasc}}}" aria-label="{{#str}}discussionlistsortbyrepliesasc, mod_forum{{/str}}">{{#str}}replies, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
                                 {{/state.sortorder.isrepliesdesc}}
@@ -164,7 +165,7 @@
                             </th>
                         {{/forum.capabilities.viewdiscussions}}
                         {{#forum.capabilities.subscribe}}
-                            <th scope="col" class="text-center">{{#str}} subscribed, mod_forum {{/str}}</th>
+                            <th scope="col" class="text-center px-2">{{#str}} notsubscribed, mod_forum {{/str}}</th>
                         {{/forum.capabilities.subscribe}}
                         <th scope="col" class="discussionsubscription">
                             <span class="accesshide">{{#str}}actions{{/str}}</span>
@@ -213,7 +214,7 @@
                                 </div>
                             </th>
                             {{#forum.state.groupmode}}
-                                <td class="group align-middle">
+                                <td class="group align-middle fit-content limit-width px-3">
                                     {{#discussion.group}}
                                         <img alt="{{#str}} pictureof, core, {{name}} {{/str}}"
                                              class="border rounded h-auto rounded-circle grouppicture"
@@ -231,35 +232,47 @@
                                     {{/discussion.group}}
                                 </td>
                             {{/forum.state.groupmode}}
-                            <td class="author align-middle">
+                            <td class="author align-middle fit-content limit-width px-3">
                                 {{#firstpostauthor}}
-                                    <div class="d-flex flex-row">
+                                    <div class="d-flex">
                                         <div class="align-middle p-0">
                                             <img class="rounded-circle userpicture" src="{{urls.profileimage}}"
                                                  alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
                                                  title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}" >
                                         </div>
-                                        <div class="align-middle">
-                                            <div>{{fullname}}</div>
-                                            <div>
-                                                <small>{{#userdate}}{{discussion.times.created}}, {{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdate}}</small>
+                                        <div class="author-info align-middle">
+                                            <div class="mb-1 line-height-3 text-truncate">{{fullname}}</div>
+                                            <div class="line-height-3">
+                                                {{#userdate}}{{discussion.times.created}}, {{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdate}}
                                             </div>
                                         </div>
                                     </div>
                                 {{/firstpostauthor}}
                             </td>
-                            <td class="text-left align-middle">
+                            <td class="text-left align-middle fit-content limit-width px-3">
                                 {{! TODO Check q&a, eachuser }}
-                                {{#latestpostid}}
-                                    <a href="{{{discussion.urls.viewlatest}}}" title="{{#userdate}}{{discussion.times.modified}},{{#str}}strftimerecentfull{{/str}}{{/userdate}}">
-                                        {{#userdate}}
-                                            {{discussion.times.modified}}, {{#str}}strftimedateshortmonthabbr, langconfig{{/str}}
-                                        {{/userdate}}
-                                    </a>
-                                {{/latestpostid}}
+                                {{#latestpostauthor}}
+                                    <div class="d-flex">
+                                        <div class="align-middle p-0">
+                                            <img class="rounded-circle userpicture" src="{{urls.profileimage}}"
+                                                 alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
+                                                 title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}" >
+                                        </div>
+                                        <div class="author-info align-middle">
+                                            <div class="mb-1 line-height-3 text-truncate">{{fullname}}</div>
+                                            <div class="line-height-3">
+                                                {{#latestpostid}}
+                                                    <a href="{{{discussion.urls.viewlatest}}}" title="{{#userdate}}{{discussion.times.modified}},{{#str}}strftimerecentfull{{/str}}{{/userdate}}">
+                                                        {{#userdate}}{{discussion.times.created}}, {{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdate}}
+                                                    </a>
+                                                {{/latestpostid}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/latestpostauthor}}
                             </td>
                             {{#forum.capabilities.viewdiscussions}}
-                                <td class="p-0 text-center align-middle">
+                                <td class="p-0 text-center align-middle fit-content px-2">
                                     <span>{{replies}}</span>
                                     {{#forum.userstate.tracked}}
                                         {{#unread}}
@@ -275,7 +288,7 @@
                                 </td>
                             {{/forum.capabilities.viewdiscussions}}
                             {{#forum.capabilities.subscribe}}
-                                <td class="text-center align-middle">
+                                <td class="text-center align-middle fit-content px-2">
                                     {{#discussion}}
                                         <span class="switch">
                                             <input
@@ -300,7 +313,7 @@
                                     {{/discussion}}
                                 </td>
                             {{/forum.capabilities.subscribe}}
-                            <td class="p-0 align-middle" data-container="discussion-summary-actions" style="width: 1px;">
+                            <td class="p-0 align-middle fit-content" data-container="discussion-summary-actions">
                                 {{#discussion}}
                                     <div class="d-flex flex-wrap justify-content-end icon-no-margin">
                                         {{#hasanyactions}}

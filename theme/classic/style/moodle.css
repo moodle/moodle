@@ -16577,6 +16577,18 @@ select {
 .forumsearch input[type=text] {
   margin-bottom: 0; }
 
+#page-mod-forum-view table .fit-content {
+  width: 1px;
+  white-space: nowrap; }
+
+#page-mod-forum-view table .limit-width {
+  max-width: 200px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden; }
+  #page-mod-forum-view table .limit-width .author-info {
+    max-width: calc(100% - 35px - .5rem); }
+
 #page-mod-forum-discuss .discussioncontrols {
   width: auto;
   margin: 0; }
