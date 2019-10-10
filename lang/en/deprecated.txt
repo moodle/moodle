@@ -120,3 +120,4 @@ global,core_calendar
 globalevent,core_calendar
 globalevents,core_calendar
 eventtypeglobal,core_calendar
+documentation,core_webservice
