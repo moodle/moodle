@@ -358,8 +358,9 @@ class main implements renderable, templatable {
         list($csql, $params) = $DB->get_in_or_equal(array_keys($courses), SQL_PARAMS_NAMED);
         $select = "instanceid $csql AND fieldid = :fieldid";
         $params['fieldid'] = $fieldid;
-        $values = $DB->get_records_select_menu('customfield_data', $select, $params, 'value',
-            'DISTINCT value, value AS value2');
+        $distinctablevalue = $DB->sql_compare_text('value');
+        $values = $DB->get_records_select_menu('customfield_data', $select, $params, $DB->sql_order_by_text('value'),
+            "DISTINCT $distinctablevalue, $distinctablevalue AS value2");
         $values = array_filter($values);
         if (!$values) {
             return [];

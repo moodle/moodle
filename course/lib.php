@@ -4454,17 +4454,19 @@ function course_filter_courses_by_customfield(
 
     // Get a list of courseids that match that custom field value.
     if ($customfieldvalue == COURSE_CUSTOMFIELD_EMPTY) {
+        $comparevalue = $DB->sql_compare_text('cd.value');
         $sql = "
            SELECT c.id
              FROM {course} c
         LEFT JOIN {customfield_data} cd ON cd.instanceid = c.id AND cd.fieldid = :fieldid
             WHERE c.id $csql
-              AND (cd.value IS NULL OR cd.value = '' OR cd.value = '0')
+              AND (cd.value IS NULL OR $comparevalue = '' OR $comparevalue = '0')
         ";
         $params['fieldid'] = $fieldid;
         $matchcourseids = $DB->get_fieldset_sql($sql, $params);
     } else {
-        $select = "fieldid = :fieldid AND value = :customfieldvalue AND instanceid $csql";
+        $comparevalue = $DB->sql_compare_text('value');
+        $select = "fieldid = :fieldid AND $comparevalue = :customfieldvalue AND instanceid $csql";
         $params['fieldid'] = $fieldid;
         $params['customfieldvalue'] = $customfieldvalue;
         $matchcourseids = $DB->get_fieldset_select('customfield_data', 'instanceid', $select, $params);
