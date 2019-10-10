@@ -52,7 +52,7 @@
             {{! Start groups filter popover}}
             <div id="filter-groups-popover" class="popover m-t-1 hidden">
                 <h3 class="popover-header">{{# str}} filter:groupsname, forumreport_summary {{/ str}}</h3>
-                <div class="popover-body">
+                <div class="popover-body" data-region="filter-groups">
                     <div class="form-check filter-scrollable">
                         {{#filtergroups}}
                         <input id="filtergroups{{groupid}}" class="form-check-input" type="checkbox" name="filtergroups[]"
@@ -60,14 +60,14 @@
                         <label class="form-check-label pt-1" for="filtergroups{{groupid}}">{{groupname}}</label>
                         <br>
                         {{/filtergroups}}
-                        <br>
                     </div>
                     <div class="filter-actions">
-                        <button type="button" class="select-all btn btn-link p-0 p-r-1" aria-label="{{# str}} selectall {{/ str}}">{{# str}} selectall {{/ str}}</button>
+                        <button type="button" class="select-all btn btn-link p-0 pr-1" aria-label="{{# str}} selectall {{/ str}}">{{# str}} selectall {{/ str}}</button>
                         <div class="float-right">
-                            <button type="button" class="filter-clear btn btn-link p-0 p-r-1" aria-label="{{# str}} clear {{/ str}}">{{# str}} clear {{/ str}}</button>
+                            <button type="button" class="filter-clear btn btn-link p-0 px-1" aria-label="{{# str}} clear {{/ str}}">{{# str}} clear {{/ str}}</button>
                             <button type="button" class="filter-save btn btn-link p-0" aria-label="{{# str}} save {{/ str}}">
-                                    <strong>{{# str}} save {{/ str}}</strong></button>
+                                <strong>{{# str}} save {{/ str}}</strong>
+                            </button>
                         </div>
                     </div>
                 </div>
