@@ -98,7 +98,7 @@ class current_company_managers_user_selector extends company_user_selector_base 
                 JOIN {company_users} cu ON (u.id = cu.userid AND cu.companyid = :companyid)
                 WHERE $wherecondition AND u.suspended = 0 ";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -144,7 +144,7 @@ class potential_company_managers_user_selector extends company_user_selector_bas
                     {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id AND cu.companyid = :companyid AND cu.managertype = 0)
                 WHERE $wherecondition AND u.suspended = 0 ";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -188,7 +188,7 @@ class current_company_users_user_selector extends company_user_selector_base {
                     {user} u INNER JOIN {company_users} cu ON (cu.companyid = :companyid AND cu.userid = u.id )
                 WHERE $wherecondition AND u.suspended = 0 ";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -238,7 +238,7 @@ class potential_company_users_user_selector extends company_user_selector_base {
                         FROM
                             {company_users} )";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -280,9 +280,9 @@ class current_company_course_user_selector extends company_user_selector_base {
             // Deal with all.
             $companycourses = $this->company->get_menu_courses(true, true);
             unset($companycourses[0]);
-            $params['courses'] = join (',', array_keys($companycourses));
+            $coursesql = "AND e.courseid IN (" . join (',', array_keys($companycourses)). ")";
         } else {
-            $params['courses'] = join (',', array_values($this->selectedcourses));
+            $coursesql = "AND e.courseid IN (" .  join (',', array_values($this->selectedcourses)) . ")";
         }
 
         if (!in_array(0, $this->selectedcourses) && count($this->selectedcourses) == 1) {
@@ -298,11 +298,11 @@ class current_company_course_user_selector extends company_user_selector_base {
             $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
         }
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u') . ', c.id AS courseid, c.fullname';
+        $fields      = 'SELECT ue.id as userenrolmentid, ' . $this->required_fields_sql('u') . ', c.id AS courseid, c.fullname';
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM
-                    {user} u INNER JOIN {company_users} cu
+        $sql = " FROM {user} u
+                    JOIN {company_users} cu
                     ON (cu.userid = u.id AND cu.managertype = 0 $departmentsql)
                     JOIN {user_enrolments} ue ON (ue.userid = u.id)
                     JOIN {enrol} e
@@ -310,9 +310,9 @@ class current_company_course_user_selector extends company_user_selector_base {
                     JOIN {course} c ON (e.courseid = c.id)
                 WHERE $wherecondition AND u.suspended = 0
                     AND cu.companyid = :companyid
-                    AND e.courseid in (:courses)";
+                    $coursesql";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname, u.lastname, c.fullname ASC';
 
         if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -320,7 +320,6 @@ class current_company_course_user_selector extends company_user_selector_base {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
-
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
 
         if (empty($availableusers)) {
@@ -449,7 +448,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
                     cu.companyid = :companyid
                     $userfilter";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -613,7 +612,7 @@ class potential_department_user_selector extends user_selector_base {
                     $departmentsql
                     $userfilter";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         // Are we also looking for other managers?
         if (!empty($this->showothermanagers)) {
@@ -749,7 +748,7 @@ class current_department_user_selector extends user_selector_base {
                     AND
                     cu.departmentid = ($this->departmentid)";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -1011,7 +1010,7 @@ class potential_license_user_selector extends user_selector_base {
                     $userfilter
                     $edusql";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -1200,7 +1199,7 @@ class current_license_user_selector extends user_selector_base {
                         WHERE departmentid IN (" .
                         implode(',', array_keys($this->subdepartments)) .
                      "))";
-            $order = ' ORDER BY u.lastname ASC, u.firstname ASC, c.fullname ASC';
+            $order = ' ORDER BY u.firstname , u.lastname, c.fullname ASC';
         } else {
             $maxcount = $CFG->iomad_max_select_users * count($this->courses);
             $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, clu.isusing ';
@@ -1217,7 +1216,7 @@ class current_license_user_selector extends user_selector_base {
                         WHERE departmentid IN (" .
                         implode(',', array_keys($this->subdepartments)) .
                      "))";
-            $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+            $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
         }
         if (!$this->is_validating() && !$all) {
             if (!empty($userfilter)) {
@@ -1391,7 +1390,7 @@ class current_company_group_user_selector extends company_user_selector_base {
                       AND groupid = :licgroupid
                     )";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -1498,7 +1497,7 @@ class potential_company_group_user_selector extends company_user_selector_base {
                       )
                     )";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);

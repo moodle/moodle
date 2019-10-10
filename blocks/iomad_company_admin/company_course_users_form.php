@@ -49,7 +49,7 @@ class company_ccu_courses_form extends company_moodleform {
                          'licenses' => false,
                          'shared' => false);
         $this->companycourses = $this->company->get_menu_courses(true, true);
-        unset($this->companycourses[0]);
+        $this->companycourses[0] = get_string('all');
 
         parent::__construct($actionurl);
     }
@@ -74,7 +74,7 @@ class company_ccu_courses_form extends company_moodleform {
 
         // We are going to cheat and be lazy here.
             $autooptions = array('multiple' => true,
-                                 'noselectionstring' => get_string('all'),
+                                 'noselectionstring' => get_string('none'),
                                  'onchange' => 'this.form.submit()');
             $mform->addElement('autocomplete', 'selectedcourses', get_string('selectenrolmentcourse', 'block_iomad_company_admin'), $this->companycourses, $autooptions);
         } else {
@@ -379,9 +379,9 @@ class company_course_users_form extends moodleform {
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
-$courses = optional_param_array('courses', array(0 => 0), PARAM_INTEGER);
+$courses = optional_param_array('courses', array(), PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
-$selectedcourses = optional_param_array('selectedcourses', array(0 => 0), PARAM_INTEGER);
+$selectedcourses = optional_param_array('selectedcourses', array('a'), PARAM_INTEGER);
 $groupid = optional_param('groupid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
@@ -458,6 +458,7 @@ $departmentselect->label = get_string('department', 'block_iomad_company_admin')
                            $output->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
 
 $coursesform = new company_ccu_courses_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses, $parentlevel);
+$coursesform->set_data(array('selectedcourses' => $selectedcourses, 'courses' => $courses));
 $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
 echo $output->header();
 
@@ -485,24 +486,26 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
     if ($companyid > 0) {
         $coursesform->set_data($params);
         echo $coursesform->display();
-        if ($data = $coursesform->get_data() || !empty($selectedcourses)) {
-             if (count($courses) > 0) {
+        if (!in_array('a', $selectedcourses, true)) {
+            if ($data = $coursesform->get_data() || empty($selectedcourses)) {
+                 if (count($courses) > 0) {
+                    $usersform->set_course(array($courses));
+                    $usersform->process();
+                    $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
+                    $usersform->set_course(array($courses));
+                    $usersform->set_data(array('groupid' => $groupid));
+                } else if (!empty($selectedcourses)) {
+                    $usersform->set_course($selectedcourses);
+                }
+                echo $usersform->display();
+            } else if (count($courses) > 0) {
                 $usersform->set_course(array($courses));
                 $usersform->process();
                 $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
                 $usersform->set_course(array($courses));
                 $usersform->set_data(array('groupid' => $groupid));
-            } else if (!empty($selectedcourses)) {
-                $usersform->set_course($selectedcourses);
+                echo $usersform->display();
             }
-            echo $usersform->display();
-        } else if (count($courses) > 0) {
-            $usersform->set_course(array($course));
-            $usersform->process();
-            $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
-            $usersform->set_course(array($courses));
-            $usersform->set_data(array('groupid' => $groupid));
-            echo $usersform->display();
         }
     }
     echo html_writer::end_tag('div');
