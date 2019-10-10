@@ -50,6 +50,11 @@ class analytics_cleanup_task extends \core\task\scheduled_task {
      * @return void
      */
     public function execute() {
+
+        if (!\core_analytics\manager::is_analytics_enabled()) {
+            mtrace(get_string('analyticsdisabled', 'analytics'));
+            return;
+        }
         $models = \core_analytics\manager::cleanup();
     }
 }

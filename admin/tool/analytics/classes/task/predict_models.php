@@ -52,6 +52,11 @@ class predict_models extends \core\task\scheduled_task {
     public function execute() {
         global $OUTPUT, $PAGE;
 
+        if (!\core_analytics\manager::is_analytics_enabled()) {
+            mtrace(get_string('analyticsdisabled', 'analytics'));
+            return;
+        }
+
         $models = \core_analytics\manager::get_all_models(true, true);
         if (!$models) {
             mtrace(get_string('errornoenabledandtrainedmodels', 'tool_analytics'));

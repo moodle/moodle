@@ -41,6 +41,12 @@ if ($context->contextlevel < CONTEXT_COURSE) {
     $PAGE->set_context($context);
 }
 
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    $renderer = $PAGE->get_renderer('report_insights');
+    echo $renderer->render_analytics_disabled();
+    exit(0);
+}
+
 \core_analytics\manager::check_can_list_insights($context);
 
 // Get all models that are enabled, trained and have predictions at this context.
