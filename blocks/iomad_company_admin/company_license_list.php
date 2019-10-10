@@ -115,10 +115,6 @@ iomad::require_capability('block/iomad_company_admin:view_licenses', $context);
 $company = new company($companyid);
 echo "<h3>".$company->get_name()."</h3>";
 
-// Get the number of companies.
-$objectcount = $DB->count_records('companylicense', array('companyid' => $companyid));
-echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
-
 flush();
 
 $stredit   = get_string('edit');
@@ -184,7 +180,13 @@ if ($departmentid == $companydepartment->id) {
                                       $childsql
                                       $expiredsql
                                       ORDER BY expirydate DESC",
-                                      array('companyid' => $companyid, 'time' => time()));
+                                      array('companyid' => $companyid, 'time' => time()), $page * $perpage, $perpage);
+
+    $objectcount = $DB->count_records_sql("SELECT count(id) FROM {companylicense}
+                                        WHERE companyid = :companyid
+                                        $childsql
+                                        $expiredsql",
+                                        array('companyid' => $companyid, 'time' => time()));
 
     // Cycle through the results.
     foreach ($licenses as $license) {
@@ -320,6 +322,7 @@ if ($departmentid == $companydepartment->id) {
         $table->data[] = $dataarray;
     }
 } else if ($licenses = company::get_recursive_departments_licenses($companydepartment->id)) {
+    $objectcount = count($licenses);
     foreach ($licenses as $licenseid) {
 
         // Get the license record.
@@ -393,6 +396,7 @@ echo '</div>';
 
 // Display the list of licenses.
 if (!empty($table)) {
+    echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
     echo html_writer::table($table);
     echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
 }
