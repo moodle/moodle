@@ -25,8 +25,7 @@ $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_licenses, PARAM_INT);        // How many per page.
 $companyid    = optional_param('companyid', 0, PARAM_INTEGER);
 $save         = optional_param('save', 0, PARAM_INTEGER);
-
-global $DB;
+$showexpired  = optional_param('showexpired', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 
@@ -52,7 +51,7 @@ $PAGE->navbar->add($linktext, $linkurl);
 $companyid = iomad::get_my_companyid($context);
 $company = new company($companyid);
 
-$baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+$baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage, 'showexpired' => $showexpired));
 $returnurl = $baseurl;
 
 // Get the appropriate company department.
@@ -172,12 +171,20 @@ if ($departmentid == $companydepartment->id) {
         $childsql = "";
     }
 
+    // Are we showing the expired licenses?
+    if (empty($showexpired)) {
+        $expiredsql = " AND expirydate > :time ";
+    } else {
+        $expiredsql = "";
+    }
+
     // Get the licenses.
     $licenses = $DB->get_records_sql("SELECT * FROM {companylicense}
                                       WHERE companyid = :companyid
                                       $childsql
+                                      $expiredsql
                                       ORDER BY expirydate DESC",
-                                      array('companyid' => $companyid));
+                                      array('companyid' => $companyid, 'time' => time()));
 
     // Cycle through the results.
     foreach ($licenses as $license) {
@@ -371,6 +378,13 @@ if ($departmentid == $companydepartment->id) {
 
 
 echo '<div class="buttons">';
+if ($showexpired) {
+    $showexpiredstring = get_string('hideexpiredlicenses', 'block_iomad_company_admin');
+} else {
+    $showexpiredstring = get_string('showexpiredlicenses', 'block_iomad_company_admin');
+}
+echo $OUTPUT->single_button(new moodle_url('company_license_list.php', array('showexpired' => !$showexpired)),
+                                            $showexpiredstring);
 if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) {
     echo $OUTPUT->single_button(new moodle_url('company_license_edit_form.php'),
                                                 get_string('licenseaddnew', 'block_iomad_company_admin'), 'get');
