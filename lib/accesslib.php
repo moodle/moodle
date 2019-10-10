@@ -2560,43 +2560,49 @@ function get_capability_string($capabilityname) {
  */
 function get_component_string($component, $contextlevel) {
 
-    if ($component === 'moodle' or $component === 'core') {
-        switch ($contextlevel) {
-            // TODO MDL-46123: this should probably use context level names instead
-            case CONTEXT_SYSTEM:    return get_string('coresystem');
-            case CONTEXT_USER:      return get_string('users');
-            case CONTEXT_COURSECAT: return get_string('categories');
-            case CONTEXT_COURSE:    return get_string('course');
-            case CONTEXT_MODULE:    return get_string('activities');
-            case CONTEXT_BLOCK:     return get_string('block');
-            default:                print_error('unknowncontext');
-        }
+    if ($component === 'moodle' || $component === 'core') {
+        return context_helper::get_level_name($contextlevel);
     }
 
     list($type, $name) = core_component::normalize_component($component);
     $dir = core_component::get_plugin_directory($type, $name);
     if (!file_exists($dir)) {
         // plugin not installed, bad luck, there is no way to find the name
-        return $component.' ???';
+        return $component . ' ???';
     }
 
+    // Some plugin types need an extra prefix to make the name easy to understand.
     switch ($type) {
-        // TODO MDL-46123: this is really hacky and should be improved.
-        case 'quiz':         return get_string($name.':componentname', $component);// insane hack!!!
-        case 'repository':   return get_string('repository', 'repository').': '.get_string('pluginname', $component);
-        case 'gradeimport':  return get_string('gradeimport', 'grades').': '.get_string('pluginname', $component);
-        case 'gradeexport':  return get_string('gradeexport', 'grades').': '.get_string('pluginname', $component);
-        case 'gradereport':  return get_string('gradereport', 'grades').': '.get_string('pluginname', $component);
-        case 'webservice':   return get_string('webservice', 'webservice').': '.get_string('pluginname', $component);
-        case 'block':        return get_string('block').': '.get_string('pluginname', basename($component));
+        case 'quiz':
+            $prefix = get_string('quizreport', 'quiz') . ': ';
+            break;
+        case 'repository':
+            $prefix = get_string('repository', 'repository') . ': ';
+            break;
+        case 'gradeimport':
+            $prefix = get_string('gradeimport', 'grades') . ': ';
+            break;
+        case 'gradeexport':
+            $prefix = get_string('gradeexport', 'grades') . ': ';
+            break;
+        case 'gradereport':
+            $prefix = get_string('gradereport', 'grades') . ': ';
+            break;
+        case 'webservice':
+            $prefix = get_string('webservice', 'webservice') . ': ';
+            break;
+        case 'block':
+            $prefix = get_string('block') . ': ';
+            break;
         case 'mod':
-            if (get_string_manager()->string_exists('pluginname', $component)) {
-                return get_string('activity').': '.get_string('pluginname', $component);
-            } else {
-                return get_string('activity').': '.get_string('modulename', $component);
-            }
-        default: return get_string('pluginname', $component);
+            $prefix = get_string('activity') . ': ';
+            break;
+
+        // Default case, just use the plugin name.
+        default:
+            $prefix = '';
     }
+    return $prefix . get_string('pluginname', $component);
 }
 
 /**

@@ -2,6 +2,14 @@ This files describes API changes for quiz report plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
 
+=== 3.9 ===
+
+* Quiz report plugins defining capabilities used to require an extra string like
+    $string['statistics:componentname'] = 'Quiz statistics report';
+in addition to
+    $string['pluginname'] = 'Statistics';
+This is no longer required.
+
 === 3.8 ===
 
 * New quiz_attempts_report_table method: \quiz_attempts_report_table::checkbox_col_header()
