@@ -1536,7 +1536,8 @@ class framework implements \H5PFrameworkInterface {
             $context = \context_system::instance();
             $url = "{$CFG->wwwroot}/pluginfile.php/{$context->id}/core_h5p";
 
-            $core = new \H5PCore($interface, $fs, $url, $language, true);
+            require_once("{$CFG->libdir}/h5p/h5p.classes.php");
+            $core = new core($interface, $fs, $url, $language, true);
             $core->aggregateAssets = !(isset($CFG->core_h5p_aggregate_assets) && $CFG->core_h5p_aggregate_assets === '0');
         }
 

@@ -41,7 +41,7 @@ class player {
     private $url;
 
     /**
-     * @var \H5PCore The H5PCore object.
+     * @var core The H5PCore object.
      */
     private $core;
 
@@ -96,7 +96,7 @@ class player {
             $this->content = $this->core->loadContent($this->h5pid);
 
             // Get the embedtype to use for displaying the H5P content.
-            $this->embedtype = \H5PCore::determineEmbedType($this->content['embedType'], $this->content['library']['embedTypes']);
+            $this->embedtype = core::determineEmbedType($this->content['embedType'], $this->content['library']['embedTypes']);
         }
     }
 
@@ -125,18 +125,18 @@ class player {
         $cid = $this->get_cid();
         $systemcontext = \context_system::instance();
 
-        $disable = array_key_exists('disable', $this->content) ? $this->content['disable'] : \H5PCore::DISABLE_NONE;
+        $disable = array_key_exists('disable', $this->content) ? $this->content['disable'] : core::DISABLE_NONE;
         $displayoptions = $this->core->getDisplayOptionsForView($disable, $this->h5pid);
 
         $contenturl = \moodle_url::make_pluginfile_url($systemcontext->id, \core_h5p\file_storage::COMPONENT,
             \core_h5p\file_storage::CONTENT_FILEAREA, $this->h5pid, null, null);
 
         $contentsettings = [
-            'library'         => \H5PCore::libraryToString($this->content['library']),
+            'library'         => core::libraryToString($this->content['library']),
             'fullScreen'      => $this->content['library']['fullscreen'],
-            'exportUrl'       => $this->get_export_settings($displayoptions[ \H5PCore::DISPLAY_OPTION_DOWNLOAD ]),
+            'exportUrl'       => $this->get_export_settings($displayoptions[ core::DISPLAY_OPTION_DOWNLOAD ]),
             'embedCode'       => $this->get_embed_code($this->url->out(),
-                $displayoptions[ \H5PCore::DISPLAY_OPTION_EMBED ]),
+                $displayoptions[ core::DISPLAY_OPTION_EMBED ]),
             'resizeCode'      => $this->get_resize_code(),
             'title'           => $this->content['slug'],
             'displayOptions'  => $displayoptions,
@@ -401,10 +401,10 @@ class player {
         }
 
         $disableoptions = [
-            \H5PCore::DISPLAY_OPTION_FRAME     => $frame,
-            \H5PCore::DISPLAY_OPTION_DOWNLOAD  => $export,
-            \H5PCore::DISPLAY_OPTION_EMBED     => $embed,
-            \H5PCore::DISPLAY_OPTION_COPYRIGHT => $copyright,
+            core::DISPLAY_OPTION_FRAME     => $frame,
+            core::DISPLAY_OPTION_DOWNLOAD  => $export,
+            core::DISPLAY_OPTION_EMBED     => $embed,
+            core::DISPLAY_OPTION_COPYRIGHT => $copyright,
         ];
 
         return $this->core->getStorableDisplayOptions($disableoptions, 0);
@@ -496,14 +496,14 @@ class player {
         $relpath = '/' . preg_replace('/^[^:]+:\/\/[^\/]+\//', '', $liburl);
 
         // Add core stylesheets.
-        foreach (\H5PCore::$styles as $style) {
+        foreach (core::$styles as $style) {
             $settings['core']['styles'][] = $relpath . $style . $cachebuster;
             $this->cssrequires[] = new \moodle_url($liburl . $style . $cachebuster);
         }
         // Add core JavaScript.
-        foreach (\H5PCore::$scripts as $script) {
-            $settings['core']['scripts'][] = $relpath . $script . $cachebuster;
-            $this->jsrequires[] = new \moodle_url($liburl . $script . $cachebuster);
+        foreach (core::get_scripts() as $script) {
+            $settings['core']['scripts'][] = $script->out(false);
+            $this->jsrequires[] = $script;
         }
 
         $cid = $this->get_cid();
@@ -582,6 +582,7 @@ class player {
             'libraryConfig' => $this->core->h5pF->getLibraryConfig(),
             'pluginCacheBuster' => $this->get_cache_buster(),
             'libraryUrl' => $basepath . 'lib/h5p/js',
+            'moodleLibraryPaths' => $this->core->get_dependency_roots($this->h5pid),
         );
 
         return $settings;

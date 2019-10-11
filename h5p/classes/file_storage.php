@@ -600,11 +600,12 @@ class file_storage implements \H5PFileStorage {
         }
         // Get the filearea.
         $filearea = array_shift($sections);
+        $itemid = array_shift($sections);
         // Get the filepath.
         $filepath = implode('/', $sections);
         $filepath = '/' . $filepath . '/';
 
-        return ['filearea' => $filearea, 'filepath' => $filepath, 'filename' => $filename];
+        return ['filearea' => $filearea, 'filepath' => $filepath, 'filename' => $filename, 'itemid' => $itemid];
     }
 
     /**
