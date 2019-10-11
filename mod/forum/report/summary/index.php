@@ -75,9 +75,6 @@ $PAGE->set_title($forumname);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('nodetitle', "forumreport_summary"));
 
-// Render the report filters form.
-$renderer = $PAGE->get_renderer('forumreport_summary');
-
 // Prepare and display the report.
 $bulkoperations = !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
 
@@ -94,16 +91,16 @@ if ($download) {
         \core\notification::info(get_string('viewsdisclaimer', 'forumreport_summary'));
     }
 
-
-
-    if ($bulkoperations) {
-        echo $renderer->render_bulk_action_menu();
-    }
+    // Render the report filters form.
+    $renderer = $PAGE->get_renderer('forumreport_summary');
 
     echo $renderer->render_filters_form($cm, $url, $filters);
     $table->show_download_buttons_at(array(TABLE_P_BOTTOM));
     echo $renderer->render_summary_table($table, $perpage);
-    $table->download_buttons();
+
+    if ($bulkoperations) {
+        echo $renderer->render_bulk_action_menu();
+    }
 
     echo $OUTPUT->footer();
 }
