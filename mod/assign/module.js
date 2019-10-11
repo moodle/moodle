@@ -168,10 +168,12 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
     contract = Y.one('.' + classname);
     if (contract) {
         contract.on('click', function(e) {
-            img = e.target;
-            imgclasses = img.getAttribute('class').split(' ');
-            for (i = 0; i < imgclasses.length; i++) {
-                classname = imgclasses[i];
+            e.preventDefault();
+            link = e.target;
+            linkclasses = link.getAttribute('class').split(' ');
+            thissuffix = '';
+            for (i = 0; i < linkclasses.length; i++) {
+                classname = linkclasses[i];
                 if (classname.indexOf('contract_') == 0) {
                     thissuffix = classname.substr(9);
                 }
@@ -185,6 +187,7 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
             summary = Y.one('.' + summaryclassname);
             if (summary) {
                 summary.show(false);
+                summary.one('a.expand_' + thissuffix).focus();
             }
         });
     }
@@ -198,10 +201,12 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
     }
     if (expand) {
         expand.on('click', function(e) {
-            img = e.target;
-            imgclasses = img.getAttribute('class').split(' ');
-            for (i = 0; i < imgclasses.length; i++) {
-                classname = imgclasses[i];
+            e.preventDefault();
+            link = e.target;
+            linkclasses = link.getAttribute('class').split(' ');
+            thissuffix = '';
+            for (i = 0; i < linkclasses.length; i++) {
+                classname = linkclasses[i];
                 if (classname.indexOf('expand_') == 0) {
                     thissuffix = classname.substr(7);
                 }
@@ -215,6 +220,7 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
             full = Y.one('.' + fullclassname);
             if (full) {
                 full.show(false);
+                full.one('a.contract_' + thissuffix).focus();
             }
         });
     }
