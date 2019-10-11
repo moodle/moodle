@@ -11660,14 +11660,16 @@ div.editor_atto_toolbar button .icon {
   display: none; }
 
 .switch {
-  position: relative; }
+  position: relative;
+  display: inline-block; }
   .switch input {
     float: left;
     width: 1px;
     transform: translateX(1px);
     padding: 0;
     margin: 0;
-    opacity: 0; }
+    opacity: 0;
+    line-height: 1.25rem; }
     .switch input + label {
       position: relative;
       min-height: 1.25rem;
@@ -11678,43 +11680,52 @@ div.editor_atto_toolbar button .icon {
       cursor: pointer;
       outline: none;
       user-select: none;
-      vertical-align: middle;
       padding-left: 3rem; }
     .switch input + label::before,
     .switch input + label::after {
       content: '';
       position: absolute;
-      top: calc(50% - 0.625rem);
       left: 0;
-      width: 2.5rem;
-      height: 1.25rem;
       bottom: 0;
       display: block; }
     .switch input + label::before {
       right: 0;
+      height: 1rem;
+      width: 2.5rem;
+      top: calc(50% - 0.5rem);
       background-color: #dee2e6;
       border-radius: 1.25rem;
       transition: 0.2s all; }
     .switch input + label::after {
-      margin-top: 2px;
-      left: 2px;
-      width: calc(1.25rem - 4px);
-      height: calc(1.25rem - 4px);
+      left: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      top: calc(50% - 0.625rem);
       border-radius: 50%;
       background-color: #fff;
-      transition: 0.2s all; }
+      transition: 0.2s all;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12); }
     .switch input:checked + label::before {
-      background-color: #1177d1; }
+      background-color: rgba(17, 119, 209, 0.4); }
     .switch input:checked + label::after {
-      margin-left: 1.25rem; }
+      margin-left: 1.25rem;
+      background-color: #1177d1; }
     .switch input:focus + label::before {
+      outline: none; }
+    .switch input:focus + label::after {
       outline: none;
-      box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.25); }
+      box-shadow: 0 0 0 0.4rem rgba(17, 119, 209, 0.25); }
     .switch input:disabled + label {
       color: #868e96;
       cursor: not-allowed; }
     .switch input:disabled + label::before {
       background-color: #e9ecef; }
+    .switch input:disabled + label::after {
+      background-color: #868e96; }
+  .switch.sr-only-label input + label {
+    text-indent: -9999px;
+    margin-bottom: 0;
+    padding-left: 0; }
 
 .paged-content-page-container {
   min-height: 3.125rem; }
