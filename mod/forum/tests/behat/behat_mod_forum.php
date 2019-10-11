@@ -142,6 +142,225 @@ class behat_mod_forum extends behat_base {
     }
 
     /**
+     * Creates new discussions within forums of a given course.
+     *
+     * @Given the following forum discussions exist in course :coursename:
+     * @param string $coursename The full name of the course where the forums exist.
+     * @param TableNode $discussionsdata The discussion posts to be created.
+     */
+    public function the_following_forum_discussions_exist(string $coursename, TableNode $discussionsdata) {
+        global $DB;
+
+        $courseid = $this->get_course_id($coursename);
+        $forumgenerator = behat_util::get_data_generator()->get_plugin_generator('mod_forum');
+
+        // Add the discussions to the relevant forum.
+        foreach ($discussionsdata->getHash() as $discussioninfo) {
+            $discussioninfo['course'] = $courseid;
+            $discussioninfo['forum'] = $this->get_forum_id($courseid, $discussioninfo['forum']);
+            $discussioninfo['userid'] = $this->get_user_id($discussioninfo['user']);
+
+            // Prepare data for any attachments.
+            if (!empty($discussioninfo['attachments']) || !empty($discussioninfo['inlineattachments'])) {
+                $discussioninfo['attachment'] = 1;
+                $cm = get_coursemodule_from_instance('forum', $discussioninfo['forum']);
+            }
+
+            // Create the discussion post.
+            $discussion = $forumgenerator->create_discussion($discussioninfo);
+            $postid = $DB->get_field('forum_posts', 'id', ['discussion' => $discussion->id]);
+
+            // Override the creation and modified timestamps as required.
+            if (!empty($discussioninfo['created']) || !empty($discussioninfo['modified'])) {
+                $discussiondata = [
+                    'id' => $discussion->id,
+                    'timemodified' => empty($discussioninfo['modified']) ? $discussioninfo['created'] : $discussioninfo['modified'],
+                ];
+
+                $DB->update_record('forum_discussions', $discussiondata);
+
+                $postdata = [
+                    'id' => $postid,
+                    'modified' => empty($discussioninfo['modified']) ? $discussioninfo['created'] : $discussioninfo['modified'],
+                ];
+
+                if (!empty($discussioninfo['created'])) {
+                    $postdata['created'] = $discussioninfo['created'];
+                }
+
+                $DB->update_record('forum_posts', $postdata);
+            }
+
+            // Create attachments to the discussion post if required.
+            if (!empty($discussioninfo['attachments'])) {
+                $attachments = array_map('trim', explode(',', $discussioninfo['attachments']));
+                $this->create_post_attachments($postid, $discussioninfo['userid'], $attachments, $cm, 'attachment');
+            }
+
+            // Create inline attachments to the discussion post if required.
+            if (!empty($discussioninfo['inlineattachments'])) {
+                $inlineattachments = array_map('trim', explode(',', $discussioninfo['inlineattachments']));
+                $this->create_post_attachments($postid, $discussioninfo['userid'], $inlineattachments, $cm, 'post');
+            }
+        }
+    }
+
+    /**
+     * Creates replies to discussions within forums of a given course.
+     *
+     * @Given the following forum replies exist in course :coursename:
+     * @param string $coursename The full name of the course where the forums exist.
+     * @param TableNode $repliesdata The reply posts to be created.
+     */
+    public function the_following_forum_replies_exist(string $coursename, TableNode $repliesdata) {
+        global $DB;
+
+        $courseid = $this->get_course_id($coursename);
+        $forumgenerator = behat_util::get_data_generator()->get_plugin_generator('mod_forum');
+
+        // Add the replies to the relevant discussions.
+        foreach ($repliesdata->getHash() as $replyinfo) {
+            $replyinfo['course'] = $courseid;
+            $replyinfo['forum'] = $this->get_forum_id($courseid, $replyinfo['forum']);
+            $replyinfo['userid'] = $this->get_user_id($replyinfo['user']);
+
+            [
+                'discussionid' => $replyinfo['discussion'],
+                'parentid' => $replyinfo['parent'],
+            ] = $this->get_base_discussion($replyinfo['forum'], $replyinfo['discussion']);
+
+            // Prepare data for any attachments.
+            if (!empty($replyinfo['attachments']) || !empty($replyinfo['inlineattachments'])) {
+                $replyinfo['attachment'] = 1;
+                $cm = get_coursemodule_from_instance('forum', $replyinfo['forum']);
+            }
+
+            // Create the reply post.
+            $reply = $forumgenerator->create_post($replyinfo);
+
+            // Create attachments to the post if required.
+            if (!empty($replyinfo['attachments'])) {
+                $attachments = array_map('trim', explode(',', $replyinfo['attachments']));
+                $this->create_post_attachments($reply->id, $replyinfo['userid'], $attachments, $cm, 'attachment');
+            }
+
+            // Create inline attachments to the post if required.
+            if (!empty($replyinfo['inlineattachments'])) {
+                $inlineattachments = array_map('trim', explode(',', $replyinfo['inlineattachments']));
+                $this->create_post_attachments($reply->id, $replyinfo['userid'], $inlineattachments, $cm, 'post');
+            }
+        }
+    }
+
+    /**
+     * Fetch user ID from its username.
+     *
+     * @param string $username The username.
+     * @return int The user ID.
+     * @throws Exception
+     */
+    protected function get_user_id($username) {
+        global $DB;
+
+        if (!$userid = $DB->get_field('user', 'id', ['username' => $username])) {
+            throw new Exception("A user with username '{$username}' does not exist");
+        }
+        return $userid;
+    }
+
+    /**
+     * Fetch course ID using course name.
+     *
+     * @param string $coursename The name of the course.
+     * @return int The course ID.
+     * @throws Exception
+     */
+    protected function get_course_id(string $coursename): int {
+        global $DB;
+
+        if (!$courseid = $DB->get_field('course', 'id', ['fullname' => $coursename])) {
+            throw new Exception("A course with name '{$coursename}' does not exist");
+        }
+
+        return $courseid;
+    }
+
+    /**
+     * Fetch forum ID using forum name.
+     *
+     * @param int $courseid The course ID the forum exists within.
+     * @param string $forumname The name of the forum.
+     * @return int The forum ID.
+     * @throws Exception
+     */
+    protected function get_forum_id(int $courseid, string $forumname): int {
+        global $DB;
+
+        $conditions = [
+            'course' => $courseid,
+            'name' => $forumname,
+        ];
+
+        if (!$forumid = $DB->get_field('forum', 'id', $conditions)) {
+            throw new Exception("A forum with name '{$forumname}' does not exist in the provided course");
+        }
+
+        return $forumid;
+    }
+
+    /**
+     * Fetch discussion ID and first post ID by discussion name.
+     *
+     * @param int $forumid The forum ID where the discussion resides.
+     * @param string $name The name of the discussion.
+     * @return array The discussion ID and first post ID.
+     * @throws dml_exception If the discussion name is not unique within the forum (or doesn't exist).
+     */
+    protected function get_base_discussion(int $forumid, string $name): array {
+        global $DB;
+
+        $conditions = [
+            'name' => $name,
+            'forum' => $forumid,
+        ];
+
+        $result = $DB->get_record("forum_discussions", $conditions, 'id, firstpost', MUST_EXIST);
+
+        return [
+            'discussionid' => $result->id,
+            'parentid' => $result->firstpost,
+        ];
+    }
+
+    /**
+     * Create one or more attached or inline attachments to a forum post.
+     *
+     * @param int $postid The ID of the forum post.
+     * @param int $userid The user ID creating the attachment.
+     * @param array $attachmentnames Names of all attachments to be created.
+     * @param stdClass $cm The context module of the forum.
+     * @param string $filearea The file area being written to, eg 'attachment' or 'post' (inline).
+     */
+    protected function create_post_attachments(int $postid, int $userid, array $attachmentnames, stdClass $cm, string $filearea): void {
+        $filestorage = get_file_storage();
+
+        foreach ($attachmentnames as $attachmentname) {
+            $filestorage->create_file_from_string(
+                [
+                    'contextid' => context_module::instance($cm->id)->id,
+                    'component' => 'mod_forum',
+                    'filearea'  => $filearea,
+                    'itemid'    => $postid,
+                    'filepath'  => '/',
+                    'filename'  => $attachmentname,
+                    'userid'    => $userid,
+                ],
+                "File content {$attachmentname}"
+            );
+        }
+    }
+
+    /**
      * Returns the steps list to add a new discussion to a forum.
      *
      * Abstracts add a new topic and add a new discussion, as depending

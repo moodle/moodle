@@ -15,15 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Subplugin info class.
  *
  * @package   mod_forum
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2019 Michael Hawkins <michaelh@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_forum\plugininfo;
+
+use core\plugininfo\base;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019071900;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;       // Requires this Moodle version
-$plugin->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)
+/**
+ * Forum report subplugin info class.
+ *
+ * @copyright 2019 Michael Hawkins <michaelh@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class forumreport extends base {
+    /**
+     * Allow the forum report subplugin be uninstalled.
+     *
+     * @return boolean
+     */
+    public function is_uninstall_allowed() {
+        return true;
+    }
+}

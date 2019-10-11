@@ -383,6 +383,13 @@ $author-image-margin-sm: 8px;
     }
 }
 
+// Make filter popover content scrollable if needed.
+.filter-scrollable {
+    overflow-y: auto;
+    max-height: 25em;
+    margin-bottom: 1em;
+}
+
 // End styling for mod_forum.
 
 .maincalendar .calendarmonth td,

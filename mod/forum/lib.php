@@ -5251,7 +5251,23 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         $discussionid = $params['d'];
     }
 
-    // for some actions you need to be enrolled, beiing admin is not enough sometimes here
+    // Display all forum reports user has access to.
+    if (isloggedin() && !isguestuser()) {
+        $reportnames = array_keys(core_component::get_plugin_list('forumreport'));
+
+        foreach ($reportnames as $reportname) {
+            if (has_capability("forumreport/{$reportname}:view", $PAGE->cm->context)) {
+                $reportlinkparams = [
+                    'courseid' => $forumobject->course,
+                    'forumid' => $forumobject->id,
+                ];
+                $reportlink = new moodle_url("/mod/forum/report/{$reportname}/index.php", $reportlinkparams);
+                $forumnode->add(get_string('nodetitle', "forumreport_{$reportname}"), $reportlink, navigation_node::TYPE_CONTAINER);
+            }
+        }
+    }
+
+    // For some actions you need to be enrolled, being admin is not enough sometimes here.
     $enrolled = is_enrolled($PAGE->cm->context, $USER, '', false);
     $activeenrolled = is_enrolled($PAGE->cm->context, $USER, '', true);
 

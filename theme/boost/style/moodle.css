@@ -16297,6 +16297,11 @@ select {
     width: 30px;
     height: 30px; } }
 
+.filter-scrollable {
+  overflow-y: auto;
+  max-height: 25em;
+  margin-bottom: 1em; }
+
 .maincalendar .calendarmonth td,
 .maincalendar .calendarmonth th {
   border: 1px dotted #dee2e6; }

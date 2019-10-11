@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Module containing the selectors for the forum summary report.
  *
- * @package   mod_forum
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module     forumreport_summary/selectors
+ * @package    forumreport_summary
+ * @copyright  2019 Jun Pataleta
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2019071900;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;       // Requires this Moodle version
-$plugin->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)
+export default {
+    filters: {
+        group: {
+            checkbox: '[data-region="filter-groups"] input[type="checkbox"]',
+            clear: '[data-region="filter-groups"] .filter-clear',
+            popover: '#filter-groups-popover',
+            save: '[data-region="filter-groups"] .filter-save',
+            selectall: '[data-region="filter-groups"] .select-all',
+            trigger: '#filter-groups-button',
+        }
+    }
+};
