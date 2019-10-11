@@ -1600,45 +1600,49 @@ function(
 
         AutoRows.init(footer);
 
-        initialiseEmojiAutoComplete(
-            emojiAutoCompleteContainer[0],
-            messageTextArea[0],
-            function(hasSuggestions) {
-                var newState = StateManager.setShowEmojiAutoComplete(viewState, hasSuggestions);
-                render(newState);
-            },
-            function(emoji) {
-                var newState = StateManager.setShowEmojiAutoComplete(viewState, false);
+        if (emojiAutoCompleteContainer.length) {
+            initialiseEmojiAutoComplete(
+                emojiAutoCompleteContainer[0],
+                messageTextArea[0],
+                function(hasSuggestions) {
+                    var newState = StateManager.setShowEmojiAutoComplete(viewState, hasSuggestions);
+                    render(newState);
+                },
+                function(emoji) {
+                    var newState = StateManager.setShowEmojiAutoComplete(viewState, false);
+                    render(newState);
+
+                    messageTextArea.focus();
+                    var cursorPos = messageTextArea.prop('selectionStart');
+                    var currentText = messageTextArea.val();
+                    var textBefore = currentText.substring(0, cursorPos).replace(/\S*$/, '');
+                    var textAfter = currentText.substring(cursorPos).replace(/^\S*/, '');
+
+                    messageTextArea.val(textBefore + emoji + textAfter);
+                    // Set the cursor position to after the inserted emoji.
+                    messageTextArea.prop('selectionStart', textBefore.length + emoji.length);
+                    messageTextArea.prop('selectionEnd', textBefore.length + emoji.length);
+                }
+            );
+        }
+
+        if (emojiPickerElement.length) {
+            initialiseEmojiPicker(emojiPickerElement[0], function(emoji) {
+                var newState = StateManager.setShowEmojiPicker(viewState, !viewState.showEmojiPicker);
                 render(newState);
 
                 messageTextArea.focus();
                 var cursorPos = messageTextArea.prop('selectionStart');
                 var currentText = messageTextArea.val();
-                var textBefore = currentText.substring(0, cursorPos).replace(/\S*$/, '');
-                var textAfter = currentText.substring(cursorPos).replace(/^\S*/, '');
+                var textBefore = currentText.substring(0, cursorPos);
+                var textAfter = currentText.substring(cursorPos, currentText.length);
 
                 messageTextArea.val(textBefore + emoji + textAfter);
                 // Set the cursor position to after the inserted emoji.
-                messageTextArea.prop('selectionStart', textBefore.length + emoji.length);
-                messageTextArea.prop('selectionEnd', textBefore.length + emoji.length);
-            }
-        );
-
-        initialiseEmojiPicker(emojiPickerElement[0], function(emoji) {
-            var newState = StateManager.setShowEmojiPicker(viewState, !viewState.showEmojiPicker);
-            render(newState);
-
-            messageTextArea.focus();
-            var cursorPos = messageTextArea.prop('selectionStart');
-            var currentText = messageTextArea.val();
-            var textBefore = currentText.substring(0, cursorPos);
-            var textAfter = currentText.substring(cursorPos, currentText.length);
-
-            messageTextArea.val(textBefore + emoji + textAfter);
-            // Set the cursor position to after the inserted emoji.
-            messageTextArea.prop('selectionStart', cursorPos + emoji.length);
-            messageTextArea.prop('selectionEnd', cursorPos + emoji.length);
-        });
+                messageTextArea.prop('selectionStart', cursorPos + emoji.length);
+                messageTextArea.prop('selectionEnd', cursorPos + emoji.length);
+            });
+        }
 
         CustomEvents.define(header, [
             CustomEvents.events.activate
