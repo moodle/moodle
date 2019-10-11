@@ -76,7 +76,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('nodetitle', "forumreport_summary"));
 
 // Prepare and display the report.
-$bulkoperations = !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
+$bulkoperations = !$download && !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
 
 $table = new \forumreport_summary\summary_table($courseid, $filters, $bulkoperations);
 $table->baseurl = $url;
