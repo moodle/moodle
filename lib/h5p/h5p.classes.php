@@ -2432,7 +2432,7 @@ class H5PCore {
     // Using content dependencies
     foreach ($dependencies as $dependency) {
       if (isset($dependency['path']) === FALSE) {
-        $dependency['path'] = 'libraries/' . H5PCore::libraryToString($dependency, TRUE);
+        $dependency['path'] = $this->getDependencyPath($dependency);
         $dependency['preloadedJs'] = explode(',', $dependency['preloadedJs']);
         $dependency['preloadedCss'] = explode(',', $dependency['preloadedCss']);
       }
@@ -2450,6 +2450,16 @@ class H5PCore {
     }
 
     return $files;
+  }
+
+  /**
+   * Get the path to the dependency.
+   *
+   * @param stdClass $dependency
+   * @return string
+   */
+  protected function getDependencyPath(array $dependency): string {
+    return H5PCore::libraryToString($dependency, TRUE);
   }
 
   private static function getDependenciesHash(&$dependencies) {
