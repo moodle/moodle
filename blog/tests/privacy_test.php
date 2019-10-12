@@ -370,6 +370,37 @@ class core_blog_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('post', ['courseid' => $c1->id, 'userid' => $u1->id, 'module' => 'notes']));
     }
 
+    /**
+     * Test provider delete_data_for_user with a context that contains no entries
+     *
+     * @return void
+     */
+    public function test_delete_data_for_user_empty_context() {
+        global $DB;
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        // Create a blog entry for user, associated with course.
+        $entry = new blog_entry($this->create_post(['userid' => $user->id, 'courseid' => $course->id])->id);
+        $entry->add_association($context->id);
+
+        // Generate list of contexts for user.
+        $contexts = provider::get_contexts_for_userid($user->id);
+        $this->assertContains($context->id, $contexts->get_contextids());
+
+        // Now delete the blog entry.
+        $entry->delete();
+
+        // Try to delete user data using contexts obtained prior to entry deletion.
+        $contextlist = new approved_contextlist($user, 'core_blog', $contexts->get_contextids());
+        provider::delete_data_for_user($contextlist);
+
+        // Sanity check to ensure blog_associations is really empty.
+        $this->assertEmpty($DB->get_records('blog_association', ['contextid' => $context->id]));
+    }
+
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
 
