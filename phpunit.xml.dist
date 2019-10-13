@@ -67,7 +67,7 @@
         <testsuite name="core_cohort_testsuite">
             <directory suffix="_test.php">cohort/tests</directory>
         </testsuite>
-        <testsuite name="core_grade_testsuite">
+        <testsuite name="core_grades_testsuite">
             <directory suffix="_test.php">lib/grade/tests</directory>
             <directory suffix="_test.php">grade/tests</directory>
             <directory suffix="_test.php">grade/grading/tests</directory>
