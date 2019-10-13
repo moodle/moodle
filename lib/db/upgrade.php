@@ -2028,16 +2028,18 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2018092800.02) {
         // Delete any contacts that are not mutual (meaning they both haven't added each other).
-        $sql = "SELECT c1.id
-                  FROM {message_contacts} c1
-             LEFT JOIN {message_contacts} c2
-                    ON c1.userid = c2.contactid
-                   AND c1.contactid = c2.userid
-                 WHERE c2.id IS NULL";
-        if ($contacts = $DB->get_records_sql($sql)) {
-            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contacts));
-            $DB->delete_records_select('message_contacts', "id $insql", $inparams);
-        }
+        do {
+            $sql = "SELECT c1.id
+                      FROM {message_contacts} c1
+                 LEFT JOIN {message_contacts} c2
+                        ON c1.userid = c2.contactid
+                       AND c1.contactid = c2.userid
+                     WHERE c2.id IS NULL";
+            if ($contacts = $DB->get_records_sql($sql, null, 0, 1000)) {
+                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contacts));
+                $DB->delete_records_select('message_contacts', "id $insql", $inparams);
+            }
+        } while ($contacts);
 
         upgrade_main_savepoint(true, 2018092800.02);
     }
