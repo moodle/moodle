@@ -1066,13 +1066,16 @@ function badges_calculate_message_schedule($schedule) {
 
     switch ($schedule) {
         case BADGE_MESSAGE_DAILY:
-            $nextcron = time() + 60 * 60 * 24;
+            $tomorrow = new DateTime("1 day", core_date::get_server_timezone_object());
+            $nextcron = $tomorrow->getTimestamp();
             break;
         case BADGE_MESSAGE_WEEKLY:
-            $nextcron = time() + 60 * 60 * 24 * 7;
+            $nextweek = new DateTime("1 week", core_date::get_server_timezone_object());
+            $nextcron = $nextweek->getTimestamp();
             break;
         case BADGE_MESSAGE_MONTHLY:
-            $nextcron = time() + 60 * 60 * 24 * 7 * 30;
+            $nextmonth = new DateTime("1 month", core_date::get_server_timezone_object());
+            $nextcron = $nextmonth->getTimestamp();
             break;
     }
 
