@@ -436,9 +436,7 @@ class question_category_object {
         $cat->infoformat = $newinfoformat;
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
-        if ($idnumber) {
-            $cat->idnumber = $idnumber;
-        }
+        $cat->idnumber = $idnumber;
         $categoryid = $DB->insert_record("question_categories", $cat);
 
         // Log the creation of this category.
@@ -511,9 +509,7 @@ class question_category_object {
         $cat->infoformat = $newinfoformat;
         $cat->parent = $parentid;
         $cat->contextid = $tocontextid;
-        if ($idnumber) {
-            $cat->idnumber = $idnumber;
-        }
+        $cat->idnumber = $idnumber;
         if ($newstamprequired) {
             $cat->stamp = make_unique_id_code();
         }
