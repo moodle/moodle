@@ -857,45 +857,6 @@ function badges_get_badge_api_versions() {
 }
 
 /**
- * Called on install or upgrade to create default list of backpacks a user can connect to.
- *
- * @return void
- */
-function badges_install_default_backpacks() {
-    global $DB;
-
-    $record = new stdClass();
-    $record->backpackweburl = BADGE_BACKPACKWEBURL;
-    $record->backpackapiurl = BADGE_BACKPACKAPIURL;
-    $record->apiversion = OPEN_BADGES_V1;
-    $record->sortorder = 0;
-    $record->password = '';
-
-    $bpid = 0;
-    if (!($bp = $DB->get_record('badge_external_backpack', array('backpackapiurl' => $record->backpackapiurl)))) {
-        $bpid = $DB->insert_record('badge_external_backpack', $record);
-    } else {
-        $bpid = $bp->id;
-    }
-    set_config('badges_site_backpack', $bpid);
-
-    // All existing backpacks default to V1.
-    $DB->set_field('badge_backpack', 'externalbackpackid', $bpid);
-
-    $record = new stdClass();
-    $record->backpackapiurl = BADGRIO_BACKPACKAPIURL;
-    $record->backpackweburl = BADGRIO_BACKPACKWEBURL;
-    $record->apiversion = OPEN_BADGES_V2;
-    $record->sortorder = 1;
-    $record->password = '';
-
-    if (!$DB->record_exists('badge_external_backpack', array('backpackapiurl' => $record->backpackapiurl))) {
-        $DB->insert_record('badge_external_backpack', $record);
-    }
-
-}
-
-/**
  * Get the default issuer for a badge from this site.
  *
  * @return array
