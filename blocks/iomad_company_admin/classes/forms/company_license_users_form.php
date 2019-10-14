@@ -423,6 +423,14 @@ class company_license_users_form extends \moodleform {
                         if (!$licensedata->isusing || $this->license->type == 1 || $this->license->type == 3) {
                             $DB->delete_records('companylicense_users', array('id' => $unassignid));
 
+                            // Remove the report data if license hasn't been used.
+                            if (!$licensedata->isusing) {
+                                $DB->delete_records('local_iomad_track', array('userid' => $licensedata->userid,
+                                                                               'licenseid' => $licensedata->id,
+                                                                               'courseid' => $licensedata->licensecourseid,
+                                                                               'timeenrolled' => null)
+                            }
+
                             // Create an event.
                             $eventother = array('licenseid' => $this->license->id,
                                                 'duedate' => 0);

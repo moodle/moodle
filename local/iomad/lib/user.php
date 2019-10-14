@@ -408,6 +408,9 @@ class company_user {
                     $DB->delete_records('email', array('id' => $email->id));
                 }
             }
+
+            // Remove the tracking inf if the user hasn't completed the course.
+            $DB->delete_records('local_iomad_track', array('courseid' => $user->courseid, 'userid' => $user->id, 'timecompleted' => null));
         } else {
             foreach ($courseids as $courseid) {
                 $roles = get_user_roles(context_course::instance($courseid), $user->id, false);
@@ -449,6 +452,9 @@ class company_user {
                         $DB->delete_records('email', array('id' => $email->id));
                     }
                 }
+
+                // Remove the tracking inf if the user hasn't completed the course.
+                $DB->delete_records('local_iomad_track', array('courseid' => $courseid, 'userid' => $user->id, 'timecompleted' => null));
             }
         }
     }
