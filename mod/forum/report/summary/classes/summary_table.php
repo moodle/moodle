@@ -179,8 +179,11 @@ class summary_table extends table_sql {
      * @return string User's full name.
      */
     public function col_fullname($data): string {
-        global $OUTPUT;
+        if ($this->is_downloading()) {
+            return fullname($data);
+        }
 
+        global $OUTPUT;
         return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->cm->course, 'includefullname' => true));
     }
 
@@ -384,6 +387,7 @@ class summary_table extends table_sql {
         $this->collapsible(false);
         $this->sortable(true, 'firstname', SORT_ASC);
         $this->pageable(true);
+        $this->is_downloadable(true);
         $this->no_sorting('select');
         $this->set_attribute('id', 'forumreport_summary_table');
     }
@@ -645,5 +649,18 @@ class summary_table extends table_sql {
         }
 
         return (count($groups) < $groupsavailablecount);
+    }
+
+    /**
+     * Download the summary report in the selected format.
+     *
+     * @param string $format The format to download the report.
+     */
+    public function download($format) {
+        $filename = 'summary_report_' . userdate(time(), get_string('backupnameformat', 'langconfig'),
+                99, false);
+
+        $this->is_downloading($format, $filename);
+        $this->out($this->perpage, false);
     }
 }
