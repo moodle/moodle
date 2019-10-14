@@ -367,8 +367,9 @@ class company_user {
             $courseids = array($courseids);
         }
 
-        foreach ($courseids as $courseid) {
-            $roles = get_user_roles(context_course::instance($courseid), $user->id, false);
+        // Did we get passed a course id in the user? (Comes from a selector)
+        if (!empty($user->courseid)) {
+            $roles = get_user_roles(context_course::instance($user->courseid), $user->id, false);
             foreach ($roles as $role) {
                 if (!$all && $role->roleid == $studentrole->id) {
                     $isstudent = true;
@@ -377,24 +378,24 @@ class company_user {
                 }
             }
             if (!$isstudent) {
-                if (!$DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 0))) {
+                if (!$DB->get_record('iomad_courses', array('courseid' => $user->courseid, 'shared' => 0))) {
                     $shared = true;
                 } else {
                     $shared = false;
                 }
-                $course = $DB->get_record('course', array('id' => $courseid));
+                $course = $DB->get_record('course', array('id' => $user->courseid));
                 $courseenrolmentmanager = new course_enrolment_manager($PAGE, $course);
 
                 $ues = $courseenrolmentmanager->get_user_enrolments($user->id);
 
                 foreach ($ues as $ue) {
-                    if ( $ue->enrolmentinstance->courseid == $courseid ) {
+                    if ( $ue->enrolmentinstance->courseid == $user->courseid ) {
                         $courseenrolmentmanager->unenrol_user($ue);
                     }
                 }
                 if ($shared) {
                     if (!empty($companyid)) {
-                        company::remove_user_from_shared_course($courseid,
+                        company::remove_user_from_shared_course($user->courseid,
                                                                 $user->id,
                                                                 $companyid);
                     }
@@ -402,9 +403,51 @@ class company_user {
             }
 
             // Check if there is a user enroled email which hasn't been sent yet.
-            if ($emails = $DB->get_records('email', array('userid' => $user->id, 'courseid' => $courseid, 'templatename' => 'user_added_to_course', 'sent' => null))) {
+            if ($emails = $DB->get_records('email', array('userid' => $user->id, 'courseid' => $user->courseid, 'templatename' => 'user_added_to_course', 'sent' => null))) {
                 foreach ($emails as $email) {
                     $DB->delete_records('email', array('id' => $email->id));
+                }
+            }
+        } else {
+            foreach ($courseids as $courseid) {
+                $roles = get_user_roles(context_course::instance($courseid), $user->id, false);
+                foreach ($roles as $role) {
+                    if (!$all && $role->roleid == $studentrole->id) {
+                        $isstudent = true;
+                    } else {
+                        $DB->delete_records('role_assignments', array('id' => $role->id));
+                    }
+                }
+                if (!$isstudent) {
+                    if (!$DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 0))) {
+                        $shared = true;
+                    } else {
+                        $shared = false;
+                    }
+                    $course = $DB->get_record('course', array('id' => $courseid));
+                    $courseenrolmentmanager = new course_enrolment_manager($PAGE, $course);
+
+                    $ues = $courseenrolmentmanager->get_user_enrolments($user->id);
+
+                    foreach ($ues as $ue) {
+                        if ( $ue->enrolmentinstance->courseid == $courseid ) {
+                            $courseenrolmentmanager->unenrol_user($ue);
+                        }
+                    }
+                    if ($shared) {
+                        if (!empty($companyid)) {
+                            company::remove_user_from_shared_course($courseid,
+                                                                    $user->id,
+                                                                    $companyid);
+                        }
+                    }
+                }
+
+                // Check if there is a user enroled email which hasn't been sent yet.
+                if ($emails = $DB->get_records('email', array('userid' => $user->id, 'courseid' => $courseid, 'templatename' => 'user_added_to_course', 'sent' => null))) {
+                    foreach ($emails as $email) {
+                        $DB->delete_records('email', array('id' => $email->id));
+                    }
                 }
             }
         }
