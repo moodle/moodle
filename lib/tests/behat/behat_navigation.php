@@ -670,7 +670,6 @@ class behat_navigation extends behat_base {
      * @throws Exception if the specified page cannot be determined.
      */
     public function i_am_on_page_instance(string $identifier, string $type) {
-        list($component, $type) = $this->parse_page_name($type);
         $this->getSession()->visit($this->locate_path(
                 $this->resolve_page_instance_helper($identifier, $type)->out_as_local_url()));
     }
