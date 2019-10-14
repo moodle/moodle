@@ -2,7 +2,7 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.8 ===
-
+* The rotate_image function has been added to the stored_file class (MDL-63349)
 * The yui checknet module is removed. Call \core\session\manager::keepalive instead.
 * The generate_uuid() function has been deprecated. Please use \core\uuid::generate() instead.
 * Remove lib/pear/auth/RADIUS.php (MDL-65746)
