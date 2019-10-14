@@ -317,6 +317,7 @@ class behat_hooks extends behat_base {
 
         // Register behat selectors for theme, if suite is changed. We do it for every suite change.
         if ($suitename !== self::$runningsuite) {
+            self::$runningsuite = $suitename;
             behat_context_helper::set_environment($scope->getEnvironment());
 
             // We need the Mink session to do it and we do it only before the first scenario.
@@ -337,6 +338,12 @@ class behat_hooks extends behat_base {
 
             $this->getSession()->getSelectorsHandler()->registerSelector('named_partial', new $namedpartialclass());
             $this->getSession()->getSelectorsHandler()->registerSelector('named_exact', new $namedexactclass());
+
+            // Register component named selectors.
+            foreach (\core_component::get_component_names() as $component) {
+                $this->register_component_selectors_for_component($component);
+            }
+
         }
 
         // Reset mink session between the scenarios.
@@ -368,7 +375,6 @@ class behat_hooks extends behat_base {
         // Set the theme if not default.
         if ($suitename !== "default") {
             set_config('theme', $suitename);
-            self::$runningsuite = $suitename;
         }
 
         // Reset the scenariorunning variable to ensure that Step 0 occurs.
@@ -673,18 +679,6 @@ class behat_hooks extends behat_base {
      */
     protected static function is_first_scenario() {
         return !(self::$initprocessesfinished);
-    }
-
-    /**
-     * Register component selectors.
-     *
-     * @param BeforeScenarioScope $scope scope passed by event fired before scenario.
-     * @BeforeScenario
-     */
-    public function register_component_selectors(BeforeScenarioScope $scope) {
-        foreach (\core_component::get_component_names() as $component) {
-            $this->register_component_selectors_for_component($component);
-        }
     }
 
     /**
