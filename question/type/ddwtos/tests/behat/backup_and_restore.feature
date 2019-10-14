@@ -29,7 +29,7 @@ Feature: Test duplicating a quiz containing a drag and drop into text question
     And I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Course 2 |
     And I navigate to "Question bank" in current page administration
-    And I click on "Edit" "link" in the "Drag to text" "table_row"
+    And I choose "Edit question" action for "Drag to text" in the question bank
     Then the following fields match these values:
       | Question name                       | Drag to text                                         |
       | Question text                       | The [[1]] brown [[2]] jumped over the [[3]] dog.     |

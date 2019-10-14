@@ -18,17 +18,17 @@ Feature: The questions in the question bank can be filtered by tags
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name              | user     | questiontext    |
+      | questioncategory | qtype     | name            | user     | questiontext    |
       | Test questions   | essay     | question 1 name | admin    | Question 1 text |
       | Test questions   | essay     | question 2 name | teacher1 | Question 2 text |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank > Questions" in current page administration
-    And I click on "Edit" "link" in the "question 1 name" "table_row"
+    And I choose "Edit question" action for "question 1 name" in the question bank
     And I set the following fields to these values:
       | Tags | foo |
     And I press "id_submitbutton"
-    And I click on "Edit" "link" in the "question 2 name" "table_row"
+    And I choose "Edit question" action for "question 2 name" in the question bank
     And I set the following fields to these values:
       | Tags | bar |
     And I press "id_submitbutton"

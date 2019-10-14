@@ -1,6 +1,21 @@
 This files describes API changes for question type plugins.
 
+=== 3.8, 3.7.3, 3.6.7 ===
+
+* Coming up in Moodle 3.8 are some changes to the question bank UI. These will break any
+  Behat automated tests which use the common pattern
+    When I click on "Duplicate" "link" in the "Test question" "table_row"
+  to trigger actions on questions when looking at the question bank screen. Therefore,
+  a new step has been introduced:
+    When I choose "Duplicate" action for "Test question" in the question bank
+  If you want your Behat tests to continue working with Moodle 3.8, you will need to use
+  the new step. The new step has been back-ported, so you can start updating your tests
+  and have them work with Moodle 3.6 and 3.7. In addition, if you want to trigger the
+  "Edit" action, you should change that to "Edit question".
+
+
 === 3.5 ===
+
   + Added new classes backup_qtype_extrafields_plugin and restore_qtype_extrafields_plugin
    in order to use extra fields method in backup/restore question type. Require and inherit new classes for using it. See
    backup_qtype_shortanswer_plugin and restore_qtype_shortanswer_plugin for an example of using this.
