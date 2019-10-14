@@ -68,7 +68,7 @@ class course_request_form extends moodleform {
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
 
-        if (!empty($CFG->requestcategoryselection)) {
+        if (empty($CFG->lockrequestcategory)) {
             $displaylist = core_course_category::make_categories_list('moodle/course:request');
             $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist);
             $mform->setDefault('category', $CFG->defaultrequestcategory);

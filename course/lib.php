@@ -2838,7 +2838,7 @@ class course_request {
         $data->requester = $USER->id;
 
         // Setting the default category if none set.
-        if (empty($data->category) || empty($CFG->requestcategoryselection)) {
+        if (empty($data->category) || !empty($CFG->lockrequestcategory)) {
             $data->category = $CFG->defaultrequestcategory;
         }
 
@@ -3167,7 +3167,7 @@ class course_request {
             return $defaultcontext &&
                 has_capability('moodle/course:request', $defaultcontext);
         } else if ($context instanceof context_coursecat) {
-            if ($CFG->requestcategoryselection || $CFG->defaultrequestcategory == $context->instanceid) {
+            if (!$CFG->lockrequestcategory || $CFG->defaultrequestcategory == $context->instanceid) {
                 return has_capability('moodle/course:request', $context);
             }
         }

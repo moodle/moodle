@@ -17,7 +17,10 @@ Feature: Users can request and approve courses
       | user2 | Acceptance test site | manager |
     Given I log in as "admin"
     And I set the following administration settings values:
-      | enablecourserequests | 1 |
+      | lockrequestcategory | 1 |
+    And I set the following system permissions of "Authenticated user" role:
+      | capability | permission |
+      | moodle/course:request | Allow |
     And I log out
     When I log in as "user1"
     And I am on course index
@@ -65,12 +68,6 @@ Feature: Users can request and approve courses
       | user2 | manager         | Category     | SCI       |
       | user3 | manager         | Category     | ENG       |
     Given I log in as "admin"
-    And I set the following administration settings values:
-      | enablecourserequests     | 1 |
-      | requestcategoryselection | 1 |
-    And I set the following system permissions of "Authenticated user" role:
-      | capability            | permission |
-      | moodle/course:request | Prevent    |
     And I set the following system permissions of "Course requestor" role:
       | capability            | permission |
       | moodle/course:request | Allow      |

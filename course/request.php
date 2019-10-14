@@ -49,8 +49,8 @@ if (empty($CFG->enablecourserequests)) {
     print_error('courserequestdisabled', '', $returnurl);
 }
 
-if (!$CFG->requestcategoryselection) {
-    // Category selection is not enabled, user will always request in the default request category.
+if ($CFG->lockrequestcategory) {
+    // Course request category is locked, user will always request in the default request category.
     $categoryid = null;
 } else if (!$categoryid) {
     // Category selection is enabled but category is not specified.

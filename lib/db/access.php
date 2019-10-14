@@ -783,9 +783,6 @@ $capabilities = array(
     'moodle/course:request' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
-        'archetypes' => array(
-            'user' => CAP_ALLOW,
-        )
     ),
 
     'moodle/course:delete' => array(

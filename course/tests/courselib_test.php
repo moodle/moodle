@@ -6816,7 +6816,7 @@ class core_course_courselib_testcase extends advanced_testcase {
      * Tests for the course_request::can_request
      */
     public function test_can_request_course() {
-        global $CFG;
+        global $CFG, $DB;
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -6828,18 +6828,29 @@ class core_course_courselib_testcase extends advanced_testcase {
         $context3 = context_coursecat::instance($cat3);
         $this->setUser($user);
 
-        // By default course request is not available.
+        // By default users don't have capability to request courses.
         $this->assertFalse(course_request::can_request(context_system::instance()));
+        $this->assertFalse(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertFalse(course_request::can_request($context3));
 
-        // Enable course requests. Default 'user' role has capability to request courses.
-        $CFG->enablecourserequests = true;
+        // Allow for the 'user' role the capability to request courses.
+        $userroleid = $DB->get_field('role', 'id', ['shortname' => 'user']);
+        assign_capability('moodle/course:request', CAP_ALLOW, $userroleid,
+            context_system::instance()->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Lock category selection.
+        $CFG->lockrequestcategory = 1;
+
+        // Now user can only request course in the default category or in system context.
         $this->assertTrue(course_request::can_request(context_system::instance()));
         $this->assertTrue(course_request::can_request($context1));
         $this->assertFalse(course_request::can_request($context2));
         $this->assertFalse(course_request::can_request($context3));
 
-        // Enable category selection.
-        $CFG->requestcategoryselection = 1;
+        // Enable category selection. User can request course anywhere.
+        $CFG->lockrequestcategory = 0;
         $this->assertTrue(course_request::can_request(context_system::instance()));
         $this->assertTrue(course_request::can_request($context1));
         $this->assertTrue(course_request::can_request($context2));
@@ -6856,6 +6867,13 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue(course_request::can_request($context1));
         $this->assertFalse(course_request::can_request($context2));
         $this->assertTrue(course_request::can_request($context3));
+
+        // Disable course request functionality.
+        $CFG->enablecourserequests = false;
+        $this->assertFalse(course_request::can_request(context_system::instance()));
+        $this->assertFalse(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertFalse(course_request::can_request($context3));
     }
 
     /**
@@ -6873,7 +6891,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Enable course requests. Default 'user' role has capability to request courses.
         $CFG->enablecourserequests = true;
-        $CFG->requestcategoryselection = 1;
+        $CFG->lockrequestcategory = 0;
         $this->setUser($requestor);
         $requestdata = ['summary_editor' => ['text' => '', 'format' => 0], 'name' => 'Req', 'reason' => 'test'];
         $request1 = course_request::create((object)($requestdata));
