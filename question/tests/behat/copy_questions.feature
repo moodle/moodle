@@ -26,7 +26,7 @@ Feature: A teacher can duplicate questions in the question bank
 
   @javascript
   Scenario: Duplicating a previously created question
-    When I click on "Duplicate" "link" in the "Test question to be copied" "table_row"
+    When I choose "Duplicate" action for "Test question to be copied" in the question bank
     And I set the following fields to these values:
       | Question name | Duplicated question name                |
       | Question text | Write a lot about duplicating questions |
@@ -38,12 +38,12 @@ Feature: A teacher can duplicate questions in the question bank
 
   @javascript
   Scenario: Duplicated questions automatically get a new name suggested
-    When I click on "Duplicate" "link" in the "Test question to be copied" "table_row"
+    When I choose "Duplicate" action for "Test question to be copied" in the question bank
     Then the field "Question name" matches value "Test question to be copied (copy)"
 
   @javascript
   Scenario: The duplicate operation can be cancelled
-    When I click on "Duplicate" "link" in the "Test question to be copied" "table_row"
+    When I choose "Duplicate" action for "Test question to be copied" in the question bank
     And I press "Cancel"
     Then I should see "Test question to be copied"
     And the field "Select a category" matches value "&nbsp;&nbsp;&nbsp;Test questions (1)"

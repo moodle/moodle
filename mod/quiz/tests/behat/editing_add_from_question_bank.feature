@@ -29,11 +29,11 @@ Feature: Adding questions to a quiz from the question bank
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I navigate to "Question bank > Questions" in current page administration
-    And I click on "Edit" "link" in the "question 01 name" "table_row"
+    And I choose "Edit question" action for "question 01 name" in the question bank
     And I set the following fields to these values:
       | Tags | foo |
     And I press "id_submitbutton"
-    And I click on "Edit" "link" in the "question 02 name" "table_row"
+    And I choose "Edit question" action for "question 02 name" in the question bank
     And I set the following fields to these values:
       | Tags | bar |
     And I press "id_submitbutton"

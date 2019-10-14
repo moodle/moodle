@@ -25,7 +25,7 @@ Feature: Test editing a True/False question
     And I navigate to "Question bank" in current page administration
 
   Scenario: Edit a True/False question
-    When I click on "Edit" "link" in the "true-false-001" "table_row"
+    When I choose "Edit question" action for "true-false-001" in the question bank
     And I set the following fields to these values:
       | Question name | |
     And I press "id_submitbutton"
