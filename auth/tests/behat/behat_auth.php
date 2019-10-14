@@ -42,10 +42,18 @@ class behat_auth extends behat_base {
      * Logs in the user. There should exist a user with the same value as username and password.
      *
      * @Given /^I log in as "(?P<username_string>(?:[^"]|\\")*)"$/
+     * @param string $username the user to log in as.
+     * @param moodle_url|null $wantsurl optional, URL to go to after logging in.
      */
-    public function i_log_in_as($username) {
+    public function i_log_in_as(string $username, moodle_url $wantsurl = null) {
+
+        $loginurl = new moodle_url('/login/index.php');
+        if ($wantsurl !== null) {
+            $loginurl->param('wantsurl', $wantsurl->out_as_local_url());
+        }
+
         // Visit login page.
-        $this->getSession()->visit($this->locate_path('login/index.php'));
+        $this->getSession()->visit($this->locate_path($loginurl->out_as_local_url()));
 
         // Enter username and password.
         $this->execute('behat_forms::i_set_the_field_to', array('Username', $this->escape($username)));
