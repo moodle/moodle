@@ -37,9 +37,7 @@ Feature: Adding questions to a quiz from the question bank
     And I set the following fields to these values:
       | Tags | bar |
     And I press "id_submitbutton"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "foo" in the "question 01 name" "table_row"
@@ -74,9 +72,7 @@ Feature: Adding questions to a quiz from the question bank
       | Test questions   | essay     | question 21 name | teacher1 | Question 21 text |
       | Test questions   | essay     | question 22 name | teacher1 | Question 22 text |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And I click on "2" "link" in the ".pagination" "css_element"
@@ -97,10 +93,8 @@ Feature: Adding questions to a quiz from the question bank
       | Section 1 | 1         | 0       |
       | Section 2 | 2         | 0       |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    When I navigate to "Edit quiz" in current page administration
-    And I open the "Page 1" add to quiz menu
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    When I open the "Page 1" add to quiz menu
     And I follow "from question bank"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'question 03 name')]//input[@type='checkbox']" to "1"
     And I click on "Add selected questions to the quiz" "button"
