@@ -4073,6 +4073,7 @@ class core_course_external extends external_api {
      * @throws invalid_parameter_exception
      */
     public static function get_enrolled_users_by_cmid(int $cmid) {
+        global $PAGE;
         $warnings = [];
 
         [
@@ -4087,8 +4088,11 @@ class core_course_external extends external_api {
 
         $enrolledusers = get_enrolled_users($coursecontext);
 
-        $users = array_map(function ($user) {
+        $users = array_map(function ($user) use ($PAGE) {
             $user->fullname = fullname($user);
+            $userpicture = new user_picture($user);
+            $userpicture->size = 1;
+            $user->profileimage = $userpicture->get_url($PAGE)->out(false);
             return $user;
         }, $enrolledusers);
         sort($users);
@@ -4119,6 +4123,7 @@ class core_course_external extends external_api {
     public static function user_description() {
         $userfields = array(
             'id'    => new external_value(core_user::get_property_type('id'), 'ID of the user'),
+            'profileimage' => new external_value(PARAM_URL, 'The location of the users larger image', VALUE_OPTIONAL),
             'fullname' => new external_value(PARAM_TEXT, 'The full name of the user', VALUE_OPTIONAL),
             'firstname'   => new external_value(
                     core_user::get_property_type('firstname'),
