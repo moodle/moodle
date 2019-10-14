@@ -322,6 +322,7 @@ class behat_hooks extends behat_base {
 
         // Register behat selectors for theme, if suite is changed. We do it for every suite change.
         if ($suitename !== self::$runningsuite) {
+            self::$runningsuite = $suitename;
             behat_context_helper::set_environment($scope->getEnvironment());
 
             // We need the Mink session to do it and we do it only before the first scenario.
@@ -373,7 +374,6 @@ class behat_hooks extends behat_base {
         // Set the theme if not default.
         if ($suitename !== "default") {
             set_config('theme', $suitename);
-            self::$runningsuite = $suitename;
         }
 
         // Reset the scenariorunning variable to ensure that Step 0 occurs.
