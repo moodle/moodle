@@ -515,7 +515,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::get_department_parameters(), array('criteria' => $criteria));
+        $params = self::validate_parameters(self::get_departments_parameters(), array('criteria' => $criteria));
 
         // Get/check context/capability
         $context = context_system::instance();
