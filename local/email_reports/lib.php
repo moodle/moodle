@@ -268,11 +268,19 @@ function email_reports_cron() {
     $warnnotstartedcourses = $DB->get_records_sql("SELECT * FROM {iomad_courses}
                                                    WHERE warnnotstarted != 0");
     foreach ($warnnotstartedcourses as $warnnotstartedcourse) {
+        $checktime = time() - $warnnotstartedcourse->warnnotstarted * 60 * 60 *24;
         $warnnotstartedusers = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
-                                                   WHERE timestarted = 0
-                                                   AND courseid = :courseid
-                                                   AND timeenrolled < :time",
-                                                   array('time' => time() - $warnnotstartedcourse->warnnotstarted * 60 * 60 *24, 'courseid' => $warnnotstartedcourse->courseid));
+                                                   WHERE courseid = :courseid
+                                                   AND (
+                                                       (timestarted = 0
+                                                       AND timeenrolled < :time1
+                                                       AND licenseallocated IS NULL)
+                                                     ||
+                                                       (timeenrolled IS NULL
+                                                       AND licenseallocated < :time2
+                                                       AND licenseallocated IS NOT NULL)
+                                                   )",
+                                                   array('time1' => $checktime, 'time2' => $checktime, 'courseid' => $warnnotstartedcourse->courseid));
         foreach ($warnnotstartedusers as $notstarteduser) {
             if ($userrec = $DB->get_record('user', array('id' => $notstarteduser->userid, 'suspended' => 0, 'deleted' => 0))) {
                 if ($courserec = $DB->get_record('course', array('id' => $notstarteduser->courseid))) {
