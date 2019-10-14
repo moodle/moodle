@@ -45,12 +45,21 @@ if ($manage) {
     $context = context_system::instance();
     // Make sure the user has the proper capability.
     require_capability('tool/dataprivacy:managedatarequests', $context);
+    navigation_node::override_active_url($returnurl);
 } else {
     // For the case where a user makes request for themselves (or for their children if they are the parent).
     $returnurl = new moodle_url($CFG->wwwroot . '/admin/tool/dataprivacy/mydatarequests.php');
     $context = context_user::instance($USER->id);
 }
+
 $PAGE->set_context($context);
+
+if (!$manage && $profilenode = $PAGE->settingsnav->find('myprofile', null)) {
+    $profilenode->make_active();
+}
+
+$title = get_string('createnewdatarequest', 'tool_dataprivacy');
+$PAGE->navbar->add($title);
 
 // If contactdataprotectionofficer is disabled, send the user back to the profile page, or the privacy policy page.
 // That is, unless you have sufficient capabilities to perform this on behalf of a user.
@@ -100,7 +109,6 @@ if ($data = $mform->get_data()) {
     redirect($returnurl, $redirectmessage);
 }
 
-$title = get_string('createnewdatarequest', 'tool_dataprivacy');
 $PAGE->set_heading($SITE->fullname);
 $PAGE->set_title($title);
 echo $OUTPUT->header();
