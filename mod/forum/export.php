@@ -28,6 +28,9 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/dataformatlib.php');
 
 $forumid = required_param('id', PARAM_INT);
+$userids = optional_param_array('userids', [], PARAM_INT);
+$from = optional_param('from', '', PARAM_INT);
+$to = optional_param('to', '', PARAM_INT);
 
 $vaultfactory = mod_forum\local\container::get_vault_factory();
 $managerfactory = mod_forum\local\container::get_manager_factory();
@@ -141,6 +144,9 @@ $PAGE->set_heading($pagetitle);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
+
+// It is possible that the following fields have been provided in the URL.
+$form->set_data(['userids' => $userids, 'from' => $from, 'to' => $to]);
 
 $form->display();
 
