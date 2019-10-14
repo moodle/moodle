@@ -26,7 +26,7 @@ Feature: Test editing a Matching question
 
   @javascript @_switch_window
   Scenario: Edit a Matching question
-    When I click on "Edit" "link" in the "Matching for editing" "table_row"
+    When I choose "Edit question" action for "Matching for editing" in the question bank
     And I set the following fields to these values:
       | Question name | |
     And I press "id_submitbutton"
@@ -35,14 +35,14 @@ Feature: Test editing a Matching question
       | Question name | Edited Matching name |
     And I press "id_submitbutton"
     Then I should see "Edited Matching name"
-    When I click on "Edit" "link" in the "Edited Matching name" "table_row"
+    When I choose "Edit question" action for "Edited Matching name" in the question bank
     And I set the following fields to these values:
       | Shuffle    | 0   |
       | Question 2 | dog |
       | Question 4 | fly |
     And I press "id_submitbutton"
     Then I should see "Edited Matching name"
-    When I click on "Preview" "link" in the "Edited Matching name" "table_row"
+    When I choose "Preview" action for "Edited Matching name" in the question bank
     And I switch to "questionpreview" window
     Then I should see "frog"
     And I should see "dog"
