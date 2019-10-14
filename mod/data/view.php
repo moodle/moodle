@@ -516,7 +516,7 @@ if ($showactivity) {
                     'name' => $selectallid,
                     'value' => 1,
                     'label' => get_string('selectall'),
-                    'classes' => 'mr-1',
+                    'classes' => 'btn-secondary mr-1',
                 ], true);
                 echo $OUTPUT->render($mastercheckbox);
 

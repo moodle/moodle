@@ -267,7 +267,7 @@ if (empty($students)) {
             $checkbox = new \core\output\checkbox_toggleall('feedback-non-respondents', false, [
                 'id' => 'messageuser-' . $student->id,
                 'name' => 'messageuser[]',
-                'class' => 'mr-1',
+                'classes' => 'mr-1',
                 'value' => $student->id,
                 'label' => get_string('includeuserinrecipientslist', 'mod_feedback', fullname($student)),
                 'labelclasses' => 'accesshide',
