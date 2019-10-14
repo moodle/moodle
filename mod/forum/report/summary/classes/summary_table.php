@@ -54,7 +54,10 @@ class summary_table extends table_sql {
     public $sql;
 
     /** @var int The number of rows to be displayed per page. */
-    protected $perpage = 25;
+    protected $perpage = 50;
+
+    /** @var array The values available for pagination size per page. */
+    protected $perpageoptions = [50, 100, 200];
 
     /** @var \stdClass The course module object of the forum being reported on. */
     protected $cm;
@@ -75,6 +78,9 @@ class summary_table extends table_sql {
      */
     protected $context = null;
 
+    /** @var bool Whether the user has the capability/capabilities to perform bulk operations. */
+    protected $bulkoperations = false;
+
     /**
      * @var bool
      */
@@ -92,8 +98,9 @@ class summary_table extends table_sql {
      * @param array $filters Report filters in the format 'type' => [values].
      * @param bool $bulkoperations Is the user allowed to perform bulk operations?
      * @param bool $canseeprivatereplies Whether the user can see all private replies or not.
+     * @param int $perpage The number of rows to display per page.
      */
-    public function __construct(int $courseid, array $filters, bool $bulkoperations, bool $canseeprivatereplies) {
+    public function __construct(int $courseid, array $filters, bool $bulkoperations, bool $canseeprivatereplies, int $perpage) {
         global $USER, $OUTPUT;
 
         $forumid = $filters['forums'][0];
@@ -103,6 +110,7 @@ class summary_table extends table_sql {
         $this->cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
         $this->context = \context_module::instance($this->cm->id);
         $this->canseeprivatereplies = $canseeprivatereplies;
+        $this->perpage = $perpage;
 
         // Only show their own summary unless they have permission to view all.
         if (!has_capability('forumreport/summary:viewall', $this->context)) {
@@ -793,5 +801,84 @@ class summary_table extends table_sql {
         }
 
         return $this->showwordcharcounts;
+    }
+
+    /**
+     * Set whether the user has the capability/capabilities to perform bulk operations.
+     *
+     * @param bool $allowbulkoperations Whether the user has the relevant capability/capabilities.
+     * @return void
+     */
+    public function set_bulkoperations(bool $allowbulkoperations): void {
+        $this->bulkoperations = $allowbulkoperations;
+    }
+
+    /**
+     * Fetch whether the user has the capability/capabilities to perform bulk operations.
+     *
+     * @return bool
+     */
+    public function get_bulkoperations(): bool {
+        return $this->bulkoperations;
+    }
+
+    /**
+     * Fetch the number of items to be displayed per page.
+     *
+     * @return int
+     */
+    public function get_perpage(): int {
+        return $this->perpage;
+    }
+
+    /**
+     * Overriding method to render the bulk actions and items per page pagination options directly below the table.
+     *
+     * @return void
+     */
+    public function wrap_html_finish(): void {
+        global $OUTPUT;
+
+        $data = new \stdClass();
+        $data->showbulkactions = $this->get_bulkoperations();
+
+        if ($data->showbulkactions) {
+            $data->id = 'formactionid';
+            $data->attributes = [
+                [
+                    'name' => 'data-action',
+                    'value' => 'toggle'
+                ],
+                [
+                    'name' => 'data-togglegroup',
+                    'value' => 'summaryreport-table'
+                ],
+                [
+                    'name' => 'data-toggle',
+                    'value' => 'action'
+                ],
+                [
+                    'name' => 'disabled',
+                    'value' => true
+                ]
+            ];
+            $data->actions = [
+                [
+                    'value' => '#messageselect',
+                    'name' => get_string('messageselectadd')
+                ]
+            ];
+        }
+
+        // Include the pagination size selector.
+        $perpageoptions = array_combine($this->perpageoptions, $this->perpageoptions);
+        $selected = in_array($this->perpage, $this->perpageoptions) ? $this->perpage : $this->perpageoptions[0];
+        $perpageselect = new \single_select(new \moodle_url(''), 'perpage',
+                $perpageoptions, $selected, null, 'selectperpage');
+        $perpageselect->label = get_string('perpage', 'moodle');
+
+        $data->perpage = $OUTPUT->render($perpageselect);
+
+        echo $OUTPUT->render_from_template('forumreport_summary/bulk_action_menu', $data);
     }
 }

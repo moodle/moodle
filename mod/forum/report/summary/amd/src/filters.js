@@ -105,6 +105,14 @@ export const init = (root) => {
         generateWithFilters(event, event.target.search.substr(1));
     });
 
+    // Override rows per page submission so it generates with filters.
+    if (document.forms.selectperpage) {
+        document.forms.selectperpage.onsubmit = (event) => {
+            let getparam = 'perpage=' + document.forms.selectperpage.elements.perpage.value;
+            generateWithFilters(event, getparam);
+        };
+    }
+
     // Submit report via filter
     const submitWithFilter = (containerelement) => {
         // Close the container (eg popover).
