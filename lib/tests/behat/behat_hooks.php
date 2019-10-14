@@ -338,6 +338,13 @@ class behat_hooks extends behat_base {
 
             $this->getSession()->getSelectorsHandler()->registerSelector('named_partial', new $namedpartialclass());
             $this->getSession()->getSelectorsHandler()->registerSelector('named_exact', new $namedexactclass());
+
+            // Register component named selectors.
+            foreach (\core_component::get_component_list() as $subsystem => $components) {
+                foreach (array_keys($components) as $component) {
+                    $this->register_component_selectors_for_component($component);
+                }
+            }
         }
 
         // Reset mink session between the scenarios.
@@ -673,20 +680,6 @@ class behat_hooks extends behat_base {
      */
     protected static function is_first_scenario() {
         return !(self::$initprocessesfinished);
-    }
-
-    /**
-     * Register component selectors.
-     *
-     * @param BeforeScenarioScope $scope scope passed by event fired before scenario.
-     * @BeforeScenario
-     */
-    public function register_component_selectors(BeforeScenarioScope $scope) {
-        foreach (\core_component::get_component_list() as $subsystem => $components) {
-            foreach (array_keys($components) as $component) {
-                $this->register_component_selectors_for_component($component);
-            }
-        }
     }
 
     /**
