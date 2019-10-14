@@ -102,9 +102,10 @@ class summary_table extends table_sql {
      * @param bool $allowbulkoperations Is the user allowed to perform bulk operations?
      * @param bool $canseeprivatereplies Whether the user can see all private replies or not.
      * @param int $perpage The number of rows to display per page.
+     * @param bool $canexport Is the user allowed to export records?
      */
     public function __construct(int $courseid, array $filters, bool $allowbulkoperations,
-            bool $canseeprivatereplies, int $perpage) {
+            bool $canseeprivatereplies, int $perpage, bool $canexport) {
         global $USER, $OUTPUT;
 
         $forumid = $filters['forums'][0];
@@ -155,6 +156,10 @@ class summary_table extends table_sql {
 
         $columnheaders['earliestpost'] = get_string('earliestpost', 'forumreport_summary');
         $columnheaders['latestpost'] = get_string('latestpost', 'forumreport_summary');
+
+        if ($canexport) {
+            $columnheaders['export'] = '';
+        }
 
         $this->define_columns(array_keys($columnheaders));
         $this->define_headers(array_values($columnheaders));
@@ -275,6 +280,23 @@ class summary_table extends table_sql {
         global $USER;
 
         return empty($data->latestpost) ? '-' : userdate($data->latestpost, "", \core_date::get_user_timezone($USER));
+    }
+
+    /**
+     * Generate the export column.
+     *
+     * @param \stdClass $data The row data.
+     * @return string The link to export content belonging to the row.
+     */
+    public function col_export(\stdClass $data): string {
+        global $OUTPUT;
+
+        $params = [
+            'id' => $this->cm->instance, // Forum id.
+            'userids[]' => $data->userid // User id.
+        ];
+
+        return $OUTPUT->action_link(new \moodle_url('/mod/forum/export.php', $params), get_string('export', 'mod_forum'));
     }
 
     /**

@@ -80,8 +80,10 @@ $PAGE->navbar->add(get_string('nodetitle', "forumreport_summary"));
 // Prepare and display the report.
 $allowbulkoperations = !$download && !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
 $canseeprivatereplies = has_capability('mod/forum:readprivatereplies', $context);
+$canexport = has_capability('mod/forum:exportforum', $context);
 
-$table = new \forumreport_summary\summary_table($courseid, $filters, $allowbulkoperations, $canseeprivatereplies, $perpage);
+$table = new \forumreport_summary\summary_table($courseid, $filters, $allowbulkoperations,
+        $canseeprivatereplies, $perpage, $canexport);
 $table->baseurl = $url;
 
 if ($download) {
