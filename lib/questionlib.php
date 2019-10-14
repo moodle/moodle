@@ -1440,11 +1440,25 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
             if ($category->contextid == $contextid) {
                 $cid = $category->id;
                 if ($currentcat != $cid || $currentcat == 0) {
-                    $countstring = !empty($category->questioncount) ?
-                            " ($category->questioncount)" : '';
-                    $categoriesarray[$contextstring][$cid] =
-                            format_string($category->indentedname, true,
-                                array('context' => $context)) . $countstring;
+                    $a = new stdClass;
+                    $a->name = format_string($category->indentedname, true,
+                            array('context' => $context));
+                    if ($category->idnumber !== null && $category->idnumber !== '') {
+                        $a->idnumber = s($category->idnumber);
+                    }
+                    if (!empty($category->questioncount)) {
+                        $a->questioncount = $category->questioncount;
+                    }
+                    if (isset($a->idnumber) && isset($a->questioncount)) {
+                        $formattedname = get_string('categorynamewithidnumberandcount', 'question', $a);
+                    } else if (isset($a->idnumber)) {
+                        $formattedname = get_string('categorynamewithidnumber', 'question', $a);
+                    } else if (isset($a->questioncount)) {
+                        $formattedname = get_string('categorynamewithcount', 'question', $a);
+                    } else {
+                        $formattedname = $a->name;
+                    }
+                    $categoriesarray[$contextstring][$cid] = $formattedname;
                 }
             }
         }
@@ -1875,14 +1889,14 @@ class question_edit_contexts {
     }
 
     /**
-     * @return array all parent contexts
+     * @return context[] all parent contexts
      */
     public function all() {
         return $this->allcontexts;
     }
 
     /**
-     * @return object lowest context which must be either the module or course context
+     * @return context lowest context which must be either the module or course context
      */
     public function lowest() {
         return $this->allcontexts[0];
@@ -1890,7 +1904,7 @@ class question_edit_contexts {
 
     /**
      * @param string $cap capability
-     * @return array parent contexts having capability, zero based index
+     * @return context[] parent contexts having capability, zero based index
      */
     public function having_cap($cap) {
         $contextswithcap = array();
@@ -1904,7 +1918,7 @@ class question_edit_contexts {
 
     /**
      * @param array $caps capabilities
-     * @return array parent contexts having at least one of $caps, zero based index
+     * @return context[] parent contexts having at least one of $caps, zero based index
      */
     public function having_one_cap($caps) {
         $contextswithacap = array();
@@ -1921,14 +1935,14 @@ class question_edit_contexts {
 
     /**
      * @param string $tabname edit tab name
-     * @return array parent contexts having at least one of $caps, zero based index
+     * @return context[] parent contexts having at least one of $caps, zero based index
      */
     public function having_one_edit_tab_cap($tabname) {
         return $this->having_one_cap(self::$caps[$tabname]);
     }
 
     /**
-     * @return those contexts where a user can add a question and then use it.
+     * @return context[] those contexts where a user can add a question and then use it.
      */
     public function having_add_and_use() {
         $contextswithcap = array();
@@ -1993,7 +2007,7 @@ class question_edit_contexts {
     /**
      * Throw error if at least one parent context hasn't got one of the caps $caps
      *
-     * @param array $cap capabilities
+     * @param array $caps capabilities
      */
     public function require_one_cap($caps) {
         if (!$this->have_one_cap($caps)) {

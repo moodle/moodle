@@ -32,9 +32,11 @@ Feature: A teacher can put questions in categories in the question bank
       | Name            | New Category 1    |
       | Parent category | Top               |
       | Category info   | Created as a test |
+      | ID number       | newcatidnumber    |
     And I press "submitbutton"
-    Then I should see "New Category 1 (0)"
+    Then I should see "New Category 1 ID number newcatidnumber (0)"
     And I should see "Created as a test" in the "New Category 1" "list_item"
+    And "New Category 1 [newcatidnumber]" "option" should exist in the "Parent category" "select"
 
   Scenario: A question category can be edited
     When I navigate to "Question bank > Categories" in current page administration

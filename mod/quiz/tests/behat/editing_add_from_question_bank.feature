@@ -21,9 +21,9 @@ Feature: Adding questions to a quiz from the question bank
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name             | user     | questiontext     |
-      | Test questions   | essay     | question 01 name | admin    | Question 01 text |
-      | Test questions   | essay     | question 02 name | teacher1 | Question 02 text |
+      | questioncategory | qtype     | name             | user     | questiontext     | idnumber |
+      | Test questions   | essay     | question 01 name | admin    | Question 01 text |          |
+      | Test questions   | essay     | question 02 name | teacher1 | Question 02 text | qidnum   |
 
   Scenario: The questions can be filtered by tag
     Given I log in as "teacher1"
@@ -42,9 +42,12 @@ Feature: Adding questions to a quiz from the question bank
     And I navigate to "Edit quiz" in current page administration
     And I open the "last" add to quiz menu
     And I follow "from question bank"
+    Then I should see "foo" in the "question 01 name" "table_row"
+    And I should see "bar" in the "question 02 name" "table_row"
+    And I should see "qidnum" in the "question 02 name" "table_row"
     And I set the field "Filter by tags..." to "foo"
     And I press key "13" in the field "Filter by tags..."
-    Then I should see "question 01 name" in the "categoryquestions" "table"
+    And I should see "question 01 name" in the "categoryquestions" "table"
     And I should not see "question 02 name" in the "categoryquestions" "table"
 
   Scenario: The question modal can be paginated

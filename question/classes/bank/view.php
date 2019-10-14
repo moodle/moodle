@@ -17,6 +17,8 @@
 
 namespace core_question\bank;
 
+use core_question\bank\search\condition;
+
 /**
  * Functions used to show question editing interface
  *
@@ -50,21 +52,80 @@ namespace core_question\bank;
 class view {
     const MAX_SORTS = 3;
 
+    /**
+     * @var \moodle_url base URL for the current page. Used as the
+     * basis for making URLs for actions that reload the page.
+     */
     protected $baseurl;
+
+    /**
+     * @var \moodle_url used as a basis for URLs that edit a question.
+     */
     protected $editquestionurl;
-    protected $quizorcourseid;
+
+    /**
+     * @var \question_edit_contexts
+     */
     protected $contexts;
+
+    /**
+     * @var object|\cm_info|null if we are in a module context, the cm.
+     */
     protected $cm;
+
+    /**
+     * @var object the course we are within.
+     */
     protected $course;
-    protected $visiblecolumns;
-    protected $extrarows;
+
+    /**
+     * @var \question_bank_column_base[] these are all the 'columns' that are
+     * part of the display. Array keys are the class name.
+     */
     protected $requiredcolumns;
+
+    /**
+     * @var \question_bank_column_base[] these are the 'columns' that are
+     * actually displayed as a column, in order. Array keys are the class name.
+     */
+    protected $visiblecolumns;
+
+    /**
+     * @var \question_bank_column_base[] these are the 'columns' that are
+     * actually displayed as an additional row (e.g. question text), in order.
+     * Array keys are the class name.
+     */
+    protected $extrarows;
+
+    /**
+     * @var array list of column class names for which columns to sort on.
+     */
     protected $sort;
+
+    /**
+     * @var int|null id of the a question to highlight in the list (if present).
+     */
     protected $lastchangedid;
+
+    /**
+     * @var string SQL to count the number of questions matching the current
+     * search conditions.
+     */
     protected $countsql;
+
+    /**
+     * @var string SQL to actually load the question data to display.
+     */
     protected $loadsql;
+
+    /**
+     * @var array params used by $countsql and $loadsql (which currently must be the same).
+     */
     protected $sqlparams;
-    /** @var array of \core_question\bank\search\condition objects. */
+
+    /**
+     * @var condition[] search conditions.
+     */
     protected $searchconditions = array();
 
     /**
@@ -75,18 +136,10 @@ class view {
      * @param object $cm (optional) activity settings.
      */
     public function __construct($contexts, $pageurl, $course, $cm = null) {
-        global $CFG, $PAGE;
-
         $this->contexts = $contexts;
         $this->baseurl = $pageurl;
         $this->course = $course;
         $this->cm = $cm;
-
-        if (!empty($cm) && $cm->modname == 'quiz') {
-            $this->quizorcourseid = '&amp;quizid=' . $cm->instance;
-        } else {
-            $this->quizorcourseid = '&amp;courseid=' .$this->course->id;
-        }
 
         // Create the url of the new question page to forward to.
         $returnurl = $pageurl->out_as_local_url(false);
@@ -102,7 +155,7 @@ class view {
 
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         $this->init_sort();
-        $this->init_search_conditions($this->contexts, $this->course, $this->cm);
+        $this->init_search_conditions();
     }
 
     /**
@@ -124,9 +177,9 @@ class view {
 
         if (empty($CFG->questionbankcolumns)) {
             $questionbankcolumns = array('checkbox_column', 'question_type_column',
-                                     'question_name_column', 'tags_action_column', 'edit_action_column',
-                                     'copy_action_column', 'preview_action_column', 'delete_action_column',
-                                     'creator_name_column', 'modifier_name_column');
+                    'question_name_idnumber_tags_column', 'tags_action_column', 'edit_action_column',
+                    'copy_action_column', 'preview_action_column', 'delete_action_column',
+                    'creator_name_column', 'modifier_name_column');
         } else {
              $questionbankcolumns = explode(',', $CFG->questionbankcolumns);
         }
@@ -226,8 +279,10 @@ class view {
 
     /**
      * Deal with a sort name of the form columnname, or colname_subsort by
-     * breaking it up, validating the bits that are presend, and returning them.
+     * breaking it up, validating the bits that are present, and returning them.
      * If there is no subsort, then $subsort is returned as ''.
+     *
+     * @param string $sort the sort parameter to process.
      * @return array array($colname, $subsort).
      */
     protected function parse_subsort($sort) {
@@ -272,7 +327,7 @@ class view {
                 }
             }
             // Deal with subsorts.
-            list($colname, $subsort) = $this->parse_subsort($sort);
+            list($colname) = $this->parse_subsort($sort);
             $this->requiredcolumns[$colname] = $this->get_column_type($colname);
             $this->sort[$sort] = $order;
         }
@@ -296,7 +351,7 @@ class view {
     }
 
     /**
-     * @param $sort a column or column_subsort name.
+     * @param string $sort a column or column_subsort name.
      * @return int the current sort order for this column -1, 0, 1
      */
     public function get_primary_sort_order($sort) {
@@ -311,6 +366,7 @@ class view {
 
     /**
      * Get a URL to redisplay the page with a new sort for the question bank.
+     *
      * @param string $sort the column, or column_subsort to sort on.
      * @param bool $newsortreverse whether to sort in reverse order.
      * @return string The new URL.
@@ -336,7 +392,8 @@ class view {
 
     /**
      * Create the SQL query to retrieve the indicated questions
-     * @param stdClass $category no longer used.
+     *
+     * @param \stdClass $category no longer used.
      * @param bool $recurse no longer used.
      * @param bool $showhidden no longer used.
      * @deprecated since Moodle 2.7 MDL-40313.
@@ -355,8 +412,6 @@ class view {
      * \core_question\bank\search\condition filters.
      */
     protected function build_query() {
-        global $DB;
-
         // Get the required tables and fields.
         $joins = array();
         $fields = array('q.hidden', 'q.category');
@@ -402,12 +457,19 @@ class view {
         return $DB->count_records_sql($this->countsql, $this->sqlparams);
     }
 
+    /**
+     * Load the questions we need to display.
+     *
+     * @param int $page page to display.
+     * @param int $perpage number of questions per page.
+     * @return \moodle_recordset questionid => data about each question.
+     */
     protected function load_page_questions($page, $perpage) {
         global $DB;
         $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams, $page * $perpage, $perpage);
-        if (!$questions->valid()) {
-            // No questions on this page. Reset to page 0.
+        if (empty($questions)) {
             $questions->close();
+            // No questions on this page. Reset to page 0.
             $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams, 0, $perpage);
         }
         return $questions;
@@ -424,7 +486,7 @@ class view {
     /**
      * Get the URL for duplicating a given question.
      * @param int $questionid the question id.
-     * @return moodle_url the URL.
+     * @return string the URL, HTML-escaped.
      */
     public function copy_question_url($questionid) {
         return $this->editquestionurl->out(true, array('id' => $questionid, 'makecopy' => 1));
@@ -432,7 +494,7 @@ class view {
 
     /**
      * Get the context we are displaying the question bank for.
-     * @return context context object.
+     * @return \context context object.
      */
     public function get_most_specific_context() {
         return $this->contexts->lowest();
@@ -440,8 +502,8 @@ class view {
 
     /**
      * Get the URL to preview a question.
-     * @param stdClass $questiondata the data defining the question.
-     * @return moodle_url the URL.
+     * @param \stdClass $questiondata the data defining the question.
+     * @return \moodle_url the URL.
      */
     public function preview_question_url($questiondata) {
         return question_preview_url($questiondata->id, null, null, null, null,
@@ -458,7 +520,15 @@ class view {
      * deleteselected Deletes the selected questions from the category
      * Other actions:
      * category      Chooses the category
-     * displayoptions Sets display options
+     *
+     * @param string $tabname question bank edit tab name, for permission checking.
+     * @param int $page the page number to show.
+     * @param int $perpage the number of questions per page to show.
+     * @param string $cat 'categoryid,contextid'.
+     * @param int $recurse     Whether to include subcategories.
+     * @param bool $showhidden  whether deleted questions should be displayed.
+     * @param bool $showquestiontext whether the text of each question should be shown in the list. Deprecated.
+     * @param array $tagids current list of selected tags.
      */
     public function display($tabname, $page, $perpage, $cat,
             $recurse, $showhidden, $showquestiontext, $tagids = []) {
@@ -468,7 +538,7 @@ class view {
             return;
         }
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
-        list($categoryid, $contextid) = explode(',', $cat);
+        list(, $contextid) = explode(',', $cat);
         $catcontext = \context::instance_by_id($contextid);
         $thiscontext = $this->get_most_specific_context();
         // Category selection form.
@@ -521,7 +591,7 @@ class view {
 
     /**
      * prints category information
-     * @param stdClass $category the category row from the database.
+     * @param \stdClass $category the category row from the database.
      * @deprecated since Moodle 2.7 MDL-40313.
      * @see \core_question\bank\search\condition
      * @todo MDL-41978 This will be deleted in Moodle 2.8
@@ -568,7 +638,7 @@ class view {
      */
     protected function display_options($recurse, $showhidden, $showquestiontext) {
         debugging('display_options() is deprecated, please use display_options_form instead.', DEBUG_DEVELOPER);
-        return $this->display_options_form($showquestiontext);
+        $this->display_options_form($showquestiontext);
     }
 
     /**
@@ -594,7 +664,7 @@ class view {
     /**
      * Display the form with options for which questions are displayed and how they are displayed.
      * @param bool $showquestiontext Display the text of the question within the list.
-     * @param string $path path to the script displaying this page.
+     * @param string $scriptpath path to the script displaying this page.
      * @param bool $showtextoption whether to include the 'Show question text' checkbox.
      */
     protected function display_options_form($showquestiontext, $scriptpath = '/question/edit.php',
@@ -619,7 +689,7 @@ class view {
         echo \html_writer::input_hidden_params($this->baseurl, $excludes);
 
         foreach ($this->searchconditions as $searchcondition) {
-            echo $searchcondition->display_options($this);
+            echo $searchcondition->display_options();
         }
         if ($showtextoption) {
             $this->display_showtext_checkbox($showquestiontext);
@@ -639,7 +709,7 @@ class view {
         print_collapsible_region_start('', 'advancedsearch', get_string('advancedsearchoptions', 'question'),
                                                'question_bank_advanced_search');
         foreach ($this->searchconditions as $searchcondition) {
-            echo $searchcondition->display_options_adv($this);
+            echo $searchcondition->display_options_adv();
         }
         print_collapsible_region_end();
     }
@@ -666,7 +736,6 @@ class view {
     }
 
     protected function create_new_question_form($category, $canadd) {
-        global $CFG;
         echo '<div class="createnewquestion">';
         if ($canadd) {
             create_new_question_button($category->id, $this->editquestionurl->params(),
@@ -681,20 +750,20 @@ class view {
      * Prints the table of questions in a category with interactions
      *
      * @param array      $contexts    Not used!
-     * @param moodle_url $pageurl     The URL to reload this page.
+     * @param \moodle_url $pageurl     The URL to reload this page.
      * @param string     $categoryandcontext 'categoryID,contextID'.
-     * @param stdClass   $cm          Not used!
-     * @param bool       $recurse     Whether to include subcategories.
+     * @param \stdClass  $cm          Not used!
+     * @param int        $recurse     Whether to include subcategories.
      * @param int        $page        The number of the page to be displayed
      * @param int        $perpage     Number of questions to show per page
-     * @param bool       $showhidden  whether deleted questions should be displayed.
-     * @param bool       $showquestiontext whether the text of each question should be shown in the list. Deprecated.
+     * @param bool       $showhidden  Not used! This is now controlled in a different way.
+     * @param bool       $showquestiontext Not used! This is now controlled in a different way.
      * @param array      $addcontexts contexts where the user is allowed to add new questions.
      */
     protected function display_question_list($contexts, $pageurl, $categoryandcontext,
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
             $showquestiontext = false, $addcontexts = array()) {
-        global $CFG, $DB, $OUTPUT, $PAGE;
+        global $OUTPUT;
 
         // This function can be moderately slow with large question counts and may time out.
         // We probably do not want to raise it to unlimited, so randomly picking 5 minutes.
@@ -715,11 +784,18 @@ class view {
         if ($totalnumber == 0) {
             return;
         }
-        $questions = $this->load_page_questions($page, $perpage);
+        $questionsrs = $this->load_page_questions($page, $perpage);
+        $questions = [];
+        foreach ($questionsrs as $question) {
+            $questions[$question->id] = $question;
+        }
+        $questionsrs->close();
+        foreach ($this->requiredcolumns as $name => $column) {
+            $column->load_additional_data($questions);
+        }
 
         echo '<div class="categorypagingbarcontainer">';
-        $pageingurl = new \moodle_url('edit.php');
-        $r = $pageingurl->params($pageurl->params());
+        $pageingurl = new \moodle_url('edit.php', $pageurl->params());
         $pagingbar = new \paging_bar($totalnumber, $page, $perpage, $pageingurl);
         $pagingbar->pagevar = 'qpage';
         echo $OUTPUT->render($pagingbar);
@@ -737,7 +813,6 @@ class view {
             $this->print_table_row($question, $rowcount);
             $rowcount += 1;
         }
-        $questions->close();
         $this->end_table();
         echo "</div>\n";
 
@@ -771,8 +846,8 @@ class view {
      * Display the controls at the bottom of the list of questions.
      * @param int      $totalnumber Total number of questions that might be shown (if it was not for paging).
      * @param bool     $recurse     Whether to include subcategories.
-     * @param stdClass $category    The question_category row from the database.
-     * @param context  $catcontext  The context of the category being displayed.
+     * @param \stdClass $category    The question_category row from the database.
+     * @param \context  $catcontext  The context of the category being displayed.
      * @param array    $addcontexts contexts where the user is allowed to add new questions.
      */
     protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts) {
@@ -865,7 +940,7 @@ class view {
     }
 
     public function process_actions() {
-        global $CFG, $DB;
+        global $DB;
         // Now, check for commands on this page and modify variables as necessary.
         if (optional_param('move', false, PARAM_BOOL) and confirm_sesskey()) {
             // Move selected questions to new category.
@@ -886,7 +961,6 @@ class view {
             }
             if ($questionids) {
                 list($usql, $params) = $DB->get_in_or_equal($questionids);
-                $sql = "";
                 $questions = $DB->get_records_sql("
                         SELECT q.*, c.contextid
                         FROM {question} q
@@ -976,11 +1050,13 @@ class view {
 
             return true;
         }
+
+        return false;
     }
 
     /**
      * Add another search control to this view.
-     * @param \core_question\bank\search\condition $searchcondition the condition to add.
+     * @param condition $searchcondition the condition to add.
      */
     public function add_searchcondition($searchcondition) {
         $this->searchconditions[] = $searchcondition;

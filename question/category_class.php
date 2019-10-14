@@ -143,8 +143,13 @@ class question_category_list_item extends list_item {
         $questionbankurl = new moodle_url('/question/edit.php', $this->parentlist->pageurl->params());
         $questionbankurl->param('cat', $category->id . ',' . $category->contextid);
         $item = '';
-        $text = format_string($category->name, true, ['context' => $this->parentlist->context])
-                . ' (' . $category->questioncount . ')';
+        $text = format_string($category->name, true, ['context' => $this->parentlist->context]);
+        if ($category->idnumber !== null && $category->idnumber !== '') {
+            $text .= ' ' . html_writer::span(
+                    html_writer::span(get_string('idnumber', 'question'), 'accesshide') .
+                    ' ' . $category->idnumber, 'badge badge-primary');
+        }
+        $text .= ' (' . $category->questioncount . ')';
         $item .= html_writer::tag('b', html_writer::link($questionbankurl, $text,
                         ['title' => $editqestions]) . ' ');
         $item .= format_text($category->info, $category->infoformat,

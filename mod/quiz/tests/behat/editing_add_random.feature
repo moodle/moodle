@@ -35,7 +35,7 @@ Feature: Adding random questions to a quiz based on category and tags
       | Tags | foo |
     And I press "id_submitbutton"
     And I click on "Manage tags" "link" in the "question 2 name" "table_row"
-    And I set the following fields to these values:
+    And I set the following fields in the "Question tags" "dialogue" to these values:
       | Tags | bar |
     And I press "Save changes"
     And I am on "Course 1" course homepage
