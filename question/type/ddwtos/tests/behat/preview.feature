@@ -26,7 +26,7 @@ Feature: Preview a drag-drop into text question
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
-    When I click on "Preview" "link" in the "Drag to text" "table_row"
+    When I choose "Preview" action for "Drag to text" in the question bank
     And I switch to "questionpreview" window
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
     # Keep window large else drag will scroll the window to find element.
@@ -42,7 +42,7 @@ Feature: Preview a drag-drop into text question
 
   @javascript
   Scenario: Preview a question using the keyboard & submit incomplete.
-    When I click on "Preview" "link" in the "Drag to text" "table_row"
+    When I choose "Preview" action for "Drag to text" in the question bank
     And I switch to "questionpreview" window
     And I type " " into space "1" in the drag and drop onto image question
     And I type "   " into space "2" in the drag and drop onto image question
@@ -54,7 +54,7 @@ Feature: Preview a drag-drop into text question
 
   @javascript
   Scenario: Preview a question using the keyboard.
-    When I click on "Preview" "link" in the "Drag to text" "table_row"
+    When I choose "Preview" action for "Drag to text" in the question bank
     And I switch to "questionpreview" window
     And I type "  " into space "1" in the drag and drop onto image question
     And I type "  " into space "2" in the drag and drop onto image question
@@ -70,7 +70,7 @@ Feature: Preview a drag-drop into text question
       | questioncategory | qtype  | name         | template  |
       | Test questions   | ddwtos | Funny groups | oddgroups |
     And I reload the page
-    When I click on "Preview" "link" in the "Funny groups" "table_row"
+    When I choose "Preview" action for "Funny groups" in the question bank
     And I switch to "questionpreview" window
     And I type " " into space "1" in the drag and drop onto image question
     And I type " " into space "2" in the drag and drop onto image question

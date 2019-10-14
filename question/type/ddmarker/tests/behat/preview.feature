@@ -26,7 +26,7 @@ Feature: Preview a drag-drop marker question
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
-    When I click on "Preview" "link" in the "Drag markers" "table_row"
+    When I choose "Preview" action for "Drag markers" in the question bank
     And I switch to "questionpreview" window
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
     # Keep window large else drag will scroll the window to find element.
@@ -44,7 +44,7 @@ Feature: Preview a drag-drop marker question
 
   @javascript
   Scenario: Preview a question using the keyboard.
-    When I click on "Preview" "link" in the "Drag markers" "table_row"
+    When I choose "Preview" action for "Drag markers" in the question bank
     And I switch to "questionpreview" window
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
     # Keep window large else drag will scroll the window to find element.

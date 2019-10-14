@@ -86,4 +86,21 @@ class behat_question extends behat_question_base {
         $xpath = $questionxpath . "/div[@class='info']/div[@class='state' and contains(., {$stateliteral})]";
         $this->find('xpath', $xpath, $exception);
     }
+
+    /**
+     * Activates a particular action on a particular question in the question bank UI.
+     *
+     * @When I choose :action action for :questionname in the question bank
+     * @param string $action the label for the action you want to activate.
+     * @param string $questionname the question name.
+     */
+    public function i_action_the_question($action, $questionname) {
+        if ($action == 'Edit question') {
+            $action = 'Edit';
+        }
+
+        // Click the action from the menu.
+        $this->execute("behat_general::i_click_on_in_the",
+                [$action, 'link', $questionname, 'table_row']);
+    }
 }
