@@ -475,6 +475,7 @@ class question_category_object {
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
         $cat->idnumber = $idnumber;
+
         $categoryid = $DB->insert_record("question_categories", $cat);
 
         // Log the creation of this category.
@@ -537,6 +538,7 @@ class question_category_object {
             }
         }
 
+        $updateidnumber = true;
         if ((string) $idnumber === '') {
             $idnumber = null;
         } else if (!empty($tocontextid)) {
@@ -544,6 +546,7 @@ class question_category_object {
             if ($DB->record_exists('question_categories',
                     ['idnumber' => $idnumber, 'contextid' => $tocontextid])) {
                 $idnumber = null;
+                $updateidnumber = false;
             }
         }
 
@@ -555,7 +558,9 @@ class question_category_object {
         $cat->infoformat = $newinfoformat;
         $cat->parent = $parentid;
         $cat->contextid = $tocontextid;
-        $cat->idnumber = $idnumber;
+        if ($updateidnumber) {
+            $cat->idnumber = $idnumber;
+        }
         if ($newstamprequired) {
             $cat->stamp = make_unique_id_code();
         }
