@@ -346,6 +346,23 @@ class behat_util extends testing_util {
     }
 
     /**
+     * Removes config settings that were added to the main $CFG config within the Behat CLI
+     * run.
+     *
+     * Database storage is already handled by reset_database and existing config values will
+     * be reset automatically by initialise_cfg(), so we only need to remove added ones.
+     */
+    public static function remove_added_config() {
+        global $CFG;
+        if (!empty($CFG->behat_cli_added_config)) {
+            foreach ($CFG->behat_cli_added_config as $key => $value) {
+                unset($CFG->{$key});
+            }
+            unset($CFG->behat_cli_added_config);
+        }
+    }
+
+    /**
      * Reset contents of all database tables to initial values, reset caches, etc.
      */
     public static function reset_all_data() {
@@ -375,6 +392,7 @@ class behat_util extends testing_util {
 
         // Initialise $CFG with default values. This is needed for behat cli process, so we don't have modified
         // $CFG values from the old run. @see set_config.
+        self::remove_added_config();
         initialise_cfg();
     }
 
