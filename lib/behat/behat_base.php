@@ -1018,6 +1018,56 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Convert page names to URLs for steps like 'When I am on the "[page name]" page'.
+     *
+     * You should override this as appropriate for your plugin. The method
+     * {@link behat_navigation::resolve_core_page_url()} is a good example.
+     *
+     * Your overridden method should document the recognised page types with
+     * a table like this:
+     *
+     * Recognised page names are:
+     * | Page            | Description                                                    |
+     *
+     * @param string $page name of the page, with the component name removed e.g. 'Admin notification'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_url(string $page): moodle_url {
+        throw new Exception('Component "' . get_class($this) .
+                '" does not support the generic \'When I am on the "' . $page .
+                '" page\' navigation step.');
+    }
+
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * A typical example might be:
+     *     When I am on the "Test quiz" "mod_quiz > Responses report" page
+     * which would cause this method in behat_mod_quiz to be called with
+     * arguments 'Responses report', 'Test quiz'.
+     *
+     * You should override this as appropriate for your plugin. The method
+     * {@link behat_navigation::resolve_core_page_instance_url()} is a good example.
+     *
+     * Your overridden method should document the recognised page types with
+     * a table like this:
+     *
+     * Recognised page names are:
+     * | Type      | identifier meaning | Description                                     |
+     *
+     * @param string $type identifies which type of page this is, e.g. 'Attempt review'.
+     * @param string $identifier identifies the particular page, e.g. 'Test quiz > student > Attempt 1'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        throw new Exception('Component "' . get_class($this) .
+                '" does not support the generic \'When I am on the "' . $identifier .
+                '" "' . $type . '" page\' navigation step.');
+    }
+
+    /**
      * Gets the required timeout in seconds.
      *
      * @param int $timeout One of the TIMEOUT constants
