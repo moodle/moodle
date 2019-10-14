@@ -229,7 +229,8 @@ class renderer {
                         }
 
                         if ($displaymode === FORUM_MODE_MODERN) {
-                            $exportedpost->showactionmenu = $exportedpost->capabilities['controlreadstatus'] ||
+                            $exportedpost->showactionmenu = $exportedpost->capabilities['view'] ||
+                                                            $exportedpost->capabilities['controlreadstatus'] ||
                                                             $exportedpost->capabilities['edit'] ||
                                                             $exportedpost->capabilities['split'] ||
                                                             $exportedpost->capabilities['delete'] ||

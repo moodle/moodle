@@ -137,16 +137,6 @@
                             {{/author.groups}}
 
                             {{^readonly}}
-                                {{#capabilities.view}}
-                                    <a
-                                        href="{{{urls.view}}}"
-                                        class="d-inline-block mr-1 icon-no-margin"
-                                        title="{{#str}} permanentlinktopost, mod_forum {{/str}}"
-                                    >
-                                        {{#pix}} e/insert_edit_link, core {{/pix}}
-                                    </a>
-                                {{/capabilities.view}}
-
                                 {{#showactionmenu}}
                                     <div class="dropdown">
                                         <button
@@ -163,6 +153,15 @@
                                         <!-- inline style to fix RTL placement bug -->
                                         <div class="dropdown-menu dropdown-menu-right rounded-lg shadow border-0" aria-labelledby="post-actions-menu-{{uniqid}}" style="right: auto">
                                             {{#capabilities}}
+                                                {{#view}}
+                                                    <a
+                                                        href="{{{urls.view}}}"
+                                                        class="dropdown-item"
+                                                        role="menuitem"
+                                                    >
+                                                        {{#str}} permalink, mod_forum {{/str}}
+                                                    </a>
+                                                {{/view}}
                                                 {{#controlreadstatus}}
                                                     {{#unread}}
                                                         <a

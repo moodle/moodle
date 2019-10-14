@@ -135,7 +135,13 @@ define([
                         switch (mode) {
                             case DISPLAYCONSTANTS.MODERN:
                                 var capabilities = post.capabilities;
-                                post.showactionmenu = capabilities.controlreadstatus ||
+                                var currentAuthorName = currentRoot.children()
+                                                                   .not(Selectors.post.repliesContainer)
+                                                                   .find(Selectors.post.authorName)
+                                                                   .text();
+                                post.parentauthorname = currentAuthorName;
+                                post.showactionmenu = capabilities.view ||
+                                                      capabilities.controlreadstatus ||
                                                       capabilities.edit ||
                                                       capabilities.split ||
                                                       capabilities.delete ||
