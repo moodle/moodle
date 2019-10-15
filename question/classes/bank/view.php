@@ -347,7 +347,10 @@ class view {
     }
 
     protected function default_sort() {
-        return array('core_question\bank\question_type_column' => 1, 'core_question\bank\question_name_column' => 1);
+        return array(
+            'core_question\bank\question_type_column' => 1,
+            'core_question\bank\question_name_idnumber_tags_column-name' => 1
+        );
     }
 
     /**

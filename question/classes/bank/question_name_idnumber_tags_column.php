@@ -78,7 +78,7 @@ class question_name_idnumber_tags_column extends question_name_column {
     public function is_sortable() {
         return [
             'name' => ['field' => 'q.name', 'title' => get_string('questionname', 'question')],
-            'lastname' => ['field' => 'q.idnumber', 'title' => get_string('idnumber', 'question')],
+            'idnumber' => ['field' => 'q.idnumber', 'title' => get_string('idnumber', 'question')],
         ];
     }
 

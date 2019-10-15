@@ -18,10 +18,10 @@ Feature: The questions in the question bank can be sorted in various ways
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name              | user     | questiontext    | idnumber |
-      | Test questions   | essay     | A question 1 name | admin    | Question 1 text |          |
-      | Test questions   | essay     | B question 2 name | teacher1 | Question 2 text |          |
-      | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text | numidnum |
+      | questioncategory | qtype     | name              | user     | questiontext    | idnumber  |
+      | Test questions   | essay     | A question 1 name | admin    | Question 1 text | numidnuma |
+      | Test questions   | essay     | B question 2 name | teacher1 | Question 2 text |           |
+      | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text | numidnumc |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank > Questions" in current page administration
@@ -33,8 +33,10 @@ Feature: The questions in the question bank can be sorted in various ways
   @javascript
   Scenario: The questions can be sorted by idnumber
     When I follow "Sort by ID number ascending"
-    Then "C question 3 name" "checkbox" should appear before "A question 1 name" "checkbox"
-    And I should see "numidnum" in the "C question 3 name" "table_row"
+    Then "C question 3 name" "checkbox" should appear after "A question 1 name" "checkbox"
+    And I should see "numidnumc" in the "C question 3 name" "table_row"
+    And I follow "Sort by ID number descending"
+    And "C question 3 name" "checkbox" should appear before "A question 1 name" "checkbox"
 
   @javascript
   Scenario: The questions can be sorted in reverse order by type
