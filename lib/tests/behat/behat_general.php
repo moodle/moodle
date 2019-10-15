@@ -765,7 +765,7 @@ class behat_general extends behat_base {
      * @Then :preelement :preselectortype should appear before :postelement :postselectortype in the :containerelement :containerselectortype
      * @throws ExpectationException
      * @param string $preelement The locator of the preceding element
-     * @param string $preselectortype The locator of the preceding element
+     * @param string $preselectortype The selector type of the preceding element
      * @param string $postelement The locator of the latest element
      * @param string $postselectortype The selector type of the latest element
      * @param string $containerelement
@@ -779,7 +779,7 @@ class behat_general extends behat_base {
         ?string $containerelement = null,
         ?string $containerselectortype = null
     ) {
-        $msg = "'{$preelement}' '{$preselectortype}' does not appear after '{$postelement}' '{$postselectortype}'";
+        $msg = "'{$preelement}' '{$preselectortype}' does not appear before '{$postelement}' '{$postselectortype}'";
         $this->check_element_order(
             $containerelement,
             $containerselectortype,
@@ -800,7 +800,7 @@ class behat_general extends behat_base {
      * @param string $postelement The locator of the latest element
      * @param string $postselectortype The selector type of the latest element
      * @param string $preelement The locator of the preceding element
-     * @param string $preselectortype The locator of the preceding element
+     * @param string $preselectortype The selector type of the preceding element
      * @param string $containerelement
      * @param string $containerselectortype
      */
