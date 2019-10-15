@@ -27,6 +27,7 @@ define(
     'core/notification',
     'core/pubsub',
     'core/str',
+    'core/pending',
     'core/templates',
     'core/user_date',
     'core_message/message_repository',
@@ -42,6 +43,7 @@ function(
     Notification,
     PubSub,
     Str,
+    Pending,
     Templates,
     UserDate,
     MessageRepository,
@@ -200,62 +202,120 @@ function(
      * @return {Object} jQuery promise.
      */
     var render = function(conversations, userId) {
-        var formattedConversations = conversations.map(function(conversation) {
+
+        // Helper to format the last message for rendering.
+        // Returns a promise which resolves to either a string, or null
+        // (such as in the event of an empty personal space).
+        var pending = new Pending();
+
+        var formatMessagePreview = async function(lastMessage) {
+            if (!lastMessage) {
+                return null;
+            }
+            var isMedia = lastMessage.text.includes('src');
+
+            if (!isMedia) {
+                // Try to get the text value of the content.
+                // If that's not possible, we'll report it under the catch-all 'other media'.
+                var messagePreview = $(lastMessage.text).text();
+                if (messagePreview) {
+                    return messagePreview;
+                }
+            }
+
+            // As a fallback, report unknowns as 'other media' type content.
+            var pix = 'i/messagecontentmultimediageneral';
+            var label = 'messagecontentmultimediageneral';
+
+            if (lastMessage.text.includes('<img')) {
+                pix = 'i/messagecontentimage';
+                label = 'messagecontentimage';
+            } else if (lastMessage.text.includes('<video')) {
+                pix = 'i/messagecontentvideo';
+                label = 'messagecontentvideo';
+            } else if (lastMessage.text.includes('<audio')) {
+                pix = 'i/messagecontentaudio';
+                label = 'messagecontentaudio';
+            }
+
+            try {
+                var labelString = await Str.get_string(label, 'core_message');
+                var icon = await Templates.renderPix(pix, 'core', labelString);
+                return icon + ' ' + labelString;
+            } catch (error) {
+                Notification.exception(error);
+                return null;
+            }
+        };
+
+        var mapPromises = conversations.map(function(conversation) {
 
             var lastMessage = conversation.messages.length ? conversation.messages[conversation.messages.length - 1] : null;
 
-            var formattedConversation = {
-                id: conversation.id,
-                imageurl: conversation.imageurl,
-                name: conversation.name,
-                subname: conversation.subname,
-                unreadcount: conversation.unreadcount,
-                ismuted: conversation.ismuted,
-                lastmessagedate: lastMessage ? lastMessage.timecreated : null,
-                sentfromcurrentuser: lastMessage ? lastMessage.useridfrom == userId : null,
-                lastmessage: lastMessage ? $(lastMessage.text).text() || lastMessage.text : null
-            };
+            return formatMessagePreview(lastMessage)
+                .then(function(messagePreview) {
+                    var formattedConversation = {
+                        id: conversation.id,
+                        imageurl: conversation.imageurl,
+                        name: conversation.name,
+                        subname: conversation.subname,
+                        unreadcount: conversation.unreadcount,
+                        ismuted: conversation.ismuted,
+                        lastmessagedate: lastMessage ? lastMessage.timecreated : null,
+                        sentfromcurrentuser: lastMessage ? lastMessage.useridfrom == userId : null,
+                        lastmessage: messagePreview
+                    };
 
-            var otherUser = null;
-            if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF) {
-                // Self-conversations have only one member.
-                otherUser = conversation.members[0];
-            } else if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
-                // For private conversations, remove the current userId from the members to get the other user.
-                otherUser = conversation.members.reduce(function(carry, member) {
-                    if (!carry && member.id != userId) {
-                        carry = member;
+                    var otherUser = null;
+                    if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF) {
+                        // Self-conversations have only one member.
+                        otherUser = conversation.members[0];
+                    } else if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
+                        // For private conversations, remove the current userId from the members to get the other user.
+                        otherUser = conversation.members.reduce(function(carry, member) {
+                            if (!carry && member.id != userId) {
+                                carry = member;
+                            }
+                            return carry;
+                        }, null);
                     }
-                    return carry;
-                }, null);
-            }
 
-            if (otherUser !== null) {
-                formattedConversation.userid = otherUser.id;
-                formattedConversation.showonlinestatus = otherUser.showonlinestatus;
-                formattedConversation.isonline = otherUser.isonline;
-                formattedConversation.isblocked = otherUser.isblocked;
-            }
-
-            if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PUBLIC) {
-                formattedConversation.lastsendername = conversation.members.reduce(function(carry, member) {
-                    if (!carry && lastMessage && member.id == lastMessage.useridfrom) {
-                        carry = member.fullname;
+                    if (otherUser !== null) {
+                        formattedConversation.userid = otherUser.id;
+                        formattedConversation.showonlinestatus = otherUser.showonlinestatus;
+                        formattedConversation.isonline = otherUser.isonline;
+                        formattedConversation.isblocked = otherUser.isblocked;
                     }
-                    return carry;
-                }, null);
-            }
 
-            return formattedConversation;
+                    if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PUBLIC) {
+                        formattedConversation.lastsendername = conversation.members.reduce(function(carry, member) {
+                            if (!carry && lastMessage && member.id == lastMessage.useridfrom) {
+                                carry = member.fullname;
+                            }
+                            return carry;
+                        }, null);
+                    }
+
+                    return formattedConversation;
+                }).catch(Notification.exception);
         });
 
-        formattedConversations.forEach(function(conversation) {
-            if (new Date().toDateString() == new Date(conversation.lastmessagedate * 1000).toDateString()) {
-                conversation.istoday = true;
-            }
-        });
+        return Promise.all(mapPromises)
+            .then(function(formattedConversations) {
+                formattedConversations.forEach(function(conversation) {
+                    if (new Date().toDateString() == new Date(conversation.lastmessagedate * 1000).toDateString()) {
+                        conversation.istoday = true;
+                    }
+                });
 
-        return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: formattedConversations});
+                return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: formattedConversations});
+            }).then(function(html, js) {
+                pending.resolve();
+                return $.Deferred().resolve(html, js);
+            }).catch(function(error) {
+                pending.resolve();
+                Notification.exception(error);
+            });
     };
 
     /**
