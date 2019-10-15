@@ -340,6 +340,79 @@ class current_company_course_user_selector extends company_user_selector_base {
 
         return array($groupname => $availableusers);
     }
+
+    /**
+     * Get the list of users that were selected by doing optional_param then validating the result.
+     *
+     * @return array of user objects.
+     */
+    protected function load_selected_users() {
+        // See if we got anything.
+        if ($this->multiselect) {
+            $userids = optional_param_array($this->name, array(), PARAM_INT);
+        } else if ($userid = optional_param($this->name, 0, PARAM_INT)) {
+            $userids = array($userid);
+        }
+        // If there are no users there is nobody to load.
+        if (empty($userids)) {
+            return array();
+        }
+
+        // If we did, use the find_users method to validate the ids.
+        $groupedusers = $this->find_users('');
+
+        // Aggregate the resulting list back into a single one.
+        $users = array();
+        foreach ($groupedusers as $group) {
+            foreach ($group as $user) {
+                if (!isset($users[$user->userenrolmentid]) && empty($user->disabled) && in_array($user->userenrolmentid, $userids)) {
+                    $users[$user->userenrolmentid] = $user;
+                }
+            }
+        }
+
+        // If we are only supposed to be selecting a single user, make sure we do.
+        if (!$this->multiselect && count($users) > 1) {
+            $users = array_slice($users, 0, 1);
+        }
+
+        return $users;
+    }
+
+    /**
+     * Output one particular optgroup. Used by the preceding function output_options.
+     *
+     * @param string $groupname the label for this optgroup.
+     * @param array $users the users to put in this optgroup.
+     * @param boolean $select if true, select the users in this group.
+     * @return string HTML code.
+     */
+    protected function output_optgroup($groupname, $users, $select) {
+        if (!empty($users)) {
+            $output = '  <optgroup label="' . htmlspecialchars($groupname) . ' (' . count($users) . ')">' . "\n";
+            foreach ($users as $user) {
+                $attributes = '';
+                if (!empty($user->disabled)) {
+                    $attributes .= ' disabled="disabled"';
+                } else if ($select || isset($this->selected[$user->id])) {
+                    $attributes .= ' selected="selected"';
+                }
+                unset($this->selected[$user->id]);
+                $output .= '    <option' . $attributes . ' value="' . $user->userenrolmentid . '">' .
+                        $this->output_user($user) . "</option>\n";
+                if (!empty($user->infobelow)) {
+                    // Poor man's indent  here is because CSS styles do not work in select options, except in Firefox.
+                    $output .= '    <option disabled="disabled" class="userselector-infobelow">' .
+                            '&nbsp;&nbsp;&nbsp;&nbsp;' . s($user->infobelow) . '</option>';
+                }
+            }
+        } else {
+            $output = '  <optgroup label="' . htmlspecialchars($groupname) . '">' . "\n";
+            $output .= '    <option disabled="disabled">&nbsp;</option>' . "\n";
+        }
+        $output .= "  </optgroup>\n";
+        return $output;
+    }
 }
 
 class potential_company_course_user_selector extends company_user_selector_base {
