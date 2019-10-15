@@ -40,6 +40,11 @@ class admin_uploaduser_form1 extends moodleform {
 
         $mform->addElement('header', 'settingsheader', get_string('upload'));
 
+        $url = new moodle_url('example.csv');
+        $link = html_writer::link($url, 'example.csv');
+        $mform->addElement('static', 'examplecsv', get_string('examplecsv', 'tool_uploaduser'), $link);
+        $mform->addHelpButton('examplecsv', 'examplecsv', 'tool_uploaduser');
+
         $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
 
