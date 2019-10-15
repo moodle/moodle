@@ -212,7 +212,11 @@ function(
             if (!lastMessage) {
                 return null;
             }
-            var isMedia = lastMessage.text.includes('src');
+            // Check the message html for a src attribute, indicative of media.
+            // Replace <img with <noimg to stop browsers pre-fetching the image as part of tmp element creation.
+            var tmpElement = document.createElement("element");
+            tmpElement.innerHTML = lastMessage.text.replace(/<img /g, '<noimg ');
+            var isMedia = tmpElement.querySelector("[src]") || false;
 
             if (!isMedia) {
                 // Try to get the text value of the content.
