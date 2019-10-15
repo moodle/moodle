@@ -2,6 +2,13 @@ This files describes API changes for quiz report plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
 
+=== 3.8 ===
+
+* New quiz_attempts_report_table method: \quiz_attempts_report_table::checkbox_col_header()
+  This generates a column header containing a checkbox that toggles the checked state of all the checkboxes corresponding to the
+  entries listed on a given quiz report table. It requires the name of the checkbox column as a parameter in order to disable
+  sorting on the checkbox column.
+
 === 3.2 ===
 
 * A code refactoring based on new sql functions in MDL-31243 and removing
