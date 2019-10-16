@@ -465,7 +465,7 @@ function profiling_list_controls($listurl) {
  * against an array of * wildchar patterns
  */
 function profiling_string_matches($string, $patterns) {
-    $patterns = explode(',', $patterns);
+   $patterns = preg_split("/\n|,/", $patterns);
     foreach ($patterns as $pattern) {
         // Trim and prepare pattern
         $pattern = str_replace('\*', '.*', preg_quote(trim($pattern), '~'));
@@ -473,7 +473,7 @@ function profiling_string_matches($string, $patterns) {
         if (empty($pattern)) {
             continue;
         }
-        if (preg_match('~' . $pattern . '~', $string)) {
+        if (preg_match('~^' . $pattern . '$~', $string)) {
             return true;
         }
     }

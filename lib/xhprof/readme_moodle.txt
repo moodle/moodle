@@ -40,4 +40,5 @@ TODO:
 20160721 - MDL-55292 - Russell Smith (mr-russ): Add support for tideways profiler collection for PHP7
 20171002 - MDL-60313 - Marina Glancy (marinaglancy): Upgrade to 0.9.4 release; patched for PHP7.2
 20190314 - MDL-64543 - Brendan Heywood (brendanheywood): Add support for conditional slow profiling
+20191016 - MDL-65349 - Brendan Heywood (brendanheywood): Improved url matching behaviour
 
