@@ -74,6 +74,11 @@
                 {{> mod_forum/grades/grade_button }}
             {{/forum.state.gradingenabled}}
         {{/forum.capabilities.grade}}
+        {{^forum.capabilities.grade}}
+            {{#forum.state.gradingenabled}}
+                {{> mod_forum/grades/view_grade_button }}
+            {{/forum.state.gradingenabled}}
+        {{/forum.capabilities.grade}}
     </div>
     {{#forum.capabilities.create}}
         <div class="collapse m-t-1 p-b-1" id="collapseAddForm">

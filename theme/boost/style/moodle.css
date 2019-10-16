@@ -17708,6 +17708,9 @@ p.arrow_button {
     margin-left: 5px;
     margin-right: 12px; }
 
+.grade-display .description {
+  font-size: 1rem; }
+
 .criterion .description {
   font-size: 1rem; }
 

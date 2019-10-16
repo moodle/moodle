@@ -143,6 +143,28 @@ const launchWholeForumGrading = async(rootNode) => {
 };
 
 /**
+ * Launch the Grader.
+ *
+ * @param {HTMLElement} rootNode the root HTML element describing what is to be graded
+ */
+const launchViewGrading = async rootNode => {
+    const data = rootNode.dataset;
+    const gradingPanelFunctions = await Grader.getGradingPanelFunctions(
+        'mod_forum',
+        data.contextid,
+        data.gradingComponent,
+        data.gradingComponentSubtype,
+        data.gradableItemtype
+    );
+
+    await Grader.view(
+        gradingPanelFunctions.getter,
+        data.userid,
+        data.name
+    );
+};
+
+/**
  * Register listeners to launch the grading panel.
  */
 export const registerLaunchListeners = () => {
@@ -160,6 +182,27 @@ export const registerLaunchListeners = () => {
                 e.preventDefault();
                 try {
                     await launchWholeForumGrading(rootNode);
+                } catch (error) {
+                    Notification.exception(error);
+                }
+            } else {
+                throw Error('Unable to find a valid gradable item');
+            }
+        }
+        if (e.target.matches(Selectors.viewGrade)) {
+            e.preventDefault();
+            const rootNode = findGradableNode(e.target);
+
+            if (!rootNode) {
+                throw Error('Unable to find a gradable item');
+            }
+
+            if (rootNode.matches(Selectors.gradableItems.wholeForum)) {
+                // Note: The preventDefault must be before any async function calls because the function becomes async
+                // at that point and the default action is implemented.
+                e.preventDefault();
+                try {
+                    await launchViewGrading(rootNode);
                 } catch (error) {
                     Notification.exception(error);
                 }

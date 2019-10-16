@@ -129,7 +129,9 @@ class fetch extends external_api {
 
         $gradeduser = \core_user::get_user($gradeduserid);
 
-        return self::get_fetch_data($gradeitem, $gradeduser);
+        $maxgrade = (int) $gradeitem->get_grade_item()->grademax;
+
+        return self::get_fetch_data($gradeitem, $gradeduser, $maxgrade);
     }
 
     /**
@@ -137,9 +139,10 @@ class fetch extends external_api {
      *
      * @param gradeitem $gradeitem
      * @param stdClass $gradeduser
+     * @param int $maxgrade
      * @return array
      */
-    public static function get_fetch_data(gradeitem $gradeitem, stdClass $gradeduser): array {
+    public static function get_fetch_data(gradeitem $gradeitem, stdClass $gradeduser, int $maxgrade): array {
         global $USER;
 
         $hasgrade = $gradeitem->user_has_grade($gradeduser);
@@ -160,6 +163,8 @@ class fetch extends external_api {
             'hasgrade' => $hasgrade,
             'grade' => [
                 'options' => $values,
+                'usergrade' => $grade->grade,
+                'maxgrade' => $maxgrade,
                 'timecreated' => $grade->timecreated,
                 'timemodified' => $grade->timemodified,
             ],
@@ -186,6 +191,8 @@ class fetch extends external_api {
                     ]),
                     'The description of the grade option'
                 ),
+                'usergrade' => new external_value(PARAM_RAW, 'Current user grade'),
+                'maxgrade' => new external_value(PARAM_RAW, 'Max possible grade'),
                 'timecreated' => new external_value(PARAM_INT, 'The time that the grade was created'),
                 'timemodified' => new external_value(PARAM_INT, 'The time that the grade was last updated'),
             ]),

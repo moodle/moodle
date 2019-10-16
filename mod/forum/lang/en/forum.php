@@ -745,6 +745,9 @@ $string['viewconversation'] = 'View discussion';
 
 $string['grade_forum_header'] = 'Whole forum grading';
 $string['grade_forum_title'] = 'Grade';
+$string['gradingstatus'] = 'Grade status:';
+$string['graded'] = 'Graded';
+$string['notgraded'] = 'Not graded';
 $string['gradeforrating'] = 'Grade for rating: {$a->str_long_grade}';
 $string['gradeforratinghidden'] = 'Grade for rating hidden';
 $string['gradeforwholeforum'] = 'Grade for forum: {$a->str_long_grade}';
@@ -755,6 +758,7 @@ $string['grades:gradesavedfor'] = 'Grade saved for {$a->fullname}';
 $string['grades:gradesavefailed'] = 'Unable to save grade for {$a->fullname}: {$a->error}';
 $string['showmoreusers'] = 'Show more users';
 $string['nousersmatch'] = 'No user(s) found for given criteria';
+$string['viewgrades'] = 'View grades';
 
 // Deprecated since Moodle 3.8.
 $string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';

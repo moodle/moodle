@@ -156,6 +156,7 @@ class fetch extends external_api {
         $fillings = $instance->get_guide_filling();
         $context = $controller->get_context();
         $definitionid = (int) $definition->id;
+        $maxgrade = max(array_keys($controller->get_grade_range()));
 
         $criterion = [];
         if ($definition->guide_criteria) {
@@ -224,6 +225,8 @@ class fetch extends external_api {
                 'criterion' => $criterion,
                 'hascomments' => !empty($comments),
                 'comments' => $comments,
+                'usergrade' => $grade->grade,
+                'maxgrade' => $maxgrade,
                 'timecreated' => $grade->timecreated,
                 'timemodified' => $grade->timemodified,
             ],
@@ -264,6 +267,8 @@ class fetch extends external_api {
                     ]),
                     'Frequently used comments'
                 ),
+                'usergrade' => new external_value(PARAM_RAW, 'Current user grade'),
+                'maxgrade' => new external_value(PARAM_RAW, 'Max possible grade'),
                 'timecreated' => new external_value(PARAM_INT, 'The time that the grade was created'),
                 'timemodified' => new external_value(PARAM_INT, 'The time that the grade was last updated'),
             ]),

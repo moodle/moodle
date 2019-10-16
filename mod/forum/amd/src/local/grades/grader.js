@@ -32,6 +32,8 @@ import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
 import {debounce} from 'core/utils';
 import {fillInitialValues} from 'core_grades/grades/grader/gradingpanel/comparison';
+import * as Modal from 'core/modal_factory';
+import * as ModalEvents from 'core/modal_events';
 
 const templateNames = {
     grader: {
@@ -388,4 +390,49 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     displayUserPicker(graderContainer, userPicker.rootNode);
 };
 
+/**
+ * Show the grade for a specific user.
+ *
+ * @param {Function} getGradeForUser A function get the grade details for a specific user
+ * @param {Number} userid The ID of a specific user
+ */
+export const view = async(getGradeForUser, userid, moduleName) => {
+
+    const [
+        userGrade,
+        modal,
+    ] = await Promise.all([
+        getGradeForUser(userid),
+        Modal.create({
+            title: moduleName,
+            large: true,
+            type: Modal.types.CANCEL
+        }),
+    ]);
+
+    const spinner = addIconToContainerWithPromise(modal.getRoot());
+
+    // Handle hidden event.
+    modal.getRoot().on(ModalEvents.hidden, function() {
+        // Destroy when hidden.
+        modal.destroy();
+    });
+
+    modal.show();
+    const output = document.createElement('div');
+    const {html, js} = await Templates.renderForPromise('mod_forum/local/grades/view_grade', userGrade);
+    Templates.replaceNodeContents(output, html, js);
+
+    // Note: We do not use await here because it messes with the Modal transitions.
+    const [gradeHTML, gradeJS] = await renderGradeTemplate(userGrade);
+    const gradeReplace = output.querySelector('[data-region="grade-template"]');
+    Templates.replaceNodeContents(gradeReplace, gradeHTML, gradeJS);
+    modal.setBody(output.outerHTML);
+    spinner.resolve();
+};
+
+const renderGradeTemplate = async(userGrade) => {
+    const {html, js} = await Templates.renderForPromise(userGrade.templatename, userGrade.grade);
+    return [html, js];
+};
 export {getGradingPanelFunctions};
