@@ -939,7 +939,7 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
-    float: left;
+    float: inherit;
     margin: .2em 0 0;
     padding: 0;
 }
