@@ -151,7 +151,7 @@ function cron_run_adhoc_tasks(int $timenow) {
 
     // Run all adhoc tasks.
     while (!\core\task\manager::static_caches_cleared_since($timenow) &&
-            $task = \core\task\manager::get_next_adhoc_task($timenow)) {
+            $task = \core\task\manager::get_next_adhoc_task(time())) {
         cron_run_inner_adhoc_task($task);
         unset($task);
 
