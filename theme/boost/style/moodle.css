@@ -14708,7 +14708,10 @@ body.path-question-type {
   overflow: hidden; }
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
-  margin-top: 0; }
+  margin-top: 0;
+  width: 16px;
+  height: 16px;
+  padding-right: 4px; }
 
 .path-mod-quiz .statedetails {
   display: block;
