@@ -178,6 +178,22 @@ class block_tag_flickr extends block_base {
         }
         return $url;
     }
+
+    /**
+     * Return the plugin config settings for external functions.
+     *
+     * @return stdClass the configs for both the block instance and plugin
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        // Return all settings for all users since it is safe (no private keys, etc..).
+        $configs = !empty($this->config) ? $this->config : new stdClass();
+
+        return (object) [
+            'instance' => $configs,
+            'plugin' => new stdClass(),
+        ];
+    }
 }
 
 

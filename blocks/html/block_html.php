@@ -209,4 +209,23 @@ class block_html extends block_base {
 
         return $attributes;
     }
+
+    /**
+     * Return the plugin config settings for external functions.
+     *
+     * @return stdClass the configs for both the block instance and plugin
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        global $CFG;
+
+        // Return all settings for all users since it is safe (no private keys, etc..).
+        $instanceconfigs = !empty($this->config) ? $this->config : new stdClass();
+        $pluginconfigs = (object) ['allowcssclasses' => $CFG->block_html_allowcssclasses];
+
+        return (object) [
+            'instance' => $instanceconfigs,
+            'plugin' => $pluginconfigs,
+        ];
+    }
 }

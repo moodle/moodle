@@ -177,6 +177,27 @@ class block_course_list extends block_list {
     public function get_aria_role() {
         return 'navigation';
     }
+
+    /**
+     * Return the plugin config settings for external functions.
+     *
+     * @return stdClass the configs for both the block instance and plugin
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        global $CFG;
+
+        // Return all settings for all users since it is safe (no private keys, etc..).
+        $configs = (object) [
+            'adminview' => $CFG->block_course_list_adminview,
+            'hideallcourseslink' => $CFG->block_course_list_hideallcourseslink
+        ];
+
+        return (object) [
+            'instance' => new stdClass(),
+            'plugin' => $configs,
+        ];
+    }
 }
 
 

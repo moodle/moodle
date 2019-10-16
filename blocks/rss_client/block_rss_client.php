@@ -279,4 +279,26 @@
             return core_text::substr($title, 0, $max - 3) . '...';
         }
     }
+
+    /**
+     * Return the plugin config settings for external functions.
+     *
+     * @return stdClass the configs for both the block instance and plugin
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        global $CFG;
+
+        // Return all settings for all users since it is safe (no private keys, etc..).
+        $instanceconfigs = !empty($this->config) ? $this->config : new stdClass();
+        $pluginconfigs = (object) [
+            'num_entries' => $CFG->block_rss_client_num_entries,
+            'timeout' => $CFG->block_rss_client_timeout
+        ];
+
+        return (object) [
+            'instance' => $instanceconfigs,
+            'plugin' => $pluginconfigs,
+        ];
+    }
 }

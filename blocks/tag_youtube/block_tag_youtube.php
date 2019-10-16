@@ -398,5 +398,25 @@ class block_tag_youtube extends block_base {
             return $oldcat;
         }
     }
+
+    /**
+     * Return the plugin config settings for external functions.
+     *
+     * @return stdClass the configs for both the block instance and plugin
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        // There is a private key, only admins can see it.
+        $pluginconfigs = get_config('block_tag_youtube');
+        if (!has_capability('moodle/site:config', context_system::instance())) {
+            unset($pluginconfigs->apikey);
+        }
+        $instanceconfigs = !empty($this->config) ? $this->config : new stdClass();
+
+        return (object) [
+            'instance' => $instanceconfigs,
+            'plugin' => $pluginconfigs,
+        ];
+    }
 }
 
