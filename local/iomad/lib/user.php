@@ -390,7 +390,8 @@ class company_user {
 
                 foreach ($ues as $ue) {
                     if ( $ue->enrolmentinstance->courseid == $user->courseid ) {
-                        $courseenrolmentmanager->unenrol_user($ue);
+                        //$courseenrolmentmanager->unenrol_user($ue);
+                        $DB->delete_records('user_enrolments', array('id' => $ue->id));
                     }
                 }
                 if ($shared) {
@@ -410,7 +411,7 @@ class company_user {
             }
 
             // Remove the tracking inf if the user hasn't completed the course.
-            $DB->delete_records('local_iomad_track', array('courseid' => $user->courseid, 'userid' => $user->id, 'timecompleted' => null));
+            //$DB->delete_records('local_iomad_track', array('courseid' => $user->courseid, 'userid' => $user->id, 'timecompleted' => null));
         } else {
             foreach ($courseids as $courseid) {
                 $roles = get_user_roles(context_course::instance($courseid), $user->id, false);
@@ -434,7 +435,8 @@ class company_user {
 
                     foreach ($ues as $ue) {
                         if ( $ue->enrolmentinstance->courseid == $courseid ) {
-                            $courseenrolmentmanager->unenrol_user($ue);
+                            $DB->delete_records('user_enrolments', array('id' => $ue->id));
+                            //$courseenrolmentmanager->unenrol_user($ue);
                         }
                     }
                     if ($shared) {
@@ -893,7 +895,7 @@ class company_user {
                                             'issuedate' => time(),
                                             'duedate' => 0);
                         $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
-                                                                                                      'objectid' => $newlicenseid,
+                                                                                                      'objectid' => $licenserecord->id,
                                                                                                       'courseid' => $courseid,
                                                                                                       'userid' => $userid,
                                                                                                       'other' => $eventother));
