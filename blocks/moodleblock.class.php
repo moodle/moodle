@@ -306,6 +306,21 @@ class block_base {
     }
 
     /**
+     * Return the plugin config settings for external functions.
+     *
+     * In some cases the configs will need formatting or be returned only if the current user has some capabilities enabled.
+     *
+     * @return stdClass the configs for both the block instance and plugin (as object with name -> value)
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        return (object) [
+            'instance' => new stdClass(),
+            'plugin' => new stdClass(),
+        ];
+    }
+
+    /**
      * Convert the contents of the block to HTML.
      *
      * This is used by block base classes like block_list to convert the structured
