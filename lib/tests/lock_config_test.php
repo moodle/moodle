@@ -46,30 +46,56 @@ class lock_config_testcase extends advanced_testcase {
         if (isset($CFG->lock_factory)) {
             $original = $CFG->lock_factory;
         }
+        $originalfilelocking = null;
+        if (isset($CFG->preventfilelocking)) {
+            $originalfilelocking = $CFG->preventfilelocking;
+        }
 
         // Test no configuration.
         unset($CFG->lock_factory);
-
+        $CFG->preventfilelocking = 0;
         $factory = \core\lock\lock_config::get_lock_factory('cache');
-
         $this->assertNotEmpty($factory, 'Get a default factory with no configuration');
 
-        $CFG->lock_factory = '\core\lock\file_lock_factory';
+        // Test explicit broken lock.
+        $CFG->lock_factory = '\core\lock\not_a_lock_factory';
+        try {
+            $factory = \core\lock\lock_config::get_lock_factory('cache');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $ex) {
+            $this->assertInstanceOf('coding_exception', $ex);
+        }
 
+        // Test explicit file locks.
+        $CFG->lock_factory = '\core\lock\file_lock_factory';
         $factory = \core\lock\lock_config::get_lock_factory('cache');
         $this->assertTrue($factory instanceof \core\lock\file_lock_factory,
-                          'Get a default factory with a set configuration');
+                'Get an explicit file lock factory');
 
+        // Test explicit file locks but with file locks prevented.
+        $CFG->preventfilelocking = 1;
+        try {
+            $factory = \core\lock\lock_config::get_lock_factory('cache');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $ex) {
+            $this->assertInstanceOf('coding_exception', $ex);
+        }
+
+        // Test explicit db locks.
         $CFG->lock_factory = '\core\lock\db_record_lock_factory';
-
         $factory = \core\lock\lock_config::get_lock_factory('cache');
         $this->assertTrue($factory instanceof \core\lock\db_record_lock_factory,
-                          'Get a default factory with a changed configuration');
+                'Get an explicit db record lock factory');
 
         if ($original) {
             $CFG->lock_factory = $original;
         } else {
             unset($CFG->lock_factory);
+        }
+        if ($originalfilelocking) {
+            $CFG->preventfilelocking = $originalfilelocking;
+        } else {
+            unset($CFG->preventfilelocking);
         }
     }
 }

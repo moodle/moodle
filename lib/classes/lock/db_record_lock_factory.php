@@ -120,15 +120,17 @@ class db_record_lock_factory implements lock_factory {
         $giveuptime = $now + $timeout;
         $expires = $now + $maxlifetime;
 
-        if (!$this->db->record_exists('lock_db', array('resourcekey' => $resource))) {
+        $resourcekey = $this->type . '_' . $resource;
+
+        if (!$this->db->record_exists('lock_db', array('resourcekey' => $resourcekey))) {
             $record = new \stdClass();
-            $record->resourcekey = $resource;
+            $record->resourcekey = $resourcekey;
             $result = $this->db->insert_record('lock_db', $record);
         }
 
         $params = array('expires' => $expires,
                         'token' => $token,
-                        'resourcekey' => $resource,
+                        'resourcekey' => $resourcekey,
                         'now' => $now);
         $sql = 'UPDATE {lock_db}
                    SET
@@ -143,7 +145,7 @@ class db_record_lock_factory implements lock_factory {
             $params['now'] = $now;
             $this->db->execute($sql, $params);
 
-            $countparams = array('owner' => $token, 'resourcekey' => $resource);
+            $countparams = array('owner' => $token, 'resourcekey' => $resourcekey);
             $result = $this->db->count_records('lock_db', $countparams);
             $locked = $result === 1;
             if (!$locked) {
