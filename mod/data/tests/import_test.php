@@ -25,13 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->dirroot . '/mod/data/lib.php');
-require_once($CFG->dirroot . '/lib/datalib.php');
-require_once($CFG->dirroot . '/lib/csvlib.class.php');
-require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
-require_once($CFG->dirroot . '/mod/data/tests/generator/lib.php');
-
 /**
  * Unit tests for import.php.
  *
@@ -41,66 +34,79 @@ require_once($CFG->dirroot . '/mod/data/tests/generator/lib.php');
  */
 class mod_data_import_test extends advanced_testcase {
 
-    /** @var object $cm Course module of data instance. */
-    private $cm;
-
-    /** @var object $data Data instance. */
-    private $data;
-
-    /** @var mod_data_generator $generator */
-    private $generator;
-
-    /** @var object $student Student object */
-    private $student;
-
-    /** @var object $teacher Teacher object */
-    private $teacher;
-
     /**
-     * Set up function. In this instance we are setting up database
-     * records to be used in the unit tests.
+     * Set up function.
      */
     protected function setUp() {
         parent::setUp();
 
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/data/lib.php');
+        require_once($CFG->dirroot . '/lib/datalib.php');
+        require_once($CFG->dirroot . '/lib/csvlib.class.php');
+        require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
+        require_once($CFG->dirroot . '/mod/data/tests/generator/lib.php');
+    }
+
+    /**
+     * Get the test data.
+     * In this instance we are setting up database records to be used in the unit tests.
+     *
+     * @return array
+     */
+    protected function get_test_data(): array {
         $this->resetAfterTest(true);
 
-        $this->generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
         $course = $this->getDataGenerator()->create_course();
-        $this->teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        $this->setUser($this->teacher);
-        $this->student = $this->getDataGenerator()->create_and_enrol($course, 'student', array('username' => 'student'));
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->setUser($teacher);
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student', array('username' => 'student'));
 
-        $this->data = $this->generator->create_instance(array('course' => $course->id));
-        $this->cm = get_coursemodule_from_instance('data', $this->data->id);
+        $data = $generator->create_instance(array('course' => $course->id));
+        $cm = get_coursemodule_from_instance('data', $data->id);
 
         // Add fields.
         $fieldrecord = new StdClass();
         $fieldrecord->name = 'ID'; // Identifier of the records for testing.
         $fieldrecord->type = 'number';
-        $this->generator->create_field($fieldrecord, $this->data);
+        $generator->create_field($fieldrecord, $data);
 
         $fieldrecord->name = 'Param2';
         $fieldrecord->type = 'text';
-        $this->generator->create_field($fieldrecord, $this->data);
+        $generator->create_field($fieldrecord, $data);
+
+
+        return [
+            'teacher' => $teacher,
+            'student' => $student,
+            'data' => $data,
+            'cm' => $cm,
+        ];
     }
 
     /**
      * Test uploading entries for a data instance without userdata.
      * @throws dml_exception
      */
-    public function test_import() {
+    public function test_import(): void {
+        [
+            'data' => $data,
+            'cm' => $cm,
+            'teacher' => $teacher,
+        ] = $this->get_test_data();
+
         $filecontent = file_get_contents(__DIR__ . '/fixtures/test_data_import.csv');
         ob_start();
-        data_import_csv($this->cm, $this->data, $filecontent, 'UTF-8', 'comma');
+        data_import_csv($cm, $data, $filecontent, 'UTF-8', 'comma');
         ob_end_clean();
 
         // No userdata is present in the file: Fallback is to assign the uploading user as author.
         $expecteduserids = array();
-        $expecteduserids[1] = $this->teacher->id;
-        $expecteduserids[2] = $this->teacher->id;
+        $expecteduserids[1] = $teacher->id;
+        $expecteduserids[2] = $teacher->id;
 
-        $records = $this->get_data_records($this->data->id);
+        $records = $this->get_data_records($data->id);
         $this->assertCount(2, $records);
         foreach ($records as $record) {
             $identifier = $record->items['ID']->content;
@@ -114,17 +120,24 @@ class mod_data_import_test extends advanced_testcase {
      * At least one entry has an identifiable user, which is assigned as author.
      * @throws dml_exception
      */
-    public function test_import_with_userdata() {
+    public function test_import_with_userdata(): void {
+        [
+            'data' => $data,
+            'cm' => $cm,
+            'teacher' => $teacher,
+            'student' => $student,
+        ] = $this->get_test_data();
+
         $filecontent = file_get_contents(__DIR__ . '/fixtures/test_data_import_with_userdata.csv');
         ob_start();
-        data_import_csv($this->cm, $this->data, $filecontent, 'UTF-8', 'comma');
+        data_import_csv($cm, $data, $filecontent, 'UTF-8', 'comma');
         ob_end_clean();
 
         $expecteduserids = array();
-        $expecteduserids[1] = $this->student->id; // User student exists and is assigned as author.
-        $expecteduserids[2] = $this->teacher->id; // User student2 does not exist. Fallback is the uploading user.
+        $expecteduserids[1] = $student->id; // User student exists and is assigned as author.
+        $expecteduserids[2] = $teacher->id; // User student2 does not exist. Fallback is the uploading user.
 
-        $records = $this->get_data_records($this->data->id);
+        $records = $this->get_data_records($data->id);
         $this->assertCount(2, $records);
         foreach ($records as $record) {
             $identifier = $record->items['ID']->content;
@@ -141,23 +154,30 @@ class mod_data_import_test extends advanced_testcase {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function test_import_with_field_username() {
+    public function test_import_with_field_username(): void {
+        [
+            'data' => $data,
+            'cm' => $cm,
+            'teacher' => $teacher,
+            'student' => $student,
+        ] = $this->get_test_data();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
 
         // Add username field.
         $fieldrecord = new StdClass();
         $fieldrecord->name = 'Username';
         $fieldrecord->type = 'text';
-        $this->generator->create_field($fieldrecord, $this->data);
+        $generator->create_field($fieldrecord, $data);
 
         $filecontent = file_get_contents(__DIR__ . '/fixtures/test_data_import_with_field_username.csv');
         ob_start();
-        data_import_csv($this->cm, $this->data, $filecontent, 'UTF-8', 'comma');
+        data_import_csv($cm, $data, $filecontent, 'UTF-8', 'comma');
         ob_end_clean();
 
         $expecteduserids = array();
-        $expecteduserids[1] = $this->student->id; // User student exists and is assigned as author.
-        $expecteduserids[2] = $this->teacher->id; // User student2 does not exist. Fallback is the uploading user.
-        $expecteduserids[3] = $this->student->id; // User student exists and is assigned as author.
+        $expecteduserids[1] = $student->id; // User student exists and is assigned as author.
+        $expecteduserids[2] = $teacher->id; // User student2 does not exist. Fallback is the uploading user.
+        $expecteduserids[3] = $student->id; // User student exists and is assigned as author.
 
         $expectedcontent = array();
         $expectedcontent[1] = array(
@@ -173,7 +193,7 @@ class mod_data_import_test extends advanced_testcase {
             'Param2' => 'My third entry',
         );
 
-        $records = $this->get_data_records($this->data->id);
+        $records = $this->get_data_records($data->id);
         $this->assertCount(3, $records);
         foreach ($records as $record) {
             $identifier = $record->items['ID']->content;
@@ -196,23 +216,30 @@ class mod_data_import_test extends advanced_testcase {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function test_import_with_field_username_without_userdata() {
+    public function test_import_with_field_username_without_userdata(): void {
+        [
+            'data' => $data,
+            'cm' => $cm,
+            'teacher' => $teacher,
+            'student' => $student,
+        ] = $this->get_test_data();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
 
         // Add username field.
         $fieldrecord = new StdClass();
         $fieldrecord->name = 'Username';
         $fieldrecord->type = 'text';
-        $this->generator->create_field($fieldrecord, $this->data);
+        $generator->create_field($fieldrecord, $data);
 
         $filecontent = file_get_contents(__DIR__ . '/fixtures/test_data_import_with_userdata.csv');
         ob_start();
-        data_import_csv($this->cm, $this->data, $filecontent, 'UTF-8', 'comma');
+        data_import_csv($cm, $data, $filecontent, 'UTF-8', 'comma');
         ob_end_clean();
 
         // No userdata is present in the file: Fallback is to assign the uploading user as author.
         $expecteduserids = array();
-        $expecteduserids[1] = $this->teacher->id;
-        $expecteduserids[2] = $this->teacher->id;
+        $expecteduserids[1] = $teacher->id;
+        $expecteduserids[2] = $teacher->id;
 
         $expectedcontent = array();
         $expectedcontent[1] = array(
@@ -224,7 +251,7 @@ class mod_data_import_test extends advanced_testcase {
             'Param2' => 'My second entry',
         );
 
-        $records = $this->get_data_records($this->data->id);
+        $records = $this->get_data_records($data->id);
         $this->assertCount(2, $records);
         foreach ($records as $record) {
             $identifier = $record->items['ID']->content;
@@ -246,10 +273,10 @@ class mod_data_import_test extends advanced_testcase {
      * @param int $dataid Id of the data instance.
      * @return array The records of the data instance.
      * @throws dml_exception
-     *
      */
-    private function get_data_records($dataid) {
+    private function get_data_records(int $dataid): array {
         global $DB;
+
         $records = $DB->get_records('data_records', ['dataid' => $dataid]);
         foreach ($records as $record) {
             $sql = 'SELECT f.name, f.type, con.content FROM

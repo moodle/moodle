@@ -976,7 +976,7 @@ function data_numentries($data, $userid=null) {
  * @param int $userid
  * @return bool
  */
-function data_add_record($data, $groupid=0, $userid=null) {
+function data_add_record($data, $groupid = 0, $userid = null) {
     global $USER, $DB;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
