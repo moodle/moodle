@@ -428,7 +428,7 @@ class company_license_users_form extends \moodleform {
                                 $DB->delete_records('local_iomad_track', array('userid' => $licensedata->userid,
                                                                                'licenseid' => $licensedata->id,
                                                                                'courseid' => $licensedata->licensecourseid,
-                                                                               'timeenrolled' => null)
+                                                                               'timeenrolled' => null));
                             }
 
                             // Create an event.
