@@ -178,7 +178,7 @@ class postgres_lock_factory implements lock_factory {
     public function get_lock($resource, $timeout, $maxlifetime = 86400) {
         $giveuptime = time() + $timeout;
 
-        $token = $this->get_index_from_key($resource);
+        $token = $this->get_index_from_key($this->type . '_' . $resource);
 
         $params = array('locktype' => $this->dblockid,
                         'token' => $token);
