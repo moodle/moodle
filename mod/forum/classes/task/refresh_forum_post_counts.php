@@ -43,19 +43,15 @@ class refresh_forum_post_counts extends \core\task\adhoc_task {
 
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
-        $recordsfound = mod_forum_update_null_forum_post_counts(5000);
+        // Default to chunks of 5000 records per run, unless overridden in config.php
+        $chunksize = $CFG->forumpostcountchunksize ?? 5000;
 
-        // Re-queue this adhoc task if records were found during the current run,
-        // since there may be more records to update.
-        if ($recordsfound) {
-            $record = new \stdClass();
-            $record->classname = '\mod_forum\task\refresh_forum_post_counts';
-            $record->component = 'mod_forum';
+        $numrecordsupdated = mod_forum_update_null_forum_post_counts($chunksize);
 
-            // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
-            $nextruntime = time() - 1;
-            $record->nextruntime = $nextruntime;
-            $DB->insert_record('task_adhoc', $record);
+        // Re-queue this adhoc task if the maximum number of records were found during
+        // the current run, since there may be more records to update.
+        if ($numrecordsupdated == $chunksize) {
+            \core\task\manager::queue_adhoc_task(new refresh_forum_post_counts());
         }
     }
 }

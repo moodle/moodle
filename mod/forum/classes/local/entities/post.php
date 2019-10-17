@@ -346,13 +346,12 @@ class post {
      * This methods adds/updates forum posts' word count and char count attributes based on $data->message.
      *
      * @param \stdClass $record A record ready to be inserted / updated in DB.
-     * @return \stdClass The same record with 'wordcount' and 'charcount' attributes.
+     * @return void.
      */
-    public static function add_message_counts(\stdClass $record) : \stdClass {
+    public static function add_message_counts(\stdClass $record) : void {
         if (!empty($record->message)) {
             $record->wordcount = count_words($record->message);
             $record->charcount = count_letters($record->message);
         }
-        return $record;
     }
 }

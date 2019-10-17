@@ -116,7 +116,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
             $data->parent = $this->get_mappingid('forum_post', $data->parent);
         }
 
-        $data = \mod_forum\local\entities\post::add_message_counts($data);
+        \mod_forum\local\entities\post::add_message_counts($data);
         $newitemid = $DB->insert_record('forum_posts', $data);
         $this->set_mapping('forum_post', $oldid, $newitemid, true);
 
