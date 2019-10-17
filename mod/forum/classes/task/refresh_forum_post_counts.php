@@ -36,22 +36,43 @@ defined('MOODLE_INTERNAL') || die();
 class refresh_forum_post_counts extends \core\task\adhoc_task {
 
     /**
-     * Run the task to refresh calendar events.
+     * Run the task to populate word and character counts on existing forum posts.
+     * If the maximum number of records are updated, the task re-queues itself,
+     * as there may be more records to process.
      */
     public function execute() {
-        global $CFG, $DB;
+        if ($this->update_null_forum_post_counts()) {
+            \core\task\manager::queue_adhoc_task(new refresh_forum_post_counts());
+        }
+    }
 
-        require_once($CFG->dirroot . '/mod/forum/lib.php');
+    /**
+     * Updates null forum post counts according to the post message.
+     *
+     * @return bool Whether there may be more rows to process
+     */
+    protected function update_null_forum_post_counts(): bool {
+        global $CFG, $DB;
 
         // Default to chunks of 5000 records per run, unless overridden in config.php
         $chunksize = $CFG->forumpostcountchunksize ?? 5000;
 
-        $numrecordsupdated = mod_forum_update_null_forum_post_counts($chunksize);
+        $select = 'wordcount IS NULL OR charcount IS NULL';
+        $recordset = $DB->get_recordset_select('forum_posts', $select, null, 'discussion', 'id, message', 0, $chunksize);
 
-        // Re-queue this adhoc task if the maximum number of records were found during
-        // the current run, since there may be more records to update.
-        if ($numrecordsupdated == $chunksize) {
-            \core\task\manager::queue_adhoc_task(new refresh_forum_post_counts());
+        if (!$recordset->valid()) {
+            $recordset->close();
+            return false;
         }
+
+        foreach ($recordset as $record) {
+            \mod_forum\local\entities\post::add_message_counts($record);
+            $DB->update_record('forum_posts', $record);
+        }
+
+        $recordscount = count($recordset);
+        $recordset->close();
+
+        return ($recordscount == $chunksize);
     }
 }
