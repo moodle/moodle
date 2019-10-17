@@ -23,6 +23,7 @@
  */
 
 $string['attachmentcount'] = 'Number of attachments';
+$string['charcount'] = 'Character count';
 $string['viewcount'] = 'Number of views';
 $string['earliestpost'] = 'Earliest post';
 $string['filter:groupsbuttonlabel'] = 'Open the groups filter';
@@ -39,3 +40,4 @@ $string['summary:viewall'] = 'Access summary report data for each user within a 
 $string['summary:view'] = 'Access summary report within a given forum or forums';
 $string['summarytitle'] = 'Summary report - {$a}';
 $string['viewsdisclaimer'] = 'Number of views column is not filtered by group';
+$string['wordcount'] = 'Word count';

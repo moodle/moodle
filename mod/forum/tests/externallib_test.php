@@ -582,6 +582,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->course = $course1->id;
         $record->trackingtype = FORUM_TRACKING_OFF;
+        // Display word count. Otherwise, word and char counts will be set to null by the forum post exporter.
+        $record->displaywordcount = true;
         $forum1 = self::getDataGenerator()->create_module('forum', $record);
         $forum1context = context_module::instance($forum1->cmid);
 
@@ -673,6 +675,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // User pictures are initially empty, we should get the links once the external function is called.
         $isolatedurl = $urlfactory->get_discussion_view_url_from_discussion_id($discussion1reply2->discussion);
         $isolatedurl->params(['parent' => $discussion1reply2->id]);
+        $message = file_rewrite_pluginfile_urls($discussion1reply2->message, 'pluginfile.php',
+            $forum1context->id, 'mod_forum', 'post', $discussion1reply2->id);
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply2->id,
             'discussionid' => $discussion1reply2->discussion,
@@ -681,14 +685,14 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'timecreated' => $discussion1reply2->created,
             'subject' => $discussion1reply2->subject,
             'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply2->subject}",
-            'message' => file_rewrite_pluginfile_urls($discussion1reply2->message, 'pluginfile.php',
-                    $forum1context->id, 'mod_forum', 'post', $discussion1reply2->id),
+            'message' => $message,
             'messageformat' => 1,   // This value is usually changed by external_format_text() function.
             'unread' => null,
             'isdeleted' => false,
             'isprivatereply' => false,
-            'haswordcount' => false,
-            'wordcount' => null,
+            'haswordcount' => true,
+            'wordcount' => count_words($message),
+            'charcount' => count_letters($message),
             'author'=> $exporteduser3,
             'attachments' => [],
             'tags' => [],
@@ -728,6 +732,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         $isolatedurl = $urlfactory->get_discussion_view_url_from_discussion_id($discussion1reply1->discussion);
         $isolatedurl->params(['parent' => $discussion1reply1->id]);
+        $message = file_rewrite_pluginfile_urls($discussion1reply1->message, 'pluginfile.php',
+            $forum1context->id, 'mod_forum', 'post', $discussion1reply1->id);
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply1->id,
             'discussionid' => $discussion1reply1->discussion,
@@ -736,14 +742,14 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'timecreated' => $discussion1reply1->created,
             'subject' => $discussion1reply1->subject,
             'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply1->subject}",
-            'message' => file_rewrite_pluginfile_urls($discussion1reply1->message, 'pluginfile.php',
-                    $forum1context->id, 'mod_forum', 'post', $discussion1reply1->id),
+            'message' => $message,
             'messageformat' => 1,   // This value is usually changed by external_format_text() function.
             'unread' => null,
             'isdeleted' => false,
             'isprivatereply' => false,
-            'haswordcount' => false,
-            'wordcount' => null,
+            'haswordcount' => true,
+            'wordcount' => count_words($message),
+            'charcount' => count_letters($message),
             'author'=> $exporteduser2,
             'attachments' => [],
             'tags' => [],

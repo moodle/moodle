@@ -157,5 +157,44 @@ function xmldb_forum_upgrade($oldversion) {
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019071901) {
+
+        // Define field wordcount to be added to forum_posts.
+        $table = new xmldb_table('forum_posts');
+        $field = new xmldb_field('wordcount', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'privatereplyto');
+
+        // Conditionally launch add field wordcount.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field charcount to be added to forum_posts.
+        $table = new xmldb_table('forum_posts');
+        $field = new xmldb_field('charcount', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'wordcount');
+
+        // Conditionally launch add field charcount.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2019071901, 'forum');
+    }
+
+    if ($oldversion < 2019071902) {
+        // Create adhoc task for upgrading of existing forum_posts.
+        $record = new \stdClass();
+        $record->classname = '\mod_forum\task\refresh_forum_post_counts';
+        $record->component = 'mod_forum';
+
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $record->nextruntime = $nextruntime;
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2019071902, 'forum');
+    }
+
     return true;
 }

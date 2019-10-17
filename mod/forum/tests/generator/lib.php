@@ -313,6 +313,7 @@ class mod_forum_generator extends testing_module_generator {
         }
 
         $record = (object) $record;
+        \mod_forum\local\entities\post::add_message_counts($record);
 
         // Add the post.
         $record->id = $DB->insert_record('forum_posts', $record);

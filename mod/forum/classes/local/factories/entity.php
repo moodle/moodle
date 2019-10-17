@@ -154,7 +154,9 @@ class entity {
             $record->totalscore,
             $record->mailnow,
             $record->deleted,
-            $record->privatereplyto
+            $record->privatereplyto,
+            $record->wordcount,
+            $record->charcount
         );
     }
 

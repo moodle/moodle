@@ -67,6 +67,10 @@ class post {
     private $deleted;
     /** @var int $privatereplyto The user being privately replied to */
     private $privatereplyto;
+    /** @var int $wordcount Number of words in the message */
+    private $wordcount;
+    /** @var int $charcount Number of chars in the message */
+    private $charcount;
 
     /**
      * Constructor.
@@ -104,7 +108,9 @@ class post {
         int $totalscore,
         bool $mailnow,
         bool $deleted,
-        int $privatereplyto
+        int $privatereplyto,
+        ?int $wordcount,
+        ?int $charcount
     ) {
         $this->id = $id;
         $this->discussionid = $discussionid;
@@ -122,6 +128,8 @@ class post {
         $this->mailnow = $mailnow;
         $this->deleted = $deleted;
         $this->privatereplyto = $privatereplyto;
+        $this->wordcount = $wordcount;
+        $this->charcount = $charcount;
     }
 
     /**
@@ -314,5 +322,36 @@ class post {
      */
     public function is_private_reply_intended_for_user(stdClass $user) : bool {
         return $this->get_private_reply_recipient_id() == $user->id;
+    }
+
+    /**
+     * Returns the word count.
+     *
+     * @return int|null
+     */
+    public function get_wordcount() : ?int {
+        return $this->wordcount;
+    }
+
+    /**
+     * Returns the char count.
+     *
+     * @return int|null
+     */
+    public function get_charcount() : ?int {
+        return $this->charcount;
+    }
+
+    /**
+     * This methods adds/updates forum posts' word count and char count attributes based on $data->message.
+     *
+     * @param \stdClass $record A record ready to be inserted / updated in DB.
+     * @return void.
+     */
+    public static function add_message_counts(\stdClass $record) : void {
+        if (!empty($record->message)) {
+            $record->wordcount = count_words($record->message);
+            $record->charcount = count_letters($record->message);
+        }
     }
 }

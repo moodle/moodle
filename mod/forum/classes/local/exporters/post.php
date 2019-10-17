@@ -120,6 +120,12 @@ class post extends exporter {
                 'default' => null,
                 'null' => NULL_ALLOWED
             ],
+            'charcount' => [
+                'type' => PARAM_INT,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ],
             'capabilities' => [
                 'type' => [
                     'view' => [
@@ -410,6 +416,15 @@ class post extends exporter {
             $replysubject = "{$strre} {$replysubject}";
         }
 
+        $showwordcount = $forum->should_display_word_count();
+        if ($showwordcount) {
+            $wordcount = $post->get_wordcount() ?? count_words($message);
+            $charcount = $post->get_charcount() ?? count_letters($message);
+        } else {
+            $wordcount = null;
+            $charcount = null;
+        }
+
         return [
             'id' => $post->get_id(),
             'subject' => $subject,
@@ -424,8 +439,9 @@ class post extends exporter {
             'unread' => ($loadcontent && $readreceiptcollection) ? !$readreceiptcollection->has_user_read_post($user, $post) : null,
             'isdeleted' => $isdeleted,
             'isprivatereply' => $isprivatereply,
-            'haswordcount' => $forum->should_display_word_count(),
-            'wordcount' => $forum->should_display_word_count() ? count_words($message) : null,
+            'haswordcount' => $showwordcount,
+            'wordcount' => $wordcount,
+            'charcount' => $charcount,
             'capabilities' => [
                 'view' => $canview,
                 'edit' => $canedit,

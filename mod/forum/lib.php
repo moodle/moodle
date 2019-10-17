@@ -240,6 +240,7 @@ function forum_update_instance($forum, $mform) {
             $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id, $options, $post->message);
         }
 
+        \mod_forum\local\entities\post::add_message_counts($post);
         $DB->update_record('forum_posts', $post);
         $discussion->name = $forum->name;
         $DB->update_record('forum_discussions', $discussion);
@@ -2948,6 +2949,7 @@ function forum_add_new_post($post, $mform, $unused = null) {
         $post->mailnow    = 0;
     }
 
+    \mod_forum\local\entities\post::add_message_counts($post);
     $post->id = $DB->insert_record("forum_posts", $post);
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
             mod_forum_post_form::editor_options($context, null), $post->message);
@@ -3018,6 +3020,7 @@ function forum_update_post($newpost, $mform, $unused = null) {
     }
     $post->message = file_save_draft_area_files($newpost->itemid, $context->id, 'mod_forum', 'post', $post->id,
             mod_forum_post_form::editor_options($context, $post->id), $post->message);
+    \mod_forum\local\entities\post::add_message_counts($post);
     $DB->update_record('forum_posts', $post);
     // Note: Discussion modified time/user are intentionally not updated, to enable them to track the latest new post.
     $DB->update_record('forum_discussions', $discussion);
@@ -3080,6 +3083,7 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     $post->course        = $forum->course; // speedup
     $post->mailnow       = $discussion->mailnow;
 
+    \mod_forum\local\entities\post::add_message_counts($post);
     $post->id = $DB->insert_record("forum_posts", $post);
 
     // TODO: Fix the calling code so that there always is a $cm when this function is called
