@@ -29,6 +29,7 @@ require_once($CFG->dirroot.'/user/lib.php');
 require_once('change_password_form.php');
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->dirroot.'/webservice/lib.php');
+require_once('lib.php');
 
 $id     = optional_param('id', SITEID, PARAM_INT); // current course
 $return = optional_param('return', 0, PARAM_BOOL); // redirect after password change
@@ -132,6 +133,9 @@ if ($mform->is_cancelled()) {
     unset_user_preference('create_password', $USER);
 
     $strpasswordchanged = get_string('passwordchanged');
+
+    // Plugins can perform post password change actions once data has been validated.
+    core_login_post_change_password_requests($data);
 
     $fullname = fullname($USER, true);
 
