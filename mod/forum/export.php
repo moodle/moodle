@@ -90,11 +90,8 @@ if ($form->is_cancelled()) {
     $striphtml = !empty($data->striphtml);
     $humandates = !empty($data->humandates);
 
-    $fields = ['id', 'discussion', 'parent', 'userid', 'created', 'modified', 'mailed', 'subject', 'message'];
-    if (!$striphtml) {
-        $fields[] = 'messageformat';
-    }
-    $fields = array_merge($fields, ['messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto']);
+    $fields = ['id', 'discussion', 'parent', 'userid', 'created', 'modified', 'mailed', 'subject', 'message',
+                'messageformat', 'messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto'];
 
     $datamapper = $legacydatamapperfactory->get_post_data_mapper();
     $exportdata = new ArrayObject($datamapper->to_legacy_objects($posts));
@@ -116,7 +113,7 @@ if ($form->is_cancelled()) {
                 // matter what. We use http://example.com/.
                 $data->message = str_replace('@@PLUGINFILE@@/', 'http://example.com/', $data->message);
                 $data->message = html_to_text(format_text($data->message, $data->messageformat), 0, false);
-                unset($data->messageformat);
+                $data->messageformat = FORMAT_PLAIN;
             }
             if ($humandates) {
                 $data->created = userdate($data->created);
