@@ -58,8 +58,7 @@ Feature: Basic use of the Grades report
     # Check changing the form parameters
     And I set the field "Attempts from" to "enrolled users who have not attempted the quiz"
     And I press "Show report"
-    # Check teacher1's grade
-    And I should see "-" in the "T1 Teacher1" "table_row"
+    # Note: teachers should not appear in the report.
     # Check student3's grade
     And I should see "-" in the "S3 Student3" "table_row"
 
@@ -69,8 +68,8 @@ Feature: Basic use of the Grades report
     And I should see "25.00" in the "S1 Student1" "table_row"
     # Check student2's grade
     And I should see "100.00" in the "S2 Student2" "table_row"
-    # Check teacher1's grade
-    And I should see "-" in the "T1 Teacher1" "table_row"
+    # Check student3's grade
+    And I should see "-" in the "S3 Student3" "table_row"
 
     And I set the field "Attempts from" to "all users who have attempted the quiz"
     And I press "Show report"
