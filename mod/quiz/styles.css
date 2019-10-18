@@ -968,6 +968,10 @@ table.quizreviewsummary td.cell {
     border: 0 none;
 }
 
+#categoryquestions .header.qtype {
+    white-space: nowrap;
+}
+
 #categoryquestions th .sorters {
     font-weight: normal;
     font-size: 0.8em;
