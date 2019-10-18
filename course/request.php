@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/course/request_form.php');
 // Where we came from. Used in a number of redirects.
 $url = new moodle_url('/course/request.php');
 $return = optional_param('return', null, PARAM_ALPHANUMEXT);
+$categoryid = optional_param('category', null, PARAM_INT);
 if ($return === 'management') {
     $url->param('return', $return);
     $returnurl = new moodle_url('/course/management.php', array('categoryid' => $CFG->defaultrequestcategory));
@@ -47,12 +48,24 @@ if (isguestuser()) {
 if (empty($CFG->enablecourserequests)) {
     print_error('courserequestdisabled', '', $returnurl);
 }
-$context = context_system::instance();
+
+if ($CFG->lockrequestcategory) {
+    // Course request category is locked, user will always request in the default request category.
+    $categoryid = null;
+} else if (!$categoryid) {
+    // Category selection is enabled but category is not specified.
+    // Find a category where user has capability to request courses (preferably the default category).
+    $list = core_course_category::make_categories_list('moodle/course:request');
+    $categoryid = array_key_exists($CFG->defaultrequestcategory, $list) ? $CFG->defaultrequestcategory : key($list);
+}
+
+$context = context_coursecat::instance($categoryid ?: $CFG->defaultrequestcategory);
 $PAGE->set_context($context);
 require_capability('moodle/course:request', $context);
 
 // Set up the form.
-$data = course_request::prepare();
+$data = $categoryid ? (object)['category' => $categoryid] : null;
+$data = course_request::prepare($data);
 $requestform = new course_request_form($url);
 $requestform->set_data($data);
 

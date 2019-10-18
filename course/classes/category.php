@@ -2973,11 +2973,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_request_course() {
-        global $CFG;
-        if (empty($CFG->enablecourserequests) || $this->id != $CFG->defaultrequestcategory) {
-            return false;
-        }
-        return !$this->can_create_course() && has_capability('moodle/course:request', $this->get_context());
+        return course_request::can_request($this->get_context());
     }
 
     /**

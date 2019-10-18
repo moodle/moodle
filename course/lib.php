@@ -752,16 +752,21 @@ function make_categories_options() {
 /**
  * Print the buttons relating to course requests.
  *
- * @param object $context current page context.
+ * @param context $context current page context.
  */
 function print_course_request_buttons($context) {
     global $CFG, $DB, $OUTPUT;
     if (empty($CFG->enablecourserequests)) {
         return;
     }
-    if (!has_capability('moodle/course:create', $context) && has_capability('moodle/course:request', $context)) {
-    /// Print a button to request a new course
-        echo $OUTPUT->single_button(new moodle_url('/course/request.php'), get_string('requestcourse'), 'get');
+    if (course_request::can_request($context)) {
+        // Print a button to request a new course.
+        $params = [];
+        if ($context instanceof context_coursecat) {
+            $params['category'] = $context->instanceid;
+        }
+        echo $OUTPUT->single_button(new moodle_url('/course/request.php', $params),
+            get_string('requestcourse'), 'get');
     }
     /// Print a button to manage pending requests
     if (has_capability('moodle/site:approvecourse', $context)) {
@@ -2833,7 +2838,7 @@ class course_request {
         $data->requester = $USER->id;
 
         // Setting the default category if none set.
-        if (empty($data->category) || empty($CFG->requestcategoryselection)) {
+        if (empty($data->category) || !empty($CFG->lockrequestcategory)) {
             $data->category = $CFG->defaultrequestcategory;
         }
 
@@ -2973,6 +2978,31 @@ class course_request {
     }
 
     /**
+     * Checks user capability to approve a requested course
+     *
+     * If course was requested without category for some reason (might happen if $CFG->defaultrequestcategory is
+     * misconfigured), we check capabilities 'moodle/site:approvecourse' and 'moodle/course:changecategory'.
+     *
+     * @return bool
+     */
+    public function can_approve() {
+        global $CFG;
+        $category = null;
+        if ($this->properties->category) {
+            $category = core_course_category::get($this->properties->category, IGNORE_MISSING);
+        } else if ($CFG->defaultrequestcategory) {
+            $category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING);
+        }
+        if ($category) {
+            return has_capability('moodle/site:approvecourse', $category->get_context());
+        }
+
+        // We can not determine the context where the course should be created. The approver should have
+        // both capabilities to approve courses and change course category in the system context.
+        return has_all_capabilities(['moodle/site:approvecourse', 'moodle/course:changecategory'], context_system::instance());
+    }
+
+    /**
      * Returns the category where this course request should be created
      *
      * Note that we don't check here that user has a capability to view
@@ -2983,17 +3013,14 @@ class course_request {
      */
     public function get_category() {
         global $CFG;
-        // If the category is not set, if the current user does not have the rights to change the category, or if the
-        // category does not exist, we set the default category to the course to be approved.
-        // The system level is used because the capability moodle/site:approvecourse is based on a system level.
-        if (empty($this->properties->category) || !has_capability('moodle/course:changecategory', context_system::instance()) ||
-                (!$category = core_course_category::get($this->properties->category, IGNORE_MISSING, true))) {
-            $category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING, true);
+        if ($this->properties->category && ($category = core_course_category::get($this->properties->category, IGNORE_MISSING))) {
+            return $category;
+        } else if ($CFG->defaultrequestcategory &&
+                ($category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING))) {
+            return $category;
+        } else {
+            return core_course_category::get_default();
         }
-        if (!$category) {
-            $category = core_course_category::get_default();
-        }
-        return $category;
     }
 
     /**
@@ -3118,6 +3145,33 @@ class course_request {
         $eventdata->smallmessage      = '';
         $eventdata->notification      = 1;
         message_send($eventdata);
+    }
+
+    /**
+     * Checks if current user can request a course in this context
+     *
+     * @param context $context
+     * @return bool
+     */
+    public static function can_request(context $context) {
+        global $CFG;
+        if (empty($CFG->enablecourserequests)) {
+            return false;
+        }
+        if (has_capability('moodle/course:create', $context)) {
+            return false;
+        }
+
+        if ($context instanceof context_system) {
+            $defaultcontext = context_coursecat::instance($CFG->defaultrequestcategory, IGNORE_MISSING);
+            return $defaultcontext &&
+                has_capability('moodle/course:request', $defaultcontext);
+        } else if ($context instanceof context_coursecat) {
+            if (!$CFG->lockrequestcategory || $CFG->defaultrequestcategory == $context->instanceid) {
+                return has_capability('moodle/course:request', $context);
+            }
+        }
+        return false;
     }
 }
 

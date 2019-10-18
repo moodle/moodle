@@ -37,7 +37,7 @@ class core_course_courserequest_testcase extends advanced_testcase {
 
         $defaultcategory = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
         set_config('enablecourserequests', 1);
-        set_config('requestcategoryselection', 0);
+        set_config('lockrequestcategory', 1);
         set_config('defaultrequestcategory', $defaultcategory);
 
         // Create some categories.
@@ -70,7 +70,7 @@ class core_course_courserequest_testcase extends advanced_testcase {
 
         // Request with category different than default and category selection allowed.
         set_config('defaultrequestcategory', $cat3->id);
-        set_config('requestcategoryselection', 1);
+        set_config('lockrequestcategory', 0);
         $data->category = $cat1->id;
         $cr = course_request::create($data);
         $this->assertEquals($cat1->id, $cr->category);
@@ -83,14 +83,20 @@ class core_course_courserequest_testcase extends advanced_testcase {
 
         $defaultcategory = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
         set_config('enablecourserequests', 1);
-        set_config('requestcategoryselection', 0);
+        set_config('lockrequestcategory', 1);
         set_config('defaultrequestcategory', $defaultcategory);
 
         // Create some categories.
         $cat1 = $this->getDataGenerator()->create_category();
         $cat2 = $this->getDataGenerator()->create_category();
 
+        // Create a user and allow course requests for him.
         $requester = $this->getDataGenerator()->create_user();
+        $roleid = create_role('Course requestor role', 'courserequestor', '');
+        assign_capability('moodle/course:request', CAP_ALLOW, $roleid,
+            context_system::instance()->id);
+        role_assign($roleid, $requester->id, context_system::instance()->id);
+        accesslib_clear_all_caches_for_unit_testing();
 
         $data = new stdClass();
         $data->fullname = 'Həllo World!';
@@ -116,7 +122,7 @@ class core_course_courserequest_testcase extends advanced_testcase {
         $this->assertEquals($defaultcategory, $course->category);
 
         // Test with category.
-        set_config('requestcategoryselection', 1);
+        set_config('lockrequestcategory', 0);
         set_config('defaultrequestcategory', $cat2->id);
         $data->shortname .= ' 2nd';
         $data->category = $cat1->id;
@@ -138,10 +144,16 @@ class core_course_courserequest_testcase extends advanced_testcase {
 
         $this->setAdminUser();
         set_config('enablecourserequests', 1);
-        set_config('requestcategoryselection', 0);
+        set_config('lockrequestcategory', 1);
         set_config('defaultrequestcategory', $DB->get_field_select('course_categories', "MIN(id)", "parent=0"));
 
+        // Create a user and allow course requests for him.
         $requester = $this->getDataGenerator()->create_user();
+        $roleid = create_role('Course requestor role', 'courserequestor', '');
+        assign_capability('moodle/course:request', CAP_ALLOW, $roleid,
+            context_system::instance()->id);
+        role_assign($roleid, $requester->id, context_system::instance()->id);
+        accesslib_clear_all_caches_for_unit_testing();
 
         $data = new stdClass();
         $data->fullname = 'Həllo World!';

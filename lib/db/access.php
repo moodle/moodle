@@ -133,7 +133,7 @@ $capabilities = array(
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
             'manager' => CAP_ALLOW
         )
@@ -782,10 +782,7 @@ $capabilities = array(
 
     'moodle/course:request' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW,
-        )
+        'contextlevel' => CONTEXT_COURSECAT,
     ),
 
     'moodle/course:delete' => array(

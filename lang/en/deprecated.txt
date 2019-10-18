@@ -115,3 +115,5 @@ completeregistration,core_hub
 registersite,core_hub
 updatesite,core_hub
 unregisterexplained,core_hub
+configrequestcategoryselection,core_admin
+requestcategoryselection,core_admin

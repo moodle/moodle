@@ -6811,4 +6811,110 @@ class core_course_courselib_testcase extends advanced_testcase {
         course_delete_module($moduleinstances[$indextodelete]->cmid, true); // Try to delete the instance asynchronously.
         $this->assertEquals($expected, course_modules_pending_deletion($course->id, $gradable));
     }
+
+    /**
+     * Tests for the course_request::can_request
+     */
+    public function test_can_request_course() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $cat1 = $CFG->defaultrequestcategory;
+        $cat2 = $this->getDataGenerator()->create_category()->id;
+        $cat3 = $this->getDataGenerator()->create_category()->id;
+        $context1 = context_coursecat::instance($cat1);
+        $context2 = context_coursecat::instance($cat2);
+        $context3 = context_coursecat::instance($cat3);
+        $this->setUser($user);
+
+        // By default users don't have capability to request courses.
+        $this->assertFalse(course_request::can_request(context_system::instance()));
+        $this->assertFalse(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertFalse(course_request::can_request($context3));
+
+        // Allow for the 'user' role the capability to request courses.
+        $userroleid = $DB->get_field('role', 'id', ['shortname' => 'user']);
+        assign_capability('moodle/course:request', CAP_ALLOW, $userroleid,
+            context_system::instance()->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Lock category selection.
+        $CFG->lockrequestcategory = 1;
+
+        // Now user can only request course in the default category or in system context.
+        $this->assertTrue(course_request::can_request(context_system::instance()));
+        $this->assertTrue(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertFalse(course_request::can_request($context3));
+
+        // Enable category selection. User can request course anywhere.
+        $CFG->lockrequestcategory = 0;
+        $this->assertTrue(course_request::can_request(context_system::instance()));
+        $this->assertTrue(course_request::can_request($context1));
+        $this->assertTrue(course_request::can_request($context2));
+        $this->assertTrue(course_request::can_request($context3));
+
+        // Remove cap from cat2.
+        $roleid = create_role('Test role', 'testrole', 'Test role description');
+        assign_capability('moodle/course:request', CAP_PROHIBIT, $roleid,
+            $context2->id, true);
+        role_assign($roleid, $user->id, $context2->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->assertTrue(course_request::can_request(context_system::instance()));
+        $this->assertTrue(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertTrue(course_request::can_request($context3));
+
+        // Disable course request functionality.
+        $CFG->enablecourserequests = false;
+        $this->assertFalse(course_request::can_request(context_system::instance()));
+        $this->assertFalse(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertFalse(course_request::can_request($context3));
+    }
+
+    /**
+     * Tests for the course_request::can_approve
+     */
+    public function test_can_approve_course_request() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $requestor = $this->getDataGenerator()->create_user();
+        $user = $this->getDataGenerator()->create_user();
+        $cat1 = $CFG->defaultrequestcategory;
+        $cat2 = $this->getDataGenerator()->create_category()->id;
+        $cat3 = $this->getDataGenerator()->create_category()->id;
+
+        // Enable course requests. Default 'user' role has capability to request courses.
+        $CFG->enablecourserequests = true;
+        $CFG->lockrequestcategory = 0;
+        $this->setUser($requestor);
+        $requestdata = ['summary_editor' => ['text' => '', 'format' => 0], 'name' => 'Req', 'reason' => 'test'];
+        $request1 = course_request::create((object)($requestdata));
+        $request2 = course_request::create((object)($requestdata + ['category' => $cat2]));
+        $request3 = course_request::create((object)($requestdata + ['category' => $cat3]));
+
+        $this->setUser($user);
+        // Add capability to approve courses.
+        $roleid = create_role('Test role', 'testrole', 'Test role description');
+        assign_capability('moodle/site:approvecourse', CAP_ALLOW, $roleid,
+            context_system::instance()->id, true);
+        role_assign($roleid, $user->id, context_coursecat::instance($cat2)->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->assertFalse($request1->can_approve());
+        $this->assertTrue($request2->can_approve());
+        $this->assertFalse($request3->can_approve());
+
+        // Delete category where course was requested. Now only site-wide manager can approve it.
+        core_course_category::get($cat2, MUST_EXIST, true)->delete_full(false);
+        $this->assertFalse($request2->can_approve());
+
+        $this->setAdminUser();
+        $this->assertTrue($request2->can_approve());
+    }
 }
