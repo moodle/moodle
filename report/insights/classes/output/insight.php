@@ -151,6 +151,11 @@ class insight implements \renderable, \templatable {
             list($obj->style, $obj->outcomeicon) = self::get_calculation_display($calculation->indicator,
                 floatval($calculation->value), $output, $calculation->subtype);
 
+            $identifier = $calculation->indicator->get_name()->get_identifier() . 'def';
+            $component = $calculation->indicator->get_name()->get_component();
+            if (get_string_manager()->string_exists($identifier, $component)) {
+                $obj->outcomehelp = (new \help_icon($identifier, $component))->export_for_template($output);
+            }
             $data->calculations[] = $obj;
         }
 
