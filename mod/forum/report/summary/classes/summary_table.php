@@ -327,58 +327,36 @@ class summary_table extends table_sql {
                 break;
 
             case self::FILTER_GROUPS:
-                // Skip adding filter if not applied, or all options are selected.
-                if ($this->is_filtered_by_groups($values)) {
-                    // Include users without groups if that option (-1) is selected.
-                    $nonekey = array_search(-1, $values, true);
+                // Filter data to only include content within specified groups (and/or no groups).
+                // Additionally, only display users who can post within the selected option(s).
 
-                    // Users within selected groups or not in any groups are included.
-                    if ($nonekey !== false && count($values) > 1) {
-                        unset($values[$nonekey]);
-                        list($groupidin, $groupidparams) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, 'groupid');
+                // Only filter by groups the user has access to.
+                $groups = $this->get_filter_groups($values);
 
-                        // No select fields required.
-                        // No joins required (handled by where to prevent data duplication).
-                        $this->sql->filterwhere .= "
-                            AND (u.id =
-                                (SELECT gm.userid
-                                   FROM {groups_members} gm
-                                  WHERE gm.userid = u.id
-                                    AND gm.groupid {$groupidin}
-                               GROUP BY gm.userid
-                                  LIMIT 1)
-                            OR
-                                (SELECT nogm.userid
-                                   FROM mdl_groups_members nogm
-                                  WHERE nogm.userid = u.id
-                               GROUP BY nogm.userid
-                                  LIMIT 1)
-                            IS NULL)";
+                // Skip adding filter if not applied, or all valid options are selected.
+                if (!empty($groups)) {
+                    // Posts within selected groups and/or not in any groups (group ID -1) are included.
+                    // No user filtering as anyone enrolled can potentially post to unrestricted discussions.
+                    if (array_search(-1, $groups) !== false) {
+                        list($groupidin, $groupidparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
+
+                        $this->sql->filterwhere .= " AND d.groupid {$groupidin}";
                         $this->sql->params += $groupidparams;
 
-                    } else if ($nonekey !== false) {
-                        // Only users within no groups are included.
-                        unset($values[$nonekey]);
+                    } else {
+                        // Only posts and users within selected groups are included.
+                        list($groupusersin, $groupusersparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
+                        list($groupidin, $groupidparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
 
-                        // No select fields required.
-                        $this->sql->filterfromjoins .= " LEFT JOIN {groups_members} nogm ON nogm.userid = u.id";
-                        $this->sql->filterwhere .= " AND nogm.id IS NULL";
-
-                    } else if (!empty($values)) {
-                        // Only users within selected groups are included.
-                        list($groupidin, $groupidparams) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, 'groupid');
-
-                        // No select fields required.
                         // No joins required (handled by where to prevent data duplication).
                         $this->sql->filterwhere .= "
-                            AND u.id = (
-                                 SELECT gm.userid
-                                   FROM {groups_members} gm
-                                  WHERE gm.userid = u.id
-                                    AND gm.groupid {$groupidin}
-                               GROUP BY gm.userid
-                                  LIMIT 1)";
-                        $this->sql->params += $groupidparams;
+                            AND u.id IN (
+                                SELECT gm.userid
+                                  FROM {groups_members} gm
+                                 WHERE gm.groupid {$groupusersin}
+                            )
+                            AND d.groupid {$groupidin}";
+                        $this->sql->params += $groupusersparams + $groupidparams;
                     }
                 }
 
@@ -665,25 +643,57 @@ class summary_table extends table_sql {
     }
 
     /**
-     * Check whether the groups filter will be applied by checking whether the number of groups selected
-     * matches the total number of options available (all groups plus no groups option).
+     * Get the final list of groups to filter by, based on the groups submitted,
+     * and those the user has access to.
      *
-     * @param array $groups The group IDs selected.
-     * @return bool
+     *
+     * @param array $groups The group IDs submitted.
+     * @return array Group objects of groups to use in groups filter.
+     *                If no filtering required (all groups selected), returns [].
      */
-    protected function is_filtered_by_groups(array $groups): bool {
-        static $groupsavailablecount = null;
+    protected function get_filter_groups(array $groups): array {
+        global $USER;
 
-        if (empty($groups)) {
-            return false;
+        $groupmode = groups_get_activity_groupmode($this->cm);
+        $aag = has_capability('moodle/site:accessallgroups', $this->context);
+        $allowedgroups = [];
+        $filtergroups = [];
+
+        // Filtering only valid if a forum groups mode is enabled.
+        if (in_array($groupmode, [VISIBLEGROUPS, SEPARATEGROUPS])) {
+            $allgroupsobj = groups_get_all_groups($this->cm->course, 0, $this->cm->groupingid);
+            $allgroups = [];
+
+            foreach ($allgroupsobj as $group) {
+                $allgroups[] = $group->id;
+            }
+
+            if ($groupmode == VISIBLEGROUPS || $aag) {
+                $nogroups = new \stdClass();
+                $nogroups->id = -1;
+                $nogroups->name = get_string('groupsnone');
+
+                // Any groups and no groups.
+                $allowedgroupsobj = $allgroupsobj + [$nogroups];
+            } else {
+                // Only assigned groups.
+                $allowedgroupsobj = groups_get_all_groups($this->cm->course, $USER->id, $this->cm->groupingid);
+            }
+
+            foreach ($allowedgroupsobj as $group) {
+                $allowedgroups[] = $group->id;
+            }
+
+            // If not all groups in course are selected, filter by allowed groups submitted.
+            if (!empty($groups) && !empty(array_diff($allowedgroups, $groups))) {
+                $filtergroups = array_intersect($groups, $allowedgroups);
+            } else if (!empty(array_diff($allgroups, $allowedgroups))) {
+                // If user's 'all groups' is a subset of the course groups, filter by all groups available to them.
+                $filtergroups = $allowedgroups;
+            }
         }
 
-        // Find total number of options available (groups plus 'no groups'), if not already fetched.
-        if (is_null($groupsavailablecount)) {
-            $groupsavailablecount = 1 + count(groups_get_activity_allowed_groups($this->cm));
-        }
-
-        return (count($groups) < $groupsavailablecount);
+        return $filtergroups;
     }
 
     /**

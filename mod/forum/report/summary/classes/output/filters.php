@@ -93,34 +93,41 @@ class filters implements renderable, templatable {
      * @return void.
      */
     protected function prepare_groups_data(array $groupsdata): void {
+        global $DB, $USER;
+
+        $groupmode = groups_get_activity_groupmode($this->cm);
+        $context = \context_module::instance($this->cm->id);
+        $aag = has_capability('moodle/site:accessallgroups', $context);
         $groupsavailable = [];
-        $groupsselected = [];
 
-        // Only fetch groups user has access to.
-        $groups = groups_get_activity_allowed_groups($this->cm);
+        // If no groups mode enabled, nothing to prepare.
+        if (!in_array($groupmode, [VISIBLEGROUPS, SEPARATEGROUPS])) {
+            return;
+        }
 
-        // Include a 'no groups' option if groups exist.
-        if (!empty($groups)) {
+        if ($groupmode == VISIBLEGROUPS || $aag) {
+            // Any groups, and no groups.
+            $allowedgroupsobj = groups_get_all_groups($this->cm->course, 0, $this->cm->groupingid);
             $nogroups = new stdClass();
             $nogroups->id = -1;
             $nogroups->name = get_string('groupsnone');
-            array_push($groups, $nogroups);
+            $allowedgroupsobj[] = $nogroups;
+        } else {
+            // Only assigned groups.
+            $allowedgroupsobj = groups_get_all_groups($this->cm->course, $USER->id, $this->cm->groupingid);
         }
 
-        foreach ($groups as $group) {
+        foreach ($allowedgroupsobj as $group) {
             $groupsavailable[$group->id] = $group->name;
-
-            // Select provided groups if they are available.
-            if (in_array($group->id, $groupsdata)) {
-                $groupsselected[] = $group->id;
-            }
         }
+
+        // Set valid groups selected.
+        $groupsselected = array_intersect($groupsdata, array_keys($groupsavailable));
 
         // Overwrite groups properties.
         $this->groupsavailable = $groupsavailable;
         $this->groupsselected = $groupsselected;
     }
-
 
     /**
      * Export data for use as the context of a mustache template.
