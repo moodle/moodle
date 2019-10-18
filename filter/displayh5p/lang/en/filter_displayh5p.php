@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for filter_h5p
+ * Strings for filter_displayh5p
  *
- * @package    filter_h5p
+ * @package    filter_displayh5p
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,5 +30,5 @@ $string['allowedsourceslistdesc'] = 'List of sources from which users can embed 
 <b>[id]</b> is a placeholder for the H5P content id in the external source.
 
 <b>*</b> wildcard is supported. For example, *.example.com will embed H5P content from any subdomain of example.com, but not from the example.com domain.';
-$string['filtername'] = 'H5P';
+$string['filtername'] = 'Display H5P';
 $string['privacy:metadata'] = 'This H5P filter does not store any personal data.';
