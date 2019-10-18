@@ -672,6 +672,7 @@ class current_user_course_selector extends course_selector_base {
     }
 
     public function find_courses($search) {
+        global $DB;
 
         if ($search) {
             $groupname = get_string('usercoursesmatching', 'block_iomad_company_admin', $search);
@@ -679,7 +680,14 @@ class current_user_course_selector extends course_selector_base {
             $groupname = get_string('usercourses', 'block_iomad_company_admin');
         }
 
-        if ($coursearray = enrol_get_users_courses($this->user->id, true, null, 'visible DESC, sortorder ASC')) {
+        if ($coursearray = enrol_get_users_courses($this->user->id, true, null, 'fullname')) {
+            // Don't want license courses.
+            foreach ($coursearray as $courseid => $coursedata) {
+                if ($DB->get_record('iomad_courses', array('courseid' => $courseid, 'licensed' => 1))) {
+                    unset($coursearray[$courseid]);
+                }
+            }
+            // Deal with any search.
             if (empty($search)) {
                 return array($groupname => $coursearray);
             } else {
@@ -741,7 +749,7 @@ class potential_user_course_selector extends course_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
         $params['siteid'] = $SITE->id;
-	$company = new company($this->companyid);
+        $company = new company($this->companyid);
         $userdepartment = $company->get_userlevel($this->user);
 
         if (!$companycourses = $DB->get_records('company_course', array('companyid' => $this->companyid), null, 'courseid')) {
@@ -795,17 +803,24 @@ class potential_user_course_selector extends course_selector_base {
                                INNER JOIN {iomad_courses} pc
                                ON c.id=pc.courseid
                                WHERE pc.shared=1
-                               AND pc.licensed != 1";
+                               AND pc.licensed != 1
+                               $currentcoursesql";
                 $partialsharedsql = " FROM {course} c
-                                    WHERE c.id IN (SELECT pc.courseid from {iomad_courses} pc
+                                    WHERE c.id IN (SELECT pc.courseid FROM {iomad_courses} pc
                                     INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
-                                       where pc.shared=2 AND pc.licensed !=1 AND csc.companyid = :companyid)";
+                                       WHERE pc.shared=2 AND pc.licensed !=1 AND csc.companyid = :companyid)
+                                       $currentcoursesql";
             } else {
-                $sharedsql = " FROM {course} c INNER JOIN {iomad_courses} pc ON c.id=pc.courseid WHERE pc.shared=1";
+                $sharedsql = " FROM {course} c
+                               INNER JOIN {iomad_courses} pc ON c.id=pc.courseid
+                               WHERE pc.shared=1
+                               $currentcoursesql";
                 $partialsharedsql = " FROM {course} c
-                                    WHERE c.id IN (SELECT pc.courseid from {iomad_courses} pc
-                                    INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
-                                       where pc.shared=2 AND csc.companyid = :companyid)";
+                                      WHERE c.id IN 
+                                         (SELECT pc.courseid WHERE {iomad_courses} pc
+                                          INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
+                                          WHERE pc.shared=2 AND csc.companyid = :companyid)
+                                      $currentcoursesql";
             }
         } else {
             $sharedsql = " FROM {course} c WHERE 1 = 2";
