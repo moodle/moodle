@@ -966,6 +966,11 @@ table.quizreviewsummary td.cell {
     text-align: center;
     padding: 0 2px;
     border: 0 none;
+    vertical-align: top;
+}
+
+#categoryquestions .header.checkbox {
+    vertical-align: bottom;
 }
 
 #categoryquestions th.modifiername .sorters,
