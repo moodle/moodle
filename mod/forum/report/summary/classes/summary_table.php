@@ -333,13 +333,11 @@ class summary_table extends table_sql {
 
                         // No joins required (handled by where to prevent data duplication).
                         $this->sql->filterwhere .= "
-                            AND u.id = (
-                                 SELECT gm.userid
-                                   FROM {groups_members} gm
-                                  WHERE gm.userid = u.id
-                                    AND gm.groupid {$groupusersin}
-                               GROUP BY gm.userid
-                                  LIMIT 1)
+                            AND u.id IN (
+                                SELECT gm.userid
+                                  FROM {groups_members} gm
+                                 WHERE gm.groupid {$groupusersin}
+                            )
                             AND d.groupid {$groupidin}";
                         $this->sql->params += $groupusersparams + $groupidparams;
                     }
