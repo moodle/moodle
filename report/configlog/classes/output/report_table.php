@@ -26,6 +26,7 @@ namespace report_configlog\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/searchlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
@@ -37,12 +38,18 @@ require_once($CFG->libdir . '/tablelib.php');
  */
 class report_table extends \table_sql implements \renderable {
 
+    /** @var string $search */
+    protected $search;
+
     /**
      * Constructor
      *
+     * @param string $search
      */
-    public function __construct() {
+    public function __construct(string $search) {
         parent::__construct('report-configlog-report-table');
+
+        $this->search = trim($search);
 
         // Define columns.
         $columns = [
@@ -57,6 +64,7 @@ class report_table extends \table_sql implements \renderable {
         $this->define_headers(array_values($columns));
 
         // Table configuration.
+        $this->set_attribute('id', $this->uniqueid);
         $this->set_attribute('cellspacing', '0');
 
         $this->sortable(true, 'timemodified', SORT_DESC);
@@ -76,15 +84,38 @@ class report_table extends \table_sql implements \renderable {
      * @return void
      */
     protected function init_sql() {
-        $userfields = get_all_user_name_fields(true, 'u');
+        global $DB;
 
+        $userfields = get_all_user_name_fields(true, 'u');
         $fields = 'cl.id, cl.timemodified, cl.plugin, cl.name, cl.value, cl.oldvalue, cl.userid, ' . $userfields;
 
         $from = '{config_log} cl
             JOIN {user} u ON u.id = cl.userid';
 
-        $this->set_sql($fields, $from, '1=1');
-        $this->set_count_sql('SELECT COUNT(1) FROM ' . $from);
+        // Report search.
+        $where = '1=1';
+        $params = [];
+
+        if (!empty($this->search)) {
+            // Clean quotes, allow search by 'setting:' prefix.
+            $searchstring = str_replace(["\\\"", 'setting:'], ["\"", 'subject:'], $this->search);
+
+            $parser = new \search_parser();
+            $lexer = new \search_lexer($parser);
+
+            if ($lexer->parse($searchstring)) {
+                $parsearray = $parser->get_parsed_array();
+
+                // Data fields should contain both value/oldvalue.
+                $datafields = $DB->sql_concat_join("':'", ['cl.value', 'cl.oldvalue']);
+
+                list($where, $params) = search_generate_SQL($parsearray, $datafields, 'cl.name', 'cl.userid', 'u.id',
+                    'u.firstname', 'u.lastname', 'cl.timemodified', 'cl.id');
+            }
+        }
+
+        $this->set_sql($fields, $from, $where, $params);
+        $this->set_count_sql('SELECT COUNT(1) FROM ' . $from . ' WHERE ' . $where, $params);
     }
 
     /**

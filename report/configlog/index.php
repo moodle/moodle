@@ -27,11 +27,48 @@ require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('reportconfiglog', '', null, '', array('pagelayout'=>'report'));
-echo $OUTPUT->header();
 
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('configlog', 'report_configlog'));
 
-$table = new \report_configlog\output\report_table();
+$mform = new \report_configlog\form\search();
+
+/** @var cache_session $cache */
+$cache = cache::make_from_params(cache_store::MODE_SESSION, 'report_customlog', 'search');
+if ($cachedata = $cache->get('data')) {
+    $mform->set_data($cachedata);
+}
+
+$searchclauses = [];
+
+// Check if we have a form submission, or a cached submission.
+$data = ($mform->is_submitted() ? $mform->get_data() : fullclone($cachedata));
+if ($data instanceof stdClass) {
+    if (!empty($data->value)) {
+        $searchclauses[] = $data->value;
+    }
+    if (!empty($data->setting)) {
+        $searchclauses[] = "setting:{$data->setting}";
+    }
+    if (!empty($data->user)) {
+        $searchclauses[] = "user:{$data->user}";
+    }
+    if (!empty($data->datefrom)) {
+        $searchclauses[] = "datefrom:{$data->datefrom}";
+    }
+    if (!empty($data->dateto)) {
+        $dateto = $data->dateto + DAYSECS - 1;
+        $searchclauses[] = "dateto:{$dateto}";
+    }
+
+    // Cache form submission so that it is preserved while paging through the report.
+    unset($data->submitbutton);
+    $cache->set('data', $data);
+}
+
+$mform->display();
+
+$table = new \report_configlog\output\report_table(implode(' ', $searchclauses));
 $table->define_baseurl($PAGE->url);
 
 echo $PAGE->get_renderer('report_configlog')->render($table);
