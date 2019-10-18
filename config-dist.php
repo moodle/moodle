@@ -639,10 +639,10 @@ $CFG->admin = 'admin';
 // to check the latest default in question/classes/bank/view.php before setting this.
 //
 //      $CFG->questionbankcolumns = 'checkbox_column,question_type_column,'
-//              . 'question_name_idnumber_tags_column,'
+//              . 'question_name_idnumber_tags_column,edit_menu_column,'
 //              . 'tags_action_column,edit_action_column,copy_action_column,'
 //              . 'preview_action_column,delete_action_column,export_xml_action_column,'
-//              . 'creator_name_column,modifier_name_column,edit_menu_column';
+//              . 'creator_name_column,modifier_name_column';
 //
 // Forum summary report
 //
