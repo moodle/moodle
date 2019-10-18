@@ -130,6 +130,27 @@ class core_analytics_targets_testcase extends advanced_testcase {
                 ],
                 'isvalid' => get_string('completionnotenabledforcourse', 'completion')
             ],
+            'coursehiddentraining' => [
+                'params' => [
+                    'enablecompletion' => 1,
+                    'startdate' => mktime(0, 0, 0, $month - 1, 24, $year - 1),
+                    'enddate' => mktime(0, 0, 0, $month - 1, 23, $year),
+                    'students' => true,
+                    'visible' => '0',
+                ],
+                'isvalid' => true,
+            ],
+            'coursehiddenprediction' => [
+                'params' => [
+                    'enablecompletion' => 1,
+                    'startdate' => mktime(0, 0, 0, $month - 1, 24, $year),
+                    'enddate' => mktime(0, 0, 0, $month - 1, 23, $year + 1),
+                    'students' => true,
+                    'visible' => '0',
+                ],
+                'isvalid' => get_string('hiddenfromstudents'),
+                'fortraining' => false
+            ],
         ];
     }
 
