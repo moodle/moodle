@@ -147,7 +147,7 @@ class WikiToMarkdown {
       $count = 0;
     }
     else {
-      $listchar = $line{0};
+      $listchar = $line[0];
       $count = strspn( $line, $listchar );
       $line = preg_replace( "/^[".$listchar."]+ /i", "", $line );
     }
