@@ -100,7 +100,7 @@ class sync_grades extends \core\task\scheduled_task {
                         }
 
                         // Need a valid context to continue.
-                        if (!$context = \context::instance_by_id($tool->contextid)) {
+                        if (!$context = \context::instance_by_id($tool->contextid, IGNORE_MISSING)) {
                             mtrace("Failed - Invalid contextid '$tool->contextid' for the tool '$tool->id'.");
                             continue;
                         }
