@@ -116,11 +116,11 @@ class core_user_privacy_testcase extends provider_testcase {
         $courserequestdata = (array) $writer->get_data([get_string('privacy:courserequestpath', 'user')]);
         $entry = array_shift($courserequestdata);
         // Make sure that the password is not exported.
-        $this->assertFalse(array_key_exists('password', $entry));
+        $this->assertFalse(property_exists($entry, 'password'));
         // Check that some of the other fields are present.
-        $this->assertTrue(array_key_exists('fullname', $entry));
-        $this->assertTrue(array_key_exists('shortname', $entry));
-        $this->assertTrue(array_key_exists('summary', $entry));
+        $this->assertTrue(property_exists($entry, 'fullname'));
+        $this->assertTrue(property_exists($entry, 'shortname'));
+        $this->assertTrue(property_exists($entry, 'summary'));
 
          // User details.
         $userdata = (array) $writer->get_data([]);

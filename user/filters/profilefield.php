@@ -122,7 +122,7 @@ class user_filter_profilefield extends user_filter_type {
         $operator = $field.'_op';
         $profile  = $field.'_fld';
 
-        if (array_key_exists($profile, $formdata)) {
+        if (property_exists($formdata, $profile)) {
             if ($formdata->$operator < 5 and $formdata->$field === '') {
                 return false;
             }

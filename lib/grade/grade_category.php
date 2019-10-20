@@ -2192,7 +2192,7 @@ class grade_category extends grade_object {
         $children_array = array();
         foreach ($category->children as $sortorder=>$child) {
 
-            if (array_key_exists('itemtype', $child)) {
+            if (property_exists($child, 'itemtype')) {
                 $grade_item = new grade_item($child, false);
 
                 if (in_array($grade_item->itemtype, array('course', 'category'))) {

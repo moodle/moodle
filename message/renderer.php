@@ -42,7 +42,7 @@ class core_message_renderer extends plugin_renderer_base {
      * @param  array $allprocessors  array of objects containing all message processors
      * @param  array $processors  array of objects containing active message processors
      * @param  array $providers   array of objects containing message providers
-     * @param  array $preferences array of objects containing current preferences
+     * @param  stdClass $preferences object containing current preferences
      * @return string The text to render
      */
     public function manage_messageoutput_settings($allprocessors, $processors, $providers, $preferences) {
@@ -120,7 +120,7 @@ class core_message_renderer extends plugin_renderer_base {
      *
      * @param  array $processors  array of objects containing message processors
      * @param  array $providers   array of objects containing message providers
-     * @param  array $preferences array of objects containing current preferences
+     * @param  stdClass $preferences object containing current preferences
      * @return string The text to render
      */
     public function manage_defaultmessageoutputs($processors, $providers, $preferences) {
@@ -177,7 +177,7 @@ class core_message_renderer extends plugin_renderer_base {
                         $preference = $processor->name.'_provider_'.$preferencebase;
                         if ($providerdisabled) {
                             $select = MESSAGE_DISALLOWED;
-                        } else if (array_key_exists($preference, $preferences)) {
+                        } else if (property_exists($preferences, $preference)) {
                             $select = $preferences->{$preference};
                         }
                         // dropdown menu
@@ -192,7 +192,7 @@ class core_message_renderer extends plugin_renderer_base {
                             $checked = true;
                         } else if ($select == 'permitted') {
                             $preference = 'message_provider_'.$preferencebase;
-                            if (array_key_exists($preference, $preferences)) {
+                            if (property_exists($preferences, $preference)) {
                                 $checked = (int)in_array($processor->name, explode(',', $preferences->{$preference}));
                             }
                         }

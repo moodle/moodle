@@ -254,7 +254,13 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         }
 
         $result = $this->collection->findOne($key);
-        if ($result === null || !array_key_exists('data', $result)) {
+        // Note $result is really an object, BSONDocument extending ArrayObject,
+        // which implements ArrayAccess. That enables access to its information
+        // using square brackets and some array operations. But, it seems that
+        // it's not enough for array_key_exists() to operate on it. Hence, we
+        // are explicitly casting to array, after having checked that the operation
+        // doesn't incur into any performance penalty.
+        if ($result === null || !array_key_exists('data', (array)$result)) {
             return false;
         }
         $data = @unserialize($result['data']);
