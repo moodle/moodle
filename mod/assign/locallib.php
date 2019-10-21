@@ -2474,8 +2474,8 @@ class assign {
         //   - The assignment is visible in the gradebook.
         //   - No previous notification has been sent.
         //   - The grader was a real user, not an automated process.
-        //   - If marking workflow is not enabled, the grade was updated in the past 24 hours, or
-        //     if marking workflow is enabled, the workflow state is at 'released'.
+        //   - The grade was updated in the past 24 hours.
+        //   - If marking workflow is enabled, the workflow state is at 'released'.
         $sql = "SELECT g.id as gradeid, a.course, a.name, a.blindmarking, a.revealidentities, a.hidegrader,
                        g.*, g.timemodified as lastmodified, cm.id as cmid, um.id as recordid
                  FROM {assign} a
@@ -2485,9 +2485,9 @@ class assign {
                  JOIN {modules} md ON md.id = cm.module AND md.name = 'assign'
                  JOIN {grade_items} gri ON gri.iteminstance = a.id AND gri.courseid = a.course AND gri.itemmodule = md.name
             LEFT JOIN {assign_user_mapping} um ON g.id = um.userid AND um.assignment = a.id
-                 WHERE ((a.markingworkflow = 0 AND g.timemodified >= :yesterday AND g.timemodified <= :today) OR
-                        (a.markingworkflow = 1 AND uf.workflowstate = :wfreleased)) AND
-                       g.grader > 0 AND uf.mailed = 0 AND gri.hidden = 0
+                 WHERE (a.markingworkflow = 0 OR (a.markingworkflow = 1 AND uf.workflowstate = :wfreleased)) AND
+                       g.grader > 0 AND uf.mailed = 0 AND gri.hidden = 0 AND
+                       g.timemodified >= :yesterday AND g.timemodified <= :today
               ORDER BY a.course, cm.id";
 
         $params = array(
