@@ -5,7 +5,7 @@ Feature: Enable the calendar block in a course
   I can add the calendar block to a course
 
   @javascript
-  Scenario: View a global event in the calendar block in a course
+  Scenario: View a site event in the calendar block in a course
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | teacher1 | Teacher | 1 | teacher1@example.com | T1 |

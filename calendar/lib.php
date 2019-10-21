@@ -70,9 +70,15 @@ define('CALENDAR_TF_24', '%H:%M');
 define('CALENDAR_TF_12', '%I:%M %p');
 
 /**
- * CALENDAR_EVENT_GLOBAL - Global calendar event types
+ * CALENDAR_EVENT_GLOBAL - Site calendar event types
+ * @deprecated since 3.8
  */
 define('CALENDAR_EVENT_GLOBAL', 1);
+
+/**
+ * CALENDAR_EVENT_SITE - Site calendar event types
+ */
+define('CALENDAR_EVENT_SITE', 1);
 
 /**
  * CALENDAR_EVENT_COURSE - Course calendar event types
@@ -1551,8 +1557,8 @@ function calendar_add_event_metadata($event) {
         $event->cmid = $module->id;
     } else if ($event->courseid == SITEID) { // Site event.
         $event->icon = '<img src="' . $OUTPUT->image_url('i/siteevent') . '" alt="' .
-            get_string('globalevent', 'calendar') . '" class="icon" />';
-        $event->cssclass = 'calendar_event_global';
+            get_string('siteevent', 'calendar') . '" class="icon" />';
+        $event->cssclass = 'calendar_event_site';
     } else if ($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) { // Course event.
         $event->icon = '<img src="' . $OUTPUT->image_url('i/courseevent') . '" alt="' .
             get_string('courseevent', 'calendar') . '" class="icon" />';
@@ -1958,7 +1964,7 @@ function calendar_sub_month($month, $year) {
  * @param int $year the number of the year
  * @param array $eventsbyday event on specific day
  * @param array $durationbyday duration of the event in days
- * @param array $typesbyday event type (eg: global, course, user, or group)
+ * @param array $typesbyday event type (eg: site, course, user, or group)
  * @param array $courses list of courses
  * @return void
  */
@@ -1995,9 +2001,9 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
 
             // Mark the day as having such an event.
             if ($event->courseid == SITEID && $event->groupid == 0) {
-                $typesbyday[$eventdaystart]['startglobal'] = true;
-                // Set event class for global event.
-                $events[$event->id]->class = 'calendar_event_global';
+                $typesbyday[$eventdaystart]['startsite'] = true;
+                // Set event class for site event.
+                $events[$event->id]->class = 'calendar_event_site';
             } else if ($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $typesbyday[$eventdaystart]['startcourse'] = true;
                 // Set event class for course event.
@@ -2036,7 +2042,7 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
         for ($i = $lowerbound + 1; $i <= $upperbound; ++$i) {
             $durationbyday[$i][] = $event->id;
             if ($event->courseid == SITEID && $event->groupid == 0) {
-                $typesbyday[$i]['durationglobal'] = true;
+                $typesbyday[$i]['durationsite'] = true;
             } else if ($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $typesbyday[$i]['durationcourse'] = true;
             } else if ($event->groupid) {
@@ -2077,7 +2083,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, s
     if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_COURSE, $user)) {
         $courses = array_keys($courseeventsfrom);
     }
-    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_GLOBAL, $user)) {
+    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_SITE, $user)) {
         $courses[] = SITEID;
     }
     $courses = array_unique($courses);
@@ -2472,7 +2478,7 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
  * @return bool True if the tyep should be displayed false otherwise
  */
 function calendar_show_event_type($type, $user = null) {
-    $default = CALENDAR_EVENT_GLOBAL + CALENDAR_EVENT_COURSE + CALENDAR_EVENT_GROUP + CALENDAR_EVENT_USER;
+    $default = CALENDAR_EVENT_SITE + CALENDAR_EVENT_COURSE + CALENDAR_EVENT_GROUP + CALENDAR_EVENT_USER;
 
     if (get_user_preferences('calendar_persistflt', 0, $user) === 0) {
         global $SESSION;
@@ -2498,7 +2504,7 @@ function calendar_show_event_type($type, $user = null) {
  */
 function calendar_set_event_type_display($type, $display = null, $user = null) {
     $persist = get_user_preferences('calendar_persistflt', 0, $user);
-    $default = CALENDAR_EVENT_GLOBAL + CALENDAR_EVENT_COURSE + CALENDAR_EVENT_GROUP
+    $default = CALENDAR_EVENT_SITE + CALENDAR_EVENT_COURSE + CALENDAR_EVENT_GROUP
             + CALENDAR_EVENT_USER + CALENDAR_EVENT_COURSECAT;
     if ($persist === 0) {
         global $SESSION;

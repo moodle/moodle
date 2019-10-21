@@ -16,7 +16,7 @@ Feature: Enable the upcoming events block in a course
       | teacher1 | C1 | editingteacher |
 
   @javascript
-  Scenario: View a global event in the calendar block
+  Scenario: View a site event in the calendar block
     Given I log in as "admin"
     And I create a calendar event with form data:
       | id_eventtype | Site |

@@ -9,7 +9,7 @@ Feature: View a upcoming site event on the dashboard
       | student1 | Student | 1 | student1@example.com | S1 |
 
   @javascript
-  Scenario: View a global event in the upcoming events block on the dashboard
+  Scenario: View a site event in the upcoming events block on the dashboard
     Given I log in as "admin"
     And I create a calendar event with form data:
       | id_eventtype | Site |
