@@ -110,4 +110,20 @@ class question_bank_test extends advanced_testcase {
         ), question_bank::get_finder()->get_questions_from_categories_with_usage_counts(
                 array($cat->id), new qubaid_list(array($quba->get_id()))));
     }
+
+    public function test_load_many_for_cache() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $q1 = $generator->create_question('shortanswer', null, ['category' => $cat->id]);
+
+        $qs = question_finder::get_instance()->load_many_for_cache([$q1->id]);
+        $this->assertArrayHasKey($q1->id, $qs);
+    }
+
+    public function test_load_many_for_cache_missing_id() {
+        // Try to load a non-existent question.
+        $this->expectException('dml_missing_record_exception');
+        question_finder::get_instance()->load_many_for_cache([-1]);
+    }
 }
