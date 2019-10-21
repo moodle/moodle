@@ -56,6 +56,7 @@ class forum {
                 'assesstimefinish' => $forum->get_assess_time_finish(),
                 'scale' => $forum->get_scale(),
                 'grade_forum' => $forum->get_grade_for_forum(),
+                'sendstudentnotifications_forum' => $forum->should_notify_students_default_when_grade_for_forum(),
                 'maxbytes' => $forum->get_max_bytes(),
                 'maxattachments' => $forum->get_max_attachments(),
                 'forcesubscribe' => $forum->get_subscription_mode(),

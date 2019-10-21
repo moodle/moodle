@@ -87,6 +87,7 @@ class entity {
             $record->assesstimefinish,
             $record->scale,
             $record->grade_forum,
+            $record->sendstudentnotifications_forum,
             $record->maxbytes,
             $record->maxattachments,
             $record->forcesubscribe,
