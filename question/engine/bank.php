@@ -625,7 +625,7 @@ class question_finder implements cache_data_source {
                                             WHERE q.id ' . $idcondition, $params);
 
         foreach ($questionids as $id) {
-            if (!array_key_exists($id, $questionids)) {
+            if (!array_key_exists($id, $questiondata)) {
                 throw new dml_missing_record_exception('question', '', array('id' => $id));
             }
             get_question_options($questiondata[$id]);
