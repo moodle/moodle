@@ -65,6 +65,7 @@ define([], function() {
         DAY_MESSAGES_CONTAINER: '[data-region="day-messages-container"]',
         DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE: '[data-region="delete-messages-for-all-users-toggle"]',
         DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER: '[data-region="delete-messages-for-all-users-toggle-container"]',
+        EMOJI_AUTO_COMPLETE_CONTAINER: '[data-region="emoji-auto-complete-container"]',
         EMOJI_PICKER_CONTAINER: '[data-region="emoji-picker-container"]',
         EMOJI_PICKER: '[data-region="emoji-picker"]',
         EMOJI_PICKER_SEARCH_INPUT: '[data-region="search-input"]',

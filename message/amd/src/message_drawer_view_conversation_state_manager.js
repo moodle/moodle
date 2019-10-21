@@ -145,6 +145,7 @@ define(['jquery'], function($) {
             pendingSendMessageIds: [],
             pendingDeleteConversation: false,
             selectedMessageIds: [],
+            showEmojiAutoComplete: false,
             showEmojiPicker: false
         };
     };
@@ -542,6 +543,19 @@ define(['jquery'], function($) {
     };
 
     /**
+     * Set whether emojis auto complete suggestions should be shown.
+     *
+     * @param  {Object} state Current state.
+     * @param  {Bool} show Show the autocomplete
+     * @return {Object} New state with array of pending delete message ids.
+     */
+    var setShowEmojiAutoComplete = function(state, show) {
+        var newState = cloneState(state);
+        newState.showEmojiAutoComplete = show;
+        return newState;
+    };
+
+    /**
      * Set the state pending block userids.
      *
      * @param  {Object} state Current state.
@@ -845,6 +859,7 @@ define(['jquery'], function($) {
         setMessagesSendPendingById: setMessagesSendPendingById,
         setMessagesSendSuccessById: setMessagesSendSuccessById,
         setMessagesSendFailById: setMessagesSendFailById,
+        setShowEmojiAutoComplete: setShowEmojiAutoComplete,
         setShowEmojiPicker: setShowEmojiPicker,
         addPendingBlockUsersById: addPendingBlockUsersById,
         addPendingRemoveContactsById: addPendingRemoveContactsById,

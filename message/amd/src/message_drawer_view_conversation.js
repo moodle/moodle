@@ -69,6 +69,7 @@ define(
     'core_message/message_drawer_view_conversation_state_manager',
     'core_message/message_drawer_router',
     'core_message/message_drawer_routes',
+    'core/emoji/auto_complete',
     'core/emoji/picker'
 ],
 function(
@@ -87,6 +88,7 @@ function(
     StateManager,
     MessageDrawerRouter,
     MessageDrawerRoutes,
+    initialiseEmojiAutoComplete,
     initialiseEmojiPicker
 ) {
 
@@ -1556,6 +1558,7 @@ function(
         var isLoadingMoreMessages = false;
         var messagesContainer = getMessagesContainer(body);
         var emojiPickerElement = footer.find(SELECTORS.EMOJI_PICKER);
+        var emojiAutoCompleteContainer = footer.find(SELECTORS.EMOJI_AUTO_COMPLETE_CONTAINER);
         var messageTextArea = footer.find(SELECTORS.MESSAGE_TEXT_AREA);
         var headerActivateHandlers = [
             [SELECTORS.ACTION_REQUEST_BLOCK, generateConfirmActionHandler(requestBlockUser)],
@@ -1596,6 +1599,30 @@ function(
         ];
 
         AutoRows.init(footer);
+
+        initialiseEmojiAutoComplete(
+            emojiAutoCompleteContainer[0],
+            messageTextArea[0],
+            function(hasSuggestions) {
+                var newState = StateManager.setShowEmojiAutoComplete(viewState, hasSuggestions);
+                render(newState);
+            },
+            function(emoji) {
+                var newState = StateManager.setShowEmojiAutoComplete(viewState, false);
+                render(newState);
+
+                messageTextArea.focus();
+                var cursorPos = messageTextArea.prop('selectionStart');
+                var currentText = messageTextArea.val();
+                var textBefore = currentText.substring(0, cursorPos).replace(/\S*$/, '');
+                var textAfter = currentText.substring(cursorPos).replace(/^\S*/, '');
+
+                messageTextArea.val(textBefore + emoji + textAfter);
+                // Set the cursor position to after the inserted emoji.
+                messageTextArea.prop('selectionStart', textBefore.length + emoji.length);
+                messageTextArea.prop('selectionEnd', textBefore.length + emoji.length);
+            }
+        );
 
         initialiseEmojiPicker(emojiPickerElement[0], function(emoji) {
             var newState = StateManager.setShowEmojiPicker(viewState, !viewState.showEmojiPicker);

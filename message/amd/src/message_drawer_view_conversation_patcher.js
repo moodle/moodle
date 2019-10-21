@@ -602,6 +602,23 @@ function(
     };
 
     /**
+     * Determine if we should show the emoji auto complete.
+     *
+     * @param  {Object} state The current state.
+     * @param  {Object} newState The new state.
+     * @return {Bool|Null}
+     */
+    var buildShowEmojiAutoComplete = function(state, newState) {
+        if (!state.showEmojiAutoComplete && newState.showEmojiAutoComplete) {
+            return true;
+        } else if (state.showEmojiAutoComplete && !newState.showEmojiAutoComplete) {
+            return false;
+        } else {
+            return null;
+        }
+    };
+
+    /**
      * Get the user Object of user to be blocked if pending.
      *
      * @param  {Object} state The current state.
@@ -1353,7 +1370,8 @@ function(
                 selectedMessages: buildSelectedMessages,
                 isFavourite: buildIsFavourite,
                 isMuted: buildIsMuted,
-                showEmojiPicker: buildShowEmojiPicker
+                showEmojiPicker: buildShowEmojiPicker,
+                showEmojiAutoComplete: buildShowEmojiAutoComplete
             }
         };
         // These build functions are only applicable to private conversations.
