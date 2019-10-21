@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version of filter_h5p.
+ * Version of filter_displayh5p.
  *
- * @package    filter_h5p
+ * @package    filter_displayh5p
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version  = 2019092000;
+$plugin->version  = 2019101800;
 $plugin->requires = 2019092000;
-$plugin->component = 'filter_h5p';
+$plugin->component = 'filter_displayh5p';

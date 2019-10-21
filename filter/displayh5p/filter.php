@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * H5P filter
+ * Display H5P filter
  *
- * @package    filter_h5p
+ * @package    filter_displayh5p
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,15 +24,15 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * H5P filter
+ * Display H5P filter
  *
  * This filter will replace any occurrence of H5P URLs with the corresponding H5P content embed code
  *
- * @package    filter_h5p
+ * @package    filter_displayh5p
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_h5p extends moodle_text_filter {
+class filter_displayh5p extends moodle_text_filter {
 
     /**
      * @var boolean $loadresizerjs This is whether to request the resize.js script.
@@ -57,7 +57,7 @@ class filter_h5p extends moodle_text_filter {
             return $text;
         }
 
-        $allowedsources = get_config('filter_h5p', 'allowedsources');
+        $allowedsources = get_config('filter_displayh5p', 'allowedsources');
         $allowedsources = array_filter(array_map('trim', explode("\n", $allowedsources)));
         if (empty($allowedsources)) {
             return $text;

@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the filter_h5p
+ * Unit tests for the filter_displayh5p
  *
- * @package    filter_h5p
+ * @package    filter_displayh5p
  * @category   test
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,38 +26,40 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot.'/filter/h5p/filter.php');
+require_once($CFG->dirroot.'/filter/displayh5p/filter.php');
 
 /**
- * Unit tests for the H5P filter.
+ * Unit tests for the display H5P filter.
  *
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_h5p_testcase extends advanced_testcase {
+class filter_displayh5p_testcase extends advanced_testcase {
 
     public function setUp() {
         parent::setUp();
 
         $this->resetAfterTest(true);
 
-        set_config('allowedsources', "https://h5p.org/h5p/embed/[id]\nhttps://*.h5p.com/content/[id]/embed\nhttps://*.h5p.com/content/[id]
-                \nhttps://generic.wordpress.soton.ac.uk/altc/wp-admin/admin-ajax.php?action=h5p_embed&id=[id]", 'filter_h5p');
-        // Enable h5p filter at top level.
-        filter_set_global_state('h5p', TEXTFILTER_ON);
+        set_config('allowedsources',
+            "https://h5p.org/h5p/embed/[id]\nhttps://*.h5p.com/content/[id]/embed\nhttps://*.h5p.com/content/[id]
+                \nhttps://generic.wordpress.soton.ac.uk/altc/wp-admin/admin-ajax.php?action=h5p_embed&id=[id]",
+            'filter_displayh5p');
+        // Enable display h5p filter at top level.
+        filter_set_global_state('displayh5p', TEXTFILTER_ON);
     }
 
     /**
      * Check that h5p tags with urls from allowed domains are filtered.
      *
      * @param string $text Original text
-     * @param string $filteredtextpattern Text pattern after H5P filter
+     * @param string $filteredtextpattern Text pattern after display H5P filter
      *
      * @dataProvider texts_provider
      */
     public function test_filter_urls($text, $filteredtextpattern) {
 
-        $filterplugin = new filter_h5p(null, array());
+        $filterplugin = new filter_displayh5p(null, array());
 
         $filteredtext = $filterplugin->filter($text);
         $this->assertRegExp($filteredtextpattern, $filteredtext);

@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for filter_h5p.
+ * Privacy Subsystem implementation for filter_displayh5p.
  *
- * @package    filter_h5p
+ * @package    filter_displayh5p
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace filter_h5p\privacy;
+namespace filter_displayh5p\privacy;
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Privacy Subsystem for filter_h5p implementing null_provider.
+ * Privacy Subsystem for filter_displayh5p implementing null_provider.
  *
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
