@@ -986,7 +986,6 @@ table.quizreviewsummary td.cell {
 
 table#categoryquestions {
     width: 100%;
-    overflow: hidden;
     table-layout: fixed;
 }
 
@@ -1000,6 +999,10 @@ table#categoryquestions {
     width: 19px;
     text-align: center;
     padding: 0;
+}
+
+#categoryquestions .editmenu {
+    width: 5em;
 }
 
 #categoryquestions .qtype {

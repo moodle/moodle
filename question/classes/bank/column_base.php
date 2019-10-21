@@ -15,23 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Base class for representing a column in a {@link question_bank_view}.
  *
- * @package    moodlecore
- * @subpackage questionbank
- * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_question
+ * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 namespace core_question\bank;
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Base class for representing a column in a {@link question_bank_view}.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 abstract class column_base {
     /**
      * @var view $qbank the question bank view we are helping to render.

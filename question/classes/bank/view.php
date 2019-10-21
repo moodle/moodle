@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
+/**
+ * Class to print a view of the question bank.
+ *
+ * @package   core_question
+ * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core_question\bank;
+defined('MOODLE_INTERNAL') || die();
 
 use core_question\bank\search\condition;
-
-/**
- * Functions used to show question editing interface
- *
- * @package    moodlecore
- * @subpackage questionbank
- * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 
 /**
@@ -46,8 +46,8 @@ use core_question\bank\search\condition;
  *    and sorted in the right order.
  *  + outputting table headers.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class view {
     const MAX_SORTS = 3;
@@ -177,9 +177,10 @@ class view {
 
         if (empty($CFG->questionbankcolumns)) {
             $questionbankcolumns = array('checkbox_column', 'question_type_column',
-                    'question_name_idnumber_tags_column', 'tags_action_column', 'edit_action_column',
-                    'copy_action_column', 'preview_action_column', 'delete_action_column',
-                    'creator_name_column', 'modifier_name_column');
+                    'question_name_idnumber_tags_column',
+                    'edit_action_column', 'copy_action_column', 'tags_action_column',
+                    'preview_action_column', 'delete_action_column', 'export_xml_action_column',
+                    'creator_name_column', 'modifier_name_column', 'edit_menu_column');
         } else {
              $questionbankcolumns = explode(',', $CFG->questionbankcolumns);
         }
@@ -237,6 +238,15 @@ class view {
      * @param string $heading The name of column that is set as heading
      */
     protected function init_columns($wanted, $heading = '') {
+        // If we are using the edit menu column, allow it to absorb all the actions.
+        foreach ($wanted as $column) {
+            if ($column instanceof edit_menu_column) {
+                $wanted = $column->claim_menuable_columns($wanted);
+                break;
+            }
+        }
+
+        // Now split columns into real columns and rows.
         $this->visiblecolumns = array();
         $this->extrarows = array();
         foreach ($wanted as $column) {
@@ -482,8 +492,34 @@ class view {
         return $this->baseurl;
     }
 
+    /**
+     * Get the URL for editing a question as a {@link \moodle_url}.
+     *
+     * @param int $questionid the question id.
+     * @return \moodle_url the URL, HTML-escaped.
+     */
+    public function edit_question_moodle_url($questionid) {
+        return new \moodle_url($this->editquestionurl, ['id' => $questionid]);
+    }
+
+    /**
+     * Get the URL for editing a question as a HTML-escaped string.
+     *
+     * @param int $questionid the question id.
+     * @return string the URL, HTML-escaped.
+     */
     public function edit_question_url($questionid) {
-        return $this->editquestionurl->out(true, array('id' => $questionid));
+        return $this->edit_question_moodle_url($questionid)->out();
+    }
+
+    /**
+     * Get the URL for duplicating a question as a {@link \moodle_url}.
+     *
+     * @param int $questionid the question id.
+     * @return \moodle_url the URL.
+     */
+    public function copy_question_moodle_url($questionid) {
+        return new \moodle_url($this->editquestionurl, ['id' => $questionid, 'makecopy' => 1]);
     }
 
     /**
@@ -492,7 +528,7 @@ class view {
      * @return string the URL, HTML-escaped.
      */
     public function copy_question_url($questionid) {
-        return $this->editquestionurl->out(true, array('id' => $questionid, 'makecopy' => 1));
+        return $this->copy_question_moodle_url($questionid)->out();
     }
 
     /**

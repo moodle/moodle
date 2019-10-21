@@ -4200,32 +4200,32 @@ class action_menu implements renderable, templatable {
 
     /**
      * An icon to use for the toggling the secondary menu (dropdown).
-     * @var actionicon
+     * @var pix_icon
      */
     public $actionicon;
 
     /**
      * Any text to use for the toggling the secondary menu (dropdown).
-     * @var menutrigger
+     * @var string
      */
     public $menutrigger = '';
 
     /**
      * Any extra classes for toggling to the secondary menu.
-     * @var triggerextraclasses
+     * @var string
      */
     public $triggerextraclasses = '';
 
     /**
      * Place the action menu before all other actions.
-     * @var prioritise
+     * @var bool
      */
     public $prioritise = false;
 
     /**
      * Constructs the action menu with the given items.
      *
-     * @param array $actions An array of actions.
+     * @param array $actions An array of actions (action_menu_link|pix_icon|string).
      */
     public function __construct(array $actions = array()) {
         static $initialised = 0;
@@ -4259,7 +4259,6 @@ class action_menu implements renderable, templatable {
      * Sets the label for the menu trigger.
      *
      * @param string $label The text
-     * @return null
      */
     public function set_action_label($label) {
         $this->actionlabel = $label;
@@ -4270,7 +4269,6 @@ class action_menu implements renderable, templatable {
      *
      * @param string $trigger The text
      * @param string $extraclasses Extra classes to style the secondary menu toggle.
-     * @return null
      */
     public function set_menu_trigger($trigger, $extraclasses = '') {
         $this->menutrigger = $trigger;

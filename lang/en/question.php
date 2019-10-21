@@ -157,6 +157,7 @@ $string['eventquestionsexported'] = 'Questions exported';
 $string['eventquestionsimported'] = 'Questions imported';
 $string['eventquestionupdated'] = 'Question updated';
 $string['export'] = 'Export';
+$string['exportasxml'] = 'Export as Moodle XML';
 $string['exportcategory'] = 'Export category';
 $string['exportcategory_help'] = 'This setting determines the category from which the exported questions will be taken.
 
