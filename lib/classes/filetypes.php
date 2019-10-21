@@ -96,7 +96,8 @@ abstract class core_filetypes {
             'flv' => array('type' => 'video/x-flv', 'icon' => 'flash',
                     'groups' => array('video', 'web_video'), 'string' => 'video'),
             'f4v' => array('type' => 'video/mp4', 'icon' => 'flash', 'groups' => array('video', 'web_video'), 'string' => 'video'),
-
+            'fmp4' => array('type' => 'video/mp4', 'icon' => 'mpeg', 'groups' => array('html_video', 'video', 'web_video'),
+                    'string' => 'video'),
             'gallery' => array('type' => 'application/x-smarttech-notebook', 'icon' => 'archive'),
             'galleryitem' => array('type' => 'application/x-smarttech-notebook', 'icon' => 'archive'),
             'gallerycollection' => array('type' => 'application/x-smarttech-notebook', 'icon' => 'archive'),
@@ -275,6 +276,8 @@ abstract class core_filetypes {
             'tex' => array('type' => 'application/x-tex', 'icon' => 'text'),
             'texi' => array('type' => 'application/x-texinfo', 'icon' => 'text'),
             'texinfo' => array('type' => 'application/x-texinfo', 'icon' => 'text'),
+            'ts' => array('type' => 'video/MP2T', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'),
+                    'string' => 'video'),
             'tsv' => array('type' => 'text/tab-separated-values', 'icon' => 'text'),
             'txt' => array('type' => 'text/plain', 'icon' => 'text', 'defaulticon' => true),
             'vtt' => array('type' => 'text/vtt', 'icon' => 'text', 'groups' => array('html_track')),

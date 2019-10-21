@@ -3787,5 +3787,28 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019120500.00) {
+        // Upgrade MIME types for existing streaming files.
+        $filetypes = array(
+            '%.fmp4' => 'video/mp4',
+            '%.ts' => 'video/MP2T',
+            '%.mpd' => 'application/dash+xml',
+            '%.m3u8' => 'application/x-mpegURL',
+        );
+
+        $select = $DB->sql_like('filename', '?', false);
+        foreach ($filetypes as $extension => $mimetype) {
+            $DB->set_field_select(
+                'files',
+                'mimetype',
+                $mimetype,
+                $select,
+                array($extension)
+            );
+        }
+
+        upgrade_main_savepoint(true, 2019120500.00);
+    }
+
     return true;
 }
