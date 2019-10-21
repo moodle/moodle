@@ -925,11 +925,11 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
     }
 
     /**
-     * Test get_from_discussion_ids_and_user_ids.
+     * Test get_from_filters.
      *
-     * @covers ::get_from_discussion_ids_and_user_ids
+     * @covers ::get_from_filters
      */
-    public function test_get_from_discussion_ids_and_user_ids() {
+    public function test_get_from_filters() {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -945,9 +945,8 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $discussionids = [$discussion1->id, $discussion2->id];
 
         $userids = [$user->id];
-        $entities = array_values($this->vault->get_from_discussion_ids_and_user_ids($user,
-            $discussionids,
-            $userids,
+        $entities = array_values($this->vault->get_from_filters($user,
+            ['discussionids' => $discussionids, 'userids' => $userids],
             true,
             'id ASC'));
 
@@ -957,14 +956,17 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->assertEquals($post3->id, $entities[2]->get_id());
         $this->assertEquals($post4->id, $entities[3]->get_id());
 
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($user, [$discussion1->id], $userids, false);
+        $entities = $this->vault->get_from_filters($user, ['discussionids' => $discussion1->id, 'userids' => $userids],
+                false);
         $this->assertCount(3, $entities);
         $this->assertArrayHasKey($post1->id, $entities);
         $this->assertArrayHasKey($post2->id, $entities);
         $this->assertArrayHasKey($post3->id, $entities);
 
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($user, [$discussion1->id, $discussion2->id],
-                [$user->id, $user2->id], false);
+        $discussionids = [$discussion1->id, $discussion2->id];
+        $userids = [$user->id, $user2->id];
+        $entities = $this->vault->get_from_filters($user, ['discussionids' => $discussionids, 'userids' => $userids],
+                false);
         $this->assertCount(4, $entities);
         $this->assertArrayHasKey($post1->id, $entities);
         $this->assertArrayHasKey($post2->id, $entities);
@@ -972,47 +974,75 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->assertArrayHasKey($post4->id, $entities);
 
         // Test ordering by id descending.
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($user, [$discussion1->id, $discussion2->id],
-                [$user->id], false, 'id DESC');
+        $entities = $this->vault->get_from_filters($user, ['discussionids' => $discussionids, 'userids' => $user->id],
+                false, 'id DESC');
         $this->assertEquals($post4->id, array_values($entities)[0]->get_id());
         $this->assertEquals($post3->id, array_values($entities)[1]->get_id());
         $this->assertEquals($post2->id, array_values($entities)[2]->get_id());
         $this->assertEquals($post1->id, array_values($entities)[3]->get_id());
 
         // Test ordering by id ascending.
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($user, [$discussion1->id, $discussion2->id],
-                [$user->id], false, 'id ASC');
+        $entities = $this->vault->get_from_filters($user, ['discussionids' => $discussionids, 'userids' => $user->id],
+            false, 'id ASC');
         $this->assertEquals($post1->id, array_values($entities)[0]->get_id());
         $this->assertEquals($post2->id, array_values($entities)[1]->get_id());
         $this->assertEquals($post3->id, array_values($entities)[2]->get_id());
         $this->assertEquals($post4->id, array_values($entities)[3]->get_id());
     }
 
-    /**
-     * Test get_from_discussion_ids_and_user_ids when no discussion ids were provided.
-     *
-     * @covers ::get_from_discussion_ids_and_user_ids
-     */
-    public function test_get_from_discussion_ids_and_user_ids_empty() {
+    public function test_get_from_filters_from_to_dates() {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
         $course = $datagenerator->create_course();
-        [$student1, $student2] = $this->helper_create_users($course, 2, 'student');
+        [$user, $user2] = $this->helper_create_users($course, 2, 'student');
         $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
-        [$discussion, $post] = $this->helper_post_to_forum($forum, $student1);
-        $this->assertEquals([], $this->vault->get_from_discussion_ids_and_user_ids($student1, [], [], false));
-        $this->assertEquals([], $this->vault->get_from_discussion_ids_and_user_ids($student1, [$discussion->id], [], false));
-        $this->assertEquals([], $this->vault->get_from_discussion_ids_and_user_ids($student1, [], [$student2->id], false));
+
+        [$discussion1, $post1] = $this->helper_post_to_forum($forum, $user);
+
+        $date = new DateTime('2019-07-05');
+        $post2 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+        $post3 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+        $date->modify('+1 month');
+        $post4 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+        $post5 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+        $post6 = $this->helper_reply_to_post($post1, $user, ['created' => $date->getTimestamp()]);
+
+        [$discussion2, $post4] = $this->helper_post_to_forum($forum, $user);
+
+        $datefilter = new DateTime('2019-07-01');
+        $filters = ['from' => $datefilter->getTimestamp()];
+        $entities = $this->vault->get_from_filters($user, $filters, false);
+        $this->assertCount(7, $entities);
+
+        $filters['to'] = $datefilter->modify('+1 month')->getTimestamp();
+        $entities = $this->vault->get_from_filters($user, $filters, false);
+        $this->assertCount(2, $entities);
+    }
+
+    /**
+     * Test get_from_filters when no discussion ids were provided.
+     *
+     * @covers ::get_from_filters
+     */
+    public function test_get_from_filters_empty() {
+        $this->resetAfterTest();
+
+        $datagenerator = $this->getDataGenerator();
+        $course = $datagenerator->create_course();
+        [$student1] = $this->helper_create_users($course, 1, 'student');
+        $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
+        $this->helper_post_to_forum($forum, $student1);
+        $this->assertEquals([], $this->vault->get_from_filters($student1, [], false));
     }
 
     /**
      * Ensure that selecting posts in a discussion only returns posts that the user can see, when considering private
      * replies.
      *
-     * @covers ::get_from_discussion_ids_and_user_ids
+     * @covers ::get_from_filters
      */
-    public function test_get_from_discussion_ids_and_user_ids_private_replies() {
+    public function test_get_from_filters_private_replies() {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -1048,7 +1078,8 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $discussionids = [$discussion->id, $otherdiscussion->id];
 
         // Teacher 1. Request all posts from the vault, telling the vault that the teacher CAN see private replies made by anyone.
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($teacher, $discussionids, $userids, true);
+        $entities = $this->vault->get_from_filters($teacher, ['discussionids' => $discussionids, 'userids' => $userids],
+            true);
         $this->assertCount(4, $entities);
         $this->assertArrayHasKey($postprivatereply->id, $entities);
         $this->assertArrayHasKey($otherpost->id, $entities);
@@ -1057,7 +1088,8 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
 
         // Student 1. Request all posts from the vault, telling the vault that the student CAN'T see private replies made by anyone.
         // Teacher2's private reply to otherpost is omitted.
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($student, $discussionids, $userids, false);
+        $entities = $this->vault->get_from_filters($student, ['discussionids' => $discussionids, 'userids' => $userids],
+                false);
         $this->assertCount(3, $entities);
         $this->assertArrayHasKey($postprivatereply->id, $entities);
         $this->assertArrayHasKey($otherpost->id, $entities);
@@ -1065,7 +1097,8 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
 
         // Student 1. Request all posts from the vault, telling the vault that student CAN see all private replies made.
         // The private reply made by teacher 2 to otherpost is now included.
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($student, $discussionids, $userids, true);
+        $entities = $this->vault->get_from_filters($student, ['discussionids' => $discussionids, 'userids' => $userids],
+                true);
         $this->assertCount(4, $entities);
         $this->assertArrayHasKey($postprivatereply->id, $entities);
         $this->assertArrayHasKey($otherpost->id, $entities);
@@ -1073,7 +1106,8 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $this->assertArrayHasKey($otherpostreplyprivatereply->id, $entities);
 
         // Teacher 2. Request all posts from the vault, telling the vault that teacher2 CAN see all private replies made.
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($otherteacher, $discussionids, $userids, true);
+        $entities = $this->vault->get_from_filters($otherteacher,
+                ['discussionids' => $discussionids, 'userids' => $userids], true);
         $this->assertCount(4, $entities);
         $this->assertArrayHasKey($otherpost->id, $entities);
         $this->assertArrayHasKey($otherpostprivatereply->id, $entities);
@@ -1081,14 +1115,16 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
 
         // Teacher 2. Request all posts from the vault, telling the vault that teacher2 CANNOT see all private replies made.
         // The private replies not relating to teacher 2 directly are omitted.
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($otherteacher, $discussionids, $userids, false);
+        $entities = $this->vault->get_from_filters($otherteacher,
+                ['discussionids' => $discussionids, 'userids' => $userids], false);
         $this->assertCount(2, $entities);
         $this->assertArrayHasKey($otherpost->id, $entities);
         $this->assertArrayHasKey($otherpostprivatereply->id, $entities);
 
         // Student 2. Request all posts from the vault, telling the vault that student2 CAN'T see all private replies made.
         // All private replies are omitted, as none relate to student2.
-        $entities = $this->vault->get_from_discussion_ids_and_user_ids($otherstudent, $discussionids, $userids, false);
+        $entities = $this->vault->get_from_filters($otherstudent,
+                ['discussionids' => $discussionids, 'userids' => $userids], false);
         $this->assertCount(1, $entities);
         $this->assertArrayHasKey($otherpost->id, $entities);
     }
