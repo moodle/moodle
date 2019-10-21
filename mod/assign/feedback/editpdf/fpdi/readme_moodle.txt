@@ -15,9 +15,21 @@ License: The MIT License (MIT)
 Installation
 ------------
 1) Download the latest version of fpdi from the url above.
-2) Unzip the files into this directory.
-3) Update mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php (or the replacement file) to extend 'pdf' instead of 'TCPDF'.
+2) Unzip the src directory files into this directory.
+3) Update mod/assign/feedback/editpdf/fpdi/Tcpdf/Fpdi.php(or whichever file it has been replaced with) to extend 'pdf' instead of 'TCPDF'.
 4) Make a note below of any changes made.
+
+2019/06/18
+----------
+1/ Updated to 2.2.0
+2/ Amended the installation instructions
+3/ Updated pdf.php to inherit from the TCPDF version instead of the FPDI generic version
+   (Refer https://manuals.setasign.com/fpdi-manual/v2/migrating/#index-4)
+4/ Updated pdf.php to account for function changes
+   (Refer https://manuals.setasign.com/fpdi-manual/v2/migrating/#index-6)
+5/ With the restructure by fpdi, no need to apply patches from MDL-55848 and MDL-60301
+
+Updated by Peter Dias (MDL-65774)
 
 2017/10/03
 ----------
