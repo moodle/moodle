@@ -76,6 +76,15 @@ class export_form extends \moodleform {
             $options[$format->name] = $format->displayname;
         }
         $mform->addElement('select', 'format', 'Format', $options);
+
+        $mform->addElement('header', 'optionsheader', get_string('exportoptions', 'mod_forum'));
+
+        $mform->addElement('checkbox', 'striphtml', '', get_string('exportstriphtml', 'mod_forum'));
+        $mform->addHelpButton('striphtml', 'exportstriphtml', 'mod_forum');
+
+        $mform->addElement('checkbox', 'humandates', '', get_string('exporthumandates', 'mod_forum'));
+        $mform->addHelpButton('humandates', 'exporthumandates', 'mod_forum');
+
         $this->add_action_buttons(true, get_string('export', 'mod_forum'));
     }
 }
