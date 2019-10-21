@@ -3586,7 +3586,7 @@ class core_course_external extends external_api {
     }
 
     /**
-     * Return structure for edit_module()
+     * Return structure for get_module()
      *
      * @since Moodle 3.3
      * @return external_description
