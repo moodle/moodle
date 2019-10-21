@@ -940,7 +940,7 @@ class edit_renderer extends \plugin_renderer_base {
         $namestr = $qtype->local_name();
 
         $icon = $this->pix_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr,
-                'class' => 'icon activityicon', 'alt' => ' ', 'role' => 'presentation'));
+                'class' => 'activityicon', 'alt' => ' ', 'role' => 'presentation'));
 
         $editicon = $this->pix_icon('t/edit', '', 'moodle', array('title' => ''));
 
@@ -980,7 +980,7 @@ class edit_renderer extends \plugin_renderer_base {
         $qtype = \question_bank::get_qtype($question->qtype, false);
         $namestr = $qtype->local_name();
         $icon = $this->pix_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr,
-                'class' => 'icon activityicon', 'alt' => ' ', 'role' => 'presentation'));
+                'class' => 'activityicon', 'alt' => ' ', 'role' => 'presentation'));
 
         $editicon = $this->pix_icon('t/edit', $configuretitle, 'moodle', array('title' => ''));
         $qbankurlparams = array(
