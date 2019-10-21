@@ -266,6 +266,20 @@ button.h5p-admin.disabled:hover {
   display: none;
 }
 
+.h5p-data-view .h5p-others-contents-toggler-wrapper {
+  float: right;
+  line-height: 2;
+  margin-right: 0.5em;
+}
+
+.h5p-data-view .h5p-others-contents-toggler-label {
+  font-size: 14px;
+}
+
+.h5p-data-view .h5p-others-contents-toggler {
+  margin-right: 0.5em;
+}
+
 .h5p-data-view th[role="button"] {
   cursor: pointer;
 }

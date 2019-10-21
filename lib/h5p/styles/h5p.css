@@ -3,11 +3,11 @@
 /* Custom H5P font to use for icons. */
 @font-face {
   font-family: 'h5p';
-  src:    url('../fonts/h5p-core-21.eot?mz1lkp');
-  src:    url('../fonts/h5p-core-21.eot?mz1lkp#iefix') format('embedded-opentype'),
-  url('../fonts/h5p-core-21.ttf?mz1lkp') format('truetype'),
-  url('../fonts/h5p-core-21.woff?mz1lkp') format('woff'),
-  url('../fonts/h5p-core-21.svg?mz1lkp#h5p') format('svg');
+  src:    url('../fonts/h5p-core-23.eot?mz1lkp');
+  src:    url('../fonts/h5p-core-23.eot?mz1lkp#iefix') format('embedded-opentype'),
+  url('../fonts/h5p-core-23.ttf?mz1lkp') format('truetype'),
+  url('../fonts/h5p-core-23.woff?mz1lkp') format('woff'),
+  url('../fonts/h5p-core-23.svg?mz1lkp#h5p') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -559,4 +559,8 @@ div.h5p-fullscreen {
 iframe.h5peditor-semi-fullscreen {
   background: #fff;
   z-index: 100001;
+}
+
+.h5p-content.using-mouse *:not(textarea):focus {
+  outline: none !important;
 }

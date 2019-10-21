@@ -373,7 +373,7 @@ class H5PDefaultStorage implements \H5PFileStorage {
       $target = "{$this->path}/content/{$contentId}";
     }
 
-    $contentSource = $source . DIRECTORY_SEPARATOR . 'content';
+    $contentSource = $source . '/' . 'content';
     $contentFiles = array_diff(scandir($contentSource), array('.','..', 'content.json'));
     foreach ($contentFiles as $file) {
       if (is_dir("{$contentSource}/{$file}")) {
@@ -445,8 +445,8 @@ class H5PDefaultStorage implements \H5PFileStorage {
    * @return bool
    */
   public function hasPresave($libraryFolder, $developmentPath = null) {
-      $path = is_null($developmentPath) ? 'libraries' . DIRECTORY_SEPARATOR . $libraryFolder : $developmentPath;
-      $filePath = realpath($this->path . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . 'presave.js');
+      $path = is_null($developmentPath) ? 'libraries' . '/' . $libraryFolder : $developmentPath;
+      $filePath = realpath($this->path . '/' . $path . '/' . 'presave.js');
     return file_exists($filePath);
   }
 
