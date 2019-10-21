@@ -973,6 +973,10 @@ table.quizreviewsummary td.cell {
     vertical-align: bottom;
 }
 
+#categoryquestions .header.qtype {
+    white-space: nowrap;
+}
+
 #categoryquestions th .sorters {
     font-weight: normal;
     font-size: 0.8em;
