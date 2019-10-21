@@ -69,7 +69,7 @@ class forum {
     private $assesstimefinish;
     /** @var int $scale The rating scale */
     private $scale;
-    /** @var int $gradeforum The grade for the forum when grading holistcally */
+    /** @var int $gradeforum The grade for the forum when grading holistically */
     private $gradeforum;
     /** @var int $maxbytes Maximum attachment size */
     private $maxbytes;
@@ -123,7 +123,7 @@ class forum {
      * @param int $assesstimestart Timestamp to begin assessment
      * @param int $assesstimefinish Timestamp to end assessment
      * @param int $scale The rating scale
-     * @param int $forum_grade The holistic grade
+     * @param int $gradeforum The holistic grade
      * @param int $maxbytes Maximum attachment size
      * @param int $maxattachments Maximum number of attachments
      * @param int $forcesubscribe Does the forum force users to subscribe?
