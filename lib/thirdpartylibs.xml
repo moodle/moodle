@@ -318,6 +318,6 @@
     <location>h5p</location>
     <name>h5p-php-library</name>
     <license>GPL-3.0</license>
-    <version>1.23.1</version>
+    <version>1.24</version>
   </library>
 </libraries>
