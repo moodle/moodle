@@ -45,6 +45,8 @@ $targets = array_filter(\core_analytics\manager::get_all_targets(), function($ta
     return (!$target->based_on_assumptions());
 });
 
+// Set 'supportscontexts' to true as at this stage we don't know if the contexts are supported by
+// the selected target.
 $customdata = array(
     'trainedmodel' => false,
     'staticmodel' => false,
@@ -52,7 +54,7 @@ $customdata = array(
     'indicators' => \core_analytics\manager::get_all_indicators(),
     'timesplittings' => \core_analytics\manager::get_all_time_splittings(),
     'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors(),
-    'contexts' => \core_analytics\manager::get_potential_context_restrictions(),
+    'supportscontexts' => true,
 );
 $mform = new \tool_analytics\output\form\edit_model(null, $customdata);
 

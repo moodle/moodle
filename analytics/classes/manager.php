@@ -921,9 +921,10 @@ class manager {
      *
      * @throws \coding_exception
      * @param  array|null $contextlevels The list of context levels provided by the analyser. Null if all of them.
+     * @param  string|null $query
      * @return array Associative array with contextid as key and the short version of the context name as value.
      */
-    public static function get_potential_context_restrictions(?array $contextlevels = null) {
+    public static function get_potential_context_restrictions(?array $contextlevels = null, string $query = null) {
         global $DB;
 
         if (empty($contextlevels) && !is_null($contextlevels)) {
@@ -948,7 +949,14 @@ class manager {
             $sql = "SELECT cc.id, cc.name, ctx.id AS contextid
                       FROM {course_categories} cc
                       JOIN {context} ctx ON ctx.contextlevel = :ctxlevel AND ctx.instanceid = cc.id";
-            $coursecats = $DB->get_recordset_sql($sql, ['ctxlevel' => CONTEXT_COURSECAT]);
+            $params = ['ctxlevel' => CONTEXT_COURSECAT];
+
+            if ($query) {
+                $sql .= " WHERE " . $DB->sql_like('cc.name', ':query', false, false);
+                $params['query'] = '%' . $query . '%';
+            }
+
+            $coursecats = $DB->get_recordset_sql($sql, $params);
             foreach ($coursecats as $record) {
                 $contexts[$record->contextid] = get_string('category') . ': ' .
                     format_string($record->name, true, array('context' => $contextsystem));
@@ -960,8 +968,18 @@ class manager {
 
             $sql = "SELECT c.id, c.shortname, ctx.id AS contextid
                       FROM {course} c
-                      JOIN {context} ctx ON ctx.contextlevel = :ctxlevel AND ctx.instanceid = c.id";
-            $courses = $DB->get_recordset_sql($sql, ['ctxlevel' => CONTEXT_COURSE]);
+                      JOIN {context} ctx ON ctx.contextlevel = :ctxlevel AND ctx.instanceid = c.id
+                      WHERE c.id != :siteid";
+            $params = ['ctxlevel' => CONTEXT_COURSE, 'siteid' => SITEID];
+
+            if ($query) {
+                $sql .= ' AND (' . $DB->sql_like('c.fullname', ':query1', false, false) . ' OR ' .
+                    $DB->sql_like('c.shortname', ':query2', false, false) . ')';
+                $params['query1'] = '%' . $query . '%';
+                $params['query2'] = '%' . $query . '%';
+            }
+
+            $courses = $DB->get_recordset_sql($sql, $params);
             foreach ($courses as $record) {
                 $contexts[$record->contextid] = get_string('course') . ': ' .
                     format_string($record->shortname, true, array('context' => $contextsystem));

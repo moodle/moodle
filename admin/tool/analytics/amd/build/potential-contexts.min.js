@@ -1,0 +1,2 @@
+define ("tool_analytics/potential-contexts",["jquery","core/ajax"],function(a,b){return{processResults:function processResults(b,c){var d=[];if(a.isArray(c)){a.each(c,function(a,b){d.push({value:b.id,label:b.name})});return d}else{return c}},transport:function transport(c,d,e,f){var g,h=a(c).attr("modelid")||null;g=b.call([{methodname:"tool_analytics_potential_contexts",args:{query:d,modelid:h}}]);g[0].then(e).fail(f)}}});
+//# sourceMappingURL=potential-contexts.min.js.map

@@ -106,12 +106,23 @@ class edit_model extends \moodleform {
         $mform->addHelpButton('timesplitting', 'timesplittingmethod', 'analytics');
 
         // Contexts restriction.
-        if (!empty($this->_customdata['contexts'])) {
+        if (!empty($this->_customdata['supportscontexts'])) {
 
-            \core_collator::asort($this->_customdata['contexts']);
-            $options = ['multiple' => true, 'noselectionstring' => get_string('all')];
-            $mform->addElement('autocomplete', 'contexts', get_string('contexts', 'tool_analytics'), $this->_customdata['contexts'],
-                $options);
+            $options = [
+                'ajax' => 'tool_analytics/potential-contexts',
+                'multiple' => true,
+                'noselectionstring' => get_string('all')
+            ];
+
+            if (!empty($this->_customdata['id'])) {
+                $options['modelid'] = $this->_customdata['id'];
+                $contexts = $this->load_current_contexts();
+            } else {
+                // No need to preload any selected contexts.
+                $contexts = [];
+            }
+
+            $mform->addElement('autocomplete', 'contexts', get_string('contexts', 'tool_analytics'), $contexts, $options);
             $mform->setType('contexts', PARAM_INT);
             $mform->addHelpButton('contexts', 'contexts', 'tool_analytics');
         }
@@ -206,5 +217,19 @@ class edit_model extends \moodleform {
         }
 
         return $errors;
+    }
+
+    /**
+     * Load the currently selected context options.
+     *
+     * @return array
+     */
+    protected function load_current_contexts() {
+        $contexts = [];
+        foreach ($this->_customdata['contexts'] as $context) {
+            $contexts[$context->id] = $context->get_context_name(true, true);
+        }
+
+        return $contexts;
     }
 }

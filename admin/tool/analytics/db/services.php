@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Tool analytics webservice definitions.
  *
  * @package    tool_analytics
- * @copyright  2017 David Monllao {@link http://www.davidmonllao.com/}
+ * @copyright  2019 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019052002; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2019051100; // Requires this Moodle version.
-$plugin->component = 'tool_analytics'; // Full name of the plugin (used for diagnostics).
+$functions = array(
+
+    'tool_analytics_potential_contexts' => array(
+        'classname'   => 'tool_analytics\external',
+        'methodname'  => 'potential_contexts',
+        'description' => 'Retrieve the list of potential contexts for a model.',
+        'type'        => 'read',
+        'ajax'          => true,
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+);
+

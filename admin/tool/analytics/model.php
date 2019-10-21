@@ -122,6 +122,7 @@ switch ($action) {
 
         $invalidcurrenttimesplitting = $model->invalid_timesplitting_selected();
         $potentialtimesplittings = $model->get_potential_timesplittings();
+        $analyser = $model->get_analyser();
 
         $customdata = array(
             'id' => $model->get_id(),
@@ -133,7 +134,8 @@ switch ($action) {
             'indicators' => $model->get_potential_indicators(),
             'timesplittings' => $potentialtimesplittings,
             'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors(),
-            'contexts' => ($model->get_analyser())::potential_context_restrictions()
+            'supportscontexts' => ($analyser)::context_restriction_support(),
+            'contexts' => $model->get_contexts(),
         );
         $mform = new \tool_analytics\output\form\edit_model(null, $customdata);
 

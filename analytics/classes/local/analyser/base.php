@@ -448,10 +448,11 @@ abstract class base {
      * This generic implementation returns all the contexts in the site for the provided context level.
      * Overwrite it for specific restrictions in your analyser.
      *
+     * @param  string|null $query Context name filter.
      * @return int[]
      */
-    public static function potential_context_restrictions() {
-        return \core_analytics\manager::get_potential_context_restrictions(static::context_restriction_support());
+    public static function potential_context_restrictions(string $query = null) {
+        return \core_analytics\manager::get_potential_context_restrictions(static::context_restriction_support(), $query);
     }
 
     /**
