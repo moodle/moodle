@@ -39,24 +39,13 @@ abstract class by_course extends base {
      * Return the list of courses to analyse.
      *
      * @param string|null $action 'prediction', 'training' or null if no specific action needed.
+     * @param \context[] $contexts Only analysables that depend on the provided contexts. All analysables in the system if empty.
      * @return \Iterator
      */
-    public function get_analysables_iterator(?string $action = null) {
+    public function get_analysables_iterator(?string $action = null, array $contexts = []) {
         global $DB;
 
-        list($sql, $params) = $this->get_iterator_sql('course', CONTEXT_COURSE, $action, 'c');
-
-        // This will be updated to filter by context as part of MDL-64739.
-        if (!empty($this->options['filter'])) {
-            $courses = array();
-            foreach ($this->options['filter'] as $courseid) {
-                $courses[$courseid] = intval($courseid);
-            }
-
-            list($coursesql, $courseparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
-            $sql .= " AND c.id $coursesql";
-            $params = $params + $courseparams;
-        }
+        list($sql, $params) = $this->get_iterator_sql('course', CONTEXT_COURSE, $action, 'c', $contexts);
 
         $ordersql = $this->order_sql('sortorder', 'ASC', 'c');
 
@@ -75,5 +64,14 @@ abstract class by_course extends base {
             $context = \context_helper::preload_from_record($record);
             return \core_analytics\course::instance($record, $context);
         });
+    }
+
+    /**
+     * Can be limited to course categories or specific courses.
+     *
+     * @return array
+     */
+    public static function context_restriction_support(): array {
+        return [CONTEXT_COURSE, CONTEXT_COURSECAT];
     }
 }

@@ -646,6 +646,8 @@ class manager {
             $usedanalysablesanalysableids = array_flip($usedanalysablesanalysableids);
 
             $analyser = $model->get_analyser(array('notimesplitting' => true));
+
+            // We do not honour the list of contexts in this model as it can contain stale records.
             $analysables = $analyser->get_analysables_iterator();
 
             $analysableids = [];
@@ -913,4 +915,79 @@ class manager {
 
         return [$target, $indicators];
     }
+
+    /**
+     * Return the context restrictions that can be applied to the provided context levels.
+     *
+     * @throws \coding_exception
+     * @param  array|null $contextlevels The list of context levels provided by the analyser. Null if all of them.
+     * @param  string|null $query
+     * @return array Associative array with contextid as key and the short version of the context name as value.
+     */
+    public static function get_potential_context_restrictions(?array $contextlevels = null, string $query = null) {
+        global $DB;
+
+        if (empty($contextlevels) && !is_null($contextlevels)) {
+            return false;
+        }
+
+        if (!is_null($contextlevels)) {
+            foreach ($contextlevels as $contextlevel) {
+                if ($contextlevel !== CONTEXT_COURSE && $contextlevel !== CONTEXT_COURSECAT) {
+                    throw new \coding_exception('Only CONTEXT_COURSE and CONTEXT_COURSECAT are supported at the moment.');
+                }
+            }
+        }
+
+        $contexts = [];
+
+        // We have a separate process for each context level for performance reasons (to iterate through mdl_context calling
+        // get_context_name() would be too slow).
+        $contextsystem = \context_system::instance();
+        if (is_null($contextlevels) || in_array(CONTEXT_COURSECAT, $contextlevels)) {
+
+            $sql = "SELECT cc.id, cc.name, ctx.id AS contextid
+                      FROM {course_categories} cc
+                      JOIN {context} ctx ON ctx.contextlevel = :ctxlevel AND ctx.instanceid = cc.id";
+            $params = ['ctxlevel' => CONTEXT_COURSECAT];
+
+            if ($query) {
+                $sql .= " WHERE " . $DB->sql_like('cc.name', ':query', false, false);
+                $params['query'] = '%' . $query . '%';
+            }
+
+            $coursecats = $DB->get_recordset_sql($sql, $params);
+            foreach ($coursecats as $record) {
+                $contexts[$record->contextid] = get_string('category') . ': ' .
+                    format_string($record->name, true, array('context' => $contextsystem));
+            }
+            $coursecats->close();
+        }
+
+        if (is_null($contextlevels) || in_array(CONTEXT_COURSE, $contextlevels)) {
+
+            $sql = "SELECT c.id, c.shortname, ctx.id AS contextid
+                      FROM {course} c
+                      JOIN {context} ctx ON ctx.contextlevel = :ctxlevel AND ctx.instanceid = c.id
+                      WHERE c.id != :siteid";
+            $params = ['ctxlevel' => CONTEXT_COURSE, 'siteid' => SITEID];
+
+            if ($query) {
+                $sql .= ' AND (' . $DB->sql_like('c.fullname', ':query1', false, false) . ' OR ' .
+                    $DB->sql_like('c.shortname', ':query2', false, false) . ')';
+                $params['query1'] = '%' . $query . '%';
+                $params['query2'] = '%' . $query . '%';
+            }
+
+            $courses = $DB->get_recordset_sql($sql, $params);
+            foreach ($courses as $record) {
+                $contexts[$record->contextid] = get_string('course') . ': ' .
+                    format_string($record->shortname, true, array('context' => $contextsystem));
+            }
+            $courses->close();
+        }
+
+        return $contexts;
+    }
+
 }

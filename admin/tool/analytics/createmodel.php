@@ -45,6 +45,8 @@ $targets = array_filter(\core_analytics\manager::get_all_targets(), function($ta
     return (!$target->based_on_assumptions());
 });
 
+// Set 'supportscontexts' to true as at this stage we don't know if the contexts are supported by
+// the selected target.
 $customdata = array(
     'trainedmodel' => false,
     'staticmodel' => false,
@@ -52,6 +54,7 @@ $customdata = array(
     'indicators' => \core_analytics\manager::get_all_indicators(),
     'timesplittings' => \core_analytics\manager::get_all_time_splittings(),
     'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors(),
+    'supportscontexts' => true,
 );
 $mform = new \tool_analytics\output\form\edit_model(null, $customdata);
 
@@ -86,8 +89,8 @@ if ($mform->is_cancelled()) {
         $indicators = array_diff_key($indicators, $invalidindicators);
     }
 
-    // Update the model with the valid list of indicators.
-    $model->update($data->enabled, $indicators, $timesplitting, $predictionsprocessor);
+    // Update the model with the rest of the data provided in the form.
+    $model->update($data->enabled, $indicators, $timesplitting, $predictionsprocessor, $data->contexts);
 
     $message = '';
     $messagetype = \core\output\notification::NOTIFY_SUCCESS;

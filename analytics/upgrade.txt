@@ -30,6 +30,10 @@ information provided here is intended especially for developers.
     * Predictions flagged as "Not useful" in models whose targets use analysers that provide multiple samples
       per analysable (e.g. students at risk or no teaching) have been updated to "Incorrectly flagged".
 * \core_analytics\predictor::delete_output_dir has a new 2nd parameter, $uniquemodelid.
+* Analyser's get_analysables_iterator and get_iterator_sql have a new $contexts parameter to limit the returned analysables to
+  the ones that depend on the provided contexts.
+* Analysers can implement a context_restriction_support() method to restrict models to a subset of the
+  contents in the site. Only CONTEXT_COURSE and CONTEXT_COURSECAT are supported.
 
 === 3.7 ===
 

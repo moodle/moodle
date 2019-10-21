@@ -75,9 +75,10 @@ class analysis {
     /**
      * Runs the analysis.
      *
+     * @param \context[] $contexts Restrict the analysis to these contexts. No context restrictions if null.
      * @return null
      */
-    public function run() {
+    public function run(array $contexts = []) {
 
         $options = $this->analyser->get_options();
 
@@ -89,7 +90,7 @@ class analysis {
         } else {
             $action = 'prediction';
         }
-        $analysables = $this->analyser->get_analysables_iterator($action);
+        $analysables = $this->analyser->get_analysables_iterator($action, $contexts);
 
         $processedanalysables = $this->get_processed_analysables();
 

@@ -3619,5 +3619,24 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019101600.01);
     }
 
+    if ($oldversion < 2019101800.02) {
+
+        // Get the table by its previous name.
+        $table = new xmldb_table('analytics_models');
+        if ($dbman->table_exists($table)) {
+
+            // Define field contextids to be added to analytics_models.
+            $field = new xmldb_field('contextids', XMLDB_TYPE_TEXT, null, null, null, null, null, 'version');
+
+            // Conditionally launch add field contextids.
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019101800.02);
+    }
+
     return true;
 }

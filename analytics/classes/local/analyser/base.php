@@ -131,9 +131,10 @@ abstract class base {
      * to ease to implementation of get_analysables_iterator: get_iterator_sql and order_sql.
      *
      * @param string|null $action 'prediction', 'training' or null if no specific action needed.
+     * @param \context[] $contexts Only analysables that depend on the provided contexts. All analysables in the system if empty.
      * @return \Iterator
      */
-    public function get_analysables_iterator(?string $action = null) {
+    public function get_analysables_iterator(?string $action = null, array $contexts = []) {
 
         debugging('Please overwrite get_analysables_iterator with your own implementation, we only keep this default
             implementation for backwards compatibility purposes with get_analysables(). note that $action param will
@@ -266,38 +267,42 @@ abstract class base {
     /**
      * Returns labelled data (training and evaluation).
      *
+     * @param \context[] $contexts Restrict the analysis to these contexts. No context restrictions if null.
      * @return \stored_file[]
      */
-    public function get_labelled_data() {
+    public function get_labelled_data(array $contexts = []) {
         // Delegates all processing to the analysis.
         $result = new \core_analytics\local\analysis\result_file($this->get_modelid(), true, $this->get_options());
         $analysis = new \core_analytics\analysis($this, true, $result);
-        $analysis->run();
+        $analysis->run($contexts);
         return $result->get();
     }
 
     /**
      * Returns unlabelled data (prediction).
      *
+     * @param \context[] $contexts Restrict the analysis to these contexts. No context restrictions if null.
      * @return \stored_file[]
      */
-    public function get_unlabelled_data() {
+    public function get_unlabelled_data(array $contexts = []) {
         // Delegates all processing to the analysis.
         $result = new \core_analytics\local\analysis\result_file($this->get_modelid(), false, $this->get_options());
         $analysis = new \core_analytics\analysis($this, false, $result);
-        $analysis->run();
+        $analysis->run($contexts);
         return $result->get();
     }
 
     /**
      * Returns indicator calculations as an array.
+     *
+     * @param \context[] $contexts Restrict the analysis to these contexts. No context restrictions if null.
      * @return array
      */
-    public function get_static_data() {
+    public function get_static_data(array $contexts = []) {
         // Delegates all processing to the analysis.
         $result = new \core_analytics\local\analysis\result_array($this->get_modelid(), false, $this->get_options());
         $analysis = new \core_analytics\analysis($this, false, $result);
-        $analysis->run();
+        $analysis->run($contexts);
         return $result->get();
     }
 
@@ -423,6 +428,34 @@ abstract class base {
     }
 
     /**
+     * Returns an array of context levels that can be used to restrict the contexts used during analysis.
+     *
+     * The contexts provided to self::get_analysables_iterator will match these contextlevels.
+     *
+     * @return array Array of context levels or an empty array if context restriction is not supported.
+     */
+    public static function context_restriction_support(): array {
+        return [];
+    }
+
+    /**
+     * Returns the possible contexts used by the analyser.
+     *
+     * This method uses separate logic for each context level because to iterate through
+     * the list of contexts calling get_context_name for each of them would be expensive
+     * in performance terms.
+     *
+     * This generic implementation returns all the contexts in the site for the provided context level.
+     * Overwrite it for specific restrictions in your analyser.
+     *
+     * @param  string|null $query Context name filter.
+     * @return int[]
+     */
+    public static function potential_context_restrictions(string $query = null) {
+        return \core_analytics\manager::get_potential_context_restrictions(static::context_restriction_support(), $query);
+    }
+
+    /**
      * Get the sql of a default implementation of the iterator.
      *
      * This method only works for analysers that return analysable elements which ids map to a context instance ids.
@@ -431,9 +464,12 @@ abstract class base {
      * @param  int         $contextlevel The context level of the analysable
      * @param  string|null $action
      * @param  string|null $tablealias   The table alias
+     * @param  \context[]  $contexts     Only analysables that depend on the provided contexts. All analysables if empty.
      * @return array                     [0] => sql and [1] => params array
      */
-    protected function get_iterator_sql(string $tablename, int $contextlevel, ?string $action = null, ?string $tablealias = null) {
+    protected function get_iterator_sql(string $tablename, int $contextlevel, ?string $action = null, ?string $tablealias = null,
+            array $contexts = []) {
+        global $DB;
 
         if (!$tablealias) {
             $tablealias = 'analysable';
@@ -452,13 +488,30 @@ abstract class base {
             $params = $params + ['action' => $action];
         }
 
-        // Adding the 1 = 1 just to have the WHERE part so that all further conditions added by callers can be
-        // appended to $sql with and ' AND'.
         $sql = 'SELECT ' . $select . '
                   FROM {' . $tablename . '} ' . $tablealias . '
                   ' . $usedanalysablesjoin . '
-                  JOIN {context} ctx ON (ctx.contextlevel = :contextlevel AND ctx.instanceid = ' . $tablealias . '.id)
-                  WHERE 1 = 1';
+                  JOIN {context} ctx ON (ctx.contextlevel = :contextlevel AND ctx.instanceid = ' . $tablealias . '.id) ';
+
+        if (!$contexts) {
+            // Adding the 1 = 1 just to have the WHERE part so that all further conditions
+            // added by callers can be appended to $sql with and ' AND'.
+            $sql .= 'WHERE 1 = 1';
+        } else {
+
+            $contextsqls = [];
+            foreach ($contexts as $context) {
+                $paramkey1 = 'paramctxlike' . $context->id;
+                $paramkey2 = 'paramctxeq' . $context->id;
+                $contextsqls[] = $DB->sql_like('ctx.path', ':' . $paramkey1);
+                $contextsqls[] = 'ctx.path = :' . $paramkey2;
+
+                // This includes the context itself.
+                $params[$paramkey1] = $context->path . '/%';
+                $params[$paramkey2] = $context->path;
+            }
+            $sql .= 'WHERE (' . implode(' OR ', $contextsqls) . ')';
+        }
 
         return [$sql, $params];
     }

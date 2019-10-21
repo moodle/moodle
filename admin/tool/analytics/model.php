@@ -122,6 +122,7 @@ switch ($action) {
 
         $invalidcurrenttimesplitting = $model->invalid_timesplitting_selected();
         $potentialtimesplittings = $model->get_potential_timesplittings();
+        $analyser = $model->get_analyser();
 
         $customdata = array(
             'id' => $model->get_id(),
@@ -132,7 +133,9 @@ switch ($action) {
             'targetname' => $model->get_target()->get_name(),
             'indicators' => $model->get_potential_indicators(),
             'timesplittings' => $potentialtimesplittings,
-            'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors()
+            'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors(),
+            'supportscontexts' => ($analyser)::context_restriction_support(),
+            'contexts' => $model->get_contexts(),
         );
         $mform = new \tool_analytics\output\form\edit_model(null, $customdata);
 
@@ -157,7 +160,7 @@ switch ($action) {
                 $predictionsprocessor = false;
             }
 
-            $model->update($data->enabled, $indicators, $timesplitting, $predictionsprocessor);
+            $model->update($data->enabled, $indicators, $timesplitting, $predictionsprocessor, $data->contexts);
             redirect($returnurl);
         }
 
@@ -168,6 +171,9 @@ switch ($action) {
         $callable = array('\tool_analytics\output\helper', 'class_to_option');
         $modelobj->indicators = array_map($callable, json_decode($modelobj->indicators));
         $modelobj->timesplitting = \tool_analytics\output\helper::class_to_option($modelobj->timesplitting);
+        if ($modelobj->contextids) {
+            $modelobj->contexts = array_map($callable, json_decode($modelobj->contextids));
+        }
         $modelobj->predictionsprocessor = \tool_analytics\output\helper::class_to_option($modelobj->predictionsprocessor);
         $mform->set_data($modelobj);
         $mform->display();

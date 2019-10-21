@@ -487,4 +487,31 @@ class analytics_manager_testcase extends advanced_testcase {
         $this->assertNotEmpty($indicators);
         $this->assertContainsOnlyInstancesOf(\core_analytics\local\indicator\base::class, $indicators);
     }
+
+    /**
+     * test_get_potential_context_restrictions description
+     */
+    public function test_get_potential_context_restrictions() {
+        $this->resetAfterTest();
+
+        // No potential context restrictions.
+        $this->assertFalse(\core_analytics\manager::get_potential_context_restrictions([]));
+
+        // Include the all context levels so the misc. category get included.
+        $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions());
+
+        $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->create_category();
+        $this->assertCount(3, \core_analytics\manager::get_potential_context_restrictions());
+        $this->assertCount(3, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSE, CONTEXT_COURSECAT]));
+
+        $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSE]));
+        $this->assertCount(2, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSECAT]));
+
+        $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSECAT], 'Course category'));
+        $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSECAT], 'Course category 1'));
+        $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSECAT], 'Miscellaneous'));
+        $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSE], 'Test course 1'));
+        $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSE], 'Test course'));
+    }
 }
