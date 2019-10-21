@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 use \tool_monitor\privacy\provider;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\approved_userlist;
+use \core_privacy\tests\provider_testcase;
 
 /**
  * Privacy test for the event monitor
@@ -37,7 +38,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_monitor_privacy_testcase extends advanced_testcase {
+class tool_monitor_privacy_testcase extends provider_testcase {
 
     /**
      * Set up method.
