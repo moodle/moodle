@@ -443,6 +443,15 @@ body.path-question-type {
     }
     img.activityicon {
         margin-left: 0;
+        width: 16px;
+        height: 16px;
+        padding-right: 4px;
+    }
+}
+
+#page-mod-quiz-edit .activity {
+    img.activityicon {
+        vertical-align: text-top;
     }
 }
 
@@ -620,6 +629,7 @@ body.path-question-type {
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
     margin-top: 0;
+    padding-right: 4px;
 }
 
 .path-mod-quiz .statedetails {

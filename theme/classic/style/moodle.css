@@ -14400,7 +14400,13 @@ body.path-question-type {
   padding-left: 0; }
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
-  margin-left: 0; }
+  margin-left: 0;
+  width: 16px;
+  height: 16px;
+  padding-right: 4px; }
+
+#page-mod-quiz-edit .activity img.activityicon {
+  vertical-align: text-top; }
 
 #page-mod-quiz-edit .box.generalbox.questionbank {
   padding: 0.5em; }
@@ -14531,7 +14537,8 @@ body.path-question-type {
   overflow: hidden; }
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
-  margin-top: 0; }
+  margin-top: 0;
+  padding-right: 4px; }
 
 .path-mod-quiz .statedetails {
   display: block;
