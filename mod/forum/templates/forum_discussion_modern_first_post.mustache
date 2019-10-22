@@ -47,7 +47,7 @@
     >
         {{#isfirstunread}}<a id="unread" aria-hidden="true"></a>{{/isfirstunread}}
 
-        <div class="author-image-container d-inline-block pt-2">
+        <div class="author-image-container d-inline-block">
             {{^isdeleted}}
                 {{#author}}
                     {{#urls.profileimage}}
@@ -76,7 +76,7 @@
         <div class="d-flex flex-column w-100"  data-region-content="forum-post-core">
             <header id="post-header-{{uniqid}}">
                 {{^isdeleted}}
-                    <div class="d-flex flex-wrap align-items-center mb-3">
+                    <div class="d-flex flex-wrap align-items-center mb-1">
                         <address class="mb-0 mr-2" tabindex="-1">
                             {{#author}}
                                 <h4 class="h6 d-lg-inline-block mb-0 author-header mr-1">
@@ -161,7 +161,7 @@
                                             {{#pix}} i/moremenu {{/pix}}
                                         </button>
                                         <!-- inline style to fix RTL placement bug -->
-                                        <div class="dropdown-menu" aria-labelledby="post-actions-menu-{{uniqid}}" style="right: auto">
+                                        <div class="dropdown-menu dropdown-menu-right rounded-lg shadow border-0" aria-labelledby="post-actions-menu-{{uniqid}}" style="right: auto">
                                             {{#capabilities}}
                                                 {{#controlreadstatus}}
                                                     {{#unread}}
@@ -249,7 +249,7 @@
                 {{/hasreplycount}}
             </header>
 
-            <div class="post-message" id="post-content-{{id}}">
+            <div class="post-message pr-md-5" id="post-content-{{id}}">
                 {{{message}}}
             </div>
 
@@ -322,7 +322,7 @@
                         <div class="d-flex mt-3">
                             {{#capabilities.reply}}
                                 <button
-                                    class="btn btn-primary btn-lg"
+                                    class="btn btn-primary btn-lg font-weight-bold px-4"
                                     data-href="{{{urls.reply}}}"
                                     data-post-id="{{id}}"
                                     data-action="create-inpage-reply"

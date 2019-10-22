@@ -205,6 +205,13 @@ $allow-reset-style: true !default;
                         margin-bottom: 0;
                     }
                 }
+
+                .card-body {
+                    @include media-breakpoint-down(sm) {
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                }
             }
 
             & > div {
@@ -243,6 +250,11 @@ $allow-reset-style: true !default;
                             width: 100%;
                         }
                     }
+
+                    @include media-breakpoint-down(sm) {
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
                 }
 
                 [data-region="blocks-column"] {
@@ -254,6 +266,13 @@ $allow-reset-style: true !default;
                     flex-direction: column;
                 }
             }
+        }
+
+        select,
+        input,
+        textarea,
+        .btn:not(.btn-icon) {
+            border-radius: $border-radius-lg;
         }
     }
 }

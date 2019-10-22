@@ -88,9 +88,8 @@ $displaymode = get_user_preferences('forum_displaymode', $CFG->forum_displaymode
 
 $PAGE->set_context($forum->get_context());
 $PAGE->set_title($forum->get_name());
-$PAGE->add_body_class('forumtype-' . $forum->get_type() . ' reset-style');
+$PAGE->add_body_class('forumtype-' . $forum->get_type());
 $PAGE->set_heading($course->fullname);
-$PAGE->set_include_region_main_settings_in_header_actions(true);
 
 $buttons = [];
 if ($capabilitymanager->can_grade($USER)) {

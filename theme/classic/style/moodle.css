@@ -16640,6 +16640,10 @@ select {
     line-height: 1;
     height: auto;
     border-radius: 10rem; }
+    @media (max-width: 767.98px) {
+      #page-mod-forum-view [data-region="unified-grader"] .ratinginput,
+      .path-mod-forum.modern-display-mode .ratinginput {
+        margin-top: .5rem; } }
   #page-mod-forum-view [data-region="unified-grader"] .group-image,
   .path-mod-forum.modern-display-mode .group-image {
     width: 35px;
@@ -16776,7 +16780,8 @@ select {
       #page-mod-forum-view [data-region="unified-grader"] .forum-post-container .indent .indent .author-image-container,
       .path-mod-forum.modern-display-mode .forum-post-container .indent .indent .author-image-container {
         width: 30px;
-        margin-right: 8px; }
+        margin-right: 8px;
+        padding-top: 3px; }
       #page-mod-forum-view [data-region="unified-grader"] .forum-post-container .indent .indent .indent,
       .path-mod-forum.modern-display-mode .forum-post-container .indent .indent .indent {
         padding-left: 38px;

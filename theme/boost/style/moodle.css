@@ -16368,6 +16368,10 @@ select {
     line-height: 1;
     height: auto;
     border-radius: 10rem; }
+    @media (max-width: 767.98px) {
+      #page-mod-forum-view [data-region="unified-grader"] .ratinginput,
+      .path-mod-forum.modern-display-mode .ratinginput {
+        margin-top: .5rem; } }
   #page-mod-forum-view [data-region="unified-grader"] .group-image,
   .path-mod-forum.modern-display-mode .group-image {
     width: 35px;
@@ -16504,7 +16508,8 @@ select {
       #page-mod-forum-view [data-region="unified-grader"] .forum-post-container .indent .indent .author-image-container,
       .path-mod-forum.modern-display-mode .forum-post-container .indent .indent .author-image-container {
         width: 30px;
-        margin-right: 8px; }
+        margin-right: 8px;
+        padding-top: 3px; }
       #page-mod-forum-view [data-region="unified-grader"] .forum-post-container .indent .indent .indent,
       .path-mod-forum.modern-display-mode .forum-post-container .indent .indent .indent {
         padding-left: 38px;
@@ -17680,6 +17685,10 @@ body.reset-style #page-header .card, body.reset-style #page-header #page-enrol-u
   border: none; }
   body.reset-style #page-header .card .page-header-headings h1, body.reset-style #page-header #page-enrol-users #filterform .page-header-headings h1, #page-enrol-users body.reset-style #page-header #filterform .page-header-headings h1, body.reset-style #page-header .que .history .page-header-headings h1, .que body.reset-style #page-header .history .page-header-headings h1, body.reset-style #page-header .userprofile .profile_tree section .page-header-headings h1, .userprofile .profile_tree body.reset-style #page-header section .page-header-headings h1, body.reset-style #page-header .groupinfobox .page-header-headings h1, body.reset-style #page-header .well .page-header-headings h1 {
     margin-bottom: 0; }
+  @media (max-width: 767.98px) {
+    body.reset-style #page-header .card .card-body, body.reset-style #page-header #page-enrol-users #filterform .card-body, #page-enrol-users body.reset-style #page-header #filterform .card-body, body.reset-style #page-header .que .history .card-body, .que body.reset-style #page-header .history .card-body, body.reset-style #page-header .userprofile .profile_tree section .card-body, .userprofile .profile_tree body.reset-style #page-header section .card-body, body.reset-style #page-header .groupinfobox .card-body, body.reset-style #page-header .well .card-body, body.reset-style #page-header .card .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .card section, body.reset-style #page-header #page-enrol-users #filterform .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header #page-enrol-users #filterform section, #page-enrol-users body.reset-style #page-header #filterform .userprofile .profile_tree section, .userprofile .profile_tree #page-enrol-users body.reset-style #page-header #filterform section, body.reset-style #page-header .que .history .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .que .history section, .que body.reset-style #page-header .history .userprofile .profile_tree section, .userprofile .profile_tree .que body.reset-style #page-header .history section, body.reset-style #page-header .userprofile .profile_tree section section, .userprofile .profile_tree body.reset-style #page-header section section, body.reset-style #page-header .groupinfobox .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .groupinfobox section, body.reset-style #page-header .well .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .well section {
+      padding-left: 0;
+      padding-right: 0; } }
 
 body.reset-style #page-header > div {
   padding-top: 0 !important;
@@ -17709,12 +17718,28 @@ body.reset-style #page-content {
       @media (max-width: 1199.98px) {
         body.reset-style #page-content #region-main-box #region-main.has-blocks {
           width: 100%; } }
+    @media (max-width: 767.98px) {
+      body.reset-style #page-content #region-main-box #region-main {
+        padding-left: 0;
+        padding-right: 0; } }
   body.reset-style #page-content #region-main-box [data-region="blocks-column"] {
     margin-left: auto; }
   @media (max-width: 1199.98px) {
     body.reset-style #page-content #region-main-box {
       display: flex;
       flex-direction: column; } }
+
+body.reset-style select,
+body.reset-style input,
+body.reset-style textarea,
+body.reset-style .btn:not(.btn-icon),
+body.reset-style #page-grade-grading-manage .actions .action:not(.btn-icon),
+#page-grade-grading-manage .actions body.reset-style .action:not(.btn-icon),
+body.reset-style #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input:not(.btn-icon),
+#rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel body.reset-style input:not(.btn-icon),
+body.reset-style #rubric-rubric.gradingform_rubric .addcriterion:not(.btn-icon),
+#rubric-rubric.gradingform_rubric body.reset-style .addcriterion:not(.btn-icon) {
+  border-radius: 0.3rem; }
 
 body.behat-site .fixed-top {
   position: absolute; }

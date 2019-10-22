@@ -250,6 +250,10 @@ $author-image-margin-sm: 8px;
         line-height: 1;
         height: auto;
         border-radius: 10rem;
+
+        @include media-breakpoint-down(sm) {
+            margin-top: .5rem;
+        }
     }
 
     .group-image {
@@ -337,6 +341,7 @@ $author-image-margin-sm: 8px;
                 .author-image-container {
                     width: $author-image-width-sm;
                     margin-right: $author-image-margin-sm;
+                    padding-top: (36px - $author-image-width-sm) / 2;
                 }
 
                 /**
