@@ -76,6 +76,11 @@ class player {
     private $context;
 
     /**
+     * @var context The \core_h5p\factory object.
+     */
+    private $factory;
+
+    /**
      * Inits the H5P player for rendering the content.
      *
      * @param string $url Local URL of the H5P file to display.
@@ -87,8 +92,10 @@ class player {
         }
         $this->url = new \moodle_url($url);
 
-        // Create H5PFramework instance.
-        $this->core = \core_h5p\framework::instance();
+        $this->factory = new \core_h5p\factory();
+
+        // Create \core_h5p\core instance.
+        $this->core = $this->factory->get_core();
 
         // Get the H5P identifier linked to this URL.
         if ($this->h5pid = $this->get_h5p_id($url, $config)) {
@@ -368,9 +375,9 @@ class player {
         $file->copy_content_to($path);
 
         // Check if the h5p file is valid before saving it.
-        $h5pvalidator = \core_h5p\framework::instance('validator');
+        $h5pvalidator = $this->factory->get_validator();
         if ($h5pvalidator->isValidPackage(false, false)) {
-            $h5pstorage = \core_h5p\framework::instance('storage');
+            $h5pstorage = $this->factory->get_storage();
 
             $options = ['disable' => $this->get_display_options($config)];
             $content = [
@@ -416,7 +423,7 @@ class player {
      * @param stdClass $content The H5P package to delete.
      */
     private function delete_h5p(\stdClass $content) {
-        $h5pstorage = \core_h5p\framework::instance('storage');
+        $h5pstorage = $this->factory->get_storage();
         // Add an empty slug to the content if it's not defined, because the H5P library requires this field exists.
         // It's not used when deleting a package, so the real slug value is not required at this point.
         $content->slug = $content->slug ?? '';
