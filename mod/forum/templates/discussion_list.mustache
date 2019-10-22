@@ -163,6 +163,9 @@
                                 {{/forum.userstate.tracked}}
                             </th>
                         {{/forum.capabilities.viewdiscussions}}
+                        {{#forum.capabilities.subscribe}}
+                            <th scope="col" class="text-center">{{#str}} subscribed, mod_forum {{/str}}</th>
+                        {{/forum.capabilities.subscribe}}
                         <th scope="col" class="discussionsubscription">
                             <span class="accesshide">{{#str}}actions{{/str}}</span>
                         </th>
@@ -195,9 +198,6 @@
                                     <div>
                                         <span class="badge badge-danger rounded" data-region="locked-label" {{^discussion.locked}}hidden{{/discussion.locked}}>
                                             {{#str}}locked, forum{{/str}}
-                                        </span>
-                                        <span class="badge badge-light rounded" data-region="subscribed-label" {{^discussion.userstate.subscribed}}hidden{{/discussion.userstate.subscribed}}>
-                                            {{#str}}subscribed, forum{{/str}}
                                         </span>
                                         {{#discussion.timed.istimed}}
                                         <span>
@@ -274,6 +274,32 @@
                                     {{/forum.userstate.tracked}}
                                 </td>
                             {{/forum.capabilities.viewdiscussions}}
+                            {{#forum.capabilities.subscribe}}
+                                <td class="text-center align-middle">
+                                    {{#discussion}}
+                                        <span class="switch">
+                                            <input
+                                                type="checkbox"
+                                                id="subscription-toggle-{{id}}"
+                                                data-type="subscription-toggle"
+                                                data-action="toggle"
+                                                data-discussionid="{{id}}"
+                                                data-forumid="{{forumid}}"
+                                                {{#userstate.subscribed}}data-targetstate="0" checked{{/userstate.subscribed}}
+                                                {{^userstate.subscribed}}data-targetstate="1"{{/userstate.subscribed}}
+                                            >
+                                            <label for="subscription-toggle-{{id}}" class="sr-only">
+                                                {{#userstate.subscribed}}
+                                                    {{#str}}unsubscribediscussion, forum{{/str}}
+                                                {{/userstate.subscribed}}
+                                                {{^userstate.subscribed}}
+                                                    {{#str}}subscribediscussion, forum{{/str}}
+                                                {{/userstate.subscribed}}
+                                            </label>
+                                        </span>
+                                    {{/discussion}}
+                                </td>
+                            {{/forum.capabilities.subscribe}}
                             <td class="p-0 align-middle" data-container="discussion-summary-actions" style="width: 1px;">
                                 {{#discussion}}
                                     <div class="d-flex flex-wrap justify-content-end icon-no-margin">

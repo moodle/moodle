@@ -51,7 +51,6 @@
 }}
 <div class="ml-auto dropdown">
     <button class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} btn btn-link {{#settings.togglemoreicon}}btn-icon colour-inherit{{/settings.togglemoreicon}}"
-        role="button"
         data-toggle="dropdown"
         aria-haspopup="true"
         tabindex="0"
@@ -83,7 +82,9 @@
                 {{> forum/discussion_lock_toggle }}
             {{/istimelocked}}
         {{/capabilities.manage}}
-        {{> forum/discussion_subscription_toggle }}
+        {{^settings.excludesubscription}}
+            {{> forum/discussion_subscription_toggle }}
+        {{/settings.excludesubscription}}
         {{#unread}}
             {{> forum/mark_as_read }}
         {{/unread}}
