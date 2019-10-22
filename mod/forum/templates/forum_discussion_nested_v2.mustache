@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum_discussion_modern_posts
+    @template mod_forum/forum_discussion_nested_v2
 
-    Template to render a list of posts for a discussion.
+    Template for displaying a single forum discussion.
 
     Classes required for JS:
     * none
@@ -29,6 +29,31 @@
     {
     }
 }}
-{{#posts}}
-    {{> mod_forum/forum_discussion_modern_first_post }}
-{{/posts}}
+
+<div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
+    {{#html}}
+        {{> mod_forum/discussion_settings_drawer}}
+    {{/html}}
+
+    {{#notifications}}
+        {{> core/notification}}
+    {{/notifications}}
+
+    <div class="mb-5">{{{html.modeselectorform}}}</div>
+
+    {{{html.posts}}}
+</div>
+{{#js}}
+require(['jquery', 'mod_forum/discussion_nested_v2'], function($, Discussion) {
+    var root = $('#discussion-container-{{uniqid}}');
+    Discussion.init(root, {
+        {{#loggedinuser}}
+        loggedinuser: {
+            profileimageurl: '{{{profileimageurl}}}',
+            fullname: '{{fullname}}',
+            firstname: '{{firstname}}'
+        }
+        {{/loggedinuser}}
+    });
+});
+{{/js}}

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum_discussion_modern_first_post
+    @template mod_forum/forum_discussion_nested_v2_first_post
 
     Template to render a single post from a discussion.
 
@@ -353,7 +353,7 @@
         <div class="indent replies-container" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
-                    {{> mod_forum/forum_discussion_modern_post_reply }}
+                    {{> mod_forum/forum_discussion_nested_v2_post_reply }}
                 {{/replies}}
             {{/hasreplies}}
         </div>

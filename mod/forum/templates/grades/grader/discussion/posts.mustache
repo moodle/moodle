@@ -34,10 +34,10 @@
         <div class="hr-sect mt-0">{{name}}</div>
         {{#posts}}
             {{#parent}}
-                {{> mod_forum/forum_discussion_modern_post_reply }}
+                {{> mod_forum/forum_discussion_nested_v2_post_reply }}
             {{/parent}}
             {{#starter}}
-                {{> mod_forum/forum_discussion_modern_first_post }}
+                {{> mod_forum/forum_discussion_nested_v2_first_post }}
                 <a class="btn btn-outline-dark"
                    role="button"
                    data-action="view-context"
@@ -52,7 +52,7 @@
                 <div class="forum-post-container" data-region="replies-container">
                     <div class="indent replies-container" data-region="replies-container">
                         <div class="indent replies-container" data-region="replies-container">
-                            {{> mod_forum/forum_discussion_modern_post_reply }}
+                            {{> mod_forum/forum_discussion_nested_v2_post_reply }}
                             <a class="btn btn-outline-dark"
                                role="button"
                                data-action="view-context"

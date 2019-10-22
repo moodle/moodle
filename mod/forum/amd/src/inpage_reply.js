@@ -36,7 +36,7 @@ define([
     ) {
 
     var DISPLAYCONSTANTS = {
-        MODERN: 4,
+        NESTED_V2: 4,
         THREADED: 2,
         NESTED: 3,
         FLAT_OLDEST_FIRST: 1,
@@ -133,7 +133,7 @@ define([
                         newid = post.id;
 
                         switch (mode) {
-                            case DISPLAYCONSTANTS.MODERN:
+                            case DISPLAYCONSTANTS.NESTED_V2:
                                 var capabilities = post.capabilities;
                                 var currentAuthorName = currentRoot.children()
                                                                    .not(Selectors.post.repliesContainer)
@@ -147,7 +147,7 @@ define([
                                                       capabilities.delete ||
                                                       capabilities.export ||
                                                       post.urls.viewparent;
-                                return Templates.render('mod_forum/forum_discussion_modern_post_reply', post);
+                                return Templates.render('mod_forum/forum_discussion_nested_v2_post_reply', post);
                             case DISPLAYCONSTANTS.THREADED:
                                 return Templates.render('mod_forum/forum_discussion_threaded_post', post);
                             case DISPLAYCONSTANTS.NESTED:

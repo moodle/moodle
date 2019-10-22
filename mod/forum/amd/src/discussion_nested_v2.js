@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Module for viewing a discussion in modern view.
+ * Module for viewing a discussion in nested v2 view.
  *
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -326,7 +326,7 @@ const renderInPageReplyTemplate = (additionalTemplateContext, button, postContai
         ...additionalTemplateContext
     };
 
-    return Templates.render('mod_forum/inpage_reply_modern', context);
+    return Templates.render('mod_forum/inpage_reply_v2', context);
 };
 
 /**
@@ -393,7 +393,7 @@ const registerEventListeners = (root) => {
 };
 
 /**
- * Initialise the javascript for the discussion in modern display mode.
+ * Initialise the javascript for the discussion in nested v2 display mode.
  *
  * @param {Object} root jQuery element for the discussion container
  * @param {Object} context Additional render context for the in page reply template

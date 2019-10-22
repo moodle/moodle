@@ -219,7 +219,7 @@ $author-image-margin-sm: 8px;
 }
 
 #page-mod-forum-view [data-region="unified-grader"],
-.path-mod-forum.modern-display-mode {
+.path-mod-forum.nested-v2-display-mode {
     .discussionsubscription {
         margin-top: 0;
         text-align: inherit;
@@ -384,7 +384,7 @@ $author-image-margin-sm: 8px;
 
 /** Extra small devices (portrait phones, less than 576px). */
 @include media-breakpoint-down(sm) {
-    #page-mod-forum-discuss.modern-display-mode {
+    #page-mod-forum-discuss.nested-v2-display-mode {
         .forum-post-container {
             .author-image-container {
                 width: $author-image-width-sm;

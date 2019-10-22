@@ -232,8 +232,8 @@ class discussion {
             ];
         }
 
-        if ($this->displaymode === FORUM_MODE_MODERN) {
-            $template = 'mod_forum/forum_discussion_modern';
+        if ($this->displaymode === FORUM_MODE_NESTED_V2) {
+            $template = 'mod_forum/forum_discussion_nested_v2';
         } else {
             $template = 'mod_forum/forum_discussion';
         }
@@ -332,7 +332,7 @@ class discussion {
                 $html = '<div class="movediscussionoption">';
 
                 $movebutton = get_string('move');
-                if ($this->displaymode === FORUM_MODE_MODERN) {
+                if ($this->displaymode === FORUM_MODE_NESTED_V2) {
                     // Move discussion selector will be rendered on the settings drawer. We won't output the button in this mode.
                     $movebutton = null;
                 }
