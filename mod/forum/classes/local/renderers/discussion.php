@@ -208,7 +208,7 @@ class discussion {
             'html' => [
                 'hasanyactions' => $hasanyactions,
                 'posts' => $this->postsrenderer->render($user, [$this->forum], [$this->discussion], $posts),
-                'modeselectorform' => $this->get_display_mode_selector_html($displaymode),
+                'modeselectorform' => $this->get_display_mode_selector_html($displaymode, $user),
                 'subscribe' => null,
                 'movediscussion' => null,
                 'pindiscussion' => null,
@@ -274,14 +274,15 @@ class discussion {
      * Get the HTML for the display mode selector.
      *
      * @param int $displaymode The current display mode
+     * @param stdClass $user The current user
      * @return string
      */
-    private function get_display_mode_selector_html(int $displaymode) : string {
+    private function get_display_mode_selector_html(int $displaymode, stdClass $user) : string {
         $baseurl = $this->baseurl;
         $select = new single_select(
             $baseurl,
             'mode',
-            forum_get_layout_modes(),
+            forum_get_layout_modes(get_user_preferences('forum_useexperimentalui', false, $user)),
             $displaymode,
             null,
             'mode'

@@ -78,13 +78,28 @@ $cm = \cm_info::create($coursemodule);
 
 require_course_login($course, true, $cm);
 
-$istypesingle = 'single' === $forum->get_type();
+$istypesingle = $forum->get_type() === 'single';
+$saveddisplaymode = get_user_preferences('forum_displaymode', $CFG->forum_displaymode);
 
 if ($mode) {
-    set_user_preference('forum_displaymode', $mode);
+    $displaymode = $mode;
+} else {
+    $displaymode = $saveddisplaymode;
 }
 
-$displaymode = get_user_preferences('forum_displaymode', $CFG->forum_displaymode);
+if (get_user_preferences('forum_useexperimentalui', false)) {
+    if ($displaymode == FORUM_MODE_NESTED) {
+        $displaymode = FORUM_MODE_NESTED_V2;
+    }
+} else {
+    if ($displaymode == FORUM_MODE_NESTED_V2) {
+        $displaymode = FORUM_MODE_NESTED;
+    }
+}
+
+if ($displaymode != $saveddisplaymode) {
+    set_user_preference('forum_displaymode', $displaymode);
+}
 
 $PAGE->set_context($forum->get_context());
 $PAGE->set_title($forum->get_name());
@@ -111,7 +126,9 @@ $buttons[] = forum_search_form($course, $search);
 $PAGE->set_button(implode('', $buttons));
 
 if ($istypesingle && $displaymode == FORUM_MODE_NESTED_V2) {
-    $PAGE->add_body_class('nested-v2-display-mode reset-style');
+    $PAGE->add_body_class('reset-style');
+    $settingstrigger = $OUTPUT->render_from_template('mod_forum/settings_drawer_trigger', null);
+    $PAGE->add_header_action($settingstrigger);
 }
 
 if (empty($cm->visible) && !has_capability('moodle/course:viewhiddenactivities', $forum->get_context())) {

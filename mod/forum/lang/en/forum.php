@@ -702,6 +702,7 @@ $string['unsubscribealldone'] = 'All optional forum subscriptions were removed. 
 $string['unsubscribeallempty'] = 'You are not subscribed to any forums. To disable all notifications from this server go to Messaging in My Profile Settings.';
 $string['unsubscribed'] = 'Unsubscribed';
 $string['unsubscribeshort'] = 'Unsubscribe';
+$string['useexperimentalui'] = 'Use experimental nested discussion view';
 $string['usermarksread'] = 'Manual message read marking';
 $string['unpindiscussion'] = 'Unpin this discussion';
 $string['viewalldiscussions'] = 'View all discussions';

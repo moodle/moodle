@@ -2541,12 +2541,29 @@ function forum_get_discussion_subscription_icon_preloaders() {
  */
 function forum_print_mode_form($id, $mode, $forumtype='') {
     global $OUTPUT;
+    $useexperimentalui = get_user_preferences('forum_useexperimentalui', false);
     if ($forumtype == 'single') {
-        $select = new single_select(new moodle_url("/mod/forum/view.php", array('f'=>$id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
+        $select = new single_select(
+            new moodle_url("/mod/forum/view.php",
+            array('f' => $id)),
+            'mode',
+            forum_get_layout_modes($useexperimentalui),
+            $mode,
+            null,
+            "mode"
+        );
         $select->set_label(get_string('displaymode', 'forum'), array('class' => 'accesshide'));
         $select->class = "forummode";
     } else {
-        $select = new single_select(new moodle_url("/mod/forum/discuss.php", array('d'=>$id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
+        $select = new single_select(
+            new moodle_url("/mod/forum/discuss.php",
+            array('d' => $id)),
+            'mode',
+            forum_get_layout_modes($useexperimentalui),
+            $mode,
+            null,
+            "mode"
+        );
         $select->set_label(get_string('displaymode', 'forum'), array('class' => 'accesshide'));
     }
     echo $OUTPUT->render($select);
@@ -5301,14 +5318,23 @@ function forum_reset_course_form_defaults($course) {
 /**
  * Returns array of forum layout modes
  *
+ * @param bool $useexperimentalui use experimental layout modes or not
  * @return array
  */
-function forum_get_layout_modes() {
-    return array (FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
-                  FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
-                  FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
-                  FORUM_MODE_NESTED     => get_string('modenested', 'forum'),
-                  FORUM_MODE_NESTED_V2  => get_string('modenestedv2', 'forum'));
+function forum_get_layout_modes(bool $useexperimentalui = false) {
+    $modes = [
+        FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
+        FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
+        FORUM_MODE_THREADED   => get_string('modethreaded', 'forum')
+    ];
+
+    if ($useexperimentalui) {
+        $modes[FORUM_MODE_NESTED_V2] = get_string('modenestedv2', 'forum');
+    } else {
+        $modes[FORUM_MODE_NESTED] = get_string('modenested', 'forum');
+    }
+
+    return $modes;
 }
 
 /**
@@ -6842,6 +6868,11 @@ function mod_forum_user_preferences() {
             $discussionlistvault::SORTORDER_REPLIES_ASC
         )
     );
+    $preferences['forum_useexperimentalui'] = [
+        'null' => NULL_NOT_ALLOWED,
+        'default' => false,
+        'type' => PARAM_BOOL
+    ];
 
     return $preferences;
 }

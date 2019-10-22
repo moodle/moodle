@@ -3696,4 +3696,26 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->assertEquals($newduedate, $forum->duedate);
         $this->assertEquals($cutoffdate, $forum->cutoffdate);
     }
+
+    /**
+     * Test forum_get_layout_modes function.
+     */
+    public function test_forum_get_layout_modes() {
+        $expectednormal = [
+            FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
+            FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
+            FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
+            FORUM_MODE_NESTED => get_string('modenested', 'forum')
+        ];
+        $expectedexperimental = [
+            FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
+            FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
+            FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
+            FORUM_MODE_NESTED_V2 => get_string('modenestedv2', 'forum')
+        ];
+
+        $this->assertEquals($expectednormal, forum_get_layout_modes());
+        $this->assertEquals($expectednormal, forum_get_layout_modes(false));
+        $this->assertEquals($expectedexperimental, forum_get_layout_modes(true));
+    }
 }
