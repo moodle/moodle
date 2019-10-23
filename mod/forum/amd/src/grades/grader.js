@@ -136,7 +136,8 @@ const launchWholeForumGrading = async(rootNode) => {
             initialUserId: data.initialuserid,
             moduleName: data.name,
             courseName: data.courseName,
-            courseUrl: relativeUrl('/course/view.php', {id: data.courseId})
+            courseUrl: relativeUrl('/course/view.php', {id: data.courseId}),
+            sendStudentNotifications: data.sendStudentNotifications,
         }
     );
 };

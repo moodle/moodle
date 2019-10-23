@@ -325,7 +325,7 @@ const displayGradingError = async(root, user, err) => {
  * @param {Function} setGradeForUser A function to set the grade for a specific user
  */
 export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
-    initialUserId = null, moduleName, courseName, courseUrl
+    initialUserId = null, moduleName, courseName, courseUrl, sendStudentNotifications = false,
 } = {}) => {
 
     // We need all of these functions to be executed in series, if one step runs before another the interface
@@ -336,11 +336,13 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
         userList,
     ] = await Promise.all([
         createFullScreenWindow({fullscreen: false, showLoader: false}),
+
         Templates.renderForPromise(templateNames.grader.app, {
             moduleName,
             courseName,
             courseUrl,
-            drawer: {show: true}
+            drawer: {show: true},
+            defaultsendnotifications: sendStudentNotifications,
         }),
         getListOfUsers(),
     ]);

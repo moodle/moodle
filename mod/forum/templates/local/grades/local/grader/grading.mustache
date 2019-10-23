@@ -103,5 +103,25 @@
             </div>
             <div class="hidden overflow-auto" data-region="search-results-container"></div>
         </div>
+        <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
+        <hr/>
+        <div class="col-sm-12">
+            <h4 class="d-inline mb-0 fa fa-bell-o"></h4>
+            <h4 class="d-inline mb-0 ">{{#str}}notifications, core{{/str}}</h4>
+            <div data-region="notification" class="col-md-12 mt-3">
+                val: {{defaultsendnotifications}}
+                <label class="form-check">
+                    <input class="form-check-input" type="radio" name="sendstudentnotifications" value="1"{{#defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
+                    {{#str}}sendstudentnotificationsyes, mod_forum{{/str}}
+                </label>
+                <label class="form-check">
+                    <input class="form-check-input" type="radio" name="sendstudentnotifications" value="0"{{^defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
+                    {{#str}}sendstudentnotificationsno, mod_forum{{/str}}
+                </label>
+                {{#helpicon}}
+                    {{>core/help_icon}}
+                {{/helpicon}}
+            </div>
+        </div>
     {{/drawercontent}}
 {{/core/drawer}}
