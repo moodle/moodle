@@ -17153,7 +17153,7 @@ select.form-autocomplete-original-select {
   margin: 0.2em;
   min-height: 27px;
 }
-.form-autocomplete-multiple [role=listitem] {
+.form-autocomplete-selection [role=listitem] {
   cursor: pointer;
   white-space: inherit;
   word-break: break-word;
