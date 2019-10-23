@@ -514,7 +514,7 @@ class gradereport_user_external extends external_api {
                                         'numusers' => new external_value(PARAM_INT, 'Num users in course', VALUE_OPTIONAL),
                                         'averageformatted' => new external_value(PARAM_NOTAGS, 'Grade average', VALUE_OPTIONAL),
                                         'feedback' => new external_value(PARAM_RAW, 'Grade feedback', VALUE_OPTIONAL),
-                                        'feedbackformat' => new external_format_value('feedback'),
+                                        'feedbackformat' => new external_format_value('feedback', VALUE_OPTIONAL),
                                     ), 'Grade items'
                                 )
                             )
