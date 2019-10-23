@@ -14702,6 +14702,9 @@ body.path-question-type {
 .questionbankwindow .module {
   width: auto; }
 
+.questionbankwindow .form-autocomplete-selection {
+  margin-left: 0; }
+
 #page-mod-quiz-edit div.editq div.question div.content {
   background-color: #fff;
   border: 1px solid #ddd;

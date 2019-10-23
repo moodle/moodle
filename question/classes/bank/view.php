@@ -652,8 +652,8 @@ class view {
         echo '<div>';
         echo \html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'qbshowtext',
                                                'value' => 0, 'id' => 'qbshowtext_off'));
-        echo \html_writer::checkbox('qbshowtext', '1', $showquestiontext, get_string('showquestiontext', 'question'),
-                                       array('id' => 'qbshowtext_on', 'class' => 'searchoptions'));
+        echo \html_writer::checkbox('qbshowtext', '1', $showquestiontext, ' ' . get_string('showquestiontext', 'question'),
+                                       array('id' => 'qbshowtext_on', 'class' => 'searchoptions mr-1'));
         echo "</div>\n";
     }
 
