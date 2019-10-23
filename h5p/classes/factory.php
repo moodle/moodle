@@ -59,6 +59,14 @@ class factory {
     protected $content_validator;
 
     /**
+     * factory constructor.
+     */
+    public function __construct() {
+        // Loading classes we need from H5P third party library.
+        autoloader::register();
+    }
+
+    /**
      * Returns an instance of the \core_h5p\framework class.
      *
      * @return \core_h5p\framework
