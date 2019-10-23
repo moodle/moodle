@@ -53,6 +53,7 @@ $string['allowcoursethemes'] = 'Allow course themes';
 $string['allowediplist'] = 'Allowed IP list';
 $string['allowedemaildomains'] = 'Allowed email domains';
 $string['allowemailaddresses'] = 'Allowed email domains';
+$string['allowemojipicker'] = 'Enable emoji picker';
 $string['allowindexing'] = 'Allow indexing by search engines';
 $string['allowindexing_desc'] = 'This determines whether to allow search engines to index your site. "Everywhere" will allow the search engines to search everywhere including login and signup pages, which means sites with Force Login turned on are still indexed. To avoid the risk of spam involved with the signup page being searchable, use "Everywhere except login and signup pages". "Nowhere" will tell search engines not to index any page. Note this is only a tag in the header of the site. It is up to the search engine to respect the tag.';
 $string['allowindexingeverywhere'] = 'Everywhere';
@@ -153,6 +154,8 @@ $string['configallowcohortthemes'] = 'If you enable this, then themes can be set
 $string['configallowcoursethemes'] = 'If you enable this, then courses will be allowed to set their own themes.  Course themes override all other theme choices (site, user, or session themes)';
 $string['configallowedemaildomains'] = 'List email domains that are allowed to be disclosed in the "From" section of outgoing email. The default of "Empty" will use the No-reply address for all outgoing email. The use of wildcards is allowed e.g. *.example.com will allow emails sent from any subdomain of example.com, but not example.com itself. This will require separate entry.';
 $string['configallowemailaddresses'] = 'To restrict new email addresses to particular domains, list them here separated by spaces. All other domains will be rejected. To allow subdomains, add the domain with a preceding \'.\'. To allow a root domain together with its subdomains, add the domain twice - once with a preceding \'.\' and once without e.g. .ourcollege.edu.au ourcollege.edu.au.';
+$string['configallowemojipicker'] = 'If enabled, the emoji picker will be available within the site';
+$string['configallowemojipickerincompatible'] = 'Your current database configuration does not properly support emojis. In order to enable the emoji picker you will need to <a href="https://docs.moodle.org/37/en/MySQL_full_unicode_support">upgrade your database for full unicode support</a>.';
 $string['configallowguestmymoodle'] = 'If enabled guests can access Dashboard, otherwise guests are redirected to the site front page.';
 $string['configallowobjectembed'] = 'As a default security measure, normal users are not allowed to embed multimedia (like Flash) within texts using explicit EMBED and OBJECT tags in their HTML (although it can still be done safely using the mediaplugins filter).  If you wish to allow these tags then enable this option.';
 $string['configallowoverride'] = 'You can allow people with the roles on the left side to override some of the column roles';
