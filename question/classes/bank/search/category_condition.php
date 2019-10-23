@@ -118,7 +118,7 @@ class category_condition extends condition {
         echo \html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'recurse',
                                                'value' => 0, 'id' => 'recurse_off'));
         echo \html_writer::checkbox('recurse', '1', $this->recurse, get_string('includesubcategories', 'question'),
-                                       array('id' => 'recurse_on', 'class' => 'searchoptions'));
+                                       array('id' => 'recurse_on', 'class' => 'searchoptions mr-1'));
         echo \html_writer::end_div() . "\n";
     }
 
@@ -132,7 +132,7 @@ class category_condition extends condition {
     protected function display_category_form($contexts, $pageurl, $current) {
         echo \html_writer::start_div('choosecategory');
         $catmenu = question_category_options($contexts, true, 0, true);
-        echo \html_writer::label(get_string('selectacategory', 'question'), 'id_selectacategory');
+        echo \html_writer::label(get_string('selectacategory', 'question'), 'id_selectacategory', true, array("class" => "mr-1"));
         echo \html_writer::select($catmenu, 'category', $current, array(),
                 array('class' => 'searchoptions custom-select', 'id' => 'id_selectacategory'));
         echo \html_writer::end_div() . "\n";
@@ -170,7 +170,7 @@ class category_condition extends condition {
         $formatoptions = new \stdClass();
         $formatoptions->noclean = true;
         $formatoptions->overflowdiv = true;
-        echo \html_writer::start_div('boxaligncenter categoryinfo');
+        echo \html_writer::start_div('boxaligncenter categoryinfo pl-0');
         if (isset($this->maxinfolength)) {
             echo shorten_text(format_text($category->info, $category->infoformat, $formatoptions, $this->course->id),
                                      $this->maxinfolength);
