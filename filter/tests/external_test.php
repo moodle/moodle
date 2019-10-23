@@ -187,5 +187,14 @@ class core_filter_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($firstfilter, $result['filters'][0]['filter']); // OK, the filter is enabled globally.
         $this->assertEquals(TEXTFILTER_OFF, $result['filters'][0]['localstate']); // It is not available in this context.
         $this->assertEquals(TEXTFILTER_ON, $result['filters'][0]['inheritedstate']); // In the parent context is available.
+
+        // Try user without permission, warning expected.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $result = external::get_available_in_context(array(array('contextlevel' => 'module', 'instanceid' => $forum->cmid)));
+        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $this->assertNotEmpty($result['warnings']);
+        $this->assertEquals('context', $result['warnings'][0]['item']);
+        $this->assertEquals($forum->cmid, $result['warnings'][0]['itemid']);
     }
 }
