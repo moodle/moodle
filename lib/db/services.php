@@ -656,6 +656,7 @@ $functions = array(
         'ajax' => true,
         'type' => 'read',
         'capabilities' => 'moodle/course:viewparticipants',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ],
     'core_enrol_get_users_courses' => array(
         'classname' => 'core_enrol_external',
