@@ -8,8 +8,7 @@
 .que.ordering .sortablelist {
     float            : left;
     list-style-type  : none;
-    margin           : 0 0 0 5px;
-    padding          : 4px;
+    margin           : 0 0 0 8px;
 }
 .que.ordering .sortablelist.active {
     border           : 1px dotted #333;
@@ -45,13 +44,13 @@
 .que.ordering .sortablelist.numberingabc li {
     list-style-type  : lower-alpha;
 }
-.que.ordering .sortablelist.numberingABC li {
+.que.ordering .sortablelist.numberingABCD li {
     list-style-type  : upper-alpha;
 }
-.que.ordering .sortablelist.numberingiii li  {
+.que.ordering .sortablelist.numberingiii li {
     list-style-type  : lower-roman;
 }
-.que.ordering .sortablelist.numberingIII li {
+.que.ordering .sortablelist.numberingIIII li {
     list-style-type  : upper-roman;
 }
 
