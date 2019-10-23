@@ -417,6 +417,19 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018112400, 'local', 'email');
     }
 
+    if ($oldversion < 2018112401) {
+
+        // Changing type of field subject on table email_templateset_templates to char.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('subject', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'lang');
+
+        // Launch change of type for field subject.
+        $dbman->change_field_type($table, $field);
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2018112401, 'local', 'email');
+    }
+
     return $result;
 
 }
