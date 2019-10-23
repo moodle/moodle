@@ -619,6 +619,10 @@ body.path-question-type {
     width: auto;
 }
 
+.questionbankwindow .form-autocomplete-selection {
+    margin-left: 0;
+}
+
 #page-mod-quiz-edit div.editq div.question div.content {
     background-color: $body-bg;
     border: 1px solid #ddd;
