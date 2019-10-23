@@ -32,11 +32,16 @@
     }
 }}
 
-<style>
+{{! The styles defined here will be included in the Moodle web UI and in emails. Emails do not include Moodle
+stylesheets so we want these styles to be applied to emails. However, they will also be included in the Moodle web UI.
+We use the not(.dir-ltr):not(.dir-rtl) so that this style is not applied to the Moodle UI.
+Note that gmail strips out HTML styles which selector includes the caracters (), so the font-family rule
+is not applied in gmail.}}
+<head><style>
 body:not(.dir-ltr):not(.dir-rtl) {
     font-family: 'Open Sans', sans-serif;
 }
-body:not(.dir-ltr):not(.dir-rtl) .btn-insight {
+.btn-insight {
     color: #007bff;
     background-color: transparent;
     display: inline-block;
@@ -47,10 +52,9 @@ body:not(.dir-ltr):not(.dir-rtl) .btn-insight {
     user-select: none;
     border: 1px solid #007bff;
     padding: .375rem .75rem;
-    font-size: .9375rem;
     line-height: 1.5;
     border-radius: 0;
     text-decoration: none;
     cursor: pointer;
 }
-</style>
+</style></head>

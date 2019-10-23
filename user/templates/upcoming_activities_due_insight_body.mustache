@@ -37,56 +37,61 @@
     }
 }}
 
-<style>
-body:not(.dir-ltr):not(.dir-rtl) table.upcoming-activity-due {
-    font-family: 'Open Sans', sans-serif;
+{{! The styles defined here will be included in the Moodle web UI and in emails. Emails do not include Moodle
+stylesheets so we want these styles to be applied to emails. However, they will also be included in the Moodle web UI.
+The styles defined in the class .table have precedence over general styles at tag level, so these styles are only
+applied to emails.}}
+<head><style>
+table {
     text-align: justify;
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
-body:not(.dir-ltr):not(.dir-rtl) table.upcoming-activity-due tr.when {
+table tr.when {
     background-color: #e9ecef;
 }
-body:not(.dir-ltr):not(.dir-rtl) table.upcoming-activity-due th {
+table th {
     padding: 1rem .75rem 1rem .75rem;
     font-weight: 400;
     font-size: larger;
     border-top: 1px solid #dee2e6;
 }
-body:not(.dir-ltr):not(.dir-rtl) table.upcoming-activity-due td {
+table td {
     padding: .75rem;
 }
-body:not(.dir-ltr):not(.dir-rtl) table.upcoming-activity-due td.link {
+table td.link {
     border-top: 1px solid #dee2e6;
     border-bottom: 1px solid #dee2e6;
 }
-</style>
+</style></head>
 
-{{#str}} youhaveupcomingactivitiesdueinfo, moodle, {{userfirstname}} {{/str}}
-<br/><br/>
+<div>
+    {{#str}} youhaveupcomingactivitiesdueinfo, moodle, {{userfirstname}} {{/str}}
+    <br/><br/>
 
-{{#activitiesdue}}
-    <table class="table upcoming-activity-due">
-        <thead>
-            <tr>
-                <th scope="col" class="h5">
-                    {{#icon}}
-                        {{#pix}} {{key}}, {{component}}, {{title}} {{alttext}} {{/pix}}
-                    {{/icon}}
-                    {{name}}
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="when">
-                <td><strong>{{#str}} whendate, calendar, {{formattedtime}} {{/str}}</strong></td>
-            </tr>
-            <tr>
-                <td>{{#str}} coursetitle, moodle, {"course": "{{coursename}}" } {{/str}}</td>
-            </tr>
-            <tr>
-                <td class="link"><a href="{{url}}">{{#str}} gotoactivity, calendar{{/str}}</a></td>
-            </tr>
-        </tbody>
-    </table>
-{{/activitiesdue}}
+    {{#activitiesdue}}
+        <table class="table upcoming-activity-due">
+            <thead>
+                <tr>
+                    <th scope="col" class="h5">
+                        {{#icon}}
+                            {{#pix}} {{key}}, {{component}}, {{title}} {{alttext}} {{/pix}}
+                        {{/icon}}
+                        {{name}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="when">
+                    <td><strong>{{#str}} whendate, calendar, {{formattedtime}} {{/str}}</strong></td>
+                </tr>
+                <tr>
+                    <td>{{#str}} coursetitle, moodle, {"course": "{{coursename}}" } {{/str}}</td>
+                </tr>
+                <tr>
+                    <td class="link"><a href="{{url}}">{{#str}} gotoactivity, calendar{{/str}}</a></td>
+                </tr>
+            </tbody>
+        </table>
+    {{/activitiesdue}}
+</div>
