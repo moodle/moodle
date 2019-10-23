@@ -62,7 +62,7 @@ class hidden_condition extends condition {
         echo \html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'showhidden',
                                                    'value' => '0', 'id' => 'showhidden_off'));
         echo \html_writer::checkbox('showhidden', '1', (! $this->hide), get_string('showhidden', 'question'),
-                                   array('id' => 'showhidden_on', 'class' => 'searchoptions'));
+                                   array('id' => 'showhidden_on', 'class' => 'searchoptions mr-1'));
         echo \html_writer::end_div() . "\n";
     }
 }
