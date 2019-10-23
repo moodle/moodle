@@ -160,7 +160,7 @@ class core_gradelib_testcase extends advanced_testcase {
      * @param stdClass $user
      * @param int $expected
      */
-    public function test_grade_get_date_for_user_grade(stdClass $grade, stdClass $user, int $expected): void {
+    public function test_grade_get_date_for_user_grade(stdClass $grade, stdClass $user, ?int $expected): void {
         $this->assertEquals($expected, grade_get_date_for_user_grade($grade, $user));
     }
 
@@ -191,11 +191,22 @@ class core_gradelib_testcase extends advanced_testcase {
             'datesubmitted' => 0,
         ];
 
+        $g3 = (object) [
+            'usermodified' => $u1->id,
+            'dategraded' => null,
+            'datesubmitted' => $d2,
+        ];
+
         return [
             'If the user is the last person to have modified the grade_item then show the date that it was graded' => [
                 $g1,
                 $u1,
                 $d1,
+            ],
+            'If there is no grade and there is no feedback, then show graded date as null' => [
+                $g3,
+                $u1,
+                null,
             ],
             'If the user is not the last person to have modified the grade_item, ' .
             'and there is no submission date, then show the date that it was submitted' => [

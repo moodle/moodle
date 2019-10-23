@@ -1625,9 +1625,9 @@ function grade_floats_equal($f1, $f2) {
  *
  * @param \stdClass $grade
  * @param \stdClass $user
- * @return int
+ * @return int|null
  */
-function grade_get_date_for_user_grade(\stdClass $grade, \stdClass $user): int {
+function grade_get_date_for_user_grade(\stdClass $grade, \stdClass $user): ?int {
     // The `datesubmitted` is the time that the grade was created.
     // The `dategraded` is the time that it was modified or overwritten.
     // If the grade was last modified by the user themselves use the date graded.
