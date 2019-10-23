@@ -440,9 +440,13 @@ if ($mform->is_cancelled()) {
     $data->userid = $USER->id;
     if (!empty($data->emailto)) {
         $data->emailto = implode(',', $data->emailto);
+    } else {
+        $data->emailto = '';
     }
     if (!empty($data->emailto)) {
         $data->emailcc = implode(',', $data->emailcc);
+    } else {
+        $data->emailcc = '';
     }
     if ($isadding || empty($data->templateid)) {
         $data->companyid = $companyid;
