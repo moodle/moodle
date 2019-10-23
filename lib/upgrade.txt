@@ -11,6 +11,7 @@ information provided here is intended especially for developers.
   which means auto-detecting number of decimal points.
 * plagiarism_save_form_elements() has been deprecated. Please use {plugin name}_coursemodule_edit_post_actions() instead.
 * plagiarism_get_form_elements_module() has been deprecated. Please use {plugin name}_coursemodule_standard_elements() instead.
+* Changed default sessiontimeout to 8 hours to cover most normal working days
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop

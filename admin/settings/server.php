@@ -44,15 +44,10 @@ $temp = new admin_settingpage('sessionhandling', new lang_string('sessionhandlin
 if (empty($CFG->session_handler_class) and $DB->session_lock_supported()) {
     $temp->add(new admin_setting_configcheckbox('dbsessions', new lang_string('dbsessions', 'admin'), new lang_string('configdbsessions', 'admin'), 0));
 }
-$temp->add(new admin_setting_configselect('sessiontimeout', new lang_string('sessiontimeout', 'admin'), new lang_string('configsessiontimeout', 'admin'), 7200, array(14400 => new lang_string('numhours', '', 4),
-                                                                                                                                                      10800 => new lang_string('numhours', '', 3),
-                                                                                                                                                      7200 => new lang_string('numhours', '', 2),
-                                                                                                                                                      5400 => new lang_string('numhours', '', '1.5'),
-                                                                                                                                                      3600 => new lang_string('numminutes', '', 60),
-                                                                                                                                                      2700 => new lang_string('numminutes', '', 45),
-                                                                                                                                                      1800 => new lang_string('numminutes', '', 30),
-                                                                                                                                                      900 => new lang_string('numminutes', '', 15),
-                                                                                                                                                      300 => new lang_string('numminutes', '', 5))));
+
+$temp->add(new admin_setting_configduration('sessiontimeout', new lang_string('sessiontimeout', 'admin'),
+    new lang_string('configsessiontimeout', 'admin'), 8 * 60 * 60));
+
 $temp->add(new admin_setting_configtext('sessioncookie', new lang_string('sessioncookie', 'admin'), new lang_string('configsessioncookie', 'admin'), '', PARAM_ALPHANUM));
 $temp->add(new admin_setting_configtext('sessioncookiepath', new lang_string('sessioncookiepath', 'admin'), new lang_string('configsessioncookiepath', 'admin'), '', PARAM_RAW));
 $temp->add(new admin_setting_configtext('sessioncookiedomain', new lang_string('sessioncookiedomain', 'admin'), new lang_string('configsessioncookiedomain', 'admin'), '', PARAM_RAW, 50));
