@@ -1363,7 +1363,7 @@ final class t3lib_div {
 		$bytesToGenerate = max(4096, $bytesToReturn);
 
 			// if we have not enough random bytes cached, we generate new ones
-		if (!isset($bytes{$bytesToReturn - 1})) {
+		if (!isset($bytes[$bytesToReturn - 1])) {
 			if (TYPO3_OS === 'WIN') {
 					// Openssl seems to be deadly slow on Windows, so try to use mcrypt
 					// Windows PHP versions have a bug when using urandom source (see #24410)
@@ -1372,18 +1372,18 @@ final class t3lib_div {
 					// Try to use native PHP functions first, precedence has openssl
 				$bytes .= self::generateRandomBytesOpenSsl($bytesToGenerate);
 
-				if (!isset($bytes{$bytesToReturn - 1})) {
+				if (!isset($bytes[$bytesToReturn - 1])) {
 					$bytes .= self::generateRandomBytesMcrypt($bytesToGenerate, MCRYPT_DEV_URANDOM);
 				}
 
 					// If openssl and mcrypt failed, try /dev/urandom
-				if (!isset($bytes{$bytesToReturn - 1})) {
+				if (!isset($bytes[$bytesToReturn - 1])) {
 					$bytes .= self::generateRandomBytesUrandom($bytesToGenerate);
 				}
 			}
 
 				// Fall back if other random byte generation failed until now
-			if (!isset($bytes{$bytesToReturn - 1})) {
+			if (!isset($bytes[$bytesToReturn - 1])) {
 				$bytes .= self::generateRandomBytesFallback($bytesToReturn);
 			}
 		}
@@ -1453,7 +1453,7 @@ final class t3lib_div {
 		$bytes = '';
 			// We initialize with somewhat random.
 		$randomState = $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . base_convert(memory_get_usage() % pow(10, 6), 10, 2) . microtime() . uniqid('') . getmypid();
-		while (!isset($bytes{$bytesToReturn - 1})) {
+		while (!isset($bytes[$bytesToReturn - 1])) {
 			$randomState = sha1(microtime() . mt_rand() . $randomState);
 			$bytes .= sha1(mt_rand() . $randomState, TRUE);
 		}
@@ -5318,7 +5318,7 @@ final class t3lib_div {
 		$matches = preg_split('/(.?###.+###.?|\(|\))/', $line, -1, PREG_SPLIT_NO_EMPTY);
 		foreach ($matches as $part) {
 			$oldPart = $part;
-			$partWasQuoted = ($part{0} == '"');
+			$partWasQuoted = ($part[0] == '"');
 			$part = trim($part, '"');
 			switch ((string) $enc) {
 				case 'base64':
