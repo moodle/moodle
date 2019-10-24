@@ -384,7 +384,7 @@ class behat_util extends testing_util {
      * @param string $message The message to show when pausing.
      * This will be passed through cli_ansi_format so appropriate ANSI formatting and features are available.
      */
-    public static function pause(Session $session, string $message): void {
+    public static function pause(Session $session, string $message) {
         $posixexists = function_exists('posix_isatty');
 
         // Make sure this step is only used with interactive terminal (if detected).
