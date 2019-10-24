@@ -2498,4 +2498,110 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $posts['posts'][0]['messagetrust']);
         $this->assertEquals($cleantext, $posts['posts'][0]['message']);
     }
+
+    /**
+     * Test delete a discussion.
+     */
+    public function test_delete_post_discussion() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $user = $this->getDataGenerator()->create_user();
+        $role = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+
+        // Add a discussion.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $this->setUser($user);
+        $result = mod_forum_external::delete_post($discussion->firstpost);
+        $result = external_api::clean_returnvalue(mod_forum_external::delete_post_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertEquals(0, $DB->count_records('forum_posts', array('id' => $discussion->firstpost)));
+        $this->assertEquals(0, $DB->count_records('forum_discussions', array('id' => $discussion->id)));
+    }
+
+    /**
+     * Test delete a post.
+     */
+    public function test_delete_post_post() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $user = $this->getDataGenerator()->create_user();
+        $role = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+
+        // Add a discussion.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        $parentpost = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
+
+        // Add a post.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $record->discussion = $discussion->id;
+        $record->parent = $parentpost->id;
+        $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $this->setUser($user);
+        $result = mod_forum_external::delete_post($post->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::delete_post_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertEquals(1, $DB->count_records('forum_posts', array('discussion' => $discussion->id)));
+        $this->assertEquals(1, $DB->count_records('forum_discussions', array('id' => $discussion->id)));
+    }
+
+    /**
+     * Test delete a different user post.
+     */
+    public function test_delete_post_other_user_post() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $user = $this->getDataGenerator()->create_user();
+        $otheruser = $this->getDataGenerator()->create_user();
+        $role = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+        self::getDataGenerator()->enrol_user($otheruser->id, $course->id, $role->id);
+
+        // Add a discussion.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        $parentpost = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
+
+        // Add a post.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $record->discussion = $discussion->id;
+        $record->parent = $parentpost->id;
+        $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $this->setUser($otheruser);
+        $this->expectExceptionMessage(get_string('cannotdeletepost', 'forum'));
+        mod_forum_external::delete_post($post->id);
+    }
 }

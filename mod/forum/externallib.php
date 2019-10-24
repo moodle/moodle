@@ -2043,4 +2043,113 @@ class mod_forum_external extends external_api {
     public static function set_pin_state_returns() {
         return discussion_exporter::get_read_structure();
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.8
+     */
+    public static function delete_post_parameters() {
+        return new external_function_parameters(
+            array(
+                'postid' => new external_value(PARAM_INT, 'Post to be deleted. It can be a discussion topic post.'),
+            )
+        );
+    }
+
+    /**
+     * Deletes a post or a discussion completely when the post is the discussion topic.
+     *
+     * @param int $postid post to be deleted, it can be a discussion topic post.
+     * @return array of warnings and the status (true if the post/discussion was deleted)
+     * @since Moodle 3.8
+     * @throws moodle_exception
+     */
+    public static function delete_post($postid) {
+        global $USER, $CFG;
+        require_once($CFG->dirroot . "/mod/forum/lib.php");
+
+        $params = self::validate_parameters(self::delete_post_parameters(),
+            array(
+                'postid' => $postid,
+            )
+        );
+        $warnings = array();
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $postvault = $vaultfactory->get_post_vault();
+        $postentity = $postvault->get_from_id($params['postid']);
+
+        if (empty($postentity)) {
+            throw new moodle_exception('invalidpostid', 'forum');
+        }
+
+        $discussionentity = $discussionvault->get_from_id($postentity->get_discussion_id());
+
+        if (empty($discussionentity)) {
+            throw new moodle_exception('notpartofdiscussion', 'forum');
+        }
+
+        $forumentity = $forumvault->get_from_id($discussionentity->get_forum_id());
+        if (empty($forumentity)) {
+            throw new moodle_exception('invalidforumid', 'forum');
+        }
+
+        $context = $forumentity->get_context();
+
+        self::validate_context($context);
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forumentity);
+        $forumdatamapper = $legacydatamapperfactory->get_forum_data_mapper();
+        $discussiondatamapper = $legacydatamapperfactory->get_discussion_data_mapper();
+        $postdatamapper = $legacydatamapperfactory->get_post_data_mapper();
+
+        $replycount = $postvault->get_reply_count_for_post_id_in_discussion_id($USER, $postentity->get_id(),
+            $discussionentity->get_id(), true);
+        $hasreplies = $replycount > 0;
+
+        $capabilitymanager->validate_delete_post($USER, $discussionentity, $postentity, $hasreplies);
+
+        if (!$postentity->has_parent()) {
+            $status = forum_delete_discussion(
+                $discussiondatamapper->to_legacy_object($discussionentity),
+                false,
+                $forumentity->get_course_record(),
+                $forumentity->get_course_module_record(),
+                $forumdatamapper->to_legacy_object($forumentity)
+            );
+        } else {
+            $status = forum_delete_post(
+                $postdatamapper->to_legacy_object($postentity),
+                has_capability('mod/forum:deleteanypost', $context),
+                $forumentity->get_course_record(),
+                $forumentity->get_course_module_record(),
+                $forumdatamapper->to_legacy_object($forumentity)
+            );
+        }
+
+        $result = array();
+        $result['status'] = $status;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.8
+     */
+    public static function delete_post_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'True if the post/discussion was deleted, false otherwise.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

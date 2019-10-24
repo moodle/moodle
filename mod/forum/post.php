@@ -369,73 +369,30 @@ if (!empty($forum)) {
     }
 
     $capabilitymanager = $managerfactory->get_capability_manager($forumentity);
-    $post = $postdatamapper->to_legacy_object($postentity);
-    $discussion = $discussiondatamapper->to_legacy_object($discussionentity);
-    $forum = $forumdatamapper->to_legacy_object($forumentity);
     $course = $forumentity->get_course_record();
+    $cm = $forumentity->get_course_module_record();
     $modcontext = $forumentity->get_context();
-    $coursecontext = context_course::instance($course->id);
-
-    if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-        print_error('invalidcoursemodule');
-    }
 
     require_login($course, false, $cm);
-
-    if (!$capabilitymanager->can_delete_post($USER, $discussionentity, $postentity)) {
-        redirect(
-                $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
-                get_string('cannotdeletepost', 'forum'),
-                null,
-                \core\output\notification::NOTIFY_ERROR
-            );
-    }
 
     $replycount = $postvault->get_reply_count_for_post_id_in_discussion_id(
         $USER, $postentity->get_id(), $discussionentity->get_id(), true);
 
     if (!empty($confirm) && confirm_sesskey()) {
-        // User has confirmed the delete.
-        // Check user capability to delete post.
-        $timepassed = time() - $post->created;
-        if ($post->totalscore) {
-            redirect(
-                    $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
-                    get_string('couldnotdeleteratings', 'rating'),
-                    null,
-                    \core\output\notification::NOTIFY_ERROR
-                );
-        } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {
-            redirect(
-                    $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
-                    get_string('couldnotdeletereplies', 'forum'),
-                    null,
-                    \core\output\notification::NOTIFY_ERROR
-                );
-        } else {
+        // Do further checks and delete the post.
+        $hasreplies = $replycount > 0;
+
+        try {
+            $capabilitymanager->validate_delete_post($USER, $discussionentity, $postentity, $hasreplies);
+
             if (!$postentity->has_parent()) {
-                // Post is a discussion topic as well, so delete discussion.
-                if ($forum->type == 'single') {
-                    redirect(
-                            $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
-                            get_string('cannotdeletediscussioninsinglediscussion', 'forum'),
-                            null,
-                            \core\output\notification::NOTIFY_ERROR
-                        );
-                }
-                forum_delete_discussion($discussion, false, $course, $cm, $forum);
-
-                $params = array(
-                    'objectid' => $discussion->id,
-                    'context' => $modcontext,
-                    'other' => array(
-                        'forumid' => $forum->id,
-                    )
+                forum_delete_discussion(
+                    $discussiondatamapper->to_legacy_object($discussionentity),
+                    false,
+                    $forumentity->get_course_record(),
+                    $forumentity->get_course_module_record(),
+                    $forumdatamapper->to_legacy_object($forumentity)
                 );
-
-                $event = \mod_forum\event\discussion_deleted::create($params);
-                $event->add_record_snapshot('forum_discussions', $discussion);
-                $event->trigger();
 
                 redirect(
                     $urlfactory->get_forum_view_url_from_forum($forumentity),
@@ -443,20 +400,16 @@ if (!empty($forum)) {
                     null,
                     \core\output\notification::NOTIFY_SUCCESS
                 );
-
             } else {
-                $deleted = forum_delete_post($post, has_capability('mod/forum:deleteanypost', $modcontext), $course, $cm, $forum);
+                forum_delete_post(
+                    $postdatamapper->to_legacy_object($postentity),
+                    has_capability('mod/forum:deleteanypost', $modcontext),
+                    $forumentity->get_course_record(),
+                    $forumentity->get_course_module_record(),
+                    $forumdatamapper->to_legacy_object($forumentity)
+                );
 
-                if (!$deleted) {
-                    redirect(
-                            $urlfactory->get_discussion_view_url_from_post($postentity),
-                            get_string('errorwhiledelete', 'forum'),
-                            null,
-                            \core\output\notification::NOTIFY_ERROR
-                        );
-                }
-
-                if ($forum->type == 'single') {
+                if ($forumentity->get_type() == 'single') {
                     // Single discussion forums are an exception.
                     // We show the forum itself since it only has one discussion thread.
                     $discussionurl = $urlfactory->get_forum_view_url_from_forum($forumentity);
@@ -471,10 +424,29 @@ if (!empty($forum)) {
                     \core\output\notification::NOTIFY_SUCCESS
                 );
             }
+        } catch (Exception $e) {
+            redirect(
+                $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
+                $e->getMessage(),
+                null,
+                \core\output\notification::NOTIFY_ERROR
+            );
         }
 
-
     } else {
+
+        if (!$capabilitymanager->can_delete_post($USER, $discussionentity, $postentity)) {
+            redirect(
+                    $urlfactory->get_discussion_view_url_from_discussion($discussionentity),
+                    get_string('cannotdeletepost', 'forum'),
+                    null,
+                    \core\output\notification::NOTIFY_ERROR
+                );
+        }
+
+        $post = $postdatamapper->to_legacy_object($postentity);
+        $forum = $forumdatamapper->to_legacy_object($forumentity);
+
         // User just asked to delete something.
         forum_set_return();
         $PAGE->navbar->add(get_string('delete', 'forum'));

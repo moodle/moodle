@@ -3173,6 +3173,17 @@ function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum)
         }
     }
 
+    $params = array(
+        'objectid' => $discussion->id,
+        'context' => context_module::instance($cm->id),
+        'other' => array(
+            'forumid' => $forum->id,
+        )
+    );
+    $event = \mod_forum\event\discussion_deleted::create($params);
+    $event->add_record_snapshot('forum_discussions', $discussion);
+    $event->trigger();
+
     return $result;
 }
 
