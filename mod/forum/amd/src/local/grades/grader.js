@@ -279,7 +279,11 @@ const getSaveUserGradeFunction = (root, setGradeForUser) => {
     return async(user) => {
         try {
             root.querySelector(Selectors.regions.gradingPanelErrors).innerHTML = '';
-            const result = await setGradeForUser(user.id, root.querySelector(Selectors.regions.gradingPanel));
+            const result = await setGradeForUser(
+                user.id,
+                root.querySelector(Selectors.regions.gradingPanel),
+                root.querySelector(Selectors.values.sendStudentNotifications).value
+            );
             if (result.success) {
                 addToast(await getString('grades:gradesavedfor', 'mod_forum', user));
             }
