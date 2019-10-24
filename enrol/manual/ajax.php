@@ -157,8 +157,14 @@ switch ($action) {
             foreach ($users as $user) {
                 $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend, null, $recovergrades);
             }
+            $counter = count($users);
             foreach ($cohorts as $cohort) {
-                $plugin->enrol_cohort($instance, $cohort->id, $roleid, $timestart, $timeend, null, $recovergrades);
+                $totalenrolledusers = $plugin->enrol_cohort($instance, $cohort->id, $roleid, $timestart, $timeend, null, $recovergrades);
+                $counter += $totalenrolledusers;
+            }
+            // Display a notification message after the bulk user enrollment.
+            if ($counter > 0) {
+                \core\notification::info(get_string('totalenrolledusers', 'enrol', $counter));
             }
         } else {
             throw new enrol_ajax_exception('enrolnotpermitted');

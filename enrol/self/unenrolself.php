@@ -50,6 +50,8 @@ $PAGE->set_title($plugin->get_instance_name($instance));
 if ($confirm and confirm_sesskey()) {
     $plugin->unenrol_user($instance, $USER->id);
 
+    \core\notification::success(get_string('youunenrolledfromcourse', 'enrol', $course->fullname));
+
     redirect(new moodle_url('/index.php'));
 }
 

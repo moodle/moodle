@@ -157,6 +157,8 @@ class enrol_self_plugin extends enrol_plugin {
 
         $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
 
+        \core\notification::success(get_string('youenrolledincourse', 'enrol'));
+
         if ($instance->password and $instance->customint1 and $data->enrolpassword !== $instance->password) {
             // It must be a group enrolment, let's assign group too.
             $groups = $DB->get_records('groups', array('courseid'=>$instance->courseid), 'id', 'id, enrolmentkey');
