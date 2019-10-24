@@ -9882,6 +9882,13 @@ body.path-question-type .fitem_fgroup .accesshide {
 #page-mod-quiz-edit div.questionbank .categoryinfo {
   padding: 0.3em 0;
 }
+.questionbankwindow .boxaligncenter.categoryinfo {
+  padding-left: 0;
+}
+.questionbankwindow .singlebutton div,
+.questionbankwindow .singlebutton div input {
+  margin-left: 0;
+}
 #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer {
   padding: 0;
 }
