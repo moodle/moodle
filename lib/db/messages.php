@@ -135,4 +135,7 @@ $messageproviders = array (
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDOFF,
         )
     ),
+
+    'gradenotifications' => [
+    ],
 );
