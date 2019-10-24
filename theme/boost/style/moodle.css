@@ -14913,7 +14913,8 @@ a.ygtvspacer:hover {
     display: block;
     max-height: 0;
     visibility: hidden;
-    transition: max-height .15s ease-in-out, visibility 0s linear .15s; }
+    overflow: hidden;
+    transition: max-height .15s ease-in-out, visibility 0s linear .15s, overflow 0s linear .15s; }
 
 /* Question */
 .questionbank h2 {
