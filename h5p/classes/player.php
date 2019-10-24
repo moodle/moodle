@@ -241,10 +241,7 @@ class player {
             $h5p = false;
         }
 
-        if (!$h5p) {
-            // The H5P content hasn't been deployed previously. It has to be validated and stored before displaying it.
-            return $this->save_h5p($file, $config);
-        } else {
+        if ($h5p) {
             // The H5P content has been deployed previously.
             $displayoptions = $this->get_display_options($config);
             // Check if the user can set the displayoptions.
@@ -253,6 +250,18 @@ class player {
                 $this->core->h5pF->updateContentFields($h5p->id, ['displayoptions' => $displayoptions]);
             }
             return $h5p->id;
+        } else {
+            // The H5P content hasn't been deployed previously.
+
+            // Check if the user uploading the H5P content is "trustable". If the file hasn't been uploaded by a user with this
+            // capability, the content won't be deployed and an error message will be displayed.
+            if (!has_capability('moodle/h5p:deploy', $this->context, $file->get_userid())) {
+                $this->core->h5pF->setErrorMessage(get_string('nopermissiontodeploy', 'core_h5p'));
+                return false;
+            }
+
+            // Validate and store the H5P content before displaying it.
+            return $this->save_h5p($file, $config);
         }
     }
 

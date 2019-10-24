@@ -2439,4 +2439,15 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
         )
     ),
+
+    // Allow to deploy H5P content.
+    'moodle/h5p:deploy' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'manager'        => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
 );
