@@ -157,6 +157,27 @@ class block_online_users extends block_base {
 
         return $this->content;
     }
+
+    /**
+     * Return the plugin config settings for external functions.
+     *
+     * @return stdClass the configs for both the block instance and plugin
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        global $CFG;
+
+        // Return all settings for all users since it is safe (no private keys, etc..).
+        $configs = (object) [
+            'timetosee' => $CFG->block_online_users_timetosee,
+            'onlinestatushiding' => $CFG->block_online_users_onlinestatushiding
+        ];
+
+        return (object) [
+            'instance' => new stdClass(),
+            'plugin' => $configs,
+        ];
+    }
 }
 
 

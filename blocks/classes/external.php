@@ -67,6 +67,16 @@ class core_block_external extends external_api {
                     ),
                     'Block contents (if required).', VALUE_OPTIONAL
                 ),
+                'configs' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'Name.'),
+                            'value' => new external_value(PARAM_RAW, 'Value.'),
+                            'type' => new external_value(PARAM_ALPHA, 'Type (instance or plugin).'),
+                        )
+                    ),
+                    'Block instance and plugin configuration settings.', VALUE_OPTIONAL
+                ),
             ), 'Block information.'
         );
     }
@@ -110,6 +120,17 @@ class core_block_external extends external_api {
                 if ($returncontents) {
                     $block['contents'] = (array) $blockinstances[$bc->blockinstanceid]->get_content_for_external($OUTPUT);
                 }
+                $configs = (array) $blockinstances[$bc->blockinstanceid]->get_config_for_external();
+                foreach ($configs as $type => $data) {
+                    foreach ((array) $data as $name => $value) {
+                        $block['configs'][] = [
+                            'name' => $name,
+                            'value' => $value,
+                            'type' => $type,
+                        ];
+                    }
+                }
+
                 $allblocks[] = $block;
             }
         }
