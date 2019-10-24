@@ -36,7 +36,7 @@ export const fetchGrade = type => (component, contextid, itemname, gradeduserid)
     }])[0];
 };
 
-export const saveGrade = type => async(component, contextid, itemname, gradeduserid, formdata) => {
+export const saveGrade = type => async(component, contextid, itemname, gradeduserid, formdata, notifyuser = false) => {
     return normaliseResult(await fetchMany([{
         methodname: `core_grades_grader_gradingpanel_${type}_store`,
         args: {
@@ -45,6 +45,7 @@ export const saveGrade = type => async(component, contextid, itemname, gradeduse
             itemname,
             gradeduserid,
             formdata,
+            notifyuser,
         },
     }])[0]);
 };
