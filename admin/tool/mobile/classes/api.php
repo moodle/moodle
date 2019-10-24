@@ -206,6 +206,12 @@ class api {
         $identityprovidersdata = \auth_plugin_base::prepare_identity_providers_for_output($identityproviders, $OUTPUT);
         if (!empty($identityprovidersdata)) {
             $settings['identityproviders'] = $identityprovidersdata;
+            // Clean URLs to avoid breaking Web Services.
+            // We can't do it in prepare_identity_providers_for_output() because it may break the web output.
+            foreach ($settings['identityproviders'] as &$ip) {
+                $ip['url'] = (!empty($ip['url'])) ? clean_param($ip['url'], PARAM_URL) : '';
+                $ip['iconurl'] = (!empty($ip['iconurl'])) ? clean_param($ip['iconurl'], PARAM_URL) : '';
+            }
         }
 
         // If age is verified, return also the admin contact details.
