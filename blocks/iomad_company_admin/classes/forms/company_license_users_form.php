@@ -95,11 +95,9 @@ class company_license_users_form extends \moodleform {
 
     public function create_user_selectors() {
         if (!empty ($this->licenseid)) {
-            if (count($this->courseselect) > 1) {
+            //if (count($this->courseselect) > 1) {
                 $multiple = true;
-            } else {
-                $multiple = false;
-            }
+            //}
             $options = array('context' => $this->context,
                              'companyid' => $this->selectedcompany,
                              'licenseid' => $this->licenseid,
@@ -109,7 +107,7 @@ class company_license_users_form extends \moodleform {
                              'program' => $this->license->program,
                              'selectedcourses' => $this->selectedcourses,
                              'courses' => $this->courseselect,
-                             'multiple' => $multiple);
+                             'multiselect' => true);
             if (empty($this->potentialusers)) {
                 $this->potentialusers = new \potential_license_user_selector('potentialcourseusers', $options);
             }
@@ -365,8 +363,9 @@ class company_license_users_form extends \moodleform {
             if (optional_param('removeall', false, PARAM_BOOL) && confirm_sesskey()) {
                 $search = optional_param('currentlyenrolledusers_searchtext', '', PARAM_RAW);
                 // Process incoming allocations.
-                $potentialusers = $this->currentusers->find_users($search, true);
-                $licenserecords = array_pop($potentialusers);
+                $currentusers = $this->currentusers->find_users($search, true);
+
+                $licenserecords = array_pop($currentusers);
                 $removeall = true;
             }
             if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {

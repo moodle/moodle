@@ -876,7 +876,7 @@ class potential_license_user_selector extends user_selector_base {
     protected $subdepartments;
     protected $parentdepartmentid;
     protected $program;
-    protected $multiple;
+    protected $multiselect;
     protected $license;
     protected $selectedcourses;
 
@@ -889,7 +889,7 @@ class potential_license_user_selector extends user_selector_base {
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
         $this->program = $options['program'];
-        $this->multiple = $options['multiple'];
+        $this->multiselect = $options['multiselect'];
         $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
         $this->selectedcourses = $options['selectedcourses'];
         $this->courses = $options['courses'];
@@ -907,7 +907,7 @@ class potential_license_user_selector extends user_selector_base {
         $options['parentdepartmentid'] = $this->program;
         $options['program'] = $this->parentdepartmentid;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
-        $options['multiple']    = $this->multiple;
+        $options['multiselect']    = $this->multiselect;
         $options['selectedcourses'] = $this->selectedcourses;
         $options['courses'] = $this->courses;
 
@@ -1046,7 +1046,7 @@ class potential_license_user_selector extends user_selector_base {
             $edusql = "";
         }
         $licenseusers = $this->get_license_user_ids();
-        if (count($licenseusers) > 0 && (!$this->multiple || !$this->program)) {
+        if (count($licenseusers) > 0 && (!$this->multiselect || !$this->program)) {
             $userfilter = " AND NOT u.id in (" . implode(',', $licenseusers) . ") ";
         } else {
             $userfilter = "";
@@ -1121,6 +1121,7 @@ class current_license_user_selector extends user_selector_base {
     protected $subdepartments;
     protected $parentdepartmentid;
     protected $program;
+    protected $multiselect;
     protected $license;
     protected $selectedcourses;
 
@@ -1133,6 +1134,7 @@ class current_license_user_selector extends user_selector_base {
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
         $this->program = $options['program'];
+        $this->multiselect = $options['multiselect'];
         $this->selectedcourses = $options['selectedcourses'];
         $this->courses = $options['courses'];
         unset($this->courses[0]);
@@ -1151,6 +1153,7 @@ class current_license_user_selector extends user_selector_base {
         $options['program'] = $this->program;
         $options['selectedcourses'] = $this->selectedcourses;
         $options['courses'] = $this->courses;
+        $options['multiselect'] = $this->multiselect;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         return $options;
     }
@@ -1353,7 +1356,7 @@ class current_license_user_selector extends user_selector_base {
                 } else if ($select || isset($this->selected[$user->id])) {
                     $attributes .= ' selected="selected"';
                 }
-                unset($this->selected[$user->id]);
+//unset($this->selected[$user->id]);
                 $output .= '    <option' . $attributes . ' value="' . $user->licenseid . '">' .
                         $this->output_user($user) . "</option>\n";
                 if (!empty($user->infobelow)) {
@@ -1394,8 +1397,8 @@ class current_license_user_selector extends user_selector_base {
         $users = array();
         foreach ($groupedusers as $group) {
             foreach ($group as $user) {
-                if (!isset($users[$user->id]) && empty($user->disabled) && in_array($user->licenseid, $userids)) {
-                    $users[$user->id] = $user;
+                if (!isset($users[$user->licenseid]) && empty($user->disabled) && in_array($user->licenseid, $userids)) {
+                    $users[$user->licenseid] = $user;
                 }
             }
         }
