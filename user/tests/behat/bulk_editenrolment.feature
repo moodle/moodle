@@ -46,6 +46,7 @@ Feature: Bulk enrolments
     Then I should not see "Student 1"
     And I should not see "Student 2"
     And I should not see "Teacher 1"
+    And I should see "3 unenrolled users"
 
   @javascript
   Scenario: Bulk edit enrolment for deleted user

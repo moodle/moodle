@@ -502,6 +502,7 @@ class enrol_manual_plugin extends enrol_plugin {
      * @param int $timeend 0 means forever
      * @param int $status default to ENROL_USER_ACTIVE for new enrolments, no change by default in updates
      * @param bool $recovergrades restore grade history
+     * @return int The number of enrolled cohort users
      */
     public function enrol_cohort(stdClass $instance, $cohortid, $roleid = null, $timestart = 0, $timeend = 0, $status = null, $recovergrades = null) {
         global $DB;
@@ -514,6 +515,7 @@ class enrol_manual_plugin extends enrol_plugin {
         foreach ($members as $userid) {
             $this->enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
         }
+        return count($members);
     }
 
     /**
