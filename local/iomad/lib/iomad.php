@@ -589,7 +589,12 @@ class iomad {
                            'email',
                            'search',
                            'compfrom',
-                           'compto');
+                           'compto',
+                           'licenseallocatedfrom',
+                           'licenseallocatedto',
+                           'licenseunallocatedfrom',
+                           'licenseunallocatedto',
+                           );
         //  Get the company additional optional user parameter names.
         $fieldnames = array();
         $idlist = array();
@@ -762,7 +767,7 @@ class iomad {
                                                      WHERE issuedate > :licenseallocatedfrom
                                                      AND action = 1
                                                      ", $params)) {
-                $sqlsearch .= " AND urla.id NOT IN (".implode(',', array_keys($licallocfromids)).") ";
+                $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licallocfromids)).") ";
             }
         }
 
@@ -771,7 +776,7 @@ class iomad {
                                                      WHERE issuedate < :licenseallocatedto
                                                      AND action = 1
                                                      ", $params)) {
-                $sqlsearch .= " AND urla.id NOT IN (".implode(',', array_keys($licalloctoids)).") ";
+                $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licalloctoids)).") ";
             }
         }
 
@@ -780,7 +785,7 @@ class iomad {
                                                      WHERE issuedate > :licenseunallocatedfrom
                                                      AND action = 0
                                                      ", $params)) {
-                $sqlsearch .= " AND urla.id NOT IN (".implode(',', array_keys($licunallocfromids)).") ";
+                $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licunallocfromids)).") ";
             }
         }
 
@@ -789,7 +794,7 @@ class iomad {
                                                      WHERE issuedate < :licenseunallocatedto
                                                      AND action = 0
                                                      ", $params)) {
-                $sqlsearch .= " AND urla.id NOT IN (".implode(',', array_keys($licunalloctoids)).") ";
+                $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licunalloctoids)).") ";
             }
         }
 

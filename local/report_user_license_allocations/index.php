@@ -305,7 +305,6 @@ if (!$table->is_downloading()) {
             // Set up the filter form.
             $options = $params;
             $options['companyid'] = $companyid;
-            $options['addlicenseusage'] = true;
             $options['addfrom'] = 'licenseallocatedfromraw';
             $options['addto'] = 'licenseallocatedtoraw';
             $options['addfromb'] = 'licenseunallocatedfromraw';
