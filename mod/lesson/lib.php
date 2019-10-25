@@ -669,7 +669,7 @@ function lesson_grade_item_update($lesson, $grades=null) {
         require_once($CFG->libdir.'/gradelib.php');
     }
 
-    if (array_key_exists('cmidnumber', $lesson)) { //it may not be always present
+    if (property_exists($lesson, 'cmidnumber')) { //it may not be always present
         $params = array('itemname'=>$lesson->name, 'idnumber'=>$lesson->cmidnumber);
     } else {
         $params = array('itemname'=>$lesson->name);

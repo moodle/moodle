@@ -741,7 +741,7 @@ function quiz_grade_item_update($quiz, $grades = null) {
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
     require_once($CFG->libdir . '/gradelib.php');
 
-    if (array_key_exists('cmidnumber', $quiz)) { // May not be always present.
+    if (property_exists($quiz, 'cmidnumber')) { // May not be always present.
         $params = array('itemname' => $quiz->name, 'idnumber' => $quiz->cmidnumber);
     } else {
         $params = array('itemname' => $quiz->name);

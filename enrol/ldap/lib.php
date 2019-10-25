@@ -460,7 +460,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                         // this is an odd array -- mix of hash and array --
                         $ldapmembers = array();
 
-                        if (array_key_exists('memberattribute_role'.$role->id, $this->config)
+                        if (property_exists($this->config, 'memberattribute_role'.$role->id)
                             && !empty($this->config->{'memberattribute_role'.$role->id})
                             && !empty($course[$this->config->{'memberattribute_role'.$role->id}])) { // May have no membership!
 

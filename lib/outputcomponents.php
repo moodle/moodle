@@ -228,7 +228,7 @@ class user_picture implements renderable {
         // only touch the DB if we are missing data and complain loudly...
         $needrec = false;
         foreach (self::$fields as $field) {
-            if (!array_key_exists($field, $user)) {
+            if (!property_exists($user, $field)) {
                 $needrec = true;
                 debugging('Missing '.$field.' property in $user object, this is a performance problem that needs to be fixed by a developer. '
                           .'Please use user_picture::fields() to get the full list of required fields.', DEBUG_DEVELOPER);

@@ -3839,7 +3839,7 @@ class api {
         if (!$userevidence->can_manage()) {
             throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
 
-        } else if (array_key_exists('userid', $data) && $data->userid != $userevidence->get('userid')) {
+        } else if (property_exists($data, 'userid') && $data->userid != $userevidence->get('userid')) {
             throw new coding_exception('Can not change the userid of a user evidence.');
         }
 
