@@ -53,7 +53,7 @@ if (null !== $logid) {
         header("Content-Disposition: attachment; filename=\"{$filename}\"");
     }
 
-    readstring_accel($log->output, 'text/plain', false);
+    readstring_accel($log->output, 'text/plain');
     exit;
 }
 
