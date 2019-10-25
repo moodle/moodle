@@ -67,9 +67,8 @@ $string['uploadusers_help'] = 'Users may be uploaded (and optionally enrolled in
 * Each line of the file contains one record
 * Each record is a series of data separated by commas (or other delimiters)
 * The first record contains a list of fieldnames defining the format of the rest of the file
-* Required fieldnames are username, password, firstname, lastname, email
-
-<a href="https://docs.moodle.org/en/Upload_users" target="_blank">More help</a>';
+* Required fieldnames are username, password, firstname, lastname, email';
+$string['uploadusers_link'] = 'admin/tool/uploaduser/index';
 $string['uploaduserspreview'] = 'Upload users preview';
 $string['uploadusersresult'] = 'Upload users results';
 $string['uploaduser:uploaduserpictures'] = 'Upload user pictures';
