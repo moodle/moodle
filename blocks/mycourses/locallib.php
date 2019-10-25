@@ -118,9 +118,6 @@ function mycourses_get_my_completion($datefrom = 0) {
         $myavailablecourses[$licensedcourse->coursefullname] = $licensedcourse;
     }
 
-    // Put them into alpahbetical order.
-    ksort($myavailablecourses, SORT_NATURAL | SORT_FLAG_CASE);
-
     // Deal with completed course scores and links for certificates.
     foreach ($mycompleted as $id => $completed) {
 	$mycompleted[$id]->coursefullname = format_string($completed->coursefullname);
@@ -154,6 +151,11 @@ function mycourses_get_my_completion($datefrom = 0) {
         $mycompleted[$id]->certificate = $certstring;
 
     }
+
+    // Put them into alpahbetical order.
+    ksort($myavailablecourses, SORT_NATURAL | SORT_FLAG_CASE);
+    ksort($myinprogress, SORT_NATURAL | SORT_FLAG_CASE);
+    ksort($mycompleted, SORT_NATURAL | SORT_FLAG_CASE);
 
     $mycompletions->mycompleted = $mycompleted;
     $mycompletions->myinprogress = $myinprogress;
