@@ -430,6 +430,19 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018112401, 'local', 'email');
     }
 
+    if ($oldversion < 2018112402) {
+
+        // Changing precision of field subject on table email_templateset_templates to (255).
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('subject', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'lang');
+
+        // Launch change of precision for field subject.
+        $dbman->change_field_precision($table, $field);
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2018112402, 'local', 'email');
+    }
+
     return $result;
 
 }
