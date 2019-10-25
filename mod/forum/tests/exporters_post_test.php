@@ -485,9 +485,11 @@ class test_capability_manager extends capability_manager {
      * @param stdClass $user The user
      * @param discussion_entity $discussion The discussion
      * @param post_entity $post The post
+     * @param bool $hasreplies
      * @return bool
      */
-    public function can_delete_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_delete_post(stdClass $user, discussion_entity $discussion, post_entity $post,
+                                    bool $hasreplies = false) : bool {
         return $this->delete;
     }
 
