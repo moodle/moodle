@@ -1631,10 +1631,9 @@ class mod_forum_events_testcase extends advanced_testcase {
 
         // Loop through the events and check they are valid.
         foreach ($events as $event) {
-
-            if ($event->objectid == $discussion->id) {
+            if ($event instanceof \mod_forum\event\discussion_deleted) {
                 // Check that the event contains the expected values.
-                $this->assertInstanceOf('\mod_forum\event\discussion_deleted', $event);
+                $this->assertEquals($event->objectid, $discussion->id);
                 $this->assertEquals(context_module::instance($forum->cmid), $event->get_context());
                 $expected = array($course->id, 'forum', 'delete discussion', "view.php?id={$forum->cmid}",
                     $forum->id, $forum->cmid);
@@ -1647,6 +1646,7 @@ class mod_forum_events_testcase extends advanced_testcase {
                 $post = $posts[$event->objectid];
                 // Check that the event contains the expected values.
                 $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
+                $this->assertEquals($event->objectid, $post->id);
                 $this->assertEquals(context_module::instance($forum->cmid), $event->get_context());
                 $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $post->id, $forum->cmid);
                 $this->assertEventLegacyLogData($expected, $event);
