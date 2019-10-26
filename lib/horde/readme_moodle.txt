@@ -15,6 +15,7 @@ Description of import of Horde libraries
 # Verify that these patches have been applied in the imported version. Apply them locally if not:
     - https://github.com/horde/Mail/pull/1 (Mail component).
     - https://github.com/horde/Imap_Client/pull/6 (IMAP Client component).
+    - https://github.com/horde/Crypt_Blowfish/pull/1 (PHP 7.4 compatibility, Crypt_Blowfish)
 
 ====
 #!/bin/sh
