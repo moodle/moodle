@@ -408,7 +408,7 @@ class core_tag_collection {
         $tagsort = self::$cloudsortfield ?: 'name';
 
         if (is_numeric($a->$tagsort)) {
-            return ($a->$tagsort == $b->$tagsort) ? 0 : ($a->$tagsort > $b->$tagsort) ? 1 : -1;
+            return (($a->$tagsort == $b->$tagsort) ? 0 : ($a->$tagsort > $b->$tagsort)) ? 1 : -1;
         } else if (is_string($a->$tagsort)) {
             return strcmp($a->$tagsort, $b->$tagsort);
         } else {
