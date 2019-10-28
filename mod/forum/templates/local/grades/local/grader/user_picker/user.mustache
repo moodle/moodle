@@ -18,16 +18,24 @@
     @template mod_forum/local/grades/local/grader/user_picker/user
 
     Classes required for JS:
-    * TODO
+    * none
 
     Data attributes required for JS:
-    * TODO
+    * data-userid="42"
+    * data-region="index"
 
     Context variables required for this template:
-    * TODO
+    * id: The ID of the user
+    * fullname: The user's full name
+    * displayIndex: The index of the user in the userpicker array + 1
+    * total: The length of the user array in the userpicker
 
     Example context (json):
     {
+        "id": 4,
+        "fullname": "Phillip J. Fry",
+        "displayIndex": 3,
+        "total": 7
     }
 }}
 <div class="d-block font-weight-bold" data-region="name" data-userid="{{id}}">{{fullname}}</div>

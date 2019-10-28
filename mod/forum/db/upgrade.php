@@ -195,7 +195,8 @@ function xmldb_forum_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_mod_savepoint(true, 2019071902, 'forum');
     }
-    if ($oldversion < 2019071902) {
+
+    if ($oldversion < 2019081100) {
 
         // Define field grade_forum to be added to forum.
         $table = new xmldb_table('forum');
@@ -208,6 +209,8 @@ function xmldb_forum_upgrade($oldversion) {
 
         // Forum savepoint reached.
         upgrade_mod_savepoint(true, 2019081100, 'forum');
+
+    }
 
     if ($oldversion < 2019100100) {
         // Define table forum_grades to be created.

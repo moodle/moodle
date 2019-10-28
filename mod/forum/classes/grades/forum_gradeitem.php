@@ -65,7 +65,9 @@ class forum_gradeitem extends component_gradeitem {
     /**
      * Return an instance using the forum_entity instance.
      *
-     * @param context $context
+     * @param forum_entity $forum
+     *
+     * @return forum_gradeitem
      */
     public static function load_from_forum_entity(forum_entity $forum): self {
         $instance = new static('mod_forum', $forum->get_context(), 'forum');
@@ -124,7 +126,6 @@ class forum_gradeitem extends component_gradeitem {
      * Get the grade value for this instance.
      * The itemname is translated to the relevant grade field on the forum entity.
      *
-     * @param string $itemname
      * @return int
      */
     protected function get_gradeitem_value(): int {
@@ -139,6 +140,7 @@ class forum_gradeitem extends component_gradeitem {
      * @param stdClass $gradeduser The user being graded
      * @param stdClass $grader The user who is grading
      * @return stdClass The newly created grade record
+     * @throws \dml_exception
      */
     public function create_empty_grade(stdClass $gradeduser, stdClass $grader): stdClass {
         global $DB;
@@ -162,6 +164,7 @@ class forum_gradeitem extends component_gradeitem {
      * @param stdClass $gradeduser The user being graded
      * @param stdClass $grader The user who is grading
      * @return stdClass The grade value
+     * @throws \dml_exception
      */
     public function get_grade_for_user(stdClass $gradeduser, stdClass $grader = null): ?stdClass {
         global $DB;
@@ -184,8 +187,8 @@ class forum_gradeitem extends component_gradeitem {
     /**
      * Get grades for all users for the specified gradeitem.
      *
-     * @param int $itemnumber The specific grade item to fetch for the user
      * @return stdClass[] The grades
+     * @throws \dml_exception
      */
     public function get_all_grades(): array {
         global $DB;
@@ -201,6 +204,9 @@ class forum_gradeitem extends component_gradeitem {
      *
      * @param stdClass $grade
      * @return bool Success
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     * @throws coding_exception
      */
     protected function store_grade(stdClass $grade): bool {
         global $CFG, $DB;

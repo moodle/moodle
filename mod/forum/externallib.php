@@ -2176,7 +2176,7 @@ class mod_forum_external extends external_api {
         ]);
         $warnings = [];
 
-        $user = $DB->get_record('user', ['id' => (int)$params['userid']], '*', IGNORE_MISSING);
+        $user = core_user::get_user($params['userid']);
 
         $vaultfactory = mod_forum\local\container::get_vault_factory();
 

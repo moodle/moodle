@@ -18,16 +18,19 @@
     @template mod_forum/local/grades/local/grader/gradingpanel/error
 
     Classes required for JS:
-    * TODO
+    * none
 
     Data attributes required for JS:
-    * TODO
+    * none
 
     Context variables required for this template:
-    * TODO
+    * error.message: The returned message on error
 
     Example context (json):
     {
+        "error": {
+            "message": "The item (Safe) in (magic school bus trips) does not exist"
+        }
     }
 }}
 <div class="col-md-12 bg-danger text-white rounded pt-3 pb-3" id="gradingpanel-error-{{uniqid}}">
