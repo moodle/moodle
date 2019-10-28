@@ -58,6 +58,14 @@ abstract class component_gradeitem {
     /** @var int The grade itemnumber */
     protected $itemnumber;
 
+    /**
+     * component_gradeitem constructor.
+     *
+     * @param string $component
+     * @param context $context
+     * @param string $itemname
+     * @throws \coding_exception
+     */
     final protected function __construct(string $component, context $context, string $itemname) {
         $this->component = $component;
         $this->context = $context;
@@ -364,6 +372,7 @@ abstract class component_gradeitem {
      *
      * @param int $gradeid
      * @return stdClass
+     * @throws \dml_exception
      */
     public function get_grade(int $gradeid): stdClass {
         global $DB;
@@ -385,7 +394,6 @@ abstract class component_gradeitem {
     /**
      * Get grades for all users for the specified gradeitem.
      *
-     * @param int $itemnumber The specific grade item to fetch for the user
      * @return stdClass[] The grades
      */
     abstract public function get_all_grades(): array;

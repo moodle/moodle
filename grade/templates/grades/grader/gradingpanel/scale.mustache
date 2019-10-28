@@ -15,15 +15,17 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_grades/grades/grader/gradingpanel/point
+    @template core_grades/grades/grader/gradingpanel/scale
 
-    Point-based grading template for use in the grading panel.
+    Scale-based grading template for use in the grading panel.
 
     Context variables required for this template:
 
     Example context (json):
     {
-      "grade": 47
+        "value": 1,
+        "selected": true,
+        "title": "Motivational"
     }
 }}
 <form>

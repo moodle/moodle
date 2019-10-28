@@ -89,6 +89,11 @@ class fetch extends external_api {
      * @param string $itemname
      * @param int $gradeduserid
      * @return array
+     * @throws \dml_exception
+     * @throws \invalid_parameter_exception
+     * @throws \restricted_context_exception
+     * @throws coding_exception
+     * @throws moodle_exception
      * @since Moodle 3.8
      */
     public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid): array {
@@ -132,7 +137,7 @@ class fetch extends external_api {
     /**
      * Get the data to be fetched.
      *
-     * @param component_gradeitem $gradeitem
+     * @param stdClass $grade
      * @return array
      */
     public static function get_fetch_data(stdClass $grade): array {

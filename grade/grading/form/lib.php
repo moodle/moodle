@@ -521,6 +521,7 @@ abstract class gradingform_controller {
      * @param int $raterid
      * @param int $itemid
      * @return gradingform_instance
+     * @throws dml_exception
      */
     public function get_or_create_instance($instanceid, $raterid, $itemid) {
         if (!is_numeric($instanceid)) {
@@ -538,10 +539,11 @@ abstract class gradingform_controller {
      *
      * If the instanceid is falsey, or no instance was found, then create a new instance for the specified rater and item.
      *
-     * @param int $instanceid
      * @param int $raterid
      * @param int $itemid
+     * @param int $instanceid
      * @return gradingform_instance
+     * @throws dml_exception
      */
     public function fetch_instance(int $raterid, int $itemid, ?int $instanceid): gradingform_instance {
         global $DB;
