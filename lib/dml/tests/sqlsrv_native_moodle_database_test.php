@@ -134,6 +134,124 @@ class sqlsrv_native_moodle_database_testcase extends advanced_testcase {
         $temptablesproperty->setValue($sqlsrv, null);
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Data provider for test_has_query_order_by
+     *
+     * @return array data for test_has_query_order_by
+     */
+    public function has_query_order_by_provider() {
+        // Fixtures taken from https://docs.moodle.org/en/ad-hoc_contributed_reports.
+
+        return [
+            'User with language => FALSE' => [
+                'sql' => <<<EOT
+SELECT username, lang
+  FROM prefix_user
+EOT
+                ,
+                'expectedmainquery' => <<<EOT
+SELECT username, lang
+  FROM prefix_user
+EOT
+                ,
+                'expectedresult' => false
+            ],
+            'List Users with extra info (email) in current course => FALSE' => [
+                'sql' => <<<EOT
+SELECT u.firstname, u.lastname, u.email
+  FROM prefix_role_assignments AS ra
+  JOIN prefix_context AS context ON context.id = ra.contextid AND context.contextlevel = 50
+  JOIN prefix_course AS c ON c.id = context.instanceid AND c.id = %%COURSEID%%
+  JOIN prefix_user AS u ON u.id = ra.userid
+EOT
+                ,
+                'expectedmainquery' => <<<EOT
+SELECT u.firstname, u.lastname, u.email
+  FROM prefix_role_assignments AS ra
+  JOIN prefix_context AS context ON context.id = ra.contextid AND context.contextlevel = 50
+  JOIN prefix_course AS c ON c.id = context.instanceid AND c.id = %%COURSEID%%
+  JOIN prefix_user AS u ON u.id = ra.userid
+EOT
+                ,
+                'expectedresult' => false
+            ],
+            'ROW_NUMBER() OVER (ORDER BY ...) => FALSE (https://github.com/jleyva/moodle-block_configurablereports/issues/120)' => [
+                'sql' => <<<EOT
+SELECT COUNT(*) AS 'Users who have logged in today'
+  FROM (
+         SELECT ROW_NUMBER() OVER(ORDER BY lastaccess DESC) AS Row
+           FROM mdl_user
+          WHERE lastaccess > DATEDIFF(s, '1970-01-01 02:00:00', (SELECT Convert(DateTime, DATEDIFF(DAY, 0, GETDATE()))))
+       ) AS Logins
+EOT
+                ,
+                'expectedmainquery' => <<<EOT
+SELECT COUNT() AS 'Users who have logged in today'
+  FROM () AS Logins
+EOT
+                ,
+                'expectedresult' => false
+            ],
+            'CONTRIB-7725 workaround) => TRUE' => [
+                'sql' => <<<EOT
+SELECT COUNT(*) AS 'Users who have logged in today'
+  FROM (
+         SELECT ROW_NUMBER() OVER(ORDER BY lastaccess DESC) AS Row
+           FROM mdl_user
+          WHERE lastaccess > DATEDIFF(s, '1970-01-01 02:00:00', (SELECT Convert(DateTime, DATEDIFF(DAY, 0, GETDATE()))))
+       ) AS Logins ORDER BY 1
+EOT
+                ,
+                'expectedmainquery' => <<<EOT
+SELECT COUNT() AS 'Users who have logged in today'
+  FROM () AS Logins ORDER BY 1
+EOT
+                ,
+                'expectedresult' => true
+            ],
+            'Enrolment count in each Course => TRUE' => [
+                'sql' => <<<EOT
+  SELECT c.fullname, COUNT(ue.id) AS Enroled
+    FROM prefix_course AS c
+    JOIN prefix_enrol AS en ON en.courseid = c.id
+    JOIN prefix_user_enrolments AS ue ON ue.enrolid = en.id
+GROUP BY c.id
+ORDER BY c.fullname
+EOT
+                ,
+                'expectedmainquery' => <<<EOT
+  SELECT c.fullname, COUNT() AS Enroled
+    FROM prefix_course AS c
+    JOIN prefix_enrol AS en ON en.courseid = c.id
+    JOIN prefix_user_enrolments AS ue ON ue.enrolid = en.id
+GROUP BY c.id
+ORDER BY c.fullname
+EOT
+                ,
+                'expectedresult' => true
+            ],
+        ];
+    }
+
+    /**
+     * Test has_query_order_by
+     *
+     * @dataProvider has_query_order_by_provider
+     * @param string $sql the query
+     * @param string $expectedmainquery the expected main query
+     * @param bool $expectedresult the expected result
+     */
+    public function test_has_query_order_by(string $sql, string $expectedmainquery, bool $expectedresult) {
+        $mainquery = preg_replace('/\(((?>[^()]+)|(?R))*\)/', '()', $sql);
+        $this->assertSame($expectedmainquery, $mainquery);
+
+        // The has_query_order_by static method is protected. Use Reflection to call the method.
+        $method = new ReflectionMethod('sqlsrv_native_moodle_database', 'has_query_order_by');
+        $method->setAccessible(true);
+        $result = $method->invoke(null, $sql);
+        $this->assertSame($expectedresult, $result);
+    }
 }
 
 /**
