@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This module will tie together all of the different calls the gradable module will make.
+ * This module handles the creation of a Modal that shows the user's post in context of the entire discussion.
  *
  * @module     mod_forum/grades/expandconversation
  * @package    mod_forum
@@ -39,9 +39,9 @@ const findGradableNode = node => node.closest(ForumSelectors.expandConversation)
 /**
  * Show the post in context in a modal.
  *
- * @param {HTMLElement} rootNode The button thas clicked
+ * @param {HTMLElement} rootNode The button that has been clicked
  */
-const showPostInContext = async rootNode => {
+const showPostInContext = async(rootNode) => {
     const postId = rootNode.dataset.postid;
     const discussionId = rootNode.dataset.discussionid;
     const discussionName = rootNode.dataset.name;
@@ -58,6 +58,14 @@ const showPostInContext = async rootNode => {
         }),
     ]);
 
+    const userPosts = allPosts.posts.map((post) => {
+        post.subject = null;
+        post.readonly = true;
+        post.html.rating = null;
+
+        return post;
+    });
+
     // Handle hidden event.
     modal.getRoot().on(ModalEvents.hidden, function() {
         // Destroy when hidden.
@@ -67,7 +75,7 @@ const showPostInContext = async rootNode => {
     modal.show();
 
     // Note: We do not use await here because it messes with the Modal transitions.
-    const templatePromise = Templates.render('mod_forum/grades/grader/discussion/post_modal', allPosts);
+    const templatePromise = Templates.render('mod_forum/grades/grader/discussion/post_modal', userPosts);
     modal.setBody(templatePromise);
     // eslint-disable-next-line promise/catch-or-return
     templatePromise.then(() => {
@@ -85,8 +93,8 @@ const showPostInContext = async rootNode => {
  *
  * @param {HTMLElement} rootNode The root to listen to.
  */
-export const registerEventListeners = rootNode => {
-    rootNode.addEventListener('click', e => {
+export const registerEventListeners = (rootNode) => {
+    rootNode.addEventListener('click', (e) => {
         const rootNode = findGradableNode(e.target);
 
         if (rootNode) {
