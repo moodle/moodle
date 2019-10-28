@@ -39,15 +39,37 @@ const templateNames = {
     },
 };
 
+/**
+ * Helper function that replaces the user picker placeholder with what we get back from the user picker class.
+ *
+ * @param {HTMLElement} root
+ * @param {String} html
+ */
 const displayUserPicker = (root, html) => {
     const pickerRegion = root.querySelector(Selectors.regions.pickerRegion);
     Templates.replaceNodeContents(pickerRegion, html, '');
 };
 
+/**
+ * To be removed, this is now done as a part of Templates.renderForPromise()
+ *
+ * @param {String} html
+ * @param {String} js
+ * @return {[*, *]}
+ */
 const fetchContentFromRender = (html, js) => {
     return [html, js];
 };
 
+/**
+ * Here we build the function that is passed to the user picker that'll handle updating the user content area
+ * of the grading interface.
+ *
+ * @param {HTMLElement} root
+ * @param {Function} getContentForUser
+ * @param {Function} getGradeForUser
+ * @return {Function}
+ */
 const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) => {
     return async(user) => {
         const [
@@ -67,6 +89,13 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
     };
 };
 
+/**
+ * Add click handlers to the buttons in the header of the grading interface.
+ *
+ * @param {HTMLElement} graderLayout
+ * @param {Object} userPicker
+ * @param {Function} saveGradeFunction
+ */
 const registerEventListeners = (graderLayout, userPicker, saveGradeFunction) => {
     const graderContainer = graderLayout.getContainer();
     graderContainer.addEventListener('click', (e) => {
@@ -96,12 +125,12 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction) => 
 /**
  * Get the function used to save a user grade.
  *
- * @param {Element} root The container for the grader
+ * @param {HTMLElement} root The container for the grader
  * @param {Function} setGradeForUser The function that will be called.
  * @return {Function}
  */
 const getSaveUserGradeFunction = (root, setGradeForUser) => {
-    return async user => {
+    return async(user) => {
         try {
             root.querySelector(Selectors.regions.gradingPanelErrors).innerHTML = '';
             const result = await setGradeForUser(user.id, root.querySelector(Selectors.regions.gradingPanel));
@@ -124,7 +153,7 @@ const getSaveUserGradeFunction = (root, setGradeForUser) => {
 /**
  * Display a grading error, typically from a failed save.
  *
- * @param {Element} root The container for the grader
+ * @param {HTMLElement} root The container for the grader
  * @param {Object} user The user who was errored
  * @param {Object} err The details of the error
  */
@@ -153,6 +182,8 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     initialUserId = null, moduleName
 } = {}) => {
 
+    // We need all of these functions to be executed in series, if one step runs before another the interface
+    // will not work.
     const [
         graderLayout,
         graderHTML,
