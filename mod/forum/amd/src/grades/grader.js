@@ -32,48 +32,51 @@ const templateNames = {
     contentRegion: 'mod_forum/grades/grader/discussion/posts',
 };
 
-const getWholeForumFunctions = (cmid) => {
-    const getPostContextFunction = () => {
-        return (userid) => {
-            return Repository.getDiscussionByUserID(userid, cmid);
-        };
-    };
+/**
+ * Curried function with CMID set, this is then used in unified grader as a fetch a users content.
+ *
+ * @param {Number} cmid
+ * @return {Function}
+ */
+const getContentForUserIdFunction = (cmid) => (userid) => {
+    /**
+     * Given the parent function is called with the second param set execute the partially executed function.
+     *
+     * @param {Number} userid
+     */
+    return Repository.getDiscussionByUserID(userid, cmid)
+        .then(context => {
+            // Rebuild the returned data for the template.
+            context.discussions = context.discussions.map(discussionPostMapper);
 
-    const getContentForUserIdFunction = () => {
-        const postContextFunction = getPostContextFunction(cmid);
-        return userid => {
-            return postContextFunction(userid)
-            .then(context => {
-                // Rebuild the returned data for the template.
-                context.discussions = context.discussions.map(discussionPostMapper);
-
-                return Templates.render(templateNames.contentRegion, context);
-            })
-            .catch(Notification.exception);
-        };
-    };
-
-    const getUsersForCmidFunction = () => {
-        return () => {
-            return CourseRepository.getUsersFromCourseModuleID(cmid)
-                .then((context) => {
-                    return context.users;
-                })
-                .catch(Notification.exception);
-        };
-    };
-
-    return {
-        getContentForUserId: getContentForUserIdFunction(),
-        getUsers: getUsersForCmidFunction(),
-    };
+            return Templates.render(templateNames.contentRegion, context);
+        })
+        .catch(Notification.exception);
 };
 
-const findGradableNode = (node) => {
-    return node.closest(Selectors.gradableItem);
+/**
+ * Curried function with CMID set, this is then used in unified grader as a fetch users call.
+ * The function curried fetches all users in a course for a given CMID.
+ *
+ * @param {Number} cmid
+ * @return {Array} Array of users for a given context.
+ */
+const getUsersForCmidFunction = (cmid) => async() => {
+    const context = await CourseRepository.getUsersFromCourseModuleID(cmid);
+
+    return context.users;
 };
 
-const discussionPostMapper = discussion => {
+
+const findGradableNode = node => node.closest(Selectors.gradableItem);
+
+/**
+ * For a discussion we need to manipulate it's posts to hide certain UI elements.
+ *
+ * @param {Object} discussion
+ * @return {Array} name, id, posts
+ */
+const discussionPostMapper = (discussion) => {
     // Map postid => post.
     const parentMap = new Map();
     discussion.posts.parentposts.forEach(post => parentMap.set(post.id, post));
@@ -82,6 +85,7 @@ const discussionPostMapper = discussion => {
         post.readonly = true;
         post.starter = !post.parentid;
         post.parent = parentMap.get(post.parentid);
+        post.html.rating = null;
 
         return post;
     });
@@ -98,9 +102,8 @@ const discussionPostMapper = discussion => {
  *
  * @param {HTMLElement} rootNode the root HTML element describing what is to be graded
  */
-const launchWholeForumGrading = async rootNode => {
+const launchWholeForumGrading = async(rootNode) => {
     const data = rootNode.dataset;
-    const wholeForumFunctions = getWholeForumFunctions(data.cmid);
     const gradingPanelFunctions = await Grader.getGradingPanelFunctions(
         'mod_forum',
         data.contextid,
@@ -110,8 +113,8 @@ const launchWholeForumGrading = async rootNode => {
     );
 
     await Grader.launch(
-        wholeForumFunctions.getUsers,
-        wholeForumFunctions.getContentForUserId,
+        getUsersForCmidFunction(data.cmid),
+        getContentForUserIdFunction(data.cmid),
         gradingPanelFunctions.getter,
         gradingPanelFunctions.setter,
         {
@@ -126,7 +129,7 @@ const launchWholeForumGrading = async rootNode => {
  * Register listeners to launch the grading panel.
  */
 export const registerLaunchListeners = () => {
-    document.addEventListener('click', async e => {
+    document.addEventListener('click', async(e) => {
         if (e.target.matches(Selectors.launch)) {
             const rootNode = findGradableNode(e.target);
 
