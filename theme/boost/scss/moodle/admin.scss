@@ -61,40 +61,8 @@
     display: none;
 }
 
-.statusok {
-    @extend .tag;
-    @extend .tag-success;
-}
-
-.statuswarning {
-    @extend .tag;
-    @extend .tag-warning;
-}
-
-.statusserious,
-.statuscritical {
-    @extend .tag;
-    @extend .tag-danger;
-}
-
 #page-admin-report-capability-index #capabilitysearch {
     width: 30em;
-}
-
-#page-admin-report-backups-index .backup-error,
-#page-admin-report-backups-index .backup-unfinished {
-    @extend .tag-danger;
-}
-
-#page-admin-report-backups-index .backup-skipped,
-#page-admin-report-backups-index .backup-ok,
-#page-admin-report-backups-index .backup-notyetrun,
-#page-admin-report-backups-index .backup-queued {
-    @extend .tag-success;
-}
-
-#page-admin-report-backups-index .backup-warning {
-    @extend .tag-warning;
 }
 
 #page-admin-qtypes .disabled,
@@ -182,24 +150,6 @@
 #page-admin-roles-define .definenotice {
     margin: 1em 10% 2em 10%;
     text-align: left;
-}
-
-#page-admin-index .releasenoteslink,
-#page-admin-index .adminwarning,
-#page-admin-index .adminerror {
-    @extend .alert;
-}
-
-#page-admin-index .adminwarning {
-    @extend .alert-warning;
-}
-
-#page-admin-index .adminerror {
-    @extend .alert-danger;
-}
-
-#page-admin-index .releasenoteslink {
-    @extend .alert-info;
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {

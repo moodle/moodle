@@ -511,7 +511,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function warning($message, $type = 'warning') {
-        return $this->box($message, 'generalbox admin' . $type);
+        return $this->box($message, 'generalbox alert alert-' . $type);
     }
 
     /**
@@ -526,7 +526,7 @@ class core_admin_renderer extends plugin_renderer_base {
             return $this->warning(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot));
 
         } else if ($insecuredataroot == INSECURE_DATAROOT_ERROR) {
-            return $this->warning(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'error');
+            return $this->warning(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'danger');
 
         } else {
             return '';
@@ -544,7 +544,7 @@ class core_admin_renderer extends plugin_renderer_base {
         if ($devlibdir) {
             $moreinfo = new moodle_url('/report/security/index.php');
             $warning = get_string('devlibdirpresent', 'core_admin', ['moreinfourl' => $moreinfo->out()]);
-            return $this->warning($warning, 'error');
+            return $this->warning($warning, 'danger');
 
         } else {
             return '';
@@ -721,7 +721,7 @@ class core_admin_renderer extends plugin_renderer_base {
         return $this->warning(
                     $this->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
                     $this->container($this->doc_link('admin/versions', get_string('morehelp'))),
-                'error');
+                'danger');
     }
 
     /*
@@ -737,7 +737,7 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         $warning = (get_string('testsiteupgradewarning', 'admin', $testsite));
-        return $this->warning($warning, 'error');
+        return $this->warning($warning, 'danger');
     }
 
     /**
@@ -772,7 +772,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $level = 'warning';
 
         if ($maturity == MATURITY_ALPHA) {
-            $level = 'error';
+            $level = 'danger';
         }
 
         $maturitylevel = get_string('maturity' . $maturity, 'admin');
@@ -954,7 +954,7 @@ class core_admin_renderer extends plugin_renderer_base {
     protected function release_notes_link() {
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        return $this->box($releasenoteslink, 'generalbox releasenoteslink');
+        return $this->box($releasenoteslink, 'generalbox alert alert-info');
     }
 
     /**

@@ -51,11 +51,11 @@ echo $OUTPUT->heading(get_string('pluginname', 'report_security'));
 
 echo '<div id="timewarning">'.get_string('timewarning', 'report_security').'</div>';
 
-$strok       = '<span class="statusok">'.get_string('statusok', 'report_security').'</span>';
-$strinfo     = '<span class="statusinfo">'.get_string('statusinfo', 'report_security').'</span>';
-$strwarning  = '<span class="statuswarning">'.get_string('statuswarning', 'report_security').'</span>';
-$strserious  = '<span class="statusserious">'.get_string('statusserious', 'report_security').'</span>';
-$strcritical = '<span class="statuscritical">'.get_string('statuscritical', 'report_security').'</span>';
+$strok       = '<span class="badge badge-success">'.get_string('statusok', 'report_security').'</span>';
+$strinfo     = '<span class="badge badge-info">'.get_string('statusinfo', 'report_security').'</span>';
+$strwarning  = '<span class="badge badge-warning">'.get_string('statuswarning', 'report_security').'</span>';
+$strserious  = '<span class="badge badge-danger">'.get_string('statusserious', 'report_security').'</span>';
+$strcritical = '<span class="badge badge-danger">'.get_string('statuscritical', 'report_security').'</span>';
 
 $strissue    = get_string('issue', 'report_security');
 $strstatus   = get_string('status', 'report_security');

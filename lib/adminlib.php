@@ -9546,7 +9546,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $url = new moodle_url("/admin/search.php?query=enablewebservices");
         $row[0] = "1. " . html_writer::tag('a', get_string('enablews', 'webservice'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if ($CFG->enablewebservices) {
             $status = get_string('yes');
         }
@@ -9559,7 +9559,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $url = new moodle_url("/admin/settings.php?section=webserviceprotocols");
         $row[0] = "2. " . html_writer::tag('a', get_string('enableprotocols', 'webservice'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('none'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('none'), array('class' => 'badge badge-danger'));
         //retrieve activated protocol
         $active_protocols = empty($CFG->webserviceprotocols) ?
                 array() : explode(',', $CFG->webserviceprotocols);
@@ -9670,7 +9670,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $url = new moodle_url("/admin/search.php?query=enablewebservices");
         $row[0] = "1. " . html_writer::tag('a', get_string('enablews', 'webservice'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if ($CFG->enablewebservices) {
             $status = get_string('yes');
         }
@@ -9683,7 +9683,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $url = new moodle_url("/admin/settings.php?section=webserviceprotocols");
         $row[0] = "2. " . html_writer::tag('a', get_string('enableprotocols', 'webservice'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('none'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('none'), array('class' => 'badge badge-danger'));
         //retrieve activated protocol
         $active_protocols = empty($CFG->webserviceprotocols) ?
                 array() : explode(',', $CFG->webserviceprotocols);
@@ -10768,10 +10768,10 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $row[0] = '1. ' . html_writer::tag('a', get_string('selectsearchengine', 'admin'),
                         array('href' => $url));
 
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if (!empty($CFG->searchengine)) {
             $status = html_writer::tag('span', get_string('pluginname', 'search_' . $CFG->searchengine),
-                array('class' => 'statusok'));
+                array('class' => 'badge badge-success'));
 
         }
         $row[1] = $status;
@@ -10783,9 +10783,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $row[0] = '2. ' . html_writer::tag('a', get_string('enablesearchareas', 'admin'),
                         array('href' => $url));
 
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if ($anyenabled) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
 
         }
         $row[1] = $status;
@@ -10795,7 +10795,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $row = array();
         if (empty($CFG->searchengine)) {
             $row[0] = '3. ' . get_string('setupsearchengine', 'admin');
-            $row[1] = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+            $row[1] = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         } else {
             $url = new moodle_url('/admin/settings.php?section=search' . $CFG->searchengine);
             $row[0] = '3. ' . html_writer::tag('a', get_string('setupsearchengine', 'admin'),
@@ -10808,9 +10808,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
                 $serverstatus = $e->getMessage();
             }
             if ($serverstatus === true) {
-                $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+                $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
             } else {
-                $status = html_writer::tag('span', $serverstatus, array('class' => 'statuscritical'));
+                $status = html_writer::tag('span', $serverstatus, array('class' => 'badge badge-danger'));
             }
             $row[1] = $status;
         }
@@ -10821,9 +10821,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $url = new moodle_url('/admin/searchareas.php');
         $row[0] = '4. ' . html_writer::tag('a', get_string('indexdata', 'admin'), array('href' => $url));
         if ($anyindexed) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
         } else {
-            $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+            $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         }
         $row[1] = $status;
         $table->data[] = $row;
@@ -10833,9 +10833,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $url = new moodle_url("/admin/search.php?query=enableglobalsearch");
         $row[0] = '5. ' . html_writer::tag('a', get_string('enableglobalsearch', 'admin'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if (\core_search\manager::is_global_search_enabled()) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
         }
         $row[1] = $status;
         $table->data[] = $row;
