@@ -85,7 +85,7 @@ a.dimmed_text:visited,
 .usersuspended a:visited,
 .dimmed_category,
 .dimmed_category a {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 .unlist,
@@ -766,7 +766,7 @@ tr.flagged-tag a {
 }
 
 .tag_feed .media .muted a {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 .tag_cloud {

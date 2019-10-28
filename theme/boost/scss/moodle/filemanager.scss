@@ -621,7 +621,7 @@ a.ygtvspacer:hover {
 }
 
 .fitem.disabled .fp-btn-choose {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 .fitem.disabled .filepicker-filelist .filepicker-filename {

@@ -275,7 +275,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 
         td {
             &.weekend {
-                @extend .text-muted;
+                color: $text-muted;
             }
 
             a {

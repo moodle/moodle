@@ -65,11 +65,6 @@
     width: 30em;
 }
 
-#page-admin-qtypes .disabled,
-#page-admin-qbehaviours .disabled {
-    @extend .text-muted;
-}
-
 #page-admin-qtypes #qtypes div,
 #page-admin-qtypes #qtypes form,
 #page-admin-qbehaviours #qbehaviours div,
@@ -457,7 +452,7 @@
         .pluginname {
             .componentname {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
                 margin-left: 22px;
             }
         }
@@ -465,7 +460,7 @@
         .version {
             .versionnumber {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
             }
         }
 
@@ -482,7 +477,7 @@
 
             .requiredby {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
             }
         }
     }
@@ -492,7 +487,7 @@
 // Plugins check page displayed during upgrade.
 #plugins-check-page {
     .page-description {
-        @extend .text-muted;
+        color: $text-muted;
     }
 
     // Check for updates.
@@ -531,7 +526,7 @@
     // Plugins check table.
     #plugins-check {
         .requires-ok {
-            @extend .text-muted;
+            color: $text-muted;
         }
 
         .status-missing,
@@ -543,7 +538,7 @@
 
         .displayname {
             .plugindir {
-                @extend .text-muted;
+                color: $text-muted;
                 font-size: $font-size-sm;
             }
         }
@@ -585,7 +580,7 @@
     #plugins-check-available-dependencies {
         .displayname .component {
             font-size: $font-size-sm;
-            @extend .text-muted;
+            color: $text-muted;
         }
 
         .info .actions {
@@ -751,7 +746,7 @@
         padding: 0;
         margin: 0 0 1.5rem 0;
         li {
-            @extend .text-muted;
+            color: $text-muted;
             @extend .small;
             + li:before {
                 padding-right: 0.5rem;

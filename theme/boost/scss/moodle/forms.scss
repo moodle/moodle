@@ -90,7 +90,7 @@ input#id_externalurl {
 
 .form-defaultinfo,
 .form-label .form-shortname {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 .form-label .form-shortname {
@@ -107,7 +107,7 @@ input#id_externalurl {
 }
 
 .formsettingheading .form-horizontal {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 // Moodle doesn't differentiate between what Bootstrap calls
@@ -115,7 +115,7 @@ input#id_externalurl {
 // uneditable looks ugly, styling both as form help is fairly
 // subtle in it's impact. Going for the latter as the best option.
 .no-felement.fstatic {
-    @extend .text-muted;
+    color: $text-muted;
     padding-top: 5px;
 }
 
