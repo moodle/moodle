@@ -28,6 +28,16 @@ import {normaliseResult} from 'core_grades/grades/grader/gradingpanel/normalise'
 // Note: We use jQuery.serializer here until we can rewrite Ajax to use XHR.send()
 import jQuery from 'jquery';
 
+/**
+ * For a given component, contextid, itemname & gradeduserid we can fetch the currently assigned grade.
+ *
+ * @param {String} component
+ * @param {Number} contextid
+ * @param {String} itemname
+ * @param {Number} gradeduserid
+ *
+ * @returns {Promise}
+ */
 export const fetchCurrentGrade = (component, contextid, itemname, gradeduserid) => {
     return fetchMany([{
         methodname: `gradingform_guide_grader_gradingpanel_fetch`,
@@ -40,7 +50,17 @@ export const fetchCurrentGrade = (component, contextid, itemname, gradeduserid) 
     }])[0];
 };
 
-
+/**
+ * For a given component, contextid, itemname & gradeduserid we can store the currently assigned grade in a given form.
+ *
+ * @param {String} component
+ * @param {Number} contextid
+ * @param {String} itemname
+ * @param {Number} gradeduserid
+ * @param {HTMLElement} rootNode
+ *
+ * @returns {Promise}
+ */
 export const storeCurrentGrade = async(component, contextid, itemname, gradeduserid, rootNode) => {
     const form = rootNode.querySelector('form');
 

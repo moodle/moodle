@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,10 +17,12 @@
 /**
  * External functions and service definitions for the Marking Guide advanced grading form.
  *
- * @package    mod_forum
+ * @package    gradingform_guide
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 $functions = [
     'gradingform_guide_grader_gradingpanel_fetch' => [

@@ -17,7 +17,7 @@
 /**
  * Unit tests for core_grades\component_gradeitems;
  *
- * @package   core_grades
+ * @package   gradingform_guide
  * @category  test
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -37,7 +37,7 @@ use moodle_exception;
 /**
  * Unit tests for core_grades\component_gradeitems;
  *
- * @package   core_grades
+ * @package   gradingform_guide
  * @category  test
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

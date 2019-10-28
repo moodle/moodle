@@ -26,6 +26,8 @@ declare(strict_types = 1);
 
 namespace gradingform_guide\grades\grader\gradingpanel\external;
 
+global $CFG;
+
 use coding_exception;
 use context;
 use core_user;
@@ -40,6 +42,7 @@ use external_value;
 use external_warnings;
 use moodle_exception;
 use stdClass;
+require_once($CFG->dirroot.'/grade/grading/form/guide/lib.php');
 
 /**
  * Web services relating to fetching of a marking guide for the grading panel.
@@ -89,6 +92,11 @@ class fetch extends external_api {
      * @param string $itemname
      * @param int $gradeduserid
      * @return array
+     * @throws \dml_exception
+     * @throws \invalid_parameter_exception
+     * @throws \restricted_context_exception
+     * @throws coding_exception
+     * @throws moodle_exception
      * @since Moodle 3.8
      */
     public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid): array {
@@ -118,7 +126,7 @@ class fetch extends external_api {
         // Fetch the gradeitem instance.
         $gradeitem = gradeitem::instance($component, $context, $itemname);
 
-        if ('guide' !== $gradeitem->get_advanced_grading_method()) {
+        if (MARKING_GUIDE !== $gradeitem->get_advanced_grading_method()) {
             throw new moodle_exception(
                 "The {$itemname} item in {$component}/{$contextid} is not configured for advanced grading with a marking guide"
             );
@@ -133,7 +141,8 @@ class fetch extends external_api {
     /**
      * Get the data to be fetched.
      *
-     * @param component_gradeitem $gradeitem
+     * @param gradeitem $gradeitem
+     * @param stdClass $gradeduser
      * @return array
      */
     public static function get_fetch_data(gradeitem $gradeitem, stdClass $gradeduser): array {

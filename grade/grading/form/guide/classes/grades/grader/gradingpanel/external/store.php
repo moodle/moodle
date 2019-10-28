@@ -26,6 +26,8 @@ declare(strict_types = 1);
 
 namespace gradingform_guide\grades\grader\gradingpanel\external;
 
+global $CFG;
+
 use coding_exception;
 use context;
 use core_grades\component_gradeitem as gradeitem;
@@ -36,6 +38,7 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use moodle_exception;
+require_once($CFG->dirroot.'/grade/grading/form/guide/lib.php');
 
 /**
  * Web services relating to storing of a marking guide for the grading panel.
@@ -89,7 +92,13 @@ class store extends external_api {
      * @param int $contextid
      * @param string $itemname
      * @param int $gradeduserid
+     * @param string $formdata
      * @return array
+     * @throws \dml_exception
+     * @throws \invalid_parameter_exception
+     * @throws \restricted_context_exception
+     * @throws coding_exception
+     * @throws moodle_exception
      * @since Moodle 3.8
      */
     public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid, string $formdata): array {
@@ -132,7 +141,7 @@ class store extends external_api {
         // Require that this user can save grades.
         $gradeitem->require_user_can_grade($gradeduser, $USER);
 
-        if ('guide' !== $gradeitem->get_advanced_grading_method()) {
+        if (MARKING_GUIDE !== $gradeitem->get_advanced_grading_method()) {
             throw new moodle_exception(
                 "The {$itemname} item in {$component}/{$contextid} is not configured for advanced grading with a marking guide"
             );
