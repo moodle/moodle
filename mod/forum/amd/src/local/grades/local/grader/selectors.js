@@ -22,6 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * A small helper function to build queryable data selectors.
+ * @param {String} name
+ * @param {String} value
+ * @return {string}
+ */
 const getDataSelector = (name, value) => {
     return `[data-${name}="${value}"]`;
 };
