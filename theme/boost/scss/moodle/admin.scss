@@ -160,10 +160,6 @@
     margin-bottom: 0.5em;
 }
 
-#page-admin-index .updateplugin .updatepluginconfirmexternal {
-    @extend .tag-warning;
-}
-
 #page-admin-user-user_bulk #users .fgroup {
     white-space: nowrap;
 }
@@ -418,19 +414,6 @@
 
 #page-admin-index #notice .checkforupdates {
     text-align: center;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
-    @extend .tag-info;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity150 .info.release {
-    @extend .tag-warning;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release {
-    @extend .tag-danger;
 }
 
 // Plugins overview page at admin/plugins.php
