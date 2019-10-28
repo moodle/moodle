@@ -159,6 +159,10 @@ switch ($action) {
                 $predictionsprocessor = false;
             }
 
+            if (!isset($data->contexts)) {
+                $data->contexts = null;
+            }
+
             $model->update($data->enabled, $indicators, $timesplitting, $predictionsprocessor, $data->contexts);
             redirect($returnurl);
         }
