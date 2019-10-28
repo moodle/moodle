@@ -298,7 +298,6 @@ abstract class moodleform_mod extends moodleform {
         if ($COURSE->groupmodeforce) {
             if ($mform->elementExists('groupmode')) {
                 // The groupmode can not be changed if forced from course settings.
-                //
                 $mform->hardFreeze('groupmode');
             }
         }
