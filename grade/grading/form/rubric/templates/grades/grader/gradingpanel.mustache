@@ -18,21 +18,43 @@
     @template gradingform_rubric/grades/grader/gradingpanel
 
     Classes required for JS:
-    * TODO
+    * none
 
     Data attributes required for JS:
-    * TODO
+    * none
 
     Context variables required for this template:
-    * TODO
+    * instanceid: Instance of the module this grading form belongs too
+    * criteria: A gradeable item in the Marking Guide
+    * id: The ID of the criteria
+    * description: Description of the criteria
+    * levels: The level that a criteria can be graded at
+    * criterionid: The ID of the criteria
+    * checked: Flag for if this is the currently selected level
+    * definition: Definition of the level
+    * remark: Text input for the teacher to relay to the student
 
     Example context (json):
     {
+        "instanceid": "42",
+        "criteria": [
+            {
+                "id": 13,
+                "description": "Show your motivation to rock climbing",
+                "levels": [
+                    {
+                        "criterionid": 13,
+                        "checked": true,
+                        "definition": "Great work!"
+                    }
+                ],
+                "remark": "That's great!"
+            }
+        ]
     }
 }}
 <form id="gradingform_rubric-{{uniqid}}">
     <input type="hidden" name="instanceid" value="{{instanceid}}">
-    <div class="gradingform_rubric-description">{{{teacherdescription}}}</div>
     <div id="rubric-advancedgrading-{{uniqid}}" class="criterion">
         {{#criteria}}
             <div class="d-block mb-2">

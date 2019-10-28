@@ -26,6 +26,8 @@ declare(strict_types = 1);
 
 namespace gradingform_rubric\grades\grader\gradingpanel\external;
 
+global $CFG;
+
 use coding_exception;
 use context;
 use core_grades\component_gradeitem as gradeitem;
@@ -38,6 +40,7 @@ use external_value;
 use external_warnings;
 use stdClass;
 use moodle_exception;
+require_once($CFG->dirroot.'/grade/grading/form/rubric/lib.php');
 
 /**
  * Web services relating to fetching of a rubric for the grading panel.
@@ -90,8 +93,6 @@ class fetch extends external_api {
      * @since Moodle 3.8
      */
     public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid): array {
-        global $USER;
-
         [
             'component' => $component,
             'contextid' => $contextid,
@@ -116,7 +117,7 @@ class fetch extends external_api {
         // Fetch the gradeitem instance.
         $gradeitem = gradeitem::instance($component, $context, $itemname);
 
-        if ('rubric' !== $gradeitem->get_advanced_grading_method()) {
+        if (RUBRIC !== $gradeitem->get_advanced_grading_method()) {
             throw new moodle_exception(
                 "The {$itemname} item in {$component}/{$contextid} is not configured for advanced grading with a rubric"
             );
@@ -129,7 +130,7 @@ class fetch extends external_api {
     }
 
     /**
-     * Get the data to be fetched.
+     * Get the data to be fetched and create the structure ready for Mustache.
      *
      * @param gradeitem $gradeitem
      * @param stdClass $gradeduser
@@ -138,6 +139,7 @@ class fetch extends external_api {
     public static function get_fetch_data(gradeitem $gradeitem, stdClass $gradeduser): array {
         global $USER;
 
+        // Set up all the controllers etc that we'll be needing.
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
         $instance = $gradeitem->get_advanced_grading_instance($USER, $grade);
         $controller = $instance->get_controller();
@@ -156,7 +158,9 @@ class fetch extends external_api {
 
         $criterion = [];
         if ($definition->rubric_criteria) {
+            // Iterate over the defined criterion in the rubric and map out what we need to render each item.
             $criterion = array_map(function($criterion) use ($definitionid, $fillings, $context) {
+                // The general structure we'll be returning, we still need to get the remark (if any) and the levels associated.
                 $result = [
                     'id' => $criterion['id'],
                     'description' => self::get_formatted_text(
@@ -168,6 +172,7 @@ class fetch extends external_api {
                     ),
                 ];
 
+                // Do we have an existing grade filling? if so lets get the remark associated to this criteria.
                 $filling = [];
                 if (array_key_exists($criterion['id'], $fillings['criteria'])) {
                     $filling = $fillings['criteria'][$criterion['id']];
@@ -179,7 +184,9 @@ class fetch extends external_api {
                     );
                 }
 
+                // Lets build the levels within a criteria and figure out what needs to go where.
                 $result['levels'] = array_map(function($level) use ($criterion, $filling, $context, $definitionid) {
+                    // The bulk of what'll be returned can be defined easily we'll add to this further down.
                     $result = [
                         'id' => $level['id'],
                         'criterionid' => $criterion['id'],
@@ -194,12 +201,27 @@ class fetch extends external_api {
                         'checked' => null,
                     ];
 
+                    // Consult the grade filling to see if a level has been selected and if it is the current level.
                     if (array_key_exists('levelid', $filling) && $filling['levelid'] == $level['id']) {
                         $result['checked'] = true;
                     }
 
                     return $result;
                 }, $criterion['levels']);
+
+                $nulllevel = [
+                    'id' => null,
+                    'criterionid' => $criterion['id'],
+                    'score' => '-',
+                    'definition' => 'Not set',
+                    'checked' => null,
+                ];
+                // Consult the grade filling to see if a level has been selected and if it is the current level.
+                if (array_key_exists('levelid', $filling) && $filling['levelid'] == 0) {
+                    $nulllevel['checked'] = true;
+                }
+
+                array_unshift($result['levels'], $nulllevel);
 
                 return $result;
             }, $definition->rubric_criteria);
@@ -241,7 +263,7 @@ class fetch extends external_api {
                         'levels' => new external_multiple_structure(new external_single_structure([
                             'id' => new external_value(PARAM_INT, 'ID of level'),
                             'criterionid' => new external_value(PARAM_INT, 'ID of the criterion this matches to'),
-                            'score' => new external_value(PARAM_INT, 'What this level is worth'),
+                            'score' => new external_value(PARAM_RAW, 'What this level is worth'),
                             'definition' => new external_value(PARAM_RAW, 'Definition of the level'),
                             'checked' => new external_value(PARAM_BOOL, 'Selected flag'),
                         ])),

@@ -26,6 +26,8 @@ declare(strict_types = 1);
 
 namespace gradingform_rubric\grades\grader\gradingpanel\external;
 
+global $CFG;
+
 use coding_exception;
 use context;
 use core_grades\component_gradeitem as gradeitem;
@@ -35,6 +37,7 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use moodle_exception;
+require_once($CFG->dirroot.'/grade/grading/form/rubric/lib.php');
 
 /**
  * Web services relating to storing of a rubric for the grading panel.
@@ -132,7 +135,7 @@ class store extends external_api {
         // Require that this user can save grades.
         $gradeitem->require_user_can_grade($gradeduser, $USER);
 
-        if ('rubric' !== $gradeitem->get_advanced_grading_method()) {
+        if (RUBRIC !== $gradeitem->get_advanced_grading_method()) {
             throw new moodle_exception(
                 "The {$itemname} item in {$component}/{$contextid} is not configured for advanced grading with a rubric"
             );

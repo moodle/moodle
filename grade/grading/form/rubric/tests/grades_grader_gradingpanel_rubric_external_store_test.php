@@ -17,7 +17,7 @@
 /**
  * Unit tests for core_grades\component_gradeitems;
  *
- * @package   core_grades
+ * @package   gradingform_rubric
  * @category  test
  * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -37,7 +37,7 @@ use moodle_exception;
 /**
  * Unit tests for core_grades\component_gradeitems;
  *
- * @package   core_grades
+ * @package   gradingform_rubric
  * @category  test
  * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -92,7 +92,6 @@ class store_test extends advanced_testcase {
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
         $this->expectException(moodle_exception::class);
-        //$this->expectExceptionMessage("not configured for advanced grading with a rubric");
         store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, 'formdata');
     }
 
@@ -184,6 +183,9 @@ class store_test extends advanced_testcase {
             $levels = $criterion['levels'];
             foreach ($levels as $level) {
                 $levelid = $level['id'];
+                if (!isset($levelid)) {
+                    continue;
+                }
                 $sourcelevel = $sourcecriterion['levels'][$levelid];
 
                 $this->assertArrayHasKey('criterionid', $level);
@@ -200,9 +202,9 @@ class store_test extends advanced_testcase {
 
         }
 
-        $this->assertEquals(1, $criteria[0]['levels'][0]['checked']);
+        $this->assertEquals(1, $criteria[0]['levels'][1]['checked']);
         $this->assertEquals('Too many mistakes. Please try again.', $criteria[0]['remark']);
-        $this->assertEquals(1, $criteria[1]['levels'][2]['checked']);
+        $this->assertEquals(1, $criteria[1]['levels'][3]['checked']);
         $this->assertEquals('Great number of pictures. Well done.', $criteria[1]['remark']);
     }
 
