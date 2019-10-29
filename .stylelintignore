@@ -10,7 +10,6 @@ cache/stores/mongodb/MongoDB/
 enrol/lti/ims-blti/
 filter/algebra/AlgParser.pm
 filter/tex/mimetex.*
-lib/editor/atto/plugins/h5p/js/h5p-resizer.js
 lib/editor/atto/plugins/html/yui/src/codemirror/
 lib/editor/atto/plugins/html/yui/src/beautify/
 lib/editor/atto/yui/src/rangy/js/*.*
@@ -64,6 +63,7 @@ lib/geopattern-php/
 lib/php-jwt/
 lib/babel-polyfill/
 lib/emoji-data/
+lib/h5p/
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/

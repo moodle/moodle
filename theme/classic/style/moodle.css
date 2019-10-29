@@ -11707,6 +11707,12 @@ div.editor_atto_toolbar button .icon {
 .paged-content-page-container {
   min-height: 3.125rem; }
 
+body.h5p-embed #maincontent {
+  display: none; }
+
+body.h5p-embed .h5pmessages {
+  min-height: 230px; }
+
 .text-decoration-none {
   text-decoration: none !important;
   /* stylelint-disable-line declaration-no-important */ }

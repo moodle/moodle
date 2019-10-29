@@ -2177,3 +2177,31 @@ function workshop_check_updates_since(cm_info $cm, $from, $filter = array()) {
     }
     return $updates;
 }
+
+/**
+ * Given an array with a file path, it returns the itemid and the filepath for the defined filearea.
+ *
+ * @param  string $filearea The filearea.
+ * @param  array  $args The path (the part after the filearea and before the filename).
+ * @return array|null The itemid and the filepath inside the $args path, for the defined filearea.
+ */
+function mod_workshop_get_path_from_pluginfile(string $filearea, array $args) : ?array {
+    if ($filearea !== 'instructauthors' && $filearea !== 'instructreviewers' && $filearea !== 'conclusion') {
+        return null;
+    }
+
+    // Workshop only has empty itemid for some of the fileareas.
+    array_shift($args);
+
+    // Get the filepath.
+    if (empty($args)) {
+        $filepath = '/';
+    } else {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    return [
+        'itemid' => 0,
+        'filepath' => $filepath,
+    ];
+}

@@ -70,6 +70,12 @@ validation against and defaults to null (so, no user needed) if not provided.
 * \single_button constructor has a new attributes param to add attributes to the button HTML tag.
 * Improved url matching behaviour for profiled urls and excluded urls
 * Attempting to use xsendfile via the 3rd param of readstring_accel() is now ignored.
+* New H5P libraries have been added to Moodle core in /lib/h5p.
+* New H5P core subsystem have been added.
+* Introduced new callback for plugin developers '<component>_get_path_from_pluginfile($filearea, $args)': This will return
+the itemid and filepath for the filearea and path defined in $args. It has been added in order to get the correct itemid and
+filepath because some components, such as mod_page or mod_resource, add the revision to the URL where the itemid should be placed
+(to prevent caching problems), but then they don't store it in database.
 
 === 3.7 ===
 
