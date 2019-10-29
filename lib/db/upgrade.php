@@ -3614,7 +3614,7 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2019101600.01) {
 
         // Change the setting $CFG->requestcategoryselection into $CFG->lockrequestcategory with opposite value.
-        set_config('lockrequestcategory', !$CFG->requestcategoryselection);
+        set_config('lockrequestcategory', empty($CFG->requestcategoryselection));
 
         upgrade_main_savepoint(true, 2019101600.01);
     }
