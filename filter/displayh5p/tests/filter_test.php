@@ -45,8 +45,6 @@ class filter_displayh5p_testcase extends advanced_testcase {
             "https://h5p.org/h5p/embed/[id]\nhttps://*.h5p.com/content/[id]/embed\nhttps://*.h5p.com/content/[id]
                 \nhttps://generic.wordpress.soton.ac.uk/altc/wp-admin/admin-ajax.php?action=h5p_embed&id=[id]",
             'filter_displayh5p');
-        // Enable display h5p filter at top level.
-        filter_set_global_state('displayh5p', TEXTFILTER_ON);
     }
 
     /**
@@ -71,6 +69,8 @@ class filter_displayh5p_testcase extends advanced_testcase {
      * @return array
      */
     public function texts_provider() {
+        global $CFG;
+
         return [
             ["http:://example.com", "#http:://example.com#"],
             ["http://google.es/h5p/embed/3425234", "#http://google.es/h5p/embed/3425234#"],
@@ -83,7 +83,13 @@ class filter_displayh5p_testcase extends advanced_testcase {
             ["https://generic.wordpress.soton.ac.uk/altc/wp-admin/admin-ajax.php?action=h5p_embed&amp;id=13",
                     "#<iframe src=\"https://generic.wordpress.soton.ac.uk/altc/wp-admin/admin-ajax.php\?action=h5p_embed\&amp\;id=13\"[^>]+?>#"],
             ["https://h5p.org/h5p/embed/547225 another content in the same page https://moodle.h5p.com/content/1290729733828858779/embed",
-                    "#<iframe src=\"https://h5p.org/h5p/embed/547225\"[^>]+?>((?!<iframe).)*<iframe src=\"https://moodle.h5p.com/content/1290729733828858779/embed\"[^>]+?>#"]
+                    "#<iframe src=\"https://h5p.org/h5p/embed/547225\"[^>]+?>((?!<iframe).)*<iframe src=\"https://moodle.h5p.com/content/1290729733828858779/embed\"[^>]+?>#"],
+            [$CFG->wwwroot."/pluginfile.php/5/user/private/interactive-video.h5p?export=1&embed=1",
+                    "#<iframe src=\"{$CFG->wwwroot}/h5p/embed.php\?url=".rawurlencode("{$CFG->wwwroot}/pluginfile.php/5/user/private/interactive-video.h5p").
+                    "&export=1&embed=1\"[^>]*?></iframe>#"],
+            [$CFG->wwwroot."/pluginfile.php/5/user/private/accordion-6-7138%20%281%29.h5p.h5p",
+                    "#<iframe src=\"{$CFG->wwwroot}/h5p/embed.php\?url=".rawurlencode("{$CFG->wwwroot}/pluginfile.php/5/user/private/accordion-6-7138%20%281%29.h5p.h5p").
+                    "\"[^>]*?></iframe>#"]
         ];
     }
 }

@@ -47,49 +47,89 @@ class filter_displayh5p extends moodle_text_filter {
      * @return string
      */
     public function filter($text, array $options = array()) {
+        global $CFG;
 
         if (!is_string($text) or empty($text)) {
             // Non string data can not be filtered anyway.
             return $text;
         }
 
-        if (stripos($text, 'http') === false) {
+        // We are trying to minimize performance impact checking there's some H5P related URL.
+        $h5purl = '(http[^ &<]*h5p)';
+        if (!preg_match($h5purl, $text)) {
             return $text;
         }
 
         $allowedsources = get_config('filter_displayh5p', 'allowedsources');
         $allowedsources = array_filter(array_map('trim', explode("\n", $allowedsources)));
-        if (empty($allowedsources)) {
-            return $text;
-        }
+
+        $localsource = '('.preg_quote($CFG->wwwroot).'/[^ &<]*\.h5p([?][^ <]*)?[^ &<]*)';
+        $allowedsources[] = $localsource;
 
         $params = array(
-            'tagbegin' => "<iframe src=",
-            'tagend' => "</iframe>"
+            'tagbegin' => '<iframe src="',
+            'tagend' => '</iframe>'
         );
 
+        $specialchars = ['*', '?', '&', '[^<]'];
+        $escapedspecialchars = ['[^.]+', '\?', '&amp;', '[^<]*'];
+        $h5pcontents = array();
+
+        // Check all allowed sources.
         foreach ($allowedsources as $source) {
             // It is needed to add "/embed" at the end of URLs like https:://*.h5p.com/content/12345 (H5P.com).
             $params['urlmodifier'] = '';
-            if (!(stripos($source, 'embed'))) {
-                $params['urlmodifier'] = '/embed';
+
+            if (($source == $localsource)) {
+                $params['tagbegin'] = '<iframe src="'.$CFG->wwwroot.'/h5p/embed.php?url=';
+                $ultimatepattern = '#'.$source.'#';
+            } else {
+                if (!stripos($source, 'embed')) {
+                    $params['urlmodifier'] = '/embed';
+                }
+                // Convert special chars.
+                $sourceid = str_replace('[id]', '[0-9]+', $source);
+                $escapechars = str_replace($specialchars, $escapedspecialchars, $sourceid);
+                $ultimatepattern = '#(' . $escapechars . ')#';
             }
 
-            // Convert special chars.
-            $specialchars = ['*', '?', '&'];
-            $escapedspecialchars = ['[^.]+', '\?', '&amp;'];
-            $sourceid = str_replace('[id]', '[0-9]+', $source);
-            $escapechars = str_replace($specialchars, $escapedspecialchars, $sourceid);
-            $ultimatepattern = '#(' . $escapechars . ')#';
+            // Improve performance creating filterobjects only when needed.
+            if (!preg_match($ultimatepattern, $text)) {
+                continue;
+            }
 
             $h5pcontenturl = new filterobject($source, null, null, false,
-                   false, null, [$this, 'filterobject_prepare_replacement_callback'], $params);
+                false, null, [$this, 'filterobject_prepare_replacement_callback'], $params);
 
             $h5pcontenturl->workregexp = $ultimatepattern;
             $h5pcontents[] = $h5pcontenturl;
         }
 
-        return filter_phrases($text, $h5pcontents, null, null, false, true);
+        if (empty($h5pcontents)) {
+            // No matches to deal with.
+            return $text;
+        }
+
+        $result = filter_phrases($text, $h5pcontents, null, null, false, true);
+
+        // Encoding H5P file URLs.
+        // embed.php page is requesting a PARAM_LOCALURL url parameter, so for files/directories use non-alphanumeric
+        // characters, we need to encode the parameter. Fetch url parameter added to embed.php and encode the whole url.
+        $localurl = '#\?url=([^" <]*[\/]+[^" <]*\.h5p)([?][^"]*)?#';
+        $result = preg_replace_callback($localurl,
+            function ($matches) {
+                $baseurl = rawurlencode($matches[1]);
+                // Deal with possible parameters in the url link.
+                if (!empty($matches[2])) {
+                    $match = explode('?', $matches[2]);
+                    if (!empty($match[1])) {
+                        $baseurl = $baseurl."&".$match[1];
+                    }
+                }
+                return "?url=".$baseurl;
+            }, $result);
+
+        return $result;
     }
 
     /**
@@ -101,13 +141,13 @@ class filter_displayh5p extends moodle_text_filter {
      * @return array [$hreftagbegin, $hreftagend, $replacementphrase] for filterobject.
      */
     public function filterobject_prepare_replacement_callback($tagbegin, $tagend, $urlmodifier) {
-
         $sourceurl = "$1";
         if ($urlmodifier !== "") {
             $sourceurl .= $urlmodifier;
         }
 
-        $h5piframesrc = "\"".$sourceurl."\" width=\"100%\" height=\"637\" allowfullscreen=\"allowfullscreen\" style=\"border: 0;\">";
+        $h5piframesrc = $sourceurl.
+            '" class="h5p-iframe" style="height:230px; width: 100%; border: 0;" allowfullscreen="allowfullscreen">';
 
         // We want to request the resizing script only once.
         if (self::$loadresizerjs) {
