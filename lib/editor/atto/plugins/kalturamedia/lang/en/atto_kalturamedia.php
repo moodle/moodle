@@ -15,15 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'atto_media', language 'en'.
+ * Strings for component 'atto_kalturamedia', language 'en'.
  *
  * @package    atto_media
  * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))))).'/config.php');
-require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
 $string['pluginname'] = 'Embed Kaltura Media';
 $string['popuptitle'] = 'Select Media';
