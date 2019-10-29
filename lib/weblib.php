@@ -2978,10 +2978,10 @@ function obfuscate_email($email) {
     $length = strlen($email);
     $obfuscated = '';
     while ($i < $length) {
-        if (rand(0, 2) && $email{$i}!='@') { // MDL-20619 some browsers have problems unobfuscating @.
-            $obfuscated.='%'.dechex(ord($email{$i}));
+        if (rand(0, 2) && $email[$i]!='@') { // MDL-20619 some browsers have problems unobfuscating @.
+            $obfuscated.='%'.dechex(ord($email[$i]));
         } else {
-            $obfuscated.=$email{$i};
+            $obfuscated.=$email[$i];
         }
         $i++;
     }

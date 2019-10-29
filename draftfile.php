@@ -41,7 +41,7 @@ $preview = optional_param('preview', null, PARAM_ALPHANUM);
 // relative path must start with '/'
 if (!$relativepath) {
     print_error('invalidargorconf');
-} else if ($relativepath{0} != '/') {
+} else if ($relativepath[0] != '/') {
     print_error('pathdoesnotstartslash');
 }
 
