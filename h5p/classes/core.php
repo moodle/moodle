@@ -25,6 +25,7 @@
 namespace core_h5p;
 
 use H5PCore;
+use H5PFrameworkInterface;
 use stdClass;
 use moodle_url;
 
@@ -40,6 +41,24 @@ defined('MOODLE_INTERNAL') || die();
 class core extends \H5PCore {
 
     protected $libraries;
+
+    /**
+     * Constructor for core_h5p/core.
+     *
+     * @param H5PFrameworkInterface $framework The frameworks implementation of the H5PFrameworkInterface
+     * @param string|\H5PFileStorage $path The H5P file storage directory or class
+     * @param string $url The URL to the file storage directory
+     * @param string $language The language code. Defaults to english
+     * @param boolean $export Whether export is enabled
+     */
+    public function __construct(H5PFrameworkInterface $framework, $path, string $url, string $language = 'en',
+            bool $export = false) {
+
+        parent::__construct($framework, $path, $url, $language, $export);
+
+        // Aggregate the assets by default.
+        $this->aggregateAssets = true;
+    }
 
     protected function getDependencyPath(array $dependency): string {
         $library = $this->find_library($dependency);
