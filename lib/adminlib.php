@@ -2757,7 +2757,7 @@ class admin_setting_configfile extends admin_setting_configtext {
         ];
 
         if ($context->readonly) {
-            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $this->visiblename .= '<div class="alert alert-info">'.get_string('execpathnotallowed', 'admin').'</div>';
         }
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configfile', $context);
@@ -2818,7 +2818,7 @@ class admin_setting_configexecutable extends admin_setting_configfile {
         ];
 
         if (!empty($CFG->preventexecpath)) {
-            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $this->visiblename .= '<div class="alert alert-info">'.get_string('execpathnotallowed', 'admin').'</div>';
         }
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configexecutable', $context);
@@ -2858,7 +2858,7 @@ class admin_setting_configdirectory extends admin_setting_configfile {
         ];
 
         if (!empty($CFG->preventexecpath)) {
-            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $this->visiblename .= '<div class="alert alert-info">'.get_string('execpathnotallowed', 'admin').'</div>';
         }
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configdirectory', $context);

@@ -52,10 +52,10 @@
         <label {{#labelfor}}for="{{labelfor}}"{{/labelfor}}>
             {{{title}}}
             {{#override}}
-                <div class="form-overridden">{{override}}</div>
+                <div class="alert alert-info">{{override}}</div>
             {{/override}}
             {{#warning}}
-                <div class="form-warning">{{warning}}</div>
+                <div class="alert alert-warning">{{warning}}</div>
             {{/warning}}
         </label>
         <span class="form-shortname d-block small text-muted">{{{name}}}</span>

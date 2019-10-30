@@ -658,12 +658,6 @@
     }
 }
 
-.uninstalldeleteconfirmexternal {
-    @extend .alert-warning;
-    padding: 0.5em 1em;
-    margin: 5px 0 10px 0;
-}
-
 #page-admin-index .upgradepluginsinfo {
     text-align: center;
 }
@@ -676,12 +670,6 @@
 #page-admin-mnet-peers .box.deletedhosts {
     margin-bottom: 1em;
     font-size: $font-size-sm;
-}
-
-#page-admin-mnet-peers .mform .deletedhostinfo {
-    @extend .form-control-danger;
-    padding: 4px;
-    margin-bottom: 5px;
 }
 
 #core-cache-plugin-summaries table,
@@ -712,10 +700,6 @@
     right: 0;
     overflow: hidden;
     z-index: $zindex-dropdown;
-}
-
-#adminsettings .form-overridden {
-    @extend .alert-info;
 }
 
 .modal.modal-in-page {

@@ -253,7 +253,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= $this->output->container(get_string('cancelinstallinfodir', 'core_plugin', $pluginfo->rootdir));
             if ($repotype = $pluginman->plugin_external_source($pluginfo->component)) {
                 $out .= $this->output->container(get_string('uninstalldeleteconfirmexternal', 'core_plugin', $repotype),
-                    'uninstalldeleteconfirmexternal');
+                    'alert alert-warning mt-2');
             }
         }
 
@@ -432,7 +432,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         if ($repotype = $pluginman->plugin_external_source($pluginfo->component)) {
             $confirm .= $this->output->container(get_string('uninstalldeleteconfirmexternal', 'core_plugin', $repotype),
-                'uninstalldeleteconfirmexternal');
+                'alert alert-warning mt-2');
         }
 
         // After any uninstall we must execute full upgrade to finish the cleanup!

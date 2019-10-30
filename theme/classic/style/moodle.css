@@ -6241,24 +6241,24 @@ p.arrow_button input[type="button"],
   .alert-success .alert-link, .que .comment .alert-link {
     color: #1f3e1f; }
 
-.alert-info, #adminsettings .form-overridden, .que .formulation, .assignfeedback_editpdf_widget .label {
+.alert-info, .que .formulation, .assignfeedback_editpdf_widget .label {
   color: #2f6473;
   background-color: #def2f8;
   border-color: #d1edf6; }
-  .alert-info hr, #adminsettings .form-overridden hr, .que .formulation hr, .assignfeedback_editpdf_widget .label hr {
+  .alert-info hr, .que .formulation hr, .assignfeedback_editpdf_widget .label hr {
     border-top-color: #bce5f2; }
-  .alert-info .alert-link, #adminsettings .form-overridden .alert-link, .que .formulation .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
+  .alert-info .alert-link, .que .formulation .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
     color: #20454f; }
 
-.alert-warning, .uninstalldeleteconfirmexternal,
+.alert-warning,
 .que .outcome,
 .que .comment {
   color: #7d5a29;
   background-color: #fcefdc;
   border-color: #fbe8cd; }
-  .alert-warning hr, .uninstalldeleteconfirmexternal hr, .que .outcome hr, .que .comment hr {
+  .alert-warning hr, .que .outcome hr, .que .comment hr {
     border-top-color: #f9ddb5; }
-  .alert-warning .alert-link, .uninstalldeleteconfirmexternal .alert-link, .que .outcome .alert-link, .que .comment .alert-link {
+  .alert-warning .alert-link, .que .outcome .alert-link, .que .comment .alert-link {
     color: #573e1c; }
 
 .alert-danger {
@@ -9684,8 +9684,7 @@ a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #cat
 
 .form-control-success,
 .form-control-warning,
-.form-control-danger,
-#page-admin-mnet-peers .mform .deletedhostinfo {
+.form-control-danger {
   padding-right: 2.25rem;
   background-repeat: no-repeat;
   background-position: center right calc(1.5em + 0.75rem + 2px)/4;
@@ -12366,10 +12365,6 @@ body.h5p-embed .h5pmessages {
   .plugins-management-confirm-buttons .continue input {
     margin: 0; }
 
-.uninstalldeleteconfirmexternal {
-  padding: 0.5em 1em;
-  margin: 5px 0 10px 0; }
-
 #page-admin-index .upgradepluginsinfo {
   text-align: center; }
 
@@ -12380,10 +12375,6 @@ body.h5p-embed .h5pmessages {
 #page-admin-mnet-peers .box.deletedhosts {
   margin-bottom: 1em;
   font-size: 0.8203125rem; }
-
-#page-admin-mnet-peers .mform .deletedhostinfo {
-  padding: 4px;
-  margin-bottom: 5px; }
 
 #core-cache-plugin-summaries table,
 #core-cache-store-summaries table {
@@ -16351,9 +16342,7 @@ textarea[data-auto-rows] {
 /** Atto fields do not have form-control because that would break the layout of the editor.
     So they need these extra styles to highlight the editor when there is a validation error. */
 .has-danger .editor_atto_content.form-control,
-.has-danger .editor_atto_content.form-control-danger,
-.has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo,
-#page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo {
+.has-danger .editor_atto_content.form-control-danger {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23d9534f' viewBox='-2 -2 7 7'%3E%3Cpath stroke='%23d9534f' d='M0 0l3 3m0-3L0 3'/%3E%3Ccircle r='.5'/%3E%3Ccircle cx='3' r='.5'/%3E%3Ccircle cy='3' r='.5'/%3E%3Ccircle cx='3' cy='3' r='.5'/%3E%3C/svg%3E");
   padding-right: 2.25rem;
   background-repeat: no-repeat;
@@ -16365,37 +16354,21 @@ textarea[data-auto-rows] {
   .has-danger .editor_atto_content.form-control .form-check-inline,
   .has-danger .editor_atto_content.form-control .custom-control,
   .has-danger .editor_atto_content.form-control-danger .form-control-feedback,
-  .has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo .form-control-feedback,
-  #page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo .form-control-feedback,
   .has-danger .editor_atto_content.form-control-danger .form-control-label,
-  .has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo .form-control-label,
-  #page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo .form-control-label,
   .has-danger .editor_atto_content.form-control-danger .form-check-label,
-  .has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo .form-check-label,
-  #page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo .form-check-label,
   .has-danger .editor_atto_content.form-control-danger .form-check-inline,
-  .has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo .form-check-inline,
-  #page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo .form-check-inline,
-  .has-danger .editor_atto_content.form-control-danger .custom-control,
-  .has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo .custom-control,
-  #page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo .custom-control {
+  .has-danger .editor_atto_content.form-control-danger .custom-control {
     color: #d9534f; }
   .has-danger .editor_atto_content.form-control .form-control,
-  .has-danger .editor_atto_content.form-control-danger .form-control,
-  .has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo .form-control,
-  #page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo .form-control {
+  .has-danger .editor_atto_content.form-control-danger .form-control {
     border-color: #d9534f; }
   .has-danger .editor_atto_content.form-control .input-group-addon,
-  .has-danger .editor_atto_content.form-control-danger .input-group-addon,
-  .has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo .input-group-addon,
-  #page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo .input-group-addon {
+  .has-danger .editor_atto_content.form-control-danger .input-group-addon {
     color: #d9534f;
     border-color: #d9534f;
     background-color: #fdf7f7; }
   .has-danger .editor_atto_content.form-control .form-control-feedback,
-  .has-danger .editor_atto_content.form-control-danger .form-control-feedback,
-  .has-danger #page-admin-mnet-peers .mform .editor_atto_content.deletedhostinfo .form-control-feedback,
-  #page-admin-mnet-peers .mform .has-danger .editor_atto_content.deletedhostinfo .form-control-feedback {
+  .has-danger .editor_atto_content.form-control-danger .form-control-feedback {
     color: #d9534f; }
 
 [data-filetypesbrowserbody] [aria-expanded="false"] > [role="group"],
