@@ -1371,4 +1371,82 @@ class core_calendar_external extends external_api {
             ]
         );
     }
+
+    /**
+     * Convert the specified dates into unix timestamps.
+     *
+     * @param   array $datetimes Array of arrays containing date time details, each in the format:
+     *           ['year' => a, 'month' => b, 'day' => c,
+     *            'hour' => d (optional), 'minute' => e (optional), 'key' => 'x' (optional)]
+     * @return  array Provided array of dates converted to unix timestamps
+     * @throws moodle_exception If one or more of the dates provided does not convert to a valid timestamp.
+     */
+    public static function get_timestamps($datetimes) {
+        $params = self::validate_parameters(self::get_timestamps_parameters(), ['data' => $datetimes]);
+
+        $type = \core_calendar\type_factory::get_calendar_instance();
+        $timestamps = ['timestamps' => []];
+
+        foreach ($params['data'] as $key => $datetime) {
+            $hour = $datetime['hour'] ?? 0;
+            $minute = $datetime['minute'] ?? 0;
+
+            try {
+                $timestamp = $type->convert_to_timestamp(
+                    $datetime['year'], $datetime['month'], $datetime['day'], $hour, $minute);
+
+                $timestamps['timestamps'][] = [
+                    'key' => $datetime['key'] ?? $key,
+                    'timestamp' => $timestamp,
+                ];
+
+            } catch (Exception $e) {
+                throw new moodle_exception('One or more of the dates provided were invalid');
+            }
+        }
+
+        return $timestamps;
+    }
+
+    /**
+     * Describes the parameters for get_timestamps.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_timestamps_parameters() {
+        return new external_function_parameters ([
+            'data' => new external_multiple_structure(
+                new external_single_structure(
+                    [
+                        'key' => new external_value(PARAM_ALPHANUMEXT, 'key', VALUE_OPTIONAL),
+                        'year' => new external_value(PARAM_INT, 'year'),
+                        'month' => new external_value(PARAM_INT, 'month'),
+                        'day' => new external_value(PARAM_INT, 'day'),
+                        'hour' => new external_value(PARAM_INT, 'hour', VALUE_OPTIONAL),
+                        'minute' => new external_value(PARAM_INT, 'minute', VALUE_OPTIONAL),
+                    ]
+                )
+            )
+        ]);
+    }
+
+    /**
+     * Describes the timestamps return format.
+     *
+     * @return external_single_structure
+     */
+    public static function get_timestamps_returns() {
+        return new external_single_structure(
+            [
+                'timestamps' => new external_multiple_structure(
+                    new external_single_structure(
+                        [
+                            'key' => new external_value(PARAM_ALPHANUMEXT, 'Timestamp key'),
+                            'timestamp' => new external_value(PARAM_INT, 'Unix timestamp'),
+                        ]
+                    )
+                )
+            ]
+        );
+    }
 }

@@ -2696,4 +2696,87 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         );
         $this->assertEquals(['user', 'course', 'group'], $data['allowedeventtypes']);
     }
+
+    /**
+     * Test get_timestamps with string keys, with and without optional hour/minute values.
+     */
+    public function test_get_timestamps_string_keys() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $time1 = new DateTime('2018-12-30 00:00:00');
+        $time2 = new DateTime('2019-03-27 23:59:00');
+
+        $dates = [
+            [
+                'key' => 'from',
+                'year' => $time1->format('Y'),
+                'month' => $time1->format('m'),
+                'day' => $time1->format('d'),
+            ],
+            [
+                'key' => 'to',
+                'year' => $time2->format('Y'),
+                'month' => (int) $time2->format('m'),
+                'day' => $time2->format('d'),
+                'hour' => $time2->format('H'),
+                'minute' => $time2->format('i'),
+            ],
+        ];
+
+        $expectedtimestamps = [
+            'from' => $time1->getTimestamp(),
+            'to' => $time2->getTimestamp(),
+        ];
+
+        $result = core_calendar_external::get_timestamps($dates);
+
+        $this->assertEquals(['timestamps'], array_keys($result));
+        $this->assertEquals(2, count($result['timestamps']));
+
+        foreach ($result['timestamps'] as $data) {
+            $this->assertTrue(in_array($data['key'], ['from', 'to']));
+            $this->assertEquals($expectedtimestamps[$data['key']], $data['timestamp']);
+        }
+    }
+
+    /**
+     * Test get_timestamps with no keys specified, with and without optional hour/minute values.
+     */
+    public function test_get_timestamps_no_keys() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $time1 = new DateTime('2018-12-30 00:00:00');
+        $time2 = new DateTime('2019-03-27 23:59:00');
+
+        $dates = [
+            [
+                'year' => $time1->format('Y'),
+                'month' => $time1->format('m'),
+                'day' => $time1->format('d'),
+            ],
+            [
+                'year' => $time2->format('Y'),
+                'month' => (int) $time2->format('m'),
+                'day' => $time2->format('d'),
+                'hour' => $time2->format('H'),
+                'minute' => $time2->format('i'),
+            ],
+        ];
+
+        $expectedtimestamps = [
+            0 => $time1->getTimestamp(),
+            1 => $time2->getTimestamp(),
+        ];
+
+        $result = core_calendar_external::get_timestamps($dates);
+
+        $this->assertEquals(['timestamps'], array_keys($result));
+        $this->assertEquals(2, count($result['timestamps']));
+
+        foreach ($result['timestamps'] as $data) {
+            $this->assertEquals($expectedtimestamps[$data['key']], $data['timestamp']);
+        }
+    }
 }
