@@ -261,6 +261,7 @@ $string['grade:view'] = 'View own grades';
 $string['grade:viewall'] = 'View grades of other users';
 $string['grade:viewhidden'] = 'View hidden grades for owner';
 $string['h5p:deploy'] = 'Deploy H5P content';
+$string['h5p:updatelibraries'] = 'Manage H5P content types';
 $string['h5p:setdisplayoptions'] = 'Set H5P display options';
 $string['highlightedcellsshowdefault'] = 'The permissions highlighted in the table below are the defaults for the role archetype currently selected above.';
 $string['highlightedcellsshowinherit'] = 'The highlighted cells in the table below show the permission (if any) that will be inherited. Apart from the capabilities whose permission you actually want to alter, you should leave everything set to Inherit.';

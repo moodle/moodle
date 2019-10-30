@@ -125,6 +125,8 @@ $string['nocopyright'] = 'No copyright information available for this content.';
 $string['noextension'] = 'The file you uploaded is not a valid HTML5 Package (It does not have the .h5p file extension)';
 $string['nopermissiontodeploy'] = 'This file can\'t be displayed because it has been uploaded by a user without the required capability to deploy H5P content.';
 $string['nojson'] = 'The main h5p.json file is not valid';
+$string['notrustablefile'] = 'This file can\'t be displayed because it has been uploaded by a user without the capability to update H5P content types.
+	Please contact your administrator to ask for the content type to be installed.';
 $string['nounzip'] = 'The file you uploaded is not a valid HTML5 Package (We are unable to unzip it)';
 $string['offlineDialogBody'] = 'We were unable to send information about your completion of this task. Please check your internet connection.';
 $string['offlineDialogHeader'] = 'Your connection to the server was lost';

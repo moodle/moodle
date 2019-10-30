@@ -41,6 +41,9 @@ class framework implements \H5PFrameworkInterface {
     /** @var string The path to the last uploaded h5p file */
     private $lastuploadedfile;
 
+    /** @var stored_file The .h5p file */
+    private $file;
+
     /**
      * Returns info for the current platform.
      * Implements getPlatformInfo.
@@ -634,8 +637,29 @@ class framework implements \H5PFrameworkInterface {
      *                 FALSE if the user is not allowed to update libraries.
      */
     public function mayUpdateLibraries() {
-        // Currently, capabilities are not being set/used, so everyone can update libraries.
-        return true;
+        return helper::can_update_library($this->get_file());
+    }
+
+    /**
+     * Get the .h5p file.
+     *
+     * @return stored_file The .h5p file.
+     */
+    public function get_file(): \stored_file {
+        if (!isset($this->file)) {
+            throw new \coding_exception('Using get_file() before file is set');
+        }
+
+        return $this->file;
+    }
+
+    /**
+     * Set the .h5p file.
+     *
+     * @param  stored_file $file The .h5p file.
+     */
+    public function set_file(\stored_file $file): void {
+        $this->file = $file;
     }
 
     /**
