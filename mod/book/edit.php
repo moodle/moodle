@@ -137,7 +137,7 @@ if ($chapters = book_preload_chapters($book)) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($book->name);
+echo $OUTPUT->heading(format_string($book->name));
 
 $mform->display();
 
