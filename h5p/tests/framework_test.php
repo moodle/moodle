@@ -846,6 +846,41 @@ class framework_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test the behaviour of insertContent().
+     */
+    public function test_insertContent_latestlibrary() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        // Create a library record.
+        $lib = $generator->create_library_record('TestLibrary', 'Test', 1, 1, 2);
+
+        $content = array(
+            'params' => json_encode(['param1' => 'Test']),
+            'library' => array(
+                'libraryId' => 0,
+                'machineName' => 'TestLibrary',
+            ),
+            'disable' => 8
+        );
+
+        // Insert h5p content.
+        $contentid = $this->framework->insertContent($content);
+
+        // Get the entered content from the db.
+        $dbcontent = $DB->get_record('h5p', ['id' => $contentid]);
+
+        // Make sure the h5p content was properly inserted.
+        $this->assertNotEmpty($dbcontent);
+        $this->assertEquals($content['params'], $dbcontent->jsoncontent);
+        $this->assertEquals($content['disable'], $dbcontent->displayoptions);
+        // As the libraryId was empty, the latest library has been used.
+        $this->assertEquals($lib->id, $dbcontent->mainlibraryid);
+    }
+
+    /**
      * Test the behaviour of updateContent().
      */
     public function test_updateContent() {
@@ -2013,5 +2048,49 @@ class framework_testcase extends \advanced_testcase {
                 false,
             ]
         ];
+    }
+
+
+    /**
+     * Test the behaviour of get_latest_library_version().
+     */
+    public function test_get_latest_library_version() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        // Create a library record.
+        $machinename = 'TestLibrary';
+        $lib1 = $generator->create_library_record($machinename, 'Test', 1, 1, 2);
+        $lib2 = $generator->create_library_record($machinename, 'Test', 1, 2, 1);
+
+        $content = array(
+            'params' => json_encode(['param1' => 'Test']),
+            'library' => array(
+                'libraryId' => 0,
+                'machineName' => 'TestLibrary',
+            ),
+            'disable' => 8
+        );
+
+        // Get the latest id (at this point, should be lib2).
+        $latestlib = $this->framework->get_latest_library_version($machinename);
+        $this->assertEquals($lib2->id, $latestlib->id);
+
+        // Get the latest id (at this point, should be lib3).
+        $lib3 = $generator->create_library_record($machinename, 'Test', 2, 1, 0);
+        $latestlib = $this->framework->get_latest_library_version($machinename);
+        $this->assertEquals($lib3->id, $latestlib->id);
+
+        // Get the latest id (at this point, should be still lib3).
+        $lib4 = $generator->create_library_record($machinename, 'Test', 1, 1, 3);
+        $latestlib = $this->framework->get_latest_library_version($machinename);
+        $this->assertEquals($lib3->id, $latestlib->id);
+
+        // Get the latest id (at this point, should be lib5).
+        $lib5 = $generator->create_library_record($machinename, 'Test', 2, 1, 6);
+        $latestlib = $this->framework->get_latest_library_version($machinename);
+        $this->assertEquals($lib5->id, $latestlib->id);
     }
 }

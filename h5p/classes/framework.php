@@ -757,7 +757,19 @@ class framework implements \H5PFrameworkInterface {
             $content['contenthash'] = '';
         }
 
-        $data = array(
+        // If the libraryid declared in the package is empty, get the latest version.
+        if (empty($content['library']['libraryId'])) {
+            $mainlibrary = $this->get_latest_library_version($content['library']['machineName']);
+            if (empty($mainlibrary)) {
+                // Raise an error if the main library is not defined and the latest version doesn't exist.
+                $message = $this->t('Missing required library @library', ['@library' => $content['library']['machineName']]);
+                $this->setErrorMessage($message, 'missing-required-library');
+                return false;
+            }
+            $content['library']['libraryId'] = $mainlibrary->id;
+        }
+
+        $data = [
             'jsoncontent' => $content['params'],
             'displayoptions' => $content['disable'],
             'mainlibraryid' => $content['library']['libraryId'],
@@ -765,7 +777,7 @@ class framework implements \H5PFrameworkInterface {
             'filtered' => null,
             'pathnamehash' => $content['pathnamehash'],
             'contenthash' => $content['contenthash']
-        );
+        ];
 
         if (!isset($content['id'])) {
             $data['timecreated'] = $data['timemodified'];
@@ -1584,5 +1596,23 @@ class framework implements \H5PFrameworkInterface {
             return implode(', ', $parametervalues);
         }
         return '';
+    }
+
+    /**
+     * Get the latest library version.
+     *
+     * @param  string $machinename The library's machine name
+     * @return stdClass|null An object with the latest library version
+     */
+    public function get_latest_library_version(string $machinename): ?\stdClass {
+        global $DB;
+
+        $libraries = $DB->get_records('h5p_libraries', ['machinename' => $machinename],
+            'majorversion DESC, minorversion DESC, patchversion DESC', '*', 0, 1);
+        if ($libraries) {
+            return reset($libraries);
+        }
+
+        return null;
     }
 }
