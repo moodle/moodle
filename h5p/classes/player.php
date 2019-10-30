@@ -328,12 +328,15 @@ class player {
         // Some components, such as mod_page or mod_resource, add the revision to the URL to prevent caching problems.
         // So the URL contains this revision number as itemid but a 0 is always stored in the files table.
         // In order to get the proper hash, a callback should be done (looking for those exceptions).
-        $pathdata = component_callback($component, 'get_path_from_pluginfile', [$filearea, $parts], null);
+        $pathdata = null;
+        if ($this->context->contextlevel == CONTEXT_MODULE || $this->context->contextlevel == CONTEXT_BLOCK) {
+            $pathdata = component_callback($component, 'get_path_from_pluginfile', [$filearea, $parts], null);
+        }
         if (null === $pathdata) {
             // Look for the components and fileareas which have empty itemid defined in xxx_pluginfile.
             $hasnullitemid = false;
             $hasnullitemid = $hasnullitemid || ($component === 'user' && ($filearea === 'private' || $filearea === 'profile'));
-            $hasnullitemid = $hasnullitemid || ($component === 'mod' && $filearea === 'intro');
+            $hasnullitemid = $hasnullitemid || (substr($component, 0, 4) === 'mod_' && $filearea === 'intro');
             $hasnullitemid = $hasnullitemid || ($component === 'course' &&
                     ($filearea === 'summary' || $filearea === 'overviewfiles'));
             $hasnullitemid = $hasnullitemid || ($component === 'coursecat' && $filearea === 'description');
