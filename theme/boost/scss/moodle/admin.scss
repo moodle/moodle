@@ -712,14 +712,6 @@
     right: 0;
     overflow: hidden;
     z-index: $zindex-dropdown;
-
-    &.error {
-        @extend .form-control-danger;
-    }
-
-    &.warning {
-        @extend .form-control-warning;
-    }
 }
 
 #adminsettings .form-overridden {
