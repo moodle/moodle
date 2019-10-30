@@ -57,30 +57,39 @@ class restore_structure_parser_processor extends grouped_parser_processor {
             return $cdata;
         } else if (strlen($cdata) < 32) { // Impossible to have one link in 32cc
             return $cdata;                // (http://10.0.0.1/file.php/1/1.jpg, http://10.0.0.1/mod/url/view.php?id=)
-        } else if (strpos($cdata, '$@FILEPHP@$') === false) { // No $@FILEPHP@$, nothing to convert
-            return $cdata;
         }
 
-        if ($CFG->slasharguments) {
-            $slash = '/';
-            $forcedownload = '?forcedownload=1';
-        } else {
-            $slash = '%2F';
-            $forcedownload = '&amp;forcedownload=1';
+        if (strpos($cdata, '$@FILEPHP@$') !== false) {
+            // We need to convert $@FILEPHP@$.
+            if ($CFG->slasharguments) {
+                $slash = '/';
+                $forcedownload = '?forcedownload=1';
+            } else {
+                $slash = '%2F';
+                $forcedownload = '&amp;forcedownload=1';
+            }
+
+            // We have to remove trailing slashes, otherwise file URLs will be restored with an extra slash.
+            $basefileurl = rtrim(moodle_url::make_legacyfile_url($this->courseid, null)->out(true), $slash);
+            // Decode file.php calls.
+            $search = array ("$@FILEPHP@$");
+            $replace = array($basefileurl);
+            $result = str_replace($search, $replace, $cdata);
+
+            // Now $@SLASH@$ and $@FORCEDOWNLOAD@$ MDL-18799.
+            $search = array('$@SLASH@$', '$@FORCEDOWNLOAD@$');
+            $replace = array($slash, $forcedownload);
+
+            $cdata = str_replace($search, $replace, $result);
         }
 
-        // We have to remove trailing slashes, otherwise file URLs will be restored with an extra slash.
-        $basefileurl = rtrim(moodle_url::make_legacyfile_url($this->courseid, null)->out(true), $slash);
-        // Decode file.php calls
-        $search = array ("$@FILEPHP@$");
-        $replace = array($basefileurl);
-        $result = str_replace($search, $replace, $cdata);
+        if (strpos($cdata, '$@H5PEMBED@$') !== false) {
+            // We need to convert $@H5PEMBED@$.
+            // Decode embed.php calls.
+            $cdata = str_replace('$@H5PEMBED@$', $CFG->wwwroot.'/h5p/embed.php', $cdata);
+        }
 
-        // Now $@SLASH@$ and $@FORCEDOWNLOAD@$ MDL-18799
-        $search = array('$@SLASH@$', '$@FORCEDOWNLOAD@$');
-        $replace = array($slash, $forcedownload);
-
-        return str_replace($search, $replace, $result);
+        return $cdata;
     }
 
     /**

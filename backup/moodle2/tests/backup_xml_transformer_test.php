@@ -76,6 +76,7 @@ class backup_xml_transformer_testcase extends advanced_testcase {
             array('http://test.test/file.php?file=%2F2', 'http://test.test/file.php?file=%2F2'),
             array('http://test.test/file.php?file=%2F1%2F1.jpg', '$@FILEPHP@$$@SLASH@$1.jpg'),
             array('http://test.test/file.php?file=%2F1%2F%2F1.jpg', '$@FILEPHP@$$@SLASH@$$@SLASH@$1.jpg'),
+            array('http://test.test/h5p/embed.php?url=testurl', '$@H5PEMBED@$?url=testurl'),
         );
     }
 
