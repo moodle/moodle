@@ -578,6 +578,7 @@ class iomad {
         $loginto = optional_param_array('logintoraw', null, PARAM_INT);
         $emailfrom = optional_param_array('emailfromraw', null, PARAM_INT);
         $emailto = optional_param_array('emailtoraw', null, PARAM_INT);
+        $licenseuseage = optional_param('licenseusage', 0, PARAM_INT);
         $licenseallocatedfrom = optional_param_array('licenseallocatedfromraw', null, PARAM_INT);
         $licenseallocatedto = optional_param_array('licenseallocatedtoraw', null, PARAM_INT);
         $licenseunallocatedfrom = optional_param_array('licenseunallocatedfromraw', null, PARAM_INT);
@@ -590,6 +591,7 @@ class iomad {
                            'search',
                            'compfrom',
                            'compto',
+                           'licenseusage',
                            'licenseallocatedfrom',
                            'licenseallocatedto',
                            'licenseunallocatedfrom',
@@ -768,6 +770,8 @@ class iomad {
                                                      AND action = 1
                                                      ", $params)) {
                 $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licallocfromids)).") ";
+            } else {
+                $sqlsearch .= " AND 1 = 2 ";
             }
         }
 
@@ -777,6 +781,8 @@ class iomad {
                                                      AND action = 1
                                                      ", $params)) {
                 $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licalloctoids)).") ";
+            } else {
+                $sqlsearch .= " AND 1 = 2 ";
             }
         }
 
@@ -786,6 +792,8 @@ class iomad {
                                                      AND action = 0
                                                      ", $params)) {
                 $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licunallocfromids)).") ";
+            } else {
+                $sqlsearch .= " AND 1 = 2 ";
             }
         }
 
@@ -795,6 +803,19 @@ class iomad {
                                                      AND action = 0
                                                      ", $params)) {
                 $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licunalloctoids)).") ";
+            } else {
+                $sqlsearch .= " AND 1 = 2 ";
+            }
+        }
+
+        if (!empty($params['licenseusage'])) {
+            $params['licenseusage']--;
+            if ($licunalloctoids = $DB->get_records_sql("SELECT id FROM {local_report_user_lic_allocs}
+                                                     WHERE action = :licenseusage
+                                                     ", $params)) {
+                $sqlsearch .= " AND urla.id IN (".implode(',', array_keys($licunalloctoids)).") ";
+            } else {
+                $sqlsearch .= " AND 1 = 2 ";
             }
         }
 
