@@ -746,8 +746,6 @@
         padding: 0;
         margin: 0 0 1.5rem 0;
         li {
-            color: $text-muted;
-            @extend .small;
             + li:before {
                 padding-right: 0.5rem;
                 padding-left: 0.5rem;

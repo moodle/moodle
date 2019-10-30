@@ -2685,8 +2685,7 @@ hr {
   border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
 small,
-.small,
-#page-admin-search .adminpagepath li {
+.small {
   font-size: 80%;
   font-weight: 400; }
 
@@ -12426,12 +12425,10 @@ body.h5p-embed .h5pmessages {
   list-style: none;
   padding: 0;
   margin: 0 0 1.5rem 0; }
-  #page-admin-search .adminpagepath li {
-    color: #868e96; }
-    #page-admin-search .adminpagepath li + li:before {
-      padding-right: 0.5rem;
-      padding-left: 0.5rem;
-      content: "/"; }
+  #page-admin-search .adminpagepath li + li:before {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    content: "/"; }
 
 @media (min-width: 576px) {
   #page-admin-search .container {
