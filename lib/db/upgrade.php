@@ -3754,5 +3754,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019102500.04);
     }
 
+    if ($oldversion < 2019103000.13) {
+
+        $DB->execute("UPDATE {analytics_models} set contextids = null
+                       WHERE contextids = :zero or contextids = :null", ['zero' => '0', 'null' => 'null']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019103000.13);
+    }
+
     return true;
 }
