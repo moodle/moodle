@@ -140,6 +140,13 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        // Enable multilang filter to on content and heading.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', 1);
+        // Set WS filtering.
+        $wssettings = external_settings::get_instance();
+        $wssettings->set_filter(true);
+
         $category = self::getDataGenerator()->create_category(array(
             'name' => 'Test category'
         ));
@@ -166,7 +173,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create the assignment module with links to a filerecord.
         $assign1 = self::getDataGenerator()->create_module('assign', array(
             'course' => $course1->id,
-            'name' => 'lightwork assignment',
+            'name' => '<span lang="en" class="multilang">English</span><span lang="es" class="multilang">Español</span>',
             'intro' => 'the assignment intro text here <a href="@@PLUGINFILE@@/intro.txt">link</a>',
             'introformat' => FORMAT_HTML,
             'markingworkflow' => 1,
@@ -221,7 +228,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $assignment = $course['assignments'][0];
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
-        $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertEquals('English', $assignment['name']);
         $this->assertContains('the assignment intro text here', $assignment['intro']);
         $this->assertNotEmpty($assignment['configs']);
         // Check the url of the file attatched.
@@ -249,7 +256,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $assignment = $course['assignments'][0];
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
-        $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertEquals('English', $assignment['name']);
         $this->assertArrayNotHasKey('intro', $assignment);
         $this->assertArrayNotHasKey('introattachments', $assignment);
         $this->assertEquals(1, $assignment['markingworkflow']);
@@ -287,7 +294,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $assignment = $course['assignments'][0];
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
-        $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertEquals('English', $assignment['name']);
         $this->assertArrayNotHasKey('intro', $assignment);
         $this->assertArrayNotHasKey('introattachments', $assignment);
         $this->assertEquals(1, $assignment['markingworkflow']);
