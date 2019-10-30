@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * H5P player class.
+ * H5P core class.
  *
  * @package    core_h5p
  * @copyright  2019 Sara Arjona <sara@moodle.com>
@@ -32,7 +32,7 @@ use moodle_url;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * H5P player class, for displaying any local H5P content.
+ * H5P core class, containing functions and storage shared by the other H5P classes.
  *
  * @package    core_h5p
  * @copyright  2019 Sara Arjona <sara@moodle.com>
@@ -40,6 +40,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core extends \H5PCore {
 
+    /** @var array The array containing all the present libraries */
     protected $libraries;
 
     /**
@@ -60,12 +61,24 @@ class core extends \H5PCore {
         $this->aggregateAssets = true;
     }
 
+    /**
+     * Get the path to the dependency.
+     *
+     * @param array $dependency An array containing the information of the requested dependency library
+     * @return string The path to the dependency library
+     */
     protected function getDependencyPath(array $dependency): string {
         $library = $this->find_library($dependency);
 
         return "libraries/{$library->id}/{$library->machinename}-{$library->majorversion}.{$library->minorversion}";
     }
 
+    /**
+     * Get the paths to the content dependencies.
+     *
+     * @param int $id The H5P content ID
+     * @return array An array containing the path of each content dependency
+     */
     public function get_dependency_roots(int $id): array {
         $roots = [];
         $dependencies = $this->h5pF->loadContentDependencies($id);
@@ -85,7 +98,13 @@ class core extends \H5PCore {
         return $roots;
     }
 
-    protected function find_library($dependency): \stdClass {
+    /**
+     * Get a particular dependency library.
+     *
+     * @param array $dependency An array containing information of the dependency library
+     * @return stdClass|null The library object if the library dependency exists, null otherwise
+     */
+    protected function find_library(array $dependency): ?\stdClass {
         global $DB;
         if (null === $this->libraries) {
             $this->libraries = $DB->get_records('h5p_libraries');
@@ -116,6 +135,11 @@ class core extends \H5PCore {
         return null;
     }
 
+    /**
+     * Get core JavaScript files.
+     *
+     * @return array The array containg urls of the core JavaScript files
+     */
     public static function get_scripts(): array {
         global $CFG;
         $cachebuster = '?ver='.$CFG->jsrev;
