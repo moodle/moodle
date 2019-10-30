@@ -1147,7 +1147,7 @@ $capabilities = array(
     'moodle/course:viewsuspendedusers' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
