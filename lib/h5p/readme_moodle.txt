@@ -42,6 +42,8 @@ Hopefully, when upgrading, these patch won't be needed because it will be includ
 2.2. Change all the mb_uses straight to the core_text() alternatives. Version 1.24 has 3 ocurrences in h5p.classes.php
 and 1 ocurrence in h5p-metadata.class.php.
 
+3. Another PR has been sent to H5P library (https://github.com/h5p/h5p-php-library/pull/69) to fix some php74 minor problems. The same fix is being applied locally by MDL-67077. Once we import a new version, if it includes de fix, this won't be needed to reapply and can be removed.
+
 
 The point 2 from above won't be needed once the mbstring extension becomes mandatory in Moodle. A request has been
 sent to MDL-65809.

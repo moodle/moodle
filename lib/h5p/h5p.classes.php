@@ -2757,7 +2757,7 @@ class H5PCore {
     foreach ($arr as $key => $val) {
       $next = -1;
       while (($next = strpos($key, '_', $next + 1)) !== FALSE) {
-        $key = substr_replace($key, strtoupper($key{$next + 1}), $next, 2);
+        $key = substr_replace($key, strtoupper($key[$next + 1]), $next, 2);
       }
 
       $newArr[$key] = $val;
