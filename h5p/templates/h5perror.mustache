@@ -21,7 +21,7 @@
 
     Variables required for this template:
     * h5picon - The icon
-    * message - The error message to display.
+    * message - The error messages to display.
 
     Example context (json):
     {
@@ -33,7 +33,9 @@
 <div class="d-flex h-100 position-relative align-items-center bg-light h5pmessages">
    <div class="position-absolute py-2 bg-secondary" style="top: 0px; left: 0px; right: 0px;">
       <div class="container">
-         <img src="{{{h5picon}}}" class="h5picon" alt="{{#str}}h5p, core_h5p{{/str}}" style="width: 50px; height: auto; opacity: 0.5">
+        {{#h5picon}}
+         <img src="{{{.}}}" class="h5picon" alt="{{#str}}h5p, core_h5p{{/str}}" style="width: 50px; height: auto; opacity: 0.5">
+        {{/h5picon}}
       </div>
    </div>
    <div class="container mt-5">
@@ -42,9 +44,14 @@
          {{{ exception }}}
       </div>
       {{/exception}}
+      {{#info}}
+      <div class="alert alert-block fade in alert-info my-2" role="alert">
+         {{{ . }}}
+      </div>
+      {{/info}}
       {{#error}}
       <div class="alert alert-block fade in alert-warning my-2" role="alert">
-         {{{code}}} : {{{ message }}}
+         {{#code}}{{{code}}} : {{/code}}{{{ message }}}
       </div>
       {{/error}}
    </div>

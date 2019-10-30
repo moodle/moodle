@@ -61,15 +61,18 @@ if (empty($messages->error) && empty($messages->exception)) {
     // Add H5P assets to the page.
     $h5pplayer->add_assets_to_page();
 
-    // Check if there is some error when adding assets to the page.
+    // Print page HTML.
+    echo $OUTPUT->header();
+
+    // Check if some error has been raised when adding assets to the page. If that's the case, display them above the H5P content.
     $messages = $h5pplayer->get_messages();
-    if (empty($messages->error) && empty($messages->exception)) {
-
-        // Print page HTML.
-        echo $OUTPUT->header();
-
-        echo $h5pplayer->output();
+    if (!empty($messages->exception) || !empty($messages->error)) {
+        $messages->h5picon = new \moodle_url('/h5p/pix/icon.svg');
+        echo $OUTPUT->render_from_template('core_h5p/h5perror', $messages);
     }
+
+    // Display the H5P content.
+    echo $h5pplayer->output();
 } else {
     // If there is any error or exception when creating the player, it should be displayed.
     $PAGE->set_context(context_system::instance());
@@ -80,12 +83,9 @@ if (empty($messages->error) && empty($messages->exception)) {
     $PAGE->add_body_class('h5p-embed');
     $PAGE->set_pagelayout('embedded');
 
-    // Errors can't be printed yet, because some more errors might been added while preparing the output
-}
-
-if (!empty($messages->error) || !empty($messages->exception)) {
-    // Print all the errors.
     echo $OUTPUT->header();
+
+    // Print all the errors.
     $messages->h5picon = new \moodle_url('/h5p/pix/icon.svg');
     echo $OUTPUT->render_from_template('core_h5p/h5perror', $messages);
 }
