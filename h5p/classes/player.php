@@ -81,16 +81,23 @@ class player {
     private $factory;
 
     /**
+     * @var bool Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions.
+     */
+    private $preventredirect;
+
+    /**
      * Inits the H5P player for rendering the content.
      *
      * @param string $url Local URL of the H5P file to display.
      * @param stdClass $config Configuration for H5P buttons.
+     * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      */
-    public function __construct(string $url, \stdClass $config) {
+    public function __construct(string $url, \stdClass $config, bool $preventredirect = true) {
         if (empty($url)) {
             throw new \moodle_exception('h5pinvalidurl', 'core_h5p');
         }
         $this->url = new \moodle_url($url);
+        $this->preventredirect = $preventredirect;
 
         $this->factory = new \core_h5p\factory();
 
@@ -313,14 +320,14 @@ class player {
         // For CONTEXT_MODULE, check if the user is enrolled in the course and has permissions view this .h5p file.
         if ($this->context->contextlevel == CONTEXT_MODULE) {
             // Require login to the course first (without login to the module).
-            require_course_login($course, true, null, false, true);
+            require_course_login($course, true, null, !$this->preventredirect, $this->preventredirect);
 
             // Now check if module is available OR it is restricted but the intro is shown on the course page.
             $cminfo = \cm_info::create($cm);
             if (!$cminfo->uservisible) {
                 if (!$cm->showdescription || !$cminfo->is_visible_on_course_page()) {
                     // Module intro is not visible on the course page and module is not available, show access error.
-                    require_course_login($course, true, $cminfo, false, true);
+                    require_course_login($course, true, $cminfo, !$this->preventredirect, $this->preventredirect);
                 }
             }
         }
