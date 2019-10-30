@@ -143,7 +143,9 @@ class mod_lesson_external extends external_api {
                 $lessonrecord = self::get_lesson_summary_for_exporter($lessonrecord);
 
                 $exporter = new lesson_summary_exporter($lessonrecord, array('context' => $context));
-                $returnedlessons[] = $exporter->export($PAGE->get_renderer('core'));
+                $lesson = $exporter->export($PAGE->get_renderer('core'));
+                $lesson->name = external_format_string($lesson->name, $context);
+                $returnedlessons[] = $lesson;
             }
         }
         $result = array();
