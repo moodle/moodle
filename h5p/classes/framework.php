@@ -1519,44 +1519,6 @@ class framework implements \H5PFrameworkInterface {
     }
 
     /**
-     * Get type of h5p instance
-     *
-     * @param string|null $type Type of h5p instance to get
-     * @return \H5PContentValidator|\H5PCore|\H5PStorage|\H5PValidator|\core_h5p\framework|\H5peditor
-     */
-    public static function instance($type = null) {
-        global $CFG;
-        static $interface, $core;
-
-        if (!isset($interface)) {
-            $interface = new \core_h5p\framework();
-            $fs = new \core_h5p\file_storage();
-            $language = self::get_language();
-
-            $context = \context_system::instance();
-            $url = "{$CFG->wwwroot}/pluginfile.php/{$context->id}/core_h5p";
-
-            require_once("{$CFG->libdir}/h5p/h5p.classes.php");
-            $core = new core($interface, $fs, $url, $language, true);
-            $core->aggregateAssets = !(isset($CFG->core_h5p_aggregate_assets) && $CFG->core_h5p_aggregate_assets === '0');
-        }
-
-        switch ($type) {
-            case 'validator':
-                return new \H5PValidator($interface, $core);
-            case 'storage':
-                return new \H5PStorage($interface, $core);
-            case 'contentvalidator':
-                return new \H5PContentValidator($interface, $core);
-            case 'interface':
-                return $interface;
-            case 'core':
-            default:
-                return $core;
-        }
-    }
-
-    /**
      * Get current H5P language code.
      *
      * @return string Language Code
