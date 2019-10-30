@@ -187,8 +187,25 @@ function forum_update_instance($forum, $mform) {
     // MDL-3942 - if the aggregation type or scale (i.e. max grade) changes then recalculate the grades for the entire forum
     // if  scale changes - do we need to recheck the ratings, if ratings higher than scale how do we want to respond?
     // for count and sum aggregation types the grade we check to make sure they do not exceed the scale (i.e. max score) when calculating the grade
-    if (($oldforum->assessed<>$forum->assessed) or ($oldforum->scale<>$forum->scale)) {
-        forum_update_grades($forum); // recalculate grades for the forum
+    $updategrades = false;
+
+    if ($oldforum->assessed <> $forum->assessed) {
+        // Whether this forum is rated.
+        $updategrades = true;
+    }
+
+    if ($oldforum->scale <> $forum->scale) {
+        // The scale currently in use.
+        $updategrades = true;
+    }
+
+    if (empty($oldforum->grade_forum) || $oldforum->grade_forum <> $forum->grade_forum) {
+        // The whole forum grading.
+        $updategrades = true;
+    }
+
+    if ($updategrades) {
+        forum_update_grades($forum); // Recalculate grades for the forum.
     }
 
     if ($forum->type == 'single') {  // Update related discussion and post.
@@ -350,11 +367,11 @@ function forum_supports($feature) {
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
         case FEATURE_PLAGIARISM:              return true;
+        case FEATURE_ADVANCED_GRADING:        return true;
 
         default: return null;
     }
 }
-
 
 /**
  * Obtains the automatic completion state for this forum based on any conditions
@@ -443,40 +460,55 @@ function forum_get_email_message_id($postid, $usertoid) {
 function forum_user_outline($course, $user, $mod, $forum) {
     global $CFG;
     require_once("$CFG->libdir/gradelib.php");
+
+    $gradeinfo = '';
+    $gradetime = 0;
+
     $grades = grade_get_grades($course->id, 'mod', 'forum', $forum->id, $user->id);
-    if (empty($grades->items[0]->grades)) {
-        $grade = false;
-    } else {
+    if (!empty($grades->items[0]->grades)) {
+        // Item 0 is the rating.
         $grade = reset($grades->items[0]->grades);
+        $gradetime = max($gradetime, grade_get_date_for_user_grade($grade, $user));
+        if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            $gradeinfo .= get_string('gradeforrating', 'forum', $grade) .  html_writer::empty_tag('br');
+        } else {
+            $gradeinfo .= get_string('gradeforratinghidden', 'forum') . html_writer::empty_tag('br');
+        }
+    }
+
+    // Item 1 is the whole-forum grade.
+    if (!empty($grades->items[1]->grades)) {
+        $grade = reset($grades->items[1]->grades);
+        $gradetime = max($gradetime, grade_get_date_for_user_grade($grade, $user));
+        if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            $gradeinfo .= get_string('gradeforwholeforum', 'forum', $grade) .  html_writer::empty_tag('br');
+        } else {
+            $gradeinfo .= get_string('gradeforwholeforumhidden', 'forum') . html_writer::empty_tag('br');
+        }
     }
 
     $count = forum_count_user_posts($forum->id, $user->id);
-
     if ($count && $count->postcount > 0) {
-        $result = new stdClass();
-        $result->info = get_string("numposts", "forum", $count->postcount);
-        $result->time = $count->lastpost;
-        if ($grade) {
-            if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-                $result->info .= ', ' . get_string('grade') . ': ' . $grade->str_long_grade;
-            } else {
-                $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
-            }
-        }
-        return $result;
-    } else if ($grade) {
-        $result = (object) [
-            'time' => grade_get_date_for_user_grade($grade, $user),
-        ];
-        if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-            $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
-        } else {
-            $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+        $info = get_string("numposts", "forum", $count->postcount);
+        $time = $count->lastpost;
+
+        if ($gradeinfo) {
+            $info .= ', ' . $gradeinfo;
+            $time = max($time, $gradetime);
         }
 
-        return $result;
+        return (object) [
+            'info' => $info,
+            'time' => $time,
+        ];
+    } else if ($gradeinfo) {
+        return (object) [
+            'info' => $gradeinfo,
+            'time' => $gradetime,
+        ];
     }
-    return NULL;
+
+    return null;
 }
 
 
@@ -489,24 +521,35 @@ function forum_user_outline($course, $user, $mod, $forum) {
  * @param object $forum
  */
 function forum_user_complete($course, $user, $mod, $forum) {
-    global $CFG,$USER, $OUTPUT;
+    global $CFG, $USER;
     require_once("$CFG->libdir/gradelib.php");
 
-    $grades = grade_get_grades($course->id, 'mod', 'forum', $forum->id, $user->id);
-    if (!empty($grades->items[0]->grades)) {
-        $grade = reset($grades->items[0]->grades);
+    $getgradeinfo = function($grades, string $type) use ($course): string {
+        global $OUTPUT;
+
+        if (empty($grades)) {
+            return '';
+        }
+
+        $result = '';
+        $grade = reset($grades);
         if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-            echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+            $result .= $OUTPUT->container(get_string("gradefor{$type}", "forum", $grade));
             if ($grade->str_feedback) {
-                echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+                $result .= $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
             }
         } else {
-            echo $OUTPUT->container(get_string('grade') . ': ' . get_string('hidden', 'grades'));
+            $result .= $OUTPUT->container(get_string("gradefor{$type}hidden", "forum"));
         }
-    }
+
+        return $result;
+    };
+
+    $grades = grade_get_grades($course->id, 'mod', 'forum', $forum->id, $user->id);
+    echo $getgradeinfo($grades->items[0]->grades, 'rating');
+    echo $getgradeinfo($grades->items[1]->grades, 'wholeforum');
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
-
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
             print_error('invalidcoursemodule');
         }
@@ -685,136 +728,161 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
 }
 
 /**
- * Return grade for given user or all users.
+ * Update activity grades.
  *
- * @global object
- * @global object
- * @param object $forum
- * @param int $userid optional user id, 0 means all users
- * @return array array of grades, false if none
- */
-function forum_get_user_grades($forum, $userid = 0) {
-    global $CFG;
-
-    require_once($CFG->dirroot.'/rating/lib.php');
-
-    $ratingoptions = new stdClass;
-    $ratingoptions->component = 'mod_forum';
-    $ratingoptions->ratingarea = 'post';
-
-    //need these to work backwards to get a context id. Is there a better way to get contextid from a module instance?
-    $ratingoptions->modulename = 'forum';
-    $ratingoptions->moduleid   = $forum->id;
-    $ratingoptions->userid = $userid;
-    $ratingoptions->aggregationmethod = $forum->assessed;
-    $ratingoptions->scaleid = $forum->scale;
-    $ratingoptions->itemtable = 'forum_posts';
-    $ratingoptions->itemtableusercolumn = 'userid';
-
-    $rm = new rating_manager();
-    return $rm->get_user_grades($ratingoptions);
-}
-
-/**
- * Update activity grades
- *
- * @category grade
  * @param object $forum
  * @param int $userid specific user only, 0 means all
- * @param boolean $nullifnone return null if grade does not exist
- * @return void
  */
-function forum_update_grades($forum, $userid=0, $nullifnone=true) {
+function forum_update_grades($forum, $userid = 0): void {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
+    $cm = get_coursemodule_from_instance('forum', $forum->id);
+    $forum->cmidnumber = $cm->idnumber;
 
-    if (!$forum->assessed) {
-        forum_grade_item_update($forum);
+    $ratings = null;
+    if ($forum->assessed) {
+        require_once($CFG->dirroot.'/rating/lib.php');
 
-    } else if ($grades = forum_get_user_grades($forum, $userid)) {
-        forum_grade_item_update($forum, $grades);
+        $rm = new rating_manager();
+        $ratings = $rm->get_user_grades((object) [
+            'component' => 'mod_forum',
+            'ratingarea' => 'post',
+            'contextid' => \context_module::instance($cm->id)->id,
 
-    } else if ($userid and $nullifnone) {
-        $grade = new stdClass();
-        $grade->userid   = $userid;
-        $grade->rawgrade = NULL;
-        forum_grade_item_update($forum, $grade);
-
-    } else {
-        forum_grade_item_update($forum);
+            'modulename' => 'forum',
+            'moduleid  ' => $forum->id,
+            'userid' => $userid,
+            'aggregationmethod' => $forum->assessed,
+            'scaleid' => $forum->scale,
+            'itemtable' => 'forum_posts',
+            'itemtableusercolumn' => 'userid',
+        ]);
     }
+
+    $forumgrades = null;
+    if ($forum->grade_forum) {
+        $sql = <<<EOF
+SELECT
+    g.userid,
+    0 as datesubmitted,
+    g.grade as rawgrade,
+    g.timemodified as dategraded
+  FROM {forum} f
+  JOIN {forum_grades} g ON g.forum = f.id
+ WHERE f.id = :forumid
+EOF;
+
+        $params = [
+            'forumid' => $forum->id,
+        ];
+
+        if ($userid) {
+            $sql .= "AND g.userid = :userid";
+            $params['userid'] = $userid;
+        }
+
+        $forumgrades = [];
+        if ($grades = $DB->get_recordset_sql($sql, $params)) {
+            foreach ($grades as $userid => $grade) {
+                if ($grade->rawgrade != -1) {
+                    $forumgrades[$userid] = $grade;
+                }
+            }
+            $grades->close();
+        }
+    }
+
+    forum_grade_item_update($forum, $ratings, $forumgrades);
 }
 
 /**
- * Create/update grade item for given forum
+ * Create/update grade items for given forum.
  *
- * @category grade
- * @uses GRADE_TYPE_NONE
- * @uses GRADE_TYPE_VALUE
- * @uses GRADE_TYPE_SCALE
  * @param stdClass $forum Forum object with extra cmidnumber
  * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
- * @return int 0 if ok
  */
-function forum_grade_item_update($forum, $grades=NULL) {
+function forum_grade_item_update($forum, $ratings = null, $forumgrades = null): void {
     global $CFG;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    require_once("{$CFG->libdir}/gradelib.php");
 
-    $params = array('itemname'=>$forum->name, 'idnumber'=>$forum->cmidnumber);
+    // Update the rating.
+    $item = [
+        'itemname' => get_string('gradeitemnameforrating', 'forum', $forum),
+        'idnumber' => $forum->cmidnumber,
+    ];
 
-    if (!$forum->assessed or $forum->scale == 0) {
-        $params['gradetype'] = GRADE_TYPE_NONE;
-
+    if (!$forum->assessed || $forum->scale == 0) {
+        $item['gradetype'] = GRADE_TYPE_NONE;
     } else if ($forum->scale > 0) {
-        $params['gradetype'] = GRADE_TYPE_VALUE;
-        $params['grademax']  = $forum->scale;
-        $params['grademin']  = 0;
-
+        $item['gradetype'] = GRADE_TYPE_VALUE;
+        $item['grademax']  = $forum->scale;
+        $item['grademin']  = 0;
     } else if ($forum->scale < 0) {
-        $params['gradetype'] = GRADE_TYPE_SCALE;
-        $params['scaleid']   = -$forum->scale;
+        $item['gradetype'] = GRADE_TYPE_SCALE;
+        $item['scaleid']   = -$forum->scale;
     }
 
-    if ($grades  === 'reset') {
-        $params['reset'] = true;
-        $grades = NULL;
+    if ($ratings === 'reset') {
+        $item['reset'] = true;
+        $ratings = null;
+    }
+    // Itemnumber 0 is the rating.
+    grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, $ratings, $item);
+
+    // Whole forum grade.
+    $item = [
+        'itemname' => get_string('gradeitemnameforwholeforum', 'forum', $forum),
+        // Note: We do not need to store the idnumber here.
+    ];
+
+    if (!$forum->grade_forum) {
+        $item['gradetype'] = GRADE_TYPE_NONE;
+    } else if ($forum->grade_forum > 0) {
+        $item['gradetype'] = GRADE_TYPE_VALUE;
+        $item['grademax'] = $forum->grade_forum;
+        $item['grademin'] = 0;
+    } else if ($forum->grade_forum < 0) {
+        $item['gradetype'] = GRADE_TYPE_SCALE;
+        $item['scaleid'] = $forum->grade_forum * -1;
     }
 
-    return grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, $grades, $params);
+    if ($forumgrades === 'reset') {
+        $item['reset'] = true;
+        $forumgrades = null;
+    }
+    // Itemnumber 1 is the whole forum grade.
+    grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 1, $forumgrades, $item);
 }
 
 /**
- * Delete grade item for given forum
+ * Delete grade item for given forum.
  *
- * @category grade
  * @param stdClass $forum Forum object
- * @return grade_item
  */
 function forum_grade_item_delete($forum) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    return grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, NULL, array('deleted'=>1));
+    grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, null, ['deleted' => 1]);
+    grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 1, null, ['deleted' => 1]);
 }
 
 /**
- * Checks if scale is being used by any instance of forum
+ * Checks if scale is being used by any instance of forum.
  *
- * This is used to find out if scale used anywhere
+ * This is used to find out if scale used anywhere.
  *
- * @global object
  * @param $scaleid int
  * @return boolean True if the scale is used by any forum
  */
-function forum_scale_used_anywhere($scaleid) {
+function forum_scale_used_anywhere(int $scaleid): bool {
     global $DB;
-    if ($scaleid and $DB->record_exists('forum', array('scale' => -$scaleid))) {
-        return true;
-    } else {
+
+    if (empty($scaleid)) {
         return false;
     }
+
+    return $DB->record_exists('forum', ['scale' => $scaleid * -1]);
 }
 
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////
@@ -4956,7 +5024,7 @@ function forum_reset_gradebook($courseid, $type='') {
 
     if ($forums = $DB->get_records_sql($sql, $params)) {
         foreach ($forums as $forum) {
-            forum_grade_item_update($forum, 'reset');
+            forum_grade_item_update($forum, 'reset', 'reset');
         }
     }
 }
@@ -6737,4 +6805,15 @@ function mod_forum_user_preferences() {
     );
 
     return $preferences;
+}
+
+/**
+ * Lists all gradable areas for the advanced grading methods gramework.
+ *
+ * @return array('string'=>'string') An array with area names as keys and descriptions as values
+ */
+function forum_grading_areas_list() {
+    return [
+        'forum' => get_string('grade_forum_header', 'forum'),
+    ];
 }

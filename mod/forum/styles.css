@@ -344,3 +344,28 @@ span.unread {
     outline: 5px auto -webkit-focus-ring-color;
 }
 /* stylelint-enable declaration-block-no-duplicate-properties */
+
+/* Forum grading non striked through line */
+.hr-sect {
+    display: flex;
+    flex-basis: 100%;
+    font-weight: bold;
+    align-items: center;
+    margin: 8px 0px;
+}
+.hr-sect::before,
+.hr-sect::after {
+    content: "";
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.35);
+    height: 1px;
+    font-size: 0px;
+    line-height: 0px;
+}
+.hr-sect::before {
+    margin-right: 15px;
+}
+
+.hr-sect::after {
+    margin-left: 15px;
+}

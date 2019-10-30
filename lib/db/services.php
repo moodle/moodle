@@ -613,6 +613,14 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_course_get_enrolled_users_by_cmid' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_enrolled_users_by_cmid',
+        'classpath' => 'course/externallib.php',
+        'description' => 'List users bycourse module id.',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',
@@ -802,6 +810,40 @@ $functions = array(
         'description' => 'Update a grade item and associated student grades.',
         'type' => 'write',
     ),
+    'core_grades_grader_gradingpanel_point_fetch' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\point\\external\\fetch',
+        'methodname' => 'execute',
+        'description' => 'Fetch the data required to display the grader grading panel for simple grading, ' .
+            'creating the grade item if required',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_grader_gradingpanel_point_store' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\point\\external\\store',
+        'methodname' => 'execute',
+        'description' => 'Store the data required to display the grader grading panel for simple grading',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_grader_gradingpanel_scale_fetch' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\scale\\external\\fetch',
+        'methodname' => 'execute',
+        'description' => 'Fetch the data required to display the grader grading panel for scale-based grading, ' .
+            'creating the grade item if required',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_grader_gradingpanel_scale_store' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\scale\\external\\store',
+        'methodname' => 'execute',
+        'description' => 'Store the data required to display the grader grading panel for scale-based grading',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',

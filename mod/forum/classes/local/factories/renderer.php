@@ -26,6 +26,7 @@ namespace mod_forum\local\factories;
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_forum\grades\forum_gradeitem;
 use mod_forum\local\entities\discussion as discussion_entity;
 use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\factories\vault as vault_factory;
@@ -455,6 +456,7 @@ class renderer {
             $this->builderfactory,
             $capabilitymanager,
             $this->urlfactory,
+            forum_gradeitem::load_from_forum_entity($forum),
             $template,
             $notifications,
             function($discussions, $user, $forum) {
@@ -494,6 +496,7 @@ class renderer {
             $this->builderfactory,
             $capabilitymanager,
             $this->urlfactory,
+            forum_gradeitem::load_from_forum_entity($forum),
             $template,
             $notifications,
             function($discussions, $user, $forum) use ($capabilitymanager) {

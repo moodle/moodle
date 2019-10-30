@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
 /** Include essential files */
 require_once($CFG->libdir . '/grade/constants.php');
 

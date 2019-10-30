@@ -26,6 +26,7 @@ namespace mod_forum\local\renderers;
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_forum\grades\forum_gradeitem;
 use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\exporter as exporter_factory;
@@ -84,6 +85,9 @@ class discussion_list {
     /** @var string $template The template to use when displaying */
     private $template;
 
+    /** @var gradeitem The gradeitem instance associated with this forum */
+    private $forumgradeitem;
+
     /**
      * Constructor for a new discussion list renderer.
      *
@@ -108,6 +112,7 @@ class discussion_list {
         builder_factory $builderfactory,
         capability_manager $capabilitymanager,
         url_factory $urlfactory,
+        forum_gradeitem $forumgradeitem,
         string $template,
         array $notifications = [],
         callable $postprocessfortemplate = null
@@ -124,6 +129,7 @@ class discussion_list {
         $this->notifications = $notifications;
         $this->postprocessfortemplate = $postprocessfortemplate;
         $this->template = $template;
+        $this->forumgradeitem = $forumgradeitem;
 
         $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
         $this->forumrecord = $forumdatamapper->to_legacy_object($forum);
@@ -168,6 +174,10 @@ class discussion_list {
 
         $forumview = [
             'forum' => (array) $forumexporter->export($this->renderer),
+            'contextid' => $forum->get_context()->id,
+            'cmid' => $cm->id,
+            'gradingcomponent' => $this->forumgradeitem->get_grading_component_name(),
+            'gradingcomponentsubtype' => $this->forumgradeitem->get_grading_component_subtype(),
             'hasanyactions' => $hasanyactions,
             'groupchangemenu' => groups_print_activity_menu(
                 $cm,
@@ -206,6 +216,9 @@ class discussion_list {
             ],
             $exportedposts
         );
+
+        $firstdiscussion = reset($discussions);
+        $forumview['firstgradeduserid'] = $firstdiscussion->get_latest_post_author()->get_id();
 
         return $this->renderer->render_from_template($this->template, $forumview);
     }

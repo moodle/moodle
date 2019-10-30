@@ -395,16 +395,6 @@ function assign_supports($feature) {
 }
 
 /**
- * Lists all gradable areas for the advanced grading methods gramework
- *
- * @return array('string'=>'string') An array with area names as keys and descriptions as values
- */
-function assign_grading_areas_list() {
-    return array('submissions'=>get_string('submissions', 'assign'));
-}
-
-
-/**
  * extend an assigment navigation settings
  *
  * @param settings_navigation $settings

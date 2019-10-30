@@ -2065,7 +2065,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $outcomegradeitem->cmid = 0;
         $outcomegradeitem->courseid = $course->id;
         $outcomegradeitem->aggregationcoef = 0;
-        $outcomegradeitem->itemnumber = 1; // The activity's original grade item will be 0.
+        $outcomegradeitem->itemnumber = 1000; // Outcomes start at 1000.
         $outcomegradeitem->gradetype = GRADE_TYPE_SCALE;
         $outcomegradeitem->scaleid = $outcome->scaleid;
         $outcomegradeitem->insert();
@@ -2987,5 +2987,56 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $result = core_course_external::get_recent_courses($student->id);
         $this->assertCount(1, $result);
         $this->assertEquals($courses[0]->id, array_shift($result)->id);
+    }
+
+    /**
+     * Test get enrolled users by cmid function.
+     */
+    public function test_get_enrolled_users_by_cmid() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set the first created user to the test user.
+        self::setUser($user1);
+
+        // Create course to add the module.
+        $course1 = self::getDataGenerator()->create_course();
+
+        // Forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+
+        // Following lines enrol and assign default role id to the users.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        // Create what we expect to be returned when querying the course module.
+        $expectedusers = array(
+            'users' => array(),
+            'warnings' => array(),
+        );
+
+        $expectedusers['users'][0] = [
+            'id' => $user1->id,
+            'fullname' => fullname($user1),
+            'firstname' => $user1->firstname,
+            'lastname' => $user1->lastname,
+        ];
+        $expectedusers['users'][1] = [
+            'id' => $user2->id,
+            'fullname' => fullname($user2),
+            'firstname' => $user2->firstname,
+            'lastname' => $user2->lastname,
+        ];
+
+        // Test getting the users in a given context.
+        $users = core_course_external::get_enrolled_users_by_cmid($forum1->cmid);
+        $users = external_api::clean_returnvalue(core_course_external::get_enrolled_users_by_cmid_returns(), $users);
+
+        $this->assertEquals(2, count($users['users']));
+        $this->assertEquals($expectedusers, $users);
     }
 }

@@ -25,6 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/grade/grading/form/lib.php');
+require_once($CFG->dirroot.'/lib/filelib.php');
+
+/** rubric: Used to compare our gradeitem_type against. */
+const RUBRIC = 'rubric';
 
 /**
  * This controller encapsulates the rubric grading logic

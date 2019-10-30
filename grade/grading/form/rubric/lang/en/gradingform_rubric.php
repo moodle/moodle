@@ -58,6 +58,7 @@ $string['lockzeropoints_help'] = 'This setting only applies if the sum of the mi
 $string['name'] = 'Name';
 $string['needregrademessage'] = 'The rubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
 $string['pluginname'] = 'Rubric';
+$string['pointsvalue'] = '{$a} points';
 $string['previewrubric'] = 'Preview rubric';
 $string['privacy:metadata:criterionid'] = 'An identifier for a specific criterion being graded.';
 $string['privacy:metadata:fillingssummary'] = 'Stores information about the user\'s grade created by the rubric.';

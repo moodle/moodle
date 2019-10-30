@@ -308,3 +308,7 @@
     position: relative;
     float: right;
 }
+
+.gradingpanel-gradingform_rubric [aria-checked="true"] {
+    border: 1px solid black;
+}

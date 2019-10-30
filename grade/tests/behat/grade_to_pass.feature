@@ -196,8 +196,8 @@ Feature: We can set the grade to pass value
       | Forum name     | Test Forum 1    |
       | Description    | Test               |
       | Ratings > Aggregate type | Average of ratings |
+      | Ratings > Grade to pass  | 90                 |
       | Ratings > scale[modgrade_point] | 60 |
-      | Grade > Grade to pass  | 90                 |
     Then I should see "The grade to pass can not be greater than the maximum possible grade 60"
 
   Scenario: Set a valid grade to pass for forum activity
@@ -206,10 +206,10 @@ Feature: We can set the grade to pass value
       | Forum name     | Test Forum 1    |
       | Description    | Test               |
       | Ratings > Aggregate type | Average of ratings |
-      | Grade > Grade to pass  | 90                 |
+      | Ratings > Grade to pass  | 90                 |
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
-    And I click on "Edit  forum Test Forum 1" "link"
+    And I click on "Edit  forum Rating grade for Test Forum 1" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
@@ -217,7 +217,7 @@ Feature: We can set the grade to pass value
     And I am on "Course 1" course homepage
     And I follow "Test Forum 1"
     And I follow "Edit settings"
-    And the field "Grade to pass" matches value "80"
+    And the field "Ratings > Grade to pass" matches value "80"
 
   Scenario: Set a valid grade to pass for glossary activity
     When I turn editing mode on

@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/local/grades/local/grader/user_picker
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-region="user_picker/user"
+    * data-action="change-user"
+    * data-direction="-1"
+    * data-direction="1"
+    * data-action="search-user"
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-8">
+            <div data-region="user_picker/user"></div>
+        </div>
+        <div class="col-md-4">
+            <ul class="pagination">
+                <li class="page-item mr-3">
+                    <a class="page-link" href="#" aria-label="Previous" data-action="change-user" data-direction="-1">
+                        <span aria-hidden="true">&langle;</span>
+                        <span class="sr-only">{{#str}} previous {{/str}}</span>
+                    </a>
+                </li>
+                <li class="page-item mr-3">
+                    <a class="page-link" href="#" aria-label="Next" data-action="change-user" data-direction="1">
+                        <span aria-hidden="true">&rangle;</span>
+                        <span class="sr-only">{{#str}} next {{/str}}</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link disabled" href="#" aria-label="Search" data-action="search-user">
+                        <span class="fa fa-search" aria-hidden="true"></span>
+                        <span class="sr-only">{{#str}} search {{/str}}</span>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <hr>
+</div>
+

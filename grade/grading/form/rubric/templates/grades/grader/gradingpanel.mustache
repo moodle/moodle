@@ -1,0 +1,105 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template gradingform_rubric/grades/grader/gradingpanel
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * instanceid: Instance of the module this grading form belongs too
+    * criteria: A gradeable item in the Marking Guide
+    * id: The ID of the criteria
+    * description: Description of the criteria
+    * levels: The level that a criteria can be graded at
+    * criterionid: The ID of the criteria
+    * checked: Flag for if this is the currently selected level
+    * definition: Definition of the level
+    * remark: Text input for the teacher to relay to the student
+
+    Example context (json):
+    {
+        "instanceid": "42",
+        "criteria": [
+            {
+                "id": 13,
+                "description": "Show your motivation to rock climbing",
+                "levels": [
+                    {
+                        "criterionid": 13,
+                        "checked": true,
+                        "definition": "Great work!"
+                    }
+                ],
+                "remark": "That's great!"
+            }
+        ]
+    }
+}}
+<form id="gradingform_rubric-{{uniqid}}">
+    <input type="hidden" name="instanceid" value="{{instanceid}}">
+    <div id="rubric-advancedgrading-{{uniqid}}" class="criterion">
+        {{#criteria}}
+            <div class="d-block mb-2">
+                <h5 class="d-inline px-0 font-weight-bold mb-0">{{{description}}}</h5>
+                <button class="d-inline btn p-0 font-weight-bold mb-0 pull-right collapse"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#criteria-{{id}}"
+                        aria-expanded="true"
+                        aria-controls="criteria-{{id}}">
+                </button>
+            </div>
+            <div class="collapse show" id="criteria-{{id}}">
+                {{#levels}}
+                    <div class="form-check">
+                        <input class="form-check-input level"
+                               type="radio"
+                               name="advancedgrading[criteria][{{criterionid}}][levelid]"
+                               id="advancedgrading-criteria-{{criterionid}}-levels-{{id}}-definition"
+                               value="{{id}}"
+                                {{#checked}}
+                                    aria-checked="true"
+                                    tabindex="0"
+                                    checked
+                                {{/checked}}
+                                {{^checked}}
+                                    aria-checked="false"
+                                    tabindex="-1"
+                                {{/checked}}
+                        >
+                        <label class="w-100" for="advancedgrading-criteria-{{criterionid}}-levels-{{id}}-definition">
+                            <label class="font-weight-bold">
+                                {{{definition}}}
+                            </label>
+                            <label class="pull-right font-weight-bold">
+                                {{#str}}pointsvalue, gradingform_rubric, {{score}}{{/str}}
+                            </label>
+                        </label>
+                    </div>
+                {{/levels}}
+                <div class="form-group">
+                    <label for="advancedgrading-criteria-{{id}}-remark">Additional feedback</label>
+                    <textarea class="form-control" name="advancedgrading[criteria][{{id}}][remark]" id="advancedgrading-criteria-{{id}}-remark" cols="10" rows="5">{{{remark}}}</textarea>
+                </div>
+            </div>
+        {{/criteria}}
+    </div>
+</form>

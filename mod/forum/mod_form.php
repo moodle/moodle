@@ -27,6 +27,8 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 
+use core_grades\component_gradeitems;
+
 class mod_forum_mod_form extends moodleform_mod {
 
     function definition() {
@@ -208,13 +210,100 @@ class mod_forum_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
 
-        $this->standard_grading_coursemodule_elements();
+        // Add the whole forum grading options.
+        $this->add_forum_grade_settings($mform, 'forum');
 
         $this->standard_coursemodule_elements();
 //-------------------------------------------------------------------------------
 // buttons
         $this->add_action_buttons();
+    }
 
+    /**
+     * Add the whole forum grade settings to the mform.
+     *
+     * @param   \mform $mform
+     * @param   string $itemname
+     */
+    private function add_forum_grade_settings($mform, string $itemname) {
+        global $COURSE;
+
+        $component = "mod_{$this->_modname}";
+        $defaultgradingvalue = 0;
+
+        $itemnumber = component_gradeitems::get_itemnumber_from_itemname($component, $itemname);
+        $gradefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
+        $gradecatfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'gradecat');
+        $gradepassfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'gradepass');
+
+        // The advancedgradingmethod is different in that it is suffixed with an area name... which is not the
+        // itemnumber.
+        $methodfieldname = "advancedgradingmethod_{$itemname}";
+
+        $headername = "{$gradefieldname}_header";
+        $mform->addElement('header', $headername, get_string("grade_{$itemname}_header", $component));
+
+        $isupdate = !empty($this->_cm);
+        $gradeoptions = [
+            'isupdate' => $isupdate,
+            'currentgrade' => false,
+            'hasgrades' => false,
+            'canrescale' => false,
+            'useratings' => false,
+        ];
+
+        if ($isupdate) {
+            $gradeitem = grade_item::fetch([
+                'itemtype' => 'mod',
+                'itemmodule' => $this->_cm->modname,
+                'iteminstance' => $this->_cm->instance,
+                'itemnumber' => $itemnumber,
+                'courseid' => $COURSE->id,
+            ]);
+            if ($gradeitem) {
+                $gradeoptions['currentgrade'] = $gradeitem->grademax;
+                $gradeoptions['currentgradetype'] = $gradeitem->gradetype;
+                $gradeoptions['currentscaleid'] = $gradeitem->scaleid;
+                $gradeoptions['hasgrades'] = $gradeitem->has_grades();
+            }
+        }
+        $mform->addElement(
+            'modgrade',
+            $gradefieldname,
+            get_string("{$gradefieldname}_title", $component),
+            $gradeoptions
+        );
+        $mform->addHelpButton($gradefieldname, 'modgrade', 'grades');
+        $mform->setDefault($gradefieldname, $defaultgradingvalue);
+
+        if (!empty($this->current->_advancedgradingdata['methods']) && !empty($this->current->_advancedgradingdata['areas'])) {
+            $areadata = $this->current->_advancedgradingdata['areas'][$itemname];
+            $mform->addElement(
+                'select',
+                $methodfieldname,
+                get_string('gradingmethod', 'core_grading'),
+                $this->current->_advancedgradingdata['methods']
+            );
+            $mform->addHelpButton($methodfieldname, 'gradingmethod', 'core_grading');
+            $mform->hideIf($methodfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
+        }
+
+        // Grade category.
+        $mform->addElement(
+            'select',
+            $gradecatfieldname,
+            get_string('gradecategoryonmodform', 'grades'),
+            grade_get_categories_menu($COURSE->id, $this->_outcomesused)
+        );
+        $mform->addHelpButton($gradecatfieldname, 'gradecategoryonmodform', 'grades');
+        $mform->hideIf($gradecatfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
+
+        // Grade to pass.
+        $mform->addElement('text', $gradepassfieldname, get_string('gradepass', 'grades'));
+        $mform->addHelpButton($gradepassfieldname, 'gradepass', 'grades');
+        $mform->setDefault($gradepassfieldname, '');
+        $mform->setType($gradepassfieldname, PARAM_RAW);
+        $mform->hideIf($gradepassfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
     }
 
     function definition_after_data() {
@@ -236,7 +325,6 @@ class mod_forum_mod_form extends moodleform_mod {
             $type->freeze();
             $type->setPersistantFreeze(true);
         }
-
     }
 
     public function validation($data, $files) {
@@ -248,7 +336,61 @@ class mod_forum_mod_form extends moodleform_mod {
             }
         }
 
+        $this->validation_forum_grade($data, $files, $errors);
+
         return $errors;
+    }
+
+    /**
+     * Handle definition after data for grade settings.
+     *
+     * @param array $data
+     * @param array $files
+     * @param array $errors
+     */
+    private function validation_forum_grade(array $data, array $files, array $errors) {
+        global $COURSE;
+
+        $mform =& $this->_form;
+
+        $component = "mod_forum";
+        $itemname = 'forum';
+        $itemnumber = component_gradeitems::get_itemnumber_from_itemname($component, $itemname);
+        $gradefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
+        $gradepassfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
+
+        $gradeitem = grade_item::fetch([
+            'itemtype' => 'mod',
+            'itemmodule' => $data['modulename'],
+            'iteminstance' => $data['instance'],
+            'itemnumber' => $itemnumber,
+            'courseid' => $COURSE->id,
+        ]);
+
+        if ($mform->elementExists('cmidnumber') && $this->_cm) {
+            if (!grade_verify_idnumber($data['cmidnumber'], $COURSE->id, $gradeitem, $this->_cm)) {
+                $errors['cmidnumber'] = get_string('idnumbertaken');
+            }
+        }
+
+        // Check that the grade pass is a valid number.
+        $gradepassvalid = false;
+        if (isset($data[$gradepassfieldname])) {
+            if (unformat_float($data[$gradepassfieldname], true) === false) {
+                $errors[$gradepassfieldname] = get_string('err_numeric', 'form');
+            } else {
+                $gradepassvalid = true;
+            }
+        }
+
+        // Grade to pass: ensure that the grade to pass is valid for points and scales.
+        // If we are working with a scale, convert into a positive number for validation.
+        if ($gradepassvalid && isset($data[$gradepassfieldname]) && (!empty($data[$gradefieldname]))) {
+            $grade = $data[$gradefieldname];
+            if (unformat_float($data[$gradepassfieldname]) > $grade) {
+                $errors[$gradepassfieldname] = get_string('gradepassgreaterthangrade', 'grades', $grade);
+            }
+        }
     }
 
     function data_preprocessing(&$default_values) {
@@ -317,6 +459,32 @@ class mod_forum_mod_form extends moodleform_mod {
     }
 
     /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * Do not override this method, override data_postprocessing() instead.
+     *
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if ($data) {
+            $itemname = 'forum';
+            $component = 'mod_forum';
+            $gradepassfieldname = component_gradeitems::get_field_name_for_itemname($component, $itemname, 'gradepass');
+
+            // Convert the grade pass value - we may be using a language which uses commas,
+            // rather than decimal points, in numbers. These need to be converted so that
+            // they can be added to the DB.
+            if (isset($data->{$gradepassfieldname})) {
+                $data->{$gradepassfieldname} = unformat_float($data->{$gradepassfieldname});
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Allows module to modify the data returned by form get_data().
      * This method is also called in the bulk activity completion form.
      *
@@ -341,4 +509,3 @@ class mod_forum_mod_form extends moodleform_mod {
         }
     }
 }
-

@@ -173,10 +173,14 @@ class gradingform_guide_generator extends component_generator_base {
      * @param context_module $context
      * @return gradingform_guide_controller
      */
-    public function get_test_guide(context_module $context): gradingform_guide_controller {
+    public function get_test_guide(
+        context_module $context,
+        string $component = 'mod_assign',
+        string $areaname = 'submission'
+    ): gradingform_guide_controller {
         $generator = \testing_util::get_data_generator();
         $gradinggenerator = $generator->get_plugin_generator('core_grading');
-        $controller = $gradinggenerator->create_instance($context, 'mod_assign', 'submission', 'guide');
+        $controller = $gradinggenerator->create_instance($context, $component, $areaname, 'guide');
 
         $generator = \testing_util::get_data_generator();
         $guidegenerator = $generator->get_plugin_generator('gradingform_guide');

@@ -1127,5 +1127,6 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
                 ['discussionids' => $discussionids, 'userids' => $userids], false);
         $this->assertCount(1, $entities);
         $this->assertArrayHasKey($otherpost->id, $entities);
+
     }
 }

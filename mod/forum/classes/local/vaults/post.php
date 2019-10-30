@@ -26,6 +26,7 @@ namespace mod_forum\local\vaults;
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\entities\post as post_entity;
 use mod_forum\local\factories\entity as entity_factory;
 use stdClass;
@@ -509,6 +510,42 @@ class post extends db_table_vault {
               ) lp ON lp.discussion = p.discussion AND lp.created = p.created";
 
         $records = $this->get_db()->get_records_sql($sql, $params);
+        return $this->transform_db_records_to_entities($records);
+    }
+
+    /**
+     * Get the posts for the given user.
+     *
+     * @param int $discussionid The discussion to fetch posts for
+     * @param int $userid The user to fetch posts for
+     * @param bool $canseeprivatereplies Whether this user can see all private replies or not
+     * @param string $orderby Order the results
+     * @return post_entity[]
+     */
+    public function get_posts_in_discussion_for_user_id(
+        int $discussionid,
+        int $userid,
+        bool $canseeprivatereplies,
+        string $orderby = 'created ASC'
+    ): array {
+        $user = $this->get_db()->get_record('user', ['id' => (int)$userid], '*', IGNORE_MISSING);
+
+        $alias = $this->get_table_alias();
+        [
+            'where' => $privatewhere,
+            'params' => $privateparams,
+        ] = $this->get_private_reply_sql($user, $canseeprivatereplies);
+
+        $wheresql = "{$alias}.userid = :authorid AND
+                     {$alias}.discussion = :discussionid {$privatewhere}";
+        $orderbysql = $alias . '.' . $orderby;
+
+        $sql = $this->generate_get_records_sql($wheresql, $orderbysql);
+        $records = $this->get_db()->get_records_sql($sql, array_merge([
+            'authorid' => $userid,
+            'discussionid' => $discussionid
+        ], $privateparams));
+
         return $this->transform_db_records_to_entities($records);
     }
 }

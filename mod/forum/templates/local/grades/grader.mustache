@@ -1,0 +1,49 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/local/grades/local/grader
+
+    Classes required for JS:
+    * TODO
+
+    Data attributes required for JS:
+    * data-first-userid="350"
+    * data-cmid="1337"
+
+    Context variables required for this template:
+    * userid: ID of the first user to jump to
+    * cmid: ID of the course module we want to grade
+
+    Example context (json):
+    {
+        "userid": 350,
+        "cmid": 1337
+    }
+}}
+<div class="container-fluid"
+    data-region="unified-grader"
+    {{#userid}}data-first-userid="{{userid}}"{{/userid}}
+    data-cmid="{{cmid}}"
+    >
+    <div class="row-fluid">
+        {{> mod_forum/local/grades/local/grader/navigation }}
+    </div>
+    <div class="row-fluid no-gutters">
+        {{> mod_forum/local/grades/local/grader/content }}
+        {{> mod_forum/local/grades/local/grader/grading }}
+    </div>
+</div>
