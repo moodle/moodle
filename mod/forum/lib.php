@@ -777,7 +777,7 @@ EOF;
         ];
 
         if ($userid) {
-            $sql .= "AND g.userid = :userid";
+            $sql .= " AND g.userid = :userid";
             $params['userid'] = $userid;
         }
 
