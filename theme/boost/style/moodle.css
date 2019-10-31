@@ -3512,25 +3512,20 @@ table#listdirectories td {
   table#permissions .table-info:hover > th {
     background-color: #bce5f2; }
 
-.table-warning, #overriderolestable .overriddenpermission,
+.table-warning,
 .table-warning > th,
-#overriderolestable .overriddenpermission > th,
-.table-warning > td,
-#overriderolestable .overriddenpermission > td {
+.table-warning > td {
   background-color: #fbe8cd; }
 
-.table-warning th, #overriderolestable .overriddenpermission th,
+.table-warning th,
 .table-warning td,
-#overriderolestable .overriddenpermission td,
 .table-warning thead th,
-#overriderolestable .overriddenpermission thead th,
-.table-warning tbody + tbody,
-#overriderolestable .overriddenpermission tbody + tbody {
+.table-warning tbody + tbody {
   border-color: #f7d4a3; }
 
-.table-hover .table-warning:hover, table.grading-report .table-warning:hover, .forumheaderlist .table-warning:hover, .generaltable .table-warning:hover, table.flexible .table-warning:hover, .category_subcategories .table-warning:hover, table#modules .table-warning:hover, table#permissions .table-warning:hover, .table-hover #overriderolestable .overriddenpermission:hover, #overriderolestable .table-hover .overriddenpermission:hover, table.grading-report #overriderolestable .overriddenpermission:hover, #overriderolestable table.grading-report .overriddenpermission:hover, .forumheaderlist #overriderolestable .overriddenpermission:hover, #overriderolestable .forumheaderlist .overriddenpermission:hover, .generaltable #overriderolestable .overriddenpermission:hover, #overriderolestable .generaltable .overriddenpermission:hover, table.flexible #overriderolestable .overriddenpermission:hover, #overriderolestable table.flexible .overriddenpermission:hover, .category_subcategories #overriderolestable .overriddenpermission:hover, #overriderolestable .category_subcategories .overriddenpermission:hover, table#modules #overriderolestable .overriddenpermission:hover, #overriderolestable table#modules .overriddenpermission:hover, table#permissions #overriderolestable .overriddenpermission:hover, #overriderolestable table#permissions .overriddenpermission:hover {
+.table-hover .table-warning:hover, table.grading-report .table-warning:hover, .forumheaderlist .table-warning:hover, .generaltable .table-warning:hover, table.flexible .table-warning:hover, .category_subcategories .table-warning:hover, table#modules .table-warning:hover, table#permissions .table-warning:hover {
   background-color: #f9ddb5; }
-  .table-hover .table-warning:hover > td, table.grading-report .table-warning:hover > td, .forumheaderlist .table-warning:hover > td, .generaltable .table-warning:hover > td, table.flexible .table-warning:hover > td, .category_subcategories .table-warning:hover > td, table#modules .table-warning:hover > td, table#permissions .table-warning:hover > td, .table-hover #overriderolestable .overriddenpermission:hover > td, #overriderolestable .table-hover .overriddenpermission:hover > td, table.grading-report #overriderolestable .overriddenpermission:hover > td, #overriderolestable table.grading-report .overriddenpermission:hover > td, .forumheaderlist #overriderolestable .overriddenpermission:hover > td, #overriderolestable .forumheaderlist .overriddenpermission:hover > td, .generaltable #overriderolestable .overriddenpermission:hover > td, #overriderolestable .generaltable .overriddenpermission:hover > td, table.flexible #overriderolestable .overriddenpermission:hover > td, #overriderolestable table.flexible .overriddenpermission:hover > td, .category_subcategories #overriderolestable .overriddenpermission:hover > td, #overriderolestable .category_subcategories .overriddenpermission:hover > td, table#modules #overriderolestable .overriddenpermission:hover > td, #overriderolestable table#modules .overriddenpermission:hover > td, table#permissions #overriderolestable .overriddenpermission:hover > td, #overriderolestable table#permissions .overriddenpermission:hover > td,
+  .table-hover .table-warning:hover > td, table.grading-report .table-warning:hover > td, .forumheaderlist .table-warning:hover > td, .generaltable .table-warning:hover > td, table.flexible .table-warning:hover > td, .category_subcategories .table-warning:hover > td, table#modules .table-warning:hover > td, table#permissions .table-warning:hover > td,
   .table-hover .table-warning:hover > th,
   table.grading-report .table-warning:hover > th,
   .forumheaderlist .table-warning:hover > th,
@@ -3538,23 +3533,7 @@ table#listdirectories td {
   table.flexible .table-warning:hover > th,
   .category_subcategories .table-warning:hover > th,
   table#modules .table-warning:hover > th,
-  table#permissions .table-warning:hover > th,
-  .table-hover #overriderolestable .overriddenpermission:hover > th,
-  #overriderolestable .table-hover .overriddenpermission:hover > th,
-  table.grading-report #overriderolestable .overriddenpermission:hover > th,
-  #overriderolestable table.grading-report .overriddenpermission:hover > th,
-  .forumheaderlist #overriderolestable .overriddenpermission:hover > th,
-  #overriderolestable .forumheaderlist .overriddenpermission:hover > th,
-  .generaltable #overriderolestable .overriddenpermission:hover > th,
-  #overriderolestable .generaltable .overriddenpermission:hover > th,
-  table.flexible #overriderolestable .overriddenpermission:hover > th,
-  #overriderolestable table.flexible .overriddenpermission:hover > th,
-  .category_subcategories #overriderolestable .overriddenpermission:hover > th,
-  #overriderolestable .category_subcategories .overriddenpermission:hover > th,
-  table#modules #overriderolestable .overriddenpermission:hover > th,
-  #overriderolestable table#modules .overriddenpermission:hover > th,
-  table#permissions #overriderolestable .overriddenpermission:hover > th,
-  #overriderolestable table#permissions .overriddenpermission:hover > th {
+  table#permissions .table-warning:hover > th {
     background-color: #f9ddb5; }
 
 .table-danger,

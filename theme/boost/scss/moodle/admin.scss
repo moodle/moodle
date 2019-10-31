@@ -706,10 +706,6 @@
     z-index: 0;
 }
 
-#overriderolestable .overriddenpermission {
-    @extend .table-warning;
-}
-
 #page-admin-search {
     .adminpagetitle {
         margin-bottom: 0;
