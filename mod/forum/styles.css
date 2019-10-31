@@ -351,7 +351,7 @@ span.unread {
     flex-basis: 100%;
     font-weight: bold;
     align-items: center;
-    margin: 8px 0px;
+    margin: 8px 0;
 }
 .hr-sect::before,
 .hr-sect::after {
@@ -359,8 +359,8 @@ span.unread {
     flex-grow: 1;
     background: rgba(0, 0, 0, 0.35);
     height: 1px;
-    font-size: 0px;
-    line-height: 0px;
+    font-size: 0;
+    line-height: 0;
 }
 .hr-sect::before {
     margin-right: 15px;
