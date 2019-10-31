@@ -1051,4 +1051,33 @@ class core_upgradelib_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records_select('analytics_models', $select, $params));
     }
+
+    /**
+     * Test the functionality of {@link upgrade_core_licenses} function.
+     */
+    public function test_upgrade_core_licenses() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+
+        // Emulate that upgrade is in process.
+        $CFG->upgraderunning = time();
+
+        $deletedcorelicenseshortname = 'unknown';
+        $DB->delete_records('license', ['shortname' => $deletedcorelicenseshortname]);
+
+        upgrade_core_licenses();
+
+        $expectedshortnames = ['allrightsreserved', 'cc', 'cc-nc', 'cc-nc-nd', 'cc-nc-sa', 'cc-nd', 'cc-sa', 'public'];
+        $licenses = $DB->get_records('license');
+
+        foreach ($licenses as $license) {
+            $this->assertContains($license->shortname, $expectedshortnames);
+            $this->assertObjectHasAttribute('custom', $license);
+            $this->assertObjectHasAttribute('sortorder', $license);
+        }
+        // A core license which was deleted prior to upgrade should not be reinstalled.
+        $actualshortnames = $DB->get_records_menu('license', null, '', 'id, shortname');
+        $this->assertNotContains($deletedcorelicenseshortname, $actualshortnames);
+    }
 }

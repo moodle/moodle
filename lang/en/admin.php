@@ -81,7 +81,6 @@ $string['autolang'] = 'Language autodetect';
 $string['autologinguests'] = 'Auto-login guests';
 $string['searchareas'] = 'Search areas';
 $string['availableto'] = 'Available to';
-$string['availablelicenses'] = 'Available licences';
 $string['backgroundcolour'] = 'Transparent colour';
 $string['backups'] = 'Backups';
 $string['backup_shortname'] = 'Use course name in backup filename';
@@ -763,7 +762,6 @@ $string['managecustomfields'] = 'Manage custom field types';
 $string['manageformats'] = 'Manage course formats';
 $string['manageformatsgotosettings'] = 'Default format can be changed in {$a}';
 $string['managelang'] = 'Manage';
-$string['managelicenses'] = 'Manage licences';
 $string['manageqbehaviours'] = 'Manage question behaviours';
 $string['manageqtypes'] = 'Manage question types';
 $string['maturity50'] = 'Alpha';
@@ -1046,6 +1044,8 @@ $string['registration_help'] = 'By registering:
 $string['registrationwarning'] = 'Your site is not yet registered.';
 $string['registrationwarningcontactadmin'] = 'Your site is not yet registered. Please notify your administrator.';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target="_blank" href="{$a}">Release Notes</a>';
+$string['rememberuserlicensepref'] = 'Remember user licence preference';
+$string['rememberuserlicensepref_help'] = 'If enabled, the last licence selected by the user is preselected when uploading a file in the file picker. Otherwise, the default site licence is preselected.';
 $string['rememberusername'] = 'Remember username';
 $string['rememberusername_desc'] = 'Enable if you want to store permanent cookies with usernames during user login. Permanent cookies may be considered a privacy issue if used without consent.';
 $string['reportsmanage'] = 'Manage reports';
@@ -1461,3 +1461,7 @@ $string['registermoodleorgli2'] = 'Statistics about your site will be added to t
 $string['registerwithmoodleorg'] = 'Register your site';
 $string['configrequestcategoryselection'] = 'Allow the selection of a category when requesting a course.';
 $string['requestcategoryselection'] = 'Enable category selection';
+
+// Deprecated since Moodle 3.9.
+$string['availablelicenses'] = 'Available licences';
+$string['managelicenses'] = 'Manage licences';

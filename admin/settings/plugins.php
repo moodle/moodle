@@ -182,20 +182,6 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'mlbackendsettings', $hassiteconfig);
     }
 
-/// License types
-    $ADMIN->add('modules', new admin_category('licensesettings', new lang_string('licenses')));
-    $temp = new admin_settingpage('managelicenses', new lang_string('managelicenses', 'admin'));
-
-    require_once($CFG->libdir . '/licenselib.php');
-    $licenses = array();
-    $array = explode(',', $CFG->licenses);
-    foreach ($array as $value) {
-        $licenses[$value] = new lang_string($value, 'license');
-    }
-    $temp->add(new admin_setting_configselect('sitedefaultlicense', new lang_string('configsitedefaultlicense','admin'), new lang_string('configsitedefaultlicensehelp','admin'), 'allrightsreserved', $licenses));
-    $temp->add(new admin_setting_managelicenses());
-    $ADMIN->add('licensesettings', $temp);
-
 /// Filter plugins
     $ADMIN->add('modules', new admin_category('filtersettings', new lang_string('managefilters')));
 
