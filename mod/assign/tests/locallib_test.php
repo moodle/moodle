@@ -4043,18 +4043,18 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->setUser($student2);
         $summary = $assign->get_assign_grading_summary_renderable($group1->id);
         $output1 .= $assign->get_renderer()->render($summary);
-        $this->assertContains('Tuesday, 28 May 2019, 7:31 AM', $output1);
+        $this->assertContains('Tuesday, 28 May 2019, 7:31 AM', $output1, '', true);
 
         $output2 = '';
         // Teacher should be able to see all group override duedate.
         $this->setUser($teacher);
         $summary = $assign->get_assign_grading_summary_renderable($group1->id);
         $output2 .= $assign->get_renderer()->render($summary);
-        $this->assertContains('Friday, 20 September 2019, 10:37 PM', $output2);
+        $this->assertContains('Friday, 20 September 2019, 10:37 PM', $output2, '', true);
 
         $output3 = '';
         $summary = $assign->get_assign_grading_summary_renderable($group2->id);
         $output3 .= $assign->get_renderer()->render($summary);
-        $this->assertContains('Friday, 7 June 2019, 5:37 PM', $output3);
+        $this->assertContains('Friday, 7 June 2019, 5:37 PM', $output3, '', true);
     }
 }
