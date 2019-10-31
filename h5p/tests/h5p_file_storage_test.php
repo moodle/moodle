@@ -26,6 +26,7 @@
 namespace core_h5p\local\tests;
 
 use core_h5p\file_storage;
+use core_h5p\autoloader;
 use file_archive;
 use zip_archive;
 
@@ -58,6 +59,8 @@ class h5p_file_storage_testcase extends \advanced_testcase {
     protected function setUp() {
         parent::setUp();
         $this->resetAfterTest(true);
+
+        autoloader::register();
 
         // Fetch generator.
         $generator = \testing_util::get_data_generator();
