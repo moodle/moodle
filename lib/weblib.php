@@ -1110,7 +1110,7 @@ function validate_email($address) {
     global $CFG;
     require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
 
-    return moodle_phpmailer::validateAddress($address);
+    return moodle_phpmailer::validateAddress($address) && !preg_match('/[<>]/', $address);
 }
 
 /**

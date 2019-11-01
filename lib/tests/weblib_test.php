@@ -525,6 +525,18 @@ EXPECTED;
                 'email' => "moodle@example.com>\r\nRCPT TO:<victim@example.com",
                 'result' => false
             ],
+            [
+                'email' => 'greater>than@example.com',
+                'result' => false
+            ],
+            [
+                'email' => 'less<than@example.com',
+                'result' => false
+            ],
+            [
+                'email' => '"this<is>validbutwerejectit"@example.com',
+                'result' => false
+            ],
 
             // Extra email addresses from Wikipedia page on Email Addresses.
             // Valid.
