@@ -86,14 +86,14 @@ class factory {
      */
     public function get_core(): core {
         if (null === $this->core) {
-          $fs = new \core_h5p\file_storage();
-          $language = \core_h5p\framework::get_language();
-          $context = \context_system::instance();
+            $fs = new \core_h5p\file_storage();
+            $language = \core_h5p\framework::get_language();
+            $context = \context_system::instance();
 
-          $url = \moodle_url::make_pluginfile_url($context->id, 'core_h5p', '', null,
-              '', '')->out();
+            $url = \moodle_url::make_pluginfile_url($context->id, 'core_h5p', '', null,
+                '', '')->out();
 
-          $this->core = new core($this->get_framework(), $fs, $url, $language, true);
+            $this->core = new core($this->get_framework(), $fs, $url, $language, true);
         }
 
         return $this->core;
