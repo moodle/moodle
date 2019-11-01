@@ -240,6 +240,17 @@ export const init = (root) => {
         submitWithFilter('#filter-groups-popover');
     });
 
+    // Listeners for export buttons.
+    // These allow fetching of the relevant export URL, before submitting the request with
+    // any POST data that is common to all of the export links. This allows filters to be
+    // applied that contain potentially a lot of data (eg discussion IDs for groups filtering).
+    document.querySelectorAll(Selectors.filters.exportlink.link).forEach(function(exportbutton) {
+        exportbutton.addEventListener('click', function(event) {
+            document.forms.exportlinkform.action = event.target.dataset.url;
+            document.forms.exportlinkform.submit();
+        });
+    });
+
     // Dates filter specific handlers.
 
    // Event handler for showing dates filter popover.

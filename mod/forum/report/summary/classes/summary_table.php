@@ -95,6 +95,11 @@ class summary_table extends table_sql {
     protected $canseeprivatereplies;
 
     /**
+     * @var array Validated filter data, for use in GET parameters by export links.
+     */
+    protected $exportfilterdata = [];
+
+    /**
      * Forum report table constructor.
      *
      * @param int $courseid The ID of the course the forum(s) exist within.
@@ -158,7 +163,7 @@ class summary_table extends table_sql {
         $columnheaders['latestpost'] = get_string('latestpost', 'forumreport_summary');
 
         if ($canexport) {
-            $columnheaders['export'] = '';
+            $columnheaders['export'] = get_string('exportposts', 'forumreport_summary');
         }
 
         $this->define_columns(array_keys($columnheaders));
@@ -291,12 +296,33 @@ class summary_table extends table_sql {
     public function col_export(\stdClass $data): string {
         global $OUTPUT;
 
+        // If no posts, nothing to export.
+        if (empty($data->earliestpost)) {
+            return '';
+        }
+
         $params = [
             'id' => $this->cm->instance, // Forum id.
-            'userids[]' => $data->userid // User id.
+            'userids[]' => $data->userid, // User id.
         ];
 
-        return $OUTPUT->action_link(new \moodle_url('/mod/forum/export.php', $params), get_string('export', 'mod_forum'));
+        // Add relevant filter params.
+        foreach ($this->exportfilterdata as $name => $data) {
+            if (is_array($data)) {
+                foreach ($data as $key => $value) {
+                    $params["{$name}[{$key}]"] = $value;
+                }
+            } else {
+                $params[$name] = $data;
+            }
+        }
+
+        $buttoncontext = [
+            'url' => new \moodle_url('/mod/forum/export.php', $params),
+            'label' => get_string('exportpostslabel', 'forumreport_summary', fullname($data)),
+        ];
+
+        return $OUTPUT->render_from_template('forumreport_summary/export_link_button', $buttoncontext);
     }
 
     /**
@@ -376,18 +402,17 @@ class summary_table extends table_sql {
 
                 // Skip adding filter if not applied, or all valid options are selected.
                 if (!empty($groups)) {
+                    list($groupidin, $groupidparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
+
                     // Posts within selected groups and/or not in any groups (group ID -1) are included.
                     // No user filtering as anyone enrolled can potentially post to unrestricted discussions.
                     if (array_search(-1, $groups) !== false) {
-                        list($groupidin, $groupidparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
-
                         $this->sql->filterwhere .= " AND d.groupid {$groupidin}";
                         $this->sql->params += $groupidparams;
 
                     } else {
                         // Only posts and users within selected groups are included.
                         list($groupusersin, $groupusersparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
-                        list($groupidin, $groupidparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
 
                         // No joins required (handled by where to prevent data duplication).
                         $this->sql->filterwhere .= "
@@ -421,6 +446,7 @@ class summary_table extends table_sql {
                         $this->sql->params['fromdate'] = $values['from']['timestamp'];
                         $this->sql->filterbase['dateslog'] .= ' AND timecreated >= :fromdate';
                         $this->sql->filterbase['dateslogparams']['fromdate'] = $values['from']['timestamp'];
+                        $this->exportfilterdata['timestampfrom'] = $values['from']['timestamp'];
                     }
 
                     // To date.
@@ -431,6 +457,7 @@ class summary_table extends table_sql {
                         $this->sql->params['todate'] = $values['to']['timestamp'];
                         $this->sql->filterbase['dateslog'] .= ' AND timecreated <= :todate';
                         $this->sql->filterbase['dateslogparams']['todate'] = $values['to']['timestamp'];
+                        $this->exportfilterdata['timestampto'] = $values['to']['timestamp'];
                     }
                 }
 
@@ -457,6 +484,7 @@ class summary_table extends table_sql {
         $this->pageable(true);
         $this->is_downloadable(true);
         $this->no_sorting('select');
+        $this->no_sorting('export');
         $this->set_attribute('id', 'forumreport_summary_table');
         $this->sql = new \stdClass();
         $this->sql->params = [];
