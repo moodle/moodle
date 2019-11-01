@@ -66,7 +66,7 @@ class export_form extends \moodleform {
                     return $OUTPUT->render_from_template('mod_forum/form-user-selector-suggestion', $useroptiondata);
                 }
         ];
-        $mform->addElement('autocomplete', 'userids', get_string('users'), [], $options);
+        $mform->addElement('autocomplete', 'useridsselected', get_string('users'), [], $options);
 
         // Get the discussions on this forum.
         $vaultfactory = \mod_forum\local\container::get_vault_factory();

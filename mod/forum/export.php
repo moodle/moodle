@@ -26,11 +26,29 @@ define('NO_OUTPUT_BUFFERING', true);
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/dataformatlib.php');
+require_once($CFG->dirroot . '/calendar/externallib.php');
 
 $forumid = required_param('id', PARAM_INT);
 $userids = optional_param_array('userids', [], PARAM_INT);
-$from = optional_param('from', '', PARAM_INT);
-$to = optional_param('to', '', PARAM_INT);
+$discussionids = optional_param_array('discids', [], PARAM_INT);
+$from = optional_param_array('from', [], PARAM_INT);
+$to = optional_param_array('to', [], PARAM_INT);
+$fromtimestamp = optional_param('timestampfrom', '', PARAM_INT);
+$totimestamp = optional_param('timestampto', '', PARAM_INT);
+
+if (!empty($from['enabled'])) {
+    unset($from['enabled']);
+    $from = core_calendar_external::get_timestamps([$from])['timestamps'][0]['timestamp'];
+} else {
+    $from = $fromtimestamp;
+}
+
+if (!empty($to['enabled'])) {
+    unset($to['enabled']);
+    $to = core_calendar_external::get_timestamps([$to])['timestamps'][0]['timestamp'];
+} else {
+    $to = $totimestamp;
+}
 
 $vaultfactory = mod_forum\local\container::get_vault_factory();
 $managerfactory = mod_forum\local\container::get_manager_factory();
@@ -69,10 +87,9 @@ if ($form->is_cancelled()) {
 
     $discussionvault = $vaultfactory->get_discussion_vault();
     $postvault = $vaultfactory->get_post_vault();
-    $discussionids = [];
     if ($data->discussionids) {
         $discussionids = $data->discussionids;
-    } else {
+    } else if (empty($discussionids)) {
         $discussions = $discussionvault->get_all_discussions_in_forum($forum);
         $discussionids = array_map(function ($discussion) {
             return $discussion->get_id();
@@ -80,8 +97,8 @@ if ($form->is_cancelled()) {
     }
 
     $filters = ['discussionids' => $discussionids];
-    if ($data->userids) {
-        $filters['userids'] = $data->userids;
+    if ($data->useridsselected) {
+        $filters['userids'] = $data->useridsselected;
     }
     if ($data->from) {
         $filters['from'] = $data->from;
@@ -146,7 +163,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 
 // It is possible that the following fields have been provided in the URL.
-$form->set_data(['userids' => $userids, 'from' => $from, 'to' => $to]);
+$form->set_data(['useridsselected' => $userids, 'discussionids' => $discussionids, 'from' => $from, 'to' => $to]);
 
 $form->display();
 
