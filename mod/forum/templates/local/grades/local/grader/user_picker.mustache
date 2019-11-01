@@ -53,16 +53,21 @@
                         <span class="sr-only">{{#str}} next {{/str}}</span>
                     </a>
                 </li>
-                <li class="page-item">
-                    <a class="page-link disabled" href="#" aria-label="Search" data-action="search-user">
-                        <span class="fa fa-search" aria-hidden="true"></span>
+                <li>
+                    <button class="btn btn-icon icon-size-4 icon-no-margin colour-inherit" aria-label="{{#str}} search {{/str}}" data-target="#searchbox" aria-expanded="false" aria-controls="searchbox" data-toggle="collapse">
+                        <i class="icon fa fa-search fa-fw" aria-hidden="true"></i>
                         <span class="sr-only">{{#str}} search {{/str}}</span>
-                    </a>
+                    </button>
                 </li>
 
             </ul>
         </div>
+        <div id="searchbox" class="col-md-12 collapse">
+            <form action="" class="search-form my-3 w-100">
+                <input type="text" data-action="search-user-input" class="form-control input-lg" placeholder="Search user">
+            </form>
+            <div data-action="search-user-box"></div>
+        </div>
     </div>
     <hr>
 </div>
-
