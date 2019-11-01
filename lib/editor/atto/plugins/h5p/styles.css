@@ -1,17 +1,20 @@
 .attoh5poverlay {
     display: none;
 }
-.editor_atto_content_wrap .attoh5poverlay {
-    display: block;
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: url([[pix:atto_h5p|icon]]) center center / 100px auto no-repeat #adb5bd;
+.attoh5pinstructions {
+    max-width: 500px;
 }
-.h5p-embed-placeholder .attoh5poverlay + br {
+.editor_atto_content_wrap .h5p-placeholder + br {
     display: none;
+}
+.editor_atto_content_wrap .h5p-placeholder {
+    color: #6c757d;
+    width: 100%;
+    word-break: break-all;
+    height: 260px;
+    cursor: pointer;
+    background: url([[pix:atto_h5p|icon-white]]) center center / 100px auto no-repeat #6c757d;
+}
+.atto_h5p_button .icon {
+    width: 24px;
 }
