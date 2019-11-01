@@ -59,10 +59,11 @@ const getContentForUserIdFunction = (cmid) => (userid) => {
  * The function curried fetches all users in a course for a given CMID.
  *
  * @param {Number} cmid
+ * @param {Number} groupID
  * @return {Array} Array of users for a given context.
  */
-const getUsersForCmidFunction = (cmid) => async() => {
-    const context = await CourseRepository.getUsersFromCourseModuleID(cmid);
+const getUsersForCmidFunction = (cmid, groupID) => async() => {
+    const context = await CourseRepository.getUsersFromCourseModuleID(cmid, groupID);
 
     return context.users;
 };
@@ -112,8 +113,10 @@ const launchWholeForumGrading = async(rootNode) => {
         data.gradableItemtype
     );
 
+    const groupID = data.group ? data.group : 0;
+
     await Grader.launch(
-        getUsersForCmidFunction(data.cmid),
+        getUsersForCmidFunction(data.cmid, groupID),
         getContentForUserIdFunction(data.cmid),
         gradingPanelFunctions.getter,
         gradingPanelFunctions.setter,
