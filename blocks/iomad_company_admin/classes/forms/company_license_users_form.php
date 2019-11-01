@@ -65,6 +65,13 @@ class company_license_users_form extends \moodleform {
             }
         }
         natsort($courseselect);
+
+        // If we only have one course in the license, select it by default.
+        if (count($courseselect) == 1) {
+            $this->selectedcourses = array_keys($courseselect);
+        }
+
+        // Add the all courses to the list.
         $courseselect = array(0 => get_string('all')) + $courseselect;
         $this->courseselect = $courseselect;
 
@@ -173,6 +180,7 @@ class company_license_users_form extends \moodleform {
                                                            'multiple' => false,
                                                            'onchange' => 'this.form.submit()'));
                 $courseselector->setMultiple(true);
+                $courseselector->setSelected($this->selectedcourses);
             } else {
                 $mform->addElement('hidden', 'courses');
                 $mform->setType('courses', PARAM_INT);
