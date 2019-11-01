@@ -23,7 +23,7 @@
  */
 
 $string['actionsaved'] = 'Your feedback of \'{$a}\' has been saved.';
-$string['disabledmodel'] = 'Sorry, this model has been disabled by the administrator';
+$string['disabledmodel'] = 'This model has been disabled by an administrator.';
 $string['indicators'] = 'Indicators';
 $string['insight'] = 'Insight';
 $string['insights'] = 'Insights';
