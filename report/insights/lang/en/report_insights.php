@@ -23,8 +23,8 @@
  */
 
 $string['actionsaved'] = 'Your feedback of \'{$a}\' has been saved.';
-$string['confirmbulkaction'] = 'Are you use you want to flag the {$a->nitems} selected predictions as "{$a->action}"?';
-$string['disabledmodel'] = 'Sorry, this model has been disabled by the administrator';
+$string['confirmbulkaction'] = 'Are you sure you want to flag the {$a->nitems} selected predictions as {$a->action}?';
+$string['disabledmodel'] = 'This model has been disabled by an administrator.';
 $string['indicators'] = 'Indicators';
 $string['insight'] = 'Insight';
 $string['insights'] = 'Insights';
