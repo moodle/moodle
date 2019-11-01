@@ -397,13 +397,13 @@ if (!empty($userlist)) {
                                                     $sqlparams);
     } else {
         $coursecount = $DB->count_records('companylicense_courses', array('licenseid' => $licenseid));
-        $allocations = $DB->get_records_sql("SELECT * FROM {local_report_user_lic_allocs}
+        $allocations = $DB->count_records_sql("SELECT count(id) FROM {local_report_user_lic_allocs}
                                              WHERE action = 1
                                              AND licenseid = :licenseid
                                              $timesql
                                              AND userid IN (" . $departmentids . ")",
                                              $sqlparams);
-        $unallocations = $DB->get_records_sql("SELECT * FROM {local_report_user_lic_allocs}
+        $unallocations = $DB->count_records_sql("SELECT count(id) FROM {local_report_user_lic_allocs}
                                                WHERE action = 0
                                                AND licenseid = :licenseid
                                                $timesql
