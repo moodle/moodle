@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/inpage_reply_modern
+    @template mod_forum/inpage_reply_v2
 
-    In page reply HTML for the "modern" discussion display mode.
+    In page reply HTML for the nested v2 discussion display mode.
 
     Classes required for JS:
     * none
@@ -73,7 +73,7 @@
                 <input type="hidden" name="reply" value="{{postid}}"/>
                 <input type="hidden" name="sesskey" value="{{sesskey}}"/>
                 <div class="d-flex mt-3 align-items-center flex-wrap">
-                    <button class="btn btn-primary" data-action="forum-inpage-submit">
+                    <button class="btn btn-primary font-weight-bold px-3" data-action="forum-inpage-submit">
                         <span data-region="submit-text">{{#str}} post, core {{/str}}</span>
                         <span data-region="loading-icon-container" class="hidden">{{> core/loading }}</span>
                     </button>

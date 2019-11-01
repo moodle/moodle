@@ -34,7 +34,7 @@ define([
 ], function(
     $,
     Templates,
-    String,
+    Str,
     Notification,
     SubscriptionToggle,
     Selectors,
@@ -107,7 +107,7 @@ define([
                     return Templates.replaceNode(toggleElement, html, js);
                 })
                 .then(function() {
-                    return String.get_string('lockupdated', 'forum')
+                    return Str.get_string('lockupdated', 'forum')
                         .done(function(s) {
                             return Notification.addNotification({
                                 message: s,
@@ -123,10 +123,16 @@ define([
 
     return {
         init: function(root) {
-            SubscriptionToggle.init(root, true, function(toggleElement, context) {
-                return Templates.render('mod_forum/discussion_subscription_toggle', context)
-                    .then(function(html, js) {
-                        return Templates.replaceNode(toggleElement, html, js);
+            SubscriptionToggle.init(root, false, function(toggleElement, context) {
+                var toggleId = toggleElement.attr('id');
+                var newTargetState = context.userstate.subscribed ? 0 : 1;
+                toggleElement.data('targetstate', newTargetState);
+
+                var stringKey = context.userstate.subscribed ? 'unsubscribediscussion' : 'subscribediscussion';
+                return Str.get_string(stringKey, 'mod_forum')
+                    .then(function(string) {
+                        toggleElement.closest('td').find('label[for="' + toggleId + '"]').text(string);
+                        return string;
                     });
             });
             registerEventListeners(root);

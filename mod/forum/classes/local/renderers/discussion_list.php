@@ -188,7 +188,8 @@ class discussion_list {
             'notifications' => $this->get_notifications($user, $groupid),
             'settings' => [
                 'excludetext' => true,
-                'togglemoreicon' => true
+                'togglemoreicon' => true,
+                'excludesubscription' => true
             ],
             'totaldiscussioncount' => $alldiscussionscount,
             'visiblediscussioncount' => count($discussions)

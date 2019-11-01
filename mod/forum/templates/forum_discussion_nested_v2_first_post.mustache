@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum_discussion_modern_first_post
+    @template mod_forum/forum_discussion_nested_v2_first_post
 
     Template to render a single post from a discussion.
 
@@ -47,7 +47,7 @@
     >
         {{#isfirstunread}}<a id="unread" aria-hidden="true"></a>{{/isfirstunread}}
 
-        <div class="author-image-container d-inline-block pt-2">
+        <div class="author-image-container d-inline-block">
             {{^isdeleted}}
                 {{#author}}
                     {{#urls.profileimage}}
@@ -76,7 +76,7 @@
         <div class="d-flex flex-column w-100"  data-region-content="forum-post-core">
             <header id="post-header-{{uniqid}}">
                 {{^isdeleted}}
-                    <div class="d-flex flex-wrap align-items-center mb-3">
+                    <div class="d-flex flex-wrap align-items-center mb-1">
                         <address class="mb-0 mr-2" tabindex="-1">
                             {{#author}}
                                 <h4 class="h6 d-lg-inline-block mb-0 author-header mr-1">
@@ -137,16 +137,6 @@
                             {{/author.groups}}
 
                             {{^readonly}}
-                                {{#capabilities.view}}
-                                    <a
-                                        href="{{{urls.view}}}"
-                                        class="d-inline-block mr-1 icon-no-margin"
-                                        title="{{#str}} permanentlinktopost, mod_forum {{/str}}"
-                                    >
-                                        {{#pix}} e/insert_edit_link, core {{/pix}}
-                                    </a>
-                                {{/capabilities.view}}
-
                                 {{#showactionmenu}}
                                     <div class="dropdown">
                                         <button
@@ -161,8 +151,17 @@
                                             {{#pix}} i/moremenu {{/pix}}
                                         </button>
                                         <!-- inline style to fix RTL placement bug -->
-                                        <div class="dropdown-menu" aria-labelledby="post-actions-menu-{{uniqid}}" style="right: auto">
+                                        <div class="dropdown-menu dropdown-menu-right rounded-lg shadow border-0" aria-labelledby="post-actions-menu-{{uniqid}}" style="right: auto">
                                             {{#capabilities}}
+                                                {{#view}}
+                                                    <a
+                                                        href="{{{urls.view}}}"
+                                                        class="dropdown-item"
+                                                        role="menuitem"
+                                                    >
+                                                        {{#str}} permalink, mod_forum {{/str}}
+                                                    </a>
+                                                {{/view}}
                                                 {{#controlreadstatus}}
                                                     {{#unread}}
                                                         <a
@@ -249,7 +248,7 @@
                 {{/hasreplycount}}
             </header>
 
-            <div class="post-message" id="post-content-{{id}}">
+            <div class="post-message pr-md-5" id="post-content-{{id}}">
                 {{{message}}}
             </div>
 
@@ -322,7 +321,7 @@
                         <div class="d-flex mt-3">
                             {{#capabilities.reply}}
                                 <button
-                                    class="btn btn-primary btn-lg"
+                                    class="btn btn-primary btn-lg font-weight-bold px-4"
                                     data-href="{{{urls.reply}}}"
                                     data-post-id="{{id}}"
                                     data-action="create-inpage-reply"
@@ -354,7 +353,7 @@
         <div class="indent replies-container" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
-                    {{> mod_forum/forum_discussion_modern_post_reply }}
+                    {{> mod_forum/forum_discussion_nested_v2_post_reply }}
                 {{/replies}}
             {{/hasreplies}}
         </div>

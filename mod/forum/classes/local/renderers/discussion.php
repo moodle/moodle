@@ -208,7 +208,7 @@ class discussion {
             'html' => [
                 'hasanyactions' => $hasanyactions,
                 'posts' => $this->postsrenderer->render($user, [$this->forum], [$this->discussion], $posts),
-                'modeselectorform' => $this->get_display_mode_selector_html($displaymode),
+                'modeselectorform' => $this->get_display_mode_selector_html($displaymode, $user),
                 'subscribe' => null,
                 'movediscussion' => null,
                 'pindiscussion' => null,
@@ -232,8 +232,8 @@ class discussion {
             ];
         }
 
-        if ($this->displaymode === FORUM_MODE_MODERN) {
-            $template = 'mod_forum/forum_discussion_modern';
+        if ($this->displaymode === FORUM_MODE_NESTED_V2) {
+            $template = 'mod_forum/forum_discussion_nested_v2';
         } else {
             $template = 'mod_forum/forum_discussion';
         }
@@ -274,14 +274,15 @@ class discussion {
      * Get the HTML for the display mode selector.
      *
      * @param int $displaymode The current display mode
+     * @param stdClass $user The current user
      * @return string
      */
-    private function get_display_mode_selector_html(int $displaymode) : string {
+    private function get_display_mode_selector_html(int $displaymode, stdClass $user) : string {
         $baseurl = $this->baseurl;
         $select = new single_select(
             $baseurl,
             'mode',
-            forum_get_layout_modes(),
+            forum_get_layout_modes(get_user_preferences('forum_useexperimentalui', false, $user)),
             $displaymode,
             null,
             'mode'
@@ -332,7 +333,7 @@ class discussion {
                 $html = '<div class="movediscussionoption">';
 
                 $movebutton = get_string('move');
-                if ($this->displaymode === FORUM_MODE_MODERN) {
+                if ($this->displaymode === FORUM_MODE_NESTED_V2) {
                     // Move discussion selector will be rendered on the settings drawer. We won't output the button in this mode.
                     $movebutton = null;
                 }

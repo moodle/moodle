@@ -174,6 +174,26 @@ select {
     margin-bottom: 0;
 }
 
+#page-mod-forum-view {
+    table {
+        .fit-content {
+            width: 1px;
+            white-space: nowrap;
+        }
+
+        .limit-width {
+            max-width: 200px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+
+            .author-info {
+                max-width: calc(100% - 35px - .5rem);
+            }
+        }
+    }
+}
+
 #page-mod-forum-discuss .discussioncontrols {
     width: auto;
     margin: 0;
@@ -199,7 +219,7 @@ $author-image-margin-sm: 8px;
 }
 
 #page-mod-forum-view [data-region="unified-grader"],
-.path-mod-forum.modern-display-mode {
+.path-mod-forum.nested-v2-display-mode {
     .discussionsubscription {
         margin-top: 0;
         text-align: inherit;
@@ -250,6 +270,10 @@ $author-image-margin-sm: 8px;
         line-height: 1;
         height: auto;
         border-radius: 10rem;
+
+        @include media-breakpoint-down(sm) {
+            margin-top: .5rem;
+        }
     }
 
     .group-image {
@@ -337,6 +361,7 @@ $author-image-margin-sm: 8px;
                 .author-image-container {
                     width: $author-image-width-sm;
                     margin-right: $author-image-margin-sm;
+                    padding-top: (36px - $author-image-width-sm) / 2;
                 }
 
                 /**
@@ -359,7 +384,7 @@ $author-image-margin-sm: 8px;
 
 /** Extra small devices (portrait phones, less than 576px). */
 @include media-breakpoint-down(sm) {
-    #page-mod-forum-discuss.modern-display-mode {
+    #page-mod-forum-discuss.nested-v2-display-mode {
         .forum-post-container {
             .author-image-container {
                 width: $author-image-width-sm;
