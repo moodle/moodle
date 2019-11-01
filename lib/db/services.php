@@ -625,7 +625,7 @@ $functions = array(
         'classname' => 'core_course_external',
         'methodname' => 'get_enrolled_users_by_cmid',
         'classpath' => 'course/externallib.php',
-        'description' => 'List users bycourse module id.',
+        'description' => 'List users by course module id & filter by group id.',
         'type' => 'read',
         'ajax' => true,
     ),
