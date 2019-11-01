@@ -1,0 +1,7 @@
+{
+    "moodle-atto_emojipicker-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

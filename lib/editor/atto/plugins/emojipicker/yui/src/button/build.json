@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_emojipicker-button",
+  "builds": {
+    "moodle-atto_emojipicker-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}
