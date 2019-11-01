@@ -23,5 +23,5 @@
  */
 
 $string['emojipicker'] = 'Emoji picker';
-$string['pluginname'] = 'Emoji Picker';
+$string['pluginname'] = 'Emoji picker';
 $string['privacy:metadata'] = 'The atto_emojipicker plugin does not store any personal data.';
