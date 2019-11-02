@@ -10,7 +10,7 @@ class mod_glossary_import_form extends moodleform {
     function definition() {
         global $CFG;
         $mform =& $this->_form;
-        $cmid = $this->_customdata['id'];
+        $cmid = $this->_customdata['id'] ?? null;
 
         $mform->addElement('filepicker', 'file', get_string('filetoimport', 'glossary'));
         $mform->addHelpButton('file', 'filetoimport', 'glossary');

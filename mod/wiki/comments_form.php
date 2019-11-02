@@ -10,8 +10,8 @@ class mod_wiki_comments_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 
-        $current = $this->_customdata['current'];
-        $commentoptions = $this->_customdata['commentoptions'];
+        $current = $this->_customdata['current'] ?? null;
+        $commentoptions = $this->_customdata['commentoptions'] ?? null;
 
         // visible elements
         $mform->addElement('editor', 'entrycomment_editor', get_string('comment', 'glossary'), null, $commentoptions);
