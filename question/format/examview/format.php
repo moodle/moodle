@@ -164,7 +164,7 @@ class qformat_examview extends qformat_based_on_xml {
         $questions = array();
         $currentquestion = array();
 
-        $text = implode($lines, ' ');
+        $text = implode(' ', $lines);
         $text = $this->cleanunicode($text);
 
         $xml = xmlize($text, 0);

@@ -288,7 +288,7 @@ class completion_criteria_activity extends completion_criteria {
             }
         }
 
-        $details['requirement'] = implode($details['requirement'], ', ');
+        $details['requirement'] = implode(', ', $details['requirement']);
 
         $details['status'] = '';
 

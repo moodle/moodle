@@ -1285,7 +1285,7 @@ class core_admin_renderer extends plugin_renderer_base {
         if ($unavailable or $unknown) {
             $out .= $this->output->heading(get_string('misdepsunavail', 'core_plugin'));
             if ($unknown) {
-                $out .= $this->output->notification(get_string('misdepsunknownlist', 'core_plugin', implode($unknown, ', ')));
+                $out .= $this->output->notification(get_string('misdepsunknownlist', 'core_plugin', implode(', ', $unknown)));
             }
             if ($unavailable) {
                 $unavailablelist = array();
@@ -1300,7 +1300,7 @@ class core_admin_renderer extends plugin_renderer_base {
                     $unavailablelist[] = $unavailablelistitem;
                 }
                 $out .= $this->output->notification(get_string('misdepsunavaillist', 'core_plugin',
-                    implode($unavailablelist, ', ')));
+                    implode(', ', $unavailablelist)));
             }
             $out .= $this->output->container_start('plugins-check-dependencies-actions');
             $out .= ' '.html_writer::link(new moodle_url('/admin/tool/installaddon/'),
@@ -1420,7 +1420,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 html_writer::div($plugin->name, 'name').' '.html_writer::div($plugin->component, 'component'),
                 $plugin->version->release,
                 $plugin->version->version,
-                implode($supportedmoodles, ' '),
+                implode(' ', $supportedmoodles),
                 $info
             );
         }
@@ -2011,7 +2011,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 if (empty($CFG->docroot) or $environment_result->plugin) {
                     $report = get_string($stringtouse, 'admin', $rec);
                 } else {
-                    $report = $this->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec), true);
+                    $report = $this->doc_link(join('/', $linkparts), get_string($stringtouse, 'admin', $rec), true);
                 }
                 // Enclose report text in div so feedback text will be displayed underneath it.
                 $report = html_writer::div($report);
