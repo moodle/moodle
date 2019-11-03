@@ -75,7 +75,7 @@ $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
 $string['mainmenu'] = 'Main menu';
-$string['minimumversion'] = 'Require users to upgrade their apps to the minimum version indicated. Those using previous versions of the app will not be able to access to the site. This works since app version 3.8.0 onward.';
+$string['minimumversion'] = 'If an app version is specified (3.8.0 or higher), any users using an older app version will be prompted to upgrade their app before being allowed access to the site.';
 $string['minimumversion_key'] = 'Minimum app version required';
 $string['mobileapp'] = 'Mobile app';
 $string['mobileappconnected'] = 'Mobile app connected';
@@ -93,7 +93,7 @@ $string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}"
 $string['remoteaddons'] = 'Remote add-ons';
 $string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites.';
 $string['setuplink'] = 'App download page';
-$string['setuplink_desc'] = 'URL of page with links to download the mobile app from the App Store and Google Play.';
+$string['setuplink_desc'] = 'URL of page with options to download the mobile app from the App Store and Google Play. The app download page link is displayed in the page footer and in a user\'s profile. Leave blank to not display a link.';
 $string['smartappbanners'] = 'App Banners';
 $string['typeoflogin'] = 'Type of login';
 $string['typeoflogin_desc'] = 'If the site uses a SSO authentication method, then select via a browser window or via an embedded browser. An embedded browser provides a better user experience, though it doesn\'t work with all SSO plugins.';
