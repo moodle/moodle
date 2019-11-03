@@ -119,6 +119,8 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
             var processdelay = window.MathJax.Hub.processSectionDelay;
             // Set the process section delay to 0 when updating the formula.
             window.MathJax.Hub.processSectionDelay = 0;
+            // When content is updated never position to hash, it may cause unexpected document scrolling.
+            window.MathJax.Hub.Config({positionToHash: false});
             self._setLocale();
             event.nodes.each(function(node) {
                 node.all('.filter_mathjaxloader_equation').each(function(node) {
