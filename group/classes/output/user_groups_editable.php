@@ -98,7 +98,7 @@ class user_groups_editable extends \core\output\inplace_editable {
         }
 
         if (!empty($listofgroups)) {
-            $this->displayvalue = implode($listofgroups, ', ');
+            $this->displayvalue = implode(', ', $listofgroups);
         } else {
             $this->displayvalue = get_string('groupsnone');
         }

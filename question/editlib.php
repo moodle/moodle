@@ -490,7 +490,7 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
     foreach ($contexts->having_one_edit_tab_cap($edittab) as $context){
         $contextlistarr[] = "'{$context->id}'";
     }
-    $contextlist = join($contextlistarr, ' ,');
+    $contextlist = join(' ,', $contextlistarr);
     if (!empty($pagevars['cat'])){
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (false !== array_search($catparts[1], $contextlistarr)) ||
