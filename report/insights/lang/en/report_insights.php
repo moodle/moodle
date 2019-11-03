@@ -23,7 +23,7 @@
  */
 
 $string['calculatedvalue'] = 'Calculated value';
-$string['disabledmodel'] = 'Sorry, this model has been disabled by the administrator';
+$string['disabledmodel'] = 'This model has been disabled by an administrator.';
 $string['indicator'] = 'Indicator';
 $string['insightprediction'] = '{$a} prediction';
 $string['insight'] = 'Insight';
