@@ -114,6 +114,21 @@ export const init = (root) => {
         };
     }
 
+    // Override download link so the file is generated with filters.
+    const downloadForm = document.getElementById('summaryreport').querySelector('form.dataformatselector');
+    if (downloadForm) {
+        downloadForm.onsubmit = (event) => {
+            const downloadType = downloadForm.querySelector('#downloadtype_download').value;
+            const getParams = `download=${downloadType}`;
+            const prevAction = document.forms.filtersform.action;
+
+            generateWithFilters(event, getParams);
+
+            // Revert action, so re-submitting the form via filter does not trigger a further download.
+            document.forms.filtersform.action = prevAction;
+        };
+    }
+
     // Submit report via filter
     const submitWithFilter = (containerelement) => {
         // Disable the dates filter mform checker to prevent any changes triggering a warning to the user.
