@@ -144,6 +144,7 @@ $string['inputdatadirectory'] = 'Data directory:';
 $string['inputwebadress'] = 'Web address :';
 $string['inputwebdirectory'] = 'Moodle directory:';
 $string['installation'] = 'Installation';
+$string['invaliddbprefix'] = 'Invalid prefix. The prefix can only consist of lower case letters and underscore.';
 $string['langdownloaderror'] = 'Unfortunately the language "{$a}" could not be downloaded. The installation process will continue in English.';
 $string['langdownloadok'] = 'The language "{$a}" was installed successfully. The installation process will continue in this language.';
 $string['memorylimit'] = 'Memory limit';
