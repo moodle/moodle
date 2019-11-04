@@ -123,7 +123,11 @@ class insights_list implements \renderable, \templatable {
             if ($predictionsdata) {
                 list($total, $predictions) = $predictionsdata;
 
-                $data->bulkactions = actions_exporter::add_bulk_actions($target, $output, $predictions, $this->context);
+                if ($predictions) {
+                    // No bulk actions if no predictions.
+                    $data->bulkactions = actions_exporter::add_bulk_actions($target, $output, $predictions, $this->context);
+                }
+
                 $data->multiplepredictions = count($predictions) > 1 ? true : false;
 
                 foreach ($predictions as $prediction) {
