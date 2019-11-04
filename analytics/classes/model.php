@@ -1398,6 +1398,10 @@ class model {
             $current++;
         }
 
+        if (empty($predictions)) {
+            return array();
+        }
+
         return [$current, $predictions];
     }
 
