@@ -253,6 +253,66 @@ class behat_mod_forum extends behat_base {
     }
 
     /**
+     * Checks if the user can subscribe to the forum.
+     *
+     * @Given /^I can subscribe to this forum$/
+     */
+    public function i_can_subscribe_to_this_forum() {
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
+        }
+
+        $this->execute('behat_general::assert_page_contains_text', [get_string('subscribe', 'mod_forum')]);
+
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
+        }
+    }
+
+    /**
+     * Checks if the user can unsubscribe from the forum.
+     *
+     * @Given /^I can unsubscribe from this forum$/
+     */
+    public function i_can_unsubscribe_from_this_forum() {
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
+        }
+
+        $this->execute('behat_general::assert_page_contains_text', [get_string('unsubscribe', 'mod_forum')]);
+
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
+        }
+    }
+
+    /**
+     * Subscribes to the forum.
+     *
+     * @Given /^I subscribe to this forum$/
+     */
+    public function i_subscribe_to_this_forum() {
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
+        }
+
+        $this->execute('behat_general::click_link', [get_string('subscribe', 'mod_forum')]);
+    }
+
+    /**
+     * Unsubscribes from the forum.
+     *
+     * @Given /^I unsubscribe from this forum$/
+     */
+    public function i_unsubscribe_from_this_forum() {
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
+        }
+
+        $this->execute('behat_general::click_link', [get_string('unsubscribe', 'mod_forum')]);
+    }
+
+    /**
      * Fetch user ID from its username.
      *
      * @param string $username The username.

@@ -34,35 +34,29 @@ Feature: A user can control their own subscription preferences for a discussion
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    Then I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    Then I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I follow "Subscribe to this forum"
+    And I subscribe to this forum
     And I should see "Student One will be notified of new posts in 'Test forum name'"
-    And I click on "Actions menu" "link"
-    And I should see "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I follow "Unsubscribe from this forum"
+    And I unsubscribe from this forum
     And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
 
@@ -83,35 +77,29 @@ Feature: A user can control their own subscription preferences for a discussion
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    Then I click on "Actions menu" "link"
-    And I should see "Unsubscribe from this forum"
+    Then I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
-    And I click on "Actions menu" "link"
-    And I should see "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
-    And I click on "Actions menu" "link"
-    And I should see "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
-    And I click on "Actions menu" "link"
-    And I should see "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I follow "Unsubscribe from this forum"
+    And I unsubscribe from this forum
     And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    And I follow "Subscribe to this forum"
+    And I subscribe to this forum
     And I should see "Student One will be notified of new posts in 'Test forum name'"
-    And I click on "Actions menu" "link"
-    And I should see "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
 
@@ -132,13 +120,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I log out
@@ -153,14 +139,12 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I click on "Actions menu" "link"
-    And I should see "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    When I follow "Unsubscribe from this forum"
+    When I unsubscribe from this forum
     Then I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
 
@@ -181,13 +165,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
-    And I click on "Actions menu" "link"
-    And I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I log out
@@ -202,14 +184,12 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I click on "Actions menu" "link"
-    And I should see "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
-    When I follow "Unsubscribe from this forum"
+    When I unsubscribe from this forum
     And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    And I click on "Actions menu" "link"
-    Then I should see "Subscribe to this forum"
+    And I can subscribe to this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
 
