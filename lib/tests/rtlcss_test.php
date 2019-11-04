@@ -340,7 +340,15 @@ class rtlcss_test extends basic_testcase {
                 'expected' => 'div {display:inline;}',
                 'input' => 'div {/*rtl:begin:remove*/left:10px; text-align:left;/*rtl:end:remove*/ display:inline;}',
                 'reversable' => false
-            ]]
+            ]],
+            // Not supported by MoodleHQ/RTLCSS yet.
+            //[[
+            //    'should' => 'Final/trailing comment ignored bug (block style): note a tag rules are NOT flipped as they should be',
+            //    'expected' => 'div {left:10px;text-align:left;} a {right:10px;}',
+            //    'input' => 'div {/*rtl:begin:ignore*/left:10px; text-align:left;/*rtl:end:ignore*/} a {left:10px;}',
+            //    'reversable' => false,
+            //    'skip' => true
+            //]]
         ];
     }
 
