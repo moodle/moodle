@@ -322,8 +322,10 @@ class grading_manager {
             }
 
         } else if ($this->get_context()->contextlevel == CONTEXT_MODULE) {
-            list($context, $course, $cm) = get_context_info_array($this->get_context()->id);
-            return self::available_areas('mod_'.$cm->modname);
+            $modulecontext = $this->get_context();
+            $coursecontext = $modulecontext->get_course_context();
+            $cm = get_fast_modinfo($coursecontext->instanceid)->get_cm($modulecontext->instanceid);
+            return self::available_areas("mod_{$cm->modname}");
 
         } else {
             throw new coding_exception('Unsupported gradable area context level');
