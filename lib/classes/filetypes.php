@@ -114,6 +114,7 @@ abstract class core_filetypes {
             'gzip' => array('type' => 'application/g-zip', 'icon' => 'archive',
                     'groups' => array('archive'), 'string' => 'archive'),
             'h' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
+            'h5p' => array('type' => 'application/zip', 'icon' => 'h5p', 'string' => 'archive'),
             'hpp' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
             'hqx' => array('type' => 'application/mac-binhex40', 'icon' => 'archive',
                     'groups' => array('archive'), 'string' => 'archive'),
