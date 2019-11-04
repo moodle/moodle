@@ -76,6 +76,13 @@ validation against and defaults to null (so, no user needed) if not provided.
 the itemid and filepath for the filearea and path defined in $args. It has been added in order to get the correct itemid and
 filepath because some components, such as mod_page or mod_resource, add the revision to the URL where the itemid should be placed
 (to prevent caching problems), but then they don't store it in database.
+* New utility function \core_form\util::form_download_complete should be called if your code sends
+  a file with Content-Disposition: Attachment in response to a Moodle form submit button (to ensure
+  that disabled submit buttons get re-enabled in that case). It is automatically called by the
+  filelib.php send_xx functions.
+* If you have a form which sends a file in response to a Moodle form submit button, but you cannot
+  call the above function because the file is sent by a third party library, then you should add
+  the attribute data-double-submit-protection="off" to your form.
 
 === 3.7 ===
 

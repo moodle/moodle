@@ -169,6 +169,10 @@ abstract class moodleform {
      * @param mixed $attributes you can pass a string of html attributes here or an array.
      *               Special attribute 'data-random-ids' will randomise generated elements ids. This
      *               is necessary when there are several forms on the same page.
+     *               Special attribute 'data-double-submit-protection' set to 'off' will turn off
+     *               double-submit protection JavaScript - this may be necessary if your form sends
+     *               downloadable files in response to a submit button, and can't call
+     *               \core_form\util::form_download_complete();
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */

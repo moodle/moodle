@@ -2299,6 +2299,9 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         $filename = urlencode($filename);
     }
 
+    // If this file was requested from a form, then mark download as complete.
+    \core_form\util::form_download_complete();
+
     header('Content-Disposition: attachment; filename="'.$filename.'"');
     if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
         header('Cache-Control: private, max-age=10, no-transform');
@@ -2450,6 +2453,9 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 
     if ($forcedownload) {
         header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+        // If this file was requested from a form, then mark download as complete.
+        \core_form\util::form_download_complete();
     } else if ($mimetype !== 'application/x-shockwave-flash') {
         // If this is an swf don't pass content-disposition with filename as this makes the flash player treat the file
         // as an upload and enforces security that may prevent the file from being loaded.

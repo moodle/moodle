@@ -140,6 +140,10 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
         header('Expires: 0');
         header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
         header('Pragma: public');
+
+        // If this file was requested from a form, then mark download as complete.
+        \core_form\util::form_download_complete();
+
         $exportfilehandler = fopen($exportfile, 'rb');
         print fread($exportfilehandler, filesize($exportfile));
         fclose($exportfilehandler);
