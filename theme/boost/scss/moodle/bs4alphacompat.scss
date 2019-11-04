@@ -215,13 +215,6 @@ $bs4aspacers: map-merge((
   }
 }
 
-// Adding compatibility for col-xs-* classes.
-@for $i from 1 through $grid-columns {
-  .col-xs-#{$i} {
-    @extend .col-#{$i};
-  }
-}
-
 input[disabled] {
     cursor: not-allowed;
 }

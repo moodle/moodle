@@ -46,16 +46,16 @@
     }
 }}
 <tr data-prediction-id="{{predictionid}}" class="d-flex">
-    <td class="insight-checkbox-cell col-xs-1{{^bulkactions}} hidden{{/bulkactions}}">
+    <td class="insight-checkbox-cell col-1{{^bulkactions}} hidden{{/bulkactions}}">
         {{{toggleslave}}}
     </td>
-    <td class="col-xs-8">
+    <td class="col-8">
         {{#sampleimage}}
             {{{sampleimage}}}
         {{/sampleimage}}
         {{{sampledescription}}}
     </td>
-    <td class="col-xs-3{{^actions}} hidden{{/actions}}">
+    <td class="col-3{{^actions}} hidden{{/actions}}">
     {{#actions}}
         {{> core/action_menu}}
     {{/actions}}
