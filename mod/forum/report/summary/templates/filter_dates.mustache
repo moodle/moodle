@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template forumreport_summary/filter_dates
+
+    Summary report dates filter.
+
+    Example context (json):
+    {
+        "filterdatesname": "Dates",
+        "filterdatesdata": [
+            {
+                "type": "from",
+                "timestamp": "1571377510",
+                "enabled": "1"
+            },
+            {
+                "type": "to",
+                "timestamp": "1571377510",
+                "enabled": "1"
+            }
+        ]
+    }
+}}
+
+
+<button type="button" id="filter-dates-button" class="btn btn-primary rounded p-1" aria-expanded="false"
+        aria-haspopup="true" aria-label="{{# str}} filter:datesbuttonlabel, forumreport_summary {{/ str}}">
+    {{filterdatesname}}
+</button>
+
+{{! Hidden dates fields to populate from visible mform in popover. }}
+{{#filterdatesdata}}
+<input type="hidden" name="date{{type}}[timestamp]" value="{{timestamp}}">
+<input type="hidden" name="date{{type}}[enabled]" value="{{enabled}}">
+{{/filterdatesdata}}
