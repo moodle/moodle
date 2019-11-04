@@ -241,10 +241,10 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
      * Override of standard quickforms method.
      *
      * @param  array $submitValues
-     * @param  bool  $notused Not used.
+     * @param  bool  $assoc  whether to return the value as associative array
      * @return array field name => value. The value is the time interval in seconds.
      */
-    function exportValue(&$submitValues, $notused = false) {
+    function exportValue(&$submitValues, $assoc = false) {
         // Get the values from all the child elements.
         $valuearray = array();
         foreach ($this->_elements as $element) {
@@ -259,8 +259,8 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
             return null;
         }
         if ($this->_options['optional'] && empty($valuearray['enabled'])) {
-            return array($this->getName() => 0);
+            return $this->_prepareValue(0, $assoc);
         }
-        return array($this->getName() => $valuearray['number'] * $valuearray['timeunit']);
+        return $this->_prepareValue($valuearray['number'] * $valuearray['timeunit'], $assoc);
     }
 }
