@@ -30,5 +30,5 @@ if ($ADMIN->fulltree) {
             get_string('allowedsourceslist',
             'filter_displayh5p'),
             get_string('allowedsourceslistdesc', 'filter_displayh5p'),
-            "https://h5p.org/h5p/embed/[id]\nhttps://*.h5p.com/content/[id]/embed\nhttps://*.h5p.com/content/[id]"));
+            "https://h5p.org/h5p/embed/[id]"));
 }

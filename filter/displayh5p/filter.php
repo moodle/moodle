@@ -63,7 +63,7 @@ class filter_displayh5p extends moodle_text_filter {
         $allowedsources = get_config('filter_displayh5p', 'allowedsources');
         $allowedsources = array_filter(array_map('trim', explode("\n", $allowedsources)));
 
-        $localsource = '('.preg_quote($CFG->wwwroot).'/[^ &<]*\.h5p([?][^ <]*)?[^ &<]*)';
+        $localsource = '('.preg_quote($CFG->wwwroot).'/[^ &\#"\'<]*\.h5p([?][^ "\'<]*)?[^ \#"\'<]*)';
         $allowedsources[] = $localsource;
 
         $params = array(
@@ -71,8 +71,8 @@ class filter_displayh5p extends moodle_text_filter {
             'tagend' => '</iframe>'
         );
 
-        $specialchars = ['*', '?', '&', '[^<]'];
-        $escapedspecialchars = ['[^.]+', '\?', '&amp;', '[^<]*'];
+        $specialchars = ['?', '&'];
+        $escapedspecialchars = ['\?', '&amp;'];
         $h5pcontents = array();
 
         // Check all allowed sources.

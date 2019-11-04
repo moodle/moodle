@@ -42,7 +42,7 @@ class filter_displayh5p_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         set_config('allowedsources',
-            "https://h5p.org/h5p/embed/[id]\nhttps://*.h5p.com/content/[id]/embed\nhttps://*.h5p.com/content/[id]
+            "https://h5p.org/h5p/embed/[id]\nhttps://moodle.h5p.com/content/[id]/embed\nhttps://moodle.h5p.com/content/[id]
                 \nhttps://generic.wordpress.soton.ac.uk/altc/wp-admin/admin-ajax.php?action=h5p_embed&id=[id]",
             'filter_displayh5p');
     }
