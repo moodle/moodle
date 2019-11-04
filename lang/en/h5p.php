@@ -79,6 +79,9 @@ $string['h5ptitle'] = 'Visit H5P.org to check out more cool content.';
 $string['h5pfilenotfound'] = 'H5P file not found';
 $string['h5pinvalidurl'] = 'Invalid H5P content URL.';
 $string['h5pprivatefile'] = 'This H5P content can\'t be displayed because you don\'t have access to the .h5p file.';
+$string['h5pmanage'] = 'Manage H5P content types';
+$string['h5ppackage'] = 'H5P content type';
+$string['h5ppackage_help'] = 'An H5P content type is a file with an H5P or ZIP extension containing all libraries required to display the content.';
 $string['hideadvanced'] = 'Hide advanced';
 $string['invalidcontextid'] = 'H5P file not found (invalid contextid)';
 $string['invalidfile'] = 'File "{$a->%filename}" not allowed. Only files with the following extensions are allowed: {$a->%files-allowed}.';
@@ -92,11 +95,16 @@ $string['invalidlibraryoption'] = 'Illegal option {$a->%option} in {$a->%library
 $string['invalidlibraryproperty'] = 'Can\'t read the property {$a->%property} in {$a->%library}';
 $string['invalidmainjson'] = 'A valid main h5p.json file is missing';
 $string['invalidmultiselectoption'] = 'Invalid selected option in multi-select.';
+$string['invalidpackage'] = 'Invalid H5P content type';
 $string['invalidselectoption'] = 'Invalid selected option in select.';
 $string['invalidsemanticsjson'] = 'Invalid semantics.json file has been included in the library {$a->%name}';
 $string['invalidsemanticstype'] = 'H5P internal error: unknown content type "{$a->@type}" in semantics. Removing content!';
 $string['invalidstring'] = 'Provided string is not valid according to regexp in semantics. (value: "{$a->%value}", regexp: "{$a->%regexp}")';
 $string['librarydirectoryerror'] = 'Library directory name must match machineName or machineName-majorVersion.minorVersion (from library.json). (Directory: {$a->%directoryName} , machineName: {$a->%machineName}, majorVersion: {$a->%majorVersion}, minorVersion: {$a->%minorVersion})';
+$string['librariesmanagerdescription'] = '<p>H5P enables users to create interactive content by providing a range of content types.</p>'.
+    '<p>To ensure that only trusted H5P content types are used on your site, you need to <i>either</i></p>'.
+    '<ul><li>Upload H5P content types from h5p.org <i>or</i></li><li>Enable the scheduled task \'Download available H5P content types from h5p.org</li></ul>'.
+    '<p>Note that users will only be able to use the H5P content types which are installed on your site.</p>';
 $string['license'] = 'License';
 $string['licenseCC010'] = 'CC0 1.0 Universal (CC0 1.0) Public Domain Dedication';
 $string['licenseCC010U'] = 'CC0 1.0 Universal';
@@ -155,6 +163,8 @@ $string['undisclosed'] = 'Undisclosed';
 $string['unpackedFilesExceedsMaxSize'] = 'The total size of the unpacked files exceeds the maximum size allowed. ({$a->%used} > {$a->%max})';
 $string['updatedlibraries'] = 'Updated {$a->%old} H5P libraries.';
 $string['updatedlibrary'] = 'Updated {$a->%old} H5P library.';
+$string['uploadlibraries'] = 'Upload H5P content types';
+$string['uploadsuccess'] = 'H5P content types uploaded successfully';
 $string['wrongversion'] = 'The version of the H5P library {$a->%machineName} used in this content is not valid. Content contains {$a->%contentLibrary}, but it should be {$a->%semanticsLibrary}.';
 $string['year'] = 'Year';
 $string['years'] = 'Year(s)';
