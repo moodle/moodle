@@ -35,6 +35,7 @@
     }
 }}
 <div
+    id="grader-container-{{uniqid}}"
     class="d-flex flex-column h-100 unified-grader"
     data-region="unified-grader"
     {{#userid}}data-first-userid="{{.}}"{{/userid}}
@@ -47,3 +48,27 @@
         {{> mod_forum/local/grades/local/grader/content }}
     </div>
 </div>
+{{#js}}
+    require(['jquery', 'core/drawer'], function($, Drawer) {
+        var root = $('#grader-container-{{uniqid}}');
+        var drawer = root.find('[data-region="right-hand-drawer"]');
+        var expandButtons = root.find('[data-action="expand-grading-drawer"]');
+        var collapseButtons = root.find('[data-action="collapse-grading-drawer"]');
+
+        expandButtons.click(function() {
+            collapseButtons.removeClass('active');
+            expandButtons.addClass('active');
+            collapseButtons.attr('aria-expanded', true);
+            expandButtons.attr('aria-expanded', true);
+            Drawer.show(drawer);
+        });
+
+        collapseButtons.click(function() {
+            expandButtons.removeClass('active');
+            collapseButtons.addClass('active');
+            collapseButtons.attr('aria-expanded', false);
+            expandButtons.attr('aria-expanded', false);
+            Drawer.hide(drawer);
+        });
+    });
+{{/js}}

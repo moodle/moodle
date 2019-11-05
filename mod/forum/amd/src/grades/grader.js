@@ -27,6 +27,7 @@ import Templates from 'core/templates';
 import * as Grader from '../local/grades/grader';
 import Notification from 'core/notification';
 import CourseRepository from 'core_course/repository';
+import {relativeUrl} from 'core/url';
 
 const templateNames = {
     contentRegion: 'mod_forum/grades/grader/discussion/posts',
@@ -120,7 +121,9 @@ const launchWholeForumGrading = async(rootNode) => {
         {
             groupid: data.groupid,
             initialUserId: data.initialuserid,
-            moduleName: data.name
+            moduleName: data.name,
+            courseName: data.courseName,
+            courseUrl: relativeUrl('/course/view.php', {id: data.courseId})
         }
     );
 };

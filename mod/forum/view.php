@@ -115,6 +115,8 @@ if ($capabilitymanager->can_grade($USER)) {
             'contextid' => $forum->get_context()->id,
             'cmid' => $cmid,
             'name' => $forum->get_name(),
+            'courseid' => $course->id,
+            'coursename' => $course->shortname,
             'groupid' => $groupid,
             'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
             'gradingcomponentsubtype' => $forumgradeitem->get_grading_component_subtype(),

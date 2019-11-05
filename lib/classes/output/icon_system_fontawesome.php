@@ -195,6 +195,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/assignroles' => 'fa-user-plus',
             'core:i/backup' => 'fa-file-zip-o',
             'core:i/badge' => 'fa-shield',
+            'core:i/breadcrumbdivider' => 'fa-angle-right',
             'core:i/calc' => 'fa-calculator',
             'core:i/calendar' => 'fa-calendar',
             'core:i/calendareventdescription' => 'fa-align-left',
