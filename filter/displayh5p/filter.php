@@ -146,8 +146,8 @@ class filter_displayh5p extends moodle_text_filter {
             $sourceurl .= $urlmodifier;
         }
 
-        $h5piframesrc = $sourceurl.
-            '" class="h5p-iframe" style="height:230px; width: 100%; border: 0;" allowfullscreen="allowfullscreen">';
+        $h5piframesrc = $sourceurl . '" class="h5p-iframe" name="h5pcontent"' .
+            ' style="height:230px; width: 100%; border: 0;" allowfullscreen="allowfullscreen">';
 
         // We want to request the resizing script only once.
         if (self::$loadresizerjs) {
