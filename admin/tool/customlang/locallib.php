@@ -254,20 +254,19 @@ class tool_customlang_utils {
      *
      * @param string $component the name of the component
      * @param array $strings
+     * @return void
      */
     protected static function dump_strings($lang, $component, $strings) {
         global $CFG;
 
         if ($lang !== clean_param($lang, PARAM_LANG)) {
-            debugging('Unable to dump local strings for non-installed language pack .'.s($lang));
-            return false;
+            throw new moodle_exception('Unable to dump local strings for non-installed language pack .'.s($lang));
         }
         if ($component !== clean_param($component, PARAM_COMPONENT)) {
             throw new coding_exception('Incorrect component name');
         }
         if (!$filename = self::get_component_filename($component)) {
-            debugging('Unable to find the filename for the component '.s($component));
-            return false;
+            throw new moodle_exception('Unable to find the filename for the component '.s($component));
         }
         if ($filename !== clean_param($filename, PARAM_FILE)) {
             throw new coding_exception('Incorrect file name '.s($filename));
@@ -284,8 +283,7 @@ class tool_customlang_utils {
         }
 
         if (!$f = fopen($filepath, 'w')) {
-            debugging('Unable to write '.s($filepath));
-            return false;
+            throw new moodle_exception('Unable to write '.s($filepath));
         }
         fwrite($f, <<<EOF
 <?php
