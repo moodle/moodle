@@ -159,7 +159,7 @@ class fetch extends external_api {
         $criterion = [];
         if ($definition->rubric_criteria) {
             // Iterate over the defined criterion in the rubric and map out what we need to render each item.
-            $criterion = array_map(function($criterion) use ($definitionid, $fillings, $context) {
+            $criterion = array_map(function($criterion) use ($definitionid, $fillings, $context, $hasgrade) {
                 // The general structure we'll be returning, we still need to get the remark (if any) and the levels associated.
                 $result = [
                     'id' => $criterion['id'],
@@ -213,8 +213,8 @@ class fetch extends external_api {
                     'id' => null,
                     'criterionid' => $criterion['id'],
                     'score' => '-',
-                    'definition' => 'Not set',
-                    'checked' => null,
+                    'definition' => get_string('notset', 'gradingform_rubric'),
+                    'checked' => !$hasgrade,
                 ];
                 // Consult the grade filling to see if a level has been selected and if it is the current level.
                 if (array_key_exists('levelid', $filling) && $filling['levelid'] == 0) {

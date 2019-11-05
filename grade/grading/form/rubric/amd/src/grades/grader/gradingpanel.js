@@ -24,6 +24,7 @@
 
 import {call as fetchMany} from 'core/ajax';
 import {normaliseResult} from 'core_grades/grades/grader/gradingpanel/normalise';
+import {compareData} from 'core_grades/grades/grader/gradingpanel/comparison';
 
 
 // Note: We use jQuery.serializer here until we can rewrite Ajax to use XHR.send()
@@ -65,14 +66,18 @@ export const fetchCurrentGrade = (component, contextid, itemname, gradeduserid) 
 export const storeCurrentGrade = async(component, contextid, itemname, gradeduserid, rootNode) => {
     const form = rootNode.querySelector('form');
 
-    return normaliseResult(await fetchMany([{
-        methodname: `gradingform_rubric_grader_gradingpanel_store`,
-        args: {
-            component,
-            contextid,
-            itemname,
-            gradeduserid,
-            formdata: jQuery(form).serialize(),
-        },
-    }])[0]);
+    if (compareData(form) === true) {
+        return normaliseResult(await fetchMany([{
+            methodname: `gradingform_rubric_grader_gradingpanel_store`,
+            args: {
+                component,
+                contextid,
+                itemname,
+                gradeduserid,
+                formdata: jQuery(form).serialize(),
+            },
+        }])[0]);
+    } else {
+        return '';
+    }
 };
