@@ -38,5 +38,21 @@
         "total": 7
     }
 }}
-<div class="d-block font-weight-bold" data-region="name" data-userid="{{id}}">{{fullname}}</div>
-<div class="d-block"><div class="d-inline" data-region="index">{{displayIndex}}</div>/{{total}}</div>
+{{#profileimagelg}}
+<img
+    class="rounded-circle userpicture mr-2"
+    src="{{.}}"
+    alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
+    title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
+>
+{{/profileimagelg}}
+<div>
+    <h5
+        class="mb-0 font-weight-bold user-full-name text-truncate"
+        data-region="name"
+        data-userid="{{id}}"
+    >
+        {{fullname}}
+    </h5>
+</div>
+
