@@ -58,12 +58,26 @@ const showPostInContext = async(rootNode) => {
         }),
     ]);
 
-    const userPosts = allPosts.posts.map((post) => {
-        post.subject = null;
+    const postsById = new Map(allPosts.posts.map(post => {
         post.readonly = true;
-        post.html.rating = null;
+        post.hasreplies = false;
+        post.replies = [];
+        return [post.id, post];
+    }));
 
-        return post;
+    let posts = [];
+    allPosts.posts.forEach(post => {
+        if (post.parentid) {
+            const parent = postsById.get(post.parentid);
+            if (parent) {
+                parent.hasreplies = true;
+                parent.replies.push(post);
+            } else {
+                posts.push(post);
+            }
+        } else {
+            posts.push(post);
+        }
     });
 
     // Handle hidden event.
@@ -72,20 +86,18 @@ const showPostInContext = async(rootNode) => {
         modal.destroy();
     });
 
-    modal.show();
-
-    // Note: We do not use await here because it messes with the Modal transitions.
-    const templatePromise = Templates.render('mod_forum/grades/grader/discussion/post_modal', userPosts);
-    modal.setBody(templatePromise);
-    // eslint-disable-next-line promise/catch-or-return
-    templatePromise.then(() => {
+    modal.getRoot().on(ModalEvents.bodyRendered, () => {
         const relevantPost = modal.getRoot()[0].querySelector(`#p${postId}`);
         if (relevantPost) {
             relevantPost.scrollIntoView({behavior: "smooth"});
         }
-
-        return;
     });
+
+    modal.show();
+
+    // Note: We do not use await here because it messes with the Modal transitions.
+    const templatePromise = Templates.render('mod_forum/grades/grader/discussion/post_modal', {posts});
+    modal.setBody(templatePromise);
 };
 
 /**
