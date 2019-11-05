@@ -16338,7 +16338,8 @@ select[size="1"] {
   overflow: visible; }
 
 textarea[data-auto-rows] {
-  overflow-x: hidden; }
+  overflow-x: hidden;
+  resize: none; }
 
 /** Display elements under labels in vertical forms regardless of the screen size. */
 .mform.full-width-labels .fitem.row {
@@ -17683,29 +17684,20 @@ p.arrow_button {
     margin-left: 5px;
     margin-right: 12px; }
 
-.criterion button.collapse[aria-expanded="true"]:before {
-  content: "";
-  margin-right: 0;
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 16px;
-  width: 16px; }
+.criterion .description {
+  font-size: 1rem; }
 
-.criterion button.collapse[aria-expanded="false"]:before {
-  content: "";
-  margin-right: 0;
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 16px;
-  width: 16px; }
+.criterion .criterion-toggle .expanded-icon {
+  display: block; }
+
+.criterion .criterion-toggle .collapsed-icon {
+  display: none; }
+
+.criterion .criterion-toggle.collapsed .expanded-icon {
+  display: none; }
+
+.criterion .criterion-toggle.collapsed .collapsed-icon {
+  display: block; }
 
 .path-grade-edit-tree .setup-grades h4 {
   margin: 0; }
