@@ -795,7 +795,7 @@ class page_requirements_manager {
                                                         array('dndenabled_inbox', 'moodle'), array('fileexists', 'moodle'), array('maxbytesfile', 'error'),
                                                         array('sizegb', 'moodle'), array('sizemb', 'moodle'), array('sizekb', 'moodle'), array('sizeb', 'moodle'),
                                                         array('maxareabytesreached', 'moodle'), array('serverconnection', 'error'),
-                                                        array('changesmadereallygoaway', 'moodle')
+                                                        array('changesmadereallygoaway', 'moodle'), array('complete', 'moodle')
                                                     ));
                     break;
             }
