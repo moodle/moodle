@@ -141,6 +141,12 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
         $licensedata['validlength'] = $data->validlength;
         $licensedata['type'] = $data->type;
 
+        if (empty($data->cutoffdate)) {
+            $licensedata['cutoffdate'] = 0;
+        } else {
+            $licensedata['cutoffdate'] = $data->cutoffdate;
+        }
+
         if ( !empty($licenseid) && $currlicensedata = $DB->get_record('companylicense', array('id' => $licenseid))) {
             $new = false;
             // Already in the table update it.
