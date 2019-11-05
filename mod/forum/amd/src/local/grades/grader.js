@@ -31,6 +31,7 @@ import {get_string as getString} from 'core/str';
 import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
 import {debounce} from 'core/utils';
+import {fillInitialValues} from 'core_grades/grades/grader/gradingpanel/comparison';
 
 const templateNames = {
     grader: {
@@ -95,6 +96,8 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
         const panelContainer = root.querySelector(Selectors.regions.gradingPanelContainer);
         const panel = panelContainer.querySelector(Selectors.regions.gradingPanel);
         Templates.replaceNodeContents(panel, gradingPanelHtml, gradingPanelJS);
+        fillInitialValues(panel.querySelector('form'));
+
         panelContainer.scrollTop = 0;
         firstLoad = false;
 
