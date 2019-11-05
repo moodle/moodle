@@ -29,6 +29,7 @@ import getGradingPanelFunctions from './local/grader/gradingpanel';
 import {add as addToast} from 'core/toast';
 import {get_string as getString} from 'core/str';
 import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
+import {addIconToContainerWithPromise} from 'core/loadingicon';
 
 const templateNames = {
     grader: {
@@ -72,6 +73,7 @@ const fetchContentFromRender = (html, js) => {
  */
 const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) => {
     return async(user) => {
+        const spinner = addIconToContainerWithPromise(root);
         const [
             [html, js],
             userGrade,
@@ -86,6 +88,7 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
             gradingPanelJS
         ] = await Templates.render(userGrade.templatename, userGrade.grade).then(fetchContentFromRender);
         Templates.replaceNodeContents(root.querySelector(Selectors.regions.gradingPanel), gradingPanelHtml, gradingPanelJS);
+        spinner.resolve();
     };
 };
 

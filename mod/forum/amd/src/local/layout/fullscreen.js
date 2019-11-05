@@ -29,7 +29,7 @@ import {addIconToContainer} from 'core/loadingicon';
  */
 const getComposedLayout = ({
     fullscreen = true,
-    showLoader = true,
+    showLoader = false,
 } = {}) => {
     const container = document.createElement('div');
     document.body.append(container);
