@@ -40,7 +40,10 @@ then cut and paste the address into the address
 line at the top of your web browser window.
 
 If you need help, please contact the site administrator,
-{$a->admin}';
+{$a->admin}
+
+If you did not do this, someone else could be trying to compromise your account.
+Please contact the site administrator immediately.';
 $string['confirmaccountemailsubject'] = '{$a}: account confirmation';
 $string['confirmationinvalid'] = 'The confirmation link is either invalid, or has expired. Please start the login process again to generate a new confirmation email.';
 $string['confirmationpending'] = 'This account is pending email confirmation.';
@@ -60,7 +63,10 @@ then cut and paste the address into the address
 line at the top of your web browser window.
 
 If you need help, please contact the site administrator,
-{$a->admin}';
+{$a->admin}
+
+If you did not do this, someone else could be trying to compromise your account.
+Please contact the site administrator immediately.';
 $string['confirmlinkedloginemailsubject'] = '{$a}: linked login confirmation';
 $string['createaccountswarning'] = 'This authentication plugin allows users to create accounts on your site. You may want to enable the setting "authpreventaccountcreation" if you use this plugin.';
 $string['createnewlinkedlogin'] = 'Link a new account ({$a})';
