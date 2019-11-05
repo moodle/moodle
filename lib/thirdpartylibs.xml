@@ -309,6 +309,12 @@
     <version>6.26.0</version>
   </library>
   <library>
+    <location>mdn-polyfills</location>
+    <name>mdn-polyfill</name>
+    <license>MIT</license>
+    <version>5.19.0</version>
+  </library>
+  <library>
     <location>emoji-data</location>
     <name>Emoji data</name>
     <license>MIT</license>
