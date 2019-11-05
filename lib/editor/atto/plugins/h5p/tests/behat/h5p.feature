@@ -169,7 +169,7 @@ Feature: Add h5ps to Atto
     And I wait until the page is ready
     And I click on "Save and display" "button"
     And I wait until the page is ready
-    And I switch to "h5p-iframe" class iframe
+    And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
     And I should see "Reuse"
     And I should not see "Embed"
