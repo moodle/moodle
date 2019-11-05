@@ -82,18 +82,25 @@ const discussionPostMapper = (discussion) => {
     const parentMap = new Map();
     discussion.posts.parentposts.forEach(post => parentMap.set(post.id, post));
     const userPosts = discussion.posts.userposts.map(post => {
-        post.subject = null;
         post.readonly = true;
-        post.starter = !post.parentid;
-        post.parent = parentMap.get(post.parentid);
-        post.html.rating = null;
+        post.hasreplies = false;
+        post.replies = [];
 
-        return post;
+        const parent = post.parentid ? parentMap.get(post.parentid) : null;
+        if (parent) {
+            parent.hasreplies = false;
+            parent.replies = [];
+            parent.readonly = true;
+        }
+
+        return {
+            parent,
+            post
+        };
     });
 
     return {
-        id: discussion.id,
-        name: discussion.name,
+        ...discussion,
         posts: userPosts,
     };
 };

@@ -432,6 +432,7 @@ $grading-search-button-padding-left: calc(#{map-get($spacers, 2)} + 8px) !defaul
 $grading-search-input-padding-left: calc(#{map-get($spacers, 2)} + #{map-get($spacers, 2)} + #{$grading-icon-button-size - ($input-border-width * 2)}) !default; /* stylelint-disable-line max-line-length */
 $grading-search-input-padding-right: calc(#{map-get($spacers, 2)} + #{$grading-icon-button-size}) !default;
 $grading-nav-bar-active-drawer-button-bottom: calc(#{map-get($spacers, 2) * -1} - 1px) !default;
+$grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) * 2} + 45px) !default;
 
 @keyframes expandSearchButton {
     from {
@@ -708,6 +709,101 @@ $grading-nav-bar-active-drawer-button-bottom: calc(#{map-get($spacers, 2) * -1} 
             font-size: 20px;
             height: 20px;
             width: 20px;
+        }
+    }
+
+    .grader-module-content-display {
+        .discussion-container {
+            &:last-of-type {
+                > hr {
+                    display: none;
+                }
+            }
+
+            .posts-container {
+                &:last-of-type {
+                    > hr {
+                        display: none;
+                    }
+                }
+
+                .parent-container {
+                    position: relative;
+
+                    .show-content-button {
+                        position: absolute;
+                        height: 100%;
+                        width: 100%;
+                        left: 0;
+                        top: 0;
+                        padding-left: $grading-content-show-content-button-padding-left;
+                        text-align: left;
+                        z-index: 1;
+
+                        &:not(.collapsed) {
+                            display: none;
+                        }
+                    }
+
+                    .content {
+                        display: block;
+                        height: auto !important; /* stylelint-disable-line declaration-no-important */
+
+                        .header {
+                            transition: margin-bottom $grading-animation-duration ease-in-out;
+
+                            div + div {
+                                opacity: 1;
+                                visibility: visible;
+                                max-height: none;
+                                transition:
+                                    opacity $grading-animation-duration linear,
+                                    visibility 0s linear;
+                            }
+                        }
+                        .body-content-container {
+                            opacity: 1;
+                            visibility: visible;
+                            max-height: none;
+                            transition:
+                                opacity $grading-animation-duration linear,
+                                visibility 0s linear;
+                        }
+                    }
+
+                    .show-content-button.collapsed + .content {
+                        opacity: .3;
+
+                        .header {
+                            margin-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
+
+                            div + div {
+                                opacity: 0;
+                                visibility: hidden;
+                                max-height: 0;
+                            }
+                        }
+                        .body-content-container {
+                            opacity: 0;
+                            visibility: hidden;
+                            max-height: 0;
+                        }
+                    }
+
+                    .show-content-button.collapsed:hover + .content,
+                    .show-content-button.collapsed:focus + .content {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        .no-post-container {
+            .icon {
+                height: 250px;
+                width: 250px;
+                margin-right: 0;
+            }
         }
     }
 }

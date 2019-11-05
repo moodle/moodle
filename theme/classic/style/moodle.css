@@ -16909,6 +16909,63 @@ select {
     height: 20px;
     width: 20px; }
 
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container:last-of-type > hr {
+  display: none; }
+
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container:last-of-type > hr {
+  display: none; }
+
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container {
+  position: relative; }
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    padding-left: calc(1rem + 45px);
+    text-align: left;
+    z-index: 1; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button:not(.collapsed) {
+      display: none; }
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content {
+    display: block;
+    height: auto !important;
+    /* stylelint-disable-line declaration-no-important */ }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header {
+      transition: margin-bottom 0.3s ease-in-out; }
+      .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header div + div {
+        opacity: 1;
+        visibility: visible;
+        max-height: none;
+        transition: opacity 0.3s linear, visibility 0s linear; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .body-content-container {
+      opacity: 1;
+      visibility: visible;
+      max-height: none;
+      transition: opacity 0.3s linear, visibility 0s linear; }
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content {
+    opacity: .3; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header {
+      margin-bottom: 0 !important;
+      /* stylelint-disable-line declaration-no-important */ }
+      .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header div + div {
+        opacity: 0;
+        visibility: hidden;
+        max-height: 0; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .body-content-container {
+      opacity: 0;
+      visibility: hidden;
+      max-height: 0; }
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:hover + .content,
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:focus + .content {
+    opacity: 1; }
+
+.path-mod-forum .unified-grader .grader-module-content-display .no-post-container .icon {
+  height: 250px;
+  width: 250px;
+  margin-right: 0; }
+
 @media (max-width: 575.98px) {
   .path-mod-forum .unified-grader .grader-grading-panel {
     width: 100%; } }

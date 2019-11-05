@@ -2205,8 +2205,15 @@ class mod_forum_external extends external_api {
         $managerfactory = mod_forum\local\container::get_manager_factory();
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
-        $discussionvault = $vaultfactory->get_discussion_vault();
-        $discussions = $discussionvault->get_all_discussions_in_forum($forum, 'timemodified ASC, id ASC');
+        $discussionsummariesvault = $vaultfactory->get_discussions_in_forum_vault();
+        $discussionsummaries = $discussionsummariesvault->get_from_forum_id(
+            $forum->get_id(),
+            true,
+            null,
+            $discussionsummariesvault::SORTORDER_CREATED_ASC,
+            0,
+            0
+        );
 
         $postvault = $vaultfactory->get_post_vault();
 
@@ -2214,7 +2221,8 @@ class mod_forum_external extends external_api {
         $postbuilder = $builderfactory->get_exported_posts_builder();
 
         $builtdiscussions = [];
-        foreach ($discussions as $id => $discussion) {
+        foreach ($discussionsummaries as $discussionsummary) {
+            $discussion = $discussionsummary->get_discussion();
             $posts = $postvault->get_posts_in_discussion_for_user_id(
                     $discussion->get_id(),
                     $user->id,
@@ -2239,9 +2247,14 @@ class mod_forum_external extends external_api {
                 );
             }
 
+            $discussionauthor = $discussionsummary->get_first_post_author();
+            $firstpost = $discussionsummary->get_first_post();
+
             $builtdiscussions[] = [
                 'name' => $discussion->get_name(),
                 'id' => $discussion->get_id(),
+                'timecreated' => $firstpost->get_time_created(),
+                'authorfullname' => $discussionauthor->get_full_name(),
                 'posts' => [
                     'userposts' => $postbuilder->build($user, [$forum], [$discussion], $posts),
                     'parentposts' => $parentposts,
@@ -2284,6 +2297,8 @@ class mod_forum_external extends external_api {
                     new external_single_structure([
                         'name' => new external_value(PARAM_RAW, 'Name of the discussion'),
                         'id' => new external_value(PARAM_INT, 'ID of the discussion'),
+                        'timecreated' => new external_value(PARAM_INT, 'Timestamp of the discussion start'),
+                        'authorfullname' => new external_value(PARAM_RAW, 'Full name of the user that started the discussion'),
                         'posts' => new external_single_structure([
                             'userposts' => new external_multiple_structure(\mod_forum\local\exporters\post::get_read_structure()),
                             'parentposts' => new external_multiple_structure(\mod_forum\local\exporters\post::get_read_structure()),
