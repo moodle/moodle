@@ -317,7 +317,7 @@ define([
                     return arguments;
                 })
                 .then(function() {
-                    $('body').trigger(CalendarEvents.dayChanged, [year, month, day, courseId, categoryId]);
+                    $('body').trigger(CalendarEvents.dayChanged, [year, month, courseId, categoryId]);
                     return arguments;
                 });
         };
