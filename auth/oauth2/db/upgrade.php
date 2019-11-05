@@ -50,5 +50,39 @@ function xmldb_auth_oauth2_upgrade($oldversion) {
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018120301) {
+        // Fetch Facebook, Google, and Microsoft issuers. We use the URL field to determine the issuer type as it's the only
+        // field that contains the keyword that can somewhat let us reliably determine the issuer type.
+        $likefacebook = $DB->sql_like('oe.url', ':facebook');
+        $likegoogle = $DB->sql_like('oe.url', ':google');
+        $likemicrosoft = $DB->sql_like('oe.url', ':microsoft');
+
+        $params = [
+            'facebook' => '%facebook%',
+            'google' => '%google%',
+            'microsoft' => '%microsoft%',
+        ];
+
+        // We're querying from the oauth2_endpoint table because the base URLs of FB and Microsoft can be empty in the issuer table.
+        $subsql = "
+            SELECT DISTINCT oe.issuerid
+                       FROM {oauth2_endpoint} oe
+                      WHERE $likefacebook
+                            OR $likegoogle
+                            OR $likemicrosoft";
+
+        // Update non-Facebook/Google/Microsoft issuers and set requireconfirmation to 1.
+        $updatesql = "
+            UPDATE {oauth2_issuer}
+               SET requireconfirmation = 1
+             WHERE id NOT IN ({$subsql})";
+        $DB->execute($updatesql, $params);
+
+        // Delete linked logins for non-Facebook/Google/Microsoft issuers. They can easily re-link their logins anyway.
+        $DB->delete_records_select('auth_oauth2_linked_login', "issuerid NOT IN ($subsql)", $params);
+
+        upgrade_plugin_savepoint(true, 2018120301, 'auth', 'oauth2');
+    }
+
     return true;
 }
