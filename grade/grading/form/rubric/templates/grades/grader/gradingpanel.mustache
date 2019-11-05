@@ -57,49 +57,71 @@
     <input type="hidden" name="instanceid" value="{{instanceid}}">
     <div id="rubric-advancedgrading-{{uniqid}}" class="criterion">
         {{#criteria}}
-            <div class="d-block mb-2">
-                <h5 class="d-inline px-0 font-weight-bold mb-0">{{{description}}}</h5>
-                <button class="d-inline btn p-0 font-weight-bold mb-0 pull-right collapse"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#criteria-{{id}}"
-                        aria-expanded="true"
-                        aria-controls="criteria-{{id}}">
-                </button>
-            </div>
-            <div class="collapse show" id="criteria-{{id}}">
-                {{#levels}}
-                    <div class="form-check">
-                        <input class="form-check-input level"
-                               type="radio"
-                               name="advancedgrading[criteria][{{criterionid}}][levelid]"
-                               id="advancedgrading-criteria-{{criterionid}}-levels-{{id}}-definition"
-                               value="{{id}}"
-                                {{#checked}}
-                                    aria-checked="true"
-                                    tabindex="0"
-                                    checked
-                                {{/checked}}
-                                {{^checked}}
-                                    aria-checked="false"
-                                    tabindex="-1"
-                                {{/checked}}
-                        >
-                        <label class="w-100" for="advancedgrading-criteria-{{criterionid}}-levels-{{id}}-definition">
-                            <label class="font-weight-bold">
-                                {{{definition}}}
+            <div class="mb-3">
+                <div class="d-flex align-items-center mb-2">
+                    <h5 class="px-0 mb-0 description font-weight-bold">{{{description}}}</h5>
+                    <button class="criterion-toggle btn btn-icon icon-no-margin text-reset p-0 font-weight-bold mb-0 ml-auto"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#criteria-{{id}}"
+                            aria-expanded="true"
+                            aria-controls="criteria-{{id}}">
+                            <span class="collapsed-icon">
+                                {{#pix}} t/collapsed, core {{/pix}}
+                                <span class="sr-only">{{#str}} expandcriterion, core_grades {{/str}}</span>
+                            </span>
+                            <span class="expanded-icon">
+                                {{#pix}} t/expanded, core {{/pix}}
+                                <span class="sr-only">{{#str}} collapsecriterion, core_grades {{/str}}</span>
+                            </span>
+                    </button>
+                </div>
+                <div class="collapse show" id="criteria-{{id}}">
+                    {{#levels}}
+                        <div class="form-check">
+                            <input class="form-check-input level"
+                                   type="radio"
+                                   name="advancedgrading[criteria][{{criterionid}}][levelid]"
+                                   id="advancedgrading-criteria-{{criterionid}}-levels-{{id}}-definition"
+                                   value="{{id}}"
+                                    {{#checked}}
+                                        aria-checked="true"
+                                        tabindex="0"
+                                        checked
+                                    {{/checked}}
+                                    {{^checked}}
+                                        aria-checked="false"
+                                        tabindex="-1"
+                                    {{/checked}}
+                            >
+                            <label class="w-100" for="advancedgrading-criteria-{{criterionid}}-levels-{{id}}-definition">
+                                <span>
+                                    {{{definition}}}
+                                </span>
+                                <span class="pull-right">
+                                    {{#str}}pointsvalue, gradingform_rubric, {{score}}{{/str}}
+                                </span>
                             </label>
-                            <label class="pull-right font-weight-bold">
-                                {{#str}}pointsvalue, gradingform_rubric, {{score}}{{/str}}
-                            </label>
-                        </label>
+                        </div>
+                    {{/levels}}
+                    <div class="form-group">
+                        <label class="text-muted" for="advancedgrading-criteria-{{id}}-remark">{{#str}} additionalfeedback, core_grades {{/str}}</label>
+                        <textarea class="form-control"
+                                  name="advancedgrading[criteria][{{id}}][remark]"
+                                  id="advancedgrading-criteria-{{id}}-remark"
+                                  cols="10"
+                                  rows="1"
+                                  data-max-rows="5"
+                                  data-auto-rows="true"
+                        >{{{remark}}}</textarea>
                     </div>
-                {{/levels}}
-                <div class="form-group">
-                    <label for="advancedgrading-criteria-{{id}}-remark">Additional feedback</label>
-                    <textarea class="form-control" name="advancedgrading[criteria][{{id}}][remark]" id="advancedgrading-criteria-{{id}}-remark" cols="10" rows="5">{{{remark}}}</textarea>
                 </div>
             </div>
         {{/criteria}}
     </div>
 </form>
+{{#js}}
+require(['core/auto_rows'], function(AutoRows) {
+    AutoRows.init(document.getElementById('gradingform_rubric-{{uniqid}}'));
+});
+{{/js}}

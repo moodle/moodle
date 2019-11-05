@@ -30,6 +30,7 @@ $string['addfeedback'] = 'Add feedback';
 $string['addgradeletter'] = 'Add a grade letter';
 $string['addidnumbers'] = 'Add ID numbers';
 $string['additem'] = 'Add grade item';
+$string['additionalfeedback'] = 'Additional feedback';
 $string['addoutcome'] = 'Add an outcome';
 $string['addoutcomeitem'] = 'Add outcome item';
 $string['addscale'] = 'Add a scale';
