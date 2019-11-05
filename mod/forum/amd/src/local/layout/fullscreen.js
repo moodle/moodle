@@ -21,6 +21,7 @@
  */
 
 import {addIconToContainer} from 'core/loadingicon';
+import {addToastRegion} from 'core/toast';
 
 /**
  * @param {string} templateName
@@ -36,6 +37,7 @@ const getComposedLayout = ({
     container.classList.add('layout');
     container.classList.add('fullscreen');
     container.setAttribute('aria-role', 'application');
+    addToastRegion(container);
 
     // Lock scrolling on the document body.
     lockBodyScroll();
