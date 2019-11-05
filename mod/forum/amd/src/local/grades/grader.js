@@ -37,6 +37,7 @@ const templateNames = {
         gradingPanel: {
             error: 'mod_forum/local/grades/local/grader/gradingpanel/error',
         },
+        status: 'mod_forum/local/grades/local/grader/status'
     },
 };
 
@@ -211,10 +212,23 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     Templates.replaceNodeContents(graderContainer, html, js);
     const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser);
 
+    const userIds = userList.map(user => user.id);
+    const statusContainer = graderContainer.querySelector(Selectors.regions.statusContainer);
     // Fetch the userpicker for display.
     const userPicker = await getUserPicker(
         userList,
-        updateUserContent,
+        user => {
+            const renderContext = {
+                status: null,
+                index: userIds.indexOf(user.id) + 1,
+                total: userList.length
+            };
+            Templates.render(templateNames.grader.status, renderContext).then(html => {
+                statusContainer.innerHTML = html;
+                return html;
+            }).catch();
+            updateUserContent(user);
+        },
         saveGradeFunction,
         {
             initialUserId,

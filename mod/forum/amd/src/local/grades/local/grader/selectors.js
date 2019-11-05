@@ -44,6 +44,7 @@ export default {
         gradingPanel: getDataSelector('region', 'grade'),
         gradingPanelContainer: getDataSelector('region', 'grading-panel-container'),
         gradingPanelErrors: getDataSelector('region', 'grade-errors'),
+        statusContainer: getDataSelector('region', 'status-container'),
     },
 };
 

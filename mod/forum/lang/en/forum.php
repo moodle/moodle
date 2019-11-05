@@ -342,6 +342,7 @@ $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cogni
 $string['indicator:socialbreadth'] = 'Forum social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Forum activity.';
 $string['starredonly'] = 'Search starred discussions only';
+$string['indexoutoftotal'] = '{$a->index} out of {$a->total}';
 $string['inforum'] = 'in {$a}';
 $string['inreplyto'] = 'In reply to {$a}';
 $string['introblog'] = 'The posts in this forum were copied here automatically from blogs of users in this course because those blog entries are no longer available';
