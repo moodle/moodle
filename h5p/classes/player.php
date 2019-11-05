@@ -174,15 +174,28 @@ class player {
      * @return string The HTML code to display this H5P content.
      */
     public function output() : string {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
 
         $template = new \stdClass();
         $template->h5pid = $this->h5pid;
         if ($this->embedtype === 'div') {
-            return $OUTPUT->render_from_template('core_h5p/h5pdiv', $template);
+            $h5phtml = $OUTPUT->render_from_template('core_h5p/h5pdiv', $template);
         } else {
-            return $OUTPUT->render_from_template('core_h5p/h5piframe', $template);
+            $h5phtml = $OUTPUT->render_from_template('core_h5p/h5piframe', $template);
         }
+
+        // Trigger capability_assigned event.
+        \core_h5p\event\h5p_viewed::create([
+            'objectid' => $this->h5pid,
+            'userid' => $USER->id,
+            'context' => $this->context,
+            'other' => [
+                'url' => $this->url->out(),
+                'time' => time()
+            ]
+        ])->trigger();
+
+        return $h5phtml;
     }
 
     /**
