@@ -241,6 +241,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/grade_incorrect' => 'fa-remove text-danger',
             'core:i/grade_partiallycorrect' => 'fa-check-square',
             'core:i/grades' => 'fa-table',
+            'core:i/grading' => 'fa-magic',
             'core:i/groupevent' => 'fa-group',
             'core:i/groupn' => 'fa-user',
             'core:i/group' => 'fa-users',

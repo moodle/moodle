@@ -32,24 +32,63 @@
     {
     }
 }}
-<div class="grader-grading-panel  border-left border-secondary col-md-4">
-    <div class="col-md-12 bg-light px-2 py-3 mb-3">
-        <!--TODO  Manipulate grader panel-->
-        <h4 class="d-inline font-weight-bold mb-0 fa fa-arrow-right" aria-label="Open or close grader panel" data-action="expandgrader"></h4>
-
-        <h4 class="d-inline font-weight-bold mb-0">{{#str}}grading, mod_forum{{/str}}</h4>
-    </div>
-    <div data-region="user_picker">
-        {{> mod_forum/local/grades/local/grader/user_picker_placeholder }}
-        <hr/>
-    </div>
-    <div class="grader-grading-panel-display col-sm-12">
-        <h4 class="d-inline mb-0 fa fa-star-o"></h4>
-        <h4 class="d-inline mb-0 ">{{#str}}grade, core_grades{{/str}}</h4>
-        <div data-region="grade" class="col-md-12 mt-3">
-          {{> mod_forum/local/grades/local/grader/grade_placeholder }}
+{{<core/drawer}}
+    {{$drawerclasses}}grader-grading-panel flex-shrink-0{{/drawerclasses}}
+    {{$drawercontent}}
+        <div class="h-100 w-100 bg-white d-flex flex-column">
+            <div class="flex-shrink-0 d-flex flex-column">
+                <div class="header-container bg-light">
+                    <div id="searchbox-{{uniqid}}" class="user-search-container d-flex flex-grow-1 align-items-center collapse">
+                        <div class="search-input-container w-100">
+                            <span class="search-icon icon-no-margin d-flex align-items-center justify-content-center">
+                                {{#pix}} i/search, core {{/pix}}
+                            </span>
+                            <input
+                                type="text"
+                                data-action="search-user-input"
+                                class="form-control form-control-lg"
+                                placeholder="Search user"
+                            >
+                            <button
+                                class="toggle-search-button btn btn-icon icon-no-margin"
+                                data-target="#searchbox-{{uniqid}}"
+                                aria-expanded="false"
+                                aria-controls="searchbox-{{uniqid}}"
+                                data-toggle="collapse"
+                            >
+                                <div class="expanded-icon">{{#pix}} e/cancel, core {{/pix}}</div>
+                                <div class="collapsed-icon">{{#pix}} i/search, core {{/pix}}</div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="info-container d-flex align-items-center">
+                        <button
+                            class="btn btn-icon icon-size-3 icon-no-margin colour-inherit"
+                            data-action="collapse-grading-drawer"
+                            aria-controls="grading-drawer"
+                            aria-expanded="true"
+                            title="{{#str}} closebuttontitle, core {{/str}}"
+                        >
+                            <span class="dir-ltr-hide">{{#pix}} t/left, core {{/pix}}</span>
+                            <span class="dir-rtl-hide">{{#pix}} t/right, core {{/pix}}</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="border-bottom px-3 pt-2" data-region="user_picker">
+                    {{> mod_forum/local/grades/local/grader/user_picker_placeholder }}
+                </div>
+            </div>
+            <div class="body-container position-relative d-flex flex-column overflow-auto" data-region="body-container">
+                <div class="grader-grading-panel-display pt-3 overflow-auto" data-region="grading-panel-container">
+                    <h4 class="mb-0 h5 px-3 font-weight-normal">
+                        {{#pix}} i/grading, core {{/pix}}{{#str}} gradingmodulename, core_grades, {{moduleName}} {{/str}}
+                    </h4>
+                    <div data-region="grade" class="pt-3 px-3">
+                        {{> mod_forum/local/grades/local/grader/grade_placeholder }}
+                    </div>
+                    <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
+                </div>
+            </div>
         </div>
-        <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
-        <hr/>
-    </div>
-</div>
+    {{/drawercontent}}
+{{/core/drawer}}

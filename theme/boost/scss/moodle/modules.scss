@@ -218,7 +218,6 @@ $author-image-margin-sm: 8px;
     }
 }
 
-#page-mod-forum-view [data-region="unified-grader"],
 .path-mod-forum.nested-v2-display-mode {
     .discussionsubscription {
         margin-top: 0;
@@ -423,6 +422,275 @@ $author-image-margin-sm: 8px;
 
     .mform {
         margin-left: -3em;
+    }
+}
+
+$grading-drawer-width: 430px !default;
+$grading-animation-duration: .3s !default;
+$grading-icon-button-size: 36px !default;
+$grading-search-button-padding-left: calc(#{map-get($spacers, 2)} + 8px) !default;
+$grading-search-input-padding-left: calc(#{map-get($spacers, 2)} + #{map-get($spacers, 2)} + #{$grading-icon-button-size - ($input-border-width * 2)}) !default; /* stylelint-disable-line max-line-length */
+$grading-search-input-padding-right: calc(#{map-get($spacers, 2)} + #{$grading-icon-button-size}) !default;
+
+@keyframes expandSearchButton {
+    from {
+        height: $grading-icon-button-size;
+        width: $grading-icon-button-size;
+        border-radius: $grading-icon-button-size / 2;
+        background-color: $gray-200;
+    }
+    to {
+        width: 100%;
+        height: $input-height-lg;
+        border-radius: 0;
+        background-color: $input-bg;
+        border-color: $input-border-color;
+        padding-left: $grading-search-button-padding-left;
+        padding-top: $input-padding-y-lg;
+        padding-bottom: $input-padding-y-lg;
+        @include font-size($input-font-size-lg);
+        line-height: $input-line-height-lg;
+        right: 0;
+    }
+}
+
+@keyframes collapseSearchButton {
+    from {
+        width: 100%;
+        height: $input-height-lg;
+        border-radius: 0;
+        background-color: $input-bg;
+        border-color: $input-border-color;
+        padding-left: $grading-search-button-padding-left;
+        padding-top: $input-padding-y-lg;
+        padding-bottom: $input-padding-y-lg;
+        @include font-size($input-font-size-lg);
+        line-height: $input-line-height-lg;
+        right: 0;
+    }
+    to {
+        height: $grading-icon-button-size;
+        width: $grading-icon-button-size;
+        border-radius: $grading-icon-button-size / 2;
+        background-color: $gray-200;
+    }
+}
+
+.path-mod-forum .unified-grader {
+    .grader-grading-panel {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        z-index: 0;
+        width: $grading-drawer-width;
+
+        &.hidden {
+            right: ($grading-drawer-width * -1);
+        }
+
+        .grading-icon {
+            width: $grading-icon-button-size;
+        }
+
+        .user-picker-container {
+            .userpicture {
+                height: 60px;
+                width: 60px;
+            }
+
+            .user-full-name {
+                max-width: 240px;
+            }
+
+            .page-link {
+                width: $grading-icon-button-size;
+                height: $grading-icon-button-size;
+                display: flex;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .header-container {
+            height: 65px;
+            position: relative;
+            overflow: hidden;
+
+            .info-container {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                transform: translateY(-50%);
+                width: 100%;
+                height: 100%;
+                padding: map-get($spacers, 2);
+                padding-right: calc(#{$grading-icon-button-size} + #{map-get($spacers, 2)});
+                opacity: 1;
+                visibility: visible;
+                transition: left $grading-animation-duration ease-in-out;
+                z-index: 1;
+            }
+
+            .user-search-container {
+                overflow: hidden;
+                position: absolute;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+                z-index: 2;
+                width: 100%;
+                height: 100% !important; /* stylelint-disable-line declaration-no-important */
+                padding: map-get($spacers, 2);
+
+                .search-input-container {
+                    position: relative;
+                    overflow: visible;
+                    flex-wrap: nowrap;
+
+                    input {
+                        padding-left: $grading-search-input-padding-left;
+                        padding-right: $grading-search-input-padding-right;
+                        transition: $custom-forms-transition;
+                    }
+
+                    .search-icon {
+                        position: absolute;
+                        top: 50%;
+                        left: map-get($spacers, 2);
+                        transform: translateY(-50%);
+                        color: $input-color;
+                        height: $grading-icon-button-size;
+                        width: $grading-icon-button-size - ($input-border-width * 2);
+                        background-color: $input-bg;
+                    }
+
+                    input,
+                    .search-icon {
+                        opacity: 1;
+                        visibility: visible;
+                        transition:
+                            opacity 0s linear $grading-animation-duration,
+                            visibility 0s linear $grading-animation-duration;
+                    }
+
+                    .toggle-search-button {
+                        position: absolute;
+                        top: 50%;
+                        right: map-get($spacers, 2);
+                        transform: translateY(-50%);
+                        z-index: 1;
+                        color: inherit;
+                        text-align: left;
+                        padding-left: 9px;
+                        animation-name: expandSearchButton;
+                        animation-duration: $grading-animation-duration;
+                        animation-timing-function: ease-in-out;
+                        transition: right 0s linear $grading-animation-duration;
+
+                        .expanded-icon {
+                            opacity: 1;
+                            max-width: 50px;
+                            max-height: 50px;
+                            transition:
+                                opacity 0s linear $grading-animation-duration,
+                                max-height 0s linear $grading-animation-duration,
+                                max-width 0s linear $grading-animation-duration;
+                        }
+
+                        .collapsed-icon {
+                            opacity: 0;
+                            max-height: 0;
+                            max-width: 0;
+                            overflow: hidden;
+                            transition:
+                                opacity 0s linear $grading-animation-duration,
+                                max-height 0s linear $grading-animation-duration,
+                                max-width 0s linear $grading-animation-duration;
+                        }
+                    }
+                }
+
+                &.collapse:not(.show) {
+                    width: calc(#{$grading-icon-button-size} + #{map-get($spacers, 2)} + #{map-get($spacers, 2)});
+                    transition: width $grading-animation-duration ease-in-out;
+
+                    .search-input-container {
+                        flex-wrap: nowrap;
+
+                        input,
+                        .search-icon {
+                            opacity: 0;
+                            visibility: hidden;
+                            transition:
+                                opacity 0s linear,
+                                visibility 0s linear;
+                        }
+
+                        input {
+                            padding-left: 0;
+                            padding-right: 0;
+                        }
+
+                        .toggle-search-button {
+                            animation-name: collapseSearchButton;
+                            animation-duration: $grading-animation-duration;
+
+                            .expanded-icon {
+                                opacity: 0;
+                                max-height: 0;
+                                max-width: 0;
+                                overflow: hidden;
+                                transition:
+                                    opacity 0s linear,
+                                    max-height 0s linear,
+                                    max-width 0s linear;
+                            }
+
+                            .collapsed-icon {
+                                opacity: 1;
+                                max-width: 50px;
+                                max-height: 50px;
+                                transition:
+                                    opacity 0s linear,
+                                    max-height 0s linear,
+                                    max-width 0s linear;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .user-search-container.show + .info-container,
+            .user-search-container.collapsing + .info-container {
+                opacity: 0;
+                visibility: hidden;
+                left: calc(100% * -1);
+                transition:
+                    left $grading-animation-duration ease-in-out,
+                    opacity 0s linear $grading-animation-duration,
+                    visibility 0s linear $grading-animation-duration,
+                    padding 0s linear $grading-animation-duration;
+            }
+        }
+    }
+
+    .grader-module-content {
+        overflow-y: auto;
+        margin-right: $grading-drawer-width;
+        @include transition(margin-right .2s ease-in-out);
+    }
+
+    .grader-grading-panel.hidden + .grader-module-content {
+        margin-right: 0;
+    }
+}
+
+@include media-breakpoint-down(xs) {
+    .path-mod-forum .unified-grader {
+        .grader-grading-panel {
+            width: 100%;
+        }
     }
 }
 

@@ -357,6 +357,7 @@ $string['gradevaluetoobig'] = 'One of the grade values is larger than the allowe
 $string['gradeview'] = 'View grade';
 $string['gradewasmodifiedduringediting'] = 'The grade entered for {$a->itemname} for {$a->username} was ignored because it was more recently updated by someone else.';
 $string['gradeweighthelp'] = 'Grade weight help';
+$string['gradingmodulename'] = 'Grading ({$a})';
 $string['groupavg'] = 'Group average';
 $string['hidden'] = 'Hidden';
 $string['hidden_help'] = 'If ticked, grades are hidden from students. A hidden until date may be set if desired, to release grades after grading is completed.';

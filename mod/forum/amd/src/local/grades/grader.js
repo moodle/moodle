@@ -87,7 +87,10 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
             gradingPanelHtml,
             gradingPanelJS
         ] = await Templates.render(userGrade.templatename, userGrade.grade).then(fetchContentFromRender);
-        Templates.replaceNodeContents(root.querySelector(Selectors.regions.gradingPanel), gradingPanelHtml, gradingPanelJS);
+        const panelContainer = root.querySelector(Selectors.regions.gradingPanelContainer);
+        const panel = panelContainer.querySelector(Selectors.regions.gradingPanel);
+        Templates.replaceNodeContents(panel, gradingPanelHtml, gradingPanelJS);
+        panelContainer.scrollTop = 0;
         spinner.resolve();
     };
 };
@@ -189,18 +192,21 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     // will not work.
     const [
         graderLayout,
-        graderHTML,
+        {html, js},
         userList,
     ] = await Promise.all([
         createFullScreenWindow({fullscreen: false, showLoader: false}),
-        Templates.render(templateNames.grader.app, {moduleName: moduleName}),
+        Templates.renderForPromise(templateNames.grader.app, {
+            moduleName,
+            drawer: {show: true}
+        }),
         getListOfUsers(),
     ]);
     const graderContainer = graderLayout.getContainer();
 
     const saveGradeFunction = getSaveUserGradeFunction(graderContainer, setGradeForUser);
 
-    Templates.replaceNodeContents(graderContainer, graderHTML, '');
+    Templates.replaceNodeContents(graderContainer, html, js);
     const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser);
 
     // Fetch the userpicker for display.

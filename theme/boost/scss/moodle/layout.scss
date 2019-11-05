@@ -1,16 +1,20 @@
 .layout {
     &.fullscreen {
-        height: 100%;
+        height: 100vh;
         position: fixed;
         top: 0;
         left: 0;
         z-index: $zindex-modal-backdrop;
-        overflow-x: hidden;
         transition: 0.5s;
-        width: 100%;
+        width: 100vw;
         margin: 0;
         opacity: 1;
         background-color: $modal-content-bg;
+
+        > div {
+            height: 100%;
+            width: 100%;
+        }
 
         .loading-icon {
             margin-left: auto;
