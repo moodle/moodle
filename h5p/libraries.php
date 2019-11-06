@@ -43,6 +43,7 @@ echo $OUTPUT->heading($pagetitle);
 echo $OUTPUT->box(get_string('librariesmanagerdescription', 'core_h5p'));
 
 $form = new \core_h5p\form\uploadlibraries_form();
+$h5pfactory = new \core_h5p\factory();
 if ($data = $form->get_data()) {
     require_sesskey();
 
@@ -54,7 +55,6 @@ if ($data = $form->get_data()) {
     $file = reset($files);
 
     // Validate and save the H5P package.
-    $h5pfactory = new \core_h5p\factory();
     // Because we are passing skipcontent = true to save_h5p function, the returning value is false in an error
     // is encountered, null when successfully saving the package without creating the content.
     if (\core_h5p\helper::save_h5p($h5pfactory, $file, new stdClass(), false, true) === false) {
@@ -64,4 +64,19 @@ if ($data = $form->get_data()) {
     }
 }
 $form->display();
+
+// Load installed Libraries.
+$framework = $h5pfactory->get_framework();
+$libraries = $framework->loadLibraries();
+$installed = [];
+foreach ($libraries as $libraryname => $versions) {
+    foreach ($versions as $version) {
+        $installed[] = $version;
+    }
+}
+
+if (count($installed)) {
+    echo $OUTPUT->render_from_template('core_h5p/h5plibraries', (object)['contenttypes' => $installed]);
+}
+
 echo $OUTPUT->footer();
