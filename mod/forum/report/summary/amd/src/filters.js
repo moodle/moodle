@@ -96,7 +96,7 @@ export const init = (root) => {
     };
 
     // Close the relevant filter.
-    var closeOpenFilters = (openFilterButton, openFilter) => {
+    const closeOpenFilters = (openFilterButton, openFilter) => {
         openFilter.classList.add('hidden');
         openFilter.setAttribute('data-openfilter', 'false');
 
@@ -145,14 +145,17 @@ export const init = (root) => {
 
         // Add listeners to handle closing filter.
         const closeListener = e => {
-            if (e.target.id !== referenceElement.id && popperContent !== e.target.closest('[data-openfilter="true"]')) {
+            if (e.target.id !== referenceElement.id && popperContent !== e.target.closest('[data-openfilter="true"]') &&
+                    (typeof e.keyCode === 'undefined' || e.keyCode === KeyCodes.enter || e.keyCode === KeyCodes.space)) {
                 closeOpenFilters(referenceElement, popperContent);
                 document.removeEventListener('click', closeListener);
+                document.removeEventListener('keyup', closeListener);
                 document.removeEventListener('keyup', escCloseListener);
             }
         };
 
         document.addEventListener('click', closeListener);
+        document.addEventListener('keyup', closeListener);
 
         const escCloseListener = e => {
             if (e.keyCode === KeyCodes.escape) {
@@ -205,14 +208,17 @@ export const init = (root) => {
 
         // Add listener to handle closing filter.
         const closeListener = e => {
-            if (e.target.id !== referenceElement.id && popperContent !== e.target.closest('[data-openfilter="true"]')) {
+            if (e.target.id !== referenceElement.id && popperContent !== e.target.closest('[data-openfilter="true"]') &&
+                    (typeof e.keyCode === 'undefined' || e.keyCode === KeyCodes.enter || e.keyCode === KeyCodes.space)) {
                 closeOpenFilters(referenceElement, popperContent);
                 document.removeEventListener('click', closeListener);
+                document.removeEventListener('keyup', closeListener);
                 document.removeEventListener('keyup', escCloseListener);
             }
         };
 
         document.addEventListener('click', closeListener);
+        document.addEventListener('keyup', closeListener);
 
         const escCloseListener = e => {
             if (e.keyCode === KeyCodes.escape) {
