@@ -2631,7 +2631,7 @@ template {
   display: none !important; }
 
 h1, h2, h3, h4, h5, h6,
-.h1, .h2, .path-calendar .maincalendar .calendar-controls .current, .h3, .h4, .h5, .h6 {
+.h1, .h2, .h3, .h4, .h5, .h6 {
   margin-bottom: 0.5rem;
   font-weight: 300;
   line-height: 1.2; }
@@ -2639,7 +2639,7 @@ h1, h2, h3, h4, h5, h6,
 h1, .h1 {
   font-size: 2.34375rem; }
 
-h2, .h2, .path-calendar .maincalendar .calendar-controls .current {
+h2, .h2 {
   font-size: 1.875rem; }
 
 h3, .h3 {
