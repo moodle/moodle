@@ -104,14 +104,14 @@ class filter_emoticon extends moodle_text_filter {
         }
 
         // Detect all zones that we should not handle (including the nested tags).
-        $processing = preg_split('/(<\/?(?:span|script)[^>]*>)/is', $text, 0, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $processing = preg_split('/(<\/?(?:span|script|pre)[^>]*>)/is', $text, 0, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
         // Initialize the results.
         $resulthtml = "";
         $exclude = 0;
 
         // Define the patterns that mark the start of the forbidden zones.
-        $excludepattern = array('/^<script/is', '/^<span[^>]+class="nolink[^"]*"/is');
+        $excludepattern = array('/^<script/is', '/^<span[^>]+class="nolink[^"]*"/is', '/^<pre/is');
 
         // Loop through the fragments.
         foreach ($processing as $fragment) {
@@ -126,13 +126,15 @@ class filter_emoticon extends moodle_text_filter {
             }
             if ($exclude > 0) {
                 // If we are ignoring the fragment, then we must check if we may have reached the end of the zone.
-                if (strpos($fragment, '</span') !== false || strpos($fragment, '</script') !== false) {
+                if (strpos($fragment, '</span') !== false || strpos($fragment, '</script') !== false
+                    || strpos($fragment, '</pre') !== false) {
                     $exclude -= 1;
                     // This is needed because of a double increment at the first element.
                     if ($exclude == 1) {
                         $exclude -= 1;
                     }
-                } else if (strpos($fragment, '<span') !== false || strpos($fragment, '<script') !== false) {
+                } else if (strpos($fragment, '<span') !== false || strpos($fragment, '<script') !== false
+                    || strpos($fragment, '<pre') !== false) {
                     // If we find a nested tag we increase the exclusion level.
                     $exclude = $exclude + 1;
                 }
