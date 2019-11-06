@@ -355,6 +355,7 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 2, null, false, [], [], $student1->id);
         $this->assertEquals($student1->id, $attempt->userid);
         $this->assertEquals(0, $attempt->preview);
+        $student1attempt = $attempt; // Save for extra verification below.
         // Create attempt for student2.
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 2, null, false, [], [], $student2->id);
         $this->assertEquals($student2->id, $attempt->userid);
@@ -363,5 +364,11 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 2, null, false, [], [], $USER->id);
         $this->assertEquals($USER->id, $attempt->userid);
         $this->assertEquals(1, $attempt->preview);
+
+        // Check that the userid stored in the first step is the user the attempt is for,
+        // not the user who triggered the creation.
+        $quba = question_engine::load_questions_usage_by_activity($student1attempt->uniqueid);
+        $step = $quba->get_question_attempt(1)->get_step(0);
+        $this->assertEquals($student1->id, $step->get_user_id());
     }
 }
