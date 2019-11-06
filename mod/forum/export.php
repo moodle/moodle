@@ -114,7 +114,8 @@ if ($form->is_cancelled()) {
     $humandates = !empty($data->humandates);
 
     $fields = ['id', 'discussion', 'parent', 'userid', 'created', 'modified', 'mailed', 'subject', 'message',
-                'messageformat', 'messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto'];
+                'messageformat', 'messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto',
+                'wordcount', 'charcount'];
 
     $datamapper = $legacydatamapperfactory->get_post_data_mapper();
     $exportdata = new ArrayObject($datamapper->to_legacy_objects($posts));
