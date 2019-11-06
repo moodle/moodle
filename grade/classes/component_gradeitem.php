@@ -392,6 +392,15 @@ abstract class component_gradeitem {
     abstract public function get_grade_for_user(stdClass $gradeduser, stdClass $grader): ?stdClass;
 
     /**
+     * Get the grade status for the specified user.
+     * If the user has a grade as defined by the implementor return true else return false.
+     *
+     * @param stdClass $gradeduser The user being graded
+     * @return bool The grade status
+     */
+    abstract public function user_has_grade(stdClass $gradeduser): bool;
+
+    /**
      * Get grades for all users for the specified gradeitem.
      *
      * @return stdClass[] The grades
