@@ -122,7 +122,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         set_config('hostname', 'localhost', 'auth_cas');
         set_config('auth_logo', 'http://invalidurl.com//invalid/', 'auth_cas');
-
+        set_config('auth_name', 'CAS', 'auth_cas');
         set_config('auth', 'oauth2,cas');
 
         list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
