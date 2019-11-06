@@ -140,6 +140,7 @@ class fetch extends external_api {
         global $USER;
 
         // Set up all the controllers etc that we'll be needing.
+        $hasgrade = $gradeitem->user_has_grade($gradeduser);
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
         $instance = $gradeitem->get_advanced_grading_instance($USER, $grade);
         $controller = $instance->get_controller();
@@ -229,6 +230,7 @@ class fetch extends external_api {
 
         return [
             'templatename' => 'gradingform_rubric/grades/grader/gradingpanel',
+            'hasgrade' => $hasgrade,
             'grade' => [
                 'instanceid' => $instance->get_id(),
                 'criteria' => $criterion,
@@ -251,6 +253,7 @@ class fetch extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'templatename' => new external_value(PARAM_SAFEPATH, 'The template to use when rendering this data'),
+            'hasgrade' => new external_value(PARAM_BOOL, 'Does the user have a grade?'),
             'grade' => new external_single_structure([
                 'instanceid' => new external_value(PARAM_INT, 'The id of the current grading instance'),
                 'rubricmode' => new external_value(PARAM_RAW, 'The mode i.e. evaluate editable'),

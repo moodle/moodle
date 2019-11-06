@@ -129,20 +129,23 @@ class fetch extends external_api {
 
         // Fetch the actual data.
         $gradeduser = \core_user::get_user($gradeduserid);
+        $hasgrade = $gradeitem->user_has_grade($gradeduser);
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
 
-        return self::get_fetch_data($grade);
+        return self::get_fetch_data($grade, $hasgrade);
     }
 
     /**
      * Get the data to be fetched.
      *
      * @param stdClass $grade
+     * @param bool $hasgrade
      * @return array
      */
-    public static function get_fetch_data(stdClass $grade): array {
+    public static function get_fetch_data(stdClass $grade, bool $hasgrade): array {
         return [
             'templatename' => 'core_grades/grades/grader/gradingpanel/point',
+            'hasgrade' => $hasgrade,
             'grade' => [
                 'grade' => $grade->grade,
                 'timecreated' => $grade->timecreated,
@@ -161,6 +164,7 @@ class fetch extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'templatename' => new external_value(PARAM_SAFEPATH, 'The template to use when rendering this data'),
+            'hasgrade' => new external_value(PARAM_BOOL, 'Does the user have a grade?'),
             'grade' => new external_single_structure([
                 'grade' => new external_value(PARAM_FLOAT, 'The numeric grade'),
                 'timecreated' => new external_value(PARAM_INT, 'The time that the grade was created'),

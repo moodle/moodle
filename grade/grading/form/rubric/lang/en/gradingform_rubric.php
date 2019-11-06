@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addcriterion'] = 'Add criterion';
+$string['additionalfeedback'] = 'Additional feedback';
 $string['alwaysshowdefinition'] = 'Allow users to preview rubric (otherwise it will only be displayed after grading)';
 $string['backtoediting'] = 'Back to editing';
 $string['confirmdeletecriterion'] = 'Are you sure you want to delete this criterion?';
