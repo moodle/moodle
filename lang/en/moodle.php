@@ -1075,11 +1075,13 @@ $string['indicator:noteacher_help'] = 'This indicator reflects the availability 
 $string['indicator:potentialcognitive'] = 'Course potential cognitive depth';
 $string['indicator:potentialcognitive_help'] = 'This indicator is based on the potential cognitive depth that could be reached by a student participating in course activities.';
 $string['indicator:potentialcognitivedef'] = 'Course potential cognitive depth';
-$string['indicator:potentialcognitivedef_help'] = 'The degree to which the course offers "deep" cognitive engagement, e.g. submission of work for feedback, the opportunity to review work by others, and the opportunity to revise and resubmit work. <a href="{$a}Learning_analytics_indicators#Cognitive_depth" target="_blank">More info</a>';
+$string['indicator:potentialcognitivedef_help'] = 'The degree to which the course offers "deep" cognitive engagement, e.g. submission of work for feedback, the opportunity to review work by others, and the opportunity to revise and resubmit work.';
+$string['indicator:potentialcognitivedef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:potentialsocial'] = 'Course potential social breadth';
 $string['indicator:potentialsocial_help'] = 'This indicator is based on the potential social breadth that could be reached by the student participating in course activities.';
 $string['indicator:potentialsocialdef'] = 'Course potential social breadth';
-$string['indicator:potentialsocialdef_help'] = 'The degree to which the course offers "broad" social engagement, interacting with other participants and with the community of practice beyond the class. <a href="{$a}Learning_analytics_indicators#Social_breadth" target="_blank">More info</a>';
+$string['indicator:potentialsocialdef_help'] = 'The degree to which the course offers "broad" social engagement, interacting with other participants and with the community of practice beyond the class.';
+$string['indicator:potentialsocialdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['indicator:readactions'] = 'Read actions amount';
 $string['indicator:readactions_help'] = 'This indicator represents the number of read (view) actions taken by the student.';
 $string['indicator:userforumstracking'] = 'User is tracking forums';

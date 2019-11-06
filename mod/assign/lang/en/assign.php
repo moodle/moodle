@@ -298,11 +298,13 @@ $string['inactiveoverridehelp'] = '* Student does not have the correct group or 
 $string['indicator:cognitivedepth'] = 'Assignment cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in an assignment activity.';
 $string['indicator:cognitivedepthdef'] = 'Assignment cognitive';
-$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Assignment activities during this analysis interval (Levels = No view, View, Submit, View feedback, Comment on feedback, Resubmit after viewing feedback) <a href="{$a}Learning_analytics_indicators#Cognitive_depth" target="_blank">More info</a>';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Assignment activities during this analysis interval (Levels = No view, View, Submit, View feedback, Comment on feedback, Resubmit after viewing feedback)';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Assignment social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in an assignment activity.';
 $string['indicator:socialbreadthdef'] = 'Assignment social';
-$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Assignment activities during this analysis interval (Levels = No participation, Participant alone, Participant with others) <a href="{$a}Learning_analytics_indicators#Social_breadth" target="_blank">More info</a>';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Assignment activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['instructionfiles'] = 'Instruction files';
 $string['introattachments'] = 'Additional files';
 $string['introattachments_help'] = 'Additional files for use in the assignment, such as answer templates, may be added. Download links for the files will then be displayed on the assignment page under the description.';
