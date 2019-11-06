@@ -8144,7 +8144,7 @@ button.bg-dark:focus {
 .mx-5 {
   margin-left: 3rem !important; }
 
-.p-0, .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area.py-3 {
+.p-0 {
   padding: 0 !important; }
 
 .pt-0,
@@ -17348,6 +17348,9 @@ div#dock {
     background-color: transparent; }
   .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-unit.yui-layout-unit-center div.yui-layout-bd {
     background-color: #f8f9fa; }
+  .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area.py-3 {
+    padding: 0 !important;
+    /* stylelint-disable-line declaration-no-important */ }
   .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable,
   .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell {
     border: 0;
