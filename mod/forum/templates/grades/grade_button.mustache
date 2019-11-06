@@ -29,15 +29,21 @@
     {
     }
 }}
-<a class="btn btn-primary" href="" data-grade-action="launch" {{!
-    }}data-contextid="{{contextid}}" {{!
-    }}data-cmid="{{cmid}}" {{!
-    }}data-name="{{name}}" {{!
-    }}data-course-id="{{courseid}}" {{!
-    }}data-course-name="{{coursename}}" {{!
-    }}data-group="{{groupid}}" {{!
-    }}data-grading-component="{{gradingcomponent}}" {{!
-    }}data-grading-component-subtype="{{gradingcomponentsubtype}}" {{!
-    }}data-gradable-itemtype="forum" {{!
-    }}{{#firstgradeduserid}}data-initialuserid="{{firstgradeduserid}}" {{/firstgradeduserid}}{{!
-    }}>{{#str}}gradeusers, forum{{/str}}</a>
+<button
+    class="btn btn-primary"
+    type="button"
+    data-grade-action="launch"
+    data-contextid="{{contextid}}"
+    data-cmid="{{cmid}}"
+    data-name="{{name}}"
+    data-course-id="{{courseid}}"
+    data-course-name="{{coursename}}"
+    data-experimental-display-mode="{{experimentaldisplaymode}}"
+    data-group="{{groupid}}"
+    data-grading-component="{{gradingcomponent}}"
+    data-grading-component-subtype="{{gradingcomponentsubtype}}"
+    data-gradable-itemtype="forum"
+    {{#firstgradeduserid}}data-initialuserid="{{firstgradeduserid}}" {{/firstgradeduserid}}
+>
+    {{#str}}gradeusers, forum{{/str}}
+</button>

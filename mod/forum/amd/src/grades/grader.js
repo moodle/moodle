@@ -37,9 +37,10 @@ const templateNames = {
  * Curried function with CMID set, this is then used in unified grader as a fetch a users content.
  *
  * @param {Number} cmid
+ * @param {Bool} experimentalDisplayMode
  * @return {Function}
  */
-const getContentForUserIdFunction = (cmid) => (userid) => {
+const getContentForUserIdFunction = (cmid, experimentalDisplayMode) => (userid) => {
     /**
      * Given the parent function is called with the second param set execute the partially executed function.
      *
@@ -49,6 +50,7 @@ const getContentForUserIdFunction = (cmid) => (userid) => {
         .then(context => {
             // Rebuild the returned data for the template.
             context.discussions = context.discussions.map(discussionPostMapper);
+            context.experimentaldisplaymode = experimentalDisplayMode ? true : false;
 
             return Templates.render(templateNames.contentRegion, context);
         })
@@ -91,6 +93,7 @@ const discussionPostMapper = (discussion) => {
             parent.hasreplies = false;
             parent.replies = [];
             parent.readonly = true;
+            post.parentauthorname = parent.author.fullname;
         }
 
         return {
@@ -122,7 +125,7 @@ const launchWholeForumGrading = async(rootNode) => {
 
     await Grader.launch(
         getUsersForCmidFunction(data.cmid),
-        getContentForUserIdFunction(data.cmid),
+        getContentForUserIdFunction(data.cmid, data.experimentalDisplayMode == "1"),
         gradingPanelFunctions.getter,
         gradingPanelFunctions.setter,
         {

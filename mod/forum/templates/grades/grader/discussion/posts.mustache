@@ -29,7 +29,11 @@
     {
     }
 }}
-<div data-region="posts" id="post-region-{{uniqid}}">
+<div
+    class="{{#experimentaldisplaymode}}nested-v2-display-mode{{/experimentaldisplaymode}}"
+    data-region="posts"
+    id="post-region-{{uniqid}}"
+>
     {{#discussions}}
         <div class="discussion-container">
             <div class="p-4">
@@ -53,21 +57,24 @@
                                     {{#str}} viewparentpost, mod_forum {{/str}}
                                 </button>
                                 <div id="parent-post-content-{{id}}" class="content collapse">
-                                    {{> mod_forum/forum_discussion_nested_post }}
+                                    {{#experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_v2_first_post }}{{/experimentaldisplaymode}}
+                                    {{^experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_post }}{{/experimentaldisplaymode}}
                                 </div>
                             </div>
                         {{/parent}}
                         {{#post}}
                             <div class="post-container">
-                                {{> mod_forum/forum_discussion_nested_post }}
+                                {{#experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_v2_first_post }}{{/experimentaldisplaymode}}
+                                {{^experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_post }}{{/experimentaldisplaymode}}
                             </div>
                             <button
-                                class="btn btn-link border ml-auto"
+                                class="view-context-button btn btn-link border"
                                 type="button"
                                 data-action="view-context"
                                 data-discussionid="{{discussionid}}"
                                 data-postid="{{id}}"
                                 data-name="{{name}}"
+                                data-experimental-display-mode="{{experimentaldisplaymode}}"
                             >
                                 {{#str}} viewconversation, forum {{/str}}
                             </button>

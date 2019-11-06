@@ -218,6 +218,7 @@ $author-image-margin-sm: 8px;
     }
 }
 
+.path-mod-forum .nested-v2-display-mode,
 .path-mod-forum.nested-v2-display-mode {
     .discussionsubscription {
         margin-top: 0;
@@ -782,7 +783,17 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                                     visibility 0s linear;
                             }
                         }
+
                         .body-content-container {
+                            opacity: 1;
+                            visibility: visible;
+                            max-height: none;
+                            transition:
+                                opacity $grading-animation-duration linear,
+                                visibility 0s linear;
+                        }
+
+                        .forum-post-core {
                             opacity: 1;
                             visibility: visible;
                             max-height: none;
@@ -804,7 +815,14 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                                 max-height: 0;
                             }
                         }
+
                         .body-content-container {
+                            opacity: 0;
+                            visibility: hidden;
+                            max-height: 0;
+                        }
+
+                        .forum-post-core {
                             opacity: 0;
                             visibility: hidden;
                             max-height: 0;
@@ -826,6 +844,18 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                 margin-right: 0;
             }
         }
+
+        .nested-v2-display-mode {
+            .discussion-container {
+                .posts-container {
+                    .parent-container {
+                        .show-content-button {
+                            padding-left: $author-image-width + $author-image-margin;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .no-search-results-container {
@@ -834,6 +864,43 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
             width: 250px;
             margin-right: 0;
         }
+    }
+
+    .nested-v2-display-mode {
+        .view-context-button {
+            margin-left: $author-image-width + $author-image-margin;
+            border-radius: $border-radius-lg;
+        }
+
+        .parent-container {
+            .author-image-container {
+                position: relative;
+
+                &:after {
+                    position: absolute;
+                    top: calc(#{$author-image-width} + #{map-get($spacers, 2)});
+                    content: "";
+                    background-color: $gray-200;
+                    width: 2px;
+                    height: calc(100% - #{$author-image-width} + #{map-get($spacers, 2)});
+                }
+            }
+        }
+
+        .parent-container + .post-container {
+            .author-image-container {
+                img {
+                    width: $author-image-width-sm !important; /* stylelint-disable-line declaration-no-important */
+                }
+            }
+        }
+    }
+}
+
+.path-mod-forum .unified-grader .nested-v2-display-mode,
+.path-mod-forum .modal .nested-v2-display-mode {
+    .post-subject {
+        display: none;
     }
 }
 

@@ -29,8 +29,9 @@
     {
     }
 }}
-<div data-region="posts-modal">
+<div class="{{#experimentaldisplaymode}}nested-v2-display-mode{{/experimentaldisplaymode}}" data-region="posts-modal">
     {{#posts}}
-        {{> mod_forum/forum_discussion_nested_post }}
+        {{#experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_v2_first_post }}{{/experimentaldisplaymode}}
+        {{^experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_post }}{{/experimentaldisplaymode}}
     {{/posts}}
 </div>

@@ -45,6 +45,7 @@ const showPostInContext = async(rootNode) => {
     const postId = rootNode.dataset.postid;
     const discussionId = rootNode.dataset.discussionid;
     const discussionName = rootNode.dataset.name;
+    const experimentalDisplayMode = rootNode.dataset.experimentalDisplayMode == "1";
 
     const [
         allPosts,
@@ -70,6 +71,7 @@ const showPostInContext = async(rootNode) => {
         if (post.parentid) {
             const parent = postsById.get(post.parentid);
             if (parent) {
+                post.parentauthorname = parent.author.fullname;
                 parent.hasreplies = true;
                 parent.replies.push(post);
             } else {
@@ -96,7 +98,10 @@ const showPostInContext = async(rootNode) => {
     modal.show();
 
     // Note: We do not use await here because it messes with the Modal transitions.
-    const templatePromise = Templates.render('mod_forum/grades/grader/discussion/post_modal', {posts});
+    const templatePromise = Templates.render('mod_forum/grades/grader/discussion/post_modal', {
+        posts,
+        experimentaldisplaymode: experimentalDisplayMode
+    });
     modal.setBody(templatePromise);
 };
 
