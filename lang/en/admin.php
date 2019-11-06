@@ -647,6 +647,7 @@ $string['change'] = 'change';
 $string['checkboxno'] = 'No';
 $string['checkboxyes'] = 'Yes';
 $string['choosefiletoedit'] = 'Choose file to edit';
+$string['h5pgetcontenttypestask'] = 'Download available H5P content types from h5p.org';
 $string['iconvrequired'] = 'Installing ICONV extension is required.';
 $string['ignore'] = 'Ignore';
 $string['includemoduleuserdata'] = 'Include module user data';

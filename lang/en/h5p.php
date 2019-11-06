@@ -71,6 +71,7 @@ $string['downloadtitle'] = 'Download this content as a H5P file.';
 $string['editor'] = 'Editor';
 $string['embed'] = 'Embed';
 $string['embedtitle'] = 'View the embed code for this content.';
+$string['fetchtypesfailure'] = 'No information could be obtained on the H5P content types available. H5P repository connection failure';
 $string['fileExceedsMaxSize'] = 'One of the files inside the package exceeds the maximum file size allowed. ({$a->%file} {$a->%used} > {$a->%max})';
 $string['fullscreen'] = 'Fullscreen';
 $string['gpl'] = 'General Public License v3';

@@ -392,4 +392,13 @@ $tasks = array(
         'dayofweek' => '*',
         'month' => '*'
     ),
+    array(
+        'classname' => 'core\task\h5p_get_content_types_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '1',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
 );
