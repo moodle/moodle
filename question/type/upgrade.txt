@@ -1,5 +1,15 @@
 This files describes API changes for question type plugins.
 
+=== 3.8 ===
+
+* There is a new method for question types get_extra_question_bank_actions.
+  Assuming the question bank display is using the new 'edit_menu_column'
+  (which it will be by default) this method lets you add question-type-specific
+  actions to the menu. The question_type base class has extensive PHPdoc comments
+  on the method to explain what you should do, and there is an example of how to
+  use it in a question type at
+  https://github.com/moodleou/moodle-qtype_pmatch/commit/2aefa8b5dcc7bab768f4707a4ffb7befcf4c2540.
+
 === 3.8, 3.7.3, 3.6.7 ===
 
 * Coming up in Moodle 3.8 are some changes to the question bank UI. These will break any

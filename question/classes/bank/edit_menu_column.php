@@ -86,6 +86,16 @@ class edit_menu_column extends column_base {
             }
         }
 
+        $qtypeactions = \question_bank::get_qtype($question->qtype)
+                ->get_extra_question_bank_actions($question);
+        foreach ($qtypeactions as $action) {
+            $menu->add($action);
+        }
+
         echo $OUTPUT->render($menu);
+    }
+
+    public function get_required_fields() {
+        return ['q.qtype'];
     }
 }
