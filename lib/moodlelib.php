@@ -6443,7 +6443,7 @@ function send_password_change_confirmation_email($user, $resetrecord) {
  * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function send_password_change_info($user) {
-    global $CFG;
+    global $CFG, $USER;
 
     $site = get_site();
     $supportuser = core_user::get_support_user();
@@ -6465,6 +6465,10 @@ function send_password_change_info($user) {
         return email_to_user($user, $supportuser, $subject, $message);
     }
 
+    // This is a workaround as change_password_url() is designed to allow
+    // use of the $USER global. See MDL-66984.
+    $olduser = $USER;
+    $USER = $user;
     if ($userauth->can_change_password() and $userauth->change_password_url()) {
         // We have some external url for password changing.
         $data->link .= $userauth->change_password_url();
@@ -6473,6 +6477,7 @@ function send_password_change_info($user) {
         // No way to change password, sorry.
         $data->link = '';
     }
+    $USER = $olduser;
 
     if (!empty($data->link) and has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
         $message = get_string('emailpasswordchangeinfo', '', $data);
