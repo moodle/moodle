@@ -38,26 +38,35 @@
         <div class="h-100 w-100 bg-white d-flex flex-column">
             <div class="flex-shrink-0 d-flex flex-column">
                 <div class="header-container bg-light">
-                    <div id="searchbox-{{uniqid}}" class="user-search-container d-flex flex-grow-1 align-items-center collapse">
+                    <div
+                        id="searchbox-{{uniqid}}"
+                        class="user-search-container d-flex flex-grow-1 align-items-center collapsed"
+                        data-region="user-search-container"
+                    >
                         <div class="search-input-container w-100">
                             <span class="search-icon icon-no-margin d-flex align-items-center justify-content-center">
                                 {{#pix}} i/search, core {{/pix}}
                             </span>
                             <input
                                 type="text"
-                                data-action="search-user-input"
+                                data-region="user-search-input"
                                 class="form-control form-control-lg"
-                                placeholder="Search user"
+                                placeholder="{{#str}} searchusers, mod_forum {{/str}}"
                             >
                             <button
                                 class="toggle-search-button btn btn-icon icon-no-margin"
-                                data-target="#searchbox-{{uniqid}}"
                                 aria-expanded="false"
                                 aria-controls="searchbox-{{uniqid}}"
-                                data-toggle="collapse"
+                                data-action="toggle-search"
                             >
-                                <div class="expanded-icon">{{#pix}} e/cancel, core {{/pix}}</div>
-                                <div class="collapsed-icon">{{#pix}} i/search, core {{/pix}}</div>
+                                <div class="expanded-icon">
+                                    <span aria-hidden="true">{{#pix}} e/cancel, core, {{#str}} hideusersearch, mod_forum {{/str}} {{/pix}}</span>
+                                    <span class="sr-only">{{#str}} hideusersearch, mod_forum {{/str}}</span>
+                                </div>
+                                <div class="collapsed-icon">
+                                    <span aria-hidden="true">{{#pix}} i/search, core, {{#str}} showusersearch, mod_forum {{/str}} {{/pix}}</span>
+                                    <span class="sr-only">{{#str}} showusersearch, mod_forum {{/str}}</span>
+                                </div>
                             </button>
                         </div>
                     </div>
@@ -92,6 +101,7 @@
                     <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
                 </div>
             </div>
+            <div class="hidden overflow-auto" data-region="search-results-container"></div>
         </div>
     {{/drawercontent}}
 {{/core/drawer}}

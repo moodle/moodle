@@ -484,6 +484,17 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
         z-index: 1;
     }
 
+    .body-container {
+        &.hidden {
+            display: none !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+
+    .userpicture {
+        height: 60px;
+        width: 60px;
+    }
+
     .grader-grading-panel {
         position: absolute;
         top: 0;
@@ -500,11 +511,6 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
         }
 
         .user-picker-container {
-            .userpicture {
-                height: 60px;
-                width: 60px;
-            }
-
             .user-full-name {
                 max-width: 240px;
             }
@@ -539,6 +545,20 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                 z-index: 1;
             }
 
+            .toggle-search-button {
+                &.expand {
+                    animation-name: expandSearchButton;
+                    animation-duration: $grading-animation-duration;
+                    animation-timing-function: ease-in-out;
+                }
+
+                &.collapse {
+                    display: block;
+                    animation-name: collapseSearchButton;
+                    animation-duration: $grading-animation-duration;
+                }
+            }
+
             .user-search-container {
                 overflow: hidden;
                 position: absolute;
@@ -558,7 +578,11 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                     input {
                         padding-left: $grading-search-input-padding-left;
                         padding-right: $grading-search-input-padding-right;
-                        transition: $custom-forms-transition;
+                        opacity: 1;
+                        visibility: visible;
+                        transition:
+                            opacity 0s linear $grading-animation-duration,
+                            visibility 0s linear;
                     }
 
                     .search-icon {
@@ -570,10 +594,6 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                         height: $grading-icon-button-size;
                         width: $grading-icon-button-size - ($input-border-width * 2);
                         background-color: $input-bg;
-                    }
-
-                    input,
-                    .search-icon {
                         opacity: 1;
                         visibility: visible;
                         transition:
@@ -590,35 +610,36 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                         color: inherit;
                         text-align: left;
                         padding-left: 9px;
-                        animation-name: expandSearchButton;
-                        animation-duration: $grading-animation-duration;
-                        animation-timing-function: ease-in-out;
                         transition: right 0s linear $grading-animation-duration;
 
                         .expanded-icon {
                             opacity: 1;
+                            visibility: visible;
                             max-width: 50px;
                             max-height: 50px;
                             transition:
                                 opacity 0s linear $grading-animation-duration,
                                 max-height 0s linear $grading-animation-duration,
-                                max-width 0s linear $grading-animation-duration;
+                                max-width 0s linear $grading-animation-duration,
+                                visibility 0s linear $grading-animation-duration;
                         }
 
                         .collapsed-icon {
                             opacity: 0;
+                            visibility: hidden;
                             max-height: 0;
                             max-width: 0;
                             overflow: hidden;
                             transition:
                                 opacity 0s linear $grading-animation-duration,
                                 max-height 0s linear $grading-animation-duration,
-                                max-width 0s linear $grading-animation-duration;
+                                max-width 0s linear $grading-animation-duration,
+                                visibility 0s linear $grading-animation-duration;
                         }
                     }
                 }
 
-                &.collapse:not(.show) {
+                &.collapsed {
                     width: calc(#{$grading-icon-button-size} + #{map-get($spacers, 2)} + #{map-get($spacers, 2)});
                     transition: width $grading-animation-duration ease-in-out;
 
@@ -640,36 +661,36 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                         }
 
                         .toggle-search-button {
-                            animation-name: collapseSearchButton;
-                            animation-duration: $grading-animation-duration;
-
                             .expanded-icon {
                                 opacity: 0;
+                                visibility: hidden;
                                 max-height: 0;
                                 max-width: 0;
                                 overflow: hidden;
                                 transition:
                                     opacity 0s linear,
                                     max-height 0s linear,
-                                    max-width 0s linear;
+                                    max-width 0s linear,
+                                    visibility 0s linear;
                             }
 
                             .collapsed-icon {
                                 opacity: 1;
+                                visibility: visible;
                                 max-width: 50px;
                                 max-height: 50px;
                                 transition:
                                     opacity 0s linear,
                                     max-height 0s linear,
-                                    max-width 0s linear;
+                                    max-width 0s linear,
+                                    visibility 0s linear;
                             }
                         }
                     }
                 }
             }
 
-            .user-search-container.show + .info-container,
-            .user-search-container.collapsing + .info-container {
+            .user-search-container:not(.collapsed) + .info-container {
                 opacity: 0;
                 visibility: hidden;
                 left: calc(100% * -1);
@@ -804,6 +825,14 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                 width: 250px;
                 margin-right: 0;
             }
+        }
+    }
+
+    .no-search-results-container {
+        .icon {
+            height: 250px;
+            width: 250px;
+            margin-right: 0;
         }
     }
 }

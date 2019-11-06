@@ -30,6 +30,7 @@ import {add as addToast} from 'core/toast';
 import {get_string as getString} from 'core/str';
 import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
+import {debounce} from 'core/utils';
 
 const templateNames = {
     grader: {
@@ -37,7 +38,8 @@ const templateNames = {
         gradingPanel: {
             error: 'mod_forum/local/grades/local/grader/gradingpanel/error',
         },
-        status: 'mod_forum/local/grades/local/grader/status'
+        searchResults: 'mod_forum/local/grades/local/grader/user_picker/user_search',
+        status: 'mod_forum/local/grades/local/grader/status',
     },
 };
 
@@ -73,8 +75,10 @@ const fetchContentFromRender = (html, js) => {
  * @return {Function}
  */
 const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) => {
+    let firstLoad = true;
+
     return async(user) => {
-        const spinner = addIconToContainerWithPromise(root);
+        const spinner = firstLoad ? null : addIconToContainerWithPromise(root);
         const [
             [html, js],
             userGrade,
@@ -92,8 +96,99 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
         const panel = panelContainer.querySelector(Selectors.regions.gradingPanel);
         Templates.replaceNodeContents(panel, gradingPanelHtml, gradingPanelJS);
         panelContainer.scrollTop = 0;
-        spinner.resolve();
+        firstLoad = false;
+
+        if (spinner) {
+            spinner.resolve();
+        }
     };
+};
+
+/**
+ * Show the search results container and hide the user picker and body content.
+ *
+ * @param {HTMLElement} bodyContainer The container element for the body content
+ * @param {HTMLElement} userPickerContainer The container element for the user picker
+ * @param {HTMLElement} searchResultsContainer The container element for the search results
+ */
+const showSearchResultContainer = (bodyContainer, userPickerContainer, searchResultsContainer) => {
+    bodyContainer.classList.add('hidden');
+    userPickerContainer.classList.add('hidden');
+    searchResultsContainer.classList.remove('hidden');
+};
+
+/**
+ * Hide the search results container and show the user picker and body content.
+ *
+ * @param {HTMLElement} bodyContainer The container element for the body content
+ * @param {HTMLElement} userPickerContainer The container element for the user picker
+ * @param {HTMLElement} searchResultsContainer The container element for the search results
+ */
+const hideSearchResultContainer = (bodyContainer, userPickerContainer, searchResultsContainer) => {
+    bodyContainer.classList.remove('hidden');
+    userPickerContainer.classList.remove('hidden');
+    searchResultsContainer.classList.add('hidden');
+};
+
+/**
+ * Toggles the visibility of the user search.
+ *
+ * @param {HTMLElement} toggleSearchButton The button that toggles the search
+ * @param {HTMLElement} searchContainer The container element for the user search
+ * @param {HTMLElement} searchInput The input element for searching
+ */
+const showUserSearchInput = (toggleSearchButton, searchContainer, searchInput) => {
+    searchContainer.classList.remove('collapsed');
+    toggleSearchButton.setAttribute('aria-expanded', 'true');
+    toggleSearchButton.classList.add('expand');
+    toggleSearchButton.classList.remove('collapse');
+    searchInput.focus();
+};
+
+/**
+ * Toggles the visibility of the user search.
+ *
+ * @param {HTMLElement} toggleSearchButton The button that toggles the search
+ * @param {HTMLElement} searchContainer The container element for the user search
+ * @param {HTMLElement} searchInput The input element for searching
+ */
+const hideUserSearchInput = (toggleSearchButton, searchContainer, searchInput) => {
+    searchContainer.classList.add('collapsed');
+    toggleSearchButton.setAttribute('aria-expanded', 'false');
+    toggleSearchButton.classList.add('collapse');
+    toggleSearchButton.classList.remove('expand');
+    toggleSearchButton.focus();
+    searchInput.value = '';
+};
+
+/**
+ * Find the list of users who's names include the given search term.
+ *
+ * @param {Array} userList List of users for the grader
+ * @param {String} searchTerm The search term to match
+ * @return {Array}
+ */
+const searchForUsers = (userList, searchTerm) => {
+    if (searchTerm === '') {
+        return userList;
+    }
+
+    searchTerm = searchTerm.toLowerCase();
+
+    return userList.filter((user) => {
+        return user.fullname.toLowerCase().includes(searchTerm);
+    });
+};
+
+/**
+ * Render the list of users in the search results area.
+ *
+ * @param {HTMLElement} searchResultsContainer The container element for search results
+ * @param {Array} users The list of users to display
+ */
+const renderSearchResults = async (searchResultsContainer, users) => {
+    const {html, js} = await Templates.renderForPromise(templateNames.grader.searchResults, {users});
+    Templates.replaceNodeContents(searchResultsContainer, html, js);
 };
 
 /**
@@ -102,9 +197,17 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
  * @param {HTMLElement} graderLayout
  * @param {Object} userPicker
  * @param {Function} saveGradeFunction
+ * @param {Array} userList List of users for the grader.
  */
-const registerEventListeners = (graderLayout, userPicker, saveGradeFunction) => {
+const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, userList) => {
     const graderContainer = graderLayout.getContainer();
+    const toggleSearchButton = graderContainer.querySelector(Selectors.buttons.toggleSearch);
+    const searchInputContainer = graderContainer.querySelector(Selectors.regions.userSearchContainer);
+    const searchInput = searchInputContainer.querySelector(Selectors.regions.userSearchInput);
+    const bodyContainer = graderContainer.querySelector(Selectors.regions.bodyContainer);
+    const userPickerContainer = graderContainer.querySelector(Selectors.regions.pickerRegion);
+    const searchResultsContainer = graderContainer.querySelector(Selectors.regions.searchResultsContainer);
+
     graderContainer.addEventListener('click', (e) => {
         if (e.target.closest(Selectors.buttons.toggleFullscreen)) {
             e.stopImmediatePropagation();
@@ -126,7 +229,40 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction) => 
         if (e.target.closest(Selectors.buttons.saveGrade)) {
             saveGradeFunction(userPicker.currentUser);
         }
+
+        if (e.target.closest(Selectors.buttons.toggleSearch)) {
+            if (toggleSearchButton.getAttribute('aria-expanded') === 'true') {
+                // Search is open so let's close it.
+                hideUserSearchInput(toggleSearchButton, searchInputContainer, searchInput);
+                hideSearchResultContainer(bodyContainer, userPickerContainer, searchResultsContainer);
+                searchResultsContainer.innerHTML = '';
+            } else {
+                // Search is closed so let's open it.
+                showUserSearchInput(toggleSearchButton, searchInputContainer, searchInput);
+                showSearchResultContainer(bodyContainer, userPickerContainer, searchResultsContainer);
+                renderSearchResults(searchResultsContainer, userList);
+            }
+
+            return;
+        }
+
+        const selectUserButton = e.target.closest(Selectors.buttons.selectUser);
+        if (selectUserButton) {
+            const userId = selectUserButton.getAttribute('data-userid');
+            const user = userList.find(user => user.id == userId);
+            userPicker.setUserId(userId);
+            userPicker.showUser(user);
+            hideUserSearchInput(toggleSearchButton, searchInputContainer, searchInput);
+            hideSearchResultContainer(bodyContainer, userPickerContainer, searchResultsContainer);
+            searchResultsContainer.innerHTML = '';
+        }
     });
+
+    // Debounce the search input so that it only executes 300 milliseconds after the user has finished typing.
+    searchInput.addEventListener('input', debounce(() => {
+        const users = searchForUsers(userList, searchInput.value);
+        renderSearchResults(searchResultsContainer, users);
+    }, 300));
 };
 
 /**
@@ -236,7 +372,7 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     );
 
     // Register all event listeners.
-    registerEventListeners(graderLayout, userPicker, saveGradeFunction);
+    registerEventListeners(graderLayout, userPicker, saveGradeFunction, userList);
 
     // Display the newly created user picker.
     displayUserPicker(graderContainer, userPicker.rootNode);

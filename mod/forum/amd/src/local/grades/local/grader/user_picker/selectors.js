@@ -28,9 +28,6 @@ export default {
     },
     actions: {
         changeUser: '[data-action="change-user"]',
-        selectUser: '[data-action="select-user"]',
-        searchUserBox: '[data-action="search-user-box"]',
-        searchUserInput: '[data-action="search-user-input"]',
     }
 };
 
