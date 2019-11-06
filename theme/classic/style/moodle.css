@@ -4469,17 +4469,17 @@ fieldset:disabled #rubric-rubric.gradingform_rubric a.addcriterion,
     .show > .btn-outline-dark.dropdown-toggle:focus {
       box-shadow: 0 0 0 0.2rem rgba(55, 58, 60, 0.5); }
 
-.btn-link, .btn.btn-icon, #page-grade-grading-manage .actions .btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion {
+.btn-link {
   font-weight: 400;
   color: #1177d1;
   text-decoration: none; }
-  .btn-link:hover, .btn.btn-icon:hover, #page-grade-grading-manage .actions .btn-icon.action:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover {
+  .btn-link:hover {
     color: #0b4f8a;
     text-decoration: underline; }
-  .btn-link:focus, .btn.btn-icon:focus, #page-grade-grading-manage .actions .btn-icon.action:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, .btn-link.focus, .focus.btn.btn-icon, #page-grade-grading-manage .actions .focus.btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.focus.btn-icon, #rubric-rubric.gradingform_rubric .focus.btn-icon.addcriterion {
+  .btn-link:focus, .btn-link.focus {
     text-decoration: underline;
     box-shadow: none; }
-  .btn-link:disabled, .btn.btn-icon:disabled, #page-grade-grading-manage .actions .btn-icon.action:disabled, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:disabled, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:disabled, .btn-link.disabled, .disabled.btn.btn-icon, .fp-viewbar.disabled a.btn-icon, #page-grade-grading-manage .actions .disabled.btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.disabled.btn-icon, #rubric-rubric.gradingform_rubric .disabled.btn-icon.addcriterion {
+  .btn-link:disabled, .btn-link.disabled {
     color: #868e96;
     pointer-events: none; }
 
@@ -4495,25 +4495,15 @@ fieldset:disabled #rubric-rubric.gradingform_rubric a.addcriterion,
   line-height: 1.5;
   border-radius: 0.2rem; }
 
-.btn-block, p.arrow_button input, #addcontrols input,
-#removecontrols input {
+.btn-block {
   display: block;
   width: 100%; }
-  .btn-block + .btn-block, p.arrow_button input + .btn-block, #addcontrols input + .btn-block, #removecontrols input + .btn-block, p.arrow_button .btn-block + input, p.arrow_button input + input, #addcontrols .btn-block + input, #addcontrols p.arrow_button input + input, #addcontrols input + input,
-  #removecontrols .btn-block + input, #removecontrols p.arrow_button input + input,
-  #removecontrols input + input {
+  .btn-block + .btn-block {
     margin-top: 0.5rem; }
 
-input[type="submit"].btn-block, p.arrow_button input[type="submit"], #addcontrols input[type="submit"],
-#removecontrols input[type="submit"],
+input[type="submit"].btn-block,
 input[type="reset"].btn-block,
-p.arrow_button input[type="reset"],
-#addcontrols input[type="reset"],
-#removecontrols input[type="reset"],
-input[type="button"].btn-block,
-p.arrow_button input[type="button"],
-#addcontrols input[type="button"],
-#removecontrols input[type="button"] {
+input[type="button"].btn-block {
   width: 100%; }
 
 .fade {
@@ -10210,7 +10200,8 @@ a.skip:active {
 .groupmanagementtable #buttonscell p.arrow_button input {
   width: auto;
   min-width: 80%;
-  margin: 0 auto; }
+  margin: 0 auto;
+  display: block; }
 
 .groupmanagementtable #removeselect_wrapper,
 .groupmanagementtable #addselect_wrapper {
@@ -11760,12 +11751,12 @@ body.h5p-embed .h5pmessages {
 
 .emoji-auto-complete {
   height: 40px; }
-  .emoji-auto-complete .btn.btn-link.btn-icon.emoji-button, .emoji-auto-complete .btn.btn-icon.emoji-button, .emoji-auto-complete #page-grade-grading-manage .actions .btn-icon.emoji-button.action, #page-grade-grading-manage .actions .emoji-auto-complete .btn-icon.emoji-button.action, .emoji-auto-complete #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.emoji-button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .emoji-auto-complete input.btn-icon.emoji-button, .emoji-auto-complete #rubric-rubric.gradingform_rubric .btn-icon.emoji-button.addcriterion, #rubric-rubric.gradingform_rubric .emoji-auto-complete .btn-icon.emoji-button.addcriterion {
+  .emoji-auto-complete .btn.btn-link.btn-icon.emoji-button, .emoji-auto-complete #page-grade-grading-manage .actions .btn-link.btn-icon.emoji-button.action, #page-grade-grading-manage .actions .emoji-auto-complete .btn-link.btn-icon.emoji-button.action, .emoji-auto-complete #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.emoji-button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .emoji-auto-complete input.btn-link.btn-icon.emoji-button, .emoji-auto-complete #rubric-rubric.gradingform_rubric .btn-link.btn-icon.emoji-button.addcriterion, #rubric-rubric.gradingform_rubric .emoji-auto-complete .btn-link.btn-icon.emoji-button.addcriterion {
     height: 40px;
     width: 40px;
     line-height: 40px;
     font-size: 24px; }
-    .emoji-auto-complete .btn.btn-link.btn-icon.emoji-button.active, .emoji-auto-complete .btn.btn-icon.emoji-button.active, .emoji-auto-complete #page-grade-grading-manage .actions .btn-icon.emoji-button.active.action, #page-grade-grading-manage .actions .emoji-auto-complete .btn-icon.emoji-button.active.action, .emoji-auto-complete #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.emoji-button.active, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .emoji-auto-complete input.btn-icon.emoji-button.active, .emoji-auto-complete #rubric-rubric.gradingform_rubric .btn-icon.emoji-button.active.addcriterion, #rubric-rubric.gradingform_rubric .emoji-auto-complete .btn-icon.emoji-button.active.addcriterion {
+    .emoji-auto-complete .btn.btn-link.btn-icon.emoji-button.active, .emoji-auto-complete #page-grade-grading-manage .actions .btn-link.btn-icon.emoji-button.active.action, #page-grade-grading-manage .actions .emoji-auto-complete .btn-link.btn-icon.emoji-button.active.action, .emoji-auto-complete #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.emoji-button.active, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .emoji-auto-complete input.btn-link.btn-icon.emoji-button.active, .emoji-auto-complete #rubric-rubric.gradingform_rubric .btn-link.btn-icon.emoji-button.active.addcriterion, #rubric-rubric.gradingform_rubric .emoji-auto-complete .btn-link.btn-icon.emoji-button.active.addcriterion {
       background-color: #e9ecef; }
 
 .toast-wrapper {
@@ -12498,25 +12489,18 @@ body.h5p-embed .h5pmessages {
 
 .block .block-cards a.coursename,
 .block .block-cards span.categoryname,
-.block .block-cards .btn-link,
-.block .block-cards .btn.btn-icon,
-.block .block-cards #page-grade-grading-manage .actions .btn-icon.action,
-#page-grade-grading-manage .actions .block .block-cards .btn-icon.action,
-.block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon,
-#rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon,
-.block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion,
-#rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion {
+.block .block-cards .btn-link {
   color: inherit; }
 
 .block .block-cards .multiline {
   white-space: normal; }
 
-.block .block-cards .btn.btn-link.btn-icon, .block .block-cards .btn.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion {
+.block .block-cards .btn.btn-link.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion {
   height: 36px;
   width: 36px;
   padding: 0;
   border-radius: 50%; }
-  .block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards .btn.btn-icon:hover, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action:hover, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon:hover, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion:hover, .block .block-cards .btn.btn-link.btn-icon:focus, .block .block-cards .btn.btn-icon:focus, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action:focus, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon:focus, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion:focus {
+  .block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:hover, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:hover, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:hover, .block .block-cards .btn.btn-link.btn-icon:focus, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:focus, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:focus, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:focus {
     background-color: #e9ecef; }
 
 .dashboard-card-deck.one-row {
@@ -15020,16 +15004,9 @@ a.ygtvspacer:hover {
     .message-app .clickable:hover {
       filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3)); }
   .message-app a,
-  .message-app .btn-link,
-  .message-app .btn.btn-icon,
-  .message-app #page-grade-grading-manage .actions .btn-icon.action,
-  #page-grade-grading-manage .actions .message-app .btn-icon.action,
-  .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon,
-  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon,
-  .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion,
-  #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion {
+  .message-app .btn-link {
     color: inherit; }
-  .message-app .btn-link:hover, .message-app .btn.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:hover, .message-app .btn-link:focus, .message-app .btn.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:focus {
+  .message-app .btn-link:hover, .message-app .btn-link:focus {
     background-color: rgba(0, 0, 0, 0.035);
     text-decoration: none; }
   .message-app .icon {
@@ -15042,40 +15019,40 @@ a.ygtvspacer:hover {
     display: inline-block; }
   .message-app .overview-section-toggle.collapsed .expanded-icon-container {
     display: none; }
-  .message-app .btn.btn-link.btn-icon, .message-app .btn.btn-icon, .message-app #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions .message-app .btn-icon.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion {
+  .message-app .btn.btn-link.btn-icon, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion {
     height: 16px;
     width: 16px;
     padding: 0;
     border-radius: 50%;
     flex-shrink: 0; }
-    .message-app .btn.btn-link.btn-icon:hover, .message-app .btn.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:hover, .message-app .btn.btn-link.btn-icon:focus, .message-app .btn.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:focus {
+    .message-app .btn.btn-link.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion:hover, .message-app .btn.btn-link.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion:focus {
       background-color: #e9ecef; }
-    .message-app .btn.btn-link.btn-icon.icon-size-0, .message-app .btn.btn-icon.icon-size-0, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-0.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-0.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-0, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-0.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-0.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-0, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-0.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-0.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-0, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-0.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-0.addcriterion {
       height: 20px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 20px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-1, .message-app .btn.btn-icon.icon-size-1, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-1.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-1.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-1, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-1.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-1.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-1, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-1.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-1.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-1, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-1.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-1.addcriterion {
       height: 24px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 24px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-2, .message-app .btn.btn-icon.icon-size-2, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-2.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-2.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-2, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-2.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-2.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-2, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-2.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-2.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-2, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-2.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-2.addcriterion {
       height: 28px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 28px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-3, .message-app .btn.btn-icon.icon-size-3, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-3.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-3.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-3, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-3.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-3.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-3, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-3.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-3.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-3, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-3.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-3.addcriterion {
       height: 36px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 36px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-4, .message-app .btn.btn-icon.icon-size-4, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-4.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-4.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-4, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-4.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-4.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-4, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-4.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-4.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-4, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-4.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-4.addcriterion {
       height: 44px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 44px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-5, .message-app .btn.btn-icon.icon-size-5, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-5.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-5.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-5, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-5.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-5.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-5, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-5.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-5.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-5, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-5.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-5.addcriterion {
       height: 68px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 68px !important;
@@ -17155,7 +17132,7 @@ div#dock {
   display: inline-block;
   min-height: 12rem; }
 
-#page-mod-quiz-mod #id_reviewoptionshdr .btn-link, #page-mod-quiz-mod #id_reviewoptionshdr .btn.btn-icon, #page-mod-quiz-mod #id_reviewoptionshdr #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions #page-mod-quiz-mod #id_reviewoptionshdr .btn-icon.action, #page-mod-quiz-mod #id_reviewoptionshdr #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-mod-quiz-mod #id_reviewoptionshdr input.btn-icon, #page-mod-quiz-mod #id_reviewoptionshdr #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric #page-mod-quiz-mod #id_reviewoptionshdr .btn-icon.addcriterion {
+#page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
   line-height: 1.5;
   vertical-align: bottom; }
 
@@ -17612,8 +17589,6 @@ div#dock {
 p.arrow_button {
   margin-top: 5em;
   text-align: center; }
-  p.arrow_button #remove {
-    margin: 3em auto 5em; }
 
 #addcontrols {
   margin-top: 11.25rem;
@@ -17624,6 +17599,7 @@ p.arrow_button {
 
 #addcontrols input,
 #removecontrols input {
+  width: 100%;
   margin: auto; }
 
 .btn-lineup {
