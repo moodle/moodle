@@ -50,8 +50,6 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
      * Setup function- we will create a course and add an assign instance to it.
      */
     protected function setUp() {
-        global $DB;
-
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -133,14 +131,36 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
 
     public function test_delete_cohort_role_assignment() {
         $this->setAdminUser();
-        $params = (object) array(
+        // Create a cohort role assigment.
+        $params = (object) [
             'userid' => $this->userassignto->id,
             'roleid' => $this->roleid,
             'cohortid' => $this->cohort->id
-        );
-        $result = api::create_cohort_role_assignment($params);
-        $worked = api::delete_cohort_role_assignment($result->get('id'));
-        $this->assertTrue($worked);
+        ];
+        $cohortroleassignment = api::create_cohort_role_assignment($params);
+        $sync = api::sync_all_cohort_roles();
+        $rolesadded = [
+            [
+                'useridassignedto' => $this->userassignto->id,
+                'useridassignedover' => $this->userassignover->id,
+                'roleid' => $this->roleid
+            ]
+        ];
+        $expected = [
+            'rolesadded' => $rolesadded,
+            'rolesremoved' => []
+        ];
+        $this->assertEquals($sync, $expected);
+
+        // Delete the cohort role assigment and confirm the roles are removed.
+        $result = api::delete_cohort_role_assignment($cohortroleassignment->get('id'));
+        $this->assertTrue($result);
+        $sync = api::sync_all_cohort_roles();
+        $expected = [
+            'rolesadded' => [],
+            'rolesremoved' => $rolesadded
+        ];
+        $this->assertEquals($expected, $sync);
     }
 
     public function test_list_cohort_role_assignments() {
