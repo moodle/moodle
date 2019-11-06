@@ -96,7 +96,7 @@ function email_reports_cron() {
 
         // get the company template info.
         // Check against per company template repeat instead.
-        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $compuser->companyid, 'lang' => $compuser->lang, 'templatename' => 'completion_warn_user'))) {
+        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $compuser->companyid, 'lang' => $compuser->lang, 'name' => 'completion_warn_user'))) {
             // Check if its the correct day, if not continue.
             if (!empty($templateinfo->repeatday) && $templateinfo->repeatday != 99 && $templateinfo->repeatday != $dayofweek - 1) {
                 continue;
@@ -105,28 +105,38 @@ function email_reports_cron() {
             // otherwise set the notifyperiod
             if ($templateinfo->repeatperiod == 0) {
                 $notifyperiod = "";
-            } else if ($templateinfo->repeatperiond == 99) {
+            } else if ($templateinfo->repeatperiod == 99) {
                 $notifyperiod = "";
             } else {
-                $notifyperiod = "OR sent > " . strtotime("- " . $templateinfo->repeatvalue . $periods[$templateinfo->repeatperiod], $runtime);
+                $notifytime = strtotime("- 1" . $periods[$templateinfo->repeatperiod], $runtime);
+                $notifyperiod = "OR sent > $notifytime";
             }
         } else {
             // use the default notify period.
-            $notifyperiod = "OR sent > " . $runtime - $compuser->notifyperiod * 86400;
+            $notifytime = $runtime - $compuser->notifyperiod * 86400;
+            $notifyperiod = "OR sent > $notifytime";
         }
 
         // Check if we are within the period.
-        if ($DB->get_records_sql("SELECT id FROM {email}
+        if (!$DB->get_records_sql("SELECT id FROM {email}
                                   WHERE userid = :userid
                                   AND courseid = :courseid
                                   AND templatename = :templatename
                                   AND (
                                      sent IS NULL
                                   $notifyperiod
-                                  )",
+                                  )
+                                  AND id IN (
+                                     SELECT MAX(id) FROM {email}
+                                     WHERE userid = :userid2
+                                     AND courseid = :courseid2
+                                     AND templatename = :templatename2)",
                                   array('userid' => $compuser->userid,
                                         'courseid' => $compuser->courseid,
-                                        'templatename' => 'completion_warn_user'))) {
+                                        'templatename' => 'completion_warn_user',
+                                        'userid2' => $compuser->userid,
+                                        'courseid2' => $compuser->courseid,
+                                        'templatename2' => 'completion_warn_user'))) {
             continue;
         }
         mtrace("Sending completion warning email to $user->email");
@@ -169,7 +179,7 @@ function email_reports_cron() {
                                AND u.suspended = 0
                                AND lit.completedstop = 0";
 
-    $companies = $DB->get_records_sql($nocompletedcompanysql);
+    $companies = $DB->get_records_sql($notcompletedcompanysql);
     foreach ($companies as $company) {
         if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
             continue;
@@ -240,7 +250,7 @@ function email_reports_cron() {
 
                     $managerusers = $DB->get_records_sql($notcompleteddigestsql,
                                                          array('managerid' => $manager->userid,
-                                                               'companyid' => $companyid));
+                                                               'companyid' => $company->companyid));
 
                     $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
                                "<th>" . get_string('lastname') . "</th>" .
@@ -277,7 +287,6 @@ function email_reports_cron() {
                         $summary .= "<tr><td>" . $manageruser->firstname . "</td>" .
                                     "<td>" . $manageruser->lastname . "</td>" .
                                     "<td>" . $manageruser->email . "</td>" .
-                                    "<td>" . $manageruser->departmentname . "</td>" .
                                     "<td>" . $manageruser->coursename . "</td>" .
                                     "<td>" . date($CFG->iomad_date_format, $manageruser->timeenrolled) . "</td></tr>";
                     }
@@ -320,7 +329,7 @@ function email_reports_cron() {
 
                         // Get the company template info.
                         // Check against per company template repeat instead.
-                        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $notstarteduser->companyid, 'lang' => $userrec->lang, 'templatename' => 'course_not_started_warning'))) {
+                        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $notstarteduser->companyid, 'lang' => $userrec->lang, 'name' => 'course_not_started_warning'))) {
                             // Check if its the correct day, if not continue.
                             if (!empty($templateinfo->repeatday) && $templateinfo->repeatday != 99 && $templateinfo->repeatday != $dayofweek - 1) {
                                 continue;
@@ -329,28 +338,38 @@ function email_reports_cron() {
                             // otherwise set the notifyperiod
                             if ($templateinfo->repeatperiod == 0) {
                                 $notifyperiod = "";
-                            } else if ($templateinfo->repeatperiond == 99) {
+                            } else if ($templateinfo->repeatperiod == 99) {
                                 $notifyperiod = "";
                             } else {
-                                $notifyperiod = "OR sent > " . strtotime("- " . $templateinfo->repeatvalue . $periods[$templateinfo->repeatperiod], $runtime);
+                                $notifytime = strtotime("- 1" . $periods[$templateinfo->repeatperiod], $runtime);
+                                $notifyperiod = "OR sent >  $notifytime";
                             }
                         } else {
                             // use the default notify period.
-                            $notifyperiod = "OR sent > " . $runtime - $warnnotstartedcourse->notifyperiod * 86400;
+                            $notifytime = $runtime - $warnnotstartedcourse->notifyperiod * 86400;
+                            $notifyperiod = "OR sent > $notifytime";
                         }
 
                         // Check if we are within the period.
-                        if ($DB->get_records_sql("SELECT id FROM {email}
+                        if (!$DB->get_records_sql("SELECT id FROM {email}
                                                   WHERE userid = :userid
                                                   AND courseid = :courseid
                                                   AND templatename = :templatename
                                                   AND (
                                                      sent IS NULL
                                                   $notifyperiod
-                                                  )",
+                                                  )
+                                                  AND id IN (
+                                                     SELECT MAX(id) FROM {emai}l
+                                                     WHERE userid = :userid2
+                                                     AND courseid = :courseid2
+                                                     AND templatename = :templatename2)",
                                                   array('userid' => $notstarteduser->userid,
                                                         'courseid' => $notstarteduser->courseid,
-                                                        'templatename' => 'course_not_started_warning'))) {
+                                                        'templatename' => 'course_not_started_warning',
+                                                        'userid2' => $notstarteduser->userid,
+                                                        'courseid2' => $notstarteduser->courseid,
+                                                        'templatename2' => 'course_not_started_warning'))) {
                             continue;
                         }
 
@@ -395,8 +414,8 @@ function email_reports_cron() {
                         AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . "
                         AND u.deleted = 0
                         AND u.suspended = 0
-                        AND lit.expirystop = 0
-                        AND cc.id IN (
+                        AND lit.expiredstop = 0
+                        AND lit.id IN (
                             SELECT max(id) FROM {local_iomad_track}
                             GROUP BY userid,courseid)";
 
@@ -450,7 +469,7 @@ function email_reports_cron() {
 
         // Get the company template info.
         // Check against per company template repeat instead.
-        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $notstarteduser->companyid, 'lang' => $userrec->lang, 'templatename' => 'expiry_warn_user'))) {
+        if ($templateinfo = $DB->get_record('email_template', array('companyid' => $notstarteduser->companyid, 'lang' => $userrec->lang, 'name' => 'expiry_warn_user'))) {
             // Check if its the correct day, if not continue.
             if (!empty($templateinfo->repeatday) && $templateinfo->repeatday != 99 && $templateinfo->repeatday != $dayofweek - 1) {
                 continue;
@@ -459,26 +478,37 @@ function email_reports_cron() {
             // otherwise set the notifyperiod
             if ($templateinfo->repeatperiod == 0) {
                 $notifyperiod = "";
-            } else if ($templateinfo->repeatperiond == 99) {
+            } else if ($templateinfo->repeatperiod == 99) {
                 $notifyperiod = "";
             } else {
-                $notifyperiod = "OR sent > " . strtotime("- " . $templateinfo->repeatvalue . $periods[$templateinfo->repeatperiod], $runtime);
+                $notifytime = strtotime("- 1" . $periods[$templateinfo->repeatperiod], $runtime);
+                $notifyperiod = "OR sent > $notifytime";
             }
         } else {
             // use the default notify period.
-            $notifyperiod = "OR sent > " . $runtime - $warnnotstartedcourse->notifyperiod * 86400;
+            $notifytime = $runtime - $warnnotstartedcourse->notifyperiod * 86400;
+            $notifyperiod = "OR sent > $notifytime";
         }
 
         // Check if we have recently sent the email.
-        if ($DB->get_records_sql("SELECT id FROM {email}
+        if (!$DB->get_records_sql("SELECT id FROM {email}
                                   WHERE userid = :userid
                                   AND courseid = :courseid
                                   AND templatename = :templatename
-                                  AND sent IS NULL
-                                  $notifyperiod",
+                                  AND (
+                                      sent IS NULL
+                                      $notifyperiod)
+                                  AND id IN (
+                                     SELECT MAX(id) FROM {email}
+                                     WHERE userid = :userid2
+                                     AND courseid = :courseid2
+                                     AND templatename = :templatename2)",
                                   array('userid' => $compuser->userid,
                                         'courseid' => $compuser->courseid,
-                                        'templatename' => 'expiry_warn_user'))) {
+                                        'templatename' => 'expiry_warn_user',
+                                        'userid2' => $compuser->userid,
+                                        'courseid.' => $compuser->courseid,
+                                        'templatename.' => 'expiry_warn_user'))) {
             continue;
         }
         mtrace("Sending expiry warning email to $user->email");
@@ -508,7 +538,20 @@ function email_reports_cron() {
     mtrace("sending to managers");
     // Email the managers
     // Get the companies from the list of users in the temp table.
-    $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename ."}");
+    $companysql = "SELECT DISTINCT lit.companyid 
+                        FROM {local_iomad_track} lit
+                        JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
+                        JOIN {user} u ON (lit.userid = u.id)
+                        WHERE ic.validlength > 0
+                        AND ic.warnexpire > 0
+                        AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . "
+                        AND u.deleted = 0
+                        AND u.suspended = 0
+                        AND lit.expiredstop = 0
+                        AND lit.id IN (
+                            SELECT max(id) FROM {local_iomad_track})";
+
+    $companies = $DB->get_records_sql($companysql);
     foreach ($companies as $company) {
         if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
             continue;
