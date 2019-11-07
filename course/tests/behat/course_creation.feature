@@ -85,7 +85,6 @@ Feature: Managers can create courses
       | moodle/course:create | Allow |
       | moodle/course:manageactivities | Allow |
       | moodle/course:viewparticipants | Allow |
-      | moodle/role:assign | Allow |
     And I log out
     And I log in as "kevin"
     And I am on site homepage
@@ -93,22 +92,6 @@ Feature: Managers can create courses
     And I set the following fields to these values:
       | Course full name  | My first course |
       | Course short name | myfirstcourse |
-    And I press "Save and display"
-    And I follow "Participants"
-    Then I should see "Kevin the"
-    And I should not see "Teacher"
-    And I log out
-    Given I log in as "admin"
-    And I define the allowed role assignments for the "Creator" role as:
-      | Teacher | Assignable |
-    And I log out
-    And I log in as "kevin"
-    And I am on site homepage
-    And I turn editing mode on
-    When I press "Add a new course"
-    And I set the following fields to these values:
-      | Course full name  | My second course |
-      | Course short name | mysecondcourse |
     And I press "Save and display"
     And I follow "Participants"
     Then I should see "Kevin the"
