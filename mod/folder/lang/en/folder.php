@@ -35,8 +35,14 @@ $string['folder:view'] = 'View folder content';
 $string['foldercontent'] = 'Files and subfolders';
 $string['indicator:cognitivedepth'] = 'Folder cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Folder resource.';
+$string['indicator:cognitivedepthdef'] = 'Folder cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Folder resources during this analysis interval (Levels = No view, View)';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Folder social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Folder resource.';
+$string['indicator:socialbreadthdef'] = 'Folder social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Folder resources during this analysis interval (Levels = No participation, Participant alone)';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['modulename'] = 'Folder';
 $string['modulename_help'] = 'The folder module enables a teacher to display a number of related files inside a single folder, reducing scrolling on the course page. A zipped folder may be uploaded and unzipped for display, or an empty folder created and files uploaded into it.
 

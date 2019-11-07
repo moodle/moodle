@@ -267,8 +267,14 @@ $string['inactiveoverridehelp'] = '* Student does not have the correct group or 
 $string['insertedpage'] = 'Inserted page';
 $string['indicator:cognitivedepth'] = 'Lesson cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Lesson activity.';
+$string['indicator:cognitivedepthdef'] = 'Lesson cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Lesson activities during this analysis interval (Levels = No view, View, Submit, View feedback, Comment on feedback, Resubmit after viewing feedback)';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Lesson social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Lesson activity.';
+$string['indicator:socialbreadthdef'] = 'Lesson social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Lesson activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['invalidfile'] = 'Invalid file';
 $string['invalidid'] = 'No course module ID or lesson ID were passed';
 $string['invalidlessonid'] = 'lesson ID was incorrect';

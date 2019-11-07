@@ -107,7 +107,7 @@ Your carefully considered responses will help us improve the way this unit is pr
 
 Thanks very much.';
 $string['collesaname'] = 'COLLES (Actual)';
-$string['collesapintro'] = 'The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. 
+$string['collesapintro'] = 'The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn.
 
 Each couple of the 24 statements below asks you to compare your <b>preferred</b> (ideal) and <b>actual</b> experience in this unit.
 
@@ -208,8 +208,14 @@ $string['howlongoptions'] = 'under 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 mi
 $string['ifoundthat'] = 'I found that';
 $string['indicator:cognitivedepth'] = 'Survey cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Survey activity.';
+$string['indicator:cognitivedepthdef'] = 'Survey cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Survey activities during this analysis interval (Levels = No view, View, Submit)';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Survey social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Survey activity.';
+$string['indicator:socialbreadthdef'] = 'Survey social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Survey activities during this analysis interval (Levels = No participation, Participant alone)';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['introtext'] = 'Introduction text';
 $string['invalidsurveyid'] = 'Survey ID was incorrect';
 $string['invalidtmptid'] = 'Invalid template id';
