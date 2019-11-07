@@ -51,6 +51,7 @@ class helper {
         \core_php_time_limit::raise();
 
         $core = $factory->get_core();
+        $core->h5pF->set_file($file);
         $path = $core->fs->getTmpPath();
         $core->h5pF->getUploadedH5pFolderPath($path);
         // Add manually the extension to the file to avoid the validation fails.
