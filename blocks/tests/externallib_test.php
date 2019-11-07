@@ -177,6 +177,9 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
         $blocks = $page->blocks->get_blocks_for_region($page->blocks->get_default_region());
         $block = end($blocks);
         $block = block_instance('html', $block->instance);
+        $nonscalar = [
+            'something' => true,
+        ];
         $configdata = (object) [
             'title' => $title,
             'text' => [
@@ -184,6 +187,7 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
                 'text' => $body,
                 'format' => $bodyformat,
             ],
+            'nonscalar' => $nonscalar
         ];
         $block->instance_config_save((object) $configdata);
         $filename = 'img.png';
@@ -215,17 +219,20 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($newblock, $result['blocks'][0]['name']);
         $configcounts = 0;
         foreach ($result['blocks'][0]['configs'] as $config) {
-            if ($config['type'] = 'plugin' && $config['name'] == 'allowcssclasses' && $config['value'] == 0) {
+            if ($config['type'] = 'plugin' && $config['name'] == 'allowcssclasses' && $config['value'] == json_encode('0')) {
                 $configcounts++;
-            } else if ($config['type'] = 'instance' && $config['name'] == 'text' && $config['value'] == $body) {
+            } else if ($config['type'] = 'instance' && $config['name'] == 'text' && $config['value'] == json_encode($body)) {
                 $configcounts++;
-            } else if ($config['type'] = 'instance' && $config['name'] == 'title' && $config['value'] == $title) {
+            } else if ($config['type'] = 'instance' && $config['name'] == 'title' && $config['value'] == json_encode($title)) {
                 $configcounts++;
-            } else if ($config['type'] = 'instance' && $config['name'] == 'format' && $config['value'] == 0) {
+            } else if ($config['type'] = 'instance' && $config['name'] == 'format' && $config['value'] == json_encode('0')) {
+                $configcounts++;
+            } else if ($config['type'] = 'instance' && $config['name'] == 'nonscalar' &&
+                    $config['value'] == json_encode($nonscalar)) {
                 $configcounts++;
             }
         }
-        $this->assertEquals(4, $configcounts);
+        $this->assertEquals(5, $configcounts);
     }
 
     /**
@@ -261,7 +268,7 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
             // Check the configuration returned for this default block.
             if ($block['name'] == 'recentlyaccessedcourses') {
                 $this->assertEquals('displaycategories', $block['configs'][0]['name']);
-                $this->assertEquals(0, $block['configs'][0]['value']);
+                $this->assertEquals(json_encode('0'), $block['configs'][0]['value']);
                 $this->assertEquals('plugin', $block['configs'][0]['type']);
             }
         }
