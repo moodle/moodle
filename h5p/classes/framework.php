@@ -41,6 +41,9 @@ class framework implements \H5PFrameworkInterface {
     /** @var string The path to the last uploaded h5p file */
     private $lastuploadedfile;
 
+    /** @var stored_file The .h5p file */
+    private $file;
+
     /**
      * Returns info for the current platform.
      * Implements getPlatformInfo.
@@ -634,8 +637,29 @@ class framework implements \H5PFrameworkInterface {
      *                 FALSE if the user is not allowed to update libraries.
      */
     public function mayUpdateLibraries() {
-        // Currently, capabilities are not being set/used, so everyone can update libraries.
-        return true;
+        return helper::can_update_library($this->get_file());
+    }
+
+    /**
+     * Get the .h5p file.
+     *
+     * @return stored_file The .h5p file.
+     */
+    public function get_file(): \stored_file {
+        if (!isset($this->file)) {
+            throw new \coding_exception('Using get_file() before file is set');
+        }
+
+        return $this->file;
+    }
+
+    /**
+     * Set the .h5p file.
+     *
+     * @param  stored_file $file The .h5p file.
+     */
+    public function set_file(\stored_file $file): void {
+        $this->file = $file;
     }
 
     /**
@@ -757,7 +781,19 @@ class framework implements \H5PFrameworkInterface {
             $content['contenthash'] = '';
         }
 
-        $data = array(
+        // If the libraryid declared in the package is empty, get the latest version.
+        if (empty($content['library']['libraryId'])) {
+            $mainlibrary = $this->get_latest_library_version($content['library']['machineName']);
+            if (empty($mainlibrary)) {
+                // Raise an error if the main library is not defined and the latest version doesn't exist.
+                $message = $this->t('Missing required library @library', ['@library' => $content['library']['machineName']]);
+                $this->setErrorMessage($message, 'missing-required-library');
+                return false;
+            }
+            $content['library']['libraryId'] = $mainlibrary->id;
+        }
+
+        $data = [
             'jsoncontent' => $content['params'],
             'displayoptions' => $content['disable'],
             'mainlibraryid' => $content['library']['libraryId'],
@@ -765,7 +801,7 @@ class framework implements \H5PFrameworkInterface {
             'filtered' => null,
             'pathnamehash' => $content['pathnamehash'],
             'contenthash' => $content['contenthash']
-        );
+        ];
 
         if (!isset($content['id'])) {
             $data['timecreated'] = $data['timemodified'];
@@ -1584,5 +1620,23 @@ class framework implements \H5PFrameworkInterface {
             return implode(', ', $parametervalues);
         }
         return '';
+    }
+
+    /**
+     * Get the latest library version.
+     *
+     * @param  string $machinename The library's machine name
+     * @return stdClass|null An object with the latest library version
+     */
+    public function get_latest_library_version(string $machinename): ?\stdClass {
+        global $DB;
+
+        $libraries = $DB->get_records('h5p_libraries', ['machinename' => $machinename],
+            'majorversion DESC, minorversion DESC, patchversion DESC', '*', 0, 1);
+        if ($libraries) {
+            return reset($libraries);
+        }
+
+        return null;
     }
 }

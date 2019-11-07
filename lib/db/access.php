@@ -2450,4 +2450,14 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
         )
     ),
+
+    // Allow to update H5P content-type libraries.
+    'moodle/h5p:updatelibraries' => [
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ]
+    ],
 );
