@@ -115,12 +115,6 @@ class helper {
      * @return bool Returns true if the file can be deployed, false otherwise.
      */
     public static function can_deploy_package(\stored_file $file): bool {
-        if (is_null($file)) {
-            debugging('\core_h5p\h5p::can_deploy_package() now expects a \'file\' to be passed.',
-                DEBUG_DEVELOPER);
-            return false;
-        }
-
         $context = \context::instance_by_id($file->get_contextid());
         if (has_capability('moodle/h5p:deploy', $context, $file->get_userid())) {
             return true;
