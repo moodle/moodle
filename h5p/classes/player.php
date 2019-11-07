@@ -137,11 +137,11 @@ class player {
 
         $contenturl = \moodle_url::make_pluginfile_url($systemcontext->id, \core_h5p\file_storage::COMPONENT,
             \core_h5p\file_storage::CONTENT_FILEAREA, $this->h5pid, null, null);
-
+        $exporturl = $this->get_export_settings($displayoptions[ core::DISPLAY_OPTION_DOWNLOAD ]);
         $contentsettings = [
             'library'         => core::libraryToString($this->content['library']),
             'fullScreen'      => $this->content['library']['fullscreen'],
-            'exportUrl'       => $this->get_export_settings($displayoptions[ core::DISPLAY_OPTION_DOWNLOAD ]),
+            'exportUrl'       => ($exporturl instanceof \moodle_url) ? $exporturl->out(false) : '',
             'embedCode'       => $this->get_embed_code($this->url->out(),
                 $displayoptions[ core::DISPLAY_OPTION_EMBED ]),
             'resizeCode'      => $this->get_resize_code(),
@@ -444,12 +444,12 @@ class player {
      *
      * @param bool $downloadenabled Whether the option to export the H5P content is enabled.
      *
-     * @return string The URL of the exported file.
+     * @return \moodle_url|null The URL of the exported file.
      */
-    private function get_export_settings(bool $downloadenabled) : string {
+    private function get_export_settings(bool $downloadenabled) : ?\moodle_url {
 
         if ( ! $downloadenabled) {
-            return '';
+            return null;
         }
 
         $systemcontext = \context_system::instance();
@@ -463,7 +463,7 @@ class player {
             "{$slug}{$this->content['id']}.h5p"
         );
 
-        return $url->out();
+        return $url;
     }
 
     /**
@@ -659,5 +659,38 @@ class player {
      */
     public static function get_embed_url(string $url) : \moodle_url {
         return new \moodle_url('/h5p/embed.php', ['url' => $url]);
+    }
+
+    /**
+     * Return the export file for Mobile App.
+     *
+     * @return array
+     */
+    public function get_export_file() : array {
+        // Get the export url.
+        $exporturl = $this->get_export_settings(true);
+        // Get the filename of the export url.
+        $path = $exporturl->out_as_local_url();
+        $parts = explode('/', $path);
+        $filename = array_pop($parts);
+        // Get the the export file.
+        $systemcontext = \context_system::instance();
+        $fs = get_file_storage();
+        $fileh5p = $fs->get_file($systemcontext->id,
+            \core_h5p\file_storage::COMPONENT,
+            \core_h5p\file_storage::EXPORT_FILEAREA,
+            0,
+            '/',
+            $filename);
+        // Get the options that the Mobile App needs.
+        $file = [];
+        $file['filename'] = $fileh5p->get_filename();
+        $file['filepath'] = $fileh5p->get_filepath();
+        $file['mimetype'] = $fileh5p->get_mimetype();
+        $file['filesize'] = $fileh5p->get_filesize();
+        $file['timemodified'] = $fileh5p->get_timemodified();
+        $file['fileurl'] = $exporturl->out(false);
+
+        return $file;
     }
 }

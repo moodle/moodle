@@ -2701,7 +2701,17 @@ $functions = array(
         'description' => 'Drag and drop categories',
         'type'        => 'write',
         'ajax'        => 'true'
-    )
+    ),
+    'core_h5p_get_trusted_h5p_file' => [
+        'classname'     => 'core_h5p\external',
+        'methodname'    => 'get_trusted_h5p_file',
+        'classpath'     => '',
+        'description'   => 'Get the H5P file cleaned for Mobile App.',
+        'type'          => 'read',
+        'ajax'          => 'true',
+        'capabilities'  => '',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 );
 
 $services = array(
