@@ -364,6 +364,15 @@ class forum {
     }
 
     /**
+     * Whether grading is enabled for this item.
+     *
+     * @return bool
+     */
+    public function is_grading_enabled(): bool {
+        return $this->get_grade_for_forum() !== 0;
+    }
+
+    /**
      * Get the maximum bytes.
      *
      * @return int

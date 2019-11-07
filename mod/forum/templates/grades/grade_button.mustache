@@ -30,7 +30,7 @@
     }
 }}
 <button
-    class="btn btn-primary"
+    class="btn btn-secondary"
     type="button"
     data-grade-action="launch"
     data-contextid="{{contextid}}"
@@ -43,7 +43,11 @@
     data-grading-component="{{gradingcomponent}}"
     data-grading-component-subtype="{{gradingcomponentsubtype}}"
     data-gradable-itemtype="forum"
-    {{#firstgradeduserid}}data-initialuserid="{{firstgradeduserid}}" {{/firstgradeduserid}}
 >
     {{#str}}gradeusers, forum{{/str}}
 </button>
+{{#js}}
+    require(['mod_forum/grades/grader'], function(Grader) {
+        Grader.registerLaunchListeners();
+    });
+{{/js}}

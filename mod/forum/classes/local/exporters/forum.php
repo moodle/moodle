@@ -65,6 +65,7 @@ class forum extends exporter {
             'state' => [
                 'type' => [
                     'groupmode' => ['type' => PARAM_INT],
+                    'gradingenabled' => ['type' => PARAM_BOOL],
                 ],
             ],
             'userstate' => [
@@ -77,6 +78,7 @@ class forum extends exporter {
                     'viewdiscussions' => ['type' => PARAM_BOOL],
                     'create' => ['type' => PARAM_BOOL],
                     'subscribe' => ['type' => PARAM_BOOL],
+                    'grade' => ['type' => PARAM_BOOL],
                 ]
             ],
             'urls' => [
@@ -120,6 +122,7 @@ class forum extends exporter {
             'name' => $this->forum->get_name(),
             'state' => [
                 'groupmode' => $this->forum->get_effective_group_mode(),
+                'gradingenabled' => $this->forum->is_grading_enabled()
             ],
             'userstate' => [
                 'tracked' => forum_tp_is_tracked($this->get_forum_record(), $this->related['user']),
@@ -129,6 +132,7 @@ class forum extends exporter {
                 'create' => $capabilitymanager->can_create_discussions($user, $currentgroup),
                 'selfenrol' => $capabilitymanager->can_self_enrol($user),
                 'subscribe' => $capabilitymanager->can_subscribe_to_forum($user),
+                'grade' => $capabilitymanager->can_grade($user),
             ],
             'urls' => [
                 'create' => $urlfactory->get_discussion_create_url($this->forum)->out(false),
