@@ -11475,6 +11475,9 @@ div.editor_atto_toolbar button .icon {
 .paged-content-page-container {
   min-height: 3.125rem; }
 
+body.h5p-embed #page-content {
+  display: inherit; }
+
 body.h5p-embed #maincontent {
   display: none; }
 

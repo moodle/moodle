@@ -2282,6 +2282,9 @@ $switch-transition: .2s all !default;
 }
 
 body.h5p-embed {
+    #page-content {
+        display: inherit;
+    }
     #maincontent {
         display: none;
     }
