@@ -103,7 +103,8 @@ class summary_table extends table_sql {
      * @param bool $canseeprivatereplies Whether the user can see all private replies or not.
      * @param int $perpage The number of rows to display per page.
      */
-    public function __construct(int $courseid, array $filters, bool $allowbulkoperations, bool $canseeprivatereplies, int $perpage) {
+    public function __construct(int $courseid, array $filters, bool $allowbulkoperations,
+            bool $canseeprivatereplies, int $perpage) {
         global $USER, $OUTPUT;
 
         $forumid = $filters['forums'][0];

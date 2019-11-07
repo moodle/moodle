@@ -47,7 +47,20 @@
                 "value": "#messageselect"
             }
         ],
-        "perpage" : "<div class='singleselect'></div>"
+        "perpage": {
+            "name": "perpage",
+            "method": "get",
+            "action": "#",
+            "classes": "singleselect",
+            "label": "Per page",
+            "formid": "randomid",
+            "id": "selectperpage",
+            "options":[
+                {"value": 50, "name": "50", "selected": true},
+                {"value": 100, "name": "100", "selected":false},
+                {"value": 200, "name": "200", "selected": false}
+            ]
+        }
     }
 }}
 
