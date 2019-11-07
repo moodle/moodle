@@ -44,15 +44,23 @@
     {{filtergroupsname}}
 </button>
 
+{{! Groups filter values to submit }}
+<div class="hidden">
+    {{#filtergroups}}
+    <input id="filtergroups{{groupid}}" class="form-check-input" type="checkbox" name="filtergroups[]"
+        value="{{groupid}}" {{#checked}} checked="checked" {{/checked}}>
+    {{/filtergroups}}
+</div>
+
 {{! Groups filter popover }}
-<div id="filter-groups-popover" class="popover m-t-1 hidden">
+<div id="filter-groups-popover" class="popover m-t-1 hidden" data-openfilter="false">
     <h3 class="popover-header">{{# str}} filter:groupsname, forumreport_summary {{/ str}}</h3>
     <div class="popover-body" data-region="filter-groups">
         <div class="form-check filter-scrollable">
             {{#filtergroups}}
-            <input id="filtergroups{{groupid}}" class="form-check-input" type="checkbox" name="filtergroups[]"
-                value="{{groupid}}" {{#checked}} checked="checked" {{/checked}}>
-            <label class="form-check-label pt-1" for="filtergroups{{groupid}}">{{groupname}}</label>
+            <input id="popperfiltergroups{{groupid}}" class="form-check-input" type="checkbox" name="popperfiltergroups[]"
+                data-saveid="filtergroups{{groupid}}" value="{{groupid}}" {{#checked}} checked="checked" {{/checked}}>
+            <label class="form-check-label pt-1" for="popperfiltergroups{{groupid}}">{{groupname}}</label>
             <br>
             {{/filtergroups}}
         </div>
