@@ -285,9 +285,6 @@ class player {
             // content-type libraries exist, to avoid users without the h5p:updatelibraries capability upload malicious content.
             $onlyupdatelibs = !helper::can_update_library($file);
 
-            // Set the .h5p file, in order to check later the permissions to update libraries.
-            $this->core->h5pF->set_file($file);
-
             // Validate and store the H5P content before displaying it.
             $h5pid = helper::save_h5p($this->factory, $file, $config, $onlyupdatelibs, false);
             if (!$h5pid && $file->get_userid() != $USER->id && has_capability('moodle/h5p:updatelibraries', $this->context)) {
