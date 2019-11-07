@@ -4062,6 +4062,7 @@ class core_course_external extends external_api {
     public static function get_enrolled_users_by_cmid_parameters() {
         return new external_function_parameters([
             'cmid' => new external_value(PARAM_INT, 'id of the course module', VALUE_REQUIRED),
+            'groupid' => new external_value(PARAM_INT, 'id of the group', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -4069,24 +4070,27 @@ class core_course_external extends external_api {
      * Get all users in a course for a given cmid.
      *
      * @param int $cmid Course Module id from which the users will be obtained
+     * @param int $groupid Group id from which the users will be obtained
      * @return array List of users
      * @throws invalid_parameter_exception
      */
-    public static function get_enrolled_users_by_cmid(int $cmid) {
-        global $PAGE;
+    public static function get_enrolled_users_by_cmid(int $cmid, int $groupid = 0) {
+    global $PAGE;
         $warnings = [];
 
         [
             'cmid' => $cmid,
+            'groupid' => $groupid,
         ] = self::validate_parameters(self::get_enrolled_users_by_cmid_parameters(), [
                 'cmid' => $cmid,
+                'groupid' => $groupid,
         ]);
 
         list($course, $cm) = get_course_and_cm_from_cmid($cmid);
         $coursecontext = context_course::instance($course->id);
         self::validate_context($coursecontext);
 
-        $enrolledusers = get_enrolled_users($coursecontext);
+        $enrolledusers = get_enrolled_users($coursecontext, '', $groupid);
 
         $users = array_map(function ($user) use ($PAGE) {
             $user->fullname = fullname($user);
