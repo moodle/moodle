@@ -124,6 +124,17 @@ class core_h5p_external_testcase extends externallib_advanced_testcase {
         // Check the warnings to be sure that h5pinvalidurl is the message by moodle_exception.
         $this->assertEquals($urlempty, $result['warnings'][0]['item']);
         $this->assertEquals(get_string('h5pinvalidurl', 'core_h5p'), $result['warnings'][0]['message']);
+
+        // Create a non-local URL.
+        $urlnonlocal = 'http://www.google.com/pluginfile.php/644/block_html/content/arithmetic-quiz-1-1.h5p';
+        $result = external::get_trusted_h5p_file($urlnonlocal, 0, 0, 0, 0);
+        $result = external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
+        // Expected result: Just 1 record on warnings and none on files.
+        $this->assertCount(0, $result['files']);
+        $this->assertCount(1, $result['warnings']);
+        // Check the warnings to be sure that h5pinvalidurl is the message by moodle_exception.
+        $this->assertEquals($urlnonlocal, $result['warnings'][0]['item']);
+        $this->assertEquals(get_string('h5pinvalidurl', 'core_h5p'), $result['warnings'][0]['message']);
     }
 
     /**
