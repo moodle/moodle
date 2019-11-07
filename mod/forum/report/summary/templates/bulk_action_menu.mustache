@@ -67,7 +67,9 @@
     </div>
     {{/showbulkactions}}
     <div class="float-right">
-        {{{perpage}}}
+        {{#perpage}}
+            {{> core/single_select}}
+        {{/perpage}}
     </div>
 </div>
 

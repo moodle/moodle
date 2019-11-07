@@ -53,14 +53,11 @@ class forumreport_summary_renderer extends plugin_renderer_base {
      * Render the summary report table.
      *
      * @param summary_table $table The summary table to be rendered.
-     * @param int $bulkoperations Whether the user has bulk operations capability/capabilities.
      * @return string The report table HTML.
      */
-    public function render_summary_table(summary_table $table, bool $bulkoperations): string {
+    public function render_summary_table(summary_table $table): string {
         // Buffer so calling script can output the report as required.
         ob_start();
-
-        $table->set_bulkoperations($bulkoperations);
 
         // Render table.
         $table->out($table->get_perpage(), false);

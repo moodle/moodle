@@ -30,7 +30,7 @@ if (isguestuser()) {
 
 $courseid = required_param('courseid', PARAM_INT);
 $forumid = required_param('forumid', PARAM_INT);
-$perpage = optional_param('perpage', 50, PARAM_INT);
+$perpage = optional_param('perpage', \forumreport_summary\summary_table::DEFAULT_PER_PAGE, PARAM_INT);
 $filters = [];
 
 // Establish filter values.
@@ -78,10 +78,10 @@ $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('nodetitle', "forumreport_summary"));
 
 // Prepare and display the report.
-$bulkoperations = !$download && !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
+$allowbulkoperations = !$download && !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
 $canseeprivatereplies = has_capability('mod/forum:readprivatereplies', $context);
 
-$table = new \forumreport_summary\summary_table($courseid, $filters, $bulkoperations, $canseeprivatereplies, $perpage);
+$table = new \forumreport_summary\summary_table($courseid, $filters, $allowbulkoperations, $canseeprivatereplies, $perpage);
 $table->baseurl = $url;
 
 if ($download) {
@@ -99,6 +99,6 @@ if ($download) {
 
     echo $renderer->render_filters_form($cm, $url, $filters);
     $table->show_download_buttons_at(array(TABLE_P_BOTTOM));
-    echo $renderer->render_summary_table($table, $bulkoperations);
+    echo $renderer->render_summary_table($table);
     echo $OUTPUT->footer();
 }
