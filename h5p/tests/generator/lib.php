@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_h5p\factory;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -338,5 +340,43 @@ class core_h5p_generator extends \component_generator_base {
                 'dependencytype' => $dependencytype
             )
         );
+    }
+
+    /**
+     * Create content type records in the h5p_libraries database table.
+     *
+     * @param int $pending Number of content types not installed
+     * @return array Data of the content types not installed.
+     */
+    public function create_content_types(int $pending): array {
+        global $DB;
+
+        $factory = new factory();
+        $core = $factory->get_core();
+
+        // Get info of latest content types versions.
+        $contenttypes = $core->get_latest_content_types()->contentTypes;
+
+        $size = count($contenttypes) - $pending;
+
+        // Avoid to install 2 content types.
+        $chunks = array_chunk($contenttypes, $size);
+
+        $contenttypes = $chunks[0];
+        $pendingtypes = $chunks[1];
+
+        // Fake installation of all other H5P content types.
+        foreach ($contenttypes as $contenttype) {
+            $library = [
+                'machinename' => $contenttype->id,
+                'majorversion' => $contenttype->version->major,
+                'minorversion' => $contenttype->version->minor,
+                'patchversion' => $contenttype->version->patch,
+                'runnable' => 1
+            ];
+            $DB->insert_record('h5p_libraries', (object) $library);
+        }
+
+        return [$contenttypes, $pendingtypes];
     }
 }

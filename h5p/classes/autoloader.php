@@ -43,6 +43,7 @@ class autoloader {
 
         $classes = [
             'H5PCore' => '/lib/h5p/h5p.classes.php',
+            'H5PHubEndpoints' => '/lib/h5p/h5p.classes.php',
             'H5PFrameworkInterface' => '/lib/h5p/h5p.classes.php',
             'H5PContentValidator' => 'lib/h5p/h5p.classes.php',
             'H5PValidator' => '/lib/h5p/h5p.classes.php',
