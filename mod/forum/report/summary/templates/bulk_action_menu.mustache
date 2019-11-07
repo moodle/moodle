@@ -21,6 +21,7 @@
 
     Example context (json):
     {
+        "showbulkactions": true,
         "id": "formactionid",
         "attributes": [
             {
@@ -45,19 +46,33 @@
                 "name": "Send a message",
                 "value": "#messageselect"
             }
-        ]
+        ],
+        "perpage" : "<div class='singleselect'></div>"
     }
 }}
 
-<br /><div class="buttons"><div class="form-inline">
-    <label for="{{id}}">{{#str}}withselectedusers{{/str}}</label>
-    <select id="{{id}}" class="select custom-select ml-2" {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
-        <option value="">{{#str}}choosedots{{/str}}</option>
-    {{#actions}}
-        <option value="{{value}}">{{name}}</option>
-    {{/actions}}
-    </select>
-</div></div>
+<br />
+<div class="d-inline-block w-100">
+    {{#showbulkactions}}
+    <div class="buttons float-left">
+        <div class="form-inline pl-1">
+            <label for="{{id}}">{{#str}}withselectedusers{{/str}}</label>
+            <select id="{{id}}" class="select custom-select ml-4" {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
+                <option value="">{{#str}}choosedots{{/str}}</option>
+                {{#actions}}
+                <option value="{{value}}">{{name}}</option>
+                {{/actions}}
+            </select>
+        </div>
+    </div>
+    {{/showbulkactions}}
+    <div class="float-right">
+        {{#perpage}}
+            {{> core/single_select}}
+        {{/perpage}}
+    </div>
+</div>
+
 {{#js}}
 require(['jquery', 'core_message/message_send_bulk'], function($, BulkSender) {
     $('#{{id}}').on('change', function(e) {

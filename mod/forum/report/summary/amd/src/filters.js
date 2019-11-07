@@ -43,34 +43,76 @@ export const init = (root) => {
     // Generic filter handlers.
 
     // Called to override click event to trigger a proper generate request with filtering.
-    const generateWithFilters = (event) => {
-        let newLink = $('#filtersform').attr('action');
+    const generateWithFilters = (event, getparams) => {
+        let currentLink = document.forms.filtersform.action,
+            newLink;
 
         if (event) {
             event.preventDefault();
 
-            let filterParams = event.target.search.substr(1);
-            newLink += '&' + filterParams;
+           let currentSplit = currentLink.split('?'),
+               currentstring = currentSplit[1],
+               newparamsarray = getparams.split('&'),
+               paramsstring = '',
+               paramkeys = [],
+               paramvalues = [];
+
+            // Separate out the existing action GET param string.
+            currentstring.split('&').forEach(function(param) {
+                let splitparam = param.split('=');
+                paramkeys.push(splitparam[0]);
+                paramvalues.push(splitparam[1]);
+            });
+
+            newparamsarray.forEach(function(paramstring) {
+                let newparam = paramstring.split('='),
+                    existingkey = paramkeys.indexOf(newparam[0]);
+
+                // Overwrite value if existing, otherwise add new param.
+                if (existingkey > -1) {
+                    paramvalues[existingkey] = newparam[1];
+                } else {
+                    paramkeys.push(newparam[0]);
+                    paramvalues.push(newparam[1]);
+                }
+            });
+
+            // Build URL.
+            paramkeys.forEach(function(name, key) {
+                paramsstring += `&${name}=${paramvalues[key]}`;
+            });
+
+            newLink = currentSplit[0] + '?' + paramsstring.substr(1);
+        } else {
+            newLink = currentLink;
         }
 
-        $('#filtersform').attr('action', newLink);
-        $('#filtersform').submit();
+        document.forms.filtersform.action = newLink;
+        document.forms.filtersform.submit();
     };
 
     // Override 'reset table preferences' so it generates with filters.
     $('.resettable').on("click", "a", function(event) {
-        generateWithFilters(event);
+        generateWithFilters(event, event.target.search.substr(1));
     });
 
     // Override table heading sort links so they generate with filters.
     $('thead').on("click", "a", function(event) {
-        generateWithFilters(event);
+        generateWithFilters(event, event.target.search.substr(1));
     });
 
     // Override pagination page links so they generate with filters.
     $('.pagination').on("click", "a", function(event) {
-        generateWithFilters(event);
+        generateWithFilters(event, event.target.search.substr(1));
     });
+
+    // Override rows per page submission so it generates with filters.
+    if (document.forms.selectperpage) {
+        document.forms.selectperpage.onsubmit = (event) => {
+            let getparam = 'perpage=' + document.forms.selectperpage.elements.perpage.value;
+            generateWithFilters(event, getparam);
+        };
+    }
 
     // Submit report via filter
     const submitWithFilter = (containerelement) => {

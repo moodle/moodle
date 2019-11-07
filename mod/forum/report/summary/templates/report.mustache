@@ -21,19 +21,13 @@
 
     Example context (json):
     {
-        "placeholdertext": "To generate the summary report, set any filter values required, then select \"Generate report\".",
-        "tablehtml": false
+        "tablehtml": "TableSQL format HTML for the table"
     }
 }}
 
-{{! The placeholder text, used before the report has been generated }}
-{{^tablehtml}}<div class='d-block p-b-10'><h3>{{placeholdertext}}</h3></div>{{/tablehtml}}
-
-{{#tablehtml}}
-    <div class="text-center">
-        {{> core/loading }}
-    </div>
-    <div id="summaryreport" class="hidden">
-        {{{tablehtml}}}
-    </div>
-{{/tablehtml}}
+<div class="text-center">
+    {{> core/loading }}
+</div>
+<div id="summaryreport" class="hidden">
+    {{{tablehtml}}}
+</div>

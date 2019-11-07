@@ -53,55 +53,19 @@ class forumreport_summary_renderer extends plugin_renderer_base {
      * Render the summary report table.
      *
      * @param summary_table $table The summary table to be rendered.
-     * @param int $perpage Number of results to render per page.
      * @return string The report table HTML.
      */
-    public function render_summary_table(summary_table $table, int $perpage): string {
+    public function render_summary_table(summary_table $table): string {
         // Buffer so calling script can output the report as required.
         ob_start();
 
         // Render table.
-        $table->out($perpage, false);
+        $table->out($table->get_perpage(), false);
 
         $tablehtml = ob_get_contents();
 
         ob_end_clean();
 
-        return $this->render_from_template('forumreport_summary/report', ['tablehtml' => $tablehtml, 'placeholdertext' => false]);
-    }
-
-    /**
-     * Render the bulk action menu for the forum summary report.
-     * @return string
-     */
-    public function render_bulk_action_menu(): string {
-        $data = new stdClass();
-        $data->id = 'formactionid';
-        $data->attributes = [
-            [
-                'name' => 'data-action',
-                'value' => 'toggle'
-            ],
-            [
-                'name' => 'data-togglegroup',
-                'value' => 'summaryreport-table'
-            ],
-            [
-                'name' => 'data-toggle',
-                'value' => 'action'
-            ],
-            [
-                'name' => 'disabled',
-                'value' => true
-            ]
-        ];
-        $data->actions = [
-            [
-                'value' => '#messageselect',
-                'name' => get_string('messageselectadd')
-            ]
-        ];
-
-        return $this->render_from_template('forumreport_summary/bulk_action_menu', $data);
+        return $this->render_from_template('forumreport_summary/report', ['tablehtml' => $tablehtml]);
     }
 }
