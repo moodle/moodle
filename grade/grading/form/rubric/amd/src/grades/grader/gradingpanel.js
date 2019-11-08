@@ -59,6 +59,7 @@ export const fetchCurrentGrade = (component, contextid, itemname, gradeduserid) 
  * @param {String} itemname
  * @param {Number} gradeduserid
  * @param {HTMLElement} rootNode
+ * @param {Boolean} notifyuser
  *
  * @returns {Promise}
  */
