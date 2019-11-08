@@ -41,6 +41,7 @@ $string['any'] = 'Any';
 $string['approval'] = 'Approval';
 $string['areyousureoverridecompletion'] = 'Are you sure you want to override the current completion state of this activity for this user and mark it "{$a}"?';
 $string['badautocompletion'] = 'When you select automatic completion, you must also enable at least one requirement (below).';
+$string['badcompletionusegrade'] = 'When you select require grade, you must also enable at least one grade item.';
 $string['bulkactivitycompletion'] = 'Bulk edit activity completion';
 $string['bulkactivitydetail'] = 'Select the activities you wish to bulk edit.';
 $string['bulkcompletiontracking'] = 'Completion tracking';

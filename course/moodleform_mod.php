@@ -409,6 +409,7 @@ abstract class moodleform_mod extends moodleform {
             }
         }
 
+        $hasgradedefined = false;
         $component = "mod_{$this->_modname}";
         $itemnames = component_gradeitems::get_itemname_mapping_for_component($component);
         foreach ($itemnames as $itemnumber => $itemname) {
@@ -449,6 +450,14 @@ abstract class moodleform_mod extends moodleform {
                     $errors[$gradepassfieldname] = get_string('gradepassgreaterthangrade', 'grades', $grade);
                 }
             }
+
+            // We have a grade if we've already found one, or the 'assessed' field is set to a non falsey value (this is for
+            // ratings), or the grade field name is set to a non falsey value (this is all other grading items).
+            $hasgradedefined = $hasgradedefined || !empty($data[$assessedfieldname]) || !empty($data[$gradefieldname]);
+        }
+
+        if (!empty($data['completionusegrade']) && !$hasgradedefined) {
+            $errors['completionusegrade'] = get_string('badcompletionusegrade', 'completion');
         }
 
         // Completion: Don't let them choose automatic completion without turning
@@ -664,10 +673,21 @@ abstract class moodleform_mod extends moodleform {
                 $mform->hideIf('completionusegrade', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
                 $mform->addHelpButton('completionusegrade', 'completionusegrade', 'completion');
                 $gotcompletionoptions = true;
+                $component = "mod_{$this->_modname}";
+                $itemnames = component_gradeitems::get_itemname_mapping_for_component($component);
 
-                // If using the rating system, there is no grade unless ratings are enabled.
-                if ($this->_features->rating) {
-                    $mform->disabledIf('completionusegrade', 'assessed', 'eq', 0);
+                if (count($itemnames) === 1) {
+                    // Only add disable if logic if we've got exactly one grade item since we can't do
+                    // make the disable conditional on multiple elements.
+                    if ($this->_features->rating) {
+                        // If using the rating system, there is no grade unless ratings are enabled.
+                        $mform->disabledIf('completionusegrade', 'assessed', 'eq', 0);
+                    } else {
+                        $itemnumbers = array_keys($itemnames);
+                        $itemnumber = array_shift($itemnumbers);
+                        $gradefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
+                        $mform->disabledIf('completionusegrade', "{$gradefieldname}[modgrade_type]", 'eq', 'none');
+                    }
                 }
             }
 
