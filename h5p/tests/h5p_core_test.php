@@ -50,19 +50,13 @@ class h5p_core_test extends \advanced_testcase {
     /**
      * Check that given an H5P content type machine name, the required library are fetched and installed from the official H5P
      * repository.
-     *
-     * This test require access to an external URL (H5P libraries repository), so can take long time to execute.
-     * PHPUNIT_LONGTEST constant should be set in phpunit.xml or directly in config.php.
-     * define('PHPUNIT_LONGTEST', true);
-     *
-     * return void
      */
     public function test_fetch_content_type(): void {
         global $DB;
 
         $this->resetAfterTest(true);
 
-        if (!defined('PHPUNIT_LONGTEST')) {
+        if (!PHPUNIT_LONGTEST) {
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 
@@ -91,19 +85,13 @@ class h5p_core_test extends \advanced_testcase {
     /**
      * Test that latest version of non installed H5P content type libraries are fetched and installed from the
      * official H5P repository. To speed up the test, only if checked that one content type is installed.
-     *
-     * This test require access to an external URL (H5P libraries repository), so can take long time to execute.
-     * PHPUNIT_LONGTEST constant should be set in phpunit.xml or directly in config.php.
-     * define('PHPUNIT_LONGTEST', true);
-     *
-     * return void
      */
     public function test_fetch_latest_content_types(): void {
         global $DB;
 
         $this->resetAfterTest(true);
 
-        if (!defined('PHPUNIT_LONGTEST')) {
+        if (!PHPUNIT_LONGTEST) {
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 

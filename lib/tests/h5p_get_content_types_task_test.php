@@ -38,15 +38,10 @@ class h5p_get_content_types_task_test extends advanced_testcase {
     /**
      * Test task execution
      *
-     * This test require access to an external URL (H5P libraries repository), so can take long time to execute.
-     * PHPUNIT_LONGTEST constant should be set in phpunit.xml or directly in config.php.
-     * define('PHPUNIT_LONGTEST', true);
-     *
      * return void
      */
     public function test_task_execution(): void {
-
-        if (!defined('PHPUNIT_LONGTEST')) {
+        if (!PHPUNIT_LONGTEST) {
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 
