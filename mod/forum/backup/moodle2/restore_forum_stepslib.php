@@ -47,6 +47,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
             $paths[] = new restore_path_element('forum_digest', '/activity/forum/digests/digest');
             $paths[] = new restore_path_element('forum_read', '/activity/forum/readposts/read');
             $paths[] = new restore_path_element('forum_track', '/activity/forum/trackedprefs/track');
+            $paths[] = new restore_path_element('forum_grade', '/activity/forum/grades/grade');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -212,6 +213,27 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         $newitemid = $DB->insert_record('forum_digests', $data);
+    }
+
+    protected function process_forum_grade($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->forum = $this->get_new_parentid('forum');
+
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        // We want to ensure the current user has an ID that we can associate to a grade.
+        if ($data->userid != 0) {
+            $newitemid = $DB->insert_record('forum_grades', $data);
+
+            // Note - the old contextid is required in order to be able to restore files stored in
+            // sub plugin file areas attached to the gradeid.
+            $this->set_mapping('grade', $oldid, $newitemid, false, null, $this->task->get_old_contextid());
+            $this->set_mapping(restore_gradingform_plugin::itemid_mapping('forum'), $oldid, $newitemid);
+        }
     }
 
     protected function process_forum_read($data) {
