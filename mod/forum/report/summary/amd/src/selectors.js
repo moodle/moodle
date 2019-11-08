@@ -39,6 +39,9 @@ export default {
             popover: '#filter-dates-popover',
             save: '[data-region="filter-dates"] .filter-save',
             trigger: '#filter-dates-button',
+        },
+        exportlink: {
+            link: '#summaryreport #forumreport_summary_table button.export-link'
         }
     }
 };

@@ -49,6 +49,14 @@
                 "timestamp": "725673600",
                 "enabled": "1"
             }
+        ],
+        "discussionids": [
+            {
+                "discid": 123
+            },
+            {
+                "discid": 456
+            }
         ]
     }
 }}
@@ -61,6 +69,11 @@
             {{> forumreport_summary/filter_dates}}
             {{> forumreport_summary/filter_groups}}
         </div>
+    </form>
+    <form id="exportlinkform" name="exportlinkform" method="post" action="#">
+        {{#discussionids}}
+        <input type="hidden" name="discids[]" value="{{discid}}">
+        {{/discussionids}}
     </form>
 
     {{! Dates filter popover - mform must exist outside of the filtersform }}

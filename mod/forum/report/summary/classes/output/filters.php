@@ -71,6 +71,17 @@ class filters implements renderable, templatable {
     protected $groupsselected = [];
 
     /**
+     * IDs of discussions required for export links.
+     * If a subset of groups available are selected, this will include the discussion IDs
+     * within that group in the forum.
+     * If all groups are selected, or no groups mode is enabled, this will be empty as
+     * no discussion filtering is required in the export.
+     *
+     * @var array $discussionids
+     */
+    protected $discussionids = [];
+
+    /**
      * HTML for dates filter.
      *
      * @var array $datesdata
@@ -147,6 +158,23 @@ class filters implements renderable, templatable {
         // Overwrite groups properties.
         $this->groupsavailable = $groupsavailable;
         $this->groupsselected = $groupsselected;
+
+        // If export links will require discussion filtering, find and set the discussion IDs.
+        $groupsselectedcount = count($groupsselected);
+        if ($groupsselectedcount > 0 && $groupsselectedcount < count($groupsavailable)) {
+            list($groupidin, $groupidparams) = $DB->get_in_or_equal($groupsselected, SQL_PARAMS_NAMED);
+            $dwhere = "course = :courseid AND forum = :forumid AND groupid {$groupidin}";
+            $dparams = [
+                'courseid' => $this->cm->course,
+                'forumid' => $this->cm->instance,
+            ];
+            $dparams += $groupidparams;
+            $discussionids = $DB->get_fieldset_select('forum_discussions', 'DISTINCT id', $dwhere, $dparams);
+
+            foreach ($discussionids as $discussionid) {
+                $this->discussionids[] = ['discid' => $discussionid];
+            }
+        }
     }
 
     /**
@@ -262,6 +290,9 @@ class filters implements renderable, templatable {
         } else {
             $output->hasgroups = false;
         }
+
+        // Set discussion IDs for use by export links (always included, as it will be empty if not required).
+        $output->discussionids = $this->discussionids;
 
         // Set date button and generate dates popover mform.
         $datesformdata = [];
