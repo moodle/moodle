@@ -491,13 +491,7 @@ abstract class component_gradeitem {
      * @param stdClass $grader The user who is grading
      */
     public function send_student_notification(stdClass $gradeduser, stdClass $grader): void {
-        list($itemtype, $itemmodule) = \core_component::normalize_component($this->component);
-        $gradeitem = \grade_item::fetch([
-            'itemtype' => $itemtype,
-            'itemmodule' => $itemmodule,
-            'iteminstance' => $this->itemnumber,
-        ]);
-
+        $contextname = $this->context->get_context_name();
         $eventdata = new \core\message\message();
         $eventdata->courseid          = $this->context->get_course_context()->instanceid;
         $eventdata->component         = 'moodle';
@@ -505,9 +499,10 @@ abstract class component_gradeitem {
         $eventdata->userfrom          = $grader;
         $eventdata->userto            = $gradeduser;
         $eventdata->subject           = get_string('gradenotificationsubject', 'grades');
-        $eventdata->fullmessage       = get_string('gradenotificationmessage', 'grades', ['name' => $gradeitem->get_name()]);
-
-        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessage       = get_string('gradenotificationmessage', 'grades', $contextname);
+        $eventdata->contexturl        = $this->context->get_url();
+        $eventdata->contexturlname    = $contextname;
+        $eventdata->fullmessageformat = FORMAT_HTML;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
         $eventdata->notification      = 1;
