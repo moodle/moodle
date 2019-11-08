@@ -96,7 +96,7 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
         $lockdiscussionafter = 0;
         $duedate = 0;
         $cutoffdate = 0;
-
+        $sendnotification = false;
         $forum = new forum_entity(
             $context,
             $coursemodule,
@@ -113,6 +113,7 @@ class mod_forum_entities_forum_testcase extends advanced_testcase {
             $assesstimefinish,
             $scale,
             $gradeforum,
+            $sendnotification,
             $maxbytes,
             $maxattachments,
             $forcesubscribe,
