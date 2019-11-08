@@ -211,45 +211,38 @@ class core extends \H5PCore {
      * @return int|null Returns the id of the content type library installed, null otherwise.
      */
     public function fetch_content_type(array $library): ?int {
-
         $factory = new \core_h5p\factory();
-        $framework = $factory->get_framework();
 
         // Get a temp path to download the content type.
         $temppath = make_request_directory();
         $tempfile = "{$temppath}/" . $library['machineName'] . ".h5p";
 
         // Download the latest content type from the H5P official repository.
-        $endpoint = $this->get_api_endpoint($library['machineName']);
-        $result = download_file_content(
-            $endpoint,
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_url(
+            (object) [
+                'component' => 'core_h5p',
+                'filearea' => 'library_sources',
+                'itemid' => 0,
+                'contextid' => (\context_system::instance())->id,
+                'filepath' => '/',
+                'filename' => $library['machineName'],
+            ],
+            $this->get_api_endpoint($library['machineName']),
             null,
-            null,
-            true,
-            300,
-            20,
-            false,
-            $tempfile
+            true
         );
 
-        if (!empty($result->error) || $result->status == '404') {
+        if (!$file) {
             return null;
         }
 
-        $framework->getUploadedH5pPath($tempfile);
-        $framework->getUploadedH5pFolderPath($temppath);
+        helper::save_h5p($factory, $file, (object) [], false, true);
 
-        $validator = $factory->get_validator();
+        $file->delete();
 
-        // Check if the h5p file is valid before saving it.
-        if ($validator->isValidPackage(false, false)) {
-            $h5pstorage = $factory->get_storage();
-            $h5pstorage->savePackage([], null, true);
-            $librarykey = \H5PCore::libraryToString($library);
-            return $h5pstorage->h5pC->librariesJsonData[$librarykey]["libraryId"];
-        }
-
-        return null;
+        $librarykey = static::libraryToString($library);
+        return $factory->get_storage()->h5pC->librariesJsonData[$librarykey]["libraryId"];
     }
 
     /**
