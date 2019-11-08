@@ -115,6 +115,11 @@ class helper {
      * @return bool Returns true if the file can be deployed, false otherwise.
      */
     public static function can_deploy_package(\stored_file $file): bool {
+        if (null === $file->get_userid()) {
+            // If there is no userid, it is owned by the system.
+            return true;
+        }
+
         $context = \context::instance_by_id($file->get_contextid());
         if (has_capability('moodle/h5p:deploy', $context, $file->get_userid())) {
             return true;
@@ -132,14 +137,13 @@ class helper {
      * @return bool Returns true if the content-type libraries can be created/updated, false otherwise.
      */
     public static function can_update_library(\stored_file $file): bool {
-        if (is_null($file)) {
-            debugging('\core_h5p\h5p::can_update_library() now expects a \'file\' to be passed.',
-                DEBUG_DEVELOPER);
-            return false;
+        if (null === $file->get_userid()) {
+            // If there is no userid, it is owned by the system.
+            return true;
         }
 
-        $context = \context::instance_by_id($file->get_contextid());
         // Check if the owner of the .h5p file has the capability to manage content-types.
+        $context = \context::instance_by_id($file->get_contextid());
         if (has_capability('moodle/h5p:updatelibraries', $context, $file->get_userid())) {
             return true;
         }
