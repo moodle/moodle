@@ -126,7 +126,7 @@ class player {
      *
      * @return stdClass with framework error messages.
      */
-    public function get_messages() : \stdClass {
+    public function get_messages(): \stdClass {
         // Check if there are some errors and store them in $messages.
         if (empty($this->messages->error)) {
             $this->messages->error = $this->core->h5pF->getMessages('error') ?: false;
@@ -194,7 +194,7 @@ class player {
      *
      * @return string The HTML code to display this H5P content.
      */
-    public function output() : string {
+    public function output(): string {
         global $OUTPUT;
 
         $template = new \stdClass();
@@ -211,7 +211,7 @@ class player {
      *
      * @return string the title
      */
-    public function get_title() : string {
+    public function get_title(): string {
         return $this->content['title'];
     }
 
@@ -220,7 +220,7 @@ class player {
      *
      * @return context The context.
      */
-    public function get_context() : \context {
+    public function get_context(): \context {
         return $this->context;
     }
 
@@ -461,7 +461,7 @@ class player {
      *
      * @return int The representation of display options as int.
      */
-    private function get_display_options(\stdClass $config) : int {
+    private function get_display_options(\stdClass $config): int {
         $export = isset($config->export) ? $config->export : 0;
         $embed = isset($config->embed) ? $config->embed : 0;
         $copyright = isset($config->copyright) ? $config->copyright : 0;
@@ -500,7 +500,7 @@ class player {
      *
      * @return \moodle_url|null The URL of the exported file.
      */
-    private function get_export_settings(bool $downloadenabled) : ?\moodle_url {
+    private function get_export_settings(bool $downloadenabled): ?\moodle_url {
 
         if ( ! $downloadenabled) {
             return null;
@@ -527,7 +527,7 @@ class player {
      *
      * @return string
      */
-    private function get_cache_buster() : string {
+    private function get_cache_buster(): string {
         global $CFG;
         return '?ver=' . $CFG->themerev;
     }
@@ -537,7 +537,7 @@ class player {
      *
      * @return string The identifier.
      */
-    private function get_cid() : string {
+    private function get_cid(): string {
         return 'cid-' . $this->h5pid;
     }
 
@@ -546,7 +546,7 @@ class player {
      *
      * @return Array core H5P assets.
      */
-    private function get_assets() : array {
+    private function get_assets(): array {
         global $CFG;
 
         // Get core settings.
@@ -625,7 +625,7 @@ class player {
      *
      * @return array The settings.
      */
-    private function get_core_settings() : array {
+    private function get_core_settings(): array {
         global $CFG;
 
         $basepath = $CFG->wwwroot . '/';
@@ -663,7 +663,7 @@ class player {
      *
      * @return array Files that the view has dependencies to
      */
-    private function get_dependency_files() : array {
+    private function get_dependency_files(): array {
         $preloadeddeps = $this->core->loadContentDependencies($this->h5pid, 'preloaded');
         $files = $this->core->getDependenciesFiles($preloadeddeps);
 
@@ -675,7 +675,7 @@ class player {
      *
      * @return string The HTML code with the resize script.
      */
-    private function get_resize_code() : string {
+    private function get_resize_code(): string {
         global $OUTPUT;
 
         $template = new \stdClass();
@@ -692,7 +692,7 @@ class player {
      *
      * @return string The HTML code to reuse this H5P content in a different place.
      */
-    private function get_embed_code(string $url, bool $embedenabled) : string {
+    private function get_embed_code(string $url, bool $embedenabled): string {
         global $OUTPUT;
 
         if ( ! $embedenabled) {
@@ -711,7 +711,7 @@ class player {
      *
      * @return \moodle_url The embed URL.
      */
-    public static function get_embed_url(string $url) : \moodle_url {
+    public static function get_embed_url(string $url): \moodle_url {
         return new \moodle_url('/h5p/embed.php', ['url' => $url]);
     }
 
@@ -720,7 +720,7 @@ class player {
      *
      * @return array
      */
-    public function get_export_file() : array {
+    public function get_export_file(): array {
         // Get the export url.
         $exporturl = $this->get_export_settings(true);
         // Get the filename of the export url.

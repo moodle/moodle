@@ -63,9 +63,9 @@ class external extends external_api {
     /**
      * Return the H5P file trusted.
      *
-     * The Mobile App needs to work with an H5P package which can trust. 
-     * And this H5P package is only trusted by the Mobile App once it's been processed 
-     * by the core checking the right caps, validating the H5P package 
+     * The Mobile App needs to work with an H5P package which can trust.
+     * And this H5P package is only trusted by the Mobile App once it's been processed
+     * by the core checking the right caps, validating the H5P package
      * and doing any clean-up process involved.
      *
      * @since  Moodle 3.8
