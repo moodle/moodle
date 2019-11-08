@@ -117,30 +117,33 @@ function email_reports_cron() {
             $notifyperiod = "OR sent > $notifytime";
         }
 
-        // Check if we are within the period.
-        if (!$DB->get_records_sql("SELECT id FROM {email}
-                                  WHERE userid = :userid
-                                  AND courseid = :courseid
-                                  AND templatename = :templatename
-                                  AND (
-                                     sent IS NULL
-                                  $notifyperiod
-                                  )
-                                  AND id IN (
-                                     SELECT MAX(id) FROM {email}
-                                     WHERE userid = :userid2
-                                     AND courseid = :courseid2
-                                     AND templatename = :templatename2)",
-                                  array('userid' => $compuser->userid,
-                                        'courseid' => $compuser->courseid,
-                                        'templatename' => 'completion_warn_user',
-                                        'userid2' => $compuser->userid,
-                                        'courseid2' => $compuser->courseid,
-                                        'templatename2' => 'completion_warn_user'))) {
-            continue;
+        // Check if we have sent any emails and if they are within the period.
+        if ($DB->count_records('email', array('userid' => $compuser->userid,
+                                              'courseid' => $compuser->courseid,
+                                              'templatename' => 'completion_warn_user')) > 0) {
+            if (!$DB->get_records_sql("SELECT id FROM {email}
+                                      WHERE userid = :userid
+                                      AND courseid = :courseid
+                                      AND templatename = :templatename
+                                      AND (
+                                         sent IS NULL
+                                      $notifyperiod
+                                      )
+                                      AND id IN (
+                                         SELECT MAX(id) FROM {email}
+                                         WHERE userid = :userid2
+                                         AND courseid = :courseid2
+                                         AND templatename = :templatename2)",
+                                      array('userid' => $compuser->userid,
+                                            'courseid' => $compuser->courseid,
+                                            'templatename' => 'completion_warn_user',
+                                            'userid2' => $compuser->userid,
+                                            'courseid2' => $compuser->courseid,
+                                            'templatename2' => 'completion_warn_user'))) {
+                continue;
+            }
         }
         mtrace("Sending completion warning email to $user->email");
-
         EmailTemplate::send('completion_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
 
         // Send the supervisor email too.
@@ -350,30 +353,35 @@ function email_reports_cron() {
                             $notifyperiod = "OR sent > $notifytime";
                         }
 
-                        // Check if we are within the period.
-                        if (!$DB->get_records_sql("SELECT id FROM {email}
-                                                  WHERE userid = :userid
-                                                  AND courseid = :courseid
-                                                  AND templatename = :templatename
-                                                  AND (
-                                                     sent IS NULL
-                                                  $notifyperiod
-                                                  )
-                                                  AND id IN (
-                                                     SELECT MAX(id) FROM {emai}l
-                                                     WHERE userid = :userid2
-                                                     AND courseid = :courseid2
-                                                     AND templatename = :templatename2)",
-                                                  array('userid' => $notstarteduser->userid,
-                                                        'courseid' => $notstarteduser->courseid,
-                                                        'templatename' => 'course_not_started_warning',
-                                                        'userid2' => $notstarteduser->userid,
-                                                        'courseid2' => $notstarteduser->courseid,
-                                                        'templatename2' => 'course_not_started_warning'))) {
-                            continue;
+                        // Check if we have sent any emails and if they are within the period.
+                        if ($DB->count_records('email', array('userid' => $notstarteduser->userid,
+                                                              'courseid' => $notstarteduser->courseid,
+                                                              'templatename' => 'course_not_started_warning')) > 0) {
+                            if (!$DB->get_records_sql("SELECT id FROM {email}
+                                                      WHERE userid = :userid
+                                                      AND courseid = :courseid
+                                                      AND templatename = :templatename
+                                                      AND (
+                                                         sent IS NULL
+                                                      $notifyperiod
+                                                      )
+                                                      AND id IN (
+                                                         SELECT MAX(id) FROM {emai}l
+                                                         WHERE userid = :userid2
+                                                         AND courseid = :courseid2
+                                                         AND templatename = :templatename2)",
+                                                      array('userid' => $notstarteduser->userid,
+                                                            'courseid' => $notstarteduser->courseid,
+                                                            'templatename' => 'course_not_started_warning',
+                                                            'userid2' => $notstarteduser->userid,
+                                                            'courseid2' => $notstarteduser->courseid,
+                                                            'templatename2' => 'course_not_started_warning'))) {
+                                continue;
+                            }
                         }
 
                         // Passed all checks, send the email.
+                        mtrace("Sending not started warning email to $userrec->email");
                         EmailTemplate::send('course_not_started_warning', array('user' => $userrec, 'course' => $courserec, 'company' => $companyrec));
 
                         // Send the supervisor email too.
@@ -490,26 +498,30 @@ function email_reports_cron() {
             $notifyperiod = "OR sent > $notifytime";
         }
 
-        // Check if we have recently sent the email.
-        if (!$DB->get_records_sql("SELECT id FROM {email}
-                                  WHERE userid = :userid
-                                  AND courseid = :courseid
-                                  AND templatename = :templatename
-                                  AND (
-                                      sent IS NULL
-                                      $notifyperiod)
-                                  AND id IN (
-                                     SELECT MAX(id) FROM {email}
-                                     WHERE userid = :userid2
-                                     AND courseid = :courseid2
-                                     AND templatename = :templatename2)",
-                                  array('userid' => $compuser->userid,
-                                        'courseid' => $compuser->courseid,
-                                        'templatename' => 'expiry_warn_user',
-                                        'userid2' => $compuser->userid,
-                                        'courseid.' => $compuser->courseid,
-                                        'templatename.' => 'expiry_warn_user'))) {
-            continue;
+        // Check if we have sent any emails and if they are within the period.
+        if ($DB->count_records('email', array('userid' => $compuser->userid,
+                                              'courseid' => $compuser->courseid,
+                                              'templatename' => 'expiry_warn_user')) > 0) {
+            if (!$DB->get_records_sql("SELECT id FROM {email}
+                                      WHERE userid = :userid
+                                      AND courseid = :courseid
+                                      AND templatename = :templatename
+                                      AND (
+                                          sent IS NULL
+                                          $notifyperiod)
+                                      AND id IN (
+                                         SELECT MAX(id) FROM {email}
+                                         WHERE userid = :userid2
+                                         AND courseid = :courseid2
+                                         AND templatename = :templatename2)",
+                                      array('userid' => $compuser->userid,
+                                            'courseid' => $compuser->courseid,
+                                            'templatename' => 'expiry_warn_user',
+                                            'userid2' => $compuser->userid,
+                                            'courseid.' => $compuser->courseid,
+                                            'templatename.' => 'expiry_warn_user'))) {
+                continue;
+            }
         }
         mtrace("Sending expiry warning email to $user->email");
         EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
