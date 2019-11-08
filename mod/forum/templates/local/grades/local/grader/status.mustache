@@ -15,44 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/local/grades/local/grader/user_picker/user
+    @template mod_forum/local/grades/local/grader/status
 
     Classes required for JS:
     * none
 
     Data attributes required for JS:
-    * data-userid="42"
-    * data-region="index"
+    *
 
     Context variables required for this template:
-    * id: The ID of the user
-    * fullname: The user's full name
-    * displayIndex: The index of the user in the userpicker array + 1
-    * total: The length of the user array in the userpicker
+    *
 
     Example context (json):
     {
-        "id": 4,
-        "fullname": "Phillip J. Fry",
-        "displayIndex": 3,
-        "total": 7
+        "status": "Graded",
+        "index": 1,
+        "total": 10
     }
 }}
-{{#profileimage}}
-<img
-    class="rounded-circle userpicture mr-2"
-    src="{{.}}"
-    alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
-    title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
->
-{{/profileimage}}
-<div>
-    <h5
-        class="mb-0 font-weight-bold user-full-name text-truncate"
-        data-region="name"
-        data-userid="{{id}}"
-    >
-        {{fullname}}
-    </h5>
-</div>
-
+{{#status}}<h2 class="font-weight-bold h5 mb-0">{{.}}</h2>{{/status}}
+<div>{{#str}} indexoutoftotal, mod_forum, {"index": "{{index}}", "total":"{{total}}"}{{/str}}</div>

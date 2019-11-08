@@ -30,29 +30,21 @@
     {
     }
 }}
-<div class="col-md-12 mt-3">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="bg-pulse-grey w-50" style="height: 20px;"></div>
-            <div class="bg-pulse-grey w-25 mt-1" style="height: 15px;"></div>
-        </div>
-        <div class="col-md-4">
-            <ul class="pagination">
-                <li class="page-item mr-3">
-                    <span class="btn bg-pulse-grey" aria-hidden="true">&langle;</span>
-                    <span class="sr-only">{{#str}} previous {{/str}}</span>
-                </li>
-                <li class="page-item mr-3">
-                    <span class="btn bg-pulse-grey" aria-hidden="true">&rangle;</span>
-                    <span class="sr-only">{{#str}} next {{/str}}</span>
-
+<div class="d-flex align-items-center user-picker-container mb-2 py-2">
+    <div class="d-flex align-items-center">
+        <div class="bg-pulse-grey rounded-circle d-inline-block flex-shrink-0 userpicture mr-2"></div>
+        <div class="bg-pulse-grey d-inline-block" style="height: 22px; width: 150px"></div>
+    </div>
+    <div class="ml-auto flex-shrink-0">
+        <nav>
+            <ul class="pagination mb-0">
+                <li class="page-item">
+                    <a class="bg-pulse-grey border-0 page-link icon-no-margin p-0 icon-size-3" href="#"></a>
                 </li>
                 <li class="page-item">
-                    <span class="btn bg-pulse-grey fa fa-search" aria-hidden="true"></span>
-                    <span class="sr-only">{{#str}} search {{/str}}</span>
+                    <a class="bg-pulse-grey border-0 page-link icon-no-margin p-0 icon-size-3 ml-2" href="#"></a>
                 </li>
             </ul>
-        </div>
+        </nav>
     </div>
 </div>
-

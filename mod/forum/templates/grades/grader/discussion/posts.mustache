@@ -29,48 +29,68 @@
     {
     }
 }}
-<div data-region="posts" id="post-region-{{uniqid}}">
+<div
+    class="{{#experimentaldisplaymode}}nested-v2-display-mode{{/experimentaldisplaymode}}"
+    data-region="posts"
+    id="post-region-{{uniqid}}"
+>
     {{#discussions}}
-        <div class="hr-sect mt-0">{{name}}</div>
-        {{#posts}}
-            {{#parent}}
-                {{> mod_forum/forum_discussion_nested_v2_post_reply }}
-            {{/parent}}
-            {{#starter}}
-                {{> mod_forum/forum_discussion_nested_v2_first_post }}
-                <a class="btn btn-outline-dark"
-                   role="button"
-                   data-action="view-context"
-                   data-discussionid="{{discussionid}}"
-                   data-postid="{{id}}"
-                   data-name="{{name}}"
-                   href="#">
-                    {{#str}} viewconversation, forum {{/str}}
-                </a>
-            {{/starter}}
-            {{^starter}}
-                <div class="forum-post-container" data-region="replies-container">
-                    <div class="indent replies-container" data-region="replies-container">
-                        <div class="indent replies-container" data-region="replies-container">
-                            {{> mod_forum/forum_discussion_nested_v2_post_reply }}
-                            <a class="btn btn-outline-dark"
-                               role="button"
-                               data-action="view-context"
-                               data-discussionid="{{discussionid}}"
-                               data-postid="{{id}}"
-                               data-name="{{name}}"
-                               href="#">
+        <div class="discussion-container">
+            <div class="p-4">
+                <h3 class="d-inline-block m-0 h6 font-weight-bold">{{#str}} discussionstartedby, mod_forum, {{authorfullname}} {{/str}}</h3>
+                <p class="d-inline-block m-0 h6 font-weight-normal text-muted ml-1">
+                    {{#userdate}} {{timecreated}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}
+                </p>
+                <h2 class="mb-4 font-weight-bold">{{name}}</h2>
+
+                {{#posts}}
+                    <div class="posts-container">
+                        {{#parent}}
+                            <div class="parent-container">
+                                <button
+                                    class="btn btn-link show-content-button collapsed"
+                                    data-target="#parent-post-content-{{id}}"
+                                    aria-expanded="false"
+                                    aria-controls="parent-post-content-{{id}}"
+                                    data-toggle="collapse"
+                                >
+                                    {{#str}} viewparentpost, mod_forum {{/str}}
+                                </button>
+                                <div id="parent-post-content-{{id}}" class="content collapse">
+                                    {{#experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_v2_first_post }}{{/experimentaldisplaymode}}
+                                    {{^experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_post }}{{/experimentaldisplaymode}}
+                                </div>
+                            </div>
+                        {{/parent}}
+                        {{#post}}
+                            <div class="post-container">
+                                {{#experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_v2_first_post }}{{/experimentaldisplaymode}}
+                                {{^experimentaldisplaymode}}{{> mod_forum/forum_discussion_nested_post }}{{/experimentaldisplaymode}}
+                            </div>
+                            <button
+                                class="view-context-button btn btn-link border"
+                                type="button"
+                                data-action="view-context"
+                                data-discussionid="{{discussionid}}"
+                                data-postid="{{id}}"
+                                data-name="{{name}}"
+                                data-experimental-display-mode="{{experimentaldisplaymode}}"
+                            >
                                 {{#str}} viewconversation, forum {{/str}}
-                            </a>
-                        </div>
+                            </button>
+                        {{/post}}
+                        <hr class="w-75 mx-auto my-5">
                     </div>
-                </div>
-            {{/starter}}
+                {{/posts}}
+            </div>
             <hr>
-        {{/posts}}
+        </div>
     {{/discussions}}
     {{^discussions}}
-        <h3>{{#str}} noposts, forum {{/str}}</h3>
+        <div class="no-post-container text-center p-5">
+            {{#pix}} no-posts, mod_forum {{/pix}}
+            <h2 class="mt-3 font-weight-bold">{{#str}} noposts, mod_forum {{/str}}</h2>
+        </div>
     {{/discussions}}
 </div>
 {{#js}}

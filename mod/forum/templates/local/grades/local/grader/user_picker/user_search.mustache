@@ -56,40 +56,20 @@
         ]
     }
 }}
-<div data-action="search-user-box">
-    {{#expandedUsers}}
-        <div class="mt-2">
-            <img class="rounded-circle userpicture" src="{{profileimage}}"
-                 alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
-                 title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}" >
-            <a href="#" class="font-weight-bold" data-action="select-user" data-userid="{{id}}">{{fullname}}</a>
-        </div>
-    {{/expandedUsers}}
-    {{^expandedUsers}}
-        <h5>{{#str}}nousersmatch, mod_forum{{/str}}</h5>
-    {{/expandedUsers}}
-    {{#hasCollapsed}}
+<div class="d-flex flex-column px-3 py-2" data-action="search-user-box">
+    {{#users}}
         <button
-                class="btn btn-icon mt-2 text-muted icon-no-margin icon-size-3"
-                type="button"
-                id="grader-users-menu-{{uniqid}}"
-                aria-label="{{#str}} showmoreusers, mod_forum {{/str}}"
-                data-toggle="collapse"
-                data-target="#collapsed-users-{{uniqid}}"
-                aria-expanded="false"
-                aria-controls="collapsed-users-{{uniqid}}"
+            class="btn btn-link text-reset p-0 mb-2 d-flex align-items-center"
+            data-action="select-user"
+            data-userid="{{id}}"
         >
-            {{#pix}} i/moremenu {{/pix}}
+            {{> mod_forum/local/grades/local/grader/user_picker/user }}
         </button>
-        <div id="collapsed-users-{{uniqid}}" class="collapse" aria-labelledby="grader-users-menu-{{uniqid}}">
-            {{#collapsedUsers}}
-                <div class="mt-2">
-                    <img class="rounded-circle userpicture" src="{{profileimage}}"
-                         alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
-                         title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}" >
-                    <a href="#" class="font-weight-bold" data-action="select-user" data-userid="{{id}}">{{fullname}}</a>
-                </div>
-            {{/collapsedUsers}}
+    {{/users}}
+    {{^users}}
+        <div class="no-search-results-container text-center">
+            {{#pix}} no-search-results, mod_forum {{/pix}}
+            <h5 class="font-weight-bold mt-3">{{#str}}nousersmatch, mod_forum{{/str}}</h5>
         </div>
-    {{/hasCollapsed}}
+    {{/users}}
 </div>

@@ -366,6 +366,7 @@ select[size="1"] {
 
 textarea[data-auto-rows] {
     overflow-x: hidden;
+    resize: none;
 }
 
 /** Display elements under labels in vertical forms regardless of the screen size. */

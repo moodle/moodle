@@ -2664,17 +2664,21 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->course = $course1->id;
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
+        $record->timemodified = 1;
         $discussion1 = $forumgenerator->create_discussion($record);
         $discussion1firstpost = $postvault->get_first_post_for_discussion_ids([$discussion1->id]);
-        $discussion1firstpostobject = $legacypostmapper->to_legacy_object($discussion1firstpost[$discussion1->firstpost]);
+        $discussion1firstpost = $discussion1firstpost[$discussion1->firstpost];
+        $discussion1firstpostobject = $legacypostmapper->to_legacy_object($discussion1firstpost);
 
         $record = new stdClass();
         $record->course = $course1->id;
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
+        $record->timemodified = 2;
         $discussion2 = $forumgenerator->create_discussion($record);
         $discussion2firstpost = $postvault->get_first_post_for_discussion_ids([$discussion2->id]);
-        $discussion2firstpostobject = $legacypostmapper->to_legacy_object($discussion2firstpost[$discussion2->firstpost]);
+        $discussion2firstpost = $discussion2firstpost[$discussion2->firstpost];
+        $discussion2firstpostobject = $legacypostmapper->to_legacy_object($discussion2firstpost);
 
         // Add 1 reply to the discussion 1 from a different user.
         $record = new stdClass();
@@ -2733,6 +2737,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $expectedposts['discussions'][0] = [
             'name' => $discussion1->name,
             'id' => $discussion1->id,
+            'timecreated' => $discussion1firstpost->get_time_created(),
+            'authorfullname' => $user1entity->get_full_name(),
             'posts' => [
                 'userposts' => [
                     [
@@ -2864,6 +2870,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $expectedposts['discussions'][1] = [
             'name' => $discussion2->name,
             'id' => $discussion2->id,
+            'timecreated' => $discussion2firstpost->get_time_created(),
+            'authorfullname' => $user1entity->get_full_name(),
             'posts' => [
                 'userposts' => [
                     [

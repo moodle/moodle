@@ -34,40 +34,39 @@
     {
     }
 }}
-<div class="col-md-12">
-    <div class="row">
-        <div class="col-md-8">
-            <div data-region="user_picker/user"></div>
-        </div>
-        <div class="col-md-4">
-            <ul class="pagination">
-                <li class="page-item mr-3">
-                    <a class="page-link" href="#" aria-label="Previous" data-action="change-user" data-direction="-1">
-                        <span aria-hidden="true">&langle;</span>
-                        <span class="sr-only">{{#str}} previous {{/str}}</span>
-                    </a>
-                </li>
-                <li class="page-item mr-3">
-                    <a class="page-link" href="#" aria-label="Next" data-action="change-user" data-direction="1">
-                        <span aria-hidden="true">&rangle;</span>
-                        <span class="sr-only">{{#str}} next {{/str}}</span>
-                    </a>
-                </li>
-                <li>
-                    <button class="btn btn-icon icon-size-4 icon-no-margin colour-inherit" aria-label="{{#str}} search {{/str}}" data-target="#searchbox" aria-expanded="false" aria-controls="searchbox" data-toggle="collapse">
-                        <i class="icon fa fa-search fa-fw" aria-hidden="true"></i>
-                        <span class="sr-only">{{#str}} search {{/str}}</span>
-                    </button>
-                </li>
 
+<div class="d-flex align-items-center user-picker-container mb-2 py-2">
+    <div class="d-flex align-items-center" data-region="user_picker/user"></div>
+    <div class="ml-auto flex-shrink-0">
+        <nav aria-label="{{#str}} usernavigation, mod_forum {{/str}}">
+            <ul class="pagination mb-0">
+                <li class="page-item">
+                    <a
+                        class="page-link icon-no-margin p-0 text-reset icon-size-3"
+                        href="#"
+                        aria-label="{{#str}} previous {{/str}}"
+                        data-action="change-user"
+                        data-direction="-1"
+                        title="{{#str}} previoususer, mod_forum {{/str}}"
+                    >
+                        <span class="dir-ltr-hide">{{#pix}} i/next, core {{/pix}}</span>
+                        <span class="dir-rtl-hide">{{#pix}} i/previous, core {{/pix}}</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a
+                        class="page-link icon-no-margin p-0 text-reset icon-size-3 ml-2"
+                        href="#"
+                        aria-label="{{#str}} next {{/str}}"
+                        data-action="change-user"
+                        data-direction="1"
+                        title="{{#str}} nextuser, mod_forum {{/str}}"
+                    >
+                        <span class="dir-ltr-hide">{{#pix}} i/previous, core {{/pix}}</span>
+                        <span class="dir-rtl-hide">{{#pix}} i/next, core {{/pix}}</span>
+                    </a>
+                </li>
             </ul>
-        </div>
-        <div id="searchbox" class="col-md-12 collapse">
-            <form action="" class="search-form my-3 w-100">
-                <input type="text" data-action="search-user-input" class="form-control input-lg" placeholder="Search user">
-            </form>
-            <div data-action="search-user-box"></div>
-        </div>
+        </nav>
     </div>
-    <hr>
 </div>

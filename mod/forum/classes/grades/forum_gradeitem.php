@@ -91,7 +91,7 @@ class forum_gradeitem extends component_gradeitem {
      * @return bool
      */
     public function is_grading_enabled(): bool {
-        return $this->forum->get_grade_for_forum() !== 0;
+        return $this->forum->is_grading_enabled();
     }
 
     /**

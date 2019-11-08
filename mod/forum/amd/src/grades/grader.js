@@ -27,6 +27,7 @@ import Templates from 'core/templates';
 import * as Grader from '../local/grades/grader';
 import Notification from 'core/notification';
 import CourseRepository from 'core_course/repository';
+import {relativeUrl} from 'core/url';
 
 const templateNames = {
     contentRegion: 'mod_forum/grades/grader/discussion/posts',
@@ -36,9 +37,10 @@ const templateNames = {
  * Curried function with CMID set, this is then used in unified grader as a fetch a users content.
  *
  * @param {Number} cmid
+ * @param {Bool} experimentalDisplayMode
  * @return {Function}
  */
-const getContentForUserIdFunction = (cmid) => (userid) => {
+const getContentForUserIdFunction = (cmid, experimentalDisplayMode) => (userid) => {
     /**
      * Given the parent function is called with the second param set execute the partially executed function.
      *
@@ -48,6 +50,7 @@ const getContentForUserIdFunction = (cmid) => (userid) => {
         .then(context => {
             // Rebuild the returned data for the template.
             context.discussions = context.discussions.map(discussionPostMapper);
+            context.experimentaldisplaymode = experimentalDisplayMode ? true : false;
 
             return Templates.render(templateNames.contentRegion, context);
         })
@@ -82,18 +85,26 @@ const discussionPostMapper = (discussion) => {
     const parentMap = new Map();
     discussion.posts.parentposts.forEach(post => parentMap.set(post.id, post));
     const userPosts = discussion.posts.userposts.map(post => {
-        post.subject = null;
         post.readonly = true;
-        post.starter = !post.parentid;
-        post.parent = parentMap.get(post.parentid);
-        post.html.rating = null;
+        post.hasreplies = false;
+        post.replies = [];
 
-        return post;
+        const parent = post.parentid ? parentMap.get(post.parentid) : null;
+        if (parent) {
+            parent.hasreplies = false;
+            parent.replies = [];
+            parent.readonly = true;
+            post.parentauthorname = parent.author.fullname;
+        }
+
+        return {
+            parent,
+            post
+        };
     });
 
     return {
-        id: discussion.id,
-        name: discussion.name,
+        ...discussion,
         posts: userPosts,
     };
 };
@@ -117,13 +128,15 @@ const launchWholeForumGrading = async(rootNode) => {
 
     await Grader.launch(
         getUsersForCmidFunction(data.cmid, groupID),
-        getContentForUserIdFunction(data.cmid),
+        getContentForUserIdFunction(data.cmid, data.experimentalDisplayMode == "1"),
         gradingPanelFunctions.getter,
         gradingPanelFunctions.setter,
         {
             groupid: data.groupid,
             initialUserId: data.initialuserid,
-            moduleName: data.name
+            moduleName: data.name,
+            courseName: data.courseName,
+            courseUrl: relativeUrl('/course/view.php', {id: data.courseId})
         }
     );
 };

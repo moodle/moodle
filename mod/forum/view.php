@@ -105,25 +105,7 @@ $PAGE->set_context($forum->get_context());
 $PAGE->set_title($forum->get_name());
 $PAGE->add_body_class('forumtype-' . $forum->get_type());
 $PAGE->set_heading($course->fullname);
-
-$buttons = [];
-if ($capabilitymanager->can_grade($USER)) {
-    $forumgradeitem = forum_gradeitem::load_from_forum_entity($forum);
-    if ($forumgradeitem->is_grading_enabled()) {
-        $groupid = groups_get_activity_group($cm, true) ?: null;
-        $gradeobj = (object) [
-            'contextid' => $forum->get_context()->id,
-            'cmid' => $cmid,
-            'name' => $forum->get_name(),
-            'groupid' => $groupid,
-            'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
-            'gradingcomponentsubtype' => $forumgradeitem->get_grading_component_subtype(),
-        ];
-        $buttons[] = $OUTPUT->render_from_template('mod_forum/grades/grade_button', $gradeobj);
-    }
-}
-$buttons[] = forum_search_form($course, $search);
-$PAGE->set_button(implode('', $buttons));
+$PAGE->set_button(forum_search_form($course, $search));
 
 if ($istypesingle && $displaymode == FORUM_MODE_NESTED_V2) {
     $PAGE->add_body_class('reset-style');
@@ -189,6 +171,24 @@ $groupid = groups_get_activity_group($cm, true) ?: null;
 $rendererfactory = mod_forum\local\container::get_renderer_factory();
 switch ($forum->get_type()) {
     case 'single':
+        if ($capabilitymanager->can_grade($USER)) {
+            $forumgradeitem = forum_gradeitem::load_from_forum_entity($forum);
+            if ($forumgradeitem->is_grading_enabled()) {
+                $groupid = groups_get_activity_group($cm, true) ?: null;
+                $gradeobj = (object) [
+                    'contextid' => $forum->get_context()->id,
+                    'cmid' => $cmid,
+                    'name' => $forum->get_name(),
+                    'courseid' => $course->id,
+                    'coursename' => $course->shortname,
+                    'experimentaldisplaymode' => $displaymode == FORUM_MODE_NESTED_V2,
+                    'groupid' => $groupid,
+                    'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
+                    'gradingcomponentsubtype' => $forumgradeitem->get_grading_component_subtype(),
+                ];
+                echo $OUTPUT->render_from_template('mod_forum/grades/grade_button', $gradeobj);
+            }
+        }
         $discussion = $discussionvault->get_last_discussion_in_forum($forum);
         $discussioncount = $discussionvault->get_count_discussions_in_forum($forum);
         $hasmultiplediscussions = $discussioncount > 1;
@@ -227,7 +227,7 @@ switch ($forum->get_type()) {
         break;
     default:
         $discussionsrenderer = $rendererfactory->get_discussion_list_renderer($forum);
-        echo $discussionsrenderer->render($USER, $cm, $groupid, $sortorder, $pageno, $pagesize);
+        echo $discussionsrenderer->render($USER, $cm, $groupid, $sortorder, $pageno, $pagesize, $displaymode);
 }
 
 echo $OUTPUT->footer();

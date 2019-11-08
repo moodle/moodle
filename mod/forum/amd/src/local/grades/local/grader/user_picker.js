@@ -79,10 +79,6 @@ class UserPicker {
         // Call the showUser function to show the first user immediately.
         await this.showUser(this.currentUser);
 
-        // Show a list of users under the user search box.
-        await this.renderSearch(this.userList);
-
-        this.searchResultListener();
         // Ensure that the event listeners are all bound.
         this.registerEventListeners();
     }
@@ -123,7 +119,6 @@ class UserPicker {
     registerEventListeners() {
         this.root.addEventListener('click', async(e) => {
             const button = e.target.closest(Selectors.actions.changeUser);
-            const input = e.target.closest(Selectors.actions.searchUserInput);
 
             if (button) {
                 const result = await this.preChangeUserCallback(this.currentUser);
@@ -133,87 +128,17 @@ class UserPicker {
                     await this.showUser(this.currentUser);
                 }
             }
-            if (input) {
-
-                // Make the key up a seperate function.
-                this.onKeyUp(input);
-            }
         });
     }
 
-    /**
-     * Listener for keyboard entry that'll search the user list for matching users.
-     *
-     * @param {Text} input User entered text of the user to search for.
-     */
-    onKeyUp(input) {
-        // Init a timeout variable to be used below
-        let timeout = null;
-        // Listen for keystroke events
-        input.onkeyup = () => {
-            // Clear the timeout if it has already been set.
-            clearTimeout(timeout);
-            // Make a new timeout set to go off in 300ms
-            timeout = setTimeout(async(userList) => {
-                const userInput = input.value;
-                const results = userList.filter((user) => {
-                    return user.fullname.toLowerCase().includes(userInput.toLowerCase());
-                });
-                await this.renderSearch(results);
-                this.searchResultListener();
-            }, 300, this.userList);
-        };
-    }
-
-    /**
-     * Apply the click handler for the users found in the user search area.
-     */
-    searchResultListener() {
-        this.root.querySelector(Selectors.actions.searchUserBox).addEventListener('click', async(e) => {
-            e.preventDefault();
-            const user = e.target.closest(Selectors.actions.selectUser);
-            if (user !== null) {
-                const foundUser = this.userList.findIndex(item => parseInt(item.id) === parseInt(user.dataset.userid));
-                const result = await this.preChangeUserCallback(this.currentUser);
-
-                if (!result.failed) {
-                    this.updateIndex(0, parseInt(foundUser));
-                    await this.showUser(this.currentUser);
-                }
-            }
-        });
-    }
-
-    /**
-     * Render the user search results.
-     *
-     * @param {Array} results List of users
-     */
-    async renderSearch(results) {
-        const trimmedUsers = results.slice(0, 10);
-        const overflowUsers = results.slice(10);
-        const builtResults = {
-          'expandedUsers': trimmedUsers,
-          'hasCollapsed': overflowUsers.length > 0,
-          'collapsedUsers': overflowUsers,
-        };
-        const {html, js} = await Templates.renderForPromise(`${templatePath}/user_picker/user_search`, builtResults);
-        const searchUserRegion = this.root.querySelector(Selectors.actions.searchUserBox);
-        Templates.replaceNode(searchUserRegion, html, js);
-    }
     /**
      * Update the current user index.
      *
      * @param {Number} direction
-     * @param {Number} specificIndex
      * @returns {Number}}
      */
-    updateIndex(direction, specificIndex = null) {
-        if (specificIndex) {
-            this.currentUserIndex = specificIndex;
-        } else {
-            this.currentUserIndex += direction;
-        }
+    updateIndex(direction) {
+        this.currentUserIndex += direction;
 
         // Loop around the edges.
         if (this.currentUserIndex < 0) {

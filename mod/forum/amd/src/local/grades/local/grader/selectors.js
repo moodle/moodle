@@ -37,12 +37,20 @@ export default {
         toggleFullscreen: getDataSelector('action', 'togglefullscreen'),
         closeGrader: getDataSelector('action', 'closegrader'),
         saveGrade: getDataSelector('action', 'savegrade'),
+        selectUser: getDataSelector('action', 'select-user'),
+        toggleSearch: getDataSelector('action', 'toggle-search')
     },
     regions: {
+        bodyContainer: getDataSelector('region', 'body-container'),
         moduleReplace: getDataSelector('region', 'module_content'),
         pickerRegion: getDataSelector('region', 'user_picker'),
         gradingPanel: getDataSelector('region', 'grade'),
+        gradingPanelContainer: getDataSelector('region', 'grading-panel-container'),
         gradingPanelErrors: getDataSelector('region', 'grade-errors'),
+        searchResultsContainer: getDataSelector('region', 'search-results-container'),
+        statusContainer: getDataSelector('region', 'status-container'),
+        userSearchContainer: getDataSelector('region', 'user-search-container'),
+        userSearchInput: getDataSelector('region', 'user-search-input')
     },
 };
 

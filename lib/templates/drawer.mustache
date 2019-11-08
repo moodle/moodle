@@ -33,9 +33,9 @@
 }}
 <div
     id="{{$drawerid}}drawer-{{uniqid}}{{/drawerid}}"
-    class="{{$drawerclasses}}{{/drawerclasses}} drawer bg-white hidden"
-    aria-expanded="false"
-    aria-hidden="true"
+    class="{{$drawerclasses}}{{/drawerclasses}} drawer bg-white {{^show}}hidden{{/show}}"
+    aria-expanded="{{#show}}true{{/show}}{{^show}}false{{/show}}"
+    aria-hidden="{{#show}}false{{/show}}{{^show}}true{{/show}}"
     data-region="right-hand-drawer"
     role="region"
     tabindex="-1"
