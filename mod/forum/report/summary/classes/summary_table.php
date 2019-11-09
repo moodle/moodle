@@ -628,6 +628,11 @@ class summary_table extends table_sql {
         $this->build_table();
         $this->close_recordset();
         $this->finish_output();
+
+        // Drop the temp table when necessary.
+        if ($this->logreader) {
+            $this->drop_log_summary_temp_table();
+        }
     }
 
     /**
@@ -762,6 +767,22 @@ class summary_table extends table_sql {
         $xmldbtable->add_key('primary', XMLDB_KEY_PRIMARY, array('userid'));
 
         $dbman->create_temp_table($xmldbtable);
+    }
+
+    /**
+     * Drops the temp table.
+     *
+     * This should be called once the processing for the summary table has been done.
+     */
+    protected function drop_log_summary_temp_table(): void {
+        global $DB;
+
+        // Drop the temp table if it exists.
+        $temptable = new \xmldb_table(self::LOG_SUMMARY_TEMP_TABLE);
+        $dbman = $DB->get_manager();
+        if ($dbman->table_exists($temptable)) {
+            $dbman->drop_table($temptable);
+        }
     }
 
     /**
