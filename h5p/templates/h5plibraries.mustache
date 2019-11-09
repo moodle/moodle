@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_h5p/h5plibraries
+
+    Example context (json):
+    {
+        "contenttypes": [
+            {
+                "title": "Accordion",
+                "major_version": 1,
+                "minor_version:": 0,
+                "patch_version:": 0,
+                "runnable": 1
+            },
+            {
+                "title": "Collage",
+                "major_version": 0,
+                "minor_version:": 3,
+                "patch_version:": 1,
+                "runnable": 1
+            },
+            {
+                "title": "FontAwesome",
+                "major_version": 4,
+                "minor_version:": 5,
+                "patch_version:": 0,
+                "runnable": 0
+            }
+        ]
+    }
+
+}}
+<h3 class="mt-3">{{#str}} installedh5p, h5p {{/str}}</h3>
+
+<ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="contenttypes-tab" data-toggle="tab" href="#contenttypes" role="tab" aria-controls="contenttypes" aria-selected="true">
+            {{#str}} installedcontenttypes, h5p {{/str}}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="libraries-tab" data-toggle="tab" href="#libraries" role="tab" aria-controls="libraries" aria-selected="false">
+            {{#str}} installedcontentlibraries, h5p {{/str}}
+        </a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="contenttypes" role="tabpanel" aria-labelledby="contenttypes-tab">
+        <div class="overview px-3 mb-5">
+            <table class="admintable generaltable" id="h5pcontenttypes">
+                <thead>
+                    <tr>
+                        <th>{{#str}}description, core{{/str}}</th>
+                        <th>{{#str}}version, core{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#contenttypes}}
+                        {{#runnable}}
+                        <tr class="">
+                            <td>
+                                {{{ title }}}
+                            </td>
+                            <td>{{{ major_version }}}.{{{ minor_version }}}.{{{ patch_version }}}</td>
+                        </tr>
+                        {{/runnable}}
+                    {{/contenttypes}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="libraries" role="tabpanel" aria-labelledby="libraries-tab">
+        <div class="overview px-3 mb-5">
+            <table class="admintable generaltable" id="h5plibraries">
+                <thead>
+                    <tr>
+                        <th>{{#str}}description, core{{/str}}</th>
+                        <th>{{#str}}version, core{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#contenttypes}}
+                        {{^runnable}}
+                        <tr class="">
+                            <td>
+                                {{{ title }}}
+                            </td>
+                            <td>{{{ major_version }}}.{{{ minor_version }}}.{{{ patch_version }}}</td>
+                        </tr>
+                        {{/runnable}}
+                    {{/contenttypes}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
