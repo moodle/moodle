@@ -50,7 +50,7 @@ class thread_edit_form extends \moodleform {
         $mform->addHelpButton('startdate', 'startdate', 'block_iomad_microlearning');
 
         $mform->addElement('duration', 'message_preset',
-                            get_string('message_preset', 'block_iomad_microlearning'));
+                            get_string('message_preset', 'block_iomad_microlearning'), array('defaultunit' => 86400));
         $mform->addHelpButton('message_preset', 'message_preset', 'block_iomad_microlearning');
 
         $hourarray = array();
@@ -83,11 +83,11 @@ class thread_edit_form extends \moodleform {
         $mform->addHelpButton('send_reminder', 'send_reminder', 'block_iomad_microlearning');
 
         $mform->addElement('duration', 'releaseinterval',
-                            get_string('interval', 'block_iomad_microlearning'));
+                            get_string('interval', 'block_iomad_microlearning'), array('defaultunit' => 86400));
         $mform->addHelpButton('releaseinterval', 'interval', 'block_iomad_microlearning');
 
         $mform->addElement('duration', 'defaultdue',
-                            get_string('defaultdue', 'block_iomad_microlearning'));
+                            get_string('defaultdue', 'block_iomad_microlearning'), array('defaultunit' => 86400));
         $mform->addHelpButton('defaultdue', 'defaultdue', 'block_iomad_microlearning');
 
         $mform->addElement('selectyesno', 'halt_until_fulfilled',
@@ -95,11 +95,11 @@ class thread_edit_form extends \moodleform {
         $mform->addHelpButton('halt_until_fulfilled', 'halt_until_fulfilled', 'block_iomad_microlearning');
 
         $mform->addElement('duration', 'reminder1',
-                            get_string('reminder1', 'block_iomad_microlearning'));
+                            get_string('reminder1', 'block_iomad_microlearning'), array('defaultunit' => 86400));
         $mform->addHelpButton('reminder1', 'reminder1', 'block_iomad_microlearning');
 
         $mform->addElement('duration', 'reminder2',
-                            get_string('reminder2', 'block_iomad_microlearning'));
+                            get_string('reminder2', 'block_iomad_microlearning'), array('defaultunit' => 86400));
         $mform->addHelpButton('reminder2', 'reminder2', 'block_iomad_microlearning');
 
         $mform->addElement('selectyesno', 'active',

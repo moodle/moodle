@@ -19,6 +19,8 @@ $string['active'] = 'Active';
 $string['active_help'] = 'If the thread is not active then there will be no messages sent to the users and it will not be visible on their dashboard';
 $string['blocktitle'] = 'Microlearning Threads';
 $string['clonethread'] = 'Clone thread';
+$string['clonethreadcheckfull'] = 'Are you sure you want to clone thread {$a} and all associated nuggets to a new thread?  This does not copy over any currently assigned users.';
+$string['copy'] = ' (copy)';
 $string['cmid'] = 'Course module ID';
 $string['cmid_help'] = 'Course module ID number into this field for the unique course section.  You must define either this or the Section ID value.';
 $string['company_threads_for'] = 'Microlearning threads for company {$a}';
@@ -92,6 +94,7 @@ $string['send_reminder'] = 'Send reminder';
 $string['send_reminder_help'] = 'Set this to true if you with to send reminder emails to assigned users.';
 $string['startdate'] = 'Start date';
 $string['startdate_help'] = 'The date that the microlearning thread will be scheduled from';
+<<<<<<< HEAD
 $string['threadcreated'] = 'Microlearning thread created';
 $string['threadcreatedok'] = 'Thread created OK';
 $string['threaddeleted'] = 'Microlearning thread deleted';
@@ -106,3 +109,16 @@ $string['threadupdated'] = 'Microlearning thread updated';
 $string['threadupdatedok'] = 'Thread updated OK';
 $string['timecreated'] = 'Time created';
 $string['updown'] = 'Up/Down';
+=======
+$string['timecreated'] = 'Timecreated';
+$string['selectthread'] = 'Select microlearning thread';
+$string['company_threads_for'] = 'Microlearning threads for company {$a}';
+$string['company_users_for'] = 'Users for microlearning thread {$a}';
+$string['interval'] = 'Release interval';
+$string['interval_help'] = 'This is the default interval between schedule dates for each nuggets';
+$string['defaultdue'] = 'Due after';
+$string['incorrecturl'] = 'URL specified is not within this site';
+$string['interval_help'] = 'This is the default time till the nugget is supposed to be completed by';
+$string['url'] = 'URL';
+$string['url_help'] = 'Specify a site URL instead';
+>>>>>>> 0e50dccb50c... IOMAD: more microlearning changes.

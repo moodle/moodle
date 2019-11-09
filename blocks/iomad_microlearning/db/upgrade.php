@@ -60,5 +60,20 @@ function xmldb_block_iomad_microlearning_upgrade($oldversion) {
     $result = true;
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2019101400) {
+
+        // Define field url to be added to microlearning_nugget.
+        $table = new xmldb_table('microlearning_nugget');
+        $field = new xmldb_field('url', XMLDB_TYPE_TEXT, null, null, null, null, null, 'cmid');
+
+        // Conditionally launch add field url.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad_microlearning savepoint reached.
+        upgrade_block_savepoint(true, 2019101400, 'iomad_microlearning');
+    }
+
     return $result;
 }

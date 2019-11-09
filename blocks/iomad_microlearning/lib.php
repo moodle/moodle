@@ -102,6 +102,7 @@ class microlearning {
         // create thread copy.
         $originalthreadid = $threadrec->id;
         unset($threadrec->id);
+        $threadrec->name = $threadrec->name . get_string('copy', 'block_iomad_microlearning');
         if (!$threadrec->id = $DB->insert_record('microlearning_thread', $threadrec)) {
             $errors = true;
         }
@@ -227,6 +228,15 @@ class microlearning {
             $DB->update_record('microlearning_nugget', $above);
             $nugget->nuggetorder--;
             $DB->update_record('microlearning_nugget', $nugget);
+            if ($nugget->nuggetorder < 0) {
+                // we need to re-order all of the nuggets as something went wrong....
+                $threadnuggets = $DB->get_records('microlearning_nugget', array('threadid' => $nugget->threadid), 'nuggetorder', 'id');
+                $newcount = 0;
+                foreach ($threadnuggets as $threadnugget) {
+                    $DB->set_field('microlearning_nugget', 'nuggetorder', $newcount, array('id' => $threadnugget->id));
+                    $newcount++;
+                }
+            }
         }
 
         // Fire an Event for this.
@@ -271,18 +281,28 @@ class microlearning {
 
     }
 
-    public static function get_schedules($threadinfo, $nuggets) {
+    public static function get_schedules($threadinfo, $nuggets, $startdate = null, $fromnuggetid = 0) {
         global $DB, $CFG;
 
         $returndata = new stdclass();
         $returndata->threadid = $threadinfo->id;
-        $startdate = $threadinfo->startdate;
+        if (empty($startdate)) {
+            $startdate = $threadinfo->startdate;
+        }
         $schedulearray = array();
         $duedatearray = array();
         $reminder1array = array();
         $reminder2array = array();
+        $found = false;
 
         foreach ($nuggets as $nugget) {
+            // if we are passed a nugget ID we need to go from that one only.
+            if (!empty($fromnuggetid) && $nugget->id == $fromnuggetid) {
+                $found = true;
+            }
+            if (!empty($fromnuggetid) && $nugget->id != $fromnuggetid && !$found) {
+                continue;
+            }
             // Check if we already have a schedule.
             if ($schedule = $DB->get_record('microlearning_nugget_sched', array('nuggetid' => $nugget->id))) {
                 $startdate = $schedule->due_date;
@@ -306,6 +326,7 @@ class microlearning {
                 $startdate = $startdate + $threadinfo->releaseinterval;
             }
         }
+        $returndata->threadinfo = $threadinfo;
         $returndata->schedulearray = $schedulearray;
         $returndata->duedatearray = $duedatearray;
         $returndata->reminder1array = $reminder1array;
@@ -355,9 +376,11 @@ class microlearning {
                 $DB->insert_record('microlearning_nugget_sched', array('scheduledate' => $scheduledata->schedulearray[$nuggetid],
                                                                        'nuggetid' => $nuggetid,
                                                                        'timecreated' => time(),
-                                                                       'due_date'=> $scheduledata->duedatearray[$nuggetid],
+                                                                       'send_message' => $scheduledata->threadinfo->send_message,
+                                                                       'send_reminder' => $scheduledata->threadinfo->send_reminder,
                                                                        'reminder1_date' => $scheduledata->reminder1array[$nuggetid],
-                                                                       'reminder2_date'=> $scheduledata->reminder2array[$nuggetid]));
+                                                                       'reminder2_date' => $scheduledata->reminder2array[$nuggetid],
+                                                                       'due_date'=> $scheduledata->duedatearray[$nuggetid]));
             }
 
             // Update the user nugget schedules.
@@ -397,9 +420,15 @@ class microlearning {
 
         // Get the thread nuggets.
         $nuggets = $DB->get_records('microlearning_nugget', array('threadid' => $threadid));
-        $scheduleinfo = self::get_schedules($threadinfo, $nuggets);
+        if (empty($threadinfo->halt_until_fulfilled)) {
+            $scheduleinfo = self::get_schedules($threadinfo, $nuggets);
+        } else {
+            $scheduleinfo = self::get_schedules($threadinfo, $nuggets, time());
+        }
 
         // insert the user schedule info.
+        $stop = false;
+        $completed = false;
         foreach ($nuggets as $nugget) {
             $schedulerec = new stdclass();
             $schedulerec->userid = $userid;
@@ -422,6 +451,9 @@ class microlearning {
                                                           array('userid' => $userid,
                                                                 'cmid' => $nugget->cmid))) {
                     $schedulerec->timecompleted = $modcompletion->timemodified;
+                    $completed = true;
+                } else {
+                    $completed = false;
                 }
             } else if (!empty($nugget->sectionid)) {
                 // Get all of the course modules in that section which have completion set up.
@@ -445,6 +477,9 @@ class microlearning {
                     // Get the maximum time modified.
                     $last = array_shift($actualcount);
                     $schedulerec->timecompleted = $last->timemodified;
+                    $completed = true;
+                } else {
+                    $completed = false;
                 }
             } else {
                 $schedulerec->timecompleted = null;
@@ -452,6 +487,11 @@ class microlearning {
             $schedulerec->accesskey = self::generate_accesskey();
             if (!$DB->insert_record('microlearning_thread_user', $schedulerec)) {
                 $errors = true;
+            }
+
+            // Is this a halt until completed?
+            if (!empty($threadinfo->halt_until_fulfilled) && !$completed) {
+                break;
             }
         }
 
@@ -511,7 +551,9 @@ class microlearning {
         require_once($CFG->dirroot . '/course/lib.php');
 
         // Get the nugget url.
-        if (!empty($nugget->sectionid)) {
+        if (!empty($nugget->url)) {
+            $linkurl = $nugget->url;
+        } else if (!empty($nugget->sectionid)) {
             $sectioninfo = $DB->get_record('course_sections', array('id' => $nugget->sectionid));
             $linkurl = course_get_url($sectioninfo->course, $sectioninfo->section);
         } else if (!empty($nugget->cmid)) {
@@ -637,61 +679,161 @@ class microlearning {
         global $DB, $USER;
     }
 
-    public static function user_deleted(\core\event\user_deleted $event) {
+    public static function event_user_deleted(\core\event\user_deleted $event) {
         global $DB, $USER;
 
         // Delete all of the schedules for this user.
         $DB->delete_records('microlearning_thread_user', array('userid' => $event->objectid));
     }
 
-    public static function course_module_completion_updated(\core\event\course_module_completion_updated $event) {
+    public static function event_course_module_completion_updated(\core\event\course_module_completion_updated $event) {
         global $DB, $USER;
         $cmid = $event->contextinstanceid;
+        $userid = $event->relateduserid;
+        $found = false;
+        $threads = array();
         if ($nuggets = $DB->get_records_sql("SELECT mtu.* FROM {microlearning_thread_user} mtu
                                              JOIN {microlearning_nugget} mn ON (mtu.nuggetid = mn.id)
                                              WHERE mtu.userid = :userid
-                                             AND mn.cmid = :cmid", array('userid' => $event->relateduserid, 'cmid' => $cmid))) {
+                                             AND mn.cmid = :cmid", array('userid' => $userid, 'cmid' => $cmid))) {
             foreach ($nuggets as $nugget) {
-                $DB->set_field('microlearning_thread_user', 'timecompleted', $event->timecreated, array('id' => $nugget->id));
+                if ($nugget->cmid == $cmid) {
+                    $found = true;
+                    if (empty($threads[$nugget->threadid])) {
+                        $threads[$nugget->threadid] = array();
+                    }
+                    $threads[$nugget->threadid][$nugget->id] = $nugget->id;
+                }
+                $DB->set_field('microlearning_thread_user', 'timecompleted', $event->timecreated, array('id' => $nugget->id, 'userid' => $userid));
             }
         }
 
         // check if there is a section set instead.
-        $cmidrec = $DB->get_record('course_modules', array('id' => $event->contextinstance));
+        $cmidrec = $DB->get_record('course_modules', array('id' => $cmid));
         if ($nuggets = $DB->get_records_sql("SELECT mtu.* FROM {microlearning_thread_user} mtu
                                          JOIN {microlearning_nugget} mn ON (mtu.nuggetid = mn.id)
                                          WHERE mtu.userid = :userid
-                                         AND mn.sectionid = :sectionid", array('userid' => $event->relateduserid, 'sectionid' => $cmidrec->section))) {
+                                         AND mn.sectionid = :sectionid", array('userid' => $userid, 'sectionid' => $cmidrec->section))) {
 
             // Get all of the course modules in that section which have completion set up.
             $requiredcount = $DB->count_records_sql("SELECT COUNT(id) FROM {course_modules}
                                                      WHERE section = :section
                                                      AND completion > 0",
-                                                     array('section' => $cmid->section));
+                                                     array('section' => $cmidrec->section));
 
             // Get all of the course modules in that section which have completion set up.
             $actualcount = $DB->count_records_sql("SELECT COUNT(id) FROM {course_modules_completion}
                                                      WHERE userid = :userid
                                                      AND completionstate > 0
                                                      AND coursemoduleid IN
-                                                      (SELECT id FROM {course_modules
+                                                      (SELECT id FROM {course_modules}
                                                        WHERE section = :section)",
-                                                     array('userid' => $event->relateduserid,
-                                                           'section' => $cmid->section));
-
+                                                     array('userid' => $userid,
+                                                           'section' => $cmidrec->section));
+            // If we have everything we need, mark it as completed.
             if ($requiredcount == $actualcount) {
                 foreach ($nuggets as $nugget) {
+                    $found = true;
+                    if (empty($threads[$nugget->threadid])) {
+                        $threads[$nugget->threadid] = array();
+                    }
+                    $threads[$nugget->threadid][$nugget->id] = $nugget->id;
                     $DB->set_field('microlearning_thread_user', 'timecompleted', $event->timecreated, array('id' => $nugget->id));
                 }
             }
         }
-    }
 
-    public static function event_user_deleted(\core\event\user_deleted $event) {
-        global $DB, $CFG;
+        // Did we find anything?  Check if we need to anything else if it's a halted thread.
+        if ($found) {
+            foreach ($threads as $threadid => $threadnuggets) {
+                if (!$threadrec = $DB->get_record('microlearning_thread', array('id' => $threadid, 'halt_until_fulfilled' => 1))) {
+                    continue;
+                }
+                // Get the nuggets from the thread.
+                $mynuggets = $DB->get_records('microlearning_nuggets', array('threadid' => $threadid), '*', 'nuggetorder');
+                $found = false;
+                foreach ($mynuggets as $nugget) {
+                    if (!empty($threadnuggets[$nugget->id])) {
+                        $found = true;
+                    } else {
+                        unset($mynuggets[$nugget->id]);
+                    }
+                }
+                if ($found && count($mynuggets) > 1) {
+                    unset($mynuggets[$nugget->id]);
+                    $wantednuggets = $mynuggets;
+                    $nextnugget = array_shift($wantednuggets);
+                    $threadscheds = self::get_schedules($threadrec, $mynuggets, $event->timecreated, $nextnugget->id);
+                    $completed = false;
+                    $stop = false;
+                    foreach ($mynuggets as $mynugget) {
+                        $schedulerec = new stdclass();
+                        $schedulerec->userid = $userid;
+                        $schedulerec->threadid = $threadid;
+                        $schedulerec->nuggetid = $mynugget->id;
+                        $schedulerec->schedule_date = $threadscheds->schedulearray[$mynugget->id];
+                        $schedulerec->due_date = $threadscheds->duedatearray[$mynugget->id];
+                        $schedulerec->message_time = $threadinfo->message_time;
+                        $schedulerec->reminder1_date = $threadscheds->reminder1array[$mynugget->id];
+                        $schedulerec->reminder2_date = $threadscheds->reminder2array[$mynugget->id];
+                        $schedulerec->message_delivered = false;
+                        $schedulerec->reminder1_delivered = false;
+                        $schedulerec->reminder2_delivered = false;
+                        $schedulerec->timecreated = time();
+                        if (!empty($mynugget->cmid)) {
+                            if ($modcompletion = $DB->get_record_sql("SELECT * FROM {course_modules_completion}
+                                                                      WHERE userid = :userid
+                                                                      AND coursemoduleid = :cmid
+                                                                      AND completionstate > 0",
+                                                                      array('userid' => $userid,
+                                                                            'cmid' => $mynugget->cmid))) {
+                                $schedulerec->timecompleted = $modcompletion->timemodified;
+                                $completed = true;
+                            } else {
+                                $completed = false;
+                            }
+                        } else if (!empty($mynugget->sectionid)) {
+                            // Get all of the course modules in that section which have completion set up.
+                            $requiredcount = $DB->count_records_sql("SELECT COUNT(id) FROM {course_modules}
+                                                                     WHERE section = :section
+                                                                     AND completion > 0",
+                                                                     array('section' => $mynugget->sectionid));
 
-        // remove the user from the thread.
-        $DB->delete_records('microlearning_thread_user', array('userid' => $event->objectid));
+                            // Get all of the course modules in that section which have completion set up.
+                            $actualcount = $DB->get_records_sql("SELECT * FROM {course_modules_completion}
+                                                                 WHERE userid = :userid
+                                                                 AND completionstate > 0
+                                                                 AND coursemoduleid IN
+                                                                  (SELECT id FROM {course_modules}
+                                                                   WHERE section = :section)
+                                                                 ORDER BY timemodified DESC",
+                                                                  array('userid' => $userid,
+                                                                        'section' => $mynugget->sectionid));
+
+                            if (!empty($actualcount) && $requiredcount >= count($actualcount)) {
+                            // Get the maximum time modified.
+                                $last = array_shift($actualcount);
+                                $schedulerec->timecompleted = $last->timemodified;
+                                $completed = true;
+                            } else {
+                                $completed = false;
+                            }
+                        } else {
+                            $schedulerec->timecompleted = null;
+                        }
+                        $schedulerec->accesskey = self::generate_accesskey();
+                        if (!$DB->insert_record('microlearning_thread_user', $schedulerec)) {
+                            $errors = true;
+                        }
+
+                        // Is this a halt until completed?
+                        if (!empty($threadinfo->halt_until_fulfilled) && !$completed) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public static function cron() {
@@ -734,8 +876,9 @@ class microlearning {
         mtrace("getting list of users for first reminder");
         if ($reminder1users = $DB->get_records_sql("SELECT mtu.* FROM {microlearning_thread_user} mtu
                                                    JOIN {microlearning_thread} mt
-                                                   ON (mtu.threadid = mt.id AND mt.send_message = 1)
-                                                   WHERE mtu.timecompleted IS NULL
+                                                   ON (mtu.threadid = mt.id)
+                                                   WHERE mt.send_reminder = 1
+                                                   AND mtu.timecompleted IS NULL
                                                    AND mtu.reminder1_delivered = 0
                                                    AND mtu.reminder1_date IS NOT NULL
                                                    AND mtu.reminder1_date < :runtime",
@@ -764,8 +907,9 @@ class microlearning {
         mtrace("getting list of users for second reminder");
         if ($reminder2users = $DB->get_records_sql("SELECT mtu.* FROM {microlearning_thread_user} mtu
                                                    JOIN {microlearning_thread} mt
-                                                   ON (mtu.threadid = mt.id AND mt.send_message = 1)
-                                                   WHERE mtu.timecompleted IS NULL
+                                                   ON (mtu.threadid = mt.id)
+                                                   WHERE mt.send_reminder = 1
+                                                   AND mtu.timecompleted IS NULL
                                                    AND mtu.reminder2_delivered = 0
                                                    AND mtu.reminder2_date IS NOT NULL
                                                    AND mtu.reminder2_date < :runtime",

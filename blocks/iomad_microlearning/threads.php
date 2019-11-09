@@ -112,7 +112,7 @@ if ($cloneid) {
     } else {
         // No so show the confirmation question.
         echo $output->header();
-        echo $output->heading(get_string('deletethread', 'block_iomad_microlearning'));
+        echo $output->heading(get_string('clonethread', 'block_iomad_microlearning'));
         $optionsyes = array('cloneid' => $cloneid, 'confirm' => md5($cloneid), 'sesskey' => sesskey());
         echo $output->confirm(get_string('clonethreadcheckfull', 'block_iomad_microlearning', "'$threadinfo->name'"),
                               new moodle_url('threads.php', $optionsyes), 'threads.php');

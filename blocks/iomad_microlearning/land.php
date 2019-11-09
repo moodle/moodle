@@ -44,8 +44,8 @@ if (isloggedin() and !isguestuser()) {
                          WHERE userid = :userid
                          AND nuggetid = :nuggetid
                          AND accesskey = :accesskey
-                         AND scheduledate > :expirytime
-                         AND scheduledate < :time",
+                         AND schedule_date > :expirytime
+                         AND schedule_date < :time",
                          array('userid' => $userid,
                                'nuggetid' => $nuggetid,
                                'accesskey' => $accesskey,

@@ -86,7 +86,7 @@ $observers = array(
 
     array(
         'eventname'   => '\core\event\course_module_completion_updated',
-        'callback'    => 'block_iomad_microlearning_observer::course_module_completed',
+        'callback'    => 'block_iomad_microlearning_observer::course_module_completion_updated',
         'includefile' => '/blocks/iomad_microlearning/classes/observer.php',
         'internal'    => false,
     ),

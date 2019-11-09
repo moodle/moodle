@@ -59,7 +59,7 @@ if ($delete and confirm_sesskey()) {
         $name = $thread->name;
         echo $OUTPUT->heading(get_string('deletethread', 'block_iomad_microlearning'), 2, 'headingblock header');
         $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('threaddeletecheckfull', 'block_iomad_microlearning', "'$name'"),
+        echo $OUTPUT->confirm(get_string('deletethreadcheckfull', 'block_iomad_microlearning', "'$name'"),
                               new moodle_url('microlearning.php', $optionsyes), 'microlearning.php');
         echo $OUTPUT->footer();
         die;

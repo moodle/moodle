@@ -71,9 +71,13 @@ class nugget_edit_form extends \moodleform {
         $mform->addHelpButton('cmid', 'cmid', 'block_iomad_microlearning');
         $mform->setType('cmid', PARAM_INT);
 
-        $mform->addElement('selectyesno', 'halt_until_fulfilled',
-                            get_string('halt_until_fulfilled', 'block_iomad_microlearning'));
-        $mform->addHelpButton('halt_until_fulfilled', 'halt_until_fulfilled', 'block_iomad_microlearning');
+        $mform->addElement('text', 'url',
+                            get_string('url', 'block_iomad_microlearning'));
+        $mform->addHelpButton('url', 'url', 'block_iomad_microlearning');
+        $mform->setType('cmid', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'halt_until_fulfilled');
+        $mform->setType('halt_until_fulfilled', PARAM_INT);
 
         $mform->addElement('hidden', 'nuggetorder');
         $mform->setType('nuggetorder', PARAM_INT);
@@ -82,7 +86,7 @@ class nugget_edit_form extends \moodleform {
     }
 
     public function validation($data, $files) {
-        global $DB;
+        global $CFG, $DB;
 
         $errors = array();
 
@@ -93,6 +97,20 @@ class nugget_edit_form extends \moodleform {
         }
         if (empty($data['sectionid']) && empty($data['cmid'])) {
             $errors['sectionid'] = get_string('missingsectionorcmid', 'block_iomad_microlearning');
+        }
+        if (!empty($data['cmid']) && $DB->get_records_sql("SELECT id FROM {microlearning_nugget}
+                                                          WHERE threadid = :threadid
+                                                          AND cmid = :cmid
+                                                          id != :id", $data)) {
+            $errors['cmid'] = get_string('cmidalreadyinuse', 'block_iomad_microlearning');
+        } else if (!empty($data['sectionid']) && $DB->get_records_sql("SELECT id FROM {microlearning_nugget}
+                                                          WHERE threadid = :threadid
+                                                          AND sectionid = :sectionid
+                                                          AND id != :id", $data)) {
+            $errors['cmid'] = get_string('sectionidalreadyinuse', 'block_iomad_microlearning');
+        }
+        if (!empty($data['url']) && strpos($data['url'], $CFG->wwwroot) === false) {
+            $errors['url'] = get_string('incorrecturl', 'block_iomad_microlearning');
         }
         return $errors;
     }

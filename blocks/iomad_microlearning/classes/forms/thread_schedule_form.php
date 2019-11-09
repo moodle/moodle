@@ -25,8 +25,11 @@ class thread_schedule_form extends \moodleform {
     protected $nuggets;
 
     public function __construct($actionurl, $threadid, $nuggets) {
+        global $DB;
+
         $this->threadid = $threadid;
         $this->nuggets = $nuggets;
+        $this->threadinfo = $DB->get_record('microlearning_thread', array('id' => $threadid));
         parent::__construct($actionurl);
 
     }
@@ -43,9 +46,12 @@ class thread_schedule_form extends \moodleform {
                      <th class="header c0" style="text-align:left;" scope="col">' . get_string('nugget', 'block_iomad_microlearning') . '</th>
                      <th class="header c1" style="text-align:right;" scope="col">' . get_string('nuggetorder', 'block_iomad_microlearning') . '</th>
                      <th class="header c2" style="text-align:right;" scope="col">' . get_string('scheduledate', 'block_iomad_microlearning') . '</th>
-                     <th class="header c3" style="text-align:right;" scope="col">' . get_string('duedate', 'block_iomad_microlearning') . '</th>
-                     <th class="header c4" style="text-align:right;" scope="col">' . get_string('reminder1', 'block_iomad_microlearning') . '</th>
-                     <th class="header c5 lastcol" style="text-align:right;" scope="col">' . get_string('reminder2', 'block_iomad_microlearning') . '</th></tr></thead><tbody>';
+                     <th class="header c3" style="text-align:right;" scope="col">' . get_string('duedate', 'block_iomad_microlearning') . '</th>';
+        if (!empty($this->threadinfo->send_reminder)) {
+            $headhtml .= '<th class="header c4" style="text-align:right;" scope="col">' . get_string('reminder1', 'block_iomad_microlearning') . '</th>
+                     <th class="header c5 lastcol" style="text-align:right;" scope="col">' . get_string('reminder2', 'block_iomad_microlearning') . '</th>';
+        }
+        $headhtml .= '</tr></thead><tbody>';
 
         $mform->addElement('html', $headhtml);
 
@@ -56,10 +62,17 @@ class thread_schedule_form extends \moodleform {
             $mform->addElement('date_time_selector', "schedulearray[$nugget->id]", '');
             $mform->addElement('html', '</td><td class="cell c2" style="text-align:left;">');
             $mform->addElement('date_time_selector', "duedatearray[$nugget->id]", '', array('optional' => true));
-            $mform->addElement('html', '</td><td class="cell c3" style="text-align:left;">');
-            $mform->addElement('date_time_selector', "reminder1array[$nugget->id]", '', array('optional' => true));
-            $mform->addElement('html', '</td><td class="cell c4" style="text-align:left;">');
-            $mform->addElement('date_time_selector', "reminder2array[$nugget->id]", '', array('optional' => true));
+            if (!empty($this->threadinfo->send_reminder)) {
+                $mform->addElement('html', '</td><td class="cell c3" style="text-align:left;">');
+                $mform->addElement('date_time_selector', "reminder1array[$nugget->id]", '', array('optional' => true));
+                $mform->addElement('html', '</td><td class="cell c4" style="text-align:left;">');
+                $mform->addElement('date_time_selector', "reminder2array[$nugget->id]", '', array('optional' => true));
+            } else {
+                $mform->addElement('hidden', "reminder1array[$nugget->id]");
+                $mform->addElement('hidden', "reminder2array[$nugget->id]");
+                $mform->setType("reminder1array[$nugget->id]", PARAM_INT);
+                $mform->setType("reminder2array[$nugget->id]", PARAM_INT);
+            }
             $mform->addElement('html', '</td></tr>');
         }
         $mform->addElement('html', '</tbody></table>');
