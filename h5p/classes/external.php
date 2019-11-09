@@ -99,9 +99,18 @@ class external extends external_api {
             $messages = $h5pplayer->get_messages();
         } catch (\moodle_exception $e) {
             $messages = (object) [
-                'exception' => $e->getMessage(),
                 'code' => $e->getCode(),
             ];
+            // To mantain the coherence between web coding error and Mobile coding errors.
+            // We need to return the same message error to Mobile.
+            // The 'out_al_local_url called on a non-local URL' error is provided by the \moodle_exception.
+            // We have to translate to h5pinvalidurl which is the same coding error showed in web.
+            if ($e->errorcode === 'codingerror' &&
+                    $e->a === 'out_as_local_url called on a non-local URL') {
+                $messages->exception = get_string('h5pinvalidurl', 'core_h5p');
+            } else {
+                $messages->exception = $e->getMessage();
+            }
         }
 
         if (empty($messages->error) && empty($messages->exception)) {
