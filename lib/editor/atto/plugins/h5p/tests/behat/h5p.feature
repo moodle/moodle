@@ -85,7 +85,7 @@ Feature: Add h5ps to Atto
     And I follow "PageName1"
     When I navigate to "Edit settings" in current page administration
     And I click on "Insert H5P" "button"
-    Then I should not see "URL or Embed code" in the "Insert H5P" "dialogue"
+    Then I should not see "URL or embed code" in the "Insert H5P" "dialogue"
 
   @javascript
   Scenario: No upload h5p capabilities
