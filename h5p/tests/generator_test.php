@@ -25,6 +25,8 @@
 
 namespace core_h5p;
 
+use core_h5p\autoloader;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -34,8 +36,18 @@ defined('MOODLE_INTERNAL') || die();
 * @category   test
 * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+* @runTestsInSeparateProcesses
 */
 class generator_testcase extends \advanced_testcase {
+
+    /**
+     * Tests set up.
+     */
+    protected function setUp() {
+        parent::setUp();
+
+        autoloader::register();
+    }
 
     /**
      * Test the returned data of generate_h5p_data() when the method is called without requesting
