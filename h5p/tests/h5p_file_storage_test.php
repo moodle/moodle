@@ -38,6 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package    core_h5p
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class h5p_file_storage_testcase extends \advanced_testcase {
 
