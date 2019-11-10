@@ -78,4 +78,3 @@ Feature: Render H5P content using filters
     And I switch to "h5p-iframe" class iframe
     And I should not see "you don't have access"
     And I should see "Lorum ipsum"
-
