@@ -2,361 +2,364 @@
 Change log for qtype_ordering
 ========================================
 
+2019-10-24 (96)
+ - standardize layout and spelling in CHANGES.txt
+
 2019-10-06 (94)
- -  fix behavior in Adaptive mode, with 'Whether correct' review option enabled 
+ - fix behavior in Adaptive mode, with 'Whether correct' review option enabled
 
 2019-07-31 (93)
- -  (github-issue #43 and #44): rename upper case numberstyles to ABCD and IIII in order to differentiate from lower case styles on DBs, such as MySQL, which use case insensitive indexes. 
+ - (github-issue #43 and #44): rename upper case numberstyles to ABCD and IIII in order to differentiate from lower case styles on DBs, such as MySQL, which use case insensitive indexes.
 
 2019-07-12 (92)
- -  rename 'answernumbering' to 'numberingstyle' and include this field in import/export of xml/gift formats. 
+ - rename 'answernumbering' to 'numberingstyle' and include this field in import/export of xml/gift formats.
 
 2019-07-11 (91)
- -  intermittent commit to rename answeringnumbering to numberingstyle 
+ - intermittent commit to rename answeringnumbering to numberingstyle
 
 2019-07-11 (90)
- -  Qtype_ordering: Numbering for lists (123.., abc...) (#42) Thanks Mahmoud. Great job! 
+ - Qtype_ordering: Numbering for lists (123.., abc...) (#42) Thanks Mahmoud. Great job!
 
 2019-03-06 (89)
- -  fix URL of secondary zip download site 
+ - fix URL of secondary zip download site
 
 2019-03-06 (89)
- -  fix small typo in behat test file 
+ - fix small typo in behat test file
 
 2019-03-06 (88)
- -  fix small typo in language file and optimize logic in form validation 
+ - fix small typo in language file and optimize logic in form validation
 
 2019-03-05 (87)
- -  Qtype ordering should not allow duplicatue items (#40) Thank you Mahmoud Kassaei for your continuing work to improve the Ordering question type 
+ - Qtype ordering should not allow duplicatue items (#40) Thank you Mahmoud Kassaei for your continuing work to improve the Ordering question type
 
 2019-02-19 (86)
- -  small fix to spelling and whitespace 
+ - small fix to spelling and whitespace
 
 2019-02-19 (86)
- -  qtype_ordering: Ordering codechecker (#39) * Code checker issues on edit_ordering_form.php * function question_register_questiontype() not needed in questiontype.php * Code checker issues in questiontype.php * Code checker issues in question.php * Code checker issues in renderer.php * Code checker issues in version.php 
+ - qtype_ordering: Ordering codechecker (#39) * Code checker issues on edit_ordering_form.php * function question_register_questiontype() not needed in questiontype.php * Code checker issues in questiontype.php * Code checker issues in question.php * Code checker issues in renderer.php * Code checker issues in version.php
 
 2019-02-08 (85)
- -  Merge pull request #38 from mkassaei/ordering_cleanup Ordering cleanup - thanks Mahmoud Kassaei! 
+ - Merge pull request #38 from mkassaei/ordering_cleanup Ordering cleanup - thanks Mahmoud Kassaei!
 
 2019-01-25 (84)
- -  remove deprecated jquery folder and amd/*.js files 
+ - remove deprecated jquery folder and amd/*.js files
 
 2019-01-25 (84)
- -  Merge pull request #37 from timhunt/qtype-ordering-js-css New JavaScript implementation - many thanks  to Tim Hunt and Mahmoud Kassei of Open University 
+ - Merge pull request #37 from timhunt/qtype-ordering-js-css New JavaScript implementation - many thanks  to Tim Hunt and Mahmoud Kassei of Open University
 
 2019-01-08 (83)
- -  qtype/ordering add showgrading field to backup file 
+ - add showgrading field to backup file
 
 2018-12-26 (82)
- -  restore accidentally removed settings.php 
+ - restore accidentally removed settings.php
 
 2018-12-26 (82)
- -  qtype/ordering (readme.txt) added credits for recent improvements: Thanks to Tim Hunt, Mahmoud Kassaei, and Dominique Bauer 
+ - (readme.txt) added credits for recent improvements: Thanks to Tim Hunt, Mahmoud Kassaei, and Dominique Bauer
 
 2018-12-22 (81)
- -  qtype/ordering fix Github issue #36: remove contenteditable from LI element, and instead attach to ancestor element in DOM 
+ - fix Github issue #36: remove contenteditable from LI element, and instead attach to ancestor element in DOM
 
 2018-12-22 (80)
- -  qtype/ordering fix Github issue #36: draggable items become stuck to cursor when logged as student in Boost theme on Moodle 3.6 
+ - fix Github issue #36: draggable items become stuck to cursor when logged as student in Boost theme on Moodle 3.6
 
 2018-12-21 (79)
- -  qtype/ordering improve logic and of code to get_subset and code to add repeated elements to form 
+ - improve logic and of code to get_subset and code to add repeated elements to form
 
 2018-12-15 (78)
- -  qtype/ordering fix Github issue #35: Clicking Add to add items more than once without saving the question in between has incorrect and unwanted behavior 
+ - fix Github issue #35: Clicking Add to add items more than once without saving the question in between has incorrect and unwanted behavior
 
 2018-12-12 (77)
- -  qtype/ordering rename variables to improve readability of loop that detects ordered subsets 
+ - rename variables to improve readability of loop that detects ordered subsets
 
 2018-12-12 (77)
- -  qtype/ordering optimize code and comments in loop to detect ordered subsets 
- -  Merge pull request #34 from timhunt/walkthrough-unit-test Unit tests of the question as a whole - Thanks to Tim Hunt 
+ - optimize code and comments in loop to detect ordered subsets
+ - Merge pull request #34 from timhunt/walkthrough-unit-test Unit tests of the question as a whole - Thanks to Tim Hunt
 
 2018-12-11 (76)
- -  fix detection of longest ordered/contiguous subset grading type 
+ - fix detection of longest ordered/contiguous subset grading type
 
 2018-11-29 (75)
- -  fix detection of longest ordered/contiguous subset grading type 
- -  qtype/ordering fix detection of Longest ordered/contiguous subset where two or more such subsets exist 
- -  Merge pull request #32 from timhunt/response-analysis Response analysis - many thank Tim Hunt 
- -  qtype/ordering fix detection of Longest ordered/contiguous subset where two or more such subsets exist 
+ - fix detection of longest ordered/contiguous subset grading type
+ - fix detection of Longest ordered/contiguous subset where two or more such subsets exist
+ - Merge pull request #32 from timhunt/response-analysis Response analysis - many thank Tim Hunt
+ - fix detection of Longest ordered/contiguous subset where two or more such subsets exist
 
 2018-11-26 (74)
- -  qtype/ordering fix indexing of items when "Item selection type" is "Select a contiguous subset of items". The incorrect indexing resulted in less than the exptected number of items being displayed. 
+ - fix indexing of items when "Item selection type" is "Select a contiguous subset of items". The incorrect indexing resulted in less than the exptected number of items being displayed.
 
 2018-11-19 (73)
- -  qtype/ordering update version.php for recent BEHAT modifications 
+ - update version.php for recent BEHAT modifications
 
 2018-11-01 (72)
- -  qtype/ordering added new setting to specify number of new draggable items to be added to a question 
+ - added new setting to specify number of new draggable items to be added to a question
 
 2018-06-29 (71)
- -  qtype/ordering ensure get_possible_responses does not fail even if there is no correct response 
+ - ensure get_possible_responses does not fail even if there is no correct response
 
 2018-06-18 (70)
- -  add standard syntax for ::name:: in improve export/import of GIFT format 
+ - add standard syntax for ::name:: in improve export/import of GIFT format
 
 2018-05-24 (69)
- -  fix import of GIFT text files 
+ - fix import of GIFT text files
 
 2018-01-17 (68)
- -  improvements for compatability with AMD in Moodle >= 2.9. Many thanks to Jakob Ackermann (github.com/jacac) 
+ - improvements for compatability with AMD in Moodle >= 2.9. Many thanks to Jakob Ackermann (github.com/jacac)
 
 2018-01-16 (67)
- -  improvements for compatability with AMD in Moodle >= 2.9. Many thanks to Jakob Ackermann (github.com/jacac) 
+ - improvements for compatability with AMD in Moodle >= 2.9. Many thanks to Jakob Ackermann (github.com/jacac)
 
 2017-11-23 (66)
- -  recognize RELATIVE_TO_CORRECT in gift import file 
+ - recognize RELATIVE_TO_CORRECT in gift import file
 
 2017-11-22 (65)
- -  fix issue in Moodle 3.4 in which sorted order is not returned to server for processing 
+ - fix issue in Moodle 3.4 in which sorted order is not returned to server for processing
 
 2017-08-01 (64)
- -  release new grading method: relative to correct - thanks to Anatoliy Markiv and Kings College London, UK 
+ - release new grading method: relative to correct - thanks to Anatoliy Markiv and Kings College London, UK
 
 2017-07-25 (63)
- -  fix score calculation for individual items on RELATIVE_TO_CORRET grading method 
+ - fix score calculation for individual items on RELATIVE_TO_CORRET grading method
 
 2017-07-22 (62)
- -  refine scoring on relative-to-correct grading method 
+ - refine scoring on relative-to-correct grading method
 
 2017-07-21 (61)
- -  add preliminary version of new grading type: RELATIVE_TO_CORRECT 
+ - add preliminary version of new grading type: RELATIVE_TO_CORRECT
 
 2017-07-01 (60)
- -  return result from 'summarize_response' for use in 'Technical information' and Response report 
+ - return result from 'summarize_response' for use in 'Technical information' and Response report
 
 2017-05-08 (59)
- -  restore functionality on Moodle 2.0 
+ - restore functionality on Moodle 2.0
 
 2017-04-26 (58)
- -  fix display of images in feedback and explanatino of correct response 
+ - fix display of images in feedback and explanatino of correct response
 
 2016-10-26 (57)
- -  small improvements to the wording in a couple of code comments 
- -  imrpove code readability when setting flags to pass to methods to retrieve/check answers 
+ - small improvements to the wording in a couple of code comments
+ - imrpove code readability when setting flags to pass to methods to retrieve/check answers
 
 2016-10-26 (56)
- -  fix behavior of Ordering question when the quiz is in adaptive mode (with or without penalties) 
+ - fix behavior of Ordering question when the quiz is in adaptive mode (with or without penalties)
 
 2016-08-16 (55)
- -  add new option to SHOW/HIDE score calculations when a student reviews a response to an Ordering qusetion 
+ - add new option to SHOW/HIDE score calculations when a student reviews a response to an Ordering qusetion
 
 2016-05-11 (54)
- -  added development history and credits to the readme.txt file 
- -  added development history and credits to the readme.txt file 
+ - added development history and credits to the readme.txt file
+ - added development history and credits to the readme.txt file
 
 2016-05-11 (53)
- -  added development history and credits to the readme.txt file 
- -  merge Vadim's PULL request for phpdocs and code style 
+ - added development history and credits to the readme.txt file
+ - merge Vadim's PULL request for phpdocs and code style
 
 2016-05-03 (53)
- -  improve commenting and add failsafe 'default' block to 'switch' statement 
+ - improve commenting and add failsafe 'default' block to 'switch' statement
 
 2016-05-02 (52)
- -  add missing settings.php from recent merge 
+ - add missing settings.php from recent merge
 
 2016-05-02 (51)
- -  allow images in backup/restore of ordering questions - thanks vadimonus \! 
+ - allow images in backup/restore of ordering questions - thanks vadimonus \!
 
 2016-04-27 (50)
- -  fix grade calculation for LONGEST_CONTIGUOUS_SUBSET when longest subset starts in a middle position 
+ - fix grade calculation for LONGEST_CONTIGUOUS_SUBSET when longest subset starts in a middle position
 
 2016-03-29 (49)
- -  force standard settings for Ordering questions used by Reader quizzes 
+ - force standard settings for Ordering questions used by Reader quizzes
 
 2016-03-29 (48)
- -  force standard settings for Ordering questions used by Reader quizzes 
+ - force standard settings for Ordering questions used by Reader quizzes
 
 2016-03-29 (47)
- -  force standard settings for Ordering questions used by Reader quizzes 
+ - force standard settings for Ordering questions used by Reader quizzes
 
 2016-03-28 (46)
- -  make default selection type 'random' 
+ - make default selection type 'random'
 
 2016-02-24 (45)
- -  set default layout to VERTICAL when importing from GIFT or XML file 
+ - set default layout to VERTICAL when importing from GIFT or XML file
 
 2016-02-24 (44)
- -  replace numeric literals with class constants to represent grading methog values 
+ - replace numeric literals with class constants to represent grading methog values
 
 2016-02-24 (43)
- -  improve correctness report for incorrect respones in ALL_OR_NOTHING grading type 
+ - improve correctness report for incorrect respones in ALL_OR_NOTHING grading type
 
 2016-02-24 (42)
- -  add new grading method: ALL_OR_NOTHING 
+ - add new grading method: ALL_OR_NOTHING
 
 2016-02-24 (41)
- -  fix export/import of gradingtype for Ordering questions 
+ - fix export/import of gradingtype for Ordering questions
 
 2016-01-23 (40)
- -  add new grading type: LONGEST_CONTIGUOUS_SUBSET 
+ - add new grading type: LONGEST_CONTIGUOUS_SUBSET
 
 2016-01-11 (39)
- -  add new gradetype: LONGEST_ORDERED_SUBSET 
+ - add new gradetype: LONGEST_ORDERED_SUBSET
 
 2016-01-02 (38)
- -  fix display of number when showing correct order of items in a horizontal list 
+ - fix display of number when showing correct order of items in a horizontal list
 
 2016-01-02 (37)
- -  fix handling of unscored items in grading details during review of question attempt 
- -  fix handling of unscored items in grading details during review of question attempt 
+ - fix handling of unscored items in grading details during review of question attempt
+ - fix handling of unscored items in grading details during review of question attempt
 
 2016-01-01 (36)
- -  fix grade calculation for RELATIVE_ONE_PREVIOUS_AND_NEXT and RELATIVE_ALL_PREVIOUS_AND_NEXT, and add grade/score details for less than perfect grades 
+ - fix grade calculation for RELATIVE_ONE_PREVIOUS_AND_NEXT and RELATIVE_ALL_PREVIOUS_AND_NEXT, and add grade/score details for less than perfect grades
 
 2015-12-31 (35)
- -  finish implementation of new setting, gradingtype, to allow different grading methods for ordering questions 
+ - finish implementation of new setting, gradingtype, to allow different grading methods for ordering questions
 
 2015-11-23 (33)
- -  qtype/ordering fix errors creating new question on Moodle 3.0 
+ - fix errors creating new question on Moodle 3.0
 
 2015-11-18 (32)
- -  qtype/ordering fix errors related to html editors when creating new Ordering questions 
+ - fix errors related to html editors when creating new Ordering questions
 
 2015-11-18 (31)
- -  qtype/ordering allow full HTML editors on answers in order to allow images and pictures 
+ - allow full HTML editors on answers in order to allow images and pictures
 
 2015-11-15 (30)
- -  qtype/ordering increase padding of draggable elements to allow easier dropping in first and last positions 
+ - increase padding of draggable elements to allow easier dropping in first and last positions
 
 2015-11-14 (29)
- -  qtype/ordering remove duplicate code and unnecessary comments from legacy/questionlib for Moodle 2.0 
- -  qtype/ordering fix display and state storage of Moodle 2.0 
+ - remove duplicate code and unnecessary comments from legacy/questionlib for Moodle 2.0
+ - fix display and state storage of Moodle 2.0
 
 2015-11-13 (28)
- -  mod/reader small fixes for Moodle 2.0 
+ - mod/reader small fixes for Moodle 2.0
 
 2015-11-11 (27)
- -  qtype/ordering fix missing vairable DB in Moodle 2.0 
- -  qtype/ordering remove excess vertical white space below sortable list DIV 
+ - fix missing vairable DB in Moodle 2.0
+ - remove excess vertical white space below sortable list DIV
 
 2015-11-09 (26)
- -  qtype/ordering add interactive settings to question creation form 
+ - add interactive settings to question creation form
 
 2015-11-07 (25)
- -  qtype/ordering add horizontal layout, and fix feedback fieds on import from xml and gift formats 
+ - add horizontal layout, and fix feedback fieds on import from xml and gift formats
 
 2015-07-31 (24)
- -  remove unnecessary stripslashes when formatting question text 
+ - remove unnecessary stripslashes when formatting question text
 
 2015-07-13 (23)
- -  qtype/ordering change CSS draggable item width to 80% instead of fixed 360px in order to improve display on small screens 
+ - change CSS draggable item width to 80% instead of fixed 360px in order to improve display on small screens
 
 2015-02-21 (22)
- -  qtype/ordering fix restoring or options in ordering questions 
+ - fix restoring or options in ordering questions
 
 2015-02-21 (21)
- -  qtype/ordering fix restoring or options in ordering questions 
- -  qtype/ordering fix restoring or options in ordering questions 
+ - fix restoring or options in ordering questions
+ - fix restoring or options in ordering questions
 
 2015-02-15 (20)
- -  qtype/ordering ensure JQuery is high enough version to allow drag-and-drop when Quiz is in a popup window 
- -  qtype/ordering ensure JQuery is high enough version to allow drag-and-drop when Quiz is in a popup window 
+ - ensure JQuery is high enough version to allow drag-and-drop when Quiz is in a popup window
+ - ensure JQuery is high enough version to allow drag-and-drop when Quiz is in a popup window
 
 2015-02-05 (19)
- -  qtype/ordering fix restore error message about missing table: (should be qtype_ordering_options) 
+ - fix restore error message about missing table: (should be qtype_ordering_options)
 
 2015-01-30 (18)
- -  qtype/ordering cater for missing data about responses when reviewing an attempt at an Ordering question 
+ - cater for missing data about responses when reviewing an attempt at an Ordering question
 
 2015-01-24 (17)
- -  qtype/ordering fix "undefined index" error when viewing results for old ordering attempts which have no reponse details 
+ - fix "undefined index" error when viewing results for old ordering attempts which have no reponse details
 
 2015-01-23 (16)
- -  qtype/ordering fix error upgrading when there are duplicate questionids in qtype_ordering_options table 
+ - fix error upgrading when there are duplicate questionids in qtype_ordering_options table
 
 2015-01-19 (15)
- -  qtype/ordering fix installation error: Key column 'question' doesn't exist in table 
+ - fix installation error: Key column 'question' doesn't exist in table
 
 2015-01-17 (14)
- -  qtype/ordering reliminary code to get implement questiontypebase.php on Moodle 2.0 
- -  qtype/ordering remember ordering question state when moving between pages in a quiz 
+ - reliminary code to get implement questiontypebase.php on Moodle 2.0
+ - remember ordering question state when moving between pages in a quiz
 
 2015-01-17 (13)
- -  qtype/ordering remember ordering question state when moving between pages in a quiz 
+ - remember ordering question state when moving between pages in a quiz
 
 2015-01-17 (13)
- -  qtype/ordering remember ordering question state when moving between pages in a quiz 
+ - remember ordering question state when moving between pages in a quiz
 
 2015-01-17 (12)
- -  qtype/ordering remember ordering question state when moving between pages in a quiz 
+ - remember ordering question state when moving between pages in a quiz
 
 2015-01-17 (11)
- -  qtype/ordering remember ordering question state when moving between pages in a quiz 
+ - remember ordering question state when moving between pages in a quiz
 
 2015-01-14 (10)
- -  qtype/ordering improve display of reviously stored response in incomplete attempts 
- -  qtype/ordering fix typo in ordering/question.php 
+ - improve display of reviously stored response in incomplete attempts
+ - fix typo in ordering/question.php
 
 2015-01-14 (09)
- -  qtype/ordering fix compatibility of feedback fields in Moodle 2.0 
+ - fix compatibility of feedback fields in Moodle 2.0
 
 2015-01-14 (08)
- -  qtype/ordering use standard methods to add feedback in edit form 
+ - use standard methods to add feedback in edit form
 
 2014-12-19 (07)
- -  qtype/ordering allow images to embedded in question text and feedback 
+ - allow images to embedded in question text and feedback
 
 2014-12-08 (06)
- -  qtype/ordering rename 'jquery.ui.touch-punch.js' to 'jquery-ui.touch-punch.js' 
+ - rename 'jquery.ui.touch-punch.js' to 'jquery-ui.touch-punch.js'
 
 2014-12-04 (05)
- -  qtype/ordering try a few improvements for Moodle 2.0 
- -  qtype/ordering small improvement to code that accesses $SESSION values 
+ - try a few improvements for Moodle 2.0
+ - small improvement to code that accesses $SESSION values
 
 2014-12-04 (05)
- -  qtype/ordering replace use of $_SESSION variable with Moodle's $SESSION array 
- -  qtype/ordering replace use of $_SESSION variable with Moodle's $SESSION array 
- -  qtype/ordering restrict scope of css on ordering question 
- -  qtype/ordering fix upgrade script to check for existence of reader_question_instances before attempting to acces sit 
- -  qtype/ordering improve compatability with Moodle 2.0 
- -  qtype/ordering use Moodle's standard jquery libraries in Moodle >= 2.5 
+ - replace use of $_SESSION variable with Moodle's $SESSION array
+ - replace use of $_SESSION variable with Moodle's $SESSION array
+ - restrict scope of css on ordering question
+ - fix upgrade script to check for existence of reader_question_instances before attempting to acces sit
+ - improve compatability with Moodle 2.0
+ - use Moodle's standard jquery libraries in Moodle >= 2.5
 
 2014-11-30 (03)
- -  qtype/ordering update to latest version of JQuery (11.1) and add mouse-punch to handle drag-drop events on touchscreens 
- -  qtype/ordering update to latest version of JQuery (11.1) and add mouse-punch to handle drag-drop events on touchscreens 
+ - update to latest version of JQuery (11.1) and add mouse-punch to handle drag-drop events on touchscreens
+ - update to latest version of JQuery (11.1) and add mouse-punch to handle drag-drop events on touchscreens
 
 2014-07-26 (02)
- -  qtype/ordering always show correct answer in review mode 
- -  qtype/ordering fix display of correct/wrong items for question review 
- -  qtype/ordering fix display of correct/wrong items for question review 
- -  qtype/ordering fix display of correct/wrong items for question review 
+ - always show correct answer in review mode
+ - fix display of correct/wrong items for question review
+ - fix display of correct/wrong items for question review
+ - fix display of correct/wrong items for question review
 
 2014-05-14.01
- -  qtype/ordering fix display of correct/wrong items for question review 
- -  qtype/ordering fix display of correct/wrong items for question review 
- -  qtype/ordering add method to intialize new ordering question 
- -  qtype/ordering half fix for delays and cheating 
- -  qtype/ordering fix undefined passwordsaltmain in Moodle >= 2.6 
+ - fix display of correct/wrong items for question review
+ - fix display of correct/wrong items for question review
+ - add method to intialize new ordering question
+ - half fix for delays and cheating
+ - fix undefined passwordsaltmain in Moodle >= 2.6
 
 2013-06-28.00
- -  Moodle.2x qtype/ordering standardize version.php and add readme.txt 
+ - standardize version.php and add readme.txt
 
 2013-06-28.00
- -  Moodle.2x qtype/ordering standardize version.php and add readme.txt 
- -  Moodle.2x qtype/ordering replace __DIR__ with dirname(__FILE__) for compatability with PHP 5.2 
- -  Moodle.2x qtype/ordering fix REFTABLE 'questions' -> 'question' in db/install.xml 
- -  Moodle.2x qtype/ordering add print_question_formulation_and_controls method required to display ordering questions in Moodle 2.0 
- -  Moodle.2x qtype/ordering add print_question_formulation_and_controls method required to display ordering questions in Moodle 2.0 
- -  Moodle.2x qtype/ordering use standard message to report DB insert/update errors 
- -  Moodle.2x qtype/ordering use standard message to report DB insert/update errors 
- -  Moodle.2x qtype/ordering fix any badly formed ordering questions that were added by earlier versions of GIFT/XML import 
- -  Moodle.2x qtype/ordering fix error 'logical cannot be NULL' when importing from GIFT file 
- -  Moodle.2x qtype/ordering add import/export GIFT/XML 
- -  Moodle.2x qtype/ordering increment version number to be instep with Reader module 
- -  remove debug statements which caused scoring of ordering questions to be lower than it should be 
- -  use md5 instead of fraction field as id in ordering questions 
- -  add first attempt at backup/restore 
- -  tidy up and optimze javascript 
- -  tidy up and optimze javascript 
- -  tidy up and optimze javascript 
- -  remove unnecessary print_r statement, and and tidy up some whitespace 
- -  fix cvs/git/svn ignore files 
- -  fix cvs/git/svn ignore files 
- -  add cvs/git/svn ignore files 
- -  add strings and classes required by Moodle 2.0 
- -  fix undefined question_type on Moodle 2.0 
- -  add new plugin strings required by Moodle 2.3 
- -  question/type/ordering: add plugin strings required for Moodle 2.3 
- -  add reader module for Moodle 2.x 
+ - standardize version.php and add readme.txt
+ - replace __DIR__ with dirname(__FILE__) for compatability with PHP 5.2
+ - fix REFTABLE 'questions' -> 'question' in db/install.xml
+ - add print_question_formulation_and_controls method required to display ordering questions in Moodle 2.0
+ - add print_question_formulation_and_controls method required to display ordering questions in Moodle 2.0
+ - use standard message to report DB insert/update errors
+ - use standard message to report DB insert/update errors
+ - fix any badly formed ordering questions that were added by earlier versions of GIFT/XML import
+ - fix error 'logical cannot be NULL' when importing from GIFT file
+ - add import/export GIFT/XML
+ - increment version number to be instep with Reader module
+ - remove debug statements which caused scoring of ordering questions to be lower than it should be
+ - use md5 instead of fraction field as id in ordering questions
+ - add first attempt at backup/restore
+ - tidy up and optimze javascript
+ - tidy up and optimze javascript
+ - tidy up and optimze javascript
+ - remove unnecessary print_r statement, and and tidy up some whitespace
+ - fix cvs/git/svn ignore files
+ - fix cvs/git/svn ignore files
+ - add cvs/git/svn ignore files
+ - add strings and classes required by Moodle 2.0
+ - fix undefined question_type on Moodle 2.0
+ - add new plugin strings required by Moodle 2.3
+ - question/type/ordering: add plugin strings required for Moodle 2.3
+ - add reader module for Moodle 2.x
