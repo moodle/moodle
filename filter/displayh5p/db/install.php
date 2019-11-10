@@ -31,8 +31,8 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_filter_displayh5p_install() {
     global $CFG;
 
-    require_once("$CFG->libdir/filterlib.php");
+    require_once($CFG->dirroot . '/filter/displayh5p/db/upgradelib.php');
 
-    // Display H5P filter should be enabled by default because we need this filter for H5P atto button to work.
-    filter_set_global_state('displayh5p', TEXTFILTER_ON, -1);
+    // We need to move up the displayh5p filter over urltolink and activitynames filters to works properly.
+    filter_displayh5p_reorder();
 }
