@@ -35,25 +35,19 @@ use core_customfield\data_controller;
 class core_customfield_data_controller_testcase extends advanced_testcase {
 
     /**
-     * This method is called after the last test of this test class is run.
+     * Tear down to reset the singleton after each test.
      */
-    public static function tearDownAfterClass() {
-        $handler = core_course\customfield\course_handler::create();
-        $handler->delete_all();
+    public function tearDown() {
+        core_course\customfield\course_handler::reset_after_test();
+        parent::tearDown();
     }
 
     /**
-     * Tests set up.
-     */
-    public function setUp() {
-        $this->resetAfterTest();
-    }
-
-    /**
-     * Get generator
+     * Get generator.
+     *
      * @return core_customfield_generator
      */
-    protected function get_generator() : core_customfield_generator {
+    protected function get_generator(): core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 
@@ -62,6 +56,8 @@ class core_customfield_data_controller_testcase extends advanced_testcase {
      */
     public function test_constructor() {
         global $DB;
+        $this->resetAfterTest();
+
         // Create a course, fields category and fields.
         $course = $this->getDataGenerator()->create_course();
         $category0 = $this->get_generator()->create_category(['name' => 'aaaa']);
@@ -130,6 +126,8 @@ class core_customfield_data_controller_testcase extends advanced_testcase {
      */
     public function test_constructor_errors() {
         global $DB;
+        $this->resetAfterTest();
+
         // Create a category, field and data.
         $category = $this->get_generator()->create_category();
         $field = $this->get_generator()->create_field(['categoryid' => $category->get('id')]);

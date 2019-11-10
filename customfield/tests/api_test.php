@@ -38,17 +38,19 @@ use \core_customfield\category_controller;
 class core_customfield_api_testcase extends advanced_testcase {
 
     /**
-     * This method is called after the last test of this test class is run.
+     * Tear down to reset the singleton after each test.
      */
     public function tearDown() {
         core_course\customfield\course_handler::reset_after_test();
+        parent::tearDown();
     }
 
     /**
-     * Get generator
+     * Get generator.
+     *
      * @return core_customfield_generator
      */
-    protected function get_generator() : core_customfield_generator {
+    protected function get_generator(): core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 
@@ -57,7 +59,7 @@ class core_customfield_api_testcase extends advanced_testcase {
      *
      * @param array $expected
      * @param array $array array of objects with "get($property)" method
-     * @param sring $propertyname
+     * @param string $propertyname
      */
     protected function assert_property_in_array($expected, $array, $propertyname) {
         $this->assertEquals($expected, array_values(array_map(function($a) use ($propertyname) {
