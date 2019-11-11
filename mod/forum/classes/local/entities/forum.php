@@ -71,8 +71,8 @@ class forum {
     private $scale;
     /** @var int $gradeforum The grade for the forum when grading holistically */
     private $gradeforum;
-    /** @var bool $sendstudentnotificationsforum Whether to notify students when the forum is graded holistically */
-    private $sendstudentnotificationsforum;
+    /** @var bool $gradeforumnotify Whether to notify students when the forum is graded holistically */
+    private $gradeforumnotify;
     /** @var int $maxbytes Maximum attachment size */
     private $maxbytes;
     /** @var int $maxattachments Maximum number of attachments */
@@ -126,7 +126,7 @@ class forum {
      * @param int $assesstimefinish Timestamp to end assessment
      * @param int $scale The rating scale
      * @param int $gradeforum The holistic grade
-     * @param bool $sendstudentnotificationsforum Default for whether to notify students when grade holistically
+     * @param bool $gradeforumnotify Default for whether to notify students when grade holistically
      * @param int $maxbytes Maximum attachment size
      * @param int $maxattachments Maximum number of attachments
      * @param int $forcesubscribe Does the forum force users to subscribe?
@@ -161,7 +161,7 @@ class forum {
         int $assesstimefinish,
         int $scale,
         int $gradeforum,
-        bool $sendstudentnotificationsforum,
+        bool $gradeforumnotify,
         int $maxbytes,
         int $maxattachments,
         int $forcesubscribe,
@@ -195,7 +195,7 @@ class forum {
         $this->assesstimefinish = $assesstimefinish;
         $this->scale = $scale;
         $this->gradeforum = $gradeforum;
-        $this->sendstudentnotificationsforum = $sendstudentnotificationsforum;
+        $this->gradeforumnotify = $gradeforumnotify;
         $this->maxbytes = $maxbytes;
         $this->maxattachments = $maxattachments;
         $this->forcesubscribe = $forcesubscribe;
@@ -383,7 +383,7 @@ class forum {
      * @return bool
      */
     public function should_notify_students_default_when_grade_for_forum(): bool {
-        return $this->sendstudentnotificationsforum;
+        return $this->gradeforumnotify;
     }
 
     /**
