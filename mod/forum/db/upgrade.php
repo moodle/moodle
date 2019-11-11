@@ -242,7 +242,7 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019100100, 'forum');
     }
 
-    if ($oldversion < 2019102200) {
+    if ($oldversion < 2019100108) {
 
         // Define field sendstudentnotifications_forum to be added to forum.
         $table = new xmldb_table('forum');
@@ -255,7 +255,7 @@ function xmldb_forum_upgrade($oldversion) {
         }
 
         // Forum savepoint reached.
-        upgrade_mod_savepoint(true, 2019102200, 'forum');
+        upgrade_mod_savepoint(true, 2019100108, 'forum');
     }
 
     return true;

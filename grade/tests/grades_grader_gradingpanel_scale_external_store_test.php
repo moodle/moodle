@@ -137,7 +137,8 @@ class store_test extends advanced_testcase {
 
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
-        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, http_build_query($formdata), false);
+        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
+                (int) $student->id, http_build_query($formdata), false);
         $result = external_api::clean_returnvalue(store::execute_returns(), $result);
 
         // The result should still be empty.
@@ -208,7 +209,8 @@ class store_test extends advanced_testcase {
 
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
-        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, http_build_query($formdata), false);
+        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
+                (int) $student->id, http_build_query($formdata), false);
         $result = external_api::clean_returnvalue(store::execute_returns(), $result);
 
         // The result should still be empty.
@@ -282,7 +284,8 @@ class store_test extends advanced_testcase {
 
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
-        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, http_build_query($formdata), false);
+        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
+                (int) $student->id, http_build_query($formdata), false);
         $result = external_api::clean_returnvalue(store::execute_returns(), $result);
 
         // The result should still be empty.
@@ -364,7 +367,8 @@ class store_test extends advanced_testcase {
 
         $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage("Invalid grade '{$suppliedvalue}' provided. Grades must be between 0 and 3.");
-        store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, http_build_query($formdata), false);
+        store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
+                (int) $student->id, http_build_query($formdata), false);
     }
 
     /**
