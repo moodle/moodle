@@ -1172,4 +1172,45 @@ class core_upgradelib_testcase extends advanced_testcase {
         // Eventual custom values not following the expected hub-specific naming format, are kept.
         $this->assertSame($converted->custom, 'Do not touch this');
     }
+
+    /**
+     * Test the functionality of the {@link upgrade_analytics_fix_contextids_defaults} function.
+     */
+    public function test_upgrade_analytics_fix_contextids_defaults() {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+
+        $model = (object)[
+            'name' => 'asd',
+            'target' => 'ou',
+            'indicators' => '[]',
+            'version' => '1',
+            'timecreated' => time(),
+            'timemodified' => time(),
+            'usermodified' => $USER->id,
+            'contextids' => ''
+        ];
+        $DB->insert_record('analytics_models', $model);
+
+        $model->contextids = null;
+        $DB->insert_record('analytics_models', $model);
+
+        unset($model->contextids);
+        $DB->insert_record('analytics_models', $model);
+
+        $model->contextids = '0';
+        $DB->insert_record('analytics_models', $model);
+
+        $model->contextids = 'null';
+        $DB->insert_record('analytics_models', $model);
+
+        $select = $DB->sql_compare_text('contextids') . ' = :zero OR ' . $DB->sql_compare_text('contextids') . ' = :null';
+        $params = ['zero' => '0', 'null' => 'null'];
+        $this->assertEquals(2, $DB->count_records_select('analytics_models', $select, $params));
+
+        upgrade_analytics_fix_contextids_defaults();
+
+        $this->assertEquals(0, $DB->count_records_select('analytics_models', $select, $params));
+    }
 }
