@@ -109,38 +109,37 @@ function email_reports_cron() {
                 $notifyperiod = "";
             } else {
                 $notifytime = strtotime("- 1" . $periods[$templateinfo->repeatperiod], $runtime);
-                $notifyperiod = "OR sent > $notifytime";
+                $notifyperiod = "AND sent < $notifytime";
             }
         } else {
             // use the default notify period.
             $notifytime = $runtime - $compuser->notifyperiod * 86400;
-            $notifyperiod = "OR sent > $notifytime";
+            $notifyperiod = "AND sent < $notifytime";
         }
 
         // Check if we have sent any emails and if they are within the period.
         if ($DB->count_records('email', array('userid' => $compuser->userid,
                                               'courseid' => $compuser->courseid,
                                               'templatename' => 'completion_warn_user')) > 0) {
-            if (!$DB->get_records_sql("SELECT id FROM {email}
-                                      WHERE userid = :userid
-                                      AND courseid = :courseid
-                                      AND templatename = :templatename
-                                      AND (
-                                         sent IS NULL
-                                      $notifyperiod
-                                      )
-                                      AND id IN (
-                                         SELECT MAX(id) FROM {email}
-                                         WHERE userid = :userid2
-                                         AND courseid = :courseid2
-                                         AND templatename = :templatename2)",
-                                      array('userid' => $compuser->userid,
-                                            'courseid' => $compuser->courseid,
-                                            'templatename' => 'completion_warn_user',
-                                            'userid2' => $compuser->userid,
-                                            'courseid2' => $compuser->courseid,
-                                            'templatename2' => 'completion_warn_user'))) {
-                continue;
+            if (!empty($notifyperiod)) {
+                if (!$DB->get_records_sql("SELECT id FROM {email}
+                                          WHERE userid = :userid
+                                          AND courseid = :courseid
+                                          AND templatename = :templatename
+                                          $notifyperiod
+                                          AND id IN (
+                                             SELECT MAX(id) FROM {email}
+                                             WHERE userid = :userid2
+                                             AND courseid = :courseid2
+                                             AND templatename = :templatename2)",
+                                          array('userid' => $compuser->userid,
+                                                'courseid' => $compuser->courseid,
+                                                'templatename' => 'completion_warn_user',
+                                                'userid2' => $compuser->userid,
+                                                'courseid2' => $compuser->courseid,
+                                                'templatename2' => 'completion_warn_user'))) {
+                    continue;
+                }
             }
         }
         mtrace("Sending completion warning email to $user->email");
@@ -329,7 +328,6 @@ function email_reports_cron() {
             if ($userrec = $DB->get_record('user', array('id' => $notstarteduser->userid, 'suspended' => 0, 'deleted' => 0))) {
                 if ($courserec = $DB->get_record('course', array('id' => $notstarteduser->courseid))) {
                     if ($companyrec = $DB->get_record('company', array('id' => $notstarteduser->companyid))) {
-
                         // Get the company template info.
                         // Check against per company template repeat instead.
                         if ($templateinfo = $DB->get_record('email_template', array('companyid' => $notstarteduser->companyid, 'lang' => $userrec->lang, 'name' => 'course_not_started_warning'))) {
@@ -345,38 +343,37 @@ function email_reports_cron() {
                                 $notifyperiod = "";
                             } else {
                                 $notifytime = strtotime("- 1" . $periods[$templateinfo->repeatperiod], $runtime);
-                                $notifyperiod = "OR sent >  $notifytime";
+                                $notifyperiod = " AND sent <  $notifytime";
                             }
                         } else {
                             // use the default notify period.
                             $notifytime = $runtime - $warnnotstartedcourse->notifyperiod * 86400;
-                            $notifyperiod = "OR sent > $notifytime";
+                            $notifyperiod = " AND sent < $notifytime";
                         }
 
                         // Check if we have sent any emails and if they are within the period.
                         if ($DB->count_records('email', array('userid' => $notstarteduser->userid,
                                                               'courseid' => $notstarteduser->courseid,
                                                               'templatename' => 'course_not_started_warning')) > 0) {
-                            if (!$DB->get_records_sql("SELECT id FROM {email}
-                                                      WHERE userid = :userid
-                                                      AND courseid = :courseid
-                                                      AND templatename = :templatename
-                                                      AND (
-                                                         sent IS NULL
-                                                      $notifyperiod
-                                                      )
-                                                      AND id IN (
-                                                         SELECT MAX(id) FROM {emai}l
-                                                         WHERE userid = :userid2
-                                                         AND courseid = :courseid2
-                                                         AND templatename = :templatename2)",
-                                                      array('userid' => $notstarteduser->userid,
-                                                            'courseid' => $notstarteduser->courseid,
-                                                            'templatename' => 'course_not_started_warning',
-                                                            'userid2' => $notstarteduser->userid,
-                                                            'courseid2' => $notstarteduser->courseid,
-                                                            'templatename2' => 'course_not_started_warning'))) {
-                                continue;
+                            if (!empty($notifyperiod)) {
+                                if (!$DB->get_records_sql("SELECT id FROM {email}
+                                                          WHERE userid = :userid
+                                                          AND courseid = :courseid
+                                                          AND templatename = :templatename
+                                                          $notifyperiod
+                                                          AND id IN (
+                                                             SELECT MAX(id) FROM {emai}l
+                                                             WHERE userid = :userid2
+                                                             AND courseid = :courseid2
+                                                             AND templatename = :templatename2)",
+                                                          array('userid' => $notstarteduser->userid,
+                                                                'courseid' => $notstarteduser->courseid,
+                                                                'templatename' => 'course_not_started_warning',
+                                                                'userid2' => $notstarteduser->userid,
+                                                                'courseid2' => $notstarteduser->courseid,
+                                                                'templatename2' => 'course_not_started_warning'))) {
+                                    continue;
+                                }
                             }
                         }
 
@@ -490,37 +487,37 @@ function email_reports_cron() {
                 $notifyperiod = "";
             } else {
                 $notifytime = strtotime("- 1" . $periods[$templateinfo->repeatperiod], $runtime);
-                $notifyperiod = "OR sent > $notifytime";
+                $notifyperiod = "AND sent < $notifytime";
             }
         } else {
             // use the default notify period.
             $notifytime = $runtime - $warnnotstartedcourse->notifyperiod * 86400;
-            $notifyperiod = "OR sent > $notifytime";
+            $notifyperiod = "AND sent < $notifytime";
         }
 
         // Check if we have sent any emails and if they are within the period.
         if ($DB->count_records('email', array('userid' => $compuser->userid,
                                               'courseid' => $compuser->courseid,
                                               'templatename' => 'expiry_warn_user')) > 0) {
-            if (!$DB->get_records_sql("SELECT id FROM {email}
-                                      WHERE userid = :userid
-                                      AND courseid = :courseid
-                                      AND templatename = :templatename
-                                      AND (
-                                          sent IS NULL
-                                          $notifyperiod)
-                                      AND id IN (
-                                         SELECT MAX(id) FROM {email}
-                                         WHERE userid = :userid2
-                                         AND courseid = :courseid2
-                                         AND templatename = :templatename2)",
-                                      array('userid' => $compuser->userid,
-                                            'courseid' => $compuser->courseid,
-                                            'templatename' => 'expiry_warn_user',
-                                            'userid2' => $compuser->userid,
-                                            'courseid.' => $compuser->courseid,
-                                            'templatename.' => 'expiry_warn_user'))) {
-                continue;
+            if (!empty($notifyperiod)) {
+                if (!$DB->get_records_sql("SELECT id FROM {email}
+                                          WHERE userid = :userid
+                                          AND courseid = :courseid
+                                              AND templatename = :templatename
+                                          $notifyperiod
+                                          AND id IN (
+                                             SELECT MAX(id) FROM {email}
+                                             WHERE userid = :userid2
+                                             AND courseid = :courseid2
+                                             AND templatename = :templatename2)",
+                                          array('userid' => $compuser->userid,
+                                                'courseid' => $compuser->courseid,
+                                                'templatename' => 'expiry_warn_user',
+                                                'userid2' => $compuser->userid,
+                                                'courseid.' => $compuser->courseid,
+                                                'templatename.' => 'expiry_warn_user'))) {
+                    continue;
+                }
             }
         }
         mtrace("Sending expiry warning email to $user->email");
