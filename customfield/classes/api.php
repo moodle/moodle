@@ -431,7 +431,9 @@ class api {
         $fields = $DB->get_records_sql($sql);
         foreach ($fields as $field) {
             $inst = field_controller::create(0, $field);
-            if ($inst->supports_course_grouping()) {
+            $isvisible = $inst->get_configdata_property('visibility') == \core_course\customfield\course_handler::VISIBLETOALL;
+            // Only visible fields to everybody supporting course grouping will be displayed.
+            if ($inst->supports_course_grouping() && $isvisible) {
                 $ret[$inst->get('shortname')] = $inst->get('name');
             }
         }

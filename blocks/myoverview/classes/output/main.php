@@ -366,7 +366,9 @@ class main implements renderable, templatable {
             return [];
         }
         $field = \core_customfield\field_controller::create($fieldid);
-        if (!$field->supports_course_grouping()) {
+        $isvisible = $field->get_configdata_property('visibility') == \core_course\customfield\course_handler::VISIBLETOALL;
+        // Only visible fields to everybody supporting course grouping will be displayed.
+        if (!$field->supports_course_grouping() || !$isvisible) {
             return []; // The field shouldn't have been selectable in the global settings, but just skip it now.
         }
         $values = $field->course_grouping_format_values($values);
