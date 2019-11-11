@@ -653,3 +653,14 @@ function upgrade_convert_hub_config_site_param_names(stdClass $hubconfig, string
 
     return (object) $converted;
 }
+
+/**
+ * Fix the incorrect default values inserted into analytics contextids field.
+ */
+function upgrade_analytics_fix_contextids_defaults() {
+    global $DB;
+
+    $select = $DB->sql_compare_text('contextids') . ' = :zero OR ' . $DB->sql_compare_text('contextids') . ' = :null';
+    $params = ['zero' => '0', 'null' => 'null'];
+    $DB->execute("UPDATE {analytics_models} set contextids = null WHERE " . $select, $params);
+}
