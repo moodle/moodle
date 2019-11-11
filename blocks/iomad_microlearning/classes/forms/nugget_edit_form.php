@@ -74,7 +74,7 @@ class nugget_edit_form extends \moodleform {
         $mform->addElement('text', 'url',
                             get_string('url', 'block_iomad_microlearning'));
         $mform->addHelpButton('url', 'url', 'block_iomad_microlearning');
-        $mform->setType('cmid', PARAM_TEXT);
+        $mform->setType('url', PARAM_URL);
 
         $mform->addElement('hidden', 'halt_until_fulfilled');
         $mform->setType('halt_until_fulfilled', PARAM_INT);

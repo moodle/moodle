@@ -27,6 +27,7 @@ $string['company_threads_for'] = 'Microlearning threads for company {$a}';
 $string['company_users_for'] = 'Users for microlearning thread {$a}';
 $string['crontask'] = 'Iomad microlearning cron';
 $string['defaultdue'] = 'Due after';
+$string['defaultdue_help'] = 'This is the time after which the scheduled nugget becomes due.  It can be overwritten by changing the thread schedule.';
 $string['deletenugget'] = 'Delete nugget';
 $string['deletenuggetcheckfull'] = 'Are you sure you want to delete nugget {$a}';
 $string['deletethread'] = 'Delete thread';
