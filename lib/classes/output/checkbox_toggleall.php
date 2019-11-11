@@ -60,7 +60,9 @@ class checkbox_toggleall implements renderable, templatable {
      *     <ul>
      *         <li><b>id          </b> string - The element ID.</li>
      *         <li><b>name        </b> string - The element name.</li>
-     *         <li><b>classes     </b> string - CSS classes that you want to add for your checkbox.</li>
+     *         <li><b>classes     </b> string - CSS classes that you want to add for your checkbox or toggle controls.
+     *                                          For button type master toggle controls, this could be any Bootstrap 4 btn classes
+     *                                          that you might want to add. Defaults to "btn-secondary".</li>
      *         <li><b>value       </b> string|int - The element's value.</li>
      *         <li><b>checked     </b> boolean - Whether to render this initially as checked.</li>
      *         <li><b>label       </b> string - The label for the checkbox element.</li>

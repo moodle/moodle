@@ -395,16 +395,6 @@ function assign_supports($feature) {
 }
 
 /**
- * Lists all gradable areas for the advanced grading methods gramework
- *
- * @return array('string'=>'string') An array with area names as keys and descriptions as values
- */
-function assign_grading_areas_list() {
-    return array('submissions'=>get_string('submissions', 'assign'));
-}
-
-
-/**
  * extend an assigment navigation settings
  *
  * @param settings_navigation $settings
@@ -901,24 +891,11 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
 }
 
 /**
- * Checks if a scale is being used by an assignment.
- *
- * This is used by the backup code to decide whether to back up a scale
- * @param int $assignmentid
- * @param int $scaleid
- * @return boolean True if the scale is used by the assignment
+ * @deprecated since Moodle 3.8
  */
-function assign_scale_used($assignmentid, $scaleid) {
-    global $DB;
-
-    $return = false;
-    $rec = $DB->get_record('assign', array('id'=>$assignmentid, 'grade'=>-$scaleid));
-
-    if (!empty($rec) && !empty($scaleid)) {
-        $return = true;
-    }
-
-    return $return;
+function assign_scale_used() {
+    throw new coding_exception('assign_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**
@@ -1765,4 +1742,28 @@ function mod_assign_user_preferences() {
     );
 
     return $preferences;
+}
+
+/**
+ * Given an array with a file path, it returns the itemid and the filepath for the defined filearea.
+ *
+ * @param  string $filearea The filearea.
+ * @param  array  $args The path (the part after the filearea and before the filename).
+ * @return array The itemid and the filepath inside the $args path, for the defined filearea.
+ */
+function mod_assign_get_path_from_pluginfile(string $filearea, array $args) : array {
+    // Assign never has an itemid (the number represents the revision but it's not stored in database).
+    array_shift($args);
+
+    // Get the filepath.
+    if (empty($args)) {
+        $filepath = '/';
+    } else {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    return [
+        'itemid' => 0,
+        'filepath' => $filepath,
+    ];
 }

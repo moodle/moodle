@@ -17,6 +17,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
 
+  @javascript
   Scenario: An optional forum can have discussions subscribed to
     Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name        | Test forum name |
@@ -33,35 +34,33 @@ Feature: A user can control their own subscription preferences for a discussion
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    Then I should see "Subscribe to this forum"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I click on "You are subscribed to this discussion. Click to unsubscribe." "link" in the "Test post subject one" "table_row"
-    And I should see "Student One will NOT be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I follow "Subscribe to this forum"
+    Then I can subscribe to this forum
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I can subscribe to this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I can subscribe to this forum
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I can subscribe to this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I subscribe to this forum
     And I should see "Student One will be notified of new posts in 'Test forum name'"
-    And I should see "Unsubscribe from this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I follow "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I unsubscribe from this forum
     And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
+    And I can subscribe to this forum
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
 
+  @javascript
   Scenario: An automatic subscription forum can have discussions unsubscribed from
     Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name        | Test forum name |
@@ -78,35 +77,33 @@ Feature: A user can control their own subscription preferences for a discussion
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    Then I should see "Unsubscribe from this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I click on "You are subscribed to this discussion. Click to unsubscribe." "link" in the "Test post subject one" "table_row"
-    And I should see "Student One will NOT be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And I should see "Unsubscribe from this forum"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And I should see "Unsubscribe from this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I click on "You are subscribed to this discussion. Click to unsubscribe." "link" in the "Test post subject one" "table_row"
-    And I should see "Student One will NOT be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And I should see "Unsubscribe from this forum"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I follow "Unsubscribe from this forum"
+    Then I can unsubscribe from this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I can unsubscribe from this forum
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I can unsubscribe from this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I can unsubscribe from this forum
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I unsubscribe from this forum
     And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I follow "Subscribe to this forum"
+    And I can subscribe to this forum
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I subscribe to this forum
     And I should see "Student One will be notified of new posts in 'Test forum name'"
-    And I should see "Unsubscribe from this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
+    And I can unsubscribe from this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
 
+  @javascript
   Scenario: A user does not lose their preferences when a forum is switch from optional to automatic
     Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name        | Test forum name |
@@ -123,14 +120,13 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I should see "Subscribe to this forum"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
+    And I can subscribe to this forum
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I can subscribe to this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I log out
     And I log in as "admin"
     And I am on "Course 1" course homepage
@@ -143,15 +139,16 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I should see "Unsubscribe from this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
-    When I follow "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    When I unsubscribe from this forum
     Then I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
+    And I can subscribe to this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
 
+  @javascript
   Scenario: A user does not lose their preferences when a forum is switch from optional to automatic
     Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name        | Test forum name |
@@ -168,14 +165,13 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I should see "Subscribe to this forum"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
-    And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
+    And I can subscribe to this forum
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject one" "table_row"
+    And I can subscribe to this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I log out
     And I log in as "admin"
     And I am on "Course 1" course homepage
@@ -188,14 +184,14 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I should see "Unsubscribe from this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
-    When I follow "Unsubscribe from this forum"
+    And I can unsubscribe from this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
+    When I unsubscribe from this forum
     And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    Then I should see "Subscribe to this forum"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
+    And I can subscribe to this forum
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
 
   Scenario: An optional forum prompts a user to subscribe to a discussion when posting unless they have already chosen not to subscribe
     Given I add a "Forum" to section "1" and I fill the form with:
@@ -223,8 +219,8 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Discussion contents 1, second message |
       | Discussion subscription | 0 |
     And I follow "Test forum name"
-    Then "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
+    Then "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I follow "Test post subject one"
     And I follow "Reply"
     And the field "Discussion subscription" matches value "Send me notifications of new posts in this discussion"
@@ -259,8 +255,8 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Discussion contents 1, second message |
       | Discussion subscription | 0 |
     And I follow "Test forum name"
-    Then "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
+    Then "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
+    And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I follow "Test post subject one"
     And I follow "Reply"
     And the field "Discussion subscription" matches value "Send me notifications of new posts in this discussion"
@@ -281,11 +277,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log out
     When I log in as "guest"
     And I follow "Test forum name"
-    Then "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject one" "table_row"
+    Then "Subscribe to this discussion" "checkbox" should not exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should not exist in the "Test post subject one" "table_row"
     And I follow "Test post subject one"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
+    And "Subscribe to this discussion" "checkbox" should not exist
+    And "Unsubscribe from this discussion" "checkbox" should not exist
 
   Scenario: A user who is not logged in should not be able to subscribe to a discussion
     Given I am on site homepage
@@ -298,11 +294,11 @@ Feature: A user can control their own subscription preferences for a discussion
      | Message | Test post message one |
     And I log out
     When I follow "Test forum name"
-    Then "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject one" "table_row"
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject one" "table_row"
+    Then "Subscribe to this discussion" "checkbox" should not exist in the "Test post subject one" "table_row"
+    And "Unsubscribe from this discussion" "checkbox" should not exist in the "Test post subject one" "table_row"
     And I follow "Test post subject one"
-    And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist
-    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
+    And "Subscribe to this discussion" "checkbox" should not exist
+    And "Unsubscribe from this discussion" "checkbox" should not exist
 
   Scenario: A user can toggle their subscription preferences when viewing a discussion
     Given I add a "Forum" to section "1" and I fill the form with:
@@ -329,7 +325,6 @@ Feature: A user can control their own subscription preferences for a discussion
     And I follow "You are subscribed to this discussion. Click to unsubscribe"
     And I should see "Student One will NOT be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I follow "Test post subject one"
-    #And I should see "Unsubscribe from this forum"
     And "You are not subscribed to this discussion. Click to subscribe" "link" should exist
     And I follow "Test forum name"
     And I navigate to "Unsubscribe from this forum" in current page administration
@@ -339,7 +334,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe" "link" should exist
     And I follow "You are not subscribed to this discussion. Click to subscribe"
     And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
-    And "You are subscribed to this discussion. Click to unsubscribe" "link" should exist
+    And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And I follow "Test forum name"
     And I navigate to "Subscribe to this forum" in current page administration
     And I should see "Student One will be notified of new posts in 'Test forum name'"

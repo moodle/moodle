@@ -36,6 +36,7 @@ use mod_forum\subscriptions;
 use context;
 use context_system;
 use stdClass;
+use moodle_exception;
 
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -430,28 +431,63 @@ class capability {
     }
 
     /**
-     * Can the user delete the post in this discussion?
+     * Verifies is the given user can delete a post.
      *
      * @param stdClass $user The user to check
      * @param discussion_entity $discussion The discussion to check
      * @param post_entity $post The post the user wants to delete
+     * @param bool $hasreplies Whether the post has replies
      * @return bool
+     * @throws moodle_exception
      */
-    public function can_delete_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function validate_delete_post(stdClass $user, discussion_entity $discussion, post_entity $post,
+            bool $hasreplies = false) : void {
         global $CFG;
 
         $forum = $this->get_forum();
 
         if ($forum->get_type() == 'single' && $discussion->is_first_post($post)) {
             // Do not allow deleting of first post in single simple type.
-            return false;
-        } else {
-            $context = $this->get_context();
-            $ownpost = $post->is_owned_by_user($user);
-            $ineditingtime = $post->get_age() < $CFG->maxeditingtime;
+            throw new moodle_exception('cannotdeletepost', 'forum');
+        }
 
-            return ($ownpost && $ineditingtime && has_capability('mod/forum:deleteownpost', $context, $user)) ||
-                has_capability('mod/forum:deleteanypost', $context, $user);
+        $context = $this->get_context();
+        $ownpost = $post->is_owned_by_user($user);
+        $ineditingtime = $post->get_age() < $CFG->maxeditingtime;
+
+        if (!($ownpost && $ineditingtime && has_capability('mod/forum:deleteownpost', $context, $user) ||
+                has_capability('mod/forum:deleteanypost', $context, $user))) {
+
+            throw new moodle_exception('cannotdeletepost', 'forum');
+        }
+
+        if ($post->get_total_score()) {
+            throw new moodle_exception('couldnotdeleteratings', 'rating');
+        }
+
+        if ($hasreplies && !has_capability('mod/forum:deleteanypost', $context, $user)) {
+            throw new moodle_exception('couldnotdeletereplies', 'forum');
+        }
+    }
+
+
+    /**
+     * Can the user delete the post in this discussion?
+     *
+     * @param stdClass $user The user to check
+     * @param discussion_entity $discussion The discussion to check
+     * @param post_entity $post The post the user wants to delete
+     * @param bool $hasreplies Whether the post has replies
+     * @return bool
+     */
+    public function can_delete_post(stdClass $user, discussion_entity $discussion, post_entity $post,
+            bool $hasreplies = false) : bool {
+
+        try {
+            $this->validate_delete_post($user, $discussion, $post, $hasreplies);
+            return true;
+        } catch (moodle_exception $e) {
+            return false;
         }
     }
 
@@ -632,5 +668,30 @@ class capability {
         }
 
         return $canstart;
+    }
+
+    /**
+     * Checks whether the user can export the whole forum (discussions and posts).
+     *
+     * @param stdClass $user The user object.
+     * @return bool True if the user can export the forum or false otherwise.
+     */
+    public function can_export_forum(stdClass $user) : bool {
+        return has_capability('mod/forum:exportforum', $this->get_context(), $user);
+    }
+
+    /**
+     * Check whether the supplied grader can grade the gradee.
+     *
+     * @param stdClass $grader The user grading
+     * @param stdClass $gradee The user being graded
+     * @return bool
+     */
+    public function can_grade(stdClass $grader, stdClass $gradee = null): bool {
+        if (!has_capability('mod/forum:grade', $this->get_context(), $grader)) {
+            return false;
+        }
+
+        return true;
     }
 }

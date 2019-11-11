@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['onlinestatushiding_desc'] = 'If enabled, users have the option to hide their online status from other users.';
 $string['configtimetosee'] = 'Number of minutes determining the period of inactivity after which a user is no longer considered to be online.';
+$string['onlinestatushiding'] = 'Online status hiding';
 $string['nouser'] = 'No online users';
 $string['numuser'] = '{$a} online user';
 $string['numusers'] = '{$a} online users';

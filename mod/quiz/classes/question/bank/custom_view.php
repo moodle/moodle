@@ -207,7 +207,7 @@ class custom_view extends \core_question\bank\view {
     }
 
     protected function print_category_info($category) {
-        $formatoptions = new stdClass();
+        $formatoptions = new \stdClass();
         $formatoptions->noclean = true;
         $strcategory = get_string('category', 'quiz');
         echo '<div class="categoryinfo"><div class="categorynamefieldcontainer">' .

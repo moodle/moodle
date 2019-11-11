@@ -33,7 +33,7 @@ use coding_exception;
 use moodle_url;
 
 /**
- * Methods to communicate with moodle.net web services
+ * Provides methods to communicate with the hub (sites directory) web services.
  *
  * @package    core
  * @copyright  2017 Marina Glancy
@@ -51,11 +51,11 @@ class api {
     const HUB_BACKUP_FILE_TYPE = 'backup';
 
     /**
-     * Calls moodle.net WS
+     * Calls a remote function exposed via web services on the hub.
      *
      * @param string $function name of WS function
      * @param array $data parameters of WS function
-     * @param bool $allowpublic allow request without moodle.net registration
+     * @param bool $allowpublic allow request without registration on the hub
      * @return mixed depends on the function
      * @throws moodle_exception
      */
@@ -71,7 +71,7 @@ class api {
     }
 
     /**
-     * Performs REST request to moodle.net (using GET method)
+     * Performs a REST request to the hub site (using the GET method).
      *
      * @param string $token
      * @param string $function
@@ -88,13 +88,14 @@ class api {
 
         $curl = new curl();
         $serverurl = HUB_MOODLEORGHUBURL . "/local/hub/webservice/webservices.php";
-        $curloutput = @json_decode($curl->get($serverurl, $params), true);
+        $query = http_build_query($params, '', '&');
+        $curloutput = @json_decode($curl->post($serverurl, $query), true);
         $info = $curl->get_info();
         if ($curl->get_errno()) {
             // Connection error.
             throw new moodle_exception('errorconnect', 'hub', '', $curl->error);
         } else if (isset($curloutput['exception'])) {
-            // Exception occurred on moodle.net .
+            // Exception occurred on the remote side.
             self::process_curl_exception($token, $curloutput);
         } else if ($info['http_code'] != 200) {
             throw new moodle_exception('errorconnect', 'hub', '', $info['http_code']);
@@ -104,7 +105,7 @@ class api {
     }
 
     /**
-     * Analyses exception received from moodle.net
+     * Analyses exception received from the hub server.
      *
      * @param string $token token used for CURL request
      * @param array $curloutput output from CURL request
@@ -127,7 +128,7 @@ class api {
     }
 
     /**
-     * Update site registration on moodle.net
+     * Update site registration on the hub.
      *
      * @param array $siteinfo
      * @throws moodle_exception
@@ -138,20 +139,20 @@ class api {
     }
 
     /**
-     * Returns information about moodle.net
+     * Returns information about the hub.
      *
      * Example of the return array:
      * {
      *     "courses": 384,
-     *     "description": "Moodle.net connects you with free content and courses shared by Moodle ...",
-     *     "downloadablecourses": 190,
-     *     "enrollablecourses": 194,
+     *     "description": "Official Moodle sites directory.",
+     *     "downloadablecourses": 0,
+     *     "enrollablecourses": 0,
      *     "hublogo": 1,
      *     "language": "en",
-     *     "name": "Moodle.net",
+     *     "name": "moodle",
      *     "sites": 274175,
-     *     "url": "https://moodle.net",
-     *     "imgurl": "https://moodle.net/local/hub/webservice/download.php?filetype=hubscreenshot"
+     *     "url": "https://stats.moodle.org",
+     *     "imgurl": "https://stats.moodle.org/local/hub/webservice/download.php?filetype=hubscreenshot"
      * }
      *
      * @return array
@@ -166,6 +167,8 @@ class api {
 
     /**
      * Calls WS function hub_get_courses
+     *
+     * @deprecated since Moodle 3.8. Moodle.net has been sunsetted making this function useless.
      *
      * Parameter $options may have any of these fields:
      * [
@@ -255,43 +258,8 @@ class api {
      * @throws moodle_exception
      */
     public static function get_courses($search, $downloadable, $enrollable, $options) {
-        static $availableoptions = ['ids', 'sitecourseids', 'coverage', 'licenceshortname', 'subject', 'audience',
-            'educationallevel', 'language', 'orderby', 'givememore', 'allsitecourses'];
-
-        if (empty($options)) {
-            $options = [];
-        } else if (is_object($options)) {
-            $options = (array)$options;
-        } else if (!is_array($options)) {
-            throw new \coding_exception('Parameter $options is invalid');
-        }
-
-        if ($unknownkeys = array_diff(array_keys($options), $availableoptions)) {
-            throw new \coding_exception('Unknown option(s): ' . join(', ', $unknownkeys));
-        }
-
-        $params = [
-            'search' => $search,
-            'downloadable' => (int)(bool)$downloadable,
-            'enrollable' => (int)(bool)$enrollable,
-            'options' => $options
-        ];
-        $result = self::call('hub_get_courses', $params, true);
-        $courses = $result['courses'];
-        $coursetotal = $result['coursetotal'];
-
-        foreach ($courses as $idx => $course) {
-            $courses[$idx]['screenshotbaseurl'] = null;
-            if (!empty($course['screenshots'])) {
-                $courses[$idx]['screenshotbaseurl'] = new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/webservice/download.php',
-                    array('courseid' => $course['id'],
-                        'filetype' => self::HUB_SCREENSHOT_FILE_TYPE));
-            }
-            $courses[$idx]['commenturl'] = new moodle_url(HUB_MOODLEORGHUBURL,
-                array('courseid' => $course['id'], 'mustbelogged' => true));
-        }
-
-        return [$courses, $coursetotal];
+        debugging("This function has been deprecated as part of the Moodle.net sunsetting process.");
+        return [[], 0];
     }
 
     /**
@@ -307,17 +275,19 @@ class api {
     /**
      * Unpublish courses
      *
+     * @deprecated since Moodle 3.8. Moodle.net has been sunsetted making this function useless.
+     *
      * @param int[]|int $courseids
      * @throws moodle_exception
      */
     public static function unregister_courses($courseids) {
-        $courseids = (array)$courseids;
-        $params = array('courseids' => $courseids);
-        self::call('hub_unregister_courses', $params);
+        debugging("This function has been deprecated as part of the Moodle.net sunsetting process.");
     }
 
     /**
      * Publish one course
+     *
+     * @deprecated since Moodle 3.8. Moodle.net has been sunsetted making this function useless.
      *
      * Expected contents of $courseinfo:
      * [
@@ -357,73 +327,47 @@ class api {
      *
      * @param array|\stdClass $courseinfo
      * @return int id of the published course on the hub
-     * @throws moodle_exception if communication to moodle.net failed or course could not be published
+     * @throws moodle_exception if the communication with the hub failed or the course could not be published
      */
     public static function register_course($courseinfo) {
-        $params = array('courses' => array($courseinfo));
-        $hubcourseids = self::call('hub_register_courses', $params);
-        if (count($hubcourseids) != 1) {
-            throw new moodle_exception('errorcoursewronglypublished', 'hub');
-        }
-        return $hubcourseids[0];
+        debugging("This function has been deprecated as part of the Moodle.net sunsetting process.");
+        throw new moodle_exception('errorcoursewronglypublished', 'hub');
     }
 
     /**
      * Uploads a screenshot for the published course
      *
-     * @param int $hubcourseid id of the published course on moodle.net, it must be published from this site
+     * @deprecated since Moodle 3.8. Moodle.net has been sunsetted making this function useless.
+     *
+     * @param int $hubcourseid id of the published course on the hub, it must be published from this site
      * @param \stored_file $file
      * @param int $screenshotnumber ordinal number of the screenshot
      */
     public static function add_screenshot($hubcourseid, \stored_file $file, $screenshotnumber) {
-        $curl = new \curl();
-        $params = array();
-        $params['filetype'] = self::HUB_SCREENSHOT_FILE_TYPE;
-        $params['file'] = $file;
-        $params['courseid'] = $hubcourseid;
-        $params['filename'] = $file->get_filename();
-        $params['screenshotnumber'] = $screenshotnumber;
-        $params['token'] = registration::get_token(MUST_EXIST);
-        $curl->post(HUB_MOODLEORGHUBURL . "/local/hub/webservice/upload.php", $params);
+        debugging("This function has been deprecated as part of the Moodle.net sunsetting process.");
     }
 
     /**
      * Downloads course backup
      *
-     * @param int $hubcourseid id of the course on moodle.net
+     * @deprecated since Moodle 3.8. Moodle.net has been sunsetted making this function useless.
+     *
+     * @param int $hubcourseid id of the course on the hub
      * @param string $path local path (in tempdir) to save the downloaded backup to.
      */
     public static function download_course_backup($hubcourseid, $path) {
-        $fp = fopen($path, 'w');
-
-        $curlurl = new \moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/webservice/download.php',
-            ['filetype' => self::HUB_BACKUP_FILE_TYPE, 'courseid' => $hubcourseid]);
-
-        // Send an identification token if the site is registered.
-        if ($token = registration::get_token()) {
-            $curlurl->param('token', $token);
-        }
-
-        $ch = curl_init($curlurl->out(false));
-        curl_setopt($ch, CURLOPT_FILE, $fp);
-        curl_exec($ch);
-        curl_close($ch);
-        fclose($fp);
+        debugging("This function has been deprecated as part of the Moodle.net sunsetting process.");
     }
 
     /**
      * Uploads a course backup
      *
-     * @param int $hubcourseid id of the published course on moodle.net, it must be published from this site
+     * @deprecated since Moodle 3.8. Moodle.net has been sunsetted making this function useless.
+     *
+     * @param int $hubcourseid id of the published course on the hub, it must be published from this site
      * @param \stored_file $backupfile
      */
     public static function upload_course_backup($hubcourseid, \stored_file $backupfile) {
-        $curl = new \curl();
-        $params = array();
-        $params['filetype'] = self::HUB_BACKUP_FILE_TYPE;
-        $params['courseid'] = $hubcourseid;
-        $params['file'] = $backupfile;
-        $params['token'] = registration::get_token();
-        $curl->post(HUB_MOODLEORGHUBURL . '/local/hub/webservice/upload.php', $params);
+        debugging("This function has been deprecated as part of the Moodle.net sunsetting process.");
     }
 }

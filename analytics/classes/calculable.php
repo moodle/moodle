@@ -66,6 +66,11 @@ abstract class calculable {
     protected $sampledata = array();
 
     /**
+     * @var \core_analytics\calculation_info|null
+     */
+    protected $calculationinfo = null;
+
+    /**
      * Returns a lang_string object representing the name for the indicator or target.
      *
      * Used as column identificator.
@@ -141,6 +146,42 @@ abstract class calculable {
             return false;
         }
         return $this->sampledata[$sampleid][$elementname];
+    }
+
+    /**
+     * Adds info related to the current calculation for later use when generating insights.
+     *
+     * Note that the data in $info array is reused across multiple samples, if you want to add data just for this
+     * sample you can use the sample id as key.
+     *
+     * Please, note that you should be careful with how much data you add here as it can kill the server memory.
+     *
+     * @param  int      $sampleid       The sample id this data is associated with
+     * @param  array    $info           The data. Indexed by an id unique across the site. E.g. an activity id.
+     * @return null
+     */
+    protected final function add_shared_calculation_info(int $sampleid, array $info) {
+        if (is_null($this->calculationinfo)) {
+            // Lazy loading.
+            $this->calculationinfo = new \core_analytics\calculation_info();
+        }
+
+        $this->calculationinfo->add_shared($sampleid, $info);
+    }
+
+    /**
+     * Stores in MUC the previously added data and it associates it to the provided $calculable.
+     *
+     * Flagged as final as we don't want people to extend this, it is likely to be moved to \core_analytics\calculable
+     *
+     * @param  \core_analytics\local\time_splitting\base $timesplitting
+     * @param  int                                       $rangeindex
+     * @return null
+     */
+    public final function save_calculation_info(\core_analytics\local\time_splitting\base $timesplitting, int $rangeindex) {
+        if (!is_null($this->calculationinfo)) {
+            $this->calculationinfo->save($this, $timesplitting, $rangeindex);
+        }
     }
 
     /**

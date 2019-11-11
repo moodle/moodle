@@ -1983,10 +1983,15 @@ class api {
             ],
         ];
 
+        $userpicture = new \user_picture($eventdata->userfrom);
+        $userpicture->size = 1; // Use f1 size.
+        $userpicture = $userpicture->get_url($PAGE)->out(false);
+
         $conv = $DB->get_record('message_conversations', ['id' => $conversationid]);
         if ($conv->type == self::MESSAGE_CONVERSATION_TYPE_GROUP) {
             $convextrafields = self::get_linked_conversation_extra_fields([$conv]);
-            // Conversation image.
+            // Conversation images.
+            $customdata['notificationsendericonurl'] = $userpicture;
             $imageurl = isset($convextrafields[$conv->id]) ? $convextrafields[$conv->id]['imageurl'] : null;
             if ($imageurl) {
                 $customdata['notificationiconurl'] = $imageurl;
@@ -1999,8 +2004,7 @@ class api {
             }
             $customdata['conversationname'] = format_string($conv->name, true, ['context' => $convcontext]);
         } else if ($conv->type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
-            $userpicture = new \user_picture($eventdata->userfrom);
-            $customdata['notificationiconurl'] = $userpicture->get_url($PAGE)->out(false);
+            $customdata['notificationiconurl'] = $userpicture;
         }
         $eventdata->customdata = $customdata;
 
@@ -2672,6 +2676,7 @@ class api {
         $message->smallmessage = '';
         $message->contexturl = $url->out(false);
         $userpicture = new \user_picture($userfrom);
+        $userpicture->size = 1; // Use f1 size.
         $userpicture->includetoken = $userto->id; // Generate an out-of-session token for the user receiving the message.
         $message->customdata = [
             'notificationiconurl' => $userpicture->get_url($PAGE)->out(false),

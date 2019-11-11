@@ -98,6 +98,8 @@ $string['attemptincomplete'] = 'That attempt (by {$a}) is not yet completed.';
 $string['attemptlast'] = 'Last attempt';
 $string['attemptnumber'] = 'Attempt';
 $string['attemptquiznow'] = 'Attempt quiz now';
+$string['attemptreviewtitle'] = '{$a}: Attempt review';
+$string['attemptreviewtitlepaged'] = '{$a->name}: Attempt review (page {$a->currentpage} of {$a->totalpages})';
 $string['attempts'] = 'Attempts';
 $string['attempts_help'] = 'The total number of attempts allowed (not the number of extra attempts).';
 $string['attemptsallowed'] = 'Attempts allowed';
@@ -110,7 +112,10 @@ $string['attemptsnumyourgroups'] = 'Attempts: {$a->total} ({$a->group} from your
 $string['attemptsonly'] = 'Show only students with attempts';
 $string['attemptstate'] = 'State';
 $string['attemptstillinprogress'] = 'Attempt still in progress';
+$string['attemptsummarytitle'] = '{$a}: Attempt summary';
 $string['attemptsunlimited'] = 'Unlimited attempts';
+$string['attempttitle'] = '{$a}';
+$string['attempttitlepaged'] = '{$a->name} (page {$a->currentpage} of {$a->totalpages})';
 $string['autosaveperiod'] = 'Auto-save delay';
 $string['autosaveperiod_desc'] = 'Responses can be saved automatically during quiz attempts. The responses are saved whenever one is changed, and then after this delay. There is a trade-off: a shorter delay increases the server load, but reduces the chance that students lose their work. If you are going to make this delay much shorter, you should change the value gradually and monitor the server load. If the load gets too high, make the delay longer again. Setting the delay to 0 turns off auto-saving.';
 $string['back'] = 'Back to preview question';
@@ -431,8 +436,14 @@ $string['inactiveoverridehelp'] = '* Student does not have the correct group or 
 $string['incorrect'] = 'Incorrect';
 $string['indicator:cognitivedepth'] = 'Quiz cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Quiz activity.';
+$string['indicator:cognitivedepthdef'] = 'Quiz cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Quiz activities during this analysis interval (Levels = No view, View, Submit, View feedback, Comment on feedback, Resubmit after viewing feedback)';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Quiz social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Quiz activity.';
+$string['indicator:socialbreadthdef'] = 'Quiz social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Quiz activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['indivresp'] = 'Responses of individuals to each item';
 $string['info'] = 'Info';
 $string['infoshort'] = 'i';
@@ -817,8 +828,6 @@ $string['reviewclosed'] = 'After the quiz is closed';
 $string['reviewduring'] = 'During the attempt';
 $string['reviewimmediately'] = 'Immediately after the attempt';
 $string['reviewnever'] = 'Never allow review';
-$string['reviewofattempt'] = 'Review of attempt {$a}';
-$string['reviewofpreview'] = 'Review of preview';
 $string['reviewofquestion'] = 'Review of question {$a->question} in {$a->quiz} by {$a->user}';
 $string['reviewopen'] = 'Later, while the quiz is still open';
 $string['reviewoptions'] = 'Students may review';
@@ -900,7 +909,7 @@ $string['shuffledrandomly'] = 'Shuffled randomly';
 $string['shufflequestions'] = 'Shuffle';
 $string['shufflequestions_help'] = 'If enabled, every time the quiz is attempted, the order of the questions in this section will be shuffled into a different random order.
 
-This can make it harder for students to share answers, but it also makes it harder for students discuss a particular question with the teacher.';
+This can make it harder for students to share answers, but it also makes it harder for students to discuss a particular question with the teacher.';
 $string['shufflewithin'] = 'Shuffle within questions';
 $string['shufflewithin_help'] = 'If enabled, the parts making up each question will be randomly shuffled each time a student attempts the quiz, provided the option is also enabled in the question settings. This setting only applies to questions that have multiple parts, such as multiple choice or matching questions.';
 $string['singleanswer'] = 'Choose one answer.';
@@ -992,3 +1001,5 @@ $string['yourfinalgradeis'] = 'Your final grade for this quiz is {$a}.';
 
 // Deprecated since Moodle 3.8.
 $string['numattemptsmade'] = '{$a} attempts made on this quiz';
+$string['reviewofattempt'] = 'Review of attempt {$a}';
+$string['reviewofpreview'] = 'Review of preview';

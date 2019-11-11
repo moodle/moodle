@@ -148,6 +148,16 @@
                     <input type="text" class="form-control" name="user" id="user" value="{{user}}">
                 </td>
             </tr>
+            {{^guestuser}}
+            <tr>
+                <td class="c0 text-xs-right align-bottom">
+                    <label for="starredonly">{{#str}}starredonly, forum{{/str}}</label>
+                </td>
+                <td class="c1 align-middle form-inline">
+                    <input type="checkbox" class="form-control" name="starredonly" id="starredonly" value="1" {{#starredonly}}checked{{/starredonly}} />
+                </td>
+            </tr>
+            {{/guestuser}}
             {{#tagsenabled}}
                 <tr>
                     <td class="c0">

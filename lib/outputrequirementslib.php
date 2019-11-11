@@ -331,7 +331,8 @@ class page_requirements_manager {
                 'svgicons'            => $page->theme->use_svg_icons(),
                 'usertimezone'        => usertimezone(),
                 'contextid'           => $contextid,
-                'langrev'             => get_string_manager()->get_revision()
+                'langrev'             => get_string_manager()->get_revision(),
+                'templaterev'         => $this->get_templaterev()
             );
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;
@@ -411,6 +412,25 @@ class page_requirements_manager {
         }
 
         return $jsrev;
+    }
+
+    /**
+     * Determine the correct Template revision to use for this load.
+     *
+     * @return int the templaterev to use.
+     */
+    protected function get_templaterev() {
+        global $CFG;
+
+        if (empty($CFG->cachetemplates)) {
+            $templaterev = -1;
+        } else if (empty($CFG->templaterev)) {
+            $templaterev = 1;
+        } else {
+            $templaterev = $CFG->templaterev;
+        }
+
+        return $templaterev;
     }
 
     /**
@@ -797,7 +817,7 @@ class page_requirements_manager {
                                                         array('dndenabled_inbox', 'moodle'), array('fileexists', 'moodle'), array('maxbytesfile', 'error'),
                                                         array('sizegb', 'moodle'), array('sizemb', 'moodle'), array('sizekb', 'moodle'), array('sizeb', 'moodle'),
                                                         array('maxareabytesreached', 'moodle'), array('serverconnection', 'error'),
-                                                        array('changesmadereallygoaway', 'moodle')
+                                                        array('changesmadereallygoaway', 'moodle'), array('complete', 'moodle')
                                                     ));
                     break;
             }
@@ -1018,7 +1038,9 @@ class page_requirements_manager {
 
         $component = clean_param($component, PARAM_COMPONENT);
         $module = clean_param($module, PARAM_ALPHANUMEXT);
+        $modname = "{$component}/{$module}";
 
+        $functioncode = [];
         if ($func !== null) {
             $func = clean_param($func, PARAM_ALPHANUMEXT);
 
@@ -1037,11 +1059,13 @@ class page_requirements_manager {
                 }
             }
 
-            $js = 'require(["' . $component . '/' . $module . '"], function(amd) { amd.' . $func . '(' . $strparams . '); });';
-
-        } else {
-            $js = 'require(["' . $component . '/' . $module . '"]);';
+            $functioncode[] = "amd.{$func}({$strparams});";
         }
+
+        $functioncode[] = "M.util.js_complete('{$modname}');";
+
+        $initcode = implode(' ', $functioncode);
+        $js = "M.util.js_pending('{$modname}'); require(['{$modname}'], function(amd) {{$initcode}});";
 
         $this->js_amd_inline($js);
     }
@@ -1364,8 +1388,10 @@ class page_requirements_manager {
         }
 
         // First include must be to a module with no dependencies, this prevents multiple requests.
-        $prefix = "require(['core/first'], function() {\n";
-        $suffix = "\n});";
+        $prefix = 'M.util.js_pending("core/first");';
+        $prefix .= "require(['core/first'], function() {\n";
+        $suffix = 'M.util.js_complete("core/first");';
+        $suffix .= "\n});";
         $output .= html_writer::script($prefix . implode(";\n", $this->amdjscode) . $suffix);
         return $output;
     }
@@ -2102,6 +2128,23 @@ class YUI_config {
             }
         }
     }
+}
+
+/**
+ * Invalidate all server and client side template caches.
+ */
+function template_reset_all_caches() {
+    global $CFG;
+
+    $next = time();
+    if (isset($CFG->templaterev) and $next <= $CFG->templaterev and $CFG->templaterev - $next < 60 * 60) {
+        // This resolves problems when reset is requested repeatedly within 1s,
+        // the < 1h condition prevents accidental switching to future dates
+        // because we might not recover from it.
+        $next = $CFG->templaterev + 1;
+    }
+
+    set_config('templaterev', $next);
 }
 
 /**

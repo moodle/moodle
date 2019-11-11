@@ -70,6 +70,9 @@ $string['categoryinfo'] = 'Category info';
 $string['categorymove'] = 'The category \'{$a->name}\' contains {$a->count} questions (some of which may be hidden questions or random questions that are still in use in a quiz). Please choose another category to move them to.';
 $string['categorymoveto'] = 'Save in category';
 $string['categorynamecantbeblank'] = 'The category name cannot be blank.';
+$string['categorynamewithcount'] = '{$a->name} ({$a->questioncount})';
+$string['categorynamewithidnumber'] = '{$a->name} [{$a->idnumber}]';
+$string['categorynamewithidnumberandcount'] = '{$a->name} [{$a->idnumber}] ({$a->questioncount})';
 $string['clickflag'] = 'Flag question';
 $string['clicktoflag'] = 'Flag this question for future reference';
 $string['clicktounflag'] = 'Remove flag';
@@ -154,6 +157,7 @@ $string['eventquestionsexported'] = 'Questions exported';
 $string['eventquestionsimported'] = 'Questions imported';
 $string['eventquestionupdated'] = 'Question updated';
 $string['export'] = 'Export';
+$string['exportasxml'] = 'Export as Moodle XML';
 $string['exportcategory'] = 'Export category';
 $string['exportcategory_help'] = 'This setting determines the category from which the exported questions will be taken.
 

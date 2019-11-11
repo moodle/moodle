@@ -46,13 +46,15 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
      * Set up for every test
      */
     public function setUp() {
-        global $DB;
+        global $DB, $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        $CFG->enablecompletion = 1;
         // Setup test data.
-        $this->course = $this->getDataGenerator()->create_course();
-        $this->scorm = $this->getDataGenerator()->create_module('scorm', array('course' => $this->course->id));
+        $this->course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $this->scorm = $this->getDataGenerator()->create_module('scorm', array('course' => $this->course->id),
+            array('completion' => 2, 'completionview' => 1));
         $this->context = context_module::instance($this->scorm->cmid);
         $this->cm = get_coursemodule_from_instance('scorm', $this->scorm->id);
 
@@ -849,8 +851,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_scorm_external::launch_sco_returns(), $result);
 
         $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = array_shift($events);
+        $this->assertCount(3, $events);
+        $event = array_pop($events);
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_scorm\event\sco_launched', $event);
@@ -859,6 +861,14 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($moodleurl, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\core\event\course_module_completion_updated', $event);
+
+        // Check completion status.
+        $completion = new completion_info($this->course);
+        $completiondata = $completion->get_data($this->cm);
+        $this->assertEquals(COMPLETION_VIEWED, $completiondata->completionstate);
 
         // Invalid SCO.
         try {

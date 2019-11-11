@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2019 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_timesplitting_seconds extends \core_analytics\local\time_splitting\periodic {
+class test_timesplitting_seconds extends \core_analytics\local\time_splitting\past_periodic {
 
     /**
      * Every second.

@@ -61,16 +61,15 @@ class media_videojs_testcase extends advanced_testcase {
      * Test method get_supported_extensions()
      */
     public function test_supported_extensions() {
-        $nativeextensions = array_merge(file_get_typegroup('extension', 'html_video'),
-            file_get_typegroup('extension', 'html_audio'));
+        $supportedextensions = array_merge(file_get_typegroup('extension', 'html_video'),
+            file_get_typegroup('extension', 'html_audio'), file_get_typegroup('extension', 'media_source'));
 
         set_config('useflash', 0, 'media_videojs');
 
         // Make sure that the list of extensions from the setting is filtered to HTML5 natively supported extensions.
         $player = new media_videojs_plugin();
-        $this->assertNotEmpty($player->get_supported_extensions());
         $this->assertTrue(in_array('.mp3', $player->get_supported_extensions()));
-        $this->assertEmpty(array_diff($player->get_supported_extensions(), $nativeextensions));
+        $this->assertEmpty(array_diff($player->get_supported_extensions(), $supportedextensions));
 
         // Try to set the audioextensions to something non-native (.ra) and make sure it is not returned as supported.
         set_config('audioextensions', '.mp3,.wav,.ra', 'media_videojs');
@@ -78,7 +77,7 @@ class media_videojs_testcase extends advanced_testcase {
         $this->assertNotEmpty($player->get_supported_extensions());
         $this->assertTrue(in_array('.mp3', $player->get_supported_extensions()));
         $this->assertFalse(in_array('.ra', $player->get_supported_extensions()));
-        $this->assertEmpty(array_diff($player->get_supported_extensions(), $nativeextensions));
+        $this->assertEmpty(array_diff($player->get_supported_extensions(), $supportedextensions));
 
         // Try to use flash extensions and make sure they are not returned as supported.
         set_config('videoextensions', '.flv,.f4v', 'media_videojs');

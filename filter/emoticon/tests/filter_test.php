@@ -95,6 +95,21 @@ class filter_emoticon_testcase extends advanced_testcase {
                 'format' => FORMAT_HTML,
                 'expected' => '<span class="nolink"><span>(n)</span>(n)</span>' . $this->get_converted_content_for_emoticon('(n)'),
             ],
+            'Basic pre should not be processed' => [
+                'input' => '<pre>(n)</pre>',
+                'format' => FORMAT_HTML,
+                'expected' => '<pre>(n)</pre>',
+            ],
+            'Nested pre should not be processed' => [
+                'input' => '<pre><pre>(n)</pre>(n)</pre>',
+                'format' => FORMAT_HTML,
+                'expected' => '<pre><pre>(n)</pre>(n)</pre>',
+            ],
+            'Nested pre should not be processed but following emoticon' => [
+                'input' => '<pre><pre>(n)</pre>(n)</pre>(n)',
+                'format' => FORMAT_HTML,
+                'expected' => '<pre><pre>(n)</pre>(n)</pre>' . $this->get_converted_content_for_emoticon('(n)'),
+            ],
         ];
     }
 

@@ -322,6 +322,7 @@ class behat_hooks extends behat_base {
 
         // Register behat selectors for theme, if suite is changed. We do it for every suite change.
         if ($suitename !== self::$runningsuite) {
+            self::$runningsuite = $suitename;
             behat_context_helper::set_environment($scope->getEnvironment());
 
             // We need the Mink session to do it and we do it only before the first scenario.
@@ -342,6 +343,12 @@ class behat_hooks extends behat_base {
 
             $this->getSession()->getSelectorsHandler()->registerSelector('named_partial', new $namedpartialclass());
             $this->getSession()->getSelectorsHandler()->registerSelector('named_exact', new $namedexactclass());
+
+            // Register component named selectors.
+            foreach (\core_component::get_component_names() as $component) {
+                $this->register_component_selectors_for_component($component);
+            }
+
         }
 
         // Reset mink session between the scenarios.
@@ -373,7 +380,6 @@ class behat_hooks extends behat_base {
         // Set the theme if not default.
         if ($suitename !== "default") {
             set_config('theme', $suitename);
-            self::$runningsuite = $suitename;
         }
 
         // Reset the scenariorunning variable to ensure that Step 0 occurs.
@@ -396,7 +402,7 @@ class behat_hooks extends behat_base {
      * Yes, this is in a strange location and should be in the BeforeScenario hook, but failures in the test setUp lead
      * to the test being incorrectly marked as skipped with no way to force the test to be failed.
      *
-     * @param   BeforeStepScope $scope
+     * @param BeforeStepScope $scope
      * @BeforeStep
      */
     public function before_step(BeforeStepScope $scope) {
@@ -425,7 +431,6 @@ class behat_hooks extends behat_base {
                         new ExpectationException($message, $session)
                     );
 
-                self::$initprocessesfinished = true;
             }
             $this->scenariorunning = true;
         }
@@ -500,11 +505,7 @@ class behat_hooks extends behat_base {
             throw new coding_exception("Step '" . $scope->getStep()->getText() . "'' is undefined.");
         }
 
-        // Save the page content if the step failed.
-        if (!empty($CFG->behat_faildump_path) &&
-            $scope->getTestResult()->getResultCode() === Behat\Testwork\Tester\Result\TestResult::FAILED) {
-            $this->take_contentdump($scope);
-        }
+        $isfailed = $scope->getTestResult()->getResultCode() === Behat\Testwork\Tester\Result\TestResult::FAILED;
 
         // Abort any open transactions to prevent subsequent tests hanging.
         // This does the same as abort_all_db_transactions(), but doesn't call error_log() as we don't
@@ -516,15 +517,28 @@ class behat_hooks extends behat_base {
             }
         }
 
+        if ($isfailed && !empty($CFG->behat_faildump_path)) {
+            // Save the page content (html).
+            $this->take_contentdump($scope);
+
+            if ($this->running_javascript()) {
+                // Save a screenshot.
+                $this->take_screenshot($scope);
+            }
+        }
+
+        if ($isfailed && !empty($CFG->behat_pause_on_fail)) {
+            $exception = $scope->getTestResult()->getException();
+            $message = "<colour:lightRed>Scenario failed. ";
+            $message .= "<colour:lightYellow>Paused for inspection. Press <colour:lightRed>Enter/Return<colour:lightYellow> to continue.<newline>";
+            $message .= "<colour:lightRed>Exception follows:<newline>";
+            $message .= trim($exception->getMessage());
+            behat_util::pause($this->getSession(), $message);
+        }
+
         // Only run if JS.
         if (!$this->running_javascript()) {
             return;
-        }
-
-        // Save a screenshot if the step failed.
-        if (!empty($CFG->behat_faildump_path) &&
-            $scope->getTestResult()->getResultCode() === Behat\Testwork\Tester\Result\TestResult::FAILED) {
-            $this->take_screenshot($scope);
         }
 
         try {
@@ -700,6 +714,58 @@ class behat_hooks extends behat_base {
     protected static function is_first_scenario() {
         return !(self::$initprocessesfinished);
     }
+
+    /**
+     * Register a set of component selectors.
+     *
+     * @param string $component
+     */
+    public function register_component_selectors_for_component(string $component): void {
+        $componentclassname = "behat_{$component}";
+
+        if (!behat_context_helper::has_context($componentclassname)) {
+            if ("core_" === substr($component, 0, 5)) {
+                $componentclassname = "behat_" . substr($component, 5);
+                if (!behat_context_helper::has_context($componentclassname)) {
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+
+        $context = behat_context_helper::get($componentclassname);
+        $namedpartial = $this->getSession()->getSelectorsHandler()->getSelector('named_partial');
+        $namedexact = $this->getSession()->getSelectorsHandler()->getSelector('named_exact');
+
+        // Replacements must come before selectors as they are used in the selectors.
+        foreach ($context->get_named_replacements() as $replacement) {
+            $namedpartial->register_replacement($component, $replacement);
+            $namedexact->register_replacement($component, $replacement);
+        }
+
+        foreach ($context->get_partial_named_selectors() as $selector) {
+            $namedpartial->register_component_selector($component, $selector);
+        }
+
+        foreach ($context->get_exact_named_selectors() as $selector) {
+            $namedexact->register_component_selector($component, $selector);
+        }
+
+    }
+
+    /**
+     * Mark the first step as having been completed.
+     *
+     * This must be the last BeforeStep hook in the setup.
+     *
+     * @param BeforeStepScope $scope
+     * @BeforeStep
+     */
+    public function first_step_setup_complete(BeforeStepScope $scope) {
+        self::$initprocessesfinished = true;
+    }
+
 }
 
 /**

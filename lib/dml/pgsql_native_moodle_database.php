@@ -187,6 +187,17 @@ class pgsql_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        if (!empty($this->dboptions['dbpersist'])) {
+            // There are rare situations (such as PHP out of memory errors) when open cursors may
+            // not be closed at the end of a connection. When using persistent connections, the
+            // cursors remain open and 'get in the way' of future connections. To avoid this
+            // problem, close all cursors here.
+            $result = pg_query($this->pgsql, 'CLOSE ALL');
+            if ($result) {
+                pg_free_result($result);
+            }
+        }
+
         if (!empty($this->dboptions['dbhandlesoptions'])) {
             /* We don't trust people who just set the dbhandlesoptions, this code checks up on them.
              * These functions do not talk to the server, they use the client library knowledge to determine state.
@@ -842,8 +853,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return array of objects, or empty array if no records were found
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
-
+    public function get_records_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
         if ($limitnum) {
@@ -868,24 +878,19 @@ class pgsql_native_moodle_database extends moodle_database {
             }
         }
 
-        $rows = pg_fetch_all($result);
-        pg_free_result($result);
-
-        $return = array();
-        if ($rows) {
-            foreach ($rows as $row) {
-                $id = reset($row);
-                if ($blobs) {
-                    foreach ($blobs as $blob) {
-                        $row[$blob] = ($row[$blob] !== null ? pg_unescape_bytea($row[$blob]) : null);
-                    }
+        $return = [];
+        while ($row = pg_fetch_assoc($result)) {
+            $id = reset($row);
+            if ($blobs) {
+                foreach ($blobs as $blob) {
+                    $row[$blob] = ($row[$blob] !== null ? pg_unescape_bytea($row[$blob]) : null);
                 }
-                if (isset($return[$id])) {
-                    $colname = key($row);
-                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$id' found in column '$colname'.", DEBUG_DEVELOPER);
-                }
-                $return[$id] = (object)$row;
             }
+            if (isset($return[$id])) {
+                $colname = key($row);
+                debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$id' found in column '$colname'.", DEBUG_DEVELOPER);
+            }
+            $return[$id] = (object) $row;
         }
 
         return $return;

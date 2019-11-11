@@ -510,7 +510,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                         }
                     } else {
                         $this->gradetypeformelement->setValue('none');
-                        $this->maxgradeformelement->setValue('');
+                        $this->maxgradeformelement->setValue(100);
                     }
                 }
                 break;

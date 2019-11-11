@@ -1,5 +1,25 @@
 This files describes API changes for code that uses the question API.
 
+=== 3.8 ===
+
+If you have customised the display of the question bank (using $CFG->questionbankcolumns)
+then be aware that the default configuration has changed, and you may wish to make
+equivalent changes in your customised version. The old column question_name_column
+has been replaced by question_name_idnumber_tags_column. The old question_name_column
+still exists, so it is safe to continue using it.
+
+There is a new question bank column edit_menu_column which displays all actions
+in a drop-down menu, instead of as separate icons. This is now used by default.
+Specifically, it gathers all other columns which implement the new interface
+menuable_action. If you have made a custom subclasses of action_column_base,
+you probably want to implement the new interface. If your column is a simple action,
+the easiest way to do this will be to subclass menu_action_column_base. If your action
+is more complex, and does not follow the simple pattern that menu_action_column_base
+uses, then you will need to implement menuable_action yourself. The commit for
+MDL-66816 updates all the core action columns. Looking at that change should make
+it clearly the changes you need to make to your columns.
+
+
 === 3.7 ===
 
 The code for the is_valid_number function that was duplicated in the

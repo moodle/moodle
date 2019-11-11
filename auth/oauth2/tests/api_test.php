@@ -140,4 +140,23 @@ class auth_oauth2_external_testcase extends advanced_testcase {
         $this->assertEquals($newuser->id, $match->get('userid'));
     }
 
+    /**
+     * Test that is_enabled correctly identifies when the plugin is enabled.
+     */
+    public function test_is_enabled() {
+        $this->resetAfterTest();
+
+        set_config('auth', 'manual,oauth2');
+        $this->assertTrue(\auth_oauth2\api::is_enabled());
+    }
+
+    /**
+     * Test that is_enabled correctly identifies when the plugin is disabled.
+     */
+    public function test_is_enabled_disabled() {
+        $this->resetAfterTest();
+
+        set_config('auth', 'manual');
+        $this->assertFalse(\auth_oauth2\api::is_enabled());
+    }
 }

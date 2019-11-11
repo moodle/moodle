@@ -77,6 +77,27 @@ class no_teaching extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Returns the body message for the insight.
+     *
+     * @param  \context     $context
+     * @param  string       $contextname
+     * @param  \stdClass    $user
+     * @param  \moodle_url  $insighturl
+     * @return string[]                     The plain text message and the HTML message
+     */
+    public function get_insight_body(\context $context, string $contextname, \stdClass $user, \moodle_url $insighturl): array {
+        global $OUTPUT;
+
+        $a = (object)['userfirstname' => $user->firstname];
+        $fullmessage = get_string('noteachinginfomessage', 'course', $a) . PHP_EOL . PHP_EOL . $insighturl->out(false);
+        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message',
+            ['url' => $insighturl->out(false), 'insightinfomessage' => get_string('noteachinginfomessage', 'course', $a)]
+        );
+
+        return [$fullmessage, $fullmessagehtml];
+    }
+
+    /**
      * prediction_actions
      *
      * @param \core_analytics\prediction $prediction
@@ -107,9 +128,7 @@ class no_teaching extends \core_analytics\local\target\binary {
                 $url, $pix, get_string('participants'));
         }
 
-        $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
-        // No need to show details as there is only 1 indicator.
-        unset($parentactions[\core_analytics\prediction::ACTION_PREDICTION_DETAILS]);
+        $parentactions = parent::prediction_actions($prediction, $includedetailsaction, $isinsightuser);
 
         return array_merge($actions, $parentactions);
     }

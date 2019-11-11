@@ -31,8 +31,10 @@ define(['jquery',
         'core/templates',
         'tool_lp/dialogue',
         'core/str',
-        'tool_lp/tree'],
-        function($, Notification, Ajax, Templates, Dialogue, Str, Tree) {
+        'tool_lp/tree',
+        'core/pending'
+        ],
+        function($, Notification, Ajax, Templates, Dialogue, Str, Tree, Pending) {
 
     /**
      * Competency picker class.
@@ -157,6 +159,7 @@ define(['jquery',
         // Add listener for add.
         self._find('[data-region="competencylinktree"] [data-action="add"]').click(function(e) {
             e.preventDefault();
+            var pendingPromise = new Pending();
             if (!self._selectedCompetencies.length) {
                 return;
             }
@@ -168,7 +171,10 @@ define(['jquery',
                 self._trigger('save', {competencyId: self._selectedCompetencies[0]});
             }
 
+            // The dialogue here is a YUI dialogue and doesn't support Promises at all.
+            // However, it is typically synchronous so this shoudl suffice.
             self.close();
+            pendingPromise.resolve();
         });
 
         // The list of selected competencies will be modified while looping (because of the listeners above).

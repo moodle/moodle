@@ -514,9 +514,12 @@ class subscriptions {
                         'userid' => $userid,
                         'forum' => $forumid,
                     ), null, 'id, discussion, preference');
+
+                    self::$forumdiscussioncache[$userid][$forumid] = array();
                     foreach ($subscriptions as $id => $data) {
                         self::add_to_discussion_cache($forumid, $userid, $data->discussion, $data->preference);
                     }
+
                     $subscriptions->close();
                 }
             } else {

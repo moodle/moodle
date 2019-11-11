@@ -15,18 +15,42 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum-action-menu
+    @template mod_forum/forum_action_menu
 
-    This template renders action menu for each course.
+    This template renders action menu for a forum discussion.
+
+    Context variables required for this template:
+    * capabilities Object - Uses the following attributes:
+      * manage boolean - Whether to render the lock action.
+      * favourite boolean - Whether to render the star/unstar action.
+      * pin boolean - Whether to render the star/unstar action.
+      * subscribe boolean - Whether to render the subscribe action.
+    * id int - The discussion ID.
+    * forumid int - The forum ID.
+    * istimelocked boolean - Whether this forum is time locked.
+    * settings Object - Uses the following attributes:
+      * excludetext boolean - Whether to show an icon only.
+      * togglemoreicon - Whether to show a toggle-more icon or not.
 
     Example context (json):
     {
-
+        "capabilities": {
+            "manage": true,
+            "favourite": true,
+            "pin": true,
+            "subscribe": true
+        },
+        "id": 1,
+        "forumid": 1,
+        "istimelocked": false,
+        "settings": {
+            "excludetext": false,
+            "togglemoreicon": false
+        }
     }
 }}
 <div class="ml-auto dropdown">
-    <button class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} m-t-0 p-t-0 btn btn-link btn-icon"
-        type="button"
+    <a href="#" class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} btn btn-link {{#settings.togglemoreicon}}btn-icon colour-inherit text-decoration-none d-flex align-items-center justify-content-center{{/settings.togglemoreicon}}"
         role="button"
         data-toggle="dropdown"
         aria-haspopup="true"
@@ -34,7 +58,7 @@
         aria-controls="forum-action-menu-{{id}}-menu"
         aria-expanded="false">
         {{#settings.togglemoreicon}}
-            {{#pix}} i/moremenu, core{{/pix}}
+            {{#pix}} i/menu, core{{/pix}}
         {{/settings.togglemoreicon}}
         {{^settings.togglemoreicon}}
             {{#pix}} i/settings, core{{/pix}}
@@ -42,9 +66,8 @@
         {{^settings.excludetext}}
             {{#str}} settings, mod_forum {{/str}}
         {{/settings.excludetext}}
-
-    </button>
-    <div class="dropdown-menu dropdown-menu-right menu"
+    </a>
+    <div class="dropdown-menu dropdown-menu-right"
          aria-labelledby="forum-action-menu-{{id}}-menu"
          data-rel="menu-content"
          role="menu"
@@ -56,9 +79,15 @@
             {{> mod_forum/discussion_pin_toggle}}
         {{/capabilities.pin}}
         {{#capabilities.manage}}
-        {{^istimelocked}}
-            {{> forum/discussion_lock_toggle }}
-        {{/istimelocked}}
+            {{^istimelocked}}
+                {{> forum/discussion_lock_toggle }}
+            {{/istimelocked}}
         {{/capabilities.manage}}
+        {{^settings.excludesubscription}}
+            {{> forum/discussion_subscription_toggle }}
+        {{/settings.excludesubscription}}
+        {{#unread}}
+            {{> forum/mark_as_read }}
+        {{/unread}}
     </div>
 </div>

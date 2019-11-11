@@ -72,4 +72,29 @@ class block_starredcourses extends block_base {
     public function applicable_formats() {
         return array('my' => true);
     }
+
+    /**
+     * Allow the block to have a configuration page
+     *
+     * @return boolean
+     */
+    public function has_config() {
+        return true;
+    }
+
+    /**
+     * Return the plugin config settings for external functions.
+     *
+     * @return stdClass the configs for both the block instance and plugin
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        // Return all settings for all users since it is safe (no private keys, etc..).
+        $configs = get_config('block_starredcourses');
+
+        return (object) [
+            'instance' => new stdClass(),
+            'plugin' => $configs,
+        ];
+    }
 }

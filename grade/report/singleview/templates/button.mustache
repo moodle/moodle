@@ -15,6 +15,14 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template gradereport_singleview/button
+
     Button.
+
+    Example context (json):
+    {
+        "type": "submit",
+        "value": "Save"
+    }
 }}
 <input type="{{type}}" value={{#quote}}{{value}}{{/quote}} class="btn btn-secondary">

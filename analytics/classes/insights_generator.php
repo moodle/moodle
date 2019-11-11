@@ -71,7 +71,6 @@ class insights_generator {
      * @return  null
      */
     public function generate($samplecontexts, $predictions) {
-        global $OUTPUT;
 
         $analyserclass = $this->target->get_analyser_class();
 
@@ -89,7 +88,7 @@ class insights_generator {
                 foreach ($users as $user) {
 
                     $this->set_notification_language($user);
-                    list($insighturl, $fullmessage, $fullmessagehtml) = $this->prediction_info($prediction);
+                    list($insighturl, $fullmessage, $fullmessagehtml) = $this->prediction_info($prediction, $context, $user);
                     $this->notification($context, $user, $insighturl, $fullmessage, $fullmessagehtml);
                 }
             }
@@ -99,6 +98,10 @@ class insights_generator {
             // Iterate through the context and the users in each context.
             foreach ($samplecontexts as $context) {
 
+                // Weird to pass both the context and the contextname to a method right, but this way we don't add unnecessary
+                // db reads calling get_context_name() multiple times.
+                $contextname = $context->get_context_name(false);
+
                 $users = $this->target->get_insights_users($context);
                 foreach ($users as $user) {
 
@@ -106,10 +109,8 @@ class insights_generator {
 
                     $insighturl = $this->target->get_insight_context_url($this->modelid, $context);
 
-                    $fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
-                    $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message',
-                        ['url' => $insighturl->out(false)]
-                    );
+                    list($fullmessage, $fullmessagehtml) = $this->target->get_insight_body($context, $contextname, $user,
+                        $insighturl);
 
                     $this->notification($context, $user, $insighturl, $fullmessage, $fullmessagehtml);
                 }
@@ -135,7 +136,7 @@ class insights_generator {
         $message->component = 'moodle';
         $message->name = 'insights';
 
-        $message->userfrom = \core_user::get_noreply_user();
+        $message->userfrom = \core_user::get_support_user();
         $message->userto = $user;
 
         $message->subject = $this->target->get_insight_subject($this->modelid, $context);
@@ -177,40 +178,78 @@ class insights_generator {
     /**
      * Extracts info from the prediction for display purposes.
      *
-     * @param  \core_analytics\prediction $prediction
+     * @param  \core_analytics\prediction   $prediction
+     * @param  \context                     $context
+     * @param  \stdClass                    $user
      * @return array Three items array with formats [\moodle_url, string, string]
      */
-    private function prediction_info(\core_analytics\prediction $prediction) {
+    private function prediction_info(\core_analytics\prediction $prediction, \context $context, \stdClass $user) {
         global $OUTPUT;
 
-        $predictionactions = $this->target->prediction_actions($prediction, true, true);
+        // The prediction actions get passed to the target so that it can show them in its preferred way.
+        $actions = array_merge(
+            $this->target->prediction_actions($prediction, true, true),
+            $this->target->bulk_actions([$prediction])
+        );
+        $predictioninfo = $this->target->get_insight_body_for_prediction($context, $user, $prediction, $actions);
 
         // For FORMAT_PLAIN.
-        $fullmessageplaintext  = '';
+        $fullmessageplaintext = '';
+        if (!empty($predictioninfo[FORMAT_PLAIN])) {
+            $fullmessageplaintext .= $predictioninfo[FORMAT_PLAIN];
+        }
+
+        $insighturl = $predictioninfo['url'] ?? null;
 
         // For FORMAT_HTML.
         $messageactions  = [];
-        $insighturl = null;
-        foreach ($predictionactions as $action) {
-            $actionurl = $action->get_url();
-            if (!$actionurl->get_param('forwardurl')) {
+        foreach ($actions as $action) {
+            if (!$action->get_url()->get_param('forwardurl')) {
 
-                $actiondoneurl = new \moodle_url('/report/insights/done.php');
+                $params = ['actionvisiblename' => $action->get_text(), 'target' => '_blank'];
+                $actiondoneurl = new \moodle_url('/report/insights/done.php', $params);
                 // Set the forward url to the 'done' script.
-                $actionurl->param('forwardurl', $actiondoneurl->out(false));
+                $action->get_url()->param('forwardurl', $actiondoneurl->out(false));
+            }
+
+            if ($action->get_url()->param('predictionid') === null) {
+                // Bulk actions do not include the prediction id by default.
+                $action->get_url()->param('predictionid', $prediction->get_prediction_data()->id);
             }
 
             if (empty($insighturl)) {
-                // We use the primary action url as insight url so we log that the user followed the provided link.
+                // Ideally the target provides us with the best URL for the insight, if it doesn't we default
+                // to the first actions.
                 $insighturl = $action->get_url();
             }
+
             $actiondata = (object)['url' => $action->get_url()->out(false), 'text' => $action->get_text()];
+
+            // Basic message for people who still lives in the 90s.
             $fullmessageplaintext .= get_string('insightinfomessageaction', 'analytics', $actiondata) . PHP_EOL;
-            $messageactions[] = $actiondata;
+
+            // We now process the HTML version actions, with a special treatment for useful/notuseful.
+            if ($action->get_action_name() === 'useful') {
+                $usefulurl = $actiondata->url;
+            } else if ($action->get_action_name() === 'notuseful') {
+                $notusefulurl = $actiondata->url;
+            } else {
+                $messageactions[] = $actiondata;
+            }
         }
 
-        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message_prediction',
-            ['actions' => $messageactions]);
+        // Extra condition because we don't want to show the yes/no unless we have urls for both of them.
+        if (!empty($usefulurl) && !empty($notusefulurl)) {
+            $usefulbuttons = ['usefulurl' => $usefulurl, 'notusefulurl' => $notusefulurl];
+        }
+
+        $contextinfo = [
+            'usefulbuttons' => !empty($usefulbuttons) ? $usefulbuttons : false,
+            'actions' => $messageactions,
+            'body' => $predictioninfo[FORMAT_HTML] ?? ''
+        ];
+        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message_prediction', $contextinfo);
+
         return [$insighturl, $fullmessageplaintext, $fullmessagehtml];
     }
 

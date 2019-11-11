@@ -26,9 +26,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// Just a link to course report.
-$ADMIN->add('reports', new admin_externalpage('reportinsights', get_string('insights', 'report_insights'),
-        $CFG->wwwroot . "/report/insights/insights.php?contextid=" . SYSCONTEXTID, 'moodle/analytics:listinsights'));
+if (\core_analytics\manager::is_analytics_enabled()) {
+    // Just a link to course report.
+    $ADMIN->add('reports', new admin_externalpage('reportinsights', get_string('insights', 'report_insights'),
+            $CFG->wwwroot . "/report/insights/insights.php?contextid=" . SYSCONTEXTID, 'moodle/analytics:listinsights'));
 
-// No report settings.
-$settings = null;
+    // No report settings.
+    $settings = null;
+}

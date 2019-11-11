@@ -433,7 +433,10 @@ class engine extends \core_search\engine {
             $query->addField($key);
             if ($dismax && !empty($field['mainquery'])) {
                 // Add fields the main query should be run against.
-                $query->addQueryField($key);
+                // Due to a regression in the PECL solr extension, https://bugs.php.net/bug.php?id=72740,
+                // a boost value is required, even if it is optional; to avoid boosting one among other fields,
+                // the explicit boost value will be the default one, for every field.
+                $query->addQueryField($key, 1);
             }
         }
     }
@@ -1441,5 +1444,41 @@ class engine extends \core_search\engine {
      */
     public function supports_users() {
         return true;
+    }
+
+    /**
+     * Solr supports deleting the index for a context.
+     *
+     * @param int $oldcontextid Context that has been deleted
+     * @return bool True to indicate that any data was actually deleted
+     * @throws \core_search\engine_exception
+     */
+    public function delete_index_for_context(int $oldcontextid) {
+        $client = $this->get_search_client();
+        try {
+            $client->deleteByQuery('contextid:' . $oldcontextid);
+            $client->commit(true);
+            return true;
+        } catch (\Exception $e) {
+            throw new \core_search\engine_exception('error_solr', 'search_solr', '', $e->getMessage());
+        }
+    }
+
+    /**
+     * Solr supports deleting the index for a course.
+     *
+     * @param int $oldcourseid
+     * @return bool True to indicate that any data was actually deleted
+     * @throws \core_search\engine_exception
+     */
+    public function delete_index_for_course(int $oldcourseid) {
+        $client = $this->get_search_client();
+        try {
+            $client->deleteByQuery('courseid:' . $oldcourseid);
+            $client->commit(true);
+            return true;
+        } catch (\Exception $e) {
+            throw new \core_search\engine_exception('error_solr', 'search_solr', '', $e->getMessage());
+        }
     }
 }

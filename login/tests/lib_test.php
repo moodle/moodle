@@ -53,7 +53,7 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/A password reset was requested for your account/', $email->body);
+        $this->assertRegExp('/A password reset was requested for your account/', quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -77,7 +77,7 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/A password reset was requested for your account/', $email->body);
+        $this->assertRegExp('/A password reset was requested for your account/', quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -119,7 +119,7 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/A password reset was requested for your account/', $email->body);
+        $this->assertRegExp('/A password reset was requested for your account/', quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -152,7 +152,7 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/A password reset was requested for your account/', $email->body);
+        $this->assertRegExp('/A password reset was requested for your account/', quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -169,7 +169,7 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/Unfortunately your account on this site is disabled/', $email->body);
+        $this->assertRegExp('/Unfortunately your account on this site is disabled/', quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -189,7 +189,7 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/Unfortunately passwords cannot be reset on this site/', $email->body);
+        $this->assertRegExp('/Unfortunately passwords cannot be reset on this site/', quoted_printable_decode($email->body));
         $sink->clear();
     }
 

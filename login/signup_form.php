@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot . '/user/editlib.php');
+require_once('lib.php');
 
 class login_signup_form extends moodleform implements renderable, templatable {
     function definition() {
@@ -97,6 +98,9 @@ class login_signup_form extends moodleform implements renderable, templatable {
             $mform->closeHeaderBefore('recaptcha_element');
         }
 
+        // Hook for plugins to extend form definition.
+        core_login_extend_signup_form($mform);
+
         // Add "Agree to sitepolicy" controls. By default it is a link to the policy text and a checkbox but
         // it can be implemented differently in custom sitepolicy handlers.
         $manager = new \core_privacy\local\sitepolicy\manager();
@@ -127,6 +131,9 @@ class login_signup_form extends moodleform implements renderable, templatable {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
+        // Extend validation for any form extensions from plugins.
+        $errors = array_merge($errors, core_login_validate_extend_signup_form($data));
 
         if (signup_captcha_enabled()) {
             $recaptchaelement = $this->_form->getElement('recaptcha_element');

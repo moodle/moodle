@@ -25,12 +25,20 @@ define(
 [
     'jquery',
     'core/custom_interaction_events',
-    'mod_forum/selectors'
+    'mod_forum/selectors',
+    'core/pubsub',
+    'mod_forum/forum_events',
+    'core/str',
+    'core/notification',
 ],
 function(
     $,
     CustomEvents,
-    Selectors
+    Selectors,
+    PubSub,
+    ForumEvents,
+    String,
+    Notification
 ) {
 
     /**
@@ -88,14 +96,16 @@ function(
                 // No siblings either. That means we're the lowest level reply in a thread
                 // so we need to walk back up the tree of posts and find an ancestor post that
                 // has a sibling post we can focus.
-                currentPost.parents().toArray().forEach(function(parent) {
-                    var ancestorSiblingPost = $(parent).next(Selectors.post.post);
+                var parentPosts = currentPost.parents(Selectors.post.post).toArray();
+
+                for (var i = 0; i < parentPosts.length; i++) {
+                    var ancestorSiblingPost = $(parentPosts[i]).next(Selectors.post.post);
 
                     if (ancestorSiblingPost.length) {
                         ancestorSiblingPost.focus();
-                        return;
+                        break;
                     }
-                });
+                }
             }
         }
     };
@@ -258,6 +268,19 @@ function(
 
             e.stopPropagation();
             data.originalEvent.preventDefault();
+        });
+
+        PubSub.subscribe(ForumEvents.SUBSCRIPTION_TOGGLED, function(data) {
+            var subscribed = data.subscriptionState;
+            var updateMessage = subscribed ? 'discussionsubscribed' : 'discussionunsubscribed';
+            String.get_string(updateMessage, "forum")
+                .then(function(s) {
+                    return Notification.addNotification({
+                        message: s,
+                        type: "info"
+                    });
+                })
+                .catch(Notification.exception);
         });
     };
 

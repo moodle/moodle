@@ -55,7 +55,7 @@ class event_icon_exporter extends exporter {
         $user = $event->get_user();
         $userid = $user ? $user->get('id') : null;
         $isactivityevent = !empty($coursemodule);
-        $isglobalevent = ($course && $courseid == SITEID);
+        $issiteevent = ($course && $courseid == SITEID);
         $iscategoryevent = ($category && !empty($categoryid));
         $iscourseevent = ($course && !empty($courseid) && $courseid != SITEID && empty($groupid));
         $isgroupevent = ($group && !empty($groupid));
@@ -70,7 +70,7 @@ class event_icon_exporter extends exporter {
             } else {
                 $alttext = get_string('activityevent', 'calendar');
             }
-        } else if ($isglobalevent) {
+        } else if ($issiteevent) {
             $key = 'i/siteevent';
             $component = 'core';
             $alttext = get_string('typesite', 'calendar');

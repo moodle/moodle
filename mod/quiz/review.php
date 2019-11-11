@@ -94,11 +94,9 @@ if ($options->flags == question_display_options::EDITABLE && optional_param('sav
 
 // Work out appropriate title and whether blocks should be shown.
 if ($attemptobj->is_own_preview()) {
-    $strreviewtitle = get_string('reviewofpreview', 'quiz');
     navigation_node::override_active_url($attemptobj->start_attempt_url());
 
 } else {
-    $strreviewtitle = get_string('reviewofattempt', 'quiz', $attemptobj->get_attempt_number());
     if (empty($attemptobj->get_quiz()->showblocks) && !$attemptobj->is_preview_user()) {
         $PAGE->blocks->show_only_fake_blocks();
     }
@@ -106,7 +104,7 @@ if ($attemptobj->is_own_preview()) {
 
 // Set up the page header.
 $headtags = $attemptobj->get_html_head_contributions($page, $showall);
-$PAGE->set_title($attemptobj->get_quiz_name());
+$PAGE->set_title($attemptobj->review_page_title($page, $showall));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 
 // Summary table start. ============================================================================

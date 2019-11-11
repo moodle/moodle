@@ -78,6 +78,20 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertFalse(\core_search\manager::is_global_search_enabled());
     }
 
+    public function test_course_search_url() {
+
+        $this->resetAfterTest();
+
+        // URL is course/search.php by default.
+        $this->assertEquals(new moodle_url("/course/search.php"), \core_search\manager::get_course_search_url());
+
+        set_config('enableglobalsearch', true);
+        $this->assertEquals(new moodle_url("/search/index.php"), \core_search\manager::get_course_search_url());
+
+        set_config('enableglobalsearch', false);
+        $this->assertEquals(new moodle_url("/course/search.php"), \core_search\manager::get_course_search_url());
+    }
+
     public function test_search_areas() {
         global $CFG;
 
@@ -1449,4 +1463,52 @@ class search_manager_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Tests the context_deleted, course_deleting_start, and course_deleting_finish methods.
+     */
+    public function test_context_deletion() {
+        $this->resetAfterTest();
+
+        // Create one course with 4 activities, and another with one.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course();
+        $page1 = $generator->create_module('page', ['course' => $course1]);
+        $context1 = \context_module::instance($page1->cmid);
+        $page2 = $generator->create_module('page', ['course' => $course1]);
+        $page3 = $generator->create_module('page', ['course' => $course1]);
+        $context3 = \context_module::instance($page3->cmid);
+        $page4 = $generator->create_module('page', ['course' => $course1]);
+        $course2 = $generator->create_course();
+        $page5 = $generator->create_module('page', ['course' => $course2]);
+        $context5 = \context_module::instance($page5->cmid);
+
+        // Also create a user.
+        $user = $generator->create_user();
+        $usercontext = \context_user::instance($user->id);
+
+        $search = testable_core_search::instance();
+
+        // Delete two of the pages individually.
+        course_delete_module($page1->cmid);
+        course_delete_module($page3->cmid);
+
+        // Delete the course with another two.
+        delete_course($course1->id, false);
+
+        // Delete the user.
+        delete_user($user);
+
+        // Delete the page from the other course.
+        course_delete_module($page5->cmid);
+
+        // It should have deleted the contexts and the course, but not the contexts in the course.
+        $expected = [
+            ['context', $context1->id],
+            ['context', $context3->id],
+            ['course', $course1->id],
+            ['context', $usercontext->id],
+            ['context', $context5->id]
+        ];
+        $this->assertEquals($expected, $search->get_engine()->get_and_clear_deletes());
+    }
 }

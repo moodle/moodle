@@ -34,7 +34,6 @@ Options:
 --list                 List models
 --non-interactive      Not interactive questions
 --analysisinterval     Restrict the evaluation to 1 single analysis interval (Optional)
---filter               Analyser dependant. e.g. A courseid would evaluate the model using a single course (Optional)
 --mode                 'configuration' or 'trainedmodel'. You can only use mode=trainedmodel when the trained" .
     " model was imported" . "
 --reuse-prev-analysed  Reuse recently analysed courses instead of analysing the whole site. Set it to false while" .
@@ -42,7 +41,7 @@ Options:
 -h, --help             Print out this help
 
 Example:
-\$ php admin/tool/analytics/cli/evaluate_model.php --modelid=1 --analysisinterval='\\core\\analytics\\time_splitting\\quarters' --filter=123,321
+\$ php admin/tool/analytics/cli/evaluate_model.php --modelid=1 --analysisinterval='\\core\\analytics\\time_splitting\\quarters'
 ";
 
 // Now get cli options.
@@ -55,7 +54,6 @@ list($options, $unrecognized) = cli_get_params(
         'mode'                  => 'configuration',
         'reuse-prev-analysed'   => true,
         'non-interactive'       => false,
-        'filter'                => false
     ),
     array(
         'h' => 'help',
@@ -64,6 +62,11 @@ list($options, $unrecognized) = cli_get_params(
 
 if ($options['help']) {
     echo $help;
+    exit(0);
+}
+
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    echo get_string('analyticsdisabled', 'analytics') . PHP_EOL;
     exit(0);
 }
 
@@ -76,11 +79,6 @@ if ($options['modelid'] === false) {
     // All actions but --list require a modelid.
     echo $help;
     exit(0);
-}
-
-// Reformat them as an array.
-if ($options['filter'] !== false) {
-    $options['filter'] = explode(',', $options['filter']);
 }
 
 if ($options['mode'] !== 'configuration' && $options['mode'] !== 'trainedmodel') {
@@ -102,8 +100,9 @@ if ($options['reuse-prev-analysed']) {
     mtrace(get_string('evaluationinbatches', 'tool_analytics'));
 }
 
+$renderer = $PAGE->get_renderer('tool_analytics');
+
 $analyseroptions = array(
-    'filter' => $options['filter'],
     'timesplitting' => $options['analysisinterval'],
     'reuseprevanalysed' => $options['reuse-prev-analysed'],
     'mode' => $options['mode'],
@@ -114,7 +113,6 @@ $results = $model->evaluate($analyseroptions);
 // Reset the page as some indicators may call external functions that overwrite the page context.
 \tool_analytics\output\helper::reset_page();
 
-$renderer = $PAGE->get_renderer('tool_analytics');
 echo $renderer->render_evaluate_results($results, $model->get_analyser()->get_logs());
 
 // Check that we have, at leasa,t 1 valid dataset (not necessarily good) to use.

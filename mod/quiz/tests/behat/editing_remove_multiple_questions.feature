@@ -21,8 +21,6 @@ Feature: Edit quiz page - remove multiple questions
       | activity   | name   | course | idnumber |
       | quiz       | Quiz 1 | C1     | quiz1    |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
 
   @javascript
   Scenario: Delete selected question using select multiple items feature.
@@ -36,7 +34,7 @@ Feature: Edit quiz page - remove multiple questions
       | Question A | 1    |
       | Question B | 1    |
       | Question C | 2    |
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
 
     # Confirm the starting point.
     Then I should see "Question A" on quiz page "1"
@@ -70,7 +68,7 @@ Feature: Edit quiz page - remove multiple questions
       | Question A | 1    |
       | Question B | 2    |
       | Question C | 2    |
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
 
   # Confirm the starting point.
     Then I should see "Question A" on quiz page "1"
@@ -100,8 +98,8 @@ Feature: Edit quiz page - remove multiple questions
     And quiz "Quiz 1" contains the following questions:
       | question   | page |
       | Question A | 1    |
-    When I navigate to "Edit quiz" in current page administration
-    And I click on "Select multiple items" "button"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    When I click on "Select multiple items" "button"
     And I click on "selectquestion-1" "checkbox"
     And I click on "Delete selected" "button"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
@@ -119,9 +117,9 @@ Feature: Edit quiz page - remove multiple questions
       | Question A | 1    |
       | Question B | 1    |
       | Question C | 2    |
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
 
-  # Confirm the starting point.
+    # Confirm the starting point.
     Then I should see "Question A" on quiz page "1"
     And I should see "Question B" on quiz page "1"
     And I should see "Question C" on quiz page "2"
@@ -129,7 +127,7 @@ Feature: Edit quiz page - remove multiple questions
     And I should see "Questions: 3"
     And I should see "This quiz is open"
 
-  # Delete all questions in page. Page contains multiple questions
+    # Delete all questions in page. Page contains multiple questions
     When I click on "Select multiple items" "button"
     Then I press "Select all"
     And I click on "Delete selected" "button"
@@ -153,7 +151,7 @@ Feature: Edit quiz page - remove multiple questions
       | Question A | 1    |
       | Question B | 1    |
       | Question C | 2    |
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
 
   # Confirm the starting point.
     Then I should see "Question A" on quiz page "1"
@@ -191,7 +189,7 @@ Feature: Edit quiz page - remove multiple questions
       | Section 1 | 1         | 0       |
       | Section 2 | 2         | 0       |
       | Section 3 | 4         | 0       |
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
 
     When I click on "Select multiple items" "button"
     And I click on "selectquestion-3" "checkbox"
@@ -230,7 +228,7 @@ Feature: Edit quiz page - remove multiple questions
       | Section 1 | 1         | 0       |
       | Section 2 | 2         | 0       |
       | Section 3 | 4         | 0       |
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
 
     When I click on "Select multiple items" "button"
     And I click on "selectquestion-2" "checkbox"

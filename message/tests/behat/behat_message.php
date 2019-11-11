@@ -38,6 +38,69 @@ require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 class behat_message extends behat_base {
 
     /**
+     * Return the list of partial named selectors.
+     *
+     * @return array
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector('Message', [".//*[@data-conversation-id]//img[%altMatch%]/.."]),
+            new behat_component_named_selector('Message conversation', [
+                <<<XPATH
+    .//*[@data-region='message-drawer' and contains(., %locator%)]//div[@data-region='content-message-container']
+XPATH
+            ], false),
+            new behat_component_named_selector('Message header', [
+                <<<XPATH
+    .//*[@data-region='message-drawer']//div[@data-region='header-content' and contains(., %locator%)]
+XPATH
+            ]),
+            new behat_component_named_selector('Message member', [
+                <<<XPATH
+    .//*[@data-region='message-drawer']//div[@data-region='group-info-content-container']
+    //div[@class='list-group' and not(contains(@class, 'hidden'))]//*[%core_message/textMatch%]
+XPATH
+                , <<<XPATH
+    .//*[@data-region='message-drawer']//div[@data-region='group-info-content-container']
+    //div[@data-region='empty-message-container' and not(contains(@class, 'hidden')) and contains(., %locator%)]
+XPATH
+            ], false),
+            new behat_component_named_selector('Message tab', [
+                <<<XPATH
+    .//*[@data-region='message-drawer']//button[@data-toggle='collapse' and contains(string(), %locator%)]
+XPATH
+            ], false),
+            new behat_component_named_selector('Message list area', [
+                <<<XPATH
+    .//*[@data-region='message-drawer']//*[contains(@data-region, concat('view-overview-', %locator%))]
+XPATH
+            ], false),
+            new behat_component_named_selector('Message content', [
+                <<<XPATH
+    .//*[@data-region='message-drawer']//*[@data-region='message' and @data-message-id and contains(., %locator%)]
+XPATH
+            ], false),
+        ];
+    }
+
+    /**
+     * Return a list of the Mink named replacements for the component.
+     *
+     * Named replacements allow you to define parts of an xpath that can be reused multiple times, or in multiple
+     * xpaths.
+     *
+     * This method should return a list of {@link behat_component_named_replacement} and the docs on that class explain
+     * how it works.
+     *
+     * @return behat_component_named_replacement[]
+     */
+    public static function get_named_replacements(): array {
+        return [
+            new behat_component_named_replacement('textMatch', 'text()[contains(., %locator%)]'),
+        ];
+    }
+
+    /**
      * Open the messaging UI.
      *
      * @Given /^I open messaging$/
@@ -57,7 +120,7 @@ class behat_message extends behat_base {
     public function i_open_the_conversations_list(string $tab) {
         $this->execute('behat_general::i_click_on', [
             $this->escape($tab),
-            'group_message_tab'
+            'core_message > Message tab'
         ]);
     }
 
@@ -78,7 +141,7 @@ class behat_message extends behat_base {
      */
     public function i_view_contact_in_messages($userfullname) {
         // Visit home page and follow messages.
-        $this->i_select_user_in_messaging($userfullname);
+        $this->execute('behat_message::i_select_user_in_messaging', [$userfullname]);
 
         $this->execute('behat_general::i_click_on_in_the',
             array(
@@ -107,9 +170,9 @@ class behat_message extends behat_base {
      * @param string $userfullname
      */
     public function i_select_user_in_messaging($userfullname) {
-        $this->i_open_messaging();
+        $this->execute('behat_message::i_open_messaging', []);
 
-        $this->i_search_for_string_in_messaging($userfullname);
+        $this->execute('behat_message::i_search_for_string_in_messaging', [$userfullname]);
 
         // Need to limit the click to the search results because the 'view-contact-profile' elements
         // can occur in two separate divs on the page.
@@ -154,7 +217,7 @@ class behat_message extends behat_base {
      * @param string $userfullname
      */
     public function i_send_message_to_user($messagecontent, $userfullname) {
-        $this->i_select_user_in_messaging($userfullname);
+        $this->execute('behat_message::i_select_user_in_messaging', [$userfullname]);
 
         $this->execute('behat_forms::i_set_the_field_with_xpath_to',
             array("//textarea[@data-region='send-message-txt']", $this->escape($messagecontent))
@@ -213,7 +276,7 @@ class behat_message extends behat_base {
         $this->execute('behat_general::i_click_on',
             array(
                 $this->escape($conversationname),
-                'group_message',
+                'core_message > Message',
             )
         );
     }

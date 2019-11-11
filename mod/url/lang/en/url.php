@@ -47,8 +47,14 @@ $string['invalidstoredurl'] = 'Cannot display this resource, URL is invalid.';
 $string['chooseavariable'] = 'Choose a variable...';
 $string['indicator:cognitivedepth'] = 'URL cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a URL resource.';
+$string['indicator:cognitivedepthdef'] = 'URL cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the URL resources during this analysis interval (Levels = No view, View)';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'URL social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a URL resource.';
+$string['indicator:socialbreadthdef'] = 'URL social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the URL resources during this analysis interval (Levels = No participation, Participant alone)';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['invalidurl'] = 'Entered URL is invalid';
 $string['modulename'] = 'URL';
 $string['modulename_help'] = 'The URL module enables a teacher to provide a web link as a course resource. Anything that is freely available online, such as documents or images, can be linked to; the URL doesn’t have to be the home page of a website. The URL of a particular web page may be copied and pasted or a teacher can use the file picker and choose a link from a repository such as Flickr, YouTube or Wikimedia (depending upon which repositories are enabled for the site).

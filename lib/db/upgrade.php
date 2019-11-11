@@ -2028,16 +2028,18 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2018092800.02) {
         // Delete any contacts that are not mutual (meaning they both haven't added each other).
-        $sql = "SELECT c1.id
-                  FROM {message_contacts} c1
-             LEFT JOIN {message_contacts} c2
-                    ON c1.userid = c2.contactid
-                   AND c1.contactid = c2.userid
-                 WHERE c2.id IS NULL";
-        if ($contacts = $DB->get_records_sql($sql)) {
-            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contacts));
-            $DB->delete_records_select('message_contacts', "id $insql", $inparams);
-        }
+        do {
+            $sql = "SELECT c1.id
+                      FROM {message_contacts} c1
+                 LEFT JOIN {message_contacts} c2
+                        ON c1.userid = c2.contactid
+                       AND c1.contactid = c2.userid
+                     WHERE c2.id IS NULL";
+            if ($contacts = $DB->get_records_sql($sql, null, 0, 1000)) {
+                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contacts));
+                $DB->delete_records_select('message_contacts', "id $insql", $inparams);
+            }
+        } while ($contacts);
 
         upgrade_main_savepoint(true, 2018092800.02);
     }
@@ -3361,7 +3363,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Add default backpacks.
-        require_once($CFG->libdir.'/badgeslib.php'); // Core Upgrade-related functions for badges only.
+        require_once($CFG->dirroot . '/badges/upgradelib.php'); // Core install and upgrade related functions only for badges.
         badges_install_default_backpacks();
 
         // Main savepoint reached.
@@ -3464,5 +3466,302 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019073100.00);
     }
+
+    if ($oldversion < 2019083000.01) {
+
+        // If block_community is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/blocks/community/communitycourse.php')) {
+            // Drop table that is no longer needed.
+            $table = new xmldb_table('block_community');
+            if ($dbman->table_exists($table)) {
+                $dbman->drop_table($table);
+            }
+
+            // Delete instances.
+            $instances = $DB->get_records_list('block_instances', 'blockname', ['community']);
+            $instanceids = array_keys($instances);
+
+            if (!empty($instanceids)) {
+                $DB->delete_records_list('block_positions', 'blockinstanceid', $instanceids);
+                $DB->delete_records_list('block_instances', 'id', $instanceids);
+                list($sql, $params) = $DB->get_in_or_equal($instanceids, SQL_PARAMS_NAMED);
+                $params['contextlevel'] = CONTEXT_BLOCK;
+                $DB->delete_records_select('context', "contextlevel=:contextlevel AND instanceid " . $sql, $params);
+
+                $preferences = array();
+                foreach ($instances as $instanceid => $instance) {
+                    $preferences[] = 'block' . $instanceid . 'hidden';
+                    $preferences[] = 'docked_block_instance_' . $instanceid;
+                }
+                $DB->delete_records_list('user_preferences', 'name', $preferences);
+            }
+
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'community'));
+
+            // Remove capabilities.
+            capabilities_cleanup('block_community');
+            // Clean config.
+            unset_all_config_for_plugin('block_community');
+
+            // Remove Moodle-level community based capabilities.
+            $capabilitiestoberemoved = ['block/community:addinstance', 'block/community:myaddinstance'];
+            // Delete any role_capabilities for the old roles.
+            $DB->delete_records_list('role_capabilities', 'capability', $capabilitiestoberemoved);
+            // Delete the capability itself.
+            $DB->delete_records_list('capabilities', 'name', $capabilitiestoberemoved);
+        }
+
+        upgrade_main_savepoint(true, 2019083000.01);
+    }
+
+    if ($oldversion < 2019083000.02) {
+        // Remove unused config.
+        unset_config('enablecoursepublishing');
+        upgrade_main_savepoint(true, 2019083000.02);
+    }
+
+    if ($oldversion < 2019083000.04) {
+        // Delete "orphaned" subscriptions.
+        $sql = "SELECT DISTINCT es.userid
+                  FROM {event_subscriptions} es
+             LEFT JOIN {user} u ON u.id = es.userid
+                 WHERE u.deleted = 1 OR u.id IS NULL";
+        $deletedusers = $DB->get_field_sql($sql);
+        if ($deletedusers) {
+            list($sql, $params) = $DB->get_in_or_equal($deletedusers);
+
+            // Delete orphaned subscriptions.
+            $DB->execute("DELETE FROM {event_subscriptions} WHERE userid " . $sql, $params);
+        }
+
+        upgrade_main_savepoint(true, 2019083000.04);
+    }
+
+    if ($oldversion < 2019090500.01) {
+
+        // Define index analysableid (not unique) to be added to analytics_used_analysables.
+        $table = new xmldb_table('analytics_used_analysables');
+        $index = new xmldb_index('analysableid', XMLDB_INDEX_NOTUNIQUE, ['analysableid']);
+
+        // Conditionally launch add index analysableid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019090500.01);
+    }
+
+    if ($oldversion < 2019092700.01) {
+        upgrade_rename_prediction_actions_useful_incorrectly_flagged();
+        upgrade_main_savepoint(true, 2019092700.01);
+    }
+
+    if ($oldversion < 2019100800.02) {
+        // Rename the official moodle sites directory the site is registered with.
+        $DB->execute("UPDATE {registration_hubs}
+                         SET hubname = ?, huburl = ?
+                       WHERE huburl = ?", ['moodle', 'https://stats.moodle.org', 'https://moodle.net']);
+
+        // Convert the hub site specific settings to the new naming format without the hub URL in the name.
+        $hubconfig = get_config('hub');
+
+        if (!empty($hubconfig)) {
+            foreach (upgrade_convert_hub_config_site_param_names($hubconfig, 'https://moodle.net') as $name => $value) {
+                set_config($name, $value, 'hub');
+            }
+        }
+
+        upgrade_main_savepoint(true, 2019100800.02);
+    }
+
+    if ($oldversion < 2019100900.00) {
+        // If block_participants is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/blocks/participants/block_participants.php')) {
+            // Delete instances.
+            $instances = $DB->get_records_list('block_instances', 'blockname', ['participants']);
+            $instanceids = array_keys($instances);
+
+            if (!empty($instanceids)) {
+                $DB->delete_records_list('block_positions', 'blockinstanceid', $instanceids);
+                $DB->delete_records_list('block_instances', 'id', $instanceids);
+                list($sql, $params) = $DB->get_in_or_equal($instanceids, SQL_PARAMS_NAMED);
+                $params['contextlevel'] = CONTEXT_BLOCK;
+                $DB->delete_records_select('context', "contextlevel=:contextlevel AND instanceid " . $sql, $params);
+
+                $preferences = array();
+                foreach ($instances as $instanceid => $instance) {
+                    $preferences[] = 'block' . $instanceid . 'hidden';
+                    $preferences[] = 'docked_block_instance_' . $instanceid;
+                }
+                $DB->delete_records_list('user_preferences', 'name', $preferences);
+            }
+
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'participants'));
+
+            // Remove capabilities.
+            capabilities_cleanup('block_participants');
+
+            // Clean config.
+            unset_all_config_for_plugin('block_participants');
+        }
+
+        upgrade_main_savepoint(true, 2019100900.00);
+    }
+
+    if ($oldversion < 2019101600.01) {
+
+        // Change the setting $CFG->requestcategoryselection into $CFG->lockrequestcategory with opposite value.
+        set_config('lockrequestcategory', empty($CFG->requestcategoryselection));
+
+        upgrade_main_savepoint(true, 2019101600.01);
+    }
+
+    if ($oldversion < 2019101800.02) {
+
+        // Get the table by its previous name.
+        $table = new xmldb_table('analytics_models');
+        if ($dbman->table_exists($table)) {
+
+            // Define field contextids to be added to analytics_models.
+            $field = new xmldb_field('contextids', XMLDB_TYPE_TEXT, null, null, null, null, null, 'version');
+
+            // Conditionally launch add field contextids.
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019101800.02);
+    }
+
+    if ($oldversion < 2019102500.04) {
+        // Define table h5p_libraries to be created.
+        $table = new xmldb_table('h5p_libraries');
+
+        // Adding fields to table h5p_libraries.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('machinename', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('majorversion', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('minorversion', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('patchversion', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('runnable', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('fullscreen', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('embedtypes', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('preloadedjs', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('preloadedcss', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('droplibrarycss', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('semantics', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('addto', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table h5p_libraries.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table h5p_libraries.
+        $table->add_index('machinemajorminorpatch', XMLDB_INDEX_NOTUNIQUE,
+            ['machinename', 'majorversion', 'minorversion', 'patchversion', 'runnable']);
+
+        // Conditionally launch create table for h5p_libraries.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table h5p_library_dependencies to be created.
+        $table = new xmldb_table('h5p_library_dependencies');
+
+        // Adding fields to table h5p_library_dependencies.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('libraryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('requiredlibraryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('dependencytype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table h5p_library_dependencies.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('libraryid', XMLDB_KEY_FOREIGN, ['libraryid'], 'h5p_libraries', ['id']);
+        $table->add_key('requiredlibraryid', XMLDB_KEY_FOREIGN, ['requiredlibraryid'], 'h5p_libraries', ['id']);
+
+        // Conditionally launch create table for h5p_library_dependencies.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table h5p to be created.
+        $table = new xmldb_table('h5p');
+
+        // Adding fields to table h5p.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('jsoncontent', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('mainlibraryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('displayoptions', XMLDB_TYPE_INTEGER, '4', null, null, null, null);
+        $table->add_field('pathnamehash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('filtered', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table h5p.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('mainlibraryid', XMLDB_KEY_FOREIGN, ['mainlibraryid'], 'h5p_libraries', ['id']);
+
+        // Conditionally launch create table for h5p.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table h5p_contents_libraries to be created.
+        $table = new xmldb_table('h5p_contents_libraries');
+
+        // Adding fields to table h5p_contents_libraries.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('h5pid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('libraryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('dependencytype', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('dropcss', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('weight', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table h5p_contents_libraries.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('h5pid', XMLDB_KEY_FOREIGN, ['h5pid'], 'h5p', ['id']);
+        $table->add_key('libraryid', XMLDB_KEY_FOREIGN, ['libraryid'], 'h5p_libraries', ['id']);
+
+        // Conditionally launch create table for h5p_contents_libraries.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table h5p_libraries_cachedassets to be created.
+        $table = new xmldb_table('h5p_libraries_cachedassets');
+
+        // Adding fields to table h5p_libraries_cachedassets.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('libraryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('hash', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table h5p_libraries_cachedassets.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('libraryid', XMLDB_KEY_FOREIGN, ['libraryid'], 'h5p_libraries_cachedassets', ['id']);
+
+        // Conditionally launch create table for h5p_libraries_cachedassets.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019102500.04);
+    }
+
+    if ($oldversion < 2019103000.13) {
+
+        $DB->execute("UPDATE {analytics_models} set contextids = null
+                       WHERE contextids = :zero or contextids = :null", ['zero' => '0', 'null' => 'null']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019103000.13);
+    }
+
     return true;
 }

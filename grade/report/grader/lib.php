@@ -767,7 +767,7 @@ class grade_report_grader extends grade_report {
                 $fieldcell = new html_table_cell();
                 $fieldcell->attributes['class'] = 'userfield user' . $field;
                 $fieldcell->header = false;
-                $fieldcell->text = $user->{$field};
+                $fieldcell->text = s($user->{$field});
                 $userrow->cells[] = $fieldcell;
             }
 

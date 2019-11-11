@@ -43,6 +43,7 @@ $functions = array(
         'classpath' => 'mod/forum/externallib.php',
         'description' => 'Returns a list of forum posts for a discussion.',
         'type' => 'read',
+        'ajax' => true,
         'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
@@ -174,5 +175,48 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+
+    'mod_forum_delete_post' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'delete_post',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Deletes a post or a discussion completely when the post is the discussion topic.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+
+    'mod_forum_get_discussion_posts_by_userid' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'get_discussion_posts_by_userid',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Returns a list of forum posts for a discussion for a user.',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting',
+    ),
+    'mod_forum_get_discussion_post' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'get_discussion_post',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Get a particular discussion post.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_forum_prepare_draft_area_for_post' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'prepare_draft_area_for_post',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Prepares a draft area for editing a post.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_forum_update_discussion_post' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'update_discussion_post',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Updates a post or a discussion topic post.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 );

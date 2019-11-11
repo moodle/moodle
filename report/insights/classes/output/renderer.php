@@ -58,6 +58,7 @@ class renderer extends plugin_renderer_base {
      */
     protected function render_insight(renderable $renderable) {
         $data = $renderable->export_for_template($this);
+        $renderable->get_model()->get_target()->add_bulk_actions_js();
         return parent::render_from_template('report_insights/insight_details', $data);
     }
 
@@ -116,6 +117,27 @@ class renderer extends plugin_renderer_base {
 
         $output = $OUTPUT->header();
         $output .= $OUTPUT->notification(get_string('noinsightsmodel', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= $OUTPUT->footer();
+
+        return $output;
+    }
+
+    /**
+     * Renders an analytics disabled notification.
+     *
+     * @return string HTML
+     */
+    public function render_analytics_disabled() {
+        global $OUTPUT, $PAGE, $FULLME;
+
+        $PAGE->set_url($FULLME);
+        $PAGE->set_title(get_string('pluginname', 'report_insights'));
+        $PAGE->set_heading(get_string('pluginname', 'report_insights'));
+
+        $output = $OUTPUT->header();
+        $output .= $OUTPUT->notification(get_string('analyticsdisabled', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= \html_writer::tag('a', get_string('continue'), ['class' => 'btn btn-primary',
+            'href' => (new \moodle_url('/'))->out()]);
         $output .= $OUTPUT->footer();
 
         return $output;

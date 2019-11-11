@@ -61,7 +61,6 @@ abstract class CSSList implements Renderable, Commentable {
 				$oListItem->setComments($comments);
 				$oList->append($oListItem);
 			}
-			$oParserState->consumeWhiteSpace();
 		}
 		if(!$bIsRoot && !$bLenientParsing) {
 			throw new SourceException("Unexpected end of document", $oParserState->currentLine());

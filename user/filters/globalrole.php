@@ -82,7 +82,7 @@ class user_filter_globalrole extends user_filter_type {
     public function check_data($formdata) {
         $field = $this->_name;
 
-        if (array_key_exists($field, $formdata) and !empty($formdata->$field)) {
+        if (property_exists($formdata, $field) and !empty($formdata->$field)) {
             return array('value' => (int)$formdata->$field);
         }
         return false;

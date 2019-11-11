@@ -50,6 +50,7 @@ class purge_caches extends \moodleform {
             $mform->createElement('advcheckbox', 'theme', '', get_string('purgethemecache', 'admin')),
             $mform->createElement('advcheckbox', 'lang', '', get_string('purgelangcache', 'admin')),
             $mform->createElement('advcheckbox', 'js', '', get_string('purgejscache', 'admin')),
+            $mform->createElement('advcheckbox', 'template', '', get_string('purgetemplates', 'admin')),
             $mform->createElement('advcheckbox', 'filter', '', get_string('purgefiltercache', 'admin')),
             $mform->createElement('advcheckbox', 'muc', '', get_string('purgemuc', 'admin')),
             $mform->createElement('advcheckbox', 'other', '', get_string('purgeothercaches', 'admin'))

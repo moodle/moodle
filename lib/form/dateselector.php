@@ -97,11 +97,6 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
                 }
             }
         }
-
-        // The YUI2 calendar only supports the gregorian calendar type.
-        if ($calendartype->get_name() === 'gregorian') {
-            form_init_date_js();
-        }
     }
 
     /**
@@ -256,7 +251,19 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
      * @param string $error An error message associated with a group
      */
     function accept(&$renderer, $required = false, $error = null) {
+        form_init_date_js();
         $renderer->renderElement($this, $required, $error);
+    }
+
+    /**
+     * Export for template
+     *
+     * @param renderer_base $output
+     * @return array|stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        form_init_date_js();
+        return parent::export_for_template($output);
     }
 
     /**

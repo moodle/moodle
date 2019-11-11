@@ -314,12 +314,18 @@ class assign_submission_file extends assign_submission_plugin {
      * @return boolean
      */
     public function remove(stdClass $submission) {
+        global $DB;
         $fs = get_file_storage();
 
         $fs->delete_area_files($this->assignment->get_context()->id,
                                'assignsubmission_file',
                                ASSIGNSUBMISSION_FILE_FILEAREA,
                                $submission->id);
+
+        $currentsubmission = $this->get_file_submission($submission->id);
+        $currentsubmission->numfiles = 0;
+        $DB->update_record('assignsubmission_file', $currentsubmission);
+
         return true;
     }
 
@@ -630,5 +636,13 @@ class assign_submission_file extends assign_submission_plugin {
         $sets = $util->normalize_file_types($typeslist);
 
         return $sets;
+    }
+
+    /**
+     * Determine if the plugin allows image file conversion
+     * @return bool
+     */
+    public function allow_image_conversion() {
+        return true;
     }
 }

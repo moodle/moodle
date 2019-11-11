@@ -521,13 +521,53 @@ abstract class gradingform_controller {
      * @param int $raterid
      * @param int $itemid
      * @return gradingform_instance
+     * @throws dml_exception
      */
     public function get_or_create_instance($instanceid, $raterid, $itemid) {
-        global $DB;
-        if ($instanceid &&
-                $instance = $DB->get_record('grading_instances', array('id'  => $instanceid, 'raterid' => $raterid, 'itemid' => $itemid), '*', IGNORE_MISSING)) {
-            return $this->get_instance($instance);
+        if (!is_numeric($instanceid)) {
+            $instanceid = null;
         }
+        return $this->fetch_instance($raterid, $itemid, $instanceid);
+    }
+
+    /**
+     * If an instanceid is specified and grading instance exists and it is created by this rater for
+     * this item, then the instance is returned.
+     *
+     * If instanceid is not known, then null can be passed to fetch the current instance matchign the specified raterid
+     * and itemid.
+     *
+     * If the instanceid is falsey, or no instance was found, then create a new instance for the specified rater and item.
+     *
+     * @param int $raterid
+     * @param int $itemid
+     * @param int $instanceid
+     * @return gradingform_instance
+     * @throws dml_exception
+     */
+    public function fetch_instance(int $raterid, int $itemid, ?int $instanceid): gradingform_instance {
+        global $DB;
+
+        $instance = null;
+        if (null === $instanceid) {
+            if ($instance = $this->get_current_instance($raterid, $itemid)) {
+                return $instance;
+            }
+            $instanceid = $instancerecord->id ?? null;
+        }
+
+        if (!empty($instanceid)) {
+            $instance = $DB->get_record('grading_instances', [
+                'id'  => $instanceid,
+                'raterid' => $raterid,
+                'itemid' => $itemid,
+            ], '*', IGNORE_MISSING);
+
+            if ($instance) {
+                return $this->get_instance($instance);
+            }
+        }
+
         return $this->create_instance($raterid, $itemid);
     }
 

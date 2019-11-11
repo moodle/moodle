@@ -9,6 +9,11 @@ This information is intended for authors of webservices, not people writing webs
   is passed and the web service call does not require the user to be logged in we will attempt to use GET for the
   request. This allows for things like proxy caching on URLs. The cache key must be changed if we do not want to
   retrieve what has been cached and want to perform the request again.
+* External function core_webservice_external::get_site_info() now returns the user private access key "userprivateaccesskey".
+  This key could be used for fetching files via the tokenpluginfile.php script instead webservice/pluginfile.php to avoid
+  multiple GET requests that include the WS token as a visible parameter.
+* External function core_webservice_external::get_site_info() now returns a new field "userissiteadmin" indicating if
+  the current user is a site administrator.
 
 === 3.7 ===
 

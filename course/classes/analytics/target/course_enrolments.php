@@ -36,6 +36,16 @@ defined('MOODLE_INTERNAL') || die();
 abstract class course_enrolments extends \core_analytics\local\target\binary {
 
     /**
+     * @var string
+     */
+    const MESSAGE_ACTION_NAME = 'studentmessage';
+
+    /**
+     * @var float
+     */
+    const ENROL_ACTIVE_PERCENT_REQUIRED = 0.7;
+
+    /**
      * Students in the course.
      * @var int[]
      */
@@ -72,6 +82,27 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Returns the body message for the insight.
+     *
+     * @param  \context     $context
+     * @param  string       $contextname
+     * @param  \stdClass    $user
+     * @param  \moodle_url  $insighturl
+     * @return string[]                     The plain text message and the HTML message
+     */
+    public function get_insight_body(\context $context, string $contextname, \stdClass $user, \moodle_url $insighturl): array {
+        global $OUTPUT;
+
+        $a = (object)['coursename' => $contextname, 'userfirstname' => $user->firstname];
+        $fullmessage = get_string('studentsatriskinfomessage', 'course', $a) . PHP_EOL . PHP_EOL . $insighturl->out(false);
+        $fullmessagehtml = $OUTPUT->render_from_template('core_analytics/insight_info_message',
+            ['url' => $insighturl->out(false), 'insightinfomessage' => get_string('studentsatriskinfomessage', 'course', $a)]
+        );
+
+        return [$fullmessage, $fullmessagehtml];
+    }
+
+    /**
      * Discards courses that are not yet ready to be used for training or prediction.
      *
      * @param \core_analytics\analysable $course
@@ -82,6 +113,10 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
 
         if (!$course->was_started()) {
             return get_string('coursenotyetstarted', 'course');
+        }
+
+        if (!$fortraining && !$course->get_course_data()->visible) {
+            return get_string('hiddenfromstudents');
         }
 
         if (!$this->students = $course->get_students()) {
@@ -125,6 +160,11 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
     /**
      * Discard student enrolments that are invalid.
      *
+     * Note that this method assumes that the target is only interested in enrolments that are/were active
+     * between the current course start and end times. Targets interested in predicting students at risk before
+     * their enrolment start and targets interested in getting predictions for students whose enrolment already
+     * finished should overwrite this method as these students are discarded by this method.
+     *
      * @param int $sampleid
      * @param \core_analytics\analysable $course
      * @param bool $fortraining
@@ -144,7 +184,7 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
         $limit = $course->get_start() - (YEARSECS + (WEEKSECS * 4));
         if (($userenrol->timestart && $userenrol->timestart < $limit) ||
                 (!$userenrol->timestart && $userenrol->timecreated < $limit)) {
-            // Following what we do in is_valid_sample, we will discard enrolments that last more than 1 academic year
+            // Following what we do in is_valid_analysable, we will discard enrolments that last more than 1 academic year
             // because they have incorrect start and end dates or because they are reused along multiple years
             // without removing previous academic years students. This may not be very accurate because some courses
             // can last just some months, but it is better than nothing.
@@ -154,7 +194,7 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
         if ($course->get_end()) {
             if (($userenrol->timestart && $userenrol->timestart > $course->get_end()) ||
                     (!$userenrol->timestart && $userenrol->timecreated > $course->get_end())) {
-                // Discard user enrolments that starts after the analysable official end.
+                // Discard user enrolments that start after the analysable official end.
                 return false;
             }
 
@@ -183,28 +223,171 @@ abstract class course_enrolments extends \core_analytics\local\target\binary {
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false,
             $isinsightuser = false) {
-        global $USER;
 
         $actions = array();
 
         $sampledata = $prediction->get_sample_data();
         $studentid = $sampledata['user']->id;
 
-        $attrs = array('target' => '_blank');
-
-        // Send a message.
-        $url = new \moodle_url('/message/index.php', array('user' => $USER->id, 'id' => $studentid));
-        $pix = new \pix_icon('t/message', get_string('sendmessage', 'message'));
-        $actions[] = new \core_analytics\prediction_action('studentmessage', $prediction, $url, $pix,
-                get_string('sendmessage', 'message'), false, $attrs);
-
         // View outline report.
         $url = new \moodle_url('/report/outline/user.php', array('id' => $studentid, 'course' => $sampledata['course']->id,
                 'mode' => 'outline'));
         $pix = new \pix_icon('i/report', get_string('outlinereport'));
         $actions[] = new \core_analytics\prediction_action('viewoutlinereport', $prediction, $url, $pix,
-                get_string('outlinereport'), false, $attrs);
+                get_string('outlinereport'), false, ['target' => '_blank']);
 
-        return array_merge($actions, parent::prediction_actions($prediction, $includedetailsaction));
+        return array_merge(parent::prediction_actions($prediction, $includedetailsaction, $isinsightuser), $actions);
+    }
+
+    /**
+     * Suggested bulk actions for a user.
+     *
+     * @param  \core_analytics\prediction[]     $predictions List of predictions suitable for the bulk actions to use.
+     * @return \core_analytics\bulk_action[]                 The list of bulk actions.
+     */
+    public function bulk_actions(array $predictions) {
+
+        $actions = [];
+
+        $userids = [];
+        foreach ($predictions as $prediction) {
+            $sampledata = $prediction->get_sample_data();
+            $userid = $sampledata['user']->id;
+
+            // Indexed by prediction id because we want the predictionid-userid
+            // mapping later when sending the message.
+            $userids[$prediction->get_prediction_data()->id] = $userid;
+        }
+
+        // Send a message for all the students.
+        $attrs = array(
+            'data-bulk-sendmessage' => '1',
+            'data-prediction-to-user-id' => json_encode($userids)
+        );
+        $actions[] = new \core_analytics\bulk_action(self::MESSAGE_ACTION_NAME, new \moodle_url(''),
+            new \pix_icon('t/message', get_string('sendmessage', 'message')),
+            get_string('sendmessage', 'message'), true, $attrs);
+
+        return array_merge($actions, parent::bulk_actions($predictions));
+    }
+
+    /**
+     * Adds the JS required to run the bulk actions.
+     */
+    public function add_bulk_actions_js() {
+        global $PAGE;
+
+        $PAGE->requires->js_call_amd('report_insights/message_users', 'init',
+            ['.insights-bulk-actions', self::MESSAGE_ACTION_NAME]);
+        parent::add_bulk_actions_js();
+    }
+
+    /**
+     * Is/was this user enrolment active during most of the analysis interval?
+     *
+     * This method discards enrolments that were not active during most of the analysis interval. It is
+     * important to discard these enrolments because the indicator calculations can lead to misleading
+     * results.
+     *
+     * Note that this method assumes that the target is interested in enrolments that are/were active
+     * during the analysis interval. Targets interested in predicting students at risk before
+     * their enrolment start should not call this method. Similarly, targets interested in getting
+     * predictions for students whose enrolment already finished should not call this method either.
+     *
+     * @param  int    $sampleid     The id of the sample that is being calculated
+     * @param  int    $starttime    The analysis interval start time
+     * @param  int    $endtime      The analysis interval end time
+     * @return bool
+     */
+    protected function enrolment_active_during_analysis_time(int $sampleid, int $starttime, int $endtime) {
+
+        $userenrol = $this->retrieve('user_enrolments', $sampleid);
+
+        if (!empty($userenrol->timestart)) {
+            $enrolstart = $userenrol->timestart;
+        } else {
+            // This is always set.
+            $enrolstart = $userenrol->timecreated;
+        }
+
+        if (!empty($userenrol->timeend)) {
+            $enrolend = $userenrol->timeend;
+        } else {
+            // Default to tre end of the world.
+            $enrolend = PHP_INT_MAX;
+        }
+
+        if ($endtime && $endtime < $enrolstart) {
+            /* The enrolment starts/ed after the analysis end time.
+             *   |=========|        |----------|
+             * A start    A end   E start     E end
+             */
+            return false;
+        }
+
+        if ($starttime && $enrolend < $starttime) {
+            /* The enrolment finishes/ed before the analysis start time.
+             *    |---------|        |==========|
+             * E start    E end   A start     A end
+             */
+            return false;
+        }
+
+        // Now we want to discard enrolments that were not active for most of the analysis interval. We
+        // need both a $starttime and an $endtime to calculate this.
+
+        if (!$starttime) {
+            // Early return. Nothing to discard if there is no start.
+            return true;
+        }
+
+        if (!$endtime) {
+            // We can not calculate in relative terms (percent) how far from the analysis start time
+            // this enrolment start is/was.
+            return true;
+        }
+
+        if ($enrolstart < $starttime && $endtime < $enrolend) {
+            /* The enrolment is active during all the analysis time.
+             *    |-----------------------------|
+             *               |========|
+             * E start    A start   A end     E end
+             */
+            return true;
+        }
+
+        // If we reach this point is because the enrolment is only active for a portion of the analysis interval.
+        // Therefore, we check that it was active for most of the analysis interval, a self::ENROL_ACTIVE_PERCENT_REQUIRED.
+
+        if ($starttime <= $enrolstart && $enrolend <= $endtime) {
+            /*    |=============================|
+             *               |--------|
+             * A start    E start   E end     A end
+             */
+            $activeenrolduration = $enrolend - $enrolstart;
+        } else if ($enrolstart <= $starttime && $enrolend <= $endtime) {
+            /*            |===================|
+             *    |------------------|
+             * E start  A start    E end    A end
+             */
+            $activeenrolduration = $enrolend - $starttime;
+        } else if ($starttime <= $enrolstart && $endtime <= $enrolend) {
+            /*   |===================|
+             *               |------------------|
+             * A start    E start  A end    E end
+             */
+            $activeenrolduration = $endtime - $enrolstart;
+        }
+
+        $analysisduration = $endtime - $starttime;
+
+        if (floatval($activeenrolduration) / floatval($analysisduration) < self::ENROL_ACTIVE_PERCENT_REQUIRED) {
+            // The student was not enroled in the course for most of the analysis interval.
+            return false;
+        }
+
+        // We happily return true if the enrolment was active for more than self::ENROL_ACTIVE_PERCENT_REQUIRED of
+        // the analysis interval.
+        return true;
     }
 }

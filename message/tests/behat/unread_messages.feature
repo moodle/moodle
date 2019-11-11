@@ -31,23 +31,23 @@ Feature: Unread messages
     Given I log in as "student1"
     When I open messaging
     And I open the "Group" conversations list
-    Then "New group" "group_message" should exist
+    Then "New group" "core_message > Message" should exist
     And I select "New group" conversation in messaging
     And I send "Hi!" message in the message area
-    And I should see "Hi!" in the "New group" "group_message_conversation"
-    And I should see "##today##j F##" in the "New group" "group_message_conversation"
+    And I should see "Hi!" in the "New group" "core_message > Message conversation"
+    And I should see "##today##j F##" in the "New group" "core_message > Message conversation"
     And I log out
     And I log in as "student2"
     And I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
     And I open messaging
-    And I should see "1" in the "Group" "group_message_tab"
-    And "New group" "group_message" should exist
-    And I should see "1" in the "New group" "group_message"
+    And I should see "1" in the "Group" "core_message > Message tab"
+    And "New group" "core_message > Message" should exist
+    And I should see "1" in the "New group" "core_message > Message"
     And I select "New group" conversation in messaging
-    And I should see "Hi!" in the "New group" "group_message_conversation"
+    And I should see "Hi!" in the "New group" "core_message > Message conversation"
     And I should not see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
-    And I should not see "1" in the "Group" "group_message_tab"
-    And I should not see "1" in the "New group" "group_message"
+    And I should not see "1" in the "Group" "core_message > Message tab"
+    And I should not see "1" in the "New group" "core_message > Message"
 
   Scenario: Unread messages for private conversation
     Given the following "private messages" exist:
@@ -57,14 +57,14 @@ Feature: Unread messages
     When I log in as "student1"
     Then I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
     And I open messaging
-    And I should see "1" in the "Private" "group_message_tab"
-    And "Student 2" "group_message" should exist
-    And I should see "1" in the "Student 2" "group_message"
+    And I should see "1" in the "Private" "core_message > Message tab"
+    And "Student 2" "core_message > Message" should exist
+    And I should see "1" in the "Student 2" "core_message > Message"
     And I select "Student 2" conversation in messaging
-    And I should see "Hi!" in the "Student 2" "group_message_conversation"
+    And I should see "Hi!" in the "Student 2" "core_message > Message conversation"
     And I should not see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
-    And I should not see "1" in the "Private" "group_message_tab"
-    And I should not see "1" in the "Student 2" "group_message"
+    And I should not see "1" in the "Private" "core_message > Message tab"
+    And I should not see "1" in the "Student 2" "core_message > Message"
 
   Scenario: Unread messages for starred conversation
     Given the following "private messages" exist:
@@ -77,11 +77,11 @@ Feature: Unread messages
     When I log in as "student1"
     Then I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
     And I open messaging
-    And I should see "1" in the "Starred" "group_message_tab"
-    And "Student 2" "group_message" should exist
-    And I should see "1" in the "Student 2" "group_message"
+    And I should see "1" in the "Starred" "core_message > Message tab"
+    And "Student 2" "core_message > Message" should exist
+    And I should see "1" in the "Student 2" "core_message > Message"
     And I select "Student 2" conversation in messaging
-    And I should see "Hi!" in the "Student 2" "group_message_conversation"
+    And I should see "Hi!" in the "Student 2" "core_message > Message conversation"
     And I should not see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
-    And I should not see "1" in the "Starred" "group_message_tab"
-    And I should not see "1" in the "Student 2" "group_message"
+    And I should not see "1" in the "Starred" "core_message > Message tab"
+    And I should not see "1" in the "Student 2" "core_message > Message"

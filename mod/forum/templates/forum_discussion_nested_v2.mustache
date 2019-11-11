@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/forum_discussion_nested_v2
+
+    Template for displaying a single forum discussion.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+
+<div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
+    {{#html}}
+        {{> mod_forum/discussion_settings_drawer}}
+    {{/html}}
+
+    {{#notifications}}
+        {{> core/notification}}
+    {{/notifications}}
+
+    <div class="mb-5">{{{html.modeselectorform}}}</div>
+
+    {{{html.posts}}}
+</div>
+{{#js}}
+require(['jquery', 'mod_forum/discussion_nested_v2'], function($, Discussion) {
+    var root = $('#discussion-container-{{uniqid}}');
+    Discussion.init(root, {
+        {{#loggedinuser}}
+        loggedinuser: {
+            profileimageurl: '{{{profileimageurl}}}',
+            fullname: '{{fullname}}',
+            firstname: '{{firstname}}'
+        }
+        {{/loggedinuser}}
+    });
+});
+{{/js}}

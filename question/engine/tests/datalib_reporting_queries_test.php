@@ -119,19 +119,24 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
         $this->bothusages = new qubaid_list($this->usageids);
 
         // Now test the various queries.
-        $this->dotest_load_questions_usages_latest_steps();
-        $this->dotest_load_questions_usages_question_state_summary();
+        $this->dotest_load_questions_usages_latest_steps($this->allslots);
+        $this->dotest_load_questions_usages_latest_steps(null);
+        $this->dotest_load_questions_usages_question_state_summary($this->allslots);
+        $this->dotest_load_questions_usages_question_state_summary(null);
         $this->dotest_load_questions_usages_where_question_in_state();
-        $this->dotest_load_average_marks();
+        $this->dotest_load_average_marks($this->allslots);
+        $this->dotest_load_average_marks(null);
         $this->dotest_sum_usage_marks_subquery();
         $this->dotest_question_attempt_latest_state_view();
     }
 
     /**
      * This test is executed by {@link test_reporting_queries()}.
+     *
+     * @param array|null $slots list of slots to use in the call.
      */
-    protected function dotest_load_questions_usages_latest_steps() {
-        $rawstates = $this->dm->load_questions_usages_latest_steps($this->bothusages, $this->allslots,
+    protected function dotest_load_questions_usages_latest_steps($slots) {
+        $rawstates = $this->dm->load_questions_usages_latest_steps($this->bothusages, $slots,
                 'qa.id AS questionattemptid, qa.questionusageid, qa.slot, ' .
                 'qa.questionid, qa.maxmark, qas.sequencenumber, qas.state');
 
@@ -178,10 +183,12 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
 
     /**
      * This test is executed by {@link test_reporting_queries()}.
+     *
+     * @param array|null $slots list of slots to use in the call.
      */
-    protected function dotest_load_questions_usages_question_state_summary() {
+    protected function dotest_load_questions_usages_question_state_summary($slots) {
         $summary = $this->dm->load_questions_usages_question_state_summary(
-                $this->bothusages, $this->allslots);
+                $this->bothusages, $slots);
 
         $this->assertEquals($summary[$this->allslots[0] . ',' . $this->sa->id],
                 (object) array(
@@ -229,9 +236,11 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
 
     /**
      * This test is executed by {@link test_reporting_queries()}.
+     *
+     * @param array|null $slots list of slots to use in the call.
      */
-    protected function dotest_load_average_marks() {
-        $averages = $this->dm->load_average_marks($this->bothusages);
+    protected function dotest_load_average_marks($slots) {
+        $averages = $this->dm->load_average_marks($this->bothusages, $slots);
 
         $this->assertEquals(array(
             $this->allslots[0] => (object) array(

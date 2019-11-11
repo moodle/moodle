@@ -4180,6 +4180,9 @@ class restore_module_structure_step extends restore_structure_step {
         // Apply for 'format' plugins optional paths at module level
         $this->add_plugin_structure('format', $module);
 
+        // Apply for 'report' plugins optional paths at module level.
+        $this->add_plugin_structure('report', $module);
+
         // Apply for 'plagiarism' plugins optional paths at module level
         $this->add_plugin_structure('plagiarism', $module);
 
@@ -5323,10 +5326,9 @@ class restore_process_file_aliases_queue extends restore_execution_step {
 
 
 /**
- * Abstract structure step, to be used by all the activities using core questions stuff
- * (like the quiz module), to support qtype plugins, states and sessions
+ * Helper code for use by any plugin that stores question attempt data that it needs to back up.
  */
-abstract class restore_questions_activity_structure_step extends restore_activity_structure_step {
+trait restore_questions_attempt_data_trait {
     /** @var array question_attempt->id to qtype. */
     protected $qtypes = array();
     /** @var array question_attempt->id to questionid. */
@@ -5378,21 +5380,21 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     /**
      * Process question_usages
      */
-    protected function process_question_usage($data) {
+    public function process_question_usage($data) {
         $this->restore_question_usage_worker($data, '');
     }
 
     /**
      * Process question_attempts
      */
-    protected function process_question_attempt($data) {
+    public function process_question_attempt($data) {
         $this->restore_question_attempt_worker($data, '');
     }
 
     /**
      * Process question_attempt_steps
      */
-    protected function process_question_attempt_step($data) {
+    public function process_question_attempt_step($data) {
         $this->restore_question_attempt_step_worker($data, '');
     }
 
@@ -5412,8 +5414,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         $data = (object)$data;
         $oldid = $data->id;
 
-        $oldcontextid = $this->get_task()->get_old_contextid();
-        $data->contextid  = $this->get_mappingid('context', $this->task->get_old_contextid());
+        $data->contextid  = $this->task->get_contextid();
 
         // Everything ready, insert (no mapping needed)
         $newitemid = $DB->insert_record('question_usages', $data);
@@ -5569,6 +5570,17 @@ abstract class restore_questions_activity_structure_step extends restore_activit
             $this->add_related_files('question', $filearea, 'question_attempt_step');
         }
     }
+}
+
+
+/**
+ * Abstract structure step to help activities that store question attempt data.
+ *
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class restore_questions_activity_structure_step extends restore_activity_structure_step {
+    use restore_questions_attempt_data_trait;
 
     /**
      * Attach below $element (usually attempts) the needed restore_path_elements
@@ -5612,7 +5624,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     /**
      * Process the attempt data defined by {@link add_legacy_question_attempt_data()}.
      * @param object $data contains all the grouped attempt data to process.
-     * @param pbject $quiz data about the activity the attempts belong to. Required
+     * @param object $quiz data about the activity the attempts belong to. Required
      * fields are (basically this only works for the quiz module):
      *      oldquestions => list of question ids in this activity - using old ids.
      *      preferredbehaviour => the behaviour to use for questionattempts.
@@ -5674,7 +5686,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
         $data->uniqueid = $usage->id;
         $upgrader->save_usage($quiz->preferredbehaviour, $data, $qas,
-                 $this->questions_recode_layout($quiz->oldquestions));
+                $this->questions_recode_layout($quiz->oldquestions));
     }
 
     protected function find_question_session_and_states($data, $questionid) {
@@ -5733,6 +5745,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         }
     }
 }
+
 
 /**
  * Restore completion defaults for each module type

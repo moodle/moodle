@@ -120,6 +120,12 @@ class post extends exporter {
                 'default' => null,
                 'null' => NULL_ALLOWED
             ],
+            'charcount' => [
+                'type' => PARAM_INT,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ],
             'capabilities' => [
                 'type' => [
                     'view' => [
@@ -386,7 +392,7 @@ class post extends exporter {
             $author,
             $authorcontextid,
             $authorgroups,
-            ($canview && !$isdeleted),
+            $canview,
             $this->related
         );
         $exportedauthor = $authorexporter->export($output);
@@ -402,16 +408,21 @@ class post extends exporter {
             $subject = $isdeleted ? get_string('forumsubjectdeleted', 'forum') : get_string('forumsubjecthidden', 'forum');
             $message = $isdeleted ? get_string('forumbodydeleted', 'forum') : get_string('forumbodyhidden', 'forum');
             $timecreated = null;
-
-            if ($isdeleted) {
-                $exportedauthor->fullname = null;
-            }
         }
 
         $replysubject = $subject;
         $strre = get_string('re', 'forum');
         if (!(substr($replysubject, 0, strlen($strre)) == $strre)) {
             $replysubject = "{$strre} {$replysubject}";
+        }
+
+        $showwordcount = $forum->should_display_word_count();
+        if ($showwordcount) {
+            $wordcount = $post->get_wordcount() ?? count_words($message);
+            $charcount = $post->get_charcount() ?? count_letters($message);
+        } else {
+            $wordcount = null;
+            $charcount = null;
         }
 
         return [
@@ -428,8 +439,9 @@ class post extends exporter {
             'unread' => ($loadcontent && $readreceiptcollection) ? !$readreceiptcollection->has_user_read_post($user, $post) : null,
             'isdeleted' => $isdeleted,
             'isprivatereply' => $isprivatereply,
-            'haswordcount' => $forum->should_display_word_count(),
-            'wordcount' => $forum->should_display_word_count() ? count_words($message) : null,
+            'haswordcount' => $showwordcount,
+            'wordcount' => $wordcount,
+            'charcount' => $charcount,
             'capabilities' => [
                 'view' => $canview,
                 'edit' => $canedit,

@@ -27,12 +27,19 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Constants for the user preferences grouping options
  */
+define('BLOCK_MYOVERVIEW_GROUPING_ALLINCLUDINGHIDDEN', 'allincludinghidden');
 define('BLOCK_MYOVERVIEW_GROUPING_ALL', 'all');
 define('BLOCK_MYOVERVIEW_GROUPING_INPROGRESS', 'inprogress');
 define('BLOCK_MYOVERVIEW_GROUPING_FUTURE', 'future');
 define('BLOCK_MYOVERVIEW_GROUPING_PAST', 'past');
 define('BLOCK_MYOVERVIEW_GROUPING_FAVOURITES', 'favourites');
 define('BLOCK_MYOVERVIEW_GROUPING_HIDDEN', 'hidden');
+define('BLOCK_MYOVERVIEW_GROUPING_CUSTOMFIELD', 'customfield');
+
+/**
+ * Allows selection of all courses without a value for the custom field.
+ */
+define('BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY', -1);
 
 /**
  * Constants for the user preferences sorting options
@@ -74,14 +81,23 @@ function block_myoverview_user_preferences() {
         'default' => BLOCK_MYOVERVIEW_GROUPING_ALL,
         'type' => PARAM_ALPHA,
         'choices' => array(
+            BLOCK_MYOVERVIEW_GROUPING_ALLINCLUDINGHIDDEN,
             BLOCK_MYOVERVIEW_GROUPING_ALL,
             BLOCK_MYOVERVIEW_GROUPING_INPROGRESS,
             BLOCK_MYOVERVIEW_GROUPING_FUTURE,
             BLOCK_MYOVERVIEW_GROUPING_PAST,
             BLOCK_MYOVERVIEW_GROUPING_FAVOURITES,
-            BLOCK_MYOVERVIEW_GROUPING_HIDDEN
+            BLOCK_MYOVERVIEW_GROUPING_HIDDEN,
+            BLOCK_MYOVERVIEW_GROUPING_CUSTOMFIELD,
         )
     );
+
+    $preferences['block_myoverview_user_grouping_customfieldvalue_preference'] = [
+        'null' => NULL_ALLOWED,
+        'default' => null,
+        'type' => PARAM_RAW,
+    ];
+
     $preferences['block_myoverview_user_sort_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_MYOVERVIEW_SORTING_TITLE,
@@ -124,4 +140,15 @@ function block_myoverview_user_preferences() {
     );
 
     return $preferences;
+}
+
+/**
+ * Pre-delete course hook to cleanup any records with references to the deleted course.
+ *
+ * @param stdClass $course The deleted course
+ */
+function block_myoverview_pre_course_delete(\stdClass $course) {
+    // Removing any starred courses which have been created for users, for this course.
+    $service = \core_favourites\service_factory::get_service_for_component('core_course');
+    $service->delete_favourites_by_type_and_item('courses', $course->id);
 }

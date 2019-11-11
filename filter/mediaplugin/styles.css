@@ -19,6 +19,14 @@
     margin: auto;
 }
 
+/* This is needed to display videos in an adequate size and without too much space
+   withing the specific mod assign table views. */
+.path-mod-assign .gradingtable .mediaplugin,
+.path-mod-assign .submissionsummarytable .mediaplugin {
+    width: 400px;
+    height: auto;
+}
+
 /* Make media plugin behave properly in mod summaries and labels */
 .mod-indent-outer .mediaplugin {
     display: table-cell;

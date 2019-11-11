@@ -120,9 +120,8 @@ $navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $p
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
 
-$title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
 $headtags = $attemptobj->get_html_head_contributions($page);
-$PAGE->set_title($attemptobj->get_quiz_name());
+$PAGE->set_title($attemptobj->attempt_page_title($page));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 
 if ($attemptobj->is_last_page($page)) {

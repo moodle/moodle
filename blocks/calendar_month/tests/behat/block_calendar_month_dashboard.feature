@@ -5,7 +5,7 @@ Feature: View a site event on the dashboard
   I can view the event in the calendar
 
   @javascript
-  Scenario: View a global event in the calendar block on the dashboard
+  Scenario: View a site event in the calendar block on the dashboard
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | student1 | Student | 1 | student1@example.com | S1 |

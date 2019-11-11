@@ -147,7 +147,7 @@ class stored_file_exporter extends \core\external\exporter {
             $filenameshort .= substr($filename, -4);
         }
 
-        $icon = $this->file->is_directory() ? file_folder_icon() : file_file_icon($this->file);
+        $icon = $this->file->is_directory() ? file_folder_icon(128) : file_file_icon($this->file, 128);
 
         $url = moodle_url::make_pluginfile_url(
             $this->file->get_contextid(),

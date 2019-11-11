@@ -173,7 +173,7 @@ if ( $hook >0 ) {
                         <input type="hidden" name="confirm"     value="1" />
                         <input type="hidden" name="mode"         value="<?php echo $mode ?>" />
                         <input type="hidden" name="hook"         value="<?php echo $hook ?>" />
-                        <input type="submit" value=" <?php print_string("yes")?> " />
+                        <input type="submit" class="btn btn-primary" value=" <?php print_string("yes")?> " />
                         </div>
                         </form>
                         </td>

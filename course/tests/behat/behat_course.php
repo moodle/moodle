@@ -1144,11 +1144,8 @@ class behat_course extends behat_base {
     protected function get_activity_element($element, $selectortype, $activityname) {
         $activitynode = $this->get_activity_node($activityname);
 
-        // Transforming to Behat selector/locator.
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-        $exception = new ElementNotFoundException($this->getSession(), '"' . $element . '" "' . $selectortype . '" in "' . $activityname . '" ');
-
-        return $this->find($selector, $locator, $exception, $activitynode);
+        $exception = new ElementNotFoundException($this->getSession(), "'{$element}' '{$selectortype}' in '${activityname}'");
+        return $this->find($selectortype, $element, $exception, $activitynode);
     }
 
     /**

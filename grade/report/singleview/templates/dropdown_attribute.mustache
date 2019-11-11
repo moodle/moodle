@@ -15,8 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template gradereport_singleview/dropdown_attribute
+
     Dropdown attribute.
+
+    Example context (json):
+    {
+        "name": "Awesome-test",
+        "disabled": "true",
+        "options": "true",
+        "value": "1",
+        "selected": "true"
+    }
 }}
+<label for="{{name}}" class="accesshide">{{label}}</label>
 <select id="{{name}}" name="{{name}}" class="custom-select" tabindex="1" {{#disabled}}disabled{{/disabled}}>
     {{#options}}
         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>

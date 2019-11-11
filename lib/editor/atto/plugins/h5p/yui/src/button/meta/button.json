@@ -1,0 +1,7 @@
+{
+    "moodle-atto_h5p-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

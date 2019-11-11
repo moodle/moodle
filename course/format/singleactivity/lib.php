@@ -36,6 +36,9 @@ class format_singleactivity extends format_base {
     /** @var cm_info the current activity. Use get_activity() to retrieve it. */
     private $activity = false;
 
+    /** @var int The category ID guessed from the form data. */
+    private $categoryid = false;
+
     /**
      * The URL to use for the specified course
      *
@@ -145,6 +148,30 @@ class format_singleactivity extends format_base {
      */
     public function course_format_options($foreditform = false) {
         static $courseformatoptions = false;
+
+        $fetchtypes = $courseformatoptions === false;
+        $fetchtypes = $fetchtypes || ($foreditform && !isset($courseformatoptions['activitytype']['label']));
+
+        if ($fetchtypes) {
+            $availabletypes = $this->get_supported_activities();
+            if ($this->course) {
+                // The course exists. Test against the course.
+                $testcontext = context_course::instance($this->course->id);
+            } else if ($this->categoryid) {
+                // The course does not exist yet, but we have a category ID that we can test against.
+                $testcontext = context_coursecat::instance($this->categoryid);
+            } else {
+                // The course does not exist, and we somehow do not have a category. Test capabilities against the system context.
+                $testcontext = context_system::instance();
+            }
+            foreach (array_keys($availabletypes) as $activity) {
+                $capability = "mod/{$activity}:addinstance";
+                if (!has_capability($capability, $testcontext)) {
+                    unset($availabletypes[$activity]);
+                }
+            }
+        }
+
         if ($courseformatoptions === false) {
             $config = get_config('format_singleactivity');
             $courseformatoptions = array(
@@ -153,9 +180,13 @@ class format_singleactivity extends format_base {
                     'type' => PARAM_TEXT,
                 ),
             );
+
+            if (!empty($availabletypes) && !isset($availabletypes[$config->activitytype])) {
+                $courseformatoptions['activitytype']['default'] = array_keys($availabletypes)[0];
+            }
         }
+
         if ($foreditform && !isset($courseformatoptions['activitytype']['label'])) {
-            $availabletypes = $this->get_supported_activities();
             $courseformatoptionsedit = array(
                 'activitytype' => array(
                     'label' => new lang_string('activitytype', 'format_singleactivity'),
@@ -183,6 +214,11 @@ class format_singleactivity extends format_base {
      */
     public function create_edit_form_elements(&$mform, $forsection = false) {
         global $PAGE;
+
+        if (!$this->course && $submitvalues = $mform->getSubmitValues()) {
+            $this->categoryid = $submitvalues['category'];
+        }
+
         $elements = parent::create_edit_form_elements($mform, $forsection);
         if (!$forsection && ($course = $PAGE->course) && !empty($course->format) &&
                 $course->format !== 'site' && $course->format !== 'singleactivity') {

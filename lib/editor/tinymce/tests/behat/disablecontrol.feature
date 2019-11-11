@@ -22,7 +22,7 @@ Feature: Tinymce with enable/disable function.
 
   @javascript
   Scenario: Check disable Tinymce editor.
-    When I click on "option[value=1]" "css_element" in the "select#id_mycontrol" "css_element"
+    When I set the field "My control" to "Disable"
     Then the "class" attribute of "a#id_myeditor_pdw_toggle" "css_element" should contain "mceButtonDisabled"
     And the "class" attribute of "table#id_myeditor_formatselect" "css_element" should contain "mceListBoxDisabled"
     And the "class" attribute of "a#id_myeditor_bold" "css_element" should contain "mceButtonDisabled"
@@ -39,7 +39,7 @@ Feature: Tinymce with enable/disable function.
 
   @javascript
   Scenario: Check enable Tinymce editor.
-    When I click on "option[value=0]" "css_element" in the "select#id_mycontrol" "css_element"
+    When I set the field "My control" to "Enable"
     Then the "class" attribute of "a#id_myeditor_pdw_toggle" "css_element" should contain "mceButtonEnabled"
     And the "class" attribute of "table#id_myeditor_formatselect" "css_element" should contain "mceListBoxEnabled"
     And the "class" attribute of "a#id_myeditor_bold" "css_element" should contain "mceButtonEnabled"

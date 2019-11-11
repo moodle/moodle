@@ -58,14 +58,17 @@ class core_enrollib_testcase extends advanced_testcase {
 
         $course1 = $this->getDataGenerator()->create_course(array(
             'shortname' => 'Z',
+            'idnumber' => '123',
             'category' => $category1->id,
         ));
         $course2 = $this->getDataGenerator()->create_course(array(
             'shortname' => 'X',
+            'idnumber' => '789',
             'category' => $category2->id,
         ));
         $course3 = $this->getDataGenerator()->create_course(array(
             'shortname' => 'Y',
+            'idnumber' => '456',
             'category' => $category2->id,
             'visible' => 0,
         ));
@@ -163,7 +166,7 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertTrue(property_exists($course, 'timecreated'));
 
         $courses = enrol_get_all_users_courses($user2->id, false, null, 'id DESC');
-        $this->assertEquals(array($course3->id, $course2->id, $course1->id), array_keys($courses));
+        $this->assertEquals(array($course2->id, $course3->id, $course1->id), array_keys($courses));
 
         // Make sure that implicit sorting defined in navsortmycoursessort is respected.
 
@@ -175,7 +178,54 @@ class core_enrollib_testcase extends advanced_testcase {
         // But still the explicit sorting takes precedence over the implicit one.
 
         $courses = enrol_get_all_users_courses($user1->id, false, null, 'shortname DESC');
+        $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
+
+        // Make sure that implicit visibility sorting defined in navsortmycourseshiddenlast is respected for all course sortings.
+
+        $CFG->navsortmycoursessort = 'sortorder';
+        $CFG->navsortmycourseshiddenlast = true;
+        $courses = enrol_get_all_users_courses($user1->id);
+        $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
+
+        $CFG->navsortmycoursessort = 'sortorder';
+        $CFG->navsortmycourseshiddenlast = false;
+        $courses = enrol_get_all_users_courses($user1->id);
         $this->assertEquals(array($course1->id, $course3->id, $course2->id), array_keys($courses));
+
+        $CFG->navsortmycoursessort = 'fullname';
+        $CFG->navsortmycourseshiddenlast = true;
+        $courses = enrol_get_all_users_courses($user1->id);
+        $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
+
+        $CFG->navsortmycoursessort = 'fullname';
+        $CFG->navsortmycourseshiddenlast = false;
+        $courses = enrol_get_all_users_courses($user1->id);
+        $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
+
+        $CFG->navsortmycoursessort = 'shortname';
+        $CFG->navsortmycourseshiddenlast = true;
+        $courses = enrol_get_all_users_courses($user1->id);
+        $this->assertEquals(array($course2->id, $course3->id, $course1->id), array_keys($courses));
+
+        $CFG->navsortmycoursessort = 'shortname';
+        $CFG->navsortmycourseshiddenlast = false;
+        $courses = enrol_get_all_users_courses($user1->id);
+        $this->assertEquals(array($course2->id, $course3->id, $course1->id), array_keys($courses));
+
+        $CFG->navsortmycoursessort = 'idnumber';
+        $CFG->navsortmycourseshiddenlast = true;
+        $courses = enrol_get_all_users_courses($user1->id);
+        $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
+
+        $CFG->navsortmycoursessort = 'idnumber';
+        $CFG->navsortmycourseshiddenlast = false;
+        $courses = enrol_get_all_users_courses($user1->id);
+        $this->assertEquals(array($course1->id, $course3->id, $course2->id), array_keys($courses));
+
+        // But still the explicit visibility sorting takes precedence over the implicit one.
+
+        $courses = enrol_get_all_users_courses($user1->id, false, null, 'visible DESC, shortname DESC');
+        $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
     }
 
     public function test_enrol_user_sees_own_courses() {
@@ -1079,5 +1129,24 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertArrayHasKey($user2->id, $return);
         $this->assertArrayHasKey($roles['student'], $return[$user2->id]);
         $this->assertArrayNotHasKey($roles['teacher'], $return[$user2->id]);
+    }
+
+    /**
+     * Test enrol_calculate_duration function
+     */
+    public function test_enrol_calculate_duration() {
+        // Start time 07/01/2019 @ 12:00am (UTC).
+        $timestart = 1561939200;
+        // End time 07/05/2019 @ 12:00am (UTC).
+        $timeend = 1562284800;
+        $duration = enrol_calculate_duration($timestart, $timeend);
+        $durationinday = $duration / DAYSECS;
+        $this->assertEquals(4, $durationinday);
+
+        // End time 07/10/2019 @ 12:00am (UTC).
+        $timeend = 1562716800;
+        $duration = enrol_calculate_duration($timestart, $timeend);
+        $durationinday = $duration / DAYSECS;
+        $this->assertEquals(9, $durationinday);
     }
 }

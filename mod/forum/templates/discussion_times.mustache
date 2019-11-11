@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/discussion_times
+
+    Template to display the discussion times.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * start int - The discussion start timestamp
+    * end int - The discussion end timestamp
+    * visible boolean - Whether the discussion is visible to students or not.
+
+    Example context (json):
+    {
+        "start": 1,
+        "end": 1,
+        "visible": true
+    }
+}}
+<ul>
+{{#start}}
+    <li>
+        {{#str}} displaystartdate, mod_forum, {{#userdate}}{{.}}, {{#str}}strftimerecentfull {{/str}}{{/userdate}} {{/str}}
+    </li>
+{{/start}}
+{{#end}}
+    <li>
+        {{#str}} displayenddate, mod_forum, {{#userdate}}{{.}}, {{#str}}strftimerecentfull {{/str}}{{/userdate}} {{/str}}
+    </li>
+{{/end}}
+    <li>
+    {{#visible}}
+        {{#str}} timedvisible, mod_forum {{/str}}
+    {{/visible}}
+    {{^visible}}
+        {{#str}} timedhidden, mod_forum {{/str}}
+    {{/visible}}
+    </li>
+</ul>

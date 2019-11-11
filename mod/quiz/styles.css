@@ -939,7 +939,7 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
-    float: left;
+    float: inherit;
     margin: .2em 0 0;
     padding: 0;
 }
@@ -966,10 +966,18 @@ table.quizreviewsummary td.cell {
     text-align: center;
     padding: 0 2px;
     border: 0 none;
+    vertical-align: top;
 }
 
-#categoryquestions th.modifiername .sorters,
-#categoryquestions th.creatorname .sorters {
+#categoryquestions .header.checkbox {
+    vertical-align: bottom;
+}
+
+#categoryquestions .header.qtype {
+    white-space: nowrap;
+}
+
+#categoryquestions th .sorters {
     font-weight: normal;
     font-size: 0.8em;
 }
@@ -987,7 +995,6 @@ table.quizreviewsummary td.cell {
 
 table#categoryquestions {
     width: 100%;
-    overflow: hidden;
     table-layout: fixed;
 }
 
@@ -1001,6 +1008,10 @@ table#categoryquestions {
     width: 19px;
     text-align: center;
     padding: 0;
+}
+
+#categoryquestions .editmenu {
+    width: 5em;
 }
 
 #categoryquestions .qtype {

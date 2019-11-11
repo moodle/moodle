@@ -38,7 +38,6 @@ class mobile {
     /**
      * Returns a test view.
      * @param  array $args Arguments from tool_mobile_get_content WS
-     *
      * @return array       HTML, javascript and otherdata
      */
     public static function test_view($args) {
@@ -55,6 +54,29 @@ class mobile {
             'otherdata' => array('otherdata1' => $args->param1),
             'restrict' => array('users' => array(1, 2), 'courses' => array(3, 4)),
             'files' => array()
+        );
+    }
+
+    /**
+     * Returns a test view disabled.
+     * @param  array $args Arguments from tool_mobile_get_content WS
+     * @return array       HTML, javascript and otherdata
+     */
+    public static function test_view_disabled($args) {
+        $args = (object) $args;
+
+        return array(
+            'templates' => array(
+                array(
+                    'id' => 'main',
+                    'html' => 'The HTML code',
+                ),
+            ),
+            'javascript' => 'alert();',
+            'otherdata' => array('otherdata1' => $args->param1),
+            'restrict' => array('users' => array(1, 2), 'courses' => array(3, 4)),
+            'files' => array(),
+            'disabled' => true,
         );
     }
 }

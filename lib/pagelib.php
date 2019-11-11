@@ -354,6 +354,16 @@ class moodle_page {
     protected $_forcesettingsmenu = false;
 
     /**
+     * @var array Array of header actions HTML to add to the page header actions menu.
+     */
+    protected $_headeractions = [];
+
+    /**
+     * @var bool Should the region main settings menu be rendered in the header.
+     */
+    protected $_regionmainsettingsinheader = false;
+
+    /**
      * Force the settings menu to be displayed on this page. This will only force the
      * settings menu on an activity / resource page that is being displayed on a theme that
      * uses a settings menu.
@@ -2031,5 +2041,43 @@ class moodle_page {
         }
         // Finally add the report to the navigation tree.
         $reportnode->add($nodeinfo['name'], $nodeinfo['url'], navigation_node::TYPE_COURSE);
+    }
+
+    /**
+     * Add some HTML to the list of actions to render in the header actions menu.
+     *
+     * @param string $html The HTML to add.
+     */
+    public function add_header_action(string $html) : void {
+        $this->_headeractions[] = $html;
+    }
+
+    /**
+     * Get the list of HTML for actions to render in the header actions menu.
+     *
+     * @return string[]
+     */
+    public function get_header_actions() : array {
+        return $this->_headeractions;
+    }
+
+    /**
+     * Set the flag to indicate if the region main settings should be rendered as an action
+     * in the header actions menu rather than at the top of the content.
+     *
+     * @param bool $value If the settings should be in the header.
+     */
+    public function set_include_region_main_settings_in_header_actions(bool $value) : void {
+        $this->_regionmainsettingsinheader = $value;
+    }
+
+    /**
+     * Check if the  region main settings should be rendered as an action in the header actions
+     * menu rather than at the top of the content.
+     *
+     * @return bool
+     */
+    public function include_region_main_settings_in_header_actions() : bool {
+        return $this->_regionmainsettingsinheader;
     }
 }

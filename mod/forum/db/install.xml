@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/forum/db" VERSION="20190404" COMMENT="XMLDB file for Moodle mod/forum"
+<XMLDB PATH="mod/forum/db" VERSION="20191001" COMMENT="XMLDB file for Moodle mod/forum"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -18,6 +18,7 @@
         <FIELD NAME="assesstimestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="assesstimefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade_forum" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="maxattachments" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Number of attachments allowed per post"/>
         <FIELD NAME="forcesubscribe" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -85,6 +86,8 @@
         <FIELD NAME="mailnow" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="privatereplyto" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="wordcount" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="charcount" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -190,6 +193,26 @@
         <KEY NAME="discussion" TYPE="foreign" FIELDS="discussion" REFTABLE="forum_discussions" REFFIELDS="id"/>
         <KEY NAME="user_discussions" TYPE="unique" FIELDS="userid, discussion" COMMENT="Users may only have one discussion preferences per discussion"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="forum_grades" COMMENT="Grading data for forum instances">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="forum" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the forum that this grade relates to"/>
+        <FIELD NAME="itemnumber" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The grade itemnumber"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who was graded"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The numerical grade for this user's forum assessment.
+Can be determined by scales/advancedgradingforms etc but will always be converted back to a floating point number."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="forum" TYPE="foreign" FIELDS="forum" REFTABLE="forum" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="forumusergrade" UNIQUE="true" FIELDS="forum, itemnumber, userid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

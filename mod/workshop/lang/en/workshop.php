@@ -179,8 +179,14 @@ $string['chooseuser'] = 'Choose user...';
 $string['iamsure'] = 'Yes, I am sure';
 $string['indicator:cognitivedepth'] = 'Workshop cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Workshop activity.';
+$string['indicator:cognitivedepthdef'] = 'Workshop cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Workshop activities during this analysis interval (Levels = No view, View, Submit, View feedback, Comment on feedback, Resubmit after viewing feedback)';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Workshop social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Workshop activity.';
+$string['indicator:socialbreadthdef'] = 'Workshop social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Workshop activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['info'] = 'Info';
 $string['instructauthors'] = 'Instructions for submission';
 $string['instructreviewers'] = 'Instructions for assessment';
@@ -421,7 +427,3 @@ $string['workshop:viewreviewernames'] = 'View reviewer names';
 $string['yourassessmentfor'] = 'Your assessment for {$a}';
 $string['yourgrades'] = 'Your grades';
 $string['yoursubmission'] = 'Your submission';
-
-// Deprecated since Moodle 3.4.
-$string['err_unknownfileextension'] = 'Unknown file extension: {$a}';
-$string['err_wrongfileextension'] = 'Some files ({$a->wrongfiles}) cannot be uploaded. Only file types {$a->whitelist} are allowed.';

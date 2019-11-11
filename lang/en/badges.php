@@ -111,7 +111,7 @@ $string['backpackemail_help'] = 'The email address associated with your backpack
 $string['backpackemailverificationpending'] = 'Verification pending';
 $string['backpackemailverifyemailbody'] = 'Hi,
 
-A new connection to your OpenBadges backpack has been requested from \'{$a->sitename}\' using your email address.
+A new connection to your badges backpack has been requested from \'{$a->sitename}\' using your email address.
 
 To confirm and activate the connection to your backpack, please go to
 
@@ -121,7 +121,7 @@ In most mail programs, this should appear as a blue link which you can just clic
 
 If you need help, please contact the site administrator,
 {$a->admin}';
-$string['backpackemailverifyemailsubject'] = '{$a}: OpenBadges Backpack email verification';
+$string['backpackemailverifyemailsubject'] = '{$a}: Badges backpack email verification';
 $string['backpackemailverifypending'] = 'A verification email has been sent to <strong>{$a}</strong>. Click on the verification link in the email to activate your Backpack connection.';
 $string['backpackemailverifysuccess'] = 'Thanks for verifying your email address. You are now connected to your backpack.';
 $string['backpackemailverifytokenmismatch'] = 'The token in the link you clicked does not match the stored token. Make sure you clicked the link in most recent email you received.';
@@ -176,7 +176,7 @@ $string['claimid'] = 'Claim URL';
 $string['clearsettings'] = 'Clear settings';
 $string['completionnotenabled'] = 'Course completion is not enabled for this course, so it cannot be included in badge criteria. Course completion may be enabled in the course settings.';
 $string['completioninfo'] = 'This badge was issued for completing: ';
-$string['configenablebadges'] = 'When enabled, this feature lets you create badges and award them to site users.';
+$string['configenablebadges'] = 'If enabled, this feature lets you create badges and award them to site users.';
 $string['configuremessage'] = 'Badge message';
 $string['connect'] = 'Connect';
 $string['connected'] = 'Connected';
@@ -554,17 +554,6 @@ $string['version'] = 'Version';
 $string['version_help'] = 'The version field may be used to keep track of the badge\'s development. If specified, the version is displayed on the badge page.';
 $string['warnexpired'] = ' (This badge has expired!)';
 $string['year'] = 'Year(s)';
-
-// Deprecated since Moodle 3.3.
-$string['personaconnection'] = 'Sign in with your email';
-$string['personaconnection_help'] = 'Persona is a system for identifying yourself across the web, using an email address that you own. The Open Badges backpack uses Persona as a login system, so to be able to connect to a backpack you will need a Persona account.
-
-For more information about Persona visit <a href="https://login.persona.org/about">https://login.persona.org/about</a>.';
-$string['error:backpackloginfailed'] = 'You could not be connected to an external backpack for the following reason: {$a}';
-$string['error:badjson'] = 'The connection attempt returned invalid data.';
-$string['error:noassertion'] = 'No assertion was returned by Persona. You may have closed the dialog before completing the login process.';
-$string['error:personaneedsjs'] = 'Currently, Javascript is required to connect to your backpack. If you can, enable Javascript and reload the page.';
-$string['signinwithyouremail'] = 'Sign in with your email';
 
 // Deprecated since Moodle 3.6.
 $string['error:invalidbadgeurl'] = 'Invalid issuer URL format. The URL should have a prefix http:// or https://.';

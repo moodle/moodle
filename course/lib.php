@@ -56,13 +56,17 @@ define('FIRSTUSEDEXCELROW', 3);
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
 
+define('COURSE_TIMELINE_ALLINCLUDINGHIDDEN', 'allincludinghidden');
 define('COURSE_TIMELINE_ALL', 'all');
 define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
 define('COURSE_TIMELINE_FUTURE', 'future');
 define('COURSE_FAVOURITES', 'favourites');
 define('COURSE_TIMELINE_HIDDEN', 'hidden');
+define('COURSE_CUSTOMFIELD', 'customfield');
 define('COURSE_DB_QUERY_LIMIT', 1000);
+/** Searching for all courses that have no value for the specified custom field. */
+define('COURSE_CUSTOMFIELD_EMPTY', -1);
 
 function make_log_url($module, $url) {
     switch ($module) {
@@ -558,12 +562,10 @@ function get_module_types_names($plural = false) {
         if ($allmods = $DB->get_records("modules")) {
             foreach ($allmods as $mod) {
                 if (file_exists("$CFG->dirroot/mod/$mod->name/lib.php") && $mod->visible) {
-                    $modnames[0][$mod->name] = get_string("modulename", "$mod->name");
-                    $modnames[1][$mod->name] = get_string("modulenameplural", "$mod->name");
+                    $modnames[0][$mod->name] = get_string("modulename", "$mod->name", null, true);
+                    $modnames[1][$mod->name] = get_string("modulenameplural", "$mod->name", null, true);
                 }
             }
-            core_collator::asort($modnames[0]);
-            core_collator::asort($modnames[1]);
         }
     }
     return $modnames[(int)$plural];
@@ -750,16 +752,21 @@ function make_categories_options() {
 /**
  * Print the buttons relating to course requests.
  *
- * @param object $context current page context.
+ * @param context $context current page context.
  */
 function print_course_request_buttons($context) {
     global $CFG, $DB, $OUTPUT;
     if (empty($CFG->enablecourserequests)) {
         return;
     }
-    if (!has_capability('moodle/course:create', $context) && has_capability('moodle/course:request', $context)) {
-    /// Print a button to request a new course
-        echo $OUTPUT->single_button(new moodle_url('/course/request.php'), get_string('requestcourse'), 'get');
+    if (course_request::can_request($context)) {
+        // Print a button to request a new course.
+        $params = [];
+        if ($context instanceof context_coursecat) {
+            $params['category'] = $context->instanceid;
+        }
+        echo $OUTPUT->single_button(new moodle_url('/course/request.php', $params),
+            get_string('requestcourse'), 'get');
     }
     /// Print a button to manage pending requests
     if (has_capability('moodle/site:approvecourse', $context)) {
@@ -1289,16 +1296,36 @@ function course_module_flag_for_async_deletion($cmid) {
  * Checks whether the given course has any course modules scheduled for adhoc deletion.
  *
  * @param int $courseid the id of the course.
+ * @param bool $onlygradable whether to check only gradable modules or all modules.
  * @return bool true if the course contains any modules pending deletion, false otherwise.
  */
-function course_modules_pending_deletion($courseid) {
+function course_modules_pending_deletion(int $courseid, bool $onlygradable = false) : bool {
     if (empty($courseid)) {
         return false;
     }
+
+    if ($onlygradable) {
+        // Fetch modules with grade items.
+        if (!$coursegradeitems = grade_item::fetch_all(['itemtype' => 'mod', 'courseid' => $courseid])) {
+            // Return early when there is none.
+            return false;
+        }
+    }
+
     $modinfo = get_fast_modinfo($courseid);
     foreach ($modinfo->get_cms() as $module) {
         if ($module->deletioninprogress == '1') {
-            return true;
+            if ($onlygradable) {
+                // Check if the module being deleted is in the list of course modules with grade items.
+                foreach ($coursegradeitems as $coursegradeitem) {
+                    if ($coursegradeitem->itemmodule == $module->modname && $coursegradeitem->iteminstance == $module->instance) {
+                        // The module being deleted is within the gradable  modules.
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
         }
     }
     return false;
@@ -2538,7 +2565,7 @@ function update_course($data, $editoroptions = NULL) {
                 // The summary might be very long, we don't wan't to fill up the log record with the full text.
                 $updatedfields[$field] = '(updated)';
             }
-        } else if ($field == 'tags') {
+        } else if ($field == 'tags' && !empty($CFG->usetags)) {
             // Tags might not have the same array keys, just check the values.
             if (array_values($data->$field) !== array_values($value)) {
                 $updatedfields[$field] = $data->$field;
@@ -2811,7 +2838,7 @@ class course_request {
         $data->requester = $USER->id;
 
         // Setting the default category if none set.
-        if (empty($data->category) || empty($CFG->requestcategoryselection)) {
+        if (empty($data->category) || !empty($CFG->lockrequestcategory)) {
             $data->category = $CFG->defaultrequestcategory;
         }
 
@@ -2951,6 +2978,31 @@ class course_request {
     }
 
     /**
+     * Checks user capability to approve a requested course
+     *
+     * If course was requested without category for some reason (might happen if $CFG->defaultrequestcategory is
+     * misconfigured), we check capabilities 'moodle/site:approvecourse' and 'moodle/course:changecategory'.
+     *
+     * @return bool
+     */
+    public function can_approve() {
+        global $CFG;
+        $category = null;
+        if ($this->properties->category) {
+            $category = core_course_category::get($this->properties->category, IGNORE_MISSING);
+        } else if ($CFG->defaultrequestcategory) {
+            $category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING);
+        }
+        if ($category) {
+            return has_capability('moodle/site:approvecourse', $category->get_context());
+        }
+
+        // We can not determine the context where the course should be created. The approver should have
+        // both capabilities to approve courses and change course category in the system context.
+        return has_all_capabilities(['moodle/site:approvecourse', 'moodle/course:changecategory'], context_system::instance());
+    }
+
+    /**
      * Returns the category where this course request should be created
      *
      * Note that we don't check here that user has a capability to view
@@ -2961,17 +3013,14 @@ class course_request {
      */
     public function get_category() {
         global $CFG;
-        // If the category is not set, if the current user does not have the rights to change the category, or if the
-        // category does not exist, we set the default category to the course to be approved.
-        // The system level is used because the capability moodle/site:approvecourse is based on a system level.
-        if (empty($this->properties->category) || !has_capability('moodle/course:changecategory', context_system::instance()) ||
-                (!$category = core_course_category::get($this->properties->category, IGNORE_MISSING, true))) {
-            $category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING, true);
+        if ($this->properties->category && ($category = core_course_category::get($this->properties->category, IGNORE_MISSING))) {
+            return $category;
+        } else if ($CFG->defaultrequestcategory &&
+                ($category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING))) {
+            return $category;
+        } else {
+            return core_course_category::get_default();
         }
-        if (!$category) {
-            $category = core_course_category::get_default();
-        }
-        return $category;
     }
 
     /**
@@ -3096,6 +3145,33 @@ class course_request {
         $eventdata->smallmessage      = '';
         $eventdata->notification      = 1;
         message_send($eventdata);
+    }
+
+    /**
+     * Checks if current user can request a course in this context
+     *
+     * @param context $context
+     * @return bool
+     */
+    public static function can_request(context $context) {
+        global $CFG;
+        if (empty($CFG->enablecourserequests)) {
+            return false;
+        }
+        if (has_capability('moodle/course:create', $context)) {
+            return false;
+        }
+
+        if ($context instanceof context_system) {
+            $defaultcontext = context_coursecat::instance($CFG->defaultrequestcategory, IGNORE_MISSING);
+            return $defaultcontext &&
+                has_capability('moodle/course:request', $defaultcontext);
+        } else if ($context instanceof context_coursecat) {
+            if (!$CFG->lockrequestcategory || $CFG->defaultrequestcategory == $context->instanceid) {
+                return has_capability('moodle/course:request', $context);
+            }
+        }
+        return false;
     }
 }
 
@@ -4024,7 +4100,6 @@ function course_get_user_administration_options($course, $context) {
         $options->outcomes = !empty($CFG->enableoutcomes) && has_capability('moodle/course:update', $context);
         $options->badges = !empty($CFG->enablebadges);
         $options->import = has_capability('moodle/restore:restoretargetimport', $context);
-        $options->publish = !empty($CFG->enablecoursepublishing) && has_capability('moodle/course:publish', $context);
         $options->reset = has_capability('moodle/course:reset', $context);
         $options->roles = has_capability('moodle/role:switchroles', $context);
     } else {
@@ -4300,9 +4375,9 @@ function course_filter_courses_by_timeline_classification(
 ) : array {
 
     if (!in_array($classification,
-            [COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS,
+            [COURSE_TIMELINE_ALLINCLUDINGHIDDEN, COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS,
                 COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_HIDDEN])) {
-        $message = 'Classification must be one of COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
+        $message = 'Classification must be one of COURSE_TIMELINE_ALLINCLUDINGHIDDEN, COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
             . 'COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_FUTURE';
         throw new moodle_exception($message);
     }
@@ -4316,7 +4391,7 @@ function course_filter_courses_by_timeline_classification(
         $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
 
         // Added as of MDL-63457 toggle viewability for each user.
-        if (($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
+        if ($classification == COURSE_TIMELINE_ALLINCLUDINGHIDDEN || ($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
             (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) {
             $filteredcourses[] = $course;
             $filtermatches++;
@@ -4363,6 +4438,103 @@ function course_filter_courses_by_favourites(
         $numberofcoursesprocessed++;
 
         if (in_array($course->id, $favouritecourseids)) {
+            $filteredcourses[] = $course;
+            $filtermatches++;
+        }
+
+        if ($limit && $filtermatches >= $limit) {
+            // We've found the number of requested courses. No need to continue searching.
+            break;
+        }
+    }
+
+    // Return the number of filtered courses as well as the number of courses that were searched
+    // in order to find the matching courses. This allows the calling code to do some kind of
+    // pagination.
+    return [$filteredcourses, $numberofcoursesprocessed];
+}
+
+/**
+ * Search the given $courses for any that have a $customfieldname value that matches the given
+ * $customfieldvalue, up to the specified $limit.
+ *
+ * This function will return the subset of courses that matches the value as well as the
+ * number of courses it had to process to build that subset.
+ *
+ * It is recommended that for larger sets of courses this function is given a Generator that loads
+ * the courses from the database in chunks.
+ *
+ * @param array|Traversable $courses List of courses to process
+ * @param string $customfieldname the shortname of the custom field to match against
+ * @param string $customfieldvalue the value this custom field needs to match
+ * @param int $limit Limit the number of results to this amount
+ * @return array First value is the filtered courses, second value is the number of courses processed
+ */
+function course_filter_courses_by_customfield(
+    $courses,
+    $customfieldname,
+    $customfieldvalue,
+    int $limit = 0
+) : array {
+    global $DB;
+
+    if (!$courses) {
+        return [[], 0];
+    }
+
+    // Prepare the list of courses to search through.
+    $coursesbyid = [];
+    foreach ($courses as $course) {
+        $coursesbyid[$course->id] = $course;
+    }
+    if (!$coursesbyid) {
+        return [[], 0];
+    }
+    list($csql, $params) = $DB->get_in_or_equal(array_keys($coursesbyid), SQL_PARAMS_NAMED);
+
+    // Get the id of the custom field.
+    $sql = "
+       SELECT f.id
+         FROM {customfield_field} f
+         JOIN {customfield_category} cat ON cat.id = f.categoryid
+        WHERE f.shortname = ?
+          AND cat.component = 'core_course'
+          AND cat.area = 'course'
+    ";
+    $fieldid = $DB->get_field_sql($sql, [$customfieldname]);
+    if (!$fieldid) {
+        return [[], 0];
+    }
+
+    // Get a list of courseids that match that custom field value.
+    if ($customfieldvalue == COURSE_CUSTOMFIELD_EMPTY) {
+        $comparevalue = $DB->sql_compare_text('cd.value');
+        $sql = "
+           SELECT c.id
+             FROM {course} c
+        LEFT JOIN {customfield_data} cd ON cd.instanceid = c.id AND cd.fieldid = :fieldid
+            WHERE c.id $csql
+              AND (cd.value IS NULL OR $comparevalue = '' OR $comparevalue = '0')
+        ";
+        $params['fieldid'] = $fieldid;
+        $matchcourseids = $DB->get_fieldset_sql($sql, $params);
+    } else {
+        $comparevalue = $DB->sql_compare_text('value');
+        $select = "fieldid = :fieldid AND $comparevalue = :customfieldvalue AND instanceid $csql";
+        $params['fieldid'] = $fieldid;
+        $params['customfieldvalue'] = $customfieldvalue;
+        $matchcourseids = $DB->get_fieldset_select('customfield_data', 'instanceid', $select, $params);
+    }
+
+    // Prepare the list of courses to return.
+    $filteredcourses = [];
+    $numberofcoursesprocessed = 0;
+    $filtermatches = 0;
+
+    foreach ($coursesbyid as $course) {
+        $numberofcoursesprocessed++;
+
+        if (in_array($course->id, $matchcourseids)) {
             $filteredcourses[] = $course;
             $filtermatches++;
         }
@@ -4601,7 +4773,7 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
     }
 
     $basefields = array('id', 'idnumber', 'summary', 'summaryformat', 'startdate', 'enddate', 'category',
-            'shortname', 'fullname', 'timeaccess', 'component');
+            'shortname', 'fullname', 'timeaccess', 'component', 'visible');
 
     $sort = trim($sort);
     if (empty($sort)) {

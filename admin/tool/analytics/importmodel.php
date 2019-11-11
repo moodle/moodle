@@ -27,6 +27,13 @@ require_once(__DIR__ . '/../../../config.php');
 require_login();
 \core_analytics\manager::check_can_manage_models();
 
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    $PAGE->set_context(\context_system::instance());
+    $renderer = $PAGE->get_renderer('tool_analytics');
+    echo $renderer->render_analytics_disabled();
+    exit(0);
+}
+
 $returnurl = new \moodle_url('/admin/tool/analytics/index.php');
 $url = new \moodle_url('/admin/tool/analytics/importmodel.php');
 $title = get_string('importmodel', 'tool_analytics');

@@ -87,6 +87,12 @@ class quiz_overview_report_testcase extends advanced_testcase {
         // student enrolment does not cause duplicate records in this query.
         $generator->enrol_user($student2->id, $course->id, null, 'self');
 
+        // Also create a user who should not appear in the reports,
+        // because they have a role with neither 'mod/quiz:attempt'
+        // nor 'mod/quiz:reviewmyattempts'.
+        $tutor = $generator->create_user();
+        $generator->enrol_user($tutor->id, $course->id, 'teacher');
+
         // The test data.
         $timestamp = 1234567890;
         $attempts = array(
@@ -154,7 +160,8 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $context = context_module::instance($quiz->cmid);
         $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
-        $studentsjoins = get_enrolled_with_capabilities_join($context);
+        $studentsjoins = get_enrolled_with_capabilities_join($context, '',
+                array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'));
         $empty = new \core\dml\sql_join();
 
         // Set the options.

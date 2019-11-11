@@ -297,7 +297,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 'name' => $selectallid,
                 'value' => 1,
                 'label' => get_string('selectall'),
-                'classes' => 'mr-1'
+                'classes' => 'btn-secondary mr-1'
             ], true);
             $actiondata .= $OUTPUT->render($selectallcheckbox);
 

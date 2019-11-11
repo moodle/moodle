@@ -35,9 +35,7 @@ Feature: Preview a quiz as a teacher
 
   @javascript
   Scenario: Preview a quiz
-    When I log in as "teacher"
-    And I am on "Course 1" course homepage
-    When I follow "Quiz 1"
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
     And I follow "Review"
     Then I should see "25.00 out of 100.00"
     And I follow "Finish review"

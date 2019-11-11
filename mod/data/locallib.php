@@ -1421,6 +1421,7 @@ function data_approve_entry($entryid, $approve) {
 
 /**
  * Populate the field contents of a new record with the submitted data.
+ * An event has been previously triggered upon the creation of the new record in data_add_record().
  *
  * @param  stdClass $data           database object
  * @param  stdClass $context        context object
@@ -1449,18 +1450,6 @@ function data_add_fields_contents_to_new_record($data, $context, $recordid, $fie
     foreach ($processeddata->fields as $fieldname => $field) {
         $field->update_content($recordid, $datarecord->$fieldname, $fieldname);
     }
-
-    // Trigger an event for updating this record.
-    $event = \mod_data\event\record_created::create(array(
-        'objectid' => $recordid,
-        'context' => $context,
-        'courseid' => $data->course,
-        'other' => array(
-            'dataid' => $data->id
-        )
-    ));
-    $event->add_record_snapshot('data', $data);
-    $event->trigger();
 }
 
 /**

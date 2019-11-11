@@ -1,5 +1,10 @@
 This file describes API changes in the starredcourses block code.
 
+=== 3.8 ===
+
+* New admin setting block_starredcourses/displaycategories which enables the starred courses block
+  to display the course category.
+
 === 3.7 ===
 
 * The 'block/starredcourses:addinstance' capability has been removed. It has never been used in code.

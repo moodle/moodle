@@ -180,9 +180,11 @@ class discussion extends exporter {
 
                 if (!$group->hidepicture) {
                     $url = get_group_picture_url($group, $forum->get_course_id(), true);
-                    if (!empty($url)) {
-                        $groupdata['urls']['picture'] = $url;
+                    if (empty($url)) {
+                        // Get a generic group image URL.
+                        $url = $output->image_url('g/g1')->out(false);
                     }
+                    $groupdata['urls']['picture'] = $url;
                 }
 
                 if ($capabilitymanager->can_view_participants($user, $discussion)) {

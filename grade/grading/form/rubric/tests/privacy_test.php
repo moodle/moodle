@@ -23,11 +23,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace tests\gradingform_rubric;
 
-use \core_privacy\tests\provider_testcase;
-use \core_privacy\local\request\writer;
-use \gradingform_rubric\privacy\provider;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\writer;
+use gradingform_rubric\privacy\provider;
+use gradingform_rubric_controller;
+use context_module;
 
 /**
  * Privacy tests for gradingform_rubric
@@ -35,7 +37,7 @@ use \gradingform_rubric\privacy\provider;
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradingform_rubric_privacy_testcase extends provider_testcase {
+class privacy_testcase extends provider_testcase {
 
     /**
      * Test the export of rubric data.
@@ -45,43 +47,23 @@ class gradingform_rubric_privacy_testcase extends provider_testcase {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $module = $this->getDataGenerator()->create_module('assign', ['course' => $course]);
+        $modulecontext = context_module::instance($module->cmid);
         $user = $this->getDataGenerator()->create_user();
-
         $this->setUser($user);
 
-        $modulecontext = context_module::instance($module->cmid);
-        $rubric = new test_rubric($modulecontext, 'testrubrib', 'Description text');
-        $criterion = new test_criterion('Spelling is important');
-        $criterion->add_level('Nothing but mistakes', 0);
-        $criterion->add_level('Several mistakes', 1);
-        $criterion->add_level('No mistakes', 2);
-        $rubric->add_criteria($criterion);
-        $criterion = new test_criterion('Pictures');
-        $criterion->add_level('No pictures', 0);
-        $criterion->add_level('One picture', 1);
-        $criterion->add_level('More than one picture', 2);
-        $rubric->add_criteria($criterion);
-        $rubric->create_rubric();
+        // Generate a test rubric and get its controller.
+        $controller = $this->get_test_rubric($modulecontext, 'assign', 'submissions');
 
-        $controller = $rubric->manager->get_controller('rubric');
         // In the situation of mod_assign this would be the id from assign_grades.
         $itemid = 1;
         $instance = $controller->create_instance($user->id, $itemid);
-        // I need the ids for the criteria and there doesn't seem to be a nice method to get it.
-        $criteria = $DB->get_records('gradingform_rubric_criteria');
-        $data = ['criteria' => []];
-        foreach ($criteria as $key => $value) {
-            if ($value->description == 'Spelling is important') {
-                $level = $DB->get_record('gradingform_rubric_levels', ['criterionid' => $key, 'score' => 1]);
-                $data['criteria'][$key]['levelid'] = $level->id;
-                $data['criteria'][$key]['remark'] = 'This user made several mistakes.';
-            } else {
-                $level = $DB->get_record('gradingform_rubric_levels', ['criterionid' => $key, 'score' => 0]);
-                $data['criteria'][$key]['levelid'] = $level->id;
-                $data['criteria'][$key]['remark'] = 'Please add more pictures.';
-            }
-        }
-        $data['itemid'] = $itemid;
+
+        $data = $this->get_test_form_data(
+            $controller,
+            $itemid,
+            1, 'This user made several mistakes.',
+            0, 'Please add more pictures.'
+        );
 
         // Update this instance with data.
         $instance->update($data);
@@ -105,43 +87,23 @@ class gradingform_rubric_privacy_testcase extends provider_testcase {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $module = $this->getDataGenerator()->create_module('assign', ['course' => $course]);
+        $modulecontext = context_module::instance($module->cmid);
         $user = $this->getDataGenerator()->create_user();
-
         $this->setUser($user);
 
-        $modulecontext = context_module::instance($module->cmid);
-        $rubric = new test_rubric($modulecontext, 'testrubrib', 'Description text');
-        $criterion = new test_criterion('Spelling is important');
-        $criterion->add_level('Nothing but mistakes', 0);
-        $criterion->add_level('Several mistakes', 1);
-        $criterion->add_level('No mistakes', 2);
-        $rubric->add_criteria($criterion);
-        $criterion = new test_criterion('Pictures');
-        $criterion->add_level('No pictures', 0);
-        $criterion->add_level('One picture', 1);
-        $criterion->add_level('More than one picture', 2);
-        $rubric->add_criteria($criterion);
-        $rubric->create_rubric();
+        // Generate a test rubric and get its controller.
+        $controller = $this->get_test_rubric($modulecontext, 'assign', 'submissions');
 
-        $controller = $rubric->manager->get_controller('rubric');
         // In the situation of mod_assign this would be the id from assign_grades.
         $itemid = 1;
         $instance = $controller->create_instance($user->id, $itemid);
-        // I need the ids for the criteria and there doesn't seem to be a nice method to get it.
-        $criteria = $DB->get_records('gradingform_rubric_criteria');
-        $data = ['criteria' => []];
-        foreach ($criteria as $key => $value) {
-            if ($value->description == 'Spelling is important') {
-                $level = $DB->get_record('gradingform_rubric_levels', ['criterionid' => $key, 'score' => 1]);
-                $data['criteria'][$key]['levelid'] = $level->id;
-                $data['criteria'][$key]['remark'] = 'This user made several mistakes.';
-            } else {
-                $level = $DB->get_record('gradingform_rubric_levels', ['criterionid' => $key, 'score' => 0]);
-                $data['criteria'][$key]['levelid'] = $level->id;
-                $data['criteria'][$key]['remark'] = 'Please add more pictures.';
-            }
-        }
-        $data['itemid'] = $itemid;
+
+        $data = $this->get_test_form_data(
+            $controller,
+            $itemid,
+            1, 'This user made several mistakes.',
+            0, 'Please add more pictures.'
+        );
 
         // Update this instance with data.
         $instance->update($data);
@@ -149,21 +111,13 @@ class gradingform_rubric_privacy_testcase extends provider_testcase {
         // Second instance.
         $itemid = 2;
         $instance = $controller->create_instance($user->id, $itemid);
-        // I need the ids for the criteria and there doesn't seem to be a nice method to get it.
-        $criteria = $DB->get_records('gradingform_rubric_criteria');
-        $data = ['criteria' => []];
-        foreach ($criteria as $key => $value) {
-            if ($value->description == 'Spelling is important') {
-                $level = $DB->get_record('gradingform_rubric_levels', ['criterionid' => $key, 'score' => 0]);
-                $data['criteria'][$key]['levelid'] = $level->id;
-                $data['criteria'][$key]['remark'] = 'Too many mistakes. Please try again.';
-            } else {
-                $level = $DB->get_record('gradingform_rubric_levels', ['criterionid' => $key, 'score' => 2]);
-                $data['criteria'][$key]['levelid'] = $level->id;
-                $data['criteria'][$key]['remark'] = 'Great number of pictures. Well done.';
-            }
-        }
-        $data['itemid'] = $itemid;
+
+        $data = $this->get_test_form_data(
+            $controller,
+            $itemid,
+            0, 'Too many mistakes. Please try again.',
+            2, 'Great number of pictures. Well done.'
+        );
 
         // Update this instance with data.
         $instance->update($data);
@@ -179,135 +133,51 @@ class gradingform_rubric_privacy_testcase extends provider_testcase {
             $this->assertNotEquals($instance->get_id(), $record->instanceid);
         }
     }
-}
-
-/**
- * Convenience class to create rubrics.
- *
- * @copyright  2018 Adrian Greeve <adriangreeve.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class test_rubric {
-
-    /** @var array $criteria The criteria for this rubric. */
-    protected $criteria = [];
-    /** @var context The context that this rubric is in. */
-    protected $context;
-    /** @var string The name of this rubric. */
-    protected $name;
-    /** @var string A description for this rubric. */
-    protected $text;
-    /** @var integer The current criterion ID. This is incremented when a new criterion is added. */
-    protected $criterionid = 0;
-    /** @var grading_manager An object for managing the rubric. */
-    public $manager;
 
     /**
-     * Constuctor for this rubric.
+     * Generate a rubric controller with sample data required for testing of this class.
      *
-     * @param context $context The context that this rubric is being used in.
-     * @param string $name Name of the rubric.
-     * @param string $text Description of the rubric.
+     * @param context_module $context
+     * @param string $component
+     * @param string $area
+     * @return gradingform_rubric_controller
      */
-    public function __construct($context, $name, $text) {
-        $this->context = $context;
-        $this->name = $name;
-        $this->text = $text;
-        $this->manager = get_grading_manager();
-        $this->manager->set_context($context);
-        $this->manager->set_component('mod_assign');
-        $this->manager->set_area('submission');
+    protected function get_test_rubric(context_module $context, string $component, string $area): gradingform_rubric_controller {
+        $generator = \testing_util::get_data_generator();
+        $rubricgenerator = $generator->get_plugin_generator('gradingform_rubric');
+
+        return $rubricgenerator->get_test_rubric($context, $component, $area);
     }
 
     /**
-     * Creates the rubric using the appropriate APIs.
-     */
-    public function create_rubric() {
-
-        $data = (object) [
-            'areaid' => $this->context->id,
-            'returnurl' => '',
-            'name' => $this->name,
-            'description_editor' => [
-                'text' => $this->text,
-                'format' => 1,
-                'itemid' => 1
-            ],
-            'rubric' => [
-                'criteria' => $this->criteria,
-                'options' => [
-                    'sortlevelsasc' => 1,
-                    'lockzeropoints' => 1,
-                    'showdescriptionteacher' => 1,
-                    'showdescriptionstudent' => 1,
-                    'showscoreteacher' => 1,
-                    'showscorestudent' => 1,
-                    'enableremarks' => 1,
-                    'showremarksstudent' => 1
-                ]
-            ],
-            'saverubric' => 'Save rubric and make it ready',
-            'status' => 20
-        ];
-
-        $controller = $this->manager->get_controller('rubric');
-        $controller->update_definition($data);
-    }
-
-    /**
-     * Adds a criterion to the rubric.
+     * Fetch a set of sample data.
      *
-     * @param test_criterion $criterion The criterion object (class below).
+     * @param gradingform_rubric_controller $controller
+     * @param int $itemid
+     * @param float $spellingscore
+     * @param string $spellingremark
+     * @param float $picturescore
+     * @param string $pictureremark
+     * @return array
      */
-    public function add_criteria($criterion) {
+    protected function get_test_form_data(
+        gradingform_rubric_controller $controller,
+        int $itemid,
+        float $spellingscore,
+        string $spellingremark,
+        float $picturescore,
+        string $pictureremark
+    ): array {
+        $generator = \testing_util::get_data_generator();
+        $rubricgenerator = $generator->get_plugin_generator('gradingform_rubric');
 
-        $this->criterionid++;
-        $this->criteria['NEWID' . $this->criterionid] = [
-            'description' => $criterion->description,
-            'sortorder' => $this->criterionid,
-            'levels' => $criterion->levels
-        ];
-    }
-
-}
-
-/**
- * Convenience class to create rubric criterion.
- *
- * @copyright  2018 Adrian Greeve <adriangreeve.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class test_criterion {
-
-    /** @var string $description A description of the criterion. */
-    public $description;
-    /** @var integer $sortorder sort order of the criterion. */
-    public $sortorder = 0;
-    /** @var integer $levelid The current level id  for this level*/
-    public $levelid = 0;
-    /** @var array $levels The levels for this criterion. */
-    public $levels = [];
-
-    /**
-     * Constructor for this test_criterion object
-     *
-     * @param string $description A description of this criterion.
-     */
-    public function __construct($description) {
-        $this->description = $description;
-    }
-
-    /**
-     * Adds levels to the criterion.
-     *
-     * @param string $definition The definition for this level.
-     * @param int $score      The score received if this level is selected.
-     */
-    public function add_level($definition, $score) {
-        $this->levelid++;
-        $this->levels['NEWID' . $this->levelid] = [
-            'definition' => $definition,
-            'score' => $score
-        ];
+        return $rubricgenerator->get_test_form_data(
+            $controller,
+            $itemid,
+            $spellingscore,
+            $spellingremark,
+            $picturescore,
+            $pictureremark
+        );
     }
 }

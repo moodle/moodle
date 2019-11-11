@@ -27,43 +27,30 @@
 
     Example context (json):
     {
-        "actions": [
-            {
-                "url": "https://moodle.org",
-                "text": "Moodle"
-            }, {
-                "url": "https://en.wikipedia.org/wiki/Noodle",
-                "text": "Noodle"
-            }
-        ]
+        "body": "I am a <a href=\"#\">link</a> in a text body.",
+        "usefulbuttons": {
+            "usefulurl": "https://en.wikipedia.org/wiki/Noodle",
+            "notusefulurl": "https://en.wikipedia.org/wiki/Noodle"
+        }
     }
 }}
 
-{{! Default btn-default styles. These styles are not applied to Moodle's web UI as there is a body:not(.dir-ltr):not(.dir-rtl)}}
+{{> core_analytics/notification_styles}}
 
-<style>
-body:not(.dir-ltr):not(.dir-rtl) .btn-insight {
-    margin-bottom: 1rem!important;
-    margin-right: 1rem!important;
-    color: #212529;
-    background-color: #e9ecef;
-    border-color: #e9ecef
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: .375rem .75rem;
-    font-size: .9375rem;
-    line-height: 1.5;
-    border-radius: .25rem;
-    text-decoration: none;
-}
-</style>
-
+{{#body}}
+    {{{.}}}
+{{/body}}
 <br/>
+
 {{#actions}}
-    <a class="btn btn-default m-r-1 m-b-1 btn-insight" href="{{url}}">{{text}}</a>
+    <a class="btn btn-outline-primary m-r-1 m-b-1 btn-insight" href="{{url}}">{{text}}</a><br/><br/>
 {{/actions}}
+
+{{#usefulbuttons}}
+    <div>
+        {{! Using target blank for these actions as they only return a small notification.}}
+        <strong>{{#str}} washelpful, analytics {{/str}}</strong>
+        <a href="{{usefulurl}}" target="_blank" class="btn-insight btn btn-outline-primary">{{#str}}yes{{/str}}</a>
+        <a href="{{notusefulurl}}" target="_blank" class="btn-insight btn btn-outline-primary">{{#str}}no{{/str}}</a>
+    </div>
+{{/usefulbuttons}}

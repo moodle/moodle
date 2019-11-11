@@ -74,8 +74,6 @@ class search_simpledb_engine_testcase extends advanced_testcase {
 
         $this->engine = new \search_simpledb\engine();
         $this->search = testable_core_search::instance($this->engine);
-        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
-        $this->search->add_search_area($areaid, new core_mocksearch\search\mock_search_area());
 
         $this->generator = self::getDataGenerator()->get_plugin_generator('core_search');
         $this->generator->setup();
@@ -105,6 +103,8 @@ class search_simpledb_engine_testcase extends advanced_testcase {
     public function test_index() {
         global $DB;
 
+        $this->add_mock_search_area();
+
         $record = new \stdClass();
         $record->timemodified = time() - 1;
         $this->generator->create_record($record);
@@ -129,6 +129,8 @@ class search_simpledb_engine_testcase extends advanced_testcase {
      */
     public function test_search() {
         global $USER, $DB;
+
+        $this->add_mock_search_area();
 
         $this->generator->create_record();
         $record = new \stdClass();
@@ -214,6 +216,8 @@ class search_simpledb_engine_testcase extends advanced_testcase {
      */
     public function test_delete() {
 
+        $this->add_mock_search_area();
+
         $this->generator->create_record();
         $this->generator->create_record();
         $this->search->index();
@@ -236,6 +240,8 @@ class search_simpledb_engine_testcase extends advanced_testcase {
      * @return void
      */
     public function test_alloweduserid() {
+
+        $this->add_mock_search_area();
 
         $area = new core_mocksearch\search\mock_search_area();
 
@@ -309,6 +315,8 @@ class search_simpledb_engine_testcase extends advanced_testcase {
 
     public function test_delete_by_id() {
 
+        $this->add_mock_search_area();
+
         $this->generator->create_record();
         $this->generator->create_record();
         $this->search->index();
@@ -332,6 +340,67 @@ class search_simpledb_engine_testcase extends advanced_testcase {
         $this->assertCount(1, $results);
         $result = reset($results);
         $this->assertNotEquals($deleteid, $result->get('id'));
+    }
+
+    /**
+     * Tries out deleting data for a context or a course.
+     *
+     * @throws moodle_exception
+     */
+    public function test_deleted_contexts_and_courses() {
+        // Create some courses and activities.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'C1', 'summary' => 'xyzzy']);
+        $course1page1 = $generator->create_module('page', ['course' => $course1, 'name' => 'C1P1', 'content' => 'xyzzy']);
+        $generator->create_module('page', ['course' => $course1, 'name' => 'C1P2', 'content' => 'xyzzy']);
+        $course2 = $generator->create_course(['fullname' => 'C2', 'summary' => 'xyzzy']);
+        $course2page = $generator->create_module('page', ['course' => $course2, 'name' => 'C2P', 'content' => 'xyzzy']);
+        $course2pagecontext = \context_module::instance($course2page->cmid);
+
+        $this->search->index();
+
+        // By default we have all data in the index.
+        $this->assert_raw_index_contents('xyzzy', ['C1', 'C1P1', 'C1P2', 'C2', 'C2P']);
+
+        // Say we delete the course2pagecontext...
+        $this->engine->delete_index_for_context($course2pagecontext->id);
+        $this->assert_raw_index_contents('xyzzy', ['C1', 'C1P1', 'C1P2', 'C2']);
+
+        // Now delete the second course...
+        $this->engine->delete_index_for_course($course2->id);
+        $this->assert_raw_index_contents('xyzzy', ['C1', 'C1P1', 'C1P2']);
+
+        // Finally let's delete using Moodle functions to check that works. Single context first.
+        course_delete_module($course1page1->cmid);
+        $this->assert_raw_index_contents('xyzzy', ['C1', 'C1P2']);
+        delete_course($course1, false);
+        $this->assert_raw_index_contents('xyzzy', []);
+    }
+
+    /**
+     * Check the contents of the index.
+     *
+     * @param string $searchword Word to match within the content field
+     * @param string[] $expected Array of expected result titles, in alphabetical order
+     * @throws dml_exception
+     */
+    protected function assert_raw_index_contents(string $searchword, array $expected) {
+        global $DB;
+        $results = $DB->get_records_select('search_simpledb_index',
+                $DB->sql_like('content', '?'), ['%' . $searchword . '%'], "id, {$DB->sql_order_by_text('title')}");
+        $titles = array_map(function($x) {
+            return $x->title;
+        }, $results);
+        sort($titles);
+        $this->assertEquals($expected, $titles);
+    }
+
+    /**
+     * Adds a mock search area to the search system.
+     */
+    protected function add_mock_search_area() {
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
+        $this->search->add_search_area($areaid, new core_mocksearch\search\mock_search_area());
     }
 
     /**

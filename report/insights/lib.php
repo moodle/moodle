@@ -34,9 +34,9 @@ defined('MOODLE_INTERNAL') || die;
  */
 function report_insights_extend_navigation_course($navigation, $course, $context) {
 
-    if (has_capability('moodle/analytics:listinsights', $context)) {
+    if (\core_analytics\manager::is_analytics_enabled() && has_capability('moodle/analytics:listinsights', $context)) {
 
-        $modelids = report_insights_context_insights($context);
+        $modelids = \core_analytics\manager::cached_models_with_insights($context);
         if (!empty($modelids)) {
             $url = new moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
             $node = navigation_node::create(get_string('insights', 'report_insights'), $url, navigation_node::TYPE_SETTING,
@@ -58,15 +58,17 @@ function report_insights_extend_navigation_course($navigation, $course, $context
  */
 function report_insights_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
 
-    $context = \context_user::instance($user->id);
-    if (\core_analytics\manager::check_can_list_insights($context, true)) {
+    if (\core_analytics\manager::is_analytics_enabled()) {
+        $context = \context_user::instance($user->id);
+        if (\core_analytics\manager::check_can_list_insights($context, true)) {
 
-        $modelids = report_insights_context_insights($context);
-        if (!empty($modelids)) {
-            $url = new moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
-            $node = new core_user\output\myprofile\node('reports', 'insights', get_string('insights', 'report_insights'),
-                null, $url);
-            $tree->add_node($node);
+            $modelids = \core_analytics\manager::cached_models_with_insights($context);
+            if (!empty($modelids)) {
+                $url = new moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
+                $node = new core_user\output\myprofile\node('reports', 'insights', get_string('insights', 'report_insights'),
+                    null, $url);
+                $tree->add_node($node);
+            }
         }
     }
 }
@@ -80,9 +82,9 @@ function report_insights_myprofile_navigation(core_user\output\myprofile\tree $t
  */
 function report_insights_extend_navigation_category_settings($navigation, $context) {
 
-    if (has_capability('moodle/analytics:listinsights', $context)) {
+    if (\core_analytics\manager::is_analytics_enabled() && has_capability('moodle/analytics:listinsights', $context)) {
 
-        $modelids = report_insights_context_insights($context);
+        $modelids = \core_analytics\manager::cached_models_with_insights($context);
         if (!empty($modelids)) {
             $url = new moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
 
@@ -98,23 +100,4 @@ function report_insights_extend_navigation_category_settings($navigation, $conte
             $navigation->add_node($node);
         }
     }
-}
-
-/**
- * Returns the models that generated insights in the provided context.
- *
- * @param \context $context
- * @return int[]
- */
-function report_insights_context_insights(\context $context) {
-
-    $cache = \cache::make('core', 'contextwithinsights');
-    $modelids = $cache->get($context->id);
-    if ($modelids === false) {
-        // They will be full unless a model has been cleared.
-        $models = \core_analytics\manager::get_models_with_insights($context);
-        $modelids = array_keys($models);
-        $cache->set($context->id, $modelids);
-    }
-    return $modelids;
 }

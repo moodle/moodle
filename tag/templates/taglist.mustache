@@ -38,6 +38,7 @@
         {"id":1,"name":"Mice","viewurl":"http://moodle.org/tag/index.php?tag=Mice","isstandard":"0","flag":0}
     ],
         "label": "Tags",
+        "accesshidelabel": false,
         "tagscount": 3,
         "overflow": 1,
         "classes": "someadditionalclass"
@@ -47,7 +48,7 @@
 {{#tagscount}}
     <div class="tag_list hideoverlimit {{classes}}">
     {{#label}}
-    <b>{{label}}:</b>
+        <b{{#accesshidelabel}} class="accesshide"{{/accesshidelabel}}>{{label}}:</b>
     {{/label}}
     <ul class="inline-list">
         {{#tags}}

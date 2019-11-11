@@ -1,4 +1,29 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Adds security related settings links for security category to admin tree.
+ *
+ * @copyright  1999 Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+use core_admin\local\settings\filesize;
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
@@ -36,12 +61,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // maxbytes set to 0 will allow the maximum server limit for uploads
     $temp->add(new admin_setting_configselect('maxbytes', new lang_string('maxbytes', 'admin'), new lang_string('configmaxbytes', 'admin'), 0, $max_upload_choices));
     // 100MB
-    $defaultuserquota = 104857600;
-    $params = new stdClass();
-    $params->bytes = $defaultuserquota;
-    $params->displaysize = display_size($defaultuserquota);
-    $temp->add(new admin_setting_configtext('userquota', new lang_string('userquota', 'admin'),
-                new lang_string('configuserquota', 'admin', $params), $defaultuserquota, PARAM_INT, 30));
+    $defaultuserquota = 100 * filesize::UNIT_MB;
+    $temp->add(new filesize('userquota', new lang_string('userquota', 'admin'),
+            new lang_string('userquota_desc', 'admin'), $defaultuserquota));
 
     $temp->add(new admin_setting_configcheckbox('allowobjectembed', new lang_string('allowobjectembed', 'admin'), new lang_string('configallowobjectembed', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enabletrusttext', new lang_string('enabletrusttext', 'admin'), new lang_string('configenabletrusttext', 'admin'), 0));

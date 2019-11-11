@@ -34,7 +34,7 @@ class SMTP
      *
      * @var string
      */
-    const VERSION = '6.0.1';
+    const VERSION = '6.0.7';
 
     /**
      * SMTP line break constant.
@@ -155,11 +155,13 @@ class SMTP
      * @var string[]
      */
     protected $smtp_transaction_id_patterns = [
-        'exim' => '/[0-9]{3} OK id=(.*)/',
-        'sendmail' => '/[0-9]{3} 2.0.0 (.*) Message/',
-        'postfix' => '/[0-9]{3} 2.0.0 Ok: queued as (.*)/',
-        'Microsoft_ESMTP' => '/[0-9]{3} 2.[0-9].0 (.*)@(?:.*) Queued mail for delivery/',
-        'Amazon_SES' => '/[0-9]{3} Ok (.*)/',
+        'exim' => '/[\d]{3} OK id=(.*)/',
+        'sendmail' => '/[\d]{3} 2.0.0 (.*) Message/',
+        'postfix' => '/[\d]{3} 2.0.0 Ok: queued as (.*)/',
+        'Microsoft_ESMTP' => '/[0-9]{3} 2.[\d].0 (.*)@(?:.*) Queued mail for delivery/',
+        'Amazon_SES' => '/[\d]{3} Ok (.*)/',
+        'SendGrid' => '/[\d]{3} Ok: queued as (.*)/',
+        'CampaignMonitor' => '/[\d]{3} 2.0.0 OK:([a-zA-Z\d]{48})/',
     ];
 
     /**
@@ -231,7 +233,7 @@ class SMTP
             return;
         }
         //Is this a PSR-3 logger?
-        if (is_a($this->Debugoutput, 'Psr\Log\LoggerInterface')) {
+        if ($this->Debugoutput instanceof \Psr\Log\LoggerInterface) {
             $this->Debugoutput->debug($str);
 
             return;
@@ -442,14 +444,14 @@ class SMTP
                 return false;
             }
 
-            $this->edebug('Auth method requested: ' . ($authtype ? $authtype : 'UNKNOWN'), self::DEBUG_LOWLEVEL);
+            $this->edebug('Auth method requested: ' . ($authtype ? $authtype : 'UNSPECIFIED'), self::DEBUG_LOWLEVEL);
             $this->edebug(
                 'Auth methods available on the server: ' . implode(',', $this->server_caps['AUTH']),
                 self::DEBUG_LOWLEVEL
             );
 
             //If we have requested a specific auth type, check the server supports it before trying others
-            if (!in_array($authtype, $this->server_caps['AUTH'])) {
+            if (null !== $authtype and !in_array($authtype, $this->server_caps['AUTH'])) {
                 $this->edebug('Requested auth method not available: ' . $authtype, self::DEBUG_LOWLEVEL);
                 $authtype = null;
             }
@@ -701,7 +703,7 @@ class SMTP
                 if (!empty($line_out) and $line_out[0] == '.') {
                     $line_out = '.' . $line_out;
                 }
-                $this->client_send($line_out . static::LE);
+                $this->client_send($line_out . static::LE, 'DATA');
             }
         }
 
@@ -731,7 +733,7 @@ class SMTP
     public function hello($host = '')
     {
         //Try extended hello first (RFC 2821)
-        return (bool) ($this->sendHello('EHLO', $host) or $this->sendHello('HELO', $host));
+        return $this->sendHello('EHLO', $host) or $this->sendHello('HELO', $host);
     }
 
     /**
@@ -851,16 +853,37 @@ class SMTP
      * Implements from RFC 821: RCPT <SP> TO:<forward-path> <CRLF>.
      *
      * @param string $address The address the message is being sent to
+     * @param string $dsn     Comma separated list of DSN notifications. NEVER, SUCCESS, FAILURE
+     *                        or DELAY. If you specify NEVER all other notifications are ignored.
      *
      * @return bool
      */
-    public function recipient($address)
+    public function recipient($address, $dsn = '')
     {
+        if (empty($dsn)) {
+            $rcpt = 'RCPT TO:<' . $address . '>';
+        } else {
+            $dsn = strtoupper($dsn);
+            $notify = [];
+
+            if (strpos($dsn, 'NEVER') !== false) {
+                $notify[] = 'NEVER';
+            } else {
+                foreach (['SUCCESS', 'FAILURE', 'DELAY'] as $value) {
+                    if (strpos($dsn, $value) !== false) {
+                        $notify[] = $value;
+                    }
+                }
+            }
+
+            $rcpt = 'RCPT TO:<' . $address . '> NOTIFY=' . implode(',', $notify);
+        }
+
         return $this->sendCommand(
-            'RCPT TO',
-            'RCPT TO:<' . $address . '>',
-            [250, 251]
-        );
+           'RCPT TO',
+           $rcpt,
+           [250, 251]
+       );
     }
 
     /**
@@ -897,12 +920,12 @@ class SMTP
 
             return false;
         }
-        $this->client_send($commandstring . static::LE);
+        $this->client_send($commandstring . static::LE, $command);
 
         $this->last_reply = $this->get_lines();
         // Fetch SMTP code and possible error code explanation
         $matches = [];
-        if (preg_match('/^([0-9]{3})[ -](?:([0-9]\\.[0-9]\\.[0-9]) )?/', $this->last_reply, $matches)) {
+        if (preg_match('/^([0-9]{3})[ -](?:([0-9]\\.[0-9]\\.[0-9]{1,2}) )?/', $this->last_reply, $matches)) {
             $code = $matches[1];
             $code_ex = (count($matches) > 2 ? $matches[2] : null);
             // Cut off error code from each response line
@@ -1003,13 +1026,21 @@ class SMTP
     /**
      * Send raw data to the server.
      *
-     * @param string $data The data to send
+     * @param string $data    The data to send
+     * @param string $command Optionally, the command this is part of, used only for controlling debug output
      *
      * @return int|bool The number of bytes sent to the server or false on error
      */
-    public function client_send($data)
+    public function client_send($data, $command = '')
     {
-        $this->edebug("CLIENT -> SERVER: $data", self::DEBUG_CLIENT);
+        //If SMTP transcripts are left enabled, or debug output is posted online
+        //it can leak credentials, so hide credentials in all but lowest level
+        if (self::DEBUG_LOWLEVEL > $this->do_debug and
+            in_array($command, ['User & Password', 'Username', 'Password'], true)) {
+            $this->edebug('CLIENT -> SERVER: <credentials hidden>', self::DEBUG_CLIENT);
+        } else {
+            $this->edebug('CLIENT -> SERVER: ' . $data, self::DEBUG_CLIENT);
+        }
         set_error_handler([$this, 'errorHandler']);
         $result = fwrite($this->smtp_conn, $data);
         restore_error_handler();
@@ -1291,7 +1322,7 @@ class SMTP
             $this->last_smtp_transaction_id = false;
             foreach ($this->smtp_transaction_id_patterns as $smtp_transaction_id_pattern) {
                 if (preg_match($smtp_transaction_id_pattern, $reply, $matches)) {
-                    $this->last_smtp_transaction_id = $matches[1];
+                    $this->last_smtp_transaction_id = trim($matches[1]);
                     break;
                 }
             }

@@ -586,10 +586,11 @@ function feedback_cron () {
 }
 
 /**
- * @return bool false
+ * @deprecated since Moodle 3.8
  */
-function feedback_scale_used ($feedbackid, $scaleid) {
-    return false;
+function feedback_scale_used() {
+    throw new coding_exception('feedback_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**
@@ -1925,10 +1926,23 @@ function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted) {
         //check if there are depend items
         $item = $DB->get_record('feedback_item', array('id'=>$value->item));
         if ($item->dependitem > 0 && isset($allitems[$item->dependitem])) {
-            $check = feedback_compare_item_value($tmpcplid,
-                                        $allitems[$item->dependitem],
-                                        $item->dependvalue,
-                                        true);
+            $ditem = $allitems[$item->dependitem];
+            while ($ditem !== null) {
+                $check = feedback_compare_item_value($tmpcplid,
+                                            $ditem,
+                                            $item->dependvalue,
+                                            true);
+                if (!$check) {
+                    break;
+                }
+                if ($ditem->dependitem > 0 && isset($allitems[$ditem->dependitem])) {
+                    $item = $ditem;
+                    $ditem = $allitems[$ditem->dependitem];
+                } else {
+                    $ditem = null;
+                }
+            }
+
         } else {
             $check = true;
         }
@@ -2638,6 +2652,7 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
                 $eventdata->contexturlname   = $info->feedback;
                 // User image.
                 $userpicture = new user_picture($user);
+                $userpicture->size = 1; // Use f1 size.
                 $userpicture->includetoken = $teacher->id; // Generate an out-of-session token for the user receiving the message.
                 $customdata['notificationiconurl'] = $userpicture->get_url($PAGE)->out(false);
                 $eventdata->customdata = $customdata;

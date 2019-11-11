@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * Question behaviour for the interactive model.
  *
  * Each question has a submit button next to it which the student can use to
- * submit it. Once the qustion is submitted, it is not possible for the
+ * submit it. Once the question is submitted, it is not possible for the
  * student to change their answer any more, but the student gets full feedback
  * straight away.
  *
@@ -41,14 +41,17 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
     /**
-     * Special value used for {@link question_display_options::$readonly when
-     * we are showing the try again button to the student during an attempt.
-     * The particular number was chosen randomly. PHP will treat it the same
-     * as true, but in the renderer we reconginse it display the try again
-     * button enabled even though the rest of the question is disabled.
-     * @var integer
+     * Constant used only in {@link adjust_display_options()} below and
+     * {@link (qbehaviour_interactive_renderer}.
+     * @var int
      */
-    const READONLY_EXCEPT_TRY_AGAIN = 23485299;
+    const TRY_AGAIN_VISIBLE = 0x10;
+    /**
+     * Constant used only in {@link adjust_display_options()} below and
+     * {@link (qbehaviour_interactive_renderer}.
+     * @var int
+     */
+    const TRY_AGAIN_VISIBLE_READONLY = 0x11;
 
     public function is_compatible_question(question_definition $question) {
         return $question instanceof question_automatically_gradable;
@@ -82,6 +85,14 @@ class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
             return;
         }
 
+        // The question in in a try-again state. We need the to let the renderer know this.
+        // The API for question-rendering is defined by the question engine, but we
+        // don't want to add logic in the renderer, so we are limited in how we can do this.
+        // However, when the question is in this state, all the question-type controls
+        // need to be rendered read-only. Therefore, we can conveniently pass this information
+        // by setting special true-like values in $options->readonly (but this is a bit of a hack).
+        $options->readonly = $options->readonly ? self::TRY_AGAIN_VISIBLE_READONLY : self::TRY_AGAIN_VISIBLE;
+
         // Let the hint adjust the options.
         $hint = $this->get_applicable_hint();
         if (!is_null($hint)) {
@@ -93,12 +104,6 @@ class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
         parent::adjust_display_options($options);
         $options->feedback = $save->feedback;
         $options->numpartscorrect = $save->numpartscorrect;
-
-        // In a try-again state, everything except the try again button
-        // Should be read-only. This is a mild hack to achieve this.
-        if (!$options->readonly) {
-            $options->readonly = self::READONLY_EXCEPT_TRY_AGAIN;
-        }
     }
 
     public function get_applicable_hint() {

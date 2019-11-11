@@ -27,7 +27,7 @@ Feature: Bulk enrolments
     When I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I press "Select all"
+    And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Edit selected user enrolments"
     And I set the field "Alter status" to "Suspended"
     And I press "Save changes"
@@ -40,12 +40,13 @@ Feature: Bulk enrolments
     When I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I press "Select all"
+    And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Delete selected user enrolments"
     And I press "Unenrol users"
     Then I should not see "Student 1"
     And I should not see "Student 2"
     And I should not see "Teacher 1"
+    And I should see "3 unenrolled users"
 
   @javascript
   Scenario: Bulk edit enrolment for deleted user

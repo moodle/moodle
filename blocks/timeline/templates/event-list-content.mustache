@@ -65,7 +65,7 @@
 }}
 <div class="border-bottom pb-2">
     {{#eventsbyday}}
-        <h5 class="h6 mt-3 mb-0 {{#past}}text-danger{{/past}}">{{#userdate}} {{dayTimestamp}}, {{#str}} strftimedayshort, core_langconfig {{/str}}  {{/userdate}}</h5>
+        <h5 class="h6 mt-3 mb-0 {{#past}}text-danger{{/past}}">{{#userdate}} {{dayTimestamp}}, {{#str}} strftimedaydate, core_langconfig {{/str}}  {{/userdate}}</h5>
         {{> block_timeline/event-list-items }}
     {{/eventsbyday}}
 </div>

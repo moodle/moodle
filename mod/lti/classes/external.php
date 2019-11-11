@@ -312,8 +312,9 @@ class mod_lti_external extends external_api {
 
                 $viewablefields = [];
                 if (has_capability('mod/lti:view', $context)) {
+                    $options = array('noclean' => true);
                     list($module['intro'], $module['introformat']) =
-                        external_format_text($lti->intro, $lti->introformat, $context->id, 'mod_lti', 'intro', null);
+                        external_format_text($lti->intro, $lti->introformat, $context->id, 'mod_lti', 'intro', null, $options);
 
                     $module['introfiles'] = external_util::get_area_files($context->id, 'mod_lti', 'intro', false, false);
                     $viewablefields = array('launchcontainer', 'showtitlelaunch', 'showdescriptionlaunch', 'icon', 'secureicon');

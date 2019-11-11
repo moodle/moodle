@@ -9,6 +9,7 @@ Feature: Manage tokens
     | username  | password  | firstname | lastname |
     | testuser  | testuser  | Joe | Bloggs |
     | testuser2 | testuser2 | TestFirstname | TestLastname |
+    And I change window size to "small"
     And I log in as "admin"
     And I am on site homepage
 

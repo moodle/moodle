@@ -69,8 +69,11 @@ if ($courseid) {
     $course = null;
     $courseid = null;
     $topchildren = core_course_category::top()->get_children();
+    if (empty($topchildren)) {
+        throw new moodle_exception('cannotviewcategory', 'error');
+    }
     $category = reset($topchildren);
-    $categoryid = $category ? $category->id : 0;
+    $categoryid = $category->id;
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $category->id);
 }

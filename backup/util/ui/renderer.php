@@ -404,7 +404,9 @@ class core_backup_renderer extends plugin_renderer_base {
         $html .= $this->output->heading(get_string('importdatafrom'), 2, array('class' => 'header'));
         $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
         $attrs = array('type' => 'submit', 'value' => get_string('continue'), 'class' => 'btn btn-primary');
+        $html .= html_writer::start_tag('div', array('class' => 'mt-3'));
         $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', $attrs));
+        $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('form');
         $html .= html_writer::end_tag('div');
@@ -787,7 +789,7 @@ class core_backup_renderer extends plugin_renderer_base {
         if ($component->get_count() === 0) {
             $output .= $this->output->notification(get_string('nomatchingcourses', 'backup'));
 
-            $output .= html_writer::start_tag('div', array('class' => 'ics-search'));
+            $output .= html_writer::start_tag('div', array('class' => 'ics-search form-inline'));
             $attrs = array(
                 'type' => 'text',
                 'name' => restore_course_search::$VAR_SEARCH,
@@ -799,7 +801,7 @@ class core_backup_renderer extends plugin_renderer_base {
                 'type' => 'submit',
                 'name' => 'searchcourses',
                 'value' => get_string('search'),
-                'class' => 'btn btn-secondary'
+                'class' => 'btn btn-secondary ml-1'
             );
             $output .= html_writer::empty_tag('input', $attrs);
             $output .= html_writer::end_tag('div');
@@ -845,7 +847,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::table($table);
         $output .= html_writer::end_tag('div');
 
-        $output .= html_writer::start_tag('div', array('class' => 'ics-search'));
+        $output .= html_writer::start_tag('div', array('class' => 'ics-search form-inline'));
         $attrs = array(
             'type' => 'text',
             'name' => restore_course_search::$VAR_SEARCH,
@@ -856,7 +858,7 @@ class core_backup_renderer extends plugin_renderer_base {
             'type' => 'submit',
             'name' => 'searchcourses',
             'value' => get_string('search'),
-            'class' => 'btn btn-secondary'
+            'class' => 'btn btn-secondary ml-1'
         );
         $output .= html_writer::empty_tag('input', $attrs);
         $output .= html_writer::end_tag('div');

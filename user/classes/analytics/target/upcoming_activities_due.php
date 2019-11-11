@@ -161,6 +161,91 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
     }
 
     /**
+     * No need to link to the insights report in this case.
+     *
+     * @return bool
+     */
+    public function link_insights_report(): bool {
+        return false;
+    }
+
+    /**
+     * Returns the body message for an insight of a single prediction.
+     *
+     * This default method is executed when the analysable used by the model generates one insight
+     * for each analysable (one_sample_per_analysable === true)
+     *
+     * @param  \context                             $context
+     * @param  \stdClass                            $user
+     * @param  \core_analytics\prediction           $prediction
+     * @param  \core_analytics\action[]             $actions        Passed by reference to remove duplicate links to actions.
+     * @return array                                                Plain text msg, HTML message and the main URL for this
+     *                                                              insight (you can return null if you are happy with the
+     *                                                              default insight URL calculated in prediction_info())
+     */
+    public function get_insight_body_for_prediction(\context $context, \stdClass $user, \core_analytics\prediction $prediction,
+            array &$actions) {
+        global $OUTPUT;
+
+        $fullmessageplaintext = get_string('youhaveupcomingactivitiesdueinfo', 'moodle', $user->firstname);
+
+        $sampledata = $prediction->get_sample_data();
+        $activitiesdue = $sampledata['core_course\analytics\indicator\activities_due:extradata'];
+
+        if (empty($activitiesdue)) {
+            // We can throw an exception here because this is a target based on assumptions and we require the
+            // activities_due indicator.
+            throw new \coding_exception('The activities_due indicator must be part of the model indicators.');
+        }
+
+        $activitiestext = [];
+        foreach ($activitiesdue as $key => $activitydue) {
+
+            // Human-readable version.
+            $activitiesdue[$key]->formattedtime = userdate($activitydue->time);
+
+            // We provide the URL to the activity through a script that records the user click.
+            $activityurl = new \moodle_url($activitydue->url);
+            $actionurl = \core_analytics\prediction_action::transform_to_forward_url($activityurl, 'viewupcoming',
+                $prediction->get_prediction_data()->id);
+            $activitiesdue[$key]->url = $actionurl->out(false);
+
+            if (count($activitiesdue) === 1) {
+                // We will use this activity as the main URL of this insight.
+                $insighturl = $actionurl;
+            }
+
+            $activitiestext[] = $activitydue->name . ': ' . $activitiesdue[$key]->url;
+        }
+
+        foreach ($actions as $key => $action) {
+            if ($action->get_action_name() === 'viewupcoming') {
+
+                // Use it as the main URL of the insight if there are multiple activities due.
+                if (empty($insighturl)) {
+                    $insighturl = $action->get_url();
+                }
+
+                // Remove the 'viewupcoming' action from the list of actions for this prediction as the action has
+                // been included in the link to the activity.
+                unset($actions[$key]);
+                break;
+            }
+        }
+
+        $activitieshtml = $OUTPUT->render_from_template('core_user/upcoming_activities_due_insight_body', (object) [
+            'activitiesdue' => array_values($activitiesdue),
+            'userfirstname' => $user->firstname
+        ]);
+
+        return [
+            FORMAT_PLAIN => $fullmessageplaintext . PHP_EOL . PHP_EOL . implode(PHP_EOL, $activitiestext) . PHP_EOL,
+            FORMAT_HTML => $activitieshtml,
+            'url' => $insighturl,
+        ];
+    }
+
+    /**
      * Adds a view upcoming events action.
      *
      * @param \core_analytics\prediction $prediction
@@ -172,7 +257,7 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
             $isinsightuser = false) {
         global $CFG, $USER;
 
-        $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
+        $parentactions = parent::prediction_actions($prediction, $includedetailsaction, $isinsightuser);
 
         if (!$isinsightuser && $USER->id != $prediction->get_prediction_data()->sampleid) {
             return $parentactions;
@@ -180,9 +265,9 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
 
         // We force a lookahead of 30 days so we are sure that the upcoming activities due are shown.
         $url = new \moodle_url('/calendar/view.php', ['view' => 'upcoming', 'lookahead' => '30']);
-        $pix = new \pix_icon('i/calendar', get_string('upcomingevents', 'calendar'));
+        $pix = new \pix_icon('i/calendar', get_string('viewupcomingactivitiesdue', 'calendar'));
         $action = new \core_analytics\prediction_action('viewupcoming', $prediction,
-            $url, $pix, get_string('upcomingevents', 'calendar'));
+            $url, $pix, get_string('viewupcomingactivitiesdue', 'calendar'));
 
         return array_merge([$action], $parentactions);
     }

@@ -32,5 +32,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-debugging('Support for alternative hubs has been removed from Moodle in 3.4. For communication with moodle.net ' .
-    'see lib/classes/hub/ .', DEBUG_DEVELOPER);
+debugging('Support for alternative hubs has been removed from Moodle in 3.4.', DEBUG_DEVELOPER);

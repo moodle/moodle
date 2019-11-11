@@ -125,7 +125,8 @@ abstract class quiz_attempts_report extends quiz_default_report {
             return array($currentgroup, $empty, $empty, $empty);
         }
 
-        $studentsjoins = get_enrolled_with_capabilities_join($this->context);
+        $studentsjoins = get_enrolled_with_capabilities_join($this->context, '',
+                array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'));
 
         if (empty($currentgroup)) {
             return array($currentgroup, $studentsjoins, $empty, $studentsjoins);

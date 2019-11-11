@@ -34,4 +34,14 @@ class testable_engine extends \search_solr\engine {
     public function test_set_config($name, $value) {
         $this->config->$name = $value;
     }
+
+    /**
+     * Gets the search client (this function is usually protected) for testing.
+     *
+     * @return \SolrClient Solr client object
+     * @throws \core_search\engine_exception
+     */
+    public function get_search_client_public(): \SolrClient {
+        return parent::get_search_client();
+    }
 }

@@ -1,0 +1,286 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Testing the H5P helper.
+ *
+ * @package    core_h5p
+ * @category   test
+ * @copyright  2019 Sara Arjona <sara@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+declare(strict_types = 1);
+
+namespace core_h5p;
+
+use advanced_testcase;
+
+/**
+ * Test class covering the H5P helper.
+ *
+ * @package    core_h5p
+ * @copyright  2019 Sara Arjona <sara@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class helper_testcase extends \advanced_testcase {
+
+    /**
+     * Test the behaviour of get_display_options().
+     *
+     * @dataProvider get_display_options_provider
+     * @param  bool   $frame     Whether the frame should be displayed or not
+     * @param  bool   $export    Whether the export action button should be displayed or not
+     * @param  bool   $embed     Whether the embed action button should be displayed or not
+     * @param  bool   $copyright Whether the copyright action button should be displayed or not
+     * @param  int    $expected The expectation with the displayoptions value
+     */
+    public function test_get_display_options(bool $frame, bool $export, bool $embed, bool $copyright, int $expected): void {
+        $this->setRunTestInSeparateProcess(true);
+        $this->resetAfterTest();
+
+        $factory = new \core_h5p\factory();
+        $core = $factory->get_core();
+        $config = (object)[
+            'frame' => $frame,
+            'export' => $export,
+            'embed' => $embed,
+            'copyright' => $copyright,
+        ];
+        $displayoptions = helper::get_display_options($core, $config);
+
+        $this->assertEquals($expected, $displayoptions);
+    }
+
+    /**
+     * Data provider for test_get_display_options().
+     *
+     * @return array
+     */
+    public function get_display_options_provider(): array {
+        return [
+            'All display options disabled' => [
+                false,
+                false,
+                false,
+                false,
+                15,
+            ],
+            'All display options enabled' => [
+                true,
+                true,
+                true,
+                true,
+                0,
+            ],
+            'Frame disabled and the rest enabled' => [
+                false,
+                true,
+                true,
+                true,
+                0,
+            ],
+            'Only export enabled' => [
+                false,
+                true,
+                false,
+                false,
+                12,
+            ],
+            'Only embed enabled' => [
+                false,
+                false,
+                true,
+                false,
+                10,
+            ],
+            'Only copyright enabled' => [
+                false,
+                false,
+                false,
+                true,
+                6,
+            ],
+        ];
+    }
+
+    /**
+     * Test the behaviour of save_h5p() when there are some missing libraries in the system.
+     * @runInSeparateProcess
+     */
+    public function test_save_h5p_missing_libraries(): void {
+        $this->resetAfterTest();
+        $factory = new \core_h5p\factory();
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // This is a valid .H5P file.
+        $path = __DIR__ . '/fixtures/greeting-card-887.h5p';
+        $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
+        $factory->get_framework()->set_file($file);
+
+        $config = (object)[
+            'frame' => 1,
+            'export' => 1,
+            'embed' => 0,
+            'copyright' => 0,
+        ];
+
+        // There are some missing libraries in the system, so an error should be returned.
+        $h5pid = helper::save_h5p($factory, $file, $config);
+        $this->assertFalse($h5pid);
+        $errors = $factory->get_framework()->getMessages('error');
+        $this->assertCount(1, $errors);
+        $error = reset($errors);
+        $this->assertEquals('missing-required-library', $error->code);
+        $this->assertEquals('Missing required library H5P.GreetingCard 1.0', $error->message);
+    }
+
+    /**
+     * Test the behaviour of save_h5p() when the libraries exist in the system.
+     * @runInSeparateProcess
+     */
+    public function test_save_h5p_existing_libraries(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $factory = new \core_h5p\factory();
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // This is a valid .H5P file.
+        $path = __DIR__ . '/fixtures/greeting-card-887.h5p';
+        $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
+        $factory->get_framework()->set_file($file);
+
+        $config = (object)[
+            'frame' => 1,
+            'export' => 1,
+            'embed' => 0,
+            'copyright' => 0,
+        ];
+        // The required libraries exist in the system before saving the .h5p file.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $lib = $generator->create_library_record('H5P.GreetingCard', 'GreetingCard', 1, 0);
+        $h5pid = helper::save_h5p($factory, $file, $config);
+        $this->assertNotEmpty($h5pid);
+
+        // No errors are raised.
+        $errors = $factory->get_framework()->getMessages('error');
+        $this->assertCount(0, $errors);
+
+        // And the content in the .h5p file has been saved as expected.
+        $h5p = $DB->get_record('h5p', ['id' => $h5pid]);
+        $this->assertEquals($lib->id, $h5p->mainlibraryid);
+        $this->assertEquals(helper::get_display_options($factory->get_core(), $config), $h5p->displayoptions);
+        $this->assertContains('Hello world!', $h5p->jsoncontent);
+    }
+
+    /**
+     * Test the behaviour of save_h5p() when the .h5p file is invalid.
+     * @runInSeparateProcess
+     */
+    public function test_save_h5p_invalid_file(): void {
+        $this->resetAfterTest();
+        $factory = new \core_h5p\factory();
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Prepare an invalid .H5P file.
+        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
+        $factory->get_framework()->set_file($file);
+        $config = (object)[
+            'frame' => 1,
+            'export' => 1,
+            'embed' => 0,
+            'copyright' => 0,
+        ];
+
+        // When saving an invalid .h5p file, an error should be raised.
+        $h5pid = helper::save_h5p($factory, $file, $config);
+        $this->assertFalse($h5pid);
+        $errors = $factory->get_framework()->getMessages('error');
+        $this->assertCount(2, $errors);
+
+        $expectederrorcodes = ['invalid-content-folder', 'invalid-h5p-json-file'];
+        foreach ($errors as $error) {
+            $this->assertContains($error->code, $expectederrorcodes);
+        }
+    }
+
+    /**
+     * Test the behaviour of can_deploy_package().
+     */
+    public function test_can_deploy_package(): void {
+        $this->resetAfterTest();
+        $factory = new \core_h5p\factory();
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $admin = get_admin();
+
+        // Prepare a valid .H5P file.
+        $path = __DIR__ . '/fixtures/greeting-card-887.h5p';
+
+        // Files created by users can't be deployed.
+        $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
+        $factory->get_framework()->set_file($file);
+        $candeploy = helper::can_deploy_package($file);
+        $this->assertFalse($candeploy);
+
+        // Files created by admins can be deployed, even when the current user is not the admin.
+        $this->setUser($user);
+        $file = helper::create_fake_stored_file_from_path($path, (int)$admin->id);
+        $factory->get_framework()->set_file($file);
+        $candeploy = helper::can_deploy_package($file);
+        $this->assertTrue($candeploy);
+    }
+
+    /**
+     * Test the behaviour of can_update_library().
+     */
+    public function can_update_library(): void {
+        $this->resetAfterTest();
+        $factory = new \core_h5p\factory();
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $admin = get_admin();
+
+        // Prepare a valid .H5P file.
+        $path = __DIR__ . '/fixtures/greeting-card-887.h5p';
+
+        // Libraries can't be updated when the file has been created by users.
+        $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
+        $factory->get_framework()->set_file($file);
+        $candeploy = helper::can_update_library($file);
+        $this->assertFalse($candeploy);
+
+        // Libraries can be updated when the file has been created by admin, even when the current user is not the admin.
+        $this->setUser($user);
+        $file = helper::create_fake_stored_file_from_path($path, (int)$admin->id);
+        $factory->get_framework()->set_file($file);
+        $candeploy = helper::can_update_library($file);
+        $this->assertTrue($candeploy);
+    }
+}

@@ -157,9 +157,9 @@ class quiz_statistics_question_stats_testcase extends basic_testcase {
         $cnt = count($items);
         for ($key = 0; $key < $cnt; $key++) {
             if ($items[$key]!='') {
-                if ($start = ($items[$key]{0}=='"')) {
+                if ($start = ($items[$key][0]=='"')) {
                     $items[$key] = substr($items[$key], 1);
-                    while (!$end = ($items[$key]{strlen($items[$key])-1}=='"')) {
+                    while (!$end = ($items[$key][strlen($items[$key])-1]=='"')) {
                         $item = $items[$key];
                         unset($items[$key]);
                         $key++;

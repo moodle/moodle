@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['compressor_none'] = 'No compression.';
+$string['compressor_php_gzip'] = 'Use gzip compression.';
+$string['compressor_php_zstd'] = 'Use Zstandard compression.';
 $string['pluginname'] = 'Redis';
 $string['prefix'] = 'Key prefix';
 $string['prefix_help'] = 'This prefix is used for all key names on the Redis server.
@@ -48,3 +51,5 @@ $string['useserializer'] = 'Use serializer';
 $string['useserializer_help'] = 'Specifies the serializer to use for serializing.
 The valid serializers are Redis::SERIALIZER_PHP or Redis::SERIALIZER_IGBINARY.
 The latter is supported only when phpredis is configured with --enable-redis-igbinary option and the igbinary extension is loaded.';
+$string['usecompressor'] = 'Use compressor';
+$string['usecompressor_help'] = 'Specifies the compressor to use after serializing. It is done at Moodle Cache API level, not at php-redis level.';

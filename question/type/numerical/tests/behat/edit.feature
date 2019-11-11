@@ -28,7 +28,7 @@ Feature: Test editing a Numerical question
     And I navigate to "Question bank" in current page administration
 
   Scenario: Edit a Numerical question
-    When I click on "Edit" "link" in the "Numerical for editing" "table_row"
+    When I choose "Edit question" action for "Numerical for editing" in the question bank
     Then the field "id_answer_0" matches value "3#14"
     When I set the following fields to these values:
       | Question name | |
@@ -38,7 +38,7 @@ Feature: Test editing a Numerical question
       | Question name | Edited Numerical name |
     And I press "id_submitbutton"
     Then I should see "Edited Numerical name"
-    When I click on "Edit" "link" in the "Edited Numerical name" "table_row"
+    When I choose "Edit question" action for "Edited Numerical name" in the question bank
     And I set the following fields to these values:
       | id_answer_1    | 3#141592 |
       | id_tolerance_1 | 0#005    |

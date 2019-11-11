@@ -84,7 +84,11 @@ $string['attempthistory'] = 'Previous attempts';
 $string['attemptnumber'] = 'Attempt number';
 $string['attemptsettings'] = 'Attempt settings';
 $string['attemptreopenmethod'] = 'Attempts reopened';
-$string['attemptreopenmethod_help'] = 'Determines how student submission attempts are reopened. The available options are: <ul><li>Never - The submission cannot be reopened.</li><li>Manually - The submission can be reopened by a teacher.</li><li>Automatically until pass - The submission is automatically reopened until the student achieves the grade to pass value set in the gradebook for this assignment.</li></ul>';
+$string['attemptreopenmethod_help'] = 'Determines how student submission attempts are reopened. The available options are:
+
+* Never - The submission cannot be reopened.
+* Manually - The submission can be reopened by a teacher.
+* Automatically until pass - The submission is automatically reopened until the student achieves the grade to pass set in the gradebook for this assignment.';
 $string['attemptreopenmethod_manual'] = 'Manually';
 $string['attemptreopenmethod_none'] = 'Never';
 $string['attemptreopenmethod_untilpass'] = 'Automatically until pass';
@@ -208,6 +212,7 @@ $string['fixrescalednullgrades'] = 'This assignment contains some erroneous grad
 $string['fixrescalednullgradesconfirm'] = 'Are you sure you want to fix erroneous grades? All affected grades will be removed. This may affect course totals.';
 $string['fixrescalednullgradesdone'] = 'Grades fixed.';
 $string['gradecanbechanged'] = 'Grade can be changed';
+$string['gradeitem:submissions'] = 'Submissions';
 $string['gradersubmissionupdatedtext'] = '{$a->username} has updated their assignment submission
 for \'{$a->assignment}\' at {$a->timeupdated}
 
@@ -286,14 +291,22 @@ $string['groupoverrides'] = 'Group overrides';
 $string['groupoverridesdeleted'] = 'Group overrides deleted';
 $string['groupsnone'] = 'No groups you can access.';
 $string['hidegrader'] = 'Hide grader identity from students';
-$string['hidegrader_help'] = 'Hides the identity of any user who grades an assignment submission, so students can\'t see who marked their work.';
+$string['hidegrader_help'] = 'If enabled, the identity of any user who grades an assignment submission is not shown, so students can\'t see who marked their work.
+
+Note that this setting has no effect on the comments box on the grading page.';
 $string['hideshow'] = 'Hide/Show';
 $string['hiddenuser'] = 'Participant ';
 $string['inactiveoverridehelp'] = '* Student does not have the correct group or role to attempt the assignment';
 $string['indicator:cognitivedepth'] = 'Assignment cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in an assignment activity.';
+$string['indicator:cognitivedepthdef'] = 'Assignment cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Assignment activities during this analysis interval (Levels = No view, View, Submit, View feedback, Comment on feedback, Resubmit after viewing feedback)';
+$string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:socialbreadth'] = 'Assignment social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in an assignment activity.';
+$string['indicator:socialbreadthdef'] = 'Assignment social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Assignment activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
+$string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['instructionfiles'] = 'Instruction files';
 $string['introattachments'] = 'Additional files';
 $string['introattachments_help'] = 'Additional files for use in the assignment, such as answer templates, may be added. Download links for the files will then be displayed on the assignment page under the description.';
@@ -430,6 +443,9 @@ $string['quickgrading'] = 'Quick grading';
 $string['quickgradingresult'] = 'Quick grading';
 $string['quickgradingchangessaved'] = 'The grade changes were saved';
 $string['quickgrading_help'] = 'Quick grading allows you to assign grades (and outcomes) directly in the submissions table. Quick grading is not compatible with advanced grading and is not recommended when there are multiple markers.';
+$string['relativedatessubmissiontimeleft'] = 'Calculated for each student';
+$string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
+$string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';
 $string['removeallgroupoverrides'] = 'Delete all group overrides';
 $string['removealluseroverrides'] = 'Delete all user overrides';
 $string['reopenuntilpassincompatiblewithblindmarking'] = 'Reopen until pass option is incompatible with blind marking, because the grades are not released to the gradebook until the student identities are revealed.';
@@ -521,7 +537,6 @@ $string['submissionreceipthtml'] = '<p>You have submitted an assignment submissi
 $string['submissionreceiptsmall'] = 'You have submitted your assignment submission for {$a->assignment}';
 $string['submissionslocked'] = 'This assignment is not accepting submissions';
 $string['submissionslockedshort'] = 'Submission changes not allowed';
-$string['submissions'] = 'Submissions';
 $string['submissionsclosed'] = 'Submissions closed';
 $string['submissionsettings'] = 'Submission settings';
 $string['submissionstatement'] = 'Submission statement';
@@ -583,6 +598,7 @@ $string['updategrade'] = 'Update grade';
 $string['updatetable'] = 'Save and update table';
 $string['upgradenotimplemented'] = 'Upgrade not implemented in plugin ({$a->type} {$a->subtype})';
 $string['userextensiondate'] = 'Extension granted until: {$a}';
+$string['userassignmentdefaults'] = 'User assignment defaults';
 $string['useridlistnotcached'] = 'The grade changes were NOT saved, as it was not possible to determine which submission they were for.';
 $string['useroverrides'] = 'User overrides';
 $string['useroverridesdeleted'] = 'User overrides deleted';

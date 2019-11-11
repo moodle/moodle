@@ -67,7 +67,7 @@ class fetcher {
      * @param int $courseid The course id to check
      */
     protected function set_sql($currentgroup, $now, $timetoshowusers, $context, $sitelevel, $courseid) {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         $timefrom = 100 * floor(($now - $timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache.
 
@@ -76,7 +76,14 @@ class fetcher {
         $groupby       = "";
         $lastaccess    = ", lastaccess";
         $timeaccess    = ", ul.timeaccess AS lastaccess";
-        $uservisibility = ", up.value AS uservisibility";
+        $uservisibility = "";
+        $uservisibilityselect = "";
+        if ($CFG->block_online_users_onlinestatushiding) {
+            $uservisibility = ", up.value AS uservisibility";
+            $uservisibilityselect = "AND (" . $DB->sql_cast_char2int('up.value') . " = 1
+                                    OR up.value IS NULL
+                                    OR u.id = :userid)";
+        }
         $params = array();
 
         $userfields = \user_picture::fields('u', array('username'));
@@ -88,7 +95,9 @@ class fetcher {
             $groupby = "GROUP BY $userfields";
             $lastaccess = ", MAX(u.lastaccess) AS lastaccess";
             $timeaccess = ", MAX(ul.timeaccess) AS lastaccess";
-            $uservisibility = ", MAX(up.value) AS uservisibility";
+            if ($CFG->block_online_users_onlinestatushiding) {
+                $uservisibility = ", MAX(up.value) AS uservisibility";
+            }
             $params['currentgroup'] = $currentgroup;
         }
 
@@ -105,9 +114,7 @@ class fetcher {
                      WHERE u.lastaccess > :timefrom
                            AND u.lastaccess <= :now
                            AND u.deleted = 0
-                           AND (" . $DB->sql_cast_char2int('up.value') . " = 1
-                               OR up.value IS NULL
-                               OR u.id = :userid)
+                           $uservisibilityselect
                            $groupselect $groupby
                   ORDER BY lastaccess DESC ";
 
@@ -118,9 +125,7 @@ class fetcher {
                       WHERE u.lastaccess > :timefrom
                             AND u.lastaccess <= :now
                             AND u.deleted = 0
-                            AND (" . $DB->sql_cast_char2int('up.value') . " = 1
-                                OR up.value IS NULL
-                                OR u.id = :userid)
+                            $uservisibilityselect
                             $groupselect";
         } else {
             // Course level - show only enrolled users for now.
@@ -138,9 +143,7 @@ class fetcher {
                            AND ul.courseid = :courseid
                            AND ul.timeaccess <= :now
                            AND u.deleted = 0
-                           AND (" . $DB->sql_cast_char2int('up.value') . " = 1
-                               OR up.value IS NULL
-                               OR u.id = :userid)
+                           $uservisibilityselect
                            $groupselect $groupby
                   ORDER BY lastaccess DESC";
 
@@ -154,9 +157,7 @@ class fetcher {
                            AND ul.courseid = :courseid
                            AND ul.timeaccess <= :now
                            AND u.deleted = 0
-                           AND (" . $DB->sql_cast_char2int('up.value') . " = 1
-                               OR up.value IS NULL
-                               OR u.id = :userid)
+                           $uservisibilityselect
                            $groupselect";
 
             $params['courseid'] = $courseid;

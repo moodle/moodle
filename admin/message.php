@@ -77,7 +77,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                     // Record the site preference.
                     $preferences[$processor->name.'_provider_'.$componentprovidersetting] = $value;
                 }
-            } else if (array_key_exists($componentprovidersetting, $form)) {
+            } else if (property_exists($form, $componentprovidersetting)) {
                 // We must be processing loggedin or loggedoff checkboxes. Store
                 // defained comma-separated processors as setting value.
                 // Using array_filter eliminates elements set to 0 above.

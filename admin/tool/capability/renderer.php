@@ -114,15 +114,17 @@ class tool_capability_renderer extends plugin_renderer_base {
         }
 
         // Start the list item, and print the context name as a link to the place to make changes.
-        if ($contextid == context_system::instance()->id) {
-            $url = new moodle_url('/admin/roles/manage.php');
-            $title = get_string('changeroles', 'tool_capability');
-        } else {
-            $url = new moodle_url('/admin/roles/override.php', array('contextid' => $contextid));
-            $title = get_string('changeoverrides', 'tool_capability');
-        }
         $context = context::instance_by_id($contextid);
-        $html = $this->output->heading(html_writer::link($url, $context->get_context_name(), array('title' => $title)), 3);
+
+        if ($context instanceof context_system) {
+            $url = new moodle_url('/admin/roles/manage.php');
+        } else {
+            $url = new moodle_url('/admin/roles/permissions.php', ['contextid' => $contextid]);
+        }
+
+        $title = get_string('permissionsincontext', 'core_role', $context->get_context_name());
+
+        $html = $this->output->heading(html_writer::link($url, $title), 3);
         $html .= html_writer::table($table);
         // If there are any child contexts, print them recursively.
         if (!empty($contexts[$contextid]->children)) {

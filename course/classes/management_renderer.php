@@ -664,7 +664,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
         if ($category->can_request_course()) {
             // Request a new course.
-            $url = new moodle_url('/course/request.php', array('return' => 'management'));
+            $url = new moodle_url('/course/request.php', array('category' => $category->id, 'return' => 'management'));
             $actions[] = html_writer::link($url, get_string('requestcourse'));
         }
         if ($category->can_resort_courses()) {

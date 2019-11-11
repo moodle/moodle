@@ -240,6 +240,32 @@
     }
 }
 
+.criterion {
+    .description {
+        font-size: 1rem;
+    }
+
+    .criterion-toggle {
+        .expanded-icon {
+            display: block;
+        }
+
+        .collapsed-icon {
+            display: none;
+        }
+
+        &.collapsed {
+            .expanded-icon {
+                display: none;
+            }
+
+            .collapsed-icon {
+                display: block;
+            }
+        }
+    }
+}
+
 // Set up grades layout.
 .path-grade-edit-tree .setup-grades {
     h4 {

@@ -173,6 +173,7 @@ class feedback_summary_exporter extends exporter {
         return [
             'component' => 'mod_feedback',
             'filearea' => 'intro',
+            'options' => array('noclean' => true),
         ];
     }
 

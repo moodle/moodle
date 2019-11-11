@@ -35,7 +35,7 @@
 
 }}
 <div
-    class="message clickable d-flex flex-column p-2 mx-1 position-relative {{#fromloggedinuser}}send bg-secondary{{/fromloggedinuser}}{{^fromloggedinuser}}received bg-white{{/fromloggedinuser}} rounded mb-2 mt-2"
+    class="message clickable d-flex flex-column p-2 mx-1 position-relative {{#fromloggedinuser}}send {{/fromloggedinuser}}{{^fromloggedinuser}}received{{/fromloggedinuser}} rounded mb-2 mt-2"
     data-region="message"
     data-message-id="{{id}}"
     role="checkbox"
@@ -60,7 +60,7 @@
         {{/fromloggedinuser}}
 
         <div
-            class="ml-auto small text-right text-muted {{^formattedtime}}hidden{{/formattedtime}}"
+            class="ml-auto small text-right time {{^formattedtime}}hidden{{/formattedtime}}"
             style="flex-shrink: 0"
             data-region="time-created"
         >
@@ -88,8 +88,8 @@
         >
             <span class="text-primary small">{{#str}} retry, core {{/str}}</span>
         </button>
-        <span class="hidden ml-2 small text-dark" data-region="not-selected-icon">{{#pix}} i/uncheckedcircle, core {{/pix}}</span>
-        <span class="hidden ml-2 small text-primary" data-region="selected-icon">{{#pix}} i/checkedcircle, core {{/pix}}</span>
+        <span class="hidden ml-2 small" data-region="not-selected-icon">{{#pix}} i/uncheckedcircle, core {{/pix}}</span>
+        <span class="hidden ml-2 small" data-region="selected-icon">{{#pix}} i/checkedcircle, core {{/pix}}</span>
     </div>
     <div dir="auto" align="initial" data-region="text-container">{{{text}}}</div>
 </div>

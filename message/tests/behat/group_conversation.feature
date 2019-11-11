@@ -47,26 +47,26 @@ Feature: Create conversations for course's groups
     Given I log in as "teacher1"
     Then I open messaging
     And I open the "Group" conversations list
-    And "Group 1" "group_message" should exist
-    And "Group 2" "group_message" should exist
-    And "Group 3" "group_message" should not exist
+    And "Group 1" "core_message > Message" should exist
+    And "Group 2" "core_message > Message" should exist
+    And "Group 3" "core_message > Message" should not exist
     And I log out
     And I log in as "student1"
     And I open messaging
     And I open the "Group" conversations list
-    And "Group 1" "group_message" should exist
-    And "Group 2" "group_message" should not exist
-    And "Group 3" "group_message" should not exist
+    And "Group 1" "core_message > Message" should exist
+    And "Group 2" "core_message > Message" should not exist
+    And "Group 3" "core_message > Message" should not exist
 
   Scenario: View group conversation's participants numbers
     Given I log in as "teacher1"
     Then I open messaging
     And I open the "Group" conversations list
     And I select "Group 1" conversation in messaging
-    And I should see "5 participants" in the "Group 1" "group_message_header"
+    And I should see "5 participants" in the "Group 1" "core_message > Message header"
     And I go back in "view-conversation" message drawer
     And I select "Group 2" conversation in messaging
-    And I should see "1 participants" in the "Group 2" "group_message_header"
+    And I should see "1 participants" in the "Group 2" "core_message > Message header"
 
   Scenario: View group conversation's participants list
     Given I log in as "teacher1"
@@ -75,20 +75,20 @@ Feature: Create conversations for course's groups
     # Check Group 1 participants list.
     And I select "Group 1" conversation in messaging
     And I open messaging information
-    And "Teacher 1" "group_message_member" should not exist
-    And "Student 0" "group_message_member" should exist
-    And "Student 1" "group_message_member" should exist
-    And "Student 2" "group_message_member" should exist
-    And "Student 3" "group_message_member" should exist
-    And "Student 4" "group_message_member" should not exist
+    And "Teacher 1" "core_message > Message member" should not exist
+    And "Student 0" "core_message > Message member" should exist
+    And "Student 1" "core_message > Message member" should exist
+    And "Student 2" "core_message > Message member" should exist
+    And "Student 3" "core_message > Message member" should exist
+    And "Student 4" "core_message > Message member" should not exist
     And I go back in "group-info-content-container" message drawer
     And I go back in "view-conversation" message drawer
     # Check Group 2 participants list.
     And I select "Group 2" conversation in messaging
     And I open messaging information
-    And "Teacher 1" "group_message_member" should not exist
-    And "No participants" "group_message_member" should exist
-    And "Student 4" "group_message_member" should not exist
+    And "Teacher 1" "core_message > Message member" should not exist
+    And "No participants" "core_message > Message member" should exist
+    And "Student 4" "core_message > Message member" should not exist
 
   Scenario: Check group conversation members are synced when a new group member is added
     Given I log in as "teacher1"
@@ -99,13 +99,13 @@ Feature: Create conversations for course's groups
     And I open messaging
     And I open the "Group" conversations list
     And I select "Group 1" conversation in messaging
-    And I should see "6 participants" in the "Group 1" "group_message_header"
+    And I should see "6 participants" in the "Group 1" "core_message > Message header"
     And I open messaging information
-    And "Student 4" "group_message_member" should exist
+    And "Student 4" "core_message > Message member" should exist
     And I go back in "group-info-content-container" message drawer
     And I go back in "view-conversation" message drawer
     And I select "Group 2" conversation in messaging
-    And I should see "2 participants" in the "Group 2" "group_message_header"
+    And I should see "2 participants" in the "Group 2" "core_message > Message header"
     And I open messaging information
-    And "No participants" "group_message_member" should not exist
-    And "Student 4" "group_message_member" should exist
+    And "No participants" "core_message > Message member" should not exist
+    And "Student 4" "core_message > Message member" should exist

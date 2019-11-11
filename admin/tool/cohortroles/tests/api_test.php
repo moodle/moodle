@@ -50,8 +50,6 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
      * Setup function- we will create a course and add an assign instance to it.
      */
     protected function setUp() {
-        global $DB;
-
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -133,14 +131,91 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
 
     public function test_delete_cohort_role_assignment() {
         $this->setAdminUser();
-        $params = (object) array(
+        // Create a cohort role assigment.
+        $params = (object) [
             'userid' => $this->userassignto->id,
             'roleid' => $this->roleid,
             'cohortid' => $this->cohort->id
-        );
-        $result = api::create_cohort_role_assignment($params);
-        $worked = api::delete_cohort_role_assignment($result->get('id'));
-        $this->assertTrue($worked);
+        ];
+        $cohortroleassignment = api::create_cohort_role_assignment($params);
+        $sync = api::sync_all_cohort_roles();
+        $rolesadded = [
+            [
+                'useridassignedto' => $this->userassignto->id,
+                'useridassignedover' => $this->userassignover->id,
+                'roleid' => $this->roleid
+            ]
+        ];
+        $expected = [
+            'rolesadded' => $rolesadded,
+            'rolesremoved' => []
+        ];
+        $this->assertEquals($sync, $expected);
+
+        // Delete the cohort role assigment and confirm the roles are removed.
+        $result = api::delete_cohort_role_assignment($cohortroleassignment->get('id'));
+        $this->assertTrue($result);
+        $sync = api::sync_all_cohort_roles();
+        $expected = [
+            'rolesadded' => [],
+            'rolesremoved' => $rolesadded
+        ];
+        $this->assertEquals($expected, $sync);
+    }
+
+    /**
+     * Test case verifying that syncing won't remove role assignments if they are valid for another cohort role assignment.
+     */
+    public function test_delete_cohort_role_assignment_cohorts_having_same_members() {
+        $this->setAdminUser();
+
+        // Create 2 cohorts, with a 1 user (user1) present in both,
+        // and user2 and user3 members of 1 cohort each.
+        $cohort1 = $this->getDataGenerator()->create_cohort();
+        $cohort2 = $this->getDataGenerator()->create_cohort();
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        cohort_add_member($cohort1->id, $user1->id);
+        cohort_add_member($cohort1->id, $user2->id);
+        cohort_add_member($cohort2->id, $user1->id);
+        cohort_add_member($cohort2->id, $user3->id);
+
+        // And a role and a user to assign that role to.
+        $user4 = $this->getDataGenerator()->create_user(); // A cohort manager, for example.
+        $roleid = create_role('Role 1', 'myrole', 'test');
+
+        // Assign the role for user4 in both cohorts.
+        $params = (object) [
+            'userid' => $user4->id,
+            'roleid' => $roleid,
+            'cohortid' => $cohort1->id
+        ];
+        $cohort1roleassignment = api::create_cohort_role_assignment($params);
+        $params->cohortid = $cohort2->id;
+        $cohort2roleassignment = api::create_cohort_role_assignment($params);
+
+        $sync = api::sync_all_cohort_roles();
+
+        // There is no guarantee about the order of roles assigned.
+        // so confirm we have 3 role assignments, and they are for the users 1, 2 and 3.
+        $this->assertCount(3, $sync['rolesadded']);
+        $addedusers = array_column($sync['rolesadded'], 'useridassignedover');
+        $this->assertContains($user1->id, $addedusers);
+        $this->assertContains($user2->id, $addedusers);
+        $this->assertContains($user3->id, $addedusers);
+
+        // Remove the role assignment for user4/cohort1.
+        // Verify only 1 role is unassigned as the others are still valid for the other cohort role assignment.
+        $result = api::delete_cohort_role_assignment($cohort1roleassignment->get('id'));
+        $this->assertTrue($result);
+
+        $sync = api::sync_all_cohort_roles();
+
+        $this->assertCount(0, $sync['rolesadded']);
+        $this->assertCount(1, $sync['rolesremoved']);
+        $removedusers = array_column($sync['rolesremoved'], 'useridassignedover');
+        $this->assertContains($user2->id, $removedusers);
     }
 
     public function test_list_cohort_role_assignments() {

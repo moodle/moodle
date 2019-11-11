@@ -1,1 +1,3 @@
 numattemptsmade,mod_quiz
+reviewofattempt,mod_quiz
+reviewofpreview,mod_quiz

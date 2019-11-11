@@ -51,6 +51,9 @@ function core_login_process_password_reset_request() {
         }
         list($status, $notice, $url) = core_login_process_password_reset($username, $email);
 
+        // Plugins can perform post forgot password actions once data has been validated.
+        core_login_post_forgot_password_requests($data);
+
         // Any email has now been sent.
         // Next display results to requesting user if settings permit.
         echo $OUTPUT->header();
@@ -283,6 +286,10 @@ function core_login_process_password_set($token) {
 
         $urltogo = core_login_get_return_url();
         unset($SESSION->wantsurl);
+
+        // Plugins can perform post set password actions once data has been validated.
+        core_login_post_set_password_requests($data, $user);
+
         redirect($urltogo, get_string('passwordset'), 1);
     }
 }
@@ -399,3 +406,181 @@ function core_login_pre_signup_requests() {
         }
     }
 }
+
+/**
+ * Plugins can extend forms.
+ */
+
+ /** Inject form elements into change_password_form.
+  * @param mform $mform the form to inject elements into.
+  * @param stdClass $user the user object to use for context.
+  */
+function core_login_extend_change_password_form($mform, $user) {
+    $callbacks = get_plugins_with_function('extend_change_password_form');
+    foreach ($callbacks as $type => $plugins) {
+        foreach ($plugins as $plugin => $pluginfunction) {
+            $pluginfunction($mform, $user);
+        }
+    }
+}
+
+ /** Inject form elements into set_password_form.
+  * @param mform $mform the form to inject elements into.
+  * @param stdClass $user the user object to use for context.
+  */
+function core_login_extend_set_password_form($mform, $user) {
+    $callbacks = get_plugins_with_function('extend_set_password_form');
+    foreach ($callbacks as $type => $plugins) {
+        foreach ($plugins as $plugin => $pluginfunction) {
+            $pluginfunction($mform, $user);
+        }
+    }
+}
+
+ /** Inject form elements into forgot_password_form.
+  * @param mform $mform the form to inject elements into.
+  */
+function core_login_extend_forgot_password_form($mform) {
+    $callbacks = get_plugins_with_function('extend_forgot_password_form');
+    foreach ($callbacks as $type => $plugins) {
+        foreach ($plugins as $plugin => $pluginfunction) {
+            $pluginfunction($mform);
+        }
+    }
+}
+
+ /** Inject form elements into signup_form.
+  * @param mform $mform the form to inject elements into.
+  */
+function core_login_extend_signup_form($mform) {
+    $callbacks = get_plugins_with_function('extend_signup_form');
+    foreach ($callbacks as $type => $plugins) {
+        foreach ($plugins as $plugin => $pluginfunction) {
+            $pluginfunction($mform);
+        }
+    }
+}
+
+/**
+ * Plugins can add additional validation to forms.
+ */
+
+/** Inject validation into change_password_form.
+ * @param array $data the data array from submitted form values.
+ * @param stdClass $user the user object to use for context.
+ * @return array $errors the updated array of errors from validation.
+ */
+function core_login_validate_extend_change_password_form($data, $user) {
+    $pluginsfunction = get_plugins_with_function('validate_extend_change_password_form');
+    $errors = array();
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginerrors = $pluginfunction($data, $user);
+            $errors = array_merge($errors, $pluginerrors);
+        }
+    }
+    return $errors;
+}
+
+/** Inject validation into set_password_form.
+ * @param array $data the data array from submitted form values.
+ * @param stdClass $user the user object to use for context.
+ * @return array $errors the updated array of errors from validation.
+ */
+function core_login_validate_extend_set_password_form($data, $user) {
+    $pluginsfunction = get_plugins_with_function('validate_extend_set_password_form');
+    $errors = array();
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginerrors = $pluginfunction($data, $user);
+            $errors = array_merge($errors, $pluginerrors);
+        }
+    }
+    return $errors;
+}
+
+/** Inject validation into forgot_password_form.
+ * @param array $data the data array from submitted form values.
+ * @return array $errors the updated array of errors from validation.
+ */
+function core_login_validate_extend_forgot_password_form($data) {
+    $pluginsfunction = get_plugins_with_function('validate_extend_forgot_password_form');
+    $errors = array();
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginerrors = $pluginfunction($data);
+            $errors = array_merge($errors, $pluginerrors);
+        }
+    }
+    return $errors;
+}
+
+/** Inject validation into signup_form.
+ * @param array $data the data array from submitted form values.
+ * @return array $errors the updated array of errors from validation.
+ */
+function core_login_validate_extend_signup_form($data) {
+    $pluginsfunction = get_plugins_with_function('validate_extend_signup_form');
+    $errors = array();
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginerrors = $pluginfunction($data);
+            $errors = array_merge($errors, $pluginerrors);
+        }
+    }
+    return $errors;
+}
+
+/**
+ * Plugins can perform post submission actions.
+ */
+
+/** Post change_password_form submission actions.
+ * @param stdClass $data the data object from the submitted form.
+ */
+function core_login_post_change_password_requests($data) {
+    $pluginsfunction = get_plugins_with_function('post_change_password_requests');
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginfunction($data);
+        }
+    }
+}
+
+/** Post set_password_form submission actions.
+ * @param stdClass $data the data object from the submitted form.
+ * @param stdClass $user the user object for set_password context.
+ */
+function core_login_post_set_password_requests($data, $user) {
+    $pluginsfunction = get_plugins_with_function('post_set_password_requests');
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginfunction($data, $user);
+        }
+    }
+}
+
+/** Post forgot_password_form submission actions.
+ * @param stdClass $data the data object from the submitted form.
+ */
+function core_login_post_forgot_password_requests($data) {
+    $pluginsfunction = get_plugins_with_function('post_forgot_password_requests');
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginfunction($data);
+        }
+    }
+}
+
+/** Post signup_form submission actions.
+ * @param stdClass $data the data object from the submitted form.
+ */
+function core_login_post_signup_requests($data) {
+    $pluginsfunction = get_plugins_with_function('post_signup_requests');
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginfunction($data);
+        }
+    }
+}
+

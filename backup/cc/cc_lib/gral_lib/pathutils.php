@@ -88,9 +88,9 @@ function stripUrl($path, $rootDir='') {
  */
 function toNativePath(&$path) {
     for ($count = 0 ; $count < strlen($path); ++$count) {
-        $chr = $path{$count};
+        $chr = $path[$count];
         if (($chr == '\\') || ($chr == '/')) {
-            $path{$count} = '/';
+            $path[$count] = '/';
         }
     }
 }
@@ -104,9 +104,9 @@ function toNativePath(&$path) {
  */
 function toNativePath2(&$path) {
     for ($count = 0 ; $count < strlen($path); ++$count) {
-        $chr = $path{$count};
+        $chr = $path[$count];
         if (($chr == '\\') || ($chr == '/')) {
-            $path{$count} = DIRECTORY_SEPARATOR;
+            $path[$count] = DIRECTORY_SEPARATOR;
         }
     }
 }
@@ -118,9 +118,9 @@ function toNativePath2(&$path) {
  */
 function toUrlPath(&$path) {
     for ($count = 0 ; $count < strlen($path); ++$count) {
-        $chr = $path{$count};
+        $chr = $path[$count];
         if (($chr == '\\')) {
-            $path{$count} = '/';
+            $path[$count] = '/';
         }
     }
 }

@@ -175,6 +175,13 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'antivirussettings', $hassiteconfig);
     }
 
+    // Machine learning backend plugins.
+    $ADMIN->add('modules', new admin_category('mlbackendsettings', new lang_string('mlbackendsettings', 'admin')));
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('mlbackend');
+    foreach ($plugins as $plugin) {
+        $plugin->load_settings($ADMIN, 'mlbackendsettings', $hassiteconfig);
+    }
+
 /// License types
     $ADMIN->add('modules', new admin_category('licensesettings', new lang_string('licenses')));
     $temp = new admin_settingpage('managelicenses', new lang_string('managelicenses', 'admin'));

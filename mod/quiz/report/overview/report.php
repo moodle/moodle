@@ -172,8 +172,9 @@ class quiz_overview_report extends quiz_attempts_report {
             $headers = array();
 
             if (!$table->is_downloading() && $options->checkboxcolumn) {
-                $columns[] = 'checkbox';
-                $headers[] = $table->checkbox_col_header();
+                $columnname = 'checkbox';
+                $columns[] = $columnname;
+                $headers[] = $table->checkbox_col_header($columnname);
             }
 
             $this->add_user_columns($table, $columns, $headers);

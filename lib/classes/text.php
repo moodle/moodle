@@ -721,19 +721,19 @@ class core_text {
         if ($utf8char == '') {
             return 0;
         }
-        $ord0 = ord($utf8char{0});
+        $ord0 = ord($utf8char[0]);
         if ($ord0 >= 0 && $ord0 <= 127) {
             return $ord0;
         }
-        $ord1 = ord($utf8char{1});
+        $ord1 = ord($utf8char[1]);
         if ($ord0 >= 192 && $ord0 <= 223) {
             return ($ord0 - 192) * 64 + ($ord1 - 128);
         }
-        $ord2 = ord($utf8char{2});
+        $ord2 = ord($utf8char[2]);
         if ($ord0 >= 224 && $ord0 <= 239) {
             return ($ord0 - 224) * 4096 + ($ord1 - 128) * 64 + ($ord2 - 128);
         }
-        $ord3 = ord($utf8char{3});
+        $ord3 = ord($utf8char[3]);
         if ($ord0 >= 240 && $ord0 <= 247) {
             return ($ord0 - 240) * 262144 + ($ord1 - 128 )* 4096 + ($ord2 - 128) * 64 + ($ord3 - 128);
         }

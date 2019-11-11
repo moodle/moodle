@@ -19,9 +19,7 @@ Feature: Edit quiz page - pagination
       | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
 
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
 
   @javascript
   Scenario: Repaginate questions with N question(s) per page as well as clicking

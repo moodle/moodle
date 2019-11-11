@@ -1,0 +1,75 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/local/grades/local/grader/user_picker/user_search
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-action="select-user"
+
+
+    Context variables required for this template:
+    * expandedUsers: Array of users to show, limited to 10
+    * profileimage: Profile image for the user
+    * fullname: User's full name
+    * id: User's ID
+    * hasCollapsed: T/F if there are more users to show
+    * collapsedUsers: Array of users after index 9
+
+    Example context (json):
+    {
+        "expandedUsers": [
+            {
+                "id": 4,
+                "fullname": "Phillip J. Fry",
+                "profileimage": "/pluginfile.php/4/user/icon/boost/f1?rev=58"
+            },
+            {
+                "id": 5,
+                "fullname": "Turanga Leela",
+                "profileimage": "/pluginfile.php/5/user/icon/boost/f1?rev=58"
+            }
+        ],
+        "hasCollapsed": true,
+        "collapsedUsers": [
+            {
+                "id": 14,
+                "fullname": "Bender B. Rodriguez",
+                "profileimage": "/pluginfile.php/14/user/icon/boost/f1?rev=58"
+            }
+        ]
+    }
+}}
+<div class="d-flex flex-column px-3 py-2" data-action="search-user-box">
+    {{#users}}
+        <button
+            class="btn btn-link text-reset p-0 mb-2 d-flex align-items-center"
+            data-action="select-user"
+            data-userid="{{id}}"
+        >
+            {{> mod_forum/local/grades/local/grader/user_picker/user }}
+        </button>
+    {{/users}}
+    {{^users}}
+        <div class="no-search-results-container text-center">
+            {{#pix}} no-search-results, mod_forum {{/pix}}
+            <h5 class="font-weight-bold mt-3">{{#str}}nousersmatch, mod_forum{{/str}}</h5>
+        </div>
+    {{/users}}
+</div>

@@ -54,6 +54,9 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->blockperiod = 60*60*24;
         $moduleinfo->blockafter = 10;
         $moduleinfo->warnafter = 5;
+
+        // Grading of whole forum settings.
+        $moduleinfo->grade_forum = 0;
     }
 
     /**
@@ -395,6 +398,9 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->blockperiod = 60*60*24;
         $moduleinfo->blockafter = 10;
         $moduleinfo->warnafter = 5;
+
+        // Grading of whole forum settings.
+        $moduleinfo->grade_forum = 0;
     }
 
     /**
@@ -3307,7 +3313,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($adminoptions->outcomes);
         $this->assertTrue($adminoptions->badges);
         $this->assertTrue($adminoptions->import);
-        $this->assertFalse($adminoptions->publish);
         $this->assertTrue($adminoptions->reset);
         $this->assertTrue($adminoptions->roles);
     }
@@ -3339,7 +3344,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($adminoptions->outcomes);
         $this->assertTrue($adminoptions->badges);
         $this->assertFalse($adminoptions->import);
-        $this->assertFalse($adminoptions->publish);
         $this->assertFalse($adminoptions->reset);
         $this->assertFalse($adminoptions->roles);
 
@@ -4857,6 +4861,262 @@ class core_course_courselib_testcase extends advanced_testcase {
         list($result, $processedcount) = course_filter_courses_by_timeline_classification(
             $coursesgenerator,
             $classification,
+            $limit
+        );
+
+        $actual = array_map(function($course) {
+            return $course->shortname;
+        }, $result);
+
+        $this->assertEquals($expectedcourses, $actual);
+        $this->assertEquals($expectedprocessedcount, $processedcount);
+    }
+
+    /**
+     * Test cases for the course_filter_courses_by_timeline_classification tests.
+     */
+    public function get_course_filter_courses_by_customfield_test_cases() {
+        global $CFG;
+        require_once($CFG->dirroot.'/blocks/myoverview/lib.php');
+        $coursedata = [
+            [
+                'shortname' => 'C1',
+                'customfield_checkboxfield' => 1,
+                'customfield_datefield' => strtotime('2001-02-01T12:00:00Z'),
+                'customfield_selectfield' => 1,
+                'customfield_textfield' => 'fish',
+            ],
+            [
+                'shortname' => 'C2',
+                'customfield_checkboxfield' => 0,
+                'customfield_datefield' => strtotime('1980-08-05T13:00:00Z'),
+            ],
+            [
+                'shortname' => 'C3',
+                'customfield_checkboxfield' => 0,
+                'customfield_datefield' => strtotime('2001-02-01T12:00:00Z'),
+                'customfield_selectfield' => 2,
+                'customfield_textfield' => 'dog',
+            ],
+            [
+                'shortname' => 'C4',
+                'customfield_checkboxfield' => 1,
+                'customfield_selectfield' => 3,
+                'customfield_textfield' => 'cat',
+            ],
+            [
+                'shortname' => 'C5',
+                'customfield_datefield' => strtotime('1980-08-06T13:00:00Z'),
+                'customfield_selectfield' => 2,
+                'customfield_textfield' => 'fish',
+            ],
+        ];
+
+        return [
+            'empty set' => [
+                'coursedata' => [],
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => 1,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => [],
+                'expectedprocessedcount' => 0
+            ],
+            'checkbox yes' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => 1,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C1', 'C4'],
+                'expectedprocessedcount' => 5
+            ],
+            'checkbox no' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C2', 'C3', 'C5'],
+                'expectedprocessedcount' => 5
+            ],
+            'date 1 Feb 2001' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'datefield',
+                'customfieldvalue' => strtotime('2001-02-01T12:00:00Z'),
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C1', 'C3'],
+                'expectedprocessedcount' => 5
+            ],
+            'date 6 Aug 1980' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'datefield',
+                'customfieldvalue' => strtotime('1980-08-06T13:00:00Z'),
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C5'],
+                'expectedprocessedcount' => 5
+            ],
+            'date no date' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'datefield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C4'],
+                'expectedprocessedcount' => 5
+            ],
+            'select Option 1' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'selectfield',
+                'customfieldvalue' => 1,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C1'],
+                'expectedprocessedcount' => 5
+            ],
+            'select Option 2' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'selectfield',
+                'customfieldvalue' => 2,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C3', 'C5'],
+                'expectedprocessedcount' => 5
+            ],
+            'select no select' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'selectfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C2'],
+                'expectedprocessedcount' => 5
+            ],
+            'text fish' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'textfield',
+                'customfieldvalue' => 'fish',
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C1', 'C5'],
+                'expectedprocessedcount' => 5
+            ],
+            'text dog' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'textfield',
+                'customfieldvalue' => 'dog',
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C3'],
+                'expectedprocessedcount' => 5
+            ],
+            'text no text' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'textfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['C2'],
+                'expectedprocessedcount' => 5
+            ],
+            'checkbox limit no' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 2,
+                'offset' => 0,
+                'expectedcourses' => ['C2', 'C3'],
+                'expectedprocessedcount' => 3
+            ],
+            'checkbox limit offset no' => [
+                'coursedata' => $coursedata,
+                'customfield' => 'checkboxfield',
+                'customfieldvalue' => BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY,
+                'limit' => 2,
+                'offset' => 3,
+                'expectedcourses' => ['C5'],
+                'expectedprocessedcount' => 2
+            ],
+        ];
+    }
+
+    /**
+     * Test the course_filter_courses_by_customfield function.
+     *
+     * @dataProvider get_course_filter_courses_by_customfield_test_cases()
+     * @param array $coursedata Course test data to create.
+     * @param string $customfield Shortname of the customfield.
+     * @param string $customfieldvalue the value to filter by.
+     * @param int $limit Maximum number of results to return.
+     * @param int $offset Results to skip at the start of the result set.
+     * @param string[] $expectedcourses Expected courses in results.
+     * @param int $expectedprocessedcount Expected number of course records to be processed.
+     */
+    public function test_course_filter_courses_by_customfield(
+        $coursedata,
+        $customfield,
+        $customfieldvalue,
+        $limit,
+        $offset,
+        $expectedcourses,
+        $expectedprocessedcount
+    ) {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create the custom fields.
+        $generator->create_custom_field_category([
+            'name' => 'Course fields',
+            'component' => 'core_course',
+            'area' => 'course',
+            'itemid' => 0,
+        ]);
+        $generator->create_custom_field([
+            'name' => 'Checkbox field',
+            'category' => 'Course fields',
+            'type' => 'checkbox',
+            'shortname' => 'checkboxfield',
+        ]);
+        $generator->create_custom_field([
+            'name' => 'Date field',
+            'category' => 'Course fields',
+            'type' => 'date',
+            'shortname' => 'datefield',
+            'configdata' => '{"mindate":0, "maxdate":0}',
+        ]);
+        $generator->create_custom_field([
+            'name' => 'Select field',
+            'category' => 'Course fields',
+            'type' => 'select',
+            'shortname' => 'selectfield',
+            'configdata' => '{"options":"Option 1\nOption 2\nOption 3\nOption 4"}',
+        ]);
+        $generator->create_custom_field([
+            'name' => 'Text field',
+            'category' => 'Course fields',
+            'type' => 'text',
+            'shortname' => 'textfield',
+        ]);
+
+        $courses = array_map(function($coursedata) use ($generator) {
+            return $generator->create_course($coursedata);
+        }, $coursedata);
+
+        $student = $generator->create_user();
+
+        foreach ($courses as $course) {
+            $generator->enrol_user($student->id, $course->id, 'student');
+        }
+
+        $this->setUser($student);
+
+        $coursesgenerator = course_get_enrolled_courses_for_logged_in_user(0, $offset, 'shortname ASC', 'shortname');
+        list($result, $processedcount) = course_filter_courses_by_customfield(
+            $coursesgenerator,
+            $customfield,
+            $customfieldvalue,
             $limit
         );
 
@@ -6510,5 +6770,157 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         $result = course_get_course_dates_for_user_ids($course, [$user2->id]);
         $this->assertEquals($user2start, $result[$user2->id]['start']);
+    }
+
+    /**
+     * Data provider for test_course_modules_pending_deletion.
+     *
+     * @return array An array of arrays contain test data
+     */
+    public function provider_course_modules_pending_deletion() {
+        return [
+            'Non-gradable activity, check all'              => [['forum'], 0, false, true],
+            'Gradable activity, check all'                  => [['assign'], 0, false, true],
+            'Non-gradable activity, check gradables'        => [['forum'], 0, true, false],
+            'Gradable activity, check gradables'            => [['assign'], 0, true, true],
+            'Non-gradable within multiple, check all'       => [['quiz', 'forum', 'assign'], 1, false, true],
+            'Non-gradable within multiple, check gradables' => [['quiz', 'forum', 'assign'], 1, true, false],
+            'Gradable within multiple, check all'           => [['quiz', 'forum', 'assign'], 2, false, true],
+            'Gradable within multiple, check gradables'     => [['quiz', 'forum', 'assign'], 2, true, true],
+        ];
+    }
+
+    /**
+     * Tests the function course_modules_pending_deletion.
+     *
+     * @param string[] $modules A complete list aff all available modules before deletion
+     * @param int $indextodelete The index of the module in the $modules array that we want to test with
+     * @param bool $gradable The value to pass to the gradable argument of the course_modules_pending_deletion function
+     * @param bool $expected The expected result
+     * @dataProvider provider_course_modules_pending_deletion
+     */
+    public function test_course_modules_pending_deletion(array $modules, int $indextodelete, bool $gradable, bool $expected) {
+        $this->resetAfterTest();
+
+        // Ensure recyclebin is enabled.
+        set_config('coursebinenable', true, 'tool_recyclebin');
+
+        // Create course and modules.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $moduleinstances = [];
+        foreach ($modules as $module) {
+            $moduleinstances[] = $generator->create_module($module, array('course' => $course->id));
+        }
+
+        course_delete_module($moduleinstances[$indextodelete]->cmid, true); // Try to delete the instance asynchronously.
+        $this->assertEquals($expected, course_modules_pending_deletion($course->id, $gradable));
+    }
+
+    /**
+     * Tests for the course_request::can_request
+     */
+    public function test_can_request_course() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $cat1 = $CFG->defaultrequestcategory;
+        $cat2 = $this->getDataGenerator()->create_category()->id;
+        $cat3 = $this->getDataGenerator()->create_category()->id;
+        $context1 = context_coursecat::instance($cat1);
+        $context2 = context_coursecat::instance($cat2);
+        $context3 = context_coursecat::instance($cat3);
+        $this->setUser($user);
+
+        // By default users don't have capability to request courses.
+        $this->assertFalse(course_request::can_request(context_system::instance()));
+        $this->assertFalse(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertFalse(course_request::can_request($context3));
+
+        // Allow for the 'user' role the capability to request courses.
+        $userroleid = $DB->get_field('role', 'id', ['shortname' => 'user']);
+        assign_capability('moodle/course:request', CAP_ALLOW, $userroleid,
+            context_system::instance()->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Lock category selection.
+        $CFG->lockrequestcategory = 1;
+
+        // Now user can only request course in the default category or in system context.
+        $this->assertTrue(course_request::can_request(context_system::instance()));
+        $this->assertTrue(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertFalse(course_request::can_request($context3));
+
+        // Enable category selection. User can request course anywhere.
+        $CFG->lockrequestcategory = 0;
+        $this->assertTrue(course_request::can_request(context_system::instance()));
+        $this->assertTrue(course_request::can_request($context1));
+        $this->assertTrue(course_request::can_request($context2));
+        $this->assertTrue(course_request::can_request($context3));
+
+        // Remove cap from cat2.
+        $roleid = create_role('Test role', 'testrole', 'Test role description');
+        assign_capability('moodle/course:request', CAP_PROHIBIT, $roleid,
+            $context2->id, true);
+        role_assign($roleid, $user->id, $context2->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->assertTrue(course_request::can_request(context_system::instance()));
+        $this->assertTrue(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertTrue(course_request::can_request($context3));
+
+        // Disable course request functionality.
+        $CFG->enablecourserequests = false;
+        $this->assertFalse(course_request::can_request(context_system::instance()));
+        $this->assertFalse(course_request::can_request($context1));
+        $this->assertFalse(course_request::can_request($context2));
+        $this->assertFalse(course_request::can_request($context3));
+    }
+
+    /**
+     * Tests for the course_request::can_approve
+     */
+    public function test_can_approve_course_request() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $requestor = $this->getDataGenerator()->create_user();
+        $user = $this->getDataGenerator()->create_user();
+        $cat1 = $CFG->defaultrequestcategory;
+        $cat2 = $this->getDataGenerator()->create_category()->id;
+        $cat3 = $this->getDataGenerator()->create_category()->id;
+
+        // Enable course requests. Default 'user' role has capability to request courses.
+        $CFG->enablecourserequests = true;
+        $CFG->lockrequestcategory = 0;
+        $this->setUser($requestor);
+        $requestdata = ['summary_editor' => ['text' => '', 'format' => 0], 'name' => 'Req', 'reason' => 'test'];
+        $request1 = course_request::create((object)($requestdata));
+        $request2 = course_request::create((object)($requestdata + ['category' => $cat2]));
+        $request3 = course_request::create((object)($requestdata + ['category' => $cat3]));
+
+        $this->setUser($user);
+        // Add capability to approve courses.
+        $roleid = create_role('Test role', 'testrole', 'Test role description');
+        assign_capability('moodle/site:approvecourse', CAP_ALLOW, $roleid,
+            context_system::instance()->id, true);
+        role_assign($roleid, $user->id, context_coursecat::instance($cat2)->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->assertFalse($request1->can_approve());
+        $this->assertTrue($request2->can_approve());
+        $this->assertFalse($request3->can_approve());
+
+        // Delete category where course was requested. Now only site-wide manager can approve it.
+        core_course_category::get($cat2, MUST_EXIST, true)->delete_full(false);
+        $this->assertFalse($request2->can_approve());
+
+        $this->setAdminUser();
+        $this->assertTrue($request2->can_approve());
     }
 }

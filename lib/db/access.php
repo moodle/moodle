@@ -133,7 +133,7 @@ $capabilities = array(
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
             'manager' => CAP_ALLOW
         )
@@ -173,20 +173,6 @@ $capabilities = array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' =>  'moodle/backup:backupcourse'
-    ),
-
-    'moodle/backup:backuptargethub' => array(
-
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
@@ -309,20 +295,6 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ),
-    ),
-
-    'moodle/restore:restoretargethub' => array(
-
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' =>  'moodle/restore:restorecourse'
     ),
 
     'moodle/restore:restoretargetimport' => array(
@@ -822,10 +794,7 @@ $capabilities = array(
 
     'moodle/course:request' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW,
-        )
+        'contextlevel' => CONTEXT_COURSECAT,
     ),
 
     'moodle/course:delete' => array(
@@ -2046,15 +2015,6 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-     'moodle/course:publish' => array(
-
-        'captype' => 'write',
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
     'moodle/course:markcomplete' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -2073,23 +2033,6 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        )
-    ),
-    'moodle/community:add' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-        )
-    ),
-    'moodle/community:download' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
         )
     ),
 
@@ -2587,4 +2530,34 @@ $capabilities = array(
             'user' => CAP_ALLOW
         )
     ),
+
+    // Set display option buttons to an H5P content.
+    'moodle/h5p:setdisplayoptions' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
+
+    // Allow to deploy H5P content.
+    'moodle/h5p:deploy' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'manager'        => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
+
+    // Allow to update H5P content-type libraries.
+    'moodle/h5p:updatelibraries' => [
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ]
+    ],
 );

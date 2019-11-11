@@ -1,0 +1,78 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template forumreport_summary/filter_groups
+
+    Summary report groups filter.
+
+    Example context (json):
+    {
+        "hasgroups": true,
+        "filtergroupsname" : "Groups (all)",
+        "filtergroups": [
+            {
+                "groupid": "1",
+                "groupname": "Group A",
+                "checked": true
+            },
+            {
+                "groupid": "3",
+                "groupname": "Group C",
+                "checked": false
+            }
+        ]
+    }
+}}
+
+{{#hasgroups}}
+<button type="button" id="filter-groups-button" class="btn btn-primary rounded p-1 ml-2" aria-expanded="false"
+        aria-haspopup="true" aria-label="{{# str}} filter:groupsbuttonlabel, forumreport_summary {{/ str}}">
+    {{filtergroupsname}}
+</button>
+
+{{! Groups filter values to submit }}
+<div class="hidden">
+    {{#filtergroups}}
+    <input id="filtergroups{{groupid}}" class="form-check-input" type="checkbox" name="filtergroups[]"
+        value="{{groupid}}" {{#checked}} checked="checked" {{/checked}}>
+    {{/filtergroups}}
+</div>
+
+{{! Groups filter popover }}
+<div id="filter-groups-popover" class="popover m-t-1 hidden" data-openfilter="false">
+    <h3 class="popover-header">{{# str}} filter:groupsname, forumreport_summary {{/ str}}</h3>
+    <div class="popover-body" data-region="filter-groups">
+        <div class="form-check filter-scrollable">
+            {{#filtergroups}}
+            <input id="popperfiltergroups{{groupid}}" class="form-check-input" type="checkbox" name="popperfiltergroups[]"
+                data-saveid="filtergroups{{groupid}}" value="{{groupid}}" {{#checked}} checked="checked" {{/checked}}>
+            <label class="form-check-label pt-1" for="popperfiltergroups{{groupid}}">{{groupname}}</label>
+            <br>
+            {{/filtergroups}}
+        </div>
+        <div class="filter-actions">
+            <button type="button" class="select-all btn btn-link p-0 pr-1" aria-label="{{# str}} selectall {{/ str}}">{{# str}} selectall {{/ str}}</button>
+            <div class="float-right">
+                <button type="button" class="filter-clear btn btn-link p-0 px-1" aria-label="{{# str}} clear {{/ str}}">{{# str}} clear {{/ str}}</button>
+                <button type="button" class="filter-save btn btn-link p-0" aria-label="{{# str}} save {{/ str}}">
+                    <strong>{{# str}} save {{/ str}}</strong>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{{/hasgroups}}

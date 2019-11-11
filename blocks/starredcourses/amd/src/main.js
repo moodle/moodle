@@ -39,6 +39,7 @@ function(
 ) {
 
     var SELECTORS = {
+        BLOCK_CONTAINER: '[data-region="starred-courses"]',
         STARRED_COURSES_REGION_VIEW: '[data-region="starred-courses-view"]',
         STARRED_COURSES_REGION: '[data-region="starred-courses-view-content"]'
     };
@@ -80,6 +81,12 @@ function(
 
         return Repository.getStarredCourses(args)
             .then(function(courses) {
+                // Whether the course category should be displayed in the course item.
+                var showcoursecategory = $(SELECTORS.BLOCK_CONTAINER).data('displaycoursecategory');
+                courses = courses.map(function(course) {
+                    course.showcoursecategory = showcoursecategory;
+                    return course;
+                });
                 return renderCourses(root, courses);
             }).then(function(html, js) {
                 return Templates.replaceNodeContents(content, html, js);

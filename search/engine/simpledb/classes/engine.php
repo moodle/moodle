@@ -354,4 +354,38 @@ class engine extends \core_search\engine {
         );
         return array($sql, $params);
     }
+
+    /**
+     * Simpledb supports deleting the index for a context.
+     *
+     * @param int $oldcontextid Context that has been deleted
+     * @return bool True to indicate that any data was actually deleted
+     * @throws \core_search\engine_exception
+     */
+    public function delete_index_for_context(int $oldcontextid) {
+        global $DB;
+        try {
+            $DB->delete_records('search_simpledb_index', ['contextid' => $oldcontextid]);
+        } catch (\dml_exception $e) {
+            throw new \core_search\engine_exception('dbupdatefailed');
+        }
+        return true;
+    }
+
+    /**
+     * Simpledb supports deleting the index for a course.
+     *
+     * @param int $oldcourseid
+     * @return bool True to indicate that any data was actually deleted
+     * @throws \core_search\engine_exception
+     */
+    public function delete_index_for_course(int $oldcourseid) {
+        global $DB;
+        try {
+            $DB->delete_records('search_simpledb_index', ['courseid' => $oldcourseid]);
+        } catch (\dml_exception $e) {
+            throw new \core_search\engine_exception('dbupdatefailed');
+        }
+        return true;
+    }
 }

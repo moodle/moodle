@@ -32,9 +32,11 @@ Feature: A teacher can put questions in categories in the question bank
       | Name            | New Category 1    |
       | Parent category | Top               |
       | Category info   | Created as a test |
+      | ID number       | newcatidnumber    |
     And I press "submitbutton"
-    Then I should see "New Category 1 (0)"
+    Then I should see "New Category 1 ID number newcatidnumber (0)"
     And I should see "Created as a test" in the "New Category 1" "list_item"
+    And "New Category 1 [newcatidnumber]" "option" should exist in the "Parent category" "select"
 
   Scenario: A question category can be edited
     When I navigate to "Question bank > Categories" in current page administration
@@ -76,7 +78,7 @@ Feature: A teacher can put questions in categories in the question bank
   Scenario: Move a question between categories via the question settings page
     When I navigate to "Question bank > Questions" in current page administration
     And I set the field "Select a category" to "Used category"
-    And I click on "Edit" "link" in the "Test question to be moved" "table_row"
+    And I choose "Edit question" action for "Test question to be moved" in the question bank
     And I click on "Use this category" "checkbox"
     And I set the field "Save in category" to "Subcategory"
     And I press "id_submitbutton"

@@ -31,6 +31,9 @@ require_once(__DIR__ . '/behat_command.php');
 require_once(__DIR__ . '/behat_config_manager.php');
 
 require_once(__DIR__ . '/../../filelib.php');
+require_once(__DIR__ . '/../../clilib.php');
+
+use Behat\Mink\Session;
 
 /**
  * Init/reset utilities for Behat database and dataroot
@@ -343,6 +346,23 @@ class behat_util extends testing_util {
     }
 
     /**
+     * Removes config settings that were added to the main $CFG config within the Behat CLI
+     * run.
+     *
+     * Database storage is already handled by reset_database and existing config values will
+     * be reset automatically by initialise_cfg(), so we only need to remove added ones.
+     */
+    public static function remove_added_config() {
+        global $CFG;
+        if (!empty($CFG->behat_cli_added_config)) {
+            foreach ($CFG->behat_cli_added_config as $key => $value) {
+                unset($CFG->{$key});
+            }
+            unset($CFG->behat_cli_added_config);
+        }
+    }
+
+    /**
      * Reset contents of all database tables to initial values, reset caches, etc.
      */
     public static function reset_all_data() {
@@ -372,6 +392,41 @@ class behat_util extends testing_util {
 
         // Initialise $CFG with default values. This is needed for behat cli process, so we don't have modified
         // $CFG values from the old run. @see set_config.
+        self::remove_added_config();
         initialise_cfg();
+    }
+
+    /**
+     * Pause execution immediately.
+     *
+     * @param Session $session
+     * @param string $message The message to show when pausing.
+     * This will be passed through cli_ansi_format so appropriate ANSI formatting and features are available.
+     */
+    public static function pause(Session $session, string $message): void {
+        $posixexists = function_exists('posix_isatty');
+
+        // Make sure this step is only used with interactive terminal (if detected).
+        if ($posixexists && !@posix_isatty(STDOUT)) {
+            throw new ExpectationException('Break point should only be used with interactive terminal.', $session);
+        }
+
+        // Save the cursor position, ring the bell, and add a new line.
+        fwrite(STDOUT, cli_ansi_format("<cursor:save><bell><newline>"));
+
+        // Output the formatted message and reset colour back to normal.
+        $formattedmessage = cli_ansi_format("{$message}<colour:normal>");
+        fwrite(STDOUT, $formattedmessage);
+
+        // Wait for input.
+        fread(STDIN, 1024);
+
+        // Move the cursor back up to the previous position, then restore the original position stored earlier, and move
+        // it back down again.
+        fwrite(STDOUT, cli_ansi_format("<cursor:up><cursor:up><cursor:restore><cursor:down><cursor:down>"));
+
+        // Add any extra lines back if the provided message was spread over multiple lines.
+        $linecount = count(explode("\n", $formattedmessage));
+        fwrite(STDOUT, str_repeat(cli_ansi_format("<cursor:down>"), $linecount - 1));
     }
 }

@@ -65,7 +65,7 @@ class extract_user {
         $alias = $this->alias;
 
         return array_map(function($record) use ($idalias, $alias) {
-            return user_picture::unalias($record, null, $idalias, $alias);
+            return user_picture::unalias($record, ['deleted'], $idalias, $alias);
         }, $records);
     }
 }

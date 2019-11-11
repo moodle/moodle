@@ -179,6 +179,13 @@ class external extends external_api {
                 'langmenu' => new external_value(PARAM_INT, 'Whether the language menu should be displayed.', VALUE_OPTIONAL),
                 'langlist' => new external_value(PARAM_RAW, 'Languages on language menu.', VALUE_OPTIONAL),
                 'locale' => new external_value(PARAM_RAW, 'Sitewide locale.', VALUE_OPTIONAL),
+                'tool_mobile_minimumversion' => new external_value(PARAM_NOTAGS, 'Minimum required version to access.',
+                    VALUE_OPTIONAL),
+                'tool_mobile_iosappid' => new external_value(PARAM_ALPHANUM, 'iOS app\'s unique identifier.',
+                    VALUE_OPTIONAL),
+                'tool_mobile_androidappid' => new external_value(PARAM_NOTAGS, 'Android app\'s unique identifier.',
+                    VALUE_OPTIONAL),
+                'tool_mobile_setuplink' => new external_value(PARAM_URL, 'App download page.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );
@@ -369,12 +376,12 @@ class external extends external_api {
 
     /**
      * Returns a piece of content to be displayed in the Mobile app, it usually returns a template, javascript and
-     * other structured data that will be used to render a view in the Mobile app..
+     * other structured data that will be used to render a view in the Mobile app.
      *
      * Callbacks (placed in \$component\output\mobile) that are called by this web service are responsible for doing the
      * appropriate security checks to access the information to be returned.
      *
-     * @param string $component fame of the component.
+     * @param string $component name of the component.
      * @param string $method function method name in class \$component\output\mobile.
      * @param array $args optional arguments for the method.
      * @return array HTML, JavaScript and other required data and information to create a view in the app.
@@ -423,6 +430,7 @@ class external extends external_api {
             'otherdata'  => $otherdata,
             'files'      => !empty($result['files']) ? $result['files'] : array(),
             'restrict'   => !empty($result['restrict']) ? $result['restrict'] : array(),
+            'disabled'   => !empty($result['disabled']) ? true : false,
         );
     }
 
@@ -465,7 +473,8 @@ class external extends external_api {
                         ),
                     ),
                     'Restrict this content to certain users or courses.'
-                )
+                ),
+                'disabled' => new external_value(PARAM_BOOL, 'Whether we consider this disabled or not.', VALUE_OPTIONAL),
             )
         );
     }

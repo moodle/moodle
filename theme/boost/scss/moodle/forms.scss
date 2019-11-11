@@ -285,8 +285,12 @@ fieldset.coursesearchbox label {
     min-height: 2 * $input-padding-y-sm + 2 * $font-size-base;
 }
 
-.form-autocomplete-multiple [role=listitem] {
+.form-autocomplete-selection [role=listitem] {
     cursor: pointer;
+    white-space: inherit;
+    word-break: break-word;
+    line-height: 1.4;
+    text-align: left;
 }
 
 .form-autocomplete-suggestions {
@@ -323,11 +327,9 @@ fieldset.coursesearchbox label {
 
 .form-autocomplete-downarrow {
     color: $body-color;
-    position: relative;
-    top: 0.2em;
-    left: -1.5em;
+    top: 0.2rem;
+    right: 0.5rem;
     cursor: pointer;
-
     .loading-icon {
         position: absolute;
         top: 0;
@@ -364,6 +366,7 @@ select[size="1"] {
 
 textarea[data-auto-rows] {
     overflow-x: hidden;
+    resize: none;
 }
 
 /** Display elements under labels in vertical forms regardless of the screen size. */
@@ -460,5 +463,32 @@ textarea[data-auto-rows] {
         */
         /*rtl:remove*/
         background-image: url([[pix:t/collapsed]]);
+    }
+}
+
+// Form inset on the left/right.
+// Used to display an icon/button within the form control.
+.input-group {
+    &.form-inset {
+        .form-inset-item {
+            @extend .position-absolute;
+            padding-top: calc(#{$input-padding-y} + #{$input-border-width});
+            z-index: 3;
+        }
+
+        &.form-inset-left {
+            .form-control {
+                @extend .pl-4;
+            }
+        }
+
+        &.form-inset-right {
+            .form-control {
+                @extend .pr-4;
+            }
+            .form-inset-item {
+                right: 0;
+            }
+        }
     }
 }

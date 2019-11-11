@@ -48,6 +48,7 @@ class core_analytics_indicators_testcase extends advanced_testcase {
      * @return void
      */
     public function test_core_indicators() {
+        global $DB;
 
         $this->preventResetByRollback();
         $this->resetAfterTest(true);
@@ -121,6 +122,65 @@ class core_analytics_indicators_testcase extends advanced_testcase {
         list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere');
         $this->assertEquals($indicator::get_max_value(), $values[$user1->id][0]);
         $this->assertEquals($indicator::get_min_value(), $values[$user2->id][0]);
+
+        // Test any course access.
+        $course = $this->getDataGenerator()->create_course($params);
+        $coursecontext = \context_course::instance($course->id);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+
+        $indicator = new \core\analytics\indicator\any_course_access();
+
+        $sampleids = array($user1->id => $user1->id);
+        $data = array($user1->id => array(
+            'course' => $course,
+            'user' => $user1
+        ));
+        $indicator->add_sample_data($data);
+        $analysable = new \core_analytics\course($course);
+
+        // Min value if no user_lastaccess records.
+        $indicator->fill_per_analysable_caches($analysable);
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere');
+        $this->assertEquals($indicator::get_min_value(), $values[$user1->id][0]);
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', time() - 10, time() + 10);
+        $this->assertEquals($indicator::get_min_value(), $values[$user1->id][0]);
+
+        // Any access is enough if no time restrictions.
+        $DB->insert_record('user_lastaccess', array('userid' => $user1->id,
+            'courseid' => $course->id, 'timeaccess' => time() - 1));
+        $indicator->fill_per_analysable_caches($analysable);
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere');
+        $this->assertEquals($indicator::get_max_value(), $values[$user1->id][0]);
+
+        // Min value if the existing records are old.
+        $indicator->fill_per_analysable_caches($analysable);
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', time(), time() + 10);
+        $this->assertEquals($indicator::get_min_value(), $values[$user1->id][0]);
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', time());
+        $this->assertEquals($indicator::get_min_value(), $values[$user1->id][0]);
+
+        // Max value if the existing records are prior to end.
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', time() - 10, time());
+        $this->assertEquals($indicator::get_max_value(), $values[$user1->id][0]);
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', false, time());
+        $this->assertEquals($indicator::get_max_value(), $values[$user1->id][0]);
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', false, time());
+        $this->assertEquals($indicator::get_max_value(), $values[$user1->id][0]);
+
+        // Max value if no end time and existing user_lastaccess record.
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', time() - 10);
+        $this->assertEquals($indicator::get_max_value(), $values[$user1->id][0]);
+
+        // Rely on logs if the last time access is after the end time.
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', false, time() - 10);
+        // Min value if no logs are found.
+        $this->assertEquals($indicator::get_min_value(), $values[$user1->id][0]);
+
+        \logstore_standard\event\unittest_executed::create(
+            array('context' => \context_course::instance($course->id), 'userid' => $user1->id))->trigger();
+        // Max value if logs are found before the end time.
+        list($values, $unused) = $indicator->calculate($sampleids, 'notrelevanthere', false, time() + 10);
+        $this->assertEquals($indicator::get_max_value(), $values[$user1->id][0]);
 
         // Test any write action.
         $course1 = $this->getDataGenerator()->create_course();

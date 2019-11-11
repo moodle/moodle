@@ -157,7 +157,7 @@ class favourite_repository_testcase extends advanced_testcase {
         $timenow = time(); // Reference only, to check that the created item has a time equal to or greater than this.
         $favourites = $favouritesrepo->add_all($favcourses);
 
-        $this->assertInternalType('array', $favourites);
+        $this->assertIsArray($favourites);
         $this->assertCount(2, $favourites);
         foreach ($favourites as $favourite) {
             // Verify we get the favourite back.
@@ -304,12 +304,12 @@ class favourite_repository_testcase extends advanced_testcase {
 
         // From the repo, get the list of favourites for the 'core_course/course' area.
         $userfavourites = $favouritesrepo->find_by(['component' => 'core_course', 'itemtype' => 'course']);
-        $this->assertInternalType('array', $userfavourites);
+        $this->assertIsArray($userfavourites);
         $this->assertCount(1, $userfavourites);
 
         // Try to get a list of favourites for a non-existent area.
         $userfavourites = $favouritesrepo->find_by(['component' => 'core_cannibalism', 'itemtype' => 'course']);
-        $this->assertInternalType('array', $userfavourites);
+        $this->assertIsArray($userfavourites);
         $this->assertCount(0, $userfavourites);
     }
 
@@ -496,7 +496,7 @@ class favourite_repository_testcase extends advanced_testcase {
         $favourite1->ordering = 1;
         $favourite1 = $favouritesrepo->update($favourite1);
         $this->assertInstanceOf(favourite::class, $favourite1);
-        $this->assertAttributeEquals('1', 'ordering', $favourite1);
+        $this->assertEquals('1', $favourite1->ordering);
     }
 
     public function test_delete() {

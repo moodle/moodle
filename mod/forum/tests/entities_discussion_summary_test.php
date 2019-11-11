@@ -49,7 +49,8 @@ class mod_forum_entities_discussion_summary_testcase extends advanced_testcase {
             'test',
             'person',
             'test person',
-            'test@example.com'
+            'test@example.com',
+            false
         );
         $lastauthor = new author_entity(
             2,
@@ -57,7 +58,8 @@ class mod_forum_entities_discussion_summary_testcase extends advanced_testcase {
             'test 2',
             'person 2',
             'test 2 person 2',
-            'test2@example.com'
+            'test2@example.com',
+            false
         );
         $discussion = new discussion_entity(
             1,
@@ -91,7 +93,9 @@ class mod_forum_entities_discussion_summary_testcase extends advanced_testcase {
             0,
             false,
             false,
-            false
+            false,
+            null,
+            null
         );
 
         $discussionsummary = new discussion_summary_entity($discussion, $firstpost, $firstauthor, $lastauthor);

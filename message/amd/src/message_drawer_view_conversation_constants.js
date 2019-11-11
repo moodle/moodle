@@ -65,6 +65,10 @@ define([], function() {
         DAY_MESSAGES_CONTAINER: '[data-region="day-messages-container"]',
         DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE: '[data-region="delete-messages-for-all-users-toggle"]',
         DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER: '[data-region="delete-messages-for-all-users-toggle-container"]',
+        EMOJI_AUTO_COMPLETE_CONTAINER: '[data-region="emoji-auto-complete-container"]',
+        EMOJI_PICKER_CONTAINER: '[data-region="emoji-picker-container"]',
+        EMOJI_PICKER: '[data-region="emoji-picker"]',
+        EMOJI_PICKER_SEARCH_INPUT: '[data-region="search-input"]',
         ERROR_MESSAGE_CONTAINER: '[data-region="error-message-container"]',
         ERROR_MESSAGE: '[data-region="error-message"]',
         FAVOURITE_ICON_CONTAINER: '[data-region="favourite-icon-container"]',
@@ -91,7 +95,8 @@ define([], function() {
         TEXT: '[data-region="text"]',
         TEXT_CONTAINER: '[data-region="text-container"]',
         TIME_CREATED: '[data-region="time-created"]',
-        TITLE: '[data-region="title"]'
+        TITLE: '[data-region="title"]',
+        TOGGLE_EMOJI_PICKER_BUTTON: '[data-action="toggle-emoji-picker"]'
     };
 
     var TEMPLATES = {

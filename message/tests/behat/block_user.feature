@@ -40,7 +40,7 @@ Feature: To be able to block users that we are able to or to see a message if we
     And I select "Teacher 1" user in messaging
     And I open contact menu
     When I click on "Block" "link" in the "[data-region='header-container']" "css_element"
-    Then I should see "You are unable to block Teacher 1"
+    Then I should see "You can't block Teacher 1"
 
   Scenario: Block a user who then gets an elevated role
     Given I log in as "student1"
@@ -64,4 +64,4 @@ Feature: To be able to block users that we are able to or to see a message if we
     And I select "Student 2" user in messaging
     And I open contact menu
     When I click on "Block" "link" in the "[data-region='header-container']" "css_element"
-    Then I should see "You are unable to block Student 2"
+    Then I should see "You can't block Student 2"

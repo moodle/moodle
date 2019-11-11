@@ -244,17 +244,17 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
          */
         output_group : function(groupname, users, selectedusers, processsingle) {
             var optgroup = Y.Node.create('<optgroup></optgroup>');
+            this.listbox.append(optgroup);
+
             var count = 0;
             for (var key in users) {
                 var user = users[key];
                 var option = Y.Node.create('<option value="' + user.id + '">' + user.name + '</option>');
                 if (user.disabled) {
-                    option.set('disabled', true);
+                    option.setAttribute('disabled', 'disabled');
                 } else if (selectedusers === true || selectedusers[user.id]) {
-                    option.set('selected', true);
+                    option.setAttribute('selected', 'selected');
                     delete selectedusers[user.id];
-                } else {
-                    option.set('selected', false);
                 }
                 optgroup.append(option);
                 if (user.infobelow) {
@@ -268,13 +268,12 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
             if (count > 0) {
                 optgroup.set('label', groupname + ' (' + count + ')');
                 if (processsingle && count === 1 && this.get_option('autoselectunique') && option.get('disabled') == false) {
-                    option.set('selected', true);
+                    option.setAttribute('selected', 'selected');
                 }
             } else {
                 optgroup.set('label', groupname);
                 optgroup.append(Y.Node.create('<option disabled="disabled">\u00A0</option>'));
             }
-            this.listbox.append(optgroup);
         },
         /**
          * Replace

@@ -35,7 +35,7 @@ $string['cliansweryes'] = 'ν';
 $string['cliincorrectvalueerror'] = 'Σφάλμα, λανθασμένη τιμή «{$a->value}» για το «{$a->option}»';
 $string['cliincorrectvalueretry'] = 'Λανθασμένη τιμή. Παρακαλούμε προσπαθήστε ξανά.';
 $string['clitypevalue'] = 'πληκτρολογήστε μια τιμή';
-$string['clitypevaluedefault'] = 'πληκτρολογήστε μια τιμή· πατήστε Enter για να χρησιμοποιήσετε τηνπροεπιλεγμένη τιμή ({$a})';
+$string['clitypevaluedefault'] = 'πληκτρολογήστε μια τιμή, πατήστε Enter για να χρησιμοποιήσετε την προεπιλεγμένη τιμή ({$a})';
 $string['cliunknowoption'] = 'Μη αναγνωρίσιμες επιλογές: {$a}<br />
 Παρακαλούμε χρησιμοποιήστε την επιλογή --βοήθεια';
 $string['cliyesnoprompt'] = 'πατήστε y (σημαίνει yes=ναι) ή πατήστε n (σημαίνει no=όχι)';

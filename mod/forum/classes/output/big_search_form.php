@@ -55,6 +55,10 @@ class big_search_form implements renderable, templatable {
     public $tags;
     /** @var string The URL of the search form. */
     public $actionurl;
+    /** @var bool Is the user a guest user? */
+    public $guestuser;
+    /** @var bool Whether the include starredonly checkbox is checked. */
+    public $starredonly;
 
     /**
      * Constructor.
@@ -63,9 +67,10 @@ class big_search_form implements renderable, templatable {
      * @param object $user The user.
      */
     public function __construct($course) {
-        global $DB;
+        global $DB, $USER;
         $this->course = $course;
         $this->tags = [];
+        $this->guestuser = !isloggedin() || isguestuser($USER);
         $this->showfullwords = $DB->get_dbfamily() == 'mysql' || $DB->get_dbfamily() == 'postgres';
         $this->actionurl = new moodle_url('/mod/forum/search.php');
 
@@ -160,6 +165,15 @@ class big_search_form implements renderable, templatable {
     }
 
     /**
+     * Set starred only value.
+     *
+     * @param mixed $value Bool.
+     */
+    public function set_starredonly($value) {
+        $this->starredonly = $value;
+    }
+
+    /**
      * Forum ID setter search criteria.
      *
      * @param int $forumid The forum ID.
@@ -182,6 +196,8 @@ class big_search_form implements renderable, templatable {
         $data->subject = $this->subject;
         $data->user = $this->user;
         $data->showfullwords = $this->showfullwords;
+        $data->guestuser = $this->guestuser;
+        $data->starredonly = $this->starredonly;
         $data->actionurl = $this->actionurl->out(false);
 
         $tagtypestoshow = \core_tag_area::get_showstandard('mod_forum', 'forum_posts');

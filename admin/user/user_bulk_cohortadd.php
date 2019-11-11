@@ -138,7 +138,7 @@ foreach ($users as $user) {
             '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '&amp;course=' . SITEID . '">' .
             $user->fullname .
             '</a>',
-            $user->email,
+            s($user->email),
             $user->city,
             $user->country,
             $user->lastaccess ? format_time(time() - $user->lastaccess) : $strnever

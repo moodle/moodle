@@ -1,2 +1,0 @@
-auth_ldap_creators,auth_ldap
-auth_ldap_creators_key,auth_ldap

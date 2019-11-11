@@ -134,3 +134,32 @@ Feature: The forum search allows users to perform advanced searches for forum po
     When I press "Search forums"
     Then I should see "My subject"
     And I should not see "Your subjective"
+
+  @javascript
+  Scenario: Perform an advanced search on starred discussions without text
+    Given I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Announcements"
+    And I click on "Your subjective" action menu
+    And I follow "Star this discussion"
+    And I press "Search forums"
+    And I should see "Advanced search"
+    And I set the field "starredonly" to "1"
+    When I press "Search forums"
+    Then I should not see "My message"
+    And I should see "Your subjective"
+
+  @javascript
+  Scenario: Perform an advanced search on starred discussions with text
+    Given I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Announcements"
+    And I click on "Your subjective" action menu
+    And I follow "Star this discussion"
+    And I press "Search forums"
+    And I should see "Advanced search"
+    And I set the field "words" to "message"
+    And I set the field "starredonly" to "1"
+    When I press "Search forums"
+    Then I should not see "My message"
+    And I should see "Your subjective"

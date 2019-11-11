@@ -32,9 +32,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
         BULKUSERSELECTEDCHECKBOXES: "input.usercheckbox:checked",
         BULKACTIONFORM: "#participantsform",
         CHECKALLBUTTON: "#checkall",
-        CHECKALLNOSBUTTON: "#checkallnos",
-        CHECKALLONPAGEBUTTON: "#checkallonpage",
-        CHECKNONEBUTTON: "#checknone"
+        CHECKALLNOSBUTTON: "#checkallnos"
     };
 
     /**
@@ -120,13 +118,6 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
 
         $(SELECTORS.CHECKALLNOSBUTTON).on('click', function() {
             $(SELECTORS.BULKUSERNOSCHECKBOXES).prop('checked', true);
-        });
-        $(SELECTORS.CHECKALLONPAGEBUTTON).on('click', function() {
-            $(SELECTORS.BULKUSERCHECKBOXES).prop('checked', true);
-        });
-
-        $(SELECTORS.CHECKNONEBUTTON).on('click', function() {
-            $(SELECTORS.BULKUSERCHECKBOXES).prop('checked', false);
         });
     };
 

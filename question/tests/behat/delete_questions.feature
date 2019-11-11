@@ -26,14 +26,14 @@ Feature: A teacher can delete questions in the question bank
 
   @javascript
   Scenario: A question not used anywhere can really be deleted
-    When I click on "Delete" "link" in the "Test question to be deleted" "table_row"
+    When I choose "Delete" action for "Test question to be deleted" in the question bank
     And I press "Delete"
     And I click on "Also show old questions" "checkbox"
     Then I should not see "Test question to be deleted"
 
   @javascript
   Scenario: Deleting a question can be cancelled
-    When I click on "Delete" "link" in the "Test question to be deleted" "table_row"
+    When I choose "Delete" action for "Test question to be deleted" in the question bank
     And I press "Cancel"
     Then I should see "Test question to be deleted"
 
@@ -47,7 +47,7 @@ Feature: A teacher can delete questions in the question bank
       | Question text | Write about whatever you want    |
     And I am on "Course 1" course homepage
     And I navigate to "Question bank > Questions" in current page administration
-    When I click on "Delete" "link" in the "Test used question to be deleted" "table_row"
+    When I choose "Delete" action for "Test used question to be deleted" in the question bank
     And I press "Delete"
     Then I should not see "Test used question to be deleted"
     And I click on "Also show old questions" "checkbox"

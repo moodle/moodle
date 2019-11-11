@@ -1526,6 +1526,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertEquals($assign->get_instance()->id, $customdata->instance);
         $this->assertEquals('feedbackavailable', $customdata->messagetype);
         $userpicture = new user_picture($teacher);
+        $userpicture->size = 1; // Use f1 size.
         $this->assertEquals($userpicture->get_url($PAGE)->out(false), $customdata->notificationiconurl);
         $this->assertEquals(0, $customdata->uniqueidforuser);   // Not used in this case.
         $this->assertFalse($customdata->blindmarking);
@@ -4009,5 +4010,221 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $valid = $assign->get_filters();
 
         $this->assertEquals(count($valid), 5);
+    }
+
+    /**
+     * Test assign->get_instance() for a number of cases, as defined in the data provider.
+     *
+     * @dataProvider assign_get_instance_provider
+     * @param array $courseconfig the config to use when creating the course.
+     * @param array $assignconfig the config to use when creating the assignment.
+     * @param array $enrolconfig the config to use when enrolling the user (this will be the active user).
+     * @param array $expectedproperties an map containing the expected names and values for the assign instance data.
+     */
+    public function test_assign_get_instance(array $courseconfig, array $assignconfig, array $enrolconfig,
+            array $expectedproperties) {
+        $this->resetAfterTest();
+
+        set_config('enablecourserelativedates', true); // Enable relative dates at site level.
+
+        $course = $this->getDataGenerator()->create_course($courseconfig);
+        $assign = $this->create_instance($course, $assignconfig);
+        $user = $this->getDataGenerator()->create_and_enrol($course, ...array_values($enrolconfig));
+
+        $instance = $assign->get_instance($user->id);
+
+        foreach ($expectedproperties as $propertyname => $propertyval) {
+            $this->assertEquals($propertyval, $instance->$propertyname);
+        }
+    }
+
+    /**
+     * The test_assign_get_instance data provider.
+     */
+    public function assign_get_instance_provider() {
+        $timenow = time();
+
+        // The get_default_instance() method shouldn't calculate any properties per-user. It should just return the record data.
+        // We'll confirm this works for a few different user types anyway, just like we do for get_instance().
+        return [
+            'Teacher whose enrolment starts after the course start date, relative dates mode enabled' => [
+                'courseconfig' => ['relativedatesmode' => true, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'teacher', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 8 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 6 * DAYSECS]
+            ],
+            'Teacher whose enrolment starts before the course start date, relative dates mode enabled' => [
+                'courseconfig' => ['relativedatesmode' => true, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'teacher', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 12 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 4 * DAYSECS]
+            ],
+            'Teacher whose enrolment starts after the course start date, relative dates mode disabled' => [
+                'courseconfig' => ['relativedatesmode' => false, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'teacher', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 8 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 4 * DAYSECS]
+            ],
+            'Student whose enrolment starts after the course start date, relative dates mode enabled' => [
+                'courseconfig' => ['relativedatesmode' => true, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'student', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 8 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 6 * DAYSECS]
+            ],
+            'Student whose enrolment starts before the course start date, relative dates mode enabled' => [
+                'courseconfig' => ['relativedatesmode' => true, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'student', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 12 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 4 * DAYSECS]
+            ],
+            'Student whose enrolment starts after the course start date, relative dates mode disabled' => [
+                'courseconfig' => ['relativedatesmode' => false, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'student', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 8 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 4 * DAYSECS]
+            ],
+        ];
+    }
+
+    /**
+     * Test assign->get_default_instance() for a number of cases, as defined in the date provider.
+     *
+     * @dataProvider assign_get_default_instance_provider
+     * @param array $courseconfig the config to use when creating the course.
+     * @param array $assignconfig the config to use when creating the assignment.
+     * @param array $enrolconfig the config to use when enrolling the user (this will be the active user).
+     * @param array $expectedproperties an map containing the expected names and values for the assign instance data.
+     */
+    public function test_assign_get_default_instance(array $courseconfig, array $assignconfig, array $enrolconfig,
+            array $expectedproperties) {
+        $this->resetAfterTest();
+
+        set_config('enablecourserelativedates', true); // Enable relative dates at site level.
+
+        $course = $this->getDataGenerator()->create_course($courseconfig);
+        $assign = $this->create_instance($course, $assignconfig);
+        $user = $this->getDataGenerator()->create_and_enrol($course, ...array_values($enrolconfig));
+
+        $this->setUser($user);
+        $defaultinstance = $assign->get_default_instance();
+
+        foreach ($expectedproperties as $propertyname => $propertyval) {
+            $this->assertEquals($propertyval, $defaultinstance->$propertyname);
+        }
+    }
+
+    /**
+     * The test_assign_get_default_instance data provider.
+     */
+    public function assign_get_default_instance_provider() {
+        $timenow = time();
+
+        // The get_default_instance() method shouldn't calculate any properties per-user. It should just return the record data.
+        // We'll confirm this works for a few different user types anyway, just like we do for get_instance().
+        return [
+            'Teacher whose enrolment starts after the course start date, relative dates mode enabled' => [
+                'courseconfig' => ['relativedatesmode' => true, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'teacher', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 8 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 4 * DAYSECS]
+            ],
+            'Teacher whose enrolment starts before the course start date, relative dates mode enabled' => [
+                'courseconfig' => ['relativedatesmode' => true, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'teacher', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 12 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 4 * DAYSECS]
+            ],
+            'Teacher whose enrolment starts after the course start date, relative dates mode disabled' => [
+                'courseconfig' => ['relativedatesmode' => false, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'teacher', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 8 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 4 * DAYSECS]
+            ],
+            'Student whose enrolment starts after the course start date, relative dates mode enabled' => [
+                'courseconfig' => ['relativedatesmode' => true, 'startdate' => $timenow - 10 * DAYSECS],
+                'assignconfig' => ['duedate' => $timenow + 4 * DAYSECS],
+                'enrolconfig' => ['shortname' => 'student', 'userparams' => null, 'method' => 'manual',
+                    'startdate' => $timenow - 8 * DAYSECS],
+                'expectedproperties' => ['duedate' => $timenow + 4 * DAYSECS]
+            ],
+        ];
+    }
+
+    /**
+     * Test showing group override duedate for admin
+     */
+    public function test_view_group_override() {
+        global $DB, $PAGE;
+
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        groups_add_member($group1, $student1);
+        groups_add_member($group1, $teacher);
+
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($group2, $student2);
+
+        $assign = $this->create_instance($course, [
+                'groupmode' => 1,
+                'duedate' => 1558999899,
+            ]);
+        $instance = $assign->get_instance();
+
+        // Overrides for two groups.
+        $overrides = [
+            (object) [
+                'assignid' => $instance->id,
+                'groupid' => $group1->id,
+                'userid' => null,
+                'sortorder' => 1,
+                'duedate' => 1568990258,
+            ],
+            (object) [
+                'assignid' => $instance->id,
+                'groupid' => $group2->id,
+                'userid' => null,
+                'sortorder' => 2,
+                'duedate' => 1559900258,
+            ],
+        ];
+
+        foreach ($overrides as &$override) {
+            $override->id = $DB->insert_record('assign_overrides', $override);
+        }
+
+        $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id));
+        $PAGE->set_url($currenturl);
+        $output1 = '';
+        // Other users should see duedate of the assignment.
+        $this->setUser($student2);
+        $summary = $assign->get_assign_grading_summary_renderable($group1->id);
+        $output1 .= $assign->get_renderer()->render($summary);
+        $this->assertContains('Tuesday, 28 May 2019, 7:31 AM', $output1, '', true);
+
+        $output2 = '';
+        // Teacher should be able to see all group override duedate.
+        $this->setUser($teacher);
+        $summary = $assign->get_assign_grading_summary_renderable($group1->id);
+        $output2 .= $assign->get_renderer()->render($summary);
+        $this->assertContains('Friday, 20 September 2019, 10:37 PM', $output2, '', true);
+        $summary = $assign->get_assign_grading_summary_renderable($group2->id);
+        $output3 = '';
+        $output3 .= $assign->get_renderer()->render($summary);
+        $this->assertContains('Friday, 7 June 2019, 5:37 PM', $output3, '', true);
     }
 }

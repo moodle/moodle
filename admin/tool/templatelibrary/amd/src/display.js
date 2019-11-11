@@ -119,7 +119,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
     var loadTemplate = function(templateName) {
         var parts = templateName.split('/');
         var component = parts.shift();
-        var name = parts.shift();
+        var name = parts.join('/');
 
         var promises = ajax.call([{
             methodname: 'core_output_load_template',

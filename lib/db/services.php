@@ -261,6 +261,14 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_calendar_get_timestamps' => [
+        'classname'     => 'core_calendar_external',
+        'methodname'    => 'get_timestamps',
+        'description'   => 'Fetch unix timestamps for given date times.',
+        'classpath' => 'calendar/externallib.php',
+        'type'          => 'read',
+        'ajax'          => true,
+    ],
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',
@@ -332,6 +340,20 @@ $functions = array(
         'description' => 'Returns comments.',
         'type' => 'read',
         'capabilities' => 'moodle/comment:view',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_comment_add_comments' => array(
+        'classname' => 'core_comment_external',
+        'methodname' => 'add_comments',
+        'description' => 'Adds a comment or comments.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_comment_delete_comments' => array(
+        'classname' => 'core_comment_external',
+        'methodname' => 'delete_comments',
+        'description' => 'Deletes a comment or comments.',
+        'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_completion_get_activities_completion_status' => array(
@@ -599,6 +621,14 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_course_get_enrolled_users_by_cmid' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_enrolled_users_by_cmid',
+        'classpath' => 'course/externallib.php',
+        'description' => 'List users by course module id & filter by group id.',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',
@@ -634,6 +664,16 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'moodle/course:enrolreview'
     ),
+    'core_enrol_search_users' => [
+        'classname' => 'core_enrol_external',
+        'methodname' => 'search_users',
+        'classpath' => 'enrol/externallib.php',
+        'description' => 'Search within the list of course participants',
+        'ajax' => true,
+        'type' => 'read',
+        'capabilities' => 'moodle/course:viewparticipants',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ],
     'core_enrol_get_users_courses' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_users_courses',
@@ -647,7 +687,16 @@ $functions = array(
         'classname' => 'core_enrol_external',
         'methodname' => 'edit_user_enrolment',
         'classpath' => 'enrol/externallib.php',
-        'description' => 'External function that updates a given user enrolment',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          External function that updates a given user enrolment',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+    'core_enrol_submit_user_enrolment_form' => array(
+        'classname' => 'core_enrol_external',
+        'methodname' => 'submit_user_enrolment_form',
+        'classpath' => 'enrol/externallib.php',
+        'description' => 'Submit form data for enrolment form',
         'type' => 'write',
         'ajax' => true,
     ),
@@ -769,6 +818,40 @@ $functions = array(
         'description' => 'Update a grade item and associated student grades.',
         'type' => 'write',
     ),
+    'core_grades_grader_gradingpanel_point_fetch' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\point\\external\\fetch',
+        'methodname' => 'execute',
+        'description' => 'Fetch the data required to display the grader grading panel for simple grading, ' .
+            'creating the grade item if required',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_grader_gradingpanel_point_store' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\point\\external\\store',
+        'methodname' => 'execute',
+        'description' => 'Store the data required to display the grader grading panel for simple grading',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_grader_gradingpanel_scale_fetch' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\scale\\external\\fetch',
+        'methodname' => 'execute',
+        'description' => 'Fetch the data required to display the grader grading panel for scale-based grading, ' .
+            'creating the grade item if required',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_grader_gradingpanel_scale_store' => [
+        'classname' => 'core_grades\\grades\\grader\\gradingpanel\\scale\\external\\store',
+        'methodname' => 'execute',
+        'description' => 'Store the data required to display the grader grading panel for scale-based grading',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',
@@ -862,6 +945,7 @@ $functions = array(
         'classpath' => 'group/externallib.php',
         'description' => 'Returns all groupings in specified course.',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_group_get_course_groups' => array(
         'classname' => 'core_group_external',
@@ -870,7 +954,8 @@ $functions = array(
         'description' => 'Returns all groups in specified course.',
         'type' => 'read',
         'ajax' => true,
-        'capabilities' => 'moodle/course:managegroups'
+        'capabilities' => 'moodle/course:managegroups',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_group_get_course_user_groups' => array(
         'classname' => 'core_group_external',
@@ -2616,7 +2701,17 @@ $functions = array(
         'description' => 'Drag and drop categories',
         'type'        => 'write',
         'ajax'        => 'true'
-    )
+    ),
+    'core_h5p_get_trusted_h5p_file' => [
+        'classname'     => 'core_h5p\external',
+        'methodname'    => 'get_trusted_h5p_file',
+        'classpath'     => '',
+        'description'   => 'Get the H5P file cleaned for Mobile App.',
+        'type'          => 'read',
+        'ajax'          => 'true',
+        'capabilities'  => '',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 );
 
 $services = array(

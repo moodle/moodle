@@ -23,6 +23,7 @@ Feature: Converting rubric score to grades
       | activity   | name              | intro | course | idnumber    | grade   | advancedgradingmethod_submissions |
       | assign     | Test assignment 1 | Test  | C1     | assign1     | <grade> | rubric                            |
     When I log in as "teacher1"
+    And I change window size to "large"
     And I am on "Course 1" course homepage with editing mode on
     And I go to "Test assignment 1" advanced grading definition page
     And I set the following fields to these values:

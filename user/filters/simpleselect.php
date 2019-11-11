@@ -86,7 +86,7 @@ class user_filter_simpleselect extends user_filter_type {
     public function check_data($formdata) {
         $field = $this->_name;
 
-        if (array_key_exists($field, $formdata) and $formdata->$field !== '') {
+        if (property_exists($formdata, $field) and $formdata->$field !== '') {
             return array('value' => (string)$formdata->$field);
         }
 

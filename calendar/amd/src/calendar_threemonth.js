@@ -93,6 +93,8 @@ function(
                 requestYear = nextMonth.data('nextYear');
                 requestMonth = nextMonth.data('nextMonth');
                 oldMonth = previousMonth;
+            } else {
+                return $.Deferred().resolve();
             }
 
             return CalendarViewManager.refreshMonthContent(

@@ -117,6 +117,8 @@ class message_output_airnotifier extends message_output {
             $header = array('Accept: application/json', 'X-AN-APP-NAME: ' . $CFG->airnotifierappname,
                 'X-AN-APP-KEY: ' . $CFG->airnotifieraccesskey);
             $curl = new curl;
+            // Push notifications are supposed to be instant, do not wait to long blocking the execution.
+            $curl->setopt(array('CURLOPT_TIMEOUT' => 2, 'CURLOPT_CONNECTTIMEOUT' => 2));
             $curl->setHeader($header);
 
             $params = array(

@@ -178,6 +178,20 @@
     -webkit-box-shadow: none;
 }
 
+.assignfeedback_editpdf_widget .toolbar > button.rotateleftbutton {
+    /*rtl:raw:
+    border-right: 1px solid #ccc;
+    border-left: 0;
+    */
+    /*rtl:ignore*/
+    float: left;
+}
+
+.assignfeedback_editpdf_widget .toolbar > button.rotaterightbutton {
+    /*rtl:ignore*/
+    float: right;
+}
+
 .assignfeedback_editpdf_widget .toolbar {
     float: left;
 }
@@ -343,7 +357,15 @@ ul.assignfeedback_editpdf_menu {
 
 .assignfeedback_editpdf_widget .commentdrawable {
     display: flex;
-    z-index: 1;
+    z-index: 52;
+    height: 0;
+}
+.assignfeedback_editpdf_widget .annotation {
+    z-index: 51;
+}
+
+.assignfeedback_editpdf_widget .deleteannotationbutton {
+    z-index: 51;
 }
 
 .assignfeedback_editpdf_widget .commentdrawable label {

@@ -61,6 +61,8 @@ class post {
                 'mailnow' => $post->should_mail_now(),
                 'deleted' => $post->is_deleted(),
                 'privatereplyto' => $post->get_private_reply_recipient_id(),
+                'wordcount' => $post->get_wordcount(),
+                'charcount' => $post->get_charcount(),
             ];
         }, $posts);
     }

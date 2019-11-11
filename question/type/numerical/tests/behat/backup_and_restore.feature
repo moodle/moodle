@@ -29,7 +29,7 @@ Feature: Test duplicating a quiz containing a Numerical question
     And I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Course 2 |
     And I navigate to "Question bank" in current page administration
-    And I click on "Edit" "link" in the "Numerical-001" "table_row"
+    And I choose "Edit question" action for "Numerical-001" in the question bank
     Then the following fields match these values:
       | Question name                      | Numerical-001                              |
       | Question text                      | What is pi to two d.p.?                    |

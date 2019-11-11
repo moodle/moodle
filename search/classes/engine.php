@@ -522,6 +522,47 @@ abstract class engine {
     abstract function delete($areaid = null);
 
     /**
+     * Deletes information related to a specific context id. This should be used when the context
+     * itself is deleted from Moodle.
+     *
+     * This only deletes information for the specified context - not for any child contexts.
+     *
+     * This function is optional; if not supported it will return false and the information will
+     * not be deleted from the search index.
+     *
+     * If an engine implements this function it should also implement delete_index_for_course;
+     * otherwise, nothing will be deleted when users delete an entire course at once.
+     *
+     * @param int $oldcontextid ID of context that has been deleted
+     * @return bool True if implemented
+     * @throws \core_search\engine_exception Engines may throw this exception for any problem
+     */
+    public function delete_index_for_context(int $oldcontextid) {
+        return false;
+    }
+
+    /**
+     * Deletes information related to a specific course id. This should be used when the course
+     * itself is deleted from Moodle.
+     *
+     * This deletes all information relating to that course from the index, including all child
+     * contexts.
+     *
+     * This function is optional; if not supported it will return false and the information will
+     * not be deleted from the search index.
+     *
+     * If an engine implements this function then, ideally, it should also implement
+     * delete_index_for_context so that deletion of single activities/blocks also works.
+     *
+     * @param int $oldcourseid ID of course that has been deleted
+     * @return bool True if implemented
+     * @throws \core_search\engine_exception Engines may throw this exception for any problem
+     */
+    public function delete_index_for_course(int $oldcourseid) {
+        return false;
+    }
+
+    /**
      * Checks that the schema is the latest version. If the version stored in config does not match
      * the current, this function will attempt to upgrade the schema.
      *

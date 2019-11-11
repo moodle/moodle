@@ -46,7 +46,3 @@ $string['pluginname'] = 'File submissions';
 $string['privacy:metadata:filepurpose'] = 'The files loaded for this assignment submission';
 $string['siteuploadlimit'] = 'Site upload limit';
 $string['submissionfilearea'] = 'Uploaded submission files';
-// Deprecated since Moodle 3.4.
-$string['filesofthesetypes'] = 'Files of these types may be added to the submission:';
-$string['filetypewithexts'] = '{$a->name} &mdash; {$a->extlist}';
-$string['nonexistentfiletypes'] = 'The following file types were not recognised: {$a}';

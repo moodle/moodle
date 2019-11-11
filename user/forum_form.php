@@ -61,6 +61,12 @@ class user_edit_forum_form extends moodleform {
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
         $mform->setDefault('autosubscribe', core_user::get_property_default('autosubscribe'));
 
+        $choices = array();
+        $choices['1'] = get_string('yes');
+        $choices['0'] = get_string('no');
+        $mform->addElement('select', 'useexperimentalui', get_string('useexperimentalui', 'mod_forum'), $choices);
+        $mform->setDefault('useexperimentalui', '0');
+
         if (!empty($CFG->forum_trackreadposts)) {
             $mform->addElement('header', 'trackreadposts', get_string('trackreadposts_header', 'mod_forum'));
             $choices = array();

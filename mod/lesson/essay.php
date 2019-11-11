@@ -225,6 +225,7 @@ switch ($mode) {
         }
 
         $userpicture = new user_picture($USER);
+        $userpicture->size = 1; // Use f1 size.
         foreach ($attempts as $attempt) {
             $essayinfo = lesson_page_type_essay::extract_useranswer($attempt->useranswer);
             if ($essayinfo->graded && !$essayinfo->sent) {

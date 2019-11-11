@@ -306,13 +306,9 @@ class provider implements
             $idssql = "SELECT ap.id FROM {analytics_predictions} ap
                         WHERE ap.contextid = :contextid AND ap.modelid = :modelid";
             $idsparams = ['contextid' => $context->id, 'modelid' => $modelid];
-            $predictionids = $DB->get_fieldset_sql($idssql, $idsparams);
-            if ($predictionids) {
-                list($predictionidssql, $params) = $DB->get_in_or_equal($predictionids, SQL_PARAMS_NAMED);
 
-                $DB->delete_records_select('analytics_prediction_actions', "predictionid IN ($idssql)", $idsparams);
-                $DB->delete_records_select('analytics_predictions', "id $predictionidssql", $params);
-            }
+            $DB->delete_records_select('analytics_prediction_actions', "predictionid IN ($idssql)", $idsparams);
+            $DB->delete_records_select('analytics_predictions', "contextid = :contextid AND modelid = :modelid", $idsparams);
         }
 
         // We delete them all this table is just a cache and we don't know which model filled it.

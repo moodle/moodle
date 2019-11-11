@@ -111,7 +111,7 @@ class core_messageinbound_testcase extends advanced_testcase {
         // Break on the --[TOKEN]-- tags in the file.
         $content = file_get_contents($file->getRealPath());
         $content = preg_replace("#\r\n#", "\n", $content);
-        $tokens = preg_split('#(?:^|\n*)----([A-Z]+)----\n#', file_get_contents($file->getRealPath()),
+        $tokens = preg_split('#(?:^|\n*)----([A-Z]+)----\n#', $content,
                 null, PREG_SPLIT_DELIM_CAPTURE);
         $sections = array(
             // Key              => Required.

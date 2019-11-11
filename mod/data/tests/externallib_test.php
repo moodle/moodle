@@ -141,6 +141,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->introformat = FORMAT_HTML;
         $record->course = $course1->id;
+        $record->intro = '<button>Test with HTML allowed.</button>';
         $database1 = self::getDataGenerator()->create_module('data', $record);
 
         // Second database.

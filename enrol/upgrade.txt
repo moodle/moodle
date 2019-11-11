@@ -1,6 +1,10 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+
+* Function enrol_manual_plugin::enrol_cohort now return the number of enrolled cohort users.
+
 === 3.7 ===
 
 * Functions get_potential_users() and search_other_users() now return more information to avoid extra count query:

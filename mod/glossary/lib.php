@@ -270,20 +270,13 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
         }
         return $result;
     } else if ($grade) {
-        $result = new stdClass();
+        $result = (object) [
+            'time' => grade_get_date_for_user_grade($grade, $user),
+        ];
         if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
             $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
         } else {
             $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
-        }
-
-        //datesubmitted == time created. dategraded == time modified or time overridden
-        //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
-        //TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
-        if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
-            $result->time = $grade->dategraded;
-        } else {
-            $result->time = $grade->datesubmitted;
         }
 
         return $result;
@@ -865,24 +858,11 @@ function glossary_grade_item_delete($glossary) {
 }
 
 /**
- * @global object
- * @param int $gloassryid
- * @param int $scaleid
- * @return bool
+ * @deprecated since Moodle 3.8
  */
-function glossary_scale_used ($glossaryid,$scaleid) {
-//This function returns if a scale is being used by one glossary
-    global $DB;
-
-    $return = false;
-
-    $rec = $DB->get_record("glossary", array("id"=>$glossaryid, "scale"=>-$scaleid));
-
-    if (!empty($rec)  && !empty($scaleid)) {
-        $return = true;
-    }
-
-    return $return;
+function glossary_scale_used() {
+    throw new coding_exception('glossary_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**
@@ -2438,8 +2418,8 @@ function glossary_generate_export_file($glossary, $ignored = "", $hook = 0) {
  * @return string
  */
 function glossary_read_imported_file($file_content) {
-    require_once "../../lib/xmlize.php";
     global $CFG;
+    require_once "../../lib/xmlize.php";
 
     return xmlize($file_content, 0);
 }

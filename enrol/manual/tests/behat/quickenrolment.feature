@@ -108,11 +108,11 @@ Feature: Teacher can search and enrol users one by one into the course
       | student098  | Student   | 098      | student098@example.com  |
       | student099  | Student   | 099      | student099@example.com  |
     And the following "courses" exist:
-      | fullname    | shortname |
-      | Course 001  | C001      |
+      | fullname   | shortname | format | startdate       |
+      | Course 001 | C001      | weeks  | ##1 month ago## |
     And the following "course enrolments" exist:
-      | user        | course    | role            |
-      | teacher001  | C001      | editingteacher  |
+      | user       | course | role           | timestart       |
+      | teacher001 | C001   | editingteacher | ##1 month ago## |
     And I log in as "teacher001"
     And I am on "Course 001" course homepage
 
@@ -124,6 +124,7 @@ Feature: Teacher can search and enrol users one by one into the course
     And I should see "Student 001"
     And I click on "Enrol users" "button" in the "Enrol users" "dialogue"
     Then I should see "Active" in the "Student 001" "table_row"
+    And I should see "1 enrolled users"
 
   @javascript
   Scenario: Searching for a non-existing user
@@ -155,6 +156,16 @@ Feature: Teacher can search and enrol users one by one into the course
     Then I should see "Too many users (>100) to show"
 
   @javascript
+  Scenario: Changing the Maximum users per page setting affects the enrolment pop-up.
+    Given the following config values are set as admin:
+      | maxusersperpage | 5 |
+    And I navigate to course participants
+    And I press "Enrol users"
+    When I set the field "Select users" to "student00"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
+    Then I should see "Too many users (>5) to show"
+
+  @javascript
   Scenario: Change the Show user identity setting affects the enrolment pop-up.
     Given I log out
     When I log in as "admin"
@@ -178,3 +189,48 @@ Feature: Teacher can search and enrol users one by one into the course
     When I set the field "Select users" to "student100@example.com"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
     Then I should see "student100@example.com, 1234567892, 1234567893, ABC1, ABC2"
+
+# The following tests are commented out as a result of MDL-66339.
+#  @javascript
+#  Scenario: Enrol user from participants page
+#    Given I navigate to course participants
+#    # Enrol user to course
+#    And I press "Enrol users"
+#    And I set the field "Select users" to "example.com"
+#    And I expand the "Select users" autocomplete
+#    When I click on "Student 099" item in the autocomplete list
+#    Then I should see "Student 099" in the list of options for the "Select users" autocomplete
+#    And I click on "Show more" "button"
+#    # Fill data to input duration
+#    And "input[name='timeend[enabled]'][checked=checked]" "css_element" should not exist
+#    And the "Enrolment duration" "select" should be enabled
+#    And I set the field "duration" to "2"
+#    # Fill data to input end time
+#    And I set the field "Starting from" to "2"
+#    And I set the field "timeend[enabled]" to "1"
+#    And I set the field "timeend[day]" to "10"
+#    And the "Enrolment duration" "select" should be disabled
+#    And I click on "Enrol users" "button" in the "Enrol users" "dialogue"
+#    And I am on "Course 001" course homepage
+#    And I navigate to course participants
+#    And I should see "Student 099" in the "participants" "table"
+#    And I click on "Edit enrolment" "icon" in the "Student 099" "table_row"
+#    And the field "timeend[day]" matches value "10"
+#
+#  @javascript
+#  Scenario: Update Enrol user
+#    Given I am on "Course 001" course homepage
+#    And I navigate to course participants
+#    When I click on "Edit enrolment" "icon" in the "Teacher 001" "table_row"
+#    Then the "Enrolment duration" "select" should be enabled
+#    # Fill duration
+#    And "input[name='timeend[enabled]'][checked=checked]" "css_element" should not exist
+#    And the "Enrolment duration" "select" should be enabled
+#    And I set the field "duration" to "2"
+#    # Fill end time
+#    And I set the field "timeend[enabled]" to "1"
+#    And I set the field "timeend[day]" to "28"
+#    And the "Enrolment duration" "select" should be disabled
+#    And I press "Save changes"
+#    And I click on "Edit enrolment" "icon" in the "Teacher 001" "table_row"
+#    And the field "timeend[day]" matches value "28"

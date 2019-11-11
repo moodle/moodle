@@ -1,3 +1,0 @@
-filesofthesetypes,assignsubmission_file
-filetypewithexts,assignsubmission_file
-nonexistentfiletypes,assignsubmission_file

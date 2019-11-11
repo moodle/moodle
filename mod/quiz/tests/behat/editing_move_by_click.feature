@@ -31,9 +31,7 @@ Feature: Edit quiz page - drag-and-drop
       | Question B | 1    |
       | Question C | 2    |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
 
   @javascript
   Scenario: Re-order questions by clicking on the move icon.

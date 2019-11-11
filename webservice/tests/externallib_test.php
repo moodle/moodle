@@ -122,6 +122,8 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         // covered below for admin user. This test is for user not allowed to ignore limits.
         $this->assertEquals(get_max_upload_file_size($maxbytes), $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
+        $userkey = get_user_key('core_files', $USER->id);
+        $this->assertEquals($userkey, $siteinfo['userprivateaccesskey']);
 
         $this->assertEquals(HOMEPAGE_MY, $siteinfo['userhomepage']);
         $this->assertEquals($CFG->calendartype, $siteinfo['sitecalendartype']);
@@ -130,6 +132,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         } else {
             $this->assertEquals($CFG->calendartype, $siteinfo['usercalendartype']);
         }
+        $this->assertFalse($siteinfo['userissiteadmin']);
         $this->assertEquals($CFG->calendartype, $siteinfo['sitecalendartype']);
         $this->assertEquals($user['theme'], $siteinfo['theme']);
 
@@ -160,6 +163,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(0, $siteinfo['userquota']);
         $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
+        $this->assertTrue($siteinfo['userissiteadmin']);
         $this->assertEmpty($USER->theme);
         $this->assertEquals($PAGE->theme->name, $siteinfo['theme']);
     }

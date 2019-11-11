@@ -147,7 +147,7 @@ class core_calendar_external extends external_api {
                                              "Set to true to return current user's user events",
                                              VALUE_DEFAULT, true, NULL_ALLOWED),
                                     'siteevents' => new external_value(PARAM_BOOL,
-                                             "Set to true to return global events",
+                                             "Set to true to return site events",
                                              VALUE_DEFAULT, true, NULL_ALLOWED),
                                     'timestart' => new external_value(PARAM_INT,
                                              "Time from which events should be returned",
@@ -676,7 +676,7 @@ class core_calendar_external extends external_api {
     }
 
     /**
-     * Delete Calendar events.
+     * Create calendar events.
      *
      * @param array $events A list of events to create.
      * @return array array of events created.
@@ -880,6 +880,7 @@ class core_calendar_external extends external_api {
         $courseid = (!empty($data[$coursekey])) ? $data[$coursekey] : null;
         $editoroptions = \core_calendar\local\event\forms\create::build_editor_options($context);
         $formoptions = ['editoroptions' => $editoroptions, 'courseid' => $courseid];
+        $formoptions['eventtypes'] = calendar_get_allowed_event_types($courseid);
         if ($courseid) {
             require_once($CFG->libdir . '/grouplib.php');
             $groupcoursedata = groups_get_course_data($courseid);
@@ -1367,6 +1368,84 @@ class core_calendar_external extends external_api {
                     new external_value(PARAM_NOTAGS, 'Allowed event types to be created in the given course.')
                 ),
                 'warnings' => new external_warnings(),
+            ]
+        );
+    }
+
+    /**
+     * Convert the specified dates into unix timestamps.
+     *
+     * @param   array $datetimes Array of arrays containing date time details, each in the format:
+     *           ['year' => a, 'month' => b, 'day' => c,
+     *            'hour' => d (optional), 'minute' => e (optional), 'key' => 'x' (optional)]
+     * @return  array Provided array of dates converted to unix timestamps
+     * @throws moodle_exception If one or more of the dates provided does not convert to a valid timestamp.
+     */
+    public static function get_timestamps($datetimes) {
+        $params = self::validate_parameters(self::get_timestamps_parameters(), ['data' => $datetimes]);
+
+        $type = \core_calendar\type_factory::get_calendar_instance();
+        $timestamps = ['timestamps' => []];
+
+        foreach ($params['data'] as $key => $datetime) {
+            $hour = $datetime['hour'] ?? 0;
+            $minute = $datetime['minute'] ?? 0;
+
+            try {
+                $timestamp = $type->convert_to_timestamp(
+                    $datetime['year'], $datetime['month'], $datetime['day'], $hour, $minute);
+
+                $timestamps['timestamps'][] = [
+                    'key' => $datetime['key'] ?? $key,
+                    'timestamp' => $timestamp,
+                ];
+
+            } catch (Exception $e) {
+                throw new moodle_exception('One or more of the dates provided were invalid');
+            }
+        }
+
+        return $timestamps;
+    }
+
+    /**
+     * Describes the parameters for get_timestamps.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_timestamps_parameters() {
+        return new external_function_parameters ([
+            'data' => new external_multiple_structure(
+                new external_single_structure(
+                    [
+                        'key' => new external_value(PARAM_ALPHANUMEXT, 'key', VALUE_OPTIONAL),
+                        'year' => new external_value(PARAM_INT, 'year'),
+                        'month' => new external_value(PARAM_INT, 'month'),
+                        'day' => new external_value(PARAM_INT, 'day'),
+                        'hour' => new external_value(PARAM_INT, 'hour', VALUE_OPTIONAL),
+                        'minute' => new external_value(PARAM_INT, 'minute', VALUE_OPTIONAL),
+                    ]
+                )
+            )
+        ]);
+    }
+
+    /**
+     * Describes the timestamps return format.
+     *
+     * @return external_single_structure
+     */
+    public static function get_timestamps_returns() {
+        return new external_single_structure(
+            [
+                'timestamps' => new external_multiple_structure(
+                    new external_single_structure(
+                        [
+                            'key' => new external_value(PARAM_ALPHANUMEXT, 'Timestamp key'),
+                            'timestamp' => new external_value(PARAM_INT, 'Unix timestamp'),
+                        ]
+                    )
+                )
             ]
         );
     }

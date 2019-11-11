@@ -350,10 +350,10 @@ function upgrade_course_letter_boundary($courseid = null) {
     }
     $lettercolumnsql = '';
     if ($usergradelettercolumnsetting) {
-        // the system default is to show a column with letters (and the course uses the defaults).
+        // The system default is to show a column with letters (and the course uses the defaults).
         $lettercolumnsql = '(gss.value is NULL OR ' . $DB->sql_compare_text('gss.value') .  ' <> \'0\')';
     } else {
-        // the course displays a column with letters.
+        // The course displays a column with letters.
         $lettercolumnsql = $DB->sql_compare_text('gss.value') .  ' = \'1\'';
     }
 
@@ -565,4 +565,91 @@ function upgrade_delete_orphaned_file_records() {
     $deletedfiles->close();
 
     $DB->delete_records_list('files_reference', 'id', $deletedfileids);
+}
+
+/**
+ * Updates the existing prediction actions in the database according to the new suggested actions.
+ * @return null
+ */
+function upgrade_rename_prediction_actions_useful_incorrectly_flagged() {
+    global $DB;
+
+    // The update depends on the analyser class used by each model so we need to iterate through the models in the system.
+    $modelids = $DB->get_records_sql("SELECT DISTINCT am.id, am.target
+                                        FROM {analytics_models} am
+                                        JOIN {analytics_predictions} ap ON ap.modelid = am.id
+                                        JOIN {analytics_prediction_actions} apa ON ap.id = apa.predictionid");
+    foreach ($modelids as $model) {
+        $targetname = $model->target;
+        if (!class_exists($targetname)) {
+            // The plugin may not be available.
+            continue;
+        }
+        $target = new $targetname();
+
+        $analyserclass = $target->get_analyser_class();
+        if (!class_exists($analyserclass)) {
+            // The plugin may not be available.
+            continue;
+        }
+
+        if ($analyserclass::one_sample_per_analysable()) {
+            // From 'fixed' to 'useful'.
+            $params = ['oldaction' => 'fixed', 'newaction' => 'useful'];
+        } else {
+            // From 'notuseful' to 'incorrectlyflagged'.
+            $params = ['oldaction' => 'notuseful', 'newaction' => 'incorrectlyflagged'];
+        }
+
+        $subsql = "SELECT id FROM {analytics_predictions} WHERE modelid = :modelid";
+        $updatesql = "UPDATE {analytics_prediction_actions}
+                         SET actionname = :newaction
+                       WHERE predictionid IN ($subsql) AND actionname = :oldaction";
+
+        $DB->execute($updatesql, $params + ['modelid' => $model->id]);
+    }
+}
+
+/**
+ * Convert the site settings for the 'hub' component in the config_plugins table.
+ *
+ * @param stdClass $hubconfig Settings loaded for the 'hub' component.
+ * @param string $huburl The URL of the hub to use as the valid one in case of conflict.
+ * @return stdClass List of new settings to be applied (including null values to be unset).
+ */
+function upgrade_convert_hub_config_site_param_names(stdClass $hubconfig, string $huburl): stdClass {
+
+    $cleanhuburl = clean_param($huburl, PARAM_ALPHANUMEXT);
+    $converted = [];
+
+    foreach ($hubconfig as $oldname => $value) {
+        if (preg_match('/^site_([a-z]+)([A-Za-z0-9_-]*)/', $oldname, $matches)) {
+            $newname = 'site_'.$matches[1];
+
+            if ($oldname === $newname) {
+                // There is an existing value with the new naming convention already.
+                $converted[$newname] = $value;
+
+            } else if (!array_key_exists($newname, $converted)) {
+                // Add the value under a new name and mark the original to be unset.
+                $converted[$newname] = $value;
+                $converted[$oldname] = null;
+
+            } else if ($matches[2] === '_'.$cleanhuburl) {
+                // The new name already exists, overwrite only if coming from the valid hub.
+                $converted[$newname] = $value;
+                $converted[$oldname] = null;
+
+            } else {
+                // Just unset the old value.
+                $converted[$oldname] = null;
+            }
+
+        } else {
+            // Not a hub-specific site setting, just keep it.
+            $converted[$oldname] = $value;
+        }
+    }
+
+    return (object) $converted;
 }

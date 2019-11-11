@@ -14,15 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * A column with a checkbox for each question with name q{questionid}.
+ *
+ * @package   core_question
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace core_question\bank;
+defined('MOODLE_INTERNAL') || die();
 
 use core\output\checkbox_toggleall;
+
 
 /**
  * A column with a checkbox for each question with name q{questionid}.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class checkbox_column extends column_base {
 

@@ -177,6 +177,10 @@ class api {
             'langmenu' => $CFG->langmenu,
             'langlist' => $CFG->langlist,
             'locale' => $CFG->locale,
+            'tool_mobile_minimumversion' => get_config('tool_mobile', 'minimumversion'),
+            'tool_mobile_iosappid' => get_config('tool_mobile', 'iosappid'),
+            'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
+            'tool_mobile_setuplink' => clean_param(get_config('tool_mobile', 'setuplink'), PARAM_URL),
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');
@@ -206,6 +210,12 @@ class api {
         $identityprovidersdata = \auth_plugin_base::prepare_identity_providers_for_output($identityproviders, $OUTPUT);
         if (!empty($identityprovidersdata)) {
             $settings['identityproviders'] = $identityprovidersdata;
+            // Clean URLs to avoid breaking Web Services.
+            // We can't do it in prepare_identity_providers_for_output() because it may break the web output.
+            foreach ($settings['identityproviders'] as &$ip) {
+                $ip['url'] = (!empty($ip['url'])) ? clean_param($ip['url'], PARAM_URL) : '';
+                $ip['iconurl'] = (!empty($ip['iconurl'])) ? clean_param($ip['iconurl'], PARAM_URL) : '';
+            }
         }
 
         // If age is verified, return also the admin contact details.
@@ -414,6 +424,7 @@ class api {
                 'NoDelegate_CoreRating' => new lang_string('ratings', 'rating'),
                 'NoDelegate_CoreTag' => new lang_string('tags'),
                 '$mmLoginEmailSignup' => new lang_string('startsignup'),
+                'NoDelegate_ForgottenPassword' => new lang_string('forgotten'),
                 'NoDelegate_ResponsiveMainMenuItems' => new lang_string('responsivemainmenuitems', 'tool_mobile'),
             ),
             "$mainmenu" => array(

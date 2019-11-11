@@ -32,6 +32,7 @@ use external_api;
 use external_function_parameters;
 use external_value;
 use external_single_structure;
+use external_multiple_structure;
 use external_warnings;
 
 /**
@@ -91,6 +92,13 @@ class external extends external_api {
     }
 
     /**
+     * Deprecated in favour of action_executed.
+     */
+    public static function set_notuseful_prediction_is_deprecated() {
+        return true;
+    }
+
+    /**
      * set_fixed_prediction parameters.
      *
      * @return external_function_parameters
@@ -133,6 +141,68 @@ class external extends external_api {
         return new external_single_structure(
             array(
                 'success' => new external_value(PARAM_BOOL, 'True if the prediction was successfully flagged as fixed.'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Deprecated in favour of action_executed.
+     */
+    public static function set_fixed_prediction_is_deprecated() {
+        return true;
+    }
+
+    /**
+     * action_executed parameters.
+     *
+     * @return external_function_parameters
+     * @since  Moodle 3.8
+     */
+    public static function action_executed_parameters() {
+        return new external_function_parameters (
+            array(
+                'actionname' => new external_value(PARAM_ALPHANUMEXT, 'The name of the action', VALUE_REQUIRED),
+                'predictionids' => new external_multiple_structure(
+                     new external_value(PARAM_INT, 'Prediction id', VALUE_REQUIRED),
+                     'Array of prediction ids'
+                ),
+            )
+        );
+    }
+
+    /**
+     * Stores an action executed over a group of predictions.
+     *
+     * @param  string   $actionname
+     * @param  array    $predictionids
+     * @return array an array of warnings and a boolean
+     * @since  Moodle 3.8
+     */
+    public static function action_executed(string $actionname, array $predictionids) {
+
+        $params = self::validate_parameters(self::action_executed_parameters(),
+            array('actionname' => $actionname, 'predictionids' => $predictionids));
+
+        foreach ($params['predictionids'] as $predictionid) {
+            list($model, $prediction, $context) = self::validate_prediction($predictionid);
+
+            // The method action_executed checks that the provided action is valid.
+            $prediction->action_executed($actionname, $model->get_target());
+        }
+
+        return array('warnings' => array());
+    }
+
+    /**
+     * action_executed return
+     *
+     * @return external_description
+     * @since  Moodle 3.8
+     */
+    public static function action_executed_returns() {
+        return new external_single_structure(
+            array(
                 'warnings' => new external_warnings(),
             )
         );

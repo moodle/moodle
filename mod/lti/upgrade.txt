@@ -1,5 +1,10 @@
 This files describes API changes in the lti code.
 
+=== 3.8 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+    * lti_scale_used()
+
 === 3.7 ===
 
 * Deprecated functions to add support for LTI 1 tools to access services:

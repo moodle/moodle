@@ -139,39 +139,51 @@ if ($action === 'delete') {
         echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
     }
 
-    // Print it all out!
+    // The attempts table.
+    $attemptstable = html_writer::table($table);
+
+    // The HTML that we will be displaying which includes the attempts table and bulk actions menu, if necessary.
+    $attemptshtml = $attemptstable;
+
+    // Show bulk actions when user has capability to edit the lesson.
     if (has_capability('mod/lesson:edit', $context)) {
-        echo  "<form id=\"mod-lesson-report-form\" method=\"post\" action=\"report.php\">\n
-               <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
-               <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+        $reporturl = new moodle_url('/mod/lesson/report.php');
+        $formid  = 'mod-lesson-report-form';
+
+        // Sesskey hidden input.
+        $formcontents = html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+
+        // CMID hidden input.
+        $formcontents .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $cm->id]);
+
+        // Attempts table.
+        $formcontents .= $attemptstable;
+
+        // Bulk actions menu.
+        $attemptsactions = [
+            'delete' => get_string('deleteselected')
+        ];
+        $bulkactions = new single_select($reporturl, 'action', $attemptsactions, '', ['' => 'choosedots'], $formid);
+        $bulkactions->set_label(get_string('withselectedattempts', 'lesson'));
+        $bulkactions->disabled = true;
+        $bulkactions->attributes = [
+            'data-action' => 'toggle',
+            'data-togglegroup' => 'lesson-attempts',
+            'data-toggle' => 'action',
+        ];
+        $bulkactionshtml = $OUTPUT->render($bulkactions);
+        $formcontents .= $OUTPUT->box($bulkactionshtml, 'center');
+
+        // Build the attempts form.
+        $formattributes = [
+            'id' => $formid,
+            'method' => 'post',
+        ];
+        $attemptshtml = html_writer::tag('form', $formcontents, $formattributes);
     }
 
-    echo html_writer::table($table);
-
-    if (has_capability('mod/lesson:edit', $context)) {
-        $checklinks  = '<a id="checkall" href="#">'.get_string('selectall').'</a> / ';
-        $checklinks .= '<a id="checknone" href="#">'.get_string('deselectall').'</a>';
-        $checklinks .= html_writer::label('action', 'menuaction', false, array('class' => 'accesshide'));
-        $options = array('delete' => get_string('deleteselected'));
-        $attributes = array('id' => 'actionid', 'class' => 'custom-select ml-1');
-        $checklinks .= html_writer::select($options, 'action', 0, array('' => 'choosedots'), $attributes);
-        $PAGE->requires->js_amd_inline("
-        require(['jquery'], function($) {
-            $('#actionid').change(function() {
-                $('#mod-lesson-report-form').submit();
-            });
-            $('#checkall').click(function(e) {
-                $('#mod-lesson-report-form').find('input:checkbox').prop('checked', true);
-                e.preventDefault();
-            });
-            $('#checknone').click(function(e) {
-                $('#mod-lesson-report-form').find('input:checkbox').prop('checked', false);
-                e.preventDefault();
-            });
-        });");
-        echo $OUTPUT->box($checklinks, 'center');
-        echo '</form>';
-    }
+    // Show the attempts HTML.
+    echo $attemptshtml;
 
     // Calculate the Statistics.
     if ($data->avetime == null) {

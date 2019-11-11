@@ -127,13 +127,17 @@ class process_data_request_task extends adhoc_task {
             $thing = $fs->create_file_from_pathname($filerecord, $exportedcontent);
             $completestatus = api::DATAREQUEST_STATUS_DOWNLOAD_READY;
         } else if ($request->type == api::DATAREQUEST_TYPE_DELETE) {
-            // Delete the data.
-            $manager = new \core_privacy\manager();
-            $manager->set_observer(new \tool_dataprivacy\manager_observer());
+            // Delete the data for users other than the primary admin, which is rejected.
+            if (is_primary_admin($foruser->id)) {
+                $completestatus = api::DATAREQUEST_STATUS_REJECTED;
+            } else {
+                $manager = new \core_privacy\manager();
+                $manager->set_observer(new \tool_dataprivacy\manager_observer());
 
-            $manager->delete_data_for_user($approvedclcollection);
-            $completestatus = api::DATAREQUEST_STATUS_DELETED;
-            $deleteuser = !$foruser->deleted;
+                $manager->delete_data_for_user($approvedclcollection);
+                $completestatus = api::DATAREQUEST_STATUS_DELETED;
+                $deleteuser = !$foruser->deleted;
+            }
         }
 
         // When the preparation of the metadata finishes, update the request status to awaiting approval.

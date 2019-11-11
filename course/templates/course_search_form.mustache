@@ -14,10 +14,30 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template core_course/course_search_form
+
+    This template renders the form for course search.
+
+    Example context (json):
+    {
+        "searchurl": "https://moodlesite/course/search.php",
+        "id": "coursesearch",
+        "inputid": "coursesearchbox",
+        "inputsize": 30,
+        "value": "certificate",
+        "name" : "q",
+        "helpicon": [{
+            "heading": "Search courses",
+            "text": "You can search for multiple words at once and can refine your search as follows:"
+        }]
+    }
+}}
 <form action="{{searchurl}}" id="{{id}}" method="get" class="form-inline">
     <fieldset class="coursesearchbox invisiblefieldset">
         <label for="{{inputid}}">{{#str}}searchcourses{{/str}}</label>
-        <input id="{{inputid}}" name="search" type="text" size="{{inputsize}}" value="{{value}}" class="form-control">
+        <input id="{{inputid}}" name="q" type="text" size="{{inputsize}}" value="{{value}}" class="form-control">
+        <input name="areaids" type="hidden" value="{{areaids}}">
         <button class="btn btn-secondary" type="submit">{{#str}}go{{/str}}</button>
         {{#helpicon}}
             {{>core/help_icon}}

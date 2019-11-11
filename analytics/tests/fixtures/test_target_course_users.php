@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/test_target_shortname.php');
+require_once(__DIR__ . '/test_target_site_users.php');
 
 /**
  * Test target.

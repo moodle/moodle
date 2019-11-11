@@ -408,4 +408,11 @@ $definitions = array(
         'simpledata' => true,
         'staticacceleration' => true
     ],
+
+    // Information generated during the calculation of indicators.
+    'calculablesinfo' => [
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => false,
+        'simpledata' => false,
+    ],
 );

@@ -46,12 +46,24 @@ $string['nocourseactivity'] = 'Not enough course activity between the start and 
 $string['nocourseendtime'] = 'The course does not have an end time';
 $string['nocoursesections'] = 'No course sections';
 $string['nocoursestudents'] = 'No students';
+$string['noaccesssincestartinfomessage'] = 'Hi {$a->userfirstname},
+
+</br><br/>A number of students in {$a->coursename} have never accessed the course.';
+$string['norecentaccessesinfomessage'] = 'Hi {$a->userfirstname},
+
+</br><br/>A number of students in {$a->coursename} have not accessed the course recently.';
+$string['noteachinginfomessage'] = 'Hi {$a->userfirstname},
+
+</br><br/>Courses with start dates in the next week have been identified as having no teacher or student enrolments.';
 $string['privacy:perpage'] = 'The number of courses to show per page.';
 $string['privacy:completionpath'] = 'Course completion';
 $string['privacy:favouritespath'] = 'Course starred information';
 $string['privacy:metadata:completionsummary'] = 'The course contains completion information about the user.';
 $string['privacy:metadata:favouritessummary'] = 'The course contains information relating to the course being starred by the user.';
 $string['studentsatriskincourse'] = 'Students at risk in {$a} course';
+$string['studentsatriskinfomessage'] = 'Hi {$a->userfirstname},
+
+</br><br/>Students in the {$a->coursename} course have been identified as being at risk.';
 $string['target:coursecompletion'] = 'Students at risk of not meeting the course completion conditions';
 $string['target:coursecompletion_help'] = 'This target describes whether the student is considered at risk of not meeting the course completion conditions.';
 $string['target:coursecompetencies'] = 'Students at risk of not achieving the competencies assigned to a course';
@@ -60,8 +72,15 @@ $string['target:coursedropout'] = 'Students at risk of dropping out';
 $string['target:coursedropout_help'] = 'This target describes whether the student is considered at risk of dropping out.';
 $string['target:coursegradetopass'] = 'Students at risk of not achieving the minimum grade to pass the course';
 $string['target:coursegradetopass_help'] = 'This target describes whether the student is at risk of not achieving the minimum grade to pass the course.';
-$string['target:noteachingactivity'] = 'No teaching';
+$string['target:noaccesssincecoursestart'] = 'Students who have not accessed the course yet';
+$string['target:noaccesssincecoursestart_help'] = 'This target describes students who never accessed a course they are enrolled in.';
+$string['target:noaccesssincecoursestartinfo'] = 'The following students are enroled in a course which has started, but they have never accessed the course.';
+$string['target:norecentaccesses'] = 'Students who have not accessed the course recently';
+$string['target:norecentaccesses_help'] = 'This target identifies students who have not accessed a course they are enrolled in within the set analysis interval (by default the past month).';
+$string['target:norecentaccessesinfo'] = 'The following students have not accessed a course they are enrolled in within the set analysis interval (by default the past month).';
+$string['target:noteachingactivity'] = 'Courses at risk of not starting';
 $string['target:noteachingactivity_help'] = 'This target describes whether courses due to start in the coming week will have teaching activity.';
+$string['target:noteachingactivityinfo'] = 'The following courses due to start in the upcoming days are at risk of not starting because they don\'t have teachers or students enroled';
 $string['targetlabelstudentcompletionno'] = 'Student who is likely to meet the course completion conditions';
 $string['targetlabelstudentcompletionyes'] = 'Student at risk of not meeting the course completion conditions';
 $string['targetlabelstudentcompetenciesno'] = 'Student who is likely to achieve the competencies assigned to a course';
@@ -71,4 +90,4 @@ $string['targetlabelstudentdropoutno'] = 'Not at risk';
 $string['targetlabelstudentgradetopassno'] = 'Student who is likely to meet the minimum grade to pass the course.';
 $string['targetlabelstudentgradetopassyes'] = 'Student at risk of not meeting the minimum grade to pass the course.';
 $string['targetlabelteachingyes'] = 'Users with teaching capabilities who have access to the course';
-$string['targetlabelteachingno'] = 'No teaching';
+$string['targetlabelteachingno'] = 'Courses at risk of not starting';

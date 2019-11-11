@@ -32,8 +32,11 @@ $pageid = required_param('pageid', PARAM_INT);
 $id     = required_param('id', PARAM_INT);         // Course Module ID
 $qtype  = optional_param('qtype', 0, PARAM_INT);
 $edit   = optional_param('edit', false, PARAM_BOOL);
-$returnto = optional_param('returnto', null, PARAM_URL);
-if (empty($returnto)) {
+$returnto = optional_param('returnto', null, PARAM_LOCALURL);
+
+if (!empty($returnto)) {
+    $returnto = new moodle_url($returnto);
+} else {
     $returnto = new moodle_url('/mod/lesson/edit.php', array('id' => $id));
     $returnto->set_anchor('lesson-' . $pageid);
 }

@@ -434,7 +434,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                     $ignorehidden = $this->get_config('ignorehiddencourses');
                     foreach($flat_records as $course) {
                         $course = array_change_key_case($course, CASE_LOWER);
-                        $idnumber = $course{$this->config->course_idnumber}[0];
+                        $idnumber = $course[$this->config->course_idnumber][0];
                         $trace->output(get_string('synccourserole', 'enrol_ldap', array('idnumber'=>$idnumber, 'role_shortname'=>$role->shortname)));
 
                         // Does the course exist in moodle already?
@@ -460,7 +460,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                         // this is an odd array -- mix of hash and array --
                         $ldapmembers = array();
 
-                        if (array_key_exists('memberattribute_role'.$role->id, $this->config)
+                        if (property_exists($this->config, 'memberattribute_role'.$role->id)
                             && !empty($this->config->{'memberattribute_role'.$role->id})
                             && !empty($course[$this->config->{'memberattribute_role'.$role->id}])) { // May have no membership!
 

@@ -381,12 +381,11 @@ $string['coursesettings'] = 'Course default settings';
 $string['coursesmovedout'] = 'Courses moved out from {$a}';
 $string['coursespending'] = 'Courses pending approval';
 $string['coursesearch'] = 'Search courses';
-$string['coursesearch_help'] = '<p>You can search for multiple words at once and can refine your search as follows:</p>
-<ul>
-<li>word - find any match of this word within the text.</li>
-<li>+word - only exact matching words will be found.</li>
-<li>-word - don\'t include results containing this word.</li>
-</ul>';
+$string['coursesearch_help'] = 'You can search for multiple words at once and can refine your search as follows:
+
+* word - find any match of this word within the text
+* +word - only exact matching words will be found
+* -word - don\'t include results containing this word.';
 $string['coursestart'] = 'Course start';
 $string['coursesummary'] = 'Course summary';
 $string['coursesummary_help'] = 'The course summary is displayed in the list of courses. A course search searches course summary text in addition to course names.';
@@ -467,8 +466,8 @@ $string['defaultcoursesummary'] = 'Write a concise and interesting paragraph her
 $string['defaultcourseteacher'] = 'Teacher';
 $string['defaultcourseteacherdescription'] = 'Teachers can do anything within a course, including changing the activities and grading students.';
 $string['defaultcourseteachers'] = 'Teachers';
-$string['defaulthomepageuser'] = 'Default home page';
-$string['defaulthomepageuser_help'] = 'This determines the home page for your account';
+$string['defaulthomepageuser'] = 'Home page';
+$string['defaulthomepageuser_help'] = 'Your home page is the first link in the navigation.';
 $string['delete'] = 'Delete';
 $string['deleteablock'] = 'Delete a block';
 $string['deleteall'] = 'Delete all';
@@ -505,6 +504,7 @@ $string['desc'] = 'Descending';
 $string['description'] = 'Description';
 $string['descriptiona'] = 'Description: {$a}';
 $string['deselectall'] = 'Deselect all';
+$string['deselectnos'] = 'Deselect all \'No\'';
 $string['detailedless'] = 'Less detailed';
 $string['detailedmore'] = 'More detailed';
 $string['digitalminor'] = 'Digital minor';
@@ -512,6 +512,7 @@ $string['digitalminor_desc'] = 'Please ask your parent/guardian to contact:';
 $string['directory'] = 'Directory';
 $string['disable'] = 'Disable';
 $string['disabledcomments'] = 'Comments are disabled';
+$string['dismissnotification'] = 'Dismiss this notification';
 $string['displayingfirst'] = 'Only the first {$a->count} {$a->things} are displayed';
 $string['displayingrecords'] = 'Displaying {$a} records';
 $string['displayingusers'] = 'Displaying users {$a->start} to {$a->end}';
@@ -723,9 +724,19 @@ $string['emailresetconfirmationsubject'] = '{$a}: Password reset request';
 $string['emailresetconfirmsent'] = 'An email has been sent to your address at <b>{$a}</b>.
 <br />It contains easy instructions to confirm and complete this password change.
 If you continue to have difficulty, contact the site administrator.';
+$string['emailstop'] = 'Disable notifications';
 $string['emailtoprivatefiles'] = 'You can also e-mail files as attachments straight to your private files space. Simply attach your files to an e-mail and send it to {$a}';
 $string['emailtoprivatefilesdenied'] = 'Your administrator has disabled the option to upload your own private files.';
 $string['emailvia'] = '{$a->name} (via {$a->siteshortname})';
+$string['emojicategoryactivities'] = 'Activities';
+$string['emojicategoryanimalsnature'] = 'Animals & nature';
+$string['emojicategoryflags'] = 'Flags';
+$string['emojicategoryfooddrink'] = 'Food & drink';
+$string['emojicategoryobjects'] = 'Objects';
+$string['emojicategoryrecent'] = 'Recent';
+$string['emojicategorysmileyspeople'] = 'Smileys & people';
+$string['emojicategorysymbols'] = 'Symbols';
+$string['emojicategorytravelplaces'] = 'Travel & places';
 $string['emptydragdropregion'] = 'empty region';
 $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
@@ -1045,22 +1056,32 @@ $string['indicator:accessesbeforestart'] = 'Course accessed before start date';
 $string['indicator:accessesbeforestart_help'] = 'This indicator reflects if the student accessed the course before the course start date.';
 $string['indicator:activitiesdue'] = 'Activities due';
 $string['indicator:activitiesdue_help'] = 'The user has activities due.';
+$string['indicator:anycourseaccess'] = 'Any course access';
+$string['indicator:anycourseaccess_help'] = 'This indicator reflects access to any course that the user is enrolled in.';
 $string['indicator:anywrite'] = 'Any write action';
 $string['indicator:anywrite_help'] = 'This indicator represents any write (submit) action taken by the student.';
 $string['indicator:anywriteincourse'] = 'Any write action in the course';
 $string['indicator:anywriteincourse_help'] = 'This indicator represents any write (submit) action taken by the student in any course activity.';
 $string['indicator:completeduserprofile'] = 'User profile is completed';
 $string['indicator:completeduserprofile_help'] = 'This indicator represents that the student has completed their user profile.';
+$string['indicator:completeduserprofiledef'] = 'User profile is completed';
+$string['indicator:completeduserprofiledef_help'] = 'The site policies have been agreed to and the user has filled in the following fields: Institution, Department, Address, City, Country, URL.';
 $string['indicator:completionenabled'] = 'Completion tracking enabled';
 $string['indicator:completionenabled_help'] = 'This indicator represents that completion tracking has been enabled for this course.';
-$string['indicator:nostudent'] = 'There are no students';
-$string['indicator:nostudent_help'] = 'This indicator reflects that this course has no students.';
-$string['indicator:noteacher'] = 'There are no teachers';
-$string['indicator:noteacher_help'] = 'This indicator reflects that this course has no teachers.';
+$string['indicator:nostudent'] = 'Student enrolments';
+$string['indicator:nostudent_help'] = 'This indicator reflects the availability of students in the course.';
+$string['indicator:noteacher'] = 'Teacher availability';
+$string['indicator:noteacher_help'] = 'This indicator reflects the availability of teachers in the course.';
 $string['indicator:potentialcognitive'] = 'Course potential cognitive depth';
 $string['indicator:potentialcognitive_help'] = 'This indicator is based on the potential cognitive depth that could be reached by a student participating in course activities.';
+$string['indicator:potentialcognitivedef'] = 'Course potential cognitive depth';
+$string['indicator:potentialcognitivedef_help'] = 'The degree to which the course offers "deep" cognitive engagement, e.g. submission of work for feedback, the opportunity to review work by others, and the opportunity to revise and resubmit work.';
+$string['indicator:potentialcognitivedef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
 $string['indicator:potentialsocial'] = 'Course potential social breadth';
 $string['indicator:potentialsocial_help'] = 'This indicator is based on the potential social breadth that could be reached by the student participating in course activities.';
+$string['indicator:potentialsocialdef'] = 'Course potential social breadth';
+$string['indicator:potentialsocialdef_help'] = 'The degree to which the course offers "broad" social engagement, interacting with other participants and with the community of practice beyond the class.';
+$string['indicator:potentialsocialdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['indicator:readactions'] = 'Read actions amount';
 $string['indicator:readactions_help'] = 'This indicator represents the number of read (view) actions taken by the student.';
 $string['indicator:userforumstracking'] = 'User is tracking forums';
@@ -1144,7 +1165,7 @@ $string['maincoursepage'] = 'Main course page';
 $string['makeafolder'] = 'Create folder';
 $string['makeavailable'] = 'Make available';
 $string['makeeditable'] = 'If you make \'{$a}\' editable by the web server process (eg apache) then you could edit this file directly from this page';
-$string['makethismyhome'] = 'Make this my default home page';
+$string['makethismyhome'] = 'Make this my home page';
 $string['makeunavailable'] = 'Make unavailable';
 $string['manageblocks'] = 'Blocks';
 $string['managecategorythis'] = 'Manage this category';
@@ -1174,8 +1195,8 @@ $string['maxnumberweeks_desc'] = 'The maximum value in the number of sections dr
 $string['maxnumcoursesincombo'] = 'Browse <a href="{$a->link}">{$a->numberofcourses} courses</a>.';
 $string['maxsize'] = 'Max size: {$a}';
 $string['maxsizeandareasize'] = 'Maximum size for new files: {$a->size}, overall limit: {$a->areasize}';
-$string['maxsizeandattachments'] = 'Maximum size for new files: {$a->size}, maximum attachments: {$a->attachments}';
-$string['maxsizeandattachmentsandareasize'] = 'Maximum size for new files: {$a->size}, maximum attachments: {$a->attachments}, overall limit: {$a->areasize}';
+$string['maxsizeandattachments'] = 'Maximum file size: {$a->size}, maximum number of files: {$a->attachments}';
+$string['maxsizeandattachmentsandareasize'] = 'Maximum file size: {$a->size}, maximum number of files: {$a->attachments}, maximum total size: {$a->areasize}';
 $string['memberincourse'] = 'People in the course';
 $string['messagebody'] = 'Message body';
 $string['messagedselectedusers'] = 'Selected users have been messaged and the recipient list has been reset.';
@@ -1630,9 +1651,9 @@ for important notifications such as security alerts and new releases of Moodle.<
 <p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.</p>
 <p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.</p>';
 $string['registrationinfotitle'] = 'Registration information';
-$string['registrationno'] = 'No, I do not want to receive any email from Moodle HQ';
+$string['registrationno'] = 'No, I do not wish to receive any emails';
 $string['registrationsend'] = 'Send registration information to moodle.org';
-$string['registrationyes'] = 'Yes, notify me about important news (e.g. security issues or releases) ';
+$string['registrationyes'] = 'Yes, notify me of new Moodle releases, security alerts and other important news';
 $string['reject'] = 'Reject';
 $string['rejectdots'] = 'Reject...';
 $string['relativedatesmode'] = 'Relative dates mode';
@@ -1788,6 +1809,7 @@ $string['selectedfile'] = 'Selected file';
 $string['selectedcategories'] = 'Selected categories';
 $string['selectednowmove'] = '{$a} files selected for moving. Now go into the destination folder and press \'Move files to here\'';
 $string['selectfiles'] = 'Select files';
+$string['selectitem'] = 'Select \'{$a}\'';
 $string['selectmoduletoviewhelp'] = 'Select an activity or resource to view its help.
 
 Double-click on an activity or resource name to quickly add it.';
@@ -1802,8 +1824,8 @@ $string['separateandconnected'] = 'Separate and Connected ways of knowing';
 $string['separateandconnectedinfo'] = 'The scale based on the theory of separate and connected knowing. This theory describes two different ways that we can evaluate and learn about the things we see and hear.<ul><li><strong>Separate knowers</strong> remain as objective as possible without including feelings and emotions. In a discussion with other people, they like to defend their own ideas, using logic to find holes in opponent\'s ideas.</li><li><strong>Connected knowers</strong> are more sensitive to other people. They are skilled at empathy and tend to listen and ask questions until they feel they can connect and "understand things from their point of view". They learn by trying to share the experiences that led to the knowledge they find in other people.</li></ul>';
 $string['servererror'] = 'An error occurred whilst communicating with the server';
 $string['serverlocaltime'] = 'Server\'s local time';
-$string['sessionforceclean'] = 'As a security precaution, user-generated scripts have been disabled within this session';
-$string['sessiontimeoutsoon'] = 'Your session is about to timeout. Do you want to extend your current session?';
+$string['sessionforceclean'] = 'As a security precaution, user-generated scripts have been disabled within this session.';
+$string['sessiontimeoutsoon'] = 'Your session is about to time out. Do you want to extend your current session?';
 $string['setcategorytheme'] = 'Set category theme';
 $string['setpassword'] = 'Set password';
 $string['setpasswordinstructions'] = 'Please enter your new password below, then save changes.';
@@ -1916,7 +1938,7 @@ $string['statsreport10'] = 'User activity';
 $string['statsreport11'] = 'Most active courses';
 $string['statsreport12'] = 'Most active courses (weighted)';
 $string['statsreport13'] = 'Most participatory courses (enrolments)';
-$string['statsreport14'] = 'Most participatory courses (views/posts)';
+$string['statsreport14'] = 'Most participatory courses (posts/views)';
 $string['statsreport2'] = 'Views (all roles)';
 $string['statsreport3'] = 'Posts (all roles)';
 $string['statsreport4'] = 'All activity (all roles)';
@@ -1989,12 +2011,24 @@ $string['timesplitting:quartersaccum'] = 'All previous quarters';
 $string['timesplitting:quartersaccum_help'] = 'This analysis interval divides the course into quarters (4 equal parts), with each prediction being based on the accumulated data of all previous quarters.';
 $string['timesplitting:singlerange'] = 'From start to end';
 $string['timesplitting:singlerange_help'] = 'This analysis interval considers the entire course as a single span.';
+$string['timesplitting:onemonthafterstart'] = 'One month after start';
+$string['timesplitting:onemonthafterstart_help'] = 'This analysis interval generates a prediction 1 month after the analysable start.';
+$string['timesplitting:oneweekafterstart'] = 'One week after start';
+$string['timesplitting:oneweekafterstart_help'] = 'This analysis interval generates a prediction 1 week after the analysable start.';
+$string['timesplitting:past3days'] = 'Past 3 days';
+$string['timesplitting:past3days_help'] = 'This analysis interval generates predictions every 3 days. The indicators calculations will be based on the past 3 days.';
+$string['timesplitting:pastmonth'] = 'Past month';
+$string['timesplitting:pastmonth_help'] = 'This analysis interval generates predictions every month. The indicators calculations will be based on the past month.';
+$string['timesplitting:pastweek'] = 'Past week';
+$string['timesplitting:pastweek_help'] = 'This analysis interval generates predictions every week. The indicators calculations will be based on the past week.';
 $string['timesplitting:upcoming3days'] = 'Upcoming 3 days';
 $string['timesplitting:upcoming3days_help'] = 'This analysis interval generates predictions every 3 days. The indicators calculations will be based on the upcoming 3 days.';
 $string['timesplitting:upcomingfortnight'] = 'Upcoming fortnight';
 $string['timesplitting:upcomingfortnight_help'] = 'This analysis interval generates predictions every fortnight. The indicators calculations will be based on the upcoming fortnight.';
 $string['timesplitting:upcomingweek'] = 'Upcoming week';
 $string['timesplitting:upcomingweek_help'] = 'This analysis interval generates predictions every week. The indicators calculations will be based on the upcoming week.';
+$string['timesplitting:tenpercentafterstart'] = '10% after start';
+$string['timesplitting:tenpercentafterstart_help'] = 'This analysis interval generates a prediction after the 10% of the course is completed.';
 $string['thanks'] = 'Thanks';
 $string['theme'] = 'Theme';
 $string['themes'] = 'Themes';
@@ -2189,6 +2223,9 @@ $string['yes'] = 'Yes';
 $string['youareabouttocreatezip'] = 'You are about to create a zip file containing';
 $string['youaregoingtorestorefrom'] = 'You are about to start the restore process for';
 $string['youhaveupcomingactivitiesdue'] = 'You have upcoming activities due';
+$string['youhaveupcomingactivitiesdueinfo'] = 'Hi {$a},
+
+<br/><br/>You have upcoming activities due:';
 $string['youneedtoenrol'] = 'To perform that action you need to enrol in this course.';
 $string['yourlastlogin'] = 'Your last login was';
 $string['yourself'] = 'yourself';
@@ -2196,15 +2233,6 @@ $string['yourteacher'] = 'your {$a}';
 $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
-
-// Deprecated since Moodle 3.3.
-$string['deletecomment'] = 'Delete this comment';
-$string['sectionusedefaultname'] = 'Use default section name';
-
-// Deprecated since Moodle 3.4.
-$string['publish'] = 'Publish';
-$string['extendenrol'] = 'Extend enrolment (individual)';
-$string['groupextendenrol'] = 'Extend enrolment (common)';
 
 // Deprecated since Moodle 3.6.
 $string['addedrecip'] = 'Added {$a} new recipient';

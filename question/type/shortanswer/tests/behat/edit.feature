@@ -26,7 +26,7 @@ Feature: Test editing a Short answer question
 
   @javascript @_switch_window
   Scenario: Edit a Short answer question
-    When I click on "Edit" "link" in the "shortanswer-001 for editing" "table_row"
+    When I choose "Edit question" action for "shortanswer-001" in the question bank
     And I set the following fields to these values:
       | Question name | |
     And I press "id_submitbutton"
@@ -35,14 +35,14 @@ Feature: Test editing a Short answer question
       | Question name | Edited shortanswer-001 name |
     And I press "id_submitbutton"
     Then I should see "Edited shortanswer-001 name"
-    When I click on "Edit" "link" in the "Edited shortanswer-001 name" "table_row"
+    When I choose "Edit question" action for "Edited shortanswer-001" in the question bank
     And I set the following fields to these values:
       | id_answer_1          | newt                       |
       | id_fraction_1        | 70%                        |
       | id_feedback_1        | Newt is an OK good answer. |
     And I press "id_submitbutton"
     Then I should see "Edited shortanswer-001 name"
-    When I click on "Preview" "link" in the "Edited shortanswer-001 name" "table_row"
+    When I choose "Preview" action for "Edited shortanswer-001" in the question bank
     And I switch to "questionpreview" window
     Then I should see "Name an amphibian:"
     # Set behaviour options

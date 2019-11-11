@@ -99,6 +99,23 @@ Feature: Course participants can be filtered
       | Group: Group B                  | Student 2 |           |           | Student 1    | Student 3    |
 
   @javascript
+  Scenario: Filter users who have no role in a course
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I click on "Student 1's role assignments" "link"
+    And I click on ".form-autocomplete-selection [aria-selected=true]" "css_element"
+    And I press key "27" in the field "Student 1's role assignments"
+    And I click on "Save changes" "link"
+    When I open the autocomplete suggestions list
+    And I click on "Role: No roles" item in the autocomplete list
+    Then I should see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
+
+  @javascript
   Scenario: Multiple filters applied
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage

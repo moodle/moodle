@@ -1,0 +1,2 @@
+define ("gradingform_guide/grades/grader/gradingpanel/comments/selectors",["exports"],function(a){"use strict";Object.defineProperty(a,"__esModule",{value:!0});a.default=void 0;a.default={frequentComment:"[data-gradingform_guide-role=\"frequent-comment\"]",criterion:"[data-gradingform-guide-role=\"criterion\"]",remark:"[data-gradingform-guide-role=\"remark\"]"};return a.default});
+//# sourceMappingURL=selectors.min.js.map

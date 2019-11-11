@@ -33,15 +33,15 @@ Feature: Mute and unmute conversations
     Given I log in as "student1"
     When I open messaging
     And I open the "Group" conversations list
-    Then "Group 1" "group_message" should exist
-    And "muted" "icon_container" in the "Group 1" "group_message" should not be visible
+    Then "Group 1" "core_message > Message" should exist
+    And "muted" "icon_container" in the "Group 1" "core_message > Message" should not be visible
     And I select "Group 1" conversation in messaging
-    And "muted" "icon_container" in the "Group 1" "group_message_header" should not be visible
+    And "muted" "icon_container" in the "Group 1" "core_message > Message header" should not be visible
     And I open contact menu
     And I click on "Mute" "link" in the "[data-region='header-container']" "css_element"
-    And "muted" "icon_container" in the "Group 1" "group_message_header" should be visible
+    And "muted" "icon_container" in the "Group 1" "core_message > Message header" should be visible
     And I go back in "view-conversation" message drawer
-    And "muted" "icon_container" in the "Group 1" "group_message" should be visible
+    And "muted" "icon_container" in the "Group 1" "core_message > Message" should be visible
 
   Scenario: Mute a private conversation
     When I log in as "student1"
@@ -49,14 +49,14 @@ Feature: Mute and unmute conversations
     Then I should see "Private"
     And I open the "Private" conversations list
     And I should see "Student 2"
-    And "muted" "icon_container" in the "Student 2" "group_message" should not be visible
+    And "muted" "icon_container" in the "Student 2" "core_message > Message" should not be visible
     And I select "Student 2" conversation in messaging
     And "muted" "icon_container" in the "[data-action='view-contact']" "css_element" should not be visible
     And I open contact menu
     And I click on "Mute" "link" in the "[data-region='header-container']" "css_element"
     And "muted" "icon_container" in the "[data-action='view-contact']" "css_element" should be visible
     And I go back in "view-conversation" message drawer
-    And "muted" "icon_container" in the "Student 2" "group_message" should be visible
+    And "muted" "icon_container" in the "Student 2" "core_message > Message" should be visible
 
   Scenario: Unmute a group conversation
     Given the following "muted group conversations" exist:
@@ -65,15 +65,15 @@ Feature: Mute and unmute conversations
     When I log in as "student1"
     And I open messaging
     And I open the "Group" conversations list
-    Then "Group 1" "group_message" should exist
-    And "muted" "icon_container" in the "Group 1" "group_message" should be visible
+    Then "Group 1" "core_message > Message" should exist
+    And "muted" "icon_container" in the "Group 1" "core_message > Message" should be visible
     And I select "Group 1" conversation in messaging
-    And "muted" "icon_container" in the "Group 1" "group_message_header" should be visible
+    And "muted" "icon_container" in the "Group 1" "core_message > Message header" should be visible
     And I open contact menu
     And I click on "Unmute" "link" in the "[data-region='header-container']" "css_element"
-    And "muted" "icon_container" in the "Group 1" "group_message_header" should not be visible
+    And "muted" "icon_container" in the "Group 1" "core_message > Message header" should not be visible
     And I go back in "view-conversation" message drawer
-    And "muted" "icon_container" in the "Group 1" "group_message" should not be visible
+    And "muted" "icon_container" in the "Group 1" "core_message > Message" should not be visible
 
   Scenario: Unmute a private conversation
     Given the following "muted private conversations" exist:
@@ -84,11 +84,11 @@ Feature: Mute and unmute conversations
     Then I should see "Private"
     And I open the "Private" conversations list
     And I should see "Student 2"
-    And "muted" "icon_container" in the "Student 2" "group_message" should be visible
+    And "muted" "icon_container" in the "Student 2" "core_message > Message" should be visible
     And I select "Student 2" conversation in messaging
     And "muted" "icon_container" in the "[data-action='view-contact']" "css_element" should be visible
     And I open contact menu
     And I click on "Unmute" "link" in the "[data-region='header-container']" "css_element"
     And "muted" "icon_container" in the "[data-action='view-contact']" "css_element" should not be visible
     And I go back in "view-conversation" message drawer
-    And "muted" "icon_container" in the "Student 2" "group_message" should not be visible
+    And "muted" "icon_container" in the "Student 2" "core_message > Message" should not be visible

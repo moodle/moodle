@@ -675,7 +675,8 @@ class mysqli_native_moodle_database extends moodle_database {
      */
     public function get_indexes($table) {
         $indexes = array();
-        $sql = "SHOW INDEXES FROM {$this->prefix}$table";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "SHOW INDEXES FROM $fixedtable";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         try {
@@ -746,7 +747,8 @@ class mysqli_native_moodle_database extends moodle_database {
         } else {
             // temporary tables are not in information schema, let's try it the old way
             $result->close();
-            $sql = "SHOW COLUMNS FROM {$this->prefix}$table";
+            $fixedtable = $this->fix_table_name($table);
+            $sql = "SHOW COLUMNS FROM $fixedtable";
             $this->query_start($sql, null, SQL_QUERY_AUX);
             $result = $this->mysqli->query($sql);
             $this->query_end(true);
@@ -1317,8 +1319,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $fields = implode(',', array_keys($params));
         $qms    = array_fill(0, count($params), '?');
         $qms    = implode(',', $qms);
-
-        $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "INSERT INTO $fixedtable ($fields) VALUES($qms)";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
@@ -1483,7 +1485,8 @@ class mysqli_native_moodle_database extends moodle_database {
             }
         }
 
-        $sql = "INSERT INTO {$this->prefix}$table $fieldssql VALUES $valuessql";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "INSERT INTO $fixedtable $fieldssql VALUES $valuessql";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
@@ -1547,7 +1550,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $params[] = $id; // last ? in WHERE condition
 
         $sets = implode(',', $sets);
-        $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "UPDATE $fixedtable SET $sets WHERE id=?";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
@@ -1621,7 +1625,8 @@ class mysqli_native_moodle_database extends moodle_database {
             $newfield = "$newfield = ?";
             array_unshift($params, $normalised_value);
         }
-        $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "UPDATE $fixedtable SET $newfield $select";
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
@@ -1644,7 +1649,8 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($select) {
             $select = "WHERE $select";
         }
-        $sql = "DELETE FROM {$this->prefix}$table $select";
+        $fixedtable = $this->fix_table_name($table);
+        $sql = "DELETE FROM $fixedtable $select";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
@@ -2031,5 +2037,18 @@ class mysqli_native_moodle_database extends moodle_database {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Fixes any table names that clash with reserved words.
+     *
+     * @param string $tablename The table name
+     * @return string The fixed table name
+     */
+    protected function fix_table_name($tablename) {
+        $prefixedtablename = parent::fix_table_name($tablename);
+        // This function quotes the table name if it matches one of the MySQL reserved
+        // words, e.g. groups.
+        return $this->get_manager()->generator->getEncQuoted($prefixedtablename);
     }
 }

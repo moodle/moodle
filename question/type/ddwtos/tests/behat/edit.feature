@@ -26,7 +26,7 @@ Feature: Test editing a drag and drop into text questions
 
   @javascript
   Scenario: Edit a drag and drop into text question
-    When I click on "Edit" "link" in the "Drag to text" "table_row"
+    When I choose "Edit question" action for "Drag to text" in the question bank
     Then I should see "Choice [[1]]"
     And I should see "Choice [[2]]"
     And I should see "Choice [[3]]"

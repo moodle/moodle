@@ -81,6 +81,9 @@ class mod_forum_generator extends testing_module_generator {
         if (!isset($record->forcesubscribe)) {
             $record->forcesubscribe = FORUM_CHOOSESUBSCRIBE;
         }
+        if (!isset($record->grade_forum)) {
+            $record->grade_forum = 0;
+        }
 
         return parent::create_instance($record, (array)$options);
     }
@@ -313,6 +316,7 @@ class mod_forum_generator extends testing_module_generator {
         }
 
         $record = (object) $record;
+        \mod_forum\local\entities\post::add_message_counts($record);
 
         // Add the post.
         $record->id = $DB->insert_record('forum_posts', $record);

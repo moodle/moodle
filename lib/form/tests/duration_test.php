@@ -108,25 +108,43 @@ class core_form_duration_testcase extends basic_testcase {
      * Testcase to check generated timestamp
      */
     public function test_exportValue() {
+        /** @var MoodleQuickForm_duration $el */
         $el = $this->mform->addElement('duration', 'testel');
         $values = array('testel' => array('number' => 10, 'timeunit' => 1));
-        $this->assertEquals(array('testel' => 10), $el->exportValue($values));
+        $this->assertEquals(array('testel' => 10), $el->exportValue($values, true));
+        $this->assertEquals(10, $el->exportValue($values));
         $values = array('testel' => array('number' => 3, 'timeunit' => 60));
-        $this->assertEquals(array('testel' => 180), $el->exportValue($values));
+        $this->assertEquals(array('testel' => 180), $el->exportValue($values, true));
+        $this->assertEquals(180, $el->exportValue($values));
         $values = array('testel' => array('number' => 1.5, 'timeunit' => 60));
-        $this->assertEquals(array('testel' => 90), $el->exportValue($values));
+        $this->assertEquals(array('testel' => 90), $el->exportValue($values, true));
+        $this->assertEquals(90, $el->exportValue($values));
         $values = array('testel' => array('number' => 2, 'timeunit' => 3600));
-        $this->assertEquals(array('testel' => 7200), $el->exportValue($values));
+        $this->assertEquals(array('testel' => 7200), $el->exportValue($values, true));
+        $this->assertEquals(7200, $el->exportValue($values));
         $values = array('testel' => array('number' => 1, 'timeunit' => 86400));
-        $this->assertEquals(array('testel' => 86400), $el->exportValue($values));
+        $this->assertEquals(array('testel' => 86400), $el->exportValue($values, true));
+        $this->assertEquals(86400, $el->exportValue($values));
         $values = array('testel' => array('number' => 0, 'timeunit' => 3600));
-        $this->assertEquals(array('testel' => 0), $el->exportValue($values));
+        $this->assertEquals(array('testel' => 0), $el->exportValue($values, true));
+        $this->assertEquals(0, $el->exportValue($values));
 
         $el = $this->mform->addElement('duration', 'testel', null, array('optional' => true));
         $values = array('testel' => array('number' => 10, 'timeunit' => 1));
-        $this->assertEquals(array('testel' => 0), $el->exportValue($values));
+        $this->assertEquals(array('testel' => 0), $el->exportValue($values, true));
+        $this->assertEquals(0, $el->exportValue($values));
         $values = array('testel' => array('number' => 20, 'timeunit' => 1, 'enabled' => 1));
-        $this->assertEquals(array('testel' => 20), $el->exportValue($values));
+        $this->assertEquals(array('testel' => 20), $el->exportValue($values, true));
+        $this->assertEquals(20, $el->exportValue($values));
+
+        // Optional element.
+        $el2 = $this->mform->addElement('duration', 'testel', '', ['optional' => true]);
+        $values = array('testel' => array('number' => 10, 'timeunit' => 1, 'enabled' => 1));
+        $this->assertEquals(array('testel' => 10), $el2->exportValue($values, true));
+        $this->assertEquals(10, $el2->exportValue($values));
+        $values = array('testel' => array('number' => 10, 'timeunit' => 1, 'enabled' => 0));
+        $this->assertEquals(array('testel' => 0), $el2->exportValue($values, true));
+        $this->assertEquals(null, $el2->exportValue($values));
     }
 }
 

@@ -1,0 +1,107 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/local/grades/local/grader/grading
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-region="user_picker"
+    * data-region="grade"
+    * data-region="grade-errors"
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+{{<core/drawer}}
+    {{$drawerclasses}}grader-grading-panel flex-shrink-0{{/drawerclasses}}
+    {{$drawercontent}}
+        <div class="h-100 w-100 bg-white d-flex flex-column">
+            <div class="flex-shrink-0 d-flex flex-column">
+                <div class="header-container bg-light">
+                    <div
+                        id="searchbox-{{uniqid}}"
+                        class="user-search-container d-flex flex-grow-1 align-items-center collapsed"
+                        data-region="user-search-container"
+                    >
+                        <div class="search-input-container w-100">
+                            <span class="search-icon icon-no-margin d-flex align-items-center justify-content-center">
+                                {{#pix}} i/search, core {{/pix}}
+                            </span>
+                            <input
+                                type="text"
+                                data-region="user-search-input"
+                                class="form-control form-control-lg"
+                                placeholder="{{#str}} searchusers, mod_forum {{/str}}"
+                            >
+                            <button
+                                class="toggle-search-button btn btn-icon icon-no-margin"
+                                aria-expanded="false"
+                                aria-controls="searchbox-{{uniqid}}"
+                                data-action="toggle-search"
+                            >
+                                <div class="expanded-icon">
+                                    <span aria-hidden="true">{{#pix}} e/cancel, core, {{#str}} hideusersearch, mod_forum {{/str}} {{/pix}}</span>
+                                    <span class="sr-only">{{#str}} hideusersearch, mod_forum {{/str}}</span>
+                                </div>
+                                <div class="collapsed-icon">
+                                    <span aria-hidden="true">{{#pix}} i/search, core, {{#str}} showusersearch, mod_forum {{/str}} {{/pix}}</span>
+                                    <span class="sr-only">{{#str}} showusersearch, mod_forum {{/str}}</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="info-container d-flex align-items-center">
+                        <button
+                            class="btn btn-icon icon-size-3 icon-no-margin colour-inherit"
+                            data-action="collapse-grading-drawer"
+                            aria-controls="grading-drawer"
+                            aria-expanded="true"
+                            title="{{#str}} closebuttontitle, core {{/str}}"
+                        >
+                            <span class="dir-ltr-hide">{{#pix}} t/left, core {{/pix}}</span>
+                            <span class="dir-rtl-hide">{{#pix}} t/right, core {{/pix}}</span>
+                        </button>
+                        <div class="ml-auto mr-auto text-center" data-region="status-container">
+                            {{> mod_forum/local/grades/local/grader/status_placeholder }}
+                        </div>
+                    </div>
+                </div>
+                <div class="border-bottom px-3 pt-2" data-region="user_picker">
+                    {{> mod_forum/local/grades/local/grader/user_picker_placeholder }}
+                </div>
+            </div>
+            <div class="body-container position-relative d-flex flex-column overflow-auto" data-region="body-container">
+                <div class="grader-grading-panel-display pt-3 overflow-auto" data-region="grading-panel-container">
+                    <h4 class="mb-0 h5 px-3 font-weight-normal">
+                        {{#pix}} i/grading, core {{/pix}}{{#str}} gradingmodulename, core_grades, {{moduleName}} {{/str}}
+                    </h4>
+                    <div data-region="grade" class="pt-3 px-3">
+                        {{> mod_forum/local/grades/local/grader/grade_placeholder }}
+                    </div>
+                    <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
+                </div>
+            </div>
+            <div class="hidden overflow-auto" data-region="search-results-container"></div>
+        </div>
+    {{/drawercontent}}
+{{/core/drawer}}

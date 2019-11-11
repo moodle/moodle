@@ -241,3 +241,8 @@
     max-height: 80vh;
     overflow-y: auto;
 }
+.gradingform_guide-frequent-comments {
+    position: absolute;
+    top: 7px;
+    right: 0;
+}

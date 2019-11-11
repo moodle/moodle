@@ -121,7 +121,7 @@ class core_requirejs {
                 $extension = $item->getExtension();
                 if ($extension === 'js') {
                     $filename = substr($item->getRealpath(), strlen($srcdir) + 1);
-                    $filename = str_replace('.min', '', $filename);
+                    $filename = preg_replace('/(\.min)?\.js$/', '', $filename);
                     // We skip lazy loaded modules unless specifically requested.
                     if ($includelazy || strpos($filename, '-lazy') === false) {
                         $modulename = $component . '/' . $filename;

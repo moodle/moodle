@@ -40,6 +40,11 @@ class admin_uploaduser_form1 extends moodleform {
 
         $mform->addElement('header', 'settingsheader', get_string('upload'));
 
+        $url = new moodle_url('example.csv');
+        $link = html_writer::link($url, 'example.csv');
+        $mform->addElement('static', 'examplecsv', get_string('examplecsv', 'tool_uploaduser'), $link);
+        $mform->addHelpButton('examplecsv', 'examplecsv', 'tool_uploaduser');
+
         $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
 
@@ -230,6 +235,11 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
         $mform->setDefault('maildisplay', core_user::get_property_default('maildisplay'));
         $mform->addHelpButton('maildisplay', 'emaildisplay');
+
+        $choices = array(0 => get_string('emailenable'), 1 => get_string('emaildisable'));
+        $mform->addElement('select', 'emailstop', get_string('emailstop'), $choices);
+        $mform->setDefault('emailstop', core_user::get_property_default('emailstop'));
+        $mform->setAdvanced('emailstop');
 
         $choices = array(0 => get_string('textformat'), 1 => get_string('htmlformat'));
         $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);

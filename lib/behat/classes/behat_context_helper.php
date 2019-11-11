@@ -90,12 +90,8 @@ class behat_context_helper {
      * @return behat_base
      */
     public static function get($classname) {
-        $contexts = self::$environment->getContexts();
-
-        foreach ($contexts as $context) {
-            if (is_a($context, $classname)) {
-                return $context;
-            }
+        if (self::$environment->hasContextClass($classname)) {
+            return self::$environment->getContext($classname);
         }
 
         $suitename = self::$environment->getSuite()->getName();
@@ -119,6 +115,16 @@ class behat_context_helper {
 
         // Get the actual context.
         return self::$environment->getContext($classname);
+    }
+
+    /**
+     * Return whether there is a context of the specified classname.
+     *
+     * @param string $classname
+     * @return bool
+     */
+    public static function has_context(string $classname): bool {
+        return self::$environment->hasContextClass($classname);
     }
 
     /**

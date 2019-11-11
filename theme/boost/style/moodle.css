@@ -2308,7 +2308,17 @@
 .fa-meetup:before {
   content: ""; }
 
-.sr-only {
+.sr-only, .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink,
+.path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning,
+.path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation,
+.path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome,
+.path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label,
+.path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink,
+.path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning,
+.path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation,
+.path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome,
+.path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .tag_list > b,
+.path-mod-forum.nested-v2-display-mode .tag_list > b {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -4479,17 +4489,17 @@ fieldset:disabled #rubric-rubric.gradingform_rubric a.addcriterion,
     .show > .btn-outline-dark.dropdown-toggle:focus {
       box-shadow: 0 0 0 0.2rem rgba(55, 58, 60, 0.5); }
 
-.btn-link {
+.btn-link, .btn.btn-icon, #page-grade-grading-manage .actions .btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion {
   font-weight: 400;
   color: #1177d1;
   text-decoration: none; }
-  .btn-link:hover {
+  .btn-link:hover, .btn.btn-icon:hover, #page-grade-grading-manage .actions .btn-icon.action:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover {
     color: #0b4f8a;
     text-decoration: underline; }
-  .btn-link:focus, .btn-link.focus {
+  .btn-link:focus, .btn.btn-icon:focus, #page-grade-grading-manage .actions .btn-icon.action:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, .btn-link.focus, .focus.btn.btn-icon, #page-grade-grading-manage .actions .focus.btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.focus.btn-icon, #rubric-rubric.gradingform_rubric .focus.btn-icon.addcriterion {
     text-decoration: underline;
     box-shadow: none; }
-  .btn-link:disabled, .btn-link.disabled {
+  .btn-link:disabled, .btn.btn-icon:disabled, #page-grade-grading-manage .actions .btn-icon.action:disabled, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:disabled, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:disabled, .btn-link.disabled, .disabled.btn.btn-icon, .fp-viewbar.disabled a.btn-icon, #page-grade-grading-manage .actions .disabled.btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.disabled.btn-icon, #rubric-rubric.gradingform_rubric .disabled.btn-icon.addcriterion {
     color: #868e96;
     pointer-events: none; }
 
@@ -7689,7 +7699,7 @@ button.bg-dark:focus {
 .position-relative {
   position: relative !important; }
 
-.position-absolute {
+.position-absolute, .input-group.form-inset .form-inset-item {
   position: absolute !important; }
 
 .position-fixed {
@@ -7718,7 +7728,17 @@ button.bg-dark:focus {
     top: 0;
     z-index: 1020; } }
 
-.sr-only {
+.sr-only, .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink,
+.path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning,
+.path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation,
+.path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome,
+.path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label,
+.path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink,
+.path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning,
+.path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation,
+.path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome,
+.path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .tag_list > b,
+.path-mod-forum.nested-v2-display-mode .tag_list > b {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -8004,7 +8024,7 @@ button.bg-dark:focus {
 .py-4 {
   padding-top: 1.5rem !important; }
 
-.pr-4,
+.pr-4, .input-group.form-inset.form-inset-right .form-control,
 .px-4 {
   padding-right: 1.5rem !important; }
 
@@ -8012,7 +8032,7 @@ button.bg-dark:focus {
 .py-4 {
   padding-bottom: 1.5rem !important; }
 
-.pl-4,
+.pl-4, .input-group.form-inset.form-inset-left .form-control,
 .px-4 {
   padding-left: 1.5rem !important; }
 
@@ -9692,6 +9712,9 @@ input[disabled] {
   /*rtl:remove*/
   content: "/";
   /* stylelint-disable-line declaration-block-no-duplicate-properties */ }
+
+.dir-rtl .custom-select {
+  background-position: 0.75rem center; }
 
 /*rtl:raw:
 .dropdown-menu {
@@ -11382,67 +11405,91 @@ div.editor_atto_toolbar button .icon {
   display: none; }
 
 .switch {
-  position: relative; }
+  position: relative;
+  display: inline-block; }
   .switch input {
     float: left;
     width: 1px;
     transform: translateX(1px);
     padding: 0;
     margin: 0;
-    opacity: 0; }
+    opacity: 0;
+    line-height: 1.25rem; }
     .switch input + label {
       position: relative;
-      min-height: 0.8rem;
-      min-width: 1.6rem;
-      line-height: 0.8rem;
-      border-radius: 0.8rem;
+      min-height: 1.25rem;
+      min-width: 2.5rem;
+      line-height: 1.25rem;
+      border-radius: 1.25rem;
       display: inline-block;
       cursor: pointer;
       outline: none;
       user-select: none;
-      vertical-align: middle;
-      padding-left: 2.1rem; }
+      padding-left: 3rem; }
     .switch input + label::before,
     .switch input + label::after {
       content: '';
       position: absolute;
-      top: calc(50% - 0.4rem);
       left: 0;
-      width: 1.6rem;
-      height: 0.8rem;
       bottom: 0;
       display: block; }
     .switch input + label::before {
       right: 0;
-      background-color: #fff;
-      border-radius: 0.8rem;
+      height: 1rem;
+      width: 2.5rem;
+      top: calc(50% - 0.5rem);
+      background-color: #dee2e6;
+      border-radius: 1.25rem;
       transition: 0.2s all; }
     .switch input + label::after {
-      margin-top: 2px;
-      left: 2px;
-      width: calc(0.8rem - 4px);
-      height: calc(0.8rem - 4px);
+      left: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      top: calc(50% - 0.625rem);
       border-radius: 50%;
       background-color: #fff;
-      transition: 0.2s all; }
+      transition: 0.2s all;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12); }
     .switch input:checked + label::before {
-      background-color: #1177d1; }
+      background-color: rgba(17, 119, 209, 0.4); }
     .switch input:checked + label::after {
-      margin-left: 0.8rem; }
+      margin-left: 1.25rem;
+      background-color: #1177d1; }
     .switch input:focus + label::before {
+      outline: none; }
+    .switch input:focus + label::after {
       outline: none;
-      box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.25); }
+      box-shadow: 0 0 0 0.4rem rgba(17, 119, 209, 0.25); }
     .switch input:disabled + label {
       color: #868e96;
       cursor: not-allowed; }
     .switch input:disabled + label::before {
       background-color: #e9ecef; }
+    .switch input:disabled + label::after {
+      background-color: #868e96; }
+  .switch.sr-only-label input + label {
+    text-indent: -9999px;
+    margin-bottom: 0;
+    padding-left: 0; }
 
 .paged-content-page-container {
   min-height: 3.125rem; }
 
+body.h5p-embed #page-content {
+  display: inherit; }
+
+body.h5p-embed #maincontent {
+  display: none; }
+
+body.h5p-embed .h5pmessages {
+  min-height: 230px; }
+
 .text-decoration-none {
   text-decoration: none !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.colour-inherit {
+  color: inherit !important;
   /* stylelint-disable-line declaration-no-important */ }
 
 .position-right {
@@ -11468,6 +11515,59 @@ div.editor_atto_toolbar button .icon {
 .float-right {
   float: right !important;
   /* stylelint-disable-line declaration-no-important */ }
+
+.emoji-picker {
+  width: 350px;
+  height: 400px; }
+  .emoji-picker .category-button {
+    padding: .375rem 0;
+    height: 100%;
+    width: 38.8888888889px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 2px solid transparent; }
+    .emoji-picker .category-button.selected {
+      border-bottom: 2px solid #1177d1; }
+  .emoji-picker .emojis-container,
+  .emoji-picker .search-results-container {
+    min-width: 280px; }
+  .emoji-picker .picker-row {
+    height: 40px; }
+    .emoji-picker .picker-row .category-name {
+      line-height: 40px; }
+    .emoji-picker .picker-row .emoji-button {
+      height: 40px;
+      width: 40px;
+      line-height: 40px;
+      font-size: 24px;
+      overflow: hidden; }
+      .emoji-picker .picker-row .emoji-button:hover, .emoji-picker .picker-row .emoji-button:focus {
+        color: inherit;
+        text-decoration: none; }
+  .emoji-picker .emoji-preview {
+    height: 40px;
+    font-size: 40px;
+    line-height: 40px; }
+  .emoji-picker .emoji-short-name {
+    line-height: 20px; }
+  @media (max-width: 575.98px) {
+    .emoji-picker {
+      width: 320px; } }
+
+.emoji-auto-complete {
+  height: 40px; }
+  .emoji-auto-complete .btn.btn-link.btn-icon.emoji-button, .emoji-auto-complete .btn.btn-icon.emoji-button, .emoji-auto-complete #page-grade-grading-manage .actions .btn-icon.emoji-button.action, #page-grade-grading-manage .actions .emoji-auto-complete .btn-icon.emoji-button.action, .emoji-auto-complete #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.emoji-button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .emoji-auto-complete input.btn-icon.emoji-button, .emoji-auto-complete #rubric-rubric.gradingform_rubric .btn-icon.emoji-button.addcriterion, #rubric-rubric.gradingform_rubric .emoji-auto-complete .btn-icon.emoji-button.addcriterion {
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+    font-size: 24px; }
+    .emoji-auto-complete .btn.btn-link.btn-icon.emoji-button.active, .emoji-auto-complete .btn.btn-icon.emoji-button.active, .emoji-auto-complete #page-grade-grading-manage .actions .btn-icon.emoji-button.active.action, #page-grade-grading-manage .actions .emoji-auto-complete .btn-icon.emoji-button.active.action, .emoji-auto-complete #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.emoji-button.active, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .emoji-auto-complete input.btn-icon.emoji-button.active, .emoji-auto-complete #rubric-rubric.gradingform_rubric .btn-icon.emoji-button.active.addcriterion, #rubric-rubric.gradingform_rubric .emoji-auto-complete .btn-icon.emoji-button.active.addcriterion {
+      background-color: #e9ecef; }
+
+.toast-wrapper {
+  max-width: 350px;
+  z-index: 1051; }
 
 .icon {
   font-size: 16px;
@@ -12156,6 +12256,15 @@ div.editor_atto_toolbar button .icon {
         If modifying make sure block-region is horizontally stacked when in full screen */
       display: block; } }
 
+.header-action #region-main-settings-menu {
+  position: unset;
+  float: none;
+  width: auto; }
+  .header-action #region-main-settings-menu > div {
+    position: unset;
+    right: auto;
+    margin: 0; }
+
 @media (max-width: 1199.98px) {
   [data-region="blocks-column"] {
     width: 100%; } }
@@ -12181,18 +12290,25 @@ div.editor_atto_toolbar button .icon {
 
 .block .block-cards a.coursename,
 .block .block-cards span.categoryname,
-.block .block-cards .btn-link {
+.block .block-cards .btn-link,
+.block .block-cards .btn.btn-icon,
+.block .block-cards #page-grade-grading-manage .actions .btn-icon.action,
+#page-grade-grading-manage .actions .block .block-cards .btn-icon.action,
+.block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon,
+#rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon,
+.block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion,
+#rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion {
   color: inherit; }
 
 .block .block-cards .multiline {
   white-space: normal; }
 
-.block .block-cards .btn.btn-link.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion {
+.block .block-cards .btn.btn-link.btn-icon, .block .block-cards .btn.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion {
   height: 36px;
   width: 36px;
   padding: 0;
   border-radius: 50%; }
-  .block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:hover, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:hover, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:hover, .block .block-cards .btn.btn-link.btn-icon:focus, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:focus, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:focus, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:focus {
+  .block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards .btn.btn-icon:hover, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action:hover, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon:hover, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion:hover, .block .block-cards .btn.btn-link.btn-icon:focus, .block .block-cards .btn.btn-icon:focus, .block .block-cards #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .block .block-cards .btn-icon.action:focus, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-icon:focus, .block .block-cards #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block .block-cards .btn-icon.addcriterion:focus {
     background-color: #e9ecef; }
 
 .dashboard-card-deck.one-row {
@@ -13014,18 +13130,6 @@ span.editinstructions {
   margin-top: .2em;
   padding: .3em; }
 
-.dndupload-progress-outer {
-  background-color: #e9ecef;
-  display: block;
-  width: 100%;
-  height: 1rem;
-  margin-bottom: 1rem; }
-
-.dndupload-progress-inner {
-  background-color: #fff;
-  display: inline-block;
-  height: 1rem; }
-
 .dndupload-hidden {
   display: none; }
 
@@ -13519,9 +13623,6 @@ span.editinstructions {
 #nav-drawer.closed {
   left: -305px; }
 
-#page {
-  margin-top: 50px; }
-
 /* Use a variable for the drawer background colors. */
 [data-region="drawer"] {
   position: fixed;
@@ -13548,6 +13649,14 @@ span.editinstructions {
   #nav-drawer .list-group-item-action.active + .list-group-item,
   #nav-drawer .list-group-item.active + .list-group-item {
     border-top: none; }
+  #nav-drawer .list-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; }
+  #nav-drawer .list-group li {
+    margin-bottom: -1px; }
+  #nav-drawer .list-group li:last-child {
+    margin-bottom: 0; }
 
 #page {
   margin-top: 50px; }
@@ -13567,6 +13676,37 @@ body.drawer-ease {
 @media (min-width: 768px) {
   body.drawer-open-right {
     margin-right: 285px; } }
+
+[data-region=right-hand-drawer] {
+  display: flex;
+  flex-direction: column;
+  transition: right 0.2s ease-in-out; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-region=right-hand-drawer] {
+      transition: none; } }
+  [data-region=right-hand-drawer].drawer {
+    z-index: 1020;
+    position: fixed;
+    top: 50px;
+    right: 0;
+    height: calc(100% - 50px);
+    width: 320px;
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    visibility: visible;
+    opacity: 1; }
+  [data-region=right-hand-drawer].hidden {
+    display: block;
+    right: -320px;
+    visibility: hidden;
+    opacity: 0;
+    transition: right 0.2s ease-in-out, visibility 0s ease-in-out 0.2s, opacity 0s ease-in-out 0.2s; }
+    @media (prefers-reduced-motion: reduce) {
+      [data-region=right-hand-drawer].hidden {
+        transition: none; } }
+
+.dir-rtl [data-region=right-hand-drawer] {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
 
 #page-my-index {
   background-color: #f8f9fa; }
@@ -14606,32 +14746,21 @@ a.ygtvspacer:hover {
       visibility: visible;
       transition: right 0.25s; } }
 
+.drawer .message-app {
+  height: 100%; }
+  .drawer .message-app .icon-back-in-app {
+    display: none; }
+  .drawer .message-app .icon-back-in-drawer {
+    display: inherit; }
+
 .message-app {
   display: flex;
   flex-direction: column;
-  transition: all 0.2s ease-in-out; }
-  @media (prefers-reduced-motion: reduce) {
-    .message-app {
-      transition: none; } }
+  background-color: #eff1f3; }
   .message-app .icon-back-in-drawer {
     display: none; }
-  .message-app.drawer {
-    z-index: 1020;
-    position: fixed;
-    top: 50px;
-    right: 0;
-    height: calc(100% - 50px);
-    width: 320px;
-    box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08); }
-    .message-app.drawer .icon-back-in-app {
-      display: none; }
-    .message-app.drawer .icon-back-in-drawer {
-      display: inherit; }
   .message-app.main {
     min-height: 400px; }
-  .message-app.hidden {
-    display: block;
-    right: -320px; }
   .message-app .header-container {
     flex-shrink: 0; }
   .message-app .body-container {
@@ -14644,8 +14773,7 @@ a.ygtvspacer:hover {
       top: 0;
       bottom: 0; }
   .message-app .footer-container {
-    flex-shrink: 0;
-    overflow-x: hidden; }
+    flex-shrink: 0; }
     .message-app .footer-container textarea {
       direction: ltr; }
   .message-app .matchtext {
@@ -14667,11 +14795,18 @@ a.ygtvspacer:hover {
   .message-app .clickable {
     cursor: pointer; }
     .message-app .clickable:hover {
-      box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05), 3px 3px 5px -2px rgba(0, 0, 0, 0.1), 1px 1px 5px 0 rgba(0, 0, 0, 0.03); }
+      filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3)); }
   .message-app a,
-  .message-app .btn-link {
+  .message-app .btn-link,
+  .message-app .btn.btn-icon,
+  .message-app #page-grade-grading-manage .actions .btn-icon.action,
+  #page-grade-grading-manage .actions .message-app .btn-icon.action,
+  .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon,
+  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon,
+  .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion,
+  #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion {
     color: inherit; }
-  .message-app .btn-link:hover, .message-app .btn-link:focus {
+  .message-app .btn-link:hover, .message-app .btn.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:hover, .message-app .btn-link:focus, .message-app .btn.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:focus {
     background-color: rgba(0, 0, 0, 0.035);
     text-decoration: none; }
   .message-app .icon {
@@ -14684,40 +14819,40 @@ a.ygtvspacer:hover {
     display: inline-block; }
   .message-app .overview-section-toggle.collapsed .expanded-icon-container {
     display: none; }
-  .message-app .btn.btn-link.btn-icon, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion {
+  .message-app .btn.btn-link.btn-icon, .message-app .btn.btn-icon, .message-app #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions .message-app .btn-icon.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion {
     height: 16px;
     width: 16px;
     padding: 0;
     border-radius: 50%;
     flex-shrink: 0; }
-    .message-app .btn.btn-link.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion:hover, .message-app .btn.btn-link.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.addcriterion:focus {
+    .message-app .btn.btn-link.btn-icon:hover, .message-app .btn.btn-icon:hover, .message-app #page-grade-grading-manage .actions .btn-icon.action:hover, #page-grade-grading-manage .actions .message-app .btn-icon.action:hover, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:hover, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:hover, .message-app .btn.btn-link.btn-icon:focus, .message-app .btn.btn-icon:focus, .message-app #page-grade-grading-manage .actions .btn-icon.action:focus, #page-grade-grading-manage .actions .message-app .btn-icon.action:focus, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon:focus, .message-app #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-app .btn-icon.addcriterion:focus {
       background-color: #e9ecef; }
-    .message-app .btn.btn-link.btn-icon.icon-size-0, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-0.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-0.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-0, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-0.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-0.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-0, .message-app .btn.btn-icon.icon-size-0, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-0.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-0.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-0, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-0.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-0.addcriterion {
       height: 20px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 20px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-1, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-1.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-1.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-1, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-1.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-1.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-1, .message-app .btn.btn-icon.icon-size-1, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-1.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-1.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-1, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-1.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-1.addcriterion {
       height: 24px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 24px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-2, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-2.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-2.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-2, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-2.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-2.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-2, .message-app .btn.btn-icon.icon-size-2, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-2.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-2.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-2, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-2.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-2.addcriterion {
       height: 28px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 28px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-3, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-3.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-3.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-3, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-3.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-3.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-3, .message-app .btn.btn-icon.icon-size-3, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-3.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-3.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-3, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-3.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-3.addcriterion {
       height: 36px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 36px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-4, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-4.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-4.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-4, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-4.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-4.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-4, .message-app .btn.btn-icon.icon-size-4, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-4.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-4.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-4, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-4.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-4.addcriterion {
       height: 44px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 44px !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .message-app .btn.btn-link.btn-icon.icon-size-5, .message-app #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-5.action, #page-grade-grading-manage .actions .message-app .btn-link.btn-icon.icon-size-5.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-link.btn-icon.icon-size-5, .message-app #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-5.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-link.btn-icon.icon-size-5.addcriterion {
+    .message-app .btn.btn-link.btn-icon.icon-size-5, .message-app .btn.btn-icon.icon-size-5, .message-app #page-grade-grading-manage .actions .btn-icon.icon-size-5.action, #page-grade-grading-manage .actions .message-app .btn-icon.icon-size-5.action, .message-app #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-app input.btn-icon.icon-size-5, .message-app #rubric-rubric.gradingform_rubric .btn-icon.icon-size-5.addcriterion, #rubric-rubric.gradingform_rubric .message-app .btn-icon.icon-size-5.addcriterion {
       height: 68px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 68px !important;
@@ -14739,6 +14874,24 @@ a.ygtvspacer:hover {
     min-height: 1.5rem; }
   .message-app .section .collapsing {
     overflow: hidden; }
+  .message-app .message.send {
+    background-color: #dee2e6;
+    color: #212529; }
+    .message-app .message.send .time {
+      color: #212529; }
+    .message-app .message.send .tail {
+      right: 0;
+      margin-right: -0.5rem;
+      border-bottom-color: #dee2e6; }
+  .message-app .message.received {
+    background-color: #fff;
+    color: #212529; }
+    .message-app .message.received .time {
+      color: #646669; }
+    .message-app .message.received .tail {
+      left: 0;
+      margin-left: -0.5rem;
+      border-bottom-color: #fff; }
   .message-app .message .tail {
     content: '';
     bottom: 0;
@@ -14746,14 +14899,8 @@ a.ygtvspacer:hover {
     height: 0;
     border: 0.5rem solid transparent;
     position: relative; }
-  .message-app .message.send .tail {
-    right: 0;
-    margin-right: -0.5rem;
-    border-bottom-color: #ced4da; }
-  .message-app .message.received .tail {
-    left: 0;
-    margin-left: -0.5rem;
-    border-bottom-color: #fff; }
+  .message-app .day {
+    color: #212529; }
   .message-app .lazy-load-list {
     overflow-y: auto; }
 
@@ -14768,6 +14915,30 @@ a.ygtvspacer:hover {
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
+
+.message-app .emoji-picker-container {
+  position: absolute;
+  top: -5px;
+  right: 5px;
+  transform: translateY(-100%); }
+  .message-app .emoji-picker-container .emoji-picker .picker-row .emoji-button {
+    height: 40px;
+    width: 40px; }
+  @media (max-width: 575.98px) {
+    .message-app .emoji-picker-container {
+      right: -0.5rem; } }
+
+.message-app .emoji-auto-complete-container {
+  overflow: auto;
+  max-height: 90px;
+  transition: max-height .15s ease-in-out;
+  visibility: visible; }
+  .message-app .emoji-auto-complete-container.hidden {
+    display: block;
+    max-height: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: max-height .15s ease-in-out, visibility 0s linear .15s, overflow 0s linear .15s; }
 
 /* Question */
 .questionbank h2 {
@@ -14937,7 +15108,57 @@ body.path-question-type {
     font: inherit;
     position: static;
     padding-right: .3em; }
-  body.path-question-type .form-group .sr-only, body.path-question-type .form-buttons .sr-only, body.path-question-type .path-admin .buttons .sr-only, .path-admin body.path-question-type .buttons .sr-only, body.path-question-type .fp-content-center form + div .sr-only, .fp-content-center body.path-question-type form + div .sr-only, body.path-question-type div.backup-section + form .sr-only {
+  body.path-question-type .form-group .sr-only, body.path-question-type .form-buttons .sr-only, body.path-question-type .path-admin .buttons .sr-only, .path-admin body.path-question-type .buttons .sr-only, body.path-question-type .fp-content-center form + div .sr-only, .fp-content-center body.path-question-type form + div .sr-only, body.path-question-type div.backup-section + form .sr-only, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .alert.discussionlocked, body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .alert.discussionlocked, body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .alert.discussionlocked, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .alert.discussionlocked, body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .alert.discussionlocked, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .alert.discussionlocked, body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.releasenoteslink, body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.releasenoteslink, body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.releasenoteslink, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum .nested-v2-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.releasenoteslink, body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.releasenoteslink, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum .nested-v2-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.releasenoteslink, body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.releasenoteslink, body.path-question-type .form-group #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.releasenoteslink, body.path-question-type .form-buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.releasenoteslink, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.releasenoteslink, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.releasenoteslink, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.releasenoteslink, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.releasenoteslink, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.releasenoteslink,
+  body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.adminwarning,
+  body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.adminwarning,
+  body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.adminwarning, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum .nested-v2-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.adminwarning,
+  body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.adminwarning, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum .nested-v2-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.adminwarning,
+  body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.adminwarning, body.path-question-type .form-group #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.adminwarning, body.path-question-type .form-buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.adminwarning, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.adminwarning, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.adminwarning, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.adminwarning, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.adminwarning, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.adminwarning,
+  body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.adminerror,
+  body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.adminerror,
+  body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.adminerror, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.adminerror,
+  body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.adminerror, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.adminerror,
+  body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum .nested-v2-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.adminerror, body.path-question-type .form-group #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.adminerror, body.path-question-type .form-buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.adminerror, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.adminerror, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.adminerror, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.adminerror, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.adminerror, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum .nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.adminerror, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.formulation, body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-buttons .discussionlocked.formulation, body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.formulation, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum .nested-v2-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.formulation, body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.formulation, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum .nested-v2-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.formulation, body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum .nested-v2-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.formulation, body.path-question-type .form-group .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.formulation, body.path-question-type .form-buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.formulation, body.path-question-type .path-admin .buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.formulation, .path-admin body.path-question-type .buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.formulation, body.path-question-type .fp-content-center form + div .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.formulation, .fp-content-center body.path-question-type form + div .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.formulation, body.path-question-type div.backup-section + form .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.formulation,
+  body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.outcome,
+  body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-buttons .discussionlocked.outcome,
+  body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.outcome, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum .nested-v2-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.outcome,
+  body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.outcome, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum .nested-v2-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.outcome,
+  body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum .nested-v2-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.outcome, body.path-question-type .form-group .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.outcome, body.path-question-type .form-buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.outcome, body.path-question-type .path-admin .buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.outcome, .path-admin body.path-question-type .buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.outcome, body.path-question-type .fp-content-center form + div .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.outcome, .fp-content-center body.path-question-type form + div .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.outcome, body.path-question-type div.backup-section + form .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.outcome,
+  body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.comment,
+  body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-buttons .discussionlocked.comment,
+  body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.comment, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.comment,
+  body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.comment, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.comment,
+  body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.comment, body.path-question-type .form-group .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.comment, body.path-question-type .form-buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.comment, body.path-question-type .path-admin .buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.comment, .path-admin body.path-question-type .buttons .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.comment, body.path-question-type .fp-content-center form + div .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.comment, .fp-content-center body.path-question-type form + div .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.comment, body.path-question-type div.backup-section + form .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.comment, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-buttons .discussionlocked.label, body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .path-admin .buttons .discussionlocked.label, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .path-admin body.path-question-type .buttons .discussionlocked.label, body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .fp-content-center form + div .discussionlocked.label, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .fp-content-center body.path-question-type form + div .discussionlocked.label, body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type div.backup-section + form .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-buttons .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.label, body.path-question-type .path-admin .buttons .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.label, .path-admin body.path-question-type .buttons .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.label, body.path-question-type .fp-content-center form + div .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.label, .fp-content-center body.path-question-type form + div .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.label, body.path-question-type div.backup-section + form .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.label,
+  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .alert.discussionlocked,
+  body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .alert.discussionlocked,
+  body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .alert.discussionlocked, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .alert.discussionlocked,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .alert.discussionlocked, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .alert.discussionlocked,
+  body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.releasenoteslink, body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.releasenoteslink, body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.releasenoteslink, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.nested-v2-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.releasenoteslink, body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.releasenoteslink, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.nested-v2-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.releasenoteslink, body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.releasenoteslink, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.releasenoteslink, body.path-question-type .form-group #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.releasenoteslink, body.path-question-type .form-buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.releasenoteslink, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.releasenoteslink, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.releasenoteslink, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.releasenoteslink, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.releasenoteslink, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.releasenoteslink, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.releasenoteslink,
+  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.adminwarning,
+  body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.adminwarning,
+  body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.adminwarning, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.nested-v2-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.adminwarning,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.adminwarning, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.nested-v2-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.adminwarning,
+  body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminwarning, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.adminwarning, body.path-question-type .form-group #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.adminwarning, body.path-question-type .form-buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.adminwarning, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.adminwarning, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.adminwarning, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.adminwarning, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.adminwarning, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminwarning, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.adminwarning,
+  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .form-group .discussionlocked.adminerror,
+  body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .form-buttons .discussionlocked.adminerror,
+  body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .path-admin .buttons .discussionlocked.adminerror, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode #page-admin-index .path-admin body.path-question-type .buttons .discussionlocked.adminerror,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type .fp-content-center form + div .discussionlocked.adminerror, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode #page-admin-index .fp-content-center body.path-question-type form + div .discussionlocked.adminerror,
+  body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode #page-admin-index .discussionlocked.adminerror, .path-mod-forum.nested-v2-display-mode #page-admin-index body.path-question-type div.backup-section + form .discussionlocked.adminerror, body.path-question-type .form-group #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.adminerror, body.path-question-type .form-buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.adminerror, body.path-question-type .path-admin .buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.adminerror, .path-admin body.path-question-type .buttons #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.adminerror, body.path-question-type .fp-content-center form + div #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.adminerror, .fp-content-center body.path-question-type form + div #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.adminerror, body.path-question-type div.backup-section + form #page-admin-index .path-mod-forum.nested-v2-display-mode .discussionlocked.adminerror, #page-admin-index .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.adminerror, body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.formulation, body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-buttons .discussionlocked.formulation, body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.formulation, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum.nested-v2-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.formulation, body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.formulation, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum.nested-v2-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.formulation, body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum.nested-v2-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.formulation, body.path-question-type .form-group .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.formulation, body.path-question-type .form-buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.formulation, body.path-question-type .path-admin .buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.formulation, .path-admin body.path-question-type .buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.formulation, body.path-question-type .fp-content-center form + div .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.formulation, .fp-content-center body.path-question-type form + div .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.formulation, body.path-question-type div.backup-section + form .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.formulation,
+  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.outcome,
+  body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-buttons .discussionlocked.outcome,
+  body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.outcome, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum.nested-v2-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.outcome,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.outcome, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum.nested-v2-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.outcome,
+  body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum.nested-v2-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.outcome, body.path-question-type .form-group .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.outcome, body.path-question-type .form-buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.outcome, body.path-question-type .path-admin .buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.outcome, .path-admin body.path-question-type .buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.outcome, body.path-question-type .fp-content-center form + div .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.outcome, .fp-content-center body.path-question-type form + div .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.outcome, body.path-question-type div.backup-section + form .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.outcome,
+  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.comment,
+  body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-buttons .discussionlocked.comment,
+  body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .path-admin .buttons .discussionlocked.comment, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .que .path-admin body.path-question-type .buttons .discussionlocked.comment,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .fp-content-center form + div .discussionlocked.comment, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .que .fp-content-center body.path-question-type form + div .discussionlocked.comment,
+  body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .que body.path-question-type div.backup-section + form .discussionlocked.comment, body.path-question-type .form-group .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.comment, body.path-question-type .form-buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.comment, body.path-question-type .path-admin .buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.comment, .path-admin body.path-question-type .buttons .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.comment, body.path-question-type .fp-content-center form + div .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.comment, .fp-content-center body.path-question-type form + div .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.comment, body.path-question-type div.backup-section + form .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.comment, body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-buttons .discussionlocked.label, body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .path-admin .buttons .discussionlocked.label, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .path-admin body.path-question-type .buttons .discussionlocked.label, body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .fp-content-center form + div .discussionlocked.label, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .fp-content-center body.path-question-type form + div .discussionlocked.label, body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type div.backup-section + form .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-buttons .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .discussionlocked.label, body.path-question-type .path-admin .buttons .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .discussionlocked.label, .path-admin body.path-question-type .buttons .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .discussionlocked.label, body.path-question-type .fp-content-center form + div .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .discussionlocked.label, .fp-content-center body.path-question-type form + div .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .discussionlocked.label, body.path-question-type div.backup-section + form .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .discussionlocked.label, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .tag_list > b, body.path-question-type .form-buttons .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-buttons .tag_list > b, body.path-question-type .path-admin .buttons .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode body.path-question-type .path-admin .buttons .tag_list > b, .path-admin body.path-question-type .buttons .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode .path-admin body.path-question-type .buttons .tag_list > b, body.path-question-type .fp-content-center form + div .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode body.path-question-type .fp-content-center form + div .tag_list > b, .fp-content-center body.path-question-type form + div .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode .fp-content-center body.path-question-type form + div .tag_list > b, body.path-question-type div.backup-section + form .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode body.path-question-type div.backup-section + form .tag_list > b,
+  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .tag_list > b,
+  body.path-question-type .form-buttons .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-buttons .tag_list > b,
+  body.path-question-type .path-admin .buttons .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode body.path-question-type .path-admin .buttons .tag_list > b, .path-admin body.path-question-type .buttons .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode .path-admin body.path-question-type .buttons .tag_list > b,
+  body.path-question-type .fp-content-center form + div .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode body.path-question-type .fp-content-center form + div .tag_list > b, .fp-content-center body.path-question-type form + div .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode .fp-content-center body.path-question-type form + div .tag_list > b,
+  body.path-question-type div.backup-section + form .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode body.path-question-type div.backup-section + form .tag_list > b {
     position: static;
     width: auto;
     height: auto;
@@ -15081,7 +15302,13 @@ body.path-question-type {
   padding-left: 0; }
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
-  margin-left: 0; }
+  margin-left: 0;
+  width: 16px;
+  height: 16px;
+  padding-right: 4px; }
+
+#page-mod-quiz-edit .activity img.activityicon {
+  vertical-align: text-top; }
 
 #page-mod-quiz-edit .box.generalbox.questionbank {
   padding: 0.5em; }
@@ -15202,13 +15429,17 @@ body.path-question-type {
 .questionbankwindow .module {
   width: auto; }
 
+.questionbankwindow .form-autocomplete-selection {
+  margin-left: 0; }
+
 #page-mod-quiz-edit div.editq div.question div.content {
   background-color: #fff;
   border: 1px solid #ddd;
   overflow: hidden; }
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
-  margin-top: 0; }
+  margin-top: 0;
+  padding-right: 4px; }
 
 .path-mod-quiz .statedetails {
   display: block;
@@ -15758,8 +15989,12 @@ fieldset.coursesearchbox label {
   margin: 0.25rem;
   min-height: 2.375rem; }
 
-.form-autocomplete-multiple [role=listitem] {
-  cursor: pointer; }
+.form-autocomplete-selection [role=listitem] {
+  cursor: pointer;
+  white-space: inherit;
+  word-break: break-word;
+  line-height: 1.4;
+  text-align: left; }
 
 .form-autocomplete-suggestions {
   position: absolute;
@@ -15791,9 +16026,8 @@ fieldset.coursesearchbox label {
 
 .form-autocomplete-downarrow {
   color: #373a3c;
-  position: relative;
-  top: 0.2em;
-  left: -1.5em;
+  top: 0.2rem;
+  right: 0.5rem;
   cursor: pointer; }
   .form-autocomplete-downarrow .loading-icon {
     position: absolute;
@@ -15824,7 +16058,8 @@ select[size="1"] {
   overflow: visible; }
 
 textarea[data-auto-rows] {
-  overflow-x: hidden; }
+  overflow-x: hidden;
+  resize: none; }
 
 /** Display elements under labels in vertical forms regardless of the screen size. */
 .mform.full-width-labels .fitem.row {
@@ -15947,6 +16182,13 @@ textarea[data-auto-rows] {
     /*rtl:remove*/
     background-image: url([[pix:t/collapsed]]); } }
 
+.input-group.form-inset .form-inset-item {
+  padding-top: calc(0.375rem + 1px);
+  z-index: 3; }
+
+.input-group.form-inset.form-inset-right .form-inset-item {
+  right: 0; }
+
 .pagelayout-login .card-title h2 img {
   max-width: 100%;
   max-height: 100px; }
@@ -16026,6 +16268,12 @@ select {
   color: #373a3c;
   font-weight: bold; }
 
+.discussion-settings-container .custom-select {
+  width: 100%; }
+
+.discussion-settings-container input {
+  max-width: 100%; }
+
 .forumpost {
   border: 1px solid #dee2e6;
   display: block;
@@ -16060,11 +16308,565 @@ select {
 .forumsearch input[type=text] {
   margin-bottom: 0; }
 
+#page-mod-forum-view table .fit-content {
+  width: 1px;
+  white-space: nowrap; }
+
+#page-mod-forum-view table .limit-width {
+  max-width: 200px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden; }
+  #page-mod-forum-view table .limit-width .author-info {
+    max-width: calc(100% - 35px - .5rem); }
+
 #page-mod-forum-discuss .discussioncontrols {
   width: auto;
   margin: 0; }
   #page-mod-forum-discuss .discussioncontrols .form-inline input {
     margin-top: -1px; }
+
+/** Gently highlight the selected post by changing it's background to blue and then fading it out. */
+@keyframes background-highlight {
+  from {
+    background-color: rgba(0, 123, 255, 0.5); }
+  to {
+    background-color: inherit; } }
+
+.path-mod-forum .nested-v2-display-mode,
+.path-mod-forum.nested-v2-display-mode {
+  /** Reset the badge styling back to pill style. */
+  /** Style the ratings like a badge. */
+  /** Don't show the discussion locked alert in this mode because it's already indicated with a badge. */
+  /** Fix muted text contrast ratios for accessibility. */
+  /** Make the tag list text screen reader visible only */ }
+  .path-mod-forum .nested-v2-display-mode .discussionsubscription,
+  .path-mod-forum.nested-v2-display-mode .discussionsubscription {
+    margin-top: 0;
+    text-align: inherit;
+    margin-bottom: 0; }
+  .path-mod-forum .nested-v2-display-mode .preload-subscribe,
+  .path-mod-forum .nested-v2-display-mode .preload-unsubscribe,
+  .path-mod-forum.nested-v2-display-mode .preload-subscribe,
+  .path-mod-forum.nested-v2-display-mode .preload-unsubscribe {
+    display: none; }
+  .path-mod-forum .nested-v2-display-mode .post-message,
+  .path-mod-forum.nested-v2-display-mode .post-message {
+    line-height: 1.6; }
+  .path-mod-forum .nested-v2-display-mode .indent,
+  .path-mod-forum.nested-v2-display-mode .indent {
+    margin-left: 0; }
+  .path-mod-forum .nested-v2-display-mode .badge,
+  .path-mod-forum.nested-v2-display-mode .badge {
+    font-size: inherit;
+    font-weight: inherit;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    border-radius: 10rem; }
+  .path-mod-forum .nested-v2-display-mode .badge-light,
+  .path-mod-forum.nested-v2-display-mode .badge-light {
+    background-color: #f6f6f6;
+    color: #5b5b5b; }
+  .path-mod-forum .nested-v2-display-mode .rating-aggregate-container,
+  .path-mod-forum.nested-v2-display-mode .rating-aggregate-container {
+    background-color: #f6f6f6;
+    color: #5b5b5b;
+    padding: .25em .5em;
+    line-height: 1;
+    margin-right: .5rem;
+    vertical-align: middle;
+    border-radius: 10rem;
+    text-align: center; }
+  .path-mod-forum .nested-v2-display-mode .ratinginput,
+  .path-mod-forum.nested-v2-display-mode .ratinginput {
+    padding: .25em 1.75rem 0.25em .75em;
+    line-height: 1;
+    height: auto;
+    border-radius: 10rem; }
+    @media (max-width: 767.98px) {
+      .path-mod-forum .nested-v2-display-mode .ratinginput,
+      .path-mod-forum.nested-v2-display-mode .ratinginput {
+        margin-top: .5rem; } }
+  .path-mod-forum .nested-v2-display-mode .group-image,
+  .path-mod-forum.nested-v2-display-mode .group-image {
+    width: 35px;
+    height: 35px;
+    margin-right: 0;
+    float: none;
+    display: inline-block; }
+  .path-mod-forum .nested-v2-display-mode .text-muted, .path-mod-forum .nested-v2-display-mode a.dimmed,
+  .path-mod-forum .nested-v2-display-mode .dimmed_text,
+  .path-mod-forum .nested-v2-display-mode .dimmed_text a, .dimmed_text .path-mod-forum .nested-v2-display-mode a,
+  .path-mod-forum .nested-v2-display-mode .usersuspended,
+  .path-mod-forum .nested-v2-display-mode .usersuspended a, .usersuspended .path-mod-forum .nested-v2-display-mode a,
+  .path-mod-forum .nested-v2-display-mode .dimmed_category,
+  .path-mod-forum .nested-v2-display-mode .dimmed_category a, .dimmed_category .path-mod-forum .nested-v2-display-mode a, .path-mod-forum .nested-v2-display-mode .tag_feed .media .muted a, .tag_feed .media .muted .path-mod-forum .nested-v2-display-mode a, .path-mod-forum .nested-v2-display-mode #page-admin-qtypes .disabled, #page-admin-qtypes .path-mod-forum .nested-v2-display-mode .disabled,
+  .path-mod-forum .nested-v2-display-mode #page-admin-qbehaviours .disabled, #page-admin-qbehaviours .path-mod-forum .nested-v2-display-mode .disabled, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .pluginname .path-mod-forum .nested-v2-display-mode .componentname, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .version .path-mod-forum .nested-v2-display-mode .versionnumber, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .notes .requiredby, #page-admin-plugins #plugins-control-panel .notes .path-mod-forum .nested-v2-display-mode .requiredby, .path-mod-forum .nested-v2-display-mode #plugins-check-page .page-description, #plugins-check-page .path-mod-forum .nested-v2-display-mode .page-description, .path-mod-forum .nested-v2-display-mode #plugins-check-page #plugins-check .requires-ok, #plugins-check-page #plugins-check .path-mod-forum .nested-v2-display-mode .requires-ok, .path-mod-forum .nested-v2-display-mode #plugins-check-page #plugins-check .displayname .plugindir, #plugins-check-page #plugins-check .displayname .path-mod-forum .nested-v2-display-mode .plugindir, .path-mod-forum .nested-v2-display-mode #plugins-check-page #plugins-check-available-dependencies .displayname .component, #plugins-check-page #plugins-check-available-dependencies .displayname .path-mod-forum .nested-v2-display-mode .component, .path-mod-forum .nested-v2-display-mode #page-admin-search .adminpagepath li, #page-admin-search .adminpagepath .path-mod-forum .nested-v2-display-mode li, .path-mod-forum .nested-v2-display-mode .block .minicalendar td.weekend, .block .minicalendar .path-mod-forum .nested-v2-display-mode td.weekend, .path-mod-forum .nested-v2-display-mode .section .activity .stealth, .section .activity .path-mod-forum .nested-v2-display-mode .stealth, .path-mod-forum .nested-v2-display-mode .course-content .section-summary .section-summary-activities .activity-count, .course-content .section-summary .section-summary-activities .path-mod-forum .nested-v2-display-mode .activity-count, .path-mod-forum .nested-v2-display-mode .course-content ul li.section.hidden .sectionname > span, .course-content ul li.section.hidden .path-mod-forum .nested-v2-display-mode .sectionname > span,
+  .path-mod-forum .nested-v2-display-mode .course-content ul li.section.hidden .content > div.summary, .course-content ul li.section.hidden .path-mod-forum .nested-v2-display-mode .content > div.summary,
+  .path-mod-forum .nested-v2-display-mode .course-content ul li.section.hidden .activity .activityinstance, .course-content ul li.section.hidden .activity .path-mod-forum .nested-v2-display-mode .activityinstance, .path-mod-forum .nested-v2-display-mode #course-category-listings .listitem[data-visible="0"], #course-category-listings .path-mod-forum .nested-v2-display-mode .listitem[data-visible="0"], .path-mod-forum .nested-v2-display-mode #course-category-listings .listitem[data-visible="0"] > div > a, #course-category-listings .path-mod-forum .nested-v2-display-mode .listitem[data-visible="0"] > div > a, .path-mod-forum .nested-v2-display-mode #course-category-listings .listing-pagination-totals.dimmed, #course-category-listings .path-mod-forum .nested-v2-display-mode .listing-pagination-totals.dimmed, .path-mod-forum .nested-v2-display-mode .fitem.disabled .fp-btn-choose, .fitem.disabled .path-mod-forum .nested-v2-display-mode .fp-btn-choose, .path-mod-forum .nested-v2-display-mode .form-defaultinfo,
+  .path-mod-forum .nested-v2-display-mode .form-label .form-shortname, .form-label .path-mod-forum .nested-v2-display-mode .form-shortname, .path-mod-forum .nested-v2-display-mode .formsettingheading .form-horizontal, .formsettingheading .path-mod-forum .nested-v2-display-mode .form-horizontal, .path-mod-forum .nested-v2-display-mode .no-felement.fstatic, .path-mod-forum .nested-v2-display-mode .path-backup .backup_progress .backup_stage, .path-backup .backup_progress .path-mod-forum .nested-v2-display-mode .backup_stage,
+  .path-mod-forum .nested-v2-display-mode .dimmed_text,
+  .path-mod-forum.nested-v2-display-mode .text-muted,
+  .path-mod-forum.nested-v2-display-mode a.dimmed,
+  .path-mod-forum.nested-v2-display-mode .dimmed_text,
+  .path-mod-forum.nested-v2-display-mode .dimmed_text a,
+  .dimmed_text .path-mod-forum.nested-v2-display-mode a,
+  .path-mod-forum.nested-v2-display-mode .usersuspended,
+  .path-mod-forum.nested-v2-display-mode .usersuspended a,
+  .usersuspended .path-mod-forum.nested-v2-display-mode a,
+  .path-mod-forum.nested-v2-display-mode .dimmed_category,
+  .path-mod-forum.nested-v2-display-mode .dimmed_category a,
+  .dimmed_category .path-mod-forum.nested-v2-display-mode a,
+  .path-mod-forum.nested-v2-display-mode .tag_feed .media .muted a,
+  .tag_feed .media .muted .path-mod-forum.nested-v2-display-mode a,
+  .path-mod-forum.nested-v2-display-mode #page-admin-qtypes .disabled,
+  #page-admin-qtypes .path-mod-forum.nested-v2-display-mode .disabled,
+  .path-mod-forum.nested-v2-display-mode #page-admin-qbehaviours .disabled,
+  #page-admin-qbehaviours .path-mod-forum.nested-v2-display-mode .disabled,
+  .path-mod-forum.nested-v2-display-mode #page-admin-plugins #plugins-control-panel .pluginname .componentname,
+  #page-admin-plugins #plugins-control-panel .pluginname .path-mod-forum.nested-v2-display-mode .componentname,
+  .path-mod-forum.nested-v2-display-mode #page-admin-plugins #plugins-control-panel .version .versionnumber,
+  #page-admin-plugins #plugins-control-panel .version .path-mod-forum.nested-v2-display-mode .versionnumber,
+  .path-mod-forum.nested-v2-display-mode #page-admin-plugins #plugins-control-panel .notes .requiredby,
+  #page-admin-plugins #plugins-control-panel .notes .path-mod-forum.nested-v2-display-mode .requiredby,
+  .path-mod-forum.nested-v2-display-mode #plugins-check-page .page-description,
+  #plugins-check-page .path-mod-forum.nested-v2-display-mode .page-description,
+  .path-mod-forum.nested-v2-display-mode #plugins-check-page #plugins-check .requires-ok,
+  #plugins-check-page #plugins-check .path-mod-forum.nested-v2-display-mode .requires-ok,
+  .path-mod-forum.nested-v2-display-mode #plugins-check-page #plugins-check .displayname .plugindir,
+  #plugins-check-page #plugins-check .displayname .path-mod-forum.nested-v2-display-mode .plugindir,
+  .path-mod-forum.nested-v2-display-mode #plugins-check-page #plugins-check-available-dependencies .displayname .component,
+  #plugins-check-page #plugins-check-available-dependencies .displayname .path-mod-forum.nested-v2-display-mode .component,
+  .path-mod-forum.nested-v2-display-mode #page-admin-search .adminpagepath li,
+  #page-admin-search .adminpagepath .path-mod-forum.nested-v2-display-mode li,
+  .path-mod-forum.nested-v2-display-mode .block .minicalendar td.weekend,
+  .block .minicalendar .path-mod-forum.nested-v2-display-mode td.weekend,
+  .path-mod-forum.nested-v2-display-mode .section .activity .stealth,
+  .section .activity .path-mod-forum.nested-v2-display-mode .stealth,
+  .path-mod-forum.nested-v2-display-mode .course-content .section-summary .section-summary-activities .activity-count,
+  .course-content .section-summary .section-summary-activities .path-mod-forum.nested-v2-display-mode .activity-count,
+  .path-mod-forum.nested-v2-display-mode .course-content ul li.section.hidden .sectionname > span,
+  .course-content ul li.section.hidden .path-mod-forum.nested-v2-display-mode .sectionname > span,
+  .path-mod-forum.nested-v2-display-mode .course-content ul li.section.hidden .content > div.summary,
+  .course-content ul li.section.hidden .path-mod-forum.nested-v2-display-mode .content > div.summary,
+  .path-mod-forum.nested-v2-display-mode .course-content ul li.section.hidden .activity .activityinstance,
+  .course-content ul li.section.hidden .activity .path-mod-forum.nested-v2-display-mode .activityinstance,
+  .path-mod-forum.nested-v2-display-mode #course-category-listings .listitem[data-visible="0"],
+  #course-category-listings .path-mod-forum.nested-v2-display-mode .listitem[data-visible="0"],
+  .path-mod-forum.nested-v2-display-mode #course-category-listings .listitem[data-visible="0"] > div > a,
+  #course-category-listings .path-mod-forum.nested-v2-display-mode .listitem[data-visible="0"] > div > a,
+  .path-mod-forum.nested-v2-display-mode #course-category-listings .listing-pagination-totals.dimmed,
+  #course-category-listings .path-mod-forum.nested-v2-display-mode .listing-pagination-totals.dimmed,
+  .path-mod-forum.nested-v2-display-mode .fitem.disabled .fp-btn-choose,
+  .fitem.disabled .path-mod-forum.nested-v2-display-mode .fp-btn-choose,
+  .path-mod-forum.nested-v2-display-mode .form-defaultinfo,
+  .path-mod-forum.nested-v2-display-mode .form-label .form-shortname,
+  .form-label .path-mod-forum.nested-v2-display-mode .form-shortname,
+  .path-mod-forum.nested-v2-display-mode .formsettingheading .form-horizontal,
+  .formsettingheading .path-mod-forum.nested-v2-display-mode .form-horizontal,
+  .path-mod-forum.nested-v2-display-mode .no-felement.fstatic,
+  .path-mod-forum.nested-v2-display-mode .path-backup .backup_progress .backup_stage,
+  .path-backup .backup_progress .path-mod-forum.nested-v2-display-mode .backup_stage,
+  .path-mod-forum.nested-v2-display-mode .dimmed_text {
+    color: #707070 !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .path-mod-forum .nested-v2-display-mode .author-header,
+  .path-mod-forum.nested-v2-display-mode .author-header {
+    font-style: italic; }
+    .path-mod-forum .nested-v2-display-mode .author-header .author-name,
+    .path-mod-forum.nested-v2-display-mode .author-header .author-name {
+      font-style: normal; }
+  .path-mod-forum .nested-v2-display-mode :target > .focus-target,
+  .path-mod-forum.nested-v2-display-mode :target > .focus-target {
+    animation-name: background-highlight;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1; }
+  .path-mod-forum .nested-v2-display-mode .forum-post-container .replies-container .forum-post-container,
+  .path-mod-forum.nested-v2-display-mode .forum-post-container .replies-container .forum-post-container {
+    border-top: 1px solid #dee2e6;
+    padding-top: 1.5rem; }
+    .path-mod-forum .nested-v2-display-mode .forum-post-container .replies-container .forum-post-container .replies-container .forum-post-container,
+    .path-mod-forum.nested-v2-display-mode .forum-post-container .replies-container .forum-post-container .replies-container .forum-post-container {
+      border-top: none;
+      padding-top: 0; }
+  .path-mod-forum .nested-v2-display-mode .forum-post-container .replies-container .inline-reply-container .reply-author,
+  .path-mod-forum.nested-v2-display-mode .forum-post-container .replies-container .inline-reply-container .reply-author {
+    display: none; }
+  .path-mod-forum .nested-v2-display-mode .forum-post-container .post-message p:last-of-type,
+  .path-mod-forum.nested-v2-display-mode .forum-post-container .post-message p:last-of-type {
+    margin-bottom: 0; }
+  .path-mod-forum .nested-v2-display-mode .forum-post-container .author-image-container,
+  .path-mod-forum.nested-v2-display-mode .forum-post-container .author-image-container {
+    width: 70px;
+    margin-right: 24px;
+    flex-shrink: 0; }
+  .path-mod-forum .nested-v2-display-mode .forum-post-container .inline-reply-container textarea,
+  .path-mod-forum.nested-v2-display-mode .forum-post-container .inline-reply-container textarea {
+    border: 0;
+    resize: none; }
+  .path-mod-forum .nested-v2-display-mode .forum-post-container .indent,
+  .path-mod-forum.nested-v2-display-mode .forum-post-container .indent {
+    /**
+             * The first post and first set of replies have a larger author image so offset the 2nd
+             * set of replies by the image width + margin to ensure they align.
+             */ }
+    .path-mod-forum .nested-v2-display-mode .forum-post-container .indent .indent,
+    .path-mod-forum.nested-v2-display-mode .forum-post-container .indent .indent {
+      padding-left: 94px;
+      /**
+                 * Reduce the size of the the author image for all second level replies (and below).
+                 */
+      /**
+                 * Adjust the indentation offset for all 3rd level replies and below for the smaller author image.
+                 */ }
+      .path-mod-forum .nested-v2-display-mode .forum-post-container .indent .indent .author-image-container,
+      .path-mod-forum.nested-v2-display-mode .forum-post-container .indent .indent .author-image-container {
+        width: 30px;
+        margin-right: 8px;
+        padding-top: 3px; }
+      .path-mod-forum .nested-v2-display-mode .forum-post-container .indent .indent .indent,
+      .path-mod-forum.nested-v2-display-mode .forum-post-container .indent .indent .indent {
+        padding-left: 38px;
+        /**
+                     * Stop indenting the replies after the 5th reply.
+                     */ }
+        .path-mod-forum .nested-v2-display-mode .forum-post-container .indent .indent .indent .indent .indent .indent,
+        .path-mod-forum.nested-v2-display-mode .forum-post-container .indent .indent .indent .indent .indent .indent {
+          padding-left: 0; }
+
+/** Extra small devices (portrait phones, less than 576px). */
+@media (max-width: 767.98px) {
+  #page-mod-forum-discuss.nested-v2-display-mode .forum-post-container .author-image-container {
+    width: 30px;
+    margin-right: 8px; }
+  #page-mod-forum-discuss.nested-v2-display-mode .forum-post-container .indent .indent {
+    padding-left: 38px; }
+    #page-mod-forum-discuss.nested-v2-display-mode .forum-post-container .indent .indent .indent .indent {
+      padding-left: 0; }
+  #page-mod-forum-discuss.nested-v2-display-mode .group-image {
+    width: 30px;
+    height: 30px; } }
+
+.filter-scrollable {
+  overflow-y: auto;
+  max-height: 25em;
+  margin-bottom: 1em; }
+
+.filter-dates-popover {
+  width: 100%;
+  max-width: 41.5em; }
+  .filter-dates-popover .mform {
+    margin-left: -3em; }
+
+/* stylelint-disable-line max-line-length */
+@keyframes expandSearchButton {
+  from {
+    height: 36px;
+    width: 36px;
+    border-radius: 18px;
+    background-color: #e9ecef; }
+  to {
+    width: 100%;
+    height: calc(1.5em + 1rem + 2px);
+    border-radius: 0;
+    background-color: #fff;
+    border-color: #ced4da;
+    padding-left: calc(0.5rem + 8px);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 1.171875rem;
+    line-height: 1.5;
+    right: 0; } }
+
+@keyframes collapseSearchButton {
+  from {
+    width: 100%;
+    height: calc(1.5em + 1rem + 2px);
+    border-radius: 0;
+    background-color: #fff;
+    border-color: #ced4da;
+    padding-left: calc(0.5rem + 8px);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 1.171875rem;
+    line-height: 1.5;
+    right: 0; }
+  to {
+    height: 36px;
+    width: 36px;
+    border-radius: 18px;
+    background-color: #e9ecef; } }
+
+.path-mod-forum .unified-grader .navbar {
+  max-height: none;
+  z-index: 1; }
+
+.path-mod-forum .unified-grader .body-container.hidden {
+  display: none !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.path-mod-forum .unified-grader .userpicture {
+  height: 60px;
+  width: 60px; }
+
+.path-mod-forum .unified-grader .grader-grading-panel {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  z-index: 0;
+  width: 430px; }
+  .path-mod-forum .unified-grader .grader-grading-panel.hidden {
+    right: -430px; }
+  .path-mod-forum .unified-grader .grader-grading-panel .grading-icon {
+    width: 36px; }
+  .path-mod-forum .unified-grader .grader-grading-panel .user-picker-container .user-full-name {
+    max-width: 240px; }
+  .path-mod-forum .unified-grader .grader-grading-panel .user-picker-container .page-link {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center; }
+  .path-mod-forum .unified-grader .grader-grading-panel .header-container {
+    height: 65px;
+    position: relative;
+    overflow: hidden; }
+    .path-mod-forum .unified-grader .grader-grading-panel .header-container .info-container {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 100%;
+      height: 100%;
+      padding: 0.5rem;
+      padding-right: calc(36px + 0.5rem);
+      opacity: 1;
+      visibility: visible;
+      transition: left 0.3s ease-in-out;
+      z-index: 1; }
+    .path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.expand {
+      animation-name: expandSearchButton;
+      animation-duration: 0.3s;
+      animation-timing-function: ease-in-out; }
+    .path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.collapse {
+      display: block;
+      animation-name: collapseSearchButton;
+      animation-duration: 0.3s; }
+    .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container {
+      overflow: hidden;
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      z-index: 2;
+      width: 100%;
+      height: 100% !important;
+      /* stylelint-disable-line declaration-no-important */
+      padding: 0.5rem; }
+      .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container {
+        position: relative;
+        overflow: visible;
+        flex-wrap: nowrap; }
+        .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container input {
+          padding-left: calc(0.5rem + 0.5rem + 34px);
+          padding-right: calc(0.5rem + 36px);
+          opacity: 1;
+          visibility: visible;
+          transition: opacity 0s linear 0.3s, visibility 0s linear; }
+        .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .search-icon {
+          position: absolute;
+          top: 50%;
+          left: 0.5rem;
+          transform: translateY(-50%);
+          color: #495057;
+          height: 36px;
+          width: 34px;
+          background-color: #fff;
+          opacity: 1;
+          visibility: visible;
+          transition: opacity 0s linear 0.3s, visibility 0s linear 0.3s; }
+        .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button {
+          position: absolute;
+          top: 50%;
+          right: 0.5rem;
+          transform: translateY(-50%);
+          z-index: 1;
+          color: inherit;
+          text-align: left;
+          padding-left: 9px;
+          transition: right 0s linear 0.3s; }
+          .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .expanded-icon {
+            opacity: 1;
+            visibility: visible;
+            max-width: 50px;
+            max-height: 50px;
+            transition: opacity 0s linear 0.3s, max-height 0s linear 0.3s, max-width 0s linear 0.3s, visibility 0s linear 0.3s; }
+          .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .collapsed-icon {
+            opacity: 0;
+            visibility: hidden;
+            max-height: 0;
+            max-width: 0;
+            overflow: hidden;
+            transition: opacity 0s linear 0.3s, max-height 0s linear 0.3s, max-width 0s linear 0.3s, visibility 0s linear 0.3s; }
+      .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed {
+        width: calc(36px + 0.5rem + 0.5rem);
+        transition: width 0.3s ease-in-out; }
+        .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container {
+          flex-wrap: nowrap; }
+          .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container input,
+          .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .search-icon {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0s linear, visibility 0s linear; }
+          .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container input {
+            padding-left: 0;
+            padding-right: 0; }
+          .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .toggle-search-button .expanded-icon {
+            opacity: 0;
+            visibility: hidden;
+            max-height: 0;
+            max-width: 0;
+            overflow: hidden;
+            transition: opacity 0s linear, max-height 0s linear, max-width 0s linear, visibility 0s linear; }
+          .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .toggle-search-button .collapsed-icon {
+            opacity: 1;
+            visibility: visible;
+            max-width: 50px;
+            max-height: 50px;
+            transition: opacity 0s linear, max-height 0s linear, max-width 0s linear, visibility 0s linear; }
+    .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container:not(.collapsed) + .info-container {
+      opacity: 0;
+      visibility: hidden;
+      left: calc(100% * -1);
+      transition: left 0.3s ease-in-out, opacity 0s linear 0.3s, visibility 0s linear 0.3s, padding 0s linear 0.3s; }
+
+.path-mod-forum .unified-grader .grader-module-content {
+  overflow-y: auto;
+  margin-right: 430px;
+  transition: margin-right 0.2s ease-in-out; }
+  @media (prefers-reduced-motion: reduce) {
+    .path-mod-forum .unified-grader .grader-module-content {
+      transition: none; } }
+
+.path-mod-forum .unified-grader .grader-grading-panel.hidden + .grader-module-content {
+  margin-right: 0; }
+
+.path-mod-forum .unified-grader .drawer-button {
+  position: relative; }
+  .path-mod-forum .unified-grader .drawer-button.active::after {
+    content: "";
+    position: absolute;
+    bottom: calc(-0.5rem - 1px);
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #1177d1; }
+  .path-mod-forum .unified-grader .drawer-button .icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px; }
+
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container:last-of-type > hr {
+  display: none; }
+
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container:last-of-type > hr {
+  display: none; }
+
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container {
+  position: relative; }
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    padding-left: calc(1rem + 45px);
+    text-align: left;
+    z-index: 1; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button:not(.collapsed) {
+      display: none; }
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content {
+    display: block;
+    height: auto !important;
+    /* stylelint-disable-line declaration-no-important */ }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header {
+      transition: margin-bottom 0.3s ease-in-out; }
+      .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header div + div {
+        opacity: 1;
+        visibility: visible;
+        max-height: none;
+        transition: opacity 0.3s linear, visibility 0s linear; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .body-content-container {
+      opacity: 1;
+      visibility: visible;
+      max-height: none;
+      transition: opacity 0.3s linear, visibility 0s linear; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .forum-post-core {
+      opacity: 1;
+      visibility: visible;
+      max-height: none;
+      transition: opacity 0.3s linear, visibility 0s linear; }
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content {
+    opacity: .3; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header {
+      margin-bottom: 0 !important;
+      /* stylelint-disable-line declaration-no-important */ }
+      .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header div + div {
+        opacity: 0;
+        visibility: hidden;
+        max-height: 0; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .body-content-container {
+      opacity: 0;
+      visibility: hidden;
+      max-height: 0; }
+    .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .forum-post-core {
+      opacity: 0;
+      visibility: hidden;
+      max-height: 0; }
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:hover + .content,
+  .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:focus + .content {
+    opacity: 1; }
+
+.path-mod-forum .unified-grader .grader-module-content-display .no-post-container .icon {
+  height: 250px;
+  width: 250px;
+  margin-right: 0; }
+
+.path-mod-forum .unified-grader .grader-module-content-display .nested-v2-display-mode .discussion-container .posts-container .parent-container .show-content-button {
+  padding-left: 94px; }
+
+.path-mod-forum .unified-grader .no-search-results-container .icon {
+  height: 250px;
+  width: 250px;
+  margin-right: 0; }
+
+.path-mod-forum .unified-grader .nested-v2-display-mode .view-context-button {
+  margin-left: 94px;
+  border-radius: 0.3rem; }
+
+.path-mod-forum .unified-grader .nested-v2-display-mode .parent-container .author-image-container {
+  position: relative; }
+  .path-mod-forum .unified-grader .nested-v2-display-mode .parent-container .author-image-container:after {
+    position: absolute;
+    top: calc(70px + 0.5rem);
+    content: "";
+    background-color: #e9ecef;
+    width: 2px;
+    height: calc(100% - 70px + 0.5rem); }
+
+.path-mod-forum .unified-grader .nested-v2-display-mode .parent-container + .post-container .author-image-container img {
+  width: 30px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.path-mod-forum .unified-grader .nested-v2-display-mode .post-subject,
+.path-mod-forum .modal .nested-v2-display-mode .post-subject {
+  display: none; }
+
+@media (max-width: 575.98px) {
+  .path-mod-forum .unified-grader .grader-grading-panel {
+    width: 100%; } }
 
 .maincalendar .calendarmonth td,
 .maincalendar .calendarmonth th {
@@ -16229,7 +17031,7 @@ div#dock {
   display: inline-block;
   min-height: 12rem; }
 
-#page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
+#page-mod-quiz-mod #id_reviewoptionshdr .btn-link, #page-mod-quiz-mod #id_reviewoptionshdr .btn.btn-icon, #page-mod-quiz-mod #id_reviewoptionshdr #page-grade-grading-manage .actions .btn-icon.action, #page-grade-grading-manage .actions #page-mod-quiz-mod #id_reviewoptionshdr .btn-icon.action, #page-mod-quiz-mod #id_reviewoptionshdr #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-mod-quiz-mod #id_reviewoptionshdr input.btn-icon, #page-mod-quiz-mod #id_reviewoptionshdr #rubric-rubric.gradingform_rubric .btn-icon.addcriterion, #rubric-rubric.gradingform_rubric #page-mod-quiz-mod #id_reviewoptionshdr .btn-icon.addcriterion {
   line-height: 1.5;
   vertical-align: bottom; }
 
@@ -16342,10 +17144,6 @@ div#dock {
 .path-mod-assign [data-region="grade-panel"] fieldset,
 .path-mod-assign [data-region="grade-panel"] .fitem.row {
   margin: 0; }
-
-.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3 > .pull-xs-right {
-  float: none !important;
-  /* stylelint-disable-line declaration-no-important */ }
 
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
   width: 100%; }
@@ -16701,6 +17499,71 @@ p.arrow_button {
 .btn-lineup {
   margin: 0 0 10px 5px; }
 
+.btn.btn-icon, #page-grade-grading-manage .actions .btn-icon.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion {
+  height: 36px;
+  width: 36px;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 0;
+  border-radius: 50%;
+  flex-shrink: 0; }
+  .btn.btn-icon:hover, #page-grade-grading-manage .actions .btn-icon.action:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:hover, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:hover, .btn.btn-icon:focus, #page-grade-grading-manage .actions .btn-icon.action:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon:focus, #rubric-rubric.gradingform_rubric .btn-icon.addcriterion:focus {
+    background-color: #e9ecef; }
+  .btn.btn-icon.icon-size-0, #page-grade-grading-manage .actions .btn-icon.icon-size-0.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-0.addcriterion {
+    height: 20px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 20px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 0 !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 0 !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-1, #page-grade-grading-manage .actions .btn-icon.icon-size-1.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-1.addcriterion {
+    height: 24px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 24px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 4px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 4px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-2, #page-grade-grading-manage .actions .btn-icon.icon-size-2.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-2.addcriterion {
+    height: 28px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 28px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 8px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 8px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-3, #page-grade-grading-manage .actions .btn-icon.icon-size-3.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-3.addcriterion {
+    height: 36px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 36px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 16px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 16px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-4, #page-grade-grading-manage .actions .btn-icon.icon-size-4.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-4.addcriterion {
+    height: 44px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 44px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 24px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 24px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-5, #page-grade-grading-manage .actions .btn-icon.icon-size-5.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric .btn-icon.icon-size-5.addcriterion {
+    height: 68px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 68px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 48px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 48px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+
 .gradetreebox h4 {
   font-size: 0.9375rem; }
 
@@ -16844,6 +17707,21 @@ p.arrow_button {
   #rubric-rubric.gradingform_rubric .options .option input {
     margin-left: 5px;
     margin-right: 12px; }
+
+.criterion .description {
+  font-size: 1rem; }
+
+.criterion .criterion-toggle .expanded-icon {
+  display: block; }
+
+.criterion .criterion-toggle .collapsed-icon {
+  display: none; }
+
+.criterion .criterion-toggle.collapsed .expanded-icon {
+  display: none; }
+
+.criterion .criterion-toggle.collapsed .collapsed-icon {
+  display: block; }
 
 .path-grade-edit-tree .setup-grades h4 {
   margin: 0; }
@@ -17116,6 +17994,73 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 .carousel-item-prev,
 .active.carousel-item-left {
   transform: translateX(-100%); }
+
+/**
+ * Reset all of the forced style on the page.
+ * - Remove borders on header and content.
+ * - Remove most of the vertical padding.
+ * - Make the content region flex grow so it pushes things like the
+ *   next activity selector to the bottom of the page.
+ */
+body.reset-style #page-header .card, body.reset-style #page-header #page-enrol-users #filterform, #page-enrol-users body.reset-style #page-header #filterform, body.reset-style #page-header .que .history, .que body.reset-style #page-header .history, body.reset-style #page-header .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header section, body.reset-style #page-header .groupinfobox, body.reset-style #page-header .well {
+  border: none; }
+  body.reset-style #page-header .card .page-header-headings h1, body.reset-style #page-header #page-enrol-users #filterform .page-header-headings h1, #page-enrol-users body.reset-style #page-header #filterform .page-header-headings h1, body.reset-style #page-header .que .history .page-header-headings h1, .que body.reset-style #page-header .history .page-header-headings h1, body.reset-style #page-header .userprofile .profile_tree section .page-header-headings h1, .userprofile .profile_tree body.reset-style #page-header section .page-header-headings h1, body.reset-style #page-header .groupinfobox .page-header-headings h1, body.reset-style #page-header .well .page-header-headings h1 {
+    margin-bottom: 0; }
+  @media (max-width: 767.98px) {
+    body.reset-style #page-header .card .card-body, body.reset-style #page-header #page-enrol-users #filterform .card-body, #page-enrol-users body.reset-style #page-header #filterform .card-body, body.reset-style #page-header .que .history .card-body, .que body.reset-style #page-header .history .card-body, body.reset-style #page-header .userprofile .profile_tree section .card-body, .userprofile .profile_tree body.reset-style #page-header section .card-body, body.reset-style #page-header .groupinfobox .card-body, body.reset-style #page-header .well .card-body, body.reset-style #page-header .card .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .card section, body.reset-style #page-header #page-enrol-users #filterform .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header #page-enrol-users #filterform section, #page-enrol-users body.reset-style #page-header #filterform .userprofile .profile_tree section, .userprofile .profile_tree #page-enrol-users body.reset-style #page-header #filterform section, body.reset-style #page-header .que .history .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .que .history section, .que body.reset-style #page-header .history .userprofile .profile_tree section, .userprofile .profile_tree .que body.reset-style #page-header .history section, body.reset-style #page-header .userprofile .profile_tree section section, .userprofile .profile_tree body.reset-style #page-header section section, body.reset-style #page-header .groupinfobox .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .groupinfobox section, body.reset-style #page-header .well .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .well section {
+      padding-left: 0;
+      padding-right: 0; } }
+
+body.reset-style #page-header > div {
+  padding-top: 0 !important;
+  /* stylelint-disable-line declaration-no-important */
+  padding-bottom: 0 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+body.reset-style #page-content {
+  padding-bottom: 0 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+  body.reset-style #page-content #region-main-box #region-main {
+    border: none;
+    display: inline-flex;
+    flex-direction: column;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    vertical-align: top; }
+    body.reset-style #page-content #region-main-box #region-main div[role="main"] {
+      flex: 1; }
+    body.reset-style #page-content #region-main-box #region-main .activity-navigation {
+      overflow: hidden; }
+    body.reset-style #page-content #region-main-box #region-main.has-blocks {
+      width: calc(100% - 375px); }
+      @media (max-width: 1199.98px) {
+        body.reset-style #page-content #region-main-box #region-main.has-blocks {
+          width: 100%; } }
+    @media (max-width: 767.98px) {
+      body.reset-style #page-content #region-main-box #region-main {
+        padding-left: 0;
+        padding-right: 0; } }
+  body.reset-style #page-content #region-main-box [data-region="blocks-column"] {
+    margin-left: auto; }
+  @media (max-width: 1199.98px) {
+    body.reset-style #page-content #region-main-box {
+      display: flex;
+      flex-direction: column; } }
+
+body.reset-style select,
+body.reset-style input,
+body.reset-style textarea,
+body.reset-style .btn:not(.btn-icon),
+body.reset-style #page-grade-grading-manage .actions .action:not(.btn-icon),
+#page-grade-grading-manage .actions body.reset-style .action:not(.btn-icon),
+body.reset-style #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input:not(.btn-icon),
+#rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel body.reset-style input:not(.btn-icon),
+body.reset-style #rubric-rubric.gradingform_rubric .addcriterion:not(.btn-icon),
+#rubric-rubric.gradingform_rubric body.reset-style .addcriterion:not(.btn-icon) {
+  border-radius: 0.3rem; }
 
 body.behat-site .fixed-top {
   position: absolute; }
@@ -17656,6 +18601,33 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     /*rtl:ignore*/
     left: 50%;
     transform: translate(-50%, -50%); }
+
+.layout.fullscreen {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1040;
+  transition: 0.5s;
+  width: 100vw;
+  margin: 0;
+  opacity: 1;
+  background-color: #fff; }
+  .layout.fullscreen > div {
+    height: 100%;
+    width: 100%; }
+  .layout.fullscreen .loading-icon {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    top: 40%;
+    position: fixed; }
+    .layout.fullscreen .loading-icon .icon {
+      width: 1em;
+      height: 1em;
+      font-size: 4em; }
 
 body {
   -webkit-font-smoothing: antialiased; }

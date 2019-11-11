@@ -204,7 +204,7 @@
       }
     },
     {
-      files: ["**/amd/src/*.js", "**/amd/src/**/*.js"],
+      files: ["**/amd/src/*.js", "**/amd/src/**/*.js", "Gruntfile*.js", "babel-plugin-add-module-to-define.js"],
       // We support es6 now. Woot!
       env: {
         es6: true

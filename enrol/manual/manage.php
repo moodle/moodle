@@ -29,6 +29,7 @@ $enrolid      = required_param('enrolid', PARAM_INT);
 $roleid       = optional_param('roleid', -1, PARAM_INT);
 $extendperiod = optional_param('extendperiod', 0, PARAM_INT);
 $extendbase   = optional_param('extendbase', 0, PARAM_INT);
+$timeend      = optional_param_array('timeend', [], PARAM_INT);
 
 $instance = $DB->get_record('enrol', array('id'=>$enrolid, 'enrol'=>'manual'), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
@@ -135,7 +136,10 @@ if ($canenrol && optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) 
                     break;
             }
 
-            if ($extendperiod <= 0) {
+            if ($timeend) {
+                $timeend = make_timestamp($timeend['year'], $timeend['month'], $timeend['day'], $timeend['hour'],
+                        $timeend['minute']);
+            } else if ($extendperiod <= 0) {
                 $timeend = 0;
             } else {
                 $timeend = $timestart + $extendperiod;

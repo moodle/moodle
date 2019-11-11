@@ -39,7 +39,20 @@ $approve = optional_param('approve', 0, PARAM_INT);
 $reject = optional_param('reject', 0, PARAM_INT);
 
 $baseurl = $CFG->wwwroot . '/course/pending.php';
-admin_externalpage_setup('coursespending');
+$context = context_system::instance();
+if (has_capability('moodle/site:approvecourse', $context)) {
+    // Similar to course management capabilities, if user has approve capability in system context
+    // we add the link to the admin menu. Otherwise we check if user has capability anywhere.
+    admin_externalpage_setup('coursespending');
+} else {
+    require_login(null, false);
+    $categories = core_course_category::make_categories_list('moodle/site:approvecourse');
+    if (!$categories) {
+        require_capability('moodle/site:approvecourse', $context);
+    }
+    $PAGE->set_context($context);
+    $PAGE->set_url(new moodle_url('/course/pending.php'));
+}
 
 /// Process approval of a course.
 if (!empty($approve) and confirm_sesskey()) {
@@ -48,7 +61,11 @@ if (!empty($approve) and confirm_sesskey()) {
     $courseid = $course->approve();
 
     if ($courseid !== false) {
-        redirect(new moodle_url('/course/edit.php', ['id' => $courseid, 'returnto' => 'pending']));
+        if (has_capability('moodle/course:update', context_course::instance($courseid))) {
+            redirect(new moodle_url('/course/edit.php', ['id' => $courseid, 'returnto' => 'pending']));
+        } else {
+            redirect(new moodle_url('/course/view.php', ['id' => $courseid]));
+        }
     } else {
         print_error('courseapprovedfailed');
     }
@@ -109,6 +126,9 @@ if (empty($pending)) {
         // Check here for shortname collisions and warn about them.
         $course->check_shortname_collision();
 
+        if (!$course->can_approve()) {
+            continue;
+        }
         $category = $course->get_category();
 
         $row = array();

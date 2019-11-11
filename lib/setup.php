@@ -1037,3 +1037,15 @@ if (false) {
     $OUTPUT = new core_renderer(null, null);
     $PAGE = new moodle_page();
 }
+
+// Allow plugins to callback as soon possible after setup.php is loaded.
+$pluginswithfunction = get_plugins_with_function('after_config', 'lib.php');
+foreach ($pluginswithfunction as $plugins) {
+    foreach ($plugins as $function) {
+        try {
+            $function();
+        } catch (Exception $e) {
+            debugging("Exception calling '$function'", DEBUG_DEVELOPER, $e->getTrace());
+        }
+    }
+}

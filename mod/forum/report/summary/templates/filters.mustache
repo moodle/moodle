@@ -1,0 +1,87 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template forumreport_summary/filters
+
+    Summary report filters.
+
+    Example context (json):
+    {
+        "actionurl": "https://mymoodlesite.com/mod/forum/report/summary/index.php?courseid=2&forumid=2&perpage=50",
+        "hasgroups": true,
+        "filtergroupsname" : "Groups (all)",
+        "filtergroups": [
+            {
+                "groupid": "1",
+                "groupname": "Group A",
+                "checked": true
+            },
+            {
+                "groupid": "3",
+                "groupname": "Group C",
+                "checked": false
+            }
+        ],
+        "filterdatesname": "Dates",
+        "filterdatesform": "<div>HTML for date filters</div>",
+        "filterdatesdata": [
+            {
+                "type": "from",
+                "timestamp": "510969600",
+                "enabled": "1"
+            },
+            {
+                "type": "to",
+                "timestamp": "725673600",
+                "enabled": "1"
+            }
+        ],
+        "discussionids": [
+            {
+                "discid": 123
+            },
+            {
+                "discid": 456
+            }
+        ]
+    }
+}}
+
+<div class="pb-4" data-report-id="{{uniqid}}">
+    <form id="filtersform" name="filtersform" method="post" action="{{actionurl}}">
+        <input type="hidden" name="submitted" value="true">
+
+        <div id="filtersbuttons">
+            {{> forumreport_summary/filter_dates}}
+            {{> forumreport_summary/filter_groups}}
+        </div>
+    </form>
+    <form id="exportlinkform" name="exportlinkform" method="post" action="#">
+        {{#discussionids}}
+        <input type="hidden" name="discids[]" value="{{discid}}">
+        {{/discussionids}}
+    </form>
+
+    {{! Dates filter popover - mform must exist outside of the filtersform }}
+    {{> forumreport_summary/filter_dates_popover}}
+</div>
+
+{{#js}}
+require(['forumreport_summary/filters'], function(Filters) {
+    Filters.init(document.querySelector("[data-report-id='{{uniqid}}']"));
+});
+{{/js}}

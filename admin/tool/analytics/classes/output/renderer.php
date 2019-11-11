@@ -211,12 +211,12 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param \tool_analytics\output\effectiveness_report $effectivenessreport
+     * @param \tool_analytics\output\insights_report $insightsreport
      * @return string HTML
      */
-    protected function render_effectiveness_report(\tool_analytics\output\effectiveness_report $effectivenessreport): string {
-        $data = $effectivenessreport->export_for_template($this);
-        return parent::render_from_template('tool_analytics/effectiveness_report', $data);
+    protected function render_insights_report(\tool_analytics\output\insights_report $insightsreport): string {
+        $data = $insightsreport->export_for_template($this);
+        return parent::render_from_template('tool_analytics/insights_report', $data);
     }
 
     /**
@@ -229,4 +229,26 @@ class renderer extends plugin_renderer_base {
         $data = $invalidanalysables->export_for_template($this);
         return parent::render_from_template('tool_analytics/invalid_analysables', $data);
     }
+
+    /**
+     * Renders an analytics disabled notification.
+     *
+     * @return string HTML
+     */
+    public function render_analytics_disabled() {
+        global $OUTPUT, $PAGE, $FULLME;
+
+        $PAGE->set_url($FULLME);
+        $PAGE->set_title(get_string('pluginname', 'tool_analytics'));
+        $PAGE->set_heading(get_string('pluginname', 'tool_analytics'));
+
+        $output = $OUTPUT->header();
+        $output .= $OUTPUT->notification(get_string('analyticsdisabled', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= \html_writer::tag('a', get_string('continue'), ['class' => 'btn btn-primary',
+            'href' => (new \moodle_url('/'))->out()]);
+        $output .= $OUTPUT->footer();
+
+        return $output;
+    }
+
 }

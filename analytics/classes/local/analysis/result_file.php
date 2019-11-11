@@ -78,9 +78,9 @@ class result_file extends result {
         // if this analyser was analysed less that 1 week ago we skip generating a new one. This
         // helps scale the evaluation process as sites with tons of courses may need a lot of time to
         // complete an evaluation.
-        if (!empty($options['evaluation']) && !empty($options['reuseprevanalysed'])) {
+        if (!empty($this->options['evaluation']) && !empty($this->options['reuseprevanalysed'])) {
 
-            $previousanalysis = \core_analytics\dataset_manager::get_evaluation_analysable_file($this->analyser->get_modelid(),
+            $previousanalysis = \core_analytics\dataset_manager::get_evaluation_analysable_file($this->modelid,
                 $analysable->get_id(), $timesplitting->get_id());
             // 1 week is a partly random time interval, no need to worry about DST.
             $boundary = time() - WEEKSECS;

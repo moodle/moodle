@@ -1386,6 +1386,18 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         }
     }
 
+    // Trigger capability_assigned event.
+    \core\event\capability_assigned::create([
+        'userid' => $cap->modifierid,
+        'context' => $context,
+        'objectid' => $roleid,
+        'other' => [
+            'capability' => $capability,
+            'oldpermission' => $existing->permission ?? CAP_INHERIT,
+            'permission' => $permission
+        ]
+    ])->trigger();
+
     // Reset any cache of this role, including MUC.
     accesslib_clear_role_cache($roleid);
 
@@ -1401,7 +1413,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
  * @return boolean true or exception
  */
 function unassign_capability($capability, $roleid, $contextid = null) {
-    global $DB;
+    global $DB, $USER;
 
     // Capability must exist.
     if (!$capinfo = get_capability_info($capability)) {
@@ -1419,6 +1431,16 @@ function unassign_capability($capability, $roleid, $contextid = null) {
     } else {
         $DB->delete_records('role_capabilities', array('capability'=>$capability, 'roleid'=>$roleid));
     }
+
+    // Trigger capability_assigned event.
+    \core\event\capability_unassigned::create([
+        'userid' => $USER->id,
+        'context' => $context ?? context_system::instance(),
+        'objectid' => $roleid,
+        'other' => [
+            'capability' => $capability,
+        ]
+    ])->trigger();
 
     // Reset any cache of this role, including MUC.
     accesslib_clear_role_cache($roleid);
@@ -5310,6 +5332,15 @@ abstract class context extends stdClass implements IteratorAggregate {
         $this->_locked = $locked;
         $DB->set_field('context', 'locked', (int) $locked, ['id' => $this->id]);
         $this->mark_dirty();
+
+        if ($locked) {
+            $eventname = '\\core\\event\\context_locked';
+        } else {
+            $eventname = '\\core\\event\\context_unlocked';
+        }
+        $event = $eventname::create(['context' => $this, 'objectid' => $this->id]);
+        $event->trigger();
+
         self::reset_caches();
 
         return $this;
@@ -5415,6 +5446,9 @@ abstract class context extends stdClass implements IteratorAggregate {
         $DB->delete_records('context', array('id'=>$this->_id));
         // purge static context cache if entry present
         context::cache_remove($this);
+
+        // Inform search engine to delete data related to this context.
+        \core_search\manager::context_deleted($this);
     }
 
     // ====== context level related methods ======

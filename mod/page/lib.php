@@ -571,3 +571,27 @@ function mod_page_core_calendar_provide_event_action(calendar_event $event,
         true
     );
 }
+
+/**
+ * Given an array with a file path, it returns the itemid and the filepath for the defined filearea.
+ *
+ * @param  string $filearea The filearea.
+ * @param  array  $args The path (the part after the filearea and before the filename).
+ * @return array The itemid and the filepath inside the $args path, for the defined filearea.
+ */
+function mod_page_get_path_from_pluginfile(string $filearea, array $args) : array {
+    // Page never has an itemid (the number represents the revision but it's not stored in database).
+    array_shift($args);
+
+    // Get the filepath.
+    if (empty($args)) {
+        $filepath = '/';
+    } else {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    return [
+        'itemid' => 0,
+        'filepath' => $filepath,
+    ];
+}

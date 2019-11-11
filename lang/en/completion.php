@@ -112,7 +112,7 @@ $string['completionupdated'] = 'Updated completion for activity <b>{$a}</b>';
 $string['completionview'] = 'Require view';
 $string['completionview_desc'] = 'Student must view this activity to complete it';
 $string['configcompletiondefault'] = 'The default setting for completion tracking when creating new activities.';
-$string['configenablecompletion'] = 'When enabled, this lets you turn on completion tracking (progress) features at course level.';
+$string['configenablecompletion'] = 'If enabled, course and activity completion conditions may be set. Setting activity completion conditions is recommended so that meaningful data is displayed for users in their course overview on the Dashboard.';
 $string['confirmselfcompletion'] = 'Confirm self completion';
 $string['courseaggregation'] = 'Condition requires';
 $string['courseaggregation_all'] = 'ALL selected courses to be completed';
@@ -148,7 +148,7 @@ $string['err_noactivities'] = 'Completion information is not enabled for any act
 $string['err_nocourses'] = 'Course completion is not enabled for any other courses, so none can be displayed. You can enable course completion in the course settings.';
 $string['err_nograde'] = 'A course pass grade has not been set for this course. To enable this criteria type you must create a pass grade for this course.';
 $string['err_noroles'] = 'There are no roles with the capability moodle/course:markcomplete in this course.';
-$string['err_nousers'] = 'There are no students on this course or group for whom completion information is displayed. (By default, completion information is displayed only for students, so if there are no students, you will see this error. Administrators can alter this option via the admin screens.)';
+$string['err_nousers'] = 'There are no students in this course or group for whom completion information is displayed. (Completion information is displayed only for users with the capability \'Be shown on completion reports\'. The capability is allowed for the default role of student only, so if there are no students, you will see this message.)';
 $string['err_settingslocked'] = 'One or more students have already completed a criterion so the settings have been locked. Unlocking the completion criteria settings will delete any existing user data and may cause confusion.';
 $string['err_system'] = 'An internal error occurred in the completion system. (System administrators can enable debugging information to see more detail.)';
 $string['eventcoursecompleted'] = 'Course completed';
@@ -231,7 +231,3 @@ $string['withconditions'] = 'With conditions';
 $string['writingcompletiondata'] = 'Writing completion data';
 $string['xdays'] = '{$a} days';
 $string['yourprogress'] = 'Your progress';
-
-// Deprecated since Moodle 3.3.
-$string['completion-title-manual-n'] = 'Mark as complete: {$a}';
-$string['completion-title-manual-y'] = 'Mark as not complete: {$a}';

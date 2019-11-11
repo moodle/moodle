@@ -112,7 +112,7 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $CFG->defaultblocks_override = 'participants,search_forums,course_list:calendar_upcoming,recent_activity';
+        $CFG->defaultblocks_override = 'search_forums,course_list:calendar_upcoming,recent_activity';
 
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -126,10 +126,10 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
 
-        // Expect 5 default blocks.
-        $this->assertCount(5, $result['blocks']);
+        // Expect 4 default blocks.
+        $this->assertCount(4, $result['blocks']);
 
-        $expectedblocks = array('navigation', 'settings', 'participants', 'search_forums', 'course_list',
+        $expectedblocks = array('navigation', 'settings', 'search_forums', 'course_list',
                                 'calendar_upcoming', 'recent_activity');
         foreach ($result['blocks'] as $block) {
             if (!in_array($block['name'], $expectedblocks)) {
@@ -213,6 +213,19 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals('', $result['blocks'][0]['contents']['footer']);
         $this->assertCount(1, $result['blocks'][0]['contents']['files']);
         $this->assertEquals($newblock, $result['blocks'][0]['name']);
+        $configcounts = 0;
+        foreach ($result['blocks'][0]['configs'] as $config) {
+            if ($config['type'] = 'plugin' && $config['name'] == 'allowcssclasses' && $config['value'] == 0) {
+                $configcounts++;
+            } else if ($config['type'] = 'instance' && $config['name'] == 'text' && $config['value'] == $body) {
+                $configcounts++;
+            } else if ($config['type'] = 'instance' && $config['name'] == 'title' && $config['value'] == $title) {
+                $configcounts++;
+            } else if ($config['type'] = 'instance' && $config['name'] == 'format' && $config['value'] == 0) {
+                $configcounts++;
+            }
+        }
+        $this->assertEquals(4, $configcounts);
     }
 
     /**
@@ -224,6 +237,9 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user();
         $PAGE->set_url('/my/index.php');    // Need this because some internal API calls require the $PAGE url to be set.
+
+        // Force a setting change to check the returned blocks settings.
+        set_config('displaycategories', 0, 'block_recentlyaccessedcourses');
 
         // Get the expected default blocks.
         $alldefaultblocksordered = $DB->get_records_menu('block_instances',
@@ -242,6 +258,12 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
             // Check all the returned blocks are in the expected blocks array.
             $this->assertContains($block['name'], $alldefaultblocksordered);
             $returnedblocks[] = $block['name'];
+            // Check the configuration returned for this default block.
+            if ($block['name'] == 'recentlyaccessedcourses') {
+                $this->assertEquals('displaycategories', $block['configs'][0]['name']);
+                $this->assertEquals(0, $block['configs'][0]['value']);
+                $this->assertEquals('plugin', $block['configs'][0]['type']);
+            }
         }
         // Remove lp block.
         array_shift($alldefaultblocksordered);

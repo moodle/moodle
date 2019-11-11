@@ -138,6 +138,18 @@ class core_useragent {
     }
 
     /**
+     * Get the MoodleBot UserAgent for this site.
+     *
+     * @return string UserAgent
+     */
+    public static function get_moodlebot_useragent() {
+        global $CFG;
+
+        $version = moodle_major_version(); // Only major version for security.
+        return "MoodleBot/$version (+{$CFG->wwwroot})";
+    }
+
+    /**
      * Returns the user agent string.
      * @return bool|string The user agent string or false if one isn't available.
      */
@@ -215,7 +227,8 @@ class core_useragent {
      * @return bool
      */
     protected function is_useragent_web_crawler() {
-        $regex = '/Googlebot|google\.com|Yahoo! Slurp|\[ZSEBOT\]|msnbot|bingbot|BingPreview|Yandex|AltaVista|Baiduspider|Teoma/i';
+        $regex = '/MoodleBot|Googlebot|google\.com|Yahoo! Slurp|\[ZSEBOT\]|msnbot|bingbot|BingPreview|Yandex|AltaVista'
+                .'|Baiduspider|Teoma/i';
         return (preg_match($regex, $this->useragent));
     }
 
@@ -1110,8 +1123,7 @@ class core_useragent {
         $extension = strtolower($extension);
 
         $supportedvideo = array('m4v', 'webm', 'ogv', 'mp4', 'mov');
-        $supportedaudio = array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav');
-        // TODO MDL-56549 Flac will be supported in Firefox 51 in January 2017.
+        $supportedaudio = array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav', 'flac');
 
         // Basic extension support.
         if (!in_array($extension, $supportedvideo) && !in_array($extension, $supportedaudio)) {
@@ -1145,6 +1157,11 @@ class core_useragent {
         if ($isogg && (self::is_ie() || self::is_edge() || self::is_safari() || self::is_safari_ios())) {
             return false;
         }
+        // FLAC is not supported in IE and Edge (below 16.0).
+        if ($extension === 'flac' &&
+                (self::is_ie() || (self::is_edge() && !self::check_edge_version('16.0')))) {
+            return false;
+        }
         // Wave is not supported in IE.
         if ($extension === 'wav' && self::is_ie()) {
             return false;
@@ -1161,6 +1178,41 @@ class core_useragent {
         // Mov is not supported in IE.
         if ($extension === 'mov' && self::is_ie()) {
             return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if current browser supports the HLS and MPEG-DASH media
+     * streaming formats. Most browsers get this from Media Source Extensions.
+     * Safari on iOS, doesn't support MPEG-DASH at all.
+     *
+     * Note, the check here is not 100% accurate!
+     *
+     * Also we assume that users of Firefox/Chrome/Safari do not use the ancient versions of browsers.
+     * We check the exact version for IE/Edge though. We know that there are still users of very old
+     * versions that are afraid to upgrade or have slow IT department.
+     *
+     * Resources:
+     * https://developer.mozilla.org/en-US/docs/Web/API/Media_Source_Extensions_API
+     * https://caniuse.com/#search=mpeg-dash
+     * https://caniuse.com/#search=hls
+     *
+     * @param string $extension
+     * @return bool
+     */
+    public static function supports_media_source_extensions(string $extension) : bool {
+        // Not supported in IE below 11.0.
+        if (self::is_ie() && !self::check_ie_version('11.0')) {
+            return false;
+        }
+
+        if ($extension == '.mpd') {
+            // Not supported in Safari on iOS.
+            if (self::is_safari_ios()) {
+                return false;
+            }
         }
 
         return true;

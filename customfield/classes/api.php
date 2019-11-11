@@ -412,4 +412,29 @@ class api {
         $field->prepare_for_config_form($formdata);
         return $formdata;
     }
+
+    /**
+     * Get a list of the course custom fields that support course grouping in
+     * block_myoverview
+     * @return array $shortname => $name
+     */
+    public static function get_fields_supporting_course_grouping() {
+        global $DB;
+        $sql = "
+            SELECT f.*
+              FROM {customfield_field} f
+              JOIN {customfield_category} cat ON cat.id = f.categoryid
+             WHERE cat.component = 'core_course' AND cat.area = 'course'
+             ORDER BY f.name
+        ";
+        $ret = [];
+        $fields = $DB->get_records_sql($sql);
+        foreach ($fields as $field) {
+            $inst = field_controller::create(0, $field);
+            if ($inst->supports_course_grouping()) {
+                $ret[$inst->get('shortname')] = $inst->get('name');
+            }
+        }
+        return $ret;
+    }
 }

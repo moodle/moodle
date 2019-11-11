@@ -502,11 +502,10 @@ class mod_choice_external extends external_api {
                 $choicedetails['course'] = $choice->course;
                 $choicedetails['name']  = external_format_string($choice->name, $context->id);
                 // Format intro.
+                $options = array('noclean' => true);
                 list($choicedetails['intro'], $choicedetails['introformat']) =
-                    external_format_text($choice->intro, $choice->introformat,
-                                            $context->id, 'mod_choice', 'intro', null);
-                    $choicedetails['introfiles'] = external_util::get_area_files($context->id, 'mod_choice', 'intro', false,
-                                                                                    false);
+                    external_format_text($choice->intro, $choice->introformat, $context->id, 'mod_choice', 'intro', null, $options);
+                $choicedetails['introfiles'] = external_util::get_area_files($context->id, 'mod_choice', 'intro', false, false);
 
                 if (has_capability('mod/choice:choose', $context)) {
                     $choicedetails['publish']  = $choice->publish;

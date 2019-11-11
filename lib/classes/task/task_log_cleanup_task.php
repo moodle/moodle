@@ -25,6 +25,9 @@ namespace core\task;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\task\database_logger;
+use core\task\logmanager;
+
 /**
  * A task to cleanup log entries for tasks.
  *
@@ -46,8 +49,9 @@ class task_log_cleanup_task extends scheduled_task {
      * Perform the cleanup task.
      */
     public function execute() {
-        if (\core\task\database_logger::class == \core\task\logmanager::get_logger_classname()) {
-            \core\task\database_logger::cleanup();
+        $logger = logmanager::get_logger_classname();
+        if (is_a($logger, database_logger::class, true)) {
+            $logger::cleanup();
         }
     }
 }

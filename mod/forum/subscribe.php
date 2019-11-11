@@ -39,7 +39,7 @@ $mode           = optional_param('mode', null, PARAM_INT);     // The forum's su
 $user           = optional_param('user', 0, PARAM_INT);        // The userid of the user to subscribe, defaults to $USER.
 $discussionid   = optional_param('d', null, PARAM_INT);        // The discussionid to subscribe.
 $sesskey        = optional_param('sesskey', null, PARAM_RAW);
-$returnurl      = optional_param('returnurl', null, PARAM_RAW);
+$returnurl      = optional_param('returnurl', null, PARAM_LOCALURL);
 
 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$id));
 if (!is_null($mode)) {

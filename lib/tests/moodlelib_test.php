@@ -3238,15 +3238,15 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
-        $user2 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1, 'mailformat' => 0));
+        $user2 = $this->getDataGenerator()->create_user(array('maildisplay' => 1, 'mailformat' => 1));
         $user3 = $this->getDataGenerator()->create_user(array('maildisplay' => 0));
         set_config('allowedemaildomains', "example.com\r\nmoodle.org");
 
         $subject = 'subject';
         $messagetext = 'message text';
         $subject2 = 'subject 2';
-        $messagetext2 = 'message text 2';
+        $messagetext2 = '<b>message text 2</b>';
 
         // Close the default email sink.
         $sink = $this->redirectEmails();
@@ -3274,11 +3274,13 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($messagetext, trim($result[0]->body));
         $this->assertSame($user1->email, $result[0]->to);
         $this->assertSame($user2->email, $result[0]->from);
+        $this->assertContains('Content-Type: text/plain', $result[0]->header);
 
         $this->assertSame($subject2, $result[1]->subject);
-        $this->assertSame($messagetext2, trim($result[1]->body));
+        $this->assertContains($messagetext2, quoted_printable_decode($result[1]->body));
         $this->assertSame($user2->email, $result[1]->to);
         $this->assertSame($user1->email, $result[1]->from);
+        $this->assertNotContains('Content-Type: text/plain', $result[1]->header);
 
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
@@ -4453,6 +4455,85 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = $sink->get_messages();
         $sink->close();
 
-        $this->assertContains('passwords cannot be reset on this site', $result[0]->body);
+        $this->assertContains('passwords cannot be reset on this site', quoted_printable_decode($result[0]->body));
+    }
+
+    /**
+     * Test the get_time_interval_string for a range of inputs.
+     *
+     * @dataProvider get_time_interval_string_provider
+     * @param int $time1 the time1 param.
+     * @param int $time2 the time2 param.
+     * @param string|null $format the format param.
+     * @param string $expected the expected string.
+     */
+    public function test_get_time_interval_string(int $time1, int $time2, ?string $format, string $expected) {
+        if (is_null($format)) {
+            $this->assertEquals($expected, get_time_interval_string($time1, $time2));
+        } else {
+            $this->assertEquals($expected, get_time_interval_string($time1, $time2, $format));
+        }
+    }
+
+    /**
+     * Data provider for the test_get_time_interval_string() method.
+     */
+    public function get_time_interval_string_provider() {
+        return [
+            'Time is after the reference time by 1 minute, omitted format' => [
+                'time1' => 12345660,
+                'time2' => 12345600,
+                'format' => null,
+                'expected' => '0d 0h 1m'
+            ],
+            'Time is before the reference time by 1 minute, omitted format' => [
+                'time1' => 12345540,
+                'time2' => 12345600,
+                'format' => null,
+                'expected' => '0d 0h 1m'
+            ],
+            'Time is equal to the reference time, omitted format' => [
+                'time1' => 12345600,
+                'time2' => 12345600,
+                'format' => null,
+                'expected' => '0d 0h 0m'
+            ],
+            'Time is after the reference time by 1 minute, empty string format' => [
+                'time1' => 12345660,
+                'time2' => 12345600,
+                'format' => '',
+                'expected' => '0d 0h 1m'
+            ],
+            'Time is before the reference time by 1 minute, empty string format' => [
+                'time1' => 12345540,
+                'time2' => 12345600,
+                'format' => '',
+                'expected' => '0d 0h 1m'
+            ],
+            'Time is equal to the reference time, empty string format' => [
+                'time1' => 12345600,
+                'time2' => 12345600,
+                'format' => '',
+                'expected' => '0d 0h 0m'
+            ],
+            'Time is after the reference time by 1 minute, custom format' => [
+                'time1' => 12345660,
+                'time2' => 12345600,
+                'format' => '%R%adays %hhours %imins',
+                'expected' => '+0days 0hours 1mins'
+            ],
+            'Time is before the reference time by 1 minute, custom format' => [
+                'time1' => 12345540,
+                'time2' => 12345600,
+                'format' => '%R%adays %hhours %imins',
+                'expected' => '-0days 0hours 1mins'
+            ],
+            'Time is equal to the reference time, custom format' => [
+                'time1' => 12345600,
+                'time2' => 12345600,
+                'format' => '%R%adays %hhours %imins',
+                'expected' => '+0days 0hours 0mins'
+            ],
+        ];
     }
 }

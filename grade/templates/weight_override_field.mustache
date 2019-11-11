@@ -15,7 +15,17 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Weight field.
+    @template core_grades/weight_override_field
+
+    Weight override field.
+
+    Example context (json):
+    {
+        "itemname": "Awesome test",
+        "id": "2",
+        "checked": "true",
+        "value": "100"
+    }
 }}
 <div class="form-inline">
     <label class="accesshide" for="weightoverride_{{id}}">

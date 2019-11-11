@@ -37,7 +37,7 @@ require_once($CFG->libdir . '/tests/fixtures/testable_flexible_table.php');
  * @copyright  2013 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_tablelib_testcase extends basic_testcase {
+class core_tablelib_testcase extends advanced_testcase {
     protected function generate_columns($cols) {
         $columns = array();
         foreach (range(0, $cols - 1) as $j) {
@@ -352,6 +352,67 @@ class core_tablelib_testcase extends basic_testcase {
         );
     }
 
+    /**
+     * Data provider for test_fullname_column
+     *
+     * @return array
+     */
+    public function fullname_column_provider() {
+        return [
+            ['language'],
+            ['alternatename lastname'],
+            ['firstname lastnamephonetic'],
+        ];
+    }
+
+    /**
+     * Test fullname column observes configured alternate fullname format configuration
+     *
+     * @param string $format
+     * @return void
+     *
+     * @dataProvider fullname_column_provider
+     */
+    public function test_fullname_column(string $format) {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('alternativefullnameformat', $format);
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $table = $this->create_and_setup_table(['fullname'], [], true, false, [], []);
+        $this->assertContains(fullname($user, true), $table->format_row($user)['fullname']);
+    }
+
+    /**
+     * Test fullname column ignores fullname format configuration for a user with viewfullnames capability prohibited
+     *
+     * @param string $format
+     * @return void
+     *
+     * @dataProvider fullname_column_provider
+     */
+    public function test_fullname_column_prohibit_viewfullnames(string $format) {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        set_config('alternativefullnameformat', $format);
+
+        $currentuser = $this->getDataGenerator()->create_user();
+        $this->setUser($currentuser);
+
+        // Prohibit the viewfullnames from the default user role.
+        $userrole = $DB->get_record('role', ['id' => $CFG->defaultuserroleid]);
+        role_change_permission($userrole->id, context_system::instance(), 'moodle/site:viewfullnames', CAP_PROHIBIT);
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $table = $this->create_and_setup_table(['fullname'], [], true, false, [], []);
+        $this->assertContains(fullname($user, false), $table->format_row($user)['fullname']);
+    }
+
     public function test_get_row_html() {
         $data = $this->generate_data(1, 5);
         $columns = $this->generate_columns(5);
@@ -618,4 +679,26 @@ class core_tablelib_testcase extends basic_testcase {
         unset($_GET['tifirst']);
         $this->assertTrue($table->can_be_reset());
     }
+
+    /**
+     * Test export in CSV format
+     */
+    public function test_table_export() {
+        $table = new flexible_table('tablelib_test_export');
+        $table->define_baseurl('/invalid.php');
+        $table->define_columns(['c1', 'c2', 'c3']);
+        $table->define_headers(['Col1', 'Col2', 'Col3']);
+
+        ob_start();
+        $table->is_downloadable(true);
+        $table->is_downloading('csv');
+
+        $table->setup();
+        $table->add_data(['column0' => 'a', 'column1' => 'b', 'column2' => 'c']);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals("Col1,Col2,Col3\na,b,c\n", substr($output, 3));
+    }
+
 }

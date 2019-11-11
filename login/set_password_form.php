@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/user/lib.php');
+require_once('lib.php');
 
 /**
  * Set forgotten password form definition.
@@ -78,6 +79,10 @@ class login_set_password_form extends moodleform {
         $mform->addRule('password2', get_string('required'), 'required', null, 'client');
         $mform->setType('password2', PARAM_RAW);
 
+        // Hook for plugins to extend form definition.
+        $user = $this->_customdata;
+        core_login_extend_set_password_form($mform, $user);
+
         $this->add_action_buttons(true);
     }
 
@@ -91,6 +96,9 @@ class login_set_password_form extends moodleform {
         $user = $this->_customdata;
 
         $errors = parent::validation($data, $files);
+
+        // Extend validation for any form extensions from plugins.
+        $errors = array_merge($errors, core_login_validate_extend_set_password_form($data, $user));
 
         // Ignore submitted username.
         if ($data['password'] !== $data['password2']) {

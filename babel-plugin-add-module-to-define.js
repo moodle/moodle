@@ -33,9 +33,11 @@
  */
 
 "use strict";
+/* eslint-env node */
 
-module.exports = ({ template, types }) => {
+module.exports = ({template, types}) => {
     const fs = require('fs');
+    const path = require('path');
     const glob = require('glob');
     const cwd = process.cwd();
 
@@ -72,7 +74,7 @@ module.exports = ({ template, types }) => {
             var rawContents = fs.readFileSync(file);
             var subplugins = JSON.parse(rawContents);
 
-            for (const [component, path] of Object.entries(subplugins)) {
+            for (const [component, path] of Object.entries(subplugins.plugintypes)) {
                 if (path) {
                     moodlePlugins[path] = component;
                 }
@@ -92,7 +94,7 @@ module.exports = ({ template, types }) => {
      */
     function getModuleNameFromFileName(searchFileName) {
         searchFileName = fs.realpathSync(searchFileName);
-        const relativeFileName = searchFileName.replace(`${cwd}/`, '');
+        const relativeFileName = searchFileName.replace(`${cwd}${path.sep}`, '').replace(/\\/g, '/');
         const [componentPath, file] = relativeFileName.split('/amd/src/');
         const fileName = file.replace('.js', '');
 
@@ -119,15 +121,20 @@ module.exports = ({ template, types }) => {
         throw new Error('Unable to find module name for ' + searchFileName);
     }
 
-    // This is heavily inspired by the babel-plugin-add-module-exports plugin.
-    // See: https://github.com/59naga/babel-plugin-add-module-exports
-    //
-    // This is used when we detect a module using "export default Foo;" to make
-    // sure the transpiled code just returns Foo directly rather than an object
-    // with the default property (i.e. {default: Foo}).
-    //
-    // Note: This means that we can't support modules that combine named exports
-    // with a default export.
+    /**
+     * This is heavily inspired by the babel-plugin-add-module-exports plugin.
+     * See: https://github.com/59naga/babel-plugin-add-module-exports
+     *
+     * This is used when we detect a module using "export default Foo;" to make
+     * sure the transpiled code just returns Foo directly rather than an object
+     * with the default property (i.e. {default: Foo}).
+     *
+     * Note: This means that we can't support modules that combine named exports
+     * with a default export.
+     *
+     * @param {String} path
+     * @param {String} exportObjectName
+     */
     function addModuleExportsDefaults(path, exportObjectName) {
         const rootPath = path.findParent(path => {
             return path.key === 'body' || !path.parentPath;
@@ -135,7 +142,7 @@ module.exports = ({ template, types }) => {
 
         // HACK: `path.node.body.push` instead of path.pushContainer(due doesn't work in Plugin.post).
         // This is hardcoded to work specifically with AMD.
-        rootPath.node.body.push(template(`return ${exportObjectName}.default`)())
+        rootPath.node.body.push(template(`return ${exportObjectName}.default`)());
     }
 
     return {
@@ -173,9 +180,9 @@ module.exports = ({ template, types }) => {
 
                             // Check for any Object.defineProperty('exports', 'default') calls.
                             if (!this.addedReturnForDefaultExport && path.get('callee').matchesPattern('Object.defineProperty')) {
-                                const [identifier, prop] = path.get('arguments')
-                                const objectName = identifier.get('name').node
-                                const propertyName = prop.get('value').node
+                                const [identifier, prop] = path.get('arguments');
+                                const objectName = identifier.get('name').node;
+                                const propertyName = prop.get('value').node;
 
                                 if ((objectName === 'exports' || objectName === '_exports') && propertyName === 'default') {
                                     addModuleExportsDefaults(path, objectName);

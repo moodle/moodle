@@ -26,6 +26,7 @@ namespace mod_forum\local\factories;
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_forum\grades\forum_gradeitem;
 use mod_forum\local\entities\discussion as discussion_entity;
 use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\factories\vault as vault_factory;
@@ -134,6 +135,8 @@ class renderer {
             $this->legacydatamapperfactory,
             $this->exporterfactory,
             $this->vaultfactory,
+            $this->urlfactory,
+            $this->entityfactory,
             $capabilitymanager,
             $ratingmanager,
             $this->entityfactory->get_exported_posts_sorter(),
@@ -141,7 +144,7 @@ class renderer {
             $notifications,
             function($discussion, $user, $forum) {
                 $exportbuilder = $this->builderfactory->get_exported_discussion_builder();
-                return $exportedposts = $exportbuilder->build(
+                return $exportbuilder->build(
                     $user,
                     $forum,
                     $discussion
@@ -180,6 +183,9 @@ class renderer {
             case FORUM_MODE_NESTED:
                 $template = 'mod_forum/forum_discussion_nested_posts';
                 break;
+            case FORUM_MODE_NESTED_V2:
+                $template = 'mod_forum/forum_discussion_nested_v2_posts';
+                break;
             default;
                 $template = 'mod_forum/forum_discussion_posts';
                 break;
@@ -192,12 +198,17 @@ class renderer {
             // Post process the exported posts for our template. This function will add the "replies"
             // and "hasreplies" properties to the exported posts. It will also sort them into the
             // reply tree structure if the display mode requires it.
-            function($exportedposts, $forums) use ($displaymode, $readonly, $exportedpostssorter) {
+            function($exportedposts, $forums, $discussions) use ($displaymode, $readonly, $exportedpostssorter) {
                 $forum = array_shift($forums);
                 $seenfirstunread = false;
                 $postcount = count($exportedposts);
+                $discussionsbyid = array_reduce($discussions, function($carry, $discussion) {
+                    $carry[$discussion->get_id()] = $discussion;
+                    return $carry;
+                }, []);
                 $exportedposts = array_map(
-                    function($exportedpost) use ($forum, $readonly, $seenfirstunread) {
+                    function($exportedpost) use ($forum, $discussionsbyid, $readonly, $seenfirstunread, $displaymode) {
+                        $discussion = $discussionsbyid[$exportedpost->discussionid] ?? null;
                         if ($forum->get_type() == 'single' && !$exportedpost->hasparent) {
                             // Remove the author from any posts that don't have a parent.
                             unset($exportedpost->author);
@@ -209,6 +220,7 @@ class renderer {
                         $exportedpost->hasreplycount = false;
                         $exportedpost->hasreplies = false;
                         $exportedpost->replies = [];
+                        $exportedpost->discussionlocked = $discussion ? $discussion->is_locked() : null;
 
                         $exportedpost->isfirstunread = false;
                         if (!$seenfirstunread && $exportedpost->unread) {
@@ -216,31 +228,60 @@ class renderer {
                             $seenfirstunread = true;
                         }
 
+                        if ($displaymode === FORUM_MODE_NESTED_V2) {
+                            $exportedpost->showactionmenu = $exportedpost->capabilities['view'] ||
+                                                            $exportedpost->capabilities['controlreadstatus'] ||
+                                                            $exportedpost->capabilities['edit'] ||
+                                                            $exportedpost->capabilities['split'] ||
+                                                            $exportedpost->capabilities['delete'] ||
+                                                            $exportedpost->capabilities['export'] ||
+                                                            !empty($exportedpost->urls['viewparent']);
+                        }
+
                         return $exportedpost;
                     },
                     $exportedposts
                 );
 
-                if ($displaymode === FORUM_MODE_NESTED || $displaymode === FORUM_MODE_THREADED) {
+                if (
+                    $displaymode === FORUM_MODE_NESTED ||
+                    $displaymode === FORUM_MODE_THREADED ||
+                    $displaymode === FORUM_MODE_NESTED_V2
+                ) {
                     $sortedposts = $exportedpostssorter->sort_into_children($exportedposts);
                     $sortintoreplies = function($nestedposts) use (&$sortintoreplies) {
                         return array_map(function($postdata) use (&$sortintoreplies) {
                             [$post, $replies] = $postdata;
-                            $sortedreplies = $sortintoreplies($replies);
-                            // Set the parent author name on the replies. This is used for screen
-                            // readers to help them identify the structure of the discussion.
-                            $sortedreplies = array_map(function($reply) use ($post) {
-                                if (isset($post->author)) {
-                                    $reply->parentauthorname = $post->author->fullname;
-                                } else {
-                                    // The only time the author won't be set is for a single discussion
-                                    // forum. See above for where it gets unset.
-                                    $reply->parentauthorname = get_string('firstpost', 'mod_forum');
-                                }
-                                return $reply;
-                            }, $sortedreplies);
-                            $post->replies = $sortedreplies;
-                            $post->hasreplies = !empty($post->replies);
+                            $totalreplycount = 0;
+
+                            if (empty($replies)) {
+                                $post->replies = [];
+                                $post->hasreplies = false;
+                            } else {
+                                $sortedreplies = $sortintoreplies($replies);
+                                // Set the parent author name on the replies. This is used for screen
+                                // readers to help them identify the structure of the discussion.
+                                $sortedreplies = array_map(function($reply) use ($post) {
+                                    if (isset($post->author)) {
+                                        $reply->parentauthorname = $post->author->fullname;
+                                    } else {
+                                        // The only time the author won't be set is for a single discussion
+                                        // forum. See above for where it gets unset.
+                                        $reply->parentauthorname = get_string('firstpost', 'mod_forum');
+                                    }
+                                    return $reply;
+                                }, $sortedreplies);
+
+                                $totalreplycount = array_reduce($sortedreplies, function($carry, $reply) {
+                                    return $carry + 1 + $reply->totalreplycount;
+                                }, $totalreplycount);
+
+                                $post->replies = $sortedreplies;
+                                $post->hasreplies = true;
+                            }
+
+                            $post->totalreplycount = $totalreplycount;
+
                             return $post;
                         }, $nestedposts);
                     };
@@ -416,6 +457,7 @@ class renderer {
             $this->builderfactory,
             $capabilitymanager,
             $this->urlfactory,
+            forum_gradeitem::load_from_forum_entity($forum),
             $template,
             $notifications,
             function($discussions, $user, $forum) {
@@ -455,6 +497,7 @@ class renderer {
             $this->builderfactory,
             $capabilitymanager,
             $this->urlfactory,
+            forum_gradeitem::load_from_forum_entity($forum),
             $template,
             $notifications,
             function($discussions, $user, $forum) use ($capabilitymanager) {
@@ -481,11 +524,24 @@ class renderer {
                         $discussionentriesids,
                         $canseeanyprivatereply
                     );
+                $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
+                $forumrecord = $forumdatamapper->to_legacy_object($forum);
+                if (forum_tp_is_tracked($forumrecord, $user)) {
+                    $discussionunreadscount = $postvault->get_unread_count_for_discussion_ids(
+                            $user,
+                            $discussionentriesids,
+                            $canseeanyprivatereply
+                    );
+                } else {
+                    $discussionunreadscount = [];
+                }
 
-                array_walk($exportedposts['posts'], function($post) use ($discussionrepliescount) {
+                array_walk($exportedposts['posts'], function($post) use ($discussionrepliescount, $discussionunreadscount) {
                     $post->discussionrepliescount = $discussionrepliescount[$post->discussionid] ?? 0;
+                    $post->discussionunreadscount = $discussionunreadscount[$post->discussionid] ?? 0;
                     // TODO: Find a better solution due to language differences when defining the singular and plural form.
                     $post->isreplyplural = $post->discussionrepliescount != 1 ? true : false;
+                    $post->isunreadplural = $post->discussionunreadscount != 1 ? true : false;
                 });
 
                 $exportedposts['state']['hasdiscussions'] = $exportedposts['posts'] ? true : false;
@@ -570,6 +626,8 @@ class renderer {
             $this->legacydatamapperfactory,
             $this->exporterfactory,
             $this->vaultfactory,
+            $this->urlfactory,
+            $this->entityfactory,
             $capabilitymanager,
             $ratingmanager,
             $this->entityfactory->get_exported_posts_sorter(),

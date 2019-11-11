@@ -80,36 +80,43 @@ form.mform fieldset#id_previewareaheader .group1 {
 .que.ddimageortext .group2,
 form.mform fieldset#id_previewareaheader .group2 {
     background-color: #b0c4de;
+    border-radius: 10px 0 0 0;
 }
 
 .que.ddimageortext .group3,
 form.mform fieldset#id_previewareaheader .group3 {
     background-color: #dcdcdc;
+    border-radius: 0 10px 0 0;
 }
 
 .que.ddimageortext .group4,
 form.mform fieldset#id_previewareaheader .group4 {
     background-color: #d8bfd8;
+    border-radius: 0 0 10px 0;
 }
 
 .que.ddimageortext .group5,
 form.mform fieldset#id_previewareaheader .group5 {
     background-color: #87cefa;
+    border-radius: 0 0 0 10px;
 }
 
 .que.ddimageortext .group6,
 form.mform fieldset#id_previewareaheader .group6 {
     background-color: #daa520;
+    border-radius: 0 10px 10px 0;
 }
 
 .que.ddimageortext .group7,
 form.mform fieldset#id_previewareaheader .group7 {
     background-color: #ffd700;
+    border-radius: 10px 0 0 10px;
 }
 
 .que.ddimageortext .group8,
 form.mform fieldset#id_previewareaheader .group8 {
     background-color: #f0e68c;
+    border-radius: 10px 10px 10px 10px;
 }
 
 /* Editing form. Style repeated elements*/

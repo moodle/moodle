@@ -212,7 +212,6 @@ Y.extend(ANNOTATION, Y.Base, {
 
             drawingregion.append(deletelink);
             deletelink.setData('annotation', this);
-            deletelink.setStyle('zIndex', '200');
 
             deletelink.on('click', this.remove, this);
             deletelink.on('key', this.remove, 'space,enter', this);

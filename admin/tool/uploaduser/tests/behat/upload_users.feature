@@ -51,6 +51,7 @@ Feature: Upload users
     And I navigate to "Users > Accounts > Upload users" in site administration
     When I upload "lib/tests/fixtures/upload_users.csv" file to "File" filemanager
     And I press "Upload users"
+    And I should see "Upload users preview"
     And I set the following fields to these values:
       | City/town  | Brighton   |
       | Department | Purchasing |
@@ -77,12 +78,28 @@ Feature: Upload users
     When I navigate to "Users > Accounts > Upload users" in site administration
     And I upload "lib/tests/fixtures/upload_users_profile.csv" file to "File" filemanager
     And I press "Upload users"
+    And I should see "Upload users preview"
     And I press "Upload users"
     # Check that users were created and the superfield is filled.
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I follow "Tom Jones"
     And I should see "Super field"
     And I should see "The big guy"
+    And I log out
+
+  @javascript
+  Scenario: Upload users setting their email stop value
+    Given I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_emailstop.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And the following should exist in the "uupreview" table:
+      | CSV line | username | emailstop |
+      | 2        | jbloggs  | 1         |
+      | 3        | fbloggs  | 0         |
+    And I press "Upload users"
+    And I should see "Users created: 2"
     And I log out
 
   @javascript
@@ -144,4 +161,30 @@ Feature: Upload users
     And I should see "User themes are not enabled, so any included in the upload users file will be ignored."
     And I should see "Users created: 4"
     And I press "Continue"
+    And I log out
+
+  @javascript
+  Scenario: Upload users setting their enrol date and period
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Maths    | math102   | 0        |
+    # Upload the users.
+    And I change window size to "large"
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_enrol_date_period.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I press "Upload users"
+    # Check user enrolment start date and period
+    And I am on "Maths" course homepage
+    Then I navigate to course participants
+    And I click on "Manual enrolments" "link" in the "Student One" "table_row"
+    Then I should see "1 January 2019" in the "Enrolment starts" "table_row"
+    And I should not see "Enrolment ends"
+    And I click on "Close" "button"
+    And I click on "Manual enrolments" "link" in the "Student Two" "table_row"
+    Then I should see "2 January 2020" in the "Enrolment starts" "table_row"
+    And I should see "12 January 2020" in the "Enrolment ends" "table_row"
+    And I click on "Close" "button"
     And I log out

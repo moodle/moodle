@@ -85,7 +85,7 @@ class managesubscriptions extends \moodleform {
         // Add the select elements for the available event types.
         $this->add_event_type_elements($mform, $eventtypes);
 
-        // Eventtype: 0 = user, 1 = global, anything else = course ID.
+        // Eventtype: 0 = user, 1 = site, anything else = course ID.
         $mform->addElement('submit', 'add', get_string('add'));
 
         // Add the javascript required to enhance this mform.

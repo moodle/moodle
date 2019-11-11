@@ -40,7 +40,7 @@ $string['generalsettings'] = 'General settings';
 $string['nobootswatch'] = 'None';
 $string['pluginname'] = 'Boost';
 $string['presetfiles'] = 'Additional theme preset files';
-$string['presetfiles_desc'] = 'Preset files can be used to dramatically alter the appearance of the theme. See <a href="https://docs.moodle.org/dev/Boost_Presets">Boost presets</a> for information on creating and sharing your own preset files, and see the <a href="https://moodle.net/boost">Presets repository</a> for presets that others have shared.';
+$string['presetfiles_desc'] = 'Preset files can be used to dramatically alter the appearance of the theme. See <a href="https://docs.moodle.org/dev/Boost_Presets">Boost presets</a> for information on creating and sharing your own preset files, and see the <a href="https://archive.moodle.net/boost">Presets repository</a> for presets that others have shared.';
 $string['preset'] = 'Theme preset';
 $string['preset_desc'] = 'Pick a preset to broadly change the look of the theme.';
 $string['privacy:metadata'] = 'The Boost theme does not store any personal data about any user.';

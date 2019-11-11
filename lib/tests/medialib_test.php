@@ -17,13 +17,14 @@
 /**
  * Test classes for handling embedded media (audio/video).
  *
- * @package core_media
- * @category phpunit
+ * @package   core
+ * @category  test
  * @copyright 2012 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/fixtures/testable_core_media_player.php');
 
 /**
  * Test script for media embedding.
@@ -494,43 +495,5 @@ class core_medialib_testcase extends advanced_testcase {
             $out .= str_replace('core_media_player_', '', preg_replace('/^media_(.*)_plugin$/', '$1', get_class($player)));
         }
         return $out;
-    }
-}
-
-/**
- * Media player stub for testing purposes.
- */
-class media_test_plugin extends core_media_player {
-    /** @var array Array of supported extensions */
-    public $ext;
-    /** @var int Player rank */
-    public $rank;
-    /** @var int Arbitrary number */
-    public $num;
-
-    /**
-     * @param int $num Number (used in output)
-     * @param int $rank Player rank
-     * @param array $ext Array of supported extensions
-     */
-    public function __construct($num = 1, $rank = 13, $ext = array('mp3', 'flv', 'f4v', 'mp4')) {
-        $this->ext = $ext;
-        $this->rank = $rank;
-        $this->num = $num;
-    }
-
-    public function embed($urls, $name, $width, $height, $options) {
-        self::pick_video_size($width, $height);
-        $contents = "\ntestsource=". join("\ntestsource=", $urls) .
-            "\ntestname=$name\ntestwidth=$width\ntestheight=$height\n<!--FALLBACK-->\n";
-        return html_writer::span($contents, 'mediaplugin mediaplugin_test');
-    }
-
-    public function get_supported_extensions() {
-        return $this->ext;
-    }
-
-    public function get_rank() {
-        return 10;
     }
 }

@@ -38,7 +38,13 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
     /**
      * The required version of the python package that performs all calculations.
      */
-    const REQUIRED_PIP_PACKAGE_VERSION = '1.0.0';
+    const REQUIRED_PIP_PACKAGE_VERSION = '2.3.0';
+
+    /**
+     * The python package is installed in a server.
+     * @var bool
+     */
+    protected $useserver;
 
     /**
      * The path to the Python bin.
@@ -48,14 +54,57 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
     protected $pathtopython;
 
     /**
+     * Remote server host
+     * @var string
+     */
+    protected $host;
+
+    /**
+     * Remote server port
+     * @var int
+     */
+    protected $port;
+
+    /**
+     * Whether to use http or https.
+     * @var bool
+     */
+    protected $secure;
+
+    /**
+     * Server username.
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * Server password for $this->username.
+     * @var string
+     */
+    protected $password;
+
+    /**
      * The constructor.
+     *
      */
     public function __construct() {
         global $CFG;
 
-        // Set the python location if there is a value.
-        if (!empty($CFG->pathtopython)) {
-            $this->pathtopython = $CFG->pathtopython;
+        $config = get_config('mlbackend_python');
+
+        $this->useserver = !empty($config->useserver);
+
+        if (!$this->useserver) {
+            // Set the python location if there is a value.
+            if (!empty($CFG->pathtopython)) {
+                $this->pathtopython = $CFG->pathtopython;
+            }
+        } else {
+            $this->host = $config->host ?? '';
+            $this->port = $config->port ?? '';
+            $this->secure = $config->secure ?? false;
+            $this->username = $config->username ?? '';
+            $this->password = $config->password ?? '';
         }
     }
 
@@ -65,6 +114,20 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      * @return bool|string Returns true on success, a string detailing the error otherwise
      */
     public function is_ready() {
+
+        if (!$this->useserver) {
+            return $this->is_webserver_ready();
+        } else {
+            return $this->is_python_server_ready();
+        }
+    }
+
+    /**
+     * Checks if the python package is available in the web server executing this script.
+     *
+     * @return bool|string Returns true on success, a string detailing the error otherwise
+     */
+    protected function is_webserver_ready() {
         if (empty($this->pathtopython)) {
             $settingurl = new \moodle_url('/admin/settings.php', array('section' => 'systempaths'));
             return get_string('pythonpathnotdefined', 'mlbackend_python', $settingurl->out());
@@ -78,52 +141,72 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         // Execute it sending the standard error to $output.
         $result = exec($cmd . ' 2>&1', $output, $exitcode);
 
-        $vercheck = self::check_pip_package_version($result);
-
-        if ($vercheck === 0) {
-            return true;
-        }
-
         if ($exitcode != 0) {
             return get_string('pythonpackagenotinstalled', 'mlbackend_python', $cmd);
         }
 
-        if ($result) {
-            $a = [
-                'installed' => $result,
-                'required' => self::REQUIRED_PIP_PACKAGE_VERSION,
-            ];
+        $vercheck = self::check_pip_package_version($result);
+        return $this->version_check_return($result, $vercheck);
+    }
 
-            if ($vercheck < 0) {
-                return get_string('packageinstalledshouldbe', 'mlbackend_python', $a);
+    /**
+     * Checks if the server can be accessed.
+     *
+     * @return bool|string True or an error string.
+     */
+    protected function is_python_server_ready() {
 
-            } else if ($vercheck > 0) {
-                return get_string('packageinstalledtoohigh', 'mlbackend_python', $a);
-            }
+        if (empty($this->host) || empty($this->port) || empty($this->username) || empty($this->password)) {
+            return get_string('errornoconfigdata', 'mlbackend_python');
         }
 
-        return get_string('pythonpackagenotinstalled', 'mlbackend_python', $cmd);
+        // Connection is allowed to use 'localhost' and other potentially blocked hosts/ports.
+        $curl = new \curl(['ignoresecurity' => true]);
+        $responsebody = $curl->get($this->get_server_url('version')->out(false));
+        if ($curl->info['http_code'] !== 200) {
+            return get_string('errorserver', 'mlbackend_python', $this->server_error_str($curl->info['http_code'], $responsebody));
+        }
+
+        $vercheck = self::check_pip_package_version($responsebody);
+        return $this->version_check_return($responsebody, $vercheck);
+
     }
 
     /**
      * Delete the model version output directory.
      *
+     * @throws \moodle_exception
      * @param string $uniqueid
      * @param string $modelversionoutputdir
      * @return null
      */
     public function clear_model($uniqueid, $modelversionoutputdir) {
-        remove_dir($modelversionoutputdir);
+        if (!$this->useserver) {
+            remove_dir($modelversionoutputdir);
+        } else {
+            // Use the server.
+
+            $url = $this->get_server_url('deletemodel');
+            list($responsebody, $httpcode) = $this->server_request($url, 'post', ['uniqueid' => $uniqueid]);
+        }
     }
 
     /**
      * Delete the model output directory.
      *
+     * @throws \moodle_exception
      * @param string $modeloutputdir
+     * @param string $uniqueid
      * @return null
      */
-    public function delete_output_dir($modeloutputdir) {
-        remove_dir($modeloutputdir);
+    public function delete_output_dir($modeloutputdir, $uniqueid) {
+        if (!$this->useserver) {
+            remove_dir($modeloutputdir);
+        } else {
+
+            $url = $this->get_server_url('deletemodel');
+            list($responsebody, $httpcode) = $this->server_request($url, 'post', ['uniqueid' => $uniqueid]);
+        }
     }
 
     /**
@@ -136,44 +219,28 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      */
     public function train_classification($uniqueid, \stored_file $dataset, $outputdir) {
 
-        // Obtain the physical route to the file.
-        $datasetpath = $this->get_file_path($dataset);
+        if (!$this->useserver) {
+            // Use the local file system.
 
-        $cmd = "{$this->pathtopython} -m moodlemlbackend.training " .
-            escapeshellarg($uniqueid) . ' ' .
-            escapeshellarg($outputdir) . ' ' .
-            escapeshellarg($datasetpath);
+            list($result, $exitcode) = $this->exec_command('training', [$uniqueid, $outputdir,
+                $this->get_file_path($dataset)], 'errornopredictresults');
 
-        if (!PHPUNIT_TEST && CLI_SCRIPT) {
-            debugging($cmd, DEBUG_DEVELOPER);
-        }
+        } else {
+            // Use the server.
 
-        $output = null;
-        $exitcode = null;
-        $result = exec($cmd, $output, $exitcode);
+            $requestparams = ['uniqueid' => $uniqueid, 'dirhash' => $this->hash_dir($outputdir),
+                'dataset' => $dataset];
 
-        if (!$result) {
-            throw new \moodle_exception('errornopredictresults', 'analytics');
+            $url = $this->get_server_url('training');
+            list($result, $httpcode) = $this->server_request($url, 'post', $requestparams);
         }
 
         if (!$resultobj = json_decode($result)) {
             throw new \moodle_exception('errorpredictwrongformat', 'analytics', '', json_last_error_msg());
         }
 
-        if ($exitcode != 0) {
-            if (!empty($resultobj->errors)) {
-                $errors = $resultobj->errors;
-                if (is_array($errors)) {
-                    $errors = implode(', ', $errors);
-                }
-            } else if (!empty($resultobj->info)) {
-                // Show info if no errors are returned.
-                $errors = $resultobj->info;
-                if (is_array($errors)) {
-                    $errors = implode(', ', $errors);
-                }
-            }
-            $resultobj->info = array(get_string('errorpredictionsprocessor', 'analytics', $errors));
+        if ($resultobj->status != 0) {
+            $resultobj = $this->format_error_info($resultobj);
         }
 
         return $resultobj;
@@ -189,44 +256,29 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      */
     public function classify($uniqueid, \stored_file $dataset, $outputdir) {
 
-        // Obtain the physical route to the file.
-        $datasetpath = $this->get_file_path($dataset);
+        if (!$this->useserver) {
+            // Use the local file system.
 
-        $cmd = "{$this->pathtopython} -m moodlemlbackend.prediction " .
-            escapeshellarg($uniqueid) . ' ' .
-            escapeshellarg($outputdir) . ' ' .
-            escapeshellarg($datasetpath);
+            list($result, $exitcode) = $this->exec_command('prediction', [$uniqueid, $outputdir,
+                $this->get_file_path($dataset)], 'errornopredictresults');
 
-        if (!PHPUNIT_TEST && CLI_SCRIPT) {
-            debugging($cmd, DEBUG_DEVELOPER);
-        }
+        } else {
+            // Use the server.
 
-        $output = null;
-        $exitcode = null;
-        $result = exec($cmd, $output, $exitcode);
+            $requestparams = ['uniqueid' => $uniqueid, 'dirhash' => $this->hash_dir($outputdir),
+                'dataset' => $dataset];
 
-        if (!$result) {
-            throw new \moodle_exception('errornopredictresults', 'analytics');
+            $url = $this->get_server_url('prediction');
+            list($result, $httpcode) = $this->server_request($url, 'post', $requestparams);
         }
 
         if (!$resultobj = json_decode($result)) {
             throw new \moodle_exception('errorpredictwrongformat', 'analytics', '', json_last_error_msg());
         }
 
-        if ($exitcode != 0) {
-            if (!empty($resultobj->errors)) {
-                $errors = $resultobj->errors;
-                if (is_array($errors)) {
-                    $errors = implode(', ', $errors);
-                }
-            } else if (!empty($resultobj->info)) {
-                // Show info if no errors are returned.
-                $errors = $resultobj->info;
-                if (is_array($errors)) {
-                    $errors = implode(', ', $errors);
-                }
-            }
-            $resultobj->info = array(get_string('errorpredictionsprocessor', 'analytics', $errors));
+
+        if ($resultobj->status != 0) {
+            $resultobj = $this->format_error_info($resultobj);
         }
 
         return $resultobj;
@@ -245,37 +297,72 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      */
     public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset,
             $outputdir, $trainedmodeldir) {
+        global $CFG;
 
-        // Obtain the physical route to the file.
-        $datasetpath = $this->get_file_path($dataset);
+        if (!$this->useserver) {
+            // Use the local file system.
 
-        $cmd = "{$this->pathtopython} -m moodlemlbackend.evaluation " .
-            escapeshellarg($uniqueid) . ' ' .
-            escapeshellarg($outputdir) . ' ' .
-            escapeshellarg($datasetpath) . ' ' .
-            escapeshellarg(\core_analytics\model::MIN_SCORE) . ' ' .
-            escapeshellarg($maxdeviation) . ' ' .
-            escapeshellarg($niterations);
+            $datasetpath = $this->get_file_path($dataset);
 
-        if ($trainedmodeldir) {
-            $cmd .= ' ' . escapeshellarg($trainedmodeldir);
+            $params = [$uniqueid, $outputdir, $datasetpath, \core_analytics\model::MIN_SCORE,
+                $maxdeviation, $niterations];
+
+            if ($trainedmodeldir) {
+                $params[] = $trainedmodeldir;
+            }
+
+            list($result, $exitcode) = $this->exec_command('evaluation', $params, 'errornopredictresults');
+            if (!$resultobj = json_decode($result)) {
+                throw new \moodle_exception('errorpredictwrongformat', 'analytics', '', json_last_error_msg());
+            }
+
+        } else {
+            // Use the server.
+
+            $requestparams = ['uniqueid' => $uniqueid, 'minscore' => \core_analytics\model::MIN_SCORE,
+                'maxdeviation' => $maxdeviation, 'niterations' => $niterations,
+                'dirhash' => $this->hash_dir($outputdir), 'dataset' => $dataset];
+
+            if ($trainedmodeldir) {
+                $requestparams['trainedmodeldirhash'] = $this->hash_dir($trainedmodeldir);
+            }
+
+            $url = $this->get_server_url('evaluation');
+            list($result, $httpcode) = $this->server_request($url, 'post', $requestparams);
+
+            if (!$resultobj = json_decode($result)) {
+                throw new \moodle_exception('errorpredictwrongformat', 'analytics', '', json_last_error_msg());
+            }
+
+            // We need an extra request to get the resources generated during the evaluation process.
+
+            // Directory to temporarly store the evaluation log zip returned by the server.
+            $evaluationtmpdir = make_request_directory('mlbackend_python_evaluationlog');
+            $evaluationzippath = $evaluationtmpdir . DIRECTORY_SEPARATOR . 'evaluationlog.zip';
+
+            $requestparams = ['uniqueid' => $uniqueid, 'dirhash' => $this->hash_dir($outputdir),
+            'runid' => $resultobj->runid];
+
+            $url = $this->get_server_url('evaluationlog');
+            list($result, $httpcode) = $this->server_request($url, 'download_one', $requestparams,
+                ['filepath' => $evaluationzippath]);
+
+            $rundir = $outputdir . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . $resultobj->runid;
+            if (!mkdir($rundir, $CFG->directorypermissions, true)) {
+                throw new \moodle_exception('errorexportmodelresult', 'analytics');
+            }
+
+            $zip = new \zip_packer();
+            $success = $zip->extract_to_pathname($evaluationzippath, $rundir, null, null, true);
+            if (!$success) {
+                $a = 'The evaluation files can not be exported to ' . $rundir;
+                throw new \moodle_exception('errorpredictionsprocessor', 'analytics', '', $a);
+            }
+
+            $resultobj->dir = $rundir;
         }
 
-        if (!PHPUNIT_TEST && CLI_SCRIPT) {
-            debugging($cmd, DEBUG_DEVELOPER);
-        }
-
-        $output = null;
-        $exitcode = null;
-        $result = exec($cmd, $output, $exitcode);
-
-        if (!$result) {
-            throw new \moodle_exception('errornopredictresults', 'analytics');
-        }
-
-        if (!$resultobj = json_decode($result)) {
-            throw new \moodle_exception('errorpredictwrongformat', 'analytics', '', json_last_error_msg());
-        }
+        $resultobj = $this->add_extra_result_info($resultobj);
 
         return $resultobj;
     }
@@ -290,29 +377,36 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      */
     public function export(string $uniqueid, string $modeldir) : string {
 
-        // We include an exporttmpdir as we want to be sure that the file is not deleted after the
-        // python process finishes.
         $exporttmpdir = make_request_directory('mlbackend_python_export');
 
-        $cmd = "{$this->pathtopython} -m moodlemlbackend.export " .
-            escapeshellarg($uniqueid) . ' ' .
-            escapeshellarg($modeldir) . ' ' .
-            escapeshellarg($exporttmpdir);
+        if (!$this->useserver) {
+            // Use the local file system.
 
-        if (!PHPUNIT_TEST && CLI_SCRIPT) {
-            debugging($cmd, DEBUG_DEVELOPER);
-        }
+            // We include an exporttmpdir as we want to be sure that the file is not deleted after the
+            // python process finishes.
+            list($exportdir, $exitcode) = $this->exec_command('export', [$uniqueid, $modeldir, $exporttmpdir],
+                'errorexportmodelresult');
 
-        $output = null;
-        $exitcode = null;
-        $exportdir = exec($cmd, $output, $exitcode);
+            if ($exitcode != 0) {
+                throw new \moodle_exception('errorexportmodelresult', 'analytics');
+            }
 
-        if ($exitcode != 0) {
-            throw new \moodle_exception('errorexportmodelresult', 'analytics');
-        }
+        } else {
+            // Use the server.
 
-        if (!$exportdir) {
-            throw new \moodle_exception('errorexportmodelresult', 'analytics');
+            $requestparams = ['uniqueid' => $uniqueid, 'dirhash' => $this->hash_dir($modeldir)];
+
+            $exportzippath = $exporttmpdir . DIRECTORY_SEPARATOR . 'export.zip';
+            $url = $this->get_server_url('export');
+            list($result, $httpcode) = $this->server_request($url, 'download_one', $requestparams,
+                ['filepath' => $exportzippath]);
+
+            $exportdir = make_request_directory();
+            $zip = new \zip_packer();
+            $success = $zip->extract_to_pathname($exportzippath, $exportdir, null, null, true);
+            if (!$success) {
+                throw new \moodle_exception('errorexportmodelresult', 'analytics');
+            }
         }
 
         return $exportdir;
@@ -328,28 +422,33 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      */
     public function import(string $uniqueid, string $modeldir, string $importdir) : bool {
 
-        $cmd = "{$this->pathtopython} -m moodlemlbackend.import " .
-            escapeshellarg($uniqueid) . ' ' .
-            escapeshellarg($modeldir) . ' ' .
-            escapeshellarg($importdir);
+        if (!$this->useserver) {
+            // Use the local file system.
 
-        if (!PHPUNIT_TEST && CLI_SCRIPT) {
-            debugging($cmd, DEBUG_DEVELOPER);
+            list($result, $exitcode) = $this->exec_command('import', [$uniqueid, $modeldir, $importdir],
+                'errorimportmodelresult');
+
+            if ($exitcode != 0) {
+                throw new \moodle_exception('errorimportmodelresult', 'analytics');
+            }
+
+        } else {
+            // Use the server.
+
+            // Zip the $importdir to send a single file.
+            $importzipfile = $this->zip_dir($importdir);
+            if (!$importzipfile) {
+                // There was an error zipping the directory.
+                throw new \moodle_exception('errorimportmodelresult', 'analytics');
+            }
+
+            $requestparams = ['uniqueid' => $uniqueid, 'dirhash' => $this->hash_dir($modeldir),
+                'importzip' => curl_file_create($importzipfile, null, 'import.zip')];
+            $url = $this->get_server_url('import');
+            list($result, $httpcode) = $this->server_request($url, 'post', $requestparams);
         }
 
-        $output = null;
-        $exitcode = null;
-        $success = exec($cmd, $output, $exitcode);
-
-        if ($exitcode != 0) {
-            throw new \moodle_exception('errorimportmodelresult', 'analytics');
-        }
-
-        if (!$success) {
-            throw new \moodle_exception('errorimportmodelresult', 'analytics');
-        }
-
-        return $success;
+        return (bool)$result;
     }
 
     /**
@@ -440,5 +539,210 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         return 0;
+    }
+
+    /**
+     * Executes the specified module.
+     *
+     * @param  string $modulename
+     * @param  array  $params
+     * @param  string $errorlangstr
+     * @return array [0] is the result body and [1] the exit code.
+     */
+    protected function exec_command(string $modulename, array $params, string $errorlangstr) {
+
+        $cmd = $this->pathtopython . ' -m moodlemlbackend.' . $modulename . ' ';
+        foreach ($params as $param) {
+            $cmd .= escapeshellarg($param) . ' ';
+        }
+
+        if (!PHPUNIT_TEST && CLI_SCRIPT) {
+            debugging($cmd, DEBUG_DEVELOPER);
+        }
+
+        $output = null;
+        $exitcode = null;
+        $result = exec($cmd, $output, $exitcode);
+
+        if (!$result) {
+            throw new \moodle_exception($errorlangstr, 'analytics');
+        }
+
+        return [$result, $exitcode];
+    }
+
+    /**
+     * Formats the errors and info in a single info string.
+     *
+     * @param  \stdClass $resultobj
+     * @return \stdClass
+     */
+    private function format_error_info(\stdClass $resultobj) {
+        if (!empty($resultobj->errors)) {
+            $errors = $resultobj->errors;
+            if (is_array($errors)) {
+                $errors = implode(', ', $errors);
+            }
+        } else if (!empty($resultobj->info)) {
+            // Show info if no errors are returned.
+            $errors = $resultobj->info;
+            if (is_array($errors)) {
+                $errors = implode(', ', $errors);
+            }
+        }
+        $resultobj->info = array(get_string('errorpredictionsprocessor', 'analytics', $errors));
+
+        return $resultobj;
+    }
+
+    /**
+     * Returns the url to the python ML server.
+     *
+     * @param  string|null $path
+     * @return \moodle_url
+     */
+    private function get_server_url(?string $path = null) {
+        $protocol = !empty($this->secure) ? 'https' : 'http';
+        $url = $protocol . '://' . rtrim($this->host, '/');
+        if (!empty($this->port)) {
+            $url .= ':' . $this->port;
+        }
+
+        if ($path) {
+            $url .= '/' . $path;
+        }
+
+        return new \moodle_url($url);
+    }
+
+    /**
+     * Sends a request to the python ML server.
+     *
+     * @param  \moodle_url      $url            The requested url in the python ML server
+     * @param  string           $method         The curl method to use
+     * @param  array            $requestparams  Curl request params
+     * @param  array|null       $options        Curl request options
+     * @return array                            [0] for the response body and [1] for the http code
+     */
+    protected function server_request($url, string $method, array $requestparams, ?array $options = null) {
+
+        if ($method !== 'post' && $method !== 'get' && $method !== 'download_one') {
+            throw new \coding_exception('Incorrect request method provided. Only "get", "post" and "download_one"
+                actions are available.');
+        }
+
+        // Connection is allowed to use 'localhost' and other potentially blocked hosts/ports.
+        $curl = new \curl(['ignoresecurity' => true]);
+
+        $authorization = $this->username . ':' . $this->password;
+        $curl->setHeader('Authorization: Basic ' . base64_encode($authorization));
+
+        $responsebody = $curl->{$method}($url, $requestparams, $options);
+
+        if ($curl->info['http_code'] !== 200) {
+            throw new \moodle_exception('errorserver', 'mlbackend_python', '',
+                $this->server_error_str($curl->info['http_code'], $responsebody));
+        }
+
+        return [$responsebody, $curl->info['http_code']];
+    }
+
+    /**
+     * Adds extra information to results info.
+     *
+     * @param  \stdClass $resultobj
+     * @return \stdClass
+     */
+    protected function add_extra_result_info(\stdClass $resultobj): \stdClass {
+
+        if (!empty($resultobj->dir)) {
+            $dir = $resultobj->dir . DIRECTORY_SEPARATOR . 'tensor';
+            $resultobj->info[] = get_string('tensorboardinfo', 'mlbackend_python', $dir);
+        }
+        return $resultobj;
+    }
+
+    /**
+     * Returns the proper return value for the version checking.
+     *
+     * @param  string $actual   Actual moodlemlbackend version
+     * @param  int    $vercheck Version checking result
+     * @return true|string      Returns true on success, a string detailing the error otherwise
+     */
+    private function version_check_return($actual, $vercheck) {
+
+        if ($vercheck === 0) {
+            return true;
+        }
+
+        if ($actual) {
+            $a = [
+                'installed' => $actual,
+                'required' => self::REQUIRED_PIP_PACKAGE_VERSION,
+            ];
+
+            if ($vercheck < 0) {
+                return get_string('packageinstalledshouldbe', 'mlbackend_python', $a);
+
+            } else if ($vercheck > 0) {
+                return get_string('packageinstalledtoohigh', 'mlbackend_python', $a);
+            }
+        }
+
+        if (!$this->useserver) {
+            $cmd = "{$this->pathtopython} -m moodlemlbackend.version";
+        } else {
+            // We can't not know which is the python bin in the python ML server, the most likely
+            // value is 'python'.
+            $cmd = "python -m moodlemlbackend.version";
+        }
+        return get_string('pythonpackagenotinstalled', 'mlbackend_python', $cmd);
+    }
+
+    /**
+     * Hashes the provided dir as a string.
+     *
+     * @param  string $dir Directory path
+     * @return string Hash
+     */
+    private function hash_dir(string $dir) {
+        return md5($dir);
+    }
+
+    /**
+     * Zips the provided directory.
+     *
+     * @param  string $dir Directory path
+     * @return string The zip filename
+     */
+    private function zip_dir(string $dir) {
+
+        $ziptmpdir = make_request_directory('mlbackend_python');
+        $ziptmpfile = $ziptmpdir . DIRECTORY_SEPARATOR . 'mlbackend.zip';
+
+        $files = get_directory_list($dir);
+        $zipfiles = [];
+        foreach ($files as $file) {
+            $fullpath = $dir . DIRECTORY_SEPARATOR . $file;
+            // Use the relative path to the file as the path in the zip.
+            $zipfiles[$file] = $fullpath;
+        }
+
+        $zip = new \zip_packer();
+        if (!$zip->archive_to_pathname($zipfiles, $ziptmpfile)) {
+            return false;
+        }
+
+        return $ziptmpfile;
+    }
+
+    /**
+     * Error string for httpcode !== 200
+     *
+     * @param int       $httpstatuscode The HTTP status code
+     * @param string    $responsebody   The body of the response
+     */
+    private function server_error_str(int $httpstatuscode, string $responsebody): string {
+        return 'HTTP status code ' . $httpstatuscode . ': ' . $responsebody;
     }
 }

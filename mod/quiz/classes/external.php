@@ -105,8 +105,9 @@ class mod_quiz_external extends external_api {
 
                 if (has_capability('mod/quiz:view', $context)) {
                     // Format intro.
-                    list($quizdetails['intro'], $quizdetails['introformat']) = external_format_text($quiz->intro,
-                                                                    $quiz->introformat, $context->id, 'mod_quiz', 'intro', null);
+                    $options = array('noclean' => true);
+                    list($quizdetails['intro'], $quizdetails['introformat']) =
+                        external_format_text($quiz->intro, $quiz->introformat, $context->id, 'mod_quiz', 'intro', null, $options);
 
                     $quizdetails['introfiles'] = external_util::get_area_files($context->id, 'mod_quiz', 'intro', false, false);
                     $viewablefields = array('timeopen', 'timeclose', 'grademethod', 'section', 'visible', 'groupmode',

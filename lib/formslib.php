@@ -77,7 +77,12 @@ function form_init_date_js() {
     global $PAGE;
     static $done = false;
     if (!$done) {
+        $done = true;
         $calendar = \core_calendar\type_factory::get_calendar_instance();
+        if ($calendar->get_name() !== 'gregorian') {
+            // The YUI2 calendar only supports the gregorian calendar type.
+            return;
+        }
         $module   = 'moodle-form-dateselector';
         $function = 'M.form.dateselector.init_date_selectors';
         $defaulttimezone = date_default_timezone_get();
@@ -105,7 +110,6 @@ function form_init_date_js() {
             'december'          => date_format_string(strtotime("December 1"), '%B', $defaulttimezone)
         ));
         $PAGE->requires->yui_module($module, $function, $config);
-        $done = true;
     }
 }
 
@@ -165,6 +169,10 @@ abstract class moodleform {
      * @param mixed $attributes you can pass a string of html attributes here or an array.
      *               Special attribute 'data-random-ids' will randomise generated elements ids. This
      *               is necessary when there are several forms on the same page.
+     *               Special attribute 'data-double-submit-protection' set to 'off' will turn off
+     *               double-submit protection JavaScript - this may be necessary if your form sends
+     *               downloadable files in response to a submit button, and can't call
+     *               \core_form\util::form_download_complete();
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
@@ -2470,14 +2478,16 @@ require(["core/event", "jquery"], function(Event, $) {
 ';
                 }
             }
+            // This handles both randomised (MDL-65217) and non-randomised IDs.
+            $errorid = preg_replace('/^id_/', 'id_error_', $this->_attributes['id']);
             $validateJS .= '
       ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
       if (!ret && !first_focus) {
         first_focus = true;
         Y.use(\'moodle-core-event\', function() {
             Y.Global.fire(M.core.globalEvents.FORM_ERROR, {formid: \'' . $this->_attributes['id'] . '\',
-                                                           elementid: \'id_error_' . $escapedElementName . '\'});
-            document.getElementById(\'id_error_' . $escapedElementName . '\').focus();
+                                                           elementid: \'' . $errorid. '\'});
+            document.getElementById(\'' . $errorid . '\').focus();
         });
       }
 ';

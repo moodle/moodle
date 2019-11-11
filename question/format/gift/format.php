@@ -283,7 +283,7 @@ class qformat_gift extends qformat_default {
         } else if ($answertext == '') {
             $question->qtype = 'essay';
 
-        } else if ($answertext{0} == '#') {
+        } else if ($answertext[0] == '#') {
             $question->qtype = 'numerical';
 
         } else if (strpos($answertext, '~') !== false) {

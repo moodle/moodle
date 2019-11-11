@@ -935,6 +935,7 @@ class qformat_xml extends qformat_default {
             // The import should have the format in human readable form, so translate to machine readable format.
             $qo->infoformat = $this->trans_format($question['#']['info'][0]['@']['format']);
         }
+        $qo->idnumber = $this->getpath($question, array('#', 'idnumber', 0, '#'), null);
         return $qo;
     }
 
@@ -1205,6 +1206,7 @@ class qformat_xml extends qformat_default {
             $expout .= "    <info {$infoformat}>\n";
             $expout .= "      {$categoryinfo}";
             $expout .= "    </info>\n";
+            $expout .= "    <idnumber>{$question->idnumber}</idnumber>\n";
             $expout .= "  </question>\n";
             return $expout;
         }

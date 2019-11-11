@@ -534,6 +534,196 @@ class behat_navigation extends behat_base {
     }
 
     /**
+     * Open a given page, belonging to a plugin or core component.
+     *
+     * The page-type are interpreted by each plugin to work out the
+     * corresponding URL. See the resolve_url method in each class like
+     * behat_mod_forum. That method should document which page types are
+     * recognised, and how the name identifies them.
+     *
+     * For pages belonging to core, the 'core > ' bit is omitted.
+     *
+     * @When I am on the :page page
+     * @param string $page the component and page name.
+     *      E.g. 'Admin notifications' or 'core_user > Preferences'.
+     * @throws Exception if the specified page cannot be determined.
+     */
+    public function i_am_on_page(string $page) {
+        $this->getSession()->visit($this->locate_path(
+                $this->resolve_page_helper($page)->out_as_local_url()));
+    }
+
+    /**
+     * Open a given page logged in as a given user.
+     *
+     * This is like the combination
+     *   When I log in as "..."
+     *   And I am on the "..." page
+     * but with the advantage that you go straight to the desired page, without
+     * having to wait for the Dashboard to load.
+     *
+     * @When I am on the :page page logged in as :username
+     * @param string $page the type of page. E.g. 'Admin notifications' or 'core_user > Preferences'.
+     * @param string $username the name of the user to log in as. E.g. 'admin'.
+     * @throws Exception if the specified page cannot be determined.
+     */
+    public function i_am_on_page_logged_in_as(string $page, string $username) {
+        self::execute('behat_auth::i_log_in_as', [$username, $this->resolve_page_helper($page)]);
+    }
+
+    /**
+     * Helper used by i_am_on_page() and i_am_on_page_logged_in_as().
+     *
+     * @param string $page the type of page. E.g. 'Admin notifications' or 'core_user > Preferences'.
+     * @return moodle_url the corresponding URL.
+     */
+    protected function resolve_page_helper(string $page): moodle_url {
+        list($component, $name) = $this->parse_page_name($page);
+        if ($component === 'core') {
+            return $this->resolve_core_page_url($name);
+        } else {
+            $context = behat_context_helper::get('behat_' . $component);
+            return $context->resolve_page_url($name);
+        }
+    }
+
+    /**
+     * Parse a full page name like 'Admin notifications' or 'core_user > Preferences'.
+     *
+     * E.g. parsing 'mod_quiz > View' gives ['mod_quiz', 'View'].
+     *
+     * @param string $page the full page name
+     * @return array with two elements, component and page name.
+     */
+    protected function parse_page_name(string $page): array {
+        $dividercount = substr_count($page, ' > ');
+        if ($dividercount === 0) {
+            return ['core', $page];
+        } else if ($dividercount === 1) {
+            list($component, $name) = explode(' > ', $page);
+            if ($component === 'core') {
+                throw new coding_exception('Do not specify the component "core > ..." for core pages.');
+            }
+            return [$component, $name];
+        } else {
+            throw new coding_exception('The page name most be in the form ' .
+                    '"{page-name}" for core pages, or "{component} > {page-name}" ' .
+                    'for pages belonging to other components. ' .
+                    'For example "Admin notifications" or "mod_quiz > View".');
+        }
+    }
+
+    /**
+     * Open a given instance of a page, belonging to a plugin or core component.
+     *
+     * The instance identifier and page-type are interpreted by each plugin to
+     * work out the corresponding URL. See the resolve_page_instance_url method
+     * in each class like behat_mod_forum. That method should document which page
+     * types are recognised, and how the name identifies them.
+     *
+     * For pages belonging to core, the 'core > ' bit is omitted.
+     *
+     * @When I am on the :identifier :type page
+     * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
+     * @param string $type the component and page type. E.g. 'mod_quiz > View'.
+     * @throws Exception if the specified page cannot be determined.
+     */
+    public function i_am_on_page_instance(string $identifier, string $type) {
+        $this->getSession()->visit($this->locate_path(
+                $this->resolve_page_instance_helper($identifier, $type)->out_as_local_url()));
+    }
+
+    /**
+     * Open a given page logged in as a given user.
+     *
+     * This is like the combination
+     *   When I log in as "..."
+     *   And I am on the "..." "..." page
+     * but with the advantage that you go straight to the desired page, without
+     * having to wait for the Dashboard to load.
+     *
+     * @When I am on the :identifier :type page logged in as :username
+     * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
+     * @param string $type the component and page type. E.g. 'mod_quiz > View'.
+     * @param string $username the name of the user to log in as. E.g. 'student'.
+     * @throws Exception if the specified page cannot be determined.
+     */
+    public function i_am_on_page_instance_logged_in_as(string $identifier,
+            string $type, string $username) {
+        self::execute('behat_auth::i_log_in_as',
+                [$username, $this->resolve_page_instance_helper($identifier, $type)]);
+    }
+
+    /**
+     * Helper used by i_am_on_page() and i_am_on_page_logged_in_as().
+     *
+     * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
+     * @param string $pagetype the component and page type. E.g. 'mod_quiz > View'.
+     * @return moodle_url the corresponding URL.
+     */
+    protected function resolve_page_instance_helper(string $identifier, string $pagetype): moodle_url {
+        list($component, $type) = $this->parse_page_name($pagetype);
+        if ($component === 'core') {
+            return $this->resolve_core_page_instance_url($type, $identifier);
+        } else {
+            $context = behat_context_helper::get('behat_' . $component);
+            return $context->resolve_page_instance_url($type, $identifier);
+        }
+    }
+
+    /**
+     * Convert core page names to URLs for steps like 'When I am on the "[page name]" page'.
+     *
+     * Recognised page names are:
+     * | Homepage            | Homepage (normally dashboard).                                 |
+     * | Admin notifications | Admin notification screen.                                     |
+     *
+     * @param string $name identifies which identifies this page, e.g. 'Homepage', 'Admin notifications'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_core_page_url(string $name): moodle_url {
+        switch ($name) {
+            case 'Homepage':
+                return new moodle_url('/');
+
+            case 'Admin notifications':
+                return new moodle_url('/admin/');
+
+            default:
+                throw new Exception('Unrecognised core page type "' . $name . '."');
+        }
+    }
+
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * Recognised page names are:
+     * | Page type     | Identifier meaning | description                          |
+     * | Category page | category idnumber  | List of courses in that category.    |
+     *
+     * @param string $type identifies which type of page this is, e.g. 'Category page'.
+     * @param string $identifier identifies the particular page, e.g. 'test-cat'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_core_page_instance_url(string $type, string $identifier): moodle_url {
+        global $DB;
+
+        switch ($type) {
+            case 'Category page':
+                $categoryid = $DB->get_field('course_categories', 'id', ['idnumber' => $identifier]);
+                if (!$categoryid) {
+                    throw new Exception('The specified category with idnumber "' . $identifier . '" does not exist');
+                }
+                return new moodle_url('/course/category.php', ['id' => $categoryid]);
+
+            default:
+                throw new Exception('Unrecognised core page type "' . $type . '."');
+        }
+    }
+
+    /**
      * Opens the course homepage.
      *
      * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage$/

@@ -869,6 +869,11 @@ class core_filelib_testcase extends advanced_testcase {
         // Save without merge.
         file_save_draft_area_files(IGNORE_FILE_MERGE, $usercontext->id, 'user', 'private', 0);
         $this->assertCount(2, $fs->get_area_files($usercontext->id, 'user', 'private'));
+        // Save again, this time including some inline text.
+        $inlinetext = 'Some text <img src="@@PLUGINFILE@@/file.png">';
+        $text = file_save_draft_area_files(IGNORE_FILE_MERGE, $usercontext->id, 'user', 'private', 0, null, $inlinetext);
+        $this->assertCount(2, $fs->get_area_files($usercontext->id, 'user', 'private'));
+        $this->assertEquals($inlinetext, $text);
     }
 
     /**
@@ -1055,14 +1060,16 @@ EOF;
         $options = $curl->get_options();
         $this->assertNotEmpty($options);
 
+        $moodlebot = \core_useragent::get_moodlebot_useragent();
+
         $curl->call_apply_opt($options);
-        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+        $this->assertTrue(in_array("User-Agent: $moodlebot", $curl->header));
         $this->assertFalse(in_array('User-Agent: Test/1.0', $curl->header));
 
         $options['CURLOPT_USERAGENT'] = 'Test/1.0';
         $curl->call_apply_opt($options);
         $this->assertTrue(in_array('User-Agent: Test/1.0', $curl->header));
-        $this->assertFalse(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+        $this->assertFalse(in_array("User-Agent: $moodlebot", $curl->header));
 
         $curl->set_option('CURLOPT_USERAGENT', 'AnotherUserAgent/1.0');
         $curl->call_apply_opt();
@@ -1077,7 +1084,7 @@ EOF;
 
         $curl->unset_option('CURLOPT_USERAGENT');
         $curl->call_apply_opt();
-        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+        $this->assertTrue(in_array("User-Agent: $moodlebot", $curl->header));
 
         // Finally, test it via exttests, to ensure the agent is sent properly.
         // Matching.

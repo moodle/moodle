@@ -230,4 +230,25 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         $this->assertEquals(0, $DB->count_records('question_attempts') - $initialqarows);
         $this->assertEquals(2, $DB->count_records('question_attempt_steps') - $initialqasrows);
     }
+
+    /**
+     * Test that database operations on an empty usage work without errors.
+     */
+    public function test_save_and_load_an_empty_usage() {
+        $this->resetAfterTest();
+
+        // Create a new usage.
+        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba->set_preferred_behaviour('deferredfeedback');
+
+        // Save it.
+        question_engine::save_questions_usage_by_activity($quba);
+
+        // Reload it.
+        $reloadedquba = question_engine::load_questions_usage_by_activity($quba->get_id());
+        $this->assertCount(0, $quba->get_slots());
+
+        // Delete it.
+        question_engine::delete_questions_usage_by_activity($quba->get_id());
+    }
 }

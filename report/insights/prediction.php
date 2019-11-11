@@ -27,6 +27,13 @@ require_once($CFG->libdir . '/adminlib.php');
 
 $predictionid = required_param('id', PARAM_INT);
 
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    $PAGE->set_context(\context_system::instance());
+    $renderer = $PAGE->get_renderer('report_insights');
+    echo $renderer->render_analytics_disabled();
+    exit(0);
+}
+
 list($model, $prediction, $context) = \core_analytics\manager::get_prediction($predictionid, true);
 if ($context->contextlevel < CONTEXT_COURSE) {
     // Only for higher levels than course.
@@ -71,12 +78,16 @@ if (!$model->uses_insights()) {
     exit(0);
 }
 
+if ($context->id == SYSCONTEXTID) {
+    $PAGE->set_heading(get_site()->shortname);
+} else {
+    $PAGE->set_heading($insightinfo->contextname);
+}
 $PAGE->set_title($insightinfo->insightname);
-$PAGE->set_heading($insightinfo->contextname);
 
 echo $OUTPUT->header();
 
-$renderable = new \report_insights\output\insight($prediction, $model, false);
+$renderable = new \report_insights\output\insight($prediction, $model, false, $context);
 echo $renderer->render($renderable);
 
 echo $OUTPUT->footer();

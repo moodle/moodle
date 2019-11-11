@@ -30,9 +30,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
     And quiz "Quiz 1" contains the following questions:
       | question | page | requireprevious |
       | TF1      | 1    | 1               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "be attempted" "link" should not be visible
     # The text "be attempted" is used as a relatively unique string in both the add and remove links.
 
@@ -49,9 +47,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | question | page | requireprevious |
       | TF1      | 1    | 0               |
       | TF2      | 1    | 1               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "This question cannot be attempted until the previous question has been completed." "link" should be visible
 
   @javascript
@@ -67,9 +63,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | question                | page | requireprevious |
       | Random (Test questions) | 1    | 0               |
       | TF1                     | 1    | 1               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "This question cannot be attempted until the previous question has been completed." "link" should be visible
 
   @javascript
@@ -87,9 +81,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF1      | 1    | 0               |
       | TF2      | 1    | 0               |
       | TF3      | 1    | 0               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     When I follow "No restriction on when question 2 can be attempted • Click to change"
     Then "Question 2 cannot be attempted until the previous question 1 has been completed • Click to change" "link" should be visible
     And "No restriction on when question 3 can be attempted • Click to change" "link" should be visible
@@ -109,9 +101,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF1      | 1    | 0               |
       | TF2      | 1    | 1               |
       | TF3      | 1    | 1               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     When I follow "Question 3 cannot be attempted until the previous question 2 has been completed • Click to change"
     Then "Question 2 cannot be attempted until the previous question 1 has been completed • Click to change" "link" should be visible
     And "No restriction on when question 3 can be attempted • Click to change" "link" should be visible
@@ -131,9 +121,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | Random (Test questions) | 1    | 0               |
       | TF1                     | 1    | 1               |
       | TF2                     | 1    | 1               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "be attempted" "link" in the "TF1" "list_item" should not be visible
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
@@ -153,9 +141,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
     And quiz "Quiz 1" contains the following sections:
       | heading   | firstslot | shuffle |
       | Section 1 | 1         | 1       |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
   @javascript
@@ -175,9 +161,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | heading   | firstslot | shuffle |
       | Section 1 | 1         | 1       |
       | Section 2 | 2         | 0       |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
   @javascript
@@ -193,9 +177,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | question | page | requireprevious |
       | TF1      | 1    | 1               |
       | TF2      | 1    | 1               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
   @javascript
@@ -211,9 +193,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | question | page | requireprevious |
       | Story    | 1    | 0               |
       | TF1      | 1    | 0               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "be attempted" "link" in the "TF1" "list_item" should not be visible
 
   @javascript
@@ -229,9 +209,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | question | page | requireprevious |
       | Info     | 1    | 0               |
       | TF1      | 1    | 0               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "be attempted" "link" in the "TF1" "list_item" should not be visible
 
   @javascript
@@ -249,9 +227,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF1      | 1    | 0               |
       | TF2      | 1    | 1               |
       | TF3      | 1    | 1               |
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     When I move "Question 1" to "After Question 3" in the quiz by clicking the move icon
     Then "Question 2 cannot be attempted until the previous question 1 has been completed • Click to change" "link" should be visible
     And "No restriction on when question 3 can be attempted • Click to change" "link" should be visible

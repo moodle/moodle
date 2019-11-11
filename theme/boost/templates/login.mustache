@@ -32,6 +32,7 @@
 {{> theme_boost/head }}
 
 <body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
 
 <div id="page-wrapper">
 
@@ -67,5 +68,8 @@
 </body>
 </html>
 {{#js}}
-require(['theme_boost/loader']);
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+  M.util.js_complete('theme_boost/loader');
+});
 {{/js}}

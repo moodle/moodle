@@ -234,6 +234,27 @@ class question_type {
     }
 
     /**
+     * Get extra actions for a question of this type to add to the question bank edit menu.
+     *
+     * This method is called if the {@link edit_menu_column} is being used in the
+     * question bank, which it is by default since Moodle 3.8. If applicable for
+     * your question type, you can return arn array of {@link action_menu_link}s.
+     * These will be added at the end of the Edit menu for this question.
+     *
+     * The $question object passed in will have a hard-to-predict set of fields,
+     * because the fields present depend on which columns are included in the
+     * question bank view. However, you can rely on 'id', 'createdby',
+     * 'contextid', 'hidden' and 'category' (id) being present, and so you
+     * can call question_has_capability_on without causing performance problems.
+     *
+     * @param stdClass $question the available information about the particular question the action is for.
+     * @return action_menu_link[] any actions you want to add to the Edit menu for this question.
+     */
+    public function get_extra_question_bank_actions(stdClass $question): array {
+        return [];
+    }
+
+    /**
      * This method should be overriden if you want to include a special heading or some other
      * html on a question editing page besides the question editing form.
      *

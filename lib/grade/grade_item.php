@@ -681,9 +681,7 @@ class grade_item extends grade_object {
             if ($category_array && array_key_exists($this->categoryid, $category_array)) {
                 $category = $category_array[$this->categoryid];
                 //call set_hidden on the category regardless of whether it is hidden as its parent might be hidden
-                //if($category->is_hidden()) {
-                    $category->set_hidden($hidden, false);
-                //}
+                $category->set_hidden($hidden, false);
             }
         }
     }

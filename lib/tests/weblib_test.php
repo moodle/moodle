@@ -525,6 +525,18 @@ EXPECTED;
                 'email' => "moodle@example.com>\r\nRCPT TO:<victim@example.com",
                 'result' => false
             ],
+            [
+                'email' => 'greater>than@example.com',
+                'result' => false
+            ],
+            [
+                'email' => 'less<than@example.com',
+                'result' => false
+            ],
+            [
+                'email' => '"this<is>validbutwerejectit"@example.com',
+                'result' => false
+            ],
 
             // Extra email addresses from Wikipedia page on Email Addresses.
             // Valid.
@@ -829,5 +841,40 @@ EXPECTED;
         );
         $extracteddraftareas = extract_draft_file_urls_from_text($html, false, 5, 'user', 'draft');
         $this->assertEquals($draftareas, $extracteddraftareas);
+    }
+
+    public function test_print_password_policy() {
+        $this->resetAfterTest(true);
+        global $CFG;
+
+        $policydisabled = '';
+
+        // Set password policy to disabled.
+        $CFG->passwordpolicy = false;
+
+        // Check for empty response.
+        $this->assertEquals($policydisabled, print_password_policy());
+
+        // Now set the policy to enabled with every control disabled.
+        $CFG->passwordpolicy = true;
+        $CFG->minpasswordlength = 0;
+        $CFG->minpassworddigits = 0;
+        $CFG->minpasswordlower = 0;
+        $CFG->minpasswordupper = 0;
+        $CFG->minpasswordnonalphanum = 0;
+        $CFG->maxconsecutiveidentchars = 0;
+
+        // Check for empty response.
+        $this->assertEquals($policydisabled, print_password_policy());
+
+        // Now enable some controls, and check that the policy responds with policy text.
+        $CFG->minpasswordlength = 8;
+        $CFG->minpassworddigits = 1;
+        $CFG->minpasswordlower = 1;
+        $CFG->minpasswordupper = 1;
+        $CFG->minpasswordnonalphanum = 1;
+        $CFG->maxconsecutiveidentchars = 1;
+
+        $this->assertNotEquals($policydisabled, print_password_policy());
     }
 }

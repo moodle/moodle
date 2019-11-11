@@ -69,30 +69,37 @@
 
 .que.ddwtos .group2 {
     background-color: #dcdcdc;
+    border-radius: 10px 0 0 0;
 }
 
 .que.ddwtos .group3 {
     background-color: #b0c4de;
+    border-radius: 0 10px 0 0;
 }
 
 .que.ddwtos .group4 {
     background-color: #d8bfd8;
+    border-radius: 0 0 10px 0;
 }
 
 .que.ddwtos .group5 {
     background-color: #87cefa;
+    border-radius: 0 0 0 10px;
 }
 
 .que.ddwtos .group6 {
     background-color: #daa520;
+    border-radius: 0 10px 10px 0;
 }
 
 .que.ddwtos .group7 {
     background-color: #ffd700;
+    border-radius: 10px 0 0 10px;
 }
 
 .que.ddwtos .group8 {
     background-color: #f0e68c;
+    border-radius: 10px 10px 10px 10px;
 }
 
 .que.ddwtos sub,

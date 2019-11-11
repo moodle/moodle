@@ -46,10 +46,7 @@ Feature: Quiz group override
     Given the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz"
-    And I navigate to "Group overrides" in current page administration
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
     And I press "Add group override"
     Then the "Override group" select box should contain "Group 1"
     And the "Override group" select box should not contain "Group 2"
@@ -58,18 +55,12 @@ Feature: Quiz group override
     Given the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
-    When I log in as "teacher3"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz"
-    And I navigate to "Group overrides" in current page administration
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher3"
     Then I should see "No groups you can access."
     And the "Add group override" "button" should be disabled
 
   Scenario: A teacher with accessallgroups permission should see all group overrides
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz"
-    And I navigate to "Group overrides" in current page administration
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "admin"
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group | Group 1 |
@@ -80,10 +71,7 @@ Feature: Quiz group override
       | Attempts allowed | 2       |
     And I press "Save"
     And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz"
-    And I navigate to "Group overrides" in current page administration
+    And I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
     Then I should see "Group 1" in the ".generaltable" "css_element"
     And I should see "Group 2" in the ".generaltable" "css_element"
 
@@ -91,10 +79,7 @@ Feature: Quiz group override
     Given the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz"
-    And I navigate to "Group overrides" in current page administration
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "admin"
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group | Group 1 |
@@ -105,9 +90,6 @@ Feature: Quiz group override
       | Attempts allowed | 2 |
     And I press "Save"
     And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz"
-    And I navigate to "Group overrides" in current page administration
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
     Then I should see "Group 1" in the ".generaltable" "css_element"
     And I should not see "Group 2" in the ".generaltable" "css_element"

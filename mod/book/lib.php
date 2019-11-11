@@ -215,17 +215,11 @@ function book_grades($bookid) {
 }
 
 /**
- * This function returns if a scale is being used by one book
- * it it has support for grading and scales. Commented code should be
- * modified if necessary. See book, glossary or journal modules
- * as reference.
- *
- * @param int $bookid
- * @param int $scaleid
- * @return boolean True if the scale is used by any journal
+ * @deprecated since Moodle 3.8
  */
-function book_scale_used($bookid, $scaleid) {
-    return false;
+function book_scale_used() {
+    throw new coding_exception('book_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**
@@ -570,7 +564,7 @@ function book_export_contents($cm, $baseurl) {
     $currentchapter = 0;
 
     foreach ($chapters as $chapter) {
-        if ($chapter->hidden) {
+        if ($chapter->hidden && !has_capability('mod/book:viewhiddenchapters', $context)) {
             continue;
         }
 
@@ -579,6 +573,7 @@ function book_export_contents($cm, $baseurl) {
             "title"     => format_string($chapter->title, true, array('context' => $context)),
             "href"      => $chapter->id . "/index.html",
             "level"     => 0,
+            "hidden"    => $chapter->hidden,
             "subitems"  => array()
         );
 

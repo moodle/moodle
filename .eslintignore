@@ -61,6 +61,8 @@ lib/amd/src/popper.js
 lib/geopattern-php/
 lib/php-jwt/
 lib/babel-polyfill/
+lib/emoji-data/
+lib/h5p/
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/

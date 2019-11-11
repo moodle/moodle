@@ -125,10 +125,9 @@ abstract class backup_activity_structure_step extends backup_structure_step {
 }
 
 /**
- * Abstract structure step, to be used by all the activities using core questions stuff
- * (namely quiz module), supporting question plugins, states and sessions
+ * Helper code for use by any plugin that stores question attempt data that it needs to back up.
  */
-abstract class backup_questions_activity_structure_step extends backup_activity_structure_step {
+trait backup_questions_attempt_data_trait {
 
     /**
      * Attach to $element (usually attempts) the needed backup structures
@@ -197,6 +196,17 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
             $step->annotate_files('question', $filearea, 'id');
         }
     }
+}
+
+
+/**
+ * Abstract structure step to help activities that store question attempt data.
+ *
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class backup_questions_activity_structure_step extends backup_activity_structure_step {
+    use backup_questions_attempt_data_trait;
 }
 
 
@@ -274,6 +284,9 @@ class backup_module_structure_step extends backup_structure_step {
 
         // attach format plugin structure to $module element, only one allowed
         $this->add_plugin_structure('format', $module, false);
+
+        // Attach report plugin structure to $module element, multiple allowed.
+        $this->add_plugin_structure('report', $module, true);
 
         // attach plagiarism plugin structure to $module element, there can be potentially
         // many plagiarism plugins storing information about this course

@@ -421,6 +421,26 @@ function(
     };
 
     /**
+     * Get the emoji picker container element.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     * @return {Object} The emoji picker container element.
+     */
+    var getEmojiPickerContainer = function(footer) {
+        return footer.find(SELECTORS.EMOJI_PICKER_CONTAINER);
+    };
+
+    /**
+     * Get the emoji picker container element.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     * @return {Object} The emoji picker container element.
+     */
+    var getEmojiAutoCompleteContainer = function(footer) {
+        return footer.find(SELECTORS.EMOJI_AUTO_COMPLETE_CONTAINER);
+    };
+
+    /**
      * Get a message element.
      *
      * @param  {Object} body Conversation body container element.
@@ -967,6 +987,47 @@ function(
             showMoreMessagesLoadingIcon(body);
         } else {
             hideMoreMessagesLoadingIcon(body);
+        }
+    };
+
+    /**
+     * Hide or show the emoji picker.
+     *
+     * @param {Object} header The header container element.
+     * @param {Object} body The body container element.
+     * @param {Object} footer The footer container element.
+     * @param {Bool} show Should the emoji picker be visible.
+     */
+    var renderShowEmojiPicker = function(header, body, footer, show) {
+        var container = getEmojiPickerContainer(footer);
+
+        if (show) {
+            container.removeClass('hidden');
+            container.attr('aria-hidden', false);
+            container.find(SELECTORS.EMOJI_PICKER_SEARCH_INPUT).focus();
+        } else {
+            container.addClass('hidden');
+            container.attr('aria-hidden', true);
+        }
+    };
+
+    /**
+     * Hide or show the emoji auto complete.
+     *
+     * @param {Object} header The header container element.
+     * @param {Object} body The body container element.
+     * @param {Object} footer The footer container element.
+     * @param {Bool} show Should the emoji picker be visible.
+     */
+    var renderShowEmojiAutoComplete = function(header, body, footer, show) {
+        var container = getEmojiAutoCompleteContainer(footer);
+
+        if (show) {
+            container.removeClass('hidden');
+            container.attr('aria-hidden', false);
+        } else {
+            container.addClass('hidden');
+            container.attr('aria-hidden', true);
         }
     };
 
@@ -1637,7 +1698,9 @@ function(
                 isFavourite: renderIsFavourite,
                 isMuted: renderIsMuted,
                 loadingConfirmAction: renderLoadingConfirmAction,
-                inEditMode: renderInEditMode
+                inEditMode: renderInEditMode,
+                showEmojiPicker: renderShowEmojiPicker,
+                showEmojiAutoComplete: renderShowEmojiAutoComplete,
             },
             {
                 // Scrolling should be last to make sure everything

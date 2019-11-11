@@ -109,7 +109,7 @@ class core_webservice_renderer extends plugin_renderer_base {
             $modifiedauthoriseduserurl = new moodle_url('/' . $CFG->admin . '/webservice/service_user_settings.php',
                             array('userid' => $user->id, 'serviceid' => $serviceid));
             $html .= html_writer::tag('a', $user->firstname . " "
-                            . $user->lastname . ", " . $user->email,
+                            . $user->lastname . ", " . s($user->email),
                             array('href' => $modifiedauthoriseduserurl));
             //add missing capabilities
             if (!empty($user->missingcapabilities)) {

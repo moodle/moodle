@@ -2,8 +2,12 @@ This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
 === 3.8 ===
+
 * The following functions have been finally deprecated and can not be used any more:
   - core_course_external::get_activities_overview
+* External function core_course_external::get_enrolled_courses_by_timeline_classification now also supports the classification
+  'allincludinghidden' which delivers all courses including hidden courses. The classification 'all' still returns all courses
+  without hidden courses.
 
 === 3.7 ===
 

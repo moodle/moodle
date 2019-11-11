@@ -155,7 +155,7 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
     protected function create_event($properties = []) {
         $record = new \stdClass();
         $record->name = 'event name';
-        $record->eventtype = 'global';
+        $record->eventtype = 'site';
         $record->repeat = 0;
         $record->repeats = 0;
         $record->timestart = time();

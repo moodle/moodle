@@ -49,6 +49,29 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $optionalsubsystems->add(new admin_setting_configcheckbox('allowstealth', new lang_string('allowstealthmodules'),
         new lang_string('allowstealthmodules_help'), 0, 1, 0));
 
-    $optionalsubsystems->add(new admin_setting_configcheckbox('enablecoursepublishing',
-        new lang_string('enablecoursepublishing', 'hub'), new lang_string('enablecoursepublishing_help', 'hub'), 0));
+    $optionalsubsystems->add(new admin_setting_configcheckbox('enableanalytics', new lang_string('enableanalytics', 'admin'),
+        new lang_string('configenableanalytics', 'admin'), 1, 1, 0));
+
+    $fullunicodesupport = true;
+    if ($DB->get_dbfamily() == 'mysql') {
+        $collation = $DB->get_dbcollation();
+        $collationinfo = explode('_', $collation);
+        $charset = reset($collationinfo);
+        $fullunicodesupport = $charset === 'utf8mb4';
+    }
+
+    if ($fullunicodesupport) {
+        $optionalsubsystems->add(new admin_setting_configcheckbox(
+            'allowemojipicker',
+            new lang_string('allowemojipicker', 'admin'),
+            new lang_string('configallowemojipicker', 'admin'),
+            1
+        ));
+    } else {
+        $optionalsubsystems->add(new admin_setting_description(
+            'allowemojipicker',
+            new lang_string('allowemojipicker', 'admin'),
+            new lang_string('configallowemojipickerincompatible', 'admin')
+        ));
+    }
 }

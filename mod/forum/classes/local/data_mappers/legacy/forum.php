@@ -55,6 +55,7 @@ class forum {
                 'assesstimestart' => $forum->get_assess_time_start(),
                 'assesstimefinish' => $forum->get_assess_time_finish(),
                 'scale' => $forum->get_scale(),
+                'grade_forum' => $forum->get_grade_for_forum(),
                 'maxbytes' => $forum->get_max_bytes(),
                 'maxattachments' => $forum->get_max_attachments(),
                 'forcesubscribe' => $forum->get_subscription_mode(),

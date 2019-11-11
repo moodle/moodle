@@ -1,0 +1,34 @@
+.layout {
+    &.fullscreen {
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: $zindex-modal-backdrop;
+        transition: 0.5s;
+        width: 100vw;
+        margin: 0;
+        opacity: 1;
+        background-color: $modal-content-bg;
+
+        > div {
+            height: 100%;
+            width: 100%;
+        }
+
+        .loading-icon {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            display: inline-block;
+            width: 100%;
+            top: 40%;
+            position: fixed;
+            .icon {
+                width: 1em;
+                height: 1em;
+                font-size: 4em;
+            }
+        }
+    }
+}

@@ -28,6 +28,13 @@ $predictionid = required_param('predictionid', PARAM_INT);
 $actionname = required_param('action', PARAM_ALPHANUMEXT);
 $forwardurl = required_param('forwardurl', PARAM_LOCALURL);
 
+if (!\core_analytics\manager::is_analytics_enabled()) {
+    $PAGE->set_context(\context_system::instance());
+    $renderer = $PAGE->get_renderer('report_insights');
+    echo $renderer->render_analytics_disabled();
+    exit(0);
+}
+
 list($model, $prediction, $context) = \core_analytics\manager::get_prediction($predictionid, true);
 if ($context->contextlevel < CONTEXT_COURSE) {
     // Only for higher levels than course.

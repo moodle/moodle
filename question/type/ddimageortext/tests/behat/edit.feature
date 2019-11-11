@@ -26,7 +26,7 @@ Feature: Test editing a drag and drop onto image questions
 
   @javascript
   Scenario: Edit a drag and drop onto image question
-    When I click on "Edit" "link" in the "Drag onto image" "table_row"
+    And I choose "Edit question" action for "Drag onto image" in the question bank
     And I set the following fields to these values:
       | Question name | Edited question name |
     And I press "id_submitbutton"

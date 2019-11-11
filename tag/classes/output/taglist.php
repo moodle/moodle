@@ -45,6 +45,9 @@ class taglist implements templatable {
     /** @var string */
     protected $label;
 
+    /** @var bool $accesshidelabel if true, the label should have class="accesshide" added. */
+    protected $accesshidelabel;
+
     /** @var string */
     protected $classes;
 
@@ -59,14 +62,17 @@ class taglist implements templatable {
      *               to use default, set to '' (empty string) to omit the label completely
      * @param string $classes additional classes for the enclosing div element
      * @param int $limit limit the number of tags to display, if size of $tags is more than this limit the "more" link
-     *               will be appended to the end, JS will toggle the rest of the tags
+     *               will be appended to the end, JS will toggle the rest of the tags. 0 means no limit.
      * @param context $pagecontext specify if needed to overwrite the current page context for the view tag link
+     * @param bool $accesshidelabel if true, the label should have class="accesshide" added.
      */
-    public function __construct($tags, $label = null, $classes = '', $limit = 10, $pagecontext = null) {
+    public function __construct($tags, $label = null, $classes = '',
+            $limit = 10, $pagecontext = null, $accesshidelabel = false) {
         global $PAGE;
         $canmanagetags = has_capability('moodle/tag:manage', \context_system::instance());
 
         $this->label = ($label === null) ? get_string('tags') : $label;
+        $this->accesshidelabel = $accesshidelabel;
         $this->classes = $classes;
         $fromctx = $pagecontext ? $pagecontext->id :
                 (($PAGE->context->contextlevel == CONTEXT_SYSTEM) ? 0 : $PAGE->context->id);
@@ -106,6 +112,7 @@ class taglist implements templatable {
         return (object)array(
             'tags' => array_values($this->tags),
             'label' => $this->label,
+            'accesshidelabel' => $this->accesshidelabel,
             'tagscount' => $cnt,
             'overflow' => ($this->limit && $cnt > $this->limit) ? 1 : 0,
             'classes' => $this->classes,

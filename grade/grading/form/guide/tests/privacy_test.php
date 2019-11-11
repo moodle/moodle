@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/grade/grading/tests/fixtures/marking_guide.php');
 
 use \core_privacy\tests\provider_testcase;
 use \core_privacy\local\request\writer;
@@ -35,6 +34,7 @@ use \gradingform_guide\privacy\provider;
 /**
  * Privacy tests for gradingform_guide.
  *
+ * @package    gradingform_guide
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -79,7 +79,7 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
     }
 
     /**
-     * Test the export of rubric data.
+     * Test the export of guide data.
      */
     public function test_get_gradingform_export_data() {
         global $DB;
@@ -91,28 +91,19 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
         $this->setUser($user);
 
         $modulecontext = context_module::instance($module->cmid);
-        $guide = new test_guide($modulecontext, 'testrubrib', 'Description text');
-        $guide->add_criteria(
-            'Spelling mistakes',
-            'Full marks will be given for no spelling mistakes.',
-            'Deduct 5 points per spelling mistake made.',
-            25
-        );
-        $guide->add_criteria(
-            'Pictures',
-            'Full marks will be given for including 3 pictures.',
-            'Give 5 points for each picture present',
-            15
-        );
-        $guide->create_guide();
+        $controller = $this->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
         $itemid = 1;
-        $gradedata = [
-            ['remark' => 'This user made several mistakes.', 'score' => 5],
-            ['remark' => 'This user has two pictures.', 'score' => 10]
-        ];
-        $instance = $guide->grade_item($user->id, $itemid, $gradedata);
+        $instance = $controller->create_instance($user->id, $itemid);
+        $data = $this->get_test_form_data(
+            $controller,
+            $itemid,
+            5, 'This user made several mistakes.',
+            10, 'This user has two pictures.'
+        );
+
+        $instance->update($data);
         $instanceid = $instance->get_data('id');
 
         // Let's try the method we are testing.
@@ -126,7 +117,7 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
     }
 
     /**
-     * Test the deletion of rubric user information via the instance ID.
+     * Test the deletion of guide user information via the instance ID.
      */
     public function test_delete_gradingform_for_instances() {
         global $DB;
@@ -138,64 +129,32 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
         $this->setUser($user);
 
         $modulecontext = context_module::instance($module->cmid);
-        $guide = new test_guide($modulecontext, 'testrubrib', 'Description text');
-        $guide->add_criteria(
-            'Spelling mistakes',
-            'Full marks will be given for no spelling mistakes.',
-            'Deduct 5 points per spelling mistake made.',
-            25
-        );
-        $guide->add_criteria(
-            'Pictures',
-            'Full marks will be given for including 3 pictures.',
-            'Give 5 points for each picture present',
-            15
-        );
-        $guide->create_guide();
+        $controller = $this->get_test_guide($modulecontext);
 
-        $controller = $guide->manager->get_controller('guide');
         // In the situation of mod_assign this would be the id from assign_grades.
         $itemid = 1;
         $instance = $controller->create_instance($user->id, $itemid);
-        // I need the ids for the criteria and there doesn't seem to be a nice method to get it.
-        $criteria = $DB->get_records('gradingform_guide_criteria');
-        $data = ['criteria' => []];
-        foreach ($criteria as $key => $value) {
-            if ($value->shortname == 'Spelling mistakes') {
-                $data['criteria'][$key]['remark'] = 'This user made several mistakes.';
-                $data['criteria'][$key]['remarkformat'] = 0;
-                $data['criteria'][$key]['score'] = 5;
-            } else {
-                $data['criteria'][$key]['remark'] = 'This user has two pictures.';
-                $data['criteria'][$key]['remarkformat'] = 0;
-                $data['criteria'][$key]['score'] = 10;
-            }
-        }
-        $data['itemid'] = $itemid;
+        $data = $this->get_test_form_data(
+            $controller,
+            $itemid,
+            5, 'This user made several mistakes.',
+            10, 'This user has two pictures.'
+        );
 
-        // Update this instance with data.
         $instance->update($data);
+        $instanceid = $instance->get_data('id');
 
         $itemid = 2;
         $instance = $controller->create_instance($user->id, $itemid);
-        // I need the ids for the criteria and there doesn't seem to be a nice method to get it.
-        $criteria = $DB->get_records('gradingform_guide_criteria');
-        $data = ['criteria' => []];
-        foreach ($criteria as $key => $value) {
-            if ($value->shortname == 'Spelling mistakes') {
-                $data['criteria'][$key]['remark'] = 'This user made no mistakes.';
-                $data['criteria'][$key]['remarkformat'] = 0;
-                $data['criteria'][$key]['score'] = 25;
-            } else {
-                $data['criteria'][$key]['remark'] = 'This user has one pictures.';
-                $data['criteria'][$key]['remarkformat'] = 0;
-                $data['criteria'][$key]['score'] = 5;
-            }
-        }
-        $data['itemid'] = $itemid;
+        $data = $this->get_test_form_data(
+            $controller,
+            $itemid,
+            25, 'This user made no mistakes.',
+            5, 'This user has one pictures.'
+        );
 
-        // Update this instance with data.
         $instance->update($data);
+        $instanceid = $instance->get_data('id');
 
         // Check how many records we have in the fillings table.
         $records = $DB->get_records('gradingform_guide_fillings');
@@ -207,5 +166,50 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
         foreach ($records as $record) {
             $this->assertNotEquals($instance->get_id(), $record->instanceid);
         }
+    }
+
+    /**
+     * Generate a guide controller with sample data required for testing of this class.
+     *
+     * @param context_module $context
+     * @return gradingform_guide_controller
+     */
+    protected function get_test_guide(context_module $context): gradingform_guide_controller {
+        $generator = \testing_util::get_data_generator();
+        $guidegenerator = $generator->get_plugin_generator('gradingform_guide');
+
+        return $guidegenerator->get_test_guide($context);
+    }
+
+    /**
+     * Fetch a set of sample data.
+     *
+     * @param gradingform_guide_controller $controller
+     * @param int $itemid
+     * @param float $spellingscore
+     * @param string $spellingremark
+     * @param float $picturescore
+     * @param string $pictureremark
+     * @return array
+     */
+    protected function get_test_form_data(
+        gradingform_guide_controller $controller,
+        int $itemid,
+        float $spellingscore,
+        string $spellingremark,
+        float $picturescore,
+        string $pictureremark
+    ): array {
+        $generator = \testing_util::get_data_generator();
+        $guidegenerator = $generator->get_plugin_generator('gradingform_guide');
+
+        return $guidegenerator->get_test_form_data(
+            $controller,
+            $itemid,
+            $spellingscore,
+            $spellingremark,
+            $picturescore,
+            $pictureremark
+        );
     }
 }

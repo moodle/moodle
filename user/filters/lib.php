@@ -64,11 +64,30 @@ class user_filtering {
         }
 
         if (empty($fieldnames)) {
-            $fieldnames = array('realname' => 0, 'lastname' => 1, 'firstname' => 1, 'username' => 1, 'email' => 1, 'city' => 1,
+            // As a start, add all fields as advanced fields (which are only available after clicking on "Show more").
+            $fieldnames = array('realname' => 1, 'lastname' => 1, 'firstname' => 1, 'username' => 1, 'email' => 1, 'city' => 1,
                                 'country' => 1, 'confirmed' => 1, 'suspended' => 1, 'profile' => 1, 'courserole' => 1,
                                 'anycourses' => 1, 'systemrole' => 1, 'cohort' => 1, 'firstaccess' => 1, 'lastaccess' => 1,
                                 'neveraccessed' => 1, 'timemodified' => 1, 'nevermodified' => 1, 'auth' => 1, 'mnethostid' => 1,
                                 'idnumber' => 1, 'lastip' => 1);
+
+            // Get the config which filters the admin wanted to show by default.
+            $userfiltersdefault = get_config('core', 'userfiltersdefault');
+
+            // If the admin did not enable any filter, the form will not make much sense if all fields are hidden behind
+            // "Show more". Thus, we enable the 'realname' filter automatically.
+            if ($userfiltersdefault == '') {
+                $userfiltersdefault = array('realname');
+
+                // Otherwise, we split the enabled filters into an array.
+            } else {
+                $userfiltersdefault = explode(',', $userfiltersdefault);
+            }
+
+            // Show these fields by default which the admin has enabled in the config.
+            foreach ($userfiltersdefault as $key) {
+                $fieldnames[$key] = 0;
+            }
         }
 
         $this->_fields  = array();

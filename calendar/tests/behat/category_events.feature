@@ -48,7 +48,7 @@ Feature: Course Category Events
       | student2    | B2i       | student           |
     And the following "events" exist:
       | name        | eventtype |
-      | Site event  | global    |
+      | Site event  | site    |
     And the following "events" exist:
       | name        | eventtype | course |
       | CA1i event  | course    | A1i    |

@@ -325,6 +325,7 @@ class workshop_summary_exporter extends exporter {
         return [
             'component' => 'mod_workshop',
             'filearea' => 'intro',
+            'options' => array('noclean' => true),
         ];
     }
 

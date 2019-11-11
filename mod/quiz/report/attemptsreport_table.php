@@ -657,10 +657,14 @@ abstract class quiz_attempts_report_table extends table_sql {
      *
      * It returns the HTML for a master \core\output\checkbox_toggleall component that selects/deselects all quiz attempts.
      *
+     * @param string $columnname The name of the checkbox column.
      * @return string
      */
-    public function checkbox_col_header() {
+    public function checkbox_col_header(string $columnname) {
         global $OUTPUT;
+
+        // Make sure to disable sorting on this column.
+        $this->no_sorting($columnname);
 
         // Build the select/deselect all control.
         $selectallid = $this->uniqueid . '-selectall-attempts';

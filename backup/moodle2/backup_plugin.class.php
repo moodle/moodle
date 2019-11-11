@@ -34,13 +34,27 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class backup_plugin {
 
+    /** @var string */
     protected $plugintype;
+    /** @var string */
     protected $pluginname;
+    /** @var string */
     protected $connectionpoint;
+    /** @var backup_optigroup_element */
     protected $optigroup; // Optigroup, parent of all optigroup elements
+    /** @var backup_structure_step */
     protected $step;
+    /** @var backup_course_task|backup_activity_task */
     protected $task;
 
+    /**
+     * backup_plugin constructor.
+     *
+     * @param string $plugintype
+     * @param string $pluginname
+     * @param backup_optigroup_element $optigroup
+     * @param backup_structure_step $step
+     */
     public function __construct($plugintype, $pluginname, $optigroup, $step) {
         $this->plugintype = $plugintype;
         $this->pluginname = $pluginname;

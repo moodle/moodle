@@ -36,6 +36,14 @@ defined('MOODLE_INTERNAL') || die();
 class core_customfield_generator_testcase extends advanced_testcase {
 
     /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass() {
+        $handler = core_course\customfield\course_handler::create();
+        $handler->delete_all();
+    }
+
+    /**
      * Get generator
      * @return core_customfield_generator
      */

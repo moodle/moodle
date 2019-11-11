@@ -38,4 +38,4 @@ $string['reseteveryonesdashboard'] = 'Reset Dashboard for all users';
 $string['reseteveryonesprofile'] = 'Reset profile for all users';
 $string['resetpage'] = 'Reset page to default';
 $string['reseterror'] = 'There was an error resetting your page';
-$string['privacy:metadata:core_my:preference:user_home_page_preference'] = 'The user home page preference configured for the Dashboard page.';
+$string['privacy:metadata:core_my:preference:user_home_page_preference'] = 'The user home page preference.';

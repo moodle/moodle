@@ -33,6 +33,8 @@ $cmid = optional_param('cmid', 0, PARAM_INT);
 $overrideid = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', null, PARAM_ALPHA);
 $reset = optional_param('reset', false, PARAM_BOOL);
+$userid = optional_param('userid', null, PARAM_INT);
+$userchange = optional_param('userchange', false, PARAM_BOOL);
 
 $pagetitle = get_string('editoverride', 'assign');
 
@@ -68,7 +70,9 @@ require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
 $assign = new assign($context, $cm, $course);
-$assigninstance = $assign->get_instance();
+$assigninstance = $assign->get_instance($userid);
+$shouldadduserid = $userid && !empty($course->relativedatesmode);
+$shouldresetform = optional_param('resetbutton', 0, PARAM_ALPHA) || ($userchange && $action !== 'duplicate');
 
 // Add or edit an override.
 require_capability('mod/assign:manageoverrides', $context);
@@ -111,23 +115,30 @@ if ($action === 'duplicate') {
     $pagetitle = get_string('duplicateoverride', 'assign');
 }
 
+if ($shouldadduserid) {
+    $data->userid = $userid;
+}
+
 $overridelisturl = new moodle_url('/mod/assign/overrides.php', array('cmid' => $cm->id));
 if (!$groupmode) {
     $overridelisturl->param('mode', 'user');
 }
 
 // Setup the form.
-$mform = new assign_override_form($url, $cm, $assign, $context, $groupmode, $override);
+$mform = new assign_override_form($url, $cm, $assign, $context, $groupmode, $override, $userid);
 $mform->set_data($data);
 
 if ($mform->is_cancelled()) {
     redirect($overridelisturl);
 
-} else if (optional_param('resetbutton', 0, PARAM_ALPHA)) {
+} else if ($shouldresetform) {
     $url->param('reset', true);
+    if ($shouldadduserid) {
+        $url->param('userid', $userid);
+    }
     redirect($url);
 
-} else if ($fromform = $mform->get_data()) {
+} else if (!$userchange && $fromform = $mform->get_data()) {
     // Process the data.
     $fromform->assignid = $assigninstance->id;
 

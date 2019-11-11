@@ -1044,7 +1044,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 
     // Do not merge files, leave it as it was.
     if ($draftitemid === IGNORE_FILE_MERGE) {
-        return null;
+        // Safely return $text, no need to rewrite pluginfile because this is mostly comming from an external client like the app.
+        return $text;
     }
 
     $usercontext = context_user::instance($USER->id);
@@ -2158,23 +2159,26 @@ function readfile_accel($file, $mimetype, $accelerate) {
         }
     }
 
-    if ($accelerate and !empty($CFG->xsendfile)) {
-        if (empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
-            header('Accept-Ranges: bytes');
-        } else {
-            header('Accept-Ranges: none');
-        }
+    if ($accelerate and empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
+        header('Accept-Ranges: bytes');
+    } else {
+        header('Accept-Ranges: none');
+    }
 
+    if ($accelerate) {
         if (is_object($file)) {
             $fs = get_file_storage();
-            if ($fs->xsendfile($file->get_contenthash())) {
-                return;
+            if ($fs->supports_xsendfile()) {
+                if ($fs->xsendfile($file->get_contenthash())) {
+                    return;
+                }
             }
-
         } else {
-            require_once("$CFG->libdir/xsendfilelib.php");
-            if (xsendfile($file)) {
-                return;
+            if (!empty($CFG->xsendfile)) {
+                require_once("$CFG->libdir/xsendfilelib.php");
+                if (xsendfile($file)) {
+                    return;
+                }
             }
         }
     }
@@ -2184,7 +2188,6 @@ function readfile_accel($file, $mimetype, $accelerate) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
 
     if ($accelerate and empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
-        header('Accept-Ranges: bytes');
 
         if (!empty($_SERVER['HTTP_RANGE']) and strpos($_SERVER['HTTP_RANGE'],'bytes=') !== FALSE) {
             // byteserving stuff - for acrobat reader and download accelerators
@@ -2222,9 +2225,6 @@ function readfile_accel($file, $mimetype, $accelerate) {
                 byteserving_send_file($handle, $mimetype, $ranges, $filesize);
             }
         }
-    } else {
-        // Do not byteserve
-        header('Accept-Ranges: none');
     }
 
     header('Content-Length: '.$filesize);
@@ -2250,10 +2250,10 @@ function readfile_accel($file, $mimetype, $accelerate) {
  * Similar to readfile_accel() but designed for strings.
  * @param string $string
  * @param string $mimetype
- * @param bool $accelerate
+ * @param bool $accelerate Ignored
  * @return void
  */
-function readstring_accel($string, $mimetype, $accelerate) {
+function readstring_accel($string, $mimetype, $accelerate = false) {
     global $CFG;
 
     if ($mimetype === 'text/plain') {
@@ -2264,14 +2264,6 @@ function readstring_accel($string, $mimetype, $accelerate) {
     }
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Accept-Ranges: none');
-
-    if ($accelerate and !empty($CFG->xsendfile)) {
-        $fs = get_file_storage();
-        if ($fs->xsendfile(sha1($string))) {
-            return;
-        }
-    }
-
     header('Content-Length: '.strlen($string));
     echo $string;
 }
@@ -2307,6 +2299,9 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         $filename = urlencode($filename);
     }
 
+    // If this file was requested from a form, then mark download as complete.
+    \core_form\util::form_download_complete();
+
     header('Content-Disposition: attachment; filename="'.$filename.'"');
     if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
         header('Cache-Control: private, max-age=10, no-transform');
@@ -2320,7 +2315,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
 
     // send the contents - we can not accelerate this because the file will be deleted asap
     if ($pathisstring) {
-        readstring_accel($path, $mimetype, false);
+        readstring_accel($path, $mimetype);
     } else {
         readfile_accel($path, $mimetype, false);
         @unlink($path);
@@ -2458,6 +2453,9 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 
     if ($forcedownload) {
         header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+        // If this file was requested from a form, then mark download as complete.
+        \core_form\util::form_download_complete();
     } else if ($mimetype !== 'application/x-shockwave-flash') {
         // If this is an swf don't pass content-disposition with filename as this makes the flash player treat the file
         // as an upload and enforces security that may prevent the file from being loaded.
@@ -2506,7 +2504,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
     if (empty($filter)) {
         // send the contents
         if ($pathisstring) {
-            readstring_accel($path, $mimetype, !$dontdie);
+            readstring_accel($path, $mimetype);
         } else {
             readfile_accel($path, $mimetype, !$dontdie);
         }
@@ -2526,7 +2524,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
             }
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
 
-            readstring_accel($output, $mimetype, false);
+            readstring_accel($output, $mimetype);
 
         } else if (($mimetype == 'text/plain') and ($filter == 1)) {
             // only filter text if filter all files is selected
@@ -2542,12 +2540,12 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
             }
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
 
-            readstring_accel($output, $mimetype, false);
+            readstring_accel($output, $mimetype);
 
         } else {
             // send the contents
             if ($pathisstring) {
-                readstring_accel($path, $mimetype, !$dontdie);
+                readstring_accel($path, $mimetype);
             } else {
                 readfile_accel($path, $mimetype, !$dontdie);
             }
@@ -3102,7 +3100,7 @@ class curl {
      */
     public function resetopt() {
         $this->options = array();
-        $this->options['CURLOPT_USERAGENT']         = 'MoodleBot/1.0';
+        $this->options['CURLOPT_USERAGENT']         = \core_useragent::get_moodlebot_useragent();
         // True to include the header in the output
         $this->options['CURLOPT_HEADER']            = 0;
         // True to Exclude the body from the output
@@ -3345,7 +3343,7 @@ class curl {
         } else if (!empty($this->options['CURLOPT_USERAGENT'])) {
             $useragent = $this->options['CURLOPT_USERAGENT'];
         } else {
-            $useragent = 'MoodleBot/1.0';
+            $useragent = \core_useragent::get_moodlebot_useragent();
         }
 
         // Set headers.

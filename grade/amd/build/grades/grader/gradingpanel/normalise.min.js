@@ -1,0 +1,2 @@
+define ("core_grades/grades/grader/gradingpanel/normalise",["exports"],function(a){"use strict";Object.defineProperty(a,"__esModule",{value:!0});a.failedUpdate=a.invalidResult=a.normaliseResult=void 0;a.normaliseResult=function normaliseResult(a){return{result:a,failed:!!a.warnings.length,success:!a.warnings.length,error:null}};a.invalidResult=function invalidResult(){return{success:!1,failed:!1,result:{},error:null}};a.failedUpdate=function failedUpdate(a){return{success:!1,failed:!0,result:{},error:a}}});
+//# sourceMappingURL=normalise.min.js.map

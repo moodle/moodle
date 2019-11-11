@@ -29,6 +29,8 @@ $string['accessstatement'] = 'Accessibility statement';
 $string['activitynext'] = 'Next activity';
 $string['activityprev'] = 'Previous activity';
 $string['breadcrumb'] = 'Navigation bar';
+$string['eventcontextlocked'] = 'Context frozen';
+$string['eventcontextunlocked'] = 'Context unfrozen';
 $string['hideblocka'] = 'Hide {$a} block';
 $string['showblocka'] = 'Show {$a} block';
 $string['sitemap'] = 'Site map';
@@ -39,7 +41,3 @@ $string['skipto'] = 'Skip to {$a}';
 $string['tocontent'] = 'Skip to main content';
 $string['tonavigation'] = 'Go to navigation';
 $string['youarehere'] = 'You are here';
-
-// Deprecated since Moodle 3.4.
-$string['monthnext'] = 'Next month';
-$string['monthprev'] = 'Previous month';

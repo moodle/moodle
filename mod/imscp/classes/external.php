@@ -163,8 +163,10 @@ class mod_imscp_external extends external_api {
 
                 if (has_capability('mod/imscp:view', $context)) {
                     // Format intro.
+                    $options = array('noclean' => true);
                     list($imscpdetails['intro'], $imscpdetails['introformat']) =
-                        external_format_text($imscp->intro, $imscp->introformat, $context->id, 'mod_imscp', 'intro', null);
+                        external_format_text($imscp->intro, $imscp->introformat, $context->id, 'mod_imscp', 'intro', null,
+                            $options);
                     $imscpdetails['introfiles'] = external_util::get_area_files($context->id, 'mod_imscp', 'intro', false, false);
                 }
 

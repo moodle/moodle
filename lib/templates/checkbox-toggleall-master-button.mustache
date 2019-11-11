@@ -31,12 +31,12 @@
         "togglegroup": "toggle-group",
         "label": "Select everything!",
         "checked": true,
-        "classes": "p-1",
+        "classes": "btn-primary btn-lg",
         "selectall": "Select all",
         "deselectall": "Deselect all"
     }
 }}
-<button type="button" id="{{id}}" name="{{name}}" class="btn btn-secondary {{classes}}"
+<button type="button" id="{{id}}" name="{{name}}" class="btn {{^classes}}btn-secondary{{/classes}}{{#classes}}{{.}}{{/classes}}"
         data-action="toggle"
         data-toggle="master"
         data-togglegroup="{{togglegroup}}"

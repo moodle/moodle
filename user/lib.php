@@ -1293,7 +1293,7 @@ function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx 
  * @param int $courseid The course id
  * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
  * @param int $accesssince The time since last access, 0 means any time
- * @param int $roleid The role id, 0 means all roles
+ * @param int $roleid The role id, 0 means all roles and -1 no roles
  * @param int $enrolid The enrolment id, 0 means all enrolment methods will be returned.
  * @param int $statusid The user enrolment status, -1 means all enrolments regardless of the status will be returned, if allowed.
  * @param string|array $search The search that was performed, empty means perform no search
@@ -1313,7 +1313,7 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
     // Default filter settings. We only show active by default, especially if the user has no capability to review enrolments.
     $onlyactive = true;
     $onlysuspended = false;
-    if (has_capability('moodle/course:enrolreview', $context)) {
+    if (has_capability('moodle/course:enrolreview', $context) && (has_capability('moodle/course:viewsuspendedusers', $context))) {
         switch ($statusid) {
             case ENROL_USER_ACTIVE:
                 // Nothing to do here.
@@ -1367,8 +1367,14 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
         list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true),
             SQL_PARAMS_NAMED, 'relatedctx');
 
-        $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $relatedctxsql)";
-        $params = array_merge($params, array('roleid' => $roleid), $relatedctxparams);
+        // Get users without any role.
+        if ($roleid == -1) {
+            $wheres[] = "u.id NOT IN (SELECT userid FROM {role_assignments} WHERE contextid $relatedctxsql)";
+            $params = array_merge($params, $relatedctxparams);
+        } else {
+            $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $relatedctxsql)";
+            $params = array_merge($params, array('roleid' => $roleid), $relatedctxparams);
+        }
     }
 
     if (!empty($search)) {

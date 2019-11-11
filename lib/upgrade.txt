@@ -2,7 +2,7 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.8 ===
-
+* The rotate_image function has been added to the stored_file class (MDL-63349)
 * The yui checknet module is removed. Call \core\session\manager::keepalive instead.
 * The generate_uuid() function has been deprecated. Please use \core\uuid::generate() instead.
 * Remove lib/pear/auth/RADIUS.php (MDL-65746)
@@ -22,6 +22,8 @@ information provided here is intended especially for developers.
     at least a single checkbox item is selected or not.
 * Final deprecation (removal) of the core/modal_confirm dialogue.
 * Upgrade scssphp to v1.0.2, This involves renaming classes from Leafo => ScssPhp as the repo has changed.
+* Implement supports_xsendfile() method and allow support for xsendfile in alternative_file_system_class
+  independently of local files (MDL-66304).
 * The methods get_local_path_from_storedfile and get_remote_path_from_storedfile in lib/filestore/file_system.php
   are now public. If you are overriding these then you will need to change your methods to public in your class.
 * $CFG->httpswwwroot has been removed. It is no longer necessary as loginhttps has already been removed and it's no longer being
@@ -39,7 +41,48 @@ information provided here is intended especially for developers.
       mod_forum/views/post: mod/forum/amd/src/views/post
 * The 'xxxx_check_password_policy' method now has an extra parameter: $user. It contains the user object to perform password
 validation against and defaults to null (so, no user needed) if not provided.
+* It is now possible to use sub-directories when creating mustache templates.
+  The standard rules for Level 2 namespaces also apply to templates.
+  The sub-directory used must be either an valid component, or placed inside a 'local' directory to ensure that it does not conflict with other components.
 
+    The following are all valid template names and locations in your plugin:
+      mod_forum/forum_post: mod/forum/templates/forum_post.mustache
+      mod_forum/local/post/user: mod/forum/templates/local/post/user.mustache
+      mod_forum/form/checkbox_toggle: mod/forum/templates/form/checkbox_toggle.mustache
+
+    The following are _invalid_ template names and locations:
+      mod_forum/post/user: mod/forum/templates/local/post/user.mustache
+* Following behat steps have been removed from core:
+    - I go to "<gradepath_string>" in the course gradebook
+* A new admin setting widget 'core_admin\local\settings\filesize' is added.
+* Core capabilities 'moodle/community:add' and 'moodle/community:download' have been removed from core as part of Moodle.net sunsetting.
+* As part of Moodle.net sunsetting process the following hub api functions have been deprecated:
+    - get_courses
+    - unregister_courses
+    - register_course
+    - add_screenshot
+    - download_course_backup
+    - upload_course_backup
+* A new setting 'Cache templates' was added (see MDL-66367). This setting determines if templates are cached or not.
+  This setting can be set via the UI or by defining $CFG->cachetemplates in your config.php file. It is a boolean
+  and should be set to either false or true. Developers will probably want to set this to false.
+* The core_enrol_edit_user_enrolment webservice has been deprecated. Please use core_enrol_submit_user_enrolment_form instead.
+* \single_button constructor has a new attributes param to add attributes to the button HTML tag.
+* Improved url matching behaviour for profiled urls and excluded urls
+* Attempting to use xsendfile via the 3rd param of readstring_accel() is now ignored.
+* New H5P libraries have been added to Moodle core in /lib/h5p.
+* New H5P core subsystem have been added.
+* Introduced new callback for plugin developers '<component>_get_path_from_pluginfile($filearea, $args)': This will return
+the itemid and filepath for the filearea and path defined in $args. It has been added in order to get the correct itemid and
+filepath because some components, such as mod_page or mod_resource, add the revision to the URL where the itemid should be placed
+(to prevent caching problems), but then they don't store it in database.
+* New utility function \core_form\util::form_download_complete should be called if your code sends
+  a file with Content-Disposition: Attachment in response to a Moodle form submit button (to ensure
+  that disabled submit buttons get re-enabled in that case). It is automatically called by the
+  filelib.php send_xx functions.
+* If you have a form which sends a file in response to a Moodle form submit button, but you cannot
+  call the above function because the file is sent by a third party library, then you should add
+  the attribute data-double-submit-protection="off" to your form.
 
 === 3.7 ===
 
@@ -64,6 +107,7 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   and get_reduced_timeout(). These allow for timeouts to be increased by a setting in config.php.
 * The $draftitemid parameter of file_save_draft_area_files() function now supports the constant IGNORE_FILE_MERGE:
   When the parameter is set to that constant, the function won't process file merging, keeping the original state of the file area.
+  Notice also than when $text is set, pluginfile rewrite won't be processed so the text will not be modified.
 * Introduced new callback for plugin developers '<component>_pre_processor_message_send($procname, $proceventdata)':
   This will allow any plugin to manipulate messages or notifications before they are sent by a processor (email, mobile...)
 * New capability 'moodle/category:viewcourselist' in category context that controls whether user is able to browse list of courses

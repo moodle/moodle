@@ -496,9 +496,9 @@ abstract class restore_structure_step extends restore_step {
         // Now, for each element not having one processing object, if
         // not child of grouped element, assign $this (the step itself) as processing element
         // Note method must exist or we'll get one @restore_path_element_exception
-        foreach($paths as $key => $pelement) {
+        foreach ($paths as $pelement) {
             if ($pelement->get_processing_object() === null && !$this->grouped_parent_exists($pelement, $paths)) {
-                $paths[$key]->set_processing_object($this);
+                $pelement->set_processing_object($this);
             }
             // Populate $elementsoldid and $elementsoldid based on available pathelements
             $this->elementsoldid[$pelement->get_name()] = null;
@@ -510,18 +510,22 @@ abstract class restore_structure_step extends restore_step {
 
     /**
      * Given one pathelement, return true if grouped parent was found
+     *
+     * @param restore_path_element $pelement the element we are interested in.
+     * @param restore_path_element[] $elements the elements that exist.
+     * @return bool true if this element is inside a grouped parent.
      */
-    protected function grouped_parent_exists($pelement, $elements) {
+    public function grouped_parent_exists($pelement, $elements) {
         foreach ($elements as $element) {
             if ($pelement->get_path() == $element->get_path()) {
-                continue; // Don't compare against itself
+                continue; // Don't compare against itself.
             }
-            // If element is grouped and parent of pelement, return true
+            // If element is grouped and parent of pelement, return true.
             if ($element->is_grouped() and strpos($pelement->get_path() .  '/', $element->get_path()) === 0) {
                 return true;
             }
         }
-        return false; // no grouped parent found
+        return false; // No grouped parent found.
     }
 
     /**

@@ -1,0 +1,157 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template gradingform_rubric/grades/grader/gradingpanel
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * instanceid: Instance of the module this grading form belongs too
+    * criterion: A gradeable item in the Marking Guide
+    * name: Name of the gradeable item
+    * id: ID of the gradeable item
+    * description: Description shown to students for this gradeable item
+    * descriptionmarkers: Description shown to teachers for this gradeable item
+    * maxscore: Max allowable assinable points for this item
+    * score: Current score assigned to the learner for this item
+    * remark: Text input for the teacher to relay to the student
+    * hascomments: Flag for frequently used comments
+    * comments: Array of frequently used comments
+    * description: Description of a frequently used comment
+
+    Example context (json):
+    {
+        "instanceid": "42",
+        "criterion": [
+            {
+                "name": "Motivation",
+                "id": 13,
+                "description": "Show your motivation to rock climbing",
+                "descriptionmarkers": "Does the student show interest in climbing?",
+                "maxscore": 37,
+                "score": 20,
+                "remark": "That's great!",
+                "hascomments": true,
+                "comments": [
+                    {"description": "Great work!"},
+                    {"description": "You should really try it before jumping to conclusions"}
+                ]
+            }
+        ]
+    }
+}}
+<form id="gradingform_guide-{{uniqid}}">
+  <input type="hidden" name="instanceid" value="{{instanceid}}">
+  {{#criterion}}
+    <div class="mb-3 criterion" data-gradingform-guide-role="criterion">
+      <div class="d-flex align-items-center">
+        <h5 class="description font-weight-bold mb-0">{{name}}</h5>
+        <button
+            class="btn btn-link px-1"
+            aria-controls="gradingform_guide-{{uniqid}}-criteria-{{id}}-description"
+            aria-expanded="false"
+            data-target="#gradingform_guide-{{uniqid}}-criteria-{{id}}-description"
+            data-toggle="collapse"
+            type="button"
+          >
+            {{# pix }} info, gradingform_guide {{/ pix }}
+        </button>
+        <button class="criterion-toggle btn btn-icon icon-no-margin text-reset p-0 font-weight-bold mb-0 ml-auto"
+                type="button"
+                data-toggle="collapse"
+                data-target="#criteria-{{id}}"
+                aria-expanded="true"
+                aria-controls="criteria-{{id}}">
+                <span class="collapsed-icon">
+                    {{#pix}} t/collapsed, core {{/pix}}
+                    <span class="sr-only">{{#str}} expandcriterion, core_grades {{/str}}</span>
+                </span>
+                <span class="expanded-icon">
+                    {{#pix}} t/expanded, core {{/pix}}
+                    <span class="sr-only">{{#str}} collapsecriterion, core_grades {{/str}}</span>
+                </span>
+        </button>
+      </div>
+      <div class="collapse" id="gradingform_guide-{{uniqid}}-criteria-{{id}}-description">
+          <div class="border p-3 mb-3 bg-white rounded">
+              {{{description}}}
+              {{#descriptionmarkers}}
+                  <hr>
+                  {{{descriptionmarkers}}}
+              {{/descriptionmarkers}}
+          </div>
+      </div>
+      <div class="collapse show" id="criteria-{{id}}">
+        <div class="form-group">
+          <label for="gradingform_guide-{{uniqid}}-criteria-{{id}}-score">{{#str}}outof, gradingform_guide, {{maxscore}}{{/str}}</label>
+          <input class="form-control" type="number" name="advancedgrading[criteria][{{id}}][score]" value="{{score}}"
+              id="gradingform_guide-{{uniqid}}-criteria-{{id}}-score"
+              aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-score">
+          <small id="gradingform_guide-{{uniqid}}-help-{{id}}-score" class="sr-only">{{#str}}grade_help, gradingform_guide{{/str}}</small>
+        </div>
+        <div class="form-group ">
+          <label class="text-muted" for="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark">{{#str}}additionalcomments, gradingform_guide{{/str}}</label>
+          <div class="input-group mb-3 form-inset form-inset-right">
+            <textarea class="form-control" type="text" name="advancedgrading[criteria][{{id}}][remark]"
+                id="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark"
+                aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-remark"
+                data-gradingform-guide-role="remark"
+                rows="2"
+                data-max-rows="5"
+                data-auto-rows
+                >{{remark}}</textarea>
+            {{#hascomments}}
+              <button
+                class="btn btn-icon form-inset-item icon-no-margin p-0 mt-1 mr-1 text-reset collapsed"
+                aria-controls="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark-frequent-comments"
+                aria-expanded="false"
+                data-toggle="collapse"
+                data-target="#gradingform_guide-{{uniqid}}-criteria-{{id}}-remark-frequent-comments"
+                type="button"
+              >
+                  {{#pix}}plus, gradingform_guide{{/pix}}
+              </button>
+            {{/hascomments}}
+          </div>
+          {{#hascomments}}
+            <div class="collapse" id="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark-frequent-comments">
+              <div data-gradingform_guide-frequent-comments="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark">
+                  <h6>{{#str}}comments, gradingform_guide{{/str}}</h6>
+                <div class="list-group">
+                  {{#comments}}
+                    <button type="button" class="list-group-item list-group-item-action" data-gradingform_guide-role="frequent-comment">{{description}}</button>
+                  {{/comments}}
+                </div>
+              </div>
+            </div>
+          {{/hascomments}}
+          <small id="gradingform_guide-{{uniqid}}-help-{{id}}-remark" class="sr-only">{{#str}}grade_help, gradingform_guide{{/str}}</small>
+        </div>
+      </div>
+    </div>
+  {{/criterion}}
+</form>
+{{#js}}
+require(['gradingform_guide/grades/grader/gradingpanel/comments', 'core/auto_rows'], function(Comments, AutoRows) {
+  Comments.init('gradingform_guide-{{uniqid}}');
+  AutoRows.init(document.getElementById('gradingform_guide-{{uniqid}}'));
+});
+{{/js}}

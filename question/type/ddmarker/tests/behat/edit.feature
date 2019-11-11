@@ -26,7 +26,7 @@ Feature: Test editing a drag and drop markers questions
 
   @javascript
   Scenario: Edit a drag and drop markers question
-    When I click on "Edit" "link" in the "Drag markers" "table_row"
+    When I choose "Edit question" action for "Drag markers" in the question bank
     And I set the following fields to these values:
       | Question name | Edited question name |
     And I press "id_submitbutton"

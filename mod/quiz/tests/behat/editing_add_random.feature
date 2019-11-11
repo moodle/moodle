@@ -30,17 +30,15 @@ Feature: Adding random questions to a quiz based on category and tags
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I navigate to "Question bank > Questions" in current page administration
-    And I click on "Edit" "link" in the "question 1 name" "table_row"
+    And I choose "Edit question" action for "question 1 name" in the question bank
     And I set the following fields to these values:
       | Tags | foo |
     And I press "id_submitbutton"
-    And I click on "Manage tags" "link" in the "question 2 name" "table_row"
-    And I set the following fields to these values:
+    And I choose "Manage tags" action for "question 2 name" in the question bank
+    And I set the following fields in the "Question tags" "dialogue" to these values:
       | Tags | bar |
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     And I open the "last" add to quiz menu
     And I follow "a random question"
     And I open the autocomplete suggestions list
@@ -52,8 +50,6 @@ Feature: Adding random questions to a quiz based on category and tags
       | capability             | permission | role           | contextlevel | reference |
       | moodle/question:useall | Prevent    | editingteacher | Course       | C1        |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
     When I open the "last" add to quiz menu
     Then I should not see "a random question"

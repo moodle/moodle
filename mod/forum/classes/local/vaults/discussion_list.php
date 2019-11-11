@@ -26,6 +26,7 @@ namespace mod_forum\local\vaults;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_group\output\group_details;
 use mod_forum\local\vaults\preprocessors\extract_record as extract_record_preprocessor;
 use mod_forum\local\vaults\preprocessors\extract_user as extract_user_preprocessor;
 use mod_forum\local\renderers\discussion_list as discussion_list_renderer;
@@ -70,6 +71,18 @@ class discussion_list extends db_table_vault {
     public const SORTORDER_REPLIES_DESC = 5;
     /** Sort by number of replies desc */
     public const SORTORDER_REPLIES_ASC = 6;
+    /** Sort by discussion name desc */
+    public const SORTORDER_DISCUSSION_DESC = 7;
+    /** Sort by discussion name asc */
+    public const SORTORDER_DISCUSSION_ASC = 8;
+    /** Sort by discussion starter's name desc */
+    public const SORTORDER_STARTER_DESC = 9;
+    /** Sort by discussion starter's name asc */
+    public const SORTORDER_STARTER_ASC = 10;
+    /** Sort by group name desc */
+    public const SORTORDER_GROUP_DESC = 11;
+    /** Sort by group name asc */
+    public const SORTORDER_GROUP_ASC = 12;
 
     /**
      * Get the table alias.
@@ -94,14 +107,12 @@ class discussion_list extends db_table_vault {
      *
      * @param string|null $wheresql Where conditions for the SQL
      * @param string|null $sortsql Order by conditions for the SQL
-     * @param string|null $joinsql Additional join conditions for the sql
-     * @param int|null    $userid The ID of the user we are performing this query for
+     * @param int|null $userid The ID of the user we are performing this query for
      *
      * @return string
      */
     protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null, ?int $userid = null) : string {
         $alias = $this->get_table_alias();
-        $db = $this->get_db();
 
         $includefavourites = $userid ? true : false;
 
@@ -120,8 +131,8 @@ class discussion_list extends db_table_vault {
         // - Most recent editor.
         $thistable = new dml_table(self::TABLE, $alias, $alias);
         $posttable = new dml_table('forum_posts', 'fp', 'p_');
-        $firstauthorfields = \user_picture::fields('fa', null, self::FIRST_AUTHOR_ID_ALIAS, self::FIRST_AUTHOR_ALIAS);
-        $latestuserfields = \user_picture::fields('la', null, self::LATEST_AUTHOR_ID_ALIAS, self::LATEST_AUTHOR_ALIAS);
+        $firstauthorfields = \user_picture::fields('fa', ['deleted'], self::FIRST_AUTHOR_ID_ALIAS, self::FIRST_AUTHOR_ALIAS);
+        $latestuserfields = \user_picture::fields('la', ['deleted'], self::LATEST_AUTHOR_ID_ALIAS, self::LATEST_AUTHOR_ALIAS);
 
         $fields = implode(', ', [
             $thistable->get_field_select(),
@@ -151,6 +162,18 @@ class discussion_list extends db_table_vault {
                                 ON rp.discussion = rd.id AND rp.id != rd.firstpost
                             GROUP BY rd.id
                          ) r ON d.id = r.id';
+        }
+
+        $groupsortorders = [
+            $this->get_sort_order(self::SORTORDER_GROUP_DESC, $includefavourites),
+            $this->get_sort_order(self::SORTORDER_GROUP_ASC, $includefavourites)
+        ];
+        $sortbygroup = in_array($sortsql, $groupsortorders);
+        if ($sortbygroup) {
+            $groupstable = new dml_table('groups', 'g', 'g');
+            $fields .= ', ' . $groupstable->get_field_select();
+            // Join groups.
+            $tables .= 'LEFT JOIN {groups} g ON g.id = d.groupid';
         }
 
         $selectsql = 'SELECT ' . $fields . ' FROM ' . $tables;
@@ -226,6 +249,8 @@ class discussion_list extends db_table_vault {
      * @return string
      */
     protected function get_keyfield(?int $sortmethod) : string {
+        global $CFG;
+
         switch ($sortmethod) {
             case self::SORTORDER_CREATED_DESC:
             case self::SORTORDER_CREATED_ASC:
@@ -233,6 +258,30 @@ class discussion_list extends db_table_vault {
             case self::SORTORDER_REPLIES_DESC:
             case self::SORTORDER_REPLIES_ASC:
                 return 'replycount';
+            case self::SORTORDER_DISCUSSION_DESC:
+            case self::SORTORDER_DISCUSSION_ASC:
+                return 'dname';
+            case self::SORTORDER_STARTER_DESC:
+            case self::SORTORDER_STARTER_ASC:
+                // We'll sort by the first name field of the discussion starter's name.
+
+                // Let's get the full name display config first.
+                $nameformat = $CFG->fullnamedisplay;
+                if ($CFG->fullnamedisplay === 'language') {
+                    $nameformat = get_string('fullnamedisplay', '', (object)['firstname' => 'firstname', 'lastname' => 'lastname']);
+                }
+                // Fetch all the available user name fields.
+                $availablefields = order_in_string(get_all_user_name_fields(), $nameformat);
+                // We'll default to the first name if there's no available name field.
+                $returnfield = 'firstname';
+                if (!empty($availablefields)) {
+                    // Use the first name field.
+                    $returnfield = reset($availablefields);
+                }
+                return 'fauserrecord' . $returnfield;
+            case self::SORTORDER_GROUP_DESC:
+            case self::SORTORDER_GROUP_ASC:
+                return 'gname';
             default:
                 global $CFG;
                 $alias = $this->get_table_alias();
@@ -255,11 +304,16 @@ class discussion_list extends db_table_vault {
             case self::SORTORDER_LASTPOST_ASC:
             case self::SORTORDER_CREATED_ASC:
             case self::SORTORDER_REPLIES_ASC:
+            case self::SORTORDER_DISCUSSION_ASC:
+            case self::SORTORDER_STARTER_ASC:
+            case self::SORTORDER_GROUP_ASC:
                 return "ASC";
             case self::SORTORDER_LASTPOST_DESC:
             case self::SORTORDER_CREATED_DESC:
             case self::SORTORDER_REPLIES_DESC:
-                return "DESC";
+            case self::SORTORDER_DISCUSSION_DESC:
+            case self::SORTORDER_STARTER_DESC:
+            case self::SORTORDER_GROUP_DESC:
             default:
                 return "DESC";
         }

@@ -1,0 +1,143 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/emoji/picker
+
+    This template will render the emoji picker.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    *
+
+    Context variables required for this template:
+    *
+
+    Example context (json):
+    {}
+
+}}
+
+<div
+    data-region="emoji-picker"
+    class="card shadow emoji-picker"
+>
+    <div class="card-header px-1 pt-1 pb-0 d-flex justify-content-between flex-shrink-0">
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button selected"
+            data-action="show-category"
+            data-category="Recent"
+            title="{{#str}} emojicategoryrecent, core {{/str}}"
+        >
+            {{#pix}} i/emojicategoryrecent, core {{/pix}}
+        </button>
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button"
+            data-action="show-category"
+            data-category="Smileys & People"
+            title="{{#str}} emojicategorysmileyspeople, core {{/str}}"
+        >
+            {{#pix}} i/emojicategorysmileyspeople, core {{/pix}}
+        </button>
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button"
+            data-action="show-category"
+            data-category="Animals & Nature"
+            title="{{#str}} emojicategoryanimalsnature, core {{/str}}"
+        >
+            {{#pix}} i/emojicategoryanimalsnature, core {{/pix}}
+        </button>
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button"
+            data-action="show-category"
+            data-category="Food & Drink"
+            title="{{#str}} emojicategoryfooddrink, core {{/str}}"
+        >
+            {{#pix}} i/emojicategoryfooddrink, core {{/pix}}
+        </button>
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button"
+            data-action="show-category"
+            data-category="Travel & Places"
+            title="{{#str}} emojicategorytravelplaces, core {{/str}}"
+        >
+            {{#pix}} i/emojicategorytravelplaces, core {{/pix}}
+        </button>
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button"
+            data-action="show-category"
+            data-category="Activities"
+            title="{{#str}} emojicategoryactivities, core {{/str}}"
+        >
+            {{#pix}} i/emojicategoryactivities, core {{/pix}}
+        </button>
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button"
+            data-action="show-category"
+            data-category="Objects"
+            title="{{#str}} emojicategoryobjects, core {{/str}}"
+        >
+            {{#pix}} i/emojicategoryobjects, core {{/pix}}
+        </button>
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button"
+            data-action="show-category"
+            data-category="Symbols"
+            title="{{#str}} emojicategorysymbols, core {{/str}}"
+        >
+            {{#pix}} i/emojicategorysymbols, core {{/pix}}
+        </button>
+        <button
+            class="btn btn-outline-secondary icon-no-margin category-button"
+            data-action="show-category"
+            data-category="Flags"
+            title="{{#str}} emojicategoryflags, core {{/str}}"
+        >
+            {{#pix}} i/emojicategoryflags, core {{/pix}}
+        </button>
+    </div>
+    <div class="card-body p-2 d-flex flex-column overflow-hidden">
+        <div class="input-group mb-1 flex-shrink-0">
+            <div class="input-group-prepend">
+                <span class="input-group-text pr-0 bg-white text-muted">
+                    {{#pix}} i/search, core {{/pix}}
+                </span>
+            </div>
+            <input
+                type="text"
+                class="form-control border-left-0"
+                placeholder="{{#str}} search, core {{/str}}"
+                aria-label="{{#str}} search, core {{/str}}"
+                data-region="search-input"
+            >
+        </div>
+        <div class="flex-grow-1 overflow-auto emojis-container h-100" data-region="emojis-container">
+            <div class="position-relative" data-region="row-container"></div>
+        </div>
+        <div class="flex-grow-1 overflow-auto search-results-container h-100 hidden" data-region="search-results-container">
+            <div class="position-relative" data-region="row-container"></div>
+        </div>
+    </div>
+    <div
+        class="card-footer d-flex flex-shrink-0"
+        data-region="footer"
+    >
+        <div class="emoji-preview" data-region="emoji-preview"></div>
+        <div data-region="emoji-short-name" class="emoji-short-name text-muted text-wrap ml-2"></div>
+    </div>
+</div>

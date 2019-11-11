@@ -304,6 +304,29 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that deletion requests for the primary admin are rejected
+     */
+    public function test_reject_data_deletion_request_primary_admin() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $datarequest = api::create_data_request(get_admin()->id, api::DATAREQUEST_TYPE_DELETE);
+
+        // Approve the request and execute the ad-hoc process task.
+        ob_start();
+        api::approve_data_request($datarequest->get('id'));
+        $this->runAdhocTasks('\tool_dataprivacy\task\process_data_request_task');
+        ob_end_clean();
+
+        $request = api::get_request($datarequest->get('id'));
+        $this->assertEquals(api::DATAREQUEST_STATUS_REJECTED, $request->get('status'));
+
+        // Confirm they weren't deleted.
+        $user = core_user::get_user($request->get('userid'));
+        core_user::require_active_user($user);
+    }
+
+    /**
      * Test for api::can_contact_dpo()
      */
     public function test_can_contact_dpo() {
@@ -2127,6 +2150,33 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test primary admin cannot create data deletion request for themselves
+     */
+    public function test_can_create_data_deletion_request_for_self_primary_admin() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->assertFalse(api::can_create_data_deletion_request_for_self());
+    }
+
+    /**
+     * Test secondary admin can create data deletion request for themselves
+     */
+    public function test_can_create_data_deletion_request_for_self_secondary_admin() {
+        $this->resetAfterTest();
+
+        $admin1 = $this->getDataGenerator()->create_user();
+        $admin2 = $this->getDataGenerator()->create_user();
+
+        // The primary admin is the one listed first in the 'siteadmins' config.
+        set_config('siteadmins', implode(',', [$admin1->id, $admin2->id]));
+
+        // Set the current user as the second admin (non-primary).
+        $this->setUser($admin2);
+
+        $this->assertTrue(api::can_create_data_deletion_request_for_self());
+    }
+
+    /**
      * Test user can create data deletion request for themselves if they have
      * "tool/dataprivacy:requestdelete" capability.
      *
@@ -2171,7 +2221,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
-     * Check parents can create data deletion request for their children but not others.
+     * Check parents can create data deletion request for their children (unless the child is the primary admin),
+     * but not other users.
      *
      * @throws coding_exception
      * @throws dml_exception
@@ -2194,5 +2245,9 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $this->setUser($parent);
         $this->assertTrue(api::can_create_data_deletion_request_for_children($child->id));
         $this->assertFalse(api::can_create_data_deletion_request_for_children($otheruser->id));
+
+        // Now make child the primary admin, confirm parent can't make deletion request.
+        set_config('siteadmins', $child->id);
+        $this->assertFalse(api::can_create_data_deletion_request_for_children($child->id));
     }
 }

@@ -39,8 +39,9 @@ define([
      * Register event listeners for the subscription toggle.
      *
      * @param {object} root The discussion list root element
+     * @param {boolean} preventDefault Should the default action of the event be prevented
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, preventDefault) {
         root.on('click', Selectors.lock.toggle, function(e) {
             var toggleElement = $(this);
             var forumId = toggleElement.data('forumid');
@@ -53,13 +54,13 @@ define([
                 })
                 .catch(Notification.exception);
 
-            e.preventDefault();
+            if (preventDefault) {
+                e.preventDefault();
+            }
         });
     };
 
     return {
-        init: function(root) {
-            registerEventListeners(root);
-        }
+        init: registerEventListeners
     };
 });

@@ -27,7 +27,8 @@
                 "viewurl": "https://moodlesite/course/view.php?id=2",
                 "courseimageurl": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
                 "fullname": "course 3",
-                "isfavourite": true
+                "isfavourite": true,
+                "coursecategory": "Miscellaneous"
             }
         ]
     }
@@ -36,5 +37,18 @@
 
 {{< core_course/coursecards }}
     {{$classes}}one-row{{/classes}}
-    {{$coursename}} {{{fullname}}} {{/coursename}}
+    {{$coursename}} {{fullname}} {{/coursename}}
+    {{$coursecategory}}
+        {{#showcoursecategory}}
+            <span class="sr-only">
+                {{#str}}aria:coursecategory, core_course{{/str}}
+            </span>
+            <div class="text-truncate">{{{coursecategory}}}</div>
+        {{/showcoursecategory}}
+    {{/coursecategory}}
+    {{$divider}}
+        {{#showcoursecategory}}
+            <div class="pl-1 pr-1">|</div>
+        {{/showcoursecategory}}
+    {{/divider}}
 {{/ core_course/coursecards }}

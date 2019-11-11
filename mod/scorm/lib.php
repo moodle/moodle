@@ -354,20 +354,13 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
     $grades = grade_get_grades($course->id, 'mod', 'scorm', $scorm->id, $user->id);
     if (!empty($grades->items[0]->grades)) {
         $grade = reset($grades->items[0]->grades);
-        $result = new stdClass();
+        $result = (object) [
+            'time' => grade_get_date_for_user_grade($grade, $user),
+        ];
         if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
             $result->info = get_string('grade') . ': '. $grade->str_long_grade;
         } else {
             $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
-        }
-
-        // Datesubmitted == time created. dategraded == time modified or time overridden
-        // if grade was last modified by the user themselves use date graded. Otherwise use date submitted.
-        // TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704.
-        if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
-            $result->time = $grade->dategraded;
-        } else {
-            $result->time = $grade->datesubmitted;
         }
 
         return $result;
@@ -1893,4 +1886,28 @@ function mod_scorm_core_calendar_get_valid_event_timestart_range(\calendar_event
     }
 
     return [$mindate, $maxdate];
+}
+
+/**
+ * Given an array with a file path, it returns the itemid and the filepath for the defined filearea.
+ *
+ * @param  string $filearea The filearea.
+ * @param  array  $args The path (the part after the filearea and before the filename).
+ * @return array The itemid and the filepath inside the $args path, for the defined filearea.
+ */
+function mod_scorm_get_path_from_pluginfile(string $filearea, array $args) : array {
+    // SCORM never has an itemid (the number represents the revision but it's not stored in database).
+    array_shift($args);
+
+    // Get the filepath.
+    if (empty($args)) {
+        $filepath = '/';
+    } else {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    return [
+        'itemid' => 0,
+        'filepath' => $filepath,
+    ];
 }

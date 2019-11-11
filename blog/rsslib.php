@@ -83,7 +83,7 @@ function blog_rss_print_link($context, $filtertype, $filterselect = 0, $tagid = 
 
     $url = blog_rss_get_url($context->id, $userid, $filtertype, $filterselect, $tagid);
     $rsspix = $OUTPUT->pix_icon('i/rss', get_string('rss'), 'core', array('title' => $tooltiptext));
-    print '<div class="pull-xs-right"><a href="'. $url .'">' . $rsspix . '</a></div>';
+    print '<div class="float-sm-right"><a href="'. $url .'">' . $rsspix . '</a></div>';
 }
 
 /**

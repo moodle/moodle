@@ -48,7 +48,7 @@ class manager {
     /**
      * @var \core_analytics\predictor[]
      */
-    protected static $predictionprocessors = null;
+    protected static $predictionprocessors = [];
 
     /**
      * @var \core_analytics\local\target\base[]
@@ -97,6 +97,22 @@ class manager {
         } else {
             require_capability($capability, $context);
         }
+    }
+
+    /**
+     * Is analytics enabled globally?
+     *
+     * return bool
+     */
+    public static function is_analytics_enabled(): bool {
+        global $CFG;
+
+        if (isset($CFG->enableanalytics)) {
+            return $CFG->enableanalytics;
+        }
+
+        // Enabled by default.
+        return true;
     }
 
     /**
@@ -211,6 +227,14 @@ class manager {
             $predictionprocessors[$classfullpath] = self::get_predictions_processor($classfullpath, false);
         }
         return $predictionprocessors;
+    }
+
+    /**
+     * Resets the cached prediction processors.
+     * @return null
+     */
+    public static function reset_prediction_processors() {
+        self::$predictionprocessors = [];
     }
 
     /**
@@ -484,6 +508,9 @@ class manager {
     /**
      * Returns the models with insights at the provided context.
      *
+     * Note that this method is used for display purposes. It filters out models whose insights
+     * are not linked from the reports page.
+     *
      * @param \context $context
      * @return \core_analytics\model[]
      */
@@ -494,11 +521,50 @@ class manager {
         $models = self::get_all_models(true, true, $context);
         foreach ($models as $key => $model) {
             // Check that it not only have predictions but also generates insights from them.
-            if (!$model->uses_insights()) {
+            if (!$model->uses_insights() || !$model->get_target()->link_insights_report()) {
                 unset($models[$key]);
             }
         }
         return $models;
+    }
+
+    /**
+     * Returns the models that generated insights in the provided context. It can also be used to add new models to the context.
+     *
+     * Note that if you use this function with $newmodelid is the caller responsibility to ensure that the
+     * provided model id generated insights for the provided context.
+     *
+     * @throws \coding_exception
+     * @param  \context $context
+     * @param  int|null $newmodelid A new model to add to the list of models with insights in the provided context.
+     * @return int[]
+     */
+    public static function cached_models_with_insights(\context $context, int $newmodelid = null) {
+
+        $cache = \cache::make('core', 'contextwithinsights');
+        $modelids = $cache->get($context->id);
+        if ($modelids === false) {
+            // The cache is empty, but we don't know if it is empty because there are no insights
+            // in this context or because cache/s have been purged, we need to be conservative and
+            // "pay" 1 db read to fill up the cache.
+
+            $models = \core_analytics\manager::get_models_with_insights($context);
+
+            if ($newmodelid && empty($models[$newmodelid])) {
+                throw new \coding_exception('The provided modelid ' . $newmodelid . ' did not generate any insights');
+            }
+
+            $modelids = array_keys($models);
+            $cache->set($context->id, $modelids);
+
+        } else if ($newmodelid && !in_array($newmodelid, $modelids)) {
+            // We add the context we got as an argument to the cache.
+
+            array_push($modelids, $newmodelid);
+            $cache->set($context->id, $modelids);
+        }
+
+        return $modelids;
     }
 
     /**
@@ -553,31 +619,35 @@ class manager {
     public static function cleanup() {
         global $DB;
 
-        // Clean up stuff that depends on contexts that do not exist anymore.
-        $sql = "SELECT DISTINCT ap.contextid FROM {analytics_predictions} ap
-                  LEFT JOIN {context} ctx ON ap.contextid = ctx.id
-                 WHERE ctx.id IS NULL";
-        $apcontexts = $DB->get_records_sql($sql);
+        $DB->execute("DELETE FROM {analytics_prediction_actions} WHERE predictionid IN
+                          (SELECT ap.id FROM {analytics_predictions} ap
+                        LEFT JOIN {context} ctx ON ap.contextid = ctx.id
+                            WHERE ctx.id IS NULL)");
 
-        $sql = "SELECT DISTINCT aic.contextid FROM {analytics_indicator_calc} aic
-                  LEFT JOIN {context} ctx ON aic.contextid = ctx.id
-                 WHERE ctx.id IS NULL";
-        $indcalccontexts = $DB->get_records_sql($sql);
-
-        $contexts = $apcontexts + $indcalccontexts;
-        if ($contexts) {
-            list($sql, $params) = $DB->get_in_or_equal(array_keys($contexts));
-            $DB->execute("DELETE FROM {analytics_prediction_actions} WHERE predictionid IN
-                (SELECT ap.id FROM {analytics_predictions} ap WHERE ap.contextid $sql)", $params);
-
-            $DB->delete_records_select('analytics_predictions', "contextid $sql", $params);
-            $DB->delete_records_select('analytics_indicator_calc', "contextid $sql", $params);
-        }
+        $contextsql = "SELECT id FROM {context} ctx";
+        $DB->delete_records_select('analytics_predictions', "contextid NOT IN ($contextsql)");
+        $DB->delete_records_select('analytics_indicator_calc', "contextid NOT IN ($contextsql)");
 
         // Clean up stuff that depends on analysable ids that do not exist anymore.
+
         $models = self::get_all_models();
         foreach ($models as $model) {
+
+            // We first dump into memory the list of analysables we have in the database (we could probably do this with 1 single
+            // query for the 3 tables, but it may be safer to do it separately).
+            $predictsamplesanalysableids = $DB->get_fieldset_select('analytics_predict_samples', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $predictsamplesanalysableids = array_flip($predictsamplesanalysableids);
+            $trainsamplesanalysableids = $DB->get_fieldset_select('analytics_train_samples', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $trainsamplesanalysableids = array_flip($trainsamplesanalysableids);
+            $usedanalysablesanalysableids = $DB->get_fieldset_select('analytics_used_analysables', 'DISTINCT analysableid',
+                'modelid = :modelid', ['modelid' => $model->get_id()]);
+            $usedanalysablesanalysableids = array_flip($usedanalysablesanalysableids);
+
             $analyser = $model->get_analyser(array('notimesplitting' => true));
+
+            // We do not honour the list of contexts in this model as it can contain stale records.
             $analysables = $analyser->get_analysables_iterator();
 
             $analysableids = [];
@@ -585,17 +655,28 @@ class manager {
                 if (!$analysable) {
                     continue;
                 }
-                $analysableids[] = $analysable->get_id();
-            }
-            if (empty($analysableids)) {
-                continue;
+                unset($predictsamplesanalysableids[$analysable->get_id()]);
+                unset($trainsamplesanalysableids[$analysable->get_id()]);
+                unset($usedanalysablesanalysableids[$analysable->get_id()]);
             }
 
-            list($notinsql, $params) = $DB->get_in_or_equal($analysableids, SQL_PARAMS_NAMED, 'param', false);
-            $params['modelid'] = $model->get_id();
+            $param = ['modelid' => $model->get_id()];
 
-            $DB->delete_records_select('analytics_predict_samples', "modelid = :modelid AND analysableid $notinsql", $params);
-            $DB->delete_records_select('analytics_train_samples', "modelid = :modelid AND analysableid $notinsql", $params);
+            if ($predictsamplesanalysableids) {
+                list($idssql, $idsparams) = $DB->get_in_or_equal(array_flip($predictsamplesanalysableids), SQL_PARAMS_NAMED);
+                $DB->delete_records_select('analytics_predict_samples', "modelid = :modelid AND analysableid $idssql",
+                    $param + $idsparams);
+            }
+            if ($trainsamplesanalysableids) {
+                list($idssql, $idsparams) = $DB->get_in_or_equal(array_flip($trainsamplesanalysableids), SQL_PARAMS_NAMED);
+                $DB->delete_records_select('analytics_train_samples', "modelid = :modelid AND analysableid $idssql",
+                    $param + $idsparams);
+            }
+            if ($usedanalysablesanalysableids) {
+                list($idssql, $idsparams) = $DB->get_in_or_equal(array_flip($usedanalysablesanalysableids), SQL_PARAMS_NAMED);
+                $DB->delete_records_select('analytics_used_analysables', "modelid = :modelid AND analysableid $idssql",
+                    $param + $idsparams);
+            }
         }
     }
 
@@ -834,4 +915,79 @@ class manager {
 
         return [$target, $indicators];
     }
+
+    /**
+     * Return the context restrictions that can be applied to the provided context levels.
+     *
+     * @throws \coding_exception
+     * @param  array|null $contextlevels The list of context levels provided by the analyser. Null if all of them.
+     * @param  string|null $query
+     * @return array Associative array with contextid as key and the short version of the context name as value.
+     */
+    public static function get_potential_context_restrictions(?array $contextlevels = null, string $query = null) {
+        global $DB;
+
+        if (empty($contextlevels) && !is_null($contextlevels)) {
+            return false;
+        }
+
+        if (!is_null($contextlevels)) {
+            foreach ($contextlevels as $contextlevel) {
+                if ($contextlevel !== CONTEXT_COURSE && $contextlevel !== CONTEXT_COURSECAT) {
+                    throw new \coding_exception('Only CONTEXT_COURSE and CONTEXT_COURSECAT are supported at the moment.');
+                }
+            }
+        }
+
+        $contexts = [];
+
+        // We have a separate process for each context level for performance reasons (to iterate through mdl_context calling
+        // get_context_name() would be too slow).
+        $contextsystem = \context_system::instance();
+        if (is_null($contextlevels) || in_array(CONTEXT_COURSECAT, $contextlevels)) {
+
+            $sql = "SELECT cc.id, cc.name, ctx.id AS contextid
+                      FROM {course_categories} cc
+                      JOIN {context} ctx ON ctx.contextlevel = :ctxlevel AND ctx.instanceid = cc.id";
+            $params = ['ctxlevel' => CONTEXT_COURSECAT];
+
+            if ($query) {
+                $sql .= " WHERE " . $DB->sql_like('cc.name', ':query', false, false);
+                $params['query'] = '%' . $query . '%';
+            }
+
+            $coursecats = $DB->get_recordset_sql($sql, $params);
+            foreach ($coursecats as $record) {
+                $contexts[$record->contextid] = get_string('category') . ': ' .
+                    format_string($record->name, true, array('context' => $contextsystem));
+            }
+            $coursecats->close();
+        }
+
+        if (is_null($contextlevels) || in_array(CONTEXT_COURSE, $contextlevels)) {
+
+            $sql = "SELECT c.id, c.shortname, ctx.id AS contextid
+                      FROM {course} c
+                      JOIN {context} ctx ON ctx.contextlevel = :ctxlevel AND ctx.instanceid = c.id
+                      WHERE c.id != :siteid";
+            $params = ['ctxlevel' => CONTEXT_COURSE, 'siteid' => SITEID];
+
+            if ($query) {
+                $sql .= ' AND (' . $DB->sql_like('c.fullname', ':query1', false, false) . ' OR ' .
+                    $DB->sql_like('c.shortname', ':query2', false, false) . ')';
+                $params['query1'] = '%' . $query . '%';
+                $params['query2'] = '%' . $query . '%';
+            }
+
+            $courses = $DB->get_recordset_sql($sql, $params);
+            foreach ($courses as $record) {
+                $contexts[$record->contextid] = get_string('course') . ': ' .
+                    format_string($record->shortname, true, array('context' => $contextsystem));
+            }
+            $courses->close();
+        }
+
+        return $contexts;
+    }
+
 }

@@ -430,6 +430,14 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.8.
+        '/lib/amd/src/modal_confirm.js',
+        '/lib/fonts/font-awesome-4.7.0/css/font-awesome.css',
+        '/lib/jquery/jquery-3.2.1.min.js',
+        '/lib/recaptchalib.php',
+        '/lib/sessionkeepalive_ajax.php',
+        '/lib/yui/src/checknet/js/checknet.js',
+        '/question/amd/src/qbankmanager.js',
         // Removed in 3.7.
         '/lib/form/yui/src/showadvanced/js/showadvanced.js',
         '/lib/tests/output_external_test.php',

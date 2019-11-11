@@ -143,8 +143,13 @@ class question_category_list_item extends list_item {
         $questionbankurl = new moodle_url('/question/edit.php', $this->parentlist->pageurl->params());
         $questionbankurl->param('cat', $category->id . ',' . $category->contextid);
         $item = '';
-        $text = format_string($category->name, true, ['context' => $this->parentlist->context])
-                . ' (' . $category->questioncount . ')';
+        $text = format_string($category->name, true, ['context' => $this->parentlist->context]);
+        if ($category->idnumber !== null && $category->idnumber !== '') {
+            $text .= ' ' . html_writer::span(
+                    html_writer::span(get_string('idnumber', 'question'), 'accesshide') .
+                    ' ' . $category->idnumber, 'badge badge-primary');
+        }
+        $text .= ' (' . $category->questioncount . ')';
         $item .= html_writer::tag('b', html_writer::link($questionbankurl, $text,
                         ['title' => $editqestions]) . ' ');
         $item .= format_text($category->info, $category->infoformat,
@@ -164,7 +169,7 @@ class question_category_list_item extends list_item {
 
 
 /**
- * Class representing q question category
+ * Class for performing operations on question categories.
  *
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -180,7 +185,6 @@ class question_category_object {
      * @var array nested lists to display categories.
      */
     public $editlists = array();
-    public $newtable;
     public $tab;
     public $tabsize = 3;
 
@@ -195,12 +199,17 @@ class question_category_object {
     public $catform;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * Gets necessary strings and sets relevant path information
+     * @param int $page page number
+     * @param moodle_url $pageurl base URL of the display categories page. Used for redirects.
+     * @param context[] $contexts contexts where the current user can edit categories.
+     * @param int $currentcat id of the category to be edited. 0 if none.
+     * @param int|null $defaultcategory id of the current category. null if none.
+     * @param int $todelete id of the category to delete. 0 if none.
+     * @param context[] $addcontexts contexts where the current user can add questions.
      */
     public function __construct($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {
-        global $CFG, $COURSE, $OUTPUT;
 
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
 
@@ -433,7 +442,19 @@ class question_category_object {
     }
 
     /**
-     * Creates a new category with given params
+     * Create a new category.
+     *
+     * Data is expected to come from question_category_edit_form.
+     *
+     * By default redirects on success, unless $return is true.
+     *
+     * @param string $newparent 'categoryid,contextid' of the parent category.
+     * @param string $newcategory the name.
+     * @param string $newinfo the description.
+     * @param bool $return if true, return rather than redirecting.
+     * @param int|string $newinfoformat description format. One of the FORMAT_ constants.
+     * @param null $idnumber the idnumber. '' is converted to null.
+     * @return bool|int New category id if successful, else false.
      */
     public function add_category($newparent, $newcategory, $newinfo, $return = false, $newinfoformat = FORMAT_HTML,
             $idnumber = null) {
@@ -469,9 +490,7 @@ class question_category_object {
         $cat->infoformat = $newinfoformat;
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
-        if ($idnumber) {
-            $cat->idnumber = $idnumber;
-        }
+        $cat->idnumber = $idnumber;
         $categoryid = $DB->insert_record("question_categories", $cat);
 
         // Log the creation of this category.
@@ -489,16 +508,17 @@ class question_category_object {
     }
 
     /**
-     * Updates an existing category with given params
+     * Updates an existing category with given params.
      *
-     * @param int $updateid
-     * @param int $newparent
-     * @param string $newname
-     * @param string $newinfo
-     * @param int $newinfoformat
-     * @param int $idnumber
-     * @param bool $redirect
-     * @return int
+     * Warning! parameter order and meaning confusingly different from add_category in some ways!
+     *
+     * @param int $updateid id of the category to update.
+     * @param int $newparent 'categoryid,contextid' of the parent category to set.
+     * @param string $newname category name.
+     * @param string $newinfo category description.
+     * @param int|string $newinfoformat description format. One of the FORMAT_ constants.
+     * @param int $idnumber the idnumber. '' is converted to null.
+     * @param bool $redirect if true, will redirect once the DB is updated (default).
      */
     public function update_category($updateid, $newparent, $newname, $newinfo, $newinfoformat = FORMAT_HTML,
             $idnumber = null, $redirect = true) {
@@ -538,8 +558,9 @@ class question_category_object {
             $idnumber = null;
         } else if (!empty($tocontextid)) {
             // While this check already exists in the form validation, this is a backstop preventing unnecessary errors.
-            if ($DB->record_exists('question_categories',
-                    ['idnumber' => $idnumber, 'contextid' => $tocontextid])) {
+            if ($DB->record_exists_select('question_categories',
+                    'idnumber = ? AND contextid = ? AND id <> ?',
+                    [$idnumber, $tocontextid, $updateid])) {
                 $idnumber = null;
             }
         }
@@ -552,9 +573,7 @@ class question_category_object {
         $cat->infoformat = $newinfoformat;
         $cat->parent = $parentid;
         $cat->contextid = $tocontextid;
-        if ($idnumber) {
-            $cat->idnumber = $idnumber;
-        }
+        $cat->idnumber = $idnumber;
         if ($newstamprequired) {
             $cat->stamp = make_unique_id_code();
         }

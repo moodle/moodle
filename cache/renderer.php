@@ -228,7 +228,8 @@ class core_cache_renderer extends plugin_renderer_base {
             get_string('area', 'cache'),
             get_string('mappings', 'cache'),
             get_string('sharing', 'cache'),
-            get_string('actions', 'cache'),
+            get_string('canuselocalstore', 'cache'),
+            get_string('actions', 'cache')
         );
         $table->colclasses = array(
             'definition',
@@ -237,6 +238,7 @@ class core_cache_renderer extends plugin_renderer_base {
             'area',
             'mappings',
             'sharing',
+            'canuselocalstore',
             'actions'
         );
         $table->data = array();
@@ -257,6 +259,13 @@ class core_cache_renderer extends plugin_renderer_base {
                 $mapping = '<em>'.$none.'</em>';
             }
 
+            $uselocalcachecol = get_string('no');
+            if ($definition['mode'] != cache_store::MODE_REQUEST) {
+                if (isset($definition['canuselocalstore']) && $definition['canuselocalstore']) {
+                    $uselocalcachecol = get_string('yes');
+                }
+            }
+
             $row = new html_table_row(array(
                 $definition['name'],
                 get_string('mode_'.$definition['mode'], 'cache'),
@@ -264,6 +273,7 @@ class core_cache_renderer extends plugin_renderer_base {
                 $definition['area'],
                 $mapping,
                 join(', ', $definition['selectedsharingoption']),
+                $uselocalcachecol,
                 join(', ', $htmlactions)
             ));
             $row->attributes['class'] = 'definition-'.$definition['component'].'-'.$definition['area'];

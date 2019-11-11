@@ -549,8 +549,9 @@ class mod_chat_external extends external_api {
                 $chatdetails['course']            = $chat->course;
                 $chatdetails['name']              = external_format_string($chat->name, $chatcontext->id);
                 // Format intro.
+                $options = array('noclean' => true);
                 list($chatdetails['intro'], $chatdetails['introformat']) =
-                    external_format_text($chat->intro, $chat->introformat, $chatcontext->id, 'mod_chat', 'intro', null);
+                    external_format_text($chat->intro, $chat->introformat, $chatcontext->id, 'mod_chat', 'intro', null, $options);
                 $chatdetails['introfiles'] = external_util::get_area_files($chatcontext->id, 'mod_chat', 'intro', false, false);
 
                 if (has_capability('mod/chat:chat', $chatcontext)) {

@@ -1,0 +1,110 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template forumreport_summary/bulk_action_menu
+
+    Summary report filters.
+
+    Example context (json):
+    {
+        "showbulkactions": true,
+        "id": "formactionid",
+        "attributes": [
+            {
+                "name": "data-action",
+                "value": "toggle"
+            },
+            {
+                "name": "data-togglegroup",
+                "value": "summaryreport-table"
+            },
+            {
+                "name": "data-toggle",
+                "value": "action"
+            }
+        ],
+        "actions": [
+            {
+                "name": "Choose...",
+                "value": ""
+            },
+            {
+                "name": "Send a message",
+                "value": "#messageselect"
+            }
+        ],
+        "perpage": {
+            "name": "perpage",
+            "method": "get",
+            "action": "#",
+            "classes": "singleselect",
+            "label": "Per page",
+            "formid": "randomid",
+            "id": "selectperpage",
+            "options":[
+                {"value": 50, "name": "50", "selected": true},
+                {"value": 100, "name": "100", "selected":false},
+                {"value": 200, "name": "200", "selected": false}
+            ]
+        }
+    }
+}}
+
+<br />
+<div class="d-inline-block w-100">
+    {{#showbulkactions}}
+    <div class="buttons float-left">
+        <div class="form-inline pl-1">
+            <label for="{{id}}">{{#str}}withselectedusers{{/str}}</label>
+            <select id="{{id}}" class="select custom-select ml-4" {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
+                <option value="">{{#str}}choosedots{{/str}}</option>
+                {{#actions}}
+                <option value="{{value}}">{{name}}</option>
+                {{/actions}}
+            </select>
+        </div>
+    </div>
+    {{/showbulkactions}}
+    <div class="float-right">
+        {{#perpage}}
+            {{> core/single_select}}
+        {{/perpage}}
+    </div>
+</div>
+
+{{#js}}
+require(['jquery', 'core_message/message_send_bulk'], function($, BulkSender) {
+    $('#{{id}}').on('change', function(e) {
+        var action = $(e.target).val();
+        if (action.indexOf('#') !== -1) {
+            e.preventDefault();
+
+            var ids = $('#summaryreport input.usercheckbox:checked').map(function(index, element) {
+                return element.name.replace('user', '');
+            }).get();
+
+            if (action == '#messageselect') {
+                BulkSender.showModal(ids, function() {
+                    $('#{{id}}').focus();
+                });
+            }
+
+            $('#{{id}} option[value=""]').prop('selected', 'selected');
+        }
+    });
+});
+{{/js}}

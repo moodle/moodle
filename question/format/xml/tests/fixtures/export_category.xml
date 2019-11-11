@@ -8,6 +8,7 @@
     <info format="moodle_auto_format">
       <text>This is Alpha category for test</text>
     </info>
+    <idnumber>alpha-idnumber</idnumber>
   </question>
 
 <!-- question: 91  -->

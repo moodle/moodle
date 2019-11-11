@@ -90,7 +90,16 @@ class insights_list implements \renderable, \templatable {
         $target = $this->model->get_target();
 
         $data = new \stdClass();
-        $data->insightname = format_string($target->get_name());
+        $data->modelid = $this->model->get_id();
+        $data->contextid = $this->context->id;
+
+        $targetname = $target->get_name();
+        $data->insightname = format_string($targetname);
+
+        $targetinfostr = $targetname->get_identifier() . 'info';
+        if (get_string_manager()->string_exists($targetinfostr, $targetname->get_component())) {
+            $data->insightdescription = get_string($targetinfostr, $targetname->get_component());
+        }
 
         $data->showpredictionheading = true;
         if (!$target->is_linear()) {
@@ -105,6 +114,9 @@ class insights_list implements \renderable, \templatable {
         $total = 0;
 
         if ($this->model->uses_insights()) {
+
+            $target->add_bulk_actions_js();
+
             $predictionsdata = $this->model->get_predictions($this->context, true, $this->page, $this->perpage);
 
             if (!$this->model->is_static()) {
@@ -118,6 +130,13 @@ class insights_list implements \renderable, \templatable {
             if ($predictionsdata) {
                 list($total, $predictions) = $predictionsdata;
 
+                if ($predictions) {
+                    // No bulk actions if no predictions.
+                    $data->bulkactions = actions_exporter::add_bulk_actions($target, $output, $predictions, $this->context);
+                }
+
+                $data->multiplepredictions = count($predictions) > 1 ? true : false;
+
                 foreach ($predictions as $prediction) {
                     $predictedvalue = $prediction->get_prediction_data()->prediction;
 
@@ -130,7 +149,7 @@ class insights_list implements \renderable, \templatable {
                         $predictionvalues[$predictedvalue] = $preddata;
                     }
 
-                    $insightrenderable = new \report_insights\output\insight($prediction, $this->model, true);
+                    $insightrenderable = new \report_insights\output\insight($prediction, $this->model, true, $this->context);
                     $insights[$predictedvalue][] = $insightrenderable->export_for_template($output);
                 }
 
@@ -146,6 +165,17 @@ class insights_list implements \renderable, \templatable {
                 // Ok, now we have all the data we want, put it into a format that mustache can handle.
                 foreach ($predictionvalues as $key => $prediction) {
                     if (isset($insights[$key])) {
+
+                        $toggleall = new \core\output\checkbox_toggleall('insight-bulk-action-' . $key, true, [
+                            'id' => 'id-toggle-all-' . $key,
+                            'name' => 'toggle-all-' . $key,
+                            'label' => get_string('selectall'),
+                            'labelclasses' => 'sr-only',
+                            'checked' => false
+                        ]);
+                        $prediction['checkboxtoggleall'] = $output->render($toggleall);
+
+                        $prediction['predictedvalue'] = $key;
                         $prediction['insights'] = $insights[$key];
                     }
 

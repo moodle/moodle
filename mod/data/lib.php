@@ -973,16 +973,17 @@ function data_numentries($data, $userid=null) {
  * @global object
  * @param object $data
  * @param int $groupid
+ * @param int $userid
  * @return bool
  */
-function data_add_record($data, $groupid=0){
+function data_add_record($data, $groupid = 0, $userid = null) {
     global $USER, $DB;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
 
     $record = new stdClass();
-    $record->userid = $USER->id;
+    $record->userid = $userid ?? $USER->id;
     $record->dataid = $data->id;
     $record->groupid = $groupid;
     $record->timecreated = $record->timemodified = time();
@@ -1201,20 +1202,13 @@ function data_user_outline($course, $user, $mod, $data) {
         }
         return $result;
     } else if ($grade) {
-        $result = new stdClass();
+        $result = (object) [
+            'time' => grade_get_date_for_user_grade($grade, $user),
+        ];
         if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
             $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
         } else {
             $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
-        }
-
-        //datesubmitted == time created. dategraded == time modified or time overridden
-        //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
-        //TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
-        if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
-            $result->time = $grade->dategraded;
-        } else {
-            $result->time = $grade->datesubmitted;
         }
 
         return $result;
@@ -1448,7 +1442,13 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[]='##delcheck##';
         if ($canmanageentries) {
-            $replacement[] = html_writer::checkbox('delcheck[]', $record->id, false, '', array('class' => 'recordcheckbox'));
+            $checkbox = new \core\output\checkbox_toggleall('listview-entries', false, [
+                'id' => "entry_{$record->id}",
+                'name' => 'delcheck[]',
+                'classes' => 'recordcheckbox',
+                'value' => $record->id,
+            ]);
+            $replacement[] = $OUTPUT->render($checkbox);
         } else {
             $replacement[] = '';
         }
@@ -3045,6 +3045,135 @@ function data_supports($feature) {
         default: return null;
     }
 }
+
+/**
+ * Import records for a data instance from csv data.
+ *
+ * @param object $cm Course module of the data instance.
+ * @param object $data The data instance.
+ * @param string $csvdata The csv data to be imported.
+ * @param string $encoding The encoding of csv data.
+ * @param string $fielddelimiter The delimiter of the csv data.
+ * @return int Number of records added.
+ */
+function data_import_csv($cm, $data, &$csvdata, $encoding, $fielddelimiter) {
+    global $CFG, $DB;
+    // Large files are likely to take their time and memory. Let PHP know
+    // that we'll take longer, and that the process should be recycled soon
+    // to free up memory.
+    core_php_time_limit::raise();
+    raise_memory_limit(MEMORY_EXTRA);
+
+    $iid = csv_import_reader::get_new_iid('moddata');
+    $cir = new csv_import_reader($iid, 'moddata');
+
+    $context = context_module::instance($cm->id);
+
+    $readcount = $cir->load_csv_content($csvdata, $encoding, $fielddelimiter);
+    $csvdata = null; // Free memory.
+    if (empty($readcount)) {
+        print_error('csvfailed', 'data', "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
+    } else {
+        if (!$fieldnames = $cir->get_columns()) {
+            print_error('cannotreadtmpfile', 'error');
+        }
+
+        // Check the fieldnames are valid.
+        $rawfields = $DB->get_records('data_fields', array('dataid' => $data->id), '', 'name, id, type');
+        $fields = array();
+        $errorfield = '';
+        $usernamestring = get_string('username');
+        $safetoskipfields = array(get_string('user'), get_string('email'),
+            get_string('timeadded', 'data'), get_string('timemodified', 'data'),
+            get_string('approved', 'data'), get_string('tags', 'data'));
+        $userfieldid = null;
+        foreach ($fieldnames as $id => $name) {
+            if (!isset($rawfields[$name])) {
+                if ($name == $usernamestring) {
+                    $userfieldid = $id;
+                } else if (!in_array($name, $safetoskipfields)) {
+                    $errorfield .= "'$name' ";
+                }
+            } else {
+                // If this is the second time, a field with this name comes up, it must be a field not provided by the user...
+                // like the username.
+                if (isset($fields[$name])) {
+                    if ($name == $usernamestring) {
+                        $userfieldid = $id;
+                    }
+                    unset($fieldnames[$id]); // To ensure the user provided content fields remain in the array once flipped.
+                } else {
+                    $field = $rawfields[$name];
+                    require_once("$CFG->dirroot/mod/data/field/$field->type/field.class.php");
+                    $classname = 'data_field_' . $field->type;
+                    $fields[$name] = new $classname($field, $data, $cm);
+                }
+            }
+        }
+
+        if (!empty($errorfield)) {
+            print_error('fieldnotmatched', 'data',
+                "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}", $errorfield);
+        }
+
+        $fieldnames = array_flip($fieldnames);
+
+        $cir->init();
+        $recordsadded = 0;
+        while ($record = $cir->next()) {
+            $authorid = null;
+            if ($userfieldid) {
+                if (!($author = core_user::get_user_by_username($record[$userfieldid], 'id'))) {
+                    $authorid = null;
+                } else {
+                    $authorid = $author->id;
+                }
+            }
+            if ($recordid = data_add_record($data, 0, $authorid)) {  // Add instance to data_record.
+                foreach ($fields as $field) {
+                    $fieldid = $fieldnames[$field->field->name];
+                    if (isset($record[$fieldid])) {
+                        $value = $record[$fieldid];
+                    } else {
+                        $value = '';
+                    }
+
+                    if (method_exists($field, 'update_content_import')) {
+                        $field->update_content_import($recordid, $value, 'field_' . $field->field->id);
+                    } else {
+                        $content = new stdClass();
+                        $content->fieldid = $field->field->id;
+                        $content->content = $value;
+                        $content->recordid = $recordid;
+                        $DB->insert_record('data_content', $content);
+                    }
+                }
+
+                if (core_tag_tag::is_enabled('mod_data', 'data_records') &&
+                    isset($fieldnames[get_string('tags', 'data')])) {
+                    $columnindex = $fieldnames[get_string('tags', 'data')];
+                    $rawtags = $record[$columnindex];
+                    $tags = explode(',', $rawtags);
+                    foreach ($tags as $tag) {
+                        $tag = trim($tag);
+                        if (empty($tag)) {
+                            continue;
+                        }
+                        core_tag_tag::add_item_tag('mod_data', 'data_records', $recordid, $context, $tag);
+                    }
+                }
+
+                $recordsadded++;
+                print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
+            }
+        }
+        $cir->close();
+        $cir->cleanup(true);
+        return $recordsadded;
+    }
+    return 0;
+}
+
 /**
  * @global object
  * @param array $export

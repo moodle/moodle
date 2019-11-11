@@ -1,0 +1,74 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/local/grades/local/grader
+
+    Classes required for JS:
+    * TODO
+
+    Data attributes required for JS:
+    * data-first-userid="350"
+    * data-cmid="1337"
+
+    Context variables required for this template:
+    * userid: ID of the first user to jump to
+    * cmid: ID of the course module we want to grade
+
+    Example context (json):
+    {
+        "userid": 350,
+        "cmid": 1337
+    }
+}}
+<div
+    id="grader-container-{{uniqid}}"
+    class="d-flex flex-column h-100 unified-grader"
+    data-region="unified-grader"
+    {{#userid}}data-first-userid="{{.}}"{{/userid}}
+    data-cmid="{{cmid}}"
+>
+    {{> mod_forum/local/grades/local/grader/navigation }}
+
+    <div class="d-flex flex-grow-1 h-100 position-relative">
+        {{#drawer}}{{> mod_forum/local/grades/local/grader/grading }}{{/drawer}}
+        {{> mod_forum/local/grades/local/grader/content }}
+    </div>
+</div>
+{{#js}}
+    require(['jquery', 'core/drawer'], function($, Drawer) {
+        var root = $('#grader-container-{{uniqid}}');
+        var drawer = root.find('[data-region="right-hand-drawer"]');
+        var expandButtons = root.find('[data-action="expand-grading-drawer"]');
+        var collapseButtons = root.find('[data-action="collapse-grading-drawer"]');
+
+        expandButtons.click(function() {
+            collapseButtons.removeClass('active');
+            expandButtons.addClass('active');
+            collapseButtons.attr('aria-expanded', true);
+            expandButtons.attr('aria-expanded', true);
+            Drawer.show(drawer);
+        });
+
+        collapseButtons.click(function() {
+            expandButtons.removeClass('active');
+            collapseButtons.addClass('active');
+            collapseButtons.attr('aria-expanded', false);
+            expandButtons.attr('aria-expanded', false);
+            Drawer.hide(drawer);
+        });
+    });
+{{/js}}

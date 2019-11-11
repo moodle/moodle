@@ -222,12 +222,13 @@ class models_list implements \renderable, \templatable {
                     array_unshift($modeltimesplittingmethods, $currenttimesplitting);
                 }
 
-                $evaluateparams = [$actionid, $trainedonlyexternally, $modeltimesplittingmethods];
+                $evaluateparams = [$actionid, $trainedonlyexternally];
                 $PAGE->requires->js_call_amd('tool_analytics/model', 'selectEvaluationOptions', $evaluateparams);
                 $urlparams['action'] = 'evaluate';
                 $url = new \moodle_url('/admin/tool/analytics/model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/calc', get_string('evaluate', 'tool_analytics')),
-                    get_string('evaluate', 'tool_analytics'), ['data-action-id' => $actionid]);
+                    get_string('evaluate', 'tool_analytics'), ['data-action-id' => $actionid,
+                    'data-timesplitting-methods' => json_encode($modeltimesplittingmethods)]);
                 $actionsmenu->add($icon);
             }
 
@@ -287,12 +288,12 @@ class models_list implements \renderable, \templatable {
                 }
             }
 
-            // Effectivity report.
+            // Insights report.
             if (!empty($anypredictionobtained) && $model->uses_insights()) {
-                $urlparams['action'] = 'effectivenessreport';
+                $urlparams['action'] = 'insightsreport';
                 $url = new \moodle_url('/admin/tool/analytics/model.php', $urlparams);
-                $pix = new \pix_icon('i/report', get_string('effectivenessreport', 'tool_analytics'));
-                $icon = new \action_menu_link_secondary($url, $pix, get_string('effectivenessreport', 'tool_analytics'));
+                $pix = new \pix_icon('i/report', get_string('insightsreport', 'tool_analytics'));
+                $icon = new \action_menu_link_secondary($url, $pix, get_string('insightsreport', 'tool_analytics'));
                 $actionsmenu->add($icon);
             }
 

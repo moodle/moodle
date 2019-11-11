@@ -39,13 +39,9 @@ if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
  *
  * @param theme_config $theme The theme that the CSS belongs to.
  * @param string $csspath The path to store the CSS at.
- * @param string $csscontent the complete CSS in one string
- * @param bool $chunk If set to true these files will be chunked to ensure
- *      that no one file contains more than 4095 selectors.
- * @param string $chunkurl If the CSS is be chunked then we need to know the URL
- *      to use for the chunked files.
+ * @param string $csscontent the complete CSS in one string.
  */
-function css_store_css(theme_config $theme, $csspath, $csscontent, $chunk = false, $chunkurl = null) {
+function css_store_css(theme_config $theme, $csspath, $csscontent) {
     global $CFG;
 
     clearstatcache();
@@ -59,24 +55,6 @@ function css_store_css(theme_config $theme, $csspath, $csscontent, $chunk = fals
 
     // First up write out the single file for all those using decent browsers.
     css_write_file($csspath, $csscontent);
-
-    if ($chunk) {
-        // If we need to chunk the CSS for browsers that are sub-par.
-        $css = css_chunk_by_selector_count($csscontent, $chunkurl);
-        $files = count($css);
-        $count = 1;
-        foreach ($css as $content) {
-            if ($count === $files) {
-                // If there is more than one file and this IS the last file.
-                $filename = preg_replace('#\.css$#', '.0.css', $csspath);
-            } else {
-                // If there is more than one file and this is not the last file.
-                $filename = preg_replace('#\.css$#', '.'.$count.'.css', $csspath);
-            }
-            $count++;
-            css_write_file($filename, $content);
-        }
-    }
 
     ignore_user_abort(false);
     if (connection_aborted()) {
@@ -99,179 +77,6 @@ function css_write_file($filename, $content) {
         @chmod($filename, $CFG->filepermissions);
         @unlink($filename.'.tmp'); // Just in case anything fails.
     }
-}
-
-/**
- * Takes CSS and chunks it if the number of selectors within it exceeds $maxselectors.
- *
- * The chunking will not split a group of selectors, or a media query. That means that
- * if n > $maxselectors and there are n selectors grouped together,
- * they will not be chunked and you could end up with more selectors than desired.
- * The same applies for a media query that has more than n selectors.
- *
- * Also, as we do not split group of selectors or media queries, the chunking might
- * not be as optimal as it could be, having files with less selectors than it could
- * potentially contain.
- *
- * String functions used here are not compliant with unicode characters. But that is
- * not an issue as the syntax of CSS is using ASCII codes. Even if we have unicode
- * characters in comments, or in the property 'content: ""', it will behave correcly.
- *
- * Please note that this strips out the comments if chunking happens.
- *
- * @param string $css The CSS to chunk.
- * @param string $importurl The URL to use for import statements.
- * @param int $maxselectors The number of selectors to limit a chunk to.
- * @param int $buffer Not used any more.
- * @return array An array of CSS chunks.
- */
-function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $buffer = 50) {
-
-    // Check if we need to chunk this CSS file.
-    $count = substr_count($css, ',') + substr_count($css, '{');
-    if ($count < $maxselectors) {
-        // The number of selectors is less then the max - we're fine.
-        return array($css);
-    }
-
-    $chunks = array();                  // The final chunks.
-    $offsets = array();                 // The indexes to chunk at.
-    $offset = 0;                        // The current offset.
-    $selectorcount = 0;                 // The number of selectors since the last split.
-    $lastvalidoffset = 0;               // The last valid index to split at.
-    $lastvalidoffsetselectorcount = 0;  // The number of selectors used at the time were could split.
-    $inrule = 0;                        // The number of rules we are in, should not be greater than 1.
-    $inmedia = false;                   // Whether or not we are in a media query.
-    $mediacoming = false;               // Whether or not we are expeting a media query.
-    $currentoffseterror = null;         // Not null when we have recorded an error for the current split.
-    $offseterrors = array();            // The offsets where we found errors.
-
-    // Remove the comments. Because it's easier, safer and probably a lot of other good reasons.
-    $css = preg_replace('#/\*(.*?)\*/#s', '', $css);
-    $strlen = strlen($css);
-
-    // Walk through the CSS content character by character.
-    for ($i = 1; $i <= $strlen; $i++) {
-        $char = $css[$i - 1];
-        $offset = $i;
-
-        // Is that a media query that I see coming towards us?
-        if ($char === '@') {
-            if (!$inmedia && substr($css, $offset, 5) === 'media') {
-                $mediacoming = true;
-            }
-        }
-
-        // So we are entering a rule or a media query...
-        if ($char === '{') {
-            if ($mediacoming) {
-                $inmedia = true;
-                $mediacoming = false;
-            } else {
-                $inrule++;
-                $selectorcount++;
-            }
-        }
-
-        // Let's count the number of selectors, but only if we are not in a rule, or in
-        // the definition of a media query, as they can contain commas too.
-        if (!$mediacoming && !$inrule && $char === ',') {
-            $selectorcount++;
-        }
-
-        // We reached the end of something.
-        if ($char === '}') {
-            // Oh, we are in a media query.
-            if ($inmedia) {
-                if (!$inrule) {
-                    // This is the end of the media query.
-                    $inmedia = false;
-                } else {
-                    // We were in a rule, in the media query.
-                    $inrule--;
-                }
-            } else {
-                $inrule--;
-                // Handle stupid broken CSS where there are too many } brackets,
-                // as this can cause it to break (with chunking) where it would
-                // coincidentally have worked otherwise.
-                if ($inrule < 0) {
-                    $inrule = 0;
-                }
-            }
-
-            // We are not in a media query, and there is no pending rule, it is safe to split here.
-            if (!$inmedia && !$inrule) {
-                $lastvalidoffset = $offset;
-                $lastvalidoffsetselectorcount = $selectorcount;
-            }
-        }
-
-        // Alright, this is splitting time...
-        if ($selectorcount > $maxselectors) {
-            if (!$lastvalidoffset) {
-                // We must have reached more selectors into one set than we were allowed. That means that either
-                // the chunk size value is too small, or that we have a gigantic group of selectors, or that a media
-                // query contains more selectors than the chunk size. We have to ignore this because we do not
-                // support split inside a group of selectors or media query.
-                if ($currentoffseterror === null) {
-                    $currentoffseterror = $offset;
-                    $offseterrors[] = $currentoffseterror;
-                }
-            } else {
-                // We identify the offset to split at and reset the number of selectors found from there.
-                $offsets[] = $lastvalidoffset;
-                $selectorcount = $selectorcount - $lastvalidoffsetselectorcount;
-                $lastvalidoffset = 0;
-                $currentoffseterror = null;
-            }
-        }
-    }
-
-    // Report offset errors.
-    if (!empty($offseterrors)) {
-        debugging('Could not find a safe place to split at offset(s): ' . implode(', ', $offseterrors) . '. Those were ignored.',
-            DEBUG_DEVELOPER);
-    }
-
-    // Now that we have got the offets, we can chunk the CSS.
-    $offsetcount = count($offsets);
-    foreach ($offsets as $key => $index) {
-        $start = 0;
-        if ($key > 0) {
-            $start = $offsets[$key - 1];
-        }
-        // From somewhere up to the offset.
-        $chunks[] = substr($css, $start, $index - $start);
-    }
-    // Add the last chunk (if there is one), from the last offset to the end of the string.
-    if (end($offsets) != $strlen) {
-        $chunks[] = substr($css, end($offsets));
-    }
-
-    // The array $chunks now contains CSS split into perfect sized chunks.
-    // Import statements can only appear at the very top of a CSS file.
-    // Imported sheets are applied in the the order they are imported and
-    // are followed by the contents of the CSS.
-    // This is terrible for performance.
-    // It means we must put the import statements at the top of the last chunk
-    // to ensure that things are always applied in the correct order.
-    // This way the chunked files are included in the order they were chunked
-    // followed by the contents of the final chunk in the actual sheet.
-    $importcss = '';
-    $slashargs = strpos($importurl, '.php?') === false;
-    $parts = count($chunks);
-    for ($i = 1; $i < $parts; $i++) {
-        if ($slashargs) {
-            $importcss .= "@import url({$importurl}/chunk{$i});\n";
-        } else {
-            $importcss .= "@import url({$importurl}&chunk={$i});\n";
-        }
-    }
-    $importcss .= end($chunks);
-    $chunks[key($chunks)] = $importcss;
-
-    return $chunks;
 }
 
 /**

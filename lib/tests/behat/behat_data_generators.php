@@ -309,6 +309,20 @@ class behat_data_generators extends behat_base {
     }
 
     /**
+     * Remove any empty custom fields, to avoid errors when creating the course.
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_course($data) {
+        foreach ($data as $fieldname => $value) {
+            if ($value === '' && strpos($fieldname, 'customfield_') === 0) {
+                unset($data[$fieldname]);
+            }
+        }
+        return $data;
+    }
+
+    /**
      * If password is not set it uses the username.
      * @param array $data
      * @return array
@@ -667,7 +681,31 @@ class behat_data_generators extends behat_base {
      * @param array $data the row of data from the behat script.
      */
     protected function process_question_category($data) {
+        global $DB;
+
         $context = $this->get_context($data['contextlevel'], $data['reference']);
+
+        // The way this class works, we have already looked up the given parent category
+        // name and found a matching category. However, it is possible, particularly
+        // for the 'top' category, for there to be several categories with the
+        // same name. So far one will have been picked at random, but we need
+        // the one from the right context. So, if we have the wrong category, try again.
+        // (Just fixing it here, rather than getting it right first time, is a bit
+        // of a bodge, but in general this class assumes that names are unique,
+        // and normally they are, so this was the easiest fix.)
+        if (!empty($data['parent'])) {
+            $foundparent = $DB->get_record('question_categories', ['id' => $data['parent']], '*', MUST_EXIST);
+            if ($foundparent->contextid != $context->id) {
+                $rightparentid = $DB->get_field('question_categories', 'id',
+                        ['contextid' => $context->id, 'name' => $foundparent->name]);
+                if (!$rightparentid) {
+                    throw new Exception('The specified question category with name "' . $foundparent->name .
+                            '" does not exist in context "' . $context->get_context_name() . '"."');
+                }
+                $data['parent'] = $rightparentid;
+            }
+        }
+
         $data['contextid'] = $context->id;
         $this->datagenerator->get_plugin_generator('core_question')->create_question_category($data);
     }

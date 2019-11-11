@@ -280,16 +280,7 @@ if ($bulkoperations) {
         $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
         echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
                 'value' => $label, 'data-showallink' => $showalllink));
-        // Select all users, mark all users on page as selected.
-        echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkallonpage', 'class' => 'btn btn-secondary',
-        'value' => get_string('selectallusersonpage')));
-    } else {
-        echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkallonpage', 'class' => 'btn btn-secondary',
-        'value' => get_string('selectall')));
     }
-
-    echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checknone', 'class' => 'btn btn-secondary',
-        'value' => get_string('deselectall')));
     echo html_writer::end_tag('div');
     $displaylist = array();
     if (!empty($CFG->messaging)) {
@@ -339,10 +330,17 @@ if ($bulkoperations) {
         }
     }
 
+    $selectactionparams = array(
+        'id' => 'formactionid',
+        'class' => 'ml-2',
+        'data-action' => 'toggle',
+        'data-togglegroup' => 'participants-table',
+        'data-toggle' => 'action',
+        'disabled' => empty($selectall)
+    );
     echo html_writer::tag('div', html_writer::tag('label', get_string("withselectedusers"),
         array('for' => 'formactionid', 'class' => 'col-form-label d-inline')) .
-        html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionid')),
-        array('class' => 'ml-2'));
+        html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), $selectactionparams));
 
     echo '<input type="hidden" name="id" value="'.$course->id.'" />';
     echo '<noscript style="display:inline">';
@@ -369,9 +367,8 @@ echo '</div>';
 
 if ($newcourse == 1) {
     $str = get_string('proceedtocourse', 'enrol');
-    // Floated left so it goes under the enrol users button on mobile.
     // The margin is to make it line up with the enrol users button when they are both on the same line.
-    $classes = 'my-1 pull-xs-left';
+    $classes = 'my-1';
     $url = course_get_url($course);
     echo $OUTPUT->single_button($url, $str, 'GET', array('class' => $classes));
 }

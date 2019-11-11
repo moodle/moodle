@@ -34,7 +34,9 @@ define(
     'core_message/message_drawer_view_settings',
     'core_message/message_drawer_router',
     'core_message/message_drawer_routes',
-    'core_message/message_drawer_events'
+    'core_message/message_drawer_events',
+    'core/pending',
+    'core/drawer',
 ],
 function(
     $,
@@ -49,7 +51,9 @@ function(
     ViewSettings,
     Router,
     Routes,
-    Events
+    Events,
+    Pending,
+    Drawer
 ) {
 
     var SELECTORS = {
@@ -132,9 +136,10 @@ function(
             root.attr('data-shown', true);
         }
 
-        root.removeClass('hidden');
-        root.attr('aria-expanded', true);
-        root.attr('aria-hidden', false);
+        var drawerRoot = Drawer.getDrawerRoot(root);
+        if (drawerRoot.length) {
+            Drawer.show(drawerRoot);
+        }
     };
 
     /**
@@ -143,19 +148,24 @@ function(
      * @param {Object} root The message drawer container.
      */
     var hide = function(root) {
-        root.addClass('hidden');
-        root.attr('aria-expanded', false);
-        root.attr('aria-hidden', true);
+        var drawerRoot = Drawer.getDrawerRoot(root);
+        if (drawerRoot.length) {
+            Drawer.hide(drawerRoot);
+        }
     };
 
     /**
      * Check if the drawer is visible.
      *
      * @param {Object} root The message drawer container.
-     * @return {bool}
+     * @return {boolean}
      */
     var isVisible = function(root) {
-        return !root.hasClass('hidden');
+        var drawerRoot = Drawer.getDrawerRoot(root);
+        if (drawerRoot.length) {
+            return Drawer.isVisible(drawerRoot);
+        }
+        return true;
     };
 
     /**
@@ -215,6 +225,22 @@ function(
             data.originalEvent.preventDefault();
         });
 
+        // These are theme-specific to help us fix random behat fails.
+        // These events target those events defined in BS3 and BS4 onwards.
+        root.on('hide.bs.collapse', '.collapse', function(e) {
+            var pendingPromise = new Pending();
+            $(e.target).one('hidden.bs.collapse', function() {
+                pendingPromise.resolve();
+            });
+        });
+
+        root.on('show.bs.collapse', '.collapse', function(e) {
+            var pendingPromise = new Pending();
+            $(e.target).one('shown.bs.collapse', function() {
+                pendingPromise.resolve();
+            });
+        });
+
         if (!alwaysVisible) {
             PubSub.subscribe(Events.SHOW, function() {
                 show(namespace, root);
@@ -267,8 +293,7 @@ function(
      * @param {Object} root The message drawer container.
      * @param {String} uniqueId Unique identifier for the Routes
      * @param {bool} alwaysVisible Should we show the app now, or wait for the user?
-     * @param {int} sendToUser Should we message someone now?
-     * @param {int} conversationId The value of the conversation id, null if none
+     * @param {Object} route
      */
     var init = function(root, uniqueId, alwaysVisible, route) {
         root = $(root);

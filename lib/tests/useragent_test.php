@@ -1387,6 +1387,16 @@ class core_useragent_testcase extends advanced_testcase {
                ),
             ),
 
+            // MoodleBot.
+            array(
+                'User-Agent: MoodleBot/3.8 (+https://moodle.org)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+
             // Macos Desktop app.
             array(
                 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) moodlemobile/3.6.0 Chrome/69.0.3497.106 Electron/4.0.1 Safari/537.36 MoodleMobile',

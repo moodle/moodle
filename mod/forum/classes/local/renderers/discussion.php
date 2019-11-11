@@ -30,8 +30,10 @@ use mod_forum\local\entities\discussion as discussion_entity;
 use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\entities\post as post_entity;
 use mod_forum\local\entities\sorter as sorter_entity;
+use mod_forum\local\factories\entity as entity_factory;
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\exporter as exporter_factory;
+use mod_forum\local\factories\url as url_factory;
 use mod_forum\local\factories\vault as vault_factory;
 use mod_forum\local\managers\capability as capability_manager;
 use mod_forum\local\renderers\posts as posts_renderer;
@@ -80,6 +82,10 @@ class discussion {
     private $exporterfactory;
     /** @var vault_factory $vaultfactory Vault factory */
     private $vaultfactory;
+    /** @var url_factory $urlfactory URL factory */
+    private $urlfactory;
+    /** @var entity_factory $entityfactory Entity factory */
+    private $entityfactory;
     /** @var capability_manager $capabilitymanager Capability manager */
     private $capabilitymanager;
     /** @var rating_manager $ratingmanager Rating manager */
@@ -105,11 +111,14 @@ class discussion {
      * @param legacy_data_mapper_factory $legacydatamapperfactory Legacy data mapper factory
      * @param exporter_factory $exporterfactory Exporter factory
      * @param vault_factory $vaultfactory Vault factory
+     * @param url_factory $urlfactory URL factory
+     * @param entity_factory $entityfactory Entity factory
      * @param capability_manager $capabilitymanager Capability manager
      * @param rating_manager $ratingmanager Rating manager
      * @param sorter_entity $exportedpostsorter Sorter for the exported posts
      * @param moodle_url $baseurl The base URL for the discussion
      * @param array $notifications List of HTML notifications to display
+     * @param callable|null $postprocessfortemplate Post processing for template callback
      */
     public function __construct(
         forum_entity $forum,
@@ -121,6 +130,8 @@ class discussion {
         legacy_data_mapper_factory $legacydatamapperfactory,
         exporter_factory $exporterfactory,
         vault_factory $vaultfactory,
+        url_factory $urlfactory,
+        entity_factory $entityfactory,
         capability_manager $capabilitymanager,
         rating_manager $ratingmanager,
         sorter_entity $exportedpostsorter,
@@ -138,6 +149,8 @@ class discussion {
         $this->legacydatamapperfactory = $legacydatamapperfactory;
         $this->exporterfactory = $exporterfactory;
         $this->vaultfactory = $vaultfactory;
+        $this->urlfactory = $urlfactory;
+        $this->entityfactory = $entityfactory;
         $this->capabilitymanager = $capabilitymanager;
         $this->ratingmanager = $ratingmanager;
         $this->notifications = $notifications;
@@ -169,6 +182,8 @@ class discussion {
 
         $displaymode = $this->displaymode;
         $capabilitymanager = $this->capabilitymanager;
+        $urlfactory = $this->urlfactory;
+        $entityfactory = $this->entityfactory;
 
         // Make sure we can render.
         if (!$capabilitymanager->can_view_discussions($user)) {
@@ -193,7 +208,7 @@ class discussion {
             'html' => [
                 'hasanyactions' => $hasanyactions,
                 'posts' => $this->postsrenderer->render($user, [$this->forum], [$this->discussion], $posts),
-                'modeselectorform' => $this->get_display_mode_selector_html($displaymode),
+                'modeselectorform' => $this->get_display_mode_selector_html($displaymode, $user),
                 'subscribe' => null,
                 'movediscussion' => null,
                 'pindiscussion' => null,
@@ -204,15 +219,26 @@ class discussion {
 
         $capabilities = (array) $exporteddiscussion['capabilities'];
 
-        if ($capabilities['subscribe']) {
-            $exporteddiscussion['html']['subscribe'] = $this->get_subscription_button_html();
-        }
-
         if ($capabilities['move']) {
             $exporteddiscussion['html']['movediscussion'] = $this->get_move_discussion_html();
         }
 
-        return $this->renderer->render_from_template('mod_forum/forum_discussion', $exporteddiscussion);
+        if (!empty($user->id)) {
+            $loggedinuser = $entityfactory->get_author_from_stdClass($user);
+            $exporteddiscussion['loggedinuser'] = [
+                'firstname' => $loggedinuser->get_first_name(),
+                'fullname' => $loggedinuser->get_full_name(),
+                'profileimageurl' => ($urlfactory->get_author_profile_image_url($loggedinuser, null))->out(false)
+            ];
+        }
+
+        if ($this->displaymode === FORUM_MODE_NESTED_V2) {
+            $template = 'mod_forum/forum_discussion_nested_v2';
+        } else {
+            $template = 'mod_forum/forum_discussion';
+        }
+
+        return $this->renderer->render_from_template($template, $exporteddiscussion);
     }
 
     /**
@@ -248,14 +274,15 @@ class discussion {
      * Get the HTML for the display mode selector.
      *
      * @param int $displaymode The current display mode
+     * @param stdClass $user The current user
      * @return string
      */
-    private function get_display_mode_selector_html(int $displaymode) : string {
+    private function get_display_mode_selector_html(int $displaymode, stdClass $user) : string {
         $baseurl = $this->baseurl;
         $select = new single_select(
             $baseurl,
             'mode',
-            forum_get_layout_modes(),
+            forum_get_layout_modes(get_user_preferences('forum_useexperimentalui', false, $user)),
             $displaymode,
             null,
             'mode'
@@ -263,26 +290,6 @@ class discussion {
         $select->set_label(get_string('displaymode', 'forum'), ['class' => 'accesshide']);
 
         return $this->renderer->render($select);
-    }
-
-    /**
-     * Get the HTML to render the subscription button.
-     *
-     * @return string
-     */
-    private function get_subscription_button_html() : string {
-        global $PAGE;
-
-        $forumrecord = $this->forumrecord;
-        $discussion = $this->discussion;
-        $html = html_writer::div(
-            forum_get_discussion_subscription_icon($forumrecord, $discussion->get_id(), null, true),
-            'discussionsubscription'
-        );
-        $html .= forum_get_discussion_subscription_icon_preloaders();
-        // Add the subscription toggle JS.
-        $PAGE->requires->yui_module('moodle-mod_forum-subscriptiontoggle', 'Y.M.mod_forum.subscriptiontoggle.init');
-        return $html;
     }
 
     /**
@@ -324,9 +331,15 @@ class discussion {
             }
             if (!empty($forummenu)) {
                 $html = '<div class="movediscussionoption">';
+
+                $movebutton = get_string('move');
+                if ($this->displaymode === FORUM_MODE_NESTED_V2) {
+                    // Move discussion selector will be rendered on the settings drawer. We won't output the button in this mode.
+                    $movebutton = null;
+                }
                 $select = new url_select($forummenu, '',
                         ['/mod/forum/discuss.php?d=' . $discussion->get_id() => get_string("movethisdiscussionto", "forum")],
-                        'forummenu', get_string('move'));
+                        'forummenu', $movebutton);
                 $html .= $this->renderer->render($select);
                 $html .= "</div>";
                 return $html;

@@ -1,7 +1,7 @@
 /**
  * videojs-flash
- * @version 2.0.0
- * @copyright 2017 Brightcove, Inc.
+ * @version 2.2.0
+ * @copyright 2019 Brightcove, Inc.
  * @license Apache-2.0
  */
 (function (global, factory) {
@@ -10,11 +10,11 @@
 	(global.videojsFlash = factory(global.videojs));
 }(this, (function (videojs) { 'use strict';
 
-videojs = 'default' in videojs ? videojs['default'] : videojs;
+videojs = videojs && videojs.hasOwnProperty('default') ? videojs['default'] : videojs;
 
-var version = "5.4.1";
+var version = "5.4.2";
 
-var version$1 = "2.0.0";
+var version$1 = "2.2.0";
 
 /**
  * @file flash-rtmp.js
@@ -88,7 +88,7 @@ function FlashRtmpDecorator(Flash) {
     // Look for the normal URL separator we expect, '&'.
     // If found, we split the URL into two pieces around the
     // first '&'.
-    var connEnd = src.search(/&(?!\w+=)/);
+    var connEnd = src.search(/&(?![\w-]+=)/);
     var streamBegin = void 0;
 
     if (connEnd !== -1) {
@@ -242,16 +242,6 @@ var classCallCheck = function (instance, Constructor) {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
@@ -267,16 +257,6 @@ var inherits = function (subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 };
-
-
-
-
-
-
-
-
-
-
 
 var possibleConstructorReturn = function (self, call) {
   if (!self) {
@@ -313,14 +293,14 @@ var Flash = function (_Tech) {
   inherits(Flash, _Tech);
 
   /**
-   * Create an instance of this Tech.
-   *
-   * @param {Object} [options]
-   *        The key/value store of player options.
-   *
-   * @param {Component~ReadyCallback} ready
-   *        Callback function to call when the `Flash` Tech is ready.
-   */
+  * Create an instance of this Tech.
+  *
+  * @param {Object} [options]
+  *        The key/value store of player options.
+  *
+  * @param {Component~ReadyCallback} ready
+  *        Callback function to call when the `Flash` Tech is ready.
+  */
   function Flash(options, ready) {
     classCallCheck(this, Flash);
 
@@ -377,7 +357,7 @@ var Flash = function (_Tech) {
     // Otherwise this adds a CDN url.
     // The CDN also auto-adds a swf URL for that specific version.
     if (!options.swf) {
-      options.swf = '//vjs.zencdn.net/swf/' + version + '/video-js.swf';
+      options.swf = 'https://vjs.zencdn.net/swf/' + version + '/video-js.swf';
     }
 
     // Generate ID for swf object
@@ -1121,12 +1101,16 @@ for (var _i = 0; _i < _readOnly.length; _i++) {
  * Check if the Flash tech is currently supported.
  *
  * @return {boolean}
- *          - True if the flash tech is supported.
- *          - False otherwise.
+ *          - True for Chrome and Safari Desktop and Microsoft Edge and if flash tech is supported
+ *          - False otherwise
  */
 Flash.isSupported = function () {
+  // for Chrome Desktop and Safari Desktop
+  if (videojs.browser.IS_CHROME && !videojs.browser.IS_ANDROID || videojs.browser.IS_SAFARI && !videojs.browser.IS_IOS || videojs.browser.IS_EDGE) {
+    return true;
+  }
+  // for other browsers
   return Flash.version()[0] >= 10;
-  // return swfobject.hasFlashPlayerVersion('10');
 };
 
 // Add Source Handler pattern functions to this tech
@@ -1329,7 +1313,12 @@ Flash.onError = function (swfID, err) {
   }
 
   // trigger a custom error
-  tech.error('FLASH: ' + err);
+  if (typeof err === 'string') {
+    tech.error('FLASH: ' + err);
+  } else {
+    err.origin = 'flash';
+    tech.error(err);
+  }
 };
 
 /**

@@ -157,8 +157,9 @@ class mod_page_external extends external_api {
                 // Entry to return.
                 $page->name = external_format_string($page->name, $context->id);
 
-                list($page->intro, $page->introformat) = external_format_text($page->intro,
-                                                                $page->introformat, $context->id, 'mod_page', 'intro', null);
+                $options = array('noclean' => true);
+                list($page->intro, $page->introformat) =
+                    external_format_text($page->intro, $page->introformat, $context->id, 'mod_page', 'intro', null, $options);
                 $page->introfiles = external_util::get_area_files($context->id, 'mod_page', 'intro', false, false);
 
                 $options = array('noclean' => true);

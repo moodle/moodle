@@ -112,11 +112,55 @@ define(['core/ajax'], function(Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get the discussions for the user and cmid provided.
+     *
+     * @param {number} userid
+     * @param {number} cmid
+     * @param {string} sortby
+     * @param {string} sortdirection
+     * @return {*|Promise}
+     */
+    var getDiscussionByUserID = function(userid, cmid, sortby = 'modified', sortdirection = 'DESC') {
+        var request = {
+            methodname: 'mod_forum_get_discussion_posts_by_userid',
+            args: {
+                userid: userid,
+                cmid: cmid,
+                sortby: sortby,
+                sortdirection: sortdirection,
+            },
+        };
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * Get the posts for the discussion ID provided.
+     *
+     * @param {number} discussionId
+     * @param {String} sortby
+     * @param {String} sortdirection
+     * @return {*|Promise}
+     */
+    var getDiscussionPosts = function(discussionId, sortby = 'created', sortdirection = 'ASC') {
+        var request = {
+            methodname: 'mod_forum_get_discussion_posts',
+            args: {
+                discussionid: discussionId,
+                sortby: sortby,
+                sortdirection: sortdirection,
+            },
+        };
+        return Ajax.call([request])[0];
+    };
+
     return {
         setDiscussionSubscriptionState: setDiscussionSubscriptionState,
         addDiscussionPost: addDiscussionPost,
         setDiscussionLockState: setDiscussionLockState,
         setFavouriteDiscussionState: setFavouriteDiscussionState,
-        setPinDiscussionState: setPinDiscussionState
+        setPinDiscussionState: setPinDiscussionState,
+        getDiscussionByUserID: getDiscussionByUserID,
+        getDiscussionPosts: getDiscussionPosts,
     };
 });

@@ -27,34 +27,13 @@
 
     Example context (json):
     {
-        "url": "https://moodle.org"
+        "url": "https://moodle.org",
+        "insightinfomessage": "This insight is very <strong>useful</strong> because bla bla bla."
     }
 }}
-<style>
 
-{{! Default btn-default styles. These styles are not applied to Moodle's web UI as there is a body:not(.dir-ltr):not(.dir-rtl)}}
+{{> core_analytics/notification_styles}}
 
-body:not(.dir-ltr):not(.dir-rtl) .btn-insight {
-    margin-bottom: 1rem!important;
-    margin-right: 1rem!important;
-    color: #212529;
-    background-color: #e9ecef;
-    border-color: #e9ecef
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: .375rem .75rem;
-    font-size: .9375rem;
-    line-height: 1.5;
-    border-radius: .25rem;
-    text-decoration: none;
-}
-</style>
-
-{{#str}} insightinfomessagehtml, analytics {{/str}}
+{{{insightinfomessage}}}
 <br/><br/>
-<a class="btn btn-default btn-insight" href="{{url}}">{{#str}} viewinsight, analytics {{/str}}</a>
+<a class="btn btn-outline-primary btn-insight" href="{{url}}">{{#str}} viewinsight, analytics {{/str}}</a>

@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_analytics/notification_styles
+
+    Styles for insights' notifications (only for email).
+
+    These styles are not applied to Moodle's web UI as there is a body:not(.dir-ltr):not(.dir-rtl)
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+
+{{! The styles defined here will be included in the Moodle web UI and in emails. Emails do not include Moodle
+stylesheets so we want these styles to be applied to emails. However, they will also be included in the Moodle web UI.
+We use the not(.dir-ltr):not(.dir-rtl) so that this style is not applied to the Moodle UI.
+Note that gmail strips out HTML styles which selector includes the caracters (), so the font-family rule
+is not applied in gmail.}}
+<head><style>
+body:not(.dir-ltr):not(.dir-rtl) {
+    font-family: 'Open Sans', sans-serif;
+}
+.btn-insight {
+    color: #007bff;
+    background-color: transparent;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid #007bff;
+    padding: .375rem .75rem;
+    line-height: 1.5;
+    border-radius: 0;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style></head>
