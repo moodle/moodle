@@ -108,7 +108,7 @@ class store extends external_api {
      * @throws moodle_exception
      * @since Moodle 3.8
      */
-    public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid, 
+    public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid,
             bool $notifyuser, string $formdata): array {
         global $USER;
 
