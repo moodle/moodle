@@ -13,14 +13,16 @@ Feature: The my overview block allows users to group courses by custom fields
       | Checkbox field | Course fields | checkbox | checkboxfield |                                                      |
       | Date field     | Course fields | date     | datefield     | {"mindate":0, "maxdate":0}                           |
       | Select field   | Course fields | select   | selectfield   | {"options":"Option 1\nOption 2\nOption 3\nOption 4"} |
-      | Text field     | Course fields | text     | textfield     |                                                      |
+      | Text field     | Course fields | text     | textfield     | {"visibility":"2"}                                   |
+      | Text field 2   | Course fields | text     | textfield2    | {"visibility":"2"}                                   |
+      | Hidden field   | Course fields | text     | hiddenfield   | {"visibility":"0"}                                   |
     And the following "courses" exist:
-      | fullname | shortname | category | customfield_checkboxfield | customfield_datefield | customfield_selectfield | customfield_textfield |
-      | Course 1 | C1        | 0        | 1                         | 981028800             | 1                       | fish                  |
-      | Course 2 | C2        | 0        | 0                         | 334324800             |                         |                       |
-      | Course 3 | C3        | 0        | 0                         | 981028800             | 2                       | dog                   |
-      | Course 4 | C4        | 0        | 1                         |                       | 3                       | cat                   |
-      | Course 5 | C5        | 0        |                           | 334411200             | 2                       | fish                  |
+      | fullname | shortname | category | customfield_checkboxfield | customfield_datefield | customfield_selectfield | customfield_textfield | customfield_textfield2 |
+      | Course 1 | C1        | 0        | 1                         | 981028800             | 1                       | fish                  | penguin                |
+      | Course 2 | C2        | 0        | 0                         | 334324800             |                         |                       |                        |
+      | Course 3 | C3        | 0        | 0                         | 981028800             | 2                       | dog                   |                        |
+      | Course 4 | C4        | 0        | 1                         |                       | 3                       | cat                   |                        |
+      | Course 5 | C5        | 0        |                           | 334411200             | 2                       | fish                  | penguin                |
     And the following "course enrolments" exist:
       | user     | course | role    |
       | student1 | C1     | student |
@@ -172,3 +174,24 @@ Feature: The my overview block allows users to group courses by custom fields
     And I should not see "Course 3" in the "Course overview" "block"
     And I should not see "Course 4" in the "Course overview" "block"
     And I should not see "Course 5" in the "Course overview" "block"
+
+  Scenario: Hidden fields not displayed when configuring the custom field filters
+    Given I log in as "admin"
+    When I navigate to "Plugins > Blocks > Course overview" in site administration
+    And I set the field "Custom field" to "1"
+    Then the "Field to use" select box should not contain "Hidden field"
+
+  Scenario: Hidden fields not displayed in the filter
+    Given the following config values are set as admin:
+      | displaygroupingcustomfield | 1          | block_myoverview |
+      | customfiltergrouping       | textfield2 | block_myoverview |
+    And I log in as "admin"
+    And I navigate to "Courses > Course custom fields" in site administration
+    And I click on "Edit" "link" in the "Text field 2" "table_row"
+    And I set the field "Visible to" to "Nobody"
+    And I press "Save changes"
+    And I log out
+    When I log in as "student1"
+    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    Then I should not see "penguin" in the "Course overview" "block"
+    Then I should not see "No text field" in the "Course overview" "block"
