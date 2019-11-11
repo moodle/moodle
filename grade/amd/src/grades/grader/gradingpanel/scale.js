@@ -23,6 +23,7 @@
  */
 
 import {saveGrade, fetchGrade} from './repository';
+import {compareData} from 'core_grades/grades/grader/gradingpanel/comparison';
 // Note: We use jQuery.serializer here until we can rewrite Ajax to use XHR.send()
 import jQuery from 'jquery';
 import {invalidResult} from './normalise';
@@ -37,5 +38,9 @@ export const storeCurrentGrade = (component, context, itemname, userId, rootNode
         return invalidResult;
     }
 
-    return saveGrade('scale')(component, context, itemname, userId, jQuery(form).serialize());
+    if (compareData(form) === true) {
+        return saveGrade('scale')(component, context, itemname, userId, jQuery(form).serialize());
+    } else {
+        return '';
+    }
 };

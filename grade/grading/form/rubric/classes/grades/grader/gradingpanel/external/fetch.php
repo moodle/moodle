@@ -140,6 +140,7 @@ class fetch extends external_api {
         global $USER;
 
         // Set up all the controllers etc that we'll be needing.
+        $hasgrade = $gradeitem->user_has_grade($gradeduser);
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
         $instance = $gradeitem->get_advanced_grading_instance($USER, $grade);
         $controller = $instance->get_controller();
@@ -159,7 +160,7 @@ class fetch extends external_api {
         $criterion = [];
         if ($definition->rubric_criteria) {
             // Iterate over the defined criterion in the rubric and map out what we need to render each item.
-            $criterion = array_map(function($criterion) use ($definitionid, $fillings, $context) {
+            $criterion = array_map(function($criterion) use ($definitionid, $fillings, $context, $hasgrade) {
                 // The general structure we'll be returning, we still need to get the remark (if any) and the levels associated.
                 $result = [
                     'id' => $criterion['id'],
@@ -213,8 +214,8 @@ class fetch extends external_api {
                     'id' => null,
                     'criterionid' => $criterion['id'],
                     'score' => '-',
-                    'definition' => 'Not set',
-                    'checked' => null,
+                    'definition' => get_string('notset', 'gradingform_rubric'),
+                    'checked' => !$hasgrade,
                 ];
                 // Consult the grade filling to see if a level has been selected and if it is the current level.
                 if (array_key_exists('levelid', $filling) && $filling['levelid'] == 0) {
@@ -229,6 +230,7 @@ class fetch extends external_api {
 
         return [
             'templatename' => 'gradingform_rubric/grades/grader/gradingpanel',
+            'hasgrade' => $hasgrade,
             'grade' => [
                 'instanceid' => $instance->get_id(),
                 'criteria' => $criterion,
@@ -251,6 +253,7 @@ class fetch extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'templatename' => new external_value(PARAM_SAFEPATH, 'The template to use when rendering this data'),
+            'hasgrade' => new external_value(PARAM_BOOL, 'Does the user have a grade?'),
             'grade' => new external_single_structure([
                 'instanceid' => new external_value(PARAM_INT, 'The id of the current grading instance'),
                 'rubricmode' => new external_value(PARAM_RAW, 'The mode i.e. evaluate editable'),

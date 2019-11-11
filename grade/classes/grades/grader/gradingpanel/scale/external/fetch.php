@@ -142,6 +142,7 @@ class fetch extends external_api {
     public static function get_fetch_data(gradeitem $gradeitem, stdClass $gradeduser): array {
         global $USER;
 
+        $hasgrade = $gradeitem->user_has_grade($gradeduser);
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
         $currentgrade = (int) unformat_float($grade->grade);
 
@@ -156,6 +157,7 @@ class fetch extends external_api {
 
         return [
             'templatename' => 'core_grades/grades/grader/gradingpanel/scale',
+            'hasgrade' => $hasgrade,
             'grade' => [
                 'options' => $values,
                 'timecreated' => $grade->timecreated,
@@ -174,6 +176,7 @@ class fetch extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'templatename' => new external_value(PARAM_SAFEPATH, 'The template to use when rendering this data'),
+            'hasgrade' => new external_value(PARAM_BOOL, 'Does the user have a grade?'),
             'grade' => new external_single_structure([
                 'options' => new external_multiple_structure(
                     new external_single_structure([
