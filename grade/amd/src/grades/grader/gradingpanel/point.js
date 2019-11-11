@@ -47,10 +47,12 @@ export const fetchCurrentGrade = (...args) => fetchGrade('point')(...args);
  * @param {Number} context
  * @param {String} itemname
  * @param {Number} userId
+ * @param {Boolean} notifyUser
  * @param {Element} rootNode
+ *
  * @return {Object}
  */
-export const storeCurrentGrade = async(component, context, itemname, userId, rootNode) => {
+export const storeCurrentGrade = async(component, context, itemname, userId, notifyUser, rootNode) => {
     const form = rootNode.querySelector('form');
     const grade = form.querySelector('input[name="grade"]');
 
@@ -59,7 +61,7 @@ export const storeCurrentGrade = async(component, context, itemname, userId, roo
     }
 
     if (compareData(form) === true) {
-        return await saveGrade('point')(component, context, itemname, userId, jQuery(form).serialize());
+        return await saveGrade('point')(component, context, itemname, userId, notifyUser, jQuery(form).serialize());
     } else {
         return '';
     }

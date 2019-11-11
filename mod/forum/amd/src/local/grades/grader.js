@@ -279,7 +279,11 @@ const getSaveUserGradeFunction = (root, setGradeForUser) => {
     return async(user) => {
         try {
             root.querySelector(Selectors.regions.gradingPanelErrors).innerHTML = '';
-            const result = await setGradeForUser(user.id, root.querySelector(Selectors.regions.gradingPanel));
+            const result = await setGradeForUser(
+                user.id,
+                root.querySelector(Selectors.values.sendStudentNotifications).value,
+                root.querySelector(Selectors.regions.gradingPanel)
+            );
             if (result.success) {
                 addToast(await getString('grades:gradesavedfor', 'mod_forum', user));
             }
@@ -323,9 +327,10 @@ const displayGradingError = async(root, user, err) => {
  * @param {Function} getContentForUser A function to get the content for a specific user
  * @param {Function} getGradeForUser A function get the grade details for a specific user
  * @param {Function} setGradeForUser A function to set the grade for a specific user
+ * @param
  */
 export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
-    initialUserId = null, moduleName, courseName, courseUrl
+    initialUserId = null, moduleName, courseName, courseUrl, sendStudentNotifications
 } = {}) => {
 
     // We need all of these functions to be executed in series, if one step runs before another the interface
@@ -336,11 +341,13 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
         userList,
     ] = await Promise.all([
         createFullScreenWindow({fullscreen: false, showLoader: false}),
+
         Templates.renderForPromise(templateNames.grader.app, {
             moduleName,
             courseName,
             courseUrl,
-            drawer: {show: true}
+            drawer: {show: true},
+            defaultsendnotifications: sendStudentNotifications,
         }),
         getListOfUsers(),
     ]);

@@ -77,6 +77,12 @@ class store extends external_api {
                 'The ID of the user show',
                 VALUE_REQUIRED
             ),
+            'notifyuser' => new external_value(
+                PARAM_BOOL,
+                'Wheteher to notify the user or not',
+                VALUE_DEFAULT,
+                false
+            ),
             'formdata' => new external_value(
                 PARAM_RAW,
                 'The serialised form data representing the grade',
@@ -92,7 +98,9 @@ class store extends external_api {
      * @param int $contextid
      * @param string $itemname
      * @param int $gradeduserid
+     * @param bool $notifyuser
      * @param string $formdata
+     *
      * @return array
      * @throws \dml_exception
      * @throws \invalid_parameter_exception
@@ -101,7 +109,8 @@ class store extends external_api {
      * @throws moodle_exception
      * @since Moodle 3.8
      */
-    public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid, string $formdata): array {
+    public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid, 
+            bool $notifyuser, string $formdata): array {
         global $USER;
 
         [
@@ -153,6 +162,12 @@ class store extends external_api {
 
         // Grade.
         $gradeitem->store_grade_from_formdata($gradeduser, $USER, (object) $data);
+
+        // Notify.
+        if ($notifyuser) {
+            // Send notification.
+            $gradeitem->send_student_notification($gradeduser, $USER);
+        }
 
         return fetch::get_fetch_data($gradeitem, $gradeduser);
     }

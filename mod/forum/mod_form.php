@@ -235,6 +235,8 @@ class mod_forum_mod_form extends moodleform_mod {
         $gradefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
         $gradecatfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'gradecat');
         $gradepassfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'gradepass');
+        $sendstudentnotificationsfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber,
+                'sendstudentnotifications');
 
         // The advancedgradingmethod is different in that it is suffixed with an area name... which is not the
         // itemnumber.
@@ -304,6 +306,14 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->setDefault($gradepassfieldname, '');
         $mform->setType($gradepassfieldname, PARAM_RAW);
         $mform->hideIf($gradepassfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
+
+        $mform->addElement(
+                'selectyesno',
+                $sendstudentnotificationsfieldname,
+                get_string('sendstudentnotificationsdefault', 'forum')
+        );
+        $mform->addHelpButton($sendstudentnotificationsfieldname, 'sendstudentnotificationsdefault', 'forum');
+        $mform->hideIf($sendstudentnotificationsfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
     }
 
     function definition_after_data() {

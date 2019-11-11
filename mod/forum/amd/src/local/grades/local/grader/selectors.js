@@ -52,5 +52,8 @@ export default {
         userSearchContainer: getDataSelector('region', 'user-search-container'),
         userSearchInput: getDataSelector('region', 'user-search-input')
     },
+    values: {
+        sendStudentNotifications: '[data-region="notification"] input[type="radio"]:checked',
+    }
 };
 

@@ -44,7 +44,8 @@ export default async(component, context, gradingComponent, gradingSubtype, itemN
 
     return {
         getter: (userId) => GradingMethod.fetchCurrentGrade(component, context, itemName, userId),
-        setter: (userId, formData) => GradingMethod.storeCurrentGrade(component, context, itemName, userId, formData),
+        setter: (userId, notifyStudent, formData) => GradingMethod.storeCurrentGrade(
+            component, context, itemName, userId, notifyStudent, formData),
     };
 };
 
