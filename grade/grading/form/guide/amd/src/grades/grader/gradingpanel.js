@@ -58,12 +58,12 @@ export const fetchCurrentGrade = (component, contextid, itemname, gradeduserid) 
  * @param {Number} contextid
  * @param {String} itemname
  * @param {Number} gradeduserid
+ * @param {Boolean} notifyUser
  * @param {HTMLElement} rootNode
- * @param {Boolean} notifyuser
  *
  * @returns {Promise}
  */
-export const storeCurrentGrade = async(component, contextid, itemname, gradeduserid, rootNode, notifyuser = false) => {
+export const storeCurrentGrade = async(component, contextid, itemname, gradeduserid, notifyUser, rootNode) => {
     const form = rootNode.querySelector('form');
 
     if (compareData(form) === true) {
@@ -74,8 +74,8 @@ export const storeCurrentGrade = async(component, contextid, itemname, gradeduse
                 contextid,
                 itemname,
                 gradeduserid,
+                notifyuser: notifyUser,
                 formdata: jQuery(form).serialize(),
-                notifyuser,
             },
         }])[0]);
     } else {

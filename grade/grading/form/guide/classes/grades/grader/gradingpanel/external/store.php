@@ -77,16 +77,16 @@ class store extends external_api {
                 'The ID of the user show',
                 VALUE_REQUIRED
             ),
-            'formdata' => new external_value(
-                PARAM_RAW,
-                'The serialised form data representing the grade',
-                VALUE_REQUIRED
-            ),
             'notifyuser' => new external_value(
                 PARAM_BOOL,
                 'Wheteher to notify the user or not',
                 VALUE_DEFAULT,
                 false
+            ),
+            'formdata' => new external_value(
+                PARAM_RAW,
+                'The serialised form data representing the grade',
+                VALUE_REQUIRED
             ),
         ]);
     }
@@ -98,8 +98,9 @@ class store extends external_api {
      * @param int $contextid
      * @param string $itemname
      * @param int $gradeduserid
-     * @param string $formdata
      * @param bool $notifyuser
+     * @param string $formdata
+     *
      * @return array
      * @throws \dml_exception
      * @throws \invalid_parameter_exception
@@ -108,8 +109,8 @@ class store extends external_api {
      * @throws moodle_exception
      * @since Moodle 3.8
      */
-    public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid, string $formdata,
-            bool $notifyuser): array {
+    public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid, 
+            bool $notifyuser, string $formdata): array {
         global $USER;
 
         [
