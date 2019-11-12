@@ -41,7 +41,7 @@ class test_analysis extends \core_analytics\analysis {
      */
     public function process_analysable(\core_analytics\analysable $analysable): array {
         // Half a second.
-        usleep(500000);
+        sleep(1);
         return parent::process_analysable($analysable);
     }
 }
