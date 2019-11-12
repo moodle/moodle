@@ -113,12 +113,14 @@ class store extends external_api {
             'contextid' => $contextid,
             'itemname' => $itemname,
             'gradeduserid' => $gradeduserid,
+            'notifyuser' => $notifyuser,
             'formdata' => $formdata,
         ] = self::validate_parameters(self::execute_parameters(), [
             'component' => $component,
             'contextid' => $contextid,
             'itemname' => $itemname,
             'gradeduserid' => $gradeduserid,
+            'notifyuser' => $notifyuser,
             'formdata' => $formdata,
         ]);
 
