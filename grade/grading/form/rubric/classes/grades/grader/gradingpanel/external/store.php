@@ -76,16 +76,16 @@ class store extends external_api {
                 'The ID of the user show',
                 VALUE_REQUIRED
             ),
-            'formdata' => new external_value(
-                PARAM_RAW,
-                'The serialised form data representing the grade',
-                VALUE_REQUIRED
-            ),
             'notifyuser' => new external_value(
                 PARAM_BOOL,
                 'Wheteher to notify the user or not',
                 VALUE_DEFAULT,
                 false
+            ),
+            'formdata' => new external_value(
+                PARAM_RAW,
+                'The serialised form data representing the grade',
+                VALUE_REQUIRED
             ),
         ]);
     }
@@ -113,12 +113,14 @@ class store extends external_api {
             'contextid' => $contextid,
             'itemname' => $itemname,
             'gradeduserid' => $gradeduserid,
+            'notifyuser' => $notifyuser,
             'formdata' => $formdata,
         ] = self::validate_parameters(self::execute_parameters(), [
             'component' => $component,
             'contextid' => $contextid,
             'itemname' => $itemname,
             'gradeduserid' => $gradeduserid,
+            'notifyuser' => $notifyuser,
             'formdata' => $formdata,
         ]);
 
