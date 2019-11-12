@@ -258,5 +258,18 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019100108, 'forum');
     }
 
+    if ($oldversion < 2019100109) {
+
+        $table = new xmldb_table('forum');
+        $field = new xmldb_field('sendstudentnotifications_forum');
+        if ($dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'grade_forum');
+            $dbman->rename_field($table, $field, 'grade_forum_notify');
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2019100109, 'forum');
+
+    }
     return true;
 }
