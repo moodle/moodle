@@ -32,6 +32,7 @@ import * as FocusLockManager from 'core/local/aria/focuslock';
 const getComposedLayout = ({
     fullscreen = true,
     showLoader = false,
+    focusOnClose = null,
 } = {}) => {
     const container = document.createElement('div');
     document.body.append(container);
@@ -46,7 +47,7 @@ const getComposedLayout = ({
     // Lock tab control.
     FocusLockManager.trapFocus(container);
 
-    const helpers = getLayoutHelpers(container, FocusLockManager);
+    const helpers = getLayoutHelpers(container, FocusLockManager, focusOnClose);
 
     if (showLoader) {
         helpers.showLoadingIcon();
@@ -59,7 +60,7 @@ const getComposedLayout = ({
     return helpers;
 };
 
-const getLayoutHelpers = (layoutNode, FocusLockManager) => {
+const getLayoutHelpers = (layoutNode, FocusLockManager, focusOnClose) => {
     const contentNode = document.createElement('div');
     layoutNode.append(contentNode);
 
@@ -75,6 +76,14 @@ const getLayoutHelpers = (layoutNode, FocusLockManager) => {
         FocusLockManager.untrapFocus();
 
         layoutNode.remove();
+
+        if (focusOnClose) {
+            try {
+                focusOnClose.focus();
+            } catch (e) {
+                // eslint-disable-line
+            }
+        }
     };
 
     /**
