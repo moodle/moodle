@@ -2539,7 +2539,7 @@ class assign {
         // Only ever send a max of one days worth of updates.
         $yesterday = time() - (24 * 3600);
         $timenow   = time();
-        $lastcron = $DB->get_field('modules', 'lastcron', array('name' => 'assign'));
+        $lastruntime = $DB->get_field('task_scheduled', 'lastruntime', array('component' => 'mod_assign'));
 
         // Collect all submissions that require mailing.
         // Submissions are included if all are true:
@@ -2711,10 +2711,10 @@ class assign {
         $sql = 'SELECT id
                     FROM {assign}
                     WHERE
-                        allowsubmissionsfromdate >= :lastcron AND
+                        allowsubmissionsfromdate >= :lastruntime AND
                         allowsubmissionsfromdate <= :timenow AND
                         alwaysshowdescription = 0';
-        $params = array('lastcron' => $lastcron, 'timenow' => $timenow);
+        $params = array('lastruntime' => $lastruntime, 'timenow' => $timenow);
         $newlyavailable = $DB->get_records_sql($sql, $params);
         foreach ($newlyavailable as $record) {
             $cm = get_coursemodule_from_instance('assign', $record->id, 0, false, MUST_EXIST);
