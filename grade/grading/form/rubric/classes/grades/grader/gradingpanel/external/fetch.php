@@ -274,6 +274,7 @@ class fetch extends external_api {
                         ])),
                     ])
                 ),
+                'timecreated' => new external_value(PARAM_INT, 'The time that the grade was created'),
                 'usergrade' => new external_value(PARAM_RAW, 'Current user grade'),
                 'maxgrade' => new external_value(PARAM_RAW, 'Max possible grade'),
                 'timemodified' => new external_value(PARAM_INT, 'The time that the grade was last updated'),
