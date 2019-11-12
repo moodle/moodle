@@ -207,6 +207,7 @@ class discussion_list {
                 'excludesubscription' => true
             ],
             'totaldiscussioncount' => $alldiscussionscount,
+            'userid' => $user->id,
             'visiblediscussioncount' => count($discussions)
         ];
 

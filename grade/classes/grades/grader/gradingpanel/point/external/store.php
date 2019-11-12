@@ -172,7 +172,7 @@ class store extends external_api {
         // Fetch the updated grade back out.
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
 
-        return fetch::get_fetch_data($grade, $hasgrade);
+        return fetch::get_fetch_data($grade, $hasgrade, 0);
     }
 
     /**

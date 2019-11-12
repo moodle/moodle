@@ -171,8 +171,9 @@ $groupid = groups_get_activity_group($cm, true) ?: null;
 $rendererfactory = mod_forum\local\container::get_renderer_factory();
 switch ($forum->get_type()) {
     case 'single':
+        $forumgradeitem = forum_gradeitem::load_from_forum_entity($forum);
         if ($capabilitymanager->can_grade($USER)) {
-            $forumgradeitem = forum_gradeitem::load_from_forum_entity($forum);
+
             if ($forumgradeitem->is_grading_enabled()) {
                 $groupid = groups_get_activity_group($cm, true) ?: null;
                 $gradeobj = (object) [
@@ -188,6 +189,22 @@ switch ($forum->get_type()) {
                     'sendstudentnotifications' => $forum->should_notify_students_default_when_grade_for_forum(),
                 ];
                 echo $OUTPUT->render_from_template('mod_forum/grades/grade_button', $gradeobj);
+            }
+        } else {
+            if ($forumgradeitem->is_grading_enabled()) {
+                $groupid = groups_get_activity_group($cm, true) ?: null;
+                $gradeobj = (object) [
+                    'contextid' => $forum->get_context()->id,
+                    'cmid' => $cmid,
+                    'name' => $forum->get_name(),
+                    'courseid' => $course->id,
+                    'coursename' => $course->shortname,
+                    'groupid' => $groupid,
+                    'userid' => $USER->id,
+                    'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
+                    'gradingcomponentsubtype' => $forumgradeitem->get_grading_component_subtype(),
+                ];
+                $OUTPUT->render_from_template('mod_forum/grades/view_grade_button', $gradeobj);
             }
         }
         $discussion = $discussionvault->get_last_discussion_in_forum($forum);

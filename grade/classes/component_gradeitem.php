@@ -408,6 +408,37 @@ abstract class component_gradeitem {
     abstract public function get_all_grades(): array;
 
     /**
+     * Get the grade item instance id.
+     *
+     * This is typically the cmid in the case of an activity, and relates to the iteminstance field in the grade_items
+     * table.
+     *
+     * @return int
+     */
+    abstract public function get_grade_instance_id(): int;
+
+    /**
+     * Get the core grade item from the current component grade item.
+     * This is mainly used to access the max grade for a gradeitem
+     *
+     * @return \grade_item The grade item
+     */
+    public function get_grade_item(): \grade_item {
+        global $CFG;
+        require_once("{$CFG->libdir}/gradelib.php");
+
+        [$itemtype, $itemmodule] = \core_component::normalize_component($this->component);
+        $gradeitem = \grade_item::fetch([
+            'itemtype' => $itemtype,
+            'itemmodule' => $itemmodule,
+            'itemnumber' => $this->itemnumber,
+            'iteminstance' => $this->get_grade_instance_id(),
+        ]);
+
+        return $gradeitem;
+    }
+
+    /**
      * Create or update the grade.
      *
      * @param stdClass $grade

@@ -165,7 +165,7 @@ class store extends external_api {
             $gradeitem->send_student_notification($gradeduser, $USER);
         }
 
-        return fetch::get_fetch_data($gradeitem, $gradeduser);
+        return fetch::get_fetch_data($gradeitem, $gradeduser, 0);
     }
 
     /**

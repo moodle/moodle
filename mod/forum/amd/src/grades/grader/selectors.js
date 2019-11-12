@@ -29,4 +29,5 @@ export default {
     },
     expandConversation: '[data-action="view-context"]',
     posts: '[data-region="posts"]',
+    viewGrade: '[data-grade-action="view"]',
 };

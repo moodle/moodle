@@ -131,8 +131,9 @@ class fetch extends external_api {
         $gradeduser = \core_user::get_user($gradeduserid);
         $hasgrade = $gradeitem->user_has_grade($gradeduser);
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
+        $maxgrade = (int) $gradeitem->get_grade_item()->grademax;
 
-        return self::get_fetch_data($grade, $hasgrade);
+        return self::get_fetch_data($grade, $hasgrade, $maxgrade);
     }
 
     /**
@@ -140,14 +141,17 @@ class fetch extends external_api {
      *
      * @param stdClass $grade
      * @param bool $hasgrade
+     * @param int $maxgrade
      * @return array
      */
-    public static function get_fetch_data(stdClass $grade, bool $hasgrade): array {
+    public static function get_fetch_data(stdClass $grade, bool $hasgrade, int $maxgrade): array {
         return [
             'templatename' => 'core_grades/grades/grader/gradingpanel/point',
             'hasgrade' => $hasgrade,
             'grade' => [
                 'grade' => $grade->grade,
+                'usergrade' => $grade->grade,
+                'maxgrade' => $maxgrade,
                 'timecreated' => $grade->timecreated,
                 'timemodified' => $grade->timemodified,
             ],
@@ -167,6 +171,8 @@ class fetch extends external_api {
             'hasgrade' => new external_value(PARAM_BOOL, 'Does the user have a grade?'),
             'grade' => new external_single_structure([
                 'grade' => new external_value(PARAM_FLOAT, 'The numeric grade'),
+                'usergrade' => new external_value(PARAM_RAW, 'Current user grade'),
+                'maxgrade' => new external_value(PARAM_RAW, 'Max possible grade'),
                 'timecreated' => new external_value(PARAM_INT, 'The time that the grade was created'),
                 'timemodified' => new external_value(PARAM_INT, 'The time that the grade was last updated'),
             ]),

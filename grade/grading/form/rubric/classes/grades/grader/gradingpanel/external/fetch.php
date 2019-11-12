@@ -148,7 +148,7 @@ class fetch extends external_api {
         $fillings = $instance->get_rubric_filling();
         $context = $controller->get_context();
         $definitionid = (int) $definition->id;
-
+        $maxgrade = max(array_keys($controller->get_grade_range()));
         $teacherdescription = self::get_formatted_text(
             $context,
             $definitionid,
@@ -237,6 +237,8 @@ class fetch extends external_api {
                 'rubricmode' => 'evaluate editable',
                 'teacherdescription' => $teacherdescription,
                 'canedit' => false,
+                'usergrade' => $grade->grade,
+                'maxgrade' => $maxgrade,
                 'timecreated' => $grade->timecreated,
                 'timemodified' => $grade->timemodified,
             ],
@@ -272,7 +274,8 @@ class fetch extends external_api {
                         ])),
                     ])
                 ),
-                'timecreated' => new external_value(PARAM_INT, 'The time that the grade was created'),
+                'usergrade' => new external_value(PARAM_RAW, 'Current user grade'),
+                'maxgrade' => new external_value(PARAM_RAW, 'Max possible grade'),
                 'timemodified' => new external_value(PARAM_INT, 'The time that the grade was last updated'),
             ]),
             'warnings' => new external_warnings(),
