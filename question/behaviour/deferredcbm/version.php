@@ -26,11 +26,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qbehaviour_deferredcbm';
-$plugin->version   = 2019052000;
+$plugin->version   = 2019111800;
 
-$plugin->requires  = 2019051100;
+$plugin->requires  = 2019111200;
 $plugin->dependencies = array(
-    'qbehaviour_deferredfeedback' => 2019051100
+    'qbehaviour_deferredfeedback' => 2019111200
 );
 
 $plugin->maturity  = MATURITY_STABLE;

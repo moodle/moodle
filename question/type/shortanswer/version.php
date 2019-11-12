@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_shortanswer';
-$plugin->version   = 2019052000;
+$plugin->version   = 2019111800;
 
-$plugin->requires  = 2019051100;
+$plugin->requires  = 2019111200;
 
 $plugin->maturity  = MATURITY_STABLE;

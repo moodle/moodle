@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019101700;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2019101200;        // Requires this Moodle version.
+$plugin->version   = 2019111800;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2019111200;        // Requires this Moodle version.
 $plugin->component = 'atto_emojipicker';  // Full name of the plugin (used for diagnostics).

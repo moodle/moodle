@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019052000;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;        // Requires this Moodle version
+$plugin->version   = 2019111800;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2019111200;        // Requires this Moodle version
 $plugin->component = 'gradeimport_direct'; // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = array('gradeimport_csv' => 2019051100); // Grade import csv is required for this plugin.
+$plugin->dependencies = array('gradeimport_csv' => 2019111200); // Grade import csv is required for this plugin.
