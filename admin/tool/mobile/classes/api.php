@@ -299,6 +299,13 @@ class api {
             $settings->calendar_maxevents = $CFG->calendar_maxevents;
         }
 
+        if (empty($section) or $section == 'coursecolors') {
+            $colornumbers = range(1, 10);
+            foreach ($colornumbers as $number) {
+                $settings->{'core_admin_coursecolor' . $number} = get_config('core_admin', 'coursecolor' . $number);
+            }
+        }
+
         return $settings;
     }
 
