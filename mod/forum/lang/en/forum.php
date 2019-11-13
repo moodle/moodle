@@ -738,26 +738,27 @@ $string['yournewtopic'] = 'Your new discussion topic';
 $string['yourreply'] = 'Your reply';
 $string['forumsubjectdeleted'] = 'This forum post has been removed';
 $string['forumbodydeleted'] = 'The content of this forum post has been removed and can no longer be accessed.';
-$string['gradeusers'] = 'Grade users';
 $string['forumgrader'] = 'Forum grader';
-$string['grading'] = 'Grading';
-$string['viewconversation'] = 'View discussion';
-
 $string['grade_forum_header'] = 'Whole forum grading';
+$string['grade_forum_name'] = 'Whole forum';
 $string['grade_forum_title'] = 'Grade';
-$string['gradingstatus'] = 'Grade status:';
+$string['grade_rating_name'] = 'Rating';
+$string['gradeusers'] = 'Grade users';
 $string['graded'] = 'Graded';
-$string['notgraded'] = 'Not graded';
 $string['gradeforrating'] = 'Grade for rating: {$a->str_long_grade}';
 $string['gradeforratinghidden'] = 'Grade for rating hidden';
 $string['gradeforwholeforum'] = 'Grade for forum: {$a->str_long_grade}';
+$string['grading'] = 'Grading';
+$string['gradingstatus'] = 'Grade status:';
 $string['gradeforwholeforumhidden'] = 'Grade for forum hidden';
 $string['gradeitemnameforwholeforum'] = 'Whole forum grade for {$a->name}';
 $string['gradeitemnameforrating'] = 'Rating grade for {$a->name}';
 $string['grades:gradesavedfor'] = 'Grade saved for {$a->fullname}';
 $string['grades:gradesavefailed'] = 'Unable to save grade for {$a->fullname}: {$a->error}';
-$string['showmoreusers'] = 'Show more users';
+$string['notgraded'] = 'Not graded';
 $string['nousersmatch'] = 'No user(s) found for given criteria';
+$string['showmoreusers'] = 'Show more users';
+$string['viewconversation'] = 'View conversation';
 $string['viewgrades'] = 'View grades';
 
 // Deprecated since Moodle 3.8.
