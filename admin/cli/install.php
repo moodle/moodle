@@ -157,6 +157,7 @@ $CFG->lang                 = 'en';
 $CFG->dirroot              = dirname(dirname(__DIR__));
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = "http://localhost";
+$CFG->httpswwwroot         = $CFG->wwwroot;
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
@@ -388,6 +389,7 @@ if ($interactive) {
     }
 }
 $CFG->wwwroot       = $wwwroot;
+$CFG->httpswwwroot  = $CFG->wwwroot;
 
 //We need dataroot before lang download
 $CFG->dataroot = $options['dataroot'];
