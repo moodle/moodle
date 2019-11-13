@@ -243,7 +243,9 @@ class generator_testcase extends \advanced_testcase {
             'preloadedcss' => 'css/example.css',
             'droplibrarycss' => '',
             'semantics' => 'Semantics example',
-            'addto' => '/regex11/'
+            'addto' => '/regex11/',
+            'coremajor' => null,
+            'coreminor' => null,
         ];
 
         $this->assertEquals($expected, $data);
