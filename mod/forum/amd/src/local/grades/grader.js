@@ -405,7 +405,9 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
  * @param {Number} userid The ID of a specific user
  * @param {String} moduleName the name of the module
  */
-export const view = async(getGradeForUser, userid, moduleName) => {
+export const view = async(getGradeForUser, userid, moduleName, {
+    focusOnClose = null,
+} = {}) => {
 
     const [
         userGrade,
@@ -425,6 +427,13 @@ export const view = async(getGradeForUser, userid, moduleName) => {
     modal.getRoot().on(ModalEvents.hidden, function() {
         // Destroy when hidden.
         modal.destroy();
+        if (focusOnClose) {
+            try {
+                focusOnClose.focus();
+            } catch (e) {
+                // eslint-disable-line
+            }
+        }
     });
 
     modal.show();
