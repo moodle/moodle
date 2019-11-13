@@ -115,6 +115,7 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser, 
         if (spinner) {
             spinner.resolve();
         }
+        return userGrade;
     };
 };
 
@@ -393,9 +394,10 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     // Fetch the userpicker for display.
     const userPicker = await getUserPicker(
         userList,
-        user => {
+        async(user) => {
+            const userGrade = await updateUserContent(user);
             const renderContext = {
-                status: null,
+                status: userGrade.hasgrade,
                 index: userIds.indexOf(user.id) + 1,
                 total: userList.length
             };
@@ -403,7 +405,6 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
                 statusContainer.innerHTML = html;
                 return html;
             }).catch();
-            updateUserContent(user);
         },
         saveGradeFunction,
         {
