@@ -122,18 +122,30 @@ class fetch_test extends advanced_testcase {
 
         $this->assertEquals('core_grades/grades/grader/gradingpanel/point', $result['templatename']);
 
+        $this->assertArrayHasKey('warnings', $result);
+        $this->assertIsArray($result['warnings']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test the grade array items.
         $this->assertArrayHasKey('grade', $result);
         $this->assertIsArray($result['grade']);
+
         $this->assertArrayHasKey('grade', $result['grade']);
         $this->assertEmpty($result['grade']['grade']);
-        $this->assertArrayHasKey('timecreated', $result['grade']);
+
         $this->assertIsInt($result['grade']['timecreated']);
         $this->assertArrayHasKey('timemodified', $result['grade']);
         $this->assertIsInt($result['grade']['timemodified']);
 
-        $this->assertArrayHasKey('warnings', $result);
-        $this->assertIsArray($result['warnings']);
-        $this->assertEmpty($result['warnings']);
+        $this->assertArrayHasKey('usergrade', $result['grade']);
+        $this->assertEquals(0, $result['grade']['usergrade']);
+
+        $this->assertArrayHasKey('maxgrade', $result['grade']);
+        $this->assertIsInt($result['grade']['maxgrade']);
+        $this->assertEquals(5, $result['grade']['maxgrade']);
+
+        $this->assertArrayHasKey('gradedby', $result['grade']);
+        $this->assertEquals(null, $result['grade']['gradedby']);
     }
 
     /**
@@ -164,19 +176,31 @@ class fetch_test extends advanced_testcase {
 
         $this->assertEquals('core_grades/grades/grader/gradingpanel/point', $result['templatename']);
 
+        $this->assertArrayHasKey('warnings', $result);
+        $this->assertIsArray($result['warnings']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test the grade array items.
         $this->assertArrayHasKey('grade', $result);
         $this->assertIsArray($result['grade']);
+
         $this->assertArrayHasKey('grade', $result['grade']);
         $this->assertIsFloat($result['grade']['grade']);
         $this->assertEquals(grade_floatval(unformat_float(4)), $result['grade']['grade']);
-        $this->assertArrayHasKey('timecreated', $result['grade']);
+
         $this->assertIsInt($result['grade']['timecreated']);
         $this->assertArrayHasKey('timemodified', $result['grade']);
         $this->assertIsInt($result['grade']['timemodified']);
 
-        $this->assertArrayHasKey('warnings', $result);
-        $this->assertIsArray($result['warnings']);
-        $this->assertEmpty($result['warnings']);
+        $this->assertArrayHasKey('usergrade', $result['grade']);
+        $this->assertEquals(4, $result['grade']['usergrade']);
+
+        $this->assertArrayHasKey('maxgrade', $result['grade']);
+        $this->assertIsInt($result['grade']['maxgrade']);
+        $this->assertEquals(5, $result['grade']['maxgrade']);
+
+        $this->assertArrayHasKey('gradedby', $result['grade']);
+        $this->assertEquals(fullname($teacher), $result['grade']['gradedby']);
     }
 
     /**

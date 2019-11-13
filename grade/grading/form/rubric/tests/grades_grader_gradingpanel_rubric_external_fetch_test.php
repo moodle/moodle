@@ -30,6 +30,7 @@ namespace gradingform_rubric\grades\grader\gradingpanel\external;
 use advanced_testcase;
 use coding_exception;
 use core_grades\component_gradeitem;
+use core_grades\component_gradeitems;
 use external_api;
 use mod_forum\local\entities\forum as forum_entity;
 use moodle_exception;
@@ -123,16 +124,27 @@ class fetch_test extends advanced_testcase {
 
         $this->assertEquals('gradingform_rubric/grades/grader/gradingpanel', $result['templatename']);
 
-        $this->assertArrayHasKey('grade', $result);
-        $this->assertIsArray($result['grade']);
-
-        $this->assertIsInt($result['grade']['timecreated']);
-        $this->assertArrayHasKey('timemodified', $result['grade']);
-        $this->assertIsInt($result['grade']['timemodified']);
-
         $this->assertArrayHasKey('warnings', $result);
         $this->assertIsArray($result['warnings']);
         $this->assertEmpty($result['warnings']);
+
+        // Test the grade array items.
+        $this->assertArrayHasKey('grade', $result);
+        $this->assertIsArray($result['grade']);
+        $this->assertIsInt($result['grade']['timecreated']);
+
+        $this->assertArrayHasKey('timemodified', $result['grade']);
+        $this->assertIsInt($result['grade']['timemodified']);
+
+        $this->assertArrayHasKey('usergrade', $result['grade']);
+        $this->assertEquals(0, $result['grade']['usergrade']);
+
+        $this->assertArrayHasKey('maxgrade', $result['grade']);
+        $this->assertIsInt($result['grade']['maxgrade']);
+        $this->assertEquals(100, $result['grade']['maxgrade']);
+
+        $this->assertArrayHasKey('gradedby', $result['grade']);
+        $this->assertEquals(null, $result['grade']['gradedby']);
 
         $this->assertArrayHasKey('criteria', $result['grade']);
         $criteria = $result['grade']['criteria'];
@@ -209,16 +221,27 @@ class fetch_test extends advanced_testcase {
 
         $this->assertEquals('gradingform_rubric/grades/grader/gradingpanel', $result['templatename']);
 
-        $this->assertArrayHasKey('grade', $result);
-        $this->assertIsArray($result['grade']);
-
-        $this->assertIsInt($result['grade']['timecreated']);
-        $this->assertArrayHasKey('timemodified', $result['grade']);
-        $this->assertIsInt($result['grade']['timemodified']);
-
         $this->assertArrayHasKey('warnings', $result);
         $this->assertIsArray($result['warnings']);
         $this->assertEmpty($result['warnings']);
+
+        // Test the grade array items.
+        $this->assertArrayHasKey('grade', $result);
+        $this->assertIsArray($result['grade']);
+        $this->assertIsInt($result['grade']['timecreated']);
+
+        $this->assertArrayHasKey('timemodified', $result['grade']);
+        $this->assertIsInt($result['grade']['timemodified']);
+
+        $this->assertArrayHasKey('usergrade', $result['grade']);
+        $this->assertEquals(50, $result['grade']['usergrade']);
+
+        $this->assertArrayHasKey('maxgrade', $result['grade']);
+        $this->assertIsInt($result['grade']['maxgrade']);
+        $this->assertEquals(100, $result['grade']['maxgrade']);
+
+        $this->assertArrayHasKey('gradedby', $result['grade']);
+        $this->assertEquals(fullname($teacher), $result['grade']['gradedby']);
 
         $this->assertArrayHasKey('criteria', $result['grade']);
         $criteria = $result['grade']['criteria'];
@@ -274,7 +297,7 @@ class fetch_test extends advanced_testcase {
 
         $datagenerator = $this->getDataGenerator();
         $course = $datagenerator->create_course();
-        $forum = $datagenerator->create_module('forum', array_merge($config, ['course' => $course->id]));
+        $forum = $datagenerator->create_module('forum', array_merge($config, ['course' => $course->id, 'grade_forum' => 100]));
 
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
         $vault = $vaultfactory->get_forum_vault();
@@ -301,10 +324,24 @@ class fetch_test extends advanced_testcase {
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
         $this->setUser($teacher);
+
         $controller = $rubricgenerator->get_test_rubric($forum->get_context(), 'forum', 'forum');
         $definition = $controller->get_definition();
 
-        $DB->set_field('forum', 'grade_forum', count($definition->rubric_criteria), ['id' => $forum->get_id()]);
+        // In the situation of mod_forum this would be the id from forum_grades.
+        $itemid = 1;
+        $instance = $controller->create_instance($student->id, $itemid);
+
+        $data = $this->get_test_form_data(
+            $controller,
+            $itemid,
+            1, 'This user made several mistakes.',
+            0, 'Please add more pictures.'
+        );
+
+        // Update this instance with data.
+        $instance->update($data);
+
         return [
             'forum' => $forum,
             'controller' => $controller,
@@ -312,5 +349,36 @@ class fetch_test extends advanced_testcase {
             'student' => $student,
             'teacher' => $teacher,
         ];
+    }
+    /**
+     * Fetch a set of sample data.
+     *
+     * @param \gradingform_rubric_controller $controller
+     * @param int $itemid
+     * @param float $spellingscore
+     * @param string $spellingremark
+     * @param float $picturescore
+     * @param string $pictureremark
+     * @return array
+     */
+    protected function get_test_form_data(
+        \gradingform_rubric_controller $controller,
+        int $itemid,
+        float $spellingscore,
+        string $spellingremark,
+        float $picturescore,
+        string $pictureremark
+    ): array {
+        $generator = \testing_util::get_data_generator();
+        $rubricgenerator = $generator->get_plugin_generator('gradingform_rubric');
+
+        return $rubricgenerator->get_test_form_data(
+            $controller,
+            $itemid,
+            $spellingscore,
+            $spellingremark,
+            $picturescore,
+            $pictureremark
+        );
     }
 }
