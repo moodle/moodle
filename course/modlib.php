@@ -72,7 +72,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     $completion = new completion_info($course);
     if ($completion->is_enabled()) {
         $newcm->completion                = $moduleinfo->completion;
-        if ($moduleinfo->completiongradeitemnumber == '') {
+        if ($moduleinfo->completiongradeitemnumber === '') {
             $newcm->completiongradeitemnumber = null;
         } else {
             $newcm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
@@ -527,8 +527,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         // Completion settings that would affect users who have already completed
         // the activity may be locked; if so, these should not be updated.
         if (!empty($moduleinfo->completionunlocked)) {
-            $cm->completion = $moduleinfo->completion;
-            if ($moduleinfo->completiongradeitemnumber == '') {
+            if ($moduleinfo->completiongradeitemnumber === '') {
                 $cm->completiongradeitemnumber = null;
             } else {
                 $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
