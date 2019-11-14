@@ -85,6 +85,10 @@ if ($form->is_cancelled()) {
 } else if ($data = $form->get_data()) {
     $dataformat = $data->format;
 
+    // This may take a very long time and extra memory.
+    \core_php_time_limit::raise();
+    raise_memory_limit(MEMORY_HUGE);
+
     $discussionvault = $vaultfactory->get_discussion_vault();
     $postvault = $vaultfactory->get_post_vault();
     if ($data->discussionids) {
