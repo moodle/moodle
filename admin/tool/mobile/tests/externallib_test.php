@@ -222,6 +222,13 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'calendar_lookahead', 'value' => $CFG->calendar_lookahead),
             array('name' => 'calendar_maxevents', 'value' => $CFG->calendar_maxevents),
         );
+        $colornumbers = range(1, 10);
+        foreach ($colornumbers as $number) {
+            $expected[] = [
+                'name' => 'core_admin_coursecolor' . $number,
+                'value' => get_config('core_admin', 'coursecolor' . $number)
+            ];
+        }
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
 
