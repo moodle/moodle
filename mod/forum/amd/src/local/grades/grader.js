@@ -27,6 +27,7 @@ import getUserPicker from './local/grader/user_picker';
 import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/fullscreen';
 import getGradingPanelFunctions from './local/grader/gradingpanel';
 import {add as addToast} from 'core/toast';
+import {addNotification} from 'core/notification';
 import {get_string as getString} from 'core/str';
 import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
@@ -342,10 +343,21 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
 
     // We need all of these functions to be executed in series, if one step runs before another the interface
     // will not work.
+
+    // We need this promise to resolve separately so that we can avoid loading the whole interface if there are no users.
+    const userList = await getListOfUsers();
+    if (!userList.length) {
+        addNotification({
+            message: await getString('nouserstograde', 'core_grades'),
+            type: "error",
+        });
+        return;
+    }
+
+    // Now that we have confirmed there are at least some users let's boot up the grader interface.
     const [
         graderLayout,
         {html, js},
-        userList,
     ] = await Promise.all([
         createFullScreenWindow({
             fullscreen: false,
@@ -359,8 +371,8 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
             drawer: {show: true},
             defaultsendnotifications: sendStudentNotifications,
         }),
-        getListOfUsers(),
     ]);
+
     const graderContainer = graderLayout.getContainer();
 
     const saveGradeFunction = getSaveUserGradeFunction(graderContainer, setGradeForUser);
