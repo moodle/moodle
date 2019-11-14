@@ -90,7 +90,9 @@ function email_reports_cron() {
                                        'studentrole' => $studentrole->id))) {
 
             // We want to remove them from the future list.
-            $DB->set_field('local_iomad_track', 'completedstop', 1, array('id' => $compuser->id));
+            $compuser->completedstop = 1;
+            $compuser->modifiedtime = $runtime;
+            $DB->update_record('local_iomad_track', $compuser);
             continue;
         }
 
@@ -161,8 +163,15 @@ function email_reports_cron() {
                                                        'templatename' => $templateinfo->name,
                                                        'timesent' => $compuser->timestarted));
             if ($sentcount >= $templateinfo->repeatvalue) {
-                $DB->set_field('local_iomad_track', 'completedstop', 1, array('id', $compuser->id));
+                $compuser->completedstop = 1;
+                $compuser->modifiedtime = $runtime;
+                $DB->update_record('local_iomad_track', $compuser);
             }
+        }
+        if (empty($templateinfo->repeatperiod)) {
+            $compuser->completedstop = 1;
+            $compuser->modifiedtime = $runtime;
+            $DB->update_record('local_iomad_track', $compuser);
         }
     }
 
@@ -397,8 +406,16 @@ function email_reports_cron() {
                                                                        'templatename' => $templateinfo->name,
                                                                        'timesent' => $notstarteduser->timeenrolled));
                             if ($sentcount >= $templateinfo->repeatvalue) {
-                                $DB->set_field('local_iomad_track', 'notstartedstop', 1, array('id', $notstarteduser->id));
+                                $notstarteduser->notstartedstop = 1;
+                                $notstarteduser->modifiedtime = $runtime;
+                                $DB->update_record('local_iomad_track', $notstarteduser);
                             }
+                        }
+                        if (empty($templateinfo->repeatperiod)) {
+                            // Set to never so mark it to stop.
+                            $notstarteduser->notstartedstop = 1;
+                            $notstarteduser->modifiedtime = $runtime;
+                            $DB->update_record('local_iomad_track', $notstarteduser);
                         }
                     }
                 }
@@ -539,8 +556,16 @@ function email_reports_cron() {
                                                        'templatename' => $templateinfo->name,
                                                        'timesent' => $compuser->timecompleted));
             if ($sentcount >= $templateinfo->repeatvalue) {
-                $DB->set_field('local_iomad_track', 'expirystop', 1, array('id', $compuser->id));
+                $compuser->expiredstop = 1;
+                $compuser->modifiedtime = $runtime;
+                $DB->update_record('local_iomad_track', $compuser);
             }
+        }
+        if (empty($templateinfo->repeatperiod)) {
+            // Set to never so mark it to stop.
+            $compuser->expiredstop = 1;
+            $compuser->modifiedtime = $runtime;
+            $DB->update_record('local_iomad_track', $compuser);
         }
     }
 
