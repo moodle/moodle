@@ -482,10 +482,10 @@ function local_kaltura_get_kaf_publishing_data() {
 
     // If the user is not an admin then retrieve all of the user's enroled courses.
     if (KALTURA_LTI_ADMIN_ROLE != $role) {
-        $courses = enrol_get_users_courses($USER->id, true, 'id,fullname', 'fullname ASC');
+        $courses = enrol_get_users_courses($USER->id, true, 'id,fullname,shortname', 'fullname ASC');
     } else {
         // Calling refactored code that allows for a limit on the number of courses returned.
-        $courses = local_kaltura_get_user_capability_course('moodle/course:manageactivities', $USER->id, true, 'id,fullname', 'fullname ASC');
+        $courses = local_kaltura_get_user_capability_course('moodle/course:manageactivities', $USER->id, true, 'id,fullname,shortname', 'fullname ASC');
     }
 
     foreach ($courses as $course) {
@@ -504,6 +504,7 @@ function local_kaltura_get_kaf_publishing_data() {
         $data = new stdClass();
         $data->courseId = $course->id;
         $data->courseName = $course->fullname;
+        $data->courseShortName = $course->shortname;
         $data->roles = $role;
         $json->courses[$course->id] = $data;
     }
