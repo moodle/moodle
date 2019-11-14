@@ -563,6 +563,7 @@ $string['noselecteditems'] = 'no items were selected.';
 $string['notteachererror'] = 'You must be a teacher to use this feature.';
 $string['notenrolled'] = 'You are currently not enrolled in any courses.';
 $string['nousersloaded'] = 'No users loaded';
+$string['nouserstograde'] = 'No users to grade';
 $string['numberofgrades'] = 'Number of grades';
 $string['onascaleof'] = 'on a scale of {$a->grademin} to {$a->grademax}';
 $string['operations'] = 'Operations';
