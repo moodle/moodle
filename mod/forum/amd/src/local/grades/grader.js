@@ -191,7 +191,7 @@ const searchForUsers = (userList, searchTerm) => {
  * @param {HTMLElement} searchResultsContainer The container element for search results
  * @param {Array} users The list of users to display
  */
-const renderSearchResults = async (searchResultsContainer, users) => {
+const renderSearchResults = async(searchResultsContainer, users) => {
     const {html, js} = await Templates.renderForPromise(templateNames.grader.searchResults, {users});
     Templates.replaceNodeContents(searchResultsContainer, html, js);
 };
@@ -329,10 +329,15 @@ const displayGradingError = async(root, user, err) => {
  * @param {Function} getContentForUser A function to get the content for a specific user
  * @param {Function} getGradeForUser A function get the grade details for a specific user
  * @param {Function} setGradeForUser A function to set the grade for a specific user
- * @param
+ * @param {Object} Preferences for the launch function
  */
 export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
-    initialUserId = null, moduleName, courseName, courseUrl, sendStudentNotifications
+    initialUserId = null,
+    moduleName,
+    courseName,
+    courseUrl,
+    sendStudentNotifications,
+    focusOnClose = null,
 } = {}) => {
 
     // We need all of these functions to be executed in series, if one step runs before another the interface
@@ -342,8 +347,11 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
         {html, js},
         userList,
     ] = await Promise.all([
-        createFullScreenWindow({fullscreen: false, showLoader: false}),
-
+        createFullScreenWindow({
+            fullscreen: false,
+            showLoader: false,
+            focusOnClose,
+        }),
         Templates.renderForPromise(templateNames.grader.app, {
             moduleName,
             courseName,
@@ -395,8 +403,11 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
  *
  * @param {Function} getGradeForUser A function get the grade details for a specific user
  * @param {Number} userid The ID of a specific user
+ * @param {String} moduleName the name of the module
  */
-export const view = async(getGradeForUser, userid, moduleName) => {
+export const view = async(getGradeForUser, userid, moduleName, {
+    focusOnClose = null,
+} = {}) => {
 
     const [
         userGrade,
@@ -416,6 +427,13 @@ export const view = async(getGradeForUser, userid, moduleName) => {
     modal.getRoot().on(ModalEvents.hidden, function() {
         // Destroy when hidden.
         modal.destroy();
+        if (focusOnClose) {
+            try {
+                focusOnClose.focus();
+            } catch (e) {
+                // eslint-disable-line
+            }
+        }
     });
 
     modal.show();
