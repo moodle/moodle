@@ -527,6 +527,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         // Completion settings that would affect users who have already completed
         // the activity may be locked; if so, these should not be updated.
         if (!empty($moduleinfo->completionunlocked)) {
+            $cm->completion = $moduleinfo->completion;
             if ($moduleinfo->completiongradeitemnumber === '') {
                 $cm->completiongradeitemnumber = null;
             } else {
