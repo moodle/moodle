@@ -97,6 +97,13 @@ select {
         }
     }
 
+    .discussion-list {
+        .topic {
+            // Do not use the default bold style for the table headings.
+            font-weight: inherit;
+        }
+    }
+
     // Style for the forum subscription mode node.
     .subscriptionmode {
         color: $body-color;
