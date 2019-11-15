@@ -2411,6 +2411,7 @@ $picker-emojis-per-row: 7 !default;
 
 .toast-wrapper {
     max-width: $toast-max-width;
+    max-height: 0;
     // Place these above any modals and other elements.
     z-index: 1051;
 }

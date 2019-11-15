@@ -11822,6 +11822,7 @@ body.h5p-embed .h5pmessages {
 
 .toast-wrapper {
   max-width: 350px;
+  max-height: 0;
   z-index: 1051; }
 
 .icon {
