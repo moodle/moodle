@@ -131,7 +131,8 @@ class task_log_table extends \table_sql {
         }
 
         $sql = "SELECT
-                    tl.*,
+                    tl.id, tl.type, tl.component, tl.classname, tl.userid, tl.timestart, tl.timeend,
+                    tl.dbreads, tl.dbwrites, tl.result,
                     tl.dbreads + tl.dbwrites AS db,
                     tl.timeend - tl.timestart AS duration,
                     {$userfields}
