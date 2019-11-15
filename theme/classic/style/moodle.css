@@ -16531,6 +16531,9 @@ select {
 .path-mod-forum .forumheaderlist .discussion .lastpost {
   vertical-align: top; }
 
+.path-mod-forum .discussion-list .topic {
+  font-weight: inherit; }
+
 .path-mod-forum .subscriptionmode {
   color: #373a3c; }
 
