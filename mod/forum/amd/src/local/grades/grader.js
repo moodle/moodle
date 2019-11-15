@@ -76,9 +76,10 @@ const fetchContentFromRender = (html, js) => {
  * @param {HTMLElement} root
  * @param {Function} getContentForUser
  * @param {Function} getGradeForUser
+ * @param {Function} saveGradeForUser
  * @return {Function}
  */
-const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) => {
+const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser, saveGradeForUser) => {
     let firstLoad = true;
 
     return async(user) => {
@@ -99,7 +100,14 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
         const panelContainer = root.querySelector(Selectors.regions.gradingPanelContainer);
         const panel = panelContainer.querySelector(Selectors.regions.gradingPanel);
         Templates.replaceNodeContents(panel, gradingPanelHtml, gradingPanelJS);
-        fillInitialValues(panel.querySelector('form'));
+
+        const form = panel.querySelector('form');
+        fillInitialValues(form);
+
+        form.addEventListener('submit', event => {
+            saveGradeForUser(user);
+            event.preventDefault();
+        });
 
         panelContainer.scrollTop = 0;
         firstLoad = false;
@@ -378,7 +386,7 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     const saveGradeFunction = getSaveUserGradeFunction(graderContainer, setGradeForUser);
 
     Templates.replaceNodeContents(graderContainer, html, js);
-    const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser);
+    const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser, saveGradeFunction);
 
     const userIds = userList.map(user => user.id);
     const statusContainer = graderContainer.querySelector(Selectors.regions.statusContainer);
