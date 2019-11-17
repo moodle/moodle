@@ -146,7 +146,7 @@ abstract class backup implements checksumable {
     /**
      * Usually same than major release zero version, mainly for informative/historic purposes.
      */
-    const RELEASE = '3.8';
+    const RELEASE = '3.9';
 
     /**
      * Cipher to be used in backup and restore operations.
