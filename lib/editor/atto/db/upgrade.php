@@ -126,5 +126,8 @@ function xmldb_editor_atto_upgrade($oldversion) {
         // Atto editor savepoint reached.
         upgrade_plugin_savepoint(true, 2019090900, 'editor', 'atto');
     }
+    // Automatically generated Moodle v3.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
