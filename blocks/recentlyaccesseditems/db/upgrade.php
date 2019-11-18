@@ -69,5 +69,8 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2019052001, 'recentlyaccesseditems', false);
     }
 
+    // Automatically generated Moodle v3.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
