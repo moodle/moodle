@@ -131,7 +131,8 @@ class qtype_multianswer_test extends advanced_testcase {
         $question->qtype = 'multianswer';
         $question->createdby = 0;
 
-        // TODO: Just check why is not consistent with others, $question should came back modified.
+        // Note, $question gets modified during save because of the way subquestions
+        // are extracted.
         $question = $this->qtype->save_question($question, $fromform);
 
         $questiondata = question_bank::load_question_data($question->id);
@@ -181,8 +182,11 @@ class qtype_multianswer_test extends advanced_testcase {
         $this->assertEquals($expectedhints, array_values($gothints));
 
         // Options.
-        $this->assertEquals(['questions'], array_keys(get_object_vars($questiondata->options)));
+        $this->assertEquals(['answers', 'questions'], array_keys(get_object_vars($questiondata->options)));
         $this->assertEquals(count($fromform->options->questions), count($questiondata->options->questions));
+
+        // Option answers.
+        $this->assertEquals([], $questiondata->options->answers);
 
         // Build the expected questions. We aren't going deeper to subquestion answers, options... that's another qtype job.
         $expectedquestions = [];

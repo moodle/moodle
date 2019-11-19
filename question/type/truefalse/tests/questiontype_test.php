@@ -83,7 +83,7 @@ class qtype_truefalse_test extends advanced_testcase {
         $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
                 'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
                 'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
-                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'categoryobject'],
+                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'hints', 'categoryobject'],
                 array_keys(get_object_vars($questiondata)));
         $this->assertEquals($category->id, $questiondata->category);
         $this->assertEquals(0, $questiondata->parent);
@@ -101,6 +101,8 @@ class qtype_truefalse_test extends advanced_testcase {
         $this->assertEquals($question->createdby, $questiondata->modifiedby);
         $this->assertEquals('', $questiondata->idnumber);
         $this->assertEquals($syscontext->id, $questiondata->contextid);
+
+        // Options.
         $this->assertEquals($questiondata->id, $questiondata->options->question);
         $this->assertEquals('True', $questiondata->options->answers[$questiondata->options->trueanswer]->answer);
         $this->assertEquals('False', $questiondata->options->answers[$questiondata->options->falseanswer]->answer);
@@ -112,6 +114,9 @@ class qtype_truefalse_test extends advanced_testcase {
                 $questiondata->options->answers[$questiondata->options->falseanswer]->feedback);
         $this->assertEquals(FORMAT_HTML, $questiondata->options->answers[$questiondata->options->trueanswer]->feedbackformat);
         $this->assertEquals(FORMAT_HTML, $questiondata->options->answers[$questiondata->options->falseanswer]->feedbackformat);
+
+        // Hints.
+        $this->assertEquals([], $questiondata->hints);
     }
 
     public function test_get_possible_responses() {

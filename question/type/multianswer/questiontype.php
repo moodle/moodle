@@ -45,6 +45,7 @@ class qtype_multianswer extends question_type {
     public function get_question_options($question) {
         global $DB, $OUTPUT;
 
+        parent::get_question_options($question);
         // Get relevant data indexed by positionkey from the multianswers table.
         $sequence = $DB->get_field('question_multianswer', 'sequence',
                 array('question' => $question->id), MUST_EXIST);
