@@ -116,6 +116,7 @@ class qtype_random extends question_type {
     }
 
     public function get_question_options($question) {
+        parent::get_question_options($question);
         return true;
     }
 

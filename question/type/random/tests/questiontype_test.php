@@ -82,25 +82,26 @@ class qtype_random_test extends advanced_testcase {
         $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
                 'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
                 'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
-                'createdby', 'modifiedby', 'idnumber', 'contextid', 'categoryobject'],
+                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'hints', 'categoryobject'],
                 array_keys(get_object_vars($questiondata)));
         $this->assertEquals($category->id, $questiondata->category);
-        // TODO: All this is nosense (in my brain, requires review.
-        $this->assertEquals($questiondata->id, $questiondata->parent); // parent points to self?
-        // $this->assertEquals($fromform->name, $questiondata->name); // fromform has empty name.
-        $this->assertEquals($fromform->questiontext, $questiondata->questiontext); // questiontext has 0 ?
-        $this->assertEquals($fromform->questiontextformat, $questiondata->questiontextformat);
-        $this->assertEquals('', $questiondata->generalfeedback);
-        $this->assertEquals(0, $questiondata->generalfeedbackformat);
-        $this->assertEquals(1, $questiondata->defaultmark); // Nothing @ fromform?
-        $this->assertEquals(0, $questiondata->penalty);
+
+        // Random questions are not real questions. This is signaled by parent
+        // being non-zero - and in fact equal to question id.
+        $this->assertEquals($questiondata->id, $questiondata->parent);
+        $this->assertEquals('Random (' . $category->name . ')', $questiondata->name);
+        $this->assertEquals(0, $questiondata->questiontext); // Used to store 'Select from subcategories'.
         $this->assertEquals('random', $questiondata->qtype);
         $this->assertEquals(1, $questiondata->length);
         $this->assertEquals(0, $questiondata->hidden);
-        $this->assertEquals($question->createdby, $questiondata->createdby);
-        $this->assertEquals($question->createdby, $questiondata->modifiedby);
-        $this->assertEquals('', $questiondata->idnumber);
-        $this->assertEquals($syscontext->id, $questiondata->contextid);
+        $this->assertEquals($category->contextid, $questiondata->contextid);
+
+        // Options - not used.
+        $this->assertEquals(['answers'], array_keys(get_object_vars($questiondata->options)));
+        $this->assertEquals([], $questiondata->options->answers);
+
+        // Hints - not used.
+        $this->assertEquals([], $questiondata->hints);
     }
 
     public function test_get_possible_responses() {

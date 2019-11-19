@@ -112,9 +112,8 @@ class qtype_calculated_test extends advanced_testcase {
         // Options.
         $this->assertEquals($questiondata->id, $questiondata->options->question);
         $this->assertEquals([], $questiondata->options->units);
-        // TODO: Are this four correct? The first one doesn't match, hence commented out.
-        // $this->assertEquals($fromform->unitgradingtypes, $questiondata->options->unitgradingtype);
-        $this->assertEquals($fromform->unitrole, $questiondata->options->showunits);
+        $this->assertEquals(qtype_numerical::UNITNONE, $questiondata->options->showunits);
+        $this->assertEquals(0, $questiondata->options->unitgradingtype); // Unit role is none, so this is 0.
         $this->assertEquals($fromform->unitpenalty, $questiondata->options->unitpenalty);
         $this->assertEquals($fromform->unitsleft, $questiondata->options->unitsleft);
 
