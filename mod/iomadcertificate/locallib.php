@@ -864,20 +864,23 @@ function iomadcertificate_get_date($iomadcertificate, $certrecord, $course, $use
     }
 
     // Set iomadcertificate date to current time, can be overwritten later
-    $date = $certrecord->timecreated;
-
-    if ($iomadcertificate->printdate == '2') {
-        // Get the enrolment end date
-        $sql = "SELECT MAX(c.timecompleted) as timecompleted
-                  FROM {course_completions} c
-                 WHERE c.userid = :userid
-                   AND c.course = :courseid";
-        if ($timecompleted = $DB->get_record_sql($sql, array('userid' => $userid, 'courseid' => $course->id))) {
-            if (!empty($timecompleted->timecompleted)) {
-                $date = $timecompleted->timecompleted;
+    if (!empty($certrecord->timecreated)) {
+        $date = $certrecord->timecreated;
+    } else {
+        if ($iomadcertificate->printdate == '2') {
+            // Get the enrolment end date
+            $sql = "SELECT MAX(c.timecompleted) as timecompleted
+                      FROM {course_completions} c
+                     WHERE c.userid = :userid
+                       AND c.course = :courseid";
+                if ($timecompleted = $DB->get_record_sql($sql, array('userid' => $userid, 'courseid' => $course->id))) {
+                if (!empty($timecompleted->timecompleted) && $date > $timecompleted->timecompleted) {
+                    $date = $timecompleted->timecompleted;
+                }
             }
         }
-    } else if ($iomadcertificate->printdate > 2) {
+    }
+    if ($iomadcertificate->printdate > 2) {
         if ($modinfo = iomadcertificate_get_mod_grade($course, $iomadcertificate->printdate, $userid)) {
             $date = $modinfo->dategraded;
         }
