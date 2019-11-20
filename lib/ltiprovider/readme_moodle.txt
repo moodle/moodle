@@ -13,6 +13,10 @@ These changes can be reverted once the following pull requests have been integra
 * https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/47
 * https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/48
 
+This local changes can be reverted once it's checked that they are present upstream (note the
+LTI-Tool-Provider-Library-PHP repo has been archived so it doesn't accept pull requests anymore):
+* MDL-67034 php74 compliance fixes
+
 It is recommended by upstream to install depdencies via composer - but the composer installation is bundled
 with an autoloader so it's better to do it manually.
 

@@ -30,5 +30,6 @@ Our changes:
  * Removed random seed initialization from lib/adodb/adodb.inc.php:216 (see 038f546 and MDL-41198).
  * MDL-52286 Added muting erros in ADORecordSet::__destruct().
    Check if fixed upstream during the next upgrade and remove this note. (8638b3f1441d4b928)
+ * MDL-67034 Fixes to make the library php74 compliant.
 
 skodak, iarenaza, moodler, stronk7, abgreeve, lameze, ankitagarwal, marinaglancy
