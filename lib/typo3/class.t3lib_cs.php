@@ -1313,12 +1313,12 @@ class t3lib_cs {
 					array_push($code_decomp, chr($ord));
 				}
 			}
-			$ascii[$this->UnumberToChar(hexdec($from))] = join('', $code_decomp);
+			$ascii[$this->UnumberToChar(hexdec(str_replace('U+', '0x', $from)))] = join('', $code_decomp);
 		}
 
 			// add numeric decompositions
 		foreach ($number as $from => $to) {
-			$utf8_char = $this->UnumberToChar(hexdec($from));
+			$utf8_char = $this->UnumberToChar(hexdec(str_replace('U+', '0x', $from)));
 			if (!isset($ascii[$utf8_char])) {
 				$ascii[$utf8_char] = $to;
 			}
