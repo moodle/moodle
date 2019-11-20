@@ -67,7 +67,7 @@ class H5PDevelopment {
     $contents = scandir($path);
 
     for ($i = 0, $s = count($contents); $i < $s; $i++) {
-      if ($contents[$i]{0} === '.') {
+      if ($contents[$i][0] === '.') {
         continue; // Skip hidden stuff.
       }
 
