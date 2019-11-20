@@ -66,8 +66,8 @@ class company_license_users_form extends \moodleform {
         }
         natsort($courseselect);
 
-        // If we only have one course in the license, select it by default.
-        if (count($courseselect) == 1) {
+        // If we only have one course in the license or this is a program license, select it by default.
+        if (count($courseselect) == 1 || $this->license->program == 1) {
             $this->selectedcourses = array_keys($courseselect);
         }
 
@@ -193,8 +193,8 @@ class company_license_users_form extends \moodleform {
                 $mform->addElement('html', '('.($this->license->allocation - $this->license->used).' / '.
                 $this->license->allocation.get_string('licensetotal', 'block_iomad_company_admin').')');
             } else {
-                $mform->addElement('html', '('.($this->license->allocation - $this->license->used) / count($this->courseselect) .' / '.
-                $this->license->allocation / count($this->courseselect) . get_string('licensetotal', 'block_iomad_company_admin').')');
+                $mform->addElement('html', '('.($this->license->allocation - $this->license->used) / (count($this->courseselect) - 1) .' / '.
+                $this->license->allocation / (count($this->courseselect) - 1) . get_string('licensetotal', 'block_iomad_company_admin').')');
             }
         } else {
             $mform->addElement('header', 'header', get_string('license_users_for',
