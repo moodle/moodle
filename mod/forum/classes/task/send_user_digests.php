@@ -200,7 +200,7 @@ class send_user_digests extends \core\task\adhoc_task {
             }
 
             if (!isset($this->viewfullnames[$forum->id])) {
-                $this->viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $this->recipient->id);
+                $this->viewfullnames[$forum->id] = has_capability('moodle/site:viewfullnames', $modcontext, $this->recipient->id);
             }
 
             // Set the discussion storage values.
