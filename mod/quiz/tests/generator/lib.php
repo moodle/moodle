@@ -101,7 +101,7 @@ class mod_quiz_generator extends testing_module_generator {
      *
      * @param array $data must specify quizid, and one of userid or groupid.
      */
-    public function create_override(array $data): void {
+    public function create_override(array $data) {
         global $DB;
 
         if (!isset($data['quiz'])) {
