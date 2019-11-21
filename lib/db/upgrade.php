@@ -3798,5 +3798,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019111800.04);
     }
 
+
+    if ($oldversion < 2019111801.02) {
+        // Delete all orphaned subscription events.
+        $select = "subscriptionid IS NOT NULL
+                   AND subscriptionid NOT IN (SELECT id from {event_subscriptions})";
+        $DB->delete_records_select('event', $select);
+
+        upgrade_main_savepoint(true, 2019111801.02);
+    }
+
     return true;
 }
