@@ -4250,7 +4250,10 @@ function delete_user(stdClass $user) {
 
     // Now do a brute force cleanup.
 
-    // Remove user's calendar subscriptions.
+    // Delete all user events and subscription events.
+    $DB->delete_records_select('event', 'userid = :userid AND subscriptionid IS NOT NULL', ['userid' => $user->id]);
+
+    // Now, delete all calendar subscription from the user.
     $DB->delete_records('event_subscriptions', ['userid' => $user->id]);
 
     // Remove from all cohorts.
