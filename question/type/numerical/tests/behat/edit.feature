@@ -20,14 +20,14 @@ Feature: Test editing a Numerical question
     And the following "questions" exist:
       | questioncategory | qtype     | name                  | template |
       | Test questions   | numerical | Numerical for editing | pi |
-    And the following "language customisations" exist:
+
+  Scenario: Edit a Numerical question when using a custom decimal separator
+    Given the following "language customisations" exist:
       | component       | stringid | value |
       | core_langconfig | decsep   | #     |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank" in current page administration
-
-  Scenario: Edit a Numerical question
     When I choose "Edit question" action for "Numerical for editing" in the question bank
     Then the field "id_answer_0" matches value "3#14"
     When I set the following fields to these values:
@@ -47,3 +47,17 @@ Feature: Test editing a Numerical question
       | id_answer_3    | 3,01     |
     And I press "id_submitbutton"
     Then I should see "Edited Numerical name"
+
+  Scenario: Edit a Numerical question with very small answer
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    When I choose "Edit question" action for "Numerical for editing" in the question bank
+    And I set the following fields to these values:
+      | id_answer_0    | 0.00000123456789 |
+      | id_tolerance_1 | 0.0000123456789  |
+    And I press "id_submitbutton"
+    And I choose "Edit question" action for "Numerical for editing" in the question bank
+    Then the following fields match these values:
+      | id_answer_0    | 0.00000123456789 |
+      | id_tolerance_1 | 0.0000123456789  |
