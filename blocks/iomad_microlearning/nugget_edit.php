@@ -87,7 +87,7 @@ if ($editform->is_cancelled()) {
 
         // Set the order;
         $nuggetcount = $DB->count_records('microlearning_nugget', array('threadid' => $threadid));
-        $createdata->nuggetorder = $nuggetcount - 1;
+        $createdata->nuggetorder = $nuggetcount;
 
 
         $nuggetid = $DB->insert_record('microlearning_nugget', $createdata);

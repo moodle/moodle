@@ -24,4 +24,17 @@ class block_iomad_microlearning_renderer extends plugin_renderer_base {
 
         return $out;
     }
+
+    /**
+     * Back to list of roles button
+     */
+    public function threads_list_buttons($link, $link2) {
+        $out = '<p><a class="btn btn-primary" href="'.$link.'">' . get_string('add') . '</a>';
+        if (iomad::has_capability('block/iomad_microlearning:import_threads', context_system::instance())) {
+            $out .= '&nbsp<a class="btn btn-primary" href="'.$link2.'">' . get_string('import') . '</a>';
+        }
+        $out .= '</p>';
+
+        return $out;
+    }
 }

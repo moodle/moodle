@@ -55,6 +55,15 @@ $capabilities = array(
         ),
     ),
 
+    'block/iomad_microlearning:import_threads' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
     'block/iomad_microlearning:edit_nuggets' => array(
 
         'captype' => 'read',
