@@ -68,7 +68,6 @@ define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], f
         });
 
         jQuery("html").tooltip({
-            container: "body",
             selector: '[data-toggle="tooltip"]'
         });
 
