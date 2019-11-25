@@ -3989,7 +3989,9 @@ class company {
 
         if (!$noemail) {
         // Send out the email.
+            $company = new company($licenserecord->companyid);
             EmailTemplate::send('license_allocated', array('course' => $course,
+                                                           'company' => $company,
                                                            'user' => $user,
                                                            'due' => $duedate,
                                                            'license' => $license));
