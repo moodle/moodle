@@ -27,10 +27,14 @@ import getUserPicker from './local/grader/user_picker';
 import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/fullscreen';
 import getGradingPanelFunctions from './local/grader/gradingpanel';
 import {add as addToast} from 'core/toast';
+import {addNotification} from 'core/notification';
 import {get_string as getString} from 'core/str';
 import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
 import {debounce} from 'core/utils';
+import {fillInitialValues} from 'core_grades/grades/grader/gradingpanel/comparison';
+import * as Modal from 'core/modal_factory';
+import * as ModalEvents from 'core/modal_events';
 
 const templateNames = {
     grader: {
@@ -72,9 +76,10 @@ const fetchContentFromRender = (html, js) => {
  * @param {HTMLElement} root
  * @param {Function} getContentForUser
  * @param {Function} getGradeForUser
+ * @param {Function} saveGradeForUser
  * @return {Function}
  */
-const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) => {
+const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser, saveGradeForUser) => {
     let firstLoad = true;
 
     return async(user) => {
@@ -95,6 +100,15 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser) 
         const panelContainer = root.querySelector(Selectors.regions.gradingPanelContainer);
         const panel = panelContainer.querySelector(Selectors.regions.gradingPanel);
         Templates.replaceNodeContents(panel, gradingPanelHtml, gradingPanelJS);
+
+        const form = panel.querySelector('form');
+        fillInitialValues(form);
+
+        form.addEventListener('submit', event => {
+            saveGradeForUser(user);
+            event.preventDefault();
+        });
+
         panelContainer.scrollTop = 0;
         firstLoad = false;
 
@@ -186,7 +200,7 @@ const searchForUsers = (userList, searchTerm) => {
  * @param {HTMLElement} searchResultsContainer The container element for search results
  * @param {Array} users The list of users to display
  */
-const renderSearchResults = async (searchResultsContainer, users) => {
+const renderSearchResults = async(searchResultsContainer, users) => {
     const {html, js} = await Templates.renderForPromise(templateNames.grader.searchResults, {users});
     Templates.replaceNodeContents(searchResultsContainer, html, js);
 };
@@ -276,7 +290,11 @@ const getSaveUserGradeFunction = (root, setGradeForUser) => {
     return async(user) => {
         try {
             root.querySelector(Selectors.regions.gradingPanelErrors).innerHTML = '';
-            const result = await setGradeForUser(user.id, root.querySelector(Selectors.regions.gradingPanel));
+            const result = await setGradeForUser(
+                user.id,
+                root.querySelector(Selectors.values.sendStudentNotifications).value,
+                root.querySelector(Selectors.regions.gradingPanel)
+            );
             if (result.success) {
                 addToast(await getString('grades:gradesavedfor', 'mod_forum', user));
             }
@@ -320,33 +338,55 @@ const displayGradingError = async(root, user, err) => {
  * @param {Function} getContentForUser A function to get the content for a specific user
  * @param {Function} getGradeForUser A function get the grade details for a specific user
  * @param {Function} setGradeForUser A function to set the grade for a specific user
+ * @param {Object} Preferences for the launch function
  */
 export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
-    initialUserId = null, moduleName, courseName, courseUrl
+    initialUserId = null,
+    moduleName,
+    courseName,
+    courseUrl,
+    sendStudentNotifications,
+    focusOnClose = null,
 } = {}) => {
 
     // We need all of these functions to be executed in series, if one step runs before another the interface
     // will not work.
+
+    // We need this promise to resolve separately so that we can avoid loading the whole interface if there are no users.
+    const userList = await getListOfUsers();
+    if (!userList.length) {
+        addNotification({
+            message: await getString('nouserstograde', 'core_grades'),
+            type: "error",
+        });
+        return;
+    }
+
+    // Now that we have confirmed there are at least some users let's boot up the grader interface.
     const [
         graderLayout,
         {html, js},
-        userList,
     ] = await Promise.all([
-        createFullScreenWindow({fullscreen: false, showLoader: false}),
+        createFullScreenWindow({
+            fullscreen: false,
+            showLoader: false,
+            focusOnClose,
+        }),
         Templates.renderForPromise(templateNames.grader.app, {
             moduleName,
             courseName,
             courseUrl,
-            drawer: {show: true}
+            drawer: {show: true},
+            defaultsendnotifications: sendStudentNotifications,
         }),
-        getListOfUsers(),
     ]);
+
     const graderContainer = graderLayout.getContainer();
 
     const saveGradeFunction = getSaveUserGradeFunction(graderContainer, setGradeForUser);
 
     Templates.replaceNodeContents(graderContainer, html, js);
-    const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser);
+    const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser, saveGradeFunction);
 
     const userIds = userList.map(user => user.id);
     const statusContainer = graderContainer.querySelector(Selectors.regions.statusContainer);
@@ -378,4 +418,59 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     displayUserPicker(graderContainer, userPicker.rootNode);
 };
 
+/**
+ * Show the grade for a specific user.
+ *
+ * @param {Function} getGradeForUser A function get the grade details for a specific user
+ * @param {Number} userid The ID of a specific user
+ * @param {String} moduleName the name of the module
+ */
+export const view = async(getGradeForUser, userid, moduleName, {
+    focusOnClose = null,
+} = {}) => {
+
+    const [
+        userGrade,
+        modal,
+    ] = await Promise.all([
+        getGradeForUser(userid),
+        Modal.create({
+            title: moduleName,
+            large: true,
+            type: Modal.types.CANCEL
+        }),
+    ]);
+
+    const spinner = addIconToContainerWithPromise(modal.getRoot());
+
+    // Handle hidden event.
+    modal.getRoot().on(ModalEvents.hidden, function() {
+        // Destroy when hidden.
+        modal.destroy();
+        if (focusOnClose) {
+            try {
+                focusOnClose.focus();
+            } catch (e) {
+                // eslint-disable-line
+            }
+        }
+    });
+
+    modal.show();
+    const output = document.createElement('div');
+    const {html, js} = await Templates.renderForPromise('mod_forum/local/grades/view_grade', userGrade);
+    Templates.replaceNodeContents(output, html, js);
+
+    // Note: We do not use await here because it messes with the Modal transitions.
+    const [gradeHTML, gradeJS] = await renderGradeTemplate(userGrade);
+    const gradeReplace = output.querySelector('[data-region="grade-template"]');
+    Templates.replaceNodeContents(gradeReplace, gradeHTML, gradeJS);
+    modal.setBody(output.outerHTML);
+    spinner.resolve();
+};
+
+const renderGradeTemplate = async(userGrade) => {
+    const {html, js} = await Templates.renderForPromise(userGrade.templatename, userGrade.grade);
+    return [html, js];
+};
 export {getGradingPanelFunctions};

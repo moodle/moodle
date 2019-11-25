@@ -38,6 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package    core_h5p
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class h5p_file_storage_testcase extends \advanced_testcase {
 
@@ -462,7 +463,7 @@ class h5p_file_storage_testcase extends \advanced_testcase {
         ];
         $filestorage = new file_storage();
         $fs->create_file_from_string($filerecord, 'test string info');
-        $expectedfilepath = DIRECTORY_SEPARATOR . file_storage::LIBRARY_FILEAREA . $filepath . 'upgrade.js';
+        $expectedfilepath = '/' . file_storage::LIBRARY_FILEAREA . $filepath . 'upgrade.js';
         $this->assertEquals($expectedfilepath, $filestorage->getUpgradeScript($machinename, $majorversion, $minorversion));
         $this->assertNull($filestorage->getUpgradeScript($machinename, $majorversion, 7));
     }
@@ -489,9 +490,9 @@ class h5p_file_storage_testcase extends \advanced_testcase {
         foreach ($files as $file) {
             if (!$file->is_directory) {
                 $stream = $ziparchive->get_stream($file->index);
-                $items = explode(DIRECTORY_SEPARATOR, $file->pathname);
+                $items = explode('/', $file->pathname);
                 array_shift($items);
-                $path = implode(DIRECTORY_SEPARATOR, $items);
+                $path = implode('/', $items);
                 $this->h5p_file_storage->saveFileFromZip($this->h5p_tempath, $path, $stream);
                 $filestocheck[] = $path;
             }

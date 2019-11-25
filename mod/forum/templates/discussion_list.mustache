@@ -74,6 +74,11 @@
                 {{> mod_forum/grades/grade_button }}
             {{/forum.state.gradingenabled}}
         {{/forum.capabilities.grade}}
+        {{^forum.capabilities.grade}}
+            {{#forum.state.gradingenabled}}
+                {{> mod_forum/grades/view_grade_button }}
+            {{/forum.state.gradingenabled}}
+        {{/forum.capabilities.grade}}
     </div>
     {{#forum.capabilities.create}}
         <div class="collapse m-t-1 p-b-1" id="collapseAddForm">
@@ -271,7 +276,7 @@
                                             <div class="line-height-3">
                                                 {{#latestpostid}}
                                                     <a href="{{{discussion.urls.viewlatest}}}" title="{{#userdate}}{{discussion.times.modified}},{{#str}}strftimerecentfull{{/str}}{{/userdate}}">
-                                                        {{#userdate}}{{discussion.times.created}}, {{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdate}}
+                                                        {{#userdate}}{{discussion.times.modified}}, {{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdate}}
                                                     </a>
                                                 {{/latestpostid}}
                                             </div>

@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package    core_h5p
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class framework_testcase extends \advanced_testcase {
 
@@ -67,8 +68,17 @@ class framework_testcase extends \advanced_testcase {
 
     /**
      * Test the behaviour of fetchExternalData() when the store path is not defined.
+     *
+     * This test is intensive and requires downloading content of an external file,
+     * therefore it might take longer time to execute.
+     * In order to execute this test PHPUNIT_LONGTEST should be set to true in phpunit.xml or directly in config.php.
      */
     public function test_fetchExternalData_no_path_defined() {
+
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
         $this->resetAfterTest();
 
         // Provide a valid URL to an external H5P content.
@@ -88,9 +98,17 @@ class framework_testcase extends \advanced_testcase {
 
     /**
      * Test the behaviour of fetchExternalData() when the store path is defined.
+     *
+     * This test is intensive and requires downloading content of an external file,
+     * therefore it might take longer time to execute.
+     * In order to execute this test PHPUNIT_LONGTEST should be set to true in phpunit.xml or directly in config.php.
      */
     public function test_fetchExternalData_path_defined() {
         global $CFG;
+
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
 
         $this->resetAfterTest();
 
@@ -112,8 +130,18 @@ class framework_testcase extends \advanced_testcase {
     /**
      * Test the behaviour of fetchExternalData() when the URL is pointing to an external file that is
      * not an h5p content.
+     *
+     * This test is intensive and requires downloading content of an external file,
+     * therefore it might take longer time to execute.
+     * In order to execute this test PHPUNIT_LONGTEST should be set to true in phpunit.xml or directly in config.php.
      */
     public function test_fetchExternalData_url_not_h5p() {
+
+        if (!PHPUNIT_LONGTEST) {
+            // This test is intensive and requires downloading the content of an external file.
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
         $this->resetAfterTest();
 
         // Provide an URL to an external file that is not an H5P content file.

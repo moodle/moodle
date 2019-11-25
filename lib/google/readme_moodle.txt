@@ -36,6 +36,9 @@ Here are the files that we have added.
 
     This should not ever be used directly. The wrapper above uses it automatically.
 
+Local changes (to reapply until upstream upgrades contain them):
+    * MDL-67034 php74 compliance fixes
+
 
 Information
 -----------

@@ -72,7 +72,11 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     $completion = new completion_info($course);
     if ($completion->is_enabled()) {
         $newcm->completion                = $moduleinfo->completion;
-        $newcm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+        if ($moduleinfo->completiongradeitemnumber === '') {
+            $newcm->completiongradeitemnumber = null;
+        } else {
+            $newcm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+        }
         $newcm->completionview            = $moduleinfo->completionview;
         $newcm->completionexpected        = $moduleinfo->completionexpected;
     }
@@ -411,7 +415,7 @@ function set_moduleinfo_defaults($moduleinfo) {
     // Convert the 'use grade' checkbox into a grade-item number: 0 if checked, null if not.
     if (isset($moduleinfo->completionusegrade) && $moduleinfo->completionusegrade) {
         $moduleinfo->completiongradeitemnumber = 0;
-    } else {
+    } else if (!isset($moduleinfo->completiongradeitemnumber)) {
         $moduleinfo->completiongradeitemnumber = null;
     }
 
@@ -524,7 +528,11 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         // the activity may be locked; if so, these should not be updated.
         if (!empty($moduleinfo->completionunlocked)) {
             $cm->completion = $moduleinfo->completion;
-            $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+            if ($moduleinfo->completiongradeitemnumber === '') {
+                $cm->completiongradeitemnumber = null;
+            } else {
+                $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+            }
             $cm->completionview = $moduleinfo->completionview;
         }
         // The expected date does not affect users who have completed the activity,
@@ -684,6 +692,7 @@ function get_moduleinfo_data($cm, $course) {
     $data->completionview     = $cm->completionview;
     $data->completionexpected = $cm->completionexpected;
     $data->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
+    $data->completiongradeitemnumber = $cm->completiongradeitemnumber;
     $data->showdescription    = $cm->showdescription;
     $data->tags               = core_tag_tag::get_item_tags_array('core', 'course_modules', $cm->id);
     if (!empty($CFG->enableavailability)) {

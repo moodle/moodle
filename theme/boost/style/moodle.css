@@ -11567,6 +11567,7 @@ body.h5p-embed .h5pmessages {
 
 .toast-wrapper {
   max-width: 350px;
+  max-height: 0;
   z-index: 1051; }
 
 .icon {
@@ -17707,6 +17708,9 @@ p.arrow_button {
   #rubric-rubric.gradingform_rubric .options .option input {
     margin-left: 5px;
     margin-right: 12px; }
+
+.grade-display .description {
+  font-size: 1rem; }
 
 .criterion .description {
   font-size: 1rem; }

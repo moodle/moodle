@@ -47,32 +47,24 @@ Feature: Quiz reset
     And I am on the "Test quiz name" "mod_quiz > Grades report" page
     Then I should see "Attempts: 0"
 
-  @javascript
   Scenario: Use course reset to remove user overrides.
-    When I am on the "Test quiz name" "mod_quiz > User overrides" page logged in as "teacher1"
-    And I press "Add user override"
-    And I set the following fields to these values:
-        | Override user    | Student1 |
-        | Attempts allowed | 2        |
-    And I press "Save"
-    And I should see "Sam1 Student1"
+    Given the following "mod_quiz > user overrides" exist:
+      | quiz           | user     | attempts |
+      | Test quiz name | student1 | 2        |
+    When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reset" in current page administration
-    And I set the following fields to these values:
-        | Delete all user overrides | 1 |
+    And I set the field "Delete all user overrides" to "1"
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test quiz name" "mod_quiz > User overrides" page
     Then I should not see "Sam1 Student1"
 
   Scenario: Use course reset to remove group overrides.
-    When I am on the "Test quiz name" "mod_quiz > Group overrides" page logged in as "teacher1"
-    And I press "Add group override"
-    And I set the following fields to these values:
-        | Override group   | Group 1 |
-        | Attempts allowed | 2       |
-    And I press "Save"
-    And I should see "Group 1"
+    Given the following "mod_quiz > group overrides" exist:
+      | quiz           | group | attempts |
+      | Test quiz name | G1    | 2        |
+    When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reset" in current page administration
     And I set the following fields to these values:

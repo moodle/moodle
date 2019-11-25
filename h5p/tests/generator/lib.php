@@ -372,7 +372,9 @@ class core_h5p_generator extends \component_generator_base {
                 'majorversion' => $contenttype->version->major,
                 'minorversion' => $contenttype->version->minor,
                 'patchversion' => $contenttype->version->patch,
-                'runnable' => 1
+                'runnable' => 1,
+                'coremajor' => $contenttype->coreApiVersionNeeded->major,
+                'coreminor' => $contenttype->coreApiVersionNeeded->minor
             ];
             $DB->insert_record('h5p_libraries', (object) $library);
         }

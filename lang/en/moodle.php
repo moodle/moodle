@@ -1213,6 +1213,7 @@ $string['messageprovider:courserequested'] = 'Course creation request notificati
 $string['messageprovider:courserequestrejected'] = 'Course creation request rejection notification';
 $string['messageprovider:errors'] = 'Important errors with the site';
 $string['messageprovider:errors_help'] = 'These are important errors that an administrator should know about.';
+$string['messageprovider:gradenotifications'] = 'Grade notifications';
 $string['messageprovider:messagecontactrequests'] = 'Message contact requests notification';
 $string['messageprovider:notices'] = 'Notices about minor problems';
 $string['messageprovider:notices_help'] = 'These are notices that an administrator might be interested in seeing.';

@@ -71,7 +71,7 @@ class core_block_external extends external_api {
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_RAW, 'Name.'),
-                            'value' => new external_value(PARAM_RAW, 'Value.'),
+                            'value' => new external_value(PARAM_RAW, 'JSON encoded representation of the config value.'),
                             'type' => new external_value(PARAM_ALPHA, 'Type (instance or plugin).'),
                         )
                     ),
@@ -125,7 +125,7 @@ class core_block_external extends external_api {
                     foreach ((array) $data as $name => $value) {
                         $block['configs'][] = [
                             'name' => $name,
-                            'value' => $value,
+                            'value' => json_encode($value), // Always JSON encode, we may receive non-scalar values.
                             'type' => $type,
                         ];
                     }

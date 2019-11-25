@@ -16,5 +16,8 @@ Description of HTML Purifier v4.10.0 library import into Moodle
 * add this readme_moodle.txt to /lib/htmlpurifier/
 
 Modifications:
+(verify if we need to apply them on every upgrade, remove when not needed)
 * MDL-60337 use correct IDN variant for converting domain names to ascii
   Check status of https://github.com/ezyang/htmlpurifier/pull/148
+* MDL-67030 applied https://github.com/ezyang/htmlpurifier/pull/224 towards
+  php74 compatibility.

@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addcriterion'] = 'Add criterion';
+$string['additionalfeedback'] = 'Additional feedback';
 $string['alwaysshowdefinition'] = 'Allow users to preview rubric (otherwise it will only be displayed after grading)';
 $string['backtoediting'] = 'Back to editing';
 $string['confirmdeletecriterion'] = 'Are you sure you want to delete this criterion?';
@@ -57,6 +58,7 @@ $string['lockzeropoints'] = 'Calculate grade based on the rubric having a minimu
 $string['lockzeropoints_help'] = 'This setting only applies if the sum of the minimum number of points for each criterion is greater than 0. If ticked, the minimum achievable grade for the rubric will be greater than 0. If unticked, the minimum possible score for the rubric will be mapped to the minimum grade available for the activity (which is 0 unless a scale is used).';
 $string['name'] = 'Name';
 $string['needregrademessage'] = 'The rubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
+$string['notset'] = 'Not set';
 $string['pluginname'] = 'Rubric';
 $string['pointsvalue'] = '{$a} points';
 $string['previewrubric'] = 'Preview rubric';

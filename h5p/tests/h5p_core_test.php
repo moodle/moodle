@@ -60,26 +60,32 @@ class h5p_core_test extends \advanced_testcase {
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 
+        // Get info of latest content types versions.
+        $contenttypes = $this->core->get_latest_content_types()->contentTypes;
+        // We are installing the first content type.
+        $librarydata = $contenttypes[0];
+
         $library = [
-                'machineName' => 'H5P.Accordion',
-                'majorVersion' => 1,
-                'minorVersion' => 0,
-                'patchVersion' => 0,
+                'machineName' => $librarydata->id,
+                'majorVersion' => $librarydata->version->major,
+                'minorVersion' => $librarydata->version->minor,
+                'patchVersion' => $librarydata->version->patch,
         ];
 
-        $sql = 'SELECT count(id)
-                  FROM {files}
-                 WHERE ' . $DB->sql_like('filepath', ':filepath');
-        $params['filepath'] = "/{$library['machineName']}-%";
+        // Verify that the content type is not yet installed.
+        $conditions['machinename'] = $library['machineName'];
+        $typeinstalled = $DB->count_records('h5p_libraries', $conditions);
 
-        $contentfiles = $DB->count_records_sql($sql, $params);
+        $this->assertEquals(0, $typeinstalled);
 
-        $this->assertEquals(0, $contentfiles);
-
+        // Fetch the content type.
         $this->core->fetch_content_type($library);
 
-        $contentfiles = $DB->count_records_sql($sql, $params);
-        $this->assertGreaterThan(0, $contentfiles);
+        // Check that the content type is now installed.
+        $typeinstalled = $DB->get_record('h5p_libraries', $conditions);
+        $this->assertEquals($librarydata->id, $typeinstalled->machinename);
+        $this->assertEquals($librarydata->coreApiVersionNeeded->major, $typeinstalled->coremajor);
+        $this->assertEquals($librarydata->coreApiVersionNeeded->minor, $typeinstalled->coreminor);
     }
 
     /**

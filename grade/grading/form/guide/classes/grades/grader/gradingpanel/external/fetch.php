@@ -148,6 +148,7 @@ class fetch extends external_api {
     public static function get_fetch_data(gradeitem $gradeitem, stdClass $gradeduser): array {
         global $USER;
 
+        $hasgrade = $gradeitem->user_has_grade($gradeduser);
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
         $instance = $gradeitem->get_advanced_grading_instance($USER, $grade);
         $controller = $instance->get_controller();
@@ -155,6 +156,7 @@ class fetch extends external_api {
         $fillings = $instance->get_guide_filling();
         $context = $controller->get_context();
         $definitionid = (int) $definition->id;
+        $maxgrade = max(array_keys($controller->get_grade_range()));
 
         $criterion = [];
         if ($definition->guide_criteria) {
@@ -217,11 +219,14 @@ class fetch extends external_api {
 
         return [
             'templatename' => 'gradingform_guide/grades/grader/gradingpanel',
+            'hasgrade' => $hasgrade,
             'grade' => [
                 'instanceid' => $instance->get_id(),
                 'criterion' => $criterion,
                 'hascomments' => !empty($comments),
                 'comments' => $comments,
+                'usergrade' => $grade->grade,
+                'maxgrade' => $maxgrade,
                 'timecreated' => $grade->timecreated,
                 'timemodified' => $grade->timemodified,
             ],
@@ -238,6 +243,7 @@ class fetch extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'templatename' => new external_value(PARAM_SAFEPATH, 'The template to use when rendering this data'),
+            'hasgrade' => new external_value(PARAM_BOOL, 'Does the user have a grade?'),
             'grade' => new external_single_structure([
                 'instanceid' => new external_value(PARAM_INT, 'The id of the current grading instance'),
                 'criterion' => new external_multiple_structure(
@@ -261,6 +267,8 @@ class fetch extends external_api {
                     ]),
                     'Frequently used comments'
                 ),
+                'usergrade' => new external_value(PARAM_RAW, 'Current user grade'),
+                'maxgrade' => new external_value(PARAM_RAW, 'Max possible grade'),
                 'timecreated' => new external_value(PARAM_INT, 'The time that the grade was created'),
                 'timemodified' => new external_value(PARAM_INT, 'The time that the grade was last updated'),
             ]),

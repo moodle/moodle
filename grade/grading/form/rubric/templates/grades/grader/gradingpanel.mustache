@@ -59,7 +59,7 @@
         {{#criteria}}
             <div class="mb-3">
                 <div class="d-flex align-items-center mb-2">
-                    <h5 class="px-0 mb-0 description font-weight-bold">{{{description}}}</h5>
+                    <h5 id="criterion-description-{{id}}" class="px-0 mb-0 description font-weight-bold">{{{description}}}</h5>
                     <button class="criterion-toggle btn btn-icon icon-no-margin text-reset p-0 font-weight-bold mb-0 ml-auto"
                             type="button"
                             data-toggle="collapse"
@@ -76,7 +76,7 @@
                             </span>
                     </button>
                 </div>
-                <div class="collapse show" id="criteria-{{id}}">
+                <div class="collapse show" id="criteria-{{id}}" role="radiogroup" aria-labelledby="criterion-description-{{id}}">
                     {{#levels}}
                         <div class="form-check">
                             <input class="form-check-input level"

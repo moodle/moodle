@@ -86,9 +86,20 @@ $table = new \forumreport_summary\summary_table($courseid, $filters, $allowbulko
         $canseeprivatereplies, $perpage, $canexport);
 $table->baseurl = $url;
 
+$eventparams = [
+    'context' => $context,
+    'other' => [
+        'forumid' => $forumid,
+        'hasviewall' => has_capability('forumreport/summary:viewall', $context),
+    ],
+];
+
 if ($download) {
+    \forumreport_summary\event\report_downloaded::create($eventparams)->trigger();
     $table->download($download);
 } else {
+    \forumreport_summary\event\report_viewed::create($eventparams)->trigger();
+
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $forumname), 2, 'p-b-2');
 

@@ -510,8 +510,8 @@ class framework implements \H5PFrameworkInterface {
         global $DB;
 
         $results = $DB->get_records('h5p_libraries', [], 'title ASC, majorversion ASC, minorversion ASC',
-            'machinename AS machine_name, majorversion AS major_version, minorversion AS minor_version,
-            patchversion AS patch_version');
+            'id, machinename AS machine_name, majorversion AS major_version, minorversion AS minor_version,
+            patchversion AS patch_version, runnable, title');
 
         $libraries = array();
         foreach ($results as $library) {
@@ -720,6 +720,8 @@ class framework implements \H5PFrameworkInterface {
             'droplibrarycss' => $droplibrarycss,
             'semantics' => $librarydata['semantics'],
             'addto' => isset($librarydata['addTo']) ? json_encode($librarydata['addTo']) : null,
+            'coremajor' => isset($librarydata['coreApi']['majorVersion']) ? $librarydata['coreApi']['majorVersion'] : null,
+            'coreminor' => isset($librarydata['coreApi']['majorVersion']) ? $librarydata['coreApi']['minorVersion'] : null,
         );
 
         if ($new) {

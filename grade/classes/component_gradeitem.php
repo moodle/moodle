@@ -392,11 +392,51 @@ abstract class component_gradeitem {
     abstract public function get_grade_for_user(stdClass $gradeduser, stdClass $grader): ?stdClass;
 
     /**
+     * Get the grade status for the specified user.
+     * If the user has a grade as defined by the implementor return true else return false.
+     *
+     * @param stdClass $gradeduser The user being graded
+     * @return bool The grade status
+     */
+    abstract public function user_has_grade(stdClass $gradeduser): bool;
+
+    /**
      * Get grades for all users for the specified gradeitem.
      *
      * @return stdClass[] The grades
      */
     abstract public function get_all_grades(): array;
+
+    /**
+     * Get the grade item instance id.
+     *
+     * This is typically the cmid in the case of an activity, and relates to the iteminstance field in the grade_items
+     * table.
+     *
+     * @return int
+     */
+    abstract public function get_grade_instance_id(): int;
+
+    /**
+     * Get the core grade item from the current component grade item.
+     * This is mainly used to access the max grade for a gradeitem
+     *
+     * @return \grade_item The grade item
+     */
+    public function get_grade_item(): \grade_item {
+        global $CFG;
+        require_once("{$CFG->libdir}/gradelib.php");
+
+        [$itemtype, $itemmodule] = \core_component::normalize_component($this->component);
+        $gradeitem = \grade_item::fetch([
+            'itemtype' => $itemtype,
+            'itemmodule' => $itemmodule,
+            'itemnumber' => $this->itemnumber,
+            'iteminstance' => $this->get_grade_instance_id(),
+        ]);
+
+        return $gradeitem;
+    }
 
     /**
      * Create or update the grade.
@@ -473,5 +513,30 @@ abstract class component_gradeitem {
         );
 
         return $gradinginstance;
+    }
+
+    /**
+     * Sends a notification about the item being graded for the student.
+     *
+     * @param stdClass $gradeduser The user being graded
+     * @param stdClass $grader The user who is grading
+     */
+    public function send_student_notification(stdClass $gradeduser, stdClass $grader): void {
+        $contextname = $this->context->get_context_name();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = $this->context->get_course_context()->instanceid;
+        $eventdata->component         = 'moodle';
+        $eventdata->name              = 'gradenotifications';
+        $eventdata->userfrom          = $grader;
+        $eventdata->userto            = $gradeduser;
+        $eventdata->subject           = get_string('gradenotificationsubject', 'grades');
+        $eventdata->fullmessage       = get_string('gradenotificationmessage', 'grades', $contextname);
+        $eventdata->contexturl        = $this->context->get_url();
+        $eventdata->contexturlname    = $contextname;
+        $eventdata->fullmessageformat = FORMAT_HTML;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+        $eventdata->notification      = 1;
+        message_send($eventdata);
     }
 }

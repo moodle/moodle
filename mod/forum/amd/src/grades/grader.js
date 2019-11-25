@@ -114,7 +114,9 @@ const discussionPostMapper = (discussion) => {
  *
  * @param {HTMLElement} rootNode the root HTML element describing what is to be graded
  */
-const launchWholeForumGrading = async(rootNode) => {
+const launchWholeForumGrading = async(rootNode, {
+    focusOnClose = null,
+} = {}) => {
     const data = rootNode.dataset;
     const gradingPanelFunctions = await Grader.getGradingPanelFunctions(
         'mod_forum',
@@ -136,7 +138,36 @@ const launchWholeForumGrading = async(rootNode) => {
             initialUserId: data.initialuserid,
             moduleName: data.name,
             courseName: data.courseName,
-            courseUrl: relativeUrl('/course/view.php', {id: data.courseId})
+            courseUrl: relativeUrl('/course/view.php', {id: data.courseId}),
+            sendStudentNotifications: data.sendStudentNotifications,
+            focusOnClose,
+        }
+    );
+};
+
+/**
+ * Launch the Grader.
+ *
+ * @param {HTMLElement} rootNode the root HTML element describing what is to be graded
+ */
+const launchViewGrading = async(rootNode, {
+    focusOnClose = null,
+} = {}) => {
+    const data = rootNode.dataset;
+    const gradingPanelFunctions = await Grader.getGradingPanelFunctions(
+        'mod_forum',
+        data.contextid,
+        data.gradingComponent,
+        data.gradingComponentSubtype,
+        data.gradableItemtype
+    );
+
+    await Grader.view(
+        gradingPanelFunctions.getter,
+        data.userid,
+        data.name,
+        {
+            focusOnClose,
         }
     );
 };
@@ -158,7 +189,32 @@ export const registerLaunchListeners = () => {
                 // at that point and the default action is implemented.
                 e.preventDefault();
                 try {
-                    await launchWholeForumGrading(rootNode);
+                    await launchWholeForumGrading(rootNode, {
+                        focusOnClose: e.target,
+                    });
+                } catch (error) {
+                    Notification.exception(error);
+                }
+            } else {
+                throw Error('Unable to find a valid gradable item');
+            }
+        }
+        if (e.target.matches(Selectors.viewGrade)) {
+            e.preventDefault();
+            const rootNode = findGradableNode(e.target);
+
+            if (!rootNode) {
+                throw Error('Unable to find a gradable item');
+            }
+
+            if (rootNode.matches(Selectors.gradableItems.wholeForum)) {
+                // Note: The preventDefault must be before any async function calls because the function becomes async
+                // at that point and the default action is implemented.
+                e.preventDefault();
+                try {
+                    await launchViewGrading(rootNode, {
+                        focusOnClose: e.target,
+                    });
                 } catch (error) {
                     Notification.exception(error);
                 }

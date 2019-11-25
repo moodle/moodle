@@ -26,8 +26,6 @@ information provided here is intended especially for developers.
   independently of local files (MDL-66304).
 * The methods get_local_path_from_storedfile and get_remote_path_from_storedfile in lib/filestore/file_system.php
   are now public. If you are overriding these then you will need to change your methods to public in your class.
-* $CFG->httpswwwroot has been removed. It is no longer necessary as loginhttps has already been removed and it's no longer being
-  used anywhere in core.
 * It is now possible to use sub-directories for AMD modules.
   The standard rules for Level 2 namespaces also apply to AMD modules.
   The sub-directory used must be either an valid component, or placed inside a 'local' directory to ensure that it does not conflict with other components.

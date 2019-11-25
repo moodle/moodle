@@ -171,11 +171,16 @@ class core extends \H5PCore {
         $typesinstalled = [];
 
         foreach ($contenttypes->contentTypes as $type) {
+            // Don't fetch content types that require a higher H5P core API version.
+            if (!$this->is_required_core_api($type->coreApiVersionNeeded)) {
+                continue;
+            }
+
             $library = [
                 'machineName' => $type->id,
                 'majorVersion' => $type->version->major,
                 'minorVersion' => $type->version->minor,
-                'patchVersion' => $type->version->patch,
+                'patchVersion' => $type->version->patch
             ];
 
             $factory = new \core_h5p\factory();
@@ -284,4 +289,21 @@ class core extends \H5PCore {
 
         return $contenttypes;
     }
+
+    /**
+     * Checks that the required H5P core API version or higher is installed.
+     *
+     * @param stdClass $coreapi Object with properties major and minor for the core API version required.
+     * @return bool True if the required H5P core API version is installed. False if not.
+     */
+    public function is_required_core_api($coreapi): bool {
+        if (isset($coreapi) && !empty($coreapi)) {
+            if (($coreapi->major > H5PCore::$coreApi['majorVersion']) ||
+                (($coreapi->major == H5PCore::$coreApi['majorVersion']) && ($coreapi->minor > H5PCore::$coreApi['minorVersion']))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

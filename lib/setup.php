@@ -534,6 +534,9 @@ global $FULLSCRIPT;
  */
 global $SCRIPT;
 
+// The httpswwwroot has been deprecated, we keep it as an alias for backwards compatibility with plugins only.
+$CFG->httpswwwroot = $CFG->wwwroot;
+
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
 if (NO_OUTPUT_BUFFERING) {

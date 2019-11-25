@@ -22,6 +22,7 @@
 
 import {addIconToContainer} from 'core/loadingicon';
 import {addToastRegion} from 'core/toast';
+import * as FocusLockManager from 'core/local/aria/focuslock';
 
 /**
  * @param {string} templateName
@@ -31,6 +32,7 @@ import {addToastRegion} from 'core/toast';
 const getComposedLayout = ({
     fullscreen = true,
     showLoader = false,
+    focusOnClose = null,
 } = {}) => {
     const container = document.createElement('div');
     document.body.append(container);
@@ -42,7 +44,10 @@ const getComposedLayout = ({
     // Lock scrolling on the document body.
     lockBodyScroll();
 
-    const helpers = getLayoutHelpers(container);
+    // Lock tab control.
+    FocusLockManager.trapFocus(container);
+
+    const helpers = getLayoutHelpers(container, FocusLockManager, focusOnClose);
 
     if (showLoader) {
         helpers.showLoadingIcon();
@@ -55,7 +60,7 @@ const getComposedLayout = ({
     return helpers;
 };
 
-const getLayoutHelpers = (layoutNode) => {
+const getLayoutHelpers = (layoutNode, FocusLockManager, focusOnClose) => {
     const contentNode = document.createElement('div');
     layoutNode.append(contentNode);
 
@@ -68,8 +73,17 @@ const getLayoutHelpers = (layoutNode) => {
     const close = () => {
         exitFullscreen();
         unlockBodyScroll();
+        FocusLockManager.untrapFocus();
 
         layoutNode.remove();
+
+        if (focusOnClose) {
+            try {
+                focusOnClose.focus();
+            } catch (e) {
+                // eslint-disable-line
+            }
+        }
     };
 
     /**

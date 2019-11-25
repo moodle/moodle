@@ -61,7 +61,7 @@ class store_test extends advanced_testcase {
 
         $this->expectException(coding_exception::class);
         $this->expectExceptionMessage("The 'foo' item is not valid for the 'mod_invalid' component");
-        store::execute('mod_invalid', 1, 'foo', 2, 'formdata');
+        store::execute('mod_invalid', 1, 'foo', 2, false, 'formdata');
     }
 
     /**
@@ -74,7 +74,7 @@ class store_test extends advanced_testcase {
 
         $this->expectException(coding_exception::class);
         $this->expectExceptionMessage("The 'foo' item is not valid for the 'mod_forum' component");
-        store::execute('mod_forum', 1, 'foo', 2, 'formdata');
+        store::execute('mod_forum', 1, 'foo', 2, false, 'formdata');
     }
 
     /**
@@ -96,7 +96,7 @@ class store_test extends advanced_testcase {
 
         $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage("not configured for direct grading");
-        store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, 'formdata');
+        store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, false, 'formdata');
     }
 
     /**
@@ -115,7 +115,7 @@ class store_test extends advanced_testcase {
 
         $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage("Grading is not enabled");
-        store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, 'formdata');
+        store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, false, 'formdata');
     }
 
     /**
@@ -139,7 +139,8 @@ class store_test extends advanced_testcase {
 
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
-        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, http_build_query($formdata));
+        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
+                (int) $student->id, false, http_build_query($formdata));
         $result = external_api::clean_returnvalue(store::execute_returns(), $result);
 
         // The result should still be empty.
@@ -199,7 +200,8 @@ class store_test extends advanced_testcase {
 
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
-        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, http_build_query($formdata));
+        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
+                (int) $student->id, false, http_build_query($formdata));
         $result = external_api::clean_returnvalue(store::execute_returns(), $result);
 
         // The result should still be empty.
@@ -264,7 +266,8 @@ class store_test extends advanced_testcase {
 
         $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage("Invalid grade '{$suppliedvalue}' provided. Grades must be between 0 and {$maxvalue}.");
-        store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, http_build_query($formdata));
+        store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
+                (int) $student->id, false, http_build_query($formdata));
     }
 
     /**

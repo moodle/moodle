@@ -29,8 +29,7 @@ namespace mod_forum\grades;
 use coding_exception;
 use context;
 use core_grades\component_gradeitem;
-use core_grades\component_gradeitems;
-use gradingform_instance;
+use core_grades\local\gradeitem as gradeitem;
 use mod_forum\local\container as forum_container;
 use mod_forum\local\entities\forum as forum_entity;
 use required_capability_exception;
@@ -185,6 +184,32 @@ class forum_gradeitem extends component_gradeitem {
     }
 
     /**
+     * Get the grade status for the specified user.
+     * Check if a grade obj exists & $grade->grade !== null.
+     * If the user has a grade return true.
+     *
+     * @param stdClass $gradeduser The user being graded
+     * @return bool The grade exists
+     * @throws \dml_exception
+     */
+    public function user_has_grade(stdClass $gradeduser): bool {
+        global $DB;
+
+        $params = [
+            'forum' => $this->forum->get_id(),
+            'itemnumber' => $this->itemnumber,
+            'userid' => $gradeduser->id,
+        ];
+
+        $grade = $DB->get_record($this->get_table_name(), $params);
+
+        if (empty($grade) || $grade->grade === null) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Get grades for all users for the specified gradeitem.
      *
      * @return stdClass[] The grades
@@ -197,6 +222,18 @@ class forum_gradeitem extends component_gradeitem {
             'forum' => $this->forum->get_id(),
             'itemnumber' => $this->itemnumber,
         ]);
+    }
+
+    /**
+     * Get the grade item instance id.
+     *
+     * This is typically the cmid in the case of an activity, and relates to the iteminstance field in the grade_items
+     * table.
+     *
+     * @return int
+     */
+    public function get_grade_instance_id(): int {
+        return (int) $this->forum->get_id();
     }
 
     /**

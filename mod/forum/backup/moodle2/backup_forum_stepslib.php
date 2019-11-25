@@ -44,7 +44,7 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
             'maxbytes', 'maxattachments', 'forcesubscribe', 'trackingtype',
             'rsstype', 'rssarticles', 'timemodified', 'warnafter',
             'blockafter', 'blockperiod', 'completiondiscussions', 'completionreplies',
-            'completionposts', 'displaywordcount', 'lockdiscussionafter'));
+            'completionposts', 'displaywordcount', 'lockdiscussionafter', 'grade_forum'));
 
         $discussions = new backup_nested_element('discussions');
 
@@ -96,6 +96,17 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $track = new backup_nested_element('track', array('id'), array(
             'userid'));
 
+        $grades = new backup_nested_element('grades');
+
+        $grade = new backup_nested_element('grade', ['id'], [
+            'forum',
+            'itemnumber',
+            'userid',
+            'grade',
+            'timecreated',
+            'timemodified',
+        ]);
+
         // Build the tree
 
         $forum->add_child($discussions);
@@ -115,6 +126,9 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
         $forum->add_child($tags);
         $tags->add_child($tag);
+
+        $forum->add_child($grades);
+        $grades->add_child($grade);
 
         $discussion->add_child($posts);
         $posts->add_child($post);
@@ -166,6 +180,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
                     backup_helper::is_sqlparam('mod_forum'),
                     backup::VAR_CONTEXTID));
             }
+
+            $grade->set_source_table('forum_grades', array('forum' => backup::VAR_PARENTID));
         }
 
         // Define id annotations
@@ -190,6 +206,9 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
         $track->annotate_ids('user', 'userid');
 
+        $grade->annotate_ids('userid', 'userid');
+
+        $grade->annotate_ids('forum', 'forum');
         // Define file annotations
 
         $forum->annotate_files('mod_forum', 'intro', null); // This file area hasn't itemid

@@ -41,7 +41,9 @@ const findGradableNode = node => node.closest(ForumSelectors.expandConversation)
  *
  * @param {HTMLElement} rootNode The button that has been clicked
  */
-const showPostInContext = async(rootNode) => {
+const showPostInContext = async(rootNode, {
+    focusOnClose = null,
+} = {}) => {
     const postId = rootNode.dataset.postid;
     const discussionId = rootNode.dataset.discussionid;
     const discussionName = rootNode.dataset.name;
@@ -86,6 +88,11 @@ const showPostInContext = async(rootNode) => {
     modal.getRoot().on(ModalEvents.hidden, function() {
         // Destroy when hidden.
         modal.destroy();
+        try {
+            focusOnClose.focus();
+        } catch (e) {
+            // eslint-disable-line
+        }
     });
 
     modal.getRoot().on(ModalEvents.bodyRendered, () => {
@@ -118,7 +125,9 @@ export const registerEventListeners = (rootNode) => {
             e.preventDefault();
 
             try {
-                showPostInContext(rootNode);
+                showPostInContext(rootNode, {
+                    focusOnClose: e.target,
+                });
             } catch (err) {
                 showException(err);
             }

@@ -778,8 +778,7 @@ class pdf extends TcpdfFpdi {
         $imagecontent = $imagestoredfile->get_content();
         $this->currentpage++;
         $template = $this->importPage($this->currentpage);
-        // Defaulting dimensions to 0 because as of 2.x the default has changed to NULL.
-        $size = $this->getTemplateSize($template, 0, 0);
+        $size = $this->getTemplateSize($template);
 
         if ($imageinfo["width"] > $imageinfo["height"]) {
             if ($size['width'] < $size['height']) {

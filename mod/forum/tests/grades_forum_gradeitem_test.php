@@ -63,6 +63,33 @@ class forum_gradeitem_test extends \advanced_testcase {
     }
 
     /**
+     * Test fetching of a grade for a user when the grade has been created.
+     */
+    public function test_user_has_grade(): void {
+        $forum = $this->get_forum_instance([
+            'grade_forum' => 100,
+        ]);
+        $course = $forum->get_course_record();
+        [$student] = $this->helper_create_users($course, 1);
+        [$grader] = $this->helper_create_users($course, 1, 'editingteacher');
+
+        $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
+
+        $hasgrade = $gradeitem->user_has_grade($student);
+        $this->assertEquals(false, $hasgrade);
+        // Create the grade record.
+        $gradeitem->create_empty_grade($student, $grader);
+
+        $hasgrade = $gradeitem->user_has_grade($student);
+        $this->assertEquals(false, $hasgrade);
+
+        // Store a new value.
+        $gradeitem->store_grade_from_formdata($student, $grader, (object) ['grade' => 97]);
+        $hasgrade = $gradeitem->user_has_grade($student);
+        $this->assertEquals(true, $hasgrade);
+    }
+
+    /**
      * Ensure that it is possible to get, and update, a grade for a user when simple direct grading is in use.
      */
     public function test_get_and_store_grade_for_user_with_simple_direct_grade(): void {
