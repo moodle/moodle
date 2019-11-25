@@ -84,6 +84,15 @@ $candidatedir = "$CFG->localcachedir/theme/$rev/$themename/css";
 $candidatesheet = "{$candidatedir}/" . theme_styles_get_filename($type, $themesubrev, $usesvg);
 $etag = theme_styles_get_etag($themename, $rev, $type, $themesubrev, $usesvg);
 
+if (file_exists($candidatesheet)) {
+    if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+        // We do not actually need to verify the etag value because our files
+        // never change in cache because we increment the rev counter.
+        css_send_unmodified(filemtime($candidatesheet), $etag);
+    }
+    css_send_cached_css($candidatesheet, $etag);
+}
+
 // Ok, now we need to start normal moodle script, we need to load all libs and $DB.
 define('ABORT_AFTER_CONFIG_CANCEL', true);
 
