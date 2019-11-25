@@ -21,6 +21,12 @@ function xmldb_local_report_user_license_allocations_install() {
 
     upgrade_set_timeout(7200); // Set installation time to 2 hours as this takes a long time.
 
+    // Only do this if the logstore table exists.
+    $dbman = $DB->get_manager();
+    if (!$dbman->table_exists('logstore_standard_log')) {
+        return true;
+    }
+
     // Deal with historic license allocations as they may have dropped out of the logs or was before we fired an event.
     // Find the first event.
     if ($firstrec = $DB->get_records_sql("SELECT * FROM {logstore_standard_log}
