@@ -286,7 +286,7 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
         $mostrecentrange = reset($mostrecentrange);
 
         // We wait for the next range to be added.
-        usleep(1000000);
+        sleep(1);
 
         // We set the analysable again so the time ranges are recalculated.
         $seconds->set_analysable($analysable);
@@ -309,7 +309,7 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
         $mostrecentrange = reset($mostrecentrange);
 
         // We wait for the next range to be added.
-        usleep(1000000);
+        sleep(1);
 
         $seconds->set_analysable($analysable);
         $nnewranges = $seconds->get_all_ranges();

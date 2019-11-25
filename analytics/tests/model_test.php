@@ -292,7 +292,7 @@ class analytics_model_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        set_config('modeltimelimit', 1, 'analytics');
+        set_config('modeltimelimit', 2, 'analytics');
 
         $courses = array();
         for ($i = 0; $i < 5; $i++) {
