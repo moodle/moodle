@@ -176,6 +176,9 @@ class assign {
      */
     private $mostrecentteamsubmission = null;
 
+    /** @var array Array of error messages encountered during the execution of assignment related operations. */
+    private $errors = array();
+
     /**
      * Constructor for the base assign class.
      *
@@ -309,6 +312,24 @@ class assign {
      */
     public function set_course(stdClass $course) {
         $this->course = $course;
+    }
+
+    /**
+     * Set error message.
+     *
+     * @param string $message The error message
+     */
+    protected function set_error_message(string $message) {
+        $this->errors[] = $message;
+    }
+
+    /**
+     * Get error messages.
+     *
+     * @return array The array of error messages
+     */
+    protected function get_error_messages(): array {
+        return $this->errors;
     }
 
     /**
@@ -594,7 +615,14 @@ class assign {
         // Now show the right view page.
         if ($action == 'redirect') {
             $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
-            redirect($nextpageurl);
+            $messages = '';
+            $messagetype = \core\output\notification::NOTIFY_INFO;
+            $errors = $this->get_error_messages();
+            if (!empty($errors)) {
+                $messages = html_writer::alist($errors, ['class' => 'mb-1 mt-1']);
+                $messagetype = \core\output\notification::NOTIFY_ERROR;
+            }
+            redirect($nextpageurl, $messages, null, $messagetype);
             return;
         } else if ($action == 'savegradingresult') {
             $message = get_string('gradingchangessaved', 'assign');
@@ -7882,7 +7910,10 @@ class assign {
         global $USER;
 
         if (!$this->can_edit_submission($userid, $USER->id)) {
-            print_error('nopermission');
+            $user = core_user::get_user($userid);
+            $message = get_string('usersubmissioncannotberemoved', 'assign', fullname($user));
+            $this->set_error_message($message);
+            return false;
         }
 
         if ($this->get_instance()->teamsubmission) {
