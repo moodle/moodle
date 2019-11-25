@@ -101,7 +101,7 @@ class nugget_edit_form extends \moodleform {
         if (!empty($data['cmid']) && $DB->get_records_sql("SELECT id FROM {microlearning_nugget}
                                                           WHERE threadid = :threadid
                                                           AND cmid = :cmid
-                                                          id != :id", $data)) {
+                                                          AND id != :id", $data)) {
             $errors['cmid'] = get_string('cmidalreadyinuse', 'block_iomad_microlearning');
         } else if (!empty($data['sectionid']) && $DB->get_records_sql("SELECT id FROM {microlearning_nugget}
                                                           WHERE threadid = :threadid
