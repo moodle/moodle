@@ -839,8 +839,8 @@ class microlearning {
                         $schedulerec->schedule_date = $threadscheds->schedulearray[$mynugget->id];
                         $schedulerec->due_date = $threadscheds->duedatearray[$mynugget->id];
                         $schedulerec->message_time = $threadrec->message_time;
-                        $schedulerec->reminder1_date = $threadscheds->reminder1array[$mynugget->id];
-                        $schedulerec->reminder2_date = $threadscheds->reminder2array[$mynugget->id];
+                        $schedulerec->reminder1_date = $schedulerec->schedule_date + $threadrec->reminder1;
+                        $schedulerec->reminder2_date = $schedulerec->schedule_date + $threadrec->reminder2;
                         $schedulerec->message_delivered = false;
                         $schedulerec->reminder1_delivered = false;
                         $schedulerec->reminder2_delivered = false;
