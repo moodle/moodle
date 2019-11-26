@@ -1140,12 +1140,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     display: block;
 }
 
-.moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
-    @extend .modal-content;
-}
-
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
-    @extend .modal-header;
+    display: flex;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
@@ -1158,7 +1156,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
-    @extend .modal-title;
     font-size: 1.5rem;
 }
 
@@ -1167,12 +1164,24 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         left: 0;
         right: auto;
     */
-    padding: $spacer;
+    padding: 0;
+    position: relative;
+    margin-left: auto;
 }
 
 .moodle-dialogue-base .closebutton {
-    @extend .close;
+    padding: $modal-header-padding;
+    margin: (-$modal-header-padding-y) (-$modal-header-padding-x) (-$modal-header-padding-y) auto;
+    position: relative;
+    background-color: transparent;
+    border: 0;
+    background-image: none;
     box-shadow: none;
+    opacity: 0.7;
+    &:hover,
+    &:active {
+        opacity: 1;
+    }
     &::after {
         content: "×";
     }
@@ -1180,6 +1189,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
     padding: 0.5rem;
+    body {
+        background-color: $body-bg;
+    }
 }
 
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
@@ -1222,10 +1234,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     color: #333;
     font-size: 90%;
     border-bottom: 1px solid #eee;
-}
-
-.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
-    @extend .modal-footer;
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft:empty {

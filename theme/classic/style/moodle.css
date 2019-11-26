@@ -6171,7 +6171,7 @@ input[type="button"].btn-block {
 
 .alert-dismissible {
   padding-right: 3.90625rem; }
-  .alert-dismissible .close, .alert-dismissible .moodle-dialogue-base .closebutton, .moodle-dialogue-base .alert-dismissible .closebutton {
+  .alert-dismissible .close {
     position: absolute;
     top: 0;
     right: 0;
@@ -6521,7 +6521,7 @@ input[type="button"].btn-block {
     background-color: #1d1e1f;
     border-color: #1d1e1f; }
 
-.close, .moodle-dialogue-base .closebutton {
+.close {
   float: right;
   font-size: 1.40625rem;
   font-weight: 700;
@@ -6529,19 +6529,19 @@ input[type="button"].btn-block {
   color: #000;
   text-shadow: 0 1px 0 #fff;
   opacity: .5; }
-  .close:hover, .moodle-dialogue-base .closebutton:hover {
+  .close:hover {
     color: #000;
     text-decoration: none; }
-  .close:not(:disabled):not(.disabled):hover, .moodle-dialogue-base .closebutton:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus, .moodle-dialogue-base .closebutton:not(:disabled):not(.disabled):focus {
+  .close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus {
     opacity: .75; }
 
-button.close, .moodle-dialogue-base button.closebutton {
+button.close {
   padding: 0;
   background-color: transparent;
   border: 0;
   appearance: none; }
 
-a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
+a.close.disabled {
   pointer-events: none; }
 
 .toast {
@@ -6611,13 +6611,11 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
 .modal-dialog-scrollable {
   display: flex;
   max-height: calc(100% - 1rem); }
-  .modal-dialog-scrollable .modal-content, .modal-dialog-scrollable .moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content, .moodle-dialogue-base .modal-dialog-scrollable .moodle-dialogue-wrap.moodle-dialogue-content {
+  .modal-dialog-scrollable .modal-content {
     max-height: calc(100vh - 1rem);
     overflow: hidden; }
-  .modal-dialog-scrollable .modal-header, .modal-dialog-scrollable .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd, .moodle-dialogue-base .moodle-dialogue-wrap .modal-dialog-scrollable .moodle-dialogue-hd, .modal-dialog-scrollable .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3, .path-mod-assign [data-region="grade-panel"] .modal-dialog-scrollable .popout > .col-md-3,
-  .modal-dialog-scrollable .modal-footer,
-  .modal-dialog-scrollable .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft,
-  .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .modal-dialog-scrollable .moodle-dialogue-ft {
+  .modal-dialog-scrollable .modal-header, .modal-dialog-scrollable .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3, .path-mod-assign [data-region="grade-panel"] .modal-dialog-scrollable .popout > .col-md-3,
+  .modal-dialog-scrollable .modal-footer {
     flex-shrink: 0; }
   .modal-dialog-scrollable .modal-body {
     overflow-y: auto; }
@@ -6634,12 +6632,12 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
     flex-direction: column;
     justify-content: center;
     height: 100%; }
-    .modal-dialog-centered.modal-dialog-scrollable .modal-content, .modal-dialog-centered.modal-dialog-scrollable .moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content, .moodle-dialogue-base .modal-dialog-centered.modal-dialog-scrollable .moodle-dialogue-wrap.moodle-dialogue-content {
+    .modal-dialog-centered.modal-dialog-scrollable .modal-content {
       max-height: none; }
     .modal-dialog-centered.modal-dialog-scrollable::before {
       content: none; }
 
-.modal-content, .moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
+.modal-content {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -6664,7 +6662,7 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
   .modal-backdrop.show {
     opacity: 0.5; }
 
-.modal-header, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd, .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
+.modal-header, .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -6672,11 +6670,11 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
   border-bottom: 1px solid #dee2e6;
   border-top-left-radius: 0.3rem;
   border-top-right-radius: 0.3rem; }
-  .modal-header .close, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .close, .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 .close, .modal-header .moodle-dialogue-base .closebutton, .moodle-dialogue-base .modal-header .closebutton, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .closebutton, .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 .moodle-dialogue-base .closebutton, .moodle-dialogue-base .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 .closebutton {
+  .modal-header .close, .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 .close {
     padding: 1rem 1rem;
     margin: -1rem -1rem -1rem auto; }
 
-.modal-title, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
+.modal-title {
   margin-bottom: 0;
   line-height: 1.5; }
 
@@ -6685,7 +6683,7 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
   flex: 1 1 auto;
   padding: 1rem; }
 
-.modal-footer, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
+.modal-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -6693,9 +6691,9 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
   border-top: 1px solid #dee2e6;
   border-bottom-right-radius: 0.3rem;
   border-bottom-left-radius: 0.3rem; }
-  .modal-footer > :not(:first-child), .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft > :not(:first-child) {
+  .modal-footer > :not(:first-child) {
     margin-left: .25rem; }
-  .modal-footer > :not(:last-child), .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft > :not(:last-child) {
+  .modal-footer > :not(:last-child) {
     margin-right: .25rem; }
 
 .modal-scrollbar-measure {
@@ -6711,7 +6709,7 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
     margin: 1.75rem auto; }
   .modal-dialog-scrollable {
     max-height: calc(100% - 3.5rem); }
-    .modal-dialog-scrollable .modal-content, .modal-dialog-scrollable .moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content, .moodle-dialogue-base .modal-dialog-scrollable .moodle-dialogue-wrap.moodle-dialogue-content {
+    .modal-dialog-scrollable .modal-content {
       max-height: calc(100vh - 3.5rem); }
   .modal-dialog-centered {
     min-height: calc(100% - 3.5rem); }
@@ -10826,6 +10824,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .modal.show {
   display: block; }
 
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
+  display: flex;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #dee2e6; }
+
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
   min-height: 3rem;
   color: initial;
@@ -10841,15 +10844,28 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         left: 0;
         right: auto;
     */
-  padding: 1rem; }
+  padding: 0;
+  position: relative;
+  margin-left: auto; }
 
 .moodle-dialogue-base .closebutton {
-  box-shadow: none; }
+  padding: 1rem 1rem;
+  margin: -1rem -1rem -1rem auto;
+  position: relative;
+  background-color: transparent;
+  border: 0;
+  background-image: none;
+  box-shadow: none;
+  opacity: 0.7; }
+  .moodle-dialogue-base .closebutton:hover, .moodle-dialogue-base .closebutton:active {
+    opacity: 1; }
   .moodle-dialogue-base .closebutton::after {
     content: "×"; }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
   padding: 0.5rem; }
+  .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd body {
+    background-color: #fff; }
 
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
   overflow: auto;
