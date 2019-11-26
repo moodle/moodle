@@ -118,16 +118,16 @@ a.dimmed_text:visited,
 
 .red,
 .notifyproblem {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .green,
 .notifysuccess {
-    @extend .text-success;
+    color: map-get($theme-colors, 'success');
 }
 
 .highlight {
-    @extend .text-info;
+    color: map-get($theme-colors, 'info');
 }
 
 .fitem.advanced .text-info {
@@ -593,7 +593,7 @@ table.mod_index {
 * Completion progress report
 */
 .completion-expired {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .completion-expected {
@@ -690,7 +690,7 @@ span.flagged-tag,
 tr.flagged-tag,
 span.flagged-tag a,
 tr.flagged-tag a {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .tag-management-table td,
@@ -1230,7 +1230,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
     font-size: $font-size-sm;
 }
 
@@ -1685,15 +1685,15 @@ ul.badges {
 }
 
 .connected {
-    @extend .text-success;
+    color: map-get($theme-colors, 'success');
 }
 
 .notconnected {
-    @extend .text-danger;
+    color: map-get($theme-colors, 'danger');
 }
 
 .connecting {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 #page-badges-award .recipienttable tr td {

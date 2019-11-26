@@ -9241,41 +9241,28 @@ a.text-primary:hover, a.text-primary:focus {
 a.text-secondary:hover, a.text-secondary:focus {
   color: #a2aeb9 !important; }
 
-.text-success, .green,
-.notifysuccess, .connected {
+.text-success {
   color: #5cb85c !important; }
 
-a.text-success:hover, a.green:hover,
-a.notifysuccess:hover, a.connected:hover, a.text-success:focus, a.green:focus,
-a.notifysuccess:focus, a.connected:focus {
+a.text-success:hover, a.text-success:focus {
   color: #3d8b3d !important; }
 
-.text-info, .highlight {
+.text-info {
   color: #5bc0de !important; }
 
-a.text-info:hover, a.highlight:hover, a.text-info:focus, a.highlight:focus {
+a.text-info:hover, a.text-info:focus {
   color: #28a1c5 !important; }
 
-.text-warning, .red,
-.notifyproblem, .completion-expired, span.flagged-tag,
-tr.flagged-tag,
-span.flagged-tag a,
-tr.flagged-tag a, .moodle-dialogue-exception .param-stacktrace .stacktrace-line, .connecting {
+.text-warning {
   color: #f0ad4e !important; }
 
-a.text-warning:hover, a.red:hover,
-a.notifyproblem:hover, a.completion-expired:hover,
-span.flagged-tag a:hover,
-tr.flagged-tag a:hover, .moodle-dialogue-exception .param-stacktrace a.stacktrace-line:hover, a.connecting:hover, a.text-warning:focus, a.red:focus,
-a.notifyproblem:focus, a.completion-expired:focus,
-span.flagged-tag a:focus,
-tr.flagged-tag a:focus, .moodle-dialogue-exception .param-stacktrace a.stacktrace-line:focus, a.connecting:focus {
+a.text-warning:hover, a.text-warning:focus {
   color: #df8a13 !important; }
 
-.text-danger, .notconnected, .que .validationerror, .text-error {
+.text-danger, .que .validationerror, .text-error {
   color: #d9534f !important; }
 
-a.text-danger:hover, a.notconnected:hover, .que a.validationerror:hover, a.text-error:hover, a.text-danger:focus, a.notconnected:focus, .que a.validationerror:focus, a.text-error:focus {
+a.text-danger:hover, .que a.validationerror:hover, a.text-error:hover, a.text-danger:focus, .que a.validationerror:focus, a.text-error:focus {
   color: #b52b27 !important; }
 
 .text-light {
@@ -9736,7 +9723,18 @@ a.dimmed_text:visited,
 .notifytiny td {
   font-size: 100%; }
 
-.fitem.advanced .text-info, .fitem.advanced .highlight {
+.red,
+.notifyproblem {
+  color: #f0ad4e; }
+
+.green,
+.notifysuccess {
+  color: #5cb85c; }
+
+.highlight {
+  color: #5bc0de; }
+
+.fitem.advanced .text-info {
   font-weight: bold; }
 
 .reportlink {
@@ -10107,6 +10105,9 @@ table.mod_index {
 /**
 * Completion progress report
 */
+.completion-expired {
+  color: #f0ad4e; }
+
 .completion-expected {
   font-size: 0.703125rem; }
 
@@ -10183,6 +10184,12 @@ img.user-image {
   padding-right: 5px;
   padding-left: 5px;
   content: "«"; }
+
+span.flagged-tag,
+tr.flagged-tag,
+span.flagged-tag a,
+tr.flagged-tag a {
+  color: #f0ad4e; }
 
 .tag-management-table td,
 .tag-management-table th {
@@ -10632,6 +10639,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   font-size: 0.8203125rem; }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
+  color: #f0ad4e;
   font-size: 0.8203125rem; }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-call {
@@ -10988,6 +10996,15 @@ ul.badges {
 
 .badge-profile {
   vertical-align: top; }
+
+.connected {
+  color: #5cb85c; }
+
+.notconnected {
+  color: #d9534f; }
+
+.connecting {
+  color: #f0ad4e; }
 
 #page-badges-award .recipienttable tr td {
   vertical-align: top; }
