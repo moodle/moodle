@@ -115,12 +115,15 @@
 }
 
 .fp-viewbar:not(.disabled) a.checked {
-    @extend .btn-secondary.active;
+    background-color: darken(map-get($theme-colors, 'secondary'), 10%);
+    color: color-yiq(darken(map-get($theme-colors, 'secondary'), 10%));
+    border-color: darken(map-get($theme-colors, 'secondary'), 12.5%);
 }
 
 .fp-viewbar.disabled a {
-    @extend .btn.disabled;
-    @extend .btn-secondary.disabled;
+    pointer-events: none;
+    opacity: $btn-disabled-opacity;
+    @include box-shadow(none);
 }
 
 .file-picker .fp-clear-left {

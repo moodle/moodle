@@ -4101,10 +4101,10 @@ div.backup-section + form {
   .btn:focus, #page-grade-grading-manage .actions .action:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input:focus, #rubric-rubric.gradingform_rubric .addcriterion:focus, .btn.focus, #page-grade-grading-manage .actions .focus.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.focus, #rubric-rubric.gradingform_rubric .focus.addcriterion {
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.25); }
-  .btn.disabled, .fp-viewbar.disabled a, #page-grade-grading-manage .actions .disabled.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.disabled, #rubric-rubric.gradingform_rubric .disabled.addcriterion, .btn:disabled, #page-grade-grading-manage .actions .action:disabled, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input:disabled, #rubric-rubric.gradingform_rubric .addcriterion:disabled {
+  .btn.disabled, #page-grade-grading-manage .actions .disabled.action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.disabled, #rubric-rubric.gradingform_rubric .disabled.addcriterion, .btn:disabled, #page-grade-grading-manage .actions .action:disabled, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input:disabled, #rubric-rubric.gradingform_rubric .addcriterion:disabled {
     opacity: 0.65; }
 
-a.btn.disabled, .fp-viewbar.disabled a, #page-grade-grading-manage .actions a.disabled.action, #rubric-rubric.gradingform_rubric a.disabled.addcriterion,
+a.btn.disabled, #page-grade-grading-manage .actions a.disabled.action, #rubric-rubric.gradingform_rubric a.disabled.addcriterion,
 fieldset:disabled a.btn,
 fieldset:disabled #page-grade-grading-manage .actions a.action,
 #page-grade-grading-manage .actions fieldset:disabled a.action,
@@ -4145,17 +4145,17 @@ fieldset:disabled #rubric-rubric.gradingform_rubric a.addcriterion,
     border-color: #cbd3da; }
   .btn-secondary:focus, .btn-default:focus, .btn-secondary.focus, .focus.btn-default {
     box-shadow: 0 0 0 0.2rem rgba(203, 206, 209, 0.5); }
-  .btn-secondary.disabled, .fp-viewbar.disabled a, .disabled.btn-default, .btn-secondary:disabled, .btn-default:disabled {
+  .btn-secondary.disabled, .disabled.btn-default, .btn-secondary:disabled, .btn-default:disabled {
     color: #212529;
     background-color: #e9ecef;
     border-color: #e9ecef; }
-  .btn-secondary:not(:disabled):not(.disabled):active, .btn-default:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .fp-viewbar:not(.disabled) a.checked:not(:disabled):not(.disabled), .btn-default:not(:disabled):not(.disabled).active,
+  .btn-secondary:not(:disabled):not(.disabled):active, .btn-default:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .btn-default:not(:disabled):not(.disabled).active,
   .show > .btn-secondary.dropdown-toggle,
   .show > .dropdown-toggle.btn-default {
     color: #212529;
     background-color: #cbd3da;
     border-color: #c4ccd4; }
-    .btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-default:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .fp-viewbar:not(.disabled) a.checked:not(:disabled):not(.disabled):focus, .btn-default:not(:disabled):not(.disabled).active:focus,
+    .btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-default:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .btn-default:not(:disabled):not(.disabled).active:focus,
     .show > .btn-secondary.dropdown-toggle:focus,
     .show > .dropdown-toggle.btn-default:focus {
       box-shadow: 0 0 0 0.2rem rgba(203, 206, 209, 0.5); }
@@ -14022,6 +14022,15 @@ body.drawer-ease {
 .fp-toolbar img {
   vertical-align: -15%;
   margin-right: 5px; }
+
+.fp-viewbar:not(.disabled) a.checked {
+  background-color: #cbd3da;
+  color: #212529;
+  border-color: #c4ccd4; }
+
+.fp-viewbar.disabled a {
+  pointer-events: none;
+  opacity: 0.65; }
 
 .file-picker .fp-clear-left {
   clear: left; }
