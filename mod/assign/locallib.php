@@ -2485,6 +2485,8 @@ class assign {
      * @return array An array of userids
      */
     protected function get_grading_userid_list($cached = false, $useridlistid = '') {
+        global $SESSION;
+
         if ($cached) {
             if (empty($useridlistid)) {
                 $useridlistid = $this->get_useridlist_key_id();

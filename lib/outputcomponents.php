@@ -3251,6 +3251,9 @@ class initials_bar implements renderable, templatable {
             if ($letter == $this->current) {
                 $groupletter->selected = $this->current;
             }
+            if (!isset($data->group[$groupnumber])) {
+                $data->group[$groupnumber] = new stdClass();
+            }
             $data->group[$groupnumber]->letter[] = $groupletter;
         }
 
