@@ -720,6 +720,12 @@ class tool_uploadcourse_course {
             }
         }
 
+        // Visibility can only be 0 or 1.
+        if (!empty($coursedata['visible']) AND !($coursedata['visible'] == 0 OR $coursedata['visible'] == 1)) {
+            $this->error('invalidvisibilitymode', new lang_string('invalidvisibilitymode', 'tool_uploadcourse'));
+            return false;
+        }
+
         // Saving data.
         $this->data = $coursedata;
         $this->enrolmentdata = tool_uploadcourse_helper::get_enrolment_data($this->rawdata);
