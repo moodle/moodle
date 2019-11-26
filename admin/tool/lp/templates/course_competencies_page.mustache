@@ -82,7 +82,7 @@
         {{/comppath}}
         {{#usercompetencycourse}}
             {{#grade}}
-            <span class="badge {{^proficiency}}badge-danger{{/proficiency}}">{{gradename}}</span>
+            <span class="badge {{#proficiency}}badge-success{{/proficiency}}{{^proficiency}}badge-danger{{/proficiency}}">{{gradename}}</span>
             {{/grade}}
         {{/usercompetencycourse}}
         {{#canmanagecoursecompetencies}}

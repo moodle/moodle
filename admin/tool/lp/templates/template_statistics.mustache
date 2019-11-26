@@ -45,8 +45,7 @@
     Template statistics template.
 }}
 {{#competencycount}}
-<div data-region="templatestatistics" class="card">
-    <div class="card-block">
+<div data-region="templatestatistics" class="border p-2 mb-2">
     {{< tool_lp/progress_bar}}
         {{$progresstext}}
             {{#str}}xcompetencieslinkedoutofy, tool_lp, { "x": "{{linkedcompetencycount}}", "y": "{{competencycount}}" } {{/str}}
@@ -90,6 +89,5 @@
         </div>
     </div>
     {{/leastproficientcount}}
-    </div>
 </div>
 {{/competencycount}}

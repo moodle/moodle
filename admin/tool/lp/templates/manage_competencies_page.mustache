@@ -50,10 +50,12 @@
         <div class="col-lg-6">
             <p>
                 <form data-region="filtercompetencies" data-frameworkid="{{framework.id}}" class="form-inline">
-                    <div class="form-group">
+                    <div class="input-group mb-3">
                         <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
                         <input class="form-control" type="text" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
-                        <button class="btn btn-secondary">{{#pix}}a/search, , {{#str}}search{{/str}}{{/pix}}</button>
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary">{{#pix}}a/search, , {{#str}}search{{/str}}{{/pix}}</button>
+                        </div>
                     </div>
                 </form>
             </p>
@@ -62,8 +64,8 @@
             </ul>
         </div>
 
-        <div class="card col-lg-6">
-            <div class="card-block card-body">
+        <div class="col-lg-6">
+            <div class="border p-2 mb-2">
                 <div class="card-title">
                     <h4 data-region="selected-competency">{{#str}}selectedcompetency, tool_lp{{/str}}</h4>
                         <span data-region="competencyactionsmenu" class="float-sm-right">
