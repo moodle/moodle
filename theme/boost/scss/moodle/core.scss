@@ -989,22 +989,6 @@ tr.flagged-tag a {
     margin-left: 3px;
 }
 
-#page-enrol-users {
-    .enrol_user_buttons {
-        text-align: right;
-
-    }
-
-    #filterform {
-        @extend .card;
-        @extend .card-block;
-    }
-}
-
-#page-enrol-users .enrol-users-page-action input {
-    margin-left: 0;
-}
-
 .corelightbox {
     background-color: #ccc;
     position: absolute;

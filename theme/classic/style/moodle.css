@@ -5746,7 +5746,7 @@ input[type="button"].btn-block {
     .navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {
       color: #fff; }
 
-.card, #page-enrol-users #filterform, .que .history, .userprofile .profile_tree section, .groupinfobox, .well {
+.card, .que .history, .userprofile .profile_tree section, .groupinfobox, .well {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -5756,13 +5756,13 @@ input[type="button"].btn-block {
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem; }
-  .card > hr, #page-enrol-users #filterform > hr, .que .history > hr, .userprofile .profile_tree section > hr, .groupinfobox > hr, .well > hr {
+  .card > hr, .que .history > hr, .userprofile .profile_tree section > hr, .groupinfobox > hr, .well > hr {
     margin-right: 0;
     margin-left: 0; }
-  .card > .list-group:first-child .list-group-item:first-child, #page-enrol-users #filterform > .list-group:first-child .list-group-item:first-child, .que .history > .list-group:first-child .list-group-item:first-child, .userprofile .profile_tree section > .list-group:first-child .list-group-item:first-child, .groupinfobox > .list-group:first-child .list-group-item:first-child, .well > .list-group:first-child .list-group-item:first-child {
+  .card > .list-group:first-child .list-group-item:first-child, .que .history > .list-group:first-child .list-group-item:first-child, .userprofile .profile_tree section > .list-group:first-child .list-group-item:first-child, .groupinfobox > .list-group:first-child .list-group-item:first-child, .well > .list-group:first-child .list-group-item:first-child {
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem; }
-  .card > .list-group:last-child .list-group-item:last-child, #page-enrol-users #filterform > .list-group:last-child .list-group-item:last-child, .que .history > .list-group:last-child .list-group-item:last-child, .userprofile .profile_tree section > .list-group:last-child .list-group-item:last-child, .groupinfobox > .list-group:last-child .list-group-item:last-child, .well > .list-group:last-child .list-group-item:last-child {
+  .card > .list-group:last-child .list-group-item:last-child, .que .history > .list-group:last-child .list-group-item:last-child, .userprofile .profile_tree section > .list-group:last-child .list-group-item:last-child, .groupinfobox > .list-group:last-child .list-group-item:last-child, .well > .list-group:last-child .list-group-item:last-child {
     border-bottom-right-radius: 0.25rem;
     border-bottom-left-radius: 0.25rem; }
 
@@ -5838,14 +5838,14 @@ input[type="button"].btn-block {
 .card-deck {
   display: flex;
   flex-direction: column; }
-  .card-deck .card, .card-deck #page-enrol-users #filterform, #page-enrol-users .card-deck #filterform, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
+  .card-deck .card, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
     margin-bottom: 0.25rem; }
   @media (min-width: 576px) {
     .card-deck {
       flex-flow: row wrap;
       margin-right: -0.25rem;
       margin-left: -0.25rem; }
-      .card-deck .card, .card-deck #page-enrol-users #filterform, #page-enrol-users .card-deck #filterform, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
+      .card-deck .card, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
         display: flex;
         flex: 1 0 0%;
         flex-direction: column;
@@ -5856,57 +5856,53 @@ input[type="button"].btn-block {
 .card-group {
   display: flex;
   flex-direction: column; }
-  .card-group > .card, #page-enrol-users .card-group > #filterform, .que .card-group > .history, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
+  .card-group > .card, .que .card-group > .history, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
     margin-bottom: 0.25rem; }
   @media (min-width: 576px) {
     .card-group {
       flex-flow: row wrap; }
-      .card-group > .card, #page-enrol-users .card-group > #filterform, .que .card-group > .history, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
+      .card-group > .card, .que .card-group > .history, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
         flex: 1 0 0%;
         margin-bottom: 0; }
-        .card-group > .card + .card, #page-enrol-users .card-group > #filterform + .card, .que .card-group > .history + .card, .userprofile .profile_tree .card-group > section + .card, .card-group > .groupinfobox + .card, .card-group > .well + .card, #page-enrol-users .card-group > .card + #filterform, #page-enrol-users .card-group > #filterform + #filterform, .que #page-enrol-users .card-group > .history + #filterform, #page-enrol-users .que .card-group > .history + #filterform, .userprofile .profile_tree #page-enrol-users .card-group > section + #filterform, #page-enrol-users .userprofile .profile_tree .card-group > section + #filterform, #page-enrol-users .card-group > .groupinfobox + #filterform, #page-enrol-users .card-group > .well + #filterform, .que .card-group > .card + .history, #page-enrol-users .que .card-group > #filterform + .history, .que #page-enrol-users .card-group > #filterform + .history, .que .card-group > .history + .history, .userprofile .profile_tree .que .card-group > section + .history, .que .userprofile .profile_tree .card-group > section + .history, .que .card-group > .groupinfobox + .history, .que .card-group > .well + .history, .userprofile .profile_tree .card-group > .card + section, #page-enrol-users .userprofile .profile_tree .card-group > #filterform + section, .userprofile .profile_tree #page-enrol-users .card-group > #filterform + section, .que .userprofile .profile_tree .card-group > .history + section, .userprofile .profile_tree .que .card-group > .history + section, .userprofile .profile_tree .card-group > section + section, .userprofile .profile_tree .card-group > .groupinfobox + section, .userprofile .profile_tree .card-group > .well + section, .card-group > .card + .groupinfobox, #page-enrol-users .card-group > #filterform + .groupinfobox, .que .card-group > .history + .groupinfobox, .userprofile .profile_tree .card-group > section + .groupinfobox, .card-group > .groupinfobox + .groupinfobox, .card-group > .well + .groupinfobox, .card-group > .card + .well, #page-enrol-users .card-group > #filterform + .well, .que .card-group > .history + .well, .userprofile .profile_tree .card-group > section + .well, .card-group > .groupinfobox + .well, .card-group > .well + .well {
+        .card-group > .card + .card, .que .card-group > .history + .card, .userprofile .profile_tree .card-group > section + .card, .card-group > .groupinfobox + .card, .card-group > .well + .card, .que .card-group > .card + .history, .que .card-group > .history + .history, .userprofile .profile_tree .que .card-group > section + .history, .que .userprofile .profile_tree .card-group > section + .history, .que .card-group > .groupinfobox + .history, .que .card-group > .well + .history, .userprofile .profile_tree .card-group > .card + section, .que .userprofile .profile_tree .card-group > .history + section, .userprofile .profile_tree .que .card-group > .history + section, .userprofile .profile_tree .card-group > section + section, .userprofile .profile_tree .card-group > .groupinfobox + section, .userprofile .profile_tree .card-group > .well + section, .card-group > .card + .groupinfobox, .que .card-group > .history + .groupinfobox, .userprofile .profile_tree .card-group > section + .groupinfobox, .card-group > .groupinfobox + .groupinfobox, .card-group > .well + .groupinfobox, .card-group > .card + .well, .que .card-group > .history + .well, .userprofile .profile_tree .card-group > section + .well, .card-group > .groupinfobox + .well, .card-group > .well + .well {
           margin-left: 0;
           border-left: 0; }
-        .card-group > .card:not(:last-child), #page-enrol-users .card-group > #filterform:not(:last-child), .que .card-group > .history:not(:last-child), .userprofile .profile_tree .card-group > section:not(:last-child), .card-group > .groupinfobox:not(:last-child), .card-group > .well:not(:last-child) {
+        .card-group > .card:not(:last-child), .que .card-group > .history:not(:last-child), .userprofile .profile_tree .card-group > section:not(:last-child), .card-group > .groupinfobox:not(:last-child), .card-group > .well:not(:last-child) {
           border-top-right-radius: 0;
           border-bottom-right-radius: 0; }
-          .card-group > .card:not(:last-child) .card-img-top, #page-enrol-users .card-group > #filterform:not(:last-child) .card-img-top, .que .card-group > .history:not(:last-child) .card-img-top, .userprofile .profile_tree .card-group > section:not(:last-child) .card-img-top, .card-group > .groupinfobox:not(:last-child) .card-img-top, .card-group > .well:not(:last-child) .card-img-top,
+          .card-group > .card:not(:last-child) .card-img-top, .que .card-group > .history:not(:last-child) .card-img-top, .userprofile .profile_tree .card-group > section:not(:last-child) .card-img-top, .card-group > .groupinfobox:not(:last-child) .card-img-top, .card-group > .well:not(:last-child) .card-img-top,
           .card-group > .card:not(:last-child) .card-header,
-          #page-enrol-users .card-group > #filterform:not(:last-child) .card-header,
           .que .card-group > .history:not(:last-child) .card-header,
           .userprofile .profile_tree .card-group > section:not(:last-child) .card-header,
           .card-group > .groupinfobox:not(:last-child) .card-header,
           .card-group > .well:not(:last-child) .card-header {
             border-top-right-radius: 0; }
-          .card-group > .card:not(:last-child) .card-img-bottom, #page-enrol-users .card-group > #filterform:not(:last-child) .card-img-bottom, .que .card-group > .history:not(:last-child) .card-img-bottom, .userprofile .profile_tree .card-group > section:not(:last-child) .card-img-bottom, .card-group > .groupinfobox:not(:last-child) .card-img-bottom, .card-group > .well:not(:last-child) .card-img-bottom,
+          .card-group > .card:not(:last-child) .card-img-bottom, .que .card-group > .history:not(:last-child) .card-img-bottom, .userprofile .profile_tree .card-group > section:not(:last-child) .card-img-bottom, .card-group > .groupinfobox:not(:last-child) .card-img-bottom, .card-group > .well:not(:last-child) .card-img-bottom,
           .card-group > .card:not(:last-child) .card-footer,
-          #page-enrol-users .card-group > #filterform:not(:last-child) .card-footer,
           .que .card-group > .history:not(:last-child) .card-footer,
           .userprofile .profile_tree .card-group > section:not(:last-child) .card-footer,
           .card-group > .groupinfobox:not(:last-child) .card-footer,
           .card-group > .well:not(:last-child) .card-footer {
             border-bottom-right-radius: 0; }
-        .card-group > .card:not(:first-child), #page-enrol-users .card-group > #filterform:not(:first-child), .que .card-group > .history:not(:first-child), .userprofile .profile_tree .card-group > section:not(:first-child), .card-group > .groupinfobox:not(:first-child), .card-group > .well:not(:first-child) {
+        .card-group > .card:not(:first-child), .que .card-group > .history:not(:first-child), .userprofile .profile_tree .card-group > section:not(:first-child), .card-group > .groupinfobox:not(:first-child), .card-group > .well:not(:first-child) {
           border-top-left-radius: 0;
           border-bottom-left-radius: 0; }
-          .card-group > .card:not(:first-child) .card-img-top, #page-enrol-users .card-group > #filterform:not(:first-child) .card-img-top, .que .card-group > .history:not(:first-child) .card-img-top, .userprofile .profile_tree .card-group > section:not(:first-child) .card-img-top, .card-group > .groupinfobox:not(:first-child) .card-img-top, .card-group > .well:not(:first-child) .card-img-top,
+          .card-group > .card:not(:first-child) .card-img-top, .que .card-group > .history:not(:first-child) .card-img-top, .userprofile .profile_tree .card-group > section:not(:first-child) .card-img-top, .card-group > .groupinfobox:not(:first-child) .card-img-top, .card-group > .well:not(:first-child) .card-img-top,
           .card-group > .card:not(:first-child) .card-header,
-          #page-enrol-users .card-group > #filterform:not(:first-child) .card-header,
           .que .card-group > .history:not(:first-child) .card-header,
           .userprofile .profile_tree .card-group > section:not(:first-child) .card-header,
           .card-group > .groupinfobox:not(:first-child) .card-header,
           .card-group > .well:not(:first-child) .card-header {
             border-top-left-radius: 0; }
-          .card-group > .card:not(:first-child) .card-img-bottom, #page-enrol-users .card-group > #filterform:not(:first-child) .card-img-bottom, .que .card-group > .history:not(:first-child) .card-img-bottom, .userprofile .profile_tree .card-group > section:not(:first-child) .card-img-bottom, .card-group > .groupinfobox:not(:first-child) .card-img-bottom, .card-group > .well:not(:first-child) .card-img-bottom,
+          .card-group > .card:not(:first-child) .card-img-bottom, .que .card-group > .history:not(:first-child) .card-img-bottom, .userprofile .profile_tree .card-group > section:not(:first-child) .card-img-bottom, .card-group > .groupinfobox:not(:first-child) .card-img-bottom, .card-group > .well:not(:first-child) .card-img-bottom,
           .card-group > .card:not(:first-child) .card-footer,
-          #page-enrol-users .card-group > #filterform:not(:first-child) .card-footer,
           .que .card-group > .history:not(:first-child) .card-footer,
           .userprofile .profile_tree .card-group > section:not(:first-child) .card-footer,
           .card-group > .groupinfobox:not(:first-child) .card-footer,
           .card-group > .well:not(:first-child) .card-footer {
             border-bottom-left-radius: 0; } }
 
-.card-columns .card, .card-columns #page-enrol-users #filterform, #page-enrol-users .card-columns #filterform, .card-columns .que .history, .que .card-columns .history, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
+.card-columns .card, .card-columns .que .history, .que .card-columns .history, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
   margin-bottom: 0.75rem; }
 
 @media (min-width: 576px) {
@@ -5915,25 +5911,25 @@ input[type="button"].btn-block {
     column-gap: 1.25rem;
     orphans: 1;
     widows: 1; }
-    .card-columns .card, .card-columns #page-enrol-users #filterform, #page-enrol-users .card-columns #filterform, .card-columns .que .history, .que .card-columns .history, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
+    .card-columns .card, .card-columns .que .history, .que .card-columns .history, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
       display: inline-block;
       width: 100%; } }
 
-.accordion > .card, #page-enrol-users .accordion > #filterform, .que .accordion > .history, .userprofile .profile_tree .accordion > section, .accordion > .groupinfobox, .accordion > .well {
+.accordion > .card, .que .accordion > .history, .userprofile .profile_tree .accordion > section, .accordion > .groupinfobox, .accordion > .well {
   overflow: hidden; }
-  .accordion > .card:not(:first-of-type) .card-header:first-child, #page-enrol-users .accordion > #filterform:not(:first-of-type) .card-header:first-child, .que .accordion > .history:not(:first-of-type) .card-header:first-child, .userprofile .profile_tree .accordion > section:not(:first-of-type) .card-header:first-child, .accordion > .groupinfobox:not(:first-of-type) .card-header:first-child, .accordion > .well:not(:first-of-type) .card-header:first-child {
+  .accordion > .card:not(:first-of-type) .card-header:first-child, .que .accordion > .history:not(:first-of-type) .card-header:first-child, .userprofile .profile_tree .accordion > section:not(:first-of-type) .card-header:first-child, .accordion > .groupinfobox:not(:first-of-type) .card-header:first-child, .accordion > .well:not(:first-of-type) .card-header:first-child {
     border-radius: 0; }
-  .accordion > .card:not(:first-of-type):not(:last-of-type), #page-enrol-users .accordion > #filterform:not(:first-of-type):not(:last-of-type), .que .accordion > .history:not(:first-of-type):not(:last-of-type), .userprofile .profile_tree .accordion > section:not(:first-of-type):not(:last-of-type), .accordion > .groupinfobox:not(:first-of-type):not(:last-of-type), .accordion > .well:not(:first-of-type):not(:last-of-type) {
+  .accordion > .card:not(:first-of-type):not(:last-of-type), .que .accordion > .history:not(:first-of-type):not(:last-of-type), .userprofile .profile_tree .accordion > section:not(:first-of-type):not(:last-of-type), .accordion > .groupinfobox:not(:first-of-type):not(:last-of-type), .accordion > .well:not(:first-of-type):not(:last-of-type) {
     border-bottom: 0;
     border-radius: 0; }
-  .accordion > .card:first-of-type, #page-enrol-users .accordion > #filterform:first-of-type, .que .accordion > .history:first-of-type, .userprofile .profile_tree .accordion > section:first-of-type, .accordion > .groupinfobox:first-of-type, .accordion > .well:first-of-type {
+  .accordion > .card:first-of-type, .que .accordion > .history:first-of-type, .userprofile .profile_tree .accordion > section:first-of-type, .accordion > .groupinfobox:first-of-type, .accordion > .well:first-of-type {
     border-bottom: 0;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0; }
-  .accordion > .card:last-of-type, #page-enrol-users .accordion > #filterform:last-of-type, .que .accordion > .history:last-of-type, .userprofile .profile_tree .accordion > section:last-of-type, .accordion > .groupinfobox:last-of-type, .accordion > .well:last-of-type {
+  .accordion > .card:last-of-type, .que .accordion > .history:last-of-type, .userprofile .profile_tree .accordion > section:last-of-type, .accordion > .groupinfobox:last-of-type, .accordion > .well:last-of-type {
     border-top-left-radius: 0;
     border-top-right-radius: 0; }
-  .accordion > .card .card-header, #page-enrol-users .accordion > #filterform .card-header, .que .accordion > .history .card-header, .userprofile .profile_tree .accordion > section .card-header, .accordion > .groupinfobox .card-header, .accordion > .well .card-header {
+  .accordion > .card .card-header, .que .accordion > .history .card-header, .userprofile .profile_tree .accordion > section .card-header, .accordion > .groupinfobox .card-header, .accordion > .well .card-header {
     margin-bottom: -1px; }
 
 .breadcrumb {
@@ -10670,12 +10666,6 @@ tr.flagged-tag a {
   float: right;
   margin-left: 3px; }
 
-#page-enrol-users .enrol_user_buttons {
-  text-align: right; }
-
-#page-enrol-users .enrol-users-page-action input {
-  margin-left: 0; }
-
 .corelightbox {
   background-color: #ccc;
   position: absolute;
@@ -12501,7 +12491,7 @@ body.h5p-embed .h5pmessages {
 .block .block-cards .icon {
   margin-right: 0; }
 
-.block .block-cards .card .coursemenubtn, .block .block-cards #page-enrol-users #filterform .coursemenubtn, #page-enrol-users .block .block-cards #filterform .coursemenubtn, .block .block-cards .que .history .coursemenubtn, .que .block .block-cards .history .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
+.block .block-cards .card .coursemenubtn, .block .block-cards .que .history .coursemenubtn, .que .block .block-cards .history .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
   margin-top: -0.5rem; }
 
 .block .block-cards a.coursename,
@@ -13228,7 +13218,7 @@ body:not(.editing) .sitetopic ul.section {
   /* Remove the spacer icon. */
   display: none; }
 
-.path-course-view.editing #region-main > .card-block, .path-course-view.editing #page-enrol-users #region-main > #filterform, #page-enrol-users .path-course-view.editing #region-main > #filterform {
+.path-course-view.editing #region-main > .card-block {
   padding-bottom: 13rem; }
 
 .jumpmenu .form-inline {
@@ -17714,7 +17704,7 @@ p.arrow_button {
   width: auto;
   display: inline-flex;
   flex-direction: column; }
-  .path-grade-report-grader #region-main > .card, .path-grade-report-grader #page-enrol-users #region-main > #filterform, #page-enrol-users .path-grade-report-grader #region-main > #filterform, .path-grade-report-grader .que #region-main > .history, .que .path-grade-report-grader #region-main > .history, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
+  .path-grade-report-grader #region-main > .card, .path-grade-report-grader .que #region-main > .history, .que .path-grade-report-grader #region-main > .history, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
     width: auto;
     overflow-x: initial; }
   .path-grade-report-grader #region-main div[role="main"] {
