@@ -3363,23 +3363,22 @@ pre {
   .offset-xl-11 {
     margin-left: 91.6666666667%; } }
 
-.table, table.collection, table.flexible,
+.table, table.flexible,
 .generaltable {
   width: 100%;
   margin-bottom: 1rem;
   color: #373a3c; }
-  .table th, table.collection th, table.flexible th, .generaltable th,
+  .table th, table.flexible th, .generaltable th,
   .table td,
-  table.collection td,
   table.flexible td,
   .generaltable td {
     padding: 0.75rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6; }
-  .table thead th, table.collection thead th, table.flexible thead th, .generaltable thead th {
+  .table thead th, table.flexible thead th, .generaltable thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #dee2e6; }
-  .table tbody + tbody, table.collection tbody + tbody, table.flexible tbody + tbody, .generaltable tbody + tbody {
+  .table tbody + tbody, table.flexible tbody + tbody, .generaltable tbody + tbody {
     border-top: 2px solid #dee2e6; }
 
 .table-sm th, #page-report-loglive-index .generaltable th, #page-admin-report-log-index .generaltable th, #page-report-log-user .generaltable th, #page-admin-user table th, .environmenttable th, .category_subcategories th, .rcs-results th, table#listdirectories th,
@@ -3394,15 +3393,13 @@ pre {
 table#listdirectories td {
   padding: 0.3rem; }
 
-.table-bordered, table.collection {
+.table-bordered {
   border: 1px solid #dee2e6; }
-  .table-bordered th, table.collection th,
-  .table-bordered td,
-  table.collection td {
+  .table-bordered th,
+  .table-bordered td {
     border: 1px solid #dee2e6; }
-  .table-bordered thead th, table.collection thead th,
-  .table-bordered thead td,
-  table.collection thead td {
+  .table-bordered thead th,
+  .table-bordered thead td {
     border-bottom-width: 2px; }
 
 .table-borderless th,
@@ -3411,7 +3408,7 @@ table#listdirectories td {
 .table-borderless tbody + tbody {
   border: 0; }
 
-.table-striped tbody tr:nth-of-type(odd), table.collection tbody tr:nth-of-type(odd), table#explaincaps tbody tr:nth-of-type(odd), table#defineroletable tbody tr:nth-of-type(odd), table.grading-report tbody tr:nth-of-type(odd), table#listdirectories tbody tr:nth-of-type(odd), table.rolecaps tbody tr:nth-of-type(odd), table.userenrolment tbody tr:nth-of-type(odd), form#movecourses table tbody tr:nth-of-type(odd), #page-admin-course-index .editcourse tbody tr:nth-of-type(odd), .forumheaderlist tbody tr:nth-of-type(odd), table.flexible tbody tr:nth-of-type(odd), .generaltable tbody tr:nth-of-type(odd) {
+.table-striped tbody tr:nth-of-type(odd), table#explaincaps tbody tr:nth-of-type(odd), table#defineroletable tbody tr:nth-of-type(odd), table.grading-report tbody tr:nth-of-type(odd), table#listdirectories tbody tr:nth-of-type(odd), table.rolecaps tbody tr:nth-of-type(odd), table.userenrolment tbody tr:nth-of-type(odd), form#movecourses table tbody tr:nth-of-type(odd), #page-admin-course-index .editcourse tbody tr:nth-of-type(odd), .forumheaderlist tbody tr:nth-of-type(odd), table.flexible tbody tr:nth-of-type(odd), .generaltable tbody tr:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.05); }
 
 .table-hover tbody tr:hover, table.grading-report tbody tr:hover, .forumheaderlist tbody tr:hover, .generaltable tbody tr:hover, table.flexible tbody tr:hover, .category_subcategories tbody tr:hover, table#modules tbody tr:hover, table#permissions tbody tr:hover {
@@ -3628,12 +3625,12 @@ table#listdirectories td {
   table#permissions .table-active:hover > th {
     background-color: rgba(0, 0, 0, 0.075); }
 
-.table .thead-dark th, table.collection .thead-dark th, table.flexible .thead-dark th, .generaltable .thead-dark th {
+.table .thead-dark th, table.flexible .thead-dark th, .generaltable .thead-dark th {
   color: #fff;
   background-color: #373a3c;
   border-color: #494d50; }
 
-.table .thead-light th, table.collection .thead-light th, table.flexible .thead-light th, .generaltable .thead-light th {
+.table .thead-light th, table.flexible .thead-light th, .generaltable .thead-light th {
   color: #495057;
   background-color: #e9ecef;
   border-color: #dee2e6; }
@@ -3645,9 +3642,9 @@ table#listdirectories td {
   .table-dark td,
   .table-dark thead th {
     border-color: #494d50; }
-  .table-dark.table-bordered, table.table-dark.collection {
+  .table-dark.table-bordered {
     border: 0; }
-  .table-dark.table-striped tbody tr:nth-of-type(odd), table.table-dark.collection tbody tr:nth-of-type(odd), table.table-dark#explaincaps tbody tr:nth-of-type(odd), table.table-dark#defineroletable tbody tr:nth-of-type(odd), table.table-dark.grading-report tbody tr:nth-of-type(odd), table.table-dark#listdirectories tbody tr:nth-of-type(odd), table.table-dark.rolecaps tbody tr:nth-of-type(odd), table.table-dark.userenrolment tbody tr:nth-of-type(odd), form#movecourses table.table-dark tbody tr:nth-of-type(odd), #page-admin-course-index .table-dark.editcourse tbody tr:nth-of-type(odd), .table-dark.forumheaderlist tbody tr:nth-of-type(odd), table.table-dark.flexible tbody tr:nth-of-type(odd), .table-dark.generaltable tbody tr:nth-of-type(odd) {
+  .table-dark.table-striped tbody tr:nth-of-type(odd), table.table-dark#explaincaps tbody tr:nth-of-type(odd), table.table-dark#defineroletable tbody tr:nth-of-type(odd), table.table-dark.grading-report tbody tr:nth-of-type(odd), table.table-dark#listdirectories tbody tr:nth-of-type(odd), table.table-dark.rolecaps tbody tr:nth-of-type(odd), table.table-dark.userenrolment tbody tr:nth-of-type(odd), form#movecourses table.table-dark tbody tr:nth-of-type(odd), #page-admin-course-index .table-dark.editcourse tbody tr:nth-of-type(odd), .table-dark.forumheaderlist tbody tr:nth-of-type(odd), table.table-dark.flexible tbody tr:nth-of-type(odd), .table-dark.generaltable tbody tr:nth-of-type(odd) {
     background-color: rgba(255, 255, 255, 0.05); }
   .table-dark.table-hover tbody tr:hover, table.table-dark.grading-report tbody tr:hover, .table-dark.forumheaderlist tbody tr:hover, .table-dark.generaltable tbody tr:hover, table.table-dark.flexible tbody tr:hover, .table-dark.category_subcategories tbody tr:hover, table.table-dark#modules tbody tr:hover, table.table-dark#permissions tbody tr:hover {
     color: #fff;
@@ -3659,7 +3656,7 @@ table#listdirectories td {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; }
-    .table-responsive-sm > .table-bordered, .table-responsive-sm > table.collection {
+    .table-responsive-sm > .table-bordered {
       border: 0; } }
 
 @media (max-width: 767.98px) {
@@ -3668,7 +3665,7 @@ table#listdirectories td {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; }
-    .table-responsive-md > .table-bordered, .table-responsive-md > table.collection {
+    .table-responsive-md > .table-bordered {
       border: 0; } }
 
 @media (max-width: 991.98px) {
@@ -3677,7 +3674,7 @@ table#listdirectories td {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; }
-    .table-responsive-lg > .table-bordered, .table-responsive-lg > table.collection {
+    .table-responsive-lg > .table-bordered {
       border: 0; } }
 
 @media (max-width: 1199.98px) {
@@ -3686,7 +3683,7 @@ table#listdirectories td {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; }
-    .table-responsive-xl > .table-bordered, .table-responsive-xl > table.collection {
+    .table-responsive-xl > .table-bordered {
       border: 0; } }
 
 .table-responsive {
@@ -3694,7 +3691,7 @@ table#listdirectories td {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch; }
-  .table-responsive > .table-bordered, .table-responsive > table.collection {
+  .table-responsive > .table-bordered {
     border: 0; }
 
 .form-control {
@@ -9592,18 +9589,16 @@ a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #cat
     display: none; }
   .badge {
     border: 1px solid #000; }
-  .table, table.collection, table.flexible,
+  .table, table.flexible,
   .generaltable {
     border-collapse: collapse !important; }
     
     .table td,
-    table.collection td,
     table.flexible td,
-    .generaltable td, .table th, table.collection th, table.flexible th, .generaltable th {
+    .generaltable td, .table th, table.flexible th, .generaltable th {
       background-color: #fff !important; }
-  .table-bordered th, table.collection th,
-  .table-bordered td,
-  table.collection td {
+  .table-bordered th,
+  .table-bordered td {
     border: 1px solid #dee2e6 !important; }
   .table-dark {
     color: inherit; }
@@ -9612,7 +9607,7 @@ a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #cat
     .table-dark thead th,
     .table-dark tbody + tbody {
       border-color: #dee2e6; }
-  .table .thead-dark th, table.collection .thead-dark th, table.flexible .thead-dark th, .generaltable .thead-dark th {
+  .table .thead-dark th, table.flexible .thead-dark th, .generaltable .thead-dark th {
     color: inherit;
     border-color: #dee2e6; } }
 
@@ -11157,7 +11152,6 @@ body.jsenabled .formlistingradio {
 body.jsenabled .formlisting {
   display: block; }
 
-/* Badges styles */
 a.criteria-action {
   padding: 0 3px;
   float: right; }

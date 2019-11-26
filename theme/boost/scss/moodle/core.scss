@@ -1548,13 +1548,6 @@ body.jsenabled .formlisting {
     display: block;
 }
 
-/* Badges styles */
-table.collection {
-    @extend .table;
-    @extend .table-bordered;
-    @extend .table-striped;
-}
-
 a.criteria-action {
     padding: 0 3px;
     float: right;
