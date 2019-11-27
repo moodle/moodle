@@ -2,41 +2,51 @@
 
 // Well -> Panel -> Card. We skipped panel (BS3) so lets just support well and card.
 .well {
-    @extend .card;
+    border: $border-width solid $border-color;
+    padding: $card-spacer-x;
 }
 
 // Some things just got renamed.
 .img-responsive {
-    @extend .img-fluid;
+    @include img-fluid;
 }
 
 .text-error {
-    @extend .text-danger;
+    color: map-get($theme-colors, 'danger');
 }
 
 .btn-default {
-    @extend .btn-secondary;
+    @include button-variant(map-get($theme-colors, 'secondary'), map-get($theme-colors, 'secondary'));
 }
 
 .label {
-    @extend .tag;
-    @include tag-variant($tag-default-bg);
+    display: inline-block;
+    padding: $badge-padding-y $badge-padding-x;
+    @include font-size($badge-font-size);
+    font-weight: $badge-font-weight;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    @include border-radius($badge-border-radius);
+    @include transition($badge-transition);
+    @include badge-variant($tag-default-bg);
 }
 
 .label-success {
-    @include tag-variant($tag-success-bg);
+    @include badge-variant($tag-success-bg);
 }
 
 .label-info {
-    @include tag-variant($tag-info-bg);
+    @include badge-variant($tag-info-bg);
 }
 
 .label-warning {
-    @include tag-variant($tag-warning-bg);
+    @include badge-variant($tag-warning-bg);
 }
 
 .label-important {
-    @include tag-variant($tag-danger-bg);
+    @include badge-variant($tag-danger-bg);
 }
 
 // Floats.
