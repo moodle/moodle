@@ -26,10 +26,11 @@ namespace tool_dataprivacy;
 
 defined('MOODLE_INTERNAL') || die();
 
+use lang_string;
 use core\persistent;
 
 /**
- * Class for loading/storing competencies from the DB.
+ * Class for loading/storing data requests from the DB.
  *
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -62,6 +63,7 @@ class data_request extends persistent {
             ],
             'comments' => [
                 'type' => PARAM_TEXT,
+                'message' => new lang_string('errorinvalidrequestcomments', 'tool_dataprivacy'),
                 'default' => ''
             ],
             'commentsformat' => [
@@ -75,7 +77,10 @@ class data_request extends persistent {
                 'default' => FORMAT_PLAIN
             ],
             'userid' => [
-                'default' => 0,
+                'default' => function() {
+                    global $USER;
+                    return $USER->id;
+                },
                 'type' => PARAM_INT
             ],
             'requestedby' => [

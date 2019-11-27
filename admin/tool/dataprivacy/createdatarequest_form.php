@@ -23,6 +23,7 @@
  */
 
 use tool_dataprivacy\api;
+use tool_dataprivacy\data_request;
 use tool_dataprivacy\local\helper;
 
 defined('MOODLE_INTERNAL') || die();
@@ -36,7 +37,10 @@ require_once($CFG->libdir.'/formslib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package tool_dataprivacy
  */
-class tool_dataprivacy_data_request_form extends moodleform {
+class tool_dataprivacy_data_request_form extends \core\form\persistent {
+
+    /** @var string Name of the persistent class. */
+    protected static $persistentclass = data_request::class;
 
     /** @var bool Flag to indicate whether this form is being rendered for managing data requests or for regular requests. */
     protected $manage = false;
@@ -96,14 +100,13 @@ class tool_dataprivacy_data_request_form extends moodleform {
             api::DATAREQUEST_TYPE_EXPORT => get_string('requesttypeexport', 'tool_dataprivacy'),
             api::DATAREQUEST_TYPE_DELETE => get_string('requesttypedelete', 'tool_dataprivacy')
         ];
+
         $mform->addElement('select', 'type', get_string('requesttype', 'tool_dataprivacy'), $options);
-        $mform->setType('type', PARAM_INT);
         $mform->addHelpButton('type', 'requesttype', 'tool_dataprivacy');
 
         // Request comments text area.
         $textareaoptions = ['cols' => 60, 'rows' => 10];
         $mform->addElement('textarea', 'comments', get_string('requestcomments', 'tool_dataprivacy'), $textareaoptions);
-        $mform->setType('type', PARAM_ALPHANUM);
         $mform->addHelpButton('comments', 'requestcomments', 'tool_dataprivacy');
 
         // Action buttons.
@@ -130,33 +133,48 @@ class tool_dataprivacy_data_request_form extends moodleform {
     }
 
     /**
+     * Get the default data. Unset the default userid if managing data requests
+     *
+     * @return stdClass
+     */
+    protected function get_default_data() {
+        $data = parent::get_default_data();
+        if ($this->manage) {
+            unset($data->userid);
+        }
+
+        return $data;
+    }
+
+    /**
      * Form validation.
      *
-     * @param array $data
+     * @param stdClass $data
      * @param array $files
+     * @param array $errors
      * @return array
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function validation($data, $files) {
+    public function extra_validation($data, $files, array &$errors) {
         global $USER;
-        $errors = [];
 
         $validrequesttypes = [
             api::DATAREQUEST_TYPE_EXPORT,
             api::DATAREQUEST_TYPE_DELETE
         ];
-        if (!in_array($data['type'], $validrequesttypes)) {
+        if (!in_array($data->type, $validrequesttypes)) {
             $errors['type'] = get_string('errorinvalidrequesttype', 'tool_dataprivacy');
         }
 
-        if (api::has_ongoing_request($data['userid'], $data['type'])) {
+        $userid = $data->userid;
+
+        if (api::has_ongoing_request($userid, $data->type)) {
             $errors['type'] = get_string('errorrequestalreadyexists', 'tool_dataprivacy');
         }
 
         // Check if current user can create data deletion request.
-        $userid = $data['userid'];
-        if ($data['type'] == api::DATAREQUEST_TYPE_DELETE) {
+        if ($data->type == api::DATAREQUEST_TYPE_DELETE) {
             if ($userid == $USER->id) {
                 if (!api::can_create_data_deletion_request_for_self()) {
                     $errors['type'] = get_string('errorcannotrequestdeleteforself', 'tool_dataprivacy');

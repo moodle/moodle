@@ -67,8 +67,8 @@ if (!$manage && !\tool_dataprivacy\api::can_contact_dpo()) {
     redirect($returnurl, get_string('contactdpoviaprivacypolicy', 'tool_dataprivacy'), 0, \core\output\notification::NOTIFY_ERROR);
 }
 
-$mform = new tool_dataprivacy_data_request_form($url->out(false), ['manage' => !empty($manage)]);
-$mform->set_data(['type' => $requesttype]);
+$mform = new tool_dataprivacy_data_request_form($url->out(false), ['manage' => !empty($manage),
+    'persistent' => new \tool_dataprivacy\data_request(0, (object) ['type' => $requesttype])]);
 
 // Data request cancelled.
 if ($mform->is_cancelled()) {
