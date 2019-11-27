@@ -1461,7 +1461,9 @@
         <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="question_usages" COMMENT="This table's main purpose it to assign a unique id to each attempt at a set of questions by some part of Moodle. A question usage is made up of a number of question_attempts.">
+    <TABLE NAME="question_usages" COMMENT="This table's main purpose it to assign a unique id to each attempt at a set of questions by some part of Moodle. A question usage is made up of a number of 
+                                           
+                                           s.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Every question usage must be associated with some context."/>
@@ -1500,7 +1502,7 @@
         <INDEX NAME="behaviour" UNIQUE="false" FIELDS="behaviour" COMMENT="Required because we need to be able to determine efficiently which behaviours are in use."/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="question_attempt_steps" COMMENT="Stores one step in in a question attempt. As well as the data here, the step will have some data in the question_attempt_step_data table.">
+    <TABLE NAME="question_attempt_steps" COMMENT="Stores one step in a question attempt. As well as the data here, the step will have some data in the question_attempt_step_data table.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionattemptid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key, references question_attempt.id"/>
