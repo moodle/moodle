@@ -39,7 +39,36 @@ global $CFG;
 
 class enrol_ldap_testcase extends advanced_testcase {
 
-    public function test_enrol_ldap() {
+    /**
+     * Data provider for enrol_ldap tests
+     *
+     * Used to ensure that all the paged stuff works properly, irrespectively
+     * of the pagesize configured (that implies all the chunking and paging
+     * built in the plugis is doing its work consistently). Both searching and
+     * not searching within subcontexts.
+     *
+     * @return array[]
+     */
+    public function enrol_ldap_provider() {
+        $pagesizes = [1, 3, 5, 1000];
+        $subcontexts = [0, 1];
+        $combinations = [];
+        foreach ($pagesizes as $pagesize) {
+            foreach ($subcontexts as $subcontext) {
+                $combinations["pagesize {$pagesize}, subcontexts {$subcontext}"] = [$pagesize, $subcontext];
+            }
+        }
+        return $combinations;
+    }
+
+    /**
+     * General enrol_ldap testcase
+     *
+     * @dataProvider enrol_ldap_provider
+     * @param int $pagesize Value to be configured in settings controlling page size.
+     * @param int $subcontext Value to be configured in settings controlling searching in subcontexts.
+     */
+    public function test_enrol_ldap(int $pagesize, int $subcontext) {
         global $CFG, $DB;
 
         if (!extension_loaded('ldap')) {
@@ -83,10 +112,10 @@ class enrol_ldap_testcase extends advanced_testcase {
         $enrol->set_config('start_tls', 0);
         $enrol->set_config('ldap_version', 3);
         $enrol->set_config('ldapencoding', 'utf-8');
-        $enrol->set_config('pagesize', '2');
+        $enrol->set_config('pagesize', $pagesize);
         $enrol->set_config('bind_dn', TEST_ENROL_LDAP_BIND_DN);
         $enrol->set_config('bind_pw', TEST_ENROL_LDAP_BIND_PW);
-        $enrol->set_config('course_search_sub', 0);
+        $enrol->set_config('course_search_sub', $subcontext);
         $enrol->set_config('memberattribute_isdn', 0);
         $enrol->set_config('user_contexts', '');
         $enrol->set_config('user_search_sub', 0);
