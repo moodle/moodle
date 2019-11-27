@@ -118,7 +118,7 @@ class core_question_renderer extends plugin_renderer_base {
                 array('class' => 'comment clearfix'));
         $output .= html_writer::nonempty_tag('div',
                 $this->response_history($qa, $behaviouroutput, $qtoutput, $options),
-                array('class' => 'history clearfix'));
+                array('class' => 'history clearfix border p-2'));
 
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');

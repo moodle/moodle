@@ -2308,12 +2308,8 @@
 .fa-meetup:before {
   content: ""; }
 
-.sr-only, .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation,
-.path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome,
-.path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label,
-.path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation,
-.path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome,
-.path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .tag_list > b,
+.sr-only, .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label,
+.path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .tag_list > b,
 .path-mod-forum.nested-v2-display-mode .tag_list > b {
   position: absolute;
   width: 1px;
@@ -5436,7 +5432,7 @@ input[type="button"].btn-block {
     .navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {
       color: #fff; }
 
-.card, .que .history, .userprofile .profile_tree section, .groupinfobox, .well {
+.card, .userprofile .profile_tree section, .groupinfobox, .well {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -5445,7 +5441,7 @@ input[type="button"].btn-block {
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125); }
-  .card > hr, .que .history > hr, .userprofile .profile_tree section > hr, .groupinfobox > hr, .well > hr {
+  .card > hr, .userprofile .profile_tree section > hr, .groupinfobox > hr, .well > hr {
     margin-right: 0;
     margin-left: 0; }
 
@@ -5512,14 +5508,14 @@ input[type="button"].btn-block {
 .card-deck {
   display: flex;
   flex-direction: column; }
-  .card-deck .card, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
+  .card-deck .card, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
     margin-bottom: 0.25rem; }
   @media (min-width: 576px) {
     .card-deck {
       flex-flow: row wrap;
       margin-right: -0.25rem;
       margin-left: -0.25rem; }
-      .card-deck .card, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
+      .card-deck .card, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
         display: flex;
         flex: 1 0 0%;
         flex-direction: column;
@@ -5530,19 +5526,19 @@ input[type="button"].btn-block {
 .card-group {
   display: flex;
   flex-direction: column; }
-  .card-group > .card, .que .card-group > .history, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
+  .card-group > .card, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
     margin-bottom: 0.25rem; }
   @media (min-width: 576px) {
     .card-group {
       flex-flow: row wrap; }
-      .card-group > .card, .que .card-group > .history, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
+      .card-group > .card, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
         flex: 1 0 0%;
         margin-bottom: 0; }
-        .card-group > .card + .card, .que .card-group > .history + .card, .userprofile .profile_tree .card-group > section + .card, .card-group > .groupinfobox + .card, .card-group > .well + .card, .que .card-group > .card + .history, .que .card-group > .history + .history, .userprofile .profile_tree .que .card-group > section + .history, .que .userprofile .profile_tree .card-group > section + .history, .que .card-group > .groupinfobox + .history, .que .card-group > .well + .history, .userprofile .profile_tree .card-group > .card + section, .que .userprofile .profile_tree .card-group > .history + section, .userprofile .profile_tree .que .card-group > .history + section, .userprofile .profile_tree .card-group > section + section, .userprofile .profile_tree .card-group > .groupinfobox + section, .userprofile .profile_tree .card-group > .well + section, .card-group > .card + .groupinfobox, .que .card-group > .history + .groupinfobox, .userprofile .profile_tree .card-group > section + .groupinfobox, .card-group > .groupinfobox + .groupinfobox, .card-group > .well + .groupinfobox, .card-group > .card + .well, .que .card-group > .history + .well, .userprofile .profile_tree .card-group > section + .well, .card-group > .groupinfobox + .well, .card-group > .well + .well {
+        .card-group > .card + .card, .userprofile .profile_tree .card-group > section + .card, .card-group > .groupinfobox + .card, .card-group > .well + .card, .userprofile .profile_tree .card-group > .card + section, .userprofile .profile_tree .card-group > section + section, .userprofile .profile_tree .card-group > .groupinfobox + section, .userprofile .profile_tree .card-group > .well + section, .card-group > .card + .groupinfobox, .userprofile .profile_tree .card-group > section + .groupinfobox, .card-group > .groupinfobox + .groupinfobox, .card-group > .well + .groupinfobox, .card-group > .card + .well, .userprofile .profile_tree .card-group > section + .well, .card-group > .groupinfobox + .well, .card-group > .well + .well {
           margin-left: 0;
           border-left: 0; } }
 
-.card-columns .card, .card-columns .que .history, .que .card-columns .history, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
+.card-columns .card, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
   margin-bottom: 0.75rem; }
 
 @media (min-width: 576px) {
@@ -5551,17 +5547,17 @@ input[type="button"].btn-block {
     column-gap: 1.25rem;
     orphans: 1;
     widows: 1; }
-    .card-columns .card, .card-columns .que .history, .que .card-columns .history, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
+    .card-columns .card, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
       display: inline-block;
       width: 100%; } }
 
-.accordion > .card, .que .accordion > .history, .userprofile .profile_tree .accordion > section, .accordion > .groupinfobox, .accordion > .well {
+.accordion > .card, .userprofile .profile_tree .accordion > section, .accordion > .groupinfobox, .accordion > .well {
   overflow: hidden; }
-  .accordion > .card:not(:first-of-type):not(:last-of-type), .que .accordion > .history:not(:first-of-type):not(:last-of-type), .userprofile .profile_tree .accordion > section:not(:first-of-type):not(:last-of-type), .accordion > .groupinfobox:not(:first-of-type):not(:last-of-type), .accordion > .well:not(:first-of-type):not(:last-of-type) {
+  .accordion > .card:not(:first-of-type):not(:last-of-type), .userprofile .profile_tree .accordion > section:not(:first-of-type):not(:last-of-type), .accordion > .groupinfobox:not(:first-of-type):not(:last-of-type), .accordion > .well:not(:first-of-type):not(:last-of-type) {
     border-bottom: 0; }
-  .accordion > .card:first-of-type, .que .accordion > .history:first-of-type, .userprofile .profile_tree .accordion > section:first-of-type, .accordion > .groupinfobox:first-of-type, .accordion > .well:first-of-type {
+  .accordion > .card:first-of-type, .userprofile .profile_tree .accordion > section:first-of-type, .accordion > .groupinfobox:first-of-type, .accordion > .well:first-of-type {
     border-bottom: 0; }
-  .accordion > .card .card-header, .que .accordion > .history .card-header, .userprofile .profile_tree .accordion > section .card-header, .accordion > .groupinfobox .card-header, .accordion > .well .card-header {
+  .accordion > .card .card-header, .userprofile .profile_tree .accordion > section .card-header, .accordion > .groupinfobox .card-header, .accordion > .well .card-header {
     margin-bottom: -1px; }
 
 .breadcrumb {
@@ -5758,9 +5754,7 @@ input[type="button"].btn-block {
   padding-right: 0;
   padding-left: 0; }
 
-.alert, .que .formulation,
-.que .outcome,
-.que .comment, .assignfeedback_editpdf_widget .label {
+.alert, .assignfeedback_editpdf_widget .label {
   position: relative;
   padding: 0.75rem 1.25rem;
   margin-bottom: 1rem;
@@ -5799,34 +5793,31 @@ input[type="button"].btn-block {
   .alert-secondary .alert-link {
     color: #525557; }
 
-.alert-success,
-.que .comment {
+.alert-success {
   color: #306030;
   background-color: #def1de;
   border-color: #d1ebd1; }
-  .alert-success hr, .que .comment hr {
+  .alert-success hr {
     border-top-color: #bfe3bf; }
-  .alert-success .alert-link, .que .comment .alert-link {
+  .alert-success .alert-link {
     color: #1f3e1f; }
 
-.alert-info, .que .formulation, .assignfeedback_editpdf_widget .label {
+.alert-info, .assignfeedback_editpdf_widget .label {
   color: #2f6473;
   background-color: #def2f8;
   border-color: #d1edf6; }
-  .alert-info hr, .que .formulation hr, .assignfeedback_editpdf_widget .label hr {
+  .alert-info hr, .assignfeedback_editpdf_widget .label hr {
     border-top-color: #bce5f2; }
-  .alert-info .alert-link, .que .formulation .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
+  .alert-info .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
     color: #20454f; }
 
-.alert-warning,
-.que .outcome,
-.que .comment {
+.alert-warning {
   color: #7d5a29;
   background-color: #fcefdc;
   border-color: #fbe8cd; }
-  .alert-warning hr, .que .outcome hr, .que .comment hr {
+  .alert-warning hr {
     border-top-color: #f9ddb5; }
-  .alert-warning .alert-link, .que .outcome .alert-link, .que .comment .alert-link {
+  .alert-warning .alert-link {
     color: #573e1c; }
 
 .alert-danger {
@@ -7481,12 +7472,8 @@ button.bg-dark:focus {
     top: 0;
     z-index: 1020; } }
 
-.sr-only, .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation,
-.path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome,
-.path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label,
-.path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation,
-.path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome,
-.path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .tag_list > b,
+.sr-only, .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label,
+.path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .tag_list > b,
 .path-mod-forum.nested-v2-display-mode .tag_list > b {
   position: absolute;
   width: 1px;
@@ -9052,10 +9039,10 @@ a.text-info:hover, a.text-info:focus {
 a.text-warning:hover, a.text-warning:focus {
   color: #df8a13 !important; }
 
-.text-danger, .que .validationerror, .text-error {
+.text-danger, .text-error {
   color: #d9534f !important; }
 
-a.text-danger:hover, .que a.validationerror:hover, a.text-error:hover, a.text-danger:focus, .que a.validationerror:focus, a.text-error:focus {
+a.text-danger:hover, a.text-error:hover, a.text-danger:focus, a.text-error:focus {
   color: #b52b27 !important; }
 
 .text-light {
@@ -9064,10 +9051,10 @@ a.text-danger:hover, .que a.validationerror:hover, a.text-error:hover, a.text-da
 a.text-light:hover, a.text-light:focus {
   color: #cbd3da !important; }
 
-.text-dark, #categoryquestions .highlight {
+.text-dark {
   color: #373a3c !important; }
 
-a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #categoryquestions a.highlight:focus {
+a.text-dark:hover, a.text-dark:focus {
   color: #121314 !important; }
 
 .text-body {
@@ -9165,7 +9152,7 @@ a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #cat
 
 /* stylelint-disable function-url-scheme-blacklist */
 /* stylelint-enable function-url-scheme-blacklist */
-.tag, .que .correctness, .label {
+.tag, .label {
   display: inline-block;
   padding: 0.25rem 0.4em;
   font-size: 75%;
@@ -9175,7 +9162,7 @@ a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #cat
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline; }
-  .tag:empty, .que .correctness:empty, .label:empty {
+  .tag:empty, .label:empty {
     display: none; }
 
 .form-control-success,
@@ -12044,7 +12031,7 @@ body.h5p-embed .h5pmessages {
 .block .block-cards .icon {
   margin-right: 0; }
 
-.block .block-cards .card .coursemenubtn, .block .block-cards .que .history .coursemenubtn, .que .block .block-cards .history .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
+.block .block-cards .card .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
   margin-top: -0.5rem; }
 
 .block .block-cards a.coursename,
@@ -13267,12 +13254,6 @@ span.editinstructions {
       margin: 0.4rem 1rem 0.45rem; }
   #course-category-listings .select-a-category .notifymessage,
   #course-category-listings .select-a-category .alert,
-  #course-category-listings .select-a-category .que .formulation,
-  .que #course-category-listings .select-a-category .formulation,
-  #course-category-listings .select-a-category .que .outcome,
-  .que #course-category-listings .select-a-category .outcome,
-  #course-category-listings .select-a-category .que .comment,
-  .que #course-category-listings .select-a-category .comment,
   #course-category-listings .select-a-category .assignfeedback_editpdf_widget .label,
   .assignfeedback_editpdf_widget #course-category-listings .select-a-category .label {
     margin: 1em; }
@@ -14874,12 +14855,8 @@ body.path-question-type {
     font: inherit;
     position: static;
     padding-right: .3em; }
-  body.path-question-type .form-group .sr-only, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.formulation, body.path-question-type .form-group .que .path-mod-forum .nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.formulation,
-  body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.outcome, body.path-question-type .form-group .que .path-mod-forum .nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.outcome,
-  body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum .nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.comment, body.path-question-type .form-group .que .path-mod-forum .nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.comment, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.label,
-  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .que .discussionlocked.formulation, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.formulation, body.path-question-type .form-group .que .path-mod-forum.nested-v2-display-mode .discussionlocked.formulation, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.formulation,
-  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .que .discussionlocked.outcome, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.outcome, body.path-question-type .form-group .que .path-mod-forum.nested-v2-display-mode .discussionlocked.outcome, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.outcome,
-  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .que .discussionlocked.comment, .path-mod-forum.nested-v2-display-mode .que body.path-question-type .form-group .discussionlocked.comment, body.path-question-type .form-group .que .path-mod-forum.nested-v2-display-mode .discussionlocked.comment, .que .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.comment, body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .tag_list > b,
+  body.path-question-type .form-group .sr-only, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.label,
+  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .tag_list > b,
   body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .tag_list > b {
     position: static;
     width: auto;
@@ -14928,6 +14905,37 @@ body.path-question-type {
 .que .content {
   margin: 0 0 0 8.5em; }
 
+.que .formulation,
+.que .outcome,
+.que .comment {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 0 solid transparent; }
+
+.que .outcome,
+.que .comment {
+  color: #7d5a29;
+  background-color: #fcefdc;
+  border-color: #fbe8cd;
+  /* stylelint-disable-line max-line-length */ }
+  .que .outcome hr,
+  .que .comment hr {
+    border-top-color: #f9ddb5; }
+  .que .outcome .alert-link,
+  .que .comment .alert-link {
+    color: #573e1c; }
+
+.que .formulation {
+  color: #2f6473;
+  background-color: #def2f8;
+  border-color: #d1edf6;
+  /* stylelint-disable-line max-line-length */ }
+  .que .formulation hr {
+    border-top-color: #bce5f2; }
+  .que .formulation .alert-link {
+    color: #20454f; }
+
 .que.multichoice .answer div.r0 .icon.fa-check,
 .que.multichoice .answer div.r1 .icon.fa-check,
 .que.multichoice .answer div.r0 .icon.fa-remove,
@@ -14956,6 +14964,16 @@ body.path-question-type {
   width: auto;
   max-width: 100%; }
 
+.que .comment {
+  color: #306030;
+  background-color: #def1de;
+  border-color: #d1ebd1;
+  /* stylelint-disable-line max-line-length */ }
+  .que .comment hr {
+    border-top-color: #bfe3bf; }
+  .que .comment .alert-link {
+    color: #1f3e1f; }
+
 .que .ablock {
   margin: 0.7em 0 0.3em 0; }
 
@@ -14982,6 +15000,9 @@ body.path-question-type {
 
 .que .qtext {
   margin-bottom: 1.5em; }
+
+.que .validationerror {
+  color: #d9534f; }
 
 .que .grading,
 .que .comment,
@@ -17223,7 +17244,7 @@ p.arrow_button {
   width: auto;
   display: inline-flex;
   flex-direction: column; }
-  .path-grade-report-grader #region-main > .card, .path-grade-report-grader .que #region-main > .history, .que .path-grade-report-grader #region-main > .history, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
+  .path-grade-report-grader #region-main > .card, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
     width: auto;
     overflow-x: initial; }
   .path-grade-report-grader #region-main div[role="main"] {
@@ -17640,12 +17661,12 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
  * - Make the content region flex grow so it pushes things like the
  *   next activity selector to the bottom of the page.
  */
-body.reset-style #page-header .card, body.reset-style #page-header .que .history, .que body.reset-style #page-header .history, body.reset-style #page-header .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header section, body.reset-style #page-header .groupinfobox, body.reset-style #page-header .well {
+body.reset-style #page-header .card, body.reset-style #page-header .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header section, body.reset-style #page-header .groupinfobox, body.reset-style #page-header .well {
   border: none; }
-  body.reset-style #page-header .card .page-header-headings h1, body.reset-style #page-header .que .history .page-header-headings h1, .que body.reset-style #page-header .history .page-header-headings h1, body.reset-style #page-header .userprofile .profile_tree section .page-header-headings h1, .userprofile .profile_tree body.reset-style #page-header section .page-header-headings h1, body.reset-style #page-header .groupinfobox .page-header-headings h1, body.reset-style #page-header .well .page-header-headings h1 {
+  body.reset-style #page-header .card .page-header-headings h1, body.reset-style #page-header .userprofile .profile_tree section .page-header-headings h1, .userprofile .profile_tree body.reset-style #page-header section .page-header-headings h1, body.reset-style #page-header .groupinfobox .page-header-headings h1, body.reset-style #page-header .well .page-header-headings h1 {
     margin-bottom: 0; }
   @media (max-width: 767.98px) {
-    body.reset-style #page-header .card .card-body, body.reset-style #page-header .que .history .card-body, .que body.reset-style #page-header .history .card-body, body.reset-style #page-header .userprofile .profile_tree section .card-body, .userprofile .profile_tree body.reset-style #page-header section .card-body, body.reset-style #page-header .groupinfobox .card-body, body.reset-style #page-header .well .card-body, body.reset-style #page-header .card .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .card section, body.reset-style #page-header .que .history .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .que .history section, .que body.reset-style #page-header .history .userprofile .profile_tree section, .userprofile .profile_tree .que body.reset-style #page-header .history section, body.reset-style #page-header .userprofile .profile_tree section section, .userprofile .profile_tree body.reset-style #page-header section section, body.reset-style #page-header .groupinfobox .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .groupinfobox section, body.reset-style #page-header .well .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .well section {
+    body.reset-style #page-header .card .card-body, body.reset-style #page-header .userprofile .profile_tree section .card-body, .userprofile .profile_tree body.reset-style #page-header section .card-body, body.reset-style #page-header .groupinfobox .card-body, body.reset-style #page-header .well .card-body, body.reset-style #page-header .card .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .card section, body.reset-style #page-header .userprofile .profile_tree section section, .userprofile .profile_tree body.reset-style #page-header section section, body.reset-style #page-header .groupinfobox .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .groupinfobox section, body.reset-style #page-header .well .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .well section {
       padding-left: 0;
       padding-right: 0; } }
 
