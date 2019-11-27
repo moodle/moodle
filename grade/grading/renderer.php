@@ -66,7 +66,7 @@ class core_grading_renderer extends plugin_renderer_base {
 
         $img = $this->output->pix_icon($icon, '');
         $txt = html_writer::tag('div', $text, array('class' => 'action-text'));
-        return html_writer::link($url, $img . $txt, array('class' => 'action'));
+        return html_writer::link($url, $img . $txt, array('class' => 'action btn btn-lg'));
     }
 
     /**
