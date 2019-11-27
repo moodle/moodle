@@ -2249,6 +2249,14 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Custom number of decimal places.
         $this->assertEquals('5.43000', format_float(5.43, 5));
 
+        // Auto detect the number of decimal places.
+        $this->assertEquals('5.43', format_float(5.43, -1));
+        $this->assertEquals('5.43', format_float(5.43000, -1));
+        $this->assertEquals('5', format_float(5, -1));
+        $this->assertEquals('5', format_float(5.0, -1));
+        $this->assertEquals('0.543', format_float('5.43e-1', -1));
+        $this->assertEquals('0.543', format_float('5.43000e-1', -1));
+
         // Option to strip ending zeros after rounding.
         $this->assertEquals('5.43', format_float(5.43, 5, true, true));
         $this->assertEquals('5', format_float(5.0001, 3, true, true));

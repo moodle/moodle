@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.7.4 ===
+format_float() now accepts a special value (-1) as the $decimalpoints parameter which means auto-detecting number of decimal points.
+
 === 3.7 ===
 * Nodes in the navigation api can have labels for each group. See set/get_collectionlabel().
 * The method core_user::is_real_user() now returns false for userid = 0 parameter
