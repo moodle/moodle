@@ -3363,34 +3363,23 @@ pre {
   .offset-xl-11 {
     margin-left: 91.6666666667%; } }
 
-.table, table.flexible,
-.generaltable {
+.table {
   width: 100%;
   margin-bottom: 1rem;
   color: #373a3c; }
-  .table th, table.flexible th, .generaltable th,
-  .table td,
-  table.flexible td,
-  .generaltable td {
+  .table th,
+  .table td {
     padding: 0.75rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6; }
-  .table thead th, table.flexible thead th, .generaltable thead th {
+  .table thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #dee2e6; }
-  .table tbody + tbody, table.flexible tbody + tbody, .generaltable tbody + tbody {
+  .table tbody + tbody {
     border-top: 2px solid #dee2e6; }
 
-.table-sm th, #page-report-loglive-index .generaltable th, #page-admin-report-log-index .generaltable th, #page-report-log-user .generaltable th, #page-admin-user table th, .environmenttable th, .category_subcategories th, .rcs-results th, table#listdirectories th,
-.table-sm td,
-#page-report-loglive-index .generaltable td,
-#page-admin-report-log-index .generaltable td,
-#page-report-log-user .generaltable td,
-#page-admin-user table td,
-.environmenttable td,
-.category_subcategories td,
-.rcs-results td,
-table#listdirectories td {
+.table-sm th,
+.table-sm td {
   padding: 0.3rem; }
 
 .table-bordered {
@@ -3408,10 +3397,10 @@ table#listdirectories td {
 .table-borderless tbody + tbody {
   border: 0; }
 
-.table-striped tbody tr:nth-of-type(odd), table#explaincaps tbody tr:nth-of-type(odd), table#defineroletable tbody tr:nth-of-type(odd), table.grading-report tbody tr:nth-of-type(odd), table#listdirectories tbody tr:nth-of-type(odd), table.rolecaps tbody tr:nth-of-type(odd), table.userenrolment tbody tr:nth-of-type(odd), form#movecourses table tbody tr:nth-of-type(odd), #page-admin-course-index .editcourse tbody tr:nth-of-type(odd), .forumheaderlist tbody tr:nth-of-type(odd), table.flexible tbody tr:nth-of-type(odd), .generaltable tbody tr:nth-of-type(odd) {
+.table-striped tbody tr:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.05); }
 
-.table-hover tbody tr:hover, table.grading-report tbody tr:hover, .forumheaderlist tbody tr:hover, .generaltable tbody tr:hover, table.flexible tbody tr:hover, .category_subcategories tbody tr:hover, table#modules tbody tr:hover, table#permissions tbody tr:hover {
+.table-hover tbody tr:hover {
   color: #373a3c;
   background-color: rgba(0, 0, 0, 0.075); }
 
@@ -3426,17 +3415,10 @@ table#listdirectories td {
 .table-primary tbody + tbody {
   border-color: #83b8e7; }
 
-.table-hover .table-primary:hover, table.grading-report .table-primary:hover, .forumheaderlist .table-primary:hover, .generaltable .table-primary:hover, table.flexible .table-primary:hover, .category_subcategories .table-primary:hover, table#modules .table-primary:hover, table#permissions .table-primary:hover {
+.table-hover .table-primary:hover {
   background-color: #a7cdee; }
-  .table-hover .table-primary:hover > td, table.grading-report .table-primary:hover > td, .forumheaderlist .table-primary:hover > td, .generaltable .table-primary:hover > td, table.flexible .table-primary:hover > td, .category_subcategories .table-primary:hover > td, table#modules .table-primary:hover > td, table#permissions .table-primary:hover > td,
-  .table-hover .table-primary:hover > th,
-  table.grading-report .table-primary:hover > th,
-  .forumheaderlist .table-primary:hover > th,
-  .generaltable .table-primary:hover > th,
-  table.flexible .table-primary:hover > th,
-  .category_subcategories .table-primary:hover > th,
-  table#modules .table-primary:hover > th,
-  table#permissions .table-primary:hover > th {
+  .table-hover .table-primary:hover > td,
+  .table-hover .table-primary:hover > th {
     background-color: #a7cdee; }
 
 .table-secondary,
@@ -3450,17 +3432,10 @@ table#listdirectories td {
 .table-secondary tbody + tbody {
   border-color: #f4f5f7; }
 
-.table-hover .table-secondary:hover, table.grading-report .table-secondary:hover, .forumheaderlist .table-secondary:hover, .generaltable .table-secondary:hover, table.flexible .table-secondary:hover, .category_subcategories .table-secondary:hover, table#modules .table-secondary:hover, table#permissions .table-secondary:hover {
+.table-hover .table-secondary:hover {
   background-color: #eaedf1; }
-  .table-hover .table-secondary:hover > td, table.grading-report .table-secondary:hover > td, .forumheaderlist .table-secondary:hover > td, .generaltable .table-secondary:hover > td, table.flexible .table-secondary:hover > td, .category_subcategories .table-secondary:hover > td, table#modules .table-secondary:hover > td, table#permissions .table-secondary:hover > td,
-  .table-hover .table-secondary:hover > th,
-  table.grading-report .table-secondary:hover > th,
-  .forumheaderlist .table-secondary:hover > th,
-  .generaltable .table-secondary:hover > th,
-  table.flexible .table-secondary:hover > th,
-  .category_subcategories .table-secondary:hover > th,
-  table#modules .table-secondary:hover > th,
-  table#permissions .table-secondary:hover > th {
+  .table-hover .table-secondary:hover > td,
+  .table-hover .table-secondary:hover > th {
     background-color: #eaedf1; }
 
 .table-success,
@@ -3474,17 +3449,10 @@ table#listdirectories td {
 .table-success tbody + tbody {
   border-color: #aadaaa; }
 
-.table-hover .table-success:hover, table.grading-report .table-success:hover, .forumheaderlist .table-success:hover, .generaltable .table-success:hover, table.flexible .table-success:hover, .category_subcategories .table-success:hover, table#modules .table-success:hover, table#permissions .table-success:hover {
+.table-hover .table-success:hover {
   background-color: #bfe3bf; }
-  .table-hover .table-success:hover > td, table.grading-report .table-success:hover > td, .forumheaderlist .table-success:hover > td, .generaltable .table-success:hover > td, table.flexible .table-success:hover > td, .category_subcategories .table-success:hover > td, table#modules .table-success:hover > td, table#permissions .table-success:hover > td,
-  .table-hover .table-success:hover > th,
-  table.grading-report .table-success:hover > th,
-  .forumheaderlist .table-success:hover > th,
-  .generaltable .table-success:hover > th,
-  table.flexible .table-success:hover > th,
-  .category_subcategories .table-success:hover > th,
-  table#modules .table-success:hover > th,
-  table#permissions .table-success:hover > th {
+  .table-hover .table-success:hover > td,
+  .table-hover .table-success:hover > th {
     background-color: #bfe3bf; }
 
 .table-info,
@@ -3498,17 +3466,10 @@ table#listdirectories td {
 .table-info tbody + tbody {
   border-color: #aadeee; }
 
-.table-hover .table-info:hover, table.grading-report .table-info:hover, .forumheaderlist .table-info:hover, .generaltable .table-info:hover, table.flexible .table-info:hover, .category_subcategories .table-info:hover, table#modules .table-info:hover, table#permissions .table-info:hover {
+.table-hover .table-info:hover {
   background-color: #bce5f2; }
-  .table-hover .table-info:hover > td, table.grading-report .table-info:hover > td, .forumheaderlist .table-info:hover > td, .generaltable .table-info:hover > td, table.flexible .table-info:hover > td, .category_subcategories .table-info:hover > td, table#modules .table-info:hover > td, table#permissions .table-info:hover > td,
-  .table-hover .table-info:hover > th,
-  table.grading-report .table-info:hover > th,
-  .forumheaderlist .table-info:hover > th,
-  .generaltable .table-info:hover > th,
-  table.flexible .table-info:hover > th,
-  .category_subcategories .table-info:hover > th,
-  table#modules .table-info:hover > th,
-  table#permissions .table-info:hover > th {
+  .table-hover .table-info:hover > td,
+  .table-hover .table-info:hover > th {
     background-color: #bce5f2; }
 
 .table-warning,
@@ -3522,17 +3483,10 @@ table#listdirectories td {
 .table-warning tbody + tbody {
   border-color: #f7d4a3; }
 
-.table-hover .table-warning:hover, table.grading-report .table-warning:hover, .forumheaderlist .table-warning:hover, .generaltable .table-warning:hover, table.flexible .table-warning:hover, .category_subcategories .table-warning:hover, table#modules .table-warning:hover, table#permissions .table-warning:hover {
+.table-hover .table-warning:hover {
   background-color: #f9ddb5; }
-  .table-hover .table-warning:hover > td, table.grading-report .table-warning:hover > td, .forumheaderlist .table-warning:hover > td, .generaltable .table-warning:hover > td, table.flexible .table-warning:hover > td, .category_subcategories .table-warning:hover > td, table#modules .table-warning:hover > td, table#permissions .table-warning:hover > td,
-  .table-hover .table-warning:hover > th,
-  table.grading-report .table-warning:hover > th,
-  .forumheaderlist .table-warning:hover > th,
-  .generaltable .table-warning:hover > th,
-  table.flexible .table-warning:hover > th,
-  .category_subcategories .table-warning:hover > th,
-  table#modules .table-warning:hover > th,
-  table#permissions .table-warning:hover > th {
+  .table-hover .table-warning:hover > td,
+  .table-hover .table-warning:hover > th {
     background-color: #f9ddb5; }
 
 .table-danger,
@@ -3546,17 +3500,10 @@ table#listdirectories td {
 .table-danger tbody + tbody {
   border-color: #eba6a3; }
 
-.table-hover .table-danger:hover, table.grading-report .table-danger:hover, .forumheaderlist .table-danger:hover, .generaltable .table-danger:hover, table.flexible .table-danger:hover, .category_subcategories .table-danger:hover, table#modules .table-danger:hover, table#permissions .table-danger:hover {
+.table-hover .table-danger:hover {
   background-color: #efbbb9; }
-  .table-hover .table-danger:hover > td, table.grading-report .table-danger:hover > td, .forumheaderlist .table-danger:hover > td, .generaltable .table-danger:hover > td, table.flexible .table-danger:hover > td, .category_subcategories .table-danger:hover > td, table#modules .table-danger:hover > td, table#permissions .table-danger:hover > td,
-  .table-hover .table-danger:hover > th,
-  table.grading-report .table-danger:hover > th,
-  .forumheaderlist .table-danger:hover > th,
-  .generaltable .table-danger:hover > th,
-  table.flexible .table-danger:hover > th,
-  .category_subcategories .table-danger:hover > th,
-  table#modules .table-danger:hover > th,
-  table#permissions .table-danger:hover > th {
+  .table-hover .table-danger:hover > td,
+  .table-hover .table-danger:hover > th {
     background-color: #efbbb9; }
 
 .table-light,
@@ -3570,17 +3517,10 @@ table#listdirectories td {
 .table-light tbody + tbody {
   border-color: #fbfcfc; }
 
-.table-hover .table-light:hover, table.grading-report .table-light:hover, .forumheaderlist .table-light:hover, .generaltable .table-light:hover, table.flexible .table-light:hover, .category_subcategories .table-light:hover, table#modules .table-light:hover, table#permissions .table-light:hover {
+.table-hover .table-light:hover {
   background-color: #ececf6; }
-  .table-hover .table-light:hover > td, table.grading-report .table-light:hover > td, .forumheaderlist .table-light:hover > td, .generaltable .table-light:hover > td, table.flexible .table-light:hover > td, .category_subcategories .table-light:hover > td, table#modules .table-light:hover > td, table#permissions .table-light:hover > td,
-  .table-hover .table-light:hover > th,
-  table.grading-report .table-light:hover > th,
-  .forumheaderlist .table-light:hover > th,
-  .generaltable .table-light:hover > th,
-  table.flexible .table-light:hover > th,
-  .category_subcategories .table-light:hover > th,
-  table#modules .table-light:hover > th,
-  table#permissions .table-light:hover > th {
+  .table-hover .table-light:hover > td,
+  .table-hover .table-light:hover > th {
     background-color: #ececf6; }
 
 .table-dark,
@@ -3594,17 +3534,10 @@ table#listdirectories td {
 .table-dark tbody + tbody {
   border-color: #97999a; }
 
-.table-hover .table-dark:hover, table.grading-report .table-dark:hover, .forumheaderlist .table-dark:hover, .generaltable .table-dark:hover, table.flexible .table-dark:hover, .category_subcategories .table-dark:hover, table#modules .table-dark:hover, table#permissions .table-dark:hover {
+.table-hover .table-dark:hover {
   background-color: #babbbb; }
-  .table-hover .table-dark:hover > td, table.grading-report .table-dark:hover > td, .forumheaderlist .table-dark:hover > td, .generaltable .table-dark:hover > td, table.flexible .table-dark:hover > td, .category_subcategories .table-dark:hover > td, table#modules .table-dark:hover > td, table#permissions .table-dark:hover > td,
-  .table-hover .table-dark:hover > th,
-  table.grading-report .table-dark:hover > th,
-  .forumheaderlist .table-dark:hover > th,
-  .generaltable .table-dark:hover > th,
-  table.flexible .table-dark:hover > th,
-  .category_subcategories .table-dark:hover > th,
-  table#modules .table-dark:hover > th,
-  table#permissions .table-dark:hover > th {
+  .table-hover .table-dark:hover > td,
+  .table-hover .table-dark:hover > th {
     background-color: #babbbb; }
 
 .table-active,
@@ -3612,25 +3545,18 @@ table#listdirectories td {
 .table-active > td {
   background-color: rgba(0, 0, 0, 0.075); }
 
-.table-hover .table-active:hover, table.grading-report .table-active:hover, .forumheaderlist .table-active:hover, .generaltable .table-active:hover, table.flexible .table-active:hover, .category_subcategories .table-active:hover, table#modules .table-active:hover, table#permissions .table-active:hover {
+.table-hover .table-active:hover {
   background-color: rgba(0, 0, 0, 0.075); }
-  .table-hover .table-active:hover > td, table.grading-report .table-active:hover > td, .forumheaderlist .table-active:hover > td, .generaltable .table-active:hover > td, table.flexible .table-active:hover > td, .category_subcategories .table-active:hover > td, table#modules .table-active:hover > td, table#permissions .table-active:hover > td,
-  .table-hover .table-active:hover > th,
-  table.grading-report .table-active:hover > th,
-  .forumheaderlist .table-active:hover > th,
-  .generaltable .table-active:hover > th,
-  table.flexible .table-active:hover > th,
-  .category_subcategories .table-active:hover > th,
-  table#modules .table-active:hover > th,
-  table#permissions .table-active:hover > th {
+  .table-hover .table-active:hover > td,
+  .table-hover .table-active:hover > th {
     background-color: rgba(0, 0, 0, 0.075); }
 
-.table .thead-dark th, table.flexible .thead-dark th, .generaltable .thead-dark th {
+.table .thead-dark th {
   color: #fff;
   background-color: #373a3c;
   border-color: #494d50; }
 
-.table .thead-light th, table.flexible .thead-light th, .generaltable .thead-light th {
+.table .thead-light th {
   color: #495057;
   background-color: #e9ecef;
   border-color: #dee2e6; }
@@ -3644,9 +3570,9 @@ table#listdirectories td {
     border-color: #494d50; }
   .table-dark.table-bordered {
     border: 0; }
-  .table-dark.table-striped tbody tr:nth-of-type(odd), table.table-dark#explaincaps tbody tr:nth-of-type(odd), table.table-dark#defineroletable tbody tr:nth-of-type(odd), table.table-dark.grading-report tbody tr:nth-of-type(odd), table.table-dark#listdirectories tbody tr:nth-of-type(odd), table.table-dark.rolecaps tbody tr:nth-of-type(odd), table.table-dark.userenrolment tbody tr:nth-of-type(odd), form#movecourses table.table-dark tbody tr:nth-of-type(odd), #page-admin-course-index .table-dark.editcourse tbody tr:nth-of-type(odd), .table-dark.forumheaderlist tbody tr:nth-of-type(odd), table.table-dark.flexible tbody tr:nth-of-type(odd), .table-dark.generaltable tbody tr:nth-of-type(odd) {
+  .table-dark.table-striped tbody tr:nth-of-type(odd) {
     background-color: rgba(255, 255, 255, 0.05); }
-  .table-dark.table-hover tbody tr:hover, table.table-dark.grading-report tbody tr:hover, .table-dark.forumheaderlist tbody tr:hover, .table-dark.generaltable tbody tr:hover, table.table-dark.flexible tbody tr:hover, .table-dark.category_subcategories tbody tr:hover, table.table-dark#modules tbody tr:hover, table.table-dark#permissions tbody tr:hover {
+  .table-dark.table-hover tbody tr:hover {
     color: #fff;
     background-color: rgba(255, 255, 255, 0.075); }
 
@@ -9583,13 +9509,10 @@ a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #cat
     display: none; }
   .badge {
     border: 1px solid #000; }
-  .table, table.flexible,
-  .generaltable {
+  .table {
     border-collapse: collapse !important; }
-    
     .table td,
-    table.flexible td,
-    .generaltable td, .table th, table.flexible th, .generaltable th {
+    .table th {
       background-color: #fff !important; }
   .table-bordered th,
   .table-bordered td {
@@ -9601,7 +9524,7 @@ a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #cat
     .table-dark thead th,
     .table-dark tbody + tbody {
       border-color: #dee2e6; }
-  .table .thead-dark th, table.flexible .thead-dark th, .generaltable .thead-dark th {
+  .table .thead-dark th {
     color: inherit;
     border-color: #dee2e6; } }
 
@@ -17545,6 +17468,36 @@ div#dock {
   .path-backup .wibbler .state12 {
     background: #222; }
 
+.generaltable {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #373a3c; }
+  .generaltable th,
+  .generaltable td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6; }
+  .generaltable thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6; }
+  .generaltable tbody + tbody {
+    border-top: 2px solid #dee2e6; }
+  .generaltable tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05); }
+  .generaltable.table-sm th,
+  .generaltable.table-sm td {
+    padding: 0.3rem; }
+  .generaltable tbody tr:hover {
+    color: #373a3c;
+    background-color: rgba(0, 0, 0, 0.075); }
+
+table caption {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 42px;
+  text-align: left;
+  caption-side: top; }
+
 .singlebutton {
   display: inline-block; }
   .singlebutton + .singlebutton {
@@ -18123,13 +18076,6 @@ body.behat-site [data-region="drawer"] {
 .phpinfo .h {
   background-color: #99c;
   font-weight: bold; }
-
-table caption {
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 42px;
-  text-align: left;
-  caption-side: top; }
 
 /**
  * This file contains the styles required to make the footer sticky.

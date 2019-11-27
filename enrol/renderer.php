@@ -370,7 +370,7 @@ class course_enrolment_table extends html_table implements renderable {
         $this->sort           = optional_param(self::SORTVAR, self::DEFAULTSORT, PARAM_ALPHANUM);
         $this->sortdirection  = optional_param(self::SORTDIRECTIONVAR, self::DEFAULTSORTDIRECTION, PARAM_ALPHA);
 
-        $this->attributes = array('class'=>'userenrolment');
+        $this->attributes = array('class' => 'userenrolment table-striped');
         if (!in_array($this->sort, self::$sortablefields)) {
             $this->sort = self::DEFAULTSORT;
         }

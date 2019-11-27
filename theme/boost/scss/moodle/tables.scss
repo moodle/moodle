@@ -1,6 +1,48 @@
-table.flexible,
 .generaltable {
-    @extend .table;
+    width: 100%;
+    margin-bottom: $spacer;
+    color: $table-color;
+    background-color: $table-bg; // Reset for nesting within parents with `background-color`.
+
+    th,
+    td {
+        padding: $table-cell-padding;
+        vertical-align: top;
+        border-top: $table-border-width solid $table-border-color;
+    }
+
+    thead th {
+        vertical-align: bottom;
+        border-bottom: (2 * $table-border-width) solid $table-border-color;
+    }
+
+    tbody + tbody {
+        border-top: (2 * $table-border-width) solid $table-border-color;
+    }
+
+    tbody tr:nth-of-type(#{$table-striped-order}) {
+        background-color: $table-accent-bg;
+    }
+    &.table-sm {
+        th,
+        td {
+            padding: $table-cell-padding-sm;
+        }
+    }
+    tbody tr {
+        @include hover {
+            color: $table-hover-color;
+            background-color: $table-hover-bg;
+        }
+    }
 }
-// fancier table styles moved to expendable.less
-// to shift after 4096 selector break
+
+table {
+    caption {
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 42px;
+        text-align: left;
+        caption-side: top;
+    }
+}

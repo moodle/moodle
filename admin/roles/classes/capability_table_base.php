@@ -43,7 +43,7 @@ abstract class core_role_capability_table_base {
     protected $id;
 
     /** Added to the class="" attribute on output. */
-    protected $classes = array('rolecap');
+    protected $classes = array('rolecap table-hover');
 
     /** Default number of capabilities in the table for the search UI to be shown. */
     const NUM_CAPS_FOR_SEARCH = 12;

@@ -1902,7 +1902,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('status'),
         );
         $servertable->colclasses = array('centeralign name', 'centeralign info', 'leftalign report', 'leftalign plugin', 'centeralign status');
-        $servertable->attributes['class'] = 'admintable environmenttable generaltable';
+        $servertable->attributes['class'] = 'admintable environmenttable generaltable table-sm';
         $servertable->id = 'serverstatus';
 
         $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
@@ -1915,7 +1915,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('status'),
         );
         $othertable->colclasses = array('aligncenter info', 'alignleft report', 'alignleft plugin', 'aligncenter status');
-        $othertable->attributes['class'] = 'admintable environmenttable generaltable';
+        $othertable->attributes['class'] = 'admintable environmenttable generaltable table-sm';
         $othertable->id = 'otherserverstatus';
 
         $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());

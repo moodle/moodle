@@ -120,7 +120,8 @@ class main_view extends XMLDBAction {
         $result = $this->launch('get_db_directories');
         // Display list of DB directories if everything is ok
         if ($result && !empty($XMLDB->dbdirs)) {
-            $o .= '<table id="listdirectories" border="0" cellpadding="5" cellspacing="1" class="admintable generaltable">';
+            $o .= '<table id="listdirectories" border="0" cellpadding="5" cellspacing="1"' .
+                ' class="table-striped table-sm admintable generaltable">';
             $row = 0;
             foreach ($XMLDB->dbdirs as $key => $dbdir) {
                 // Detect if this is the lastused dir
