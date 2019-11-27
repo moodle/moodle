@@ -15,18 +15,6 @@
 
 .userprofile .profile_tree {
     column-count: 2;
-
-    section {
-        @extend .card;
-        @extend .card-body;
-        display: inline-block;
-        width: 100%;
-        margin-bottom: 1rem;
-
-        h3 {
-            @extend .lead;
-        }
-    }
 }
 
 // This rule overrides the automatic no-overflow on the participants table. It kills the auto-complete.
@@ -215,10 +203,6 @@
     .grouppicture {
         border-radius: 50%;
     }
-}
-
-.groupinfobox {
-    @extend .card;
 }
 
 .groupinfobox .left {

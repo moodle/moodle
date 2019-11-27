@@ -2308,9 +2308,7 @@
 .fa-meetup:before {
   content: ""; }
 
-.sr-only, .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label,
-.path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .tag_list > b,
-.path-mod-forum.nested-v2-display-mode .tag_list > b {
+.sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -2650,7 +2648,7 @@ h5, .h5 {
 h6, .h6 {
   font-size: 0.9375rem; }
 
-.lead, .userprofile .profile_tree section h3 {
+.lead {
   font-size: 1.171875rem;
   font-weight: 300; }
 
@@ -5432,7 +5430,7 @@ input[type="button"].btn-block {
     .navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {
       color: #fff; }
 
-.card, .userprofile .profile_tree section, .groupinfobox, .well {
+.card, .well {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -5441,11 +5439,11 @@ input[type="button"].btn-block {
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125); }
-  .card > hr, .userprofile .profile_tree section > hr, .groupinfobox > hr, .well > hr {
+  .card > hr, .well > hr {
     margin-right: 0;
     margin-left: 0; }
 
-.card-body, .userprofile .profile_tree section {
+.card-body {
   flex: 1 1 auto;
   padding: 1.25rem; }
 
@@ -5508,14 +5506,14 @@ input[type="button"].btn-block {
 .card-deck {
   display: flex;
   flex-direction: column; }
-  .card-deck .card, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
+  .card-deck .card, .card-deck .well {
     margin-bottom: 0.25rem; }
   @media (min-width: 576px) {
     .card-deck {
       flex-flow: row wrap;
       margin-right: -0.25rem;
       margin-left: -0.25rem; }
-      .card-deck .card, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
+      .card-deck .card, .card-deck .well {
         display: flex;
         flex: 1 0 0%;
         flex-direction: column;
@@ -5526,19 +5524,19 @@ input[type="button"].btn-block {
 .card-group {
   display: flex;
   flex-direction: column; }
-  .card-group > .card, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
+  .card-group > .card, .card-group > .well {
     margin-bottom: 0.25rem; }
   @media (min-width: 576px) {
     .card-group {
       flex-flow: row wrap; }
-      .card-group > .card, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
+      .card-group > .card, .card-group > .well {
         flex: 1 0 0%;
         margin-bottom: 0; }
-        .card-group > .card + .card, .userprofile .profile_tree .card-group > section + .card, .card-group > .groupinfobox + .card, .card-group > .well + .card, .userprofile .profile_tree .card-group > .card + section, .userprofile .profile_tree .card-group > section + section, .userprofile .profile_tree .card-group > .groupinfobox + section, .userprofile .profile_tree .card-group > .well + section, .card-group > .card + .groupinfobox, .userprofile .profile_tree .card-group > section + .groupinfobox, .card-group > .groupinfobox + .groupinfobox, .card-group > .well + .groupinfobox, .card-group > .card + .well, .userprofile .profile_tree .card-group > section + .well, .card-group > .groupinfobox + .well, .card-group > .well + .well {
+        .card-group > .card + .card, .card-group > .well + .card, .card-group > .card + .well, .card-group > .well + .well {
           margin-left: 0;
           border-left: 0; } }
 
-.card-columns .card, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
+.card-columns .card, .card-columns .well {
   margin-bottom: 0.75rem; }
 
 @media (min-width: 576px) {
@@ -5547,17 +5545,17 @@ input[type="button"].btn-block {
     column-gap: 1.25rem;
     orphans: 1;
     widows: 1; }
-    .card-columns .card, .card-columns .userprofile .profile_tree section, .userprofile .profile_tree .card-columns section, .card-columns .groupinfobox, .card-columns .well {
+    .card-columns .card, .card-columns .well {
       display: inline-block;
       width: 100%; } }
 
-.accordion > .card, .userprofile .profile_tree .accordion > section, .accordion > .groupinfobox, .accordion > .well {
+.accordion > .card, .accordion > .well {
   overflow: hidden; }
-  .accordion > .card:not(:first-of-type):not(:last-of-type), .userprofile .profile_tree .accordion > section:not(:first-of-type):not(:last-of-type), .accordion > .groupinfobox:not(:first-of-type):not(:last-of-type), .accordion > .well:not(:first-of-type):not(:last-of-type) {
+  .accordion > .card:not(:first-of-type):not(:last-of-type), .accordion > .well:not(:first-of-type):not(:last-of-type) {
     border-bottom: 0; }
-  .accordion > .card:first-of-type, .userprofile .profile_tree .accordion > section:first-of-type, .accordion > .groupinfobox:first-of-type, .accordion > .well:first-of-type {
+  .accordion > .card:first-of-type, .accordion > .well:first-of-type {
     border-bottom: 0; }
-  .accordion > .card .card-header, .userprofile .profile_tree .accordion > section .card-header, .accordion > .groupinfobox .card-header, .accordion > .well .card-header {
+  .accordion > .card .card-header, .accordion > .well .card-header {
     margin-bottom: -1px; }
 
 .breadcrumb {
@@ -5754,7 +5752,7 @@ input[type="button"].btn-block {
   padding-right: 0;
   padding-left: 0; }
 
-.alert, .assignfeedback_editpdf_widget .label {
+.alert {
   position: relative;
   padding: 0.75rem 1.25rem;
   margin-bottom: 1rem;
@@ -5802,13 +5800,13 @@ input[type="button"].btn-block {
   .alert-success .alert-link {
     color: #1f3e1f; }
 
-.alert-info, .assignfeedback_editpdf_widget .label {
+.alert-info {
   color: #2f6473;
   background-color: #def2f8;
   border-color: #d1edf6; }
-  .alert-info hr, .assignfeedback_editpdf_widget .label hr {
+  .alert-info hr {
     border-top-color: #bce5f2; }
-  .alert-info .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
+  .alert-info .alert-link {
     color: #20454f; }
 
 .alert-warning {
@@ -6165,7 +6163,7 @@ a.close.disabled {
   .modal-dialog-scrollable .modal-content {
     max-height: calc(100vh - 1rem);
     overflow: hidden; }
-  .modal-dialog-scrollable .modal-header, .modal-dialog-scrollable .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3, .path-mod-assign [data-region="grade-panel"] .modal-dialog-scrollable .popout > .col-md-3,
+  .modal-dialog-scrollable .modal-header,
   .modal-dialog-scrollable .modal-footer {
     flex-shrink: 0; }
   .modal-dialog-scrollable .modal-body {
@@ -6212,13 +6210,13 @@ a.close.disabled {
   .modal-backdrop.show {
     opacity: 0.5; }
 
-.modal-header, .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
+.modal-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   padding: 1rem 1rem;
   border-bottom: 1px solid #dee2e6; }
-  .modal-header .close, .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 .close {
+  .modal-header .close {
     padding: 1rem 1rem;
     margin: -1rem -1rem -1rem auto; }
 
@@ -7472,9 +7470,7 @@ button.bg-dark:focus {
     top: 0;
     z-index: 1020; } }
 
-.sr-only, .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label,
-.path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .tag_list > b,
-.path-mod-forum.nested-v2-display-mode .tag_list > b {
+.sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -12031,7 +12027,7 @@ body.h5p-embed .h5pmessages {
 .block .block-cards .icon {
   margin-right: 0; }
 
-.block .block-cards .card .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
+.block .block-cards .card .coursemenubtn, .block .block-cards .well .coursemenubtn {
   margin-top: -0.5rem; }
 
 .block .block-cards a.coursename,
@@ -13253,9 +13249,7 @@ span.editinstructions {
       color: #868e96;
       margin: 0.4rem 1rem 0.45rem; }
   #course-category-listings .select-a-category .notifymessage,
-  #course-category-listings .select-a-category .alert,
-  #course-category-listings .select-a-category .assignfeedback_editpdf_widget .label,
-  .assignfeedback_editpdf_widget #course-category-listings .select-a-category .label {
+  #course-category-listings .select-a-category .alert {
     margin: 1em; }
 
 #course-category-listings #course-listing .listitem .drag-handle {
@@ -14855,9 +14849,7 @@ body.path-question-type {
     font: inherit;
     position: static;
     padding-right: .3em; }
-  body.path-question-type .form-group .sr-only, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .alert.discussionlocked, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum .nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .discussionlocked.label,
-  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .alert.discussionlocked, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .alert.discussionlocked, body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget .discussionlocked.label, .path-mod-forum.nested-v2-display-mode .assignfeedback_editpdf_widget body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode .discussionlocked.label, .assignfeedback_editpdf_widget .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .discussionlocked.label, body.path-question-type .form-group .path-mod-forum .nested-v2-display-mode .tag_list > b, .path-mod-forum .nested-v2-display-mode body.path-question-type .form-group .tag_list > b,
-  body.path-question-type .form-group .path-mod-forum.nested-v2-display-mode .tag_list > b, .path-mod-forum.nested-v2-display-mode body.path-question-type .form-group .tag_list > b {
+  body.path-question-type .form-group .sr-only {
     position: static;
     width: auto;
     height: auto;
@@ -15229,10 +15221,6 @@ body.path-question-type .mform fieldset.hidden {
 
 .userprofile .profile_tree {
   column-count: 2; }
-  .userprofile .profile_tree section {
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 1rem; }
 
 #participantsform .no-overflow {
   overflow: visible; }
@@ -16110,6 +16098,16 @@ select {
     margin-right: 0;
     float: none;
     display: inline-block; }
+  .path-mod-forum .nested-v2-display-mode .alert.discussionlocked,
+  .path-mod-forum.nested-v2-display-mode .alert.discussionlocked {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0; }
   .path-mod-forum .nested-v2-display-mode .text-muted,
   .path-mod-forum .nested-v2-display-mode .dimmed_text,
   .path-mod-forum.nested-v2-display-mode .text-muted,
@@ -16122,6 +16120,16 @@ select {
     .path-mod-forum .nested-v2-display-mode .author-header .author-name,
     .path-mod-forum.nested-v2-display-mode .author-header .author-name {
       font-style: normal; }
+  .path-mod-forum .nested-v2-display-mode .tag_list > b,
+  .path-mod-forum.nested-v2-display-mode .tag_list > b {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0; }
   .path-mod-forum .nested-v2-display-mode :target > .focus-target,
   .path-mod-forum.nested-v2-display-mode :target > .focus-target {
     animation-name: background-highlight;
@@ -16808,6 +16816,9 @@ div#dock {
   margin-bottom: 1rem; }
 
 .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   font-size: 1.40625rem; }
 
 .path-mod-assign [data-region="grade-panel"] .popout [data-region="popout-button"] {
@@ -16849,6 +16860,20 @@ div#dock {
 
 .assignfeedback_editpdf_widget .commentcolourbutton img {
   border-width: 0; }
+
+.assignfeedback_editpdf_widget .label {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 0 solid transparent;
+  color: #2f6473;
+  background-color: #def2f8;
+  border-color: #d1edf6;
+  /* stylelint-disable-line max-line-length */ }
+  .assignfeedback_editpdf_widget .label hr {
+    border-top-color: #bce5f2; }
+  .assignfeedback_editpdf_widget .label .alert-link {
+    color: #20454f; }
 
 .assignfeedback_editpdf_menu {
   padding: 0; }
@@ -17244,7 +17269,7 @@ p.arrow_button {
   width: auto;
   display: inline-flex;
   flex-direction: column; }
-  .path-grade-report-grader #region-main > .card, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
+  .path-grade-report-grader #region-main > .card, .path-grade-report-grader #region-main > .well {
     width: auto;
     overflow-x: initial; }
   .path-grade-report-grader #region-main div[role="main"] {
@@ -17661,12 +17686,12 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
  * - Make the content region flex grow so it pushes things like the
  *   next activity selector to the bottom of the page.
  */
-body.reset-style #page-header .card, body.reset-style #page-header .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header section, body.reset-style #page-header .groupinfobox, body.reset-style #page-header .well {
+body.reset-style #page-header .card, body.reset-style #page-header .well {
   border: none; }
-  body.reset-style #page-header .card .page-header-headings h1, body.reset-style #page-header .userprofile .profile_tree section .page-header-headings h1, .userprofile .profile_tree body.reset-style #page-header section .page-header-headings h1, body.reset-style #page-header .groupinfobox .page-header-headings h1, body.reset-style #page-header .well .page-header-headings h1 {
+  body.reset-style #page-header .card .page-header-headings h1, body.reset-style #page-header .well .page-header-headings h1 {
     margin-bottom: 0; }
   @media (max-width: 767.98px) {
-    body.reset-style #page-header .card .card-body, body.reset-style #page-header .userprofile .profile_tree section .card-body, .userprofile .profile_tree body.reset-style #page-header section .card-body, body.reset-style #page-header .groupinfobox .card-body, body.reset-style #page-header .well .card-body, body.reset-style #page-header .card .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .card section, body.reset-style #page-header .userprofile .profile_tree section section, .userprofile .profile_tree body.reset-style #page-header section section, body.reset-style #page-header .groupinfobox .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .groupinfobox section, body.reset-style #page-header .well .userprofile .profile_tree section, .userprofile .profile_tree body.reset-style #page-header .well section {
+    body.reset-style #page-header .card .card-body, body.reset-style #page-header .well .card-body {
       padding-left: 0;
       padding-right: 0; } }
 

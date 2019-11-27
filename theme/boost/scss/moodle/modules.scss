@@ -286,7 +286,7 @@ $author-image-margin-sm: 8px;
 
     /** Don't show the discussion locked alert in this mode because it's already indicated with a badge. */
     .alert.discussionlocked {
-        @extend .sr-only;
+        @include sr-only();
     }
 
     /** Fix muted text contrast ratios for accessibility. */
@@ -305,7 +305,7 @@ $author-image-margin-sm: 8px;
 
     /** Make the tag list text screen reader visible only */
     .tag_list > b {
-        @extend .sr-only;
+        @include sr-only();
     }
 
     :target > .focus-target {
@@ -1316,7 +1316,9 @@ $popout-header-height: 4rem;
 
 
 .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
-    @extend .modal-header;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
     font-size: $popout-header-font-size;
 }
 
@@ -1376,8 +1378,12 @@ $popout-header-height: 4rem;
 }
 
 .assignfeedback_editpdf_widget .label {
-    @extend .alert;
-    @extend .alert-info;
+    position: relative;
+    padding: $alert-padding-y $alert-padding-x;
+    margin-bottom: $alert-margin-bottom;
+    border: $alert-border-width solid transparent;
+    @include border-radius($alert-border-radius);
+    @include alert-variant(theme-color-level('info', $alert-bg-level), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level)); /* stylelint-disable-line max-line-length */
 }
 
 .assignfeedback_editpdf_menu {
