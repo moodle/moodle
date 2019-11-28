@@ -95,7 +95,7 @@ class nugget_edit_form extends \moodleform {
                 $errors['name'] = get_string('nameinuse', 'block_iomad_microlearning');
             }
         }
-        if (empty($data['sectionid']) && empty($data['cmid'])) {
+        if (empty($data['sectionid']) && empty($data['cmid']) && empty($data['url'])) {
             $errors['sectionid'] = get_string('missingsectionorcmid', 'block_iomad_microlearning');
         }
         if (!empty($data['cmid']) && $DB->get_records_sql("SELECT id FROM {microlearning_nugget}
