@@ -71,5 +71,5 @@ $string['time'] = 'Time';
 $string['trace_log'] = 'Enable trace logging';
 $string['trace_log_desc'] = 'If enabled, all requests and responses to and from Kaltura are logged.  These logs can be used by Kaltura support to diagnose any problems encountered.  Enabling this setting may affect Moodle performance.  You may download a CSV file of the logs from <a href="{$a}">here</a>.';
 $string['browse_and_embed'] = 'Browse and Embed';
-$string['enable_assignment'] = 'Enable Assignment';
-$string['enable_assignment_desc'] = 'Enable assignment video tool';
+$string['enable_assignment'] = 'Clone Assignments';
+$string['enable_assignment_desc'] = 'If enabled, any media submitted via the Kaltura Video Assignment flow will be cloned under a different user name to prevent editing and deletion.';
