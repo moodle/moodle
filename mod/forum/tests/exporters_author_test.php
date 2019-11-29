@@ -63,7 +63,8 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
 
         $exporter = new author_exporter($author, 1, [], true, [
             'urlfactory' => \mod_forum\local\container::get_url_factory(),
-            'context' => $context
+            'context' => $context,
+            'forum' => $forum,
         ]);
 
         $exportedauthor = $exporter->export($renderer);
@@ -104,7 +105,8 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
 
         $exporter = new author_exporter($author, 1, [$group], true, [
             'urlfactory' => \mod_forum\local\container::get_url_factory(),
-            'context' => $context
+            'context' => $context,
+            'forum' => $forum,
         ]);
 
         $exportedauthor = $exporter->export($renderer);
@@ -142,7 +144,8 @@ class mod_forum_exporters_author_testcase extends advanced_testcase {
 
         $exporter = new author_exporter($author, 1, [$group], false, [
             'urlfactory' => \mod_forum\local\container::get_url_factory(),
-            'context' => $context
+            'context' => $context,
+            'forum' => $forum,
         ]);
 
         $exportedauthor = $exporter->export($renderer);
