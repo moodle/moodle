@@ -176,7 +176,13 @@ class manager {
             }
             if ($moduledata instanceof cm_info && !is_null($moduledata->completiongradeitemnumber) ||
                 ($moduledata instanceof stdClass && !empty($moduledata->completionusegrade))) {
-                $activeruledescriptions[] = get_string('completionusegrade_desc', 'completion');
+
+                $description = 'completionusegrade_desc';
+                if (!empty($moduledata->completionpassgrade)) {
+                    $description = 'completionpassgrade_desc';
+                }
+
+                $activeruledescriptions[] = get_string($description, 'completion');
             }
 
             // Now, ask the module to provide descriptions for its custom conditional completion rules.
@@ -351,8 +357,11 @@ class manager {
     protected function apply_completion_cm(\cm_info $cm, $data, $updateinstance) {
         global $DB;
 
-        $defaults = ['completion' => COMPLETION_DISABLED, 'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
-            'completionexpected' => 0, 'completiongradeitemnumber' => null];
+        $defaults = [
+            'completion' => COMPLETION_DISABLED, 'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
+            'completionexpected' => 0, 'completiongradeitemnumber' => null,
+            'completionpassgrade' => 0
+        ];
 
         $data += ['completion' => $cm->completion,
             'completionexpected' => $cm->completionexpected,

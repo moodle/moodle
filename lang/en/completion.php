@@ -25,6 +25,7 @@
  */
 
 $string['achievinggrade'] = 'Achieving grade';
+$string['achievingpassinggrade'] = 'Achieving passing grade';
 $string['activities'] = 'Activities';
 $string['activitieslabel'] = 'Activities / resources';
 $string['activityaggregation'] = 'Condition requires';
@@ -35,6 +36,7 @@ $string['activitiescompletednote'] = 'Note: Activity completion must be set for 
 $string['activitycompletion'] = 'Activity completion';
 $string['activitycompletionupdated'] = 'Changes saved';
 $string['activitygradenotrequired'] = 'Grade not required';
+$string['activitygradetopassnotset'] = 'This activity does not have a valid grade to pass set. It may be set in the Grade section of the activity settings.';
 $string['affectedactivities'] = 'The changes will affect the following <b>{$a}</b> activities or resources:';
 $string['aggregationmethod'] = 'Aggregation method';
 $string['all'] = 'All';
@@ -106,6 +108,9 @@ $string['completionondate'] = 'Date';
 $string['completionondatevalue'] = 'Date when course will be marked as complete';
 $string['completionduration'] = 'Enrolment';
 $string['completionsettingslocked'] = 'Completion settings locked';
+$string['completionpassgrade'] = 'Require passing grade';
+$string['completionpassgrade_desc'] = 'Student must receive a passing grade to complete this activity';
+$string['completionpassgrade_help'] = 'If enabled, the activity is considered complete when a student receives a passing grade.';
 $string['completionusegrade'] = 'Require grade';
 $string['completionusegrade_desc'] = 'Student must receive a grade to complete this activity';
 $string['completionusegrade_help'] = 'If enabled, the activity is considered complete when a student receives a grade. If a pass grade for the activity is set, then pass and fail icons are displayed in the activity completion report.';
@@ -141,6 +146,7 @@ $string['deletecompletiondata'] = 'Delete completion data';
 $string['dependencies'] = 'Dependencies';
 $string['dependenciescompleted'] = 'Completion of other courses';
 $string['detail_desc:receivegrade'] = 'Receive a grade';
+$string['detail_desc:receivepassgrade'] = 'Receive a passing grade';
 $string['detail_desc:view'] = 'View';
 $string['hiddenrules'] = 'Some settings specific to <b>{$a}</b> have been hidden. To view unselect other activities';
 $string['editcoursecompletionsettings'] = 'Edit course completion settings';

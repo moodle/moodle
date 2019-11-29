@@ -137,7 +137,8 @@ class core_completion_bulkedit_form extends core_completion_edit_base_form {
         // Completion: Don't let them choose automatic completion without turning
         // on some conditions.
         if (array_key_exists('completion', $data) &&
-                $data['completion'] == COMPLETION_TRACKING_AUTOMATIC && !empty($data['completionusegrade'])) {
+                $data['completion'] == COMPLETION_TRACKING_AUTOMATIC &&
+                (!empty($data['completionusegrade']) || !empty($data['completionpassgrade']))) {
             require_once($CFG->libdir.'/gradelib.php');
             $moduleswithoutgradeitem = [];
             foreach ($this->cms as $cm) {

@@ -2806,12 +2806,13 @@ class backup_completion_defaults_structure_step extends backup_structure_step {
         $cc = new backup_nested_element('course_completion_defaults');
 
         $defaults = new backup_nested_element('course_completion_default', array('id'), array(
-            'modulename', 'completion', 'completionview', 'completionusegrade', 'completionexpected', 'customrules'
+            'modulename', 'completion', 'completionview', 'completionusegrade', 'completionpassgrade',
+            'completionexpected', 'customrules'
         ));
 
         // Use module name instead of module id so we can insert into another site later.
         $sourcesql = "SELECT d.id, m.name as modulename, d.completion, d.completionview, d.completionusegrade,
-                  d.completionexpected, d.customrules
+                  d.completionpassgrade, d.completionexpected, d.customrules
                 FROM {course_completion_defaults} d join {modules} m on d.module = m.id
                 WHERE d.course = ?";
         $defaults->set_source_sql($sourcesql, array(backup::VAR_COURSEID));
