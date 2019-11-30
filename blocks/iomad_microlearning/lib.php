@@ -372,8 +372,8 @@ class microlearning {
             }
             // Check if we already have a schedule.
             if ($schedule = $DB->get_record('microlearning_nugget_sched', array('nuggetid' => $nugget->id))) {
-                if (!$passedtime) {
-                    $startdate = $schedule->due_date;
+                if (!$passedtime || $startdate < $schedule->scheduledate) {
+                    $startdate = $schedule->scheduledate;
                     $schedulearray[$nugget->id] = $schedule->scheduledate;
                     $duedatearray[$nugget->id] = $schedule->due_date;
                     $reminder1array[$nugget->id] = $schedule->reminder1_date;
@@ -383,7 +383,7 @@ class microlearning {
                     $duedatearray[$nugget->id] = $startdate + $schedule->due_date - $schedule->scheduledate;
                     $reminder1array[$nugget->id] = $startdate + $schedule->reminder1_date - $schedule->scheduledate;
                     $reminder2array[$nugget->id] = $startdate + $schedule->reminder2_date - $schedule->scheduledate;
-                    $startdate =$startdate + $schedule->due_date - $schedule->scheduledate;
+                    $startdate = $startdate + $schedule->due_date - $schedule->scheduledate;
                 }
             } else {
                 $schedulearray[$nugget->id] = $startdate + $threadinfo->message_preset + $threadinfo->message_time;
