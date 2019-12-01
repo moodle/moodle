@@ -2664,10 +2664,14 @@ class Compiler
      * @param array   $value
      * @param boolean $inExp
      *
-     * @return array|\ScssPhp\ScssPhp\Node\Number
+     * @return null|array|\ScssPhp\ScssPhp\Node\Number
      */
     protected function reduce($value, $inExp = false)
     {
+
+        if (is_null($value)) {
+            return null;
+        }
 
         switch ($value[0]) {
             case Type::T_EXPRESSION:
