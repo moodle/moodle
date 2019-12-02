@@ -112,6 +112,15 @@ class scanner extends \core\antivirus\scanner {
     }
 
     /**
+     * Returns a Unix domain socket destination url
+     *
+     * @return string The socket url, fit for stream_socket_client()
+     */
+    private function get_unixsocket_destination() {
+        return 'unix://' . $this->get_config('pathtounixsocket');
+    }
+
+    /**
      * Returns the string equivalent of a numeric clam error code
      *
      * @param int $returncode The numeric error code in question.
@@ -195,7 +204,7 @@ class scanner extends \core\antivirus\scanner {
      * @return int Scanning result constant.
      */
     public function scan_file_execute_unixsocket($file) {
-        $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'),
+        $socket = stream_socket_client($this->get_unixsocket_destination(),
                 $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
         if (!$socket) {
             // Can't open socket for some reason, notify admins.
@@ -235,7 +244,7 @@ class scanner extends \core\antivirus\scanner {
      * @return int Scanning result constant.
      */
     public function scan_data_execute_unixsocket($data) {
-        $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'), $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
+        $socket = stream_socket_client($this->get_unixsocket_destination(), $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
         if (!$socket) {
             // Can't open socket for some reason, notify admins.
             $notice = get_string('errorcantopensocket', 'antivirus_clamav', "$errstr ($errno)");
