@@ -57,7 +57,7 @@ class antivirus_clamav_runningmethod_setting extends admin_setting_configselect 
     public function validate($data) {
         if ($data === 'unixsocket') {
             $supportedtransports = stream_get_transports();
-            if (!array_search('unix', $supportedtransports)) {
+            if (array_search('unix', $supportedtransports) === false) {
                 return get_string('errornounixsocketssupported', 'antivirus_clamav');
             }
         }
