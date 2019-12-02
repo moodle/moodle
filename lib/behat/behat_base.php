@@ -827,8 +827,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         // number of JS pending code and JS completed code will not match and we will reach this point.
         throw new \Exception('Javascript code and/or AJAX requests are not ready after ' .
                 self::get_extended_timeout() .
-                ' seconds. There is a Javascript error or the code is extremely slow. ' .
-                'If you are using a slow machine, consider setting $CFG->behat_increasetimeout.');
+                ' seconds. There is a Javascript error or the code is extremely slow (' . $pending .
+                '). If you are using a slow machine, consider setting $CFG->behat_increasetimeout.');
     }
 
     /**
