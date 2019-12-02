@@ -546,8 +546,16 @@ function forum_user_complete($course, $user, $mod, $forum) {
     };
 
     $grades = grade_get_grades($course->id, 'mod', 'forum', $forum->id, $user->id);
-    echo $getgradeinfo($grades->items[0]->grades, 'rating');
-    echo $getgradeinfo($grades->items[1]->grades, 'wholeforum');
+
+    // Item 0 is the rating.
+    if (!empty($grades->items[0]->grades)) {
+        echo $getgradeinfo($grades->items[0]->grades, 'rating');
+    }
+
+    // Item 1 is the whole-forum grade.
+    if (!empty($grades->items[1]->grades)) {
+        echo $getgradeinfo($grades->items[1]->grades, 'wholeforum');
+    }
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
