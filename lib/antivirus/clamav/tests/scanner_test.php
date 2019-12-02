@@ -44,8 +44,8 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
 
     public function test_scan_file_not_exists() {
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods(array('scan_file_execute_commandline', 'message_admins'))
-                ->getMock();
+            ->setMethods(array('scan_file_execute_commandline', 'message_admins'))
+            ->getMock();
 
         // Test specifying file that does not exist.
         $nonexistingfile = $this->tempfile . '_';
@@ -63,8 +63,8 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
             'get_config',
         );
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods($methods)
-                ->getMock();
+            ->setMethods($methods)
+            ->getMock();
         // Initiate mock scanning with configuration setting to use commandline.
         $configmap = array(array('runningmethod', 'commandline'));
         $antivirus->method('get_config')->will($this->returnValueMap($configmap));
@@ -97,8 +97,8 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
             'get_config',
         );
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods($methods)
-                ->getMock();
+            ->setMethods($methods)
+            ->getMock();
         // Initiate mock scanning with configuration setting to use commandline.
         $configmap = array(array('runningmethod', 'commandline'));
         $antivirus->method('get_config')->will($this->returnValueMap($configmap));
@@ -132,8 +132,8 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
             'get_scanning_notice',
         );
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods($methods)
-                ->getMock();
+            ->setMethods($methods)
+            ->getMock();
 
         // Configure scan_file_execute_commandline and scan_file_execute_unixsocket
         // method stubs to behave as if there is a scanning error (SCAN_RESULT_ERROR).
@@ -171,8 +171,8 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
             'get_scanning_notice',
         );
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods($methods)
-                ->getMock();
+            ->setMethods($methods)
+            ->getMock();
 
         // Configure scan_file_execute_commandline and scan_file_execute_unixsocket
         // method stubs to behave as if there is a scanning error (SCAN_RESULT_ERROR).
@@ -205,20 +205,30 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
 
     public function test_scan_data_no_virus() {
         $methods = array(
-            'scan_data_execute_unixsocket',
+            'scan_data_execute_socket',
             'message_admins',
             'get_config',
         );
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods($methods)
-                ->getMock();
+            ->setMethods($methods)
+            ->getMock();
         // Initiate mock scanning with configuration setting to use unixsocket.
         $configmap = array(array('runningmethod', 'unixsocket'));
         $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
-        // Configure scan_data_execute_unixsocket method stubs to behave as if
+        // Configure scan_data_execute_socket method stubs to behave as if
         // no virus has been found (SCAN_RESULT_OK).
-        $antivirus->method('scan_data_execute_unixsocket')->willReturn(0);
+        $antivirus->method('scan_data_execute_socket')->willReturn(0);
+
+        // Set expectation that message_admins is NOT called.
+        $antivirus->expects($this->never())->method('message_admins');
+
+        // Run mock scanning.
+        $this->assertEquals(0, $antivirus->scan_data(''));
+
+        // Re-initiate mock scanning with configuration setting to use tcpsocket.
+        $configmap = array(array('runningmethod', 'tcpsocket'));
+        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
         // Set expectation that message_admins is NOT called.
         $antivirus->expects($this->never())->method('message_admins');
@@ -229,20 +239,30 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
 
     public function test_scan_data_virus() {
         $methods = array(
-            'scan_data_execute_unixsocket',
+            'scan_data_execute_socket',
             'message_admins',
             'get_config',
         );
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods($methods)
-                ->getMock();
+            ->setMethods($methods)
+            ->getMock();
         // Initiate mock scanning with configuration setting to use unixsocket.
         $configmap = array(array('runningmethod', 'unixsocket'));
         $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
-        // Configure scan_data_execute_unixsocket method stubs to behave as if
+        // Configure scan_data_execute_socket method stubs to behave as if
         // no virus has been found (SCAN_RESULT_FOUND).
-        $antivirus->method('scan_data_execute_unixsocket')->willReturn(1);
+        $antivirus->method('scan_data_execute_socket')->willReturn(1);
+
+        // Set expectation that message_admins is NOT called.
+        $antivirus->expects($this->never())->method('message_admins');
+
+        // Run mock scanning.
+        $this->assertEquals(1, $antivirus->scan_data(''));
+
+        // Re-initiate mock scanning with configuration setting to use tcpsocket.
+        $configmap = array(array('runningmethod', 'tcpsocket'));
+        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
         // Set expectation that message_admins is NOT called.
         $antivirus->expects($this->never())->method('message_admins');
@@ -253,23 +273,34 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
 
     public function test_scan_data_error_donothing() {
         $methods = array(
-            'scan_data_execute_unixsocket',
+            'scan_data_execute_socket',
             'message_admins',
             'get_config',
             'get_scanning_notice',
         );
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods($methods)
-                ->getMock();
+            ->setMethods($methods)
+            ->getMock();
         // Initiate mock scanning with configuration setting to do nothing on
         // scanning error and using unixsocket.
         $configmap = array(array('clamfailureonupload', 'donothing'), array('runningmethod', 'unixsocket'));
         $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
-        // Configure scan_data_execute_unixsocket method stubs to behave as if
+        // Configure scan_data_execute_socket method stubs to behave as if
         // there is a scanning error (SCAN_RESULT_ERROR).
-        $antivirus->method('scan_data_execute_unixsocket')->willReturn(2);
+        $antivirus->method('scan_data_execute_socket')->willReturn(2);
         $antivirus->method('get_scanning_notice')->willReturn('someerror');
+
+        // Set expectation that message_admins is called.
+        $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));
+
+        // Run mock scanning.
+        $this->assertEquals(2, $antivirus->scan_data(''));
+
+        // Re-initiate mock scanning with configuration setting to do nothing on
+        // scanning error and using tcsocket.
+        $configmap = array(array('clamfailureonupload', 'donothing'), array('runningmethod', 'tcpsocket'));
+        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
         // Set expectation that message_admins is called.
         $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));
@@ -280,24 +311,36 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
 
     public function test_scan_data_error_actlikevirus() {
         $methods = array(
-            'scan_data_execute_unixsocket',
+            'scan_data_execute_socket',
             'message_admins',
             'get_config',
             'get_scanning_notice',
         );
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods($methods)
-                ->getMock();
+            ->setMethods($methods)
+            ->getMock();
 
         // Initiate mock scanning with configuration setting to act like virus on
         // scanning error and using unixsocket.
         $configmap = array(array('clamfailureonupload', 'actlikevirus'), array('runningmethod', 'unixsocket'));
         $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
-        // Configure scan_data_execute_unixsocket method stubs to behave as if
+        // Configure scan_data_execute_socket method stubs to behave as if
         // there is a scanning error (SCAN_RESULT_ERROR).
-        $antivirus->method('scan_data_execute_unixsocket')->willReturn(2);
+        $antivirus->method('scan_data_execute_socket')->willReturn(2);
         $antivirus->method('get_scanning_notice')->willReturn('someerror');
+
+        // Set expectation that message_admins is called.
+        $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));
+
+        // Run mock scanning, we expect SCAN_RESULT_FOUND since configuration
+        // require us to act like virus.
+        $this->assertEquals(1, $antivirus->scan_data(''));
+
+        // Re-initiate mock scanning with configuration setting to act like virus on
+        // scanning error and using tcpsocket.
+        $configmap = array(array('clamfailureonupload', 'actlikevirus'), array('runningmethod', 'tcpsocket'));
+        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
         // Set expectation that message_admins is called.
         $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));
