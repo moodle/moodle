@@ -99,7 +99,8 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
      * Test test_mod_lesson_get_lessons_by_courses
      */
     public function test_mod_lesson_get_lessons_by_courses() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/externallib.php');
 
         // Create additional course.
         $course2 = self::getDataGenerator()->create_course();
@@ -107,6 +108,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         // Second lesson.
         $record = new stdClass();
         $record->course = $course2->id;
+        $record->name = '<span lang="en" class="multilang">English</span><span lang="es" class="multilang">Español</span>';
         $lesson2 = self::getDataGenerator()->create_module('lesson', $record);
 
         // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
@@ -121,6 +123,14 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $enrol->enrol_user($instance2, $this->student->id, $this->studentrole->id);
 
         self::setUser($this->student);
+
+        // Enable multilang filter to on content and heading.
+        filter_manager::reset_caches();
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+        // Set WS filtering.
+        $wssettings = external_settings::get_instance();
+        $wssettings->set_filter(true);
 
         $returndescription = mod_lesson_external::get_lessons_by_courses_returns();
 
@@ -157,6 +167,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
             $expected2[$field] = $lesson2->{$field};
         }
 
+        $expected2['name'] = 'English';  // Lang filtered expected.
         $expectedlessons = array($expected2, $expected1);
 
         // Call the external function passing course ids.

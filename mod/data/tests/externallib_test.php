@@ -122,7 +122,8 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      * Test get databases by courses
      */
     public function test_mod_data_get_databases_by_courses() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/externallib.php');
 
         $this->resetAfterTest(true);
 
@@ -141,6 +142,8 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->introformat = FORMAT_HTML;
         $record->course = $course1->id;
+        // Set multilang text to check that is properly filtered to "en" only.
+        $record->name = '<span lang="en" class="multilang">English</span><span lang="es" class="multilang">Español</span>';
         $record->intro = '<button>Test with HTML allowed.</button>';
         $database1 = self::getDataGenerator()->create_module('data', $record);
 
@@ -168,6 +171,14 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         }
         $enrol->enrol_user($instance2, $student->id, $studentrole->id);
 
+        // Enable multilang filter to on content and heading.
+        filter_manager::reset_caches();
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+        // Set WS filtering.
+        $wssettings = external_settings::get_instance();
+        $wssettings->set_filter(true);
+
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'comments', 'timeavailablefrom',
@@ -192,6 +203,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
             $expected1[$field] = $database1->{$field};
             $expected2[$field] = $database2->{$field};
         }
+        $expected1['name'] = 'English'; // Lang filtered expected.
         $expected1['comments'] = (bool) $expected1['comments'];
         $expected2['comments'] = (bool) $expected2['comments'];
 

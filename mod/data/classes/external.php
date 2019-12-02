@@ -125,7 +125,9 @@ class mod_data_external extends external_api {
                     }
                 }
                 $exporter = new database_summary_exporter($database, array('context' => $context));
-                $arrdatabases[] = $exporter->export($PAGE->get_renderer('core'));
+                $data = $exporter->export($PAGE->get_renderer('core'));
+                $data->name = external_format_string($data->name, $context);
+                $arrdatabases[] = $data;
             }
         }
 
