@@ -1,6 +1,15 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.9 ===
+* Removed the following depecated functions:
+  - message_move_userfrom_unread2read
+  - message_get_blocked_users
+  - message_get_contacts
+  - message_mark_message_read
+  - message_can_delete_message
+  - message_delete_message
+
 === 3.8 ===
 
 * The following methods have been deprecated and should not be used any more:

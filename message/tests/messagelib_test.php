@@ -122,101 +122,23 @@ class core_message_messagelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test message_get_blocked_users.
+     * Test message_get_blocked_users throws an exception because has been removed.
      */
     public function test_message_get_blocked_users() {
-        global $USER;
-
-        // Set this user as the admin.
-        $this->setAdminUser();
-
-        // Create a user to add to the admin's contact list.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-
-        \core_message\api::block_user($USER->id, $user2->id);
-
-        $this->assertCount(1, message_get_blocked_users());
-        $this->assertDebuggingCalled();
-
-        // Block other user.
-        \core_message\api::block_user($USER->id, $user1->id);
-        $this->assertCount(2, message_get_blocked_users());
-        $this->assertDebuggingCalled();
-
-        // Test deleting users.
-        delete_user($user1);
-        $this->assertCount(1, message_get_blocked_users());
-        $this->assertDebuggingCalled();
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage(
+            'message_get_blocked_users() has been removed, please use \core_message\api::get_blocked_users() instead.'
+        );
+        message_get_blocked_users();
     }
 
     /**
-     * Test message_get_contacts.
+     * Test message_get_contacts throws an exception because has been removed.
      */
     public function test_message_get_contacts() {
-        global $USER, $CFG;
-
-        // Set this user as the admin.
-        $this->setAdminUser();
-
-        $noreplyuser = core_user::get_noreply_user();
-        $supportuser = core_user::get_support_user();
-
-        // Create a user to add to the admin's contact list.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $user3 = $this->getDataGenerator()->create_user(); // Stranger.
-
-        // Add users to the admin's contact list.
-        \core_message\api::add_contact($USER->id, $user1->id);
-        \core_message\api::add_contact($USER->id, $user2->id);
-
-        // Send some messages.
-        $this->send_fake_message($user1, $USER);
-        $this->send_fake_message($user2, $USER);
-        $this->send_fake_message($user3, $USER);
-
-        list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
-        $this->assertDebuggingCalled();
-        $this->assertCount(0, $onlinecontacts);
-        $this->assertCount(2, $offlinecontacts);
-        $this->assertCount(1, $strangers);
-
-        // Send message from noreply and support users.
-        $this->send_fake_message($noreplyuser, $USER);
-        $this->send_fake_message($supportuser, $USER);
-        list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
-        $this->assertDebuggingCalled();
-        $this->assertCount(0, $onlinecontacts);
-        $this->assertCount(2, $offlinecontacts);
-        $this->assertCount(3, $strangers);
-
-        // Block 1 user.
-        \core_message\api::block_user($USER->id, $user2->id);
-        list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
-        $this->assertDebuggingCalled();
-        $this->assertCount(0, $onlinecontacts);
-        $this->assertCount(1, $offlinecontacts);
-        $this->assertCount(3, $strangers);
-
-        // Noreply user being valid user.
-        core_user::reset_internal_users();
-        $CFG->noreplyuserid = $user3->id;
-        list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
-        $this->assertDebuggingCalled();
-        $this->assertCount(0, $onlinecontacts);
-        $this->assertCount(1, $offlinecontacts);
-        $this->assertCount(2, $strangers);
-
-        // Test deleting users.
-        delete_user($user1);
-        delete_user($user3);
-        core_user::reset_internal_users();
-        list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
-        $this->assertDebuggingCalled();
-        $this->assertCount(0, $onlinecontacts);
-        $this->assertCount(0, $offlinecontacts);
-        $this->assertCount(1, $strangers);
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('message_get_contacts() has been removed.');
+        message_get_contacts();
     }
 
     /**

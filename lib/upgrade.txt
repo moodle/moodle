@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.9 ===
+* Removed the following depecated functions:
+  - question_add_tops
+  - question_is_only_toplevel_category_in_context
+
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
 * The rotate_image function has been added to the stored_file class (MDL-63349)
