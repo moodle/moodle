@@ -35,8 +35,16 @@ require_once($CFG->libdir.'/clilib.php');      // cli only functions
 require_once($CFG->libdir.'/cronlib.php');
 
 // now get cli options
-list($options, $unrecognized) = cli_get_params(array('help'=>false),
-                                               array('h'=>'help'));
+list($options, $unrecognized) = cli_get_params(
+    array(
+        'help' => false,
+        'stop' => false,
+    ),
+    array(
+        'h' => 'help',
+        's' => 'stop',
+    )
+);
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -49,12 +57,20 @@ if ($options['help']) {
 
 Options:
 -h, --help            Print out this help
+-s, --stop            Notify all other running cron processes to stop after the current task
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/cron.php
 ";
 
     echo $help;
+    die;
+}
+
+if ($options['stop']) {
+    // By clearing the caches this signals to other running processes
+    // to exit after finishing the current task.
+    \core\task\manager::clear_static_caches();
     die;
 }
 
