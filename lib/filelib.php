@@ -2229,6 +2229,10 @@ function readfile_accel($file, $mimetype, $accelerate) {
 
     header('Content-Length: '.$filesize);
 
+    if (!empty($_SERVER['REQUEST_METHOD']) and $_SERVER['REQUEST_METHOD'] === 'HEAD') {
+        exit;
+    }
+
     if ($filesize > 10000000) {
         // for large files try to flush and close all buffers to conserve memory
         while(@ob_get_level()) {
