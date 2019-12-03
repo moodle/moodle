@@ -52,16 +52,16 @@
 
 <body {{{ bodyattributes }}}>
 
-<div id="page-wrapper">
+<div id="page-wrapper" class="d-print-block">
 
     {{{ output.standard_top_of_body_html }}}
 
     {{> theme_boost/navbar }}
 
-    <div id="page" class="container-fluid">
+    <div id="page" class="container-fluid d-print-block">
         {{{ output.full_header }}}
 
-        <div id="page-content" class="row pb-3">
+        <div id="page-content" class="row pb-3 d-print-block">
             <div id="region-main-box" class="col-12">
                 {{#hasregionmainsettingsmenu}}
                 <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
