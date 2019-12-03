@@ -735,6 +735,7 @@ $string['quizordernotrandom'] = 'Order of quiz not shuffled';
 $string['quizorderrandom'] = '* Order of quiz is shuffled';
 $string['quiz:preview'] = 'Preview quizzes';
 $string['quiz:regrade'] = 'Regrade quiz attempts';
+$string['quizreport'] = 'Quiz report';
 $string['quiz:reviewmyattempts'] = 'Review your own attempts';
 $string['quizsettings'] = 'Quiz settings';
 $string['quiz:view'] = 'View quiz information';
