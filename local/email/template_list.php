@@ -153,174 +153,190 @@ if ($ajaxtemplate) {
     $parts = explode('.', $ajaxtemplate);
     list($type, $id, $managertype, $templatename) = $parts;
 
-    if ($type == 'c') {
-        // dealing with a company email template.
-        if (!$templateinfos = $DB->get_records('email_template',
-            array('name' => $templatename,
-                  'companyid' => $id))) {
-            $newtemplate = new stdclass();
-            $newtemplate->companyid = $id;
-            $newtemplate->name = $templatename;
-            $newtemplate->subject = get_string($templatename.'_subject', 'local_email');
-            $newtemplate->body = get_string($templatename.'_body', 'local_email');
-            $newtemplate->disabled = 0;
-            $newtemplate->disabledmanager = 0;
-            $newtemplate->disabledsupervisor = 0;
+    // Get the installed languages.
+    $alllangs = get_string_manager()->get_list_of_translations(true);
+    foreach ($alllangs as $installedlang => $drop) {
+        if ($type == 'c') {
+            // dealing with a company email template.
+            if (!$templateinfos = $DB->get_records('email_template',
+                array('name' => $templatename,
+                      'companyid' => $id,
+                      'lang' => $installedlang))) {
+                $newtemplate = new stdclass();
+                $newtemplate->companyid = $id;
+                $newtemplate->name = $templatename;
+                $newtemplate->subject = get_string($templatename.'_subject', 'local_email');
+                $newtemplate->body = get_string($templatename.'_body', 'local_email');
+                $newtemplate->disabled = 0;
+                $newtemplate->disabledmanager = 0;
+                $newtemplate->disabledsupervisor = 0;
+                $newtemplate->lang = $installedlang;
 
-            if (isset($SESSION->lang)) {
-                $newtemplate->lang = $SESSION->lang;
-            } else if (isset($CFG->lang)) {
-                $newtemplate->lang = $CFG->lang;
+                // What are we disabling?
+                if ($managertype == 'e') {
+                    $newtemplate->disabled = 1;
+                }
+                if ($managertype == 'em') {
+                    $newtemplate->managerdisabled = 1;
+                }
+                if ($managertype == 'es') {
+                    $newtemplate->supervisordisabled = 1;
+                }
+                $DB->insert_record('email_template', $newtemplate);
+            }
+            if ($ajaxvalue=='false') {
+                if ($managertype == 'e') {
+                    $DB->execute("UPDATE {email_template}
+                                  SET disabled = 1
+                                  WHERE companyid = :companyid
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
+                if ($managertype == 'em') {
+                    $DB->execute("UPDATE {email_template}
+                                  SET disabledmanager = 1
+                                  WHERE companyid = :companyid
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
+                if ($managertype == 'es') {
+                    $DB->execute("UPDATE {email_template}
+                                  SET disabledsupervisor = 1
+                                  WHERE companyid = :companyid
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
             } else {
-                $newtemplate->lang = 'en';
+                if ($managertype == 'e') {
+                    $DB->execute("UPDATE {email_template}
+                                  SET disabled = 0
+                                  WHERE companyid = :companyid
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
+                if ($managertype == 'em') {
+                    $DB->execute("UPDATE {email_template}
+                                  SET disabledmanager = 0
+                                  WHERE companyid = :companyid
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
+                if ($managertype == 'es') {
+                    $DB->execute("UPDATE {email_template}
+                                  SET disabledsupervisor = 0
+                                  WHERE companyid = :companyid
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
             }
+        } else if ($type == 't') {
+            // dealing with a company email template.
+            if (!$templateinfos = $DB->get_records('email_templateset_templates',
+                array('name' => $templatename,
+                      'templateset' => $id,
+                      'lang' => $installedlang))) {
+                $newtemplate = new stdclass();
+                $newtemplate->templateset = $id;
+                $newtemplate->name = $templatename;
+                $newtemplate->subject = get_string($templatename.'_subject', 'local_email');
+                $newtemplate->body = get_string($templatename.'_body', 'local_email');
+                $newtemplate->disabled = 0;
+                $newtemplate->disabledmanager = 0;
+                $newtemplate->disabledsupervisor = 0;
+                $newtemplate->lang = $installedlang;
 
-            // What are we disabling?
-            if ($managertype == 'e') {
-                $newtemplate->disabled = 1;
+                // What are we disabling?
+                if ($managertype == 'e') {
+                    $newtemplate->disabled = 1;
+                }
+                if ($managertype == 'em') {
+                    $newtemplate->managerdisabled = 1;
+                }
+                if ($managertype == 'es') {
+                    $newtemplate->supervisordisabled = 1;
+                }
+                $DB->insert_record('email_templateset_templates', $newtemplate);
             }
-            if ($managertype == 'em') {
-                $newtemplate->managerdisabled = 1;
-            }
-            if ($managertype == 'es') {
-                $newtemplate->supervisordisabled = 1;
-            }
-            $DB->insert_record('email_template', $newtemplate);
-        }
-        if ($ajaxvalue=='false') {
-            if ($managertype == 'e') {
-                $DB->execute("UPDATE {email_template}
-                              SET disabled = 1
-                              WHERE companyid = :companyid
-                              AND name = :templatename",
-                              array('companyid' => $id,
-                                    'templatename' => $templatename));
-            }
-            if ($managertype == 'em') {
-                $DB->execute("UPDATE {email_template}
-                              SET disabledmanager = 1
-                              WHERE companyid = :companyid
-                              AND name = :templatename",
-                              array('companyid' => $id,
-                                    'templatename' => $templatename));
-            }
-            if ($managertype == 'es') {
-                $DB->execute("UPDATE {email_template}
-                              SET disabledsupervisor = 1
-                              WHERE companyid = :companyid
-                              AND name = :templatename",
-                              array('companyid' => $id,
-                                    'templatename' => $templatename));
-            }
-        } else {
-            if ($managertype == 'e') {
-                $DB->execute("UPDATE {email_template}
-                              SET disabled = 0
-                              WHERE companyid = :companyid
-                              AND name = :templatename",
-                              array('companyid' => $id,
-                                    'templatename' => $templatename));
-            }
-            if ($managertype == 'em') {
-                $DB->execute("UPDATE {email_template}
-                              SET disabledmanager = 0
-                              WHERE companyid = :companyid
-                              AND name = :templatename",
-                              array('companyid' => $id,
-                                    'templatename' => $templatename));
-            }
-            if ($managertype == 'es') {
-                $DB->execute("UPDATE {email_template}
-                              SET disabledsupervisor = 0
-                              WHERE companyid = :companyid
-                              AND name = :templatename",
-                              array('companyid' => $id,
-                                    'templatename' => $templatename));
-            }
-        }
-    } else if ($type == 't') {
-        // dealing with a company email template.
-        if (!$templateinfos = $DB->get_records('email_templateset_templates',
-            array('name' => $templatename,
-                  'templateset' => $id))) {
-            $newtemplate = new stdclass();
-            $newtemplate->templateset = $id;
-            $newtemplate->name = $templatename;
-            $newtemplate->subject = get_string($templatename.'_subject', 'local_email');
-            $newtemplate->body = get_string($templatename.'_body', 'local_email');
-            $newtemplate->disabled = 0;
-            $newtemplate->disabledmanager = 0;
-            $newtemplate->disabledsupervisor = 0;
-
-            if (isset($SESSION->lang)) {
-                $newtemplate->lang = $SESSION->lang;
-            } else if (isset($CFG->lang)) {
-                $newtemplate->lang = $CFG->lang;
+            if ($ajaxvalue=='false') {
+                if ($managertype == 'e') {
+                    $DB->execute("UPDATE {email_templateset_templates}
+                                  SET disabled = 1
+                                  WHERE templateset = :templateset
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
+                if ($managertype == 'em') {
+                    $DB->execute("UPDATE {email_templateset_templates}
+                                  SET disabledmanager = 1
+                                  WHERE templateset = :templateset
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
+                if ($managertype == 'es') {
+                    $DB->execute("UPDATE {email_templateset_templates}
+                                  SET disabledsupervisor = 1
+                                  WHERE templateset = :templateset
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
             } else {
-                $newtemplate->lang = 'en';
-            }
-
-            // What are we disabling?
-            if ($managertype == 'e') {
-                $newtemplate->disabled = 1;
-            }
-            if ($managertype == 'em') {
-                $newtemplate->managerdisabled = 1;
-            }
-            if ($managertype == 'es') {
-                $newtemplate->supervisordisabled = 1;
-            }
-            $DB->insert_record('email_templateset_templates', $newtemplate);
-        }
-        if ($ajaxvalue=='false') {
-            if ($managertype == 'e') {
-                $DB->execute("UPDATE {email_templateset_templates}
-                              SET disabled = 1
-                              WHERE templateset = :templateset
-                              AND name = :templatename",
-                              array('templateset' => $id,
-                                    'templatename' => $templatename));
-            }
-            if ($managertype == 'em') {
-                $DB->execute("UPDATE {email_templateset_templates}
-                              SET disabledmanager = 1
-                              WHERE templateset = :templateset
-                              AND name = :templatename",
-                              array('templateset' => $id,
-                                    'templatename' => $templatename));
-            }
-            if ($managertype == 'es') {
-                $DB->execute("UPDATE {email_templateset_templates}
-                              SET disabledsupervisor = 1
-                              WHERE templateset = :templateset
-                              AND name = :templatename",
-                              array('templateset' => $id,
-                                    'templatename' => $templatename));
-            }
-        } else {
-            if ($managertype == 'e') {
-                $DB->execute("UPDATE {email_templateset_templates}
-                              SET disabled = 0
-                              WHERE templateset = :templateset
-                              AND name = :templatename",
-                              array('templateset' => $id,
-                                    'templatename' => $templatename));
-            }
-            if ($managertype == 'em') {
-                $DB->execute("UPDATE {email_templateset_templates}
-                              SET disabledmanager = 0
-                              WHERE templateset = :templateset
-                              AND name = :templatename",
-                              array('templateset' => $id,
-                                    'templatename' => $templatename));
-            }
-            if ($managertype == 'es') {
-                $DB->execute("UPDATE {email_templateset_templates}
-                              SET disabledsupervisor = 0
-                              WHERE templateset = :templateset
-                              AND name = :templatename",
-                              array('templateset' => $id,
-                                    'templatename' => $templatename));
+                if ($managertype == 'e') {
+                    $DB->execute("UPDATE {email_templateset_templates}
+                                  SET disabled = 0
+                                  WHERE templateset = :templateset
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
+                if ($managertype == 'em') {
+                    $DB->execute("UPDATE {email_templateset_templates}
+                                  SET disabledmanager = 0
+                                  WHERE templateset = :templateset
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
+                if ($managertype == 'es') {
+                    $DB->execute("UPDATE {email_templateset_templates}
+                                  SET disabledsupervisor = 0
+                                  WHERE templateset = :templateset
+                                  AND name = :templatename
+                                  AND lang = :installedlang",
+                                  array('companyid' => $id,
+                                        'templatename' => $templatename,
+                                        'installedlang' => $installedlang));
+                }
             }
         }
     }
