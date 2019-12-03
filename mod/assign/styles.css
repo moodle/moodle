@@ -194,10 +194,6 @@
     display: none;
 }
 
-.path-mod-assign .expandsummaryicon i {
-    pointer-events: none;
-}
-
 .path-mod-assign.jsenabled .expandsummaryicon {
     display: inline-block;
 }

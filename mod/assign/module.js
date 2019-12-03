@@ -169,7 +169,7 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
     if (contract) {
         contract.on('click', function(e) {
             e.preventDefault();
-            var link = e.target;
+            var link = e.currentTarget || e.target;
             var linkclasses = link.getAttribute('class').split(' ');
             var thissuffix = '';
             for (var i = 0; i < linkclasses.length; i++) {
@@ -202,7 +202,7 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
     if (expand) {
         expand.on('click', function(e) {
             e.preventDefault();
-            var link = e.target;
+            var link = e.currentTarget || e.target;
             var linkclasses = link.getAttribute('class').split(' ');
             var thissuffix = '';
             for (var i = 0; i < linkclasses.length; i++) {
