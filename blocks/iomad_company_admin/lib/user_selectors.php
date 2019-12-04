@@ -1737,6 +1737,7 @@ class potential_company_thread_user_selector extends company_user_selector_base 
                     AND
                     cu.companyid = :companyid
                     AND cu.managertype = 0
+                    AND cu.userid not in ( ". $CFG->siteadmins .")
                     $userfilter
                     AND u.id NOT IN
                      (SELECT DISTINCT userid
