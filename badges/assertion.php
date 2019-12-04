@@ -36,7 +36,8 @@ if (empty($CFG->enablebadges)) {
 
 $hash = required_param('b', PARAM_ALPHANUM); // Issued badge unique hash for badge assertion.
 $action = optional_param('action', null, PARAM_BOOL); // Generates badge class if true.
-$obversion = optional_param('obversion', OPEN_BADGES_V1, PARAM_INT); // For control format OB specification version.
+// OB specification version. If it's not defined, the site will be used as default.
+$obversion = optional_param('obversion', badges_open_badges_backpack_api(), PARAM_INT);
 
 $assertion = new core_badges_assertion($hash, $obversion);
 

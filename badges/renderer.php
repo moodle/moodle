@@ -337,13 +337,13 @@ class core_badges_renderer extends plugin_renderer_base {
 
         if ($USER->id == $userinfo->id && !empty($CFG->enablebadges)) {
             $output .= $this->output->single_button(
-                        new moodle_url('/badges/badge.php', array('hash' => $issued['uid'], 'bake' => true)),
+                        new moodle_url('/badges/badge.php', array('hash' => $ibadge->hash, 'bake' => true)),
                         get_string('download'),
                         'POST');
             if (!empty($CFG->badges_allowexternalbackpack) && ($expiration > $now) && badges_user_has_backpack($USER->id)) {
 
                 if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
-                    $assertion = new moodle_url('/badges/assertion.php', array('b' => $issued['uid']));
+                    $assertion = new moodle_url('/badges/assertion.php', array('b' => $ibadge->hash));
                     $action = new component_action('click', 'addtobackpack', array('assertion' => $assertion->out(false)));
                     $attributes = array(
                             'type'  => 'button',
@@ -354,7 +354,7 @@ class core_badges_renderer extends plugin_renderer_base {
                     $this->output->add_action_handler($action, 'addbutton');
                     $output .= $tobackpack;
                 } else {
-                    $assertion = new moodle_url('/badges/backpack-add.php', array('hash' => $issued['uid']));
+                    $assertion = new moodle_url('/badges/backpack-add.php', array('hash' => $ibadge->hash));
                     $attributes = ['class' => 'btn btn-secondary m-1', 'role' => 'button'];
                     $tobackpack = html_writer::link($assertion, get_string('addtobackpack', 'badges'), $attributes);
                     $output .= $tobackpack;
