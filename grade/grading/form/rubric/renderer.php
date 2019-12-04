@@ -435,7 +435,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             switch ($option) {
                 case 'sortlevelsasc':
                     // Display option as dropdown
-                    $html .= html_writer::label(get_string($option, 'gradingform_rubric'), $attrs['id'], false, array('class' => 'label'));
+                    $html .= html_writer::label(get_string($option, 'gradingform_rubric'), $attrs['id'], false);
                     $value = (int)(!!$value); // make sure $value is either 0 or 1
                     if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
                         $selectoptions = array(0 => get_string($option.'0', 'gradingform_rubric'), 1 => get_string($option.'1', 'gradingform_rubric'));
