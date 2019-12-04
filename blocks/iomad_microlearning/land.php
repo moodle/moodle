@@ -71,6 +71,8 @@ if (isloggedin() and !isguestuser()) {
     } else {
         set_moodle_cookie($USER->username);
     }
+    // Add something to the SESSION so we can trap where they came from.
+    $SESSION->came_via_microlearning = true;
 }
 
 // Get the nugget url.
