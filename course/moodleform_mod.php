@@ -372,6 +372,12 @@ abstract class moodleform_mod extends moodleform {
                 }
                 if ($mform->elementExists('completionpassgrade')) {
                     $mform->freeze('completionpassgrade');
+
+                    // Has the completion pass grade completion criteria been set?
+                    // If it has then we shouldn't change the gradepass field.
+                    if ($mform->exportValue('completionpassgrade')) {
+                        $mform->freeze('gradepass');
+                    }
                 }
                 if ($mform->elementExists('completiongradeitemnumber')) {
                     $mform->freeze('completiongradeitemnumber');

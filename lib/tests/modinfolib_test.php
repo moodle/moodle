@@ -183,6 +183,7 @@ class modinfolib_test extends advanced_testcase {
         $this->assertEquals($moduledb->indent, $cm->indent);
         $this->assertEquals($moduledb->completion, $cm->completion);
         $this->assertEquals($moduledb->completiongradeitemnumber, $cm->completiongradeitemnumber);
+        $this->assertEquals($moduledb->completionpassgrade, $cm->completionpassgrade);
         $this->assertEquals($moduledb->completionview, $cm->completionview);
         $this->assertEquals($moduledb->completionexpected, $cm->completionexpected);
         $this->assertEquals($moduledb->showdescription, $cm->showdescription);

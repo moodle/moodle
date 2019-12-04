@@ -72,6 +72,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     $completion = new completion_info($course);
     if ($completion->is_enabled()) {
         $newcm->completion                = $moduleinfo->completion;
+        $newcm->completionpassgrade       = $moduleinfo->completionpassgrade ?? 0;
         if ($moduleinfo->completiongradeitemnumber === '') {
             $newcm->completiongradeitemnumber = null;
         } else {
@@ -432,6 +433,8 @@ function set_moduleinfo_defaults($moduleinfo) {
     if (isset($moduleinfo->completionusegrade) && $moduleinfo->completionusegrade) {
         $moduleinfo->completiongradeitemnumber = 0;
     } else if (!isset($moduleinfo->completiongradeitemnumber)) {
+        // If there is no gradeitemnumber set, make sure to disable completionpassgrade.
+        $moduleinfo->completionpassgrade = 0;
         $moduleinfo->completiongradeitemnumber = null;
     }
 
@@ -544,6 +547,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         // the activity may be locked; if so, these should not be updated.
         if (!empty($moduleinfo->completionunlocked)) {
             $cm->completion = $moduleinfo->completion;
+            $cm->completionpassgrade = $moduleinfo->completionpassgrade ?? 0;
             if ($moduleinfo->completiongradeitemnumber === '') {
                 $cm->completiongradeitemnumber = null;
             } else {
@@ -712,6 +716,7 @@ function get_moduleinfo_data($cm, $course) {
     $data->completionview     = $cm->completionview;
     $data->completionexpected = $cm->completionexpected;
     $data->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
+    $data->completionpassgrade = $cm->completionpassgrade;
     $data->completiongradeitemnumber = $cm->completiongradeitemnumber;
     $data->showdescription    = $cm->showdescription;
     $data->tags               = core_tag_tag::get_item_tags_array('core', 'course_modules', $cm->id);

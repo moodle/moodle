@@ -275,6 +275,9 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         $this->standard_coursemodule_elements();
 
+        // A SCORM module should define this within itself and is not needed here.
+        $mform->removeElement('completionpassgrade');
+
         // Buttons.
         $this->add_action_buttons();
     }

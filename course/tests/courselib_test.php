@@ -221,6 +221,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->completion = COMPLETION_TRACKING_AUTOMATIC;
         $moduleinfo->completionview = COMPLETION_VIEW_REQUIRED;
         $moduleinfo->completiongradeitemnumber = 1;
+        $moduleinfo->completionpassgrade = 0;
         $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
 
         // Conditional activity.
@@ -283,6 +284,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->completion, $dbcm->completion);
         $this->assertEquals($moduleinfo->completionview, $dbcm->completionview);
         $this->assertEquals($moduleinfo->completiongradeitemnumber, $dbcm->completiongradeitemnumber);
+        $this->assertEquals($moduleinfo->completionpassgrade, $dbcm->completionpassgrade);
         $this->assertEquals($moduleinfo->completionexpected, $dbcm->completionexpected);
         $this->assertEquals($moduleinfo->availability, $dbcm->availability);
         $this->assertEquals($moduleinfo->showdescription, $dbcm->showdescription);
@@ -504,6 +506,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->completion = COMPLETION_TRACKING_AUTOMATIC;
         $moduleinfo->completionview = COMPLETION_VIEW_REQUIRED;
         $moduleinfo->completiongradeitemnumber = 1;
+        $moduleinfo->completionpassgrade = 0;
         $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
         $moduleinfo->completionunlocked = 1;
 
@@ -561,6 +564,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->completion, $dbcm->completion);
         $this->assertEquals($moduleinfo->completionview, $dbcm->completionview);
         $this->assertEquals($moduleinfo->completiongradeitemnumber, $dbcm->completiongradeitemnumber);
+        $this->assertEquals($moduleinfo->completionpassgrade, $dbcm->completionpassgrade);
         $this->assertEquals($moduleinfo->completionexpected, $dbcm->completionexpected);
         $this->assertEquals($moduleinfo->availability, $dbcm->availability);
         $this->assertEquals($moduleinfo->showdescription, $dbcm->showdescription);

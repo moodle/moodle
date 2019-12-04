@@ -273,7 +273,8 @@ class backup_module_structure_step extends backup_structure_step {
             'modulename', 'sectionid', 'sectionnumber', 'idnumber',
             'added', 'score', 'indent', 'visible', 'visibleoncoursepage',
             'visibleold', 'groupmode', 'groupingid',
-            'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
+            'completion', 'completiongradeitemnumber', 'completionpassgrade',
+            'completionview', 'completionexpected',
             'availability', 'showdescription'));
 
         $tags = new backup_nested_element('tags');
