@@ -88,7 +88,8 @@
 
 #page-admin-report-backups-index .backup-skipped,
 #page-admin-report-backups-index .backup-ok,
-#page-admin-report-backups-index .backup-notyetrun {
+#page-admin-report-backups-index .backup-notyetrun,
+#page-admin-report-backups-index .backup-queued {
     @extend .tag-success;
 }
 
