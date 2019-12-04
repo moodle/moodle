@@ -1736,6 +1736,7 @@ class potential_company_thread_user_selector extends company_user_selector_base 
                 WHERE $wherecondition  AND u.suspended = 0 $departmentsql
                     AND
                     cu.companyid = :companyid
+                    AND cu.managertype = 0
                     $userfilter
                     AND u.id NOT IN
                      (SELECT DISTINCT userid
