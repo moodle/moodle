@@ -98,6 +98,22 @@
                     <div data-region="grade" class="pt-3 px-3">
                         {{> mod_forum/local/grades/local/grader/grade_placeholder }}
                     </div>
+                    <h4 id="send-student-notifications-setting" class="mb-0 h5 px-3 font-weight-normal">
+                        {{#pix}} i/gradingnotifications, core {{/pix}}{{#str}}notifications, core{{/str}}
+                    </h4>
+                    <div data-region="notification" class="pt-3 px-3" role="radiogroup" aria-labelledby="send-student-notifications-setting">
+                        <label class="form-check">
+                            <input class="form-check-input" type="radio" name="sendstudentnotifications" value="1"{{#defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
+                            {{#str}}sendstudentnotificationsyes, mod_forum{{/str}}
+                        </label>
+                        <label class="form-check">
+                            <input class="form-check-input" type="radio" name="sendstudentnotifications" value="0"{{^defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
+                            {{#str}}sendstudentnotificationsno, mod_forum{{/str}}
+                        </label>
+                        {{#helpicon}}
+                            {{>core/help_icon}}
+                        {{/helpicon}}
+                    </div>
                     <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
                 </div>
             </div>
@@ -105,22 +121,5 @@
         </div>
         <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
         <hr/>
-        <div class="col-sm-12">
-            <h4 class="d-inline mb-0 fa fa-bell-o"></h4>
-            <h4 id="send-student-notifications-setting" class="d-inline mb-0">{{#str}}notifications, core{{/str}}</h4>
-            <div data-region="notification" class="col-md-12 mt-3" role="radiogroup" aria-labelledby="send-student-notifications-setting">
-                <label class="form-check">
-                    <input class="form-check-input" type="radio" name="sendstudentnotifications" value="1"{{#defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
-                    {{#str}}sendstudentnotificationsyes, mod_forum{{/str}}
-                </label>
-                <label class="form-check">
-                    <input class="form-check-input" type="radio" name="sendstudentnotifications" value="0"{{^defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
-                    {{#str}}sendstudentnotificationsno, mod_forum{{/str}}
-                </label>
-                {{#helpicon}}
-                    {{>core/help_icon}}
-                {{/helpicon}}
-            </div>
-        </div>
     {{/drawercontent}}
 {{/core/drawer}}
