@@ -42,11 +42,19 @@ defined('MOODLE_INTERNAL') || die();
 class filters implements renderable, templatable {
 
     /**
-     * Course module the report is being run within.
+     * Course modules the report relates to.
+     * Array of stdClass objects
      *
-     * @var stdClass $cm
+     * @var array $cms
      */
-    protected $cm;
+    protected $cms;
+
+    /**
+     * Course ID where the report is being generated.
+     *
+     * @var int $courseid
+     */
+    protected $courseid;
 
     /**
      * Moodle URL used as the form action on the generate button.
@@ -98,13 +106,14 @@ class filters implements renderable, templatable {
     /**
      * Builds renderable filter data.
      *
-     * @param stdClass $cm The course module object.
+     * @param array $cms Array of course module objects.
      * @param moodle_url $actionurl The form action URL.
      * @param array $filterdata (optional) Associative array of data that has been set on available filters, if any,
-     *                                      in the format filtertype => [values]
+     *                                     in the format filtertype => [values]
      */
-    public function __construct(stdClass $cm, moodle_url $actionurl, array $filterdata = []) {
-        $this->cm = $cm;
+    public function __construct(array $cms, moodle_url $actionurl, array $filterdata = []) {
+        $this->cms = $cms;
+        $this->courseid = $cms[0]->course;
         $this->actionurl = $actionurl;
 
         // Prepare groups filter data.
@@ -126,26 +135,46 @@ class filters implements renderable, templatable {
     protected function prepare_groups_data(array $groupsdata): void {
         global $DB, $USER;
 
-        $groupmode = groups_get_activity_groupmode($this->cm);
-        $context = \context_module::instance($this->cm->id);
-        $aag = has_capability('moodle/site:accessallgroups', $context);
         $groupsavailable = [];
+        $allowedgroupsobj = [];
 
-        // If no groups mode enabled, nothing to prepare.
-        if (!in_array($groupmode, [VISIBLEGROUPS, SEPARATEGROUPS])) {
-            return;
+        $usergroups = groups_get_all_groups($this->courseid, $USER->id);
+        $coursegroups = groups_get_all_groups($this->courseid);
+        $forumids = [];
+        $allgroups = false;
+
+        // Check if any forum gives the user access to all groups and no groups.
+        foreach ($this->cms as $cm) {
+            $forumids[] = $cm->instance;
+
+            // Only need to check for all groups access if not confirmed by a previous check.
+            if (!$allgroups) {
+                $groupmode = groups_get_activity_groupmode($cm);
+
+                // If no groups mode enabled on the forum, nothing to prepare.
+                if (!in_array($groupmode, [VISIBLEGROUPS, SEPARATEGROUPS])) {
+                    continue;
+                }
+
+                // Fetch for the current cm's forum.
+                $context = \context_module::instance($cm->id);
+                $aag = has_capability('moodle/site:accessallgroups', $context);
+
+                if ($groupmode == VISIBLEGROUPS || $aag) {
+                    $allgroups = true;
+                }
+            }
         }
 
-        if ($groupmode == VISIBLEGROUPS || $aag) {
-            // Any groups, and no groups.
-            $allowedgroupsobj = groups_get_all_groups($this->cm->course, 0, $this->cm->groupingid);
+        // Any groups, and no groups.
+        if ($allgroups) {
             $nogroups = new stdClass();
             $nogroups->id = -1;
             $nogroups->name = get_string('groupsnone');
-            $allowedgroupsobj[] = $nogroups;
+
+            $allowedgroupsobj = $coursegroups + [$nogroups];
         } else {
-            // Only assigned groups.
-            $allowedgroupsobj = groups_get_all_groups($this->cm->course, $USER->id, $this->cm->groupingid);
+            $allowedgroupsobj = $usergroups;
         }
 
         foreach ($allowedgroupsobj as $group) {
@@ -159,16 +188,15 @@ class filters implements renderable, templatable {
         $this->groupsavailable = $groupsavailable;
         $this->groupsselected = $groupsselected;
 
-        // If export links will require discussion filtering, find and set the discussion IDs.
         $groupsselectedcount = count($groupsselected);
         if ($groupsselectedcount > 0 && $groupsselectedcount < count($groupsavailable)) {
+            list($forumidin, $forumidparams) = $DB->get_in_or_equal($forumids, SQL_PARAMS_NAMED);
             list($groupidin, $groupidparams) = $DB->get_in_or_equal($groupsselected, SQL_PARAMS_NAMED);
-            $dwhere = "course = :courseid AND forum = :forumid AND groupid {$groupidin}";
-            $dparams = [
-                'courseid' => $this->cm->course,
-                'forumid' => $this->cm->instance,
-            ];
-            $dparams += $groupidparams;
+
+            $dwhere = "course = :courseid AND forum {$forumidin} AND groupid {$groupidin}";
+            $dparams = ['courseid' => $this->courseid];
+            $dparams += $forumidparams + $groupidparams;
+
             $discussionids = $DB->get_fieldset_select('forum_discussions', 'DISTINCT id', $dwhere, $dparams);
 
             foreach ($discussionids as $discussionid) {

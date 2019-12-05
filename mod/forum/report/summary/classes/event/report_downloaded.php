@@ -58,13 +58,16 @@ class report_downloaded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        if ($this->other['hasviewall']) {
-            return "The user with id '{$this->userid}' downloaded the summary report for the forum with " .
-                    "course module id '{$this->contextinstanceid}'.";
+        $whose = $this->other['hasviewall'] ? 'the' : 'their own';
+        $description = "The user with id '{$this->userid}' downloaded {$whose} summary report for ";
+
+        if ($this->other['forumid']) {
+            $description .= "the forum with course module id '{$this->contextinstanceid}'.";
         } else {
-            return "The user with id '{$this->userid}' downloaded their own summary report for the forum with " .
-                    "course module id '{$this->contextinstanceid}'.";
+            $description .= "the course with id '{$this->contextinstanceid}'.";
         }
+
+        return $description;
     }
 
     /**
