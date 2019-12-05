@@ -2982,7 +2982,7 @@
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
-  <MOODLE version="3.9" requires="3.2">
+  <MOODLE version="3.9" requires="3.5">
     <UNICODE level="required">
       <FEEDBACK>
         <ON_ERROR message="unicoderequired" />
