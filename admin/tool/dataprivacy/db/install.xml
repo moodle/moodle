@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/dataprivacy/db" VERSION="20181107" COMMENT="XMLDB file for Moodle tool/dataprivacy"
+<XMLDB PATH="admin/tool/dataprivacy/db" VERSION="20191217" COMMENT="XMLDB file for Moodle tool/dataprivacy"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -16,6 +16,7 @@
         <FIELD NAME="dpo" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The user ID of the Data Protection Officer who is reviewing th request"/>
         <FIELD NAME="dpocomment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="DPO's comments (e.g. reason for rejecting the request, etc.)"/>
         <FIELD NAME="dpocommentformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="systemapproved" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified this request object"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time this data request was created"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The last time this data request was updated"/>

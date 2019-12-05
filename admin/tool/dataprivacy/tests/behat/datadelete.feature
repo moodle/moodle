@@ -240,3 +240,13 @@ Feature: Data delete from the privacy API
     And I reload the page
     And I open the action menu in "region-main" "region"
     Then I should not see "Resubmit as new request"
+
+  Scenario: Request data deletion as student with automatic approval turned on
+    Given the following config values are set as admin:
+      | automaticdatadeletionapproval | 1  | tool_dataprivacy |
+    And I log in as "victim"
+    And I follow "Profile" in the user menu
+    And I follow "Delete my account"
+    When I press "Save changes"
+    Then I should see "Your request has been submitted and will be processed soon"
+    And I should see "Approved" in the "Delete all of my personal data" "table_row"

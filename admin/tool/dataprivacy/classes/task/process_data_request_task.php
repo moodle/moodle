@@ -146,14 +146,20 @@ class process_data_request_task extends adhoc_task {
         mtrace('The processing of the user data request has been completed...');
 
         // Create message to notify the user regarding the processing results.
-        $dpo = core_user::get_user($request->dpo);
         $message = new message();
         $message->courseid = $SITE->id;
         $message->component = 'tool_dataprivacy';
         $message->name = 'datarequestprocessingresults';
-        $message->userfrom = $dpo;
-        $message->replyto = $dpo->email;
-        $message->replytoname = fullname($dpo);
+        if (empty($request->dpo)) {
+            // Use the no-reply user as the sender if the privacy officer is not set. This is the case for automatically
+            // approved requests.
+            $fromuser = core_user::get_noreply_user();
+        } else {
+            $fromuser = core_user::get_user($request->dpo);
+            $message->replyto = $fromuser->email;
+            $message->replytoname = fullname($fromuser);
+        }
+        $message->userfrom = $fromuser;
 
         $typetext = null;
         // Prepare the context data for the email message body.
@@ -219,7 +225,7 @@ class process_data_request_task extends adhoc_task {
             if ($emailonly) {
                 // Do not sent an email if the user has been deleted. The user email has been previously deleted.
                 if (!$foruser->deleted) {
-                    $messagesent = email_to_user($foruser, $dpo, $subject, $message->fullmessage, $messagehtml);
+                    $messagesent = email_to_user($foruser, $fromuser, $subject, $message->fullmessage, $messagehtml);
                 }
             } else {
                 $messagesent = message_send($message);
@@ -265,7 +271,7 @@ class process_data_request_task extends adhoc_task {
 
                 // Send message.
                 if ($emailonly) {
-                    email_to_user($requestedby, $dpo, $subject, $message->fullmessage, $messagehtml);
+                    email_to_user($requestedby, $fromuser, $subject, $message->fullmessage, $messagehtml);
                 } else {
                     message_send($message);
                 }
