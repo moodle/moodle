@@ -82,6 +82,37 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertArrayHasKey('invalidshortname', $co->get_errors());
     }
 
+    public function test_invalid_shortname_too_long() {
+        $this->resetAfterTest();
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+
+        $upload = new tool_uploadcourse_course($mode, $updatemode, [
+            'category' => 1,
+            'fullname' => 'New course',
+            'shortname' => str_repeat('X', 2000),
+        ]);
+
+        $this->assertFalse($upload->prepare());
+        $this->assertArrayHasKey('invalidshortnametoolong', $upload->get_errors());
+    }
+
+    public function test_invalid_fullname_too_long() {
+        $this->resetAfterTest();
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+
+        $upload = new tool_uploadcourse_course($mode, $updatemode, [
+            'category' => 1,
+            'fullname' => str_repeat('X', 2000),
+        ]);
+
+        $this->assertFalse($upload->prepare());
+        $this->assertArrayHasKey('invalidfullnametoolong', $upload->get_errors());
+    }
+
     public function test_invalid_visibility() {
         $this->resetAfterTest(true);
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
