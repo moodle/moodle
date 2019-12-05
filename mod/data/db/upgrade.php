@@ -24,29 +24,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_data_upgrade($oldversion) {
     global $CFG, $DB;
 
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2017032800) {
-
-        // Define field completionentries to be added to data. Require a number of entries to be considered complete.
-        $table = new xmldb_table('data');
-        $field = new xmldb_field('completionentries', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'config');
-
-        // Conditionally launch add field timemodified.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Data savepoint reached.
-        upgrade_mod_savepoint(true, 2017032800, 'data');
-    }
-
-    // Automatically generated Moodle v3.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.4.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
 

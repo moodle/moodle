@@ -45,15 +45,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_folder_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
-
-    // Automatically generated Moodle v3.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.4.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG;
 
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
