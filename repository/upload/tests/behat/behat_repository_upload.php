@@ -204,12 +204,15 @@ class behat_repository_upload extends behat_base {
                     $exception
             );
         } else {
-            // Gets the filemanager node specified by the locator which contains the filepicker container.
+            // Gets the filemanager node specified by the locator which contains the filepicker container
+            // either for filepickers created by mform or by admin config.
             $filepickerelement = behat_context_helper::escape($filepickerelement);
             $filepickercontainer = $this->find(
                     'xpath',
                     "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
-                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')]",
+                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')] |" .
+                    "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
+                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' form-setting ')]",
                     $exception
             );
         }
