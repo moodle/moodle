@@ -34,15 +34,6 @@ function xmldb_format_weeks_upgrade($oldversion) {
     global $CFG, $DB;
 
     require_once($CFG->dirroot . '/course/format/weeks/lib.php');
-    require_once($CFG->dirroot . '/course/format/weeks/db/upgradelib.php');
-
-    if ($oldversion < 2017020200) {
-
-        // Remove 'numsections' option and hide or delete orphaned sections.
-        format_weeks_upgrade_remove_numsections();
-
-        upgrade_plugin_savepoint(true, 2017020200, 'format', 'weeks');
-    }
 
     if ($oldversion < 2017050300) {
         // Go through the existing courses using the weeks format with no value set for the 'automaticenddate'.

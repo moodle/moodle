@@ -33,16 +33,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_format_topics_upgrade($oldversion) {
     global $CFG, $DB;
 
-    require_once($CFG->dirroot . '/course/format/topics/db/upgradelib.php');
-
-    if ($oldversion < 2017020200) {
-
-        // Remove 'numsections' option and hide or delete orphaned sections.
-        format_topics_upgrade_remove_numsections();
-
-        upgrade_plugin_savepoint(true, 2017020200, 'format', 'topics');
-    }
-
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
