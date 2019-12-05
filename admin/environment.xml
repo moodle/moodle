@@ -3008,9 +3008,9 @@
           <ON_ERROR message="iconvrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="mbstring" level="optional">
+      <PHP_EXTENSION name="mbstring" level="required">
         <FEEDBACK>
-          <ON_CHECK message="mbstringrecommended" />
+          <ON_ERROR message="mbstringrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="curl" level="required">
