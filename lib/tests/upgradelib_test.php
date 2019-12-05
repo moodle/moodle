@@ -784,44 +784,6 @@ class core_upgradelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test finding theme locations.
-     */
-    public function test_upgrade_find_theme_location() {
-        global $CFG;
-
-        $this->resetAfterTest();
-
-        $CFG->themedir = $this->create_testthemes();
-
-        $this->assertSame($CFG->dirroot . '/theme/boost', upgrade_find_theme_location('boost'));
-        $this->assertSame($CFG->dirroot . '/theme/classic', upgrade_find_theme_location('classic'));
-
-        $this->assertSame($CFG->themedir . '/testtheme', upgrade_find_theme_location('testtheme'));
-        $this->assertSame($CFG->themedir . '/childoftesttheme', upgrade_find_theme_location('childoftesttheme'));
-    }
-
-    /**
-     * Test figuring out if theme is or is a child of a certain theme.
-     */
-    public function test_upgrade_theme_is_from_family() {
-        global $CFG;
-
-        $this->resetAfterTest();
-
-        $CFG->themedir = $this->create_testthemes();
-
-        $this->assertTrue(upgrade_theme_is_from_family('boost', 'boost'), 'Boost is a boost theme');
-        $this->assertTrue(upgrade_theme_is_from_family('boost', 'classic'), 'Classic is a boost base theme');
-        $this->assertFalse(upgrade_theme_is_from_family('classic', 'boost'), 'Boost is not a classic theme');
-
-        $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'childoftesttheme'), 'childoftesttheme is a testtheme');
-        $this->assertFalse(upgrade_theme_is_from_family('testtheme', 'orphantheme'), 'ofphantheme is not a testtheme');
-        $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'infinite'), 'Infinite loop with testtheme parent is true');
-        $this->assertFalse(upgrade_theme_is_from_family('testtheme', 'loop'), 'Infinite loop without testtheme parent is false');
-        $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'themewithbrokenparent'), 'No error on broken parent');
-    }
-
-    /**
      * Data provider of serialized string.
      *
      * @return array

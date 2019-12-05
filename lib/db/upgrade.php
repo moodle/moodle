@@ -922,22 +922,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017082200.01);
     }
 
-    if ($oldversion < 2017082300.01) {
-
-        // This script in included in each major version upgrade process so make sure we don't run it twice.
-        if (empty($CFG->linkcoursesectionsupgradescriptwasrun)) {
-            // Check if the site is using a boost-based theme.
-            // If value of 'linkcoursesections' is set to the old default value, change it to the new default.
-            if (upgrade_theme_is_from_family('boost', $CFG->theme)) {
-                set_config('linkcoursesections', 1);
-            }
-            set_config('linkcoursesectionsupgradescriptwasrun', 1);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017082300.01);
-    }
-
     if ($oldversion < 2017082500.00) {
         // Handle FKs for the table 'analytics_models_log'.
         $table = new xmldb_table('analytics_models_log');
@@ -3811,6 +3795,12 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         upgrade_main_savepoint(true, 2019121800.00);
+    }
+
+    if ($oldversion < 2019122000.01) {
+        // Clean old upgrade setting not used anymore.
+        unset_config('linkcoursesectionsupgradescriptwasrun');
+        upgrade_main_savepoint(true, 2019122000.01);
     }
 
     return true;

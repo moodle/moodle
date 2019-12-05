@@ -4,6 +4,9 @@ This files describes API changes in /admin/*.
 
 * The following functions, previously used (exclusively) by upgrade steps are not available anymore because of the upgrade cleanup performed for this version. See MDL-65809 for more info:
     - upgrade_fix_block_instance_configuration()
+    - upgrade_theme_is_from_family()
+    - upgrade_find_theme_location()
+    - linkcoursesectionsupgradescriptwasrun setting
 
 === 3.8 ===
 
