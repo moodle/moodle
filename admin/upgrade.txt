@@ -7,6 +7,7 @@ This files describes API changes in /admin/*.
     - upgrade_theme_is_from_family()
     - upgrade_find_theme_location()
     - linkcoursesectionsupgradescriptwasrun setting
+    - upgrade_block_positions()
 
 === 3.8 ===
 

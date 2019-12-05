@@ -651,49 +651,6 @@ class core_upgradelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Create two pages with blocks, delete one page and make sure upgrade script deletes orphaned blocks
-     */
-    public function test_delete_block_positions() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot . '/my/lib.php');
-        $this->resetAfterTest();
-
-        // Make sure each block on system dashboard page has a position.
-        $systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => MY_PAGE_PRIVATE));
-        $systemcontext = context_system::instance();
-        $blockinstances = $DB->get_records('block_instances', array('parentcontextid' => $systemcontext->id,
-            'pagetypepattern' => 'my-index', 'subpagepattern' => $systempage->id));
-        $this->assertNotEmpty($blockinstances);
-        foreach ($blockinstances as $bi) {
-            $DB->insert_record('block_positions', ['subpage' => $systempage->id, 'pagetype' => 'my-index', 'contextid' => $systemcontext->id,
-                'blockinstanceid' => $bi->id, 'visible' => 1, 'weight' => $bi->defaultweight]);
-        }
-
-        // Create two users and make two copies of the system dashboard.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $page1 = my_copy_page($user1->id, MY_PAGE_PRIVATE, 'my-index');
-        $page2 = my_copy_page($user2->id, MY_PAGE_PRIVATE, 'my-index');
-
-        $context1 = context_user::instance($user1->id);
-        $context2 = context_user::instance($user2->id);
-
-        // Delete second page without deleting block positions.
-        $DB->delete_records('my_pages', ['id' => $page2->id]);
-
-        // Blocks are still here.
-        $this->assertEquals(count($blockinstances), $DB->count_records('block_positions', ['subpage' => $page1->id, 'pagetype' => 'my-index', 'contextid' => $context1->id]));
-        $this->assertEquals(count($blockinstances), $DB->count_records('block_positions', ['subpage' => $page2->id, 'pagetype' => 'my-index', 'contextid' => $context2->id]));
-
-        // Run upgrade script that should delete orphaned block_positions.
-        upgrade_block_positions();
-
-        // First user still has all his block_positions, second user does not.
-        $this->assertEquals(count($blockinstances), $DB->count_records('block_positions', ['subpage' => $page1->id, 'pagetype' => 'my-index', 'contextid' => $context1->id]));
-        $this->assertEquals(0, $DB->count_records('block_positions', ['subpage' => $page2->id, 'pagetype' => 'my-index']));
-    }
-
-    /**
      * Test the conversion of auth plugin settings names.
      */
     public function test_upgrade_fix_config_auth_plugin_names() {

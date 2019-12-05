@@ -190,17 +190,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017020200.02);
     }
 
-    if ($oldversion < 2017020901.00) {
-
-        // Delete "orphaned" block positions. Note, the query does not use indexes (because there are none),
-        // if it runs too long during upgrade you can comment this line - it will leave orphaned records
-        // in the database but they won't bother you.
-        upgrade_block_positions();
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017020901.00);
-    }
-
     if ($oldversion < 2017021300.00) {
         unset_config('loginpasswordautocomplete');
         upgrade_main_savepoint(true, 2017021300.00);
