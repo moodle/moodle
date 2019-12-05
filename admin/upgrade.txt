@@ -1,5 +1,10 @@
 This files describes API changes in /admin/*.
 
+=== 3.9 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available anymore because of the upgrade cleanup performed for this version. See MDL-65809 for more info:
+    - upgrade_fix_block_instance_configuration()
+
 === 3.8 ===
 
 * Admin setting "Open to Google" (opentogoogle) has been renamed to the more generic "Open to search engines" (opentowebcrawlers).

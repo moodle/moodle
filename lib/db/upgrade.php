@@ -1526,14 +1526,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018020500.00);
     }
 
-    if ($oldversion < 2018022800.01) {
-        // Fix old block configurations that use the deprecated (and now removed) object class.
-        upgrade_fix_block_instance_configuration();
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018022800.01);
-    }
-
     if ($oldversion < 2018022800.02) {
         // Define index taggeditem (unique) to be dropped form tag_instance.
         $table = new xmldb_table('tag_instance');

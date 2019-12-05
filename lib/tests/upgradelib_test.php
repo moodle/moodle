@@ -891,36 +891,6 @@ class core_upgradelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Check that entries in the block_instances table are coverted over correctly.
-     *
-     * @dataProvider encoded_strings_dataprovider
-     * @param string $original The original base64_encoded block config setting.
-     * @param string $expected The expected base64_encoded block config setting.
-     */
-    public function test_upgrade_fix_block_instance_configuration($original, $expected) {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        $data = new stdClass();
-        $data->blockname = 'html';
-        $data->parentcontextid = 1;
-        $data->showinsubcontexts = 0;
-        $data->requirebytheme = 0;
-        $data->pagetypepattern = 'admin-setting-frontpagesettings';
-        $data->defaultregion = 'side-post';
-        $data->defaultweight = 1;
-        $data->timecreated = time();
-        $data->timemodified = time();
-
-        $data->configdata = $original;
-        $entryid = $DB->insert_record('block_instances', $data);
-        upgrade_fix_block_instance_configuration();
-        $record = $DB->get_record('block_instances', ['id' => $entryid]);
-        $this->assertEquals($expected, $record->configdata);
-    }
-
-    /**
      * Check that orphaned files are deleted.
      */
     public function test_upgrade_delete_orphaned_file_records() {
