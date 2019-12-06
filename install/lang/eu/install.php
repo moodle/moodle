@@ -76,7 +76,7 @@ $string['pathssubdataroot'] = '<p>Moodle-k erabiltzaileek igotako fitxategien ed
 <p>Direktorio honetan web-zerbitzariaren erabiltzaileak irakurtzeko eta idazteko baimena izan beharko ditu (normalean \'www-data\', \'nobody\', edo \'apache\').</p>
 <p>Ez litzateke web bidez eskuragarri egon beharko.</p>
 <p>Direktorioa existitzen ez bada, instalazioan sortzeko saiakera egingo da.</p>';
-$string['pathssubdirroot'] = '<p>Moodle-ko kodea daukan direktorioaren helbide osoa.</p>';
+$string['pathssubdirroot'] = '<p>Moodle-ko kodea daukan direktorioaren bide osoa.</p>';
 $string['pathssubwwwroot'] = '<p>Moodle eskuragarri egongo den helbide osoa, hau da, erabiltzaileek Moodle-n sartzeko nabigatzaileareko helbide barran idatziko duten helbidea</p>
 <p>Moodle ezin da hainbat helbidetatik eskuragarri egon. Zure gunea hainbat helbidetatik eskuragarri badago errazena aukeratu eta bertara beste helbideetatik behin-betiko berbideraketak konfiguratu itzazu.</p>
 <p>Zure gunea Internetetik eta barne-sare batetik eskuragarri badago (batzuetan Intranet deitutakoa), hemen helbide publikoa erabili ezazu.</p>
