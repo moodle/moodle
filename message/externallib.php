@@ -3620,11 +3620,6 @@ class core_message_external extends external_api {
     public static function mark_notification_read($notificationid, $timeread) {
         global $CFG, $DB, $USER;
 
-        // Check if private messaging between users is allowed.
-        if (empty($CFG->messaging)) {
-            throw new moodle_exception('disabled', 'message');
-        }
-
         // Warnings array, it can be empty at the end but is mandatory.
         $warnings = array();
 
