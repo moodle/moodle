@@ -315,7 +315,11 @@ foreach($activities as $activity) {
     $datepassedclass = $datepassed ? 'completion-expired' : '';
 
     if ($activity->completionexpected) {
-        $datetext=userdate($activity->completionexpected,get_string('strftimedate','langconfig'));
+        if ($csv) {
+            $datetext = userdate($activity->completionexpected, "%F %T");
+        } else {
+            $datetext = userdate($activity->completionexpected, get_string('strftimedate', 'langconfig'));
+        }
     } else {
         $datetext='';
     }
@@ -415,6 +419,9 @@ foreach($progress as $user) {
         $fulldescribe=get_string('progress-title','completion',$a);
 
         if ($csv) {
+            if ($date != '') {
+                $date = userdate($thisprogress->timemodified, "%F %T");
+            }
             print $sep.csv_quote($describe).$sep.csv_quote($date);
         } else {
             $celltext = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
