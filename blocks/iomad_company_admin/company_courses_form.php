@@ -80,9 +80,9 @@ class company_courses_form extends moodleform {
               <td id="buttonscell">
                   <p class="arrow_button">
                     <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('add') . '"
-                           title="' . print_string('add') .'" class="btn btn-secondary"/><br />
+                           title="' . get_string('add') .'" class="btn btn-secondary"/><br />
                     <input name="remove" id="remove" type="submit" value="'. get_string('remove').'&nbsp;'.$OUTPUT->rarrow(). '"
-                           title="'. print_string('remove') .'" class="btn btn-secondary"/><br />
+                           title="'. get_string('remove') .'" class="btn btn-secondary"/><br />
                  </p>
               </td>
               <td id="potentialcell">');
