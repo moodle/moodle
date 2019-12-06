@@ -3448,5 +3448,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019052002.07);
     }
 
+    if ($oldversion < 2019052003.05) {
+        // Delete any tool_cohortroles mappings for roles which no longer exist.
+        $DB->delete_records_select('tool_cohortroles', "roleid NOT IN (SELECT id FROM {role})");
+
+        // Delete any role assignments for roles which no longer exist.
+        $DB->delete_records_select('role_assignments', "roleid NOT IN (SELECT id FROM {role})");
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019052003.05);
+    }
+
     return true;
 }
