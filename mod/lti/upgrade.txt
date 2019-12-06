@@ -1,5 +1,10 @@
 This files describes API changes in the lti code.
 
+=== 3.10 ===
+
+* Select Content supports multiple, allowing a tool to return more than one link at a time.
+  Parameter multiple in function lti_build_content_item_selection_request() is now set to true.
+
 === 3.8 ===
 
 * The following functions have been finally deprecated and can not be used anymore:

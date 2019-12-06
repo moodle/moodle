@@ -2,7 +2,7 @@
 Feature: Content-Item support
   In order to easily add activities and content in a course from an external tool
   As a teacher
-  I need to utilise a tool that supports the Content-Item Message type
+  I need to utilise a tool that supports the Deep Linking (Content-Item Message) type
 
   Background:
     Given the following "users" exist:
@@ -16,25 +16,25 @@ Feature: Content-Item support
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
     And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
-    # Create tool type that supports content-item.
+    # Create tool type that supports deep linking.
     And I follow "configure a tool manually"
     And I set the field "Tool name" to "Teaching Tool 1"
     And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
     And I set the field "Tool configuration usage" to "Show in activity chooser and as a preconfigured tool"
     And I expand all fieldsets
-    And I set the field "Content-Item Message" to "1"
+    And I set the field "Supports Deep Linking (Content-Item Message)" to "1"
     And I press "Save changes"
     And I log out
 
   @javascript
-  Scenario: Tool that supports Content-Item Message type should be able to configure a tool via the Select content button
+  Scenario: Tool that supports Deep Linking should be able to configure a tool via the Select content button
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Teaching Tool 1" to section "1"
     Then the "Select content" "button" should be enabled
 
   @javascript
-  Scenario: Editing a tool's settings that was configured from a preconfigured tool that supports Content-Item.
+  Scenario: Editing a tool's settings that was configured from a preconfigured tool that supports Deep Linking.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Teaching Tool 1" to section "1"
@@ -67,12 +67,12 @@ Feature: Content-Item support
     And I set the field "Activity name" to "Test tool activity 1"
     And the "Select content" "button" should be disabled
     And the "Tool URL" "field" should be enabled
-    # Selecting a tool that supports content-item: Select content button - enabled, Tool URL - enabled.
+    # Selecting a tool that supports deep linking: Select content button - enabled, Tool URL - enabled.
     And I set the field "Preconfigured tool" to "Teaching Tool 1"
     And I set the field "Activity name" to "Test tool activity 1"
     Then the "Select content" "button" should be enabled
     And the "Tool URL" "field" should be enabled
-    # Selecting a tool that does not support content-item: Select content button - disabled, Tool URL - disabled.
+    # Selecting a tool that does not support deep linking: Select content button - disabled, Tool URL - disabled.
     And I set the field "Preconfigured tool" to "Teaching Tool 2"
     And I set the field "Activity name" to "Test tool activity 1"
     And the "Select content" "button" should be disabled
