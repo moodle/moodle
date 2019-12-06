@@ -144,6 +144,10 @@ class api {
         $rolesadded = array();
         $rolesremoved = array();
 
+        // Remove any cohort role mappings for roles which have been deleted.
+        // The role assignments are not a consideration because these will have been removed when the role was.
+        $DB->delete_records_select('tool_cohortroles', "roleid NOT IN (SELECT id FROM {role})");
+
         // Get all cohort role assignments and group them by user and role.
         $all = cohort_role_assignment::get_records(array(), 'userid, roleid');
         // We build an better structure to loop on.
