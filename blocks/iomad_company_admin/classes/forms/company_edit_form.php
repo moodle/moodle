@@ -338,8 +338,9 @@ class company_edit_form extends \company_moodleform {
         $ischild = false;
         try {
             $theme = \theme_config::load($companytheme);
+            $iomadthemes = array('iomad', 'iomadboost', 'iomadbootstrap');
             foreach ($theme->parents as $parentstheme) {
-                if($parentstheme == 'iomad' || $parentstheme == 'bootstrap' ){
+                if (in_array($parentstheme, $iomadthemes)){
                     $ischild = true;
                     break;
                 }
