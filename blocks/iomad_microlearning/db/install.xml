@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/iomad_microlearning/db" VERSION="20191014" COMMENT="XMLDB file for Moodle blocks/iomad_microlearning"
+<XMLDB PATH="blocks/iomad_microlearning/db" VERSION="20191208" COMMENT="XMLDB file for Moodle blocks/iomad_microlearning"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -27,7 +27,7 @@
         <FIELD NAME="active" TYPE="binary" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="interval" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="releaseinterval" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="defaultdue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
@@ -79,7 +79,7 @@
         <FIELD NAME="reminder1_delivered" TYPE="binary" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="reminder2_delivered" TYPE="binary" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecompleted" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="accesskey" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="accesskey" TYPE="char" LENGTH="240" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

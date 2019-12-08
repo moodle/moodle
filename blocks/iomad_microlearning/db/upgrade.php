@@ -75,5 +75,26 @@ function xmldb_block_iomad_microlearning_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2019101400, 'iomad_microlearning');
     }
 
+    if ($oldversion < 2019120800) {
+
+        // Rename field releaseinterval on table microlearning_thread to releaseinterval.
+        $table = new xmldb_table('microlearning_thread');
+        $field = new xmldb_field('interval', XMLDB_TYPE_INTEGER, '20', null, null, null, '0', 'timecreated');
+
+        // Launch rename field releaseinterval.
+        $dbman->rename_field($table, $field, 'releaseinterval');
+
+        // Changing precision of field accesskey on table microlearning_thread_user to (240).
+        $table = new xmldb_table('microlearning_thread_user');
+        $field = new xmldb_field('accesskey', XMLDB_TYPE_CHAR, '240', null, XMLDB_NOTNULL, null, null, 'timecompleted');
+
+        // Launch change of precision for field accesskey.
+        $dbman->change_field_precision($table, $field);
+
+
+        // Iomad_microlearning savepoint reached.
+        upgrade_block_savepoint(true, 2019120800, 'iomad_microlearning');
+    }
+
     return $result;
 }

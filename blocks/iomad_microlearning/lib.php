@@ -138,7 +138,7 @@ class microlearning {
 
             $event = \block_iomad_microlearning\event\thread_created::create(array('context' => context_system::instance(),
                                                                                    'userid' => $USER->id,
-                                                                                   'objectid' => $thread->id,
+                                                                                   'objectid' => $threadrec->id,
                                                                                    'other' => $eventother));
             $event->trigger();
             return true;
@@ -202,7 +202,7 @@ class microlearning {
 
             $event = \block_iomad_microlearning\event\thread_created::create(array('context' => context_system::instance(),
                                                                                    'userid' => $USER->id,
-                                                                                   'objectid' => $thread->id,
+                                                                                   'objectid' => $threadrec->id,
                                                                                    'other' => $eventother));
             $event->trigger();
             return true;
