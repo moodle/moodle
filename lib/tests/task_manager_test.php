@@ -50,6 +50,12 @@ class core_task_manager_testcase extends advanced_testcase {
                     (object)['id' => 7, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
                     (object)['id' => 8, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
                     (object)['id' => 9, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 10, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 11, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 12, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 13, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 14, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 15, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
                 ],
                 [
                     (object)['id' => 1, 'classname' => '\core\task\asynchronous_backup_task'],
@@ -59,8 +65,14 @@ class core_task_manager_testcase extends advanced_testcase {
                     (object)['id' => 3, 'classname' => '\core\task\asynchronous_backup_task'],
                     (object)['id' => 9, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
                     (object)['id' => 4, 'classname' => '\core\task\asynchronous_backup_task'],
+                    (object)['id' => 10, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
                     (object)['id' => 5, 'classname' => '\core\task\asynchronous_backup_task'],
                     (object)['id' => 6, 'classname' => '\core\task\asynchronous_backup_task'],
+                    (object)['id' => 11, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 12, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 13, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 14, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
+                    (object)['id' => 15, 'classname' => '\tool_dataprivacy\task\process_data_request_task'],
                 ],
             ],
             // The same lopsided queue but now the first item is gone.
@@ -148,6 +160,20 @@ class core_task_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Reduces a list of tasks into a simpler string
+     *
+     * @param array $input array of tasks
+     * @return string list of task ids
+     */
+    function flatten($tasks) {
+        $list = '';
+        foreach ($tasks as $id => $task) {
+            $list .= ' ' . $task->id;
+        }
+        return $list;
+    }
+
+    /**
      * Test that the Quality of Service reordering works.
      *
      * @dataProvider test_ensure_adhoc_task_qos_provider
@@ -159,6 +185,11 @@ class core_task_manager_testcase extends advanced_testcase {
     public function test_ensure_adhoc_task_qos(array $input, array $expected) {
         $this->resetAfterTest();
         $result = \core\task\manager::ensure_adhoc_task_qos($input);
+
+
+        $result = $this->flatten($result);
+        $expected = $this->flatten($expected);
+
         $this->assertEquals($expected, $result);
     }
 
