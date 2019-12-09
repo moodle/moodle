@@ -113,3 +113,5 @@ $string['timecreated'] = 'Time created';
 $string['updown'] = 'Up/Down';
 $string['url'] = 'URL';
 $string['url_help'] = 'Specify a site URL instead';
+$string['microllinkexpires'] = 'Microlearning email link expires';
+$string['microllinkexpires_help'] = 'This is the length of time after which the link sent out via email will not log the user in automatically.';

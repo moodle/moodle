@@ -39,8 +39,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $settings = new admin_settingpage('block_iomad_microlearning', get_string('pluginname', 'block_iomad_microlearning'));
-
     $settings->add(new admin_setting_configtext('microlearninglinkexpires',
                                                 get_string('microlearninglinkexpires', 'block_iomad_microlearning'),
                                                 get_string('microlearninglinkexpires_help', 'block_iomad_microlearning'),
