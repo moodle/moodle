@@ -55,9 +55,11 @@ require_capability('moodle/restore:restorecourse', $context);
 if (is_null($course)) {
     $coursefullname = $SITE->fullname;
     $courseshortname = $SITE->shortname;
+    $courseurl = new moodle_url('/');
 } else {
     $coursefullname = $course->fullname;
     $courseshortname = $course->shortname;
+    $courseurl = course_get_url($course->id);
 }
 
 // Show page header.
@@ -173,7 +175,6 @@ if ($restore->get_stage() != restore_ui::STAGE_PROCESS) {
     \core\task\manager::queue_adhoc_task($asynctask);
 
     // Add ajax progress bar and initiate ajax via a template.
-    $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
     $restoreurl = new moodle_url('/backup/restorefile.php', array('contextid' => $contextid));
     $progresssetup = array(
             'backupid' => $restoreid,
@@ -182,7 +183,6 @@ if ($restore->get_stage() != restore_ui::STAGE_PROCESS) {
             'restoreurl' => $restoreurl->out()
     );
     echo $renderer->render_from_template('core/async_backup_status', $progresssetup);
-
 }
 
 $restore->destroy();
