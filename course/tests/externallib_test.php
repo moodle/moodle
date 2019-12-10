@@ -964,7 +964,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         foreach ($sections[2]['modules'] as $module) {
             if ($module['id'] == $urlcm->id and $module['modname'] == 'url') {
                 $this->assertContains('width=100,height=100', $module['onclick']);
-                $this->assertContains('moodle.org', $module['customdata']);
                 $testexecuted = $testexecuted + 1;
             }
         }
