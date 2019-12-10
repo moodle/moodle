@@ -15013,7 +15013,9 @@ textarea[data-auto-rows] {
         background-image: url([[pix:t/collapsed_rtl]]);
         */
     /*rtl:remove*/
-    background-image: url([[pix:t/collapsed]]); } }
+    background-image: url([[pix:t/collapsed]]); }
+  .mform .form-inline .fdefaultcustom label {
+    justify-content: initial; } }
 
 .pagelayout-login .card-title h2 img {
   max-width: 100%;
