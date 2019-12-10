@@ -22,190 +22,177 @@
  * @copyright  2017 Simey Lameze <lameze@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax'], function($, Ajax) {
+import Ajax from 'core/ajax';
 
-    /**
-     * Delete a calendar event.
-     *
-     * @method deleteEvent
-     * @param {int} eventId The event id.
-     * @param {bool} deleteSeries Whether to delete all events in the series
-     * @return {promise} Resolved with requested calendar event
-     */
-    var deleteEvent = function(eventId, deleteSeries) {
-        if (typeof deleteSeries === 'undefined') {
-            deleteSeries = false;
-        }
-        var request = {
-            methodname: 'core_calendar_delete_calendar_events',
-            args: {
-                events: [{
-                    eventid: eventId,
-                    repeat: deleteSeries,
-                }]
-            }
-        };
-
-        return Ajax.call([request])[0];
-    };
-
-    /**
-     * Get a calendar event by id.
-     *
-     * @method getEventById
-     * @param {int} eventId The event id.
-     * @return {promise} Resolved with requested calendar event
-     */
-    var getEventById = function(eventId) {
-
-        var request = {
-            methodname: 'core_calendar_get_calendar_event_by_id',
-            args: {
-                eventid: eventId
-            }
-        };
-
-        return Ajax.call([request])[0];
-    };
-
-    /**
-     * Submit the form data for the event form.
-     *
-     * @method submitCreateUpdateForm
-     * @param {string} formdata The URL encoded values from the form
-     * @return {promise} Resolved with the new or edited event
-     */
-    var submitCreateUpdateForm = function(formdata) {
-        var request = {
-            methodname: 'core_calendar_submit_create_update_form',
-            args: {
-                formdata: formdata
-            }
-        };
-
-        return Ajax.call([request])[0];
-    };
-
-    /**
-     * Get calendar data for the month view.
-     *
-     * @method getCalendarMonthData
-     * @param {Number} year Year
-     * @param {Number} month Month
-     * @param {Number} courseid The course id.
-     * @param {Number} categoryid The category id.
-     * @param {Bool} includenavigation Whether to include navigation.
-     * @param {Bool} mini Whether the month is in mini view.
-     * @return {promise} Resolved with the month view data.
-     */
-    var getCalendarMonthData = function(year, month, courseid, categoryid, includenavigation, mini) {
-        var request = {
-            methodname: 'core_calendar_get_calendar_monthly_view',
-            args: {
-                year: year,
-                month: month,
-                courseid: courseid,
-                categoryid: categoryid,
-                includenavigation: includenavigation,
-                mini: mini
-            }
-        };
-
-        return Ajax.call([request])[0];
-    };
-
-    /**
-     * Get calendar data for the day view.
-     *
-     * @method getCalendarDayData
-     * @param {Number} year Year
-     * @param {Number} month Month
-     * @param {Number} day Day
-     * @param {Number} courseid The course id.
-     * @param {Number} categoryId The id of the category whose events are shown
-     * @return {promise} Resolved with the day view data.
-     */
-    var getCalendarDayData = function(year, month, day, courseid, categoryId) {
-        var request = {
-            methodname: 'core_calendar_get_calendar_day_view',
-            args: {
-                year: year,
-                month: month,
-                day: day,
-                courseid: courseid,
-                categoryid: categoryId,
-            }
-        };
-
-        return Ajax.call([request])[0];
-    };
-
-    /**
-     * Change the start day for the given event id. The day timestamp
-     * only has to be any time during the target day because only the
-     * date information is extracted, the time of the day is ignored.
-     *
-     * @param {int} eventId The id of the event to update
-     * @param {int} dayTimestamp A timestamp for some time during the target day
-     * @return {promise}
-     */
-    var updateEventStartDay = function(eventId, dayTimestamp) {
-        var request = {
-            methodname: 'core_calendar_update_event_start_day',
-            args: {
+/**
+ * Delete a calendar event.
+ *
+ * @method deleteEvent
+ * @param {number} eventId The event id.
+ * @param {boolean} deleteSeries Whether to delete all events in the series
+ * @return {promise} Resolved with requested calendar event
+ */
+export const deleteEvent = (eventId, deleteSeries = false) => {
+    const request = {
+        methodname: 'core_calendar_delete_calendar_events',
+        args: {
+            events: [{
                 eventid: eventId,
-                daytimestamp: dayTimestamp
-            }
-        };
-
-        return Ajax.call([request])[0];
+                repeat: deleteSeries,
+            }]
+        }
     };
 
-    /**
-     * Get calendar upcoming data.
-     *
-     * @method getCalendarUpcomingData
-     * @param {Number} courseid The course id.
-     * @param {Number} categoryid The category id.
-     * @return {promise} Resolved with the month view data.
-     */
-    var getCalendarUpcomingData = function(courseid, categoryid) {
-        var request = {
-            methodname: 'core_calendar_get_calendar_upcoming_view',
-            args: {
-                courseid: courseid,
-                categoryid: categoryid,
-            }
-        };
+    return Ajax.call([request])[0];
+};
 
-        return Ajax.call([request])[0];
+/**
+ * Get a calendar event by id.
+ *
+ * @method getEventById
+ * @param {number} eventId The event id.
+ * @return {promise} Resolved with requested calendar event
+ */
+export const getEventById = (eventId) => {
+
+    const request = {
+        methodname: 'core_calendar_get_calendar_event_by_id',
+        args: {
+            eventid: eventId
+        }
     };
 
-    /**
-     * Get the groups by course id.
-     *
-     * @param {Number} courseid The course id to fetch the groups from.
-     * @return {promise} Resolved with the course groups.
-     */
-    var getCourseGroupsData = function(courseid) {
-        var request = {
-            methodname: 'core_group_get_course_groups',
-            args: {
-                courseid: courseid
-            }
-        };
+    return Ajax.call([request])[0];
+};
 
-        return Ajax.call([request])[0];
+/**
+ * Submit the form data for the event form.
+ *
+ * @method submitCreateUpdateForm
+ * @param {string} formData The URL encoded values from the form
+ * @return {promise} Resolved with the new or edited event
+ */
+export const submitCreateUpdateForm = (formData) => {
+    const request = {
+        methodname: 'core_calendar_submit_create_update_form',
+        args: {
+            formdata: formData
+        }
     };
 
-    return {
-        getEventById: getEventById,
-        deleteEvent: deleteEvent,
-        updateEventStartDay: updateEventStartDay,
-        submitCreateUpdateForm: submitCreateUpdateForm,
-        getCalendarMonthData: getCalendarMonthData,
-        getCalendarDayData: getCalendarDayData,
-        getCalendarUpcomingData: getCalendarUpcomingData,
-        getCourseGroupsData: getCourseGroupsData
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Get calendar data for the month view.
+ *
+ * @method getCalendarMonthData
+ * @param {number} year Year
+ * @param {number} month Month
+ * @param {number} courseId The course id.
+ * @param {number} categoryId The category id.
+ * @param {boolean} includeNavigation Whether to include navigation.
+ * @param {boolean} mini Whether the month is in mini view.
+ * @param {number} day Day (optional)
+ * @return {promise} Resolved with the month view data.
+ */
+export const getCalendarMonthData = (year, month, courseId, categoryId, includeNavigation, mini, day = 1) => {
+    const request = {
+        methodname: 'core_calendar_get_calendar_monthly_view',
+        args: {
+            year,
+            month,
+            courseid: courseId,
+            categoryid: categoryId,
+            includenavigation: includeNavigation,
+            mini,
+            day,
+        }
     };
-});
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Get calendar data for the day view.
+ *
+ * @method getCalendarDayData
+ * @param {number} year Year
+ * @param {number} month Month
+ * @param {number} day Day
+ * @param {number} courseId The course id.
+ * @param {number} categoryId The id of the category whose events are shown
+ * @return {promise} Resolved with the day view data.
+ */
+export const getCalendarDayData = (year, month, day, courseId, categoryId) => {
+    const request = {
+        methodname: 'core_calendar_get_calendar_day_view',
+        args: {
+            year,
+            month,
+            day,
+            courseid: courseId,
+            categoryid: categoryId,
+        }
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Change the start day for the given event id. The day timestamp
+ * only has to be any time during the target day because only the
+ * date information is extracted, the time of the day is ignored.
+ *
+ * @param {int} eventId The id of the event to update
+ * @param {int} dayTimestamp A timestamp for some time during the target day
+ * @return {promise}
+ */
+export const updateEventStartDay = (eventId, dayTimestamp) => {
+    const request = {
+        methodname: 'core_calendar_update_event_start_day',
+        args: {
+            eventid: eventId,
+            daytimestamp: dayTimestamp
+        }
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Get calendar upcoming data.
+ *
+ * @method getCalendarUpcomingData
+ * @param {number} courseId The course id.
+ * @param {number} categoryId The category id.
+ * @return {promise} Resolved with the month view data.
+ */
+export const getCalendarUpcomingData = (courseId, categoryId) => {
+    const request = {
+        methodname: 'core_calendar_get_calendar_upcoming_view',
+        args: {
+            courseid: courseId,
+            categoryid: categoryId,
+        }
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Get the groups by course id.
+ *
+ * @param {Number} courseId The course id to fetch the groups from.
+ * @return {promise} Resolved with the course groups.
+ */
+export const getCourseGroupsData = (courseId) => {
+    const request = {
+        methodname: 'core_group_get_course_groups',
+        args: {
+            courseid: courseId
+        }
+    };
+
+    return Ajax.call([request])[0];
+};
