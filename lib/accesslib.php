@@ -6186,6 +6186,21 @@ class context_helper extends context {
     }
 
     /**
+     * Gets the current context to be used for navigation tree filtering.
+     *
+     * @param context|null $context The current context to be checked against.
+     * @return context|null the context that navigation tree filtering should use.
+     */
+    public static function get_navigation_filter_context(?context $context): ?context {
+        global $CFG;
+        if (!empty($CFG->filternavigationwithsystemcontext)) {
+            return context_system::instance();
+        } else {
+            return $context;
+        }
+    }
+
+    /**
      * not used
      */
     public function get_url() {
