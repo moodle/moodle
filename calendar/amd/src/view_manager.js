@@ -328,8 +328,8 @@ const stopLoading = (root) => {
  * @param {object} root The container element.
  * @param {number} courseId The course id.
  * @param {number} categoryId The id of the category whose events are shown
- * @param {string} template The template to be rendered.
  * @param {object} target The element being replaced. If not specified, the calendarwrapper is used.
+ * @param {string} template The template to be rendered.
  * @return {promise}
  */
 export const reloadCurrentUpcoming = (root, courseId = 0, categoryId = 0, target = null, template = '') => {
