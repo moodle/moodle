@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return string A warning message if a private key does not exist and cannot be generated.
  */
 function mod_lti_verify_private_key() {
-    $key = get_config('privatekey', 'mod_lti');
+    $key = get_config('mod_lti', 'privatekey');
 
     // If we already generated a valid key, no need to check.
     if (empty($key)) {
