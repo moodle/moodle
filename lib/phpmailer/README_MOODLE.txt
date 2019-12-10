@@ -1,13 +1,13 @@
-Description of PHPMailer 6.0.7 library import into Moodle
+Description of PHPMailer 6.1.3 library import into Moodle
 
 We now use a vanilla version of phpmailer and do our customisations in a
 subclass.
 
-For more information on this version of PHPMailer, check out https://github.com/PHPMailer/PHPMailer/releases/tag/v6.0.7
+For more information on this version of PHPMailer, check out https://github.com/PHPMailer/PHPMailer/releases/tag/v6.1.3
 
 To upgrade this library:
 1. Download the latest release of PHPMailer in https://github.com/PHPMailer/PHPMailer/releases.
-2. Remove the lib/phpmailer/language folder. This will be replaced with language folder from the latest release.
+2. Remove everything inside lib/phpmailer/ folder except README_MOODLE.txt file (this file).
 3. Extract the contents of the release archive to lib/phpmailer.
 4. Remove the following files that were extracted:
    - composer.json
