@@ -1,6 +1,10 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.9 ===
+
+* Add class .d-print-block to #page, #page-wrapper and #page content to fix Firefox printing problems
+
 === 3.8 ===
 
 * Moodle does not produce chunked CSS anymore, instead an unique css fils is generated and served (MDL-55751). This implies:
