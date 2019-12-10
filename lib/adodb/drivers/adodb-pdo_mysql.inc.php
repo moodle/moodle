@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.14  06-Jan-2019
+@version   v5.20.15  24-Nov-2019
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -23,7 +23,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	var $hasGenID = true;
 	var $_genIDSQL = "update %s set id=LAST_INSERT_ID(id+1);";
 	var $_dropSeqSQL = "drop table %s";
-	var $fmtTimeStamp = "'Y-m-d, H:i:s'";
+	var $fmtTimeStamp = "'Y-m-d H:i:s'";
 	var $nameQuote = '`';
 
 	function _init($parentDriver)
