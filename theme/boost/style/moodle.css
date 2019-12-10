@@ -16181,7 +16181,9 @@ textarea[data-auto-rows] {
         background-image: url([[pix:t/collapsed_rtl]]);
         */
     /*rtl:remove*/
-    background-image: url([[pix:t/collapsed]]); } }
+    background-image: url([[pix:t/collapsed]]); }
+  .mform .form-inline .fdefaultcustom label {
+    justify-content: initial; } }
 
 .input-group.form-inset .form-inset-item {
   padding-top: calc(0.375rem + 1px);
