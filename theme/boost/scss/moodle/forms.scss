@@ -464,6 +464,16 @@ textarea[data-auto-rows] {
         /*rtl:remove*/
         background-image: url([[pix:t/collapsed]]);
     }
+
+    .mform {
+        .form-inline {
+            .fdefaultcustom {
+                label {
+                    justify-content: initial;
+                }
+            }
+        }
+    }
 }
 
 // Form inset on the left/right.
