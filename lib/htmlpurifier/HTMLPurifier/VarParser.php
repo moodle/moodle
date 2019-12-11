@@ -7,34 +7,34 @@
 class HTMLPurifier_VarParser
 {
 
-    const STRING = 1;
+    const C_STRING = 1;
     const ISTRING = 2;
     const TEXT = 3;
     const ITEXT = 4;
-    const INT = 5;
-    const FLOAT = 6;
-    const BOOL = 7;
+    const C_INT = 5;
+    const C_FLOAT = 6;
+    const C_BOOL = 7;
     const LOOKUP = 8;
     const ALIST = 9;
     const HASH = 10;
-    const MIXED = 11;
+    const C_MIXED = 11;
 
     /**
      * Lookup table of allowed types. Mainly for backwards compatibility, but
      * also convenient for transforming string type names to the integer constants.
      */
     public static $types = array(
-        'string' => self::STRING,
+        'string' => self::C_STRING,
         'istring' => self::ISTRING,
         'text' => self::TEXT,
         'itext' => self::ITEXT,
-        'int' => self::INT,
-        'float' => self::FLOAT,
-        'bool' => self::BOOL,
+        'int' => self::C_INT,
+        'float' => self::C_FLOAT,
+        'bool' => self::C_BOOL,
         'lookup' => self::LOOKUP,
         'list' => self::ALIST,
         'hash' => self::HASH,
-        'mixed' => self::MIXED
+        'mixed' => self::C_MIXED
     );
 
     /**
@@ -42,7 +42,7 @@ class HTMLPurifier_VarParser
      * allowed value lists.
      */
     public static $stringTypes = array(
-        self::STRING => true,
+        self::C_STRING => true,
         self::ISTRING => true,
         self::TEXT => true,
         self::ITEXT => true,
@@ -74,7 +74,7 @@ class HTMLPurifier_VarParser
         // These are basic checks, to make sure nothing horribly wrong
         // happened in our implementations.
         switch ($type) {
-            case (self::STRING):
+            case (self::C_STRING):
             case (self::ISTRING):
             case (self::TEXT):
             case (self::ITEXT):
@@ -85,17 +85,17 @@ class HTMLPurifier_VarParser
                     $var = strtolower($var);
                 }
                 return $var;
-            case (self::INT):
+            case (self::C_INT):
                 if (!is_int($var)) {
                     break;
                 }
                 return $var;
-            case (self::FLOAT):
+            case (self::C_FLOAT):
                 if (!is_float($var)) {
                     break;
                 }
                 return $var;
-            case (self::BOOL):
+            case (self::C_BOOL):
                 if (!is_bool($var)) {
                     break;
                 }
@@ -119,7 +119,7 @@ class HTMLPurifier_VarParser
                     }
                 }
                 return $var;
-            case (self::MIXED):
+            case (self::C_MIXED):
                 return $var;
             default:
                 $this->errorInconsistent(get_class($this), $type);
