@@ -55,7 +55,8 @@ define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], f
             customEvents.events.escape,
         ]);
         jQuery('body').on(customEvents.events.escape, '[data-toggle=popover]', function() {
-            jQuery(this).popover('hide');
+            // Use "blur" instead of "popover('hide')" to prevent issue that the same tooltip can't be opened again.
+            jQuery(this).trigger('blur');
         });
 
         jQuery("html").popover({
