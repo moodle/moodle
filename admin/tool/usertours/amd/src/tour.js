@@ -646,14 +646,15 @@ export default class Tour {
 
         // Is this the first step?
         if (this.isFirstStep(stepConfig.stepNumber)) {
-            template.find('[data-role="previous"]').prop('disabled', true);
+            template.find('[data-role="previous"]').hide();
         } else {
             template.find('[data-role="previous"]').prop('disabled', false);
         }
 
         // Is this the final step?
         if (this.isLastStep(stepConfig.stepNumber)) {
-            template.find('[data-role="next"]').prop('disabled', true);
+            template.find('[data-role="next"]').hide();
+            template.find('[data-role="end"]').removeClass("btn-secondary").addClass("btn-primary");
         } else {
             template.find('[data-role="next"]').prop('disabled', false);
         }
