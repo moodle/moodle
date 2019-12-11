@@ -1,29 +1,21 @@
-Description of SimplePie v1.3dev library import into Moodle
+Description of SimplePie v1.5.3 library import into Moodle
 
-Obtained from http://github.com/simplepie/simplepie/commit/798f4674468316b8cc70fe8de73034c072dbdc15
+Obtained from https://github.com/simplepie/simplepie/releases/
+
+To upgrade this library:
+1. Download the latest release of SimplePie from https://github.com/simplepie/simplepie/releases/
+2. Remove everything inside lib/simplepie/ directory except README_MOODLE.txt (this file) and moodle_simplepie.php.
+3. Extract the contents of the release archive into a directory.
+4. Move the following files/directories from the extracted directory into lib/simplepie:
+    - library/
+    - autoloader.php
+    - LICENSE.txt
+    - README.markdown
+5. That should leave you with just the following. Do not move them. If there is any difference, check if they also need to be moved and update this doc:
+    - idn (This is a third-party library that SimplePie can optionally use. We don't use this in Moodle)
+    - composer.json
+    - db.sql
 
 Changes:
   * None. This import contains _NO_CHANGES_ to the simplepie.inc file, changes are
     controlled through OO extension of the classes instead.
-
-Dan Poltawski <talktodan@gmail.com>
-Petr Skoda
-
-2016/09/22
-==========
-Updated to version 1.4.2 (MDL-56001)
-The actual code has not been updated and still reads 1.4.1, but this is tagged as 1.4.2 on the site.
-My guess is that they forgot to update the numbers when tagging the new version number. An issue has
-been created on their github account (https://github.com/simplepie/simplepie/issues/472).
-By Adrian Greeve <adrian@moodle.com>
-
-
-2017/09/28
-==========
-Updated to version 1.5.0 (MDL-60236)
-By Ankit Agarwal <ankit.agrr@gmail.com>
-
-2019/06/18
-==========
-Updated to version 1.5.2 (MDL-65750)
-By Simey Lameze <simey@moodle.com>
