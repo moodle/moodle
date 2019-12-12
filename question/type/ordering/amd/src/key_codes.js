@@ -26,7 +26,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define(function() {
+define([], function() {
 
     return /** @alias module:qtype_ordering/key_codes */ {
         'tab': 9,

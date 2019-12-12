@@ -2,6 +2,9 @@
 Change log for qtype_ordering
 ========================================
 
+2019-12-12 (98)
+ - fix JS error on Moodle >= 3.7 caused by incorrect syntax in 'define' statement in key_codes.js
+
 2019-10-24 (96)
  - standardize layout and spelling in CHANGES.txt
 
