@@ -543,7 +543,7 @@ $CFG->admin = 'admin';
 //
 // Location for lock files used by the File locking factory. This must exist
 // on a shared file system that supports locking.
-//      $CFG->lock_file_root = $CFG->dataroot . '/lock';
+//      $CFG->file_lock_root = $CFG->dataroot . '/lock';
 //
 //
 // Alternative task logging.
