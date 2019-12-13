@@ -52,8 +52,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender, $recipient);
         $this->send_fake_message($sender, $recipient);
 
-        \core_message\api::mark_all_read_for_user($recipient->id);
-        $this->assertDebuggingCalled();
+        \core_message\api::mark_all_notifications_as_read($recipient->id);
+        \core_message\api::mark_all_messages_as_read($recipient->id);
         $this->assertEquals(message_count_unread_messages($recipient), 0);
     }
 
@@ -75,8 +75,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender2, $recipient);
         $this->send_fake_message($sender2, $recipient);
 
-        \core_message\api::mark_all_read_for_user($recipient->id, $sender1->id);
-        $this->assertDebuggingCalled();
+        \core_message\api::mark_all_notifications_as_read($recipient->id, $sender1->id);
+        $conversationid = \core_message\api::get_conversation_between_users([$recipient->id, $sender1->id]);
+        \core_message\api::mark_all_messages_as_read($recipient->id, $conversationid);
+
         $this->assertEquals(message_count_unread_messages($recipient), 3);
     }
 
@@ -91,12 +93,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender, $recipient);
         $this->send_fake_message($sender, $recipient);
 
-        \core_message\api::mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_NOTIFICATION);
-        $this->assertDebuggingCalled();
+        \core_message\api::mark_all_notifications_as_read($recipient->id);
         $this->assertEquals(message_count_unread_messages($recipient), 3);
 
-        \core_message\api::mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_MESSAGE);
-        $this->assertDebuggingCalled();
+        \core_message\api::mark_all_messages_as_read($recipient->id);
         $this->assertEquals(message_count_unread_messages($recipient), 0);
     }
 
