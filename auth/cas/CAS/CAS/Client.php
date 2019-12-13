@@ -997,7 +997,18 @@ class CAS_Client
 
         // set to callback mode if PgtIou and PgtId CGI GET parameters are provided
         if ( $this->isProxy() ) {
-            $this->_setCallbackMode(!empty($_GET['pgtIou'])&&!empty($_GET['pgtId']));
+            if(!empty($_GET['pgtIou'])&&!empty($_GET['pgtId'])) {
+                $this->_setCallbackMode(true);
+                $this->_setCallbackModeUsingPost(false);
+            } elseif (!empty($_POST['pgtIou'])&&!empty($_POST['pgtId'])) {
+                $this->_setCallbackMode(true);
+                $this->_setCallbackModeUsingPost(true);
+            } else {
+                $this->_setCallbackMode(false);
+                $this->_setCallbackModeUsingPost(false);
+            }
+
+            
         }
 
         if ( $this->_isCallbackMode() ) {
@@ -2330,6 +2341,36 @@ class CAS_Client
     }
 
     /**
+     * @var bool a boolean to know if the CAS client is using POST parameters when in callback mode.
+     * Written by CAS_Client::_setCallbackModeUsingPost(), read by CAS_Client::_isCallbackModeUsingPost().
+     *
+     * @hideinitializer
+     */
+    private $_callback_mode_using_post = false;
+
+    /**
+     * This method sets/unsets usage of POST parameters in callback mode (default/false is GET parameters)
+     *
+     * @param bool $callback_mode_using_post true to use POST, false to use GET (default).
+     *
+     * @return void
+     */
+    private function _setCallbackModeUsingPost($callback_mode_using_post)
+    {
+        $this->_callback_mode_using_post = $callback_mode_using_post;
+    }
+
+    /**
+     * This method returns true when the callback mode is using POST, false otherwise.
+     *
+     * @return bool A boolean.
+     */
+    private function _isCallbackModeUsingPost()
+    {
+        return $this->_callback_mode_using_post;
+    }
+
+    /**
      * the URL that should be used for the PGT callback (in fact the URL of the
      * current request without any CGI parameter). Written and read by
      * CAS_Client::_getCallbackURL().
@@ -2387,23 +2428,39 @@ class CAS_Client
     private function _callback()
     {
         phpCAS::traceBegin();
-        if (preg_match('/^PGTIOU-[\.\-\w]+$/', $_GET['pgtIou'])) {
-            if (preg_match('/^[PT]GT-[\.\-\w]+$/', $_GET['pgtId'])) {
-                $this->printHTMLHeader('phpCAS callback');
-                $pgt_iou = $_GET['pgtIou'];
-                $pgt = $_GET['pgtId'];
-                phpCAS::trace('Storing PGT `'.$pgt.'\' (id=`'.$pgt_iou.'\')');
-                echo '<p>Storing PGT `'.$pgt.'\' (id=`'.$pgt_iou.'\').</p>';
-                $this->_storePGT($pgt, $pgt_iou);
-                $this->printHTMLFooter();
+        if ($this->_isCallbackModeUsingPost()) {
+            $pgtId = $_POST['pgtId'];
+            $pgtIou = $_POST['pgtIou'];
+        } else {
+            $pgtId = $_GET['pgtId'];
+            $pgtIou = $_GET['pgtIou'];
+        }
+        if (preg_match('/^PGTIOU-[\.\-\w]+$/', $pgtIou)) {
+            if (preg_match('/^[PT]GT-[\.\-\w]+$/', $pgtId)) {
+                phpCAS::trace('Storing PGT `'.$pgtId.'\' (id=`'.$pgtIou.'\')');
+                $this->_storePGT($pgtId, $pgtIou);
+                if (array_key_exists('HTTP_ACCEPT', $_SERVER) &&
+                    (   $_SERVER['HTTP_ACCEPT'] == 'application/xml' ||
+                        $_SERVER['HTTP_ACCEPT'] == 'text/xml'
+                    )
+                ) {
+                    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\r\n";
+                    echo '<proxySuccess xmlns="http://www.yale.edu/tp/cas" />';
+                    phpCAS::traceExit("XML response sent");
+                } else {
+                    $this->printHTMLHeader('phpCAS callback');
+                    echo '<p>Storing PGT `'.$pgtId.'\' (id=`'.$pgtIou.'\').</p>';
+                    $this->printHTMLFooter();
+                    phpCAS::traceExit("HTML response sent");
+                }
                 phpCAS::traceExit("Successfull Callback");
             } else {
-                phpCAS::error('PGT format invalid' . $_GET['pgtId']);
-                phpCAS::traceExit('PGT format invalid' . $_GET['pgtId']);
+                phpCAS::error('PGT format invalid' . $pgtId);
+                phpCAS::traceExit('PGT format invalid' . $pgtId);
             }
         } else {
-            phpCAS::error('PGTiou format invalid' . $_GET['pgtIou']);
-            phpCAS::traceExit('PGTiou format invalid' . $_GET['pgtIou']);
+            phpCAS::error('PGTiou format invalid' . $pgtIou);
+            phpCAS::traceExit('PGTiou format invalid' . $pgtIou);
         }
 
         // Flush the buffer to prevent from sending anything other then a 200
