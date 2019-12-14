@@ -11,7 +11,7 @@ define(['jquery', 'qtype_ordering/drag_reorder'], function($, dragReorder) {
                 list: 'ul#' + sortableid,
                 item: 'li.sortableitem',
                 proxyHtml: '<div class="que ordering dragproxy">' +
-                        '<ul class="sortablelist"><li class="%%ITEM_CLASS_NAME%% item-moving">' +
+                        '<ul class="%%LIST_CLASS_NAME%%"><li class="%%ITEM_CLASS_NAME%% item-moving">' +
                         '%%ITEM_HTML%%</li></ul></div>',
                 itemMovingClass: "current-drop",
                 idGetter: function (item) { return $(item).attr('id'); },

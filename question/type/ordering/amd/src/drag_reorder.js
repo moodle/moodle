@@ -109,9 +109,12 @@ define([
             originalOrder = null,   // Array of ids.
             itemDragging = null,    // Item being moved by dragging (jQuery object).
             itemMoving = null,      // Item being moved using the accessible modal (jQuery object).
-            proxy = null;           // Drag proxy (jQuery object).
+            proxy = null,           // Drag proxy (jQuery object).
+            orderList = null;       // Order list (jQuery object).
 
         var startDrag = function(event, details) {
+            orderList = $(config.list);
+
             dragStart = {
                 time: new Date().getTime(),
                 x: details.x,
@@ -126,7 +129,8 @@ define([
 
             originalOrder = getCurrentOrder();
             proxy = $(config.proxyHtml.replace('%%ITEM_HTML%%', itemDragging.html())
-                .replace('%%ITEM_CLASS_NAME%%', itemDragging.attr('class')));
+                .replace('%%ITEM_CLASS_NAME%%', itemDragging.attr('class'))
+                .replace('%%LIST_CLASS_NAME%%', orderList.attr('class')));
 
             $(document.body).append(proxy);
             proxy.css('position', 'absolute');
