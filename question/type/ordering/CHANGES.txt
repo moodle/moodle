@@ -2,6 +2,10 @@
 Change log for qtype_ordering
 ========================================
 
+2019-12-14 (00)
+ - Thanks Tim Hunt: (1) Update Behat tests to use the MDL-66821 changes (2) Fix Behat test that was failing
+ - Thanks HuongNV13: (1) Items crash together horizontally (2) Number/letter no longer tracks with dragged item
+
 2019-12-12 (98)
  - fix JS error on Moodle >= 3.7 caused by incorrect syntax in 'define' statement in key_codes.js
 
