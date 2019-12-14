@@ -26,7 +26,7 @@ Feature: Test editing an Ordering question
 
   @javascript @_switch_window
   Scenario: Edit an Ordering question
-    When I click on "Edit" "link" in the "Ordering for editing" "table_row"
+    When I choose "Edit question" action for "Ordering for editing" in the question bank
     And I set the following fields to these values:
       | Question name ||
     And I press "id_submitbutton"
@@ -38,7 +38,7 @@ Feature: Test editing an Ordering question
 
   @javascript @_switch_window
   Scenario: Editing an ordering question and making sure the form does not allow duplication of draggables
-    When I click on "Edit" "link" in the "Ordering for editing" "table_row"
+    When I choose "Edit question" action for "Ordering for editing" in the question bank
     And I set the following fields to these values:
       | Draggable item 4 | Object |
     And I press "id_submitbutton"

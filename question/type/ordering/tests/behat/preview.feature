@@ -26,11 +26,11 @@ Feature: Preview an Ordering question
 
   @javascript @_switch_window
   Scenario: Preview an Ordering question and submit a correct response.
-    When I click on "Preview" "link" in the "ordering-001" "table_row"
+    When I choose "Preview" action for "ordering-001" in the question bank
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    # The test was unreliable unless if an item rendomly stared in the right place.
+    # The test was unreliable unless if an item randomly started in the right place.
     # So we first moved each item to the last place, before putting it into the right place.
     And I drag "Modular" to space "6" in the ordering question
     And I drag "Modular" to space "1" in the ordering question
