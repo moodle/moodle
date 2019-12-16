@@ -6,11 +6,11 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email | auth | confirmed | lastip |
-      | user1 | User | One | one@example.com | manual | 0 | 127.0.1.1 |
-      | user2 | User | Two | two@example.com | ldap | 1 | 0.0.0.0 |
-      | user3 | User | Three | three@example.com | manual | 1 | 0.0.0.0 |
-      | user4 | User | Four | four@example.com | ldap | 0 | 127.0.1.2 |
+      | username | firstname | lastname | email | auth | confirmed | lastip | institution | department |
+      | user1 | User | One | one@example.com | manual | 0 | 127.0.1.1       | moodle      | red        |
+      | user2 | User | Two | two@example.com | ldap | 1 | 0.0.0.0           | moodle      | blue       |
+      | user3 | User | Three | three@example.com | manual | 1 | 0.0.0.0 |                 |            |
+      | user4 | User | Four | four@example.com | ldap | 0 | 127.0.1.2 |                   |            |
     And the following "cohorts" exist:
       | name | idnumber |
       | Cohort 1 | CH1 |
@@ -104,3 +104,15 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
     And I should see "User Two"
     And I should see "User Three"
     And I should see "User Four"
+
+  Scenario: Filter users by institution and department
+    When I set the field "id_institution" to "moodle"
+    And I press "Add filter"
+    Then I should see "User One"
+    And I should see "User Two"
+    And I should not see "User Three"
+    And I should not see "User Four"
+    And I set the field "id_department" to "red"
+    And I press "Add filter"
+    And I should see "User One"
+    And I should not see "User Two"
