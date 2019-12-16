@@ -17,7 +17,10 @@
 
 namespace MongoDB\Exception;
 
-class BadMethodCallException extends \BadMethodCallException implements Exception
+use BadMethodCallException as BaseBadMethodCallException;
+use function sprintf;
+
+class BadMethodCallException extends BaseBadMethodCallException implements Exception
 {
     /**
      * Thrown when a mutable method is invoked on an immutable object.

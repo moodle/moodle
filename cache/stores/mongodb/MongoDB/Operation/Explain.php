@@ -21,9 +21,12 @@ use MongoDB\Driver\Command;
 use MongoDB\Driver\ReadPreference;
 use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
-use MongoDB\Exception\UnsupportedException;
 use MongoDB\Exception\InvalidArgumentException;
-use MongoDB\Model\BSONDocument;
+use MongoDB\Exception\UnsupportedException;
+use function current;
+use function is_array;
+use function is_string;
+use function MongoDB\server_supports_feature;
 
 /**
  * Operation for the explain command.
@@ -38,11 +41,19 @@ class Explain implements Executable
     const VERBOSITY_EXEC_STATS = 'executionStats';
     const VERBOSITY_QUERY = 'queryPlanner';
 
+    /** @var integer */
     private static $wireVersionForDistinct = 4;
+
+    /** @var integer */
     private static $wireVersionForFindAndModify = 4;
 
+    /** @var string */
     private $databaseName;
+
+    /** @var Explainable */
     private $explainable;
+
+    /** @var array */
     private $options;
 
     /**
@@ -59,19 +70,19 @@ class Explain implements Executable
      *
      *  * verbosity (string): The mode in which the explain command will be run.
      *
-     * @param string $databaseName      Database name
+     * @param string      $databaseName Database name
      * @param Explainable $explainable  Operation to explain
-     * @param array  $options           Command options
+     * @param array       $options      Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
     public function __construct($databaseName, Explainable $explainable, array $options = [])
     {
         if (isset($options['readPreference']) && ! $options['readPreference'] instanceof ReadPreference) {
-            throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], 'MongoDB\Driver\ReadPreference');
+            throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], ReadPreference::class);
         }
 
         if (isset($options['session']) && ! $options['session'] instanceof Session) {
-            throw InvalidArgumentException::invalidType('"session" option', $options['session'], 'MongoDB\Driver\Session');
+            throw InvalidArgumentException::invalidType('"session" option', $options['session'], Session::class);
         }
 
         if (isset($options['typeMap']) && ! is_array($options['typeMap'])) {
@@ -89,11 +100,11 @@ class Explain implements Executable
 
     public function execute(Server $server)
     {
-        if ($this->explainable instanceof Distinct && ! \MongoDB\server_supports_feature($server, self::$wireVersionForDistinct)) {
+        if ($this->explainable instanceof Distinct && ! server_supports_feature($server, self::$wireVersionForDistinct)) {
             throw UnsupportedException::explainNotSupported();
         }
 
-        if ($this->isFindAndModify($this->explainable) && ! \MongoDB\server_supports_feature($server, self::$wireVersionForFindAndModify)) {
+        if ($this->isFindAndModify($this->explainable) && ! server_supports_feature($server, self::$wireVersionForFindAndModify)) {
             throw UnsupportedException::explainNotSupported();
         }
 
@@ -138,6 +149,7 @@ class Explain implements Executable
         if ($explainable instanceof FindAndModify || $explainable instanceof FindOneAndDelete || $explainable instanceof FindOneAndReplace || $explainable instanceof FindOneAndUpdate) {
             return true;
         }
+
         return false;
     }
 }

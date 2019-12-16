@@ -27,5 +27,5 @@ use MongoDB\Driver\Server;
  */
 interface Explainable extends Executable
 {
-    function getCommandDocument(Server $server);
+    public function getCommandDocument(Server $server);
 }

@@ -17,15 +17,12 @@
 
 namespace MongoDB\Operation;
 
-use MongoDB\Driver\Command;
-use MongoDB\Driver\ReadConcern;
-use MongoDB\Driver\ReadPreference;
-use MongoDB\Driver\Server;
-use MongoDB\Driver\Session;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
+use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
 use MongoDB\Exception\UnsupportedException;
+use function array_intersect_key;
 
 /**
  * Operation for obtaining an estimated count of documents in a collection
@@ -36,12 +33,17 @@ use MongoDB\Exception\UnsupportedException;
  */
 class EstimatedDocumentCount implements Executable, Explainable
 {
-    private static $wireVersionForCollation = 5;
-    private static $wireVersionForReadConcern = 4;
-
+    /** @var string */
     private $databaseName;
+
+    /** @var string */
     private $collectionName;
+
+    /** @var array */
     private $options;
+
+    /** @var Count */
+    private $count;
 
     /**
      * Constructs a count command.
@@ -62,36 +64,18 @@ class EstimatedDocumentCount implements Executable, Explainable
      *
      *    Sessions are not supported for server versions < 3.6.
      *
-     * @param string       $databaseName   Database name
-     * @param string       $collectionName Collection name
-     * @param array        $options        Command options
+     * @param string $databaseName   Database name
+     * @param string $collectionName Collection name
+     * @param array  $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
     public function __construct($databaseName, $collectionName, array $options = [])
     {
-        if (isset($options['maxTimeMS']) && ! is_integer($options['maxTimeMS'])) {
-            throw InvalidArgumentException::invalidType('"maxTimeMS" option', $options['maxTimeMS'], 'integer');
-        }
-
-        if (isset($options['readConcern']) && ! $options['readConcern'] instanceof ReadConcern) {
-            throw InvalidArgumentException::invalidType('"readConcern" option', $options['readConcern'], 'MongoDB\Driver\ReadConcern');
-        }
-
-        if (isset($options['readPreference']) && ! $options['readPreference'] instanceof ReadPreference) {
-            throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], 'MongoDB\Driver\ReadPreference');
-        }
-
-        if (isset($options['session']) && ! $options['session'] instanceof Session) {
-            throw InvalidArgumentException::invalidType('"session" option', $options['session'], 'MongoDB\Driver\Session');
-        }
-
-        if (isset($options['readConcern']) && $options['readConcern']->isDefault()) {
-            unset($options['readConcern']);
-        }
-
         $this->databaseName = (string) $databaseName;
         $this->collectionName = (string) $collectionName;
-        $this->options = $options;
+        $this->options = array_intersect_key($options, ['maxTimeMS' => 1, 'readConcern' => 1, 'readPreference' => 1, 'session' => 1]);
+
+        $this->count = $this->createCount();
     }
 
     /**
@@ -106,68 +90,19 @@ class EstimatedDocumentCount implements Executable, Explainable
      */
     public function execute(Server $server)
     {
-        if (isset($this->options['collation']) && ! \MongoDB\server_supports_feature($server, self::$wireVersionForCollation)) {
-            throw UnsupportedException::collationNotSupported();
-        }
-
-        if (isset($this->options['readConcern']) && ! \MongoDB\server_supports_feature($server, self::$wireVersionForReadConcern)) {
-            throw UnsupportedException::readConcernNotSupported();
-        }
-
-        $cursor = $server->executeReadCommand($this->databaseName, new Command($this->createCommandDocument()), $this->createOptions());
-        $result = current($cursor->toArray());
-
-        // Older server versions may return a float
-        if ( ! isset($result->n) || ! (is_integer($result->n) || is_float($result->n))) {
-            throw new UnexpectedValueException('count command did not return a numeric "n" value');
-        }
-
-        return (integer) $result->n;
+        return $this->count->execute($server);
     }
 
     public function getCommandDocument(Server $server)
     {
-        return $this->createCommandDocument();
+        return $this->count->getCommandDocument($server);
     }
 
     /**
-     * Create the count command document.
-     *
-     * @return array
+     * @return Count
      */
-    private function createCommandDocument()
+    private function createCount()
     {
-        $cmd = ['count' => $this->collectionName];
-
-        if (isset($this->options['maxTimeMS'])) {
-            $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
-        }
-
-        return $cmd;
-    }
-
-    /**
-     * Create options for executing the command.
-     *
-     * @see http://php.net/manual/en/mongodb-driver-server.executereadcommand.php
-     * @return array
-     */
-    private function createOptions()
-    {
-        $options = [];
-
-        if (isset($this->options['readConcern'])) {
-            $options['readConcern'] = $this->options['readConcern'];
-        }
-
-        if (isset($this->options['readPreference'])) {
-            $options['readPreference'] = $this->options['readPreference'];
-        }
-
-        if (isset($this->options['session'])) {
-            $options['session'] = $this->options['session'];
-        }
-
-        return $options;
+        return new Count($this->databaseName, $this->collectionName, [], $this->options);
     }
 }

@@ -17,11 +17,15 @@
 
 namespace MongoDB\Operation;
 
-use MongoDB\UpdateResult;
-use MongoDB\Driver\Server;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
+use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
+use MongoDB\UpdateResult;
+use function is_array;
+use function is_object;
+use function MongoDB\is_first_key_operator;
+use function MongoDB\is_pipeline;
 
 /**
  * Operation for updating multiple documents with the update command.
@@ -32,6 +36,7 @@ use MongoDB\Exception\UnsupportedException;
  */
 class UpdateMany implements Executable, Explainable
 {
+    /** @var Update */
     private $update;
 
     /**
@@ -74,12 +79,12 @@ class UpdateMany implements Executable, Explainable
      */
     public function __construct($databaseName, $collectionName, $filter, $update, array $options = [])
     {
-        if ( ! is_array($update) && ! is_object($update)) {
+        if (! is_array($update) && ! is_object($update)) {
             throw InvalidArgumentException::invalidType('$update', $update, 'array or object');
         }
 
-        if ( ! \MongoDB\is_first_key_operator($update)) {
-            throw new InvalidArgumentException('First key in $update argument is not an update operator');
+        if (! is_first_key_operator($update) && ! is_pipeline($update)) {
+            throw new InvalidArgumentException('Expected an update document with operator as first key or a pipeline');
         }
 
         $this->update = new Update(

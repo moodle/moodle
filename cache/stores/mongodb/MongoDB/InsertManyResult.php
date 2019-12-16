@@ -25,13 +25,16 @@ use MongoDB\Exception\BadMethodCallException;
  */
 class InsertManyResult
 {
+    /** @var WriteResult */
     private $writeResult;
+
+    /** @var mixed[] */
     private $insertedIds;
+
+    /** @var boolean */
     private $isAcknowledged;
 
     /**
-     * Constructor.
-     *
      * @param WriteResult $writeResult
      * @param mixed[]     $insertedIds
      */
