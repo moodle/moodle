@@ -280,6 +280,19 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'mediaplayers', $hassiteconfig);
     }
 
+    // Payment gateway plugins.
+    $ADMIN->add('modules', new admin_category('paymentgateways', new lang_string('type_pg_plural', 'plugin')));
+    $temp = new admin_settingpage('managepaymentgateways', new lang_string('type_pgmanage', 'plugin'));
+    $temp->add(new \core_admin\local\settings\manage_payment_gateway_plugins());
+    $ADMIN->add('paymentgateways', $temp);
+
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('pg');
+    core_collator::asort_objects_by_property($plugins, 'displayname');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\pg $plugin */
+        $plugin->load_settings($ADMIN, 'paymentgateways', $hassiteconfig);
+    }
+
     // Data format settings.
     $ADMIN->add('modules', new admin_category('dataformatsettings', new lang_string('dataformats')));
     $temp = new admin_settingpage('managedataformats', new lang_string('managedataformats'));
