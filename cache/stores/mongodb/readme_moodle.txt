@@ -4,7 +4,7 @@ Download from https://github.com/mongodb/mongo-php-library
 
 Import procedure:
 
-- Copy all the files and folders from the folder mongodb/src in this directory.
+- Copy all the files and folders from the folder mongodb/src in the cache/stores/mongodb/MongoDB directory.
 - Copy the license file from the project root.
 - Update thirdpartylibs.xml with the latest version.
 
