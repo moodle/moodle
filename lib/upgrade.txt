@@ -9,6 +9,8 @@ information provided here is intended especially for developers.
   - question_is_only_toplevel_category_in_context
 * format_float() now accepts a special value (-1) as the $decimalpoints parameter
   which means auto-detecting number of decimal points.
+* plagiarism_save_form_elements() has been deprecated. Please use {plugin name}_coursemodule_edit_post_actions() instead.
+* plagiarism_get_form_elements_module() has been deprecated. Please use {plugin name}_coursemodule_standard_elements() instead.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop

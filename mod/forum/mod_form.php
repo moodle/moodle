@@ -206,6 +206,7 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->hideIf('warnafter', 'blockperiod', 'eq', 0);
 
         $coursecontext = context_course::instance($COURSE->id);
+        // To be removed (deprecated) with MDL-67526.
         plagiarism_get_form_elements_module($mform, $coursecontext, 'mod_forum');
 
 //-------------------------------------------------------------------------------
