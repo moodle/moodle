@@ -222,7 +222,7 @@
     <location>scssphp</location>
     <name>scssphp</name>
     <license>MIT</license>
-    <version>1.0.2</version>
+    <version>1.0.6</version>
   </library>
   <library>
     <location>spout</location>
