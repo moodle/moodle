@@ -38,7 +38,8 @@
         "contenttype": "contentbank\/contenttype",
         "theme": "theme",
         "local": "local",
-        "h5plib": "h5p\/h5plib"
+        "h5plib": "h5p\/h5plib",
+        "pg": "payment\/gateway"
     },
     "subsystems": {
         "access": null,
@@ -94,6 +95,7 @@
         "my": "my",
         "notes": "notes",
         "pagetype": null,
+        "payment" : "payment",
         "pix": null,
         "plagiarism": "plagiarism",
         "plugin": null,
