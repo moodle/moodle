@@ -80,7 +80,7 @@ if ($chapterid == '0') { // Go to first chapter if no given.
     book_view($book, null, false, $course, $cm, $context);
 
     foreach ($chapters as $ch) {
-        if ($edit) {
+        if ($edit || ($ch->hidden && $viewhidden)) {
             $chapterid = $ch->id;
             break;
         }
@@ -132,7 +132,7 @@ $nexttitle = null;
 $navnexttitle = null;
 $last = null;
 foreach ($chapters as $ch) {
-    if (!$edit and $ch->hidden) {
+    if (!$edit and ($ch->hidden && !$viewhidden)) {
         continue;
     }
     if ($last == $chapter->id) {
