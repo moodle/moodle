@@ -1924,6 +1924,7 @@ class core_plugin_manager {
             ),
 
             'pg' => [
+                'paypal',
             ],
 
             'plagiarism' => array(
