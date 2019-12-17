@@ -126,13 +126,14 @@ if ($action === 'pollconversions') {
             $page->annotations = $annotations;
             $response->pages[] = $page;
 
-            $component = 'assignfeedback_editpdf';
-            $filearea = document_services::PAGE_IMAGE_FILEAREA;
-            $filepath = '/';
-            $fs = get_file_storage();
-            $files = $fs->get_directory_files($context->id, $component, $filearea, $grade->id, $filepath);
-            $response->pageready = count($files);
         }
+
+        $component = 'assignfeedback_editpdf';
+        $filearea = document_services::PAGE_IMAGE_FILEAREA;
+        $filepath = '/';
+        $fs = get_file_storage();
+        $files = $fs->get_directory_files($context->id, $component, $filearea, $grade->id, $filepath);
+        $response->pageready = count($files);
     }
 
     echo json_encode($response);
