@@ -19,14 +19,16 @@ Feature: Render H5P content using filters
       | page     | PageName1  | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |
       | page     | PageName2  | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |
     And the "displayh5p" filter is "on"
+    And the following config values are set as admin:
+      | allowedsources | https://moodle.h5p.com/content/[id]/embed | filter_displayh5p |
 
-  @javascript
+  @javascript @external
   Scenario: Render an external H5P content URL.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "PageName1"
     And I navigate to "Edit settings" in current page administration
-    And I set the field "Page content" to "<div>Go for it</div>https://h5p.org/h5p/embed/576651"
+    And I set the field "Page content" to "<div>Go for it</div>https://moodle.h5p.com/content/1290772960722742119/embed"
     When I click on "Save and display" "button"
     And I wait until the page is ready
     And I switch to "h5p-iframe" class iframe
@@ -38,7 +40,8 @@ Feature: Render H5P content using filters
     And I am on "Course 1" course homepage
     And I follow "PageName1"
     And I navigate to "Edit settings" in current page administration
-    And I set the field "Page content" to "<a href='https://h5p.org/h5p/embed/576651'>Go to https://h5p.org/h5p/embed/576651</a>"
+#   This content won't be displayed, so this scenario shouldn't be labeled as external.
+    And I set the field "Page content" to "<a href='https://moodle.h5p.com/content/1290772960722742119/embed'>Go to https://moodle.h5p.com/content/1290772960722742119/embed</a>"
     When I click on "Save and display" "button"
     And I wait until the page is ready
     Then ".h5p-iframe" "css_element" should not exist
