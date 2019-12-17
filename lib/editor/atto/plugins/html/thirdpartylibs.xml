@@ -4,7 +4,7 @@
     <location>yui/src/codemirror</location>
     <name>codemirror</name>
     <license>MIT</license>
-    <version>5.37.0</version>
+    <version>5.49.2</version>
     <licenseversion></licenseversion>
   </library>
   <library>
