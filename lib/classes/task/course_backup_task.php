@@ -84,7 +84,7 @@ class course_backup_task extends \core\task\adhoc_task {
             $backupcourse->lastendtime = time();
             $backupcourse->nextstarttime = \backup_cron_automated_helper::calculate_next_automated_backup(null, time());
             $DB->update_record('backup_courses', $backupcourse);
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             mtrace('Automated backup for course: ' . $course->fullname . ' encounters an error.');
             mtrace('Exception: ' . $e->getMessage());
             mtrace('Debug: ' . $e->debuginfo);
