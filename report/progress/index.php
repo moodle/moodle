@@ -210,8 +210,13 @@ $pagingbar = '';
 // Initials bar.
 $prefixfirst = 'sifirst';
 $prefixlast = 'silast';
-$pagingbar .= $OUTPUT->initials_bar($sifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $url);
-$pagingbar .= $OUTPUT->initials_bar($silast, 'lastinitial', get_string('lastname'), $prefixlast, $url);
+
+// The URL used in the initials bar should reset the 'start' parameter.
+$initialsbarurl = new moodle_url($url);
+$initialsbarurl->remove_params('start');
+
+$pagingbar .= $OUTPUT->initials_bar($sifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $initialsbarurl);
+$pagingbar .= $OUTPUT->initials_bar($silast, 'lastinitial', get_string('lastname'), $prefixlast, $initialsbarurl);
 
 // Do we need a paging bar?
 if ($total > COMPLETION_REPORT_PAGE) {
