@@ -5,7 +5,6 @@ myfilesmanage,core
 mypreferences,core_grades
 myprofile,core
 viewallmyentries,core_blog
-virusfounduser,core_antivirus
 formattexttype,core
 currentlyselectedusers,core
 emailuserhasnone,core
