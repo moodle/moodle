@@ -93,6 +93,11 @@ class scanner extends \core\antivirus\scanner {
             // return SCAN_RESULT_FOUND result.
             if ($this->get_config('clamfailureonupload') === 'actlikevirus') {
                 return self::SCAN_RESULT_FOUND;
+            } else if ($this->get_config('clamfailureonupload') === 'tryagain') {
+                // Do not upload the file, just give a message to the user to try again later.
+                unlink($file);
+                throw new \core\antivirus\scanner_exception('antivirusfailed', '', ['item' => $filename],
+                        null, 'antivirus_clamav');
             }
         }
         return $return;

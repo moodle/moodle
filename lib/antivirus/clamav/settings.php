@@ -62,6 +62,7 @@ if ($ADMIN->fulltree) {
     $options = array(
         'donothing' => new lang_string('configclamdonothing', 'antivirus_clamav'),
         'actlikevirus' => new lang_string('configclamactlikevirus', 'antivirus_clamav'),
+        'tryagain' => new lang_string('configclamtryagain', 'antivirus_clamav')
     );
     $settings->add(new admin_setting_configselect('antivirus_clamav/clamfailureonupload',
             new lang_string('clamfailureonupload', 'antivirus_clamav'),
