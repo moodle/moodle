@@ -1122,7 +1122,7 @@ class core_useragent {
     public static function supports_html5($extension) {
         $extension = strtolower($extension);
 
-        $supportedvideo = array('m4v', 'webm', 'ogv', 'mp4', 'mov');
+        $supportedvideo = array('m4v', 'webm', 'ogv', 'mp4', 'mov', 'fmp4');
         $supportedaudio = array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav', 'flac');
 
         // Basic extension support.
@@ -1171,7 +1171,7 @@ class core_useragent {
             return false;
         }
         // Mpeg is not supported in IE below 10.0.
-        $ismpeg = in_array($extension, ['m4a', 'mp3', 'm4v', 'mp4']);
+        $ismpeg = in_array($extension, ['m4a', 'mp3', 'm4v', 'mp4', 'fmp4']);
         if ($ismpeg && (self::is_ie() && !self::check_ie_version('10.0'))) {
             return false;
         }
