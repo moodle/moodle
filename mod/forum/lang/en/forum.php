@@ -460,8 +460,8 @@ $string['pluginname'] = 'Forum';
 $string['postadded'] = '<p>Your post was successfully added.</p> <p>You have {$a} to edit it if you want to make any changes.</p>';
 $string['postaddedsuccess'] = 'Your post was successfully added.';
 $string['postaddedtimeleft'] = 'You have {$a} to edit it if you want to make any changes.';
-$string['postbymailsuccess'] = 'Congratulations, your forum post with subject "{$a->subject}" was successfully added. You can view it at {$a->discussionurl}.';
-$string['postbymailsuccess_html'] = 'Congratulations, your <a href="{$a->discussionurl}">forum post</a> with subject "{$a->subject}" was successfully posted.';
+$string['postbymailsuccess'] = 'Your reply "{$a->subject}" was successfully posted: {$a->discussionurl}';
+$string['postbymailsuccess_html'] = 'Your reply <a href="{$a->discussionurl}">{$a->subject}</a> was successfully posted.';
 $string['postbyuser'] = '{$a->post} by {$a->user}';
 $string['postincontext'] = 'See this post in context';
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
