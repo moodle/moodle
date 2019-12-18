@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.8.1 ===
+format_float() now accepts a special value (-1) as the $decimalpoints parameter which means auto-detecting number of decimal points.
+
 === 3.8 ===
 * The rotate_image function has been added to the stored_file class (MDL-63349)
 * The yui checknet module is removed. Call \core\session\manager::keepalive instead.
