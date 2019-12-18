@@ -128,41 +128,80 @@ function cron_run_scheduled_tasks(int $timenow) {
  * Execute all queued adhoc tasks, applying necessary concurrency limits and time limits.
  *
  * @param   int     $timenow The time this process started.
+ * @param   int     $keepalive Keep this function alive for N seconds and poll for new adhoc tasks.
+ * @param   bool    $checklimits Should we check limits?
  */
-function cron_run_adhoc_tasks(int $timenow) {
+function cron_run_adhoc_tasks(int $timenow, $keepalive = 0, $checklimits = true) {
     // Allow a restriction on the number of adhoc task runners at once.
     $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
     $maxruns = get_config('core', 'task_adhoc_concurrency_limit');
     $maxruntime = get_config('core', 'task_adhoc_max_runtime');
 
-    $adhoclock = null;
-    for ($run = 0; $run < $maxruns; $run++) {
-        if ($adhoclock = $cronlockfactory->get_lock("adhoc_task_runner_{$run}", 1)) {
-            break;
+    if ($checklimits) {
+        $adhoclock = null;
+        for ($run = 0; $run < $maxruns; $run++) {
+            if ($adhoclock = $cronlockfactory->get_lock("adhoc_task_runner_{$run}", 1)) {
+                break;
+            }
+        }
+
+        if (!$adhoclock) {
+            mtrace("Skipping processing of adhoc tasks. Concurrency limit reached.");
+            return;
         }
     }
 
-    if (!$adhoclock) {
-        mtrace("Skipping processing of adhoc tasks. Concurrency limit reached.");
-        return;
-    }
-
-    $starttime = time();
+    $humantimenow = date('r', $timenow);
+    $finishtime = $timenow + $keepalive;
+    $waiting = false;
+    $taskcount = 0;
 
     // Run all adhoc tasks.
-    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
-            $task = \core\task\manager::get_next_adhoc_task(time())) {
-        cron_run_inner_adhoc_task($task);
-        unset($task);
+    while (!\core\task\manager::static_caches_cleared_since($timenow)) {
 
-        if ((time() - $starttime) > $maxruntime) {
+        if ($checklimits && (time() - $timenow) >= $maxruntime) {
+            if ($waiting) {
+                $waiting = false;
+                mtrace('');
+            }
             mtrace("Stopping processing of adhoc tasks as time limit has been reached.");
             break;
         }
+
+        $task = \core\task\manager::get_next_adhoc_task(time());
+
+        if ($task) {
+            if ($waiting) {
+                mtrace('');
+            }
+            $waiting = false;
+            cron_run_inner_adhoc_task($task);
+            $taskcount++;
+            unset($task);
+        } else {
+            if (time() >= $finishtime) {
+                break;
+            }
+            if (!$waiting) {
+                mtrace('Waiting for more adhoc tasks to be queued ', '');
+            } else {
+                mtrace('.', '');
+            }
+            $waiting = true;
+            sleep(1);
+        }
     }
 
-    // Release the adhoc task runner lock.
-    $adhoclock->release();
+    if ($waiting) {
+        mtrace('');
+    }
+
+    mtrace("Ran {$taskcount} adhoc tasks found at {$humantimenow}");
+
+    if ($adhoclock) {
+        // Release the adhoc task runner lock.
+        $adhoclock->release();
+    }
 }
 
 /**

@@ -2,6 +2,8 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.9 ===
+* admin/tool/task/cli/adhoc_task.php now observers the concurrency limits.
+  If you want to get the previous (unlimited) behavior, use the --ignorelimits switch).
 * Removed the following deprecated functions:
   - question_add_tops
   - question_is_only_toplevel_category_in_context

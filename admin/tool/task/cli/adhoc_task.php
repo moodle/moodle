@@ -35,10 +35,12 @@ list($options, $unrecognized) = cli_get_params(
         'keep-alive' => 0,
         'showsql' => false,
         'showdebugging' => false,
+        'ignorelimits' => false,
     ], [
         'h' => 'help',
         'e' => 'execute',
         'k' => 'keep-alive',
+        'i' => 'ignorelimits',
     ]
 );
 
@@ -57,6 +59,7 @@ Options:
      --showdebugging       Show developer level debugging information
  -e, --execute             Run all queued adhoc tasks
  -k, --keep-alive=N        Keep this script alive for N seconds and poll for new adhoc tasks
+ -i  --ignorelimits        Ignore task_adhoc_concurrency_limit and task_adhoc_max_runtime limits
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/tool/task/cli/adhoc_task.php --execute
@@ -99,6 +102,8 @@ if (!empty($CFG->showcrondebugging)) {
     set_debugging(DEBUG_DEVELOPER, true);
 }
 
+$checklimits = empty($options['ignorelimits']);
+
 core_php_time_limit::raise();
 
 // Increase memory limit.
@@ -107,45 +112,8 @@ raise_memory_limit(MEMORY_EXTRA);
 // Emulate normal session - we use admin account by default.
 cron_setup_user();
 
-// Start output log.
-$timestart = time();
-$timenow = $timestart;
-$finishtime = $timenow + (int)$options['keep-alive'];
-$humantimenow = date('r', $timenow);
+$humantimenow = date('r', time());
+$keepalive = (int)$options['keep-alive'];
+
 mtrace("Server Time: {$humantimenow}\n");
-
-// Run all adhoc tasks.
-$taskcount = 0;
-$waiting = false;
-while (!\core\task\manager::static_caches_cleared_since($timestart)) {
-
-    $task = \core\task\manager::get_next_adhoc_task($timenow);
-
-    if ($task) {
-        if ($waiting) {
-            cli_writeln('');
-        }
-        $waiting = false;
-        cron_run_inner_adhoc_task($task);
-        $taskcount++;
-        unset($task);
-    } else {
-        if (time() > $finishtime) {
-            break;
-        }
-        if (!$waiting) {
-            cli_write('Waiting for more adhoc tasks to be queued ');
-        } else {
-            cli_write('.');
-        }
-        $waiting = true;
-        sleep(1);
-        $timenow = time();
-    }
-}
-if ($waiting) {
-    cli_writeln('');
-}
-
-mtrace("Ran {$taskcount} adhoc tasks found at {$humantimenow}");
-
+cron_run_adhoc_tasks(time(), $keepalive, $checklimits);
