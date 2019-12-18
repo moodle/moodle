@@ -327,6 +327,9 @@ class discussion {
                 $select = new url_select($forummenu, '',
                         ['/mod/forum/discuss.php?d=' . $discussion->get_id() => get_string("movethisdiscussionto", "forum")],
                         'forummenu', get_string('move'));
+                $select->set_label(get_string('movethisdiscussionlabel', 'mod_forum'), [
+                    'class' => 'sr-only',
+                ]);
                 $html .= $this->renderer->render($select);
                 $html .= "</div>";
                 return $html;
