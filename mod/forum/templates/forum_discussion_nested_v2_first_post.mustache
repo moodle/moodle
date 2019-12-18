@@ -36,7 +36,7 @@
     data-region="post"
     data-target="{{id}}-target"
     tabindex="0"
-    aria-labelledby="post-header-{{id}}"
+    aria-labelledby="post-header-{{id}}-{{uniqid}}"
     aria-describedby="post-content-{{id}}"
 >
     {{! The firstpost and starter classes below aren't used for anything other than to identify the first post in behat. }}
@@ -74,7 +74,7 @@
         </div>
 
         <div class="forum-post-core d-flex flex-column w-100"  data-region-content="forum-post-core">
-            <header id="post-header-{{uniqid}}">
+            <header id="post-header-{{id}}-{{uniqid}}">
                 {{^isdeleted}}
                     <div class="d-flex flex-wrap align-items-center mb-1">
                         <address class="mb-0 mr-2" tabindex="-1">
