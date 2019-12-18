@@ -33,6 +33,7 @@
     }
 }}
 {{<core/drawer}}
+    {{$drawerid}}grading-drawer-{{uniqid}}{{/drawerid}}
     {{$drawerclasses}}grader-grading-panel flex-shrink-0{{/drawerclasses}}
     {{$drawercontent}}
         <div class="h-100 w-100 bg-white d-flex flex-column">
@@ -76,7 +77,7 @@
                         <button
                             class="btn btn-icon icon-size-3 icon-no-margin colour-inherit"
                             data-action="collapse-grading-drawer"
-                            aria-controls="grading-drawer"
+                            aria-controls="grading-drawer-{{uniqid}}"
                             aria-expanded="true"
                             title="{{#str}} closebuttontitle, core {{/str}}"
                         >
