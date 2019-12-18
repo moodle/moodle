@@ -84,24 +84,34 @@ class converter implements \core_files\converter_interface {
 
         if (!self::are_requirements_met()) {
             $conversion->set('status', conversion::STATUS_FAILED);
-
+            error_log(
+                "Unoconv conversion failed to verify the configuraton meets the minimum requirements. " .
+                "Please check the unoconv installation configuration."
+            );
             return $this;
         }
 
         $file = $conversion->get_sourcefile();
+        $filepath = $file->get_filepath();
 
         // Sanity check that the conversion is supported.
         $fromformat = pathinfo($file->get_filename(), PATHINFO_EXTENSION);
         if (!self::is_format_supported($fromformat)) {
             $conversion->set('status', conversion::STATUS_FAILED);
-
+            error_log(
+                "Unoconv conversion for '" . $filepath . "' found input '" . $fromformat . "' " .
+                "file extension to convert from is not supported."
+            );
             return $this;
         }
 
         $format = $conversion->get('targetformat');
         if (!self::is_format_supported($format)) {
             $conversion->set('status', conversion::STATUS_FAILED);
-
+            error_log(
+                "Unoconv conversion for '" . $filepath . "' found output '" . $format . "' " .
+                "file extension to convert to is not supported."
+            );
             return $this;
         }
 
@@ -117,6 +127,10 @@ class converter implements \core_files\converter_interface {
                 throw new \file_exception('storedfileproblem', 'Could not copy file contents to temp file.');
             }
         } catch (\file_exception $fe) {
+            error_log(
+                "Unoconv conversion for '" . $filepath . "' encountered disk permission error when copying " .
+                "submitted file contents to unique temp file: '" . $filename . "'."
+            );
             throw $fe;
         }
 
@@ -134,12 +148,37 @@ class converter implements \core_files\converter_interface {
         $output = null;
         $currentdir = getcwd();
         chdir($uniqdir);
-        $result = exec($cmd, $output);
+        $result = exec($cmd, $output, $returncode);
         chdir($currentdir);
         touch($newtmpfile);
+
+        if ($returncode != 0) {
+            $conversion->set('status', conversion::STATUS_FAILED);
+            error_log(
+                "Unoconv conversion for '" . $filepath . "' from '" . $fromformat . "' to '" . $format . "' " .
+                "was unsuccessful; returned with exit status code (" . $returncode . "). Please check the unoconv " .
+                "configuration and conversion file content / format."
+            );
+            return $this;
+        }
+
+        if (!file_exists($newtmpfile)) {
+            $conversion->set('status', conversion::STATUS_FAILED);
+            error_log(
+                "Unoconv conversion for '" . $filepath . "' from '" . $fromformat . "' to '" . $format . "' " .
+                "was unsuccessful; the output file was not found in '" . $newtmpfile . "'. Please check the disk " .
+                "permissions."
+            );
+            return $this;
+        }
+
         if (filesize($newtmpfile) === 0) {
             $conversion->set('status', conversion::STATUS_FAILED);
-
+            error_log(
+                "Unoconv conversion for '" . $filepath . "' from '" . $fromformat . "' to '" . $format . "' " .
+                "was unsuccessful; the output file size has 0 bytes in '" . $newtmpfile . "'. Please check the " .
+                "conversion file content / format with the command: [ " . $cmd . " ]"
+            );
             return $this;
         }
 
