@@ -2012,7 +2012,7 @@ class table_default_export_format_parent {
  */
 class table_dataformat_export_format extends table_default_export_format_parent {
 
-    /** @var $dataformat */
+    /** @var \core\dataformat\base $dataformat */
     protected $dataformat;
 
     /** @var $rownum */
@@ -2045,6 +2045,15 @@ class table_dataformat_export_format extends table_default_export_format_parent 
 
         // Close the session so that the users other tabs in the same session are not blocked.
         \core\session\manager::write_close();
+    }
+
+    /**
+     * Whether the current dataformat supports export of HTML
+     *
+     * @return bool
+     */
+    public function supports_html(): bool {
+        return $this->dataformat->supports_html();
     }
 
     /**

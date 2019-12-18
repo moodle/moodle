@@ -146,6 +146,27 @@ abstract class base {
     }
 
     /**
+     * Method to define whether the dataformat supports export of HTML
+     *
+     * @return bool
+     */
+    public function supports_html(): bool {
+        return false;
+    }
+
+    /**
+     * Apply formatting to the cells of a given record
+     *
+     * @param array|\stdClass $record
+     * @return array
+     */
+    protected function format_record($record): array {
+        $record = (array)$record;
+
+        return $record;
+    }
+
+    /**
      * Write a single record
      *
      * @param array $record

@@ -93,14 +93,25 @@ class writer extends \core\dataformat\base {
         $this->print_heading();
     }
 
+    /**
+     * Method to define whether the dataformat supports export of HTML
+     *
+     * @return bool
+     */
+    public function supports_html(): bool {
+        return true;
+    }
+
+    /**
+     * Write a single record
+     *
+     * @param array $record
+     * @param int $rownum
+     */
     public function write_record($record, $rownum) {
         $rowheight = 0;
 
-        // If $record is an object convert it to an array.
-        if (is_object($record)) {
-            $record = (array)$record;
-        }
-
+        $record = $this->format_record($record);
         foreach ($record as $cell) {
             $rowheight = max($rowheight, $this->pdf->getStringHeight($this->colwidth, $cell, false, true, '', 1));
         }
@@ -123,7 +134,7 @@ class writer extends \core\dataformat\base {
             // Determine whether we're at the last element of the record.
             $nextposition = ($lastkey === $key) ? 1 : 0;
             // Write the element.
-            $this->pdf->Multicell($this->colwidth, $rowheight, $cell, 1, 'L', false, $nextposition);
+            $this->pdf->writeHTMLCell($this->colwidth, $rowheight, '', '', $cell, 1, $nextposition, false, true, 'L');
         }
     }
 

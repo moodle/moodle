@@ -80,7 +80,7 @@ class writer extends \core\dataformat\base {
             echo ",";
         }
 
-        echo json_encode($record, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        echo json_encode($this->format_record($record), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
         $this->sheetdatadded = true;
     }
