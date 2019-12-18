@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
 * Removed the following deprecated functions:
   - question_add_tops
   - question_is_only_toplevel_category_in_context
+* format_float() now accepts a special value (-1) as the $decimalpoints parameter
+  which means auto-detecting number of decimal points.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
