@@ -431,6 +431,7 @@ $string['modulename_link'] = 'mod/forum/view';
 $string['modulenameplural'] = 'Forums';
 $string['more'] = 'more';
 $string['movedmarker'] = '(Moved)';
+$string['movethisdiscussionlabel'] = 'Move the current discussion to the specified forum';
 $string['movethisdiscussionto'] = 'Move this discussion to ...';
 $string['mustprovidediscussionorpost'] = 'You must provide either a discussion id or post id to export';
 $string['myprofileownpost'] = 'My forum posts';
