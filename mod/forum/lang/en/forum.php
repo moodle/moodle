@@ -691,6 +691,7 @@ $string['timedhidden'] = 'Timed status: Hidden from students';
 $string['timedposts'] = 'Timed posts';
 $string['timedvisible'] = 'Timed status: Visible to all users';
 $string['timestartenderror'] = 'Display end date cannot be earlier than the start date';
+$string['togglediscussionmenu'] = 'Toggle the discussion menu';
 $string['togglefullscreen'] = 'Toggle full screen';
 $string['togglesettingsdrawer'] = 'Toggle settings drawer';
 $string['trackforum'] = 'Track unread posts';
