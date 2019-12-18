@@ -38,7 +38,7 @@ Feature: File types of the submission and feedback attachments can be limitted
     And I log in as "student1"
     And I am on "Course1" course homepage
     And I follow "TestWorkshop"
-    And I press "Start preparing your submission"
+    And I press "Add submission"
     And I set the following fields to these values:
       | Title              | Submission1           |
       | Submission content | See the attached file |

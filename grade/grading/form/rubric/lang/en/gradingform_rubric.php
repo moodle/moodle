@@ -75,7 +75,7 @@ $string['rubricmappingexplained'] = 'The minimum possible score for this rubric 
 
 If a scale is used for grading, the score will be rounded and converted to the scale elements as if they were consecutive integers.
 
-This grade calculation may be changed by editing the form and ticking the box \'Calculate grade based on the rubric having a minimum score of 0\'.';
+This grade calculation may be changed by editing the form and ticking the box \'Calculate grade having a minimum score of the minimum achievable grade for the rubric\'.';
 $string['rubricnotcompleted'] = 'Please choose something for each criterion';
 $string['rubricoptions'] = 'Rubric options';
 $string['rubricstatus'] = 'Current rubric status';
