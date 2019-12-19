@@ -262,7 +262,7 @@ module.exports = function(grunt) {
                 tasks: ['yui']
             },
             gherkinlint: {
-                files: ['**/tests/behat/*.feature'],
+                files: [inComponent ? 'tests/behat/*.feature' : '**/tests/behat/*.feature'],
                 tasks: ['gherkinlint']
             }
         },
