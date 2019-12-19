@@ -100,16 +100,15 @@ module.exports = function(grunt) {
         files = grunt.option('files').split(',');
     }
 
-    var inAMD = path.basename(cwd) == 'amd';
+    const inAMD = path.basename(cwd) == 'amd';
 
     // Globbing pattern for matching all AMD JS source files.
-    var amdSrc = [];
-    if (inAMD) {
-        amdSrc.push(cwd + "/src/*.js");
-        amdSrc.push(cwd + "/src/**/*.js");
+    let amdSrc = [];
+    if (inComponent) {
+        amdSrc.push(componentDirectory + "/amd/src/*.js");
+        amdSrc.push(componentDirectory + "/amd/src/**/*.js");
     } else {
-        amdSrc.push("**/amd/src/*.js");
-        amdSrc.push("**/amd/src/**/*.js");
+        amdSrc = ComponentList.getAmdSrcGlobList();
     }
 
     /**
@@ -468,7 +467,7 @@ module.exports = function(grunt) {
                             grunt: true,
                             // Run from current working dir and inherit stdio from process.
                             opts: {
-                                cwd: cwd,
+                                cwd: fullRunDir,
                                 stdio: 'inherit'
                             },
                             args: [task, filesOption]
@@ -494,18 +493,26 @@ module.exports = function(grunt) {
             );
         };
 
-        var watchConfig = grunt.config.get(['watch']);
-        watchConfig = Object.keys(watchConfig).reduce(function(carry, key) {
+        const originalWatchConfig = grunt.config.get(['watch']);
+        const watchConfig = Object.keys(originalWatchConfig).reduce(function(carry, key) {
             if (key == 'options') {
                 return carry;
             }
 
-            var value = watchConfig[key];
-            var fileGlobs = value.files;
-            var taskNames = value.tasks;
+            const value = originalWatchConfig[key];
+
+            const taskNames = value.tasks;
+            const files = value.files;
+            let excludes = [];
+            if (value.excludes) {
+                excludes = value.excludes;
+            }
 
             taskNames.forEach(function(taskName) {
-                carry[taskName] = fileGlobs;
+                carry[taskName] = {
+                    files,
+                    excludes,
+                };
             });
 
             return carry;
@@ -539,12 +546,14 @@ module.exports = function(grunt) {
             resp.files.forEach(function(file) {
                 grunt.log.ok('File changed: ' + file.name);
 
-                var fullPath = cwd + '/' + file.name;
+                var fullPath = fullRunDir + '/' + file.name;
                 Object.keys(watchConfig).forEach(function(task) {
-                    var fileGlobs = watchConfig[task];
-                    var match = fileGlobs.every(function(fileGlob) {
-                        return grunt.file.isMatch(fileGlob, fullPath);
+
+                    const fileGlobs = watchConfig[task].files;
+                    var match = fileGlobs.some(function(fileGlob) {
+                        return grunt.file.isMatch(`**/${fileGlob}`, fullPath);
                     });
+
                     if (match) {
                         // If we are watching a subdirectory then the file.name will be relative
                         // to that directory. However the grunt tasks  expect the file paths to be
@@ -576,7 +585,7 @@ module.exports = function(grunt) {
         });
 
         // Initiate the watch on the current directory.
-        watchmanClient.command(['watch-project', cwd], function(watchError, watchResponse) {
+        watchmanClient.command(['watch-project', fullRunDir], function(watchError, watchResponse) {
             if (watchError) {
                 grunt.log.error('Error initiating watch:', watchError);
                 watchTaskDone(1);
@@ -598,18 +607,40 @@ module.exports = function(grunt) {
                     return;
                 }
 
-                // Use the matching patterns specified in the watch config.
+                // Generate the expression query used by watchman.
+                // Documentation is limited, but see https://facebook.github.io/watchman/docs/expr/allof.html for examples.
+                // We generate an expression to match any value in the files list of all of our tasks, but excluding
+                // all value in the  excludes list of that task.
+                //
+                // [anyof, [
+                //      [allof, [
+                //          [anyof, [
+                //              ['match', validPath, 'wholename'],
+                //              ['match', validPath, 'wholename'],
+                //          ],
+                //          [not,
+                //              [anyof, [
+                //                  ['match', invalidPath, 'wholename'],
+                //                  ['match', invalidPath, 'wholename'],
+                //              ],
+                //          ],
+                //      ],
+                var matchWholeName = fileGlob => ['match', fileGlob, 'wholename'];
                 var matches = Object.keys(watchConfig).map(function(task) {
-                    var fileGlobs = watchConfig[task];
-                    var fileGlobMatches = fileGlobs.map(function(fileGlob) {
-                        return ['match', fileGlob, 'wholename'];
-                    });
+                    const matchAll = [];
+                    matchAll.push(['anyof'].concat(watchConfig[task].files.map(matchWholeName)));
 
-                    return ['allof'].concat(fileGlobMatches);
+                    if (watchConfig[task].excludes.length) {
+                        matchAll.push(['not', ['anyof'].concat(watchConfig[task].excludes.map(matchWholeName))]);
+                    }
+
+                    return ['allof'].concat(matchAll);
                 });
 
+                matches = ['anyof'].concat(matches);
+
                 var sub = {
-                    expression: ["anyof"].concat(matches),
+                    expression: matches,
                     // Which fields we're interested in.
                     fields: ["name", "size", "type"],
                     // Add our time constraint.
@@ -629,7 +660,7 @@ module.exports = function(grunt) {
                         return;
                     }
 
-                    grunt.log.ok('Listening for changes to files in ' + cwd);
+                    grunt.log.ok('Listening for changes to files in ' + fullRunDir);
                 });
             });
         });
