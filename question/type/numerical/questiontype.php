@@ -225,6 +225,7 @@ class qtype_numerical extends question_type {
                 if ($options->tolerance === false) {
                     $result->notice = get_string('invalidnumerictolerance', 'qtype_numerical');
                 }
+                $options->tolerance = (string)$options->tolerance;
             }
             if (isset($options->id)) {
                 $DB->update_record('question_numerical', $options);
