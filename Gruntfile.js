@@ -20,22 +20,51 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Grunt configuration
- */
-
 /* eslint-env node */
+
+/**
+ * Calculate the cwd, taking into consideration the `root` option (for Windows).
+ *
+ * @param {Object} grunt
+ * @returns {String} The current directory as best we can determine
+ */
+const getCwd = grunt => {
+    const fs = require('fs');
+    const path = require('path');
+
+    let cwd = fs.realpathSync(process.env.PWD || process.cwd());
+
+    // Windows users can't run grunt in a subdirectory, so allow them to set
+    // the root by passing --root=path/to/dir.
+    if (grunt.option('root')) {
+        const root = grunt.option('root');
+        if (grunt.file.exists(__dirname, root)) {
+            cwd = fs.realpathSync(path.join(__dirname, root));
+            grunt.log.ok('Setting root to ' + cwd);
+        } else {
+            grunt.fail.fatal('Setting root to ' + root + ' failed - path does not exist');
+        }
+    }
+
+    return cwd;
+};
+
+/**
+ * Grunt configuration.
+ *
+ * @param {Object} grunt
+ */
 module.exports = function(grunt) {
-    var path = require('path'),
-        tasks = {},
-        cwd = process.env.PWD || process.cwd(),
-        async = require('async'),
-        DOMParser = require('xmldom').DOMParser,
-        xpath = require('xpath'),
-        semver = require('semver'),
-        watchman = require('fb-watchman'),
-        watchmanClient = new watchman.Client(),
-        gruntFilePath = process.cwd();
+    const path = require('path');
+    const tasks = {};
+    const async = require('async');
+    const DOMParser = require('xmldom').DOMParser;
+    const xpath = require('xpath');
+    const semver = require('semver');
+    const watchman = require('fb-watchman');
+    const watchmanClient = new watchman.Client();
+    const fs = require('fs');
+    const ComponentList = require(path.resolve('GruntfileComponents.js'));
 
     // Verify the node version is new enough.
     var expected = semver.validRange(grunt.file.readJSON('package.json').engines.node);
@@ -44,16 +73,25 @@ module.exports = function(grunt) {
         grunt.fail.fatal('Node version not satisfied. Require ' + expected + ', version installed: ' + actual);
     }
 
-    // Windows users can't run grunt in a subdirectory, so allow them to set
-    // the root by passing --root=path/to/dir.
-    if (grunt.option('root')) {
-        var root = grunt.option('root');
-        if (grunt.file.exists(__dirname, root)) {
-            cwd = path.join(__dirname, root);
-            grunt.log.ok('Setting root to ' + cwd);
-        } else {
-            grunt.fail.fatal('Setting root to ' + root + ' failed - path does not exist');
-        }
+    // Detect directories:
+    // * gruntFilePath          The real path on disk to this Gruntfile.js
+    // * cwd                    The current working directory, which can be overridden by the `root` option
+    // * relativeCwd            The cwd, relative to the Gruntfile.js
+    // * componentDirectory     The root directory of the component if the cwd is in a valid component
+    // * inComponent            Whether the cwd is in a valid component
+    // * runDir                 The componentDirectory or cwd if not in a component, relative to Gruntfile.js
+    // * fullRunDir             The full path to the runDir
+    const gruntFilePath = fs.realpathSync(process.cwd());
+    const cwd = getCwd(grunt);
+    const relativeCwd = cwd.replace(new RegExp(`${gruntFilePath}/?`), '');
+    const componentDirectory = ComponentList.getOwningComponentDirectory(relativeCwd);
+    const inComponent = !!componentDirectory;
+    const runDir = inComponent ? componentDirectory : relativeCwd;
+    const fullRunDir = fs.realpathSync(gruntFilePath + path.sep + runDir);
+    grunt.log.debug(`The cwd was detected as ${cwd} with a fullRunDir of ${fullRunDir}`);
+
+    if (inComponent) {
+        grunt.log.ok(`Running tasks for component directory ${componentDirectory}`);
     }
 
     var files = null;
@@ -198,7 +236,9 @@ module.exports = function(grunt) {
                 nospawn: true // We need not to spawn so config can be changed dynamically.
             },
             amd: {
-                files: ['**/amd/src/**/*.js'],
+                files: inComponent
+                    ? ['amd/src/*.js', 'amd/src/**/*.js']
+                    : ['**/amd/src/**/*.js'],
                 tasks: ['amd']
             },
             boost: {
