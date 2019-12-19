@@ -11824,6 +11824,8 @@ body.h5p-embed .h5pmessages {
   max-width: 350px;
   max-height: 0;
   z-index: 1051; }
+  .toast-wrapper > :first-child {
+    margin-top: 1rem; }
 
 .icon {
   font-size: 16px;
