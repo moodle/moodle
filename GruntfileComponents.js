@@ -124,6 +124,21 @@ const getYuiSrcGlobList = relativeTo => {
 };
 
 /**
+ * Get the list of paths to thirdpartylibs.xml.
+ *
+ * @param {String} relativeTo
+ * @returns {Array}
+ */
+const getThirdPartyLibsList = relativeTo => {
+    const fs = require('fs');
+
+    return fetchComponentData().pathList
+        .map(componentPath => componentPath.replace(relativeTo, '') + '/thirdpartylibs.xml')
+        .filter(path => fs.existsSync(path))
+        .sort();
+};
+
+/**
  * Find the name of the component matching the specified path.
  *
  * @param {String} path
@@ -166,4 +181,5 @@ module.exports = {
     getComponentFromPath,
     getOwningComponentDirectory,
     getYuiSrcGlobList,
+    getThirdPartyLibsList,
 };
