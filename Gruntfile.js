@@ -111,6 +111,13 @@ module.exports = function(grunt) {
         amdSrc = ComponentList.getAmdSrcGlobList();
     }
 
+    let yuiSrc = [];
+    if (inComponent) {
+        yuiSrc.push(componentDirectory + "/yui/src/**/*.js");
+    } else {
+        yuiSrc = ComponentList.getYuiSrcGlobList(gruntFilePath + '/');
+    }
+
     /**
      * Function to generate the destination for the uglify task
      * (e.g. build/file.min.js). This function will be passed to
@@ -167,7 +174,7 @@ module.exports = function(grunt) {
             options: {quiet: !grunt.option('show-lint-warnings')},
             amd: {src: files ? files : amdSrc},
             // Check YUI module source files.
-            yui: {src: files ? files : ['**/yui/src/**/*.js', '!*/**/yui/src/*/meta/*.js']}
+            yui: {src: files ? files : yuiSrc},
         },
         babel: {
             options: {
@@ -249,7 +256,9 @@ module.exports = function(grunt) {
                 tasks: ['rawcss']
             },
             yui: {
-                files: ['**/yui/src/**/*.js'],
+                files: inComponent
+                    ? ['yui/src/*.json', 'yui/src/**/*.js']
+                    : ['**/yui/src/**/*.js'],
                 tasks: ['yui']
             },
             gherkinlint: {
@@ -260,7 +269,8 @@ module.exports = function(grunt) {
         shifter: {
             options: {
                 recursive: true,
-                paths: files ? files : [cwd]
+                // Shifter takes a relative path.
+                paths: files ? files : [runDir]
             }
         },
         gherkinlint: {

@@ -108,6 +108,22 @@ const getAmdSrcGlobList = () => {
 };
 
 /**
+ * Get the list of paths to build YUI sources.
+ *
+ * @param {String} relativeTo
+ * @returns {Array}
+ */
+const getYuiSrcGlobList = relativeTo => {
+    const globList = [];
+    fetchComponentData().pathList.forEach(componentPath => {
+        const relativeComponentPath = componentPath.replace(relativeTo, '');
+        globList.push(`${relativeComponentPath}/yui/src/**/*.js`);
+    });
+
+    return globList;
+};
+
+/**
  * Find the name of the component matching the specified path.
  *
  * @param {String} path
@@ -149,4 +165,5 @@ module.exports = {
     getAmdSrcGlobList,
     getComponentFromPath,
     getOwningComponentDirectory,
+    getYuiSrcGlobList,
 };
