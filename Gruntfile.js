@@ -50,6 +50,90 @@ const getCwd = grunt => {
 };
 
 /**
+ * Register any stylelint tasks.
+ *
+ * @param {Object} grunt
+ * @param {Array} files
+ * @param {String} fullRunDir
+ */
+const registerStyleLintTasks = (grunt, files, fullRunDir) => {
+    const getCssConfigForFiles = files => {
+        return {
+            stylelint: {
+                css: {
+                    // Use a fully-qualified path.
+                    src: files,
+                    options: {
+                        configOverrides: {
+                            rules: {
+                                // These rules have to be disabled in .stylelintrc for scss compat.
+                                "at-rule-no-unknown": true,
+                            }
+                        }
+                    }
+                },
+            },
+        };
+    };
+
+    const getScssConfigForFiles = files => {
+        return {
+            stylelint: {
+                scss: {
+                    options: {syntax: 'scss'},
+                    src: files,
+                },
+            },
+        };
+    };
+
+    let hasCss = true;
+    let hasScss = true;
+
+    if (files) {
+        // Specific files were passed. Just set them up.
+        grunt.config.merge(getCssConfigForFiles(files));
+        grunt.config.merge(getScssConfigForFiles(files));
+    } else {
+        // The stylelint system does not handle the case where there was no file to lint.
+        // Check whether there are any files to lint in the current directory.
+        const glob = require('glob');
+
+        const scssSrc = [];
+        glob.sync(`${fullRunDir}/**/*.scss`).forEach(path => scssSrc.push(path));
+
+        if (scssSrc.length) {
+            grunt.config.merge(getScssConfigForFiles(scssSrc));
+        } else {
+            hasScss = false;
+        }
+
+        const cssSrc = [];
+        glob.sync(`${fullRunDir}/**/*.css`).forEach(path => cssSrc.push(path));
+
+        if (cssSrc.length) {
+            grunt.config.merge(getCssConfigForFiles(cssSrc));
+        } else {
+            hasCss = false;
+        }
+    }
+
+    const scssTasks = ['sass'];
+    if (hasScss) {
+        scssTasks.unshift('stylelint:scss');
+    }
+    grunt.registerTask('scss', scssTasks);
+
+    const cssTasks = [];
+    if (hasCss) {
+        cssTasks.push('stylelint:css');
+    }
+    grunt.registerTask('rawcss', cssTasks);
+
+    grunt.registerTask('css', ['scss', 'rawcss']);
+};
+
+/**
  * Grunt configuration.
  *
  * @param {Object} grunt
@@ -248,11 +332,17 @@ module.exports = function(grunt) {
                 tasks: ['amd']
             },
             boost: {
-                files: ['**/theme/boost/scss/**/*.scss'],
+                files: [inComponent ? 'scss/**/*.scss' : 'theme/boost/scss/**/*.scss'],
                 tasks: ['scss']
             },
             rawcss: {
-                files: ['**/*.css', '**/theme/**/!(moodle.css|editor.css)'],
+                files: [
+                    '**/*.css',
+                ],
+                excludes: [
+                    '**/moodle.css',
+                    '**/editor.css',
+                ],
                 tasks: ['rawcss']
             },
             yui: {
@@ -278,23 +368,6 @@ module.exports = function(grunt) {
                 files: files ? files : ['**/tests/behat/*.feature'],
             }
         },
-        stylelint: {
-            scss: {
-                options: {syntax: 'scss'},
-                src: files ? files : ['*/**/*.scss']
-            },
-            css: {
-                src: files ? files : ['*/**/*.css'],
-                options: {
-                    configOverrides: {
-                        rules: {
-                            // These rules have to be disabled in .stylelintrc for scss compat.
-                            "at-rule-no-unknown": true,
-                        }
-                    }
-                }
-            }
-        }
     });
 
     /**
@@ -715,10 +788,8 @@ module.exports = function(grunt) {
     grunt.registerTask('amd', ['eslint:amd', 'babel']);
     grunt.registerTask('js', ['amd', 'yui']);
 
-    // Register CSS taks.
-    grunt.registerTask('css', ['stylelint:scss', 'sass', 'stylelint:css']);
-    grunt.registerTask('scss', ['stylelint:scss', 'sass']);
-    grunt.registerTask('rawcss', ['stylelint:css']);
+    // Register CSS tasks.
+    registerStyleLintTasks(grunt, files, fullRunDir);
 
     // Register the startup task.
     grunt.registerTask('startup', 'Run the correct tasks for the current directory', tasks.startup);
