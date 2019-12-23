@@ -33,3 +33,4 @@ $string['link_location'] = 'Link location';
 $string['link_location_desc'] = 'Choose where mediagallery link is displayed';
 $string['link_location_navigation'] = 'Navigation block';
 $string['link_location_course_settings'] = 'Course settings';
+$string['privacy:metadata'] = 'Kaltura media gallery plugin does not store any personal data.';

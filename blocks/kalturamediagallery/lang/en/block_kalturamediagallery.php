@@ -17,3 +17,4 @@
 $string['pluginname'] = 'Kaltura Media Gallery';
 $string['kalturamediagallery:addinstance'] = 'Add a new Kaltura Media Gallery block';
 $string['kalturamediagallery:myaddinstance'] = 'Add a new Kaltura Media Gallery block to Dashboard';
+$string['privacy:metadata'] = 'The Kaltura Media Gallery block only displays a link to Kaltura Media Gallery local plugin';

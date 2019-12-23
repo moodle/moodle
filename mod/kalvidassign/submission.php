@@ -91,7 +91,7 @@ if ($submission) {
         $message = get_string('assignmentsubmitted', 'kalvidassign');
         $continue = get_string('continue');
 
-        echo $OUTPUT->notification($message, 'notifysuccess');
+        echo $OUTPUT->notification($message, 'success');
 
         echo html_writer::start_tag('center');
 
@@ -125,7 +125,7 @@ if ($submission) {
         $message = get_string('assignmentsubmitted', 'kalvidassign');
         $continue = get_string('continue');
 
-        echo $OUTPUT->notification($message, 'notifysuccess');
+        echo $OUTPUT->notification($message, 'success');
 
         echo html_writer::start_tag('center');
 
