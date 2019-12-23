@@ -61,6 +61,7 @@ class frontend extends \core_availability\frontend {
             $context = \context_course::instance($course->id);
             $cms = array();
             $modinfo = get_fast_modinfo($course);
+            $previouscm = false;
             foreach ($modinfo->cms as $id => $othercm) {
                 // Add each course-module if it has completion turned on and is not
                 // the one currently being edited.
@@ -69,8 +70,16 @@ class frontend extends \core_availability\frontend {
                         'name' => format_string($othercm->name, true, array('context' => $context)),
                         'completiongradeitemnumber' => $othercm->completiongradeitemnumber);
                 }
+                if (count($cms) && (empty($cm) || $cm->id == $id)) {
+                    $previouscm = true;
+                }
             }
-
+            if ($previouscm) {
+                $previous = (object)array('id' => \availability_completion\condition::OPTION_PREVIOUS,
+                        'name' => get_string('option_previous', 'availability_completion'),
+                        'completiongradeitemnumber' => \availability_completion\condition::OPTION_PREVIOUS);
+                array_unshift($cms, $previous);
+            }
             $this->cachekey = $cachekey;
             $this->cacheinitparams = array($cms);
         }
