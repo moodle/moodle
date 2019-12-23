@@ -55,6 +55,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         foreach ($levels as $level => $classname) {
             $this->allcontextlevels[$level] = context_helper::get_level_name($level);
         }
+        $this->add_classes(['table-striped']);
     }
 
     protected function load_current_permissions() {

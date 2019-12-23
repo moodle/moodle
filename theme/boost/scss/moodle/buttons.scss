@@ -13,14 +13,6 @@
 p.arrow_button {
     margin-top: 5em;
     text-align: center;
-
-    #remove {
-        margin: 3em auto 5em;
-    }
-
-    input {
-        @extend .btn-block;
-    }
 }
 
 #addcontrols {
@@ -37,7 +29,7 @@ p.arrow_button {
 #addcontrols,
 #removecontrols {
     input {
-        @extend .btn-block;
+        width: 100%;
         margin: auto;
     }
 }
@@ -47,8 +39,6 @@ p.arrow_button {
 }
 
 .btn.btn-icon {
-    @extend .btn-link;
-
     height: ($icon-width + 20px);
     width: ($icon-width + 20px);
     font-size: $icon-width;

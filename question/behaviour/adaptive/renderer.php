@@ -68,7 +68,7 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
         // Display the grading details from the last graded state.
         $class = $details->state->get_feedback_class();
         return html_writer::tag('div', get_string($class, 'question'),
-                        array('class' => 'correctness ' . $class))
+                        array('class' => 'correctness badge ' . $class))
                 . html_writer::tag('div', $this->grading_details($details, $options),
                         array('class' => 'gradingdetails'));
     }

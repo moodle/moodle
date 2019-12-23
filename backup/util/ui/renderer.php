@@ -717,7 +717,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $url = $component->get_url();
 
         $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline mb-1'));
-        $output .= html_writer::start_tag('div', array('class' => 'rcs-results w-75'));
+        $output .= html_writer::start_tag('div', array('class' => 'rcs-results table-sm w-75'));
 
         $table = new html_table();
         $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
@@ -877,7 +877,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $url = $component->get_url();
 
         $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline mb-1'));
-        $output .= html_writer::start_tag('div', array('class' => 'rcs-results w-75'));
+        $output .= html_writer::start_tag('div', array('class' => 'rcs-results table-sm w-75'));
 
         $table = new html_table();
         $table->head = array('', get_string('name'), get_string('description'));

@@ -156,7 +156,8 @@ class behat_permissions extends behat_base {
     public function capability_has_permission($capabilityname, $permission) {
 
         // We already know the name, so we just need the value.
-        $radioxpath = "//table[@class='rolecap']/descendant::input[@type='radio']" .
+        $radioxpath = "//table[contains(concat(' ',
+ normalize-space(@class), ' '), ' rolecap ')]/descendant::input[@type='radio']" .
             "[@name='" . $capabilityname . "'][@checked]";
 
         $checkedradio = $this->find('xpath', $radioxpath);

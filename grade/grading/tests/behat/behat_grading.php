@@ -66,7 +66,7 @@ class behat_grading extends behat_base {
         $editactionliteral = behat_context_helper::escape(get_string("manageactionedit", "grading"));
 
         // Working both when adding and editing.
-        $definitionxpath = "//a[@class='action']" .
+        $definitionxpath = "//a[@class='action btn btn-lg']" .
             "[./descendant::*[contains(., $newactionliteral) or contains(., $editactionliteral)]]";
 
         $this->execute('behat_grading::i_go_to_advanced_grading_page', $this->escape($activityname));

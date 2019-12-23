@@ -117,10 +117,10 @@ class report_performance {
      */
     public function add_issue_to_table(&$table, $issueresult, $detailed = false) {
         global $OUTPUT;
-        $statusarr = array(self::REPORT_PERFORMANCE_OK => 'statusok',
-                        self::REPORT_PERFORMANCE_WARNING => 'statuswarning',
-                        self::REPORT_PERFORMANCE_SERIOUS => 'statusserious',
-                        self::REPORT_PERFORMANCE_CRITICAL => 'statuscritical');
+        $statusarr = array(self::REPORT_PERFORMANCE_OK => 'badge badge-success',
+                        self::REPORT_PERFORMANCE_WARNING => 'badge badge-warning',
+                        self::REPORT_PERFORMANCE_SERIOUS => 'badge badge-danger',
+                        self::REPORT_PERFORMANCE_CRITICAL => 'badge badge-danger');
 
         $row = array();
         if ($detailed) {

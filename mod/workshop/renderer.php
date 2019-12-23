@@ -425,7 +425,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
 
         $table = new html_table();
-        $table->attributes['class'] = 'grading-report';
+        $table->attributes['class'] = 'grading-report table-striped table-hover';
 
         $sortbyfirstname = $this->helper_sortable_heading(get_string('firstname'), 'firstname', $options->sortby, $options->sorthow);
         $sortbylastname = $this->helper_sortable_heading(get_string('lastname'), 'lastname', $options->sortby, $options->sorthow);

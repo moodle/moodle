@@ -403,7 +403,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                 'value' => $value
             );
             $input = html_writer::empty_tag('input', $criteriainputparams);
-            $rubrictemplate .= html_writer::tag('div', $input, array('class' => 'addcriterion'));
+            $rubrictemplate .= html_writer::tag('div', $input, array('class' => 'addcriterion btn btn-secondary'));
         }
         $rubrictemplate .= $this->rubric_edit_options($mode, $options);
         $rubrictemplate .= html_writer::end_tag('div');

@@ -174,10 +174,6 @@
         }
     }
 
-    .highlight {
-        @extend .text-dark;
-    }
-
     label {
         margin: 0;
         display: block;
@@ -293,15 +289,19 @@ body.path-question-type {
 .que .formulation,
 .que .outcome,
 .que .comment {
-    @extend .alert;
+    position: relative;
+    padding: $alert-padding-y $alert-padding-x;
+    margin-bottom: $alert-margin-bottom;
+    border: $alert-border-width solid transparent;
+    @include border-radius($alert-border-radius);
 }
 .que .outcome,
 .que .comment {
-    @extend .alert-warning;
+    @include alert-variant(theme-color-level('warning', $alert-bg-level), theme-color-level('warning', $alert-border-level), theme-color-level('warning', $alert-color-level)); /* stylelint-disable-line max-line-length */
 }
 
 .que .formulation {
-    @extend .alert-info;
+    @include alert-variant(theme-color-level('info', $alert-bg-level), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level)); /* stylelint-disable-line max-line-length */
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,
@@ -339,11 +339,7 @@ body.path-question-type {
 }
 
 .que .comment {
-    @extend .alert-success;
-}
-
-.que .history {
-    @extend .card;
+    @include alert-variant(theme-color-level('success', $alert-bg-level), theme-color-level('success', $alert-border-level), theme-color-level('success', $alert-color-level)); /* stylelint-disable-line max-line-length */
 }
 
 .que .ablock {
@@ -366,7 +362,6 @@ body.path-question-type {
 }
 
 .que .correctness {
-    @extend .tag;
     &.correct {
         background-color: $state-success-text;
     }
@@ -384,7 +379,7 @@ body.path-question-type {
 }
 
 .que .validationerror {
-    @extend .text-danger;
+    color: map-get($theme-colors, 'danger');
 }
 // copied from .formFieldState in mixin.less
 // and made more specific
