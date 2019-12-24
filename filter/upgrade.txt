@@ -1,6 +1,12 @@
 This file describes API changes in core filter API and plugins,
 information provided here is intended especially for developers.
 
+=== 3.9 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available anymore because of the upgrade cleanup performed for this version. See MDL-65809 for more info:
+    - filter_mathjaxloader_upgrade_cdn_cloudflare()
+    - filter_mathjaxloader_upgrade_mathjaxconfig_equal()
+
 === 3.6 ===
 
 * Although there is no API change that require you to update your filter,

@@ -2,6 +2,16 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.9 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available anymore because of the upgrade cleanup performed for this version. See MDL-65809 for more info:
+    - format_topics_upgrade_remove_numsections()
+    - format_topics_upgrade_hide_extra_sections()
+    - format_topics_upgrade_add_empty_sections()
+    - format_weeks_upgrade_remove_numsections()
+    - format_weeks_upgrade_hide_extra_sections()
+    - format_weeks_upgrade_add_empty_sections()
+
 === 3.8 ===
 
 * The following functions have been finally deprecated and can not be used anymore:

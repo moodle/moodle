@@ -651,100 +651,6 @@ class core_upgradelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Create two pages with blocks, delete one page and make sure upgrade script deletes orphaned blocks
-     */
-    public function test_delete_block_positions() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot . '/my/lib.php');
-        $this->resetAfterTest();
-
-        // Make sure each block on system dashboard page has a position.
-        $systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => MY_PAGE_PRIVATE));
-        $systemcontext = context_system::instance();
-        $blockinstances = $DB->get_records('block_instances', array('parentcontextid' => $systemcontext->id,
-            'pagetypepattern' => 'my-index', 'subpagepattern' => $systempage->id));
-        $this->assertNotEmpty($blockinstances);
-        foreach ($blockinstances as $bi) {
-            $DB->insert_record('block_positions', ['subpage' => $systempage->id, 'pagetype' => 'my-index', 'contextid' => $systemcontext->id,
-                'blockinstanceid' => $bi->id, 'visible' => 1, 'weight' => $bi->defaultweight]);
-        }
-
-        // Create two users and make two copies of the system dashboard.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $page1 = my_copy_page($user1->id, MY_PAGE_PRIVATE, 'my-index');
-        $page2 = my_copy_page($user2->id, MY_PAGE_PRIVATE, 'my-index');
-
-        $context1 = context_user::instance($user1->id);
-        $context2 = context_user::instance($user2->id);
-
-        // Delete second page without deleting block positions.
-        $DB->delete_records('my_pages', ['id' => $page2->id]);
-
-        // Blocks are still here.
-        $this->assertEquals(count($blockinstances), $DB->count_records('block_positions', ['subpage' => $page1->id, 'pagetype' => 'my-index', 'contextid' => $context1->id]));
-        $this->assertEquals(count($blockinstances), $DB->count_records('block_positions', ['subpage' => $page2->id, 'pagetype' => 'my-index', 'contextid' => $context2->id]));
-
-        // Run upgrade script that should delete orphaned block_positions.
-        upgrade_block_positions();
-
-        // First user still has all his block_positions, second user does not.
-        $this->assertEquals(count($blockinstances), $DB->count_records('block_positions', ['subpage' => $page1->id, 'pagetype' => 'my-index', 'contextid' => $context1->id]));
-        $this->assertEquals(0, $DB->count_records('block_positions', ['subpage' => $page2->id, 'pagetype' => 'my-index']));
-    }
-
-    /**
-     * Test the conversion of auth plugin settings names.
-     */
-    public function test_upgrade_fix_config_auth_plugin_names() {
-        $this->resetAfterTest();
-
-        // Let the plugin auth_foo use legacy format only.
-        set_config('name1', 'val1', 'auth/foo');
-        set_config('name2', 'val2', 'auth/foo');
-
-        // Let the plugin auth_bar use new format only.
-        set_config('name1', 'val1', 'auth_bar');
-        set_config('name2', 'val2', 'auth_bar');
-
-        // Let the plugin auth_baz use a mix of legacy and new format, with no conflicts.
-        set_config('name1', 'val1', 'auth_baz');
-        set_config('name1', 'val1', 'auth/baz');
-        set_config('name2', 'val2', 'auth/baz');
-        set_config('name3', 'val3', 'auth_baz');
-
-        // Let the plugin auth_qux use a mix of legacy and new format, with conflicts.
-        set_config('name1', 'val1', 'auth_qux');
-        set_config('name1', 'val2', 'auth/qux');
-
-        // Execute the migration.
-        upgrade_fix_config_auth_plugin_names('foo');
-        upgrade_fix_config_auth_plugin_names('bar');
-        upgrade_fix_config_auth_plugin_names('baz');
-        upgrade_fix_config_auth_plugin_names('qux');
-
-        // Assert that legacy settings are gone and no new were introduced.
-        $this->assertEmpty((array) get_config('auth/foo'));
-        $this->assertEmpty((array) get_config('auth/bar'));
-        $this->assertEmpty((array) get_config('auth/baz'));
-        $this->assertEmpty((array) get_config('auth/qux'));
-
-        // Assert values were simply kept where there was no conflict.
-        $this->assertSame('val1', get_config('auth_foo', 'name1'));
-        $this->assertSame('val2', get_config('auth_foo', 'name2'));
-
-        $this->assertSame('val1', get_config('auth_bar', 'name1'));
-        $this->assertSame('val2', get_config('auth_bar', 'name2'));
-
-        $this->assertSame('val1', get_config('auth_baz', 'name1'));
-        $this->assertSame('val2', get_config('auth_baz', 'name2'));
-        $this->assertSame('val3', get_config('auth_baz', 'name3'));
-
-        // Assert the new format took precedence in case of conflict.
-        $this->assertSame('val1', get_config('auth_qux', 'name1'));
-    }
-
-    /**
      * Create a collection of test themes to test determining parent themes.
      *
      * @return Url to the path containing the test themes
@@ -781,44 +687,6 @@ class core_upgradelib_testcase extends advanced_testcase {
         $vthemedir = \org\bovigo\vfs\vfsStream::setup('themes', null, $themedircontent);
 
         return \org\bovigo\vfs\vfsStream::url('themes');
-    }
-
-    /**
-     * Test finding theme locations.
-     */
-    public function test_upgrade_find_theme_location() {
-        global $CFG;
-
-        $this->resetAfterTest();
-
-        $CFG->themedir = $this->create_testthemes();
-
-        $this->assertSame($CFG->dirroot . '/theme/boost', upgrade_find_theme_location('boost'));
-        $this->assertSame($CFG->dirroot . '/theme/classic', upgrade_find_theme_location('classic'));
-
-        $this->assertSame($CFG->themedir . '/testtheme', upgrade_find_theme_location('testtheme'));
-        $this->assertSame($CFG->themedir . '/childoftesttheme', upgrade_find_theme_location('childoftesttheme'));
-    }
-
-    /**
-     * Test figuring out if theme is or is a child of a certain theme.
-     */
-    public function test_upgrade_theme_is_from_family() {
-        global $CFG;
-
-        $this->resetAfterTest();
-
-        $CFG->themedir = $this->create_testthemes();
-
-        $this->assertTrue(upgrade_theme_is_from_family('boost', 'boost'), 'Boost is a boost theme');
-        $this->assertTrue(upgrade_theme_is_from_family('boost', 'classic'), 'Classic is a boost base theme');
-        $this->assertFalse(upgrade_theme_is_from_family('classic', 'boost'), 'Boost is not a classic theme');
-
-        $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'childoftesttheme'), 'childoftesttheme is a testtheme');
-        $this->assertFalse(upgrade_theme_is_from_family('testtheme', 'orphantheme'), 'ofphantheme is not a testtheme');
-        $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'infinite'), 'Infinite loop with testtheme parent is true');
-        $this->assertFalse(upgrade_theme_is_from_family('testtheme', 'loop'), 'Infinite loop without testtheme parent is false');
-        $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'themewithbrokenparent'), 'No error on broken parent');
     }
 
     /**
@@ -888,36 +756,6 @@ class core_upgradelib_testcase extends advanced_testcase {
                 'Tzo4OiJzdGRDbGFzcyI6Mzp7czo0OiJ0ZXh0IjtzOjMyOiJOb3RoaW5nIHRoYXQgYW55b25lIGNhcmVzIGFib3V0LiI7czo1OiJ0aXRsZSI7czoxNjoiUmVhbGx5IG9sZCBibG9jayI7czo2OiJmb3JtYXQiO3M6MToiMSI7fQ=='
             ]
         ];
-    }
-
-    /**
-     * Check that entries in the block_instances table are coverted over correctly.
-     *
-     * @dataProvider encoded_strings_dataprovider
-     * @param string $original The original base64_encoded block config setting.
-     * @param string $expected The expected base64_encoded block config setting.
-     */
-    public function test_upgrade_fix_block_instance_configuration($original, $expected) {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        $data = new stdClass();
-        $data->blockname = 'html';
-        $data->parentcontextid = 1;
-        $data->showinsubcontexts = 0;
-        $data->requirebytheme = 0;
-        $data->pagetypepattern = 'admin-setting-frontpagesettings';
-        $data->defaultregion = 'side-post';
-        $data->defaultweight = 1;
-        $data->timecreated = time();
-        $data->timemodified = time();
-
-        $data->configdata = $original;
-        $entryid = $DB->insert_record('block_instances', $data);
-        upgrade_fix_block_instance_configuration();
-        $record = $DB->get_record('block_instances', ['id' => $entryid]);
-        $this->assertEquals($expected, $record->configdata);
     }
 
     /**

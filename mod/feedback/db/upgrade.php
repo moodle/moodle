@@ -42,43 +42,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_feedback_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
-
-    if ($oldversion < 2017032800) {
-
-        // Delete duplicated records in feedback_completed. We just keep the last record of completion.
-        // Related values in feedback_value won't be deleted (they won't be used and can be kept there as a backup).
-        $sql = "SELECT MAX(id) as maxid, userid, feedback, courseid
-                  FROM {feedback_completed}
-                 WHERE userid <> 0 AND anonymous_response = :notanonymous
-              GROUP BY userid, feedback, courseid
-                HAVING COUNT(id) > 1";
-        $params = ['notanonymous' => 2]; // FEEDBACK_ANONYMOUS_NO.
-
-        $duplicatedrows = $DB->get_recordset_sql($sql, $params);
-        foreach ($duplicatedrows as $row) {
-            $DB->delete_records_select('feedback_completed', 'userid = ? AND feedback = ? AND courseid = ? AND id <> ?'.
-                                                           ' AND anonymous_response = ?', array(
-                                           $row->userid,
-                                           $row->feedback,
-                                           $row->courseid,
-                                           $row->maxid,
-                                           2, // FEEDBACK_ANONYMOUS_NO.
-            ));
-        }
-        $duplicatedrows->close();
-
-        // Feedback savepoint reached.
-        upgrade_mod_savepoint(true, 2017032800, 'feedback');
-    }
-
-    // Automatically generated Moodle v3.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.4.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG;
 
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.

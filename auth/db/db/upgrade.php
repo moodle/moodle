@@ -32,19 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_auth_db_upgrade($oldversion) {
     global $CFG, $DB;
 
-    if ($oldversion < 2017032800) {
-        // Convert info in config plugins from auth/db to auth_db
-        upgrade_fix_config_auth_plugin_names('db');
-        upgrade_fix_config_auth_plugin_defaults('db');
-        upgrade_plugin_savepoint(true, 2017032800, 'auth', 'db');
-    }
-
-    // Automatically generated Moodle v3.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.4.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
 

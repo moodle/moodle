@@ -37,12 +37,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_gradingform_guide_upgrade($oldversion) {
     global $DB;
 
-    // Automatically generated Moodle v3.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.4.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
 

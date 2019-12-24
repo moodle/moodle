@@ -30,30 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion the version we are upgrading from.
  */
 function xmldb_qtype_essay_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    $dbman = $DB->get_manager();
-
-    // Automatically generated Moodle v3.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.4.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2018021800) {
-
-        // Add "filetypeslist" column to the question type options to save the allowed file types.
-        $table = new xmldb_table('qtype_essay_options');
-        $field = new xmldb_field('filetypeslist', XMLDB_TYPE_TEXT, null, null, null, null, null, 'responsetemplateformat');
-
-        // Conditionally launch add field filetypeslist.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Essay savepoint reached.
-        upgrade_plugin_savepoint(true, 2018021800, 'qtype', 'essay');
-    }
+    global $CFG;
 
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
