@@ -753,6 +753,7 @@ $string['maxeditingtime'] = 'Maximum time to edit posts';
 $string['maxusersperpage'] = ' Maximum users per page';
 $string['configmaxusersperpage'] = 'Maximum number of users displayed within user selector in course, group, cohort, webservice etc.';
 $string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
+$string['mbstringrequired'] = 'Installing the MBSTRING library is required in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['mediapluginavi'] = 'Enable .avi filter';
 $string['mediapluginflv'] = 'Enable .flv filter';
 $string['mediapluginimg'] = 'Enable auto-embedding of linked images';
