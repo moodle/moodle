@@ -85,6 +85,10 @@ if ($hassiteconfig) {
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
+    $adminsetting = new admin_setting_configcheckbox('enable_assignment', get_string('enable_assignment', 'local_kaltura'), get_string('enable_assignment_desc', 'local_kaltura'), 0);
+    $adminsetting->plugin = KALTURA_PLUGIN_NAME;
+    $settings->add($adminsetting);
+
     if (isset($configsettings->migration_yes) && $configsettings->migration_yes == 1) {
         $url = new moodle_url('/local/kaltura/migration.php');
 
