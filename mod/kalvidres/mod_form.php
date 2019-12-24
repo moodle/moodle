@@ -154,9 +154,9 @@ class mod_kalvidres_mod_form extends moodleform_mod {
 
         $videogroup = array();
         if ($addinstance) {
-            $videogroup[] =& $mform->createElement('button', $this->addvideobutton, get_string('add_video', 'kalvidres'), array('class' => 'btn btn-secondary'));
+            $videogroup[] =& $mform->createElement('button', $this->addvideobutton, get_string('add_video', 'kalvidres'));
         } else {
-            $videogroup[] =& $mform->createElement('button', $this->addvideobutton, get_string('replace_video', 'kalvidres'), array('class' => 'btn btn-secondary'));
+            $videogroup[] =& $mform->createElement('button', $this->addvideobutton, get_string('replace_video', 'kalvidres'));
         }
 
         $mform->addGroup($videogroup, 'video_group', '&nbsp;', '&nbsp;', false);
