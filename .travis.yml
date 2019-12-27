@@ -19,7 +19,7 @@ services:
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
     - 7.3
-    - 7.1.30 # Make this sticky because current default version (7.1.11) has a bug with redis-extension output (MDL-66062)
+    - 7.2
 
 addons:
   postgresql: "9.6"
