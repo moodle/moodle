@@ -207,7 +207,8 @@ class enrol_fee_plugin extends enrol_plugin {
                 echo '</div>';
             } else {
                 \core_payment\helper::gateways_modal_requirejs();
-                $attributes = core_payment\helper::gateways_modal_link_params($cost, $instance->currency);
+                $attributes = core_payment\helper::gateways_modal_link_params($cost, $instance->currency, 'enrol_fee',
+                        $instance->id);
 
                 echo '<div align="center">' .
                       html_writer::tag('button', get_string("sendpaymentbutton", "enrol_paypal"), $attributes) .
