@@ -47,7 +47,8 @@ define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], f
         // We do twice because: https://github.com/twbs/bootstrap/issues/10547
         jQuery('body').popover({
             trigger: 'focus',
-            selector: "[data-toggle=popover][data-trigger!=hover]"
+            selector: "[data-toggle=popover][data-trigger!=hover]",
+            placement: 'auto'
         });
 
         // Popovers must close on Escape for accessibility reasons.
