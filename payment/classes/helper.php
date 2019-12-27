@@ -98,12 +98,14 @@ class helper {
      * @param string $currency Currency of payment
      * @return array
      */
-    public static function gateways_modal_link_params(float $amount, string $currency) : array {
+    public static function gateways_modal_link_params(float $amount, string $currency, string $component, int $componentid): array {
         return [
             'id' => 'gateways-modal-trigger',
             'role' => 'button',
             'data-amount' => $amount,
             'data-currency' => $currency,
+            'data-component' => $component,
+            'data-componentid' => $componentid,
         ];
     }
 }
