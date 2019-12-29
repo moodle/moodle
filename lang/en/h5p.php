@@ -71,7 +71,7 @@ $string['downloadtitle'] = 'Download this content as a H5P file.';
 $string['editor'] = 'Editor';
 $string['embed'] = 'Embed';
 $string['embedtitle'] = 'View the embed code for this content.';
-$string['eventh5pviewed'] = 'H5P viewed';
+$string['eventh5pviewed'] = 'H5P content viewed';
 $string['eventh5pdeleted'] = 'H5P deleted';
 $string['fetchtypesfailure'] = 'No information could be obtained on the H5P content types available. H5P repository connection failure';
 $string['fileExceedsMaxSize'] = 'One of the files inside the package exceeds the maximum file size allowed. ({$a->%file} {$a->%used} > {$a->%max})';
@@ -107,10 +107,7 @@ $string['invalidsemanticsjson'] = 'Invalid semantics.json file has been included
 $string['invalidsemanticstype'] = 'H5P internal error: unknown content type "{$a->@type}" in semantics. Removing content!';
 $string['invalidstring'] = 'Provided string is not valid according to regexp in semantics. (value: "{$a->%value}", regexp: "{$a->%regexp}")';
 $string['librarydirectoryerror'] = 'Library directory name must match machineName or machineName-majorVersion.minorVersion (from library.json). (Directory: {$a->%directoryName} , machineName: {$a->%machineName}, majorVersion: {$a->%majorVersion}, minorVersion: {$a->%minorVersion})';
-$string['librariesmanagerdescription'] = '<p>H5P enables users to create interactive content by providing a range of content types.</p>'.
-    '<p>To ensure that only trusted H5P content types are used on your site, you need to <i>either</i></p>'.
-    '<ul><li>Upload H5P content types from h5p.org <i>or</i></li><li>Enable the scheduled task \'Download available H5P content types from h5p.org</li></ul>'.
-    '<p>Note that users will only be able to use the H5P content types which are installed on your site.</p>';
+$string['librariesmanagerdescription'] = '<p>H5P enables users to create interactive content by providing a range of content types.</p><p>To ensure that only trusted H5P content types are used on your site, you need to <i>either</i></p><ul><li>Upload H5P content types from h5p.org <i>or</i></li><li>Enable the scheduled task \'Download available H5P content types from h5p.org\'</li></ul><p>Note that users will only be able to use the H5P content types which are installed on your site.</p>';
 $string['license'] = 'License';
 $string['licenseCC010'] = 'CC0 1.0 Universal (CC0 1.0) Public Domain Dedication';
 $string['licenseCC010U'] = 'CC0 1.0 Universal';

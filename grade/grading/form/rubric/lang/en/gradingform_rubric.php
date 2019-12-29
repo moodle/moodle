@@ -54,8 +54,8 @@ $string['leveldelete'] = 'Delete level {$a}';
 $string['leveldefinition'] = 'Level {$a} definition';
 $string['levelempty'] = 'Click to edit level';
 $string['levelsgroup'] = 'Levels group';
-$string['lockzeropoints'] = 'Calculate grade based on the rubric having a minimum score of 0';
-$string['lockzeropoints_help'] = 'This setting only applies if the sum of the minimum number of points for each criterion is greater than 0. If ticked, the minimum achievable grade for the rubric will be greater than 0. If unticked, the minimum possible score for the rubric will be mapped to the minimum grade available for the activity (which is 0 unless a scale is used).';
+$string['lockzeropoints'] = 'Calculate grade having a minimum score of the minimum achievable grade for the rubric';
+$string['lockzeropoints_help'] = 'This setting only applies if the sum of the minimum number of points for each criterion is greater than 0. If ticked, the minimum achievable grade for the rubric will be the minimum achievable grade for the rubric. If unticked, the minimum possible score for the rubric will be mapped to the minimum grade available for the activity (which is 0 unless a scale is used).';
 $string['name'] = 'Name';
 $string['needregrademessage'] = 'The rubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
 $string['notset'] = 'Not set';
@@ -78,7 +78,7 @@ $string['rubricmappingexplained'] = 'The minimum possible score for this rubric 
 
 If a scale is used for grading, the score will be rounded and converted to the scale elements as if they were consecutive integers.
 
-This grade calculation may be changed by editing the form and ticking the box \'Calculate grade based on the rubric having a minimum score of 0\'.';
+This grade calculation may be changed by editing the form and ticking the box \'Calculate grade having a minimum score of the minimum achievable grade for the rubric\'.';
 $string['rubricnotcompleted'] = 'Please choose something for each criterion';
 $string['rubricoptions'] = 'Rubric options';
 $string['rubricstatus'] = 'Current rubric status';
