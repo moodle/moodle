@@ -58,7 +58,6 @@ $urlparams = array(
 $url = new moodle_url('/lib/editor/tinymce/plugins/kalturamedia/lti_launch.php', $urlparams);
 
 $params = array(
-    'insertbtnid' => TINMCE_KALTURAMEDIA_INSERT_BUTTON_ID,
     'ltilaunchurl' => $url->out(),
     'objecttagheight' => TINMCE_KALTURAMEDIA_OBJECT_TAG_HEIGHT,
     'objecttagid' => TINMCE_KALTURAMEDIA_OBJECT_TAG_ID,

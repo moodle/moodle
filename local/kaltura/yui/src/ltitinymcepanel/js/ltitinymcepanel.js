@@ -22,7 +22,7 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
- /**
+/**
  * This method calls the base class constructor
  * @method LTITINYMCEPANEL
  */
@@ -31,100 +31,91 @@ var LTITINYMCEPANEL = function() {
 };
 
 Y.extend(LTITINYMCEPANEL, Y.Base, {
-    /**
-     * The context id the editor was launched in.
-     * @property contextid
-     * @type {Integer}
-     * @default null
-     */
-    contextid: 0,
+        /**
+         * The context id the editor was launched in.
+         * @property contextid
+         * @type {Integer}
+         * @default null
+         */
+        contextid: 0,
 
-    /**
-     * Init function for the checkboxselection module
-     * @property {Object} params Data to help initialize the YUI module.
-     */
-    init : function(params) {
-        // Check to make sure parameters are initialized.
-        if ('' === params.insertbtnid || '' === params.ltilaunchurl || '' === params.objecttagheight || '' === params.objecttagid || '' === params.previewiframeid) {
-            alert('Some parameters were not initialized.');
-            return;
-        }
+        /**
+         * Init function for the checkboxselection module
+         * @property {Object} params Data to help initialize the YUI module.
+         */
+        init : function(params) {
+            // Check to make sure parameters are initialized.
+            if ('' === params.ltilaunchurl || '' === params.objecttagheight || '' === params.objecttagid || '' === params.previewiframeid) {
+                alert('Some parameters were not initialized.');
+                return;
+            }
 
-        // Initialize the the browse when the window is initially rendered.
-        this.load_lti_content(params.ltilaunchurl, params.objecttagid, params.objecttagheight);
+            // Initialize the the browse when the window is initially rendered.
+            this.load_lti_content(params.ltilaunchurl, params.objecttagid, params.objecttagheight);
 
-        // Disable the insert button since nothing has been selected yet.
-        Y.one('#'+params.insertbtnid).set('disabled', true);
+            // Listen to simulated click event send from local/kaltura/service.php
+            Y.one('#closeltipanel').on('click', this.user_selected_video_callback, this, params.objecttagid, params.previewiframeid, params.objecttagheight);
 
-        // Listen to simulated click event send from local/kaltura/service.php
-        Y.one('#closeltipanel').on('click', this.user_selected_video_callback, this, params.insertbtnid, params.objecttagid, params.previewiframeid, params.objecttagheight);
+            if (null !== Y.one('#page-footer')) {
+                Y.one('#page-footer').setStyle('display', 'none');
+            }
+        },
 
-        if (null !== Y.one('#page-footer')) {
-            Y.one('#page-footer').setStyle('display', 'none');
+        /**
+         * A funciton to load the LTI content.  This is called when the YUI module is first initialized.
+         * @property {String} url LTI launch URL.
+         * @property {String} iframeid iframe tag id.
+         * @property {String} iframeheight iframe tag height.
+         */
+        load_lti_content : function(url, iframeid, iframeheight) {
+            if (0 === this.contextid) {
+                this.contextid = Y.one('#lti_launch_context_id').get('value');
+            }
+
+            var content = '<iframe id="lti_view_element" height="'+iframeheight+'px" width="100%" src="'+url+'&amp;contextid='+this.contextid+'" allow="autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;"></iframe>';
+            Y.one('#'+iframeid).setContent(content);
+        },
+
+        /**
+         * This function serves as a call back method for when the closeltipanel div has been clicked.  It means that the user has
+         * selected a video for embedding into the TinyMCE edotor.  Enabling the insert button, removing the contents LTI launch element and
+         * adding content to the media preview element.
+         * @property {Object} e Event object.
+         * @property {String} objecttagid Object tag id.
+         * @property {String} previewiframeid Preview iframe tag id.
+         * @property {String} height Height of the iframe.
+         */
+        user_selected_video_callback : function(e, objecttagid, previewiframeid, height) {
+            Y.one('#'+objecttagid).setContent('');
+
+            var center = Y.Node.create('<center></center>');
+            var iframe = Y.Node.create('<iframe></iframe>');
+            iframe.setAttribute('allowfullscreen', '');
+            iframe.setAttribute('width', Y.one('#width').get('value')+'px');
+            iframe.setAttribute('height', height+'px');
+            iframe.setAttribute('src', Y.one('#video_preview_frame').getAttribute('src'));
+
+            center.append(iframe);
+            Y.one('#'+previewiframeid).append(center);
         }
     },
-
-    /**
-     * A funciton to load the LTI content.  This is called when the YUI module is first initialized.
-     * @property {String} url LTI launch URL.
-     * @property {String} iframeid iframe tag id.
-     * @property {String} iframeheight iframe tag height.
-     */
-    load_lti_content : function(url, iframeid, iframeheight) {
-        if (0 === this.contextid) {
-            this.contextid = Y.one('#lti_launch_context_id').get('value');
+    {
+        NAME : 'moodle-local_kaltura-ltitinymcepanel',
+        ATTRS : {
+            ltilaunchurl : {
+                value : ''
+            },
+            objecttagheight : {
+                value : ''
+            },
+            objecttagid : {
+                value : ''
+            },
+            previewiframeid : {
+                value : ''
+            }
         }
-
-        var content = '<iframe id="lti_view_element" height="'+iframeheight+'px" width="100%" src="'+url+'&amp;contextid='+this.contextid+'" allow="autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;"></iframe>';
-        Y.one('#'+iframeid).setContent(content);
-    },
-
-    /**
-     * This function serves as a call back method for when the closeltipanel div has been clicked.  It means that the user has
-     * selected a video for embedding into the TinyMCE edotor.  Enabling the insert button, removing the contents LTI launch element and
-     * adding content to the media preview element.
-     * @property {Object} e Event object.
-     * @property {String} insertbtnid Insert button id.
-     * @property {String} objecttagid Object tag id.
-     * @property {String} previewiframeid Preview iframe tag id.
-     * @property {String} height Height of the iframe.
-     */
-    user_selected_video_callback : function(e, insertbtnid, objecttagid, previewiframeid, height) {
-        Y.one('#'+insertbtnid).setStyle('display', 'inline');
-        Y.one('#'+insertbtnid).set('disabled', false);
-        Y.one('#'+objecttagid).setContent('');
-
-        var center = Y.Node.create('<center></center>');
-        var iframe = Y.Node.create('<iframe></iframe>');
-        iframe.setAttribute('allowfullscreen', '');
-        iframe.setAttribute('width', Y.one('#width').get('value')+'px');
-        iframe.setAttribute('height', height+'px');
-        iframe.setAttribute('src', Y.one('#video_preview_frame').getAttribute('src'));
-
-        center.append(iframe);
-        Y.one('#'+previewiframeid).append(center);
-    }
-},
-{
-    NAME : 'moodle-local_kaltura-ltitinymcepanel',
-    ATTRS : {
-        insertbtnid : {
-            value : ''
-        },
-        ltilaunchurl : {
-            value : ''
-        },
-        objecttagheight : {
-            value : ''
-        },
-        objecttagid : {
-            value : ''
-        },
-        previewiframeid : {
-            value : ''
-        }
-    }
-});
+    });
 M.local_kaltura = M.local_kaltura || {};
 
 /**

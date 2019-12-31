@@ -77,6 +77,11 @@ Y.extend(LTISERVICE, Y.Base, {
             Y.one(documentElement.getElementById('metadata')).setAttribute('value', params.metadata);
         }
 
+        if (window.parent.insertMedia) {
+            window.parent.insertMedia();
+            return;
+        }
+
         if (documentElement.getElementById('closeltipanel')) {
             Y.one(documentElement.getElementById('closeltipanel')).simulate('click');
         }
