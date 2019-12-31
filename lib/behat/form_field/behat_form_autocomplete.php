@@ -86,6 +86,7 @@ class behat_form_autocomplete extends behat_form_text {
 
             $this->wait_for_pending_js();
             $this->key_press(27);
+            $this->wait_for_pending_js();
         }
     }
 }
