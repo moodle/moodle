@@ -139,11 +139,8 @@ class moodle_content_writer implements content_writer {
      * @return  content_writer
      */
     public function export_related_data(array $subcontext, $name, $data) : content_writer {
-        $path = $this->get_path($subcontext, "{$name}.json");
-
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-
-        return $this;
+        return $this->export_custom_file($subcontext, "{$name}.json",
+            json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
 
     /**
@@ -289,6 +286,7 @@ class moodle_content_writer implements content_writer {
         // This weird code is to look for a subcontext that contains a number and append an '_' to the front.
         // This is because there seems to be some weird problem with array_merge_recursive used in finalise_content().
         $subcontext = array_map(function($data) {
+            $data = clean_param($data, PARAM_PATH);
             if (stripos($data, DIRECTORY_SEPARATOR) !== false) {
                 $newpath = explode(DIRECTORY_SEPARATOR, $data);
                 $newpath = array_map(function($value) {
