@@ -17,10 +17,15 @@
 
 namespace MongoDB\Operation;
 
-use MongoDB\Driver\Server;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
+use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
+use function is_array;
+use function is_integer;
+use function is_object;
+use function MongoDB\is_first_key_operator;
+use function MongoDB\is_pipeline;
 
 /**
  * Operation for updating a document with the findAndModify command.
@@ -34,6 +39,7 @@ class FindOneAndUpdate implements Executable, Explainable
     const RETURN_DOCUMENT_BEFORE = 1;
     const RETURN_DOCUMENT_AFTER = 2;
 
+    /** @var FindAndModify */
     private $findAndModify;
 
     /**
@@ -93,16 +99,16 @@ class FindOneAndUpdate implements Executable, Explainable
      */
     public function __construct($databaseName, $collectionName, $filter, $update, array $options = [])
     {
-        if ( ! is_array($filter) && ! is_object($filter)) {
+        if (! is_array($filter) && ! is_object($filter)) {
             throw InvalidArgumentException::invalidType('$filter', $filter, 'array or object');
         }
 
-        if ( ! is_array($update) && ! is_object($update)) {
+        if (! is_array($update) && ! is_object($update)) {
             throw InvalidArgumentException::invalidType('$update', $update, 'array or object');
         }
 
-        if ( ! \MongoDB\is_first_key_operator($update)) {
-            throw new InvalidArgumentException('First key in $update argument is not an update operator');
+        if (! is_first_key_operator($update) && ! is_pipeline($update)) {
+            throw new InvalidArgumentException('Expected an update document with operator as first key or a pipeline');
         }
 
         $options += [
@@ -114,7 +120,7 @@ class FindOneAndUpdate implements Executable, Explainable
             throw InvalidArgumentException::invalidType('"projection" option', $options['projection'], 'array or object');
         }
 
-        if ( ! is_integer($options['returnDocument'])) {
+        if (! is_integer($options['returnDocument'])) {
             throw InvalidArgumentException::invalidType('"returnDocument" option', $options['returnDocument'], 'integer');
         }
 

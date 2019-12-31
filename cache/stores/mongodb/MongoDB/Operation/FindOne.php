@@ -17,10 +17,11 @@
 
 namespace MongoDB\Operation;
 
-use MongoDB\Driver\Server;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
+use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
+use function current;
 
 /**
  * Operation for finding a single document with the find command.
@@ -32,6 +33,7 @@ use MongoDB\Exception\UnsupportedException;
  */
 class FindOne implements Executable, Explainable
 {
+    /** @var Find */
     private $find;
 
     /**
@@ -126,7 +128,7 @@ class FindOne implements Executable, Explainable
         $cursor = $this->find->execute($server);
         $document = current($cursor->toArray());
 
-        return ($document === false) ? null : $document;
+        return $document === false ? null : $document;
     }
 
     public function getCommandDocument(Server $server)

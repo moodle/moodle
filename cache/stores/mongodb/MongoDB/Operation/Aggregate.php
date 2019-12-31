@@ -17,20 +17,29 @@
 
 namespace MongoDB\Operation;
 
+use ArrayIterator;
 use MongoDB\Driver\Command;
+use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\ReadConcern;
 use MongoDB\Driver\ReadPreference;
 use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
 use MongoDB\Driver\WriteConcern;
-use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
 use MongoDB\Exception\UnsupportedException;
-use MongoDB\Model\TypeMapArrayIterator;
-use ArrayIterator;
 use stdClass;
 use Traversable;
+use function current;
+use function is_array;
+use function is_bool;
+use function is_integer;
+use function is_object;
+use function is_string;
+use function MongoDB\create_field_path_type_map;
+use function MongoDB\is_last_pipeline_operator_write;
+use function MongoDB\server_supports_feature;
+use function sprintf;
 
 /**
  * Operation for the aggregate command.
@@ -41,14 +50,28 @@ use Traversable;
  */
 class Aggregate implements Executable
 {
+    /** @var integer */
     private static $wireVersionForCollation = 5;
+
+    /** @var integer */
     private static $wireVersionForDocumentLevelValidation = 4;
+
+    /** @var integer */
     private static $wireVersionForReadConcern = 4;
+
+    /** @var integer */
     private static $wireVersionForWriteConcern = 5;
 
+    /** @var string */
     private $databaseName;
+
+    /** @var string|null */
     private $collectionName;
+
+    /** @var array */
     private $pipeline;
+
+    /** @var array */
     private $options;
 
     /**
@@ -63,8 +86,8 @@ class Aggregate implements Executable
      *  * batchSize (integer): The number of documents to return per batch.
      *
      *  * bypassDocumentValidation (boolean): If true, allows the write to
-     *    circumvent document level validation. This only applies when the $out
-     *    stage is specified.
+     *    circumvent document level validation. This only applies when an $out
+     *    or $merge stage is specified.
      *
      *    For servers < 3.2, this option is ignored as document level validation
      *    is not available.
@@ -87,15 +110,14 @@ class Aggregate implements Executable
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
      *
-     *  * readConcern (MongoDB\Driver\ReadConcern): Read concern. Note that a
-     *    "majority" read concern is not compatible with the $out stage.
+     *  * readConcern (MongoDB\Driver\ReadConcern): Read concern.
      *
      *    This is not supported for server versions < 3.2 and will result in an
      *    exception at execution time if used.
      *
      *  * readPreference (MongoDB\Driver\ReadPreference): Read preference.
      *
-     *    This option is ignored if the $out stage is specified.
+     *    This option is ignored if an $out or $merge stage is specified.
      *
      *  * session (MongoDB\Driver\Session): Client session.
      *
@@ -111,7 +133,7 @@ class Aggregate implements Executable
      *    mongod/mongos upgrades.
      *
      *  * writeConcern (MongoDB\Driver\WriteConcern): Write concern. This only
-     *    applies when the $out stage is specified.
+     *    applies when an $out or $merge stage is specified.
      *
      *    This is not supported for server versions < 3.4 and will result in an
      *    exception at execution time if used.
@@ -134,7 +156,7 @@ class Aggregate implements Executable
                 throw new InvalidArgumentException(sprintf('$pipeline is not a list (unexpected index: "%s")', $i));
             }
 
-            if ( ! is_array($operation) && ! is_object($operation)) {
+            if (! is_array($operation) && ! is_object($operation)) {
                 throw InvalidArgumentException::invalidType(sprintf('$pipeline[%d]', $i), $operation, 'array or object');
             }
 
@@ -146,7 +168,7 @@ class Aggregate implements Executable
             'useCursor' => true,
         ];
 
-        if ( ! is_bool($options['allowDiskUse'])) {
+        if (! is_bool($options['allowDiskUse'])) {
             throw InvalidArgumentException::invalidType('"allowDiskUse" option', $options['allowDiskUse'], 'boolean');
         }
 
@@ -183,27 +205,27 @@ class Aggregate implements Executable
         }
 
         if (isset($options['readConcern']) && ! $options['readConcern'] instanceof ReadConcern) {
-            throw InvalidArgumentException::invalidType('"readConcern" option', $options['readConcern'], 'MongoDB\Driver\ReadConcern');
+            throw InvalidArgumentException::invalidType('"readConcern" option', $options['readConcern'], ReadConcern::class);
         }
 
         if (isset($options['readPreference']) && ! $options['readPreference'] instanceof ReadPreference) {
-            throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], 'MongoDB\Driver\ReadPreference');
+            throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], ReadPreference::class);
         }
 
         if (isset($options['session']) && ! $options['session'] instanceof Session) {
-            throw InvalidArgumentException::invalidType('"session" option', $options['session'], 'MongoDB\Driver\Session');
+            throw InvalidArgumentException::invalidType('"session" option', $options['session'], Session::class);
         }
 
         if (isset($options['typeMap']) && ! is_array($options['typeMap'])) {
             throw InvalidArgumentException::invalidType('"typeMap" option', $options['typeMap'], 'array');
         }
 
-        if ( ! is_bool($options['useCursor'])) {
+        if (! is_bool($options['useCursor'])) {
             throw InvalidArgumentException::invalidType('"useCursor" option', $options['useCursor'], 'boolean');
         }
 
         if (isset($options['writeConcern']) && ! $options['writeConcern'] instanceof WriteConcern) {
-            throw InvalidArgumentException::invalidType('"writeConcern" option', $options['writeConcern'], 'MongoDB\Driver\WriteConcern');
+            throw InvalidArgumentException::invalidType('"writeConcern" option', $options['writeConcern'], WriteConcern::class);
         }
 
         if (isset($options['batchSize']) && ! $options['useCursor']) {
@@ -218,7 +240,7 @@ class Aggregate implements Executable
             unset($options['writeConcern']);
         }
 
-        if ( ! empty($options['explain'])) {
+        if (! empty($options['explain'])) {
             $options['useCursor'] = false;
         }
 
@@ -240,25 +262,35 @@ class Aggregate implements Executable
      */
     public function execute(Server $server)
     {
-        if (isset($this->options['collation']) && ! \MongoDB\server_supports_feature($server, self::$wireVersionForCollation)) {
+        if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
             throw UnsupportedException::collationNotSupported();
         }
 
-        if (isset($this->options['readConcern']) && ! \MongoDB\server_supports_feature($server, self::$wireVersionForReadConcern)) {
+        if (isset($this->options['readConcern']) && ! server_supports_feature($server, self::$wireVersionForReadConcern)) {
             throw UnsupportedException::readConcernNotSupported();
         }
 
-        if (isset($this->options['writeConcern']) && ! \MongoDB\server_supports_feature($server, self::$wireVersionForWriteConcern)) {
+        if (isset($this->options['writeConcern']) && ! server_supports_feature($server, self::$wireVersionForWriteConcern)) {
             throw UnsupportedException::writeConcernNotSupported();
         }
 
+        $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
+        if ($inTransaction) {
+            if (isset($this->options['readConcern'])) {
+                throw UnsupportedException::readConcernNotSupportedInTransaction();
+            }
+            if (isset($this->options['writeConcern'])) {
+                throw UnsupportedException::writeConcernNotSupportedInTransaction();
+            }
+        }
+
         $hasExplain = ! empty($this->options['explain']);
-        $hasOutStage = \MongoDB\is_last_pipeline_operator_out($this->pipeline);
+        $hasWriteStage = is_last_pipeline_operator_write($this->pipeline);
 
-        $command = $this->createCommand($server);
-        $options = $this->createOptions($hasOutStage, $hasExplain);
+        $command = $this->createCommand($server, $hasWriteStage);
+        $options = $this->createOptions($hasWriteStage, $hasExplain);
 
-        $cursor = ($hasOutStage && ! $hasExplain)
+        $cursor = $hasWriteStage && ! $hasExplain
             ? $server->executeReadWriteCommand($this->databaseName, $command, $options)
             : $server->executeReadCommand($this->databaseName, $command, $options);
 
@@ -270,14 +302,14 @@ class Aggregate implements Executable
             return $cursor;
         }
 
-        $result = current($cursor->toArray());
-
-        if ( ! isset($result->result) || ! is_array($result->result)) {
-            throw new UnexpectedValueException('aggregate command did not return a "result" array');
+        if (isset($this->options['typeMap'])) {
+            $cursor->setTypeMap(create_field_path_type_map($this->options['typeMap'], 'result.$'));
         }
 
-        if (isset($this->options['typeMap'])) {
-            return new TypeMapArrayIterator($result->result, $this->options['typeMap']);
+        $result = current($cursor->toArray());
+
+        if (! isset($result->result) || ! is_array($result->result)) {
+            throw new UnexpectedValueException('aggregate command did not return a "result" array');
         }
 
         return new ArrayIterator($result->result);
@@ -287,9 +319,10 @@ class Aggregate implements Executable
      * Create the aggregate command.
      *
      * @param Server  $server
+     * @param boolean $hasWriteStage
      * @return Command
      */
-    private function createCommand(Server $server)
+    private function createCommand(Server $server, $hasWriteStage)
     {
         $cmd = [
             'aggregate' => isset($this->collectionName) ? $this->collectionName : 1,
@@ -299,7 +332,9 @@ class Aggregate implements Executable
 
         $cmd['allowDiskUse'] = $this->options['allowDiskUse'];
 
-        if (isset($this->options['bypassDocumentValidation']) && \MongoDB\server_supports_feature($server, self::$wireVersionForDocumentLevelValidation)) {
+        if (! empty($this->options['bypassDocumentValidation']) &&
+            server_supports_feature($server, self::$wireVersionForDocumentLevelValidation)
+        ) {
             $cmd['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
         }
 
@@ -322,9 +357,12 @@ class Aggregate implements Executable
         }
 
         if ($this->options['useCursor']) {
-            $cmd['cursor'] = isset($this->options["batchSize"])
+            /* Ignore batchSize if pipeline includes an $out or $merge stage, as
+             * no documents will be returned and sending a batchSize of zero
+             * could prevent the pipeline from executing at all. */
+            $cmd['cursor'] = isset($this->options["batchSize"]) && ! $hasWriteStage
                 ? ['batchSize' => $this->options["batchSize"]]
-                : new stdClass;
+                : new stdClass();
         }
 
         return new Command($cmd, $cmdOptions);
@@ -335,10 +373,11 @@ class Aggregate implements Executable
      *
      * @see http://php.net/manual/en/mongodb-driver-server.executereadcommand.php
      * @see http://php.net/manual/en/mongodb-driver-server.executereadwritecommand.php
-     * @param boolean $hasOutStage
+     * @param boolean $hasWriteStage
+     * @param boolean $hasExplain
      * @return array
      */
-    private function createOptions($hasOutStage, $hasExplain)
+    private function createOptions($hasWriteStage, $hasExplain)
     {
         $options = [];
 
@@ -346,7 +385,7 @@ class Aggregate implements Executable
             $options['readConcern'] = $this->options['readConcern'];
         }
 
-        if ( ! $hasOutStage && isset($this->options['readPreference'])) {
+        if (! $hasWriteStage && isset($this->options['readPreference'])) {
             $options['readPreference'] = $this->options['readPreference'];
         }
 
@@ -354,7 +393,7 @@ class Aggregate implements Executable
             $options['session'] = $this->options['session'];
         }
 
-        if ($hasOutStage && ! $hasExplain && isset($this->options['writeConcern'])) {
+        if ($hasWriteStage && ! $hasExplain && isset($this->options['writeConcern'])) {
             $options['writeConcern'] = $this->options['writeConcern'];
         }
 

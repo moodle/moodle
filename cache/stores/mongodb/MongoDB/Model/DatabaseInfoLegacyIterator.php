@@ -17,6 +17,11 @@
 
 namespace MongoDB\Model;
 
+use function current;
+use function key;
+use function next;
+use function reset;
+
 /**
  * DatabaseInfoIterator for inline listDatabases command results.
  *
@@ -29,11 +34,10 @@ namespace MongoDB\Model;
  */
 class DatabaseInfoLegacyIterator implements DatabaseInfoIterator
 {
+    /** @var array */
     private $databases;
 
     /**
-     * Constructor.
-     *
      * @param array $databases
      */
     public function __construct(array $databases)
