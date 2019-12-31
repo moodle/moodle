@@ -103,7 +103,7 @@ $params = array(
 );
 if($editor == 'atto')
 {
-    require_once('attobsepreview.php');
+    require_once('attoembed.php');
 }
 else
 {
