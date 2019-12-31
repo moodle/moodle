@@ -36,56 +36,15 @@ require_once("{$CFG->dirroot}/iplookup/lib.php");
  */
 class core_iplookup_geoip_testcase extends advanced_testcase {
     public function setUp() {
-        if (!PHPUNIT_LONGTEST) {
-            // These tests are intensive and required downloads.
-            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
-        }
-
         $this->resetAfterTest();
     }
-
 
     /**
      * Setup the GeoIP2File system.
      */
     public function setup_geoip2file() {
         global $CFG;
-
-        // Store the file somewhere where it won't be wiped out..
-        $gzfile = "$CFG->dataroot/phpunit/geoip/GeoLite2-City.mmdb.gz";
-        check_dir_exists(dirname($gzfile));
-        if (file_exists($gzfile) and (filemtime($gzfile) < time() - 60*60*24*30)) {
-            // Delete file if older than 1 month.
-            unlink($gzfile);
-        }
-
-        if (!file_exists($gzfile)) {
-            download_file_content('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz',
-                null, null, false, 300, 20, false, $gzfile);
-        }
-
-        $this->assertTrue(file_exists($gzfile));
-
-        $geoipfile = str_replace('.gz', '', $gzfile);
-
-        // Open our files (in binary mode).
-        $file = gzopen($gzfile, 'rb');
-        $geoipfilebuf = fopen($geoipfile, 'wb');
-
-        // Keep repeating until the end of the input file.
-        while (!gzeof($file)) {
-            // Read buffer-size bytes.
-            // Both fwrite and gzread and binary-safe.
-            fwrite($geoipfilebuf, gzread($file, 4096));
-        }
-
-        // Files are done, close files.
-        fclose($geoipfilebuf);
-        gzclose($file);
-
-        $this->assertTrue(file_exists($geoipfile));
-
-        $CFG->geoip2file = $geoipfile;
+        $CFG->geoip2file = "$CFG->dirroot/iplookup/tests/fixtures/GeoIP2-City-Test.mmdb";
     }
 
     /**
@@ -121,9 +80,8 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
      */
     public function ip_provider() {
         return [
-            'IPv4: Sample suggested by maxmind themselves' => ['24.24.24.24'],
-            'IPv4: github.com' => ['192.30.255.112'],
-            'IPv6: UCLA' => ['2607:f010:3fe:fff1::ff:fe00:25'],
+            'IPv4: IPV4 test' => ['81.2.69.142'],
+            'IPv6: IPV6 test' => ['2001:252:1::1:1:1'],
         ];
     }
 }
