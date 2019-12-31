@@ -2466,6 +2466,59 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test deletion of user with long username
+     */
+    public function test_delete_user_long_username() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // For users without an e-mail, one will be created during deletion using {$username}.{$id}@unknownemail.invalid format.
+        $user = $this->getDataGenerator()->create_user([
+            'username' => str_repeat('a', 75),
+            'email' => '',
+        ]);
+
+        delete_user($user);
+
+        // The username for the deleted user shouldn't exceed 100 characters.
+        $usernamedeleted = $DB->get_field('user', 'username', ['id' => $user->id]);
+        $this->assertEquals(100, core_text::strlen($usernamedeleted));
+
+        $timestrlength = core_text::strlen((string) time());
+
+        // It should start with the user name, and end with the current time.
+        $this->assertStringStartsWith("{$user->username}.{$user->id}@", $usernamedeleted);
+        $this->assertRegExp('/\.\d{' . $timestrlength . '}$/', $usernamedeleted);
+    }
+
+    /**
+     * Test deletion of user with long email address
+     */
+    public function test_delete_user_long_email() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create user with 90 character email address.
+        $user = $this->getDataGenerator()->create_user([
+            'email' => str_repeat('a', 78) . '@example.com',
+        ]);
+
+        delete_user($user);
+
+        // The username for the deleted user shouldn't exceed 100 characters.
+        $usernamedeleted = $DB->get_field('user', 'username', ['id' => $user->id]);
+        $this->assertEquals(100, core_text::strlen($usernamedeleted));
+
+        $timestrlength = core_text::strlen((string) time());
+
+        // Max username length is 100 chars. Select up to limit - (length of current time + 1 [period character]) from users email.
+        $expectedemail = core_text::substr($user->email, 0, 100 - ($timestrlength + 1));
+        $this->assertRegExp('/^' . preg_quote($expectedemail) . '\.\d{' . $timestrlength . '}$/', $usernamedeleted);
+    }
+
+    /**
      * Test function convert_to_array()
      */
     public function test_convert_to_array() {
