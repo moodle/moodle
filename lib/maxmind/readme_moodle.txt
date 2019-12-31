@@ -27,4 +27,4 @@ unzip v1.4.1.zip
 mv GeoIP2-php-2.9.0/src/ /path/to/moodle/lib/maxmind/GeoIp2/
 mv MaxMind-DB-Reader-php-1.4.1/src/MaxMind/ /path/to/moodle/lib/maxmind/MaxMind/
 
-4) Run unit tests on iplookup/tests/geoip_test.php with PHPUNIT_LONGTEST defined.
+4) Run unit tests on iplookup/tests/geoip_test.php.
