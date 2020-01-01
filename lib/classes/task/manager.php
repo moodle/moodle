@@ -484,10 +484,6 @@ class manager {
         global $DB;
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
 
-        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
-            throw new \moodle_exception('locktimeout');
-        }
-
         $where = '(nextruntime IS NULL OR nextruntime < :timestart1)';
         $params = array('timestart1' => $timestart);
         $records = $DB->get_records_select('task_adhoc', $where, $params);
@@ -511,6 +507,13 @@ class manager {
                     continue;
                 }
 
+                // The global cron lock is under the most contention so request it
+                // as late as possible and release it as soon as possible.
+                if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+                    $lock->release();
+                    throw new \moodle_exception('locktimeout');
+                }
+
                 $task->set_lock($lock);
                 if (!$task->is_blocking()) {
                     $cronlock->release();
@@ -521,8 +524,6 @@ class manager {
             }
         }
 
-        // No tasks.
-        $cronlock->release();
         return null;
     }
 
@@ -538,10 +539,6 @@ class manager {
     public static function get_next_scheduled_task($timestart) {
         global $DB;
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
-
-        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
-            throw new \moodle_exception('locktimeout');
-        }
 
         $where = "(lastruntime IS NULL OR lastruntime < :timestart1)
                   AND (nextruntime IS NULL OR nextruntime < :timestart2)
@@ -581,6 +578,13 @@ class manager {
                     continue;
                 }
 
+                // The global cron lock is under the most contention so request it
+                // as late as possible and release it as soon as possible.
+                if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+                    $lock->release();
+                    throw new \moodle_exception('locktimeout');
+                }
+
                 if (!$task->is_blocking()) {
                     $cronlock->release();
                 } else {
@@ -590,8 +594,6 @@ class manager {
             }
         }
 
-        // No tasks.
-        $cronlock->release();
         return null;
     }
 
