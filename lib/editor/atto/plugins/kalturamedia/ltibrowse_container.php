@@ -12,31 +12,10 @@
 
 <iframe allow="autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;" id="kafIframe" src="<?php echo $ltibrowseUrl->out(); ?>" width="100%" height="600" style="border: 0;" allowfullscreen>
 </iframe>
-<div id="kalturaMediaSubmitButton"></div>
 <script>
     var buttonJs = window.opener.buttonJs;
-    var embedButton = Y.Node.create('<button></button>');
-    embedButton.setAttribute('id', 'KalturaMediaSubmit');
-    embedButton.setAttribute('class', 'btn btn-primary');
-    embedButton.setAttribute('disabled', 'disabled');
-    embedButton.setHTML("<?php echo get_string('embedbuttontext', 'atto_kalturamedia'); ?>");
-    embedButton.hide();
-    Y.one("#kalturaMediaSubmitButton").append(embedButton);
-    function kaltura_atto_embed_callback(data)
-    {
-        var button = Y.one('#KalturaMediaSubmit');
-        for(param in data)
-        {
-            var attributeName = 'data-embedinfo-'+param;
-            button.setAttribute(attributeName, data[param]);
-        }
-        button.removeAttribute('disabled');
-        button.show();
 
-        embedButton.on('click', buttonJs.embedItem, buttonJs, button._getDataAttributes());
-    }
-
-    function getEmbedInfo(data) {
-        return embedInfo;
+    function kaltura_atto_embed(data) {
+        buttonJs.embedItem(buttonJs, data);
     }
 </script>

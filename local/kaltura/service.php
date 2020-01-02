@@ -103,11 +103,12 @@ $params = array(
 );
 if($editor == 'atto')
 {
-    require_once('attobsepreview.php');
+    require_once('attoembed.php');
 }
 else
 {
     $PAGE->requires->yui_module('moodle-local_kaltura-ltiservice', 'M.local_kaltura.init', array($params));
+    $PAGE->set_pagelayout('embedded');
 
     echo $OUTPUT->header();
     echo $OUTPUT->footer();
