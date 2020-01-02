@@ -455,5 +455,21 @@ mtrace("enrol end " . time());
         upgrade_plugin_savepoint(true, 2019090800, 'local', 'iomad_track');
     }
 
+    if ($oldversion < 2020010200) {
+
+        // Get any license allocationw which have an issuedate of null.
+        $brokenrecs = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+                                            WHERE licensename IS NOT NULL
+                                            AND licenseallocated IS NULL");
+        foreach ($brokenrecs as $brokenrec) {
+            // This is fromt the external functions so can set it to the enrolment date.
+            $brokenrec->licenseallocated = $brokenrec->timeenrolled;
+            $DB->update_record('local_iomad_track', $brokenrec);
+        }
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2020010200, 'local', 'iomad_track');
+    }
+
     return $result;
 }

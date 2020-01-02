@@ -2058,6 +2058,8 @@ class block_iomad_company_admin_external extends external_api {
         //$transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs
                                                            // (except if the DB doesn't support it).
 
+        // Get the current timestamp.
+        $runtime = time();
         // Retrieve the manual enrolment plugin.
         $enrol = enrol_get_plugin('manual');
         if (empty($enrol)) {
@@ -2076,16 +2078,16 @@ class block_iomad_company_admin_external extends external_api {
             // Is this a licensed course?
             if ($DB->get_record('iomad_courses', array('courseid' => $enrolment['courseid'], 'licensed' => 1))) {
                 if (empty($enrolment['timestart'])) {
-                    $enrolment['timestart'] = time();
+                    $enrolment['timestart'] = $runtime;
                 }
 
                 // Do we have a default access period?
                 if (empty($enrolment['timeend'])) {
                     if (!empty($CFG->commerce_admin_default_license_access_length)) {
-                        $enrolment['timeend'] = time() + $CFG->commerce_admin_default_license_access_length * 24 * 60 * 60;
+                        $enrolment['timeend'] = $runtime + $CFG->commerce_admin_default_license_access_length * 24 * 60 * 60;
                     } else {
                         // Set it to 30.
-                        $enrolment['timeend'] = time() + 30 * 24 * 60 * 60;
+                        $enrolment['timeend'] = $runtime + 30 * 24 * 60 * 60;
                     }
                 }
 
@@ -2122,12 +2124,13 @@ class block_iomad_company_admin_external extends external_api {
                     $recordarray = array('licensecourseid' => $enrolment['courseid'],
                                          'userid' => $user->id,
                                          'licenseid' => $licenseid,
-                                         'issuedate' => time(),
+                                         'issuedate' => $runtime,
                                          'isusing' => 0);
 
                     $recordarray['id'] = $DB->insert_record('companylicense_users', $recordarray);
                     // Fire that event.
                     $eventother = array('licenseid' => $licenseid,
+                                         'issuedate' => $runtime,
                                         'duedate' => $enrolment['timestart']);
                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($enrolment['courseid']),
                                                                                                   'objectid' => $recordarray['id'],
