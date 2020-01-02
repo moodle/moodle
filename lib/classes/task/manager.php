@@ -552,9 +552,10 @@ class manager {
      * {@link adhoc_task_failed} or {@link adhoc_task_complete} to release the lock and reschedule the task.
      *
      * @param int $timestart
+     * @param bool $checklimits Should we check limits?
      * @return \core\task\adhoc_task or null if not found
      */
-    public static function get_next_adhoc_task($timestart) {
+    public static function get_next_adhoc_task($timestart, $checklimits = true) {
         global $DB;
 
         $where = '(nextruntime IS NULL OR nextruntime < :timestart1)';
@@ -568,10 +569,16 @@ class manager {
             throw new \moodle_exception('locktimeout');
         }
 
+        $skipclasses = array();
+
         foreach ($records as $record) {
 
+            if (in_array($record->classname, $skipclasses)) {
+                // Skip the task if it can't be started due to per-task concurrency limit.
+                continue;
+            }
+
             if ($lock = $cronlockfactory->get_lock('adhoc_' . $record->id, 0)) {
-                $classname = '\\' . $record->classname;
 
                 // Safety check, see if the task has been already processed by another cron run.
                 $record = $DB->get_record('task_adhoc', array('id' => $record->id));
@@ -585,6 +592,19 @@ class manager {
                 if (!$task) {
                     $lock->release();
                     continue;
+                }
+
+                $tasklimit = $task->get_concurrency_limit();
+                if ($checklimits && $tasklimit > 0) {
+                    if ($concurrencylock = self::get_concurrent_task_lock($task)) {
+                        $task->set_concurrency_lock($concurrencylock);
+                    } else {
+                        // Unable to obtain a concurrency lock.
+                        mtrace("Skipping $record->classname adhoc task class as the per-task limit of $tasklimit is reached.");
+                        $skipclasses[] = $record->classname;
+                        $lock->release();
+                        continue;
+                    }
                 }
 
                 $task->set_lock($lock);
@@ -691,13 +711,13 @@ class manager {
             $delay = 86400;
         }
 
-        $classname = self::get_canonical_class_name($task);
-
+        // Reschedule and then release the locks.
         $task->set_next_run_time(time() + $delay);
         $task->set_fail_delay($delay);
         $record = self::record_from_adhoc_task($task);
         $DB->update_record('task_adhoc', $record);
 
+        $task->release_concurrency_lock();
         if ($task->is_blocking()) {
             $task->get_cron_lock()->release();
         }
@@ -721,7 +741,8 @@ class manager {
         // Delete the adhoc task record - it is finished.
         $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
 
-        // Reschedule and then release the locks.
+        // Release the locks.
+        $task->release_concurrency_lock();
         if ($task->is_blocking()) {
             $task->get_cron_lock()->release();
         }
@@ -857,5 +878,25 @@ class manager {
             $classname = '\\' . $classname;
         }
         return $classname;
+    }
+
+    /**
+     * Gets the concurrent lock required to run an adhoc task.
+     *
+     * @param   adhoc_task $task The task to obtain the lock for
+     * @return  \core\lock\lock The lock if one was obtained successfully
+     * @throws  \coding_exception
+     */
+    protected static function get_concurrent_task_lock(adhoc_task $task): ?\core\lock\lock {
+        $adhoclock = null;
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory(get_class($task));
+
+        for ($run = 0; $run < $task->get_concurrency_limit(); $run++) {
+            if ($adhoclock = $cronlockfactory->get_lock("concurrent_run_{$run}", 0)) {
+                return $adhoclock;
+            }
+        }
+
+        return null;
     }
 }

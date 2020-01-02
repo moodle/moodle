@@ -168,7 +168,7 @@ function cron_run_adhoc_tasks(int $timenow, $keepalive = 0, $checklimits = true)
             break;
         }
 
-        $task = \core\task\manager::get_next_adhoc_task(time());
+        $task = \core\task\manager::get_next_adhoc_task(time(), $checklimits);
 
         if ($task) {
             if ($waiting) {
