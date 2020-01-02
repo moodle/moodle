@@ -123,11 +123,11 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
       | id_duedate_enabled | 1 |
       | duedate[day]       | 1 |
       | duedate[month]     | January |
-      | duedate[year]      | 2020 |
+      | duedate[year]      | 2030 |
       | duedate[hour]      | 08 |
       | duedate[minute]    | 00 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00"
+    And I should see "Tuesday, 1 January 2030, 8:00"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I should see "In review" in the "I'm the student's first submission" "table_row"
