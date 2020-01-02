@@ -135,11 +135,11 @@ Feature: Assign user override
       | id_cutoffdate_enabled | 1 |
       | cutoffdate[day]       | 1 |
       | cutoffdate[month]     | January |
-      | cutoffdate[year]      | 2020 |
+      | cutoffdate[year]      | 2030 |
       | cutoffdate[hour]      | 08 |
       | cutoffdate[minute]    | 00 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00"
+    And I should see "Tuesday, 1 January 2030, 8:00"
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
@@ -163,7 +163,7 @@ Feature: Assign user override
       | id_cutoffdate_enabled | 0 |
       | allowsubmissionsfromdate[day]       | 1 |
       | allowsubmissionsfromdate[month]     | January |
-      | allowsubmissionsfromdate[year]      | 2020 |
+      | allowsubmissionsfromdate[year]      | 2030 |
       | allowsubmissionsfromdate[hour]      | 08 |
       | allowsubmissionsfromdate[minute]    | 00 |
     And I press "Save and display"
@@ -183,12 +183,12 @@ Feature: Assign user override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then I should see "This assignment will accept submissions from Wednesday, 1 January 2020, 8:00"
+    Then I should see "This assignment will accept submissions from Tuesday, 1 January 2030, 8:00"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I should not see "This assignment will accept submissions from Wednesday, 1 January 2020, 8:00"
+    And I should not see "This assignment will accept submissions from Tuesday, 1 January 2030, 8:00"
 
   Scenario: Override a user when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
