@@ -87,6 +87,7 @@ function cron_run() {
  * Execute all queued scheduled tasks, applying necessary concurrency limits and time limits.
  *
  * @param   int     $timenow The time this process started.
+ * @throws \moodle_exception
  */
 function cron_run_scheduled_tasks(int $timenow) {
     // Allow a restriction on the number of scheduled task runners at once.
@@ -109,19 +110,21 @@ function cron_run_scheduled_tasks(int $timenow) {
     $starttime = time();
 
     // Run all scheduled tasks.
-    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
-            $task = \core\task\manager::get_next_scheduled_task($timenow)) {
-        cron_run_inner_scheduled_task($task);
-        unset($task);
+    try {
+        while (!\core\task\manager::static_caches_cleared_since($timenow) &&
+                $task = \core\task\manager::get_next_scheduled_task($timenow)) {
+            cron_run_inner_scheduled_task($task);
+            unset($task);
 
-        if ((time() - $starttime) > $maxruntime) {
-            mtrace("Stopping processing of scheduled tasks as time limit has been reached.");
-            break;
+            if ((time() - $starttime) > $maxruntime) {
+                mtrace("Stopping processing of scheduled tasks as time limit has been reached.");
+                break;
+            }
         }
+    } finally {
+        // Release the scheduled task runner lock.
+        $scheduledlock->release();
     }
-
-    // Release the scheduled task runner lock.
-    $scheduledlock->release();
 }
 
 /**
@@ -130,6 +133,7 @@ function cron_run_scheduled_tasks(int $timenow) {
  * @param   int     $timenow The time this process started.
  * @param   int     $keepalive Keep this function alive for N seconds and poll for new adhoc tasks.
  * @param   bool    $checklimits Should we check limits?
+ * @throws \moodle_exception
  */
 function cron_run_adhoc_tasks(int $timenow, $keepalive = 0, $checklimits = true) {
     // Allow a restriction on the number of adhoc task runners at once.
@@ -168,7 +172,15 @@ function cron_run_adhoc_tasks(int $timenow, $keepalive = 0, $checklimits = true)
             break;
         }
 
-        $task = \core\task\manager::get_next_adhoc_task(time());
+        try {
+            $task = \core\task\manager::get_next_adhoc_task(time());
+        } catch (Exception $e) {
+            if ($adhoclock) {
+                // Release the adhoc task runner lock.
+                $adhoclock->release();
+            }
+            throw $e;
+        }
 
         if ($task) {
             if ($waiting) {
