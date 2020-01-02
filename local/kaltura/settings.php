@@ -85,7 +85,7 @@ if ($hassiteconfig) {
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
-    $adminsetting = new admin_setting_configcheckbox('enable_assignment', get_string('enable_assignment', 'local_kaltura'), get_string('enable_assignment_desc', 'local_kaltura'), 0);
+    $adminsetting = new admin_setting_configcheckbox('enable_submission', get_string('enable_submission', 'local_kaltura'), get_string('enable_submission_desc', 'local_kaltura'), 0);
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
