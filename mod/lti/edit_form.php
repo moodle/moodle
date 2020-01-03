@@ -272,14 +272,19 @@ class mod_lti_edit_types_form extends moodleform {
                 // Add setup parameters fieldset.
                 $mform->addElement('header', 'setupoptions', get_string('miscellaneous', 'lti'));
 
-                // Adding option to change id that is placed in context_id.
-                $idoptions = array();
-                $idoptions[0] = get_string('id', 'lti');
-                $idoptions[1] = get_string('courseid', 'lti');
+                $options = array(
+                    LTI_DEFAULT_ORGID_SITEID => get_string('siteid', 'lti'),
+                    LTI_DEFAULT_ORGID_SITEHOST => get_string('sitehost', 'lti'),
+                );
 
-                $mform->addElement('text', 'lti_organizationid', get_string('organizationid', 'lti'));
+                $mform->addElement('select', 'lti_organizationid_default', get_string('organizationid_default', 'lti'), $options);
+                $mform->setType('lti_organizationid_default', PARAM_TEXT);
+                $mform->setDefault('lti_organizationid_default', LTI_DEFAULT_ORGID_SITEID);
+                $mform->addHelpButton('lti_organizationid_default', 'organizationid_default', 'lti');
+
+                $mform->addElement('text', 'lti_organizationid', get_string('organizationidguid', 'lti'));
                 $mform->setType('lti_organizationid', PARAM_TEXT);
-                $mform->addHelpButton('lti_organizationid', 'organizationid', 'lti');
+                $mform->addHelpButton('lti_organizationid', 'organizationidguid', 'lti');
 
                 $mform->addElement('text', 'lti_organizationurl', get_string('organizationurl', 'lti'));
                 $mform->setType('lti_organizationurl', PARAM_URL);

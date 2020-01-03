@@ -330,10 +330,14 @@ $string['oauthsecurity'] = 'LTI 1.0/1.1';
 $string['optionalsettings'] = 'Optional settings';
 $string['organization'] = 'Organization details';
 $string['organizationdescr'] = 'Organization description';
-$string['organizationid'] = 'Organization ID';
-$string['organizationid_help'] = 'A unique identifier for this Moodle instance. Typically, the DNS name of the organization is used.
+$string['organizationid_default'] = 'Default organization ID';
+$string['siteid'] = 'Site ID';
+$string['sitehost'] = 'Site hostname';
+$string['organizationid_default_help'] = 'Default value to use for Organization ID. Site ID identifies this installation of moodle.';
+$string['organizationidguid'] = 'Organization ID';
+$string['organizationidguid_help'] = 'A unique identifier for this Moodle instance passed to the tool as the Platform Instance GUID.
 
-If this field is left blank, the host name of this Moodle site will be used as the default value.';
+If this field is left blank, the default value will be used.';
 $string['organizationurl'] = 'Organization URL';
 $string['organizationurl_help'] = 'The base URL of this Moodle instance.
 
@@ -576,3 +580,9 @@ $string['using_tool_cartridge'] = 'Using tool cartridge';
 $string['using_tool_configuration'] = 'Using tool configuration: ';
 $string['validurl'] = 'A valid URL must start with http(s)://';
 $string['viewsubmissions'] = 'View submissions and grading screen';
+
+// Deprecated since Moodle 3.9.
+$string['organizationid'] = 'Organization ID';
+$string['organizationid_help'] = 'A unique identifier for this Moodle instance. Typically, the DNS name of the organization is used.
+
+If this field is left blank, the host name of this Moodle site will be used as the default value.';

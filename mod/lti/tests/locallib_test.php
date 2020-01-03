@@ -386,6 +386,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertFalse(isset($params['resource_link_description']));
         $this->assertFalse(isset($params['launch_presentation_return_url']));
         $this->assertFalse(isset($params['lis_result_sourcedid']));
+        $this->assertEquals($params['tool_consumer_instance_guid'], 'www.example.com');
 
         // Custom parameters.
         $title = 'My custom title';
@@ -1414,5 +1415,112 @@ MwIDAQAB
         $this->assertEquals($instance->id, $request['lti_message_hint']);
         $this->assertEquals('some-client-id', $request['client_id']);
         $this->assertEquals('some-type-id', $request['lti_deployment_id']);
+    }
+
+    /**
+     * Test default orgid is host if not specified in config (tool installed in earlier version of Moodle).
+     */
+    public function test_lti_get_launch_data_default_organizationid_unset_usehost() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $config = new stdClass();
+        $config->lti_organizationid = '';
+        $course = $this->getDataGenerator()->create_course();
+        $type = $this->create_type($config);
+        $link = $this->create_instance($type, $course);
+        $launchdata = lti_get_launch_data($link);
+        $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], 'www.example.com');
+    }
+
+    /**
+     * Test default org id is set to host when config is usehost.
+     */
+    public function test_lti_get_launch_data_default_organizationid_set_usehost() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $config = new stdClass();
+        $config->lti_organizationid = '';
+        $config->lti_organizationid_default = LTI_DEFAULT_ORGID_SITEHOST;
+        $course = $this->getDataGenerator()->create_course();
+        $type = $this->create_type($config);
+        $link = $this->create_instance($type, $course);
+        $launchdata = lti_get_launch_data($link);
+        $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], 'www.example.com');
+    }
+
+    /**
+     * Test default org id is set to site id when config is usesiteid.
+     */
+    public function test_lti_get_launch_data_default_organizationid_set_usesiteid() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $config = new stdClass();
+        $config->lti_organizationid = '';
+        $config->lti_organizationid_default = LTI_DEFAULT_ORGID_SITEID;
+        $course = $this->getDataGenerator()->create_course();
+        $type = $this->create_type($config);
+        $link = $this->create_instance($type, $course);
+        $launchdata = lti_get_launch_data($link);
+        $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], md5(get_site_identifier()));
+    }
+
+    /**
+     * Test orgid can be overridden in which case default is ignored.
+     */
+    public function test_lti_get_launch_data_default_organizationid_orgid_override() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $config = new stdClass();
+        $config->lti_organizationid = 'overridden!';
+        $config->lti_organizationid_default = LTI_DEFAULT_ORGID_SITEID;
+        $course = $this->getDataGenerator()->create_course();
+        $type = $this->create_type($config);
+        $link = $this->create_instance($type, $course);
+        $launchdata = lti_get_launch_data($link);
+        $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], 'overridden!');
+    }
+
+    /**
+     * Create an LTI Tool.
+     *
+     * @param object $config tool config.
+     *
+     * @return object tool.
+     */
+    private function create_type(object $config) {
+        $type = new stdClass();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->clientid = "Test client ID";
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $configbase = new stdClass();
+        $configbase->lti_acceptgrades = LTI_SETTING_NEVER;
+        $configbase->lti_sendname = LTI_SETTING_NEVER;
+        $configbase->lti_sendemailaddr = LTI_SETTING_NEVER;
+        $mergedconfig = (object) array_merge( (array) $configbase, (array) $config);
+        $typeid = lti_add_type($type, $mergedconfig);
+        return lti_get_type($typeid);
+    }
+
+    /**
+     * Create an LTI Instance for the tool in a given course.
+     *
+     * @param object $type tool for which an instance should be added.
+     * @param object $course course where the instance should be added.
+     *
+     * @return object instance.
+     */
+    private function create_instance(object $type, object $course) {
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        return $generator->create_instance(array('course' => $course->id,
+                  'toolurl' => $type->baseurl,
+                  'typeid' => $type->id
+                  ), array());
     }
 }

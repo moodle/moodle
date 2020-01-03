@@ -91,6 +91,9 @@ define('LTI_VERSION_1', 'LTI-1p0');
 define('LTI_VERSION_2', 'LTI-2p0');
 define('LTI_VERSION_1P3', '1.3.0');
 
+define('LTI_DEFAULT_ORGID_SITEID', 'SITEID');
+define('LTI_DEFAULT_ORGID_SITEHOST', 'SITEHOST');
+
 define('LTI_ACCESS_TOKEN_LIFE', 3600);
 
 // Standard prefix for JWT claims.
@@ -537,13 +540,6 @@ function lti_get_launch_data($instance, $nonce = '') {
         $typeconfig['forcessl'] = '0';
     }
 
-    // Default the organizationid if not specified.
-    if (empty($typeconfig['organizationid'])) {
-        $urlparts = parse_url($CFG->wwwroot);
-
-        $typeconfig['organizationid'] = $urlparts['host'];
-    }
-
     if (isset($tool->toolproxyid)) {
         $toolproxy = lti_get_tool_proxy($tool->toolproxyid);
         $key = $toolproxy->guid;
@@ -589,7 +585,7 @@ function lti_get_launch_data($instance, $nonce = '') {
         }
     }
 
-    $orgid = $typeconfig['organizationid'];
+    $orgid = lti_get_organizationid($typeconfig);
 
     $course = $PAGE->course;
     $islti2 = isset($tool->toolproxyid);
@@ -758,6 +754,25 @@ function lti_build_registration_request($toolproxy) {
     $requestparams['launch_presentation_return_url'] = $returnurl;
 
     return $requestparams;
+}
+
+
+/** get Organization ID using default if no value provided
+ * @param object $typeconfig
+ * @return string
+ */
+function lti_get_organizationid($typeconfig) {
+    global $CFG;
+    // Default the organizationid if not specified.
+    if (empty($typeconfig['organizationid'])) {
+        if (($typeconfig['organizationid_default'] ?? LTI_DEFAULT_ORGID_SITEHOST) == LTI_DEFAULT_ORGID_SITEHOST) {
+            $urlparts = parse_url($CFG->wwwroot);
+            return $urlparts['host'];
+        } else {
+            return md5(get_site_identifier());
+        }
+    }
+    return $typeconfig['organizationid'];
 }
 
 /**
@@ -1145,7 +1160,7 @@ function lti_build_content_item_selection_request($id, $course, moodle_url $retu
     }
 
     // Get standard request parameters and merge to the request parameters.
-    $orgid = !empty($typeconfig['organizationid']) ? $typeconfig['organizationid'] : '';
+    $orgid = lti_get_organizationid($typeconfig);
     $standardparams = lti_build_standard_message(null, $orgid, $tool->ltiversion, 'ContentItemSelectionRequest');
     $requestparams = array_merge($requestparams, $standardparams);
 
@@ -2501,6 +2516,12 @@ function lti_get_type_type_config($id) {
         $type->lti_forcessl = $config['forcessl'];
     }
 
+    if (isset($config['organizationid_default'])) {
+        $type->lti_organizationid_default = $config['organizationid_default'];
+    } else {
+        // Tool was configured before this option was available and the default then was host.
+        $type->lti_organizationid_default = LTI_DEFAULT_ORGID_SITEHOST;
+    }
     if (isset($config['organizationid'])) {
         $type->lti_organizationid = $config['organizationid'];
     }
