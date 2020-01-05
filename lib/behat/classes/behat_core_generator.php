@@ -39,99 +39,119 @@ defined('MOODLE_INTERNAL') || die();
 class behat_core_generator extends behat_generator_base {
 
     protected function get_creatable_entities(): array {
-        return [
+        $entities = [
             'users' => [
+                'singular' => 'user',
                 'datagenerator' => 'user',
                 'required' => ['username'],
             ],
             'categories' => [
+                'singular' => 'category',
                 'datagenerator' => 'category',
                 'required' => ['idnumber'],
                 'switchids' => ['category' => 'parent'],
             ],
             'courses' => [
+                'singular' => 'course',
                 'datagenerator' => 'course',
                 'required' => ['shortname'],
                 'switchids' => ['category' => 'category'],
             ],
             'groups' => [
+                'singular' => 'group',
                 'datagenerator' => 'group',
                 'required' => ['idnumber', 'course'],
                 'switchids' => ['course' => 'courseid'],
             ],
             'groupings' => [
+                'singular' => 'grouping',
                 'datagenerator' => 'grouping',
                 'required' => ['idnumber', 'course'],
                 'switchids' => ['course' => 'courseid'],
             ],
             'course enrolments' => [
+                'singular' => 'course enrolment',
                 'datagenerator' => 'enrol_user',
                 'required' => ['user', 'course', 'role'],
                 'switchids' => ['user' => 'userid', 'course' => 'courseid', 'role' => 'roleid'],
             ],
             'custom field categories' => [
+                'singular' => 'custom field category',
                 'datagenerator' => 'custom_field_category',
                 'required' => ['name', 'component', 'area', 'itemid'],
                 'switchids' => [],
             ],
             'custom fields' => [
+                'singular' => 'custom field',
                 'datagenerator' => 'custom_field',
                 'required' => ['name', 'category', 'type', 'shortname'],
                 'switchids' => [],
             ],
             'permission overrides' => [
+                'singular' => 'permission override',
                 'datagenerator' => 'permission_override',
                 'required' => ['capability', 'permission', 'role', 'contextlevel', 'reference'],
                 'switchids' => ['role' => 'roleid'],
             ],
             'system role assigns' => [
+                'singular' => 'system role assignment',
                 'datagenerator' => 'system_role_assign',
                 'required' => ['user', 'role'],
                 'switchids' => ['user' => 'userid', 'role' => 'roleid'],
             ],
             'role assigns' => [
+                'singular' => 'role assignment',
                 'datagenerator' => 'role_assign',
                 'required' => ['user', 'role', 'contextlevel', 'reference'],
                 'switchids' => ['user' => 'userid', 'role' => 'roleid'],
             ],
             'activities' => [
+                'singular' => 'activity',
                 'datagenerator' => 'activity',
                 'required' => ['activity', 'idnumber', 'course'],
                 'switchids' => ['course' => 'course', 'gradecategory' => 'gradecat', 'grouping' => 'groupingid'],
             ],
             'blocks' => [
+                'singular' => 'block',
                 'datagenerator' => 'block_instance',
                 'required' => ['blockname', 'contextlevel', 'reference'],
             ],
             'group members' => [
+                'singular' => 'group member',
                 'datagenerator' => 'group_member',
                 'required' => ['user', 'group'],
                 'switchids' => ['user' => 'userid', 'group' => 'groupid'],
             ],
             'grouping groups' => [
+                'singular' => 'grouping group',
                 'datagenerator' => 'grouping_group',
                 'required' => ['grouping', 'group'],
                 'switchids' => ['grouping' => 'groupingid', 'group' => 'groupid'],
             ],
             'cohorts' => [
+                'singular' => 'cohort',
                 'datagenerator' => 'cohort',
                 'required' => ['idnumber'],
             ],
             'cohort members' => [
+                'singular' => 'cohort member',
                 'datagenerator' => 'cohort_member',
                 'required' => ['user', 'cohort'],
                 'switchids' => ['user' => 'userid', 'cohort' => 'cohortid'],
             ],
             'roles' => [
+                'singular' => 'role',
                 'datagenerator' => 'role',
                 'required' => ['shortname'],
             ],
             'grade categories' => [
+                'singular' => 'grade category',
                 'datagenerator' => 'grade_category',
                 'required' => ['fullname', 'course'],
                 'switchids' => ['course' => 'courseid', 'gradecategory' => 'parent'],
             ],
             'grade items' => [
+                'singular' => 'grade item',
                 'datagenerator' => 'grade_item',
                 'required' => ['course'],
                 'switchids' => [
@@ -142,30 +162,36 @@ class behat_core_generator extends behat_generator_base {
                 ],
             ],
             'grade outcomes' => [
+                'singular' => 'grade outcome',
                 'datagenerator' => 'grade_outcome',
                 'required' => ['shortname', 'scale'],
                 'switchids' => ['course' => 'courseid', 'gradecategory' => 'categoryid', 'scale' => 'scaleid'],
             ],
             'scales' => [
+                'singular' => 'scale',
                 'datagenerator' => 'scale',
                 'required' => ['name', 'scale'],
                 'switchids' => ['course' => 'courseid'],
             ],
             'question categories' => [
+                'singular' => 'question category',
                 'datagenerator' => 'question_category',
                 'required' => ['name', 'contextlevel', 'reference'],
                 'switchids' => ['questioncategory' => 'parent'],
             ],
             'questions' => [
+                'singular' => 'question',
                 'datagenerator' => 'question',
                 'required' => ['qtype', 'questioncategory', 'name'],
                 'switchids' => ['questioncategory' => 'category', 'user' => 'createdby'],
             ],
             'tags' => [
+                'singular' => 'tag',
                 'datagenerator' => 'tag',
                 'required' => ['name'],
             ],
             'events' => [
+                'singular' => 'event',
                 'datagenerator' => 'event',
                 'required' => ['name', 'eventtype'],
                 'switchids' => [
@@ -175,49 +201,60 @@ class behat_core_generator extends behat_generator_base {
                 ],
             ],
             'message contacts' => [
+                'singular' => 'message contact',
                 'datagenerator' => 'message_contacts',
                 'required' => ['user', 'contact'],
                 'switchids' => ['user' => 'userid', 'contact' => 'contactid'],
             ],
             'private messages' => [
+                'singular' => 'private message',
                 'datagenerator' => 'private_messages',
                 'required' => ['user', 'contact', 'message'],
                 'switchids' => ['user' => 'userid', 'contact' => 'contactid'],
             ],
             'favourite conversations' => [
+                'singular' => 'favourite conversation',
                 'datagenerator' => 'favourite_conversations',
                 'required' => ['user', 'contact'],
                 'switchids' => ['user' => 'userid', 'contact' => 'contactid'],
             ],
             'group messages' => [
+                'singular' => 'group message',
                 'datagenerator' => 'group_messages',
                 'required' => ['user', 'group', 'message'],
                 'switchids' => ['user' => 'userid', 'group' => 'groupid'],
             ],
             'muted group conversations' => [
+                'singular' => 'muted group conversation',
                 'datagenerator' => 'mute_group_conversations',
                 'required' => ['user', 'group', 'course'],
                 'switchids' => ['user' => 'userid', 'group' => 'groupid', 'course' => 'courseid'],
             ],
             'muted private conversations' => [
+                'singular' => 'muted private conversation',
                 'datagenerator' => 'mute_private_conversations',
                 'required' => ['user', 'contact'],
                 'switchids' => ['user' => 'userid', 'contact' => 'contactid'],
             ],
             'language customisations' => [
+                'singular' => 'language customisation',
                 'datagenerator' => 'customlang',
                 'required' => ['component', 'stringid', 'value'],
             ],
-            'analytics model' => [
+            'analytics models' => [
+                'singular' => 'analytics model',
                 'datagenerator' => 'analytics_model',
                 'required' => ['target', 'indicators', 'timesplitting', 'enabled'],
             ],
             'user preferences' => [
+                'singular' => 'user preference',
                 'datagenerator' => 'user_preferences',
                 'required' => array('user', 'preference', 'value'),
-                'switchids' => array('user' => 'userid')
+                'switchids' => array('user' => 'userid'),
             ],
         ];
+
+        return $entities;
     }
 
     /**
