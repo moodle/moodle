@@ -37,11 +37,13 @@ class behat_mod_quiz_generator extends behat_generator_base {
     protected function get_creatable_entities(): array {
         return [
             'group overrides' => [
+                'singular' => 'group override',
                 'datagenerator' => 'override',
                 'required' => ['quiz', 'group'],
                 'switchids' => ['quiz' => 'quiz', 'group' => 'groupid'],
             ],
             'user overrides' => [
+                'singular' => 'user override',
                 'datagenerator' => 'override',
                 'required' => ['quiz', 'user'],
                 'switchids' => ['quiz' => 'quiz', 'user' => 'userid'],
