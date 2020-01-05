@@ -53,7 +53,7 @@ echo $OUTPUT->header();
 // Request the launch content with an iframe tag.
 $attr = array(
     'id' => 'contentframe',
-    'height' => '1500px',
+    'height' => '600px',
     'width' => '100%',
     'allowfullscreen' => 'true',
     'src' => 'lti_launch.php?courseid='.$courseid,
