@@ -52,6 +52,7 @@ Feature: Multiple option choice response
       | Description | Choice Description |
       | Allow more than one choice to be selected | Yes |
       | Limit the number of responses allowed | 1 |
+      | Show available spaces  | 1 |
       | option[0] | Option 1 |
       | limit[0] | 1 |
       | option[1] | Option 2 |
@@ -74,3 +75,21 @@ Feature: Multiple option choice response
     And the "#choice_1" "css_element" should be disabled
     And the "#choice_2" "css_element" should be disabled
     And the "#choice_3" "css_element" should be enabled
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Choice name"
+    And I follow "View 1 responses"
+    Then I should see "Option 1 (Full)"
+    And I should see "Limit: 1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Choice name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+      | Limit the number of responses allowed | No |
+    And I press "Save and return to course"
+    And I am on "Course 1" course homepage
+    And I follow "Choice name"
+    And I follow "View 1 responses"
+    Then I should not see "Limit: 1"
+    And I log out

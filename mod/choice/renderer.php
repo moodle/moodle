@@ -50,7 +50,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $choicecount = 0;
         foreach ($options['options'] as $option) {
             $choicecount++;
-            $html .= html_writer::start_tag('li', array('class'=>'option'));
+            $html .= html_writer::start_tag('li', array('class' => 'option mr-3'));
             if ($multiple) {
                 $option->attributes->name = 'answer[]';
                 $option->attributes->type = 'checkbox';
@@ -65,6 +65,13 @@ class mod_choice_renderer extends plugin_renderer_base {
             if (!empty($option->attributes->disabled)) {
                 $labeltext .= ' ' . get_string('full', 'choice');
                 $availableoption--;
+            }
+
+            if (!empty($options['limitanswers']) && !empty($options['showavailable'])) {
+                $labeltext .= html_writer::empty_tag('br');
+                $labeltext .= get_string("responsesa", "choice", $option->countanswers);
+                $labeltext .= html_writer::empty_tag('br');
+                $labeltext .= get_string("limita", "choice", $option->maxanswers);
             }
 
             $html .= html_writer::empty_tag('input', (array)$option->attributes + $disabled);
@@ -182,6 +189,11 @@ class mod_choice_renderer extends plugin_renderer_base {
                 $headertitle = get_string('notanswered', 'choice');
             } else if ($optionid > 0) {
                 $headertitle = format_string($choices->options[$optionid]->text);
+                if (!empty($choices->options[$optionid]->user) && count($choices->options[$optionid]->user) > 0) {
+                    if ((count($choices->options[$optionid]->user)) == ($choices->options[$optionid]->maxanswer)) {
+                        $headertitle .= ' ' . get_string('full', 'choice');
+                    }
+                }
             }
             $celltext = $headertitle;
 
@@ -209,7 +221,10 @@ class mod_choice_renderer extends plugin_renderer_base {
             if (!empty($options->user) && count($options->user) > 0) {
                 $numberofuser = count($options->user);
             }
-
+            if (($choices->limitanswers) && ($choices->showavailable)) {
+                $numberofuser .= html_writer::empty_tag('br');
+                $numberofuser .= get_string("limita", "choice", $options->maxanswer);
+            }
             $celloption->text = html_writer::div($celltext, 'text-center');
             $optionsnames[$optionid] = $celltext;
             $cellusernumber->text = html_writer::div($numberofuser, 'text-center');

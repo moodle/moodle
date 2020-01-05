@@ -17,6 +17,12 @@ select {
     }
 }
 
+.path-mod-choice {
+    .choices .option label {
+        vertical-align: top;
+    }
+}
+
 .path-mod-feedback .feedback_form .col-form-label {
     display: block !important; /* stylelint-disable-line declaration-no-important */
 }
