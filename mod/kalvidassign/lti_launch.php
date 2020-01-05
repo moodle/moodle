@@ -79,8 +79,8 @@ if ($isResubmit && $isReplaceMediaDisabled && empty($source)) {
     echo get_string('notallowedtoreplacemedia', 'mod_kalvidassign');
     die;
 }
-if (!empty(get_config(KALTURA_PLUGIN_NAME, 'enable_assignment'))) {
-    $launch['assignment'] = 'yes';
+if (!empty(get_config(KALTURA_PLUGIN_NAME, 'enable_submission'))) {
+    $launch['submission'] = 'yes';
 }
 if (local_kaltura_validate_browseembed_required_params($launch)) {
     $content = local_kaltura_request_lti_launch($launch, $withblocks);
