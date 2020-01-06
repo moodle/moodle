@@ -95,20 +95,21 @@ const show = (rootNode, {
                 const root = modal.getRoot()[0];
                 const gateway = (root.querySelector(Selectors.values.gateway) || {value: ''}).value;
 
-                if (gateway) {
-                    processPayment(
-                        root,
-                        gateway,
-                        rootNode.dataset.amount,
-                        rootNode.dataset.currency,
-                        rootNode.dataset.component,
-                        rootNode.dataset.componentid
-                    );
-                } else {
-                    getString('nogatewayselected', 'core_payment').then(message => {
-                        return addToast(message);
-                    });
-                }
+                        if (gateway) {
+                            processPayment(
+                                root,
+                                gateway,
+                                rootNode.dataset.amount,
+                                rootNode.dataset.currency,
+                                rootNode.dataset.component,
+                                rootNode.dataset.componentid,
+                                rootNode.dataset.description,
+                            );
+                        } else {
+                            getString('nogatewayselected', 'core_payment').then(message => {
+                                return addToast(message);
+                            });
+                        }
 
                 e.preventDefault();
             });
@@ -127,10 +128,11 @@ const show = (rootNode, {
  * @param {string} currency The currency in the three-character ISO-4217 format
  * @param {string} component Name of the component that the componentid belongs to
  * @param {number} componentid An internal identifier that is used by the component
+ * @param {string} description Description of the payment
  * @returns {Promise<void>}
  */
-const processPayment = async(rootElement, gateway, amount, currency, component, componentid) => {
+const processPayment = async(rootElement, gateway, amount, currency, component, componentid, description) => {
     const paymentMethod = await import(`pg_${gateway}/gateways_modal`);
 
-    paymentMethod.process(rootElement, amount, currency, component, componentid);
+    paymentMethod.process(rootElement, amount, currency, component, componentid, description);
 };
