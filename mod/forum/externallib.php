@@ -1319,7 +1319,7 @@ class mod_forum_external extends external_api {
             $preferredformat = editors_get_preferred_format();
             // If the post is not HTML and the preferred format is HTML, convert to it.
             if ($params['messageformat'] != FORMAT_HTML and $preferredformat == FORMAT_HTML) {
-                $params['message'] = format_text($params['message'], $params['messageformat'], ['context' => $context]);
+                $params['message'] = format_text($params['message'], $params['messageformat'], ['filter' => false]);
             }
             $params['messageformat'] = $preferredformat;
         }
