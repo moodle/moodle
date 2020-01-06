@@ -96,9 +96,13 @@ class helper {
      *
      * @param float $amount Amount of payment
      * @param string $currency Currency of payment
+     * @param string $component Name of the component that the componentid belongs to
+     * @param int $componentid An internal identifier that is used by the component
+     * @param string $description Description of the payment
      * @return array
      */
-    public static function gateways_modal_link_params(float $amount, string $currency, string $component, int $componentid): array {
+    public static function gateways_modal_link_params(float $amount, string $currency, string $component, int $componentid,
+            string $description): array {
         return [
             'id' => 'gateways-modal-trigger',
             'role' => 'button',
@@ -106,6 +110,7 @@ class helper {
             'data-currency' => $currency,
             'data-component' => $component,
             'data-componentid' => $componentid,
+            'data-description' => $description,
         ];
     }
 }

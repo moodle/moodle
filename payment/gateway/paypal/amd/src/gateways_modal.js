@@ -37,7 +37,7 @@ const showPlaceholder = async(rootElement) => {
     Templates.replaceNodeContents(rootElement.querySelector(Selectors.regions.gatewaysContainer), html, js);
 };
 
-export const process = async(rootElement, amount, currency, component, componentid) => {
+export const process = async(rootElement, amount, currency, component, componentid, description) => {
 
     const [
         ,
@@ -60,7 +60,8 @@ export const process = async(rootElement, amount, currency, component, component
                         amount: {
                             currency_code: currency, // eslint-disable-line
                             value: amount
-                        }
+                        },
+                        description: Truncate.truncate(description, {length: 127, stripTags: true}),
                     }],
                     application_context: { // eslint-disable-line
                         shipping_preference: 'NO_SHIPPING', // eslint-disable-line
