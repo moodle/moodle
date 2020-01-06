@@ -206,9 +206,10 @@ class enrol_fee_plugin extends enrol_plugin {
                 echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
                 echo '</div>';
             } else {
+                $coursefullname  = format_string($course->fullname, true, ['context' => $context]);
                 \core_payment\helper::gateways_modal_requirejs();
                 $attributes = core_payment\helper::gateways_modal_link_params($cost, $instance->currency, 'enrol_fee',
-                        $instance->id);
+                        $instance->id, get_string('purchasedescription', 'enrol_fee', $coursefullname));
 
                 echo '<div align="center">' .
                       html_writer::tag('button', get_string("sendpaymentbutton", "enrol_paypal"), $attributes) .
