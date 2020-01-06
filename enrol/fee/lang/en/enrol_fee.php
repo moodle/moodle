@@ -45,6 +45,7 @@ $string['fee:unenrolself'] = 'Unenrol self from course';
 $string['nocost'] = 'There is no cost to enrol in this course!';
 $string['pluginname'] = 'Enrolment on payment';
 $string['pluginname_desc'] = 'The enrolment on payment enrolment method allows you to set up courses requiring a payment. If the fee for any course is set to zero, then students are not asked to pay for entry. There is a site-wide fee that you set here as a default for the whole site and then a course setting that you can set for each course individually. The course fee overrides the site fee.';
+$string['purchasedescription'] = 'Enrolment in course {$a}';
 $string['sendpaymentbutton'] = 'Select payment type';
 $string['status'] = 'Allow enrolment on payment enrolments';
 $string['status_desc'] = 'Allow users to make a payment to enrol into a course by default.';
