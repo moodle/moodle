@@ -527,7 +527,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Tests is similar to the get_forum_discussion_posts only utilizing the new return structure and entities
      */
     public function test_mod_forum_get_discussion_posts() {
-        global $CFG, $PAGE;
+        global $CFG;
 
         $this->resetAfterTest(true);
 
@@ -537,6 +537,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $urlfactory = mod_forum\local\container::get_url_factory();
         $legacyfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
         $entityfactory = mod_forum\local\container::get_entity_factory();
+
+        // Create course to add the module.
+        $course1 = self::getDataGenerator()->create_course();
 
         // Create a user who can track forums.
         $record = new stdClass();
@@ -551,7 +554,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'isdeleted' => false,
             'groups' => [],
             'urls' => [
-                'profile' => $urlfactory->get_author_profile_url($user2entity),
+                'profile' => $urlfactory->get_author_profile_url($user2entity, $course1->id)->out(false),
                 'profileimage' => $urlfactory->get_author_profile_image_url($user2entity),
             ]
         ];
@@ -565,7 +568,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'groups' => [],
             'isdeleted' => false,
             'urls' => [
-                'profile' => $urlfactory->get_author_profile_url($user3entity),
+                'profile' => $urlfactory->get_author_profile_url($user3entity, $course1->id)->out(false),
                 'profileimage' => $urlfactory->get_author_profile_image_url($user3entity),
             ]
         ];
@@ -574,9 +577,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Set the first created user to the test user.
         self::setUser($user1);
-
-        // Create course to add the module.
-        $course1 = self::getDataGenerator()->create_course();
 
         // Forum with tracking off.
         $record = new stdClass();
@@ -652,7 +652,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'groups' => [],
             'isdeleted' => true,
             'urls' => [
-                'profile' => $urlfactory->get_author_profile_url($user3entity),
+                'profile' => $urlfactory->get_author_profile_url($user3entity, $course1->id)->out(false),
                 'profileimage' => $urlfactory->get_author_profile_image_url($user3entity),
             ]
         ];
@@ -2618,6 +2618,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $legacydatamapper = mod_forum\local\container::get_legacy_data_mapper_factory();
         $legacypostmapper = $legacydatamapper->get_post_data_mapper();
 
+        // Create course to add the module.
+        $course1 = self::getDataGenerator()->create_course();
+
         $user1 = self::getDataGenerator()->create_user();
         $user1entity = $entityfactory->get_author_from_stdclass($user1);
         $exporteduser1 = [
@@ -2625,7 +2628,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'fullname' => fullname($user1),
             'groups' => [],
             'urls' => [
-                'profile' => $urlfactory->get_author_profile_url($user1entity),
+                'profile' => $urlfactory->get_author_profile_url($user1entity, $course1->id)->out(false),
                 'profileimage' => $urlfactory->get_author_profile_image_url($user1entity),
             ],
             'isdeleted' => false,
@@ -2638,7 +2641,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'fullname' => fullname($user2),
             'groups' => [],
             'urls' => [
-                'profile' => $urlfactory->get_author_profile_url($user2entity),
+                'profile' => $urlfactory->get_author_profile_url($user2entity, $course1->id)->out(false),
                 'profileimage' => $urlfactory->get_author_profile_image_url($user2entity),
             ],
             'isdeleted' => false,
@@ -2649,9 +2652,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Set the first created user to the test user.
         self::setUser($user1);
-
-        // Create course to add the module.
-        $course1 = self::getDataGenerator()->create_course();
 
         // Forum with tracking off.
         $record = new stdClass();
