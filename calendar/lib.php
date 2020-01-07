@@ -3010,7 +3010,7 @@ function calendar_get_icalendar($url) {
  * Import events from an iCalendar object into a course calendar.
  *
  * @param iCalendar $ical The iCalendar object.
- * @param int $courseid The course ID for the calendar.
+ * @param int $unused Deprecated
  * @param int $subscriptionid The subscription ID.
  * @return string A log of the import progress, including errors.
  */
@@ -3060,7 +3060,8 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
         }
     }
 
-    if (!empty($subscriptionid)) {
+    $existing = $DB->get_field('event_subscriptions', 'lastupdated', ['id' => $subscriptionid]);
+    if (!empty($existing)) {
         $eventsuuids = $DB->get_records_menu('event', ['subscriptionid' => $subscriptionid], '', 'id, uuid');
 
         $icaleventscount = count($icaluuids);
