@@ -63,7 +63,9 @@ abstract class file_system {
         } else {
             $path = $this->get_remote_path_from_storedfile($file);
         }
-        readfile_allow_large($path, $file->get_filesize());
+        if (readfile_allow_large($path, $file->get_filesize()) === false) {
+            throw new file_exception('storedfilecannotreadfile', $file->get_filename());
+        }
     }
 
     /**
