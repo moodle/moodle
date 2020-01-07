@@ -221,6 +221,8 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
      */
     public function validateSubmitValue($value) {
 
+        $value = $value ?? ['filetypes' => null]; // A null $value can arrive here. Coalesce, creating the default array.
+
         if (!$this->allowall) {
             // Assert that there is an actual list provided.
             $normalized = $this->util->normalize_file_types($value['filetypes']);

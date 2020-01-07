@@ -835,7 +835,7 @@ class core_session_manager_testcase extends advanced_testcase {
         $SESSION->recentsessionlocks = $this->sessionlock_history();
 
         $page = \core\session\manager::get_locked_page_at($time);
-        $this->assertEquals($url, $page['url']);
+        $this->assertEquals($url, is_array($page) ? $page['url'] : null);
     }
 
     /**
