@@ -227,6 +227,24 @@ class core_calendar_lib_testcase extends advanced_testcase {
         calendar_import_icalendar_events($ical, null, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
+
+        // Test for ICS file with repeated events.
+        $subscription = new stdClass();
+        $subscription->name = 'Repeated events';
+        $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
+        $subscription->eventtype = 'site';
+        $id = calendar_add_subscription($subscription);
+        $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/repeated_events.ics');
+        $ical = new iCalendar();
+        $ical->unserialize($calendar);
+        $this->assertEquals($ical->parser_errors, []);
+
+        $sub = calendar_get_subscription($id);
+        $output = calendar_import_icalendar_events($ical, null, $sub->id);
+        $this->assertStringNotContainsString('Events deleted: 17', $output);
+        $this->assertStringContainsString('Events imported: 1', $output);
+        $this->assertStringContainsString('Events skipped: 0', $output);
+        $this->assertStringContainsString('Events updated: 0', $output);
     }
 
     /**
