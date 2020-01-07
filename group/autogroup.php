@@ -171,7 +171,7 @@ if ($editform->is_cancelled()) {
             $table->width = '90%';
         }
         $table->data  = array();
-
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
         foreach ($groups as $group) {
             $line = array();
             if (groups_get_group_by_name($courseid, $group['name'])) {
@@ -183,7 +183,7 @@ if ($editform->is_cancelled()) {
             if ($data->allocateby != 'no') {
                 $unames = array();
                 foreach ($group['members'] as $user) {
-                    $unames[] = fullname($user, true);
+                    $unames[] = fullname($user, $viewfullnames);
                 }
                 $line[] = implode(', ', $unames);
                 $line[] = count($group['members']);
