@@ -47,7 +47,7 @@ class wiki_parser_proxy {
             	return $content;
             }
             else {
-            	return $content[1];
+            	return is_array($content) ? $content[1] : null;
         	}
         }
         else {

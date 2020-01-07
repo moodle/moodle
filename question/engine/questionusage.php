@@ -701,7 +701,7 @@ class question_usage_by_activity {
             // Behaviour vars should not be processed by question type, just add prefix.
             $behaviourvars = $this->get_question_attempt($slot)->get_behaviour()->get_expected_data();
             foreach (array_keys($responsedata) as $responsedatakey) {
-                if ($responsedatakey[0] === '-') {
+                if (is_string($responsedatakey) && $responsedatakey[0] === '-') {
                     $behaviourvarname = substr($responsedatakey, 1);
                     if (isset($behaviourvars[$behaviourvarname])) {
                         // Expected behaviour var found.

@@ -181,7 +181,7 @@ class dropbox extends \oauth2_client {
      * @throws  moodle_exception
      */
     protected function check_and_handle_api_errors($data) {
-        if ($this->info['http_code'] == 200) {
+        if (!is_array($this->info) or $this->info['http_code'] == 200) {
             // Dropbox only returns errors on non-200 response codes.
             return;
         }
