@@ -85,6 +85,8 @@ switch ($action) {
         if ($groupmemberroles = groups_get_members_by_role($groupids[0], $courseid,
                 'u.id, ' . user_picture::fields('u', $extrafields))) {
 
+            $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
             foreach($groupmemberroles as $roleid=>$roledata) {
                 $shortroledata = new stdClass();
                 $shortroledata->name = $roledata->name;
@@ -92,7 +94,7 @@ switch ($action) {
                 foreach($roledata->users as $member) {
                     $shortmember = new stdClass();
                     $shortmember->id = $member->id;
-                    $shortmember->name = fullname($member, true);
+                    $shortmember->name = fullname($member, $viewfullnames);
                     if ($extrafields) {
                         $extrafieldsdisplay = [];
                         foreach ($extrafields as $field) {
@@ -204,12 +206,14 @@ if ($singlegroup) {
     if ($groupmemberroles = groups_get_members_by_role(reset($groupids), $courseid,
             'u.id, ' . user_picture::fields('u', $extrafields))) {
 
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
         foreach ($groupmemberroles as $roleid => $roledata) {
             $users = array();
             foreach ($roledata->users as $member) {
                 $shortmember = new stdClass();
                 $shortmember->value = $member->id;
-                $shortmember->text = fullname($member, true);
+                $shortmember->text = fullname($member, $viewfullnames);
                 if ($extrafields) {
                     $extrafieldsdisplay = [];
                     foreach ($extrafields as $field) {

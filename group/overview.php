@@ -251,9 +251,10 @@ foreach ($members as $gpgid=>$groupdata) {
             $line[] = html_writer::tag('span', $name, array('class' => 'group_hoverdescription', 'data-groupid' => $gpid));
             $hoverevents[$gpid] = get_string('descriptiona', null, $jsdescription);
         }
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
         $fullnames = array();
         foreach ($users as $user) {
-            $displayname = fullname($user, true);
+            $displayname = fullname($user, $viewfullnames);
             if ($extrafields) {
                 $extrafieldsdisplay = [];
                 foreach ($extrafields as $field) {
