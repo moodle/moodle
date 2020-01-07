@@ -527,7 +527,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Tests is similar to the get_forum_discussion_posts only utilizing the new return structure and entities
      */
     public function test_mod_forum_get_discussion_posts() {
-        global $CFG, $PAGE;
+        global $CFG;
 
         $this->resetAfterTest(true);
 
@@ -537,6 +537,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $urlfactory = mod_forum\local\container::get_url_factory();
         $legacyfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
         $entityfactory = mod_forum\local\container::get_entity_factory();
+
+        // Create course to add the module.
+        $course1 = self::getDataGenerator()->create_course();
 
         // Create a user who can track forums.
         $record = new stdClass();
@@ -550,7 +553,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'fullname' => fullname($user2),
             'groups' => [],
             'urls' => [
-                'profile' => $urlfactory->get_author_profile_url($user2entity),
+                'profile' => $urlfactory->get_author_profile_url($user2entity, $course1->id)->out(false),
                 'profileimage' => $urlfactory->get_author_profile_image_url($user2entity),
             ]
         ];
@@ -563,7 +566,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'fullname' => fullname($user3),
             'groups' => [],
             'urls' => [
-                'profile' => $urlfactory->get_author_profile_url($user3entity),
+                'profile' => $urlfactory->get_author_profile_url($user3entity, $course1->id)->out(false),
                 'profileimage' => $urlfactory->get_author_profile_image_url($user3entity),
             ]
         ];
@@ -572,9 +575,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Set the first created user to the test user.
         self::setUser($user1);
-
-        // Create course to add the module.
-        $course1 = self::getDataGenerator()->create_course();
 
         // Forum with tracking off.
         $record = new stdClass();
@@ -683,7 +683,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'html' => [
                 'rating' => null,
                 'taglist' => null,
-                'authorsubheading' => $forumgenerator->get_author_subheading_html((object)$exporteduser3, $discussion1reply2->created)
+                'authorsubheading' => $forumgenerator->get_author_subheading_html((object)$exporteduser3,
+                        $discussion1reply2->created)
             ],
             'capabilities' => [
                 'view' => 1,
@@ -699,7 +700,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'urls' => [
                 'view' => $urlfactory->get_view_post_url_from_post_id($discussion1reply2->discussion, $discussion1reply2->id),
                 'viewisolated' => $isolatedurl->out(false),
-                'viewparent' => $urlfactory->get_view_post_url_from_post_id($discussion1reply2->discussion, $discussion1reply2->parent),
+                'viewparent' => $urlfactory->get_view_post_url_from_post_id($discussion1reply2->discussion,
+                        $discussion1reply2->parent),
                 'edit' => null,
                 'delete' =>null,
                 'split' => null,
@@ -738,7 +740,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'html' => [
                 'rating' => null,
                 'taglist' => null,
-                'authorsubheading' => $forumgenerator->get_author_subheading_html((object)$exporteduser2, $discussion1reply1->created)
+                'authorsubheading' => $forumgenerator->get_author_subheading_html((object)$exporteduser2,
+                        $discussion1reply1->created)
             ],
             'capabilities' => [
                 'view' => 1,
@@ -754,7 +757,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'urls' => [
                 'view' => $urlfactory->get_view_post_url_from_post_id($discussion1reply1->discussion, $discussion1reply1->id),
                 'viewisolated' => $isolatedurl->out(false),
-                'viewparent' => $urlfactory->get_view_post_url_from_post_id($discussion1reply1->discussion, $discussion1reply1->parent),
+                'viewparent' => $urlfactory->get_view_post_url_from_post_id($discussion1reply1->discussion,
+                        $discussion1reply1->parent),
                 'edit' => null,
                 'delete' =>null,
                 'split' => null,

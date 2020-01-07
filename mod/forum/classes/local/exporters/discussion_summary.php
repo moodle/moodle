@@ -140,6 +140,7 @@ class discussion_summary extends exporter {
         $related = [
             'urlfactory' => $this->related['urlfactory'],
             'context' => $this->related['forum']->get_context(),
+            'forum' => $forum,
         ];
 
         $firstpostauthor = new author(
