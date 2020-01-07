@@ -38,49 +38,8 @@
 module.exports = ({template, types}) => {
     const fs = require('fs');
     const path = require('path');
-    const glob = require('glob');
     const cwd = process.cwd();
-
-    // Static variable to hold the modules.
-    let moodleSubsystems = null;
-    let moodlePlugins = null;
-
-    /**
-     * Parse Moodle's JSON files containing the lists of components.
-     *
-     * The values are stored in the static variables because we
-     * only need to load them once per transpiling run.
-     */
-    function loadMoodleModules() {
-        moodleSubsystems = {'lib': 'core'};
-        moodlePlugins = {};
-        let components = fs.readFileSync('lib/components.json');
-        components = JSON.parse(components);
-
-        for (const [component, path] of Object.entries(components.subsystems)) {
-            if (path) {
-                // Prefix "core_" to the front of the subsystems.
-                moodleSubsystems[path] = `core_${component}`;
-            }
-        }
-
-        for (const [component, path] of Object.entries(components.plugintypes)) {
-            if (path) {
-                moodlePlugins[path] = component;
-            }
-        }
-
-        for (const file of glob.sync('**/db/subplugins.json')) {
-            var rawContents = fs.readFileSync(file);
-            var subplugins = JSON.parse(rawContents);
-
-            for (const [component, path] of Object.entries(subplugins.plugintypes)) {
-                if (path) {
-                    moodlePlugins[path] = component;
-                }
-            }
-        }
-    }
+    const ComponentList = require(path.resolve('GruntfileComponents.js'));
 
     /**
      * Search the list of components that match the given file name
@@ -99,26 +58,14 @@ module.exports = ({template, types}) => {
         const fileName = file.replace('.js', '');
 
         // Check subsystems first which require an exact match.
-        if (moodleSubsystems.hasOwnProperty(componentPath)) {
-            return `${moodleSubsystems[componentPath]}/${fileName}`;
-        }
-
-        // It's not a subsystem so it must be a plugin. Moodle defines root folders
-        // where plugins can be installed so our path with be <plugin_root>/<plugin_name>.
-        // Let's separate the two.
-        let pathParts = componentPath.split('/');
-        const pluginName = pathParts.pop();
-        const pluginPath = pathParts.join('/');
-
-        // The plugin path mutch match exactly because some plugins are subplugins of
-        // other plugins which means their paths would partially match.
-        if (moodlePlugins.hasOwnProperty(pluginPath)) {
-            return `${moodlePlugins[pluginPath]}_${pluginName}/${fileName}`;
+        const componentName = ComponentList.getComponentFromPath(componentPath);
+        if (componentName) {
+            return `${componentName}/${fileName}`;
         }
 
         // This matches the previous PHP behaviour that would throw an exception
         // if it couldn't parse an AMD file.
-        throw new Error('Unable to find module name for ' + searchFileName);
+        throw new Error(`Unable to find module name for ${searchFileName} (${componentPath}::${file}}`);
     }
 
     /**
@@ -149,10 +96,6 @@ module.exports = ({template, types}) => {
         pre() {
             this.seenDefine = false;
             this.addedReturnForDefaultExport = false;
-
-            if (moodleSubsystems === null) {
-                loadMoodleModules();
-            }
         },
         visitor: {
             // Plugin ordering is only respected if we visit the "Program" node.
