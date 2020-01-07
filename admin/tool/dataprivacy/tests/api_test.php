@@ -337,6 +337,11 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $datarequest = api::create_data_request($student->id, api::DATAREQUEST_TYPE_EXPORT);
 
         $requestid = $datarequest->get('id');
+
+        // Login as a user without DPO role.
+        $this->setUser($teacher);
+        $this->expectException(required_capability_exception::class);
+        api::approve_data_request($requestid);
     }
 
     /**
