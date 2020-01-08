@@ -38,7 +38,7 @@ const getComposedLayout = ({
     document.body.append(container);
     container.classList.add('layout');
     container.classList.add('fullscreen');
-    container.setAttribute('aria-role', 'application');
+    container.setAttribute('role', 'application');
     addToastRegion(container);
 
     // Lock scrolling on the document body.
