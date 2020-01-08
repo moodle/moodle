@@ -33,4 +33,21 @@ $functions = [
         'type'        => 'read',
         'ajax'        => true,
     ],
+    'pg_paypal_get_sdk_url' => [
+        'classname'   => 'pg_paypal\external\get_sdk_url',
+        'methodname'  => 'execute',
+        'classpath'   => '',
+        'description' => 'Generates and returns the URL of the PayPal JavaScript SDK',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'pg_paypal_create_transaction_complete' => [
+        'classname'   => 'pg_paypal\external\transaction_complete',
+        'methodname'  => 'execute',
+        'classpath'   => '',
+        'description' => 'Takes care of what needs to be done when a PayPal transaction comes back as complete.',
+        'type'        => 'write',
+        'ajax'        => true,
+        'loginrequired' => false,
+    ],
 ];
