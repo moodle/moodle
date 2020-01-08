@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['callbacknotimplemented'] = 'The callback is not implemented for component {$a}.';
 $string['nogateway'] = 'There is no payment gateway that can be used.';
 $string['nogatewayselected'] = 'You first need to select a payment gateway.';
 $string['selectpaymenttype'] = 'Select payment type';
