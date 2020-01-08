@@ -24,9 +24,17 @@
 
 $string['brandname'] = 'Brand name';
 $string['brandname_desc'] = 'The optional label that overrides the business name in the PayPal account on the PayPal site.';
+$string['captureauthorizationfailed'] = 'Could not capture authorization.';
 $string['clientid'] = 'Client ID';
 $string['clientid_desc'] = 'The client ID that PayPal generated for your application.';
+$string['echecknotsupported'] = 'E-check is not supported.';
 $string['gatewaydescription'] = 'PayPal is an authorised payment gateway provider for processing credit card transactions.';
 $string['gatewayname'] = 'PayPal';
+$string['internalerror'] = 'Internal error.';
+$string['paymentauthorizationwarning'] = 'For PayPal payment authorizations, you must enable this feature on your PayPal account.';
+$string['paymentnotcleared'] = 'payment not cleared by PayPal.';
 $string['pluginname'] = 'PayPal';
 $string['pluginname_desc'] = 'The PayPal plugin allows you to receive payments via PayPal.';
+$string['repeatedorder'] = 'This order has already been processed earlier.';
+$string['secret'] = 'Secret';
+$string['secret_desc'] = 'The secret thatPayPal generated for your application.';
