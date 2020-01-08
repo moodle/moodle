@@ -33,6 +33,7 @@
     }
 }}
 {{<core/drawer}}
+    {{$drawerid}}grading-drawer-{{uniqid}}{{/drawerid}}
     {{$drawerclasses}}grader-grading-panel flex-shrink-0{{/drawerclasses}}
     {{$drawercontent}}
         <div class="h-100 w-100 bg-white d-flex flex-column">
@@ -52,7 +53,9 @@
                                 data-region="user-search-input"
                                 class="form-control form-control-lg"
                                 placeholder="{{#str}} searchusers, mod_forum {{/str}}"
+                                aria-labelledby="user-search-input-{{uniqid}}-label"
                             >
+                            <span id="user-search-input-{{uniqid}}-label" class="sr-only">{{#str}}searchusers, mod_forum{{/str}}</span>
                             <button
                                 class="toggle-search-button btn btn-icon icon-no-margin"
                                 aria-expanded="false"
@@ -74,7 +77,7 @@
                         <button
                             class="btn btn-icon icon-size-3 icon-no-margin colour-inherit"
                             data-action="collapse-grading-drawer"
-                            aria-controls="grading-drawer"
+                            aria-controls="grading-drawer-{{uniqid}}"
                             aria-expanded="true"
                             title="{{#str}} closebuttontitle, core {{/str}}"
                         >
@@ -114,12 +117,12 @@
                             {{>core/help_icon}}
                         {{/helpicon}}
                     </div>
-                    <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
+                    <div data-region="grade-errors" role="alert" aria-live="assertive"></div>
                 </div>
             </div>
             <div class="hidden overflow-auto" data-region="search-results-container"></div>
         </div>
-        <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
+        <div data-region="grade-errors" role="alert" aria-live="assertive"></div>
         <hr/>
     {{/drawercontent}}
 {{/core/drawer}}
