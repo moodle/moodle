@@ -157,19 +157,19 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         // Allowed roles.
         $allow = optional_param_array('allowassign', null, PARAM_INT);
         if (!is_null($allow)) {
-            $this->allowassign = $allow;
+            $this->allowassign = array_filter($allow);
         }
         $allow = optional_param_array('allowoverride', null, PARAM_INT);
         if (!is_null($allow)) {
-            $this->allowoverride = $allow;
+            $this->allowoverride = array_filter($allow);
         }
         $allow = optional_param_array('allowswitch', null, PARAM_INT);
         if (!is_null($allow)) {
-            $this->allowswitch = $allow;
+            $this->allowswitch = array_filter($allow);
         }
         $allow = optional_param_array('allowview', null, PARAM_INT);
         if (!is_null($allow)) {
-            $this->allowview = $allow;
+            $this->allowview = array_filter($allow);
         }
 
         // Now read the permissions for each capability.
@@ -618,7 +618,9 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         if ($this->roleid == 0) {
             $options[-1] = get_string('thisnewrole', 'core_role');
         }
-        return html_writer::select($options, 'allow'.$type.'[]', $selected, false, array('multiple' => 'multiple',
+        return
+            html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'allow'.$type.'[]', 'value' => "")) .
+            html_writer::select($options, 'allow'.$type.'[]', $selected, false, array('multiple' => 'multiple',
             'size' => 10, 'class' => 'form-control'));
     }
 
