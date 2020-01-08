@@ -260,7 +260,7 @@ class ADODB_text extends ADOConnection {
 					$projnames = array($n);
 
 					reset($where_arr);
-					while (list($k_a,$a) = each($where_arr)) {
+					foreach ($where_arr as $k_a => $a) {
 						if ($i == 0 && $this->_skiprow1) {
 							$projarray[] = array($n);
 							continue;
