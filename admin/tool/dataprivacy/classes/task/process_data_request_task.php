@@ -153,7 +153,7 @@ class process_data_request_task extends adhoc_task {
         $message->name = 'datarequestprocessingresults';
         $message->userfrom = $dpo;
         $message->replyto = $dpo->email;
-        $message->replytoname = fullname($dpo->email);
+        $message->replytoname = fullname($dpo);
 
         $typetext = null;
         // Prepare the context data for the email message body.
