@@ -2862,5 +2862,39 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020102100.02);
     }
 
+    if ($oldversion < 2020102700.00) {
+
+        // Define table payments to be created.
+        $table = new xmldb_table('payments');
+
+        // Adding fields to table payments.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('componentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('amount', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('currency', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('gateway', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table payments.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+
+        // Adding indexes to table payments.
+        $table->add_index('component', XMLDB_INDEX_NOTUNIQUE, ['component']);
+        $table->add_index('componentid', XMLDB_INDEX_NOTUNIQUE, ['componentid']);
+        $table->add_index('gateway', XMLDB_INDEX_NOTUNIQUE, ['gateway']);
+
+        // Conditionally launch create table for payments.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020102700.00);
+    }
+
     return true;
 }
