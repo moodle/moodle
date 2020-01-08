@@ -149,4 +149,34 @@ class helper {
 
         return $result;
     }
+
+    /**
+     * Stores essential information about the payment and returns the "id" field of the payment record in DB.
+     * Each payment gateway may then store the additional information their way.
+     *
+     * @param string $component Name of the component that the componentid belongs to
+     * @param int $componentid An internal identifier that is used by the component
+     * @param int $userid Id of the user who is paying
+     * @param float $amount Amount of payment
+     * @param string $currency Currency of payment
+     * @param string $gateway The gateway that is used for the payment
+     * @return int
+     */
+    public static function save_payment(string $component, int $componentid, int $userid, float $amount, string $currency,
+            string $gateway): int {
+        global $DB;
+
+        $record = new \stdClass();
+        $record->component = $component;
+        $record->componentid = $componentid;
+        $record->userid = $userid;
+        $record->amount = $amount;
+        $record->currency = $currency;
+        $record->gateway = $gateway;
+        $record->timecreated = $record->timemodified = time();
+
+        $id = $DB->insert_record('payments', $record);
+
+        return $id;
+    }
 }

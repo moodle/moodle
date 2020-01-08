@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20201007" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20201016" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -4286,6 +4286,28 @@
       <INDEXES>
         <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
         <INDEX NAME="instance" UNIQUE="false" FIELDS="contextid, contenttype, instanceid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="payments" COMMENT="Stores information about payments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="componentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="amount" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="gateway" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="component" UNIQUE="false" FIELDS="component"/>
+        <INDEX NAME="componentid" UNIQUE="false" FIELDS="componentid"/>
+        <INDEX NAME="gateway" UNIQUE="false" FIELDS="gateway"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="infected_files" COMMENT="Table to store infected file details.">
