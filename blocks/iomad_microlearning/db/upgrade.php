@@ -81,6 +81,11 @@ function xmldb_block_iomad_microlearning_upgrade($oldversion) {
         $table = new xmldb_table('microlearning_thread');
         $field = new xmldb_field('interval', XMLDB_TYPE_INTEGER, '20', null, null, null, '0', 'timecreated');
 
+        // Conditionally launch add field interval.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
         // Launch rename field releaseinterval.
         $dbman->rename_field($table, $field, 'releaseinterval');
 
