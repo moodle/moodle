@@ -16,6 +16,7 @@
 
 require_once('lib.php');
 require_once($CFG->dirroot.'/user/profile/definelib.php');
+require_once(dirname('__FILE__').'/company_license_table.php');
 
 $delete       = optional_param('delete', 0, PARAM_INT);
 $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
@@ -117,10 +118,6 @@ echo "<h3>".$company->get_name()."</h3>";
 
 flush();
 
-$stredit   = get_string('edit');
-$strdelete = get_string('delete');
-$strallocate = get_string('licenseallocate', 'block_iomad_company_admin');
-$strsplit = get_string('split', 'block_iomad_company_admin');
 $straddlicense = get_string('licenseaddnew', 'block_iomad_company_admin');
 $strlicensename = get_string('licensename', 'block_iomad_company_admin');
 $strlicensereference = get_string('licensereference', 'block_iomad_company_admin');
@@ -132,252 +129,124 @@ $strlicenseshelflife = get_string('licenseexpires', 'block_iomad_company_admin')
 $strlicenseduration = get_string('licenseduration', 'block_iomad_company_admin');
 $strlicenseallocated = get_string('licenseallocated', 'block_iomad_company_admin');
 $strlicenseremaining = get_string('licenseremaining', 'block_iomad_company_admin');
-$licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
-                      get_string('reusable', 'block_iomad_company_admin'),
-                      get_string('educator', 'block_iomad_company_admin'),
-                      get_string('educatorreusable', 'block_iomad_company_admin'));
 
-$table = new html_table();
-$table->head = array ($strlicensename,
-                      $strlicensereference,
-                      $strlicensetype,
-                      $strlicenseprogram,
-                      $strlicenseinstant,
-                      $strcoursesname,
-                      $strlicenseshelflife,
-                      $strlicenseduration,
-                      $strlicenseallocated,
-                      $strlicenseremaining,
-                      "",
-                      "");
-$table->align = array ("left", "left", "left", "left", "left", "left", "left", "center", "center", "center", "center");
-$table->width = "95%";
+// Set up the table
+$table = new company_license_table('company_licenses_table');
 
-if ($departmentid == $companydepartment->id) {
+$tableheaders = array ($strlicensename,
+                       $strlicensereference,
+                       $strlicensetype,
+                       $strlicenseprogram,
+                       $strlicenseinstant,
+                       $strcoursesname,
+                       $strlicenseshelflife,
+                       $strlicenseduration,
+                       $strlicenseallocated,
+                       $strlicenseremaining,
+                       "",
+                       "");
 
-    // Do we have any child companies?
-    if ($childcompanies = $company->get_child_companies_recursive()) {
-        $showcompanies = true;
-        $gotchildren = true;
-        array_unshift($table->head, get_string('company', 'block_iomad_company_admin'));
-        $childsql = "OR companyid IN (" . join(',', array_keys($childcompanies)) . ")";
-    } else {
-        $showcompanies = false;
-        $gotchildren = false;
-        $childsql = "";
-    }
+$tablecolumns = array('name',
+                      'reference',
+                      'type',
+                      'program',
+                      'instant',
+                      'coursesname',
+                      'expirydate',
+                      'validlength',
+                      'humanallocation',
+                      'used',
+                      'actions');
 
-    // Are we showing the expired licenses?
-    if (empty($showexpired)) {
-        $expiredsql = " AND expirydate > :time ";
-    } else {
-        $expiredsql = "";
-    }
-
-    // Get the licenses.
-    $licenses = $DB->get_records_sql("SELECT * FROM {companylicense}
-                                      WHERE companyid = :companyid
-                                      $childsql
-                                      $expiredsql
-                                      ORDER BY expirydate DESC",
-                                      array('companyid' => $companyid, 'time' => time()), $page * $perpage, $perpage);
-
-    $objectcount = $DB->count_records_sql("SELECT count(id) FROM {companylicense}
-                                        WHERE companyid = :companyid
-                                        $childsql
-                                        $expiredsql",
-                                        array('companyid' => $companyid, 'time' => time()));
-
-    // Cycle through the results.
-    foreach ($licenses as $license) {
-        // Set up the edit buttons.
-        $deletebutton = "";
-        $editbutton = "";
-        $allocatebutton = "";
-
-        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
-            (iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) && !empty($license->parentid))) {
-                // Is this above the user's company allocation?
-                if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
-                    $DB->get_record_sql("SELECT id FROM {company_users}
-                                         WHERE userid = :userid
-                                         AND companyid = (
-                                            SELECT companyid FROM {companylicense}
-                                            WHERE id = :parentid)",
-                                         array('userid' => $USER->id,
-                                               'parentid' => $license->parentid))) {
-                $deletebutton = "<a class='btn btn-primary' href='".
-                                 new moodle_url('company_license_list.php', array('delete' => $license->id,
-                                                                                  'sesskey' => sesskey())) ."'>$strdelete</a>";
-                $editbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
-                               array("licenseid" => $license->id, 'departmentid' => $departmentid)) . "'>$stredit</a>";
-            }
-        }
-
-        if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $context)) {
-            $allocatebutton = "<a class='btn btn-primary' href='".
-                                 new moodle_url('company_license_users_form.php', array('licenseid' => $license->id)) ."'>$strallocate</a>";
-        } else {
-            $allocatebutton = "";
-        }
-        // does the company the license is allocated to have any kids?
-        $licensecompany = new company($license->companyid);
-        if ($childcompanies = $licensecompany->get_child_companies_recursive()) {
-            $gotchildren = true;
-        } else {
-            $gotchildren = false;
-        }
-
-        // Set up the edit buttons.
-        if ((iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
-            iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) ||
-            iomad::has_capability('block/iomad_company_admin:split_my_licenses', $context)) &&
-            $license->used < $license->allocation &&
-            $gotchildren) {
-            $splitbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
-                           array("parentid" => $license->id)) . "'>$strsplit</a>";
-        } else {
-            $splitbutton = "";
-        }
-        $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $license->id));
-        $coursestring = "";
-        if (is_siteadmin()) {
-            $issiteadmin = true;
-        } else {
-            $issiteadmin = false;
-        }
-        $coursestring = "";
-        $first = true;
-        if (count($licensecourses) > 5) {
-            $coursestring = "<details><summary>" . get_string('view') . "</summary>";
-        }
-        foreach ($licensecourses as $licensecourse) {
-            $coursename = $DB->get_record('course', array('id' => $licensecourse->courseid));
-            if ($first) {
-                if ($issiteadmin) {
-                    $coursestring .= "<a href='".new moodle_url('/course/view.php',
-                                       array('id' => $licensecourse->courseid))."'>".format_string($coursename->fullname, true, 1)."</a>";
-                    $first = false;
-                } else {
-                    $coursestring .= format_string($coursename->fullname, true, 1);
-                }
-            } else {
-                if ($issiteadmin) {
-                    $coursestring .= ",</br><a href='".new moodle_url('/course/view.php',
-                                   array('id' => $licensecourse->courseid))."'>".format_string($coursename->fullname, true, 1)."</a>";
-                } else {
-                    $coursestring .= ",</br>". format_string($coursename->fullname, true, 1);
-                }
-            }
-        }
-        if (count($licensecourses) > 5) {
-            $coursestring .= "</details>";
-        }
-
-        // Deal with allocation numbers if a program.
-        if (!empty($license->program)) {
-            $programstring = get_string('yes');
-            $allocation = $license->allocation / count($licensecourses);
-            $used = $license->used / count($licensecourses);
-        } else {
-            $programstring = get_string('no');
-            $allocation = $license->allocation;
-            $used = $license->used;
-        }
-
-        // Deal with allocation numbers if a program.
-        if (!empty($license->instant)) {
-            $instantstring = get_string('yes');
-        } else {
-            $instantstring = get_string('no');
-        }
-
-        // Deal with valid length if a subscription.
-        if ($license->type == 1) {
-            $validlength = "-";
-        } else {
-            $validlength = $license->validlength;
-        }
-
-        // Create the table data.
-        $dataarray = array ($license->name,
-                           $license->reference,
-                           $licensetypes[$license->type],
-                           $programstring,
-                           $instantstring,
-                           $coursestring,
-                           date($CFG->iomad_date_format, $license->expirydate),
-                           $validlength,
-                           $allocation,
-                           $used,
-                           $editbutton . ' ' .
-                           $splitbutton . ' ' .
-                           $deletebutton . ' ' .
-                           $allocatebutton);
-        // Add in the company name if we have any.
-        if ($showcompanies) {
-            $liccompany = new company($license->companyid);
-            array_unshift($dataarray, $liccompany->get_name());
-        }
-        $table->data[] = $dataarray;
-    }
-} else if ($licenses = company::get_recursive_departments_licenses($companydepartment->id)) {
-    $objectcount = count($licenses);
-    foreach ($licenses as $licenseid) {
-
-        // Get the license record.
-        $license = $DB->get_record('companylicense', array('id' => $licenseid->licenseid));
-
-        // Set up the edit buttons.
-        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) {
-            $deletebutton = "<a href=\"company_license_list.php?delete=$license->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
-            $editbutton = "<a href='" . new moodle_url('company_license_edit_form.php',
-                                                        array("licenseid" => $license->id, 'departmentid' => $departmentid)) .
-                                                        "'>$stredit</a>";
-        } else {
-            $deletebutton = "";
-            $editbutton = "";
-        }
-
-        // Deal with allocation numbers if a program.
-        if (!empty($license->program)) {
-            $programstring = get_string('yes');
-            $allocation = $license->allocation / count($licensecourses);
-            $used = $license->used / count($licensecourses);
-        } else {
-            $programstring = get_string('no');
-            $allocation = $license->allocation;
-            $used = $license->used;
-        }
-
-        // Deal with allocation numbers if a program.
-        if (!empty($license->instant)) {
-            $instantstring = get_string('yes');
-        } else {
-            $instantstring = get_string('no');
-        }
-
-        // Deal with valid length if a subscription.
-        if ($license->type == 1) {
-            $validlength = "-";
-        } else {
-            $validlength = $license->validlength;
-        }
-
-        $table->data[] = array ($license->name,
-                                $license->reference,
-                                $licensetypes[$license->type],
-                                $programstring,
-                                $instantstring,
-                                $coursestring,
-                                date($CFG->iomad_date_format, $license->expirydate),
-                                $license->validlength,
-                                $license->allocation,
-                                $license->used,
-                                $editbutton,
-                                $deletebutton);
-    }
+if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && $childcompanies = $company->get_child_companies_recursive()) {
+    $showcompanies = true;
+    $gotchildren = true;
+    array_unshift($table->head, get_string('company', 'block_iomad_company_admin'));
+    $childsql = "OR companyid IN (" . join(',', array_keys($childcompanies)) . ")";
+} else {
+    $showcompanies = false;
+    $gotchildren = false;
+    $childsql = "";
 }
+
+// Are we showing the expired licenses?
+if (empty($showexpired)) {
+    $expiredsql = " AND expirydate > :time ";
+} else {
+    $expiredsql = "";
+}
+
+// Does this company have children?
+if ($childcompanies = $company->get_child_companies_recursive()) {
+    $gotchildren = true;
+} else {
+    $gotchildren = false;
+}
+
+// Get the licenses.
+$table->set_sql("*", "{companylicense}", "companyid = :companyid $childsql $expiredsql", array('companyid' => $companyid, 'time' => time()));
+
+$table->define_baseurl($baseurl);
+$table->define_columns($tablecolumns);
+$table->define_headers($tableheaders);
+$table->sort_default_column = 'expirydate DESC';
+$table->no_sorting('coursesname');
+$table->no_sorting('used');
+$table->no_sorting('actions');
+
+
+
+/*$objectcount = $DB->count_records_sql("SELECT count(id) FROM {companylicense}
+                                    WHERE companyid = :companyid
+                                    $childsql
+                                    $expiredsql",
+                                    array('companyid' => $companyid, 'time' => time()));
+
+// Cycle through the results.
+foreach ($licenses as $license) {
+    // does the company the license is allocated to have any kids?
+    $licensecompany = new company($license->companyid);
+    if ($childcompanies = $licensecompany->get_child_companies_recursive()) {
+        $gotchildren = true;
+    } else {
+        $gotchildren = false;
+    }
+
+    // Deal with allocation numbers if a program.
+    if (!empty($license->instant)) {
+        $instantstring = get_string('yes');
+    } else {
+        $instantstring = get_string('no');
+    }
+
+    // Deal with valid length if a subscription.
+    if ($license->type == 1) {
+        $validlength = "-";
+    } else {
+        $validlength = $license->validlength;
+    }
+
+    // Create the table data.
+    $dataarray = array ($license->name,
+                       $license->reference,
+                       $licensetypes[$license->type],
+                       $programstring,
+                       $instantstring,
+                       $coursestring,
+                       date($CFG->iomad_date_format, $license->expirydate),
+                       $validlength,
+                       $allocation,
+                       $used,
+                       $editbutton . ' ' .
+                       $splitbutton . ' ' .
+                       $deletebutton . ' ' .
+                       $allocatebutton);
+    // Add in the company name if we have any.
+    if ($showcompanies) {
+        $liccompany = new company($license->companyid);
+        array_unshift($dataarray, $liccompany->get_name());
+    }
+    $table->data[] = $dataarray; */
 
 
 echo '<div class="buttons">';
@@ -395,10 +264,5 @@ if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) 
 echo '</div>';
 
 // Display the list of licenses.
-if (!empty($table)) {
-    echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
-    echo html_writer::table($table);
-    echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
-}
-
+$table->out($CFG->iomad_max_list_licenses, true);
 echo $OUTPUT->footer();
