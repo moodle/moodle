@@ -144,7 +144,7 @@
                     {{#summaries}}
                         <!-- The discussion class is only required for behat tests to identify the row -->
                         <tr class="discussion {{#discussion.timed}}{{#istimed}}{{^visible}}dimmed_text{{/visible}}{{/istimed}}{{/discussion.timed}}">
-                            <td scope="col" class="pinned p-0 text-center align-middle">
+                            <td class="pinned p-0 text-center align-middle">
                                 {{#discussion.pinned}}
                                     {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
                                 {{/discussion.pinned}}
@@ -154,10 +154,10 @@
                                     {{/discussion}}
                                 {{/discussion.pinned}}
                             </td>
-                            <td scope="col" class="topic p-0 align-middle">
+                            <td class="topic p-0 align-middle">
                                 <a class="p-3 p-l-0 w-100 h-100 d-block" href="{{discussion.urls.view}}">{{{discussion.name}}}</a>
                             </td>
-                            <td scope="col" class="author align-middle">
+                            <td class="author align-middle">
                                 {{#firstpostauthor}}
                                     <div class="d-flex flex-row">
                                         <div class="align-middle p-0">
@@ -175,7 +175,7 @@
                                 {{/firstpostauthor}}
                             </td>
                             {{#forum.state.groupmode}}
-                                <td scope="col" class="group align-middle">
+                                <td class="group align-middle">
                                     {{#discussion.group}}
                                         {{#urls.picture}}
                                             {{#urls.userlist}}
@@ -206,13 +206,13 @@
                                 </td>
                             {{/forum.state.groupmode}}
                             {{#forum.capabilities.viewdiscussions}}
-                                <td scope="col" class="p-0 text-center align-middle">
+                                <td class="p-0 text-center align-middle">
                                     <a href="{{discussion.urls.view}}" class="p-3 w-100 h-100 d-block">
                                         {{replies}}
                                     </a>
                                 </td>
                                 {{#forum.userstate.tracked}}
-                                    <td scope="col" class="p-0 text-center align-middle">
+                                    <td class="p-0 text-center align-middle">
                                         {{#unread}}
                                             {{! TODO Rewrite as AJAX}}
                                             <span class="p-1 w-100 h-100 d-block unread">
@@ -228,7 +228,7 @@
                                     </td>
                                 {{/forum.userstate.tracked}}
                             {{/forum.capabilities.viewdiscussions}}
-                            <td scope="col" class="text-left align-middle">
+                            <td class="text-left align-middle">
                                 {{! TODO Check q&a, eachuser }}
                                 {{#latestpostid}}
                                     <div class="d-flex flex-row">
@@ -255,10 +255,10 @@
                                     </div>
                                 {{/latestpostid}}
                             </td>
-                            <td scope="col" class="text-left align-middle">
+                            <td class="text-left align-middle">
                                 {{#userdate}}{{discussion.times.created}}, {{#str}}strftimerecentfull{{/str}}{{/userdate}}
                             </td>
-                            <td scope="col" class="timed p-0 text-center align-middle">
+                            <td class="timed p-0 text-center align-middle">
                                 {{#discussion.timed.istimed}}
                                 <div class="timedpost">
                                     {{#pix}}
@@ -279,7 +279,7 @@
                                 </div>
                                 {{/discussion.timed.istimed}}
                             </td>
-                            <td scope="col" class="p-0 align-middle" data-container="discussion-summary-actions">
+                            <td class="p-0 align-middle" data-container="discussion-summary-actions">
                                 {{#discussion}}
                                     <div class="d-flex flex-wrap justify-content-end pr-4">
                                         <div class="pt-1 mt-2  {{^discussion.locked}}hidden{{/discussion.locked}}" data-region="locked-icon">
