@@ -96,7 +96,10 @@ function cron_run_scheduled_tasks(int $timenow) {
 
     $scheduledlock = null;
     for ($run = 0; $run < $maxruns; $run++) {
-        if ($scheduledlock = $cronlockfactory->get_lock("scheduled_task_runner_{$run}", 1)) {
+        // If we can't get a lock instantly it means runner N is already running
+        // so fail as fast as possible and try N+1 so we don't limit the speed at
+        // which we bring new runners into the pool.
+        if ($scheduledlock = $cronlockfactory->get_lock("scheduled_task_runner_{$run}", 0)) {
             break;
         }
     }
@@ -137,7 +140,10 @@ function cron_run_adhoc_tasks(int $timenow) {
 
     $adhoclock = null;
     for ($run = 0; $run < $maxruns; $run++) {
-        if ($adhoclock = $cronlockfactory->get_lock("adhoc_task_runner_{$run}", 1)) {
+        // If we can't get a lock instantly it means runner N is already running
+        // so fail as fast as possible and try N+1 so we don't limit the speed at
+        // which we bring new runners into the pool.
+        if ($adhoclock = $cronlockfactory->get_lock("adhoc_task_runner_{$run}", 0)) {
             break;
         }
     }
