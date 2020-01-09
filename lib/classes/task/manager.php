@@ -554,6 +554,7 @@ class manager {
      * @param int $timestart
      * @param bool $checklimits Should we check limits?
      * @return \core\task\adhoc_task or null if not found
+     * @throws \moodle_exception
      */
     public static function get_next_adhoc_task($timestart, $checklimits = true) {
         global $DB;
@@ -629,6 +630,7 @@ class manager {
      *
      * @param int $timestart - The start of the cron process - do not repeat any tasks that have been run more recently than this.
      * @return \core\task\scheduled_task or null
+     * @throws \moodle_exception
      */
     public static function get_next_scheduled_task($timestart) {
         global $DB;
