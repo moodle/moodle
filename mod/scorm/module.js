@@ -466,7 +466,6 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
                     // what the outcome actually was.
                     result = {};
                 } else {
-                    mod_scorm_seq = encodeURIComponent(result);
                     result = Y.JSON.parse(result);
                 }
 
@@ -506,7 +505,6 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
                     // what the outcome actually was.
                     result = {};
                 } else {
-                    mod_scorm_seq = encodeURIComponent(result);
                     result = Y.JSON.parse(result);
                 }
 
