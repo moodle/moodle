@@ -72,13 +72,14 @@ class transaction_complete extends external_api {
         ]);
 
         $config = get_config('pg_paypal');
+        $sandbox = $config->environment == 'sandbox';
 
         [
             'amount' => $amount,
             'currency' => $currency
         ] = \core_payment\helper::get_cost($component, $componentid);
 
-        $paypalhelper = new paypal_helper($config->clientid, $config->secret, false);
+        $paypalhelper = new \pg_paypal\paypal_helper($config->clientid, $config->secret, $sandbox);
         $authorization = $paypalhelper->capture_authorization($authorizationid, $amount, $currency);
 
         $success = false;
