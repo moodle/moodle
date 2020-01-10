@@ -97,7 +97,6 @@ const show = (rootNode, {
 
                         if (gateway) {
                             processPayment(
-                                root,
                                 gateway,
                                 rootNode.dataset.amount,
                                 rootNode.dataset.currency,
@@ -122,7 +121,6 @@ const show = (rootNode, {
 /**
  * Process payment using the selected gateway.
  *
- * @param {HTMLElement} rootElement The root element of the main modal
  * @param {string} gateway The gateway to be used for payment
  * @param {number} amount Amount of payment
  * @param {string} currency The currency in the three-character ISO-4217 format
@@ -131,8 +129,8 @@ const show = (rootNode, {
  * @param {string} description Description of the payment
  * @returns {Promise<void>}
  */
-const processPayment = async(rootElement, gateway, amount, currency, component, componentid, description) => {
+const processPayment = async(gateway, amount, currency, component, componentid, description) => {
     const paymentMethod = await import(`pg_${gateway}/gateways_modal`);
 
-    paymentMethod.process(rootElement, amount, currency, component, componentid, description);
+    paymentMethod.process(amount, currency, component, componentid, description);
 };

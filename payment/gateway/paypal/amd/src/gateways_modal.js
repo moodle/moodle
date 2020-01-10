@@ -23,37 +23,50 @@
 
 import * as Repository from './repository';
 import Templates from 'core/templates';
-import Selectors from './selectors';
 import Truncate from 'core/truncate';
 import Ajax from 'core/ajax';
 import Notification from 'core/notification';
+import ModalFactory from 'core/modal_factory';
 
 /**
- * Renders a placeholder in the modal.
+ * Creates and shows a modal that contains a placeholder.
  *
- * @param rootElement
- * @returns {Promise<void>}
+ * @returns {Promise<Modal>}
  */
-const showPlaceholder = async(rootElement) => {
-    const {html, js} = await Templates.renderForPromise('pg_paypal/paypal_button_placeholder', {});
-    Templates.replaceNodeContents(rootElement.querySelector(Selectors.regions.gatewaysContainer), html, js);
+const showPlaceholder = async() => {
+    const modal = await ModalFactory.create({
+        type: ModalFactory.types.CANCEL,
+        body: await Templates.render('pg_paypal/paypal_button_placeholder', {})
+    });
+    modal.show();
+    return modal;
 };
 
-export const process = async(rootElement, amount, currency, component, componentid, description) => {
+/**
+ * Process the payment.
+ *
+ * @param {double} amount Amount of payment
+ * @param {string} currency The currency in the three-character ISO-4217 format
+ * @param {string} component Name of the component that the componentid belongs to
+ * @param {number} componentid An internal identifier that is used by the component
+ * @param {string} description Description of the payment
+ * @returns {Promise<void>}
+ */
+export const process = async(amount, currency, component, componentid, description) => {
 
     const [
-        ,
+        modal,
         paypalConfig,
     ] = await Promise.all([
-        showPlaceholder(rootElement),
+        showPlaceholder(),
         Repository.getConfigForJs(),
     ]);
 
     const paypalScript = `https://www.paypal.com/sdk/js?client-id=${paypalConfig.clientid}&currency=${currency}&intent=authorize`;
 
     callExternalFunction(paypalScript, () => {
-        rootElement.querySelector(Selectors.buttons.save).style.display = 'none';
-        rootElement.querySelector(Selectors.regions.gatewaysContainer).innerHTML = '';
+        modal.setBody('<form></form>'); // This is a hack. Instead of emptying the body, we put an empty form there so the modal
+                                        // is not closed when user clicks outside of modal.
         paypal.Buttons({ // eslint-disable-line
             createOrder: function(data, actions) {
                 // This function sets up the details of the transaction, including the amount and line item details.
@@ -95,14 +108,20 @@ export const process = async(rootElement, amount, currency, component, component
                     });
                 });
             }
-        }).render(Selectors.regions.gatewaysContainer);
+        }).render(modal.getBody()[0]);
     });
 };
 
-const callExternalFunction = (jsFile, callback) => {
-    // Check to see if this file has already been loaded. If so just go straight to the callback.
+/**
+ * Calls a function from an external javascript file.
+ *
+ * @param {string} jsFile URL of the external JavaScript file
+ * @param {function} func The function to call
+ */
+const callExternalFunction = (jsFile, func) => {
+    // Check to see if this file has already been loaded. If so just go straight to the func.
     if (callExternalFunction.currentlyloaded.includes(jsFile)) {
-        callback();
+        func();
         return;
     }
 
@@ -112,12 +131,12 @@ const callExternalFunction = (jsFile, callback) => {
         script.onreadystatechange = function() {
             if (this.readyState == 'complete' || this.readyState == 'loaded') {
                 this.onreadystatechange = null;
-                callback();
+                func();
             }
         };
     } else {
         script.onload = function() {
-            callback();
+            func();
         };
     }
 
@@ -127,4 +146,10 @@ const callExternalFunction = (jsFile, callback) => {
     callExternalFunction.currentlyloaded.push(jsFile);
 };
 
+/**
+ * Holds the list of external JavaScript files.
+ *
+ * @static
+ * @type {Array}
+ */
 callExternalFunction.currentlyloaded = [];
