@@ -25,6 +25,8 @@ import * as Repository from './repository';
 import Templates from 'core/templates';
 import Selectors from './selectors';
 import Truncate from 'core/truncate';
+import Ajax from 'core/ajax';
+import Notification from 'core/notification';
 
 /**
  * Renders a placeholder in the modal.
@@ -47,7 +49,7 @@ export const process = async(rootElement, amount, currency, component, component
         Repository.getConfigForJs(),
     ]);
 
-    const paypalScript = `https://www.paypal.com/sdk/js?client-id=${paypalConfig.clientid}&currency=${currency}`;
+    const paypalScript = `https://www.paypal.com/sdk/js?client-id=${paypalConfig.clientid}&currency=${currency}&intent=authorize`;
 
     callExternalFunction(paypalScript, () => {
         rootElement.querySelector(Selectors.buttons.save).style.display = 'none';
@@ -69,6 +71,30 @@ export const process = async(rootElement, amount, currency, component, component
                     },
                 });
             },
+            onApprove: function(data, actions) {
+                // Authorize the transaction.
+                actions.order.authorize().then(function(authorization) {
+                    // Get the authorization id.
+                    const authorizationID = authorization.purchase_units[0].payments.authorizations[0].id;
+
+                    // Call your server to validate and capture the transaction.
+                    return Ajax.call([{
+                        methodname: 'pg_paypal_transaction_complete',
+                        args: {
+                            component,
+                            componentid,
+                            orderid: data.orderID,
+                            authorizationid: authorizationID,
+                        },
+                    }])[0]
+                    .then(function(res) {
+                        Notification.addNotification({
+                            message: res.message,
+                            type: res.success ? 'success' : 'error'
+                        });
+                    });
+                });
+            }
         }).render(Selectors.regions.gatewaysContainer);
     });
 };
