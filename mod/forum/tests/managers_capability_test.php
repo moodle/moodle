@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once(__DIR__ . '/generator_trait.php');
 
+use mod_forum\local\entities\forum;
 use mod_forum\local\managers\capability as capability_manager;
 
 /**
@@ -122,7 +123,7 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
      * Helper function to create a forum entity.
      *
      * @param array $forumproperties List of properties to override the prebuilt forum
-     * @return forum_entity
+     * @return forum
      */
     private function create_forum(array $forumproperties = []) {
         $forumrecord = (object) array_merge((array) $this->forumrecord, $forumproperties);
@@ -939,6 +940,52 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
 
         // Can't reply to a a private reply.
         $this->assertFalse($capabilitymanager->can_reply_to_post($user, $discussion, $post));
+    }
+
+    /**
+     * Test for \mod_forum\local\managers\capability::can_reply_to_post() involving Q & A forums.
+     */
+    public function test_can_reply_to_post_in_qanda_forum() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Set max editing time to 10 seconds.
+        $CFG->maxeditingtime = 10;
+
+        $qandaforum = $this->create_forum(['type' => 'qanda']);
+        $datagenerator = $this->getDataGenerator();
+        $capabilitymanager = $this->managerfactory->get_capability_manager($qandaforum);
+
+        // Student 1.
+        $student1 = $datagenerator->create_user(['firstname' => 'S1']);
+        $datagenerator->enrol_user($student1->id, $this->course->id, 'student');
+        // Confirm Student 1 can reply to the question.
+        $this->assertTrue($capabilitymanager->can_reply_to_post($student1, $this->discussion, $this->post));
+
+        // Student 2.
+        $student2 = $datagenerator->create_user(['firstname' => 'S2']);
+        $datagenerator->enrol_user($student2->id, $this->course->id, 'student');
+        // Confirm Student 2 can reply to the question.
+        $this->assertTrue($capabilitymanager->can_reply_to_post($student2, $this->discussion, $this->post));
+
+        // Reply to the question as student 1.
+        $now = time();
+        $options = ['parent' => $this->post->get_id(), 'created' => $now - 100];
+        $student1post = $this->helper_post_to_discussion($this->forumrecord, $this->discussionrecord, $student1, $options);
+        $student1postentity = $this->entityfactory->get_post_from_stdclass($student1post);
+
+        // Confirm Student 2 cannot reply student 1's answer yet.
+        $this->assertFalse($capabilitymanager->can_reply_to_post($student2, $this->discussion, $student1postentity));
+
+        // Reply to the question as student 2.
+        $this->helper_post_to_discussion($this->forumrecord, $this->discussionrecord, $student2, $options);
+
+        // Reinitialise capability manager first to ensure we don't return cached values.
+        $capabilitymanager = $this->managerfactory->get_capability_manager($qandaforum);
+
+        // Confirm Student 2 can now reply to student 1's answer.
+        $this->assertTrue($capabilitymanager->can_reply_to_post($student2, $this->discussion, $student1postentity));
     }
 
     /**
