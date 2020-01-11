@@ -29,6 +29,7 @@ import {getGatewaysSupportingCurrency} from 'core_payment/repository';
 import Selectors from './selectors';
 import * as ModalEvents from 'core/modal_events';
 import {add as addToast, addToastRegion} from 'core/toast';
+import Notification from 'core/notification';
 
 /**
  * Register event listeners for the module.
@@ -103,6 +104,18 @@ const show = (rootNode, {
                                 rootNode.dataset.component,
                                 rootNode.dataset.componentid,
                                 rootNode.dataset.description,
+                                ({success, message = ''}) => {
+                                    modal.hide();
+                                    if (success) {
+                                        Notification.addNotification({
+                                            message: message,
+                                            type: 'success',
+                                        });
+                                        location.reload();
+                                    } else {
+                                        Notification.alert('', message);
+                                    }
+                                },
                             );
                         } else {
                             getString('nogatewayselected', 'core_payment').then(message => {
@@ -127,10 +140,19 @@ const show = (rootNode, {
  * @param {string} component Name of the component that the componentid belongs to
  * @param {number} componentid An internal identifier that is used by the component
  * @param {string} description Description of the payment
+ * @param {processPaymentCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-const processPayment = async(gateway, amount, currency, component, componentid, description) => {
+const processPayment = async(gateway, amount, currency, component, componentid, description, callback) => {
     const paymentMethod = await import(`pg_${gateway}/gateways_modal`);
 
-    paymentMethod.process(amount, currency, component, componentid, description);
+    paymentMethod.process(amount, currency, component, componentid, description, callback);
 };
+
+/**
+ * The callback definition for processPayment.
+ *
+ * @callback processPaymentCallback
+ * @param {bool} success
+ * @param {string} message
+ */

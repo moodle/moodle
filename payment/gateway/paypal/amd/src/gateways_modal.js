@@ -25,8 +25,8 @@ import * as Repository from './repository';
 import Templates from 'core/templates';
 import Truncate from 'core/truncate';
 import Ajax from 'core/ajax';
-import Notification from 'core/notification';
 import ModalFactory from 'core/modal_factory';
+import ModalEvents from 'core/modal_events';
 
 /**
  * Creates and shows a modal that contains a placeholder.
@@ -50,9 +50,10 @@ const showPlaceholder = async() => {
  * @param {string} component Name of the component that the componentid belongs to
  * @param {number} componentid An internal identifier that is used by the component
  * @param {string} description Description of the payment
+ * @param {processCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-export const process = async(amount, currency, component, componentid, description) => {
+export const process = async(amount, currency, component, componentid, description, callback) => {
 
     const [
         modal,
@@ -61,6 +62,11 @@ export const process = async(amount, currency, component, componentid, descripti
         showPlaceholder(),
         Repository.getConfigForJs(),
     ]);
+
+    modal.getRoot().on(ModalEvents.hidden, () => {
+        // Destroy when hidden.
+        modal.destroy();
+    });
 
     const paypalScript = `https://www.paypal.com/sdk/js?client-id=${paypalConfig.clientid}&currency=${currency}&intent=authorize`;
 
@@ -101,16 +107,22 @@ export const process = async(amount, currency, component, componentid, descripti
                         },
                     }])[0]
                     .then(function(res) {
-                        Notification.addNotification({
-                            message: res.message,
-                            type: res.success ? 'success' : 'error'
-                        });
+                        modal.hide();
+                        return callback(res);
                     });
                 });
             }
         }).render(modal.getBody()[0]);
     });
 };
+
+/**
+ * The callback definition for process.
+ *
+ * @callback processCallback
+ * @param {bool} success
+ * @param {string} message
+ */
 
 /**
  * Calls a function from an external javascript file.
