@@ -25,9 +25,9 @@
 import ModalFactory from 'core/modal_factory';
 import Templates from 'core/templates';
 import {get_string as getString} from 'core/str';
-import {getGatewaysSupportingCurrency} from 'core_payment/repository';
+import {getGatewaysSupportingCurrency} from './repository';
 import Selectors from './selectors';
-import * as ModalEvents from 'core/modal_events';
+import ModalEvents from 'core/modal_events';
 import {add as addToast, addToastRegion} from 'core/toast';
 import Notification from 'core/notification';
 
@@ -52,83 +52,72 @@ export const registerEventListeners = (nodeSelector) => {
  * @param {Object} options - Additional options
  * @param {HTMLElement} options.focusOnClose The element to focus on when the modal is closed.
  */
-const show = (rootNode, {
+const show = async(rootNode, {
     focusOnClose = null,
 } = {}) => {
-    Templates.render('core_payment/gateways_modal', {})
-    .done(content => {
-        ModalFactory.create({
-            type: ModalFactory.types.SAVE_CANCEL,
-            title: getString('selectpaymenttype', 'core_payment'),
-            body: content,
-        })
-        .done(function(modal) {
-            addToastRegion(modal.getRoot()[0]);
-            const currency = rootNode.dataset.currency;
-            getGatewaysSupportingCurrency(currency)
-            .done(gateways => {
-                const context = {
-                    gateways: []
-                };
-
-                for (let gateway of gateways) {
-                    context.gateways.push(gateway);
-                }
-
-                Templates.render('core_payment/gateways', context)
-                    .done((html, js) => {
-                        Templates.replaceNodeContents(modal.getRoot().find(Selectors.regions.gatewaysContainer),
-                            html, js);
-                    });
-            });
-
-            modal.getRoot().on(ModalEvents.hidden, function() {
-                // Destroy when hidden.
-                modal.destroy();
-                try {
-                    focusOnClose.focus();
-                } catch (e) {
-                    // eslint-disable-line
-                }
-            });
-
-            modal.getRoot().on(ModalEvents.save, function(e) {
-                const root = modal.getRoot()[0];
-                const gateway = (root.querySelector(Selectors.values.gateway) || {value: ''}).value;
-
-                        if (gateway) {
-                            processPayment(
-                                gateway,
-                                rootNode.dataset.amount,
-                                rootNode.dataset.currency,
-                                rootNode.dataset.component,
-                                rootNode.dataset.componentid,
-                                rootNode.dataset.description,
-                                ({success, message = ''}) => {
-                                    modal.hide();
-                                    if (success) {
-                                        Notification.addNotification({
-                                            message: message,
-                                            type: 'success',
-                                        });
-                                        location.reload();
-                                    } else {
-                                        Notification.alert('', message);
-                                    }
-                                },
-                            );
-                        } else {
-                            getString('nogatewayselected', 'core_payment').then(message => {
-                                return addToast(message);
-                            });
-                        }
-
-                e.preventDefault();
-            });
-
-            modal.show();
-        });
+    const modal = await ModalFactory.create({
+        type: ModalFactory.types.SAVE_CANCEL,
+        title: await getString('selectpaymenttype', 'core_payment'),
+        body: await Templates.render('core_payment/gateways_modal', {}),
     });
+
+    addToastRegion(modal.getRoot()[0]);
+
+    modal.show();
+
+    modal.getRoot().on(ModalEvents.hidden, () => {
+        // Destroy when hidden.
+        modal.destroy();
+        try {
+            focusOnClose.focus();
+        } catch (e) {
+            // eslint-disable-line
+        }
+    });
+
+    modal.getRoot().on(ModalEvents.save, (e) => {
+        const root = modal.getRoot()[0];
+        const gateway = (root.querySelector(Selectors.values.gateway) || {value: ''}).value;
+
+        if (gateway) {
+            processPayment(
+                gateway,
+                rootNode.dataset.amount,
+                rootNode.dataset.currency,
+                rootNode.dataset.component,
+                rootNode.dataset.componentid,
+                rootNode.dataset.description,
+                ({success, message = ''}) => {
+                    modal.hide();
+                    if (success) {
+                        Notification.addNotification({
+                            message: message,
+                            type: 'success',
+                        });
+                        location.reload();
+                    } else {
+                        Notification.alert('', message);
+                    }
+                },
+            );
+        } else {
+            // We cannot use await in the following line.
+            // The reason is that we are preventing the default action of the save event being triggered,
+            // therefore we cannot define the event handler function asynchronous.
+            getString('nogatewayselected', 'core_payment').then(message => addToast(message));
+        }
+
+        e.preventDefault();
+    });
+
+    const currency = rootNode.dataset.currency;
+    const gateways = await getGatewaysSupportingCurrency(currency);
+    const context = {
+        gateways
+    };
+
+    const {html, js} = await Templates.renderForPromise('core_payment/gateways', context);
+    Templates.replaceNodeContents(modal.getRoot().find(Selectors.regions.gatewaysContainer), html, js);
 };
 
 /**
