@@ -18,8 +18,8 @@
 namespace MongoDB\Operation;
 
 use MongoDB\DeleteResult;
-use MongoDB\Driver\Server;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
+use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
 
@@ -32,6 +32,7 @@ use MongoDB\Exception\UnsupportedException;
  */
 class DeleteMany implements Executable, Explainable
 {
+    /** @var Delete */
     private $delete;
 
     /**

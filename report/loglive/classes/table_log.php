@@ -64,7 +64,7 @@ class report_loglive_table_log extends table_sql {
     public function __construct($uniqueid, $filterparams = null) {
         parent::__construct($uniqueid);
 
-        $this->set_attribute('class', 'reportloglive generaltable generalbox');
+        $this->set_attribute('class', 'reportloglive generaltable table-sm');
         $this->set_attribute('aria-live', 'polite');
         $this->filterparams = $filterparams;
         // Add course column if logs are displayed for site.

@@ -54,6 +54,9 @@ class issued_badge implements renderable {
     /** @var badge class */
     public $badgeid = 0;
 
+    /** @var unique hash identifying the issued badge */
+    public $hash;
+
     /**
      * Initializes the badge to display
      *
@@ -62,7 +65,8 @@ class issued_badge implements renderable {
     public function __construct($hash) {
         global $DB;
 
-        $assertion = new \core_badges_assertion($hash);
+        $this->hash = $hash;
+        $assertion = new \core_badges_assertion($hash, badges_open_badges_backpack_api());
         $this->issued = $assertion->get_badge_assertion();
         $this->badgeclass = $assertion->get_badge_class();
 

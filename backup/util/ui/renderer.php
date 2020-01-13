@@ -216,7 +216,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('div');
         }
 
-        $html .= $this->output->single_button($nextstageurl, get_string('continue'), 'post');
+        $html .= $this->continue_button($nextstageurl, 'post');
         $html .= html_writer::end_tag('div');
 
         return $html;
@@ -242,7 +242,7 @@ class core_backup_renderer extends plugin_renderer_base {
             get_string('backuptype', 'backup'),
             get_string('backuptype'.$details['type'], 'backup'));
         $html .= html_writer::end_tag('div');
-        $html .= $this->output->single_button($nextstageurl, get_string('continue'), 'post');
+        $html .= $this->continue_button($nextstageurl, 'post');
         $html .= html_writer::end_tag('div');
 
         return $html;
@@ -259,7 +259,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $html  = html_writer::start_div('unknownformat');
         $html .= $this->output->heading(get_string('errorinvalidformat', 'backup'), 2);
         $html .= $this->output->notification(get_string('errorinvalidformatinfo', 'backup'), 'notifyproblem');
-        $html .= $this->output->single_button($nextstageurl, get_string('continue'), 'post');
+        $html .= $this->continue_button($nextstageurl, 'post');
         $html .= html_writer::end_div();
 
         return $html;
@@ -717,7 +717,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $url = $component->get_url();
 
         $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline mb-1'));
-        $output .= html_writer::start_tag('div', array('class' => 'rcs-results w-75'));
+        $output .= html_writer::start_tag('div', array('class' => 'rcs-results table-sm w-75'));
 
         $table = new html_table();
         $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
@@ -877,7 +877,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $url = $component->get_url();
 
         $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline mb-1'));
-        $output .= html_writer::start_tag('div', array('class' => 'rcs-results w-75'));
+        $output .= html_writer::start_tag('div', array('class' => 'rcs-results table-sm w-75'));
 
         $table = new html_table();
         $table->head = array('', get_string('name'), get_string('description'));

@@ -431,6 +431,7 @@ $string['modulename_link'] = 'mod/forum/view';
 $string['modulenameplural'] = 'Forums';
 $string['more'] = 'more';
 $string['movedmarker'] = '(Moved)';
+$string['movethisdiscussionlabel'] = 'Move the current discussion to the specified forum';
 $string['movethisdiscussionto'] = 'Move this discussion to ...';
 $string['mustprovidediscussionorpost'] = 'You must provide either a discussion id or post id to export';
 $string['myprofileownpost'] = 'My forum posts';
@@ -500,8 +501,8 @@ $string['pluginname'] = 'Forum';
 $string['postadded'] = '<p>Your post was successfully added.</p> <p>You have {$a} to edit it if you want to make any changes.</p>';
 $string['postaddedsuccess'] = 'Your post was successfully added.';
 $string['postaddedtimeleft'] = 'You have {$a} to edit it if you want to make any changes.';
-$string['postbymailsuccess'] = 'Congratulations, your forum post with subject "{$a->subject}" was successfully added. You can view it at {$a->discussionurl}.';
-$string['postbymailsuccess_html'] = 'Congratulations, your <a href="{$a->discussionurl}">forum post</a> with subject "{$a->subject}" was successfully posted.';
+$string['postbymailsuccess'] = 'Your reply "{$a->subject}" was successfully posted: {$a->discussionurl}';
+$string['postbymailsuccess_html'] = 'Your reply <a href="{$a->discussionurl}">{$a->subject}</a> was successfully posted.';
 $string['postbyuser'] = '{$a->post} by {$a->user}';
 $string['postincontext'] = 'See this post in context';
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
@@ -691,6 +692,7 @@ $string['timedhidden'] = 'Timed status: Hidden from students';
 $string['timedposts'] = 'Timed posts';
 $string['timedvisible'] = 'Timed status: Visible to all users';
 $string['timestartenderror'] = 'Display end date cannot be earlier than the start date';
+$string['togglediscussionmenu'] = 'Toggle the discussion menu';
 $string['togglefullscreen'] = 'Toggle full screen';
 $string['togglesettingsdrawer'] = 'Toggle settings drawer';
 $string['trackforum'] = 'Track unread posts';
@@ -745,6 +747,8 @@ $string['grade_forum_title'] = 'Grade';
 $string['grade_rating_name'] = 'Rating';
 $string['gradeusers'] = 'Grade users';
 $string['graded'] = 'Graded';
+$string['gradedby'] = 'Graded by';
+$string['notgraded'] = 'Not graded';
 $string['gradeforrating'] = 'Grade for rating: {$a->str_long_grade}';
 $string['gradeforratinghidden'] = 'Grade for rating hidden';
 $string['gradeforwholeforum'] = 'Grade for forum: {$a->str_long_grade}';
@@ -758,7 +762,7 @@ $string['grades:gradesavefailed'] = 'Unable to save grade for {$a->fullname}: {$
 $string['notgraded'] = 'Not graded';
 $string['nousersmatch'] = 'No user(s) found for given criteria';
 $string['showmoreusers'] = 'Show more users';
-$string['viewconversation'] = 'View conversation';
+$string['viewconversation'] = 'View discussion';
 $string['viewgrades'] = 'View grades';
 
 // Deprecated since Moodle 3.8.

@@ -410,7 +410,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                     if ($this->_form->getElementType("number[{$j}]") == 'hidden') {
                         // Some of the number elements are from the float type and some are from the hidden type.
                         // We need to manually handle localised floats for hidden elements.
-                        $value = format_float($value, strlen($value), true, true);
+                        $value = format_float($value, -1);
                     }
                     $formdata["number[{$j}]"] = $value;
                     $formdata["definition[{$j}]"] = $defid;
@@ -449,7 +449,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 if ($this->_form->getElementType("number[{$j}]") == 'hidden') {
                     // Some of the number elements are from the float type and some are from the hidden type.
                     // We need to manually handle localised floats for hidden elements.
-                    $value = format_float($value, strlen($value), true, true);
+                    $value = format_float($value, -1);
                 }
                 $formdata["number[{$j}]"] = $value;
                 $formdata["definition[{$j}]"] = $defid;

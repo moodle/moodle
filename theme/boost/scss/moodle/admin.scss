@@ -61,44 +61,8 @@
     display: none;
 }
 
-.statusok {
-    @extend .tag;
-    @extend .tag-success;
-}
-
-.statuswarning {
-    @extend .tag;
-    @extend .tag-warning;
-}
-
-.statusserious,
-.statuscritical {
-    @extend .tag;
-    @extend .tag-danger;
-}
-
 #page-admin-report-capability-index #capabilitysearch {
     width: 30em;
-}
-
-#page-admin-report-backups-index .backup-error,
-#page-admin-report-backups-index .backup-unfinished {
-    @extend .tag-danger;
-}
-
-#page-admin-report-backups-index .backup-skipped,
-#page-admin-report-backups-index .backup-ok,
-#page-admin-report-backups-index .backup-notyetrun {
-    @extend .tag-success;
-}
-
-#page-admin-report-backups-index .backup-warning {
-    @extend .tag-warning;
-}
-
-#page-admin-qtypes .disabled,
-#page-admin-qbehaviours .disabled {
-    @extend .text-muted;
 }
 
 #page-admin-qtypes #qtypes div,
@@ -183,34 +147,12 @@
     text-align: left;
 }
 
-#page-admin-index .releasenoteslink,
-#page-admin-index .adminwarning,
-#page-admin-index .adminerror {
-    @extend .alert;
-}
-
-#page-admin-index .adminwarning {
-    @extend .alert-warning;
-}
-
-#page-admin-index .adminerror {
-    @extend .alert-danger;
-}
-
-#page-admin-index .releasenoteslink {
-    @extend .alert-info;
-}
-
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {
     display: block;
 }
 
 #page-admin-index .updateplugin div {
     margin-bottom: 0.5em;
-}
-
-#page-admin-index .updateplugin .updatepluginconfirmexternal {
-    @extend .tag-warning;
 }
 
 #page-admin-user-user_bulk #users .fgroup {
@@ -469,19 +411,6 @@
     text-align: center;
 }
 
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
-    @extend .tag-info;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity150 .info.release {
-    @extend .tag-warning;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release {
-    @extend .tag-danger;
-}
-
 // Plugins overview page at admin/plugins.php
 #page-admin-plugins {
     #plugins-overview-panel {
@@ -523,7 +452,7 @@
         .pluginname {
             .componentname {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
                 margin-left: 22px;
             }
         }
@@ -531,7 +460,7 @@
         .version {
             .versionnumber {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
             }
         }
 
@@ -548,7 +477,7 @@
 
             .requiredby {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
             }
         }
     }
@@ -558,7 +487,7 @@
 // Plugins check page displayed during upgrade.
 #plugins-check-page {
     .page-description {
-        @extend .text-muted;
+        color: $text-muted;
     }
 
     // Check for updates.
@@ -597,7 +526,7 @@
     // Plugins check table.
     #plugins-check {
         .requires-ok {
-            @extend .text-muted;
+            color: $text-muted;
         }
 
         .status-missing,
@@ -609,7 +538,7 @@
 
         .displayname {
             .plugindir {
-                @extend .text-muted;
+                color: $text-muted;
                 font-size: $font-size-sm;
             }
         }
@@ -651,7 +580,7 @@
     #plugins-check-available-dependencies {
         .displayname .component {
             font-size: $font-size-sm;
-            @extend .text-muted;
+            color: $text-muted;
         }
 
         .info .actions {
@@ -729,12 +658,6 @@
     }
 }
 
-.uninstalldeleteconfirmexternal {
-    @extend .alert-warning;
-    padding: 0.5em 1em;
-    margin: 5px 0 10px 0;
-}
-
 #page-admin-index .upgradepluginsinfo {
     text-align: center;
 }
@@ -747,12 +670,6 @@
 #page-admin-mnet-peers .box.deletedhosts {
     margin-bottom: 1em;
     font-size: $font-size-sm;
-}
-
-#page-admin-mnet-peers .mform .deletedhostinfo {
-    @extend .form-control-danger;
-    padding: 4px;
-    margin-bottom: 5px;
 }
 
 #core-cache-plugin-summaries table,
@@ -783,26 +700,10 @@
     right: 0;
     overflow: hidden;
     z-index: $zindex-dropdown;
-
-    &.error {
-        @extend .form-control-danger;
-    }
-
-    &.warning {
-        @extend .form-control-warning;
-    }
-}
-
-#adminsettings .form-overridden {
-    @extend .alert-info;
 }
 
 .modal.modal-in-page {
     z-index: 0;
-}
-
-#overriderolestable .overriddenpermission {
-    @extend .table-warning;
 }
 
 #page-admin-search {
@@ -817,8 +718,6 @@
         padding: 0;
         margin: 0 0 1.5rem 0;
         li {
-            @extend .text-muted;
-            @extend .small;
             + li:before {
                 padding-right: 0.5rem;
                 padding-left: 0.5rem;

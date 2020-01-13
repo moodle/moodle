@@ -85,7 +85,7 @@ a.dimmed_text:visited,
 .usersuspended a:visited,
 .dimmed_category,
 .dimmed_category a {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 .unlist,
@@ -118,16 +118,16 @@ a.dimmed_text:visited,
 
 .red,
 .notifyproblem {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .green,
 .notifysuccess {
-    @extend .text-success;
+    color: map-get($theme-colors, 'success');
 }
 
 .highlight {
-    @extend .text-info;
+    color: map-get($theme-colors, 'info');
 }
 
 .fitem.advanced .text-info {
@@ -389,6 +389,7 @@ a.skip:active {
     width: auto;
     min-width: 80%;
     margin: 0 auto;
+    display: block;
 }
 
 .groupmanagementtable #removeselect_wrapper,
@@ -592,7 +593,7 @@ table.mod_index {
 * Completion progress report
 */
 .completion-expired {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .completion-expected {
@@ -689,7 +690,7 @@ span.flagged-tag,
 tr.flagged-tag,
 span.flagged-tag a,
 tr.flagged-tag a {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .tag-management-table td,
@@ -766,7 +767,7 @@ tr.flagged-tag a {
 }
 
 .tag_feed .media .muted a {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 .tag_cloud {
@@ -988,22 +989,6 @@ tr.flagged-tag a {
     margin-left: 3px;
 }
 
-#page-enrol-users {
-    .enrol_user_buttons {
-        text-align: right;
-
-    }
-
-    #filterform {
-        @extend .card;
-        @extend .card-block;
-    }
-}
-
-#page-enrol-users .enrol-users-page-action input {
-    margin-left: 0;
-}
-
 .corelightbox {
     background-color: #ccc;
     position: absolute;
@@ -1155,12 +1140,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     display: block;
 }
 
-.moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
-    @extend .modal-content;
-}
-
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
-    @extend .modal-header;
+    display: flex;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
@@ -1173,7 +1156,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
-    @extend .modal-title;
     font-size: 1.5rem;
 }
 
@@ -1182,12 +1164,24 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         left: 0;
         right: auto;
     */
-    padding: $spacer;
+    padding: 0;
+    position: relative;
+    margin-left: auto;
 }
 
 .moodle-dialogue-base .closebutton {
-    @extend .close;
+    padding: $modal-header-padding;
+    margin: (-$modal-header-padding-y) (-$modal-header-padding-x) (-$modal-header-padding-y) auto;
+    position: relative;
+    background-color: transparent;
+    border: 0;
+    background-image: none;
     box-shadow: none;
+    opacity: 0.7;
+    &:hover,
+    &:active {
+        opacity: 1;
+    }
     &::after {
         content: "×";
     }
@@ -1195,6 +1189,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
     padding: 0.5rem;
+    body {
+        background-color: $body-bg;
+    }
 }
 
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
@@ -1229,7 +1226,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
     font-size: $font-size-sm;
 }
 
@@ -1237,10 +1234,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     color: #333;
     font-size: 90%;
     border-bottom: 1px solid #eee;
-}
-
-.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
-    @extend .modal-footer;
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft:empty {
@@ -1555,13 +1548,6 @@ body.jsenabled .formlisting {
     display: block;
 }
 
-/* Badges styles */
-table.collection {
-    @extend .table;
-    @extend .table-bordered;
-    @extend .table-striped;
-}
-
 a.criteria-action {
     padding: 0 3px;
     float: right;
@@ -1684,15 +1670,15 @@ ul.badges {
 }
 
 .connected {
-    @extend .text-success;
+    color: map-get($theme-colors, 'success');
 }
 
 .notconnected {
-    @extend .text-danger;
+    color: map-get($theme-colors, 'danger');
 }
 
 .connecting {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 #page-badges-award .recipienttable tr td {

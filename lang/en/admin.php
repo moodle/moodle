@@ -245,7 +245,7 @@ $string['configextendedusernamechars'] = 'Enable this setting to allow students 
 $string['configextramemorylimit'] = 'Some scripts like search, backup/restore or cron require more memory. Set higher values for large sites.';
 $string['configfilterall'] = 'Filter all strings, including headings, titles, navigation bar and so on.  This is mostly useful when using the multilang filter, otherwise it will just create extra load on your site for little gain.';
 $string['configfiltermatchoneperpage'] = 'Automatic linking filters will only generate a single link for the first matching text instance found on the complete page. All others are ignored.';
-$string['configfiltermatchonepertext'] = 'Automatic linking filters will only generate a single link for the first matching text instance found in each item of text (e.g., resource, block) on the page. All others are ignored. This setting is ignored if the one per page setting is <i>yes</i>.';
+$string['configfiltermatchonepertext'] = 'Automatic linking filters will only generate a single link for the first matching text instance found in each item of text on the page. All others are ignored. This setting has no effect if \'Filter match once per page\' is enabled.';
 $string['configfilteruploadedfiles'] = 'Process all uploaded HTML and text files with the filters before displaying them, only uploaded HTML files or none at all.';
 $string['configforcelogin'] = 'Normally, the front page of the site and the course listings (but not courses) can be read by people without logging in to the site.  If you want to force people to log in before they do ANYTHING on the site, then you should enable this setting.';
 $string['configforceloginforprofiles'] = 'This setting forces people to log in as a real (non-guest) account before viewing any user\'s profile. If you disabled this setting, you may find that some users post advertising (spam) or other inappropriate content in their profiles, which is then visible to the whole world.';
@@ -256,7 +256,7 @@ $string['configfrontpageloggedin'] = 'The items selected above will be displayed
 $string['configfullnamedisplay'] = 'This defines how names are shown when they are displayed in full. The default value, "language", leaves it to the string "fullnamedisplay" in the current language pack to decide. Some languages have different name display conventions.
 
 For most mono-lingual sites the most efficient setting is "firstname lastname", but you may choose to hide surnames altogether. Placeholders that can be used are: firstname, lastname, firstnamephonetic, lastnamephonetic, middlename, and alternatename.';
-$string['configgeoipfile'] = 'Location of GeoLite2 City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href="https://www.maxmind.com/">MaxMind</a>. You can either buy a commercial version or use the free version. Simply download <a href="https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz" >https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz</a> and extract it into "{$a}" directory on your server.';
+$string['configgeoipfile'] = 'Location of GeoLite2 City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href="https://www.maxmind.com/">MaxMind</a>. You can either buy a commercial version or use the free version. You\'ll need to register to download the City database file, which you can do at <a href="https://dev.maxmind.com/geoip/geoip2/geolite2/" >https://dev.maxmind.com/geoip/geoip2/geolite2/</a>. Once you\'ve registered and downloaded the file, extract it into "{$a}" directory on your server.';
 $string['configgetremoteaddrconf'] = 'If your server is behind a reverse proxy, you can use this setting to specify which HTTP headers can be trusted to contain the remote IP address. The headers are read in order, using the first one that is available.';
 $string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
 $string['configgradeexport'] = 'Choose which gradebook export formats are your primary methods for exporting grades.  Chosen plugins will then set and use a "last exported" field for every grade.  For example, this might result in exported records being identified as being "new" or "updated".  If you are not sure about this then leave everything unchecked.';
@@ -660,6 +660,7 @@ $string['intlrecommended'] = 'Intl extension is used to improve internationaliza
 $string['intlrequired'] = 'Intl extension is required to improve internationalization support, such as locale aware sorting and international domain names.';
 $string['invalidagedigitalconsent'] = 'The digital age of consent is not valid: {$a}';
 $string['invalidforgottenpasswordurl'] = 'The forgotten password URL is not a valid URL.';
+$string['invalidthemepreset'] = 'The chosen preset file is not compatible with this theme. The SCSS compile error was: "{$a}"';
 $string['invalidsection'] = 'Invalid section.';
 $string['invaliduserchangeme'] = 'Username "changeme" is reserved -- you cannot create an account with it.';
 $string['ipblocked'] = 'This site is not available currently.';
@@ -768,6 +769,7 @@ $string['maxeditingtime'] = 'Maximum time to edit posts';
 $string['maxusersperpage'] = ' Maximum users per page';
 $string['configmaxusersperpage'] = 'Maximum number of users displayed within user selector in course, group, cohort, webservice etc.';
 $string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
+$string['mbstringrequired'] = 'Installing the MBSTRING library is required in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['mediapluginavi'] = 'Enable .avi filter';
 $string['mediapluginflv'] = 'Enable .flv filter';
 $string['mediapluginimg'] = 'Enable auto-embedding of linked images';

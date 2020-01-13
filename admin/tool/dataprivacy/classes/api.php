@@ -258,7 +258,20 @@ class api {
         // The user making the request.
         $datarequest->set('requestedby', $requestinguser);
         // Set status.
-        $datarequest->set('status', self::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        $status = self::DATAREQUEST_STATUS_AWAITING_APPROVAL;
+        if (self::is_automatic_request_approval_on($type)) {
+            // Set status to approved if automatic data request approval is enabled.
+            $status = self::DATAREQUEST_STATUS_APPROVED;
+            // Set the privacy officer field if the one making the data request is a privacy officer.
+            if (self::is_site_dpo($requestinguser)) {
+                $datarequest->set('dpo', $requestinguser);
+            }
+            // Mark this request as system approved.
+            $datarequest->set('systemapproved', true);
+            // No need to notify privacy officer(s) about automatically approved data requests.
+            $notify = false;
+        }
+        $datarequest->set('status', $status);
         // Set request type.
         $datarequest->set('type', $type);
         // Set request comments.
@@ -269,13 +282,22 @@ class api {
         // Store subject access request.
         $datarequest->create();
 
+        // Queue the ad-hoc task for automatically approved data requests.
+        if ($status == self::DATAREQUEST_STATUS_APPROVED) {
+            $userid = null;
+            if ($type == self::DATAREQUEST_TYPE_EXPORT) {
+                $userid = $foruser;
+            }
+            self::queue_data_request_task($datarequest->get('id'), $userid);
+        }
+
         if ($notify) {
             // Get the list of the site Data Protection Officers.
-            $dpos = api::get_site_dpos();
+            $dpos = self::get_site_dpos();
 
             // Email the data request to the Data Protection Officer(s)/Admin(s).
             foreach ($dpos as $dpo) {
-                api::notify_dpo($dpo, $datarequest);
+                self::notify_dpo($dpo, $datarequest);
             }
         }
 
@@ -624,12 +646,11 @@ class api {
         $result = self::update_request_status($requestid, self::DATAREQUEST_STATUS_APPROVED, $USER->id);
 
         // Fire an ad hoc task to initiate the data request process.
-        $task = new process_data_request_task();
-        $task->set_custom_data(['requestid' => $requestid]);
+        $userid = null;
         if ($request->get('type') == self::DATAREQUEST_TYPE_EXPORT) {
-            $task->set_userid($request->get('userid'));
+            $userid = $request->get('userid');
         }
-        manager::queue_adhoc_task($task, true);
+        self::queue_data_request_task($requestid, $userid);
 
         return $result;
     }
@@ -712,7 +733,7 @@ class api {
             'requestedby' => $requestedby->fullname,
             'requesttype' => $typetext,
             'requestdate' => userdate($requestdata->timecreated),
-            'requestorigin' => $SITE->fullname,
+            'requestorigin' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
             'requestoriginurl' => new moodle_url('/'),
             'requestcomments' => $requestdata->messagehtml,
             'datarequestsurl' => $datarequestsurl
@@ -1276,5 +1297,36 @@ class api {
         }
 
         return $formattedtime;
+    }
+
+    /**
+     * Whether automatic data request approval is turned on or not for the given request type.
+     *
+     * @param int $type The request type.
+     * @return bool
+     */
+    public static function is_automatic_request_approval_on(int $type): bool {
+        switch ($type) {
+            case self::DATAREQUEST_TYPE_EXPORT:
+                return !empty(get_config('tool_dataprivacy', 'automaticdataexportapproval'));
+            case self::DATAREQUEST_TYPE_DELETE:
+                return !empty(get_config('tool_dataprivacy', 'automaticdatadeletionapproval'));
+        }
+        return false;
+    }
+
+    /**
+     * Creates an ad-hoc task for the data request.
+     *
+     * @param int $requestid The data request ID.
+     * @param int $userid Optional. The user ID to run the task as, if necessary.
+     */
+    public static function queue_data_request_task(int $requestid, int $userid = null): void {
+        $task = new process_data_request_task();
+        $task->set_custom_data(['requestid' => $requestid]);
+        if ($userid) {
+            $task->set_userid($userid);
+        }
+        manager::queue_adhoc_task($task, true);
     }
 }

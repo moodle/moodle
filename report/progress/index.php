@@ -210,8 +210,13 @@ $pagingbar = '';
 // Initials bar.
 $prefixfirst = 'sifirst';
 $prefixlast = 'silast';
-$pagingbar .= $OUTPUT->initials_bar($sifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $url);
-$pagingbar .= $OUTPUT->initials_bar($silast, 'lastinitial', get_string('lastname'), $prefixlast, $url);
+
+// The URL used in the initials bar should reset the 'start' parameter.
+$initialsbarurl = new moodle_url($url);
+$initialsbarurl->remove_params('start');
+
+$pagingbar .= $OUTPUT->initials_bar($sifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $initialsbarurl);
+$pagingbar .= $OUTPUT->initials_bar($silast, 'lastinitial', get_string('lastname'), $prefixlast, $initialsbarurl);
 
 // Do we need a paging bar?
 if ($total > COMPLETION_REPORT_PAGE) {
@@ -310,7 +315,11 @@ foreach($activities as $activity) {
     $datepassedclass = $datepassed ? 'completion-expired' : '';
 
     if ($activity->completionexpected) {
-        $datetext=userdate($activity->completionexpected,get_string('strftimedate','langconfig'));
+        if ($csv) {
+            $datetext = userdate($activity->completionexpected, "%F %T");
+        } else {
+            $datetext = userdate($activity->completionexpected, get_string('strftimedate', 'langconfig'));
+        }
     } else {
         $datetext='';
     }
@@ -410,6 +419,9 @@ foreach($progress as $user) {
         $fulldescribe=get_string('progress-title','completion',$a);
 
         if ($csv) {
+            if ($date != '') {
+                $date = userdate($thisprogress->timemodified, "%F %T");
+            }
             print $sep.csv_quote($describe).$sep.csv_quote($date);
         } else {
             $celltext = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));

@@ -33,5 +33,12 @@
         "total": 10
     }
 }}
-{{#status}}<h2 class="font-weight-bold h5 mb-0">{{.}}</h2>{{/status}}
+<h2 class="font-weight-bold h5 mb-0">
+    {{#status}}
+        {{#str}}graded, forum{{/str}}
+    {{/status}}
+    {{^status}}
+        {{#str}}notgraded, forum{{/str}}
+    {{/status}}
+</h2>
 <div>{{#str}} indexoutoftotal, mod_forum, {"index": "{{index}}", "total":"{{total}}"}{{/str}}</div>

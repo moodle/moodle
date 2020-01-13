@@ -90,6 +90,7 @@ $string['invalidcsvfile'] = 'Invalid input CSV file';
 $string['invalidencoding'] = 'Invalid encoding';
 $string['invalidmode'] = 'Invalid mode selected';
 $string['invalideupdatemode'] = 'Invalid update mode selected';
+$string['invalidvisibilitymode'] = 'Invalid visible mode';
 $string['invalidroles'] = 'Invalid role names: {$a}';
 $string['invalidshortname'] = 'Invalid shortname';
 $string['missingmandatoryfields'] = 'Missing value for mandatory fields: {$a}';

@@ -70,8 +70,6 @@
         margin-bottom: 1em;
 
         .action {
-            @extend .btn;
-            @extend .btn-lg;
             display: inline-block;
             position: relative;
             vertical-align: top;
@@ -190,7 +188,6 @@
                     vertical-align: middle;
 
                     input {
-                        @extend .btn;
                         background-position: 0 0;
                         height: 30px;
                         margin-right: 5px;
@@ -201,7 +198,6 @@
 
         .addcriterion {
             margin-left: 5px;
-            @extend .btn;
             padding: 0;
 
             input {

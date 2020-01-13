@@ -45,6 +45,7 @@ $strunfinished = get_string('unfinished');
 $strskipped = get_string('skipped');
 $strwarning = get_string('warning');
 $strnotyetrun = get_string('backupnotyetrun');
+$strqueued = get_string('queued');
 
 if ($courseid) {
     $course = $DB->get_record('course', array('id' => $courseid), 'id, fullname', MUST_EXIST);
@@ -62,13 +63,13 @@ if ($courseid) {
         // Get the backup status.
         if ($backup->status == backup::STATUS_FINISHED_OK) {
             $status = $strok;
-            $statusclass = 'backup-ok'; // Green.
+            $statusclass = 'table-success'; // Green.
         } else if ($backup->status == backup::STATUS_AWAITING || $backup->status == backup::STATUS_EXECUTING) {
             $status = $strunfinished;
-            $statusclass = 'backup-unfinished'; // Red.
+            $statusclass = 'table-danger'; // Red.
         } else { // Else show error.
             $status = $strerror;
-            $statusclass = 'backup-error'; // Red.
+            $statusclass = 'table-danger'; // Red.
         }
 
         $table = new html_table();
@@ -139,22 +140,25 @@ foreach ($rs as $backuprow) {
     // Prepare a cell to display the status of the entry.
     if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_OK) {
         $status = $strok;
-        $statusclass = 'backup-ok'; // Green.
+        $statusclass = 'table-success'; // Green.
     } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_UNFINISHED) {
         $status = $strunfinished;
-        $statusclass = 'backup-unfinished'; // Red.
+        $statusclass = 'table-danger'; // Red.
     } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_SKIPPED) {
         $status = $strskipped;
-        $statusclass = 'backup-skipped'; // Green.
+        $statusclass = 'table-success'; // Green.
     } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_WARNING) {
         $status = $strwarning;
-        $statusclass = 'backup-warning'; // Orange.
+        $statusclass = 'table-warning'; // Orange.
     } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN) {
         $status = $strnotyetrun;
-        $statusclass = 'backup-notyetrun';
+        $statusclass = 'table-success';
+    } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_QUEUED) {
+        $status = $strqueued;
+        $statusclass = 'table-success';
     } else {
         $status = $strerror;
-        $statusclass = 'backup-error'; // Red.
+        $statusclass = 'table-danger'; // Red.
     }
     $status = new html_table_cell($status);
     $status->attributes = array('class' => $statusclass);

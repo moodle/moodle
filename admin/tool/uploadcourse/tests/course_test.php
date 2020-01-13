@@ -82,6 +82,16 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertArrayHasKey('invalidshortname', $co->get_errors());
     }
 
+    public function test_invalid_visibility() {
+        $this->resetAfterTest(true);
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('shortname' => 'test', 'fullname' => 'New course', 'summary' => 'New', 'category' => 1, 'visible' => 2);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('invalidvisibilitymode', $co->get_errors());
+    }
+
     public function test_create() {
         global $DB;
         $this->resetAfterTest(true);

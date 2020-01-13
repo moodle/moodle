@@ -34,6 +34,16 @@ if ($hassiteconfig) {
                 new lang_string('contactdataprotectionofficer_desc', 'tool_dataprivacy'), 0)
         );
 
+        $privacysettings->add(new admin_setting_configcheckbox('tool_dataprivacy/automaticdataexportapproval',
+                new lang_string('automaticdataexportapproval', 'tool_dataprivacy'),
+                new lang_string('automaticdataexportapproval_desc', 'tool_dataprivacy'), 0)
+        );
+
+        $privacysettings->add(new admin_setting_configcheckbox('tool_dataprivacy/automaticdatadeletionapproval',
+                new lang_string('automaticdatadeletionapproval', 'tool_dataprivacy'),
+                new lang_string('automaticdatadeletionapproval_desc', 'tool_dataprivacy'), 0)
+        );
+
         // Automatically create delete data request for users upon user deletion.
         // Automatically create delete data request for pre-existing deleted users.
         // Enabled by default.

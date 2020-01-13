@@ -44,6 +44,17 @@
             <p class="ml-auto">{{usergrade}} / {{maxgrade}}</p>
         </div>
         <div class="row-fluid px-3">
+            <h5 class="font-weight-bold description">{{#str}}gradedby, forum{{/str}}:</h5>
+            <p class="ml-auto">
+                {{#gradedby}}
+                    {{gradedby}}
+                {{/gradedby}}
+                {{^gradedby}}
+                    -
+                {{/gradedby}}
+            </p>
+        </div>
+        <div class="row-fluid px-3">
             <h5 class="font-weight-bold description">{{#str}}date{{/str}}:</h5>
             <p class="ml-auto">{{#userdate}}{{timemodified}}, {{#str}} strftimedate, langconfig {{/str}}{{/userdate}}</p>
         </div>

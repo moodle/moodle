@@ -123,7 +123,7 @@
     margin-bottom: $spacer-y;
 
     .backup_stage {
-        @extend .text-muted;
+        color: $text-muted;
 
         &.backup_stage_current {
             font-weight: bold;

@@ -50,6 +50,7 @@ class core_role_check_capability_table extends core_role_capability_table_base {
         $this->contextname = $contextname;
         $this->stryes = get_string('yes');
         $this->strno = get_string('no');
+        $this->add_classes(['table-striped']);
     }
 
     protected function add_header_cells() {

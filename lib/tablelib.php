@@ -574,11 +574,11 @@ class flexible_table {
 
         // Always introduce the "flexible" class for the table if not specified
         if (empty($this->attributes)) {
-            $this->attributes['class'] = 'flexible';
+            $this->attributes['class'] = 'flexible table table-striped table-hover';
         } else if (!isset($this->attributes['class'])) {
-            $this->attributes['class'] = 'flexible';
+            $this->attributes['class'] = 'flexible table table-striped table-hover';
         } else if (!in_array('flexible', explode(' ', $this->attributes['class']))) {
-            $this->attributes['class'] = trim('flexible ' . $this->attributes['class']);
+            $this->attributes['class'] = trim('flexible table table-striped table-hover ' . $this->attributes['class']);
         }
     }
 

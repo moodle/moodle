@@ -32,19 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_auth_cas_upgrade($oldversion) {
     global $CFG;
 
-    if ($oldversion < 2017020700) {
-        // Convert info in config plugins from auth/cas to auth_cas.
-        upgrade_fix_config_auth_plugin_names('cas');
-        upgrade_fix_config_auth_plugin_defaults('cas');
-        upgrade_plugin_savepoint(true, 2017020700, 'auth', 'cas');
-    }
-
-    // Automatically generated Moodle v3.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.4.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
 

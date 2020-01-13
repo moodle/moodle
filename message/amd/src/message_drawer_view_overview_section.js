@@ -223,7 +223,10 @@ function(
                 // If that's not possible, we'll report it under the catch-all 'other media'.
                 var messagePreview = $(lastMessage.text).text();
                 if (messagePreview) {
-                    return messagePreview;
+                    // The text value of the message must have no html/script tags.
+                    if (messagePreview.indexOf('<') == -1) {
+                        return messagePreview;
+                    }
                 }
             }
 

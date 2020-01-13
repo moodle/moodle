@@ -49,6 +49,19 @@ class webservice_rest_server extends webservice_base_server {
     }
 
     /**
+     * Set the request format to.
+     */
+    public function set_rest_format(): void {
+        // Get GET and POST parameters.
+        $methodvariables = array_merge($_GET, $_POST);
+
+        // Retrieve REST format parameter - 'xml' (default) or 'json'.
+        $restformatisset = isset($methodvariables['moodlewsrestformat'])
+                && (($methodvariables['moodlewsrestformat'] == 'xml' || $methodvariables['moodlewsrestformat'] == 'json'));
+        $this->restformat = $restformatisset ? $methodvariables['moodlewsrestformat'] : 'xml';
+    }
+
+    /**
      * This method parses the $_POST and $_GET superglobals and looks for
      * the following information:
      *  1/ user authentication - username+password or token (wsusername, wspassword and wstoken parameters)
@@ -64,11 +77,7 @@ class webservice_rest_server extends webservice_base_server {
 
         // Get GET and POST parameters.
         $methodvariables = array_merge($_GET, $_POST);
-
-        // Retrieve REST format parameter - 'xml' (default) or 'json'.
-        $restformatisset = isset($methodvariables['moodlewsrestformat'])
-                && (($methodvariables['moodlewsrestformat'] == 'xml' || $methodvariables['moodlewsrestformat'] == 'json'));
-        $this->restformat = $restformatisset ? $methodvariables['moodlewsrestformat'] : 'xml';
+        $this->set_rest_format();
         unset($methodvariables['moodlewsrestformat']);
 
         if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {

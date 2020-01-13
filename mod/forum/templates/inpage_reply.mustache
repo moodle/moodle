@@ -55,8 +55,8 @@
                 </button>
                 {{#canreplyprivately}}
                 <div class="form-check form-check-inline">
-                    <input type="checkbox" class="form-check-input" id="private-reply" title="{{#str}} privatereply, forum {{/str}}" name="privatereply"/>
-                    <label class="form-check-label" for="private-reply">{{#str}} privatereply, forum {{/str}}</label>
+                    <input type="checkbox" class="form-check-input" id="private-reply-checkbox-{{uniqid}}" title="{{#str}} privatereply, forum {{/str}}" name="privatereply"/>
+                    <label class="form-check-label" for="private-reply-checkbox-{{uniqid}}">{{#str}} privatereply, forum {{/str}}</label>
                 </div>
                 {{/canreplyprivately}}
                 <button title="{{#str}} advanced, core {{/str}}" data-action="forum-advanced-reply" class="btn btn-link float-right" type="submit">

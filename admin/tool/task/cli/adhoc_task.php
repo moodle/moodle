@@ -32,10 +32,15 @@ list($options, $unrecognized) = cli_get_params(
     [
         'execute' => false,
         'help' => false,
+        'keep-alive' => 0,
         'showsql' => false,
         'showdebugging' => false,
+        'ignorelimits' => false,
     ], [
         'h' => 'help',
+        'e' => 'execute',
+        'k' => 'keep-alive',
+        'i' => 'ignorelimits',
     ]
 );
 
@@ -45,19 +50,21 @@ if ($unrecognized) {
 }
 
 if ($options['help'] or empty($options['execute'])) {
-    $help =
-"Scheduled cron tasks.
+    $help = <<<EOT
+Ad hoc cron tasks.
 
 Options:
---showsql             Show sql queries before they are executed
---showdebugging       Show developer level debugging information
---execute             Run all queued adhoc tasks
--h, --help            Print out this help
+ -h, --help                Print out this help
+     --showsql             Show sql queries before they are executed
+     --showdebugging       Show developer level debugging information
+ -e, --execute             Run all queued adhoc tasks
+ -k, --keep-alive=N        Keep this script alive for N seconds and poll for new adhoc tasks
+ -i  --ignorelimits        Ignore task_adhoc_concurrency_limit and task_adhoc_max_runtime limits
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/tool/task/cli/adhoc_task.php --execute
 
-";
+EOT;
 
     echo $help;
     die;
@@ -84,6 +91,9 @@ if (moodle_needs_upgrading()) {
 if (empty($options['execute'])) {
     exit(0);
 }
+if (empty($options['keep-alive'])) {
+    $options['keep-alive'] = 0;
+}
 
 if (!empty($CFG->showcronsql)) {
     $DB->set_debug(true);
@@ -92,26 +102,18 @@ if (!empty($CFG->showcrondebugging)) {
     set_debugging(DEBUG_DEVELOPER, true);
 }
 
+$checklimits = empty($options['ignorelimits']);
+
 core_php_time_limit::raise();
-$starttime = microtime();
 
 // Increase memory limit.
 raise_memory_limit(MEMORY_EXTRA);
 
-// Emulate normal session - we use admin accoutn by default.
+// Emulate normal session - we use admin account by default.
 cron_setup_user();
 
-// Start output log.
-$timenow = time();
-$humantimenow = date('r', $timenow);
-mtrace("Server Time: {$humantimenow}\n");
+$humantimenow = date('r', time());
+$keepalive = (int)$options['keep-alive'];
 
-// Run all adhoc tasks.
-$taskcount = 0;
-while (!\core\task\manager::static_caches_cleared_since($timenow) &&
-        $task = \core\task\manager::get_next_adhoc_task($timenow)) {
-    cron_run_inner_adhoc_task($task);
-    $taskcount++;
-    unset($task);
-}
-mtrace("Ran {$taskcount} adhoc tasks found at {$humantimenow}");
+mtrace("Server Time: {$humantimenow}\n");
+cron_run_adhoc_tasks(time(), $keepalive, $checklimits);

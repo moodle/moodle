@@ -129,8 +129,27 @@ class fetch_test extends advanced_testcase {
 
         $this->assertEquals('core_grades/grades/grader/gradingpanel/scale', $result['templatename']);
 
+        $this->assertArrayHasKey('warnings', $result);
+        $this->assertIsArray($result['warnings']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test the grade array items.
         $this->assertArrayHasKey('grade', $result);
         $this->assertIsArray($result['grade']);
+
+        $this->assertIsInt($result['grade']['timecreated']);
+        $this->assertArrayHasKey('timemodified', $result['grade']);
+        $this->assertIsInt($result['grade']['timemodified']);
+
+        $this->assertArrayHasKey('usergrade', $result['grade']);
+        $this->assertEquals(0, $result['grade']['usergrade']);
+
+        $this->assertArrayHasKey('maxgrade', $result['grade']);
+        $this->assertIsInt($result['grade']['maxgrade']);
+        $this->assertEquals(3, $result['grade']['maxgrade']);
+
+        $this->assertArrayHasKey('gradedby', $result['grade']);
+        $this->assertEquals(null, $result['grade']['gradedby']);
 
         $this->assertArrayHasKey('options', $result['grade']);
         $this->assertCount(count($options), $result['grade']['options']);
@@ -148,14 +167,6 @@ class fetch_test extends advanced_testcase {
             $this->assertArrayHasKey('selected', $returnedoption);
             $this->assertFalse($returnedoption['selected']);
         }
-
-        $this->assertIsInt($result['grade']['timecreated']);
-        $this->assertArrayHasKey('timemodified', $result['grade']);
-        $this->assertIsInt($result['grade']['timemodified']);
-
-        $this->assertArrayHasKey('warnings', $result);
-        $this->assertIsArray($result['warnings']);
-        $this->assertEmpty($result['warnings']);
     }
 
     /**
@@ -201,8 +212,27 @@ class fetch_test extends advanced_testcase {
 
         $this->assertEquals('core_grades/grades/grader/gradingpanel/scale', $result['templatename']);
 
+        $this->assertArrayHasKey('warnings', $result);
+        $this->assertIsArray($result['warnings']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test the grade array items.
         $this->assertArrayHasKey('grade', $result);
         $this->assertIsArray($result['grade']);
+
+        $this->assertIsInt($result['grade']['timecreated']);
+        $this->assertArrayHasKey('timemodified', $result['grade']);
+        $this->assertIsInt($result['grade']['timemodified']);
+
+        $this->assertArrayHasKey('usergrade', $result['grade']);
+        $this->assertEquals(2, $result['grade']['usergrade']);
+
+        $this->assertArrayHasKey('maxgrade', $result['grade']);
+        $this->assertIsInt($result['grade']['maxgrade']);
+        $this->assertEquals(3, $result['grade']['maxgrade']);
+
+        $this->assertArrayHasKey('gradedby', $result['grade']);
+        $this->assertEquals(fullname($teacher), $result['grade']['gradedby']);
 
         $this->assertArrayHasKey('options', $result['grade']);
         $this->assertCount(count($options), $result['grade']['options']);
@@ -224,14 +254,6 @@ class fetch_test extends advanced_testcase {
         $this->assertFalse($result['grade']['options'][0]['selected']);
         $this->assertTrue($result['grade']['options'][1]['selected']);
         $this->assertFalse($result['grade']['options'][2]['selected']);
-
-        $this->assertIsInt($result['grade']['timecreated']);
-        $this->assertArrayHasKey('timemodified', $result['grade']);
-        $this->assertIsInt($result['grade']['timemodified']);
-
-        $this->assertArrayHasKey('warnings', $result);
-        $this->assertIsArray($result['warnings']);
-        $this->assertEmpty($result['warnings']);
     }
 
     /**

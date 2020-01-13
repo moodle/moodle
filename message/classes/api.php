@@ -1753,46 +1753,11 @@ class api {
     }
 
     /**
-     * Marks ALL messages being sent from $fromuserid to $touserid as read.
-     *
-     * Can be filtered by type.
-     *
      * @deprecated since 3.5
-     * @param int $touserid the id of the message recipient
-     * @param int $fromuserid the id of the message sender
-     * @param string $type filter the messages by type, either MESSAGE_TYPE_NOTIFICATION, MESSAGE_TYPE_MESSAGE or '' for all.
-     * @return void
      */
-    public static function mark_all_read_for_user($touserid, $fromuserid = 0, $type = '') {
-        debugging('\core_message\api::mark_all_read_for_user is deprecated. Please either use ' .
-            '\core_message\api::mark_all_notifications_read_for_user or \core_message\api::mark_all_messages_read_for_user',
-            DEBUG_DEVELOPER);
-
-        $type = strtolower($type);
-
-        $conversationid = null;
-        $ignoremessages = false;
-        if (!empty($fromuserid)) {
-            $conversationid = self::get_conversation_between_users([$touserid, $fromuserid]);
-            if (!$conversationid) { // If there is no conversation between the users then there are no messages to mark.
-                $ignoremessages = true;
-            }
-        }
-
-        if (!empty($type)) {
-            if ($type == MESSAGE_TYPE_NOTIFICATION) {
-                self::mark_all_notifications_as_read($touserid, $fromuserid);
-            } else if ($type == MESSAGE_TYPE_MESSAGE) {
-                if (!$ignoremessages) {
-                    self::mark_all_messages_as_read($touserid, $conversationid);
-                }
-            }
-        } else { // We want both.
-            self::mark_all_notifications_as_read($touserid, $fromuserid);
-            if (!$ignoremessages) {
-                self::mark_all_messages_as_read($touserid, $conversationid);
-            }
-        }
+    public static function mark_all_read_for_user() {
+        throw new \coding_exception('\core_message\api::mark_all_read_for_user has been removed. Please either use ' .
+            '\core_message\api::mark_all_notifications_as_read or \core_message\api::mark_all_messages_as_read');
     }
 
     /**

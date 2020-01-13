@@ -174,6 +174,7 @@ $string['backtohome'] = 'Back to the site home';
 $string['backtopageyouwereon'] = 'Back to the page you were on';
 $string['backup'] = 'Backup';
 $string['backupactivehelp'] = 'Choose whether or not to do automated backups.';
+$string['backupadhocpending'] = 'Course backup adhoc task pending';
 $string['backupcancelled'] = 'Backup cancelled';
 $string['backupcoursefileshelp'] = 'If enabled then course files will be included in automated backups';
 $string['backupdate'] = 'Backup date';
@@ -1627,6 +1628,7 @@ $string['publicsitefileswarning2'] = 'Note: Files placed here can be accessed by
 $string['publicsitefileswarning3'] = 'Note: Files placed here can be accessed by anyone who knows (or can guess) the URL. <br />For security reasons, backup files should be saved in the secure backupdata folder only.';
 $string['question'] = 'Question';
 $string['questionsinthequestionbank'] = 'Questions in the question bank';
+$string['queued'] = 'Queued';
 $string['quotausage'] = 'You have currently used {$a->used} of your {$a->total} limit.';
 $string['readinginfofrombackup'] = 'Reading info from backup';
 $string['readme'] = 'README';
@@ -2000,6 +2002,7 @@ If \'plain text area\' is selected, a format for text input areas such as HTML o
 The list of available text editors is determined by the site administrator.';
 $string['texteditor'] = 'Use standard web forms';
 $string['textformat'] = 'Plain text format';
+$string['textellipsis'] = '{$a}...';
 $string['timesplitting:deciles'] = 'Last tenth';
 $string['timesplitting:deciles_help'] = 'This analysis interval divides the course into tenths (10 equal parts), with each prediction being based on the data of only the most recent previous tenth.';
 $string['timesplitting:decilesaccum'] = 'All previous tenths';

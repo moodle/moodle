@@ -266,8 +266,11 @@ function(
             }
 
             var calendarEvents = result.events.filter(function(event) {
-                // Do not include events that does not have a due date.
-                return event.eventtype != "open" && event.eventtype != "opensubmission";
+                if (event.eventtype == "open" || event.eventtype == "opensubmission") {
+                    var dayTimestamp = UserDate.getUserMidnightForTimestamp(event.timesort, midnight);
+                    return dayTimestamp > midnight;
+                }
+                return true;
             });
             // We expect to receive limit + 1 events back from the server.
             // Any less means there are no more events to load.

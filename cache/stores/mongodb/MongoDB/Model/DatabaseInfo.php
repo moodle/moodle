@@ -17,8 +17,10 @@
 
 namespace MongoDB\Model;
 
-use MongoDB\Exception\BadMethodCallException;
 use ArrayAccess;
+use MongoDB\Exception\BadMethodCallException;
+use function array_key_exists;
+
 /**
  * Database information model class.
  *
@@ -31,11 +33,10 @@ use ArrayAccess;
  */
 class DatabaseInfo implements ArrayAccess
 {
+    /** @var array */
     private $info;
 
     /**
-     * Constructor.
-     *
      * @param array $info Database info
      */
     public function __construct(array $info)
@@ -71,6 +72,7 @@ class DatabaseInfo implements ArrayAccess
      */
     public function getSizeOnDisk()
     {
+        /* The MongoDB server might return this number as an integer or float */
         return (integer) $this->info['sizeOnDisk'];
     }
 
@@ -112,21 +114,24 @@ class DatabaseInfo implements ArrayAccess
      * Not supported.
      *
      * @see http://php.net/arrayaccess.offsetset
+     * @param mixed $key
+     * @param mixed $value
      * @throws BadMethodCallException
      */
     public function offsetSet($key, $value)
     {
-        throw BadMethodCallException::classIsImmutable(__CLASS__);
+        throw BadMethodCallException::classIsImmutable(self::class);
     }
 
     /**
      * Not supported.
      *
      * @see http://php.net/arrayaccess.offsetunset
+     * @param mixed $key
      * @throws BadMethodCallException
      */
     public function offsetUnset($key)
     {
-        throw BadMethodCallException::classIsImmutable(__CLASS__);
+        throw BadMethodCallException::classIsImmutable(self::class);
     }
 }

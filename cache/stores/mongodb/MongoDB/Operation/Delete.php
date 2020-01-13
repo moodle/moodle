@@ -19,12 +19,15 @@ namespace MongoDB\Operation;
 
 use MongoDB\DeleteResult;
 use MongoDB\Driver\BulkWrite as Bulk;
+use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
 use MongoDB\Driver\WriteConcern;
-use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
+use function is_array;
+use function is_object;
+use function MongoDB\server_supports_feature;
 
 /**
  * Operation for the delete command.
@@ -37,12 +40,22 @@ use MongoDB\Exception\UnsupportedException;
  */
 class Delete implements Executable, Explainable
 {
+    /** @var integer */
     private static $wireVersionForCollation = 5;
 
+    /** @var string */
     private $databaseName;
+
+    /** @var string */
     private $collectionName;
+
+    /** @var array|object */
     private $filter;
+
+    /** @var integer */
     private $limit;
+
+    /** @var array */
     private $options;
 
     /**
@@ -72,7 +85,7 @@ class Delete implements Executable, Explainable
      */
     public function __construct($databaseName, $collectionName, $filter, $limit, array $options = [])
     {
-        if ( ! is_array($filter) && ! is_object($filter)) {
+        if (! is_array($filter) && ! is_object($filter)) {
             throw InvalidArgumentException::invalidType('$filter', $filter, 'array or object');
         }
 
@@ -85,11 +98,11 @@ class Delete implements Executable, Explainable
         }
 
         if (isset($options['session']) && ! $options['session'] instanceof Session) {
-            throw InvalidArgumentException::invalidType('"session" option', $options['session'], 'MongoDB\Driver\Session');
+            throw InvalidArgumentException::invalidType('"session" option', $options['session'], Session::class);
         }
 
         if (isset($options['writeConcern']) && ! $options['writeConcern'] instanceof WriteConcern) {
-            throw InvalidArgumentException::invalidType('"writeConcern" option', $options['writeConcern'], 'MongoDB\Driver\WriteConcern');
+            throw InvalidArgumentException::invalidType('"writeConcern" option', $options['writeConcern'], WriteConcern::class);
         }
 
         if (isset($options['writeConcern']) && $options['writeConcern']->isDefault()) {
@@ -113,8 +126,13 @@ class Delete implements Executable, Explainable
      */
     public function execute(Server $server)
     {
-        if (isset($this->options['collation']) && ! \MongoDB\server_supports_feature($server, self::$wireVersionForCollation)) {
+        if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
             throw UnsupportedException::collationNotSupported();
+        }
+
+        $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
+        if ($inTransaction && isset($this->options['writeConcern'])) {
+            throw UnsupportedException::writeConcernNotSupportedInTransaction();
         }
 
         $bulk = new Bulk();

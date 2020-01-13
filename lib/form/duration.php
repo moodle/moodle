@@ -200,7 +200,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
                 break;
 
             case 'createElement':
-                if ($arg[2]['optional']) {
+                if (!empty($arg[2]['optional'])) {
                     $caller->disabledIf($arg[0], $arg[0] . '[enabled]');
                 }
                 $caller->setType($arg[0] . '[number]', PARAM_FLOAT);

@@ -363,6 +363,8 @@ function edit_module_post_actions($moduleinfo, $course) {
     if ($hasgrades) {
         grade_regrade_final_grades($course->id);
     }
+
+    // To be removed (deprecated) with MDL-67526 (both lines).
     require_once($CFG->libdir.'/plagiarismlib.php');
     plagiarism_save_form_elements($moduleinfo);
 

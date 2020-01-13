@@ -20,6 +20,7 @@ namespace MongoDB;
 use IteratorAggregate;
 use stdClass;
 use Traversable;
+use function call_user_func;
 
 /**
  * Result class for mapReduce command results.
@@ -34,14 +35,19 @@ use Traversable;
  */
 class MapReduceResult implements IteratorAggregate
 {
+    /** @var callable */
     private $getIterator;
+
+    /** @var integer */
     private $executionTimeMS;
+
+    /** @var array */
     private $counts;
+
+    /** @var array */
     private $timing;
 
     /**
-     * Constructor.
-     *
      * @internal
      * @param callable $getIterator Callback that returns a Traversable for mapReduce results
      * @param stdClass $result      Result document from the mapReduce command
@@ -71,7 +77,7 @@ class MapReduceResult implements IteratorAggregate
      */
     public function getExecutionTimeMS()
     {
-        return $this->executionTimeMS;
+        return (integer) $this->executionTimeMS;
     }
 
     /**

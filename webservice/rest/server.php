@@ -44,3 +44,15 @@ $server = new webservice_rest_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
 $server->run();
 die;
 
+/**
+ * Raises Early WS Exception in REST format.
+ *
+ * @param  Exception $ex Raised exception.
+ */
+function raise_early_ws_exception(Exception $ex): void {
+    global $CFG;
+    require_once("$CFG->dirroot/webservice/rest/locallib.php");
+    $server = new webservice_rest_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
+    $server->set_rest_format();
+    $server->exception_handler($ex);
+}

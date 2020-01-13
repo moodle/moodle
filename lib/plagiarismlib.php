@@ -81,6 +81,8 @@ function plagiarism_get_file_results($cmid, $userid, $file) {
 /**
  * saves/updates plagiarism settings from a modules config page - called by course/modedit.php
  *
+ * @deprecated Since Moodle 3.9. MDL-65835 Please use {plugin name}_coursemodule_edit_post_actions() instead.
+ * @todo MDL-67526 This is to be moved from here to deprecatedlib.php in Moodle 4.3
  * @param object $data - form data
  */
 function plagiarism_save_form_elements($data) {
@@ -93,6 +95,14 @@ function plagiarism_save_form_elements($data) {
         require_once($dir.'/lib.php');
         $plagiarismclass = "plagiarism_plugin_$plugin";
         $plagiarismplugin = new $plagiarismclass;
+
+        $reflectionmethod = new ReflectionMethod($plagiarismplugin, 'save_form_elements');
+        if ($reflectionmethod->getDeclaringClass()->getName() == get_class($plagiarismplugin)) {
+            $text = 'plagiarism_plugin::save_form_elements() is deprecated.';
+            $text .= ' Use plagiarism_' . $plugin . '_coursemodule_edit_post_actions() instead';
+            debugging($text, DEBUG_DEVELOPER);
+        }
+
         $plagiarismplugin->save_form_elements($data);
     }
 }
@@ -100,6 +110,8 @@ function plagiarism_save_form_elements($data) {
 /**
  * adds the list of plagiarism settings to a form - called inside modules that have enabled plagiarism
  *
+ * @deprecated Since Moodle 3.9. MDL-65835 Please use {plugin name}_coursemodule_standard_elements() instead.
+ * @todo MDL-67526 This is to be moved from here to deprecatedlib.php in Moodle 4.3
  * @param object $mform - Moodle form object
  * @param object $context - context object
  * @param string $modulename - Name of the module
@@ -114,6 +126,14 @@ function plagiarism_get_form_elements_module($mform, $context, $modulename = "")
         require_once($dir.'/lib.php');
         $plagiarismclass = "plagiarism_plugin_$plugin";
         $plagiarismplugin = new $plagiarismclass;
+
+        $reflectionmethod = new ReflectionMethod($plagiarismplugin, 'get_form_elements_module');
+        if ($reflectionmethod->getDeclaringClass()->getName() == get_class($plagiarismplugin)) {
+            $text = 'plagiarism_plugin::get_form_elements_module() is deprecated.';
+            $text .= ' Use plagiarism_' . $plugin . '_coursemodule_standard_elements() instead';
+            debugging($text, DEBUG_DEVELOPER);
+        }
+
         $plagiarismplugin->get_form_elements_module($mform, $context, $modulename);
     }
 }

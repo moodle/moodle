@@ -20,22 +20,135 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Grunt configuration
- */
-
 /* eslint-env node */
+
+/**
+ * Calculate the cwd, taking into consideration the `root` option (for Windows).
+ *
+ * @param {Object} grunt
+ * @returns {String} The current directory as best we can determine
+ */
+const getCwd = grunt => {
+    const fs = require('fs');
+    const path = require('path');
+
+    let cwd = fs.realpathSync(process.env.PWD || process.cwd());
+
+    // Windows users can't run grunt in a subdirectory, so allow them to set
+    // the root by passing --root=path/to/dir.
+    if (grunt.option('root')) {
+        const root = grunt.option('root');
+        if (grunt.file.exists(__dirname, root)) {
+            cwd = fs.realpathSync(path.join(__dirname, root));
+            grunt.log.ok('Setting root to ' + cwd);
+        } else {
+            grunt.fail.fatal('Setting root to ' + root + ' failed - path does not exist');
+        }
+    }
+
+    return cwd;
+};
+
+/**
+ * Register any stylelint tasks.
+ *
+ * @param {Object} grunt
+ * @param {Array} files
+ * @param {String} fullRunDir
+ */
+const registerStyleLintTasks = (grunt, files, fullRunDir) => {
+    const getCssConfigForFiles = files => {
+        return {
+            stylelint: {
+                css: {
+                    // Use a fully-qualified path.
+                    src: files,
+                    options: {
+                        configOverrides: {
+                            rules: {
+                                // These rules have to be disabled in .stylelintrc for scss compat.
+                                "at-rule-no-unknown": true,
+                            }
+                        }
+                    }
+                },
+            },
+        };
+    };
+
+    const getScssConfigForFiles = files => {
+        return {
+            stylelint: {
+                scss: {
+                    options: {syntax: 'scss'},
+                    src: files,
+                },
+            },
+        };
+    };
+
+    let hasCss = true;
+    let hasScss = true;
+
+    if (files) {
+        // Specific files were passed. Just set them up.
+        grunt.config.merge(getCssConfigForFiles(files));
+        grunt.config.merge(getScssConfigForFiles(files));
+    } else {
+        // The stylelint system does not handle the case where there was no file to lint.
+        // Check whether there are any files to lint in the current directory.
+        const glob = require('glob');
+
+        const scssSrc = [];
+        glob.sync(`${fullRunDir}/**/*.scss`).forEach(path => scssSrc.push(path));
+
+        if (scssSrc.length) {
+            grunt.config.merge(getScssConfigForFiles(scssSrc));
+        } else {
+            hasScss = false;
+        }
+
+        const cssSrc = [];
+        glob.sync(`${fullRunDir}/**/*.css`).forEach(path => cssSrc.push(path));
+
+        if (cssSrc.length) {
+            grunt.config.merge(getCssConfigForFiles(cssSrc));
+        } else {
+            hasCss = false;
+        }
+    }
+
+    const scssTasks = ['sass'];
+    if (hasScss) {
+        scssTasks.unshift('stylelint:scss');
+    }
+    grunt.registerTask('scss', scssTasks);
+
+    const cssTasks = [];
+    if (hasCss) {
+        cssTasks.push('stylelint:css');
+    }
+    grunt.registerTask('rawcss', cssTasks);
+
+    grunt.registerTask('css', ['scss', 'rawcss']);
+};
+
+/**
+ * Grunt configuration.
+ *
+ * @param {Object} grunt
+ */
 module.exports = function(grunt) {
-    var path = require('path'),
-        tasks = {},
-        cwd = process.env.PWD || process.cwd(),
-        async = require('async'),
-        DOMParser = require('xmldom').DOMParser,
-        xpath = require('xpath'),
-        semver = require('semver'),
-        watchman = require('fb-watchman'),
-        watchmanClient = new watchman.Client(),
-        gruntFilePath = process.cwd();
+    const path = require('path');
+    const tasks = {};
+    const async = require('async');
+    const DOMParser = require('xmldom').DOMParser;
+    const xpath = require('xpath');
+    const semver = require('semver');
+    const watchman = require('fb-watchman');
+    const watchmanClient = new watchman.Client();
+    const fs = require('fs');
+    const ComponentList = require(path.resolve('GruntfileComponents.js'));
 
     // Verify the node version is new enough.
     var expected = semver.validRange(grunt.file.readJSON('package.json').engines.node);
@@ -44,16 +157,25 @@ module.exports = function(grunt) {
         grunt.fail.fatal('Node version not satisfied. Require ' + expected + ', version installed: ' + actual);
     }
 
-    // Windows users can't run grunt in a subdirectory, so allow them to set
-    // the root by passing --root=path/to/dir.
-    if (grunt.option('root')) {
-        var root = grunt.option('root');
-        if (grunt.file.exists(__dirname, root)) {
-            cwd = path.join(__dirname, root);
-            grunt.log.ok('Setting root to ' + cwd);
-        } else {
-            grunt.fail.fatal('Setting root to ' + root + ' failed - path does not exist');
-        }
+    // Detect directories:
+    // * gruntFilePath          The real path on disk to this Gruntfile.js
+    // * cwd                    The current working directory, which can be overridden by the `root` option
+    // * relativeCwd            The cwd, relative to the Gruntfile.js
+    // * componentDirectory     The root directory of the component if the cwd is in a valid component
+    // * inComponent            Whether the cwd is in a valid component
+    // * runDir                 The componentDirectory or cwd if not in a component, relative to Gruntfile.js
+    // * fullRunDir             The full path to the runDir
+    const gruntFilePath = fs.realpathSync(process.cwd());
+    const cwd = getCwd(grunt);
+    const relativeCwd = cwd.replace(new RegExp(`${gruntFilePath}/?`), '');
+    const componentDirectory = ComponentList.getOwningComponentDirectory(relativeCwd);
+    const inComponent = !!componentDirectory;
+    const runDir = inComponent ? componentDirectory : relativeCwd;
+    const fullRunDir = fs.realpathSync(gruntFilePath + path.sep + runDir);
+    grunt.log.debug(`The cwd was detected as ${cwd} with a fullRunDir of ${fullRunDir}`);
+
+    if (inComponent) {
+        grunt.log.ok(`Running tasks for component directory ${componentDirectory}`);
     }
 
     var files = null;
@@ -62,16 +184,22 @@ module.exports = function(grunt) {
         files = grunt.option('files').split(',');
     }
 
-    var inAMD = path.basename(cwd) == 'amd';
+    const inAMD = path.basename(cwd) == 'amd';
 
     // Globbing pattern for matching all AMD JS source files.
-    var amdSrc = [];
-    if (inAMD) {
-        amdSrc.push(cwd + "/src/*.js");
-        amdSrc.push(cwd + "/src/**/*.js");
+    let amdSrc = [];
+    if (inComponent) {
+        amdSrc.push(componentDirectory + "/amd/src/*.js");
+        amdSrc.push(componentDirectory + "/amd/src/**/*.js");
     } else {
-        amdSrc.push("**/amd/src/*.js");
-        amdSrc.push("**/amd/src/**/*.js");
+        amdSrc = ComponentList.getAmdSrcGlobList();
+    }
+
+    let yuiSrc = [];
+    if (inComponent) {
+        yuiSrc.push(componentDirectory + "/yui/src/**/*.js");
+    } else {
+        yuiSrc = ComponentList.getYuiSrcGlobList(gruntFilePath + '/');
     }
 
     /**
@@ -97,28 +225,29 @@ module.exports = function(grunt) {
      * @return {array} The list of thirdparty paths.
      */
     var getThirdPartyPathsFromXML = function() {
-        var thirdpartyfiles = grunt.file.expand('*/**/thirdpartylibs.xml');
-        var libs = ['node_modules/', 'vendor/'];
+        const thirdpartyfiles = ComponentList.getThirdPartyLibsList(gruntFilePath + '/');
+        const libs = ['node_modules/', 'vendor/'];
 
         thirdpartyfiles.forEach(function(file) {
-          var dirname = path.dirname(file);
+            const dirname = path.dirname(file);
 
-          var doc = new DOMParser().parseFromString(grunt.file.read(file));
-          var nodes = xpath.select("/libraries/library/location/text()", doc);
+            const doc = new DOMParser().parseFromString(grunt.file.read(file));
+            const nodes = xpath.select("/libraries/library/location/text()", doc);
 
-          nodes.forEach(function(node) {
-            var lib = path.join(dirname, node.toString());
-            if (grunt.file.isDir(lib)) {
-                // Ensure trailing slash on dirs.
-                lib = lib.replace(/\/?$/, '/');
-            }
+            nodes.forEach(function(node) {
+                let lib = path.join(dirname, node.toString());
+                if (grunt.file.isDir(lib)) {
+                    // Ensure trailing slash on dirs.
+                    lib = lib.replace(/\/?$/, '/');
+                }
 
-            // Look for duplicate paths before adding to array.
-            if (libs.indexOf(lib) === -1) {
-                libs.push(lib);
-            }
-          });
+                // Look for duplicate paths before adding to array.
+                if (libs.indexOf(lib) === -1) {
+                    libs.push(lib);
+                }
+            });
         });
+
         return libs;
     };
 
@@ -130,7 +259,7 @@ module.exports = function(grunt) {
             options: {quiet: !grunt.option('show-lint-warnings')},
             amd: {src: files ? files : amdSrc},
             // Check YUI module source files.
-            yui: {src: files ? files : ['**/yui/src/**/*.js', '!*/**/yui/src/*/meta/*.js']}
+            yui: {src: files ? files : yuiSrc},
         },
         babel: {
             options: {
@@ -198,30 +327,41 @@ module.exports = function(grunt) {
                 nospawn: true // We need not to spawn so config can be changed dynamically.
             },
             amd: {
-                files: ['**/amd/src/**/*.js'],
+                files: inComponent
+                    ? ['amd/src/*.js', 'amd/src/**/*.js']
+                    : ['**/amd/src/**/*.js'],
                 tasks: ['amd']
             },
             boost: {
-                files: ['**/theme/boost/scss/**/*.scss'],
+                files: [inComponent ? 'scss/**/*.scss' : 'theme/boost/scss/**/*.scss'],
                 tasks: ['scss']
             },
             rawcss: {
-                files: ['**/*.css', '**/theme/**/!(moodle.css|editor.css)'],
+                files: [
+                    '**/*.css',
+                ],
+                excludes: [
+                    '**/moodle.css',
+                    '**/editor.css',
+                ],
                 tasks: ['rawcss']
             },
             yui: {
-                files: ['**/yui/src/**/*.js'],
+                files: inComponent
+                    ? ['yui/src/*.json', 'yui/src/**/*.js']
+                    : ['**/yui/src/**/*.js'],
                 tasks: ['yui']
             },
             gherkinlint: {
-                files: ['**/tests/behat/*.feature'],
+                files: [inComponent ? 'tests/behat/*.feature' : '**/tests/behat/*.feature'],
                 tasks: ['gherkinlint']
             }
         },
         shifter: {
             options: {
                 recursive: true,
-                paths: files ? files : [cwd]
+                // Shifter takes a relative path.
+                paths: files ? files : [runDir]
             }
         },
         gherkinlint: {
@@ -229,42 +369,30 @@ module.exports = function(grunt) {
                 files: files ? files : ['**/tests/behat/*.feature'],
             }
         },
-        stylelint: {
-            scss: {
-                options: {syntax: 'scss'},
-                src: files ? files : ['*/**/*.scss']
-            },
-            css: {
-                src: files ? files : ['*/**/*.css'],
-                options: {
-                    configOverrides: {
-                        rules: {
-                            // These rules have to be disabled in .stylelintrc for scss compat.
-                            "at-rule-no-unknown": true,
-                        }
-                    }
-                }
-            }
-        }
     });
 
     /**
      * Generate ignore files (utilising thirdpartylibs.xml data)
      */
     tasks.ignorefiles = function() {
-      // An array of paths to third party directories.
-      var thirdPartyPaths = getThirdPartyPathsFromXML();
-      // Generate .eslintignore.
-      var eslintIgnores = ['# Generated by "grunt ignorefiles"', '*/**/yui/src/*/meta/', '*/**/build/'].concat(thirdPartyPaths);
-      grunt.file.write('.eslintignore', eslintIgnores.join('\n'));
-      // Generate .stylelintignore.
-      var stylelintIgnores = [
-          '# Generated by "grunt ignorefiles"',
-          '**/yui/build/*',
-          'theme/boost/style/moodle.css',
-          'theme/classic/style/moodle.css',
-      ].concat(thirdPartyPaths);
-      grunt.file.write('.stylelintignore', stylelintIgnores.join('\n'));
+        // An array of paths to third party directories.
+        const thirdPartyPaths = getThirdPartyPathsFromXML();
+        // Generate .eslintignore.
+        const eslintIgnores = [
+            '# Generated by "grunt ignorefiles"',
+            '*/**/yui/src/*/meta/',
+            '*/**/build/',
+        ].concat(thirdPartyPaths);
+        grunt.file.write('.eslintignore', eslintIgnores.join('\n'));
+
+        // Generate .stylelintignore.
+        const stylelintIgnores = [
+            '# Generated by "grunt ignorefiles"',
+            '**/yui/build/*',
+            'theme/boost/style/moodle.css',
+            'theme/classic/style/moodle.css',
+        ].concat(thirdPartyPaths);
+        grunt.file.write('.stylelintignore', stylelintIgnores.join('\n'));
     };
 
     /**
@@ -428,7 +556,7 @@ module.exports = function(grunt) {
                             grunt: true,
                             // Run from current working dir and inherit stdio from process.
                             opts: {
-                                cwd: cwd,
+                                cwd: fullRunDir,
                                 stdio: 'inherit'
                             },
                             args: [task, filesOption]
@@ -454,18 +582,26 @@ module.exports = function(grunt) {
             );
         };
 
-        var watchConfig = grunt.config.get(['watch']);
-        watchConfig = Object.keys(watchConfig).reduce(function(carry, key) {
+        const originalWatchConfig = grunt.config.get(['watch']);
+        const watchConfig = Object.keys(originalWatchConfig).reduce(function(carry, key) {
             if (key == 'options') {
                 return carry;
             }
 
-            var value = watchConfig[key];
-            var fileGlobs = value.files;
-            var taskNames = value.tasks;
+            const value = originalWatchConfig[key];
+
+            const taskNames = value.tasks;
+            const files = value.files;
+            let excludes = [];
+            if (value.excludes) {
+                excludes = value.excludes;
+            }
 
             taskNames.forEach(function(taskName) {
-                carry[taskName] = fileGlobs;
+                carry[taskName] = {
+                    files,
+                    excludes,
+                };
             });
 
             return carry;
@@ -499,12 +635,14 @@ module.exports = function(grunt) {
             resp.files.forEach(function(file) {
                 grunt.log.ok('File changed: ' + file.name);
 
-                var fullPath = cwd + '/' + file.name;
+                var fullPath = fullRunDir + '/' + file.name;
                 Object.keys(watchConfig).forEach(function(task) {
-                    var fileGlobs = watchConfig[task];
-                    var match = fileGlobs.every(function(fileGlob) {
-                        return grunt.file.isMatch(fileGlob, fullPath);
+
+                    const fileGlobs = watchConfig[task].files;
+                    var match = fileGlobs.some(function(fileGlob) {
+                        return grunt.file.isMatch(`**/${fileGlob}`, fullPath);
                     });
+
                     if (match) {
                         // If we are watching a subdirectory then the file.name will be relative
                         // to that directory. However the grunt tasks  expect the file paths to be
@@ -536,7 +674,7 @@ module.exports = function(grunt) {
         });
 
         // Initiate the watch on the current directory.
-        watchmanClient.command(['watch-project', cwd], function(watchError, watchResponse) {
+        watchmanClient.command(['watch-project', fullRunDir], function(watchError, watchResponse) {
             if (watchError) {
                 grunt.log.error('Error initiating watch:', watchError);
                 watchTaskDone(1);
@@ -558,18 +696,40 @@ module.exports = function(grunt) {
                     return;
                 }
 
-                // Use the matching patterns specified in the watch config.
+                // Generate the expression query used by watchman.
+                // Documentation is limited, but see https://facebook.github.io/watchman/docs/expr/allof.html for examples.
+                // We generate an expression to match any value in the files list of all of our tasks, but excluding
+                // all value in the  excludes list of that task.
+                //
+                // [anyof, [
+                //      [allof, [
+                //          [anyof, [
+                //              ['match', validPath, 'wholename'],
+                //              ['match', validPath, 'wholename'],
+                //          ],
+                //          [not,
+                //              [anyof, [
+                //                  ['match', invalidPath, 'wholename'],
+                //                  ['match', invalidPath, 'wholename'],
+                //              ],
+                //          ],
+                //      ],
+                var matchWholeName = fileGlob => ['match', fileGlob, 'wholename'];
                 var matches = Object.keys(watchConfig).map(function(task) {
-                    var fileGlobs = watchConfig[task];
-                    var fileGlobMatches = fileGlobs.map(function(fileGlob) {
-                        return ['match', fileGlob, 'wholename'];
-                    });
+                    const matchAll = [];
+                    matchAll.push(['anyof'].concat(watchConfig[task].files.map(matchWholeName)));
 
-                    return ['allof'].concat(fileGlobMatches);
+                    if (watchConfig[task].excludes.length) {
+                        matchAll.push(['not', ['anyof'].concat(watchConfig[task].excludes.map(matchWholeName))]);
+                    }
+
+                    return ['allof'].concat(matchAll);
                 });
 
+                matches = ['anyof'].concat(matches);
+
                 var sub = {
-                    expression: ["anyof"].concat(matches),
+                    expression: matches,
                     // Which fields we're interested in.
                     fields: ["name", "size", "type"],
                     // Add our time constraint.
@@ -589,7 +749,7 @@ module.exports = function(grunt) {
                         return;
                     }
 
-                    grunt.log.ok('Listening for changes to files in ' + cwd);
+                    grunt.log.ok('Listening for changes to files in ' + fullRunDir);
                 });
             });
         });
@@ -634,10 +794,8 @@ module.exports = function(grunt) {
     grunt.registerTask('amd', ['eslint:amd', 'babel']);
     grunt.registerTask('js', ['amd', 'yui']);
 
-    // Register CSS taks.
-    grunt.registerTask('css', ['stylelint:scss', 'sass', 'stylelint:css']);
-    grunt.registerTask('scss', ['stylelint:scss', 'sass']);
-    grunt.registerTask('rawcss', ['stylelint:css']);
+    // Register CSS tasks.
+    registerStyleLintTasks(grunt, files, fullRunDir);
 
     // Register the startup task.
     grunt.registerTask('startup', 'Run the correct tasks for the current directory', tasks.startup);

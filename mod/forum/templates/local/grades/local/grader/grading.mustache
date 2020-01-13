@@ -33,6 +33,7 @@
     }
 }}
 {{<core/drawer}}
+    {{$drawerid}}grading-drawer-{{uniqid}}{{/drawerid}}
     {{$drawerclasses}}grader-grading-panel flex-shrink-0{{/drawerclasses}}
     {{$drawercontent}}
         <div class="h-100 w-100 bg-white d-flex flex-column">
@@ -52,7 +53,9 @@
                                 data-region="user-search-input"
                                 class="form-control form-control-lg"
                                 placeholder="{{#str}} searchusers, mod_forum {{/str}}"
+                                aria-labelledby="user-search-input-{{uniqid}}-label"
                             >
+                            <span id="user-search-input-{{uniqid}}-label" class="sr-only">{{#str}}searchusers, mod_forum{{/str}}</span>
                             <button
                                 class="toggle-search-button btn btn-icon icon-no-margin"
                                 aria-expanded="false"
@@ -74,7 +77,7 @@
                         <button
                             class="btn btn-icon icon-size-3 icon-no-margin colour-inherit"
                             data-action="collapse-grading-drawer"
-                            aria-controls="grading-drawer"
+                            aria-controls="grading-drawer-{{uniqid}}"
                             aria-expanded="true"
                             title="{{#str}} closebuttontitle, core {{/str}}"
                         >
@@ -98,29 +101,28 @@
                     <div data-region="grade" class="pt-3 px-3">
                         {{> mod_forum/local/grades/local/grader/grade_placeholder }}
                     </div>
-                    <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
+                    <h4 id="send-student-notifications-setting" class="mb-0 h5 px-3 font-weight-normal">
+                        {{#pix}} i/gradingnotifications, core {{/pix}}{{#str}}notifications, core{{/str}}
+                    </h4>
+                    <div data-region="notification" class="pt-3 px-3" role="radiogroup" aria-labelledby="send-student-notifications-setting">
+                        <label class="form-check">
+                            <input class="form-check-input" type="radio" name="sendstudentnotifications" value="1"{{#defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
+                            {{#str}}sendstudentnotificationsyes, mod_forum{{/str}}
+                        </label>
+                        <label class="form-check">
+                            <input class="form-check-input" type="radio" name="sendstudentnotifications" value="0"{{^defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
+                            {{#str}}sendstudentnotificationsno, mod_forum{{/str}}
+                        </label>
+                        {{#helpicon}}
+                            {{>core/help_icon}}
+                        {{/helpicon}}
+                    </div>
+                    <div data-region="grade-errors" role="alert" aria-live="assertive"></div>
                 </div>
             </div>
             <div class="hidden overflow-auto" data-region="search-results-container"></div>
         </div>
-        <div data-region="grade-errors" role="alert" aria-role="assertive"></div>
+        <div data-region="grade-errors" role="alert" aria-live="assertive"></div>
         <hr/>
-        <div class="col-sm-12">
-            <h4 class="d-inline mb-0 fa fa-bell-o"></h4>
-            <h4 id="send-student-notifications-setting" class="d-inline mb-0">{{#str}}notifications, core{{/str}}</h4>
-            <div data-region="notification" class="col-md-12 mt-3" role="radiogroup" aria-labelledby="send-student-notifications-setting">
-                <label class="form-check">
-                    <input class="form-check-input" type="radio" name="sendstudentnotifications" value="1"{{#defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
-                    {{#str}}sendstudentnotificationsyes, mod_forum{{/str}}
-                </label>
-                <label class="form-check">
-                    <input class="form-check-input" type="radio" name="sendstudentnotifications" value="0"{{^defaultsendnotifications}} checked{{/defaultsendnotifications}}/>
-                    {{#str}}sendstudentnotificationsno, mod_forum{{/str}}
-                </label>
-                {{#helpicon}}
-                    {{>core/help_icon}}
-                {{/helpicon}}
-            </div>
-        </div>
     {{/drawercontent}}
 {{/core/drawer}}

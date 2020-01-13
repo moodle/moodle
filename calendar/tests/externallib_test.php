@@ -2372,7 +2372,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
-                                                              $course->id, null, false, true)
+                                                              $course->id, null, false, true, $timestart->format('j'))
         );
         $this->assertEquals($data['courseid'], $course->id);
         // User enrolled in the course can load the course calendar.
@@ -2380,7 +2380,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
-                                                              $course->id, null, false, true)
+                                                              $course->id, null, false, true, $timestart->format('j'))
         );
         $this->assertEquals($data['courseid'], $course->id);
         // User not enrolled in the course cannot load the course calendar.
@@ -2389,8 +2389,24 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
-                                                              $course->id, null, false, false)
+                                                              $course->id, null, false, false, $timestart->format('j'))
         );
+    }
+
+    /**
+     * Test get_calendar_monthly_view when a day parameter is provided.
+     */
+    public function test_get_calendar_monthly_view_with_day_provided() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $timestart = new DateTime();
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_monthly_view_returns(),
+            core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
+                                                              SITEID, null, false, true, $timestart->format('j'))
+        );
+        $this->assertEquals($data['date']['mday'], $timestart->format('d'));
     }
 
     /**

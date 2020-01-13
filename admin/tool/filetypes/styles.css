@@ -23,10 +23,3 @@
 .path-admin-tool-filetypes .generaltable .nonstandard {
     font-weight: bold;
 }
-
-/* Spacing around the 'Defined in config.php' stripe */
-.path-admin-tool-filetypes .form-overridden {
-    display: inline-block;
-    margin-bottom: 1em;
-    padding: 4px 6px;
-}

@@ -2302,7 +2302,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertEquals('-', $comp['rating']['rating']);
         $comp = $data->competencies[2];
         $this->assertEquals($comp4->get('shortname'), $comp['name']);
-        $this->assertNull($comp['rating']['rating']);
+        $this->assertNull($comp['rating']);
         $data = writer::with_context($u1ctx)->get_data(array_merge($path, ["{$p1a->get('name')} ({$p1a->get('id')})",
             get_string('commentsubcontext', 'core_comment')]));
         $this->assert_exported_comments(['Hello.', 'It\'s me.', 'After all these years...'], $data->comments);
@@ -2320,7 +2320,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertEquals('C', $comp['rating']['rating']);
         $comp = $data->competencies[2];
         $this->assertEquals($comp4->get('shortname'), $comp['name']);
-        $this->assertNull($comp['rating']['rating']);
+        $this->assertNull($comp['rating']);
 
         // This plan is complete.
         $data = writer::with_context($u1ctx)->get_data(array_merge($path, ["{$p1c->get('name')} ({$p1c->get('id')})"]));

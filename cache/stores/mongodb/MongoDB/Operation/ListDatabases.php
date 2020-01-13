@@ -18,13 +18,17 @@
 namespace MongoDB\Operation;
 
 use MongoDB\Driver\Command;
+use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
-use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
 use MongoDB\Model\DatabaseInfoIterator;
 use MongoDB\Model\DatabaseInfoLegacyIterator;
+use function current;
+use function is_array;
+use function is_integer;
+use function is_object;
 
 /**
  * Operation for the ListDatabases command.
@@ -35,6 +39,7 @@ use MongoDB\Model\DatabaseInfoLegacyIterator;
  */
 class ListDatabases implements Executable
 {
+    /** @var array */
     private $options;
 
     /**
@@ -67,7 +72,7 @@ class ListDatabases implements Executable
         }
 
         if (isset($options['session']) && ! $options['session'] instanceof Session) {
-            throw InvalidArgumentException::invalidType('"session" option', $options['session'], 'MongoDB\Driver\Session');
+            throw InvalidArgumentException::invalidType('"session" option', $options['session'], Session::class);
         }
 
         $this->options = $options;
@@ -86,7 +91,7 @@ class ListDatabases implements Executable
     {
         $cmd = ['listDatabases' => 1];
 
-        if ( ! empty($this->options['filter'])) {
+        if (! empty($this->options['filter'])) {
             $cmd['filter'] = (object) $this->options['filter'];
         }
 
@@ -94,11 +99,11 @@ class ListDatabases implements Executable
             $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
         }
 
-        $cursor = $server->executeCommand('admin', new Command($cmd), $this->createOptions());
+        $cursor = $server->executeReadCommand('admin', new Command($cmd), $this->createOptions());
         $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
         $result = current($cursor->toArray());
 
-        if ( ! isset($result['databases']) || ! is_array($result['databases'])) {
+        if (! isset($result['databases']) || ! is_array($result['databases'])) {
             throw new UnexpectedValueException('listDatabases command did not return a "databases" array');
         }
 

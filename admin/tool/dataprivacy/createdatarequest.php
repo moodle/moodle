@@ -94,7 +94,11 @@ if ($data = $mform->get_data()) {
     if ($manage) {
         $foruser = core_user::get_user($data->userid);
         $redirectmessage = get_string('datarequestcreatedforuser', 'tool_dataprivacy', fullname($foruser));
+    } else if (\tool_dataprivacy\api::is_automatic_request_approval_on($data->type)) {
+        // Let the user know that the request has been submitted and will be processed soon.
+        $redirectmessage = get_string('approvedrequestsubmitted', 'tool_dataprivacy');
     } else {
+        // Let the user know that the request has been submitted to the privacy officer.
         $redirectmessage = get_string('requestsubmitted', 'tool_dataprivacy');
     }
     redirect($returnurl, $redirectmessage);

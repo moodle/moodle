@@ -26,6 +26,7 @@ namespace tool_dataprivacy\task;
 
 use action_link;
 use coding_exception;
+use context_system;
 use core\message\message;
 use core\task\adhoc_task;
 use core_user;
@@ -145,14 +146,20 @@ class process_data_request_task extends adhoc_task {
         mtrace('The processing of the user data request has been completed...');
 
         // Create message to notify the user regarding the processing results.
-        $dpo = core_user::get_user($request->dpo);
         $message = new message();
         $message->courseid = $SITE->id;
         $message->component = 'tool_dataprivacy';
         $message->name = 'datarequestprocessingresults';
-        $message->userfrom = $dpo;
-        $message->replyto = $dpo->email;
-        $message->replytoname = fullname($dpo->email);
+        if (empty($request->dpo)) {
+            // Use the no-reply user as the sender if the privacy officer is not set. This is the case for automatically
+            // approved requests.
+            $fromuser = core_user::get_noreply_user();
+        } else {
+            $fromuser = core_user::get_user($request->dpo);
+            $message->replyto = $fromuser->email;
+            $message->replytoname = fullname($fromuser);
+        }
+        $message->userfrom = $fromuser;
 
         $typetext = null;
         // Prepare the context data for the email message body.
@@ -180,7 +187,8 @@ class process_data_request_task extends adhoc_task {
                 $message->contexturl = $datarequestsurl;
                 $message->contexturlname = get_string('datarequests', 'tool_dataprivacy');
                 // Message to the recipient.
-                $messagetextdata['message'] = get_string('resultdownloadready', 'tool_dataprivacy', $SITE->fullname);
+                $messagetextdata['message'] = get_string('resultdownloadready', 'tool_dataprivacy',
+                    format_string($SITE->fullname, true, ['context' => context_system::instance()]));
                 // Prepare download link.
                 $downloadurl = moodle_url::make_pluginfile_url($usercontext->id, 'tool_dataprivacy', 'export', $thing->get_itemid(),
                     $thing->get_filepath(), $thing->get_filename(), true);
@@ -192,7 +200,8 @@ class process_data_request_task extends adhoc_task {
                 // No point notifying a deleted user in Moodle.
                 $message->notification = 0;
                 // Message to the recipient.
-                $messagetextdata['message'] = get_string('resultdeleted', 'tool_dataprivacy', $SITE->fullname);
+                $messagetextdata['message'] = get_string('resultdeleted', 'tool_dataprivacy',
+                    format_string($SITE->fullname, true, ['context' => context_system::instance()]));
                 // Message will be sent to the deleted user via email only.
                 $emailonly = true;
                 break;
@@ -216,7 +225,7 @@ class process_data_request_task extends adhoc_task {
             if ($emailonly) {
                 // Do not sent an email if the user has been deleted. The user email has been previously deleted.
                 if (!$foruser->deleted) {
-                    $messagesent = email_to_user($foruser, $dpo, $subject, $message->fullmessage, $messagehtml);
+                    $messagesent = email_to_user($foruser, $fromuser, $subject, $message->fullmessage, $messagehtml);
                 }
             } else {
                 $messagesent = message_send($message);
@@ -262,7 +271,7 @@ class process_data_request_task extends adhoc_task {
 
                 // Send message.
                 if ($emailonly) {
-                    email_to_user($requestedby, $dpo, $subject, $message->fullmessage, $messagehtml);
+                    email_to_user($requestedby, $fromuser, $subject, $message->fullmessage, $messagehtml);
                 } else {
                     message_send($message);
                 }

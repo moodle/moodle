@@ -2641,13 +2641,25 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
      * @return  string              Rendered HTML
      */
     public function output_html($data, $query='') {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
+        $forced = false;
+        if (empty($this->plugin)) {
+            if (array_key_exists($this->name, $CFG->config_php_settings)) {
+                $forced = true;
+            }
+        } else {
+            if (array_key_exists($this->plugin, $CFG->forced_plugin_settings)
+                and array_key_exists($this->name, $CFG->forced_plugin_settings[$this->plugin])) {
+                $forced = true;
+            }
+        }
         $context = (object) [
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
             'size' => $this->size,
-            'value' => $data,
+            'value' => $forced ? null : $data,
             'forceltr' => $this->get_force_ltr(),
+            'forced' => $forced
         ];
         $element = $OUTPUT->render_from_template('core_admin/setting_configpasswordunmask', $context);
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', null, $query);
@@ -2757,7 +2769,7 @@ class admin_setting_configfile extends admin_setting_configtext {
         ];
 
         if ($context->readonly) {
-            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $this->visiblename .= '<div class="alert alert-info">'.get_string('execpathnotallowed', 'admin').'</div>';
         }
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configfile', $context);
@@ -2818,7 +2830,7 @@ class admin_setting_configexecutable extends admin_setting_configfile {
         ];
 
         if (!empty($CFG->preventexecpath)) {
-            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $this->visiblename .= '<div class="alert alert-info">'.get_string('execpathnotallowed', 'admin').'</div>';
         }
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configexecutable', $context);
@@ -2858,7 +2870,7 @@ class admin_setting_configdirectory extends admin_setting_configfile {
         ];
 
         if (!empty($CFG->preventexecpath)) {
-            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $this->visiblename .= '<div class="alert alert-info">'.get_string('execpathnotallowed', 'admin').'</div>';
         }
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configdirectory', $context);
@@ -8404,10 +8416,12 @@ function admin_get_root($reload=false, $requirefulltree=true) {
  * @return array $settingsoutput The names and values of the changed settings
  */
 function admin_apply_default_settings($node=null, $unconditional=true, $admindefaultsettings=array(), $settingsoutput=array()) {
+    $counter = 0;
 
     if (is_null($node)) {
         core_plugin_manager::reset_caches();
         $node = admin_get_root(true, true);
+        $counter = count($settingsoutput);
     }
 
     if ($node instanceof admin_category) {
@@ -8420,7 +8434,7 @@ function admin_apply_default_settings($node=null, $unconditional=true, $admindef
 
     } else if ($node instanceof admin_settingpage) {
         foreach ($node->settings as $setting) {
-            if (!$unconditional and !is_null($setting->get_setting())) {
+            if (!$unconditional && !is_null($setting->get_setting())) {
                 // Do not override existing defaults.
                 continue;
             }
@@ -8446,7 +8460,7 @@ function admin_apply_default_settings($node=null, $unconditional=true, $admindef
     }
 
     // Call this function recursively until all settings are processed.
-    if (($node instanceof admin_root) && (!empty($admindefaultsettings))) {
+    if (($node instanceof admin_root) && ($counter != count($settingsoutput))) {
         $settingsoutput = admin_apply_default_settings(null, $unconditional, $admindefaultsettings, $settingsoutput);
     }
     // Just in case somebody modifies the list of active plugins directly.
@@ -9546,7 +9560,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $url = new moodle_url("/admin/search.php?query=enablewebservices");
         $row[0] = "1. " . html_writer::tag('a', get_string('enablews', 'webservice'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if ($CFG->enablewebservices) {
             $status = get_string('yes');
         }
@@ -9559,7 +9573,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $url = new moodle_url("/admin/settings.php?section=webserviceprotocols");
         $row[0] = "2. " . html_writer::tag('a', get_string('enableprotocols', 'webservice'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('none'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('none'), array('class' => 'badge badge-danger'));
         //retrieve activated protocol
         $active_protocols = empty($CFG->webserviceprotocols) ?
                 array() : explode(',', $CFG->webserviceprotocols);
@@ -9670,7 +9684,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $url = new moodle_url("/admin/search.php?query=enablewebservices");
         $row[0] = "1. " . html_writer::tag('a', get_string('enablews', 'webservice'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if ($CFG->enablewebservices) {
             $status = get_string('yes');
         }
@@ -9683,7 +9697,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $url = new moodle_url("/admin/settings.php?section=webserviceprotocols");
         $row[0] = "2. " . html_writer::tag('a', get_string('enableprotocols', 'webservice'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('none'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('none'), array('class' => 'badge badge-danger'));
         //retrieve activated protocol
         $active_protocols = empty($CFG->webserviceprotocols) ?
                 array() : explode(',', $CFG->webserviceprotocols);
@@ -10768,10 +10782,10 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $row[0] = '1. ' . html_writer::tag('a', get_string('selectsearchengine', 'admin'),
                         array('href' => $url));
 
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if (!empty($CFG->searchengine)) {
             $status = html_writer::tag('span', get_string('pluginname', 'search_' . $CFG->searchengine),
-                array('class' => 'statusok'));
+                array('class' => 'badge badge-success'));
 
         }
         $row[1] = $status;
@@ -10783,9 +10797,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $row[0] = '2. ' . html_writer::tag('a', get_string('enablesearchareas', 'admin'),
                         array('href' => $url));
 
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if ($anyenabled) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
 
         }
         $row[1] = $status;
@@ -10795,7 +10809,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $row = array();
         if (empty($CFG->searchengine)) {
             $row[0] = '3. ' . get_string('setupsearchengine', 'admin');
-            $row[1] = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+            $row[1] = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         } else {
             $url = new moodle_url('/admin/settings.php?section=search' . $CFG->searchengine);
             $row[0] = '3. ' . html_writer::tag('a', get_string('setupsearchengine', 'admin'),
@@ -10808,9 +10822,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
                 $serverstatus = $e->getMessage();
             }
             if ($serverstatus === true) {
-                $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+                $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
             } else {
-                $status = html_writer::tag('span', $serverstatus, array('class' => 'statuscritical'));
+                $status = html_writer::tag('span', $serverstatus, array('class' => 'badge badge-danger'));
             }
             $row[1] = $status;
         }
@@ -10821,9 +10835,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $url = new moodle_url('/admin/searchareas.php');
         $row[0] = '4. ' . html_writer::tag('a', get_string('indexdata', 'admin'), array('href' => $url));
         if ($anyindexed) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
         } else {
-            $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+            $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         }
         $row[1] = $status;
         $table->data[] = $row;
@@ -10833,9 +10847,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $url = new moodle_url("/admin/search.php?query=enableglobalsearch");
         $row[0] = '5. ' . html_writer::tag('a', get_string('enableglobalsearch', 'admin'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if (\core_search\manager::is_global_search_enabled()) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
         }
         $row[1] = $status;
         $table->data[] = $row;
@@ -11087,6 +11101,98 @@ class admin_settings_sitepolicy_handler_select extends admin_setting_configselec
         foreach ($plugins as $pname => $unused) {
             $this->choices[$pname] = new lang_string('sitepolicyhandlerplugin', 'core_admin',
                 ['name' => new lang_string('pluginname', $pname), 'component' => $pname]);
+        }
+
+        return true;
+    }
+}
+
+/**
+ * Used to validate theme presets code and ensuring they compile well.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2019 Bas Brands <bas@moodle.com>
+ */
+class admin_setting_configthemepreset extends admin_setting_configselect {
+
+    /** @var string The name of the theme to check for */
+    private $themename;
+
+    /**
+     * Constructor
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config,
+     * or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised
+     * @param string $description long localised info
+     * @param string|int $defaultsetting
+     * @param array $choices array of $value=>$label for each selection
+     * @param string $themename name of theme to check presets for.
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $choices, $themename) {
+        $this->themename = $themename;
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $choices);
+    }
+
+    /**
+     * Write settings if validated
+     *
+     * @param string $data
+     * @return string
+     */
+    public function write_setting($data) {
+        $validated = $this->validate($data);
+        if ($validated !== true) {
+            return $validated;
+        }
+        return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
+    }
+
+    /**
+     * Validate the preset file to ensure its parsable.
+     *
+     * @param string $data The preset file chosen.
+     * @return mixed bool true for success or string:error on failure.
+     */
+    public function validate($data) {
+
+        if (in_array($data, ['default.scss', 'plain.scss'])) {
+            return true;
+        }
+
+        $fs = get_file_storage();
+        $theme = theme_config::load($this->themename);
+        $context = context_system::instance();
+
+        // If the preset has not changed there is no need to validate it.
+        if ($theme->settings->preset == $data) {
+            return true;
+        }
+
+        if ($presetfile = $fs->get_file($context->id, 'theme_' . $this->themename, 'preset', 0, '/', $data)) {
+            // This operation uses a lot of resources.
+            raise_memory_limit(MEMORY_EXTRA);
+            core_php_time_limit::raise(300);
+
+            // TODO: MDL-62757 When changing anything in this method please do not forget to check
+            // if the get_css_content_from_scss() method in class theme_config needs updating too.
+
+            $compiler = new core_scss();
+            $compiler->prepend_raw_scss($theme->get_pre_scss_code());
+            $compiler->append_raw_scss($presetfile->get_content());
+            if ($scssproperties = $theme->get_scss_property()) {
+                $compiler->setImportPaths($scssproperties[0]);
+            }
+            $compiler->append_raw_scss($theme->get_extra_scss_code());
+
+            try {
+                $compiler->to_css();
+            } catch (Exception $e) {
+                return get_string('invalidthemepreset', 'admin', $e->getMessage());
+            }
+
+            // Try to save memory.
+            $compiler = null;
+            unset($compiler);
         }
 
         return true;

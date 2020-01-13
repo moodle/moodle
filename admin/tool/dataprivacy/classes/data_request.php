@@ -118,6 +118,10 @@ class data_request extends persistent {
                 'type' => PARAM_INT,
                 'default' => FORMAT_PLAIN
             ],
+            'systemapproved' => [
+                'default' => false,
+                'type' => PARAM_BOOL,
+            ],
             'creationmethod' => [
                 'default' => self::DATAREQUEST_CREATION_MANUAL,
                 'choices' => [

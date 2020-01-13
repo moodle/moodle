@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -51,6 +50,8 @@ abstract class backup_cron_automated_helper {
     const BACKUP_STATUS_WARNING = 4;
     /** Course automated backup has yet to be run */
     const BACKUP_STATUS_NOTYETRUN = 5;
+    /** Course automated backup has been added to adhoc task queue */
+    const BACKUP_STATUS_QUEUED = 6;
 
     /** Run if required by the schedule set in config. Default. **/
     const RUN_ON_SCHEDULE = 0;
@@ -105,229 +106,49 @@ abstract class backup_cron_automated_helper {
     /**
      * Runs the automated backups if required
      *
-     * @global moodle_database $DB
+     * @param bool $rundirective
      */
     public static function run_automated_backup($rundirective = self::RUN_ON_SCHEDULE) {
-        global $CFG, $DB;
-
-        $status = true;
-        $emailpending = false;
         $now = time();
-        $config = get_config('backup');
 
-        mtrace("Checking automated backup status",'...');
-        $state = backup_cron_automated_helper::get_automated_backup_state($rundirective);
-        if ($state === backup_cron_automated_helper::STATE_DISABLED) {
-            mtrace('INACTIVE');
-            return $state;
-        } else if ($state === backup_cron_automated_helper::STATE_RUNNING) {
-            mtrace('RUNNING');
-            if ($rundirective == self::RUN_IMMEDIATELY) {
-                mtrace('Automated backups are already running. If this script is being run by cron this constitues an error. You will need to increase the time between executions within cron.');
-            } else {
-                mtrace("automated backup are already running. Execution delayed");
-            }
-            return $state;
-        } else {
-            mtrace('OK');
-        }
-        backup_cron_automated_helper::set_state_running();
-
-        mtrace("Getting admin info");
-        $admin = get_admin();
-        if (!$admin) {
-            mtrace("Error: No admin account was found");
-            $state = false;
+        $lock = self::get_automated_backup_lock($rundirective);
+        if (!$lock) {
+            return;
         }
 
-        if ($status) {
+        try {
             mtrace("Checking courses");
             mtrace("Skipping deleted courses", '...');
-            mtrace(sprintf("%d courses", backup_cron_automated_helper::remove_deleted_courses_from_schedule()));
-        }
-
-        if ($status) {
-
+            mtrace(sprintf("%d courses", self::remove_deleted_courses_from_schedule()));
             mtrace('Running required automated backups...');
             cron_trace_time_and_memory();
 
-            // This could take a while!
-            core_php_time_limit::raise();
-            raise_memory_limit(MEMORY_EXTRA);
-
-            $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup(null, $now);
-            $showtime = "undefined";
-            if ($nextstarttime > 0) {
-                $showtime = date('r', $nextstarttime);
+            mtrace("Getting admin info");
+            $admin = get_admin();
+            if (!$admin) {
+                mtrace("Error: No admin account was found");
+                return;
             }
 
             $rs = self::get_courses($now); // Get courses to backup.
-            foreach ($rs as $course) {
-                $backupcourse = $DB->get_record('backup_courses', array('courseid' => $course->id));
-                if (!$backupcourse) {
-                    $backupcourse = new stdClass;
-                    $backupcourse->courseid = $course->id;
-                    $backupcourse->laststatus = self::BACKUP_STATUS_NOTYETRUN;
-                    $DB->insert_record('backup_courses', $backupcourse);
-                    $backupcourse = $DB->get_record('backup_courses', array('courseid' => $course->id));
-                }
-
-                // The last backup is considered as successful when OK or SKIPPED.
-                $lastbackupwassuccessful =  ($backupcourse->laststatus == self::BACKUP_STATUS_SKIPPED ||
-                                            $backupcourse->laststatus == self::BACKUP_STATUS_OK) && (
-                                            $backupcourse->laststarttime > 0 && $backupcourse->lastendtime > 0);
-
-                // Assume that we are not skipping anything.
-                $skipped = false;
-                $skippedmessage = '';
-
-                // Check if we are going to be running the backup now.
-                $shouldrunnow = (($backupcourse->nextstarttime > 0 && $backupcourse->nextstarttime < $now)
-                    || $rundirective == self::RUN_IMMEDIATELY);
-
-                // If config backup_auto_skip_hidden is set to true, skip courses that are not visible.
-                if ($shouldrunnow && $config->backup_auto_skip_hidden) {
-                    $skipped = ($config->backup_auto_skip_hidden && !$course->visible);
-                    $skippedmessage = 'Not visible';
-                }
-
-                // If config backup_auto_skip_modif_days is set to true, skip courses
-                // that have not been modified since the number of days defined.
-                if ($shouldrunnow && !$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_days) {
-                    $timenotmodifsincedays = $now - ($config->backup_auto_skip_modif_days * DAYSECS);
-                    // Check log if there were any modifications to the course content.
-                    $logexists = self::is_course_modified($course->id, $timenotmodifsincedays);
-                    $skipped = ($course->timemodified <= $timenotmodifsincedays && !$logexists);
-                    $skippedmessage = 'Not modified in the past '.$config->backup_auto_skip_modif_days.' days';
-                }
-
-                // If config backup_auto_skip_modif_prev is set to true, skip courses
-                // that have not been modified since previous backup.
-                if ($shouldrunnow && !$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_prev) {
-                    // Check log if there were any modifications to the course content.
-                    $logexists = self::is_course_modified($course->id, $backupcourse->laststarttime);
-                    $skipped = ($course->timemodified <= $backupcourse->laststarttime && !$logexists);
-                    $skippedmessage = 'Not modified since previous backup';
-                }
-
-                // Check if the course is not scheduled to run right now.
-                if (!$shouldrunnow) {
-                    $backupcourse->nextstarttime = $nextstarttime;
-                    $DB->update_record('backup_courses', $backupcourse);
-                    mtrace('Skipping ' . $course->fullname . ' (Not scheduled for backup until ' . $showtime . ')');
-                } else {
-                    if ($skipped) { // Must have been skipped for a reason.
-                        $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
-                        $backupcourse->nextstarttime = $nextstarttime;
-                        $DB->update_record('backup_courses', $backupcourse);
-                        mtrace('Skipping ' . $course->fullname . ' (' . $skippedmessage . ')');
-                        mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
-                    } else {
-                        // Backup every non-skipped courses.
-                        mtrace('Backing up '.$course->fullname.'...');
-
-                        // We have to send an email because we have included at least one backup.
-                        $emailpending = true;
-
-                        // Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error).
-                        if ($backupcourse->laststatus != self::BACKUP_STATUS_UNFINISHED) {
-                            // Set laststarttime.
-                            $starttime = time();
-
-                            $backupcourse->laststarttime = time();
-                            $backupcourse->laststatus = self::BACKUP_STATUS_UNFINISHED;
-                            $DB->update_record('backup_courses', $backupcourse);
-
-                            $backupcourse->laststatus = self::launch_automated_backup($course, $backupcourse->laststarttime,
-                                    $admin->id);
-                            $backupcourse->lastendtime = time();
-                            $backupcourse->nextstarttime = $nextstarttime;
-
-                            $DB->update_record('backup_courses', $backupcourse);
-
-                            mtrace("complete - next execution: $showtime");
-                        }
-                    }
-
-                    // Remove excess backups.
-                    $removedcount = self::remove_excess_backups($course, $now);
-                }
-            }
+            $emailpending = self::check_and_push_automated_backups($rs, $admin);
             $rs->close();
-        }
 
-        //Send email to admin if necessary
-        if ($emailpending) {
-            mtrace("Sending email to admin");
-            $message = "";
-
-            $count = backup_cron_automated_helper::get_backup_status_array();
-            $haserrors = ($count[self::BACKUP_STATUS_ERROR] != 0 || $count[self::BACKUP_STATUS_UNFINISHED] != 0);
-
-            // Build the message text.
-            // Summary.
-            $message .= get_string('summary') . "\n";
-            $message .= "==================================================\n";
-            $message .= '  ' . get_string('courses') . ': ' . array_sum($count) . "\n";
-            $message .= '  ' . get_string('ok') . ': ' . $count[self::BACKUP_STATUS_OK] . "\n";
-            $message .= '  ' . get_string('skipped') . ': ' . $count[self::BACKUP_STATUS_SKIPPED] . "\n";
-            $message .= '  ' . get_string('error') . ': ' . $count[self::BACKUP_STATUS_ERROR] . "\n";
-            $message .= '  ' . get_string('unfinished') . ': ' . $count[self::BACKUP_STATUS_UNFINISHED] . "\n";
-            $message .= '  ' . get_string('warning') . ': ' . $count[self::BACKUP_STATUS_WARNING] . "\n";
-            $message .= '  ' . get_string('backupnotyetrun') . ': ' . $count[self::BACKUP_STATUS_NOTYETRUN]."\n\n";
-
-            //Reference
-            if ($haserrors) {
-                $message .= "  ".get_string('backupfailed')."\n\n";
-                $dest_url = "$CFG->wwwroot/report/backups/index.php";
-                $message .= "  ".get_string('backuptakealook','',$dest_url)."\n\n";
-                //Set message priority
-                $admin->priority = 1;
-                //Reset unfinished to error
-                $DB->set_field('backup_courses','laststatus','0', array('laststatus'=>'2'));
-            } else {
-                $message .= "  ".get_string('backupfinished')."\n";
+            // Send email to admin if necessary.
+            if ($emailpending) {
+                self::send_backup_status_to_admin($admin);
             }
-
-            //Build the message subject
-            $site = get_site();
-            $prefix = format_string($site->shortname, true, array('context' => context_course::instance(SITEID))).": ";
-            if ($haserrors) {
-                $prefix .= "[".strtoupper(get_string('error'))."] ";
-            }
-            $subject = $prefix.get_string('automatedbackupstatus', 'backup');
-
-            //Send the message
-            $eventdata = new \core\message\message();
-            $eventdata->courseid          = SITEID;
-            $eventdata->modulename        = 'moodle';
-            $eventdata->userfrom          = $admin;
-            $eventdata->userto            = $admin;
-            $eventdata->subject           = $subject;
-            $eventdata->fullmessage       = $message;
-            $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml   = '';
-            $eventdata->smallmessage      = '';
-
-            $eventdata->component         = 'moodle';
-            $eventdata->name         = 'backup';
-
-            message_send($eventdata);
+        } finally {
+            // Everything is finished release lock.
+            $lock->release();
+            mtrace('Automated backups complete.');
         }
-
-        //Everything is finished stop backup_auto_running
-        backup_cron_automated_helper::set_state_running(false);
-
-        mtrace('Automated backups complete.');
-
-        return $status;
     }
 
     /**
      * Gets the results from the last automated backup that was run based upon
      * the statuses of the courses that were looked at.
      *
-     * @global moodle_database $DB
      * @return array
      */
     public static function get_backup_status_array() {
@@ -339,10 +160,14 @@ abstract class backup_cron_automated_helper {
             self::BACKUP_STATUS_UNFINISHED => 0,
             self::BACKUP_STATUS_SKIPPED => 0,
             self::BACKUP_STATUS_WARNING => 0,
-            self::BACKUP_STATUS_NOTYETRUN => 0
+            self::BACKUP_STATUS_NOTYETRUN => 0,
+            self::BACKUP_STATUS_QUEUED => 0,
         );
 
-        $statuses = $DB->get_records_sql('SELECT DISTINCT bc.laststatus, COUNT(bc.courseid) AS statuscount FROM {backup_courses} bc GROUP BY bc.laststatus');
+        $statuses = $DB->get_records_sql('SELECT DISTINCT bc.laststatus,
+                                            COUNT(bc.courseid) AS statuscount
+                                            FROM {backup_courses} bc
+                                            GROUP BY bc.laststatus');
 
         foreach ($statuses as $status) {
             if (empty($status->statuscount)) {
@@ -352,6 +177,219 @@ abstract class backup_cron_automated_helper {
         }
 
         return $result;
+    }
+
+    /**
+     * Collect details for all statuses of the courses
+     * and send report to admin.
+     *
+     * @param stdClass $admin
+     * @return array
+     */
+    private static function send_backup_status_to_admin($admin) {
+        global $DB, $CFG;
+
+        mtrace("Sending email to admin");
+        $message = "";
+
+        $count = self::get_backup_status_array();
+        $haserrors = ($count[self::BACKUP_STATUS_ERROR] != 0 || $count[self::BACKUP_STATUS_UNFINISHED] != 0);
+
+        // Build the message text.
+        // Summary.
+        $message .= get_string('summary') . "\n";
+        $message .= "==================================================\n";
+        $message .= '  ' . get_string('courses') . ': ' . array_sum($count) . "\n";
+        $message .= '  ' . get_string('ok') . ': ' . $count[self::BACKUP_STATUS_OK] . "\n";
+        $message .= '  ' . get_string('skipped') . ': ' . $count[self::BACKUP_STATUS_SKIPPED] . "\n";
+        $message .= '  ' . get_string('error') . ': ' . $count[self::BACKUP_STATUS_ERROR] . "\n";
+        $message .= '  ' . get_string('unfinished') . ': ' . $count[self::BACKUP_STATUS_UNFINISHED] . "\n";
+        $message .= '  ' . get_string('backupadhocpending') . ': ' . $count[self::BACKUP_STATUS_QUEUED] . "\n";
+        $message .= '  ' . get_string('warning') . ': ' . $count[self::BACKUP_STATUS_WARNING] . "\n";
+        $message .= '  ' . get_string('backupnotyetrun') . ': ' . $count[self::BACKUP_STATUS_NOTYETRUN]."\n\n";
+
+        // Reference.
+        if ($haserrors) {
+            $message .= "  ".get_string('backupfailed')."\n\n";
+            $desturl = "$CFG->wwwroot/report/backups/index.php";
+            $message .= "  ".get_string('backuptakealook', '', $desturl)."\n\n";
+            // Set message priority.
+            $admin->priority = 1;
+            // Reset error and unfinished statuses to ok if longer than 24 hours.
+            $sql = "laststatus IN (:statuserror,:statusunfinished) AND laststarttime < :yesterday";
+            $params = [
+                'statuserror' => self::BACKUP_STATUS_ERROR,
+                'statusunfinished' => self::BACKUP_STATUS_UNFINISHED,
+                'yesterday' => time() - 86400,
+            ];
+            $DB->set_field_select('backup_courses', 'laststatus', self::BACKUP_STATUS_OK, $sql, $params);
+        } else {
+            $message .= "  ".get_string('backupfinished')."\n";
+        }
+
+        // Build the message subject.
+        $site = get_site();
+        $prefix = format_string($site->shortname, true, array('context' => context_course::instance(SITEID))).": ";
+        if ($haserrors) {
+            $prefix .= "[".strtoupper(get_string('error'))."] ";
+        }
+        $subject = $prefix.get_string('automatedbackupstatus', 'backup');
+
+        // Send the message.
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = SITEID;
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = $admin;
+        $eventdata->userto            = $admin;
+        $eventdata->subject           = $subject;
+        $eventdata->fullmessage       = $message;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+
+        $eventdata->component         = 'moodle';
+        $eventdata->name         = 'backup';
+
+        return message_send($eventdata);
+    }
+
+    /**
+     * Loop through courses and push to course ad-hoc task if required
+     *
+     * @param \record_set $courses
+     * @param stdClass $admin
+     * @return boolean
+     */
+    private static function check_and_push_automated_backups($courses, $admin) {
+        global $DB;
+
+        $now = time();
+        $emailpending = false;
+
+        $nextstarttime = self::calculate_next_automated_backup(null, $now);
+        $showtime = "undefined";
+        if ($nextstarttime > 0) {
+            $showtime = date('r', $nextstarttime);
+        }
+
+        foreach ($courses as $course) {
+            $backupcourse = $DB->get_record('backup_courses', array('courseid' => $course->id));
+            if (!$backupcourse) {
+                $backupcourse = new stdClass;
+                $backupcourse->courseid = $course->id;
+                $backupcourse->laststatus = self::BACKUP_STATUS_NOTYETRUN;
+                $DB->insert_record('backup_courses', $backupcourse);
+                $backupcourse = $DB->get_record('backup_courses', array('courseid' => $course->id));
+            }
+
+            // Check if we are going to be running the backup now.
+            $shouldrunnow = ($backupcourse->nextstarttime > 0 && $backupcourse->nextstarttime < $now);
+
+            // Check if the course is not scheduled to run right now, or it has been put in queue.
+            if (!$shouldrunnow || $backupcourse->laststatus == self::BACKUP_STATUS_QUEUED) {
+                $backupcourse->nextstarttime = $nextstarttime;
+                $DB->update_record('backup_courses', $backupcourse);
+                mtrace('Skipping ' . $course->fullname . ' (Not scheduled for backup until ' . $showtime . ')');
+            } else {
+                    $skipped = self::should_skip_course_backup($backupcourse, $course, $nextstarttime);
+                if (!$skipped) { // If it should not be skipped.
+
+                    // Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error or being backed up).
+                    if ($backupcourse->laststatus != self::BACKUP_STATUS_UNFINISHED) {
+                        // Add every non-skipped courses to backup adhoc task queue.
+                        mtrace('Putting backup of ' . $course->fullname . ' in adhoc task queue ...');
+
+                        // We have to send an email because we have included at least one backup.
+                        $emailpending = true;
+                        // Create adhoc task for backup.
+                        self::push_course_backup_adhoc_task($backupcourse, $admin);
+                        mtrace("complete - next execution: $showtime");
+                    }
+                }
+            }
+        }
+
+        return $emailpending;
+    }
+
+    /**
+     * Check if we can skip this course backup.
+     *
+     * @param stdClass $backupcourse
+     * @param stdClass $course
+     * @param int $nextstarttime
+     * @return boolean
+     */
+    private static function should_skip_course_backup($backupcourse, $course, $nextstarttime) {
+        global $DB;
+
+        $config = get_config('backup');
+        $now = time();
+         // Assume that we are not skipping anything.
+         $skipped = false;
+         $skippedmessage = '';
+
+        // The last backup is considered as successful when OK or SKIPPED.
+        $lastbackupwassuccessful = ($backupcourse->laststatus == self::BACKUP_STATUS_SKIPPED ||
+        $backupcourse->laststatus == self::BACKUP_STATUS_OK) && (
+        $backupcourse->laststarttime > 0 && $backupcourse->lastendtime > 0);
+
+        // If config backup_auto_skip_hidden is set to true, skip courses that are not visible.
+        if ($config->backup_auto_skip_hidden) {
+            $skipped = ($config->backup_auto_skip_hidden && !$course->visible);
+            $skippedmessage = 'Not visible';
+        }
+
+        // If config backup_auto_skip_modif_days is set to true, skip courses
+        // that have not been modified since the number of days defined.
+        if (!$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_days) {
+            $timenotmodifsincedays = $now - ($config->backup_auto_skip_modif_days * DAYSECS);
+            // Check log if there were any modifications to the course content.
+            $logexists = self::is_course_modified($course->id, $timenotmodifsincedays);
+            $skipped = ($course->timemodified <= $timenotmodifsincedays && !$logexists);
+            $skippedmessage = 'Not modified in the past '.$config->backup_auto_skip_modif_days.' days';
+        }
+
+        // If config backup_auto_skip_modif_prev is set to true, skip courses
+        // that have not been modified since previous backup.
+        if (!$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_prev) {
+            // Check log if there were any modifications to the course content.
+            $logexists = self::is_course_modified($course->id, $backupcourse->laststarttime);
+            $skipped = ($course->timemodified <= $backupcourse->laststarttime && !$logexists);
+            $skippedmessage = 'Not modified since previous backup';
+        }
+
+        if ($skipped) { // Must have been skipped for a reason.
+            $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
+            $backupcourse->nextstarttime = $nextstarttime;
+            $DB->update_record('backup_courses', $backupcourse);
+            mtrace('Skipping ' . $course->fullname . ' (' . $skippedmessage . ')');
+            mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . date('r', $nextstarttime));
+        }
+
+        return $skipped;
+    }
+
+    /**
+     * Create course backup adhoc task
+     *
+     * @param stdClass $backupcourse
+     * @param stdClass $admin
+     * @return void
+     */
+    private static function push_course_backup_adhoc_task($backupcourse, $admin) {
+        global $DB;
+
+        $asynctask = new \core\task\course_backup_task();
+        $asynctask->set_blocking(false);
+        $asynctask->set_custom_data(array(
+            'courseid' => $backupcourse->courseid,
+            'adminid' => $admin->id
+        ));
+        \core\task\manager::queue_adhoc_task($asynctask);
+
+        $backupcourse->laststatus = self::BACKUP_STATUS_QUEUED;
+        $DB->update_record('backup_courses', $backupcourse);
     }
 
     /**
@@ -508,7 +546,6 @@ abstract class backup_cron_automated_helper {
      * Removes deleted courses fromn the backup_courses table so that we don't
      * waste time backing them up.
      *
-     * @global moodle_database $DB
      * @return int
      */
     public static function remove_deleted_courses_from_schedule() {
@@ -517,8 +554,8 @@ abstract class backup_cron_automated_helper {
         $sql = "SELECT bc.courseid FROM {backup_courses} bc WHERE bc.courseid NOT IN (SELECT c.id FROM {course} c)";
         $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $deletedcourse) {
-            //Doesn't exist, so delete from backup tables
-            $DB->delete_records('backup_courses', array('courseid'=>$deletedcourse->courseid));
+            // Doesn't exist, so delete from backup tables.
+            $DB->delete_records('backup_courses', array('courseid' => $deletedcourse->courseid));
             $skipped++;
         }
         $rs->close();
@@ -526,57 +563,35 @@ abstract class backup_cron_automated_helper {
     }
 
     /**
-     * Gets the state of the automated backup system.
+     * Try to get lock for automated backup.
+     * @param int $rundirective
      *
-     * @global moodle_database $DB
-     * @return int One of self::STATE_*
+     * @return \core\lock\lock|boolean - An instance of \core\lock\lock if the lock was obtained, or false.
      */
-    public static function get_automated_backup_state($rundirective = self::RUN_ON_SCHEDULE) {
-        global $DB;
-
+    public static function get_automated_backup_lock($rundirective = self::RUN_ON_SCHEDULE) {
         $config = get_config('backup');
         $active = (int)$config->backup_auto_active;
         $weekdays = (string)$config->backup_auto_weekdays;
+
+        mtrace("Checking automated backup status", '...');
+        $locktype = 'automated_backup';
+        $resource = 'queue_backup_jobs_running';
+        $lockfactory = \core\lock\lock_config::get_lock_factory($locktype);
 
         // In case of automated backup also check that it is scheduled for at least one weekday.
         if ($active === self::AUTO_BACKUP_DISABLED ||
                 ($rundirective == self::RUN_ON_SCHEDULE && $active === self::AUTO_BACKUP_MANUAL) ||
                 ($rundirective == self::RUN_ON_SCHEDULE && strpos($weekdays, '1') === false)) {
-            return self::STATE_DISABLED;
-        } else if (!empty($config->backup_auto_running)) {
-            // Detect if the backup_auto_running semaphore is a valid one
-            // by looking for recent activity in the backup_controllers table
-            // for backups of type backup::MODE_AUTOMATED
-            $timetosee = 60 * 90; // Time to consider in order to clean the semaphore
-            $params = array( 'purpose'   => backup::MODE_AUTOMATED, 'timetolook' => (time() - $timetosee));
-            if ($DB->record_exists_select('backup_controllers',
-                "operation = 'backup' AND type = 'course' AND purpose = :purpose AND timemodified > :timetolook", $params)) {
-                return self::STATE_RUNNING; // Recent activity found, still running
-            } else {
-                // No recent activity found, let's clean the semaphore
-                mtrace('Automated backups activity not found in last ' . (int)$timetosee/60 . ' minutes. Cleaning running status');
-                backup_cron_automated_helper::set_state_running(false);
-            }
+            mtrace('INACTIVE');
+            return false;
         }
-        return self::STATE_OK;
-    }
 
-    /**
-     * Sets the state of the automated backup system.
-     *
-     * @param bool $running
-     * @return bool
-     */
-    public static function set_state_running($running = true) {
-        if ($running === true) {
-            if (self::get_automated_backup_state() === self::STATE_RUNNING) {
-                throw new backup_helper_exception('backup_automated_already_running');
-            }
-            set_config('backup_auto_running', '1', 'backup');
-        } else {
-            unset_config('backup_auto_running', 'backup');
+        if (!$lock = $lockfactory->get_lock($resource, 10)) {
+            return false;
         }
-        return true;
+
+        mtrace('OK');
+        return $lock;
     }
 
     /**

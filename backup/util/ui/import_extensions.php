@@ -34,6 +34,12 @@
 class import_ui extends backup_ui {
 
     /**
+     * The stages of the backup user interface
+     * The precheck/selection stage of the backup - here you choose the initial settings.
+     */
+    const STAGE_PRECHECK = 0;
+
+    /**
      * Customises the backup progress bar
      *
      * @global moodle_page $PAGE
@@ -68,6 +74,11 @@ class import_ui extends backup_ui {
         }
         $selectorlink = new moodle_url($PAGE->url, $this->stage->get_params());
         $selectorlink->remove_params('importid');
+
+        $classes = ["backup_stage"];
+        if ($currentstage == 0) {
+            $classes[] = "backup_stage_current";
+        }
         array_unshift($items, array(
                 'text' => '1. '.get_string('importcurrentstage0', 'backup'),
                 'class' => join(' ', $classes),
@@ -85,7 +96,7 @@ class import_ui extends backup_ui {
      */
     protected function initialise_stage($stage = null, array $params = null) {
         if ($stage == null) {
-            $stage = optional_param('stage', self::STAGE_INITIAL, PARAM_INT);
+            $stage = optional_param('stage', self::STAGE_PRECHECK, PARAM_INT);
         }
         if (self::$skipcurrentstage) {
             $stage *= 2;
@@ -103,6 +114,9 @@ class import_ui extends backup_ui {
             case backup_ui::STAGE_FINAL:
                 $stage = new import_ui_stage_final($this, $params);
                 break;
+            case self::STAGE_PRECHECK:
+                $stage = new import_ui_stage_precheck($this, $params);
+                break;
             default:
                 $stage = false;
                 break;
@@ -119,6 +133,56 @@ class import_ui extends backup_ui {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_ui_stage_inital extends backup_ui_stage_initial {}
+
+/**
+ * Class representing the precheck/selection stage of a import.
+ *
+ * In this stage the user is required to perform initial selections.
+ * That is a choice of which course to import from.
+ *
+ * @package   core_backup
+ * @copyright 2019 Peter Dias
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class import_ui_stage_precheck extends backup_ui_stage {
+    /**
+     * Precheck/selection import stage constructor
+     * @param backup_ui $ui
+     * @param array $params
+     */
+    public function __construct(backup_ui $ui, array $params = null) {
+        $this->stage = import_ui::STAGE_PRECHECK;
+        parent::__construct($ui, $params);
+    }
+
+    /**
+     * Processes the precheck/selection import stage
+     *
+     * @param base_moodleform|null $form
+     */
+    public function process(base_moodleform $form = null) {
+        // Dummy functions. We don't have to do anything here.
+        return;
+    }
+
+    /**
+     * Gets the next stage for the import.
+     *
+     * @return int
+     */
+    public function get_next_stage() {
+        return backup_ui::STAGE_INITIAL;
+    }
+
+    /**
+     * Initialises the backup_moodleform instance for this stage
+     *
+     * @return backup_moodleform|void
+     */
+    public function initialise_stage_form() {
+        // Dummy functions. We don't have to do anything here.
+    }
+}
 
 /**
  * Extends the schema stage

@@ -207,7 +207,7 @@ Feature: Lesson group override
       | id_deadline_enabled | 1 |
       | deadline[day]       | 1 |
       | deadline[month]     | January |
-      | deadline[year]      | 2020 |
+      | deadline[year]      | 2030 |
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save"
@@ -233,7 +233,7 @@ Feature: Lesson group override
       | id_available_enabled | 1 |
       | available[day]       | 1 |
       | available[month]     | January |
-      | available[year]      | 2020 |
+      | available[year]      | 2030 |
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save and display"
@@ -253,7 +253,7 @@ Feature: Lesson group override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
-    Then  I should see "This lesson will be open on Wednesday, 1 January 2020, 8:00"
+    Then  I should see "This lesson will be open on Tuesday, 1 January 2030, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
     And I log in as "student1"
@@ -312,7 +312,7 @@ Feature: Lesson group override
       | id_available_enabled | 1 |
       | available[day]       | 1 |
       | available[month]     | January |
-      | available[year]      | 2030 |
+      | available[year]      | 2040 |
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save and display"
@@ -324,11 +324,11 @@ Feature: Lesson group override
       | id_available_enabled | 1 |
       | available[day]       | 1 |
       | available[month]     | January |
-      | available[year]      | 2020 |
+      | available[year]      | 2030 |
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00"
+    And I should see "Tuesday, 1 January 2030, 8:00"
     And I follow "Test lesson name"
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
@@ -337,26 +337,26 @@ Feature: Lesson group override
       | id_available_enabled | 1 |
       | available[day]       | 1 |
       | available[month]     | January |
-      | available[year]      | 2021 |
+      | available[year]      | 2031 |
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save"
-    And I should see "Friday, 1 January 2021, 8:00"
+    And I should see "Wednesday, 1 January 2031, 8:00"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
-    And I should see "This lesson will be open on Friday, 1 January 2021, 8:00"
+    And I should see "This lesson will be open on Wednesday, 1 January 2031, 8:00"
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
-    And I should see "This lesson will be open on Tuesday, 1 January 2030, 8:00"
+    And I should see "This lesson will be open on Sunday, 1 January 2040, 8:00"
     And I log out
     And I log in as "student3"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
-    And I should see "This lesson will be open on Wednesday, 1 January 2020, 8:00"
+    And I should see "This lesson will be open on Tuesday, 1 January 2030, 8:00"
 
   Scenario: Override a group when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is 'separate groups'
     Given the following "permission overrides" exist:

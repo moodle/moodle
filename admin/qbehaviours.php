@@ -170,7 +170,7 @@ foreach ($sortedbehaviours as $behaviour => $behaviourname) {
     if ($version) {
         $row[] = $version;
     } else {
-        $row[] = html_writer::tag('span', get_string('nodatabase', 'admin'), array('class' => 'disabled'));
+        $row[] = html_writer::tag('span', get_string('nodatabase', 'admin'), array('class' => 'text-muted'));
     }
 
     // Other question types required by this one.

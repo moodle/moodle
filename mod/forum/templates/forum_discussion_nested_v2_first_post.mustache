@@ -36,10 +36,10 @@
     data-region="post"
     data-target="{{id}}-target"
     tabindex="0"
-    aria-labelledby="post-header-{{id}}"
+    aria-labelledby="post-header-{{id}}-{{uniqid}}"
     aria-describedby="post-content-{{id}}"
 >
-    <!-- The firstpost and starter classes below aren't used for anything other than to identify the first post in behat -->
+    {{! The firstpost and starter classes below aren't used for anything other than to identify the first post in behat. }}
     <div
         class="d-flex focus-target mb-4 {{#firstpost}}firstpost starter{{/firstpost}}"
         aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
@@ -74,7 +74,7 @@
         </div>
 
         <div class="forum-post-core d-flex flex-column w-100"  data-region-content="forum-post-core">
-            <header id="post-header-{{uniqid}}">
+            <header id="post-header-{{id}}-{{uniqid}}">
                 {{^isdeleted}}
                     <div class="d-flex flex-wrap align-items-center mb-1">
                         <address class="mb-0 mr-2" tabindex="-1">
@@ -142,7 +142,7 @@
                                         <button
                                             class="btn btn-icon text-muted icon-no-margin icon-size-3"
                                             type="button"
-                                            id="post-actions-menu-{{uniqid}}"
+                                            id="post-actions-menu-{{id}}-{{uniqid}}"
                                             data-toggle="dropdown"
                                             aria-haspopup="true"
                                             aria-expanded="false"
@@ -151,7 +151,7 @@
                                             {{#pix}} i/moremenu {{/pix}}
                                         </button>
                                         <!-- inline style to fix RTL placement bug -->
-                                        <div class="dropdown-menu dropdown-menu-right rounded-lg shadow border-0" aria-labelledby="post-actions-menu-{{uniqid}}" style="right: auto">
+                                        <div class="dropdown-menu dropdown-menu-right rounded-lg shadow border-0" aria-labelledby="post-actions-menu-{{id}}-{{uniqid}}" style="right: auto" role="menubar">
                                             {{#capabilities}}
                                                 {{#view}}
                                                     <a

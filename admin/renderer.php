@@ -253,7 +253,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= $this->output->container(get_string('cancelinstallinfodir', 'core_plugin', $pluginfo->rootdir));
             if ($repotype = $pluginman->plugin_external_source($pluginfo->component)) {
                 $out .= $this->output->container(get_string('uninstalldeleteconfirmexternal', 'core_plugin', $repotype),
-                    'uninstalldeleteconfirmexternal');
+                    'alert alert-warning mt-2');
             }
         }
 
@@ -432,7 +432,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         if ($repotype = $pluginman->plugin_external_source($pluginfo->component)) {
             $confirm .= $this->output->container(get_string('uninstalldeleteconfirmexternal', 'core_plugin', $repotype),
-                'uninstalldeleteconfirmexternal');
+                'alert alert-warning mt-2');
         }
 
         // After any uninstall we must execute full upgrade to finish the cleanup!
@@ -511,7 +511,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function warning($message, $type = 'warning') {
-        return $this->box($message, 'generalbox admin' . $type);
+        return $this->box($message, 'generalbox alert alert-' . $type);
     }
 
     /**
@@ -526,7 +526,7 @@ class core_admin_renderer extends plugin_renderer_base {
             return $this->warning(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot));
 
         } else if ($insecuredataroot == INSECURE_DATAROOT_ERROR) {
-            return $this->warning(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'error');
+            return $this->warning(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'danger');
 
         } else {
             return '';
@@ -544,7 +544,7 @@ class core_admin_renderer extends plugin_renderer_base {
         if ($devlibdir) {
             $moreinfo = new moodle_url('/report/security/index.php');
             $warning = get_string('devlibdirpresent', 'core_admin', ['moreinfourl' => $moreinfo->out()]);
-            return $this->warning($warning, 'error');
+            return $this->warning($warning, 'danger');
 
         } else {
             return '';
@@ -721,7 +721,7 @@ class core_admin_renderer extends plugin_renderer_base {
         return $this->warning(
                     $this->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
                     $this->container($this->doc_link('admin/versions', get_string('morehelp'))),
-                'error');
+                'danger');
     }
 
     /*
@@ -737,7 +737,7 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         $warning = (get_string('testsiteupgradewarning', 'admin', $testsite));
-        return $this->warning($warning, 'error');
+        return $this->warning($warning, 'danger');
     }
 
     /**
@@ -772,7 +772,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $level = 'warning';
 
         if ($maturity == MATURITY_ALPHA) {
-            $level = 'error';
+            $level = 'danger';
         }
 
         $maturitylevel = get_string('maturity' . $maturity, 'admin');
@@ -954,7 +954,7 @@ class core_admin_renderer extends plugin_renderer_base {
     protected function release_notes_link() {
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        return $this->box($releasenoteslink, 'generalbox releasenoteslink');
+        return $this->box($releasenoteslink, 'generalbox alert alert-info');
     }
 
     /**
@@ -1902,7 +1902,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('status'),
         );
         $servertable->colclasses = array('centeralign name', 'centeralign info', 'leftalign report', 'leftalign plugin', 'centeralign status');
-        $servertable->attributes['class'] = 'admintable environmenttable generaltable';
+        $servertable->attributes['class'] = 'admintable environmenttable generaltable table-sm';
         $servertable->id = 'serverstatus';
 
         $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
@@ -1915,7 +1915,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('status'),
         );
         $othertable->colclasses = array('aligncenter info', 'alignleft report', 'alignleft plugin', 'aligncenter status');
-        $othertable->attributes['class'] = 'admintable environmenttable generaltable';
+        $othertable->attributes['class'] = 'admintable environmenttable generaltable table-sm';
         $othertable->id = 'otherserverstatus';
 
         $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());

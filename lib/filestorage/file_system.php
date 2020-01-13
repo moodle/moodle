@@ -63,7 +63,9 @@ abstract class file_system {
         } else {
             $path = $this->get_remote_path_from_storedfile($file);
         }
-        readfile_allow_large($path, $file->get_filesize());
+        if (readfile_allow_large($path, $file->get_filesize()) === false) {
+            throw new file_exception('storedfilecannotreadfile', $file->get_filename());
+        }
     }
 
     /**
@@ -416,11 +418,16 @@ abstract class file_system {
     protected function get_imageinfo_from_path($path) {
         $imageinfo = getimagesize($path);
 
+        if (!is_array($imageinfo)) {
+            return false; // Nothing to process, the file was not recognised as image by GD.
+        }
+
         $image = array(
                 'width'     => $imageinfo[0],
                 'height'    => $imageinfo[1],
                 'mimetype'  => image_type_to_mime_type($imageinfo[2]),
             );
+
         if (empty($image['width']) or empty($image['height']) or empty($image['mimetype'])) {
             // GD can not parse it, sorry.
             return false;

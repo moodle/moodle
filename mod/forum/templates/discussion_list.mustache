@@ -189,12 +189,17 @@
                 {{$discussion_list_body}}
                 <tbody>
                     {{#summaries}}
-                        <!-- The discussion class is only required for behat tests to identify the row -->
-                        <tr class="discussion {{#discussion.timed}}{{#istimed}}{{^visible}}dimmed_text{{/visible}}{{/istimed}}{{/discussion.timed}}"
+                        {{! The discussion class is only required for behat tests to identify the row. }}
+                        <tr class="discussion{{!
+                                }}{{#discussion.pinned}} pinned{{/discussion.pinned}}{{!
+                                }}{{#discussion.userstate.favourited}} favourited{{/discussion.userstate.favourited}}{{!
+                                }}{{#discussion.userstate.subscribed}} subscribed{{/discussion.userstate.subscribed}}{{!
+                                }}{{#unread}} hasunread{{/unread}}{{!
+                                }}{{#discussion.timed}}{{#istimed}}{{^visible}} dimmed_text{{/visible}}{{/istimed}}{{/discussion.timed}}"
                             data-region="discussion-list-item"
                             data-discussionid="{{id}}"
                             data-forumid="{{forumid}}">
-                            <td class="pinned p-0 text-center align-middle icon-no-margin" style="width: 1px;">
+                            <td class="p-0 text-center align-middle icon-no-margin" style="width: 1px;">
                                 {{#discussion.pinned}}
                                     {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
                                 {{/discussion.pinned}}
@@ -217,7 +222,7 @@
                                         <span>
                                              <button class="btn badge badge-primary rounded border-0" data-region="timed-label"
                                                 data-toggle="popover" data-container="body" data-placement="right" data-html="true"
-                                                data-content='{{#discussion.timed}}{{#discussion.times}}{{> mod_forum/discussion_times}}{{/discussion.times}}{{/discussion.timed}}'
+                                                data-content={{#quote}}{{#discussion.timed}}{{#discussion.times}}{{> mod_forum/discussion_times}}{{/discussion.times}}{{/discussion.timed}}{{/quote}}
                                                 data-trigger="click" aria-label="{{#str}}timeddiscussion, forum{{/str}}" title="{{#str}}timeddiscussion, forum{{/str}}">
                                                  {{#str}}timed, forum{{/str}}
                                              </button>
