@@ -91,7 +91,6 @@ class core_backup_external extends external_api {
             require_capability('moodle/backup:backupactivity', $context);
         } else {
             require_capability('moodle/backup:backupcourse', $context);
-            $instanceid = $course->id;
         }
 
         $results = array();
