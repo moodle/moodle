@@ -717,13 +717,49 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return mixed
      */
     protected static function get_tree($id) {
-        global $DB;
         $coursecattreecache = cache::make('core', 'coursecattree');
         $rv = $coursecattreecache->get($id);
         if ($rv !== false) {
             return $rv;
         }
+        // Might need to rebuild the tree. Put a lock in place to ensure other requests don't try and do this in parallel.
+        $lockfactory = \core\lock\lock_config::get_lock_factory('core_coursecattree');
+        $lock = $lockfactory->get_lock('core_coursecattree_cache',
+                course_modinfo::COURSE_CACHE_LOCK_WAIT, course_modinfo::COURSE_CACHE_LOCK_EXPIRY);
+        if ($lock === false) {
+            // Couldn't get a lock to rebuild the tree.
+            return [];
+        }
+        $rv = $coursecattreecache->get($id);
+        if ($rv !== false) {
+            // Tree was built while we were waiting for the lock.
+            $lock->release();
+            return $rv;
+        }
         // Re-build the tree.
+        try {
+            $all = self::rebuild_coursecattree_cache_contents();
+            $coursecattreecache->set_many($all);
+        } finally {
+            $lock->release();
+        }
+        if (array_key_exists($id, $all)) {
+            return $all[$id];
+        }
+        // Requested non-existing category.
+        return array();
+    }
+
+    /**
+     * Rebuild the course category tree as an array, including an extra "countall" field.
+     *
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    private static function rebuild_coursecattree_cache_contents() : array {
+        global $DB;
         $sql = "SELECT cc.id, cc.parent, cc.visible
                 FROM {course_categories} cc
                 ORDER BY cc.sortorder";
@@ -760,12 +796,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
         // We must add countall to all in case it was the requested ID.
         $all['countall'] = $count;
-        $coursecattreecache->set_many($all);
-        if (array_key_exists($id, $all)) {
-            return $all[$id];
-        }
-        // Requested non-existing category.
-        return array();
+        return $all;
     }
 
     /**
