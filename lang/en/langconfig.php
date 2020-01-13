@@ -32,6 +32,7 @@ $string['iso6392'] = 'eng';
 $string['labelsep'] = ': ';
 $string['listsep'] = ',';
 $string['locale'] = 'en_AU.UTF-8';
+$string['localecldr'] = 'en-AU';
 $string['localewin'] = 'English_Australia.1252';
 $string['localewincharset'] = '';
 $string['oldcharset'] = 'ISO-8859-1';

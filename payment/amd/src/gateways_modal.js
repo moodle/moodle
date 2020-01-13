@@ -36,9 +36,18 @@ import Notification from 'core/notification';
  *
  * @param {string} nodeSelector The root to listen to.
  */
-export const registerEventListeners = (nodeSelector) => {
-    const rootNode = document.querySelector(nodeSelector);
+export const registerEventListenersBySelector = (nodeSelector) => {
+    document.querySelectorAll(nodeSelector).forEach((element) => {
+        registerEventListeners(element);
+    });
+};
 
+/**
+ * Register event listeners for the module.
+ *
+ * @param {HTMLElement} rootNode The root to listen to.
+ */
+export const registerEventListeners = (rootNode) => {
     rootNode.addEventListener('click', (e) => {
         e.preventDefault();
         show(rootNode, {focusOnClose: e.target});

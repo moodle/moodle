@@ -197,25 +197,21 @@ class enrol_fee_plugin extends enrol_plugin {
         if (abs($cost) < 0.01) { // No cost, other enrolment methods (instances) should be used.
             echo '<p>'.get_string('nocost', 'enrol_fee').'</p>';
         } else {
-            $localisedcost = format_float($cost, -1, true);
 
-            if (isguestuser()) { // Force login only for guest user, not real users with guest role.
-                $wwwroot = $CFG->wwwroot;
-                echo '<div class="mdl-align"><p>'.get_string('paymentrequired').'</p>';
-                echo '<p><b>'.get_string('cost').": $instance->currency $localisedcost".'</b></p>';
-                echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
-                echo '</div>';
-            } else {
-                $coursefullname  = format_string($course->fullname, true, ['context' => $context]);
-                \core_payment\helper::gateways_modal_requirejs();
-                $attributes = core_payment\helper::gateways_modal_link_params($cost, $instance->currency, 'enrol_fee',
-                        $instance->id, get_string('purchasedescription', 'enrol_fee', $coursefullname));
+            $locale = get_string('localecldr', 'langconfig');
+            $fmt = NumberFormatter::create($locale, NumberFormatter::CURRENCY);
+            $localisedcost = numfmt_format_currency($fmt, $cost, $instance->currency);
 
-                echo '<div align="center">' .
-                      html_writer::tag('button', get_string("sendpaymentbutton", "enrol_paypal"), $attributes) .
-                      '</div>';
-            }
-
+            $data = [
+                'isguestuser' => isguestuser(),
+                'cost' => $localisedcost,
+                'currency' => $instance->currency,
+                'amount' => $cost,
+                'instanceid' => $instance->id,
+                'description' => get_string('purchasedescription', 'enrol_fee',
+                    format_string($course->fullname, true, ['context' => $context])),
+            ];
+            echo $OUTPUT->render_from_template('enrol_fee/payment_region', $data);
         }
 
         return $OUTPUT->box(ob_get_clean());
