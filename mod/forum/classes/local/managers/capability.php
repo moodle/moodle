@@ -533,6 +533,9 @@ class capability {
         if ($post->is_private_reply()) {
             // It is not possible to reply to a private reply.
             return false;
+        } else if (!$this->can_view_post($user, $discussion, $post)) {
+            // If the user cannot view the post in the first place, the user should not be able to reply to the post.
+            return false;
         }
 
         return $this->can_post_in_discussion($user, $discussion);
