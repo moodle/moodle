@@ -180,7 +180,11 @@ class report_loglive_renderable implements renderable {
         $filter->logreader = $readers[$this->selectedlogreader];
         $filter->date = $this->date;
         $filter->orderby = $this->order;
-        $filter->anonymous = 0;
+
+        $context = context_course::instance($filter->courseid);
+        if (!has_capability('moodle/site:viewanonymousevents', $context)) {
+            $filter->anonymous = 0;
+        }
 
         return $filter;
     }

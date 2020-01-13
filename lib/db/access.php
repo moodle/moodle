@@ -391,6 +391,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/site:viewanonymousevents' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_PROHIBIT,
+            'editingteacher' => CAP_PROHIBIT,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/site:viewfullnames' => array(
 
         'captype' => 'read',
