@@ -60,6 +60,8 @@ class capability {
     private $forumrecord;
     /** @var context $context Module context for the forum */
     private $context;
+    /** @var array $canviewpostcache Cache of discussion posts that can be viewed by a user. */
+    protected $canviewpostcache = [];
 
     /**
      * Constructor.
@@ -360,12 +362,23 @@ class capability {
             return false;
         }
 
+        // Return cached can view if possible.
+        if (isset($this->canviewpostcache[$user->id][$post->get_id()])) {
+            return $this->canviewpostcache[$user->id][$post->get_id()];
+        }
+
+        // Otherwise, check if the user can see this post.
         $forum = $this->get_forum();
         $forumrecord = $this->get_forum_record();
         $discussionrecord = $this->get_discussion_record($discussion);
         $postrecord = $this->get_post_record($post);
         $coursemodule = $forum->get_course_module_record();
-        return forum_user_can_see_post($forumrecord, $discussionrecord, $postrecord, $user, $coursemodule, false);
+        $canviewpost = forum_user_can_see_post($forumrecord, $discussionrecord, $postrecord, $user, $coursemodule, false);
+
+        // Then cache the result before returning.
+        $this->canviewpostcache[$user->id][$post->get_id()] = $canviewpost;
+
+        return $canviewpost;
     }
 
     /**
