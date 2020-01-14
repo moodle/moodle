@@ -710,17 +710,38 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * 0 - array of ids of top-level categories (always present)
      * '0i' - array of ids of top-level categories that have visible=0 (always present but may be empty array)
      * $id (int) - array of ids of categories that are direct children of category with id $id. If
-     *   category with id $id does not exist returns false. If category has no children returns empty array
+     *   category with id $id does not exist, or category has no children, returns empty array
      * $id.'i' - array of ids of children categories that have visible=0
      *
      * @param int|string $id
      * @return mixed
      */
     protected static function get_tree($id) {
+        $all = self::get_cached_cat_tree();
+        if (is_null($all) || !isset($all[$id])) {
+            // Could not get or rebuild the tree, or requested a non-existant ID.
+            return [];
+        } else {
+            return $all[$id];
+        }
+    }
+
+    /**
+     * Return the course category tree.
+     *
+     * Returns the category tree array, from the cache if available or rebuilding the cache
+     * if required. Uses locking to prevent the cache being rebuilt by multiple requests at once.
+     *
+     * @return array|null The tree as an array, or null if rebuilding the tree failed due to a lock timeout.
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    private static function get_cached_cat_tree() : ?array {
         $coursecattreecache = cache::make('core', 'coursecattree');
-        $rv = $coursecattreecache->get($id);
-        if ($rv !== false) {
-            return $rv;
+        $all = $coursecattreecache->get('all');
+        if ($all !== false) {
+            return $all;
         }
         // Might need to rebuild the tree. Put a lock in place to ensure other requests don't try and do this in parallel.
         $lockfactory = \core\lock\lock_config::get_lock_factory('core_coursecattree');
@@ -728,26 +749,22 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 course_modinfo::COURSE_CACHE_LOCK_WAIT, course_modinfo::COURSE_CACHE_LOCK_EXPIRY);
         if ($lock === false) {
             // Couldn't get a lock to rebuild the tree.
-            return [];
+            return null;
         }
-        $rv = $coursecattreecache->get($id);
-        if ($rv !== false) {
+        $all = $coursecattreecache->get('all');
+        if ($all !== false) {
             // Tree was built while we were waiting for the lock.
             $lock->release();
-            return $rv;
+            return $all;
         }
         // Re-build the tree.
         try {
             $all = self::rebuild_coursecattree_cache_contents();
-            $coursecattreecache->set_many($all);
+            $coursecattreecache->set('all', $all);
         } finally {
             $lock->release();
         }
-        if (array_key_exists($id, $all)) {
-            return $all[$id];
-        }
-        // Requested non-existing category.
-        return array();
+        return $all;
     }
 
     /**
@@ -1364,7 +1381,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         while (count($walk) > 0) {
             $catid = array_pop($walk);
             $directchildren = self::get_tree($catid);
-            if ($directchildren !== false && count($directchildren) > 0) {
+            if (count($directchildren) > 0) {
                 $walk = array_merge($walk, $directchildren);
                 $children = array_merge($children, $directchildren);
             }
