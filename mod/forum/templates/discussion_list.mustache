@@ -91,14 +91,10 @@
             {{{ pagination }}}
         {{/discussion_top_pagination}}
         {{$discussion_list_output}}
-            <span id="discussion-table-description-{{uniqid}}" class="sr-only">
-                {{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}
-            </span>
-            <table
-                class="table discussion-list"
-                aria-label='{{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}'
-                aria-describedby="discussion-table-description-{{uniqid}}"
-            >
+            <table class="table discussion-list">
+                <caption id="discussion-table-description-{{uniqid}}" class="sr-only">
+                    {{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}
+                </caption>
                 {{$discussion_list_header}}
                 <thead>
                     <tr>
