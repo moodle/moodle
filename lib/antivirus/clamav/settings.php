@@ -32,6 +32,7 @@ if ($ADMIN->fulltree) {
     $runningmethodchoice = array(
         'commandline' => get_string('runningmethodcommandline', 'antivirus_clamav'),
         'unixsocket' => get_string('runningmethodunixsocket', 'antivirus_clamav'),
+        'tcpsocket' => get_string('runningmethodtcpsocket', 'antivirus_clamav'),
     );
     $settings->add(new antivirus_clamav_runningmethod_setting('antivirus_clamav/runningmethod',
             get_string('runningmethod', 'antivirus_clamav'),
@@ -46,6 +47,16 @@ if ($ADMIN->fulltree) {
     $settings->add(new antivirus_clamav_pathtounixsocket_setting('antivirus_clamav/pathtounixsocket',
             new lang_string('pathtounixsocket', 'antivirus_clamav'),
             new lang_string('pathtounixsocketdesc', 'antivirus_clamav'), '', PARAM_PATH));
+
+    // Hostname to reach ClamAV tcp socket (used in tcp socket running method).
+    $settings->add(new antivirus_clamav_tcpsockethost_setting('antivirus_clamav/tcpsockethost',
+            new lang_string('tcpsockethost', 'antivirus_clamav'),
+            new lang_string('tcpsockethostdesc', 'antivirus_clamav'), '', PARAM_HOST));
+
+    // Port to reach ClamAV tcp socket (used in tcp socket running method).
+    $settings->add(new admin_setting_configtext('antivirus_clamav/tcpsocketport',
+            new lang_string('tcpsocketport', 'antivirus_clamav'),
+            new lang_string('tcpsocketportdesc', 'antivirus_clamav'), 3310, PARAM_INT));
 
     // How to act on ClamAV failure.
     $options = array(

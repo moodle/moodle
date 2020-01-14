@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019111800;          // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2019122900;          // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2019111200;          // Requires this Moodle version.
 $plugin->component = 'antivirus_clamav';  // Full name of the plugin (used for diagnostics).

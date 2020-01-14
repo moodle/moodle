@@ -34,6 +34,7 @@ define('ANTIVIRUS_CLAMAV_SOCKET_CHUNKSIZE', 1024);
 /**
  * Class implementing ClamAV antivirus.
  * @copyright  2015 Ruslan Kabalin, Lancaster University.
+ * @copyright  2019 Didier Raboud, Liip AG.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class scanner extends \core\antivirus\scanner {
@@ -47,6 +48,8 @@ class scanner extends \core\antivirus\scanner {
             return (bool)$this->get_config('pathtoclam');
         } else if ($this->get_config('runningmethod') === 'unixsocket') {
             return (bool)$this->get_config('pathtounixsocket');
+        } else if ($this->get_config('runningmethod') === 'tcpsocket') {
+            return (bool)$this->get_config('tcpsockethost') && (bool)$this->get_config('tcpsocketport');
         }
         return false;
     }
@@ -67,12 +70,22 @@ class scanner extends \core\antivirus\scanner {
             return self::SCAN_RESULT_ERROR;
         }
 
-        // Execute the scan using preferable method.
-        $method = 'scan_file_execute_' . $this->get_config('runningmethod');
-        if (!method_exists($this, $method)) {
-            throw new \coding_exception('Attempting to call non-existing method ' . $method);
+        // We can do direct stream scanning if unixsocket or tcpsocket running methods are in use,
+        // if not, use default process.
+        $runningmethod = $this->get_config('runningmethod');
+        switch ($runningmethod) {
+            case 'unixsocket':
+            case 'tcpsocket':
+                $return = $this->scan_file_execute_socket($file, $runningmethod);
+                break;
+            case 'commandline':
+                $return = $this->scan_file_execute_commandline($file);
+                break;
+            default:
+                // This should not happen.
+                debugging('Unknown running method.');
+                return self::SCAN_RESULT_ERROR;
         }
-        $return = $this->$method($file);
 
         if ($return === self::SCAN_RESULT_ERROR) {
             $this->message_admins($this->get_scanning_notice());
@@ -92,10 +105,11 @@ class scanner extends \core\antivirus\scanner {
      * @return int Scanning result constant.
      */
     public function scan_data($data) {
-        // We can do direct stream scanning if unixsocket running method is in use,
+        // We can do direct stream scanning if unixsocket or tcpsocket running methods are in use,
         // if not, use default process.
-        if ($this->get_config('runningmethod') === 'unixsocket') {
-            $return = $this->scan_data_execute_unixsocket($data);
+        $runningmethod = $this->get_config('runningmethod');
+        if (in_array($runningmethod, array('unixsocket', 'tcpsocket'))) {
+            $return = $this->scan_data_execute_socket($data, $runningmethod);
 
             if ($return === self::SCAN_RESULT_ERROR) {
                 $this->message_admins($this->get_scanning_notice());
@@ -109,6 +123,24 @@ class scanner extends \core\antivirus\scanner {
         } else {
             return parent::scan_data($data);
         }
+    }
+
+    /**
+     * Returns a Unix domain socket destination url
+     *
+     * @return string The socket url, fit for stream_socket_client()
+     */
+    private function get_unixsocket_destination() {
+        return 'unix://' . $this->get_config('pathtounixsocket');
+    }
+
+    /**
+     * Returns a Internet domain socket destination url
+     *
+     * @return string The socket url, fit for stream_socket_client()
+     */
+    private function get_tcpsocket_destination() {
+        return 'tcp://' . $this->get_config('tcpsockethost') . ':' . $this->get_config('tcpsocketport');
     }
 
     /**
@@ -189,13 +221,27 @@ class scanner extends \core\antivirus\scanner {
     }
 
     /**
-     * Scan file using Unix domain sockets.
+     * Scan file using sockets.
      *
      * @param string $file Full path to the file.
+     * @param string $type Either 'tcpsocket' or 'unixsocket'
      * @return int Scanning result constant.
      */
-    public function scan_file_execute_unixsocket($file) {
-        $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'),
+    public function scan_file_execute_socket($file, $type) {
+        switch ($type) {
+            case "tcpsocket":
+                $socketurl = $this->get_tcpsocket_destination();
+                break;
+            case "unixsocket":
+                $socketurl = $this->get_unixsocket_destination();
+                break;
+            default;
+                // This should not happen.
+                debugging('Unknown socket type.');
+                return self::SCAN_RESULT_ERROR;
+        }
+
+        $socket = stream_socket_client($socketurl,
                 $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
         if (!$socket) {
             // Can't open socket for some reason, notify admins.
@@ -203,26 +249,57 @@ class scanner extends \core\antivirus\scanner {
             $this->set_scanning_notice($notice);
             return self::SCAN_RESULT_ERROR;
         } else {
-            // Execute scanning. We are running SCAN command and passing file as an argument,
-            // it is the fastest option, but clamav user need to be able to access it, so
-            // we give group read permissions first and assume 'clamav' user is in web server
-            // group (in Debian the default webserver group is 'www-data').
-            // Using 'n' as command prefix is forcing clamav to only treat \n as newline delimeter,
-            // this is to avoid unexpected newline characters on different systems.
-            $perms = fileperms($file);
-            chmod($file, 0640);
-            fwrite($socket, "nSCAN ".$file."\n");
-            $output = stream_get_line($socket, 4096);
+            if ($type == "unixsocket") {
+                // Execute scanning. We are running SCAN command and passing file as an argument,
+                // it is the fastest option, but clamav user need to be able to access it, so
+                // we give group read permissions first and assume 'clamav' user is in web server
+                // group (in Debian the default webserver group is 'www-data').
+                // Using 'n' as command prefix is forcing clamav to only treat \n as newline delimeter,
+                // this is to avoid unexpected newline characters on different systems.
+                $perms = fileperms($file);
+                chmod($file, 0640);
+
+                // Actual scan.
+                fwrite($socket, "nSCAN ".$file."\n");
+                // Get ClamAV answer.
+                $output = stream_get_line($socket, 4096);
+
+                // After scanning we revert permissions to initial ones.
+                chmod($file, $perms);
+            } else if ($type == "tcpsocket") {
+                // Execute scanning by passing the entire file through the TCP socket.
+                // This is not fast, but is the only possibility over a network.
+                // Using 'n' as command prefix is forcing clamav to only treat \n as newline delimeter,
+                // this is to avoid unexpected newline characters on different systems.
+
+                // Actual scan.
+                fwrite($socket, "nINSTREAM\n");
+
+                // Open the file for reading.
+                $fhandle = fopen($file, 'rb');
+                while (!feof($fhandle)) {
+                    // Read it by chunks; write them to the TCP socket.
+                    $chunk = fread($fhandle, ANTIVIRUS_CLAMAV_SOCKET_CHUNKSIZE);
+                    $size = pack('N', strlen($chunk));
+                    fwrite($socket, $size);
+                    fwrite($socket, $chunk);
+                }
+                // Terminate streaming.
+                fwrite($socket, pack('N', 0));
+                // Get ClamAV answer.
+                $output = stream_get_line($socket, 4096);
+
+                fclose($fhandle);
+            }
+            // Free up the ClamAV socket.
             fclose($socket);
-            // After scanning we revert permissions to initial ones.
-            chmod($file, $perms);
             // Parse the output.
-            return $this->parse_unixsocket_response($output);
+            return $this->parse_socket_response($output);
         }
     }
 
     /**
-     * Scan data using unix socket.
+     * Scan data socket.
      *
      * We are running INSTREAM command and passing data stream in chunks.
      * The format of the chunk is: <length><data> where <length> is the size of the following
@@ -231,11 +308,25 @@ class scanner extends \core\antivirus\scanner {
      * Do not exceed StreamMaxLength as defined in clamd.conf, otherwise clamd will
      * reply with INSTREAM size limit exceeded and close the connection.
      *
-     * @param string $data The varaible containing the data to scan.
+     * @param string $data The variable containing the data to scan.
+     * @param string $type Either 'tcpsocket' or 'unixsocket'
      * @return int Scanning result constant.
      */
-    public function scan_data_execute_unixsocket($data) {
-        $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'), $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
+    public function scan_data_execute_socket($data, $type) {
+        switch ($type) {
+            case "tcpsocket":
+                $socketurl = $this->get_tcpsocket_destination();
+                break;
+            case "unixsocket":
+                $socketurl = $this->get_unixsocket_destination();
+                break;
+            default;
+                // This should not happen.
+                debugging('Unknown socket type!');
+                return self::SCAN_RESULT_ERROR;
+        }
+
+        $socket = stream_socket_client($socketurl, $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
         if (!$socket) {
             // Can't open socket for some reason, notify admins.
             $notice = get_string('errorcantopensocket', 'antivirus_clamav', "$errstr ($errno)");
@@ -261,17 +352,17 @@ class scanner extends \core\antivirus\scanner {
             fclose($socket);
 
             // Parse the output.
-            return $this->parse_unixsocket_response($output);
+            return $this->parse_socket_response($output);
         }
     }
 
     /**
-     * Parse unix socket command response.
+     * Parse socket command response.
      *
-     * @param string $output The unix socket command response.
+     * @param string $output The socket response.
      * @return int Scanning result constant.
      */
-    private function parse_unixsocket_response($output) {
+    private function parse_socket_response($output) {
         $splitoutput = explode(': ', $output);
         $message = trim($splitoutput[1]);
         if ($message === 'OK') {
@@ -289,4 +380,35 @@ class scanner extends \core\antivirus\scanner {
             }
         }
     }
+
+    /**
+     * Scan data using Unix domain socket.
+     *
+     * @deprecated since Moodle 3.9 MDL-64075 - please do not use this function any more.
+     * @see antivirus_clamav\scanner::scan_data_execute_socket()
+     *
+     * @param string $data The variable containing the data to scan.
+     * @return int Scanning result constant.
+     */
+    public function scan_data_execute_unixsocket($data) {
+        debugging('antivirus_clamav\scanner::scan_data_execute_unixsocket() is deprecated. ' .
+                  'Use antivirus_clamav\scanner::scan_data_execute_socket() instead.', DEBUG_DEVELOPER);
+        return $this->scan_data_execute_socket($data, "unixsocket");
+    }
+
+    /**
+     * Scan file using Unix domain socket.
+     *
+     * @deprecated since Moodle 3.9 MDL-64075 - please do not use this function any more.
+     * @see antivirus_clamav\scanner::scan_file_execute_socket()
+     *
+     * @param string $file Full path to the file.
+     * @return int Scanning result constant.
+     */
+    public function scan_file_execute_unixsocket($file) {
+        debugging('antivirus_clamav\scanner::scan_file_execute_unixsocket() is deprecated. ' .
+                  'Use antivirus_clamav\scanner::scan_file_execute_socket() instead.', DEBUG_DEVELOPER);
+        return $this->scan_file_execute_socket($file, "unixsocket");
+    }
+
 }
