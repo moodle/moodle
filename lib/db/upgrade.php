@@ -2145,5 +2145,22 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019122000.01);
     }
 
+    if ($oldversion < 2020010900.02) {
+        $table = new xmldb_table('event');
+
+        // This index will improve the performance when the Events API retrieves category and group events.
+        $index = new xmldb_index('eventtype', XMLDB_INDEX_NOTUNIQUE, ['eventtype']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // This index improves the performance of backups, deletion and visibilty changes on activities.
+        $index = new xmldb_index('modulename-instance', XMLDB_INDEX_NOTUNIQUE, ['modulename', 'instance']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2020010900.02);
+    }
     return true;
 }

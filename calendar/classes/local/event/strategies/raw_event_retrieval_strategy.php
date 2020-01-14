@@ -278,7 +278,12 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
 
         // Build the WHERE condition for the sub-query.
         if (!empty($subqueryconditions)) {
-            $subquerywhere = 'WHERE ' . implode(" OR ", $subqueryconditions);
+            $unionstartquery = "SELECT modulename, instance, eventtype, priority
+                                  FROM {event} ev
+                                 WHERE ";
+            $subqueryunion = $unionstartquery . implode(" UNION $unionstartquery ", $subqueryconditions);
+        } else {
+            $subqueryunion = '{event}';
         }
 
         // Merge subquery parameters to the parameters of the main query.
@@ -291,8 +296,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
                             ev.instance,
                             ev.eventtype,
                             MIN(ev.priority) as priority
-                       FROM {event} ev
-                      $subquerywhere
+                       FROM ($subqueryunion) ev
                    GROUP BY ev.modulename, ev.instance, ev.eventtype";
 
         // Build the main query.
