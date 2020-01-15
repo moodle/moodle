@@ -109,4 +109,16 @@ class testable_core_plugin_manager extends core_plugin_manager {
 
         return null;
     }
+
+    /**
+     * Adds fake plugin information from record.
+     *
+     * @param stdClass $record
+     * @return void
+     */
+    public function add_fake_plugin_info($record): void {
+        $this->load_present_plugins();
+
+        $this->presentplugins[$record->type][$record->name] = $record;
+    }
 }

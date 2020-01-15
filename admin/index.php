@@ -241,7 +241,7 @@ if (!core_tables_exist()) {
 
     // check plugin dependencies
     $failed = array();
-    if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+    if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed, $CFG->branch)) {
         $PAGE->navbar->add(get_string('pluginscheck', 'admin'));
         $PAGE->set_title($strinstallation);
         $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
@@ -508,7 +508,7 @@ if (!$cache and $version > $CFG->version) {  // upgrade
     } else {
         // Always verify plugin dependencies!
         $failed = array();
-        if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+        if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed, $CFG->branch)) {
             echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
             die();
         }
@@ -682,7 +682,7 @@ if (!$cache and moodle_needs_upgrading()) {
 
         // Make sure plugin dependencies are always checked.
         $failed = array();
-        if (!$pluginman->all_plugins_ok($version, $failed)) {
+        if (!$pluginman->all_plugins_ok($version, $failed, $CFG->branch)) {
             $output = $PAGE->get_renderer('core', 'admin');
             echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
             die();

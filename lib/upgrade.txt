@@ -12,6 +12,13 @@ information provided here is intended especially for developers.
 * plagiarism_save_form_elements() has been deprecated. Please use {plugin name}_coursemodule_edit_post_actions() instead.
 * plagiarism_get_form_elements_module() has been deprecated. Please use {plugin name}_coursemodule_standard_elements() instead.
 * Changed default sessiontimeout to 8 hours to cover most normal working days
+* Plugins can now explicitly declare supported and incompatible Moodle versions in version.php
+  - $plugin->supported = [37,39];
+    supported takes an array of ascending numbers, that correspond to a range of branch numbers of supported versions, inclusive.
+    Moodle versions that are outside of this range will produce a message notifying at install time, but will allow for installation.
+  - $plugin->incompatible = 36;
+    incompatible takes a single int corresponding to the first incompatible branch. Any Moodle versions including and
+    above this will be prevented from installing the plugin, and a message will be given when attempting installation.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop

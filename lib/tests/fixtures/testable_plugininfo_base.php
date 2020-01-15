@@ -41,12 +41,6 @@ class testable_plugininfo_base extends \core\plugininfo\base {
         $this->displayname = 'Testable fake pluginfo instance';
     }
 
-    public function load_disk_version() {
-        $this->versiondisk = null;
-        $this->versionrequires = null;
-        $this->dependencies = array();
-    }
-
     public function load_db_version() {
         $this->versiondb = null;
     }

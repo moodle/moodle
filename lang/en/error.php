@@ -467,6 +467,7 @@ $string['pagenotexist'] = 'An unusual error occurred (tried to reach a page that
 $string['pathdoesnotstartslash'] = 'No valid arguments supplied, path does not start with slash!';
 $string['pleasereport'] = 'If you have time, please let us know what you were trying to do when the error occurred:';
 $string['pluginrequirementsnotmet'] = 'Plugin "{$a->pluginname}" ({$a->pluginversion}) could not be installed.  It requires a newer version of Moodle (currently you are using {$a->currentmoodle}, you need {$a->requiremoodle}).';
+$string['pluginunsupported'] = 'Plugin "{$a->pluginname}" {$a->pluginversion} does not support this version of Moodle {$a->moodleversion}. Seek plugin information to find supported versions.';
 $string['prefixcannotbeempty'] = '<p>Error: database table prefix cannot be empty ({$a})</p>
 <p>The site administrator must fix this problem.</p>';
 $string['prefixtoolong'] = '<p>Error: database table prefix is too long ({$a->dbfamily})</p>
@@ -604,4 +605,3 @@ $string['xmldberror'] = 'XMLDB error!';
 $string['alreadyloggedin'] = 'You are already logged in as {$a}, you need to log out before logging in as different user.';
 $string['youcannotdeletecategory'] = 'You cannot delete category \'{$a}\' because you can neither delete the contents, nor move them elsewhere.';
 $string['protected_cc_not_supported'] = 'Protected cartridges not supported.';
-
