@@ -43,6 +43,41 @@ use Behat\Gherkin\Node\TableNode as TableNode,
 class behat_course extends behat_base {
 
     /**
+     * Return the list of partial named selectors.
+     *
+     * @return array
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector(
+                'Activity chooser screen', [
+                    "%core_course/activityChooser%//*[@data-region=%locator%][contains(concat(' ', @class, ' '), ' carousel-item ')]"
+                ]
+            ),
+        ];
+    }
+
+    /**
+     * Return a list of the Mink named replacements for the component.
+     *
+     * Named replacements allow you to define parts of an xpath that can be reused multiple times, or in multiple
+     * xpaths.
+     *
+     * This method should return a list of {@link behat_component_named_replacement} and the docs on that class explain
+     * how it works.
+     *
+     * @return behat_component_named_replacement[]
+     */
+    public static function get_named_replacements(): array {
+        return [
+            new behat_component_named_replacement(
+                'activityChooser',
+                ".//*[contains(concat(' ', @class, ' '), ' modchooser ')][contains(concat(' ', @class, ' '), ' modal-dialog ')]"
+            ),
+        ];
+    }
+
+    /**
      * Turns editing mode on.
      * @Given /^I turn editing mode on$/
      */
@@ -203,17 +238,18 @@ class behat_course extends behat_base {
 
             // Clicks add activity or resource section link.
             $sectionxpath = $sectionxpath . "/descendant::div" .
-                    "[contains(concat(' ', normalize-space(@class) , ' '), ' section-modchooser ')]/span/a";
-            $sectionnode = $this->find('xpath', $sectionxpath);
-            $sectionnode->click();
+                    "[contains(concat(' ', normalize-space(@class) , ' '), ' section-modchooser ')]/button";
+
+            $this->execute('behat_general::i_click_on', [$sectionxpath, 'xpath']);
 
             // Clicks the selected activity if it exists.
-            $activityxpath = "//div[@id='chooseform']/descendant::label" .
-                    "/descendant::span[contains(concat(' ', normalize-space(@class), ' '), ' typename ')]" .
+            $activityxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' modchooser ')]" .
+                    "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
+                    "/descendant::span[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
                     "[normalize-space(.)=$activityliteral]" .
-                    "/parent::label/child::input";
-            $activitynode = $this->find('xpath', $activityxpath);
-            $activitynode->doubleClick();
+                    "/parent::a";
+
+            $this->execute('behat_general::i_click_on', [$activityxpath, 'xpath']);
 
         } else {
             // Without Javascript.
@@ -1937,5 +1973,18 @@ class behat_course extends behat_base {
         if ($this->getSession()->getDriver()->find($xpath)) {
             throw new ExpectationException($msg, $this->getSession());
         }
+    }
+
+    /**
+     * Open the activity chooser in a course.
+     *
+     * @Given /^I open the activity chooser$/
+     */
+    public function i_open_the_activity_chooser() {
+        $this->execute('behat_general::i_click_on',
+            array('//button[@data-action="open-chooser"]', 'xpath_element'));
+
+        $node = $this->get_selected_node('xpath_element', '//div[@data-region="modules"]');
+        $this->ensure_node_is_visible($node);
     }
 }

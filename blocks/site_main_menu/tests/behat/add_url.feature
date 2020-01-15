@@ -16,4 +16,4 @@ Feature: Add URL to main menu block
       | External URL | http://www.google.com |
       | id_display | In pop-up |
     Then "google" "link" should exist in the "Main menu" "block"
-    And "Add an activity or resource" "link" should exist in the "Main menu" "block"
+    And "Add an activity or resource" "button" should exist in the "Main menu" "block"
