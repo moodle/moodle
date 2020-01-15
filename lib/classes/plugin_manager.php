@@ -753,6 +753,13 @@ class core_plugin_manager {
         global $CFG;
         if (empty($branch)) {
             $branch = $CFG->branch;
+            if (empty($branch)) {
+                // During initial install there is no branch set.
+                require($CFG->dirroot . '/version.php');
+                $branch = (int)$branch;
+                // Force CFG->branch to int value during install.
+                $CFG->branch = $branch;
+            }
         }
         $return = true;
         foreach ($this->get_plugins() as $type => $plugins) {
