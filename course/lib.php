@@ -2209,6 +2209,7 @@ function move_courses($courseids, $categoryid) {
     foreach ($dbcourses as $dbcourse) {
         $course = new stdClass();
         $course->id = $dbcourse->id;
+        $course->timemodified = time();
         $course->category  = $category->id;
         $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
         if ($category->visible == 0) {
