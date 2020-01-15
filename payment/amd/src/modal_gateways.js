@@ -22,54 +22,40 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define([
-    'jquery',
-    'core/notification',
-    'core/custom_interaction_events',
-    'core/modal',
-    'core/modal_events',
-    'core_payment/events',
-    'core/modal_registry'
-],
-function(
-    $,
-    Notification,
-    CustomEvents,
-    Modal,
-    ModalEvents,
-    PaymentEvents,
-    ModalRegistry
-) {
+import $ from 'jquery';
+import CustomEvents from 'core/custom_interaction_events';
+import Modal from 'core/modal';
+import ModalEvents from 'core/modal_events';
+import PaymentEvents from 'core_payment/events';
+import ModalRegistry from 'core/modal_registry';
 
-    var registered = false;
-    var SELECTORS = {
-        PROCEED_BUTTON: '[data-action="proceed"]',
-        CANCEL_BUTTON: '[data-action="cancel"]',
-    };
+let registered = false;
+const SELECTORS = {
+    PROCEED_BUTTON: '[data-action="proceed"]',
+    CANCEL_BUTTON: '[data-action="cancel"]',
+};
+
+export default class ModalGateways extends Modal {
 
     /**
      * Constructor for the Modal.
      *
      * @param {object} root The root jQuery element for the modal
      */
-    var ModalGateways = function(root) {
-        Modal.call(this, root);
-    };
-
-    ModalGateways.TYPE = 'core_payment-modal_gateways';
-    ModalGateways.prototype = Object.create(Modal.prototype);
-    ModalGateways.prototype.constructor = ModalGateways;
+    constructor(root) {
+        super(root);
+    }
 
     /**
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
      */
-    ModalGateways.prototype.registerEventListeners = function() {
+    registerEventListeners() {
         // Apply parent event listeners.
-        Modal.prototype.registerEventListeners.call(this);
+        super.registerEventListeners();
 
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.PROCEED_BUTTON, function(e, data) {
+        this.getModal().on(CustomEvents.events.activate, SELECTORS.PROCEED_BUTTON, (e, data) => {
             var proceedEvent = $.Event(PaymentEvents.proceed);
             this.getRoot().trigger(proceedEvent, this);
 
@@ -77,9 +63,9 @@ function(
                 this.hide();
                 data.originalEvent.preventDefault();
             }
-        }.bind(this));
+        });
 
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.CANCEL_BUTTON, function(e, data) {
+        this.getModal().on(CustomEvents.events.activate, SELECTORS.CANCEL_BUTTON, (e, data) => {
             var cancelEvent = $.Event(ModalEvents.cancel);
             this.getRoot().trigger(cancelEvent, this);
 
@@ -87,15 +73,15 @@ function(
                 this.hide();
                 data.originalEvent.preventDefault();
             }
-        }.bind(this));
-    };
-
-    // Automatically register with the modal registry the first time this module is imported so that you can create modals
-    // of this type using the modal factory.
-    if (!registered) {
-        ModalRegistry.register(ModalGateways.TYPE, ModalGateways, 'core_payment/modal_gateways');
-        registered = true;
+        });
     }
+}
 
-    return ModalGateways;
-});
+ModalGateways.TYPE = 'core_payment-modal_gateways';
+
+// Automatically register with the modal registry the first time this module is imported so that you can create modals
+// of this type using the modal factory.
+if (!registered) {
+    ModalRegistry.register(ModalGateways.TYPE, ModalGateways, 'core_payment/modal_gateways');
+    registered = true;
+}
