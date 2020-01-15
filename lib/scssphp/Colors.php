@@ -25,7 +25,7 @@ class Colors
      *
      * @var array
      */
-    public static $cssColors = [
+    protected static $cssColors = [
         'aliceblue' => '240,248,255',
         'antiquewhite' => '250,235,215',
         'aqua' => '0,255,255',
@@ -176,4 +176,71 @@ class Colors
         'yellow' => '255,255,0',
         'yellowgreen' => '154,205,50',
     ];
+
+    /**
+     * Convert named color in a [r,g,b[,a]] array
+     *
+     * @param string $colorName
+     *
+     * @return array|null
+     */
+    public static function colorNameToRGBa($colorName)
+    {
+        if (is_string($colorName) && isset(static::$cssColors[$colorName])) {
+            $rgba = explode(',', static::$cssColors[$colorName]);
+
+            // only case with opacity is transparent, with opacity=0, so we can intval on opacity also
+            $rgba = array_map('intval', $rgba);
+
+            return $rgba;
+        }
+
+        return null;
+    }
+
+    /**
+     * Reverse conversion : from RGBA to a color name if possible
+     *
+     * @param integer $r
+     * @param integer $g
+     * @param integer $b
+     * @param integer $a
+     *
+     * @return string|null
+     */
+    public static function RGBaToColorName($r, $g, $b, $a = 1)
+    {
+        static $reverseColorTable = null;
+
+        if (! is_numeric($r) || ! is_numeric($g) || ! is_numeric($b) || ! is_numeric($a)) {
+            return null;
+        }
+
+        if ($a < 1) {
+            # specific case we dont' revert according to spec
+            #if (! $a && ! $r && ! $g && ! $b) {
+            #    return 'transparent';
+            #}
+
+            return null;
+        }
+
+        if (is_null($reverseColorTable)) {
+            $reverseColorTable = [];
+
+            foreach (static::$cssColors as $name => $rgb_str) {
+                $rgb_str = explode(',', $rgb_str);
+
+                if (count($rgb_str) == 3) {
+                    $reverseColorTable[intval($rgb_str[0])][intval($rgb_str[1])][intval($rgb_str[2])] = $name;
+                }
+            }
+        }
+
+        if (isset($reverseColorTable[intval($r)][intval($g)][intval($b)])) {
+            return $reverseColorTable[intval($r)][intval($g)][intval($b)];
+        }
+
+        return null;
+    }
 }
