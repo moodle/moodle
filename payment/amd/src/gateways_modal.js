@@ -28,8 +28,10 @@ import {get_string as getString} from 'core/str';
 import {getGatewaysSupportingCurrency} from './repository';
 import Selectors from './selectors';
 import ModalEvents from 'core/modal_events';
+import PaymentEvents from 'core_payment/events';
 import {add as addToast, addToastRegion} from 'core/toast';
 import Notification from 'core/notification';
+import ModalGateways from './modal_gateways';
 
 /**
  * Register event listeners for the module.
@@ -65,7 +67,7 @@ const show = async(rootNode, {
     focusOnClose = null,
 } = {}) => {
     const modal = await ModalFactory.create({
-        type: ModalFactory.types.SAVE_CANCEL,
+        type: ModalGateways.TYPE,
         title: await getString('selectpaymenttype', 'core_payment'),
         body: await Templates.render('core_payment/gateways_modal', {}),
     });
@@ -84,7 +86,7 @@ const show = async(rootNode, {
         }
     });
 
-    modal.getRoot().on(ModalEvents.save, (e) => {
+    modal.getRoot().on(PaymentEvents.proceed, (e) => {
         const root = modal.getRoot()[0];
         const gateway = (root.querySelector(Selectors.values.gateway) || {value: ''}).value;
 
