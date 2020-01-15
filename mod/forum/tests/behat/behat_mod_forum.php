@@ -50,6 +50,17 @@ class behat_mod_forum extends behat_base {
     }
 
     /**
+     * Adds a Q&A discussion to the Q&A-type forum specified by it's name with the provided table data.
+     *
+     * @Given /^I add a new question to "(?P<forum_name_string>(?:[^"]|\\")*)" forum with:$/
+     * @param string $forumname
+     * @param TableNode $table
+     */
+    public function i_add_a_new_question_to_forum_with($forumname, TableNode $table) {
+        $this->add_new_discussion($forumname, $table, get_string('addanewquestion', 'forum'));
+    }
+
+    /**
      * Adds a discussion to the forum specified by it's name with the provided table data (usually Subject and Message). The step begins from the forum's course page.
      *
      * @Given /^I add a new discussion to "(?P<forum_name_string>(?:[^"]|\\")*)" forum with:$/
