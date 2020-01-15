@@ -132,9 +132,19 @@ export const process = async(amount, currency, component, componentid, descripti
  */
 const callExternalFunction = (jsFile, func) => {
     // Check to see if this file has already been loaded. If so just go straight to the func.
-    if (callExternalFunction.currentlyloaded.includes(jsFile)) {
+    if (callExternalFunction.currentlyloaded == jsFile) {
         func();
         return;
+    }
+
+    // PayPal can only work with one currency at the same time. We have to unload the previously loaded script
+    // if it was loaded for a different currency. Weird way indeed, but the only way.
+    // See: https://github.com/paypal/paypal-checkout-components/issues/1180
+    if (callExternalFunction.currentlyloaded) {
+        const suspectedScript = document.querySelector(`script[src="${callExternalFunction.currentlyloaded}"]`);
+        if (suspectedScript) {
+            suspectedScript.parentNode.removeChild(suspectedScript);
+        }
     }
 
     const script = document.createElement('script');
@@ -155,13 +165,13 @@ const callExternalFunction = (jsFile, func) => {
     script.setAttribute('src', jsFile);
     document.head.appendChild(script);
 
-    callExternalFunction.currentlyloaded.push(jsFile);
+    callExternalFunction.currentlyloaded = jsFile;
 };
 
 /**
- * Holds the list of external JavaScript files.
+ * Holds the full url of loaded external JavaScript file.
  *
  * @static
- * @type {Array}
+ * @type {string}
  */
-callExternalFunction.currentlyloaded = [];
+callExternalFunction.currentlyloaded = '';
