@@ -254,7 +254,7 @@ abstract class base {
             if (is_array($plugin->supported) && $isint && $isrange) {
                 $this->pluginsupported = $plugin->supported;
             } else {
-                throw new coding_exception('Incorrect syntax in $plugin->supported in '."$this->name");
+                throw new coding_exception('Incorrect syntax in plugin supported declaration in '."$this->name");
             }
         }
 
@@ -262,7 +262,7 @@ abstract class base {
             if ((ctype_digit($plugin->incompatible) || is_int($plugin->incompatible)) && (int) $plugin->incompatible > 0) {
                 $this->pluginincompatible = intval($plugin->incompatible);
             } else {
-                throw new coding_exception('Incorrect syntax in $plugin->incompatible in '."$this->name");
+                throw new coding_exception('Incorrect syntax in plugin incompatible declaration in '."$this->name");
             }
         }
 
