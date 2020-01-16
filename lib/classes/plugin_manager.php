@@ -927,9 +927,9 @@ class core_plugin_manager {
      *
      * @param \core\plugininfo\base $plugin the plugin we are checking
      * @param int $branch the moodle branch to check support for
-     * @return bool
+     * @return string
      */
-    public function check_explicitly_supported($plugin, $branch) : bool {
+    public function check_explicitly_supported($plugin, $branch) : string {
         // Check for correctly formed supported.
         if (isset($plugin->pluginsupported)) {
             // Broken apart for readability.

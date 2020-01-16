@@ -81,7 +81,7 @@ class base_testcase extends \advanced_testcase {
         $pluginman->add_fake_plugin_info($plugininfo);
 
         $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessage('Incorrect syntax in $plugin->supported in example');
+        $this->expectExceptionMessage('Incorrect syntax in plugin supported declaration in example');
         $plugininfo->load_disk_version();
     }
 
@@ -147,7 +147,7 @@ class base_testcase extends \advanced_testcase {
         $pluginman->add_fake_plugin_info($plugininfo);
 
         $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessage('Incorrect syntax in $plugin->incompatible in example');
+        $this->expectExceptionMessage('Incorrect syntax in plugin incompatible declaration in example');
         $plugininfo->load_disk_version();
     }
 
