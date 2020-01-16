@@ -51,12 +51,14 @@ class behat_form_passwordunmask extends behat_form_text {
         if ($this->running_javascript()) {
             $id = $this->field->getAttribute('id');
             $js = <<<JS
-require(["jquery"], function($) {
-    var wrapper = $(document.getElementById("{$id}")).closest('[data-passwordunmask="wrapper"]');
-        wrapper.find('[data-passwordunmask="edit"]').trigger("click");
-});
+(function() {
+    require(["jquery"], function($) {
+        var wrapper = $(document.getElementById("{$id}")).closest('[data-passwordunmask="wrapper"]');
+            wrapper.find('[data-passwordunmask="edit"]').trigger("click");
+    });
+})();
 JS;
-            $this->session->executeScript($js);
+            behat_base::execute_script_in_session($this->session, $js);
         }
 
         $this->field->setValue($value);

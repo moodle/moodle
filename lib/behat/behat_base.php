@@ -535,7 +535,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         }
 
         // Check on page to see if it's an app page. Safest way is to look for added JavaScript.
-        return $this->getSession()->evaluateScript('typeof window.behat') === 'object';
+        return $this->evaluate_script('return typeof window.behat') === 'object';
     }
 
     /**
@@ -771,14 +771,18 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             // The window inner height will be as specified, which means the available viewport will
             // actually be smaller if there is a horizontal scrollbar. We assume that horizontal
             // scrollbars are rare so this doesn't matter.
-            $offset = $this->getSession()->getDriver()->evaluateScript(
-                    'return (function() { var before = document.body.style.overflowY;' .
-                    'document.body.style.overflowY = "scroll";' .
-                    'var result = {};' .
-                    'result.x = window.outerWidth - document.body.offsetWidth;' .
-                    'result.y = window.outerHeight - window.innerHeight;' .
-                    'document.body.style.overflowY = before;' .
-                    'return result; })();');
+            $js = <<<EOF
+return (function() {
+    var before = document.body.style.overflowY;
+    document.body.style.overflowY = "scroll";
+    var result = {};
+    result.x = window.outerWidth - document.body.offsetWidth;
+    result.y = window.outerHeight - window.innerHeight;
+    document.body.style.overflowY = before;
+    return result;
+})();
+EOF;
+            $offset = $this->evaluate_script($js);
             $width += $offset['x'];
             $height += $offset['y'];
         }
@@ -827,8 +831,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                         } else {
                             return "incomplete"
                         }
-                    }());'));
-                $pending = $session->evaluateScript($jscode);
+                    })()'));
+                $pending = self::evaluate_script_in_session($session, $jscode);
             } catch (NoSuchWindow $nsw) {
                 // We catch an exception here, in case we just closed the window we were interacting with.
                 // No javascript is running if there is no window right?
