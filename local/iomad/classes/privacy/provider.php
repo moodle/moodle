@@ -126,14 +126,14 @@ class provider implements
         // Get the company information.
         if ($companies = $DB->get_records('company_users', array('userid' => $user->id))) {
             foreach ($companies as $company) {
-                writer::with_context($context)->export_data($context, $company);
+                writer::with_context($context)->export_data($context, (array) $company);
             }
         }
 
         // Get the license allocation information.
         if ($licenses = $DB->get_records('companylicense_users', array('userid' => $user->id))) {
             foreach ($licenses as $license) {
-                writer::with_context($context)->export_data($context, $license);
+                writer::with_context($context)->export_data($context, (array) $license);
             }
         }
     }

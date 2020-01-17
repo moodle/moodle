@@ -122,7 +122,7 @@ class provider implements
                         'email' => $user->email);
         if ($emails = $DB->get_records_sql($emailsql, $params)) {
             foreach ($emails as $email) {
-                writer::with_context($context)->export_data($context, $email);
+                writer::with_context($context)->export_data($context, (array) $email);
             }
         }
     }
