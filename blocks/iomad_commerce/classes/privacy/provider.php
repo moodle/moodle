@@ -132,7 +132,7 @@ class provider implements
 
         $user = $contextlist->get_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Get the invoice information.
         if ($invoices = $DB->get_records('invoice', array('userid' => $user->id))) {

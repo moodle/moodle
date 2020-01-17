@@ -110,7 +110,7 @@ class provider implements
 
         $user = $contextlist->get_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Get the emails information.
         $emailsql = "SELECT * FROM {email}

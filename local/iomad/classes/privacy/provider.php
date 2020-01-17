@@ -121,7 +121,7 @@ class provider implements
 
         $user = $contextlist->get_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Get the company information.
         if ($companies = $DB->get_records('company_users', array('userid' => $user->id))) {

@@ -125,7 +125,7 @@ class provider implements
 
         $user = $contextlist->get_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         if ($tracks = $DB->get_records('local_iomad_track', array('userid' => $user->id))) {
             foreach ($tracks as $ctrack) {
