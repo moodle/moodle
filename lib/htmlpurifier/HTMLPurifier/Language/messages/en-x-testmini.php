@@ -9,4 +9,6 @@ $messages = array(
     'HTMLPurifier' => 'HTML Purifier XNone'
 );
 
+$errorNames = array();
+
 // vim: et sw=4 sts=4

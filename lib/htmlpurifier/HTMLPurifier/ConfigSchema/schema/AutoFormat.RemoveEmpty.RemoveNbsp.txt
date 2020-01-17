@@ -6,7 +6,7 @@ DEFAULT: false
 <p>
   When enabled, HTML Purifier will treat any elements that contain only
   non-breaking spaces as well as regular whitespace as empty, and remove
-  them when %AutoForamt.RemoveEmpty is enabled.
+  them when %AutoFormat.RemoveEmpty is enabled.
 </p>
 <p>
   See %AutoFormat.RemoveEmpty.RemoveNbsp.Exceptions for a list of elements

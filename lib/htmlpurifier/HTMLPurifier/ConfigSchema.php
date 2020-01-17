@@ -100,7 +100,7 @@ class HTMLPurifier_ConfigSchema
      * @param string $key Name of directive
      * @param mixed $default Default value of directive
      * @param string $type Allowed type of the directive. See
-     *      HTMLPurifier_DirectiveDef::$type for allowed values
+     *      HTMLPurifier_VarParser::$types for allowed values
      * @param bool $allow_null Whether or not to allow null values
      */
     public function add($key, $default, $type, $allow_null)
