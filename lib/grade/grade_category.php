@@ -285,6 +285,9 @@ class grade_category extends grade_object {
      * @return bool success
      */
     public function delete($source=null) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
         $grade_item = $this->load_grade_item();
 
         if ($this->is_course_category()) {
@@ -334,7 +337,10 @@ class grade_category extends grade_object {
         $grade_item->delete($source);
 
         // delete category itself
-        return parent::delete($source);
+        $success = parent::delete($source);
+
+        $transaction->allow_commit();
+        return $success;
     }
 
     /**
