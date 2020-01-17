@@ -9,9 +9,6 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="paymentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="pp_orderid" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="The ID of the order in PayPal" SEQUENCE="false"/>
-        <FIELD NAME="pp_authorizationid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="pp_paymentid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The PayPal-generated ID for the captured payment."/>
-        <FIELD NAME="pp_status" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
