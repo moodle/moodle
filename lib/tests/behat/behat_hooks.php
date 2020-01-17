@@ -385,16 +385,18 @@ class behat_hooks extends behat_base {
         // Reset the scenariorunning variable to ensure that Step 0 occurs.
         $this->scenariorunning = false;
 
-        // Run all test with medium (1024x768) screen size, to avoid responsive problems.
-        $this->resize_window('medium');
-
         // Set up the tags for current scenario.
         self::fetch_tags_for_scenario($scope);
 
         // If scenario requires the Moodle app to be running, set this up.
         if ($this->has_tag('app')) {
             $this->execute('behat_app::start_scenario');
+
+            return;
         }
+
+        // Run all test with medium (1024x768) screen size, to avoid responsive problems.
+        $this->resize_window('medium');
     }
 
     /**
