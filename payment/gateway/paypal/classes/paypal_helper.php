@@ -133,6 +133,28 @@ class paypal_helper {
         return json_decode($result, true);
     }
 
+    public function get_order_details(string $orderid): ?array {
+        $location = "{$this->baseurl}/v2/checkout/orders/{$orderid}";
+
+        $options = [
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_TIMEOUT' => 30,
+            'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
+            'CURLOPT_SSLVERSION' => CURL_SSLVERSION_TLSv1_2,
+            'CURLOPT_HTTPHEADER' => [
+                'Content-Type: application/json',
+                "Authorization: Bearer {$this->token}",
+            ],
+        ];
+
+        $command = '{}';
+
+        $curl = new curl();
+        $result = $curl->get($location, $command, $options);
+
+        return json_decode($result, true);
+    }
+
     /**
      * Request for PayPal REST oath bearer token.
      *
