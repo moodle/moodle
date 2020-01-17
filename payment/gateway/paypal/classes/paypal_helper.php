@@ -33,6 +33,21 @@ require_once($CFG->libdir . '/filelib.php');
 class paypal_helper {
 
     /**
+     * @var string The payment was authorized or the authorized payment was captured for the order.
+     */
+    public const CAPTURE_STATUS_COMPLETED = 'COMPLETED';
+
+    /**
+     * @var string The merchant intends to capture payment immediately after the customer makes a payment.
+     */
+    public const ORDER_INTENT_CAPTURE = 'CAPTURE';
+
+    /**
+     * @var string The customer approved the payment.
+     */
+    public const ORDER_STATUS_APPROVED = 'APPROVED';
+
+    /**
      * @var string The base API URL
      */
     private $baseurl;

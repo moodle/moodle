@@ -28,9 +28,6 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_heading('pg_paypal_settings', '', get_string('pluginname_desc', 'pg_paypal')));
 
-    $warning = $OUTPUT->notification(get_string('paymentauthorizationwarning', 'pg_paypal'), 'warning');
-    $settings->add(new admin_setting_heading('pg_paypal/warning', '', $warning));
-
     $settings->add(new admin_setting_configtext('pg_paypal/brandname', get_string('brandname', 'pg_paypal'),
             get_string('brandname', 'pg_paypal'), '', PARAM_TEXT));
     $settings->add(new admin_setting_configtext('pg_paypal/clientid', get_string('clientid', 'pg_paypal'),

@@ -27,15 +27,15 @@ import Truncate from 'core/truncate';
 import Ajax from 'core/ajax';
 import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
+import {get_string as getString} from 'core/str';
 
 /**
  * Creates and shows a modal that contains a placeholder.
  *
  * @returns {Promise<Modal>}
  */
-const showPlaceholder = async() => {
+const showModalWithPlaceholder = async() => {
     const modal = await ModalFactory.create({
-        type: ModalFactory.types.CANCEL,
         body: await Templates.render('pg_paypal/paypal_button_placeholder', {})
     });
     modal.show();
@@ -59,23 +59,28 @@ export const process = async(amount, currency, component, componentid, descripti
         modal,
         paypalConfig,
     ] = await Promise.all([
-        showPlaceholder(),
+        showModalWithPlaceholder(),
         Repository.getConfigForJs(),
     ]);
+
+    modal.getRoot().on(ModalEvents.outsideClick, (e) => {
+        // Prevent closing the modal when clicking outside of it.
+        e.preventDefault();
+    });
 
     modal.getRoot().on(ModalEvents.hidden, () => {
         // Destroy when hidden.
         modal.destroy();
     });
 
-    const paypalScript = `https://www.paypal.com/sdk/js?client-id=${paypalConfig.clientid}&currency=${currency}&intent=authorize`;
+    const paypalScript = `https://www.paypal.com/sdk/js?client-id=${paypalConfig.clientid}&currency=${currency}`;
 
     callExternalFunction(paypalScript, () => {
-        modal.setBody('<form></form>'); // This is a hack. Instead of emptying the body, we put an empty form there so the modal
-                                        // is not closed when user clicks outside of modal.
+        modal.setBody(''); // We have to clear the body. The render method in paypal.Buttons will render everything.
+
         paypal.Buttons({ // eslint-disable-line
+            // Set up the transaction.
             createOrder: function(data, actions) {
-                // This function sets up the details of the transaction, including the amount and line item details.
                 return actions.order.create({
                     purchase_units: [{ // eslint-disable-line
                         amount: {
@@ -90,26 +95,22 @@ export const process = async(amount, currency, component, componentid, descripti
                     },
                 });
             },
-            onApprove: function(data, actions) {
-                // Authorize the transaction.
-                actions.order.authorize().then(function(authorization) {
-                    // Get the authorization id.
-                    const authorizationID = authorization.purchase_units[0].payments.authorizations[0].id;
+            // Finalise the transaction.
+            onApprove: function(data) {
+                modal.setBody(getString('authorising', 'pg_paypal'));
 
-                    // Call your server to validate and capture the transaction.
-                    return Ajax.call([{
-                        methodname: 'pg_paypal_transaction_complete',
-                        args: {
-                            component,
-                            componentid,
-                            orderid: data.orderID,
-                            authorizationid: authorizationID,
-                        },
-                    }])[0]
-                    .then(function(res) {
-                        modal.hide();
-                        return callback(res);
-                    });
+                // Call server to validate and capture payment for order.
+                return Ajax.call([{
+                    methodname: 'pg_paypal_create_transaction_complete',
+                    args: {
+                        component,
+                        componentid,
+                        orderid: data.orderID,
+                    },
+                }])[0]
+                .then(function(res) {
+                    modal.hide();
+                    return callback(res);
                 });
             }
         }).render(modal.getBody()[0]);

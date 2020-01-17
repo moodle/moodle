@@ -22,19 +22,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['amountmismatch'] = 'The amount you attempted to pay does not match the required fee. Your account has not been debited.';
+$string['authorising'] = 'Authorising the payment. Please wait...';
 $string['brandname'] = 'Brand name';
 $string['brandname_desc'] = 'The optional label that overrides the business name in the PayPal account on the PayPal site.';
-$string['captureauthorizationfailed'] = 'Could not capture authorization.';
+$string['cannotfetchorderdatails'] = 'Could not fetch payment details from PayPal. Your account has not been debited.';
 $string['clientid'] = 'Client ID';
 $string['clientid_desc'] = 'The client ID that PayPal generated for your application.';
-$string['echecknotsupported'] = 'E-check is not supported.';
 $string['environment'] = 'Environment';
 $string['environment_desc'] = 'You can set this to Sandbox if you are using sandbox accounts (for testing purpose only).';
 $string['gatewaydescription'] = 'PayPal is an authorised payment gateway provider for processing credit card transactions.';
 $string['gatewayname'] = 'PayPal';
-$string['internalerror'] = 'Internal error.';
+$string['internalerror'] = 'An internal error has occurred. Please contact us.';
 $string['live'] = 'Live';
-$string['paymentauthorizationwarning'] = 'For PayPal payment authorizations, you must enable this feature on your PayPal account.';
 $string['paymentnotcleared'] = 'payment not cleared by PayPal.';
 $string['pluginname'] = 'PayPal';
 $string['pluginname_desc'] = 'The PayPal plugin allows you to receive payments via PayPal.';
