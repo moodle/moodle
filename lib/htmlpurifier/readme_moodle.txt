@@ -21,3 +21,5 @@ Modifications:
   Check status of https://github.com/ezyang/htmlpurifier/pull/148
 * MDL-67030 applied https://github.com/ezyang/htmlpurifier/pull/224 towards
   php74 compatibility.
+* MDL-67115 applied https://github.com/ezyang/htmlpurifier/pull/243 towards
+  php74 compatibility.
