@@ -38,6 +38,8 @@ Here are the files that we have added.
 
 Local changes (to reapply until upstream upgrades contain them):
     * MDL-67034 php74 compliance fixes
+    * MDL-67115 php74 implode() compliance fixes. This is fixed in upstream library v2.2.4
+      (verify that https://github.com/googleapis/google-api-php-client/pull/1683 is applied)
 
 
 Information
