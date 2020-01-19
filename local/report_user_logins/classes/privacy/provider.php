@@ -112,7 +112,7 @@ class provider implements
         $context = \context_system::instance();
 
         if ($tracks = $DB->get_records('local_report_user_logins', array('userid' => $user->id))) {
-            foreach ($tracks as $ctrack) {
+            foreach ($tracks as $track) {
                 writer::with_context($context)->export_data(array(get_string('pluginname', 'local_report_users')), $track);
             }
         }
