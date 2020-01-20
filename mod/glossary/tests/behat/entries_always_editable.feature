@@ -4,7 +4,6 @@ Feature: A teacher can set whether glossary entries are always editable or not
   As a teacher
   I need to prevent entries to be always editable
 
-  @javascript
   Scenario: Glossary entries are not always editable
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -18,7 +17,7 @@ Feature: A teacher can set whether glossary entries are always editable or not
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following config values are set as admin:
-      | maxeditingtime | 60 |
+      | maxeditingtime | 5 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Glossary" to section "1" and I fill the form with:
@@ -34,7 +33,7 @@ Feature: A teacher can set whether glossary entries are always editable or not
       | Definition | Test concept description |
     Then "Delete entry: Test concept name" "link" should exist
     And "Edit entry: Test concept name" "link" should exist
-    And I wait "65" seconds
+    And I wait "6" seconds
     And I reload the page
-    Then "Delete entry: Test concept name" "link" should not exist
+    And "Delete entry: Test concept name" "link" should not exist
     And "Edit entry: Test concept name" "link" should not exist
