@@ -74,4 +74,6 @@ if ($options['stop']) {
     die;
 }
 
+\core\local\cli\shutdown::script_supports_graceful_exit();
+
 cron_run();

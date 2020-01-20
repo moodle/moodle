@@ -114,7 +114,8 @@ function cron_run_scheduled_tasks(int $timenow) {
 
     // Run all scheduled tasks.
     try {
-        while (!\core\task\manager::static_caches_cleared_since($timenow) &&
+        while (!\core\local\cli\shutdown::should_gracefully_exit() &&
+                !\core\task\manager::static_caches_cleared_since($timenow) &&
                 $task = \core\task\manager::get_next_scheduled_task($timenow)) {
             cron_run_inner_scheduled_task($task);
             unset($task);
@@ -167,7 +168,8 @@ function cron_run_adhoc_tasks(int $timenow, $keepalive = 0, $checklimits = true)
     $taskcount = 0;
 
     // Run all adhoc tasks.
-    while (!\core\task\manager::static_caches_cleared_since($timenow)) {
+    while (!\core\local\cli\shutdown::should_gracefully_exit() &&
+            !\core\task\manager::static_caches_cleared_since($timenow)) {
 
         if ($checklimits && (time() - $timenow) >= $maxruntime) {
             if ($waiting) {

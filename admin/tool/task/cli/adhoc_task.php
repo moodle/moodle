@@ -115,5 +115,7 @@ cron_setup_user();
 $humantimenow = date('r', time());
 $keepalive = (int)$options['keep-alive'];
 
+\core\local\cli\shutdown::script_supports_graceful_exit();
+
 mtrace("Server Time: {$humantimenow}\n");
 cron_run_adhoc_tasks(time(), $keepalive, $checklimits);
