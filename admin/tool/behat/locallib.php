@@ -61,7 +61,7 @@ class tool_behat {
         }
 
         if ($filter) {
-            $filteroption = ' -d "' . $filter . '"';
+            $filteroption = ' -d ' . escapeshellarg($filter);
         } else {
             $filteroption = ' -di';
         }
