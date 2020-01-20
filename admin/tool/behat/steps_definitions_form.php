@@ -40,8 +40,14 @@ class steps_definitions_form extends moodleform {
      * @return void
      */
     public function definition() {
+        global $PAGE;
 
         $mform = $this->_form;
+        $output = $PAGE->get_renderer('tool_behat');
+
+        $mform->addElement('header', 'info', get_string('infoheading', 'tool_behat'));
+        $mform->setExpanded('info', false);
+        $mform->addElement('html', $output->generic_info());
 
         $mform->addElement('header', 'filters', get_string('stepsdefinitionsfilters', 'tool_behat'));
 
