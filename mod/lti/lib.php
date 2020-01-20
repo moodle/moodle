@@ -219,7 +219,9 @@ function lti_get_shortcuts($defaultitem) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     $types = lti_get_configured_types($COURSE->id, $defaultitem->link->param('sr'));
-    $types[] = $defaultitem;
+    if (has_capability('mod/lti:addmanualinstance', context_course::instance($COURSE->id))) {
+        $types[] = $defaultitem;
+    }
 
     // Add items defined in ltisource plugins.
     foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {

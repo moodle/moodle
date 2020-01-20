@@ -210,7 +210,7 @@ In addition, all web service requests from the tool provider will use SSL.
 
 If using this option, confirm that this Moodle site and the tool provider support SSL.';
 $string['generaltool'] = 'General tool';
-$string['global_tool_types'] = 'Global preconfigured tools';
+$string['global_tool_types'] = 'Preconfigured tools';
 $string['grading'] = 'Grade routing';
 $string['icon_url'] = 'Icon URL';
 $string['icon_url_help'] = 'The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
@@ -254,8 +254,10 @@ real estate to the tool, and others provide a more integrated feel with the Mood
 $string['launchoptions'] = 'Launch options';
 $string['leaveblank'] = 'Leave blank if you do not need them';
 $string['lti'] = 'LTI';
-$string['lti:addinstance'] = 'Add a new external tool';
 $string['lti:addcoursetool'] = 'Add course-specific tool configurations';
+$string['lti:addmanualinstance'] = 'Add a manually-configured tool';
+$string['lti:addinstance'] = 'Add a new external tool';
+$string['lti:addpreconfiguredinstance'] = 'Add a preconfigured tool';
 $string['lti:grade'] = 'View grades returned by the external tool';
 $string['lti:manage'] = 'Be an Instructor when the tool is launched';
 $string['lti:admin'] = 'Be an administrator when the tool is launched';
