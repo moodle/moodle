@@ -853,7 +853,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
 
     // Get basic user metadata.
     $returnobject->metadata['userid'] = $user->id;
-    $returnobject->metadata['userfullname'] = fullname($user, true);
+    $returnobject->metadata['userfullname'] = fullname($user);
     $returnobject->metadata['userprofileurl'] = new moodle_url('/user/profile.php', array(
         'id' => $user->id
     ));
@@ -925,7 +925,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
         // Save values for the real user, as $user will be full of data for the
         // user the user is disguised as.
         $returnobject->metadata['realuserid'] = $realuser->id;
-        $returnobject->metadata['realuserfullname'] = fullname($realuser, true);
+        $returnobject->metadata['realuserfullname'] = fullname($realuser);
         $returnobject->metadata['realuserprofileurl'] = new moodle_url('/user/profile.php', array(
             'id' => $realuser->id
         ));
