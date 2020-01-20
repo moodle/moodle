@@ -25,6 +25,21 @@ body.behat-site {
         transition: initial;
         position: absolute;
     }
+    .custom-control,
+    .custom-switch {
+        padding-left: 0;
+    }
+    .custom-control-input {
+        position: static;
+        z-index: 0;
+        opacity: 1;
+    }
+    .custom-control-label {
+        &::before,
+        &::after {
+            content: none;
+        }
+    }
 }
 
 .phpinfo table,
