@@ -166,6 +166,12 @@ class behat_mod_forum extends behat_base {
                 $cm = get_coursemodule_from_instance('forum', $discussioninfo['forum']);
             }
 
+            // Prepare data for groups if needed.
+            if (!empty($discussioninfo['group'])) {
+                $discussioninfo['groupid'] = $this->get_group_id($courseid, $discussioninfo['group']);
+                unset($discussioninfo['group']);
+            }
+
             // Create the discussion post.
             $discussion = $forumgenerator->create_discussion($discussioninfo);
             $postid = $DB->get_field('forum_posts', 'id', ['discussion' => $discussion->id]);
@@ -366,6 +372,33 @@ class behat_mod_forum extends behat_base {
         }
 
         return $forumid;
+    }
+
+    /**
+     * Fetch Group ID using group name.
+     *
+     * @param int $courseid The course ID the forum exists within.
+     * @param string $groupname The short name of the group.
+     * @return int The group ID.
+     * @throws Exception
+     */
+    protected function get_group_id(int $courseid, string $groupname): int {
+        global $DB;
+
+        if ($groupname === 'All participants') {
+            return -1;
+        }
+
+        $conditions = [
+            'courseid' => $courseid,
+            'idnumber' => $groupname,
+        ];
+
+        if (!$groupid = $DB->get_field('groups', 'id', $conditions)) {
+            throw new Exception("A group with name '{$groupname}' does not exist in the provided course");
+        }
+
+        return $groupid;
     }
 
     /**
