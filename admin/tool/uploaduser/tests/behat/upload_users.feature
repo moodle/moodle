@@ -36,7 +36,7 @@ Feature: Upload users
     And I am on "Maths" course homepage
     And I navigate to "Users > Groups" in current page administration
     And I set the field "groups" to "Section 1 (1)"
-    And the "members" select box should contain "Tom Jones"
+    And the "members" select box should contain "Tom Jones (jonest@example.com)"
 
   @javascript
   Scenario: Upload users enrolling them on courses and groups applying defaults

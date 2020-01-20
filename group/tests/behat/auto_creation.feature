@@ -80,15 +80,13 @@ Feature: Automatic creation of groups
       | Group/member count | 4 |
       | Grouping of auto-created groups | New grouping |
       | Grouping name | Grouping name |
+      | Allocate members | Alphabetically by last name, first name |
     And I press "Preview"
-    Then I should see "Group members"
-    And I should see "User count"
-    And I should see "Group A" in the ".generaltable" "css_element"
-    And I should see "Group B" in the ".generaltable" "css_element"
-    And I should see "Group C" in the ".generaltable" "css_element"
-    And I should see "4" in the "Group A" "table_row"
-    And I should see "4" in the "Group B" "table_row"
-    And I should see "2" in the "Group C" "table_row"
+    Then the following should exist in the "generaltable" table:
+      | Groups (3)   | Group members                    | User count (10) |
+      | Group A      | Student 1 (student1@example.com) | 4               |
+      | Group B      | Student 5 (student5@example.com) | 4               |
+      | Group C      | Student 9 (student9@example.com) | 2               |
     And I set the field "Prevent last small group" to "1"
     And I press "Preview"
     And I should see "Group A" in the ".generaltable" "css_element"
@@ -163,7 +161,7 @@ Feature: Automatic creation of groups
     And I set the field "Auto create based on" to "Members per group"
     When I set the field "Group/member count" to "11"
     And I press "Preview"
-    Then I should see "Suspended student 11"
+    Then I should see "Suspended student 11 (suspendedstudent11@example.com)"
 
   Scenario: Do not display 'Include only active enrolments' if user does not have the 'moodle/course:viewsuspendedusers' capability
     Given I log out
