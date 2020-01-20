@@ -3404,7 +3404,7 @@ function xmldb_main_upgrade($oldversion) {
                   FROM {event_subscriptions} es
              LEFT JOIN {user} u ON u.id = es.userid
                  WHERE u.deleted = 1 OR u.id IS NULL";
-        $deletedusers = $DB->get_field_sql($sql);
+        $deletedusers = $DB->get_fieldset_sql($sql);
         if ($deletedusers) {
             list($sql, $params) = $DB->get_in_or_equal($deletedusers);
 
@@ -3457,6 +3457,16 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019052003.05);
+    }
+
+
+    if ($oldversion < 2019052004.02) {
+        // Delete all orphaned subscription events.
+        $select = "subscriptionid IS NOT NULL
+                   AND subscriptionid NOT IN (SELECT id from {event_subscriptions})";
+        $DB->delete_records_select('event', $select);
+
+        upgrade_main_savepoint(true, 2019052004.02);
     }
 
     return true;
