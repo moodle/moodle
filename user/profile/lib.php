@@ -629,6 +629,10 @@ function profile_load_data($user) {
  */
 function profile_definition($mform, $userid = 0) {
     $categories = profile_get_user_fields_with_data_by_category($userid);
+
+    // IOMAD - Filter categories which only apply to this company.
+    $categories = iomad::iomad_filter_profile_categories($categories, $userid);
+
     foreach ($categories as $categoryid => $fields) {
         // Check first if *any* fields will be displayed.
         $fieldstodisplay = [];
@@ -913,7 +917,13 @@ function profile_has_required_custom_fields_set($userid) {
          LEFT JOIN {user_info_data} d ON (d.fieldid = f.id AND d.userid = ?)
              WHERE f.required = 1 AND f.visible > 0 AND f.locked = 0 AND d.id IS NULL";
 
-    if ($DB->record_exists_sql($sql, [$userid])) {
+    // IOMAD - Need to ignore profile fields which belong to another company.
+    $sql .= " AND (f.categoryid IN (
+                  SELECT c.profileid FROM {company} c JOIN {company_users} cu ON (c.id = cu.companyid AND cu.userid = ?))
+                OR f.categoryid IN (
+                  SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company}))) ";
+
+    if ($DB->record_exists_sql($sql, [$userid, $userid])) {
         return false;
     }
 

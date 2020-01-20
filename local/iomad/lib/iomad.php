@@ -328,6 +328,43 @@ class iomad {
 
     /**
      * IOMAD:
+     * Filter profile field categories to only show 'company' categories for the
+     * current user. All other pass through as normal
+     * @param array $categories list of category objects
+     * @return array filtered list of categories
+     */
+    public static function iomad_filter_profile_categories( $categories, $userid = 0 ) {
+        global $DB, $USER;
+
+        if (empty($userid)) {
+            $user = $USER;
+        } else {
+            $user = $DB->get_record('user', array('id' => $userid));
+            $user->company = company::get_company_byuserid($userid);
+        }
+
+        $iomadcategories = array();
+        foreach ($categories as $id => $category) {
+
+            // Try to find category in company list.
+            if ($company = $DB->get_record( 'company', array('profileid' => $id) ) ) {
+
+                // If this is not the user's company then do not include.
+                if (!empty( $user->company->id )) {
+                    if ($user->company->id == $company->id) {
+                        $iomadcategories[ $id ] = $category;
+                    }
+                }
+            } else {
+                $iomadcategories[ $id ] = $category;
+            }
+        }
+
+        return $iomadcategories;
+    }
+
+    /**
+     * IOMAD:
      * Filter categories to only show 'company' categories for the
      * current user. All other pass through as normal
      * @param array $categories list of category objects
