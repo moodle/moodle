@@ -415,4 +415,10 @@ $definitions = array(
         'simplekeys' => false,
         'simpledata' => false,
     ],
+
+    // The list of content items (activities, resources and their subtypes) that can be added to a course for a user.
+    'user_course_content_items' => [
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+    ],
 );
