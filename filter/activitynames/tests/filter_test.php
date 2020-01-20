@@ -37,7 +37,6 @@ require_once($CFG->dirroot . '/filter/activitynames/filter.php'); // Include the
 class filter_activitynames_filter_testcase extends advanced_testcase {
 
     public function test_links() {
-        global $CFG;
         $this->resetAfterTest(true);
 
         // Create a test course.
@@ -59,8 +58,8 @@ class filter_activitynames_filter_testcase extends advanced_testcase {
         preg_match_all('~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
                 $filtered, $matches);
 
-        // There should be 3 links links.
-        $this->assertEquals(2, count($matches[1]));
+        // There should be 2 links links.
+        $this->assertCount(2, $matches[1]);
 
         // Check text of title attribute.
         $this->assertEquals($page1->name, $matches[1][0]);
@@ -73,5 +72,34 @@ class filter_activitynames_filter_testcase extends advanced_testcase {
         // Check the link text.
         $this->assertEquals($page1->name, $matches[3][0]);
         $this->assertEquals($page2->name, $matches[3][1]);
+    }
+
+    public function test_links_activity_named_hyphen() {
+        $this->resetAfterTest(true);
+
+        // Create a test course.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        // Work around an issue with the activity names filter which maintains a static cache
+        // of activities for current course ID. We can re-build the cache by switching user.
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        // Create a page activity named '-' (single hyphen).
+        $page = $this->getDataGenerator()->create_module('page', ['course' => $course->id, 'name' => '-']);
+
+        $html = '<p>Please read the - page.</p>';
+        $filtered = format_text($html, FORMAT_HTML, array('context' => $context));
+
+        // Find the page link in the filtered html.
+        preg_match_all('~<a class="autolink" title="([^"]*)" href="[^"]*/mod/page/view.php\?id=([0-9]+)">([^<]*)</a>~',
+            $filtered, $matches);
+
+        // We should have exactly one match.
+        $this->assertCount(1, $matches[1]);
+
+        $this->assertEquals($page->name, $matches[1][0]);
+        $this->assertEquals($page->cmid, $matches[2][0]);
+        $this->assertEquals($page->name, $matches[3][0]);
     }
 }
