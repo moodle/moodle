@@ -507,7 +507,7 @@ function profile_edit_field($id, $datatype, $redirect, $companyid) {
     // Strip out the company shortname from the field name.
     if (isset($field->categoryid)) {
         $category = $DB->get_record('user_info_category', array('id' => $field->categoryid));
-        $prefix = $category->name;
+        $prefix = str_replace(" ", "", $category->name);
         if (substr($field->shortname, 0, strlen($prefix)) == $prefix) {
            $field->shortname = substr($field->shortname, strlen($prefix));
         }
@@ -526,7 +526,7 @@ function profile_edit_field($id, $datatype, $redirect, $companyid) {
             $category = $DB->get_record('user_info_category', array('id' => $data->categoryid));
             // Collect the description and format back into the proper data structure from the editor.
             // Note: This field will ALWAYS be an editor.
-            $data->shortname = $category->name . $data->shortname;
+            $data->shortname = str_replace(" ", "", $category->name . $data->shortname);
             $data->descriptionformat = $data->description['format'];
             $data->description = $data->description['text'];
 

@@ -185,5 +185,19 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018090600, 'block', 'iomad_company_admin');
     }
 
+    if ($oldversion < 2019032103) {
+
+        // Convert all profile shortnames to remove spaces.
+        if ($userprofilefields = $DB->get_records('user_info_field')) {
+            foreach ($userprofilefields as $userprofilefield) {
+                $userprofilefield->shortname = str_replace(" ", "", $userprofilefield->shortname);
+                $DB->update_record('user_info_field', $userprofilefield);
+            }
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019032103, 'block', 'iomad_company_admin');
+    }
+
     return true;
 }
