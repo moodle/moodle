@@ -25,7 +25,6 @@
  */
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/webservice/forms.php');
 require_once($CFG->libdir . '/externallib.php');
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -51,7 +50,7 @@ $webservicemanager = new webservice();
 switch ($action) {
 
     case 'create':
-        $mform = new web_service_token_form(null, array('action' => 'create'));
+        $mform = new \core_webservice\token_form(null, array('action' => 'create'));
         $data = $mform->get_data();
         if ($mform->is_cancelled()) {
             redirect($tokenlisturl);
