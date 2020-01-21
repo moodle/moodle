@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_h5p\autoloader;
+use core_h5p\local\library\autoloader;
 
 /**
  * Tests for h5p deleted event.

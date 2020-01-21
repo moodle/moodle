@@ -26,7 +26,7 @@
 namespace core_h5p\local\tests;
 
 use core_h5p\file_storage;
-use core_h5p\autoloader;
+use core_h5p\local\library\autoloader;
 use core_h5p\helper;
 use file_archive;
 use zip_archive;

@@ -32,6 +32,7 @@ use H5PCore;
 use H5PFrameworkInterface;
 use stdClass;
 use moodle_url;
+use core_h5p\local\library\autoloader;
 
 /**
  * H5P core class, containing functions and storage shared by the other H5P classes.
@@ -138,20 +139,24 @@ class core extends \H5PCore {
     }
 
     /**
-     * Get core JavaScript files.
+     * Get the list of JS scripts to include on the page.
      *
      * @return array The array containg urls of the core JavaScript files
      */
     public static function get_scripts(): array {
-        global $CFG;
-        $cachebuster = '?ver='.$CFG->jsrev;
-        $liburl = $CFG->wwwroot . '/lib/h5p/';
-        $urls = [];
+        global $PAGE;
 
+        $factory = new factory();
+        $jsrev = $PAGE->requires->get_jsrev();
+        $urls = [];
         foreach (self::$scripts as $script) {
-            $urls[] = new moodle_url($liburl . $script . $cachebuster);
+            $urls[] = autoloader::get_h5p_core_library_url($script, [
+                'ver' => $jsrev,
+            ]);
         }
-        $urls[] = new moodle_url("/h5p/js/h5p_overrides.js");
+        $urls[] = new moodle_url("/h5p/js/h5p_overrides.js", [
+            'ver' => $jsrev,
+        ]);
 
         return $urls;
     }

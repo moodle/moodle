@@ -1881,6 +1881,10 @@ class core_plugin_manager {
                 'rubric', 'guide'
             ),
 
+            'h5plib' => array(
+                'v124'
+            ),
+
             'local' => array(
             ),
 

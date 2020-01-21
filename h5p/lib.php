@@ -23,6 +23,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+use core_h5p\local\library\autoloader;
+
 /**
  * Serve the files from the core_h5p file areas.
  *
@@ -44,7 +46,7 @@ function core_h5p_pluginfile($course, $cm, $context, string $filearea, array $ar
     global $DB;
 
     // Require classes from H5P third party library
-    \core_h5p\autoloader::register();
+    autoloader::register();
 
     $filesettingsset = false;
 
