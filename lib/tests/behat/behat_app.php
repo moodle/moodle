@@ -294,7 +294,7 @@ class behat_app extends behat_base {
                         }
                     }
                     throw new DriverException('Moodle app not found in browser');
-                }, false, 30);
+                }, false, 60);
 
         // Run the scripts to install Moodle 'pending' checks.
         $this->getSession()->executeScript(
@@ -312,7 +312,7 @@ class behat_app extends behat_base {
                         return 'mainpage';
                     }
                     throw new DriverException('Moodle app login URL prompt not found');
-                }, behat_base::get_extended_timeout(), 30);
+                }, behat_base::get_extended_timeout(), 60);
 
         // If it's the login page, we automatically fill in the URL and leave it on the user/pass
         // page. If it's the main page, we just leave it there.
