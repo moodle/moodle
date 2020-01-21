@@ -34,6 +34,7 @@ information provided here is intended especially for developers.
 * Added function cleanup_after_drop to the database_manager class to take care of all the cleanups that need to be done after a table is dropped.
 * The 'xxxx_check_password_policy' callback now only fires if $CFG->passwordpolicy is true
 * grade_item::update_final_grade() can now take an optional parameter to set the grade->timemodified. If not present the current time will carry on being used.
+* lib/outputrequirementslib::get_jsrev now is public, it can be called from other classes.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop

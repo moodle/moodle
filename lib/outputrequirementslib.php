@@ -400,7 +400,7 @@ class page_requirements_manager {
      *
      * @return int the jsrev to use.
      */
-    protected function get_jsrev() {
+    public function get_jsrev() {
         global $CFG;
 
         if (empty($CFG->cachejs)) {
