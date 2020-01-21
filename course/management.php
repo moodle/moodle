@@ -316,7 +316,8 @@ if ($action !== false && confirm_sesskey()) {
                         $notificationsfail[] = get_string('movecategoryownparent', 'error', $cattomove->get_formatted_name());
                         continue;
                     }
-                    if (strpos($movetocat->path, $cattomove->path) === 0) {
+                    // Don't allow user to move selected category into one of it's own sub-categories.
+                    if (strpos($movetocat->path, $cattomove->path . '/') === 0) {
                         $notificationsfail[] = get_string('movecategoryparentconflict', 'error', $cattomove->get_formatted_name());
                         continue;
                     }
