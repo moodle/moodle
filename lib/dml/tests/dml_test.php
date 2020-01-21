@@ -5712,7 +5712,9 @@ class moodle_database_for_testing extends moodle_database {
     public function get_last_error() {}
     public function get_tables($usecache=true) {}
     public function get_indexes($table) {}
-    public function get_columns($table, $usecache=true) {}
+    protected function fetch_columns(string $table): array {
+        return [];
+    }
     protected function normalise_value($column, $value) {}
     public function set_debug($state) {}
     public function get_debug() {}

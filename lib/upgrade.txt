@@ -28,6 +28,8 @@ information provided here is intended especially for developers.
   - Currently supported by:
     - mod_assign
     - mod_quiz
+* The database drivers (moodle_database and subclasses) don't need to implement get_columns() anymore.
+  They have to implement fetch_columns instead.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
