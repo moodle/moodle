@@ -2744,6 +2744,16 @@ $functions = array(
         'capabilities'  => '',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_xapi_statement_post' => [
+        'classname'     => 'core_xapi\external\post_statement',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Post an xAPI statement.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => '',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 );
 
 $services = array(
