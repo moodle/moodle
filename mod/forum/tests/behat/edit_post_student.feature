@@ -40,7 +40,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I press "Continue"
     Then I should not see "Forum post subject"
 
-  @javascript @block_recent_activity
+  @block_recent_activity
   Scenario: Time limit expires
     Given I log out
     And I log in as "admin"
