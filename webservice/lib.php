@@ -1416,7 +1416,7 @@ abstract class webservice_base_server extends webservice_server {
                      7. The function is called with username/password (no user token is sent)
                      and none of the services has the function to allow the user.
                      These settings can be found in Administration > Site administration
-                     > Plugins > Web services > External services and Manage tokens.');
+                     > Server > Web services > External services and Manage tokens.');
         }
 
         // we have all we need now

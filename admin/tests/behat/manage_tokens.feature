@@ -15,7 +15,7 @@ Feature: Manage tokens
 
   @javascript
   Scenario: Add & delete a token
-    Given I navigate to "Plugins > Web services > Manage tokens" in site administration
+    Given I navigate to "Server > Web services > Manage tokens" in site administration
     And I follow "Add"
     And I set the field "User" to "Joe Bloggs"
     And I set the field "IP restriction" to "127.0.0.1"
