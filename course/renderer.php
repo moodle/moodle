@@ -268,20 +268,33 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     function course_section_add_cm_control($course, $section, $sectionreturn = null, $displayoptions = array()) {
-        global $CFG;
+        global $CFG, $PAGE, $USER;
 
         $vertical = !empty($displayoptions['inblock']);
 
-        // check to see if user can add menus and there are modules to add
+        // Check to see if user can add menus.
         if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
-                || !$this->page->user_is_editing()
-                || !($modnames = get_module_types_names()) || empty($modnames)) {
+                || !$this->page->user_is_editing()) {
             return '';
         }
 
         // Retrieve all modules with associated metadata
-        $modules = get_module_metadata($course, $modnames, $sectionreturn);
-        $urlparams = array('section' => $section);
+        $contentitemservice = new \core_course\local\service\content_item_service(
+            new \core_course\local\repository\caching_content_item_readonly_repository(
+                \cache::make('core', 'user_course_content_items'),
+                new \core_course\local\repository\content_item_readonly_repository()
+            )
+        );
+        $urlparams = ['section' => $section];
+        if (!is_null($sectionreturn)) {
+            $urlparams['sr'] = $sectionreturn;
+        }
+        $modules = $contentitemservice->get_content_items_for_user_in_course($USER, $course, $urlparams);
+
+        // Return if there are no content items to add.
+        if (empty($modules)) {
+            return '';
+        }
 
         // We'll sort resources and activities into two lists
         $activities = array(MOD_CLASS_ACTIVITY => array(), MOD_CLASS_RESOURCE => array());
@@ -294,7 +307,7 @@ class core_course_renderer extends plugin_renderer_base {
                 // System modules cannot be added by user, do not add to dropdown.
                 continue;
             }
-            $link = $module->link->out(true, $urlparams);
+            $link = $module->link;
             $activities[$activityclass][$link] = $module->title;
         }
 

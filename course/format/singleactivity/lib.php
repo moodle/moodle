@@ -383,10 +383,12 @@ class format_singleactivity extends format_base {
      * @return bool|null (null if the check is not possible)
      */
     public function activity_has_subtypes() {
+        global $PAGE, $USER;
         if (!($modname = $this->get_activitytype())) {
             return null;
         }
-        $metadata = get_module_metadata($this->get_course(), self::get_supported_activities());
+        $contentitemservice = new \core_course\local\service\content_item_service($PAGE->get_renderer('course'));
+        $metadata = $contentitemservice->get_content_items_for_user_in_course($USER, $this->get_course());
         foreach ($metadata as $key => $moduledata) {
             if (preg_match('/^'.$modname.':/', $key)) {
                 return true;
