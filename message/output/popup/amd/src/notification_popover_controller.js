@@ -226,9 +226,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
             var notificationurlparams = {
                 notificationid: notification.id
             };
-            if (notification.contexturl) {
-                notificationurlparams.redirecturl = encodeURIComponent(notification.contexturl);
-            }
+
             notification.contexturl = URL.relativeUrl('message/output/popup/mark_notification_read.php', notificationurlparams);
 
             var promise = Templates.render('message_popup/notification_content_item', notification)
