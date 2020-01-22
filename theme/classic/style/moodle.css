@@ -15545,7 +15545,10 @@ body.path-question-type {
 .que .questioncorrectnessicon {
   vertical-align: text-bottom; }
 
-.que input.questionflagimage {
+body.jsenabled .questionflag input[type=checkbox] {
+  display: none; }
+
+.que .questionflagimage {
   padding-right: 3px;
   height: 16px;
   width: 16px; }
