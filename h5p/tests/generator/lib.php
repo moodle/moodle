@@ -23,7 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_h5p\factory;
+use core_h5p\autoloader;
+use core_h5p\core;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -343,30 +344,28 @@ class core_h5p_generator extends \component_generator_base {
     }
 
     /**
-     * Create content type records in the h5p_libraries database table.
+     * Create H5P content type records in the h5p_libraries database table.
      *
-     * @param int $pending Number of content types not installed
+     * @param array $typestonotinstall H5P content types that should not be installed
+     * @param core $core h5p_test_core instance required to use the exttests URL
      * @return array Data of the content types not installed.
      */
-    public function create_content_types(int $pending): array {
+    public function create_content_types(array $typestonotinstall, core $core): array {
         global $DB;
 
-        $factory = new factory();
-        $core = $factory->get_core();
+        autoloader::register();
 
         // Get info of latest content types versions.
         $contenttypes = $core->get_latest_content_types()->contentTypes;
 
-        $size = count($contenttypes) - $pending;
-
-        // Avoid to install 2 content types.
-        $chunks = array_chunk($contenttypes, $size);
-
-        $contenttypes = $chunks[0];
-        $pendingtypes = $chunks[1];
+        $installedtypes = 0;
 
         // Fake installation of all other H5P content types.
         foreach ($contenttypes as $contenttype) {
+            // Don't install pending content types.
+            if (in_array($contenttype->id, $typestonotinstall)) {
+                continue;
+            }
             $library = [
                 'machinename' => $contenttype->id,
                 'majorversion' => $contenttype->version->major,
@@ -377,8 +376,9 @@ class core_h5p_generator extends \component_generator_base {
                 'coreminor' => $contenttype->coreApiVersionNeeded->minor
             ];
             $DB->insert_record('h5p_libraries', (object) $library);
+            $installedtypes++;
         }
 
-        return [$contenttypes, $pendingtypes];
+        return [$installedtypes, count($typestonotinstall)];
     }
 }
