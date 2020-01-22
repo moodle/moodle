@@ -384,7 +384,6 @@ class mysql_sql_generator extends sql_generator {
         $sqlarr = parent::getDropTableSQL($xmldb_table);
         if ($this->temptables->is_temptable($xmldb_table->getName())) {
             $sqlarr = preg_replace('/^DROP TABLE/', "DROP TEMPORARY TABLE", $sqlarr);
-            $this->temptables->delete_temptable($xmldb_table->getName());
         }
         return $sqlarr;
     }

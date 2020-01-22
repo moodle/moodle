@@ -104,21 +104,6 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one correct xmldb_table, returns the SQL statements
-     * to drop it (inside one array).
-     *
-     * @param xmldb_table $xmldb_table The table to drop.
-     * @return array SQL statement(s) for dropping the specified table.
-     */
-    public function getDropTableSQL($xmldb_table) {
-        $sqlarr = parent::getDropTableSQL($xmldb_table);
-        if ($this->temptables->is_temptable($xmldb_table->getName())) {
-            $this->temptables->delete_temptable($xmldb_table->getName());
-        }
-        return $sqlarr;
-    }
-
-    /**
      * Given one correct xmldb_index, returns the SQL statements
      * needed to create it (in array).
      *
