@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.15  24-Nov-2019
+@version   v5.20.16  12-Jan-2020
 @copyright (c) 2000-2013 John Lim. All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -120,7 +120,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 			/*
 			* find the next character of the string
 			*/
-			$c = $sql[$i];
+			$c = $sql{$i};
 
 			if ($c == "'" && !$inString && $escaped==0)
 				/*
