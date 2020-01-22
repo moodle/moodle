@@ -1538,4 +1538,149 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         // Try to retrieve other user private files info.
         core_user_external::get_private_files_info($user2->id);
     }
+
+    /**
+     * Test the functionality of the {@see \core_user\external\search_identity} class.
+     */
+    public function test_external_search_identity() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $user1 = self::getDataGenerator()->create_user([
+            'firstname' => 'Firstone',
+            'lastname' => 'Lastone',
+            'username' => 'usernameone',
+            'idnumber' => 'idnumberone',
+            'email' => 'userone@example.com',
+            'phone1' => 'tel1',
+            'phone2' => 'tel2',
+            'department' => 'Department Foo',
+            'institution' => 'Institution Foo',
+            'city' => 'City One',
+            'country' => 'AU',
+        ]);
+
+        $user2 = self::getDataGenerator()->create_user([
+            'firstname' => 'Firsttwo',
+            'lastname' => 'Lasttwo',
+            'username' => 'usernametwo',
+            'idnumber' => 'idnumbertwo',
+            'email' => 'usertwo@example.com',
+            'phone1' => 'tel1',
+            'phone2' => 'tel2',
+            'department' => 'Department Foo',
+            'institution' => 'Institution Foo',
+            'city' => 'City One',
+            'country' => 'AU',
+        ]);
+
+        $user3 = self::getDataGenerator()->create_user([
+            'firstname' => 'Firstthree',
+            'lastname' => 'Lastthree',
+            'username' => 'usernamethree',
+            'idnumber' => 'idnumberthree',
+            'email' => 'userthree@example.com',
+            'phone1' => 'tel1',
+            'phone2' => 'tel2',
+            'department' => 'Department Foo',
+            'institution' => 'Institution Foo',
+            'city' => 'City One',
+            'country' => 'AU',
+        ]);
+
+        $CFG->showuseridentity = 'email,idnumber,city';
+        $CFG->maxusersperpage = 3;
+
+        $result = \core_user\external\search_identity::execute('Lastt');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(2, count($result['list']));
+        $this->assertEquals(3, $result['maxusersperpage']);
+        $this->assertEquals(false, $result['overflow']);
+
+        foreach ($result['list'] as $user) {
+            $this->assertEquals(3, count($user['extrafields']));
+            $this->assertEquals('email', $user['extrafields'][0]['name']);
+            $this->assertEquals('idnumber', $user['extrafields'][1]['name']);
+            $this->assertEquals('city', $user['extrafields'][2]['name']);
+        }
+
+        $CFG->showuseridentity = 'username';
+        $CFG->maxusersperpage = 2;
+
+        $result = \core_user\external\search_identity::execute('Firstt');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(2, count($result['list']));
+        $this->assertEquals(2, $result['maxusersperpage']);
+        $this->assertEquals(false, $result['overflow']);
+
+        foreach ($result['list'] as $user) {
+            $this->assertEquals(1, count($user['extrafields']));
+            $this->assertEquals('username', $user['extrafields'][0]['name']);
+        }
+
+        $CFG->showuseridentity = 'email';
+        $CFG->maxusersperpage = 2;
+
+        $result = \core_user\external\search_identity::execute('City One');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(0, count($result['list']));
+        $this->assertEquals(2, $result['maxusersperpage']);
+        $this->assertEquals(false, $result['overflow']);
+
+        $CFG->showuseridentity = 'city';
+        $CFG->maxusersperpage = 2;
+
+        foreach ($result['list'] as $user) {
+            $this->assertEquals(1, count($user['extrafields']));
+            $this->assertEquals('username', $user['extrafields'][0]['name']);
+        }
+
+        $result = \core_user\external\search_identity::execute('City One');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(2, count($result['list']));
+        $this->assertEquals(2, $result['maxusersperpage']);
+        $this->assertEquals(true, $result['overflow']);
+    }
+
+    /**
+     * Test functionality of the {@see \core_user\external\search_identity} class with alternativefullnameformat defined.
+     */
+    public function test_external_search_identity_with_alternativefullnameformat() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $user1 = self::getDataGenerator()->create_user([
+            'lastname' => '小柳',
+            'lastnamephonetic' => 'Koyanagi',
+            'firstname' => '秋',
+            'firstnamephonetic' => 'Aki',
+            'email' => 'koyanagiaki@example.com',
+            'country' => 'JP',
+        ]);
+
+        $CFG->showuseridentity = 'email';
+        $CFG->maxusersperpage = 3;
+        $CFG->alternativefullnameformat =
+            '<ruby>lastname firstname <rp>(</rp><rt>lastnamephonetic firstnamephonetic</rt><rp>)</rp></ruby>';
+
+        $result = \core_user\external\search_identity::execute('Ak');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(1, count($result['list']));
+        $this->assertEquals(3, $result['maxusersperpage']);
+        $this->assertEquals(false, $result['overflow']);
+
+        foreach ($result['list'] as $user) {
+            $this->assertEquals(1, count($user['extrafields']));
+            $this->assertEquals('email', $user['extrafields'][0]['name']);
+        }
+    }
 }

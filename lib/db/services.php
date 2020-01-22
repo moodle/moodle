@@ -1740,11 +1740,20 @@ $functions = array(
         'methodname' => 'get_users_by_field',
         'classpath' => 'user/externallib.php',
         'description' => 'Retrieve users\' information for a specified unique field - If you want to do a user search, use '
-            . 'core_user_get_users()',
+            . 'core_user_get_users() or core_user_search_identity().',
         'type' => 'read',
         'capabilities' => 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_user_search_identity' => array(
+        'classname' => '\core_user\external\search_identity',
+        'methodname' => 'execute',
+        'description' => 'Return list of users identities matching the given criteria in their name or other identity fields.',
+        'type' => 'read',
+        'capabilities' => 'moodle/user:viewalldetails',
+        'ajax' => true,
+        'loginrequired' => true,
     ),
     'core_user_remove_user_device' => array(
         'classname' => 'core_user_external',
