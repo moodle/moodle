@@ -1052,7 +1052,7 @@ foreach ($pluginswithfunction as $plugins) {
     foreach ($plugins as $function) {
         try {
             $function();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             debugging("Exception calling '$function'", DEBUG_DEVELOPER, $e->getTrace());
         }
     }
