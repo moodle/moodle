@@ -42,8 +42,21 @@ define('ANY_VERSION', 'any');
  * Collection of components related methods.
  */
 class core_component {
-    /** @var array list of ignored directories - watch out for auth/db exception */
-    protected static $ignoreddirs = array('CVS'=>true, '_vti_cnf'=>true, 'simpletest'=>true, 'db'=>true, 'yui'=>true, 'tests'=>true, 'classes'=>true, 'fonts'=>true);
+    /** @var array list of ignored directories in plugin type roots - watch out for auth/db exception */
+    protected static $ignoreddirs = [
+        'CVS' => true,
+        '_vti_cnf' => true,
+        'amd' => true,
+        'classes' => true,
+        'db' => true,
+        'fonts' => true,
+        'lang' => true,
+        'pix' => true,
+        'simpletest' => true,
+        'templates' => true,
+        'tests' => true,
+        'yui' => true,
+    ];
     /** @var array list plugin types that support subplugins, do not add more here unless absolutely necessary */
     protected static $supportsubplugins = array('mod', 'editor', 'tool', 'local');
 
