@@ -27,6 +27,7 @@ namespace core_h5p;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/filelib.php");
+
 use H5PCore;
 use H5PFrameworkInterface;
 use stdClass;
@@ -170,6 +171,9 @@ class core extends \H5PCore {
 
         $typesinstalled = [];
 
+        $factory = new factory();
+        $framework = $factory->get_framework();
+
         foreach ($contenttypes->contentTypes as $type) {
             // Don't fetch content types that require a higher H5P core API version.
             if (!$this->is_required_core_api($type->coreApiVersionNeeded)) {
@@ -182,9 +186,6 @@ class core extends \H5PCore {
                 'minorVersion' => $type->version->minor,
                 'patchVersion' => $type->version->patch
             ];
-
-            $factory = new \core_h5p\factory();
-            $framework = $factory->get_framework();
 
             $shoulddownload = true;
             if ($framework->getLibraryId($type->id, $type->version->major, $type->version->minor)) {
@@ -216,7 +217,7 @@ class core extends \H5PCore {
      * @return int|null Returns the id of the content type library installed, null otherwise.
      */
     public function fetch_content_type(array $library): ?int {
-        $factory = new \core_h5p\factory();
+        $factory = new factory();
 
         // Get a temp path to download the content type.
         $temppath = make_request_directory();
@@ -247,7 +248,9 @@ class core extends \H5PCore {
         $file->delete();
 
         $librarykey = static::libraryToString($library);
-        return $factory->get_storage()->h5pC->librariesJsonData[$librarykey]["libraryId"];
+        $libraryid = $factory->get_storage()->h5pC->librariesJsonData[$librarykey]["libraryId"];
+
+        return $libraryid;
     }
 
     /**
