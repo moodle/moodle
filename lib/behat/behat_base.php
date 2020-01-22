@@ -338,20 +338,11 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         if (!$timeout) {
             $timeout = self::get_timeout();
         }
-        if ($microsleep) {
-            // Will sleep 1/10th of a second by default for self::get_timeout() seconds.
-            $loops = $timeout * 10;
-        } else {
-            // Will sleep for self::get_timeout() seconds.
-            $loops = $timeout;
-        }
 
-        // DOM will never change on non-javascript case; do not wait or try again.
-        if (!$this->running_javascript()) {
-            $loops = 1;
-        }
+        $start = microtime(true);
+        $end = $start + $timeout;
 
-        for ($i = 0; $i < $loops; $i++) {
+        do {
             // We catch the exception thrown by the step definition to execute it again.
             try {
                 // We don't check with !== because most of the time closures will return
@@ -367,14 +358,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 }
             }
 
-            if ($this->running_javascript()) {
-                if ($microsleep) {
-                    usleep(100000);
-                } else {
-                    sleep(1);
-                }
+            if (!$this->running_javascript()) {
+                break;
             }
-        }
+
+            usleep(100000);
+
+        } while (microtime(true) < $end);
 
         // Using coding_exception as is a development issue if no exception has been provided.
         if (!$exception) {

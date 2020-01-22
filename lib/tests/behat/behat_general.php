@@ -1018,11 +1018,7 @@ EOF;
             // Using the spin method as we want a reduced timeout but there is no need for a 0.1 seconds interval
             // because in the optimistic case we will timeout.
             // If all goes good it will throw an ElementNotFoundExceptionn that we will catch.
-            $this->spin(
-                function($context, $args) use ($selectortype, $element) {
-                    return $this->find($selectortype, $element);
-                }, [], behat_base::get_reduced_timeout(), $exception, false
-            );
+            return $this->find($selectortype, $element, $exception, false, behat_base::get_reduced_timeout());
         } catch (ElementNotFoundException $e) {
             // We expect the element to not be found.
             return;
