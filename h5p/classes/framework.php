@@ -100,7 +100,7 @@ class framework implements \H5PFrameworkInterface {
         $response = download_file_content($url, null, $data, true, 300, 20,
                 false, $stream);
 
-        if (empty($response->error)) {
+        if (empty($response->error) && ($response->status != '404')) {
             return $response->results;
         } else {
             $this->setErrorMessage($response->error, 'failed-fetching-external-data');

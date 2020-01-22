@@ -45,12 +45,22 @@ class h5p_get_content_types_task extends scheduled_task {
     }
 
     /**
+     * Get an \core_h5p\core instance.
+     *
+     * @return \core_h5p\core
+     */
+    public function get_core() {
+        $factory = new factory();
+        $core = $factory->get_core();
+        return $core;
+    }
+
+    /**
      * Execute the task.
      */
     public function execute() {
 
-        $factory = new factory();
-        $core = $factory->get_core();
+        $core = $this->get_core();
 
         $result = $core->fetch_latest_content_types();
 
