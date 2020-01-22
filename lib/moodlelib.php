@@ -9483,7 +9483,7 @@ function get_performance_info() {
                     $mode = ' <span title="request cache">[r]</span>';
                     break;
             }
-            $html .= '<ul class="cache-definition-stats list-unstyled ml-1 mb-1 cache-mode-'.$modeclass.' card d-inline-block">';
+            $html .= '<li class="d-inline-flex"><ul class="cache-definition-stats list-unstyled ml-1 mb-1 cache-mode-'.$modeclass.' card d-inline-block">';
             $html .= '<li class="cache-definition-stats-heading p-t-1 card-header bg-dark bg-inverse font-weight-bold">' .
                 $definition . $mode.'</li>';
             $text .= "$definition {";
@@ -9506,7 +9506,7 @@ function get_performance_info() {
                     $html .= "<li class=\"cache-store-stats $cachestoreclass p-x-1\">&nbsp;</li>";
                 }
             }
-            $html .= '</ul>';
+            $html .= '</ul></li>';
             $text .= '} ';
         }
         $html .= '</ul> ';
