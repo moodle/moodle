@@ -44,6 +44,9 @@ class token_table extends \table_sql {
      */
     protected $showalltokens;
 
+    /** @var bool $hasviewfullnames Does the user have the viewfullnames capability. */
+    protected $hasviewfullnames;
+
     /**
      * Sets up the table.
      * @param int $id The id of the table
@@ -56,6 +59,7 @@ class token_table extends \table_sql {
 
         // Can we see tokens created by all users?
         $this->showalltokens = has_capability('moodle/webservice:managealltokens', $context);
+        $this->hasviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
         // Define the headers and columns.
         $headers = [];
@@ -131,7 +135,7 @@ class token_table extends \table_sql {
         global $OUTPUT;
 
         $userprofilurl = new \moodle_url('/user/profile.php', ['id' => $data->userid]);
-        $content = \html_writer::link($userprofilurl, fullname($data));
+        $content = \html_writer::link($userprofilurl, fullname($data, $this->hasviewfullnames));
 
         // Make up list of capabilities that the user is missing for the given webservice.
         $webservicemanager = new \webservice();
@@ -183,7 +187,7 @@ class token_table extends \table_sql {
         }
 
         $creatorprofileurl = new \moodle_url('/user/profile.php', ['id' => $data->creatorid]);
-        return \html_writer::link($creatorprofileurl, fullname((object)$user));
+        return \html_writer::link($creatorprofileurl, fullname((object)$user, $this->hasviewfullnames));
     }
 
     /**
