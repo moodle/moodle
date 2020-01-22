@@ -39,7 +39,7 @@ class content_item {
     /** @var string $name the name. */
     private $name;
 
-    /** @var string $title the title. */
+    /** @var title $title the title. */
     private $title;
 
     /** @var \moodle_url $link the url for the content item's setup page (usually mod/edit.php). */
@@ -62,14 +62,14 @@ class content_item {
      *
      * @param int $id Id number.
      * @param string $name Name of the item, not human readable.
-     * @param string $title Human readable title for the item.
+     * @param title $title Human readable title for the item.
      * @param \moodle_url $link The URL to the creation page, with any item specific params
      * @param string $icon HTML containing the icon for the item
      * @param string $help The description of the item.
      * @param int $archetype the archetype for the content item (see MOD_ARCHETYPE_X definitions in lib/moodlelib.php).
      * @param string $componentname the name of the component/plugin with which this content item is associated.
      */
-    public function __construct(int $id, string $name, string $title, \moodle_url $link, string $icon, string $help,
+    public function __construct(int $id, string $name, title $title, \moodle_url $link, string $icon, string $help,
             int $archetype, string $componentname) {
         $this->id = $id;
         $this->name = $name;
@@ -128,9 +128,9 @@ class content_item {
     /**
      * Get the human readable title of this item.
      *
-     * @return string
+     * @return title
      */
-    public function get_title(): string {
+    public function get_title(): title {
         return $this->title;
     }
 

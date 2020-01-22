@@ -27,6 +27,8 @@ namespace tests\core_course;
 defined('MOODLE_INTERNAL') || die();
 
 use core_course\local\entity\content_item;
+use core_course\local\entity\lang_string_title;
+use core_course\local\entity\string_title;
 
 /**
  * Tests for the \core_course\local\entity\content_item class.
@@ -44,16 +46,28 @@ class content_item_testcase extends \advanced_testcase {
     public function test_content_item() {
         $this->resetAfterTest();
 
-        $contentitem = new content_item(22, 'Item name', 'Item title', new \moodle_url('mod_edit.php'), '<img src="test">',
-            'Description of the module', MOD_ARCHETYPE_RESOURCE, 'mod_page');
+        $contentitem = new content_item(22, 'Item name', new lang_string_title('modulename', 'mod_assign'),
+            new \moodle_url('mod_edit.php'), '<img src="test">', 'Description of the module', MOD_ARCHETYPE_RESOURCE, 'mod_page');
 
         $this->assertEquals(22, $contentitem->get_id());
         $this->assertEquals('Item name', $contentitem->get_name());
-        $this->assertEquals('Item title', $contentitem->get_title());
+        $this->assertEquals('Assignment', $contentitem->get_title()->get_value());
         $this->assertEquals(new \moodle_url('mod_edit.php'), $contentitem->get_link());
         $this->assertEquals('<img src="test">', $contentitem->get_icon());
         $this->assertEquals('Description of the module', $contentitem->get_help());
         $this->assertEquals(MOD_ARCHETYPE_RESOURCE, $contentitem->get_archetype());
         $this->assertEquals('mod_page', $contentitem->get_component_name());
+    }
+
+    /**
+     * Test confirming that plugins can return custom titles for a content item.
+     */
+    public function test_content_item_custom_string_title() {
+        $this->resetAfterTest();
+
+        $contentitem = new content_item(22, 'Item name', new string_title('My custom string'),
+            new \moodle_url('mod_edit.php'), '<img src="test">', 'Description of the module', MOD_ARCHETYPE_RESOURCE, 'mod_page');
+
+        $this->assertEquals('My custom string', $contentitem->get_title()->get_value());
     }
 }
