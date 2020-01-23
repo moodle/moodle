@@ -327,4 +327,115 @@ class mod_lti_lib_testcase extends advanced_testcase {
 
         return calendar_event::create($event);
     }
+
+    /**
+     * Test verifying the output of the lti_get_course_content_items and lti_get_all_content_items callbacks.
+     */
+    public function test_content_item_callbacks() {
+        $this->resetAfterTest();
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
+        $admin = get_admin();
+        $time = time();
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $course2 = $this->getDataGenerator()->create_course();
+        $teacher2 = $this->getDataGenerator()->create_and_enrol($course2, 'editingteacher');
+
+        // Create some preconfigured tools.
+        $sitetoolrecord = (object) [
+            'name' => 'Site level tool which is available in the activity chooser',
+            'baseurl' => 'http://example.com',
+            'createdby' => $admin->id,
+            'course' => SITEID,
+            'ltiversion' => 'LTI-1p0',
+            'timecreated' => $time,
+            'timemodified' => $time,
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER
+        ];
+        $sitetoolrecordnonchooser = (object) [
+            'name' => 'Site level tool which is NOT available in the course activity chooser',
+            'baseurl' => 'http://example2.com',
+            'createdby' => $admin->id,
+            'course' => SITEID,
+            'ltiversion' => 'LTI-1p0',
+            'timecreated' => $time,
+            'timemodified' => $time,
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'coursevisible' => LTI_COURSEVISIBLE_PRECONFIGURED
+        ];
+        $course1toolrecord = (object) [
+            'name' => 'Course created tool which is available in the activity chooser',
+            'baseurl' => 'http://example3.com',
+            'createdby' => $teacher->id,
+            'course' => $course->id,
+            'ltiversion' => 'LTI-1p0',
+            'timecreated' => $time,
+            'timemodified' => $time,
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER
+        ];
+        $course2toolrecord = (object) [
+            'name' => 'Course created tool which is available in the activity chooser',
+            'baseurl' => 'http://example4.com',
+            'createdby' => $teacher2->id,
+            'course' => $course2->id,
+            'ltiversion' => 'LTI-1p0',
+            'timecreated' => $time,
+            'timemodified' => $time,
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER
+        ];
+        $tool1id = $DB->insert_record('lti_types', $sitetoolrecord);
+        $tool2id = $DB->insert_record('lti_types', $sitetoolrecordnonchooser);
+        $tool3id = $DB->insert_record('lti_types', $course1toolrecord);
+        $tool4id = $DB->insert_record('lti_types', $course2toolrecord);
+        $sitetoolrecord->id = $tool1id;
+        $sitetoolrecordnonchooser->id = $tool2id;
+        $course1toolrecord->id = $tool3id;
+        $course2toolrecord->id = $tool4id;
+
+        $defaultmodulecontentitem = new \core_course\local\entity\content_item(
+            '1',
+            'default module content item',
+            new \core_course\local\entity\string_title('Content item title'),
+            new moodle_url(''),
+            'icon',
+            'Description of the module',
+            MOD_ARCHETYPE_OTHER,
+            'mod_lti'
+        );
+
+        // The lti_get_lti_types_by_course method (used by the callbacks) assumes the global user.
+        $this->setUser($teacher);
+
+        // Teacher in course1 should be able to see the default module item ('external tool'),
+        // the site preconfigured tool and the tool created in course1.
+        $courseitems = lti_get_course_content_items($defaultmodulecontentitem, $teacher, $course);
+        $this->assertCount(3, $courseitems);
+        $ids = [];
+        foreach ($courseitems as $item) {
+            $ids[] = $item->get_id();
+        }
+        $this->assertContains(1, $ids);
+        $this->assertContains($sitetoolrecord->id + 1, $ids);
+        $this->assertContains($course1toolrecord->id + 1, $ids);
+        $this->assertNotContains($sitetoolrecordnonchooser->id + 1, $ids);
+
+        // The content items for teacher2 in course2 include the default module content item ('external tool'),
+        // the site preconfigured tool and the tool created in course2.
+        $this->setUser($teacher2);
+        $course2items = lti_get_course_content_items($defaultmodulecontentitem, $teacher2, $course2);
+        $this->assertCount(3, $course2items);
+        $ids = [];
+        foreach ($course2items as $item) {
+            $ids[] = $item->get_id();
+        }
+        $this->assertContains(1, $ids);
+        $this->assertContains($sitetoolrecord->id + 1, $ids);
+        $this->assertContains($course2toolrecord->id + 1, $ids);
+        $this->assertNotContains($sitetoolrecordnonchooser->id + 1, $ids);
+    }
 }

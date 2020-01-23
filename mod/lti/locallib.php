@@ -2185,6 +2185,7 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
 
     foreach ($admintypes as $ltitype) {
         $type           = new stdClass();
+        $type->id       = $ltitype->id;
         $type->modclass = MOD_CLASS_ACTIVITY;
         $type->name     = 'lti_type_' . $ltitype->id;
         // Clean the name. We don't want tags here.

@@ -66,10 +66,20 @@ class content_item_readonly_repository implements content_item_readonly_reposito
      * @return content_item a content item object.
      */
     private function content_item_from_legacy_data(\stdClass $item): content_item {
+        global $OUTPUT;
+
         // Make sure the legacy data results in a content_item with id = 0.
         // Even with an id, we can't uniquely identify the item, because we can't guarantee what component it came from.
         // An id of -1, signifies this.
         $item->id = -1;
+
+        // If the module provides the helplink property, append it to the help text to match the look and feel
+        // of the default course modules.
+        if (isset($item->help) && isset($item->helplink)) {
+            $linktext = get_string('morehelp');
+            $item->help .= \html_writer::tag('div',
+                $OUTPUT->doc_link($item->helplink, $linktext, true), ['class' => 'helpdoclink']);
+        }
 
         if (is_string($item->title)) {
             $item->title = new string_title($item->title);
@@ -104,6 +114,45 @@ class content_item_readonly_repository implements content_item_readonly_reposito
         $item->archetype = $contentitem->get_archetype();
         $item->componentname = $contentitem->get_component_name();
         return $item;
+    }
+
+    /**
+     * Helper to get the contentitems from all subplugin hooks for a given module plugin.
+     *
+     * @param string $parentpluginname the name of the module plugin to check subplugins for.
+     * @param content_item $modulecontentitem the content item of the module plugin, to pass to the hooks.
+     * @param \stdClass $user the user object to pass to subplugins.
+     * @return array the array of content items.
+     */
+    private function get_subplugin_course_content_items(string $parentpluginname, content_item $modulecontentitem,
+            \stdClass $user): array {
+
+        $contentitems = [];
+        $pluginmanager = \core_plugin_manager::instance();
+        foreach ($pluginmanager->get_subplugins_of_plugin($parentpluginname) as $subpluginname => $subplugin) {
+            // Call the hook, but with a copy of the module content item data.
+            $spcontentitems = component_callback($subpluginname, 'get_course_content_items', [$modulecontentitem, $user], null);
+            if (!is_null($spcontentitems)) {
+                foreach ($spcontentitems as $spcontentitem) {
+                    $contentitems[] = $spcontentitem;
+                }
+            }
+        }
+        return $contentitems;
+    }
+
+    /**
+     * Helper to make sure any legacy items have certain properties, which, if missing are inherited from the parent module item.
+     *
+     * @param \stdClass $legacyitem the legacy information, a stdClass coming from get_shortcuts() hook.
+     * @param content_item $modulecontentitem The module's content item information, to inherit if needed.
+     * @return \stdClass the updated legacy item stdClass
+     */
+    private function legacy_item_inherit_missing(\stdClass $legacyitem, content_item $modulecontentitem): \stdClass {
+        // Fall back to the plugin parent value if the subtype didn't provide anything.
+        $legacyitem->archetype = $legacyitem->archetype ?? $modulecontentitem->get_archetype();
+        $legacyitem->icon = $legacyitem->icon ?? $modulecontentitem->get_icon();
+        return $legacyitem;
     }
 
     /**
@@ -143,41 +192,54 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 'mod_' . $mod->name
             );
 
-            // Next step is to get the dynamically generated content items for ecah module, if provided.
-            // This is achieved by implementation of the hook, 'get_shortcuts'.
+            // Legacy vs new hooks.
+            // If the new hook is found for a module plugin, use that path (calling mod plugins and their subplugins directly)
+            // If not, check the legacy hook. This won't provide us with enough information to identify items uniquely within their
+            // component (lti + lti source being an example), but we can still list these items.
+            $modcontentitemreference = clone($contentitem);
 
-            // Give each plugin implementing the hook the main entry for REFERENCE ONLY.
-            // The current hook, get_shortcuts, expects a stdClass representation of the core module content_item entry.
-            $modcontentitemreference = $this->content_item_to_legacy_data($contentitem);
-
-            // Next, get the content_items from the module callback, if implemented.
-            $items = component_callback($mod->name, 'get_shortcuts', [$modcontentitemreference], null);
-            if (!is_null($items)) {
-                foreach ($items as $item) {
-                    // Fall back to the plugin parent value if the subtype didn't provide anything.
-                    $item->archetype = $item->archetype ?? $contentitem->get_archetype();
-                    $item->icon = $item->icon ?? $contentitem->get_icon();
-
-                    // If the module provides the helplink property, append it to the help text to match the look and feel
-                    // of the default course modules.
-                    if (isset($item->help) && isset($item->helplink)) {
-                        $linktext = get_string('morehelp');
-                        $item->help .= \html_writer::tag('div',
-                            $OUTPUT->doc_link($item->helplink, $linktext, true), ['class' => 'helpdoclink']);
-                    }
-
-                    // Create a content_item instance from the legacy callback data.
-                    $plugincontentitem = $this->content_item_from_legacy_data($item);
-                    $return[] = $plugincontentitem;
+            if (component_callback_exists('mod_' . $mod->name, 'get_course_content_items')) {
+                // Call the module hooks for this module.
+                $plugincontentitems = component_callback('mod_' . $mod->name, 'get_course_content_items',
+                    [$modcontentitemreference, $user, $course], []);
+                if (!empty($plugincontentitems)) {
+                    array_push($return, ...$plugincontentitems);
                 }
 
+                // Now, get those for subplugins of the module.
+                $subpluginitems = $this->get_subplugin_course_content_items('mod_' . $mod->name, $modcontentitemreference, $user);
+                if (!empty($subpluginitems)) {
+                    array_push($return, ...$subpluginitems);
+                }
+
+            } else if (component_callback_exists('mod_' . $mod->name, 'get_shortcuts')) {
                 // If get_shortcuts() callback is defined, the default module action is not added.
                 // It is a responsibility of the callback to add it to the return value unless it is not needed.
-                continue;
-            }
+                // The legacy hook, get_shortcuts, expects a stdClass representation of the core module content_item entry.
+                $modcontentitemreference = $this->content_item_to_legacy_data($contentitem);
 
-            // The callback get_shortcuts() was not found, use the default item for the activity chooser.
-            $return[] = $contentitem;
+                $legacyitems = component_callback($mod->name, 'get_shortcuts', [$modcontentitemreference], null);
+                if (!is_null($legacyitems)) {
+                    foreach ($legacyitems as $legacyitem) {
+
+                        $legacyitem = $this->legacy_item_inherit_missing($legacyitem, $contentitem);
+
+                        // All items must have different links, use them as a key in the return array.
+                        // If plugin returned the only one item with the same link as default item - keep $modname,
+                        // otherwise append the link url to the module name.
+                        $legacyitem->name = (count($legacyitems) == 1 &&
+                            $legacyitem->link->out() === $contentitem->get_link()->out()) ? $mod->name : $mod->name . ':' .
+                                $legacyitem->link;
+
+                        $plugincontentitem = $this->content_item_from_legacy_data($legacyitem);
+
+                        $return[] = $plugincontentitem;
+                    }
+                }
+            } else {
+                // Neither callback was found, so just use the default module content item.
+                $return[] = $contentitem;
+            }
         }
 
         return $return;

@@ -236,6 +236,64 @@ function lti_get_shortcuts($defaultitem) {
 }
 
 /**
+ * Return the preconfigured tools which are configured for inclusion in the activity picker.
+ *
+ * @param \core_course\local\entity\content_item $defaultmodulecontentitem reference to the content item for the LTI module.
+ * @param \stdClass $user the user object, to use for cap checks if desired.
+ * @param stdClass $course the course to scope items to.
+ * @return array the array of content items.
+ */
+function lti_get_course_content_items(\core_course\local\entity\content_item $defaultmodulecontentitem, \stdClass $user,
+        \stdClass $course) {
+    global $CFG, $OUTPUT;
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
+
+    $types = [];
+
+    // The 'External tool' entry (the main module content item), should always take the id of 1.
+    if (has_capability('mod/lti:addmanualinstance', context_course::instance($course->id), $user)) {
+        $types = [new \core_course\local\entity\content_item(
+            1,
+            $defaultmodulecontentitem->get_name(),
+            $defaultmodulecontentitem->get_title(),
+            $defaultmodulecontentitem->get_link(),
+            $defaultmodulecontentitem->get_icon(),
+            $defaultmodulecontentitem->get_help(),
+            $defaultmodulecontentitem->get_archetype(),
+            $defaultmodulecontentitem->get_component_name()
+        )];
+    }
+
+    // Other, preconfigured tools take their own id + 1, so we'll never clash with the module's entry.
+    $preconfiguredtools = lti_get_configured_types($course->id, $defaultmodulecontentitem->get_link()->param('sr'));
+    foreach ($preconfiguredtools as $preconfiguredtool) {
+
+        // Append the help link to the help text.
+        if (isset($preconfiguredtool->help)) {
+            if (isset($preconfiguredtool->helplink)) {
+                $linktext = get_string('morehelp');
+                $preconfiguredtool->help .= html_writer::tag('div',
+                    $OUTPUT->doc_link($preconfiguredtool->helplink, $linktext, true), ['class' => 'helpdoclink']);
+            }
+        } else {
+            $preconfiguredtool->help = '';
+        }
+
+        $types[] = new \core_course\local\entity\content_item(
+            $preconfiguredtool->id + 1,
+            $preconfiguredtool->name,
+            new \core_course\local\entity\string_title($preconfiguredtool->title),
+            $preconfiguredtool->link,
+            $preconfiguredtool->icon,
+            $preconfiguredtool->help,
+            $defaultmodulecontentitem->get_archetype(),
+            $defaultmodulecontentitem->get_component_name()
+        );
+    }
+    return $types;
+}
+
+/**
  * Given a coursemodule object, this function returns the extra
  * information needed to print this activity in various places.
  * For this module we just need to support external urls as
