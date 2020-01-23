@@ -129,3 +129,5 @@ hidepicture,core_group
 hidepicture,core_moodle
 sitebackpack,core_badges
 sitebackpack_help,core_badges
+usernameoridnousererror,core_webservice
+usernameoridoccurenceerror,core_webservice
