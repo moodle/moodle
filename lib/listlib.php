@@ -552,7 +552,7 @@ abstract class list_item {
         } else {
             $childrenhtml = '';
         }
-        return $this->item_html($extraargs).'&nbsp;'.(join($this->icons, '')).(($childrenhtml !='')?("\n".$childrenhtml):'');
+        return $this->item_html($extraargs).'&nbsp;'.(join('', $this->icons)).(($childrenhtml !='')?("\n".$childrenhtml):'');
     }
 
     public function set_icon_html($first, $last, $lastitem) {

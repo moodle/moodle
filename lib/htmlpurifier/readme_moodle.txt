@@ -17,4 +17,5 @@ Description of HTML Purifier v4.12.0 library import into Moodle
 
 Modifications:
 (verify if we need to apply them on every upgrade, remove when not needed)
-(No modification was needed)
+* MDL-67115 applied https://github.com/ezyang/htmlpurifier/pull/243 towards
+  php74 compatibility.

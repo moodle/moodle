@@ -128,7 +128,7 @@ class user_roles_editable extends \core\output\inplace_editable {
         }
 
         if (!empty($listofroles)) {
-            $this->displayvalue = implode($listofroles, ', ');
+            $this->displayvalue = implode(', ', $listofroles);
         } else if (!empty($roleids) && empty($viewableroleids)) {
             $this->displayvalue = get_string('novisibleroles', 'role');
         } else {
