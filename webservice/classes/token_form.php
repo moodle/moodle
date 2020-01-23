@@ -40,59 +40,45 @@ class token_form extends \moodleform {
      * Defines the form fields.
      */
     public function definition() {
-        global $USER, $DB, $CFG;
+        global $DB;
 
         $mform = $this->_form;
         $data = $this->_customdata;
 
         $mform->addElement('header', 'token', get_string('token', 'webservice'));
 
-        if (empty($data->nouserselection)) {
+        // User selector.
+        $attributes = [
+            'multiple' => false,
+            'ajax' => 'core_user/form_user_selector',
+            'valuehtmlcallback' => function($userid) {
+                global $DB, $OUTPUT;
 
-            //check if the number of user is reasonable to be displayed in a select box
-            $usertotal = $DB->count_records('user',
-                    array('deleted' => 0, 'suspended' => 0, 'confirmed' => 1));
+                $context = \context_system::instance();
+                $fields = \core\user_fields::for_name()->with_identity($context, false);
+                $record = $DB->get_record('user', ['id' => $userid], $fields, MUST_EXIST);
 
-            if ($usertotal < 500) {
-                list($sort, $params) = users_order_by_sql('u');
-                // User searchable selector - return users who are confirmed, not deleted, not suspended and not a guest.
-                $userfieldsapi = \core\user_fields::for_name();
-                $sql = 'SELECT u.id' . $userfieldsapi->get_sql('u')->selects . '
-                        FROM {user} u
-                        WHERE u.deleted = 0
-                        AND u.confirmed = 1
-                        AND u.suspended = 0
-                        AND u.id != :siteguestid
-                        ORDER BY ' . $sort;
-                $params['siteguestid'] = $CFG->siteguest;
-                $users = $DB->get_records_sql($sql, $params);
-                $options = array();
-                foreach ($users as $userid => $user) {
-                    $options[$userid] = fullname($user);
+                $user = (object)[
+                    'id' => $record->id,
+                    'fullname' => fullname($record, has_capability('moodle/site:viewfullnames', $context)),
+                    'extrafields' => [],
+                ];
+
+                foreach ($fields->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]) as $extrafield) {
+                    $user->extrafields[] = (object)[
+                        'name' => $extrafield,
+                        'value' => s($record->$extrafield)
+                    ];
                 }
-                $mform->addElement('searchableselector', 'user', get_string('user'), $options);
-                $mform->setType('user', PARAM_INT);
-            } else {
-                //simple text box for username or user id (if two username exists, a form error is displayed)
-                $mform->addElement('text', 'user', get_string('usernameorid', 'webservice'));
-                $mform->setType('user', PARAM_RAW_TRIMMED);
-            }
-            $mform->addRule('user', get_string('required'), 'required', null, 'client');
-        }
 
-        //service selector
-        $services = $DB->get_records('external_services');
-        $options = array();
-        $systemcontext = \context_system::instance();
-        foreach ($services as $serviceid => $service) {
-            //check that the user has the required capability
-            //(only for generation by the profile page)
-            if (empty($data->nouserselection)
-                    || empty($service->requiredcapability)
-                    || has_capability($service->requiredcapability, $systemcontext, $USER->id)) {
-                $options[$serviceid] = $service->name;
-            }
-        }
+                return $OUTPUT->render_from_template('core_user/form_user_selector_suggestion', $user);
+            },
+        ];
+        $mform->addElement('autocomplete', 'user', get_string('user'), [], $attributes);
+        $mform->addRule('user', get_string('required'), 'required', null, 'client');
+
+        // Service selector.
+        $options = $DB->get_records_menu('external_services', null, '', 'id, name');
         $mform->addElement('select', 'service', get_string('service', 'webservice'), $options);
         $mform->addRule('service', get_string('required'), 'required', null, 'client');
         $mform->setType('service', PARAM_INT);
@@ -112,45 +98,22 @@ class token_form extends \moodleform {
         $this->set_data($data);
     }
 
-    function get_data() {
-        global $DB;
-        $data = parent::get_data();
-
-        if (!empty($data) && !is_numeric($data->user)) {
-            //retrieve username
-            $user = $DB->get_record('user', array('username' => $data->user), 'id');
-            $data->user = $user->id;
-        }
-        return $data;
-    }
-
-    function validation($data, $files) {
+    /**
+     * Validate the submitted data.
+     *
+     * @param array $data Submitted data.
+     * @param array $files Submitted files.
+     * @return array Validation errors.
+     */
+    public function validation($data, $files) {
         global $DB;
 
         $errors = parent::validation($data, $files);
 
-        if (is_numeric($data['user'])) {
-            $searchtype = 'id';
-        } else {
-            $searchtype = 'username';
-            //check the username is valid
-            if (clean_param($data['user'], PARAM_USERNAME) != $data['user']) {
-                $errors['user'] = get_string('invalidusername');
-            }
-        }
-
-        if (!isset($errors['user'])) {
-            $users = $DB->get_records('user', array($searchtype => $data['user']), '', 'id');
-
-            //check that the user exists in the database
-            if (count($users) == 0) {
-                $errors['user'] = get_string('usernameoridnousererror', 'webservice');
-            } else if (count($users) > 1) { //can only be a username search as id are unique
-                $errors['user'] = get_string('usernameoridoccurenceerror', 'webservice');
-            }
+        if ($DB->get_field('user', 'suspended', ['id' => $data['user']], MUST_EXIST)) {
+            $errors['user'] = get_string('suspended', 'core') . ' - ' . get_string('forbiddenwsuser', 'core_webservice');
         }
 
         return $errors;
     }
-
 }

@@ -215,8 +215,6 @@ $string['userasclientsdescription'] = 'The following steps help you to set up th
 $string['usermissingcaps'] = 'Missing capabilities: {$a}';
 $string['usernameorid'] = 'Username / User id';
 $string['usernameorid_help'] = 'Enter a username or a user id.';
-$string['usernameoridnousererror'] = 'No users were found with this username/user id.';
-$string['usernameoridoccurenceerror'] = 'More than one user was found with this username. Please enter the user id.';
 $string['usernotallowed'] = 'The user is not allowed for this service. First you need to allow this user on the {$a}\'s allowed users administration page.';
 $string['userservices'] = 'User services: {$a}';
 $string['usersettingssaved'] = 'User settings saved';
@@ -243,3 +241,7 @@ $string['wsusername'] = 'Web service username';
 
 // Deprecated since Moodle 3.9.
 $string['documentation'] = 'web service documentation';
+
+// Deprecated since Moodle 3.11.
+$string['usernameoridnousererror'] = 'No users were found with this username/user id.';
+$string['usernameoridoccurenceerror'] = 'More than one user was found with this username. Please enter the user id.';
