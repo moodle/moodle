@@ -110,7 +110,7 @@ if ($ADMIN->fulltree) {
     $settings->hide_if('block_myoverview/customfiltergrouping', 'block_myoverview/displaygroupingcustomfield');
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_myoverview/displaygroupingstarred',
+            'block_myoverview/displaygroupingfavourites',
             get_string('favourites', 'block_myoverview'),
             '',
             1));

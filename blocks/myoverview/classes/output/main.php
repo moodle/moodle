@@ -121,7 +121,7 @@ class main implements renderable, templatable {
      *
      * @var boolean
      */
-    private $displaygroupingstarred;
+    private $displaygroupingfavourites;
 
     /**
      * Store a course grouping option setting.
@@ -214,7 +214,7 @@ class main implements renderable, templatable {
         $this->displaygroupinginprogress = $config->displaygroupinginprogress;
         $this->displaygroupingfuture = $config->displaygroupingfuture;
         $this->displaygroupingpast = $config->displaygroupingpast;
-        $this->displaygroupingstarred = $config->displaygroupingstarred;
+        $this->displaygroupingfavourites = $config->displaygroupingfavourites;
         $this->displaygroupinghidden = $config->displaygroupinghidden;
         $this->displaygroupingcustomfield = ($config->displaygroupingcustomfield && $config->customfiltergrouping);
         $this->customfiltergrouping = $config->customfiltergrouping;
@@ -226,7 +226,7 @@ class main implements renderable, templatable {
                 $this->displaygroupinginprogress,
                 $this->displaygroupingfuture,
                 $this->displaygroupingpast,
-                $this->displaygroupingstarred,
+                $this->displaygroupingfavourites,
                 $this->displaygroupinghidden);
         $displaygroupingselectorscount = count(array_filter($displaygroupingselectors));
         if ($displaygroupingselectorscount > 1 || $this->displaygroupingcustomfield) {
@@ -259,7 +259,7 @@ class main implements renderable, templatable {
         if ($config->displaygroupingpast == true) {
             return BLOCK_MYOVERVIEW_GROUPING_PAST;
         }
-        if ($config->displaygroupingstarred == true) {
+        if ($config->displaygroupingfavourites == true) {
             return BLOCK_MYOVERVIEW_GROUPING_FAVOURITES;
         }
         if ($config->displaygroupinghidden == true) {
@@ -439,7 +439,7 @@ class main implements renderable, templatable {
             'displaygroupinginprogress' => $this->displaygroupinginprogress,
             'displaygroupingfuture' => $this->displaygroupingfuture,
             'displaygroupingpast' => $this->displaygroupingpast,
-            'displaygroupingstarred' => $this->displaygroupingstarred,
+            'displaygroupingfavourites' => $this->displaygroupingfavourites,
             'displaygroupinghidden' => $this->displaygroupinghidden,
             'displaygroupingselector' => $this->displaygroupingselector,
             'displaygroupingcustomfield' => $this->displaygroupingcustomfield && $customfieldvalues,
