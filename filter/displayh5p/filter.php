@@ -74,6 +74,7 @@ class filter_displayh5p extends moodle_text_filter {
         $specialchars = ['?', '&'];
         $escapedspecialchars = ['\?', '&amp;'];
         $h5pcontents = array();
+        $h5plinks = array();
 
         // Check all allowed sources.
         foreach ($allowedsources as $source) {
@@ -82,7 +83,8 @@ class filter_displayh5p extends moodle_text_filter {
 
             if (($source == $localsource)) {
                 $params['tagbegin'] = '<iframe src="'.$CFG->wwwroot.'/h5p/embed.php?url=';
-                $ultimatepattern = '#'.$source.'#';
+                $escapechars = $source;
+                $ultimatepattern = $source;
             } else {
                 if (!stripos($source, 'embed')) {
                     $params['urlmodifier'] = '/embed';
@@ -90,7 +92,7 @@ class filter_displayh5p extends moodle_text_filter {
                 // Convert special chars.
                 $sourceid = str_replace('[id]', '[0-9]+', $source);
                 $escapechars = str_replace($specialchars, $escapedspecialchars, $sourceid);
-                $ultimatepattern = '#(' . $escapechars . ')#';
+                $ultimatepattern = '(' . $escapechars . ')';
             }
 
             // Improve performance creating filterobjects only when needed.
@@ -101,13 +103,37 @@ class filter_displayh5p extends moodle_text_filter {
             $h5pcontenturl = new filterobject($source, null, null, false,
                 false, null, [$this, 'filterobject_prepare_replacement_callback'], $params);
 
-            $h5pcontenturl->workregexp = $ultimatepattern;
+            $h5pcontenturl->workregexp = '#'.$ultimatepattern.'#';
             $h5pcontents[] = $h5pcontenturl;
+
+            // Regex to find h5p extensions in an <a> tag.
+            $linkregexp = '~<a [^>]*href=["\']('.$escapechars.'[^"\']*)["\'][^>]*>([^<]*)</a>~is';
+
+            $h5plinkurl = new filterobject($linkregexp, null, null, false,
+                false, null, [$this, 'filterobject_prepare_replacement_callback'], $params);
+            $h5plinkurl->workregexp = $linkregexp;
+            $h5plinks[] = $h5plinkurl;
         }
 
-        if (empty($h5pcontents)) {
+        if (empty($h5pcontents) && empty($h5links)) {
             // No matches to deal with.
             return $text;
+        }
+
+        // Apply filter inside <a> tag href attribute.
+        // We can not use filter_phrase function because it removes all tags and can not be applied in tag attributes.
+        foreach ($h5plinks as $h5plink) {
+            $text = preg_replace_callback($h5plink->workregexp,
+                function ($matches) use ($h5plink) {
+                    if ($matches[1] == $matches[2]) {
+                        filter_prepare_phrase_for_replacement($h5plink);
+
+                        return str_replace('$1', $matches[1], $h5plink->workreplacementphrase);
+                    } else {
+                        return $matches[0];
+                    }
+                }, $text);
+
         }
 
         $result = filter_phrases($text, $h5pcontents, null, null, false, true);
