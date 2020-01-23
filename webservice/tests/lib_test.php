@@ -194,6 +194,65 @@ class webservice_test extends advanced_testcase {
     }
 
     /**
+     * Tests for the {@see webservice::get_missing_capabilities_by_users()} implementation.
+     */
+    public function test_get_missing_capabilities_by_users() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $wsman = new webservice();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        // Add a test web service.
+        $serviceid = $wsman->add_external_service((object)[
+            'name' => 'Test web service',
+            'enabled' => 1,
+            'requiredcapability' => '',
+            'restrictedusers' => false,
+            'component' => 'moodle',
+            'downloadfiles' => false,
+            'uploadfiles' => false,
+        ]);
+
+        // Add a function to the service that does not declare any capability as required.
+        $wsman->add_external_function_to_service('core_webservice_get_site_info', $serviceid);
+
+        // Users can be provided as an array of objects, arrays or integers (ids).
+        $this->assertEmpty($wsman->get_missing_capabilities_by_users([$user1, array($user2), $user3->id], $serviceid));
+
+        // Add a function to the service that declares some capability as required, but that capability is common for
+        // any user. Here we use 'core_message_delete_conversation' which declares 'moodle/site:deleteownmessage' which
+        // in turn is granted to the authenticated user archetype by default.
+        $wsman->add_external_function_to_service('core_message_delete_conversation', $serviceid);
+
+        // So all three users should have this capability implicitly.
+        $this->assertEmpty($wsman->get_missing_capabilities_by_users([$user1, $user2, $user3], $serviceid));
+
+        // Add a function to the service that declares some non-common capability. Here we use
+        // 'core_group_add_group_members' that wants 'moodle/course:managegroups'.
+        $wsman->add_external_function_to_service('core_group_add_group_members', $serviceid);
+
+        // Make it so that the $user1 has the capability in some course.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'editingteacher');
+
+        // Check that no missing capability is reported for the $user1. We don't care at what actual context the
+        // external function call will evaluate the permission. We just check that there is a chance that the user has
+        // the capability somewhere.
+        $this->assertEmpty($wsman->get_missing_capabilities_by_users([$user1], $serviceid));
+
+        // But there is no place at the site where the capability would be granted to the other two users, so it is
+        // reported as missing.
+        $missing = $wsman->get_missing_capabilities_by_users([$user1, $user2, $user3], $serviceid);
+        $this->assertArrayNotHasKey($user1->id, $missing);
+        $this->assertContains('moodle/course:managegroups', $missing[$user2->id]);
+        $this->assertContains('moodle/course:managegroups', $missing[$user3->id]);
+    }
+
+    /**
      * Utility method that tests the parameter type of a method info's input/output parameter.
      *
      * @param string $type The parameter type that is being evaluated.
