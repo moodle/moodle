@@ -49,7 +49,6 @@ class badge extends moodleform {
         $mform = $this->_form;
         $badge = (isset($this->_customdata['badge'])) ? $this->_customdata['badge'] : false;
         $action = $this->_customdata['action'];
-        $languages = get_string_manager()->get_list_of_languages();
 
         $mform->addElement('header', 'badgedetails', get_string('badgedetails', 'badges'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '70'));
@@ -61,6 +60,8 @@ class badge extends moodleform {
         $mform->addElement('text', 'version', get_string('version', 'badges'), array('size' => '70'));
         $mform->setType('version', PARAM_TEXT);
         $mform->addHelpButton('version', 'version', 'badges');
+
+        $languages = get_string_manager()->get_list_of_languages();
         $mform->addElement('select', 'language', get_string('language'), $languages);
         $mform->addHelpButton('language', 'language', 'badges');
 
@@ -157,7 +158,16 @@ class badge extends moodleform {
         $mform->setType('action', PARAM_TEXT);
 
         if ($action == 'new') {
-            $mform->setDefault('language', $CFG->lang);
+            // Try to set default badge language to that of current language, or it's parent.
+            $language = current_language();
+            if (isset($languages[$language])) {
+                $defaultlanguage = $language;
+            } else {
+                // Calling get_parent_language returns an empty string instead of 'en'.
+                $defaultlanguage = get_parent_language($language) ?: 'en';
+            }
+
+            $mform->setDefault('language', $defaultlanguage);
             $this->add_action_buttons(true, get_string('createbutton', 'badges'));
         } else {
             // Add hidden fields.
