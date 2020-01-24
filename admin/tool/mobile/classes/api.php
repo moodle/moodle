@@ -421,6 +421,7 @@ class api {
                 'NoDelegate_CoreTag' => new lang_string('tags'),
                 '$mmLoginEmailSignup' => new lang_string('startsignup'),
                 'NoDelegate_ResponsiveMainMenuItems' => new lang_string('responsivemainmenuitems', 'tool_mobile'),
+                'NoDelegate_DarkMode' => new lang_string('darkmode', 'tool_mobile'),
             ),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),
