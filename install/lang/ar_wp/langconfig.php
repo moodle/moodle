@@ -30,4 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thislanguage'] = 'ဗမာစာ';
+$string['parentlanguage'] = 'ar';
+$string['thislanguage'] = 'بالعربي workplace';
