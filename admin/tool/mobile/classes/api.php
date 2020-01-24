@@ -433,6 +433,7 @@ class api {
                 '$mmLoginEmailSignup' => new lang_string('startsignup'),
                 'NoDelegate_ForgottenPassword' => new lang_string('forgotten'),
                 'NoDelegate_ResponsiveMainMenuItems' => new lang_string('responsivemainmenuitems', 'tool_mobile'),
+                'NoDelegate_DarkMode' => new lang_string('darkmode', 'tool_mobile'),
             ),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),
