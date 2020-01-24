@@ -1,5 +1,10 @@
 <div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
     <div class="col-md-3">
+        <span class="float-sm-right text-nowrap">
+            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">{{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}</abbr>{{/required}}
+            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
+            {{{helpbutton}}}
+        </span>
         {{#text}}
             <label for="{{element.id}}">
                 {{{label}}}
