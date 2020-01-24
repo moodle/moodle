@@ -2568,7 +2568,7 @@ function update_course($data, $editoroptions = NULL) {
                 // The summary might be very long, we don't wan't to fill up the log record with the full text.
                 $updatedfields[$field] = '(updated)';
             }
-        } else if ($field == 'tags' && !empty($CFG->usetags)) {
+        } else if ($field == 'tags' && isset($data->tags)) {
             // Tags might not have the same array keys, just check the values.
             if (array_values($data->$field) !== array_values($value)) {
                 $updatedfields[$field] = $data->$field;
