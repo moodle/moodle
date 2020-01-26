@@ -503,10 +503,13 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
             $contents = $file->get_content();
 
             $filehandler = new PNG_MetaDataHandler($contents);
-            $assertion = new moodle_url('/badges/assertion.php', array('b' => $hash));
-            if ($filehandler->check_chunks("tEXt", "openbadges")) {
-                // Add assertion URL tExt chunk.
-                $newcontents = $filehandler->add_chunks("tEXt", "openbadges", $assertion->out(false));
+            // For now, the site backpack OB version will be used as default.
+            $obversion = badges_open_badges_backpack_api();
+            $assertion = new core_badges_assertion($hash, $obversion);
+            $assertionjson = json_encode($assertion->get_badge_assertion());
+            if ($filehandler->check_chunks("iTXt", "openbadges")) {
+                // Add assertion URL iTXt chunk.
+                $newcontents = $filehandler->add_chunks("iTXt", "openbadges", $assertionjson);
                 $fileinfo = array(
                         'contextid' => $user_context->id,
                         'component' => 'badges',

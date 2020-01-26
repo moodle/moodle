@@ -114,23 +114,59 @@ class PNG_MetaDataHandler
      * @param string $value Currently an assertion URL that is added to an image metadata.
      *
      * @return string $result File content with a new chunk as a string. Can be used in file_put_contents() to write to a file.
+     * @throws \moodle_exception when unsupported chunk type is defined.
      */
     public function add_chunks($type, $key, $value) {
         if (strlen($key) > 79) {
             debugging('Key is too big');
         }
 
-        // tEXt Textual data.
-        // Keyword:        1-79 bytes (character string)
-        // Null separator: 1 byte
-        // Text:           n bytes (character string)
-        $data = $key . "\0" . $value;
+        $dataparts = [];
+        if ($type === 'iTXt') {
+            // International textual data (iTXt).
+            // Keyword:             1-79 bytes (character string).
+            $dataparts[] = $key;
+            // Null separator:      1 byte.
+            $dataparts[] = "\x00";
+            // Compression flag:    1 byte
+            // A value of 0 means no compression.
+            $dataparts[] = "\x00";
+            // Compression method:  1 byte
+            // If compression is disabled, the method should also be 0.
+            $dataparts[] = "\x00";
+            // Language tag:        0 or more bytes (character string)
+            // When there is no language specified leave empty.
+
+            // Null separator:      1 byte.
+            $dataparts[] = "\x00";
+            // Translated keyword:  0 or more bytes
+            // When there is no translation specified, leave empty.
+
+            // Null separator:      1 byte.
+            $dataparts[] = "\x00";
+            // Text:                0 or more bytes.
+            $dataparts[] = $value;
+        } else if ($type === 'tEXt') {
+            // Textual data (tEXt).
+            // Keyword:             1-79 bytes (character string).
+            $dataparts[] = $key;
+            // Null separator:      1 byte.
+            $dataparts[] = "\0";
+            // Text:                n bytes (character string).
+            $dataparts[] = $value;
+        } else {
+            throw new \moodle_exception('Unsupported chunk type: ' . $type);
+        }
+
+        $data = implode($dataparts);
+
         $crc = pack("N", crc32($type . $data));
         $len = pack("N", strlen($data));
 
         // Chunk format: length + type + data + CRC.
         // CRC is a CRC-32 computed over the chunk type and chunk data.
         $newchunk = $len . $type . $data . $crc;
+        $this->_chunks[$type] = $data;
 
         $result = substr($this->_contents, 0, $this->_size - 12)
                 . $newchunk
