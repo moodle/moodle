@@ -64,10 +64,6 @@ form.mform fieldset#id_previewareaheader .dropbackground {
     max-width: none;
 }
 
-.que.ddmarker .dropbackground.img-responsive.img-fluid {
-    width: 100%;
-}
-
 .que.ddmarker div.dragitems div.draghome,
 .que.ddmarker div.dragitems div.dragitem,
 form.mform fieldset#id_previewareaheader div.draghome,

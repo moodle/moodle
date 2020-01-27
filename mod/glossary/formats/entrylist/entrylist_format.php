@@ -25,7 +25,7 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
         }
         if (!empty($entry->rating)) {
             echo '<br />';
-            echo '<span class="ratings d-block p-t-1">';
+            echo '<span class="ratings d-block pt-3">';
             $return = glossary_print_entry_ratings($course, $entry);
             echo '</span>';
         }

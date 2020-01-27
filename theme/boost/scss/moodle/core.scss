@@ -5,6 +5,8 @@
 // want white default colour.
 $bg-inverse-link-color: #fff !default;
 
+$font-size-xs: ($font-size-base * .75) !default;
+
 #region-main {
     overflow-x: auto;
     overflow-y: visible;
@@ -577,7 +579,7 @@ a.skip:active {
 
 // My Moodle
 .path-my .coursebox {
-    margin: $spacer-y 0;
+    margin: $spacer 0;
     padding: 0;
 
     .overview {
@@ -1215,7 +1217,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
-    background-color: $gray;
+    background-color: $gray-700;
 }
 
 // Prevent adding backdrops to popups in popups.
@@ -2345,7 +2347,7 @@ $footer-link-color: $bg-inverse-link-color !default;
 .sr-only-focusable {
     &:active,
     &:focus {
-        z-index: $zindex-navbar-fixed + 1;
+        z-index: 1031;
         position: fixed;
         background: #fff;
         padding: 7px;
@@ -2477,8 +2479,25 @@ body.h5p-embed {
 .float-left {
     float: left !important; /* stylelint-disable-line declaration-no-important */
 }
+
 .float-right {
     float: right !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.img-responsive {
+    @include img-fluid();
+}
+
+input[disabled] {
+    cursor: not-allowed;
+}
+
+.custom-select {
+    width: auto;
+}
+
+.fade.in {
+    opacity: 1;
 }
 
 .clamp-2 {

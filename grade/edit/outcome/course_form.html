@@ -36,12 +36,12 @@
         <?php
         if (has_capability('moodle/grade:manageoutcomes', $context)) {
         ?>
-        <td class="p-l-1 p-r-1">
-            <div class="m-y-1">
+        <td class="pl-3 pr-3">
+            <div class="my-3">
                 <input name="add" class="btn btn-secondary" id="add" type="submit" value="<?php echo $OUTPUT->larrow() . ' ' .
                     get_string('add'); ?>" title="<?php print_string('add'); ?>" />
             </div>
-            <div class="m-y-1">
+            <div class="my-3">
                 <input name="remove" class="btn btn-secondary" id="remove" type="submit" value="<?php echo get_string('remove') .
                     ' ' . $OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
             </div>

@@ -50,12 +50,12 @@
     <hr />
     <div class="row">
         {{#compliant}}
-            <a class="component-expand p-l-2" data-component="{{raw_component}}" href='#'>
-            <h4 class=" d-inline p-l-2 " id="{{raw_component}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugin, tool_dataprivacy{{/str}}{{/pix}}{{component}}</h4>
+            <a class="component-expand pl-5" data-component="{{raw_component}}" href='#'>
+            <h4 class=" d-inline pl-5 " id="{{raw_component}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugin, tool_dataprivacy{{/str}}{{/pix}}{{component}}</h4>
             </a>
         {{/compliant}}
         {{^compliant}}
-            <h4 class="d-inline p-l-3 " id="{{raw_component}}">{{component}}</h4>
+            <h4 class="d-inline pl-6 " id="{{raw_component}}">{{component}}</h4>
             <span>{{#pix}}i/risk_xss, moodle, {{#str}}requiresattention, tool_dataprivacy{{/str}}{{/pix}}</span>
         {{/compliant}}
         {{#external}}
@@ -73,7 +73,7 @@
         <div class="hide" data-section="{{raw_component}}" aria-expanded="false" role="contentinfo">
             {{#metadata}}
                 <hr />
-                <div class="p-l-3">
+                <div class="pl-6">
                     <dl class="row">
                         <dt class="col-3">
                             {{#link}}
@@ -98,7 +98,7 @@
             {{/metadata}}
             {{#nullprovider}}
                 <hr />
-                <div class="p-l-3">
+                <div class="pl-6">
                     <div class="row">
                         <div class="col-12">
                             {{nullprovider}}

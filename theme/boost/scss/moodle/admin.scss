@@ -17,17 +17,17 @@
 .environmenttable {
     .warn {
         background-color: $state-warning-bg;
-        color: $state-warning-text;
+        color: $warning;
     }
 
     .error {
         background-color: $state-danger-bg;
-        color: $state-danger-text;
+        color: $danger;
     }
 
     .ok {
         background-color: $state-success-bg;
-        color: $state-success-text;
+        color: $success;
     }
 }
 
@@ -105,7 +105,7 @@
     text-align: left;
     margin-left: auto;
     margin-right: auto;
-    margin-top: $spacer-y;
+    margin-top: $spacer;
 }
 
 #page-admin-roles-define .topfields {
@@ -113,7 +113,7 @@
 }
 
 #page-admin-roles-define .capdefault {
-    background-color: $table-bg-hover;
+    background-color: $table-hover-bg;
 }
 
 #page-filter-manage .backlink,
@@ -484,7 +484,7 @@
 
         .uninstall {
             a {
-                color: $state-danger-text;
+                color: $danger;
             }
         }
 
