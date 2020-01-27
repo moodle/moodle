@@ -797,6 +797,7 @@ $string['eventusercreated'] = 'User created';
 $string['eventuserdeleted'] = 'User deleted';
 $string['eventuserlistviewed'] = 'User list viewed';
 $string['eventuserloggedout'] = 'User logged out';
+$string['eventuserpasswordpolicyfailed'] = 'User password failed password policy';
 $string['eventuserpasswordupdated'] = 'User password updated';
 $string['eventuserprofileviewed'] = 'User profile viewed';
 $string['eventuserupdated'] = 'User updated';
@@ -857,6 +858,10 @@ $string['forcepasswordchange_help'] = 'If this checkbox is ticked, the user will
 $string['forcepasswordchangecheckfull'] = 'Are you absolutely sure you want to force a password change to {$a} ?';
 $string['forcepasswordchangenot'] = 'Could not force a password change to {$a}';
 $string['forcepasswordchangenotice'] = 'You must change your password to proceed.';
+$string['forcepasswordresetfailurenotice'] = 'Your current password no longer passes the set password policy. Please contact your Moodle administrator for assistance.
+   {$a}';
+$string['forcepasswordresetnotice'] = 'Your current password no longer passes the set password policy, you must reset your password to login.
+   {$a}';
 $string['forcetheme'] = 'Force theme';
 $string['forgotaccount'] = 'Lost password?';
 $string['forgotten'] = 'Forgotten your username or password?';
@@ -1515,6 +1520,8 @@ $string['passwordforgotteninstructions'] = 'Your details must first be found in 
 $string['passwordforgotteninstructions2'] = 'To reset your password, submit your username or your email address below. If we can find you in the database, an email will be sent to your email address, with instructions how to get access again.';
 $string['passwordchanged'] = 'Password has been changed';
 $string['passwordnohelp'] = 'No help is available to find your lost password. Please contact your Moodle administrator.';
+$string['passwordpolicynomatch'] = 'Your current password no longer matches the set password policy.
+   {$a}';
 $string['passwordrecovery'] = 'Yes, help me log in';
 $string['passwordsdiffer'] = 'These passwords do not match';
 $string['passwordsent'] = 'Password has been sent';
