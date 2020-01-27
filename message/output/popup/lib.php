@@ -58,5 +58,16 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
         $output .= $renderer->render_from_template('message_popup/notification_popover', $context);
     }
 
+    // Add the messages popover.
+    if (!empty($CFG->messaging)) {
+        $unreadcount = \core_message\api::count_unread_conversations($USER);
+        $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
+        $context = [
+            'userid' => $USER->id,
+            'unreadcount' => $unreadcount + $requestcount
+        ];
+        $output .= $renderer->render_from_template('core_message/message_popover', $context);
+    }
+
     return $output;
 }
