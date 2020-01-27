@@ -20,6 +20,12 @@ class ADODB_postgres8 extends ADODB_postgres7
 {
 	var $databaseType = 'postgres8';
 
+	// From PostgreSQL 8.0 onwards, the adsrc column used in earlier versions to
+	// retrieve the default value is obsolete and should not be used (see #562).
+	var $metaDefaultsSQL = "SELECT d.adnum as num, pg_get_expr(d.adbin, d.adrelid) as def
+		FROM pg_attrdef d, pg_class c 
+		WHERE d.adrelid=c.oid AND c.relname='%s' 
+		ORDER BY d.adnum";
 
 	/**
 	 * Retrieve last inserted ID
