@@ -31,5 +31,6 @@ Our changes:
  * MDL-52286 Added muting erros in ADORecordSet::__destruct().
    Check if fixed upstream during the next upgrade and remove this note. (8638b3f1441d4b928)
  * MDL-67034 Fixes to make the library php74 compliant.
+ * MDL-67414 Fix to make the library PostgreSQL 12.x compliant (upstream: a4876f100602c2ce4).
 
-skodak, iarenaza, moodler, stronk7, abgreeve, lameze, ankitagarwal, marinaglancy
+skodak, iarenaza, moodler, stronk7, abgreeve, lameze, ankitagarwal, marinaglancy, matteo
