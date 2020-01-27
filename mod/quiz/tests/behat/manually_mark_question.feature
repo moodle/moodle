@@ -76,7 +76,7 @@ Feature: Teachers can override the grade for any question
     And I click on "Save image" "button"
     # Editor is not inserting the html for the image correctly
     # when running under behat so line below manually inserts it.
-    And I set the field "Comment" to "<img src=\"@@PLUGINFILE@@/moodle_logo.jpg\" alt=\"It's the logo\" width=\"48\" height=\"48\" class=\"img-responsive atto_image_button_text-bottom\"><!-- File hash: a8e3ffba4ab315b3fb9187ebbf122fe9 -->"
+    And I set the field "Comment" to "<img src=\"@@PLUGINFILE@@/moodle_logo.jpg\" alt=\"It's the logo\" width=\"48\" height=\"48\" class=\"img-fluid atto_image_button_text-bottom\"><!-- File hash: a8e3ffba4ab315b3fb9187ebbf122fe9 -->"
     And I press "Save" and switch to main window
     And I switch to the main window
     And I should see "Commented: [It's the logo]" in the ".history table" "css_element"

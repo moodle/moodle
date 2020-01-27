@@ -1,0 +1,20 @@
+/**
+ * Moodle variables
+ *
+ * Variables written for Moodle specific components
+ *
+ * Please do not override any Bootstrap variables here, custom Bootstrap variable should go in
+ * preset files instead.
+ */
+
+$state-success-bg: theme-color-level("success", -10) !default;
+$state-success-border: theme-color-level("success", -9) !default;
+
+$state-info-bg: theme-color-level("info", -10) !default;
+$state-info-border: theme-color-level("info", -9) !default;
+
+$state-warning-bg: theme-color-level("warning", -10) !default;
+$state-warning-border: theme-color-level("warning", -10) !default;
+
+$state-danger-bg: theme-color-level("danger", -10) !default;
+$state-danger-border: theme-color-level("danger", -9) !default;

@@ -2317,7 +2317,7 @@ class lesson extends lesson_base {
                 if ($instancename) {
                     return html_writer::link(new moodle_url('/mod/'.$modname.'/view.php',
                         array('id' => $this->properties->activitylink)), get_string('activitylinkname',
-                        'lesson', $instancename), array('class' => 'centerpadded lessonbutton standardbutton p-r-1'));
+                        'lesson', $instancename), array('class' => 'centerpadded lessonbutton standardbutton pr-3'));
                 }
             }
         }
@@ -4261,7 +4261,7 @@ abstract class lesson_page extends lesson_base {
                 $options->attemptid = isset($attempt) ? $attempt->id : null;
 
                 $result->feedback .= $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options),
-                        'generalbox boxaligncenter p-y-1');
+                        'generalbox boxaligncenter py-3');
                 $result->feedback .= '<div class="correctanswer generalbox"><em>'
                         . get_string("youranswer", "lesson").'</em> : <div class="studentanswer mt-2 mb-2">';
 

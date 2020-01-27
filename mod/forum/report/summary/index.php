@@ -167,7 +167,7 @@ if ($download) {
     \forumreport_summary\event\report_viewed::create($eventparams)->trigger();
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $title), 2, 'p-b-2');
+    echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $title), 2, 'pb-5');
 
     if (!empty($filters['groups'])) {
         \core\notification::info(get_string('viewsdisclaimer', 'forumreport_summary'));

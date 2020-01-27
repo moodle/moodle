@@ -366,7 +366,7 @@ if (!empty($instanceid) && !empty($roleid)) {
             echo $OUTPUT->render($checknos);
         }
         echo '</div>';
-        echo '<div class="p-y-1">';
+        echo '<div class="py-3">';
         echo html_writer::label(get_string('withselectedusers'), 'formactionid');
         $displaylist['#messageselect'] = get_string('messageselectadd');
         $withselectedparams = array(

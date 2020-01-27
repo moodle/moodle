@@ -50,7 +50,7 @@
     {{{groupchangemenu}}}
 
 
-    <div class="p-t-1 p-b-1">
+    <div class="py-3">
         {{#forum.capabilities.create}}
             <a class="btn btn-primary" data-toggle="collapse" href="#collapseAddForm">
                 {{$discussion_create_text}}
@@ -60,7 +60,7 @@
         {{/forum.capabilities.create}}
         {{^forum.capabilities.create}}
             {{#forum.capabilities.selfenrol}}
-                <div class="p-t-1 p-b-1">
+                <div class="py-3">
                     <a class="btn btn-primary" href="{{forum.urls.create}}">
                         {{$discussion_create_text}}
                             {{#str}}addanewdiscussion, forum{{/str}}
@@ -81,7 +81,7 @@
         {{/forum.capabilities.grade}}
     </div>
     {{#forum.capabilities.create}}
-        <div class="collapse m-t-1 p-b-1" id="collapseAddForm">
+        <div class="collapse mt-3 pb-3" id="collapseAddForm">
             {{{newdiscussionhtml}}}
         </div>
     {{/forum.capabilities.create}}
@@ -101,7 +101,7 @@
                         <th scope="col">
                             <span class="accesshide">{{#str}}status{{/str}}</span>
                         </th>
-                        <th scope="col" class="p-l-0">
+                        <th scope="col" class="pl-0">
                             {{#state.sortorder.isdiscussiondesc}}
                                 <a href="{{{forum.urls.sortdiscussionasc}}}" aria-label="{{#str}}discussionlistsortbydiscussionasc, mod_forum{{/str}}">{{#str}}discussion, mod_forum{{/str}}</a> <span class="text-primary">{{#pix}}t/downlong, core, {{#str}}desc, core{{/str}}{{/pix}}</span>
                             {{/state.sortorder.isdiscussiondesc}}
@@ -206,7 +206,7 @@
                                 {{/discussion.pinned}}
                             </td>
                             <th scope="row" class="topic p-0 align-middle">
-                                <div class="p-3 p-l-0">
+                                <div class="p-3 pl-0">
                                     <a class="w-100 h-100 d-block" href="{{discussion.urls.view}}" title="{{discussion.name}}" aria-label="{{discussion.name}}">
                                         {{#shortentext}}100, {{{discussion.name}}}{{/shortentext}}
                                     </a>

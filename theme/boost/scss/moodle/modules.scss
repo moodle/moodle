@@ -967,10 +967,6 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     margin-left: 4px;
 }
 
-.ie .row-fluid .desktop-first-column {
-    margin-left: 0;
-}
-
 .langmenu form {
     margin: 0;
 }
@@ -1049,7 +1045,7 @@ div#dock {
         }
 
         > tbody > tr:nth-of-type(even) {
-            background-color: $table-bg-accent;
+            background-color: $table-accent-bg;
         }
 
         .rblock label {
@@ -1187,8 +1183,8 @@ div#dock {
 
     span.qnbutton {
         cursor: default;
-        background-color: $input-bg-disabled;
-        color: $gray;
+        background-color: $input-disabled-bg;
+        color: $gray-700;
     }
 
     a.qnbutton:hover,
@@ -1234,28 +1230,28 @@ div#dock {
 
     .qnbutton.correct .trafficlight {
         background-image: url([[pix:theme|mod/quiz/checkmark]]);
-        background-color: $state-success-text;
+        background-color: $success;
     }
 
     .qnbutton.blocked .trafficlight {
         background-image: url([[pix:core|t/locked]]);
-        background-color: $input-bg-disabled;
+        background-color: $input-disabled-bg;
     }
 
     .qnbutton.notanswered .trafficlight,
     .qnbutton.incorrect .trafficlight {
-        background-color: $state-danger-text;
+        background-color: $danger;
     }
 
     .qnbutton.partiallycorrect .trafficlight {
         background-image: url([[pix:theme|mod/quiz/whitecircle]]);
-        background-color: $state-warning-text;
+        background-color: $warning;
     }
 
     .qnbutton.complete .trafficlight,
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading .trafficlight {
-        background-color: $gray-light;
+        background-color: $gray-600;
     }
 }
 
