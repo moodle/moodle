@@ -16527,7 +16527,6 @@ body {
     flex-shrink: 0; }
 
 .popover-region {
-  float: right;
   position: relative; }
   .popover-region.collapsed .popover-region-toggle:before, .popover-region.collapsed .popover-region-toggle:after {
     display: none; }
@@ -16642,7 +16641,7 @@ body {
     display: none; }
 
 .navbar .popover-region {
-  float: right;
+  float: left;
   margin-right: 10px; }
   .navbar .popover-region.collapsed .popover-region-container {
     opacity: 0;

@@ -22,7 +22,6 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
 }
 
 .popover-region {
-    float: right;
     position: relative;
 
     &.collapsed {
@@ -177,7 +176,7 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
 
 .navbar {
     .popover-region {
-        float: right;
+        float: left;
         margin-right: 10px;
 
         &.collapsed {
