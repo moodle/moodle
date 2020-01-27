@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.5.10 ===
+
+* behat_data_generators::the_following_exist() has been removed, please use
+  behat_data_generators::the_following_entities_exist() instead. See MDL-67691 for more info.
+
 === 3.5.6 ===
 
 * Behat timeout constants behat_base::TIMEOUT, EXTENDED_TIMEOUT, and REDUCED_TIMEOUT will be
