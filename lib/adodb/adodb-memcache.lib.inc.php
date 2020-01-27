@@ -11,7 +11,7 @@ if (empty($ADODB_INCLUDED_CSV)) include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
 
 /*
 
-  @version   v5.20.15  24-Nov-2019
+  @version   v5.20.16  12-Jan-2020
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.

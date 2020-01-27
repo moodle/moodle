@@ -1,4 +1,4 @@
-Description of ADODB V5.20.15 library import into Moodle
+Description of ADODB V5.20.16 library import into Moodle
 
 This library will be probably removed in Moodle 2.1,
 it is now used only in enrol and auth db plugins.
@@ -24,5 +24,3 @@ Added:
 
 Our changes:
  * MDL-67034 Fixes to make the library php74 compliant.
-
-skodak, iarenaza, moodler, stronk7, abgreeve, lameze, ankitagarwal, marinaglancy, rezaie9
