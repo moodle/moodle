@@ -1,25 +1,31 @@
-.steps-definitions {
-    border-style: solid;
-    border-width: 1px;
-    border-color: #bbb;
-    padding: 5px;
-    margin: auto;
-    width: 50%;
+#page-admin-tool-behat-index .steps-definitions {
+    margin: 1rem auto;
 }
 
-.steps-definitions .step {
-    margin: 10px 0 10px 0;
+#page-admin-tool-behat-index .steps-definitions .step {
+    margin: 1rem 0 0 0;
+    border: 1px solid #eee;
+    padding: 1rem;
 }
 
-.steps-definitions .stepdescription {
-    color: #bf8c12;
+#page-admin-tool-behat-index .steps-definitions .stepdescription {
+    font-style: italic;
 }
 
-.steps-definitions .steptype {
+#page-admin-tool-behat-index .steps-definitions .stepcontent {
+    margin: 1rem 0;
+}
+
+#page-admin-tool-behat-index .steps-definitions .steptype {
     color: #1467a6;
-    margin-right: 5px;
+    margin-right: 1ex;
 }
 
-.steps-definitions .stepregex {
+#page-admin-tool-behat-index .steps-definitions .stepapipath {
+    font-family: monospace;
+    font-size: smaller;
+}
+
+#page-admin-tool-behat-index .steps-definitions .stepregex {
     color: #060;
 }
