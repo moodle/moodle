@@ -163,6 +163,9 @@ class database_logger implements task_logger {
             return;
         }
 
-        $DB->delete_records_list('task_log', 'id', $logids);
+        $chunks = array_chunk($logids, 1000);
+        foreach ($chunks as $chunk) {
+            $DB->delete_records_list('task_log', 'id', $chunk);
+        }
     }
 }
