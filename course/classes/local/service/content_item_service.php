@@ -67,10 +67,33 @@ class content_item_service {
         // Get all the visible content items.
         $allcontentitems = $this->repository->find_all_for_course($course, $user);
 
+        // Content items can only originate from modules or submodules.
+        $pluginmanager = \core_plugin_manager::instance();
+        $components = \core_component::get_component_list();
+        $parents = [];
+        foreach ($allcontentitems as $contentitem) {
+            if (!in_array($contentitem->get_component_name(), array_keys($components['mod']))) {
+                // It could be a subplugin.
+                $info = $pluginmanager->get_plugin_info($contentitem->get_component_name());
+                if (!is_null($info)) {
+                    $parent = $info->get_parent_plugin();
+                    if ($parent != false) {
+                        if (in_array($parent, array_keys($components['mod']))) {
+                            $parents[$contentitem->get_component_name()] = $parent;
+                            continue;
+                        }
+                    }
+                }
+                throw new \moodle_exception('Only modules and submodules can generate content items. \''
+                    . $contentitem->get_component_name() . '\' is neither.');
+            }
+            $parents[$contentitem->get_component_name()] = $contentitem->get_component_name();
+        }
+
         // Now, check access to these items for the user.
-        $availablecontentitems = array_filter($allcontentitems, function($contentitem) use ($course, $user) {
+        $availablecontentitems = array_filter($allcontentitems, function($contentitem) use ($course, $user, $parents) {
             // Check the parent module access for the user.
-            return course_allowed_module($course, explode('_', $contentitem->get_component_name())[1], $user);
+            return course_allowed_module($course, explode('_', $parents[$contentitem->get_component_name()])[1], $user);
         });
 
         // Add the link params to the link, if any have been provided.
