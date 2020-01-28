@@ -82,7 +82,9 @@ class assign_grading_table extends table_sql implements renderable {
                                 $quickgrading,
                                 $downloadfilename = null) {
         global $CFG, $PAGE, $DB, $USER;
-        parent::__construct('mod_assign_grading');
+
+        parent::__construct('mod_assign_grading-' . $assignment->get_context()->id);
+
         $this->is_persistent(true);
         $this->assignment = $assignment;
 
