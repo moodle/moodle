@@ -68,7 +68,7 @@ class file_temp_cleanup_task extends scheduled_task {
         // Now loop through again and remove old files and directories.
         for ($iter->rewind(); $iter->valid(); $iter->next()) {
             $node = $iter->getRealPath();
-            if (!is_readable($node)) {
+            if (!isset($modifieddateobject[$node]) || !is_readable($node)) {
                 continue;
             }
 
