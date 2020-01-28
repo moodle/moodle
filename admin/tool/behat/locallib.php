@@ -55,13 +55,13 @@ class tool_behat {
         // The loaded steps depends on the component specified.
         behat_config_manager::update_config_file($component, false);
 
-        // The Moodle\BehatExtension\HelpPrinter\MoodleDefinitionsPrinter will parse this search format.
+        // The Moodle\BehatExtension\Definition\Printer\ConsoleDefinitionInformationPrinter will parse this search format.
         if ($type) {
             $filter .= '&&' . $type;
         }
 
         if ($filter) {
-            $filteroption = ' -d "' . $filter . '"';
+            $filteroption = ' -d ' . escapeshellarg($filter);
         } else {
             $filteroption = ' -di';
         }

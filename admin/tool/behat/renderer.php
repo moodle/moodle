@@ -44,13 +44,9 @@ class tool_behat_renderer extends plugin_renderer_base {
         global $CFG;
         require_once($CFG->libdir . '/behat/classes/behat_selectors.php');
 
-        $html = $this->generic_info();
-
-        // Form.
-        ob_start();
-        $form->display();
-        $html .= ob_get_contents();
-        ob_end_clean();
+        $html = $this->output->header();
+        $html .= $this->output->heading(get_string('pluginname', 'tool_behat'));
+        $html .= $form->render();
 
         if (empty($stepsdefinitions)) {
             $stepsdefinitions = get_string('nostepsdefinitions', 'tool_behat');
@@ -128,7 +124,9 @@ class tool_behat_renderer extends plugin_renderer_base {
      */
     public function render_error($msg) {
 
-        $html = $this->generic_info();
+        $html = $this->output->header();
+        $html .= $this->output->heading(get_string('pluginname', 'tool_behat'));
+        $html .= $this->generic_info();
 
         $a = new stdClass();
         $a->errormsg = $msg;
@@ -153,13 +151,7 @@ class tool_behat_renderer extends plugin_renderer_base {
      *
      * @return string
      */
-    protected function generic_info() {
-
-        $title = get_string('pluginname', 'tool_behat');
-
-        // Header.
-        $html = $this->output->header();
-        $html .= $this->output->heading($title);
+    public function generic_info() {
 
         // Info.
         $installurl = behat_command::DOCS_URL;
@@ -175,8 +167,7 @@ class tool_behat_renderer extends plugin_renderer_base {
         );
 
         // List of steps.
-        $html .= $this->output->box_start();
-        $html .= html_writer::tag('h3', get_string('infoheading', 'tool_behat'));
+        $html = $this->output->box_start();
         $html .= html_writer::tag('div', get_string('aim', 'tool_behat'));
         $html .= html_writer::start_tag('div');
         $html .= html_writer::start_tag('ul');
