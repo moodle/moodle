@@ -52,6 +52,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
 
         this.markAllReadButton = this.root.find(SELECTORS.MARK_ALL_READ_BUTTON);
         this.unreadCount = 0;
+        this.lastQueried = 0;
         this.userId = this.root.attr('data-userid');
         this.container = this.root.find(SELECTORS.ALL_NOTIFICATIONS_CONTAINER);
         this.limit = 20;
@@ -277,6 +278,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
         return NotificationRepo.query(request).then(function(result) {
             var notifications = result.notifications;
             this.unreadCount = result.unreadcount;
+            this.lastQueried = Math.floor(new Date().getTime() / 1000);
             this.setLoadedAllContent(!notifications.length || notifications.length < this.limit);
             this.initialLoad = true;
             this.updateButtonAriaLabel();
@@ -303,7 +305,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
     NotificationPopoverController.prototype.markAllAsRead = function() {
         this.markAllReadButton.addClass('loading');
 
-        return NotificationRepo.markAllAsRead({useridto: this.userId})
+        var request = {
+            useridto: this.userId,
+            timecreatedto: this.lastQueried,
+        };
+
+        return NotificationRepo.markAllAsRead(request)
             .then(function() {
                 this.unreadCount = 0;
                 this.root.find(SELECTORS.UNREAD_NOTIFICATION).removeClass('unread');

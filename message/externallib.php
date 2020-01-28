@@ -3255,6 +3255,9 @@ class core_message_external extends external_api {
                 'useridfrom' => new external_value(
                     PARAM_INT, 'the user id who send the message, 0 for any user. -10 or -20 for no-reply or support user',
                     VALUE_DEFAULT, 0),
+                'timecreatedto' => new external_value(
+                    PARAM_INT, 'mark messages created before this time as read, 0 for all messages',
+                    VALUE_DEFAULT, 0),
             )
         );
     }
@@ -3267,9 +3270,10 @@ class core_message_external extends external_api {
      * @throws moodle_exception
      * @param  int      $useridto       the user id who received the message
      * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
+     * @param  int      $timecreatedto  mark message created before this time as read, 0 for all messages
      * @return external_description
      */
-    public static function mark_all_notifications_as_read($useridto, $useridfrom) {
+    public static function mark_all_notifications_as_read($useridto, $useridfrom, $timecreatedto = 0) {
         global $USER;
 
         $params = self::validate_parameters(
@@ -3277,6 +3281,7 @@ class core_message_external extends external_api {
             array(
                 'useridto' => $useridto,
                 'useridfrom' => $useridfrom,
+                'timecreatedto' => $timecreatedto,
             )
         );
 
@@ -3285,6 +3290,7 @@ class core_message_external extends external_api {
 
         $useridto = $params['useridto'];
         $useridfrom = $params['useridfrom'];
+        $timecreatedto = $params['timecreatedto'];
 
         if (!empty($useridto)) {
             if (core_user::is_real_user($useridto)) {
@@ -3306,7 +3312,7 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        \core_message\api::mark_all_notifications_as_read($useridto, $useridfrom);
+        \core_message\api::mark_all_notifications_as_read($useridto, $useridfrom, $timecreatedto);
 
         return true;
     }

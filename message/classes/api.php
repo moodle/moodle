@@ -1730,9 +1730,10 @@ class api {
      *
      * @param int $touserid the id of the message recipient
      * @param int|null $fromuserid the id of the message sender, null if all messages
+     * @param int|null $timecreatedto mark notifications created before this time as read
      * @return void
      */
-    public static function mark_all_notifications_as_read($touserid, $fromuserid = null) {
+    public static function mark_all_notifications_as_read($touserid, $fromuserid = null, $timecreatedto = null) {
         global $DB;
 
         $notificationsql = "SELECT n.*
@@ -1743,6 +1744,10 @@ class api {
         if (!empty($fromuserid)) {
             $notificationsql .= " AND useridfrom = ?";
             $notificationsparams[] = $fromuserid;
+        }
+        if (!empty($timecreatedto)) {
+            $notificationsql .= " AND timecreated <= ?";
+            $notificationsparams[] = $timecreatedto;
         }
 
         $notifications = $DB->get_recordset_sql($notificationsql, $notificationsparams);
