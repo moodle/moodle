@@ -53,4 +53,26 @@ class helper {
 
         return $currencies;
     }
+
+    /**
+     * Returns the list of gateways that can process payments in the given currency.
+     *
+     * @param string $currency The currency in the three-character ISO-4217 format.
+     * @return string[]
+     */
+    public static function get_gateways_for_currency(string $currency): array {
+        $gateways = [];
+
+        $plugins = \core_plugin_manager::instance()->get_enabled_plugins('pg');
+        foreach ($plugins as $plugin) {
+            $classname = '\pg_' . $plugin . '\gateway';
+
+            $currencies = $classname::get_supported_currencies();
+            if (in_array($currency, $currencies)) {
+                $gateways[] = $plugin;
+            }
+        }
+
+        return $gateways;
+    }
 }
