@@ -234,6 +234,38 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
         $this->assertEquals(1, $antivirus->scan_file($this->tempfile, ''));
     }
 
+    public function test_scan_file_error_tryagain() {
+        $methods = array(
+                'scan_file_execute_commandline',
+                'scan_file_execute_unixsocket',
+                'message_admins',
+                'get_config',
+                'get_scanning_notice',
+        );
+        $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')->setMethods($methods)->getMock();
+
+        // Configure scan_file_execute_commandline and scan_file_execute_unixsocket
+        // method stubs to behave as if there is a scanning error (SCAN_RESULT_ERROR).
+        $antivirus->method('scan_file_execute_commandline')->willReturn(2);
+        $antivirus->method('scan_file_execute_unixsocket')->willReturn(2);
+        $antivirus->method('get_scanning_notice')->willReturn('someerror');
+
+        // Set expectation that message_admins is called.
+        $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));
+
+        // Initiate mock scanning with configuration setting to act like virus on
+        // scanning error and using commandline.
+        $configmap = array(array('clamfailureonupload', 'tryagain'), array('runningmethod', 'commandline'));
+        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+
+        // Run mock scanning.
+        $this->assertFileExists($this->tempfile);
+        $this->expectException(\core\antivirus\scanner_exception::class);
+        $antivirus->scan_file($this->tempfile, '');
+        $this->assertEquals('antivirusfailed', $this->getExpectedExceptionCode());
+        $this->assertFileNotExists($this->tempfile);
+    }
+
     public function test_scan_data_no_virus() {
         $methods = array(
             'scan_data_execute_socket',
