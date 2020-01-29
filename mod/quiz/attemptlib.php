@@ -576,25 +576,12 @@ class quiz_attempt {
      *      of the state of each question. Else just set up the basic details of the attempt.
      */
     public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
-        global $DB;
-
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
 
-        if (!$loadquestions) {
-            return;
+        if ($loadquestions) {
+            $this->load_questions();
         }
-
-        $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
-        $this->slots = $DB->get_records('quiz_slots',
-                array('quizid' => $this->get_quizid()), 'slot',
-                'slot, id, requireprevious, questionid, includingsubcategories');
-        $this->sections = array_values($DB->get_records('quiz_sections',
-                array('quizid' => $this->get_quizid()), 'firstslot'));
-
-        $this->link_sections_and_slots();
-        $this->determine_layout();
-        $this->number_questions();
     }
 
     /**
@@ -641,6 +628,28 @@ class quiz_attempt {
      */
     public static function state_name($state) {
         return quiz_attempt_state_name($state);
+    }
+
+    /**
+     * This method can be called later if the object was constructed with $loadqusetions = false.
+     */
+    public function load_questions() {
+        global $DB;
+
+        if (isset($this->quba)) {
+            throw new coding_exception('This quiz attempt has already had the questions loaded.');
+        }
+
+        $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
+        $this->slots = $DB->get_records('quiz_slots',
+                array('quizid' => $this->get_quizid()), 'slot',
+                'slot, id, requireprevious, questionid, includingsubcategories');
+        $this->sections = array_values($DB->get_records('quiz_sections',
+                array('quizid' => $this->get_quizid()), 'firstslot'));
+
+        $this->link_sections_and_slots();
+        $this->determine_layout();
+        $this->number_questions();
     }
 
     /**
