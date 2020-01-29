@@ -1,0 +1,48 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_payment/gateway
+
+    This template will render the gateway option in the gateway selector modal.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * shortname
+    * name
+    * description
+    * image
+
+    Example context (json):
+    {
+        "shortname": "paypal",
+        "name": "PayPal",
+        "description": "A description for PayPal.",
+    }
+
+}}
+<div class="custom-control custom-radio {{shortname}}">
+    <input class="custom-control-input" type="radio" name="payby" id="id-payby-{{uniqid}}-{{shortname}}"  value="{{shortname}}" {{#checked}} checked="checked" {{/checked}} />
+    <label class="custom-control-label bg-light border p-3 my-3" for="id-payby-{{uniqid}}-{{shortname}}">
+        <p class="h3">{{name}}</p>
+        <p class="content mb-2">{{description}}</p>
+    </label>
+</div>
