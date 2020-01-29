@@ -49,7 +49,7 @@ class course_content_item_exporter extends exporter {
     public function __construct(content_item $contentitem, array $related = []) {
         $this->contentitem = $contentitem;
 
-        return parent::__construct($contentitem, $related);
+        return parent::__construct([], $related);
     }
 
     /**
@@ -77,7 +77,7 @@ class course_content_item_exporter extends exporter {
      */
     protected static function define_other_properties() {
         // This will hold user-dependant properties such as whether the item is starred or recommended.
-        return [];
+        return ['favourite' => ['type' => PARAM_BOOL, 'description' => 'Has the user favourited the content item']];
     }
 
     /**
@@ -96,6 +96,17 @@ class course_content_item_exporter extends exporter {
      * @return array The array of property values, indexed by name.
      */
     protected function get_other_values(\renderer_base $output) {
+
+        $favourite = false;
+        $itemtype = 'contentitem_' . $this->contentitem->get_component_name();
+        if (isset($this->related['favouriteitems'])) {
+            foreach ($this->related['favouriteitems'] as $favobj) {
+                if ($favobj->itemtype === $itemtype && in_array($this->contentitem->get_id(), $favobj->ids)) {
+                    $favourite = true;
+                }
+            }
+        }
+
         $properties = [
             'id' => $this->contentitem->get_id(),
             'name' => $this->contentitem->get_name(),
@@ -105,6 +116,7 @@ class course_content_item_exporter extends exporter {
             'help' => $this->contentitem->get_help(),
             'archetype' => $this->contentitem->get_archetype(),
             'componentname' => $this->contentitem->get_component_name(),
+            'favourite' => $favourite
         ];
 
         return $properties;
@@ -117,7 +129,8 @@ class course_content_item_exporter extends exporter {
      */
     protected static function define_related(): array {
         return [
-            'context' => 'context'
+            'context' => '\context',
+            'favouriteitems' => '\stdClass[]?'
         ];
     }
 }

@@ -116,7 +116,7 @@ class services_content_item_service_testcase extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
 
         $cis = new content_item_service(new content_item_readonly_repository());
-        $allcontentitems = $cis->get_all_content_items();
+        $allcontentitems = $cis->get_all_content_items($user);
         $coursecontentitems = $cis->get_content_items_for_user_in_course($user, $course);
 
         // The call to get_all_content_items() should return the same items as for the course,
@@ -128,9 +128,71 @@ class services_content_item_service_testcase extends \advanced_testcase {
         assign_capability('mod/lti:addinstance', CAP_PROHIBIT, $teacherrole->id, \context_course::instance($course->id));
 
         // Verify that all items, including lti, are still returned by the get_all_content_items() call.
-        $allcontentitems = $cis->get_all_content_items();
+        $allcontentitems = $cis->get_all_content_items($user);
         $coursecontentitems = $cis->get_content_items_for_user_in_course($user, $course);
         $this->assertNotContains('lti', array_column($coursecontentitems, 'name'));
         $this->assertContains('lti', array_column($allcontentitems, 'name'));
+    }
+
+    /**
+     * Test confirming that a content item can be added to a user's favourites.
+     */
+    public function test_add_to_user_favourites() {
+        $this->resetAfterTest();
+
+        // Create a user in a course.
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $cis = new content_item_service(new content_item_readonly_repository());
+
+        // Grab a the assign content item, which we'll favourite for the user.
+        $items = $cis->get_all_content_items($user);
+        $assign = $items[array_search('assign', array_column($items, 'name'))];
+        $contentitem = $cis->add_to_user_favourites($user, 'mod_assign', $assign->id);
+
+        // Verify the exported result is marked as a favourite.
+        $this->assertEquals('assign', $contentitem->name);
+        $this->assertTrue($contentitem->favourite);
+
+        // Verify the item is marked as a favourite when returned from the other service methods.
+        $allitems = $cis->get_all_content_items($user);
+        $allitemsassign = $allitems[array_search('assign', array_column($allitems, 'name'))];
+
+        $courseitems = $cis->get_content_items_for_user_in_course($user, $course);
+        $courseitemsassign = $courseitems[array_search('assign', array_column($courseitems, 'name'))];
+        $this->assertTrue($allitemsassign->favourite);
+        $this->assertTrue($courseitemsassign->favourite);
+    }
+
+    /**
+     * Test verifying that content items can be removed from a user's favourites.
+     */
+    public function test_remove_from_user_favourites() {
+        $this->resetAfterTest();
+
+        // Create a user in a course.
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $cis = new content_item_service(new content_item_readonly_repository());
+
+        // Grab a the assign content item, which we'll favourite for the user.
+        $items = $cis->get_all_content_items($user);
+        $assign = $items[array_search('assign', array_column($items, 'name'))];
+        $cis->add_to_user_favourites($user, 'mod_assign', $assign->id);
+
+        // Now, remove the favourite, and verify it.
+        $contentitem = $cis->remove_from_user_favourites($user, 'mod_assign', $assign->id);
+
+        // Verify the exported result is not marked as a favourite.
+        $this->assertEquals('assign', $contentitem->name);
+        $this->assertFalse($contentitem->favourite);
+
+        // Verify the item is not marked as a favourite when returned from the other service methods.
+        $allitems = $cis->get_all_content_items($user);
+        $allitemsassign = $allitems[array_search('assign', array_column($allitems, 'name'))];
+        $courseitems = $cis->get_content_items_for_user_in_course($user, $course);
+        $courseitemsassign = $courseitems[array_search('assign', array_column($courseitems, 'name'))];
+        $this->assertFalse($allitemsassign->favourite);
+        $this->assertFalse($courseitemsassign->favourite);
     }
 }

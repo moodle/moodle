@@ -49,7 +49,7 @@ class course_content_items_exporter extends exporter {
     public function __construct(array $contentitems, array $related) {
         $this->contentitems = $contentitems;
 
-        parent::__construct($contentitems, $related);
+        parent::__construct([], $related);
     }
 
     /**
@@ -78,7 +78,8 @@ class course_content_items_exporter extends exporter {
             $exporter = new course_content_item_exporter(
                 $contentitem,
                 [
-                    'context' => $this->related['context']
+                    'context' => $this->related['context'],
+                    'favouriteitems' => $this->related['favouriteitems'],
                 ]
             );
             return $exporter->export($output);
@@ -98,7 +99,8 @@ class course_content_items_exporter extends exporter {
      */
     protected static function define_related() {
         return [
-            'context' => '\context'
+            'context' => '\context',
+            'favouriteitems' => '\stdClass[]?'
         ];
     }
 }
