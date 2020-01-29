@@ -303,7 +303,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Create a preview link
      *
-     * @param $url contains a url to the given page
+     * @param moodle_url $url contains a url to the given page
      */
     public function restart_preview_button($url) {
         return $this->single_button($url, get_string('startnewpreview', 'quiz'));
