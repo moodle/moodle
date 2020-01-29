@@ -206,9 +206,12 @@ class enrol_fee_plugin extends enrol_plugin {
                 echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
                 echo '</div>';
             } else {
-                echo '<div align="center"><input type="submit" value="' . get_string("sendpaymentbutton", "enrol_paypal") . '" /></div>';
-                $PAGE->requires->js_call_amd('profilefield_conditional/conditionconfig', 'init', array('#id_param1',
-                        '#profilefield_conditional_conditionconfiguration', '#id_conditionconfigbutton', $fieldid));
+                \core_payment\helper::gateways_modal_requirejs();
+                $attributes = core_payment\helper::gateways_modal_link_params($cost, $instance->currency);
+
+                echo '<div align="center">' .
+                      html_writer::tag('button', get_string("sendpaymentbutton", "enrol_paypal"), $attributes) .
+                      '</div>';
             }
 
         }

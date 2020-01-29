@@ -75,4 +75,35 @@ class helper {
 
         return $gateways;
     }
+
+    /**
+     * Requires the JS libraries for the pay button.
+     */
+    public static function gateways_modal_requirejs(): void {
+        global $PAGE;
+
+        static $done = false;
+        if ($done) {
+            return;
+        }
+
+        $PAGE->requires->js_call_amd('core_payment/gateways_modal', 'registerEventListeners', ['#gateways-modal-trigger']);
+        $done = true;
+    }
+
+    /**
+     * Returns the attributes to place on a pay button.
+     *
+     * @param float $amount Amount of payment
+     * @param string $currency Currency of payment
+     * @return array
+     */
+    public static function gateways_modal_link_params(float $amount, string $currency) : array {
+        return [
+            'id' => 'gateways-modal-trigger',
+            'role' => 'button',
+            'data-amount' => $amount,
+            'data-currency' => $currency,
+        ];
+    }
 }

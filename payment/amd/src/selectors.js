@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,13 +14,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'payment', language 'en'
+ * Define all of the selectors we will be using on the payment interface.
  *
- * @package   core_payment
- * @copyright 2019 Shamim Rezaie <shamim@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module     core_payment/selectors
+ * @package    core_payment
+ * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['nogateway'] = 'There is no payment gateway that can be used.';
-$string['selectpaymenttype'] = 'Select payment type';
-$string['supportedcurrencies'] = 'Supported currencies';
+export default {
+    regions: {
+        gatewaysContainer: '[data-region="gateways-container"]',
+    },
+};
