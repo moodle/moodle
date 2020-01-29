@@ -437,5 +437,20 @@ class mod_lti_lib_testcase extends advanced_testcase {
         $this->assertContains($sitetoolrecord->id + 1, $ids);
         $this->assertContains($course2toolrecord->id + 1, $ids);
         $this->assertNotContains($sitetoolrecordnonchooser->id + 1, $ids);
+
+        // When fetching all content items, we expect to see all items available in activity choosers (in any course),
+        // plus the default module content item ('external tool').
+        $this->setAdminUser();
+        $allitems = mod_lti_get_all_content_items($defaultmodulecontentitem);
+        $this->assertCount(4, $allitems);
+        $ids = [];
+        foreach ($allitems as $item) {
+            $ids[] = $item->get_id();
+        }
+        $this->assertContains(1, $ids);
+        $this->assertContains($sitetoolrecord->id + 1, $ids);
+        $this->assertContains($course1toolrecord->id + 1, $ids);
+        $this->assertContains($course2toolrecord->id + 1, $ids);
+        $this->assertNotContains($sitetoolrecordnonchooser->id + 1, $ids);
     }
 }

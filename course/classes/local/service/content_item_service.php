@@ -50,6 +50,30 @@ class content_item_service {
     }
 
     /**
+     * Get all content items which may be added to courses, irrespective of course caps, for site admin views, etc.
+     *
+     * @return array the array of exported content items.
+     */
+    public function get_all_content_items(): array {
+        global $PAGE;
+        $allcontentitems = $this->repository->find_all();
+
+        // Export the objects to get the formatted objects for transfer/display.
+        $ciexporter = new course_content_items_exporter(
+            $allcontentitems,
+            ['context' => \context_system::instance()]
+        );
+        $exported = $ciexporter->export($PAGE->get_renderer('core'));
+
+        // Sort by title for return.
+        usort($exported->content_items, function($a, $b) {
+            return $a->title > $b->title;
+        });
+
+        return $exported->content_items;
+    }
+
+    /**
      * Return a representation of the available content items, for a user in a course.
      *
      * @param \stdClass $user the user to check access for.

@@ -72,4 +72,33 @@ class content_item_readonly_repository_testcase extends \advanced_testcase {
         $items = $cir->find_all_for_course($course, $user);
         $this->assertArrayNotHasKey($module->name, $items);
     }
+
+    /**
+     * Test confirming that all content items can be fetched, even those which require certain caps when in a course.
+     */
+    public function test_find_all() {
+        $this->resetAfterTest();
+        global $DB;
+
+        // We'll compare our results to those which are course-specific.
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        assign_capability('mod/lti:addmanualinstance', CAP_PROHIBIT, $teacherrole->id, \context_course::instance($course->id));
+        $cir = new content_item_readonly_repository();
+
+        // Course specific - lti won't be returned as the user doesn't have the required cap.
+        $forcourse = $cir->find_all_for_course($course, $user);
+        $forcourse = array_filter($forcourse, function($contentitem) {
+            return $contentitem->get_name() === 'lti';
+        });
+        $this->assertEmpty($forcourse);
+
+        // All - all items are returned, including lti.
+        $all = $cir->find_all();
+        $all = array_filter($all, function($contentitem) {
+            return $contentitem->get_name() === 'lti';
+        });
+        $this->assertCount(1, $all);
+    }
 }

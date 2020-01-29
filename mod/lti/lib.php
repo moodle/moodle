@@ -296,6 +296,67 @@ function lti_get_course_content_items(\core_course\local\entity\content_item $de
 }
 
 /**
+ * Return all content items which can be added to any course.
+ *
+ * @param \core_course\local\entity\content_item $defaultmodulecontentitem
+ * @return array the array of content items.
+ */
+function mod_lti_get_all_content_items(\core_course\local\entity\content_item $defaultmodulecontentitem): array {
+    global $OUTPUT, $CFG;
+    require_once($CFG->dirroot . '/mod/lti/locallib.php'); // For access to constants.
+
+    // The 'External tool' entry (the main module content item), should always take the id of 1.
+    $types = [new \core_course\local\entity\content_item(
+        1,
+        $defaultmodulecontentitem->get_name(),
+        $defaultmodulecontentitem->get_title(),
+        $defaultmodulecontentitem->get_link(),
+        $defaultmodulecontentitem->get_icon(),
+        $defaultmodulecontentitem->get_help(),
+        $defaultmodulecontentitem->get_archetype(),
+        $defaultmodulecontentitem->get_component_name()
+    )];
+
+    foreach (lti_get_lti_types() as $ltitype) {
+        if ($ltitype->coursevisible != LTI_COURSEVISIBLE_ACTIVITYCHOOSER) {
+            continue;
+        }
+        $type           = new stdClass();
+        $type->id       = $ltitype->id;
+        $type->modclass = MOD_CLASS_ACTIVITY;
+        $type->name     = 'lti_type_' . $ltitype->id;
+        // Clean the name. We don't want tags here.
+        $type->title    = clean_param($ltitype->name, PARAM_NOTAGS);
+        $trimmeddescription = trim($ltitype->description);
+        $type->help = '';
+        if ($trimmeddescription != '') {
+            // Clean the description. We don't want tags here.
+            $type->help     = clean_param($trimmeddescription, PARAM_NOTAGS);
+            $type->helplink = get_string('modulename_shortcut_link', 'lti');
+        }
+        if (empty($ltitype->icon)) {
+            $type->icon = $OUTPUT->pix_icon('icon', '', 'lti', array('class' => 'icon'));
+        } else {
+            $type->icon = html_writer::empty_tag('img', array('src' => $ltitype->icon, 'alt' => $ltitype->name, 'class' => 'icon'));
+        }
+        $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'typeid' => $ltitype->id));
+
+        $types[] = new \core_course\local\entity\content_item(
+            $type->id + 1,
+            $type->name,
+            new \core_course\local\entity\string_title($type->title),
+            $type->link,
+            $type->icon,
+            $type->help,
+            $defaultmodulecontentitem->get_archetype(),
+            $defaultmodulecontentitem->get_component_name()
+        );
+    }
+
+    return $types;
+}
+
+/**
  * Given a coursemodule object, this function returns the extra
  * information needed to print this activity in various places.
  * For this module we just need to support external urls as

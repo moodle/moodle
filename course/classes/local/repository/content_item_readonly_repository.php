@@ -142,6 +142,28 @@ class content_item_readonly_repository implements content_item_readonly_reposito
     }
 
     /**
+     * Get all the content items for a subplugin.
+     *
+     * @param string $parentpluginname
+     * @param content_item $modulecontentitem
+     * @return array
+     */
+    private function get_subplugin_all_content_items(string $parentpluginname, content_item $modulecontentitem): array {
+        $contentitems = [];
+        $pluginmanager = \core_plugin_manager::instance();
+        foreach ($pluginmanager->get_subplugins_of_plugin($parentpluginname) as $subpluginname => $subplugin) {
+            // Call the hook, but with a copy of the module content item data.
+            $spcontentitems = component_callback($subpluginname, 'get_all_content_items', [$modulecontentitem], null);
+            if (!is_null($spcontentitems)) {
+                foreach ($spcontentitems as $spcontentitem) {
+                    $contentitems[] = $spcontentitem;
+                }
+            }
+        }
+        return $contentitems;
+    }
+
+    /**
      * Helper to make sure any legacy items have certain properties, which, if missing are inherited from the parent module item.
      *
      * @param \stdClass $legacyitem the legacy information, a stdClass coming from get_shortcuts() hook.
@@ -153,6 +175,60 @@ class content_item_readonly_repository implements content_item_readonly_reposito
         $legacyitem->archetype = $legacyitem->archetype ?? $modulecontentitem->get_archetype();
         $legacyitem->icon = $legacyitem->icon ?? $modulecontentitem->get_icon();
         return $legacyitem;
+    }
+
+    /**
+     * Find all the available content items, not restricted to course or user.
+     *
+     * @return array the array of content items.
+     */
+    public function find_all(): array {
+        global $OUTPUT, $DB;
+
+        // Get all modules so we know which plugins are enabled and able to add content.
+        // Only module plugins may add content items.
+        $modules = $DB->get_records('modules', ['visible' => 1]);
+        $return = [];
+
+        // Now, generate the content_items.
+        foreach ($modules as $modid => $mod) {
+            // Create the content item for the module itself.
+            // If the module chooses to implement the hook, this may be thrown away.
+            $help = $this->get_core_module_help_string($mod->name);
+            $archetype = plugin_supports('mod', $mod->name, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+
+            $contentitem = new content_item(
+                $mod->id,
+                $mod->name,
+                new lang_string_title("modulename", $mod->name),
+                new \moodle_url(''), // No course scope, so just an empty link.
+                $OUTPUT->pix_icon('icon', '', $mod->name, ['class' => 'icon']),
+                $help,
+                $archetype,
+                'mod_' . $mod->name
+            );
+
+            $modcontentitemreference = clone($contentitem);
+
+            if (component_callback_exists('mod_' . $mod->name, 'get_all_content_items')) {
+                // Call the module hooks for this module.
+                $plugincontentitems = component_callback('mod_' . $mod->name, 'get_all_content_items',
+                    [$modcontentitemreference], []);
+                if (!empty($plugincontentitems)) {
+                    array_push($return, ...$plugincontentitems);
+                }
+
+                // Now, get those for subplugins of the module.
+                $subplugincontentitems = $this->get_subplugin_all_content_items('mod_' . $mod->name, $modcontentitemreference);
+                if (!empty($subplugincontentitems)) {
+                    array_push($return, ...$subplugincontentitems);
+                }
+            } else {
+                // Neither callback was found, so just use the default module content item.
+                $return[] = $contentitem;
+            }
+        }
+        return $return;
     }
 
     /**

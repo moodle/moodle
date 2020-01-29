@@ -76,4 +76,13 @@ class caching_content_item_readonly_repository implements content_item_readonly_
         $this->cachestore->set($key, $contentitems);
         return $contentitems;
     }
+
+    /**
+     * Find all the content items made available by core and plugins.
+     *
+     * @return array
+     */
+    public function find_all(): array {
+        return $this->contentitemrepository->find_all();
+    }
 }

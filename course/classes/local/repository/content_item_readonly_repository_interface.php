@@ -38,4 +38,11 @@ interface content_item_readonly_repository_interface {
      * @return array the array of content items.
      */
     public function find_all_for_course(\stdClass $course, \stdClass $user): array;
+
+    /**
+     * Find all content items that can be presented, irrespective of course.
+     *
+     * @return array the array of content items.
+     */
+    public function find_all(): array;
 }
