@@ -163,6 +163,12 @@ current value for a pluginname depending on its status (enabled, disabled, other
   * /renderer.php
   * /rsslib.php
   This default applies both when there is no supplied coverage.php file, and is used to supplement any existing coverage configuration file if one is found.
+* Loggedin / Loggedoff component settings on notification preferences have been merged to a single enabled switch:
+  MESSAGE_DEFAULT_LOGGEDIN and MESSAGE_DEFAULT_LOGGEDOFF are now deprecated, so plugins should be updated if db/messages.php is present and replace
+    MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF to MESSAGE_DEFAULT_ENABLED. Backward compatibility will take any of both settings as enabled.
+  MESSAGE_DEFAULT_PERMITTED also deprecated.
+  core_message_get_user_notification_preferences and core_message_get_user_message_preferences Webservice are now returning enabled boolean on
+    components > notifications > processors. loggedin and loggedoff are deprecated but present for backward compatibility.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.

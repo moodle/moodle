@@ -34,7 +34,7 @@ $messageproviders = array(
     'confirmation' => array(
         'capability' => 'mod/quiz:emailconfirmsubmission',
         'defaults' => array(
-            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ),
     ),
 
@@ -43,14 +43,14 @@ $messageproviders = array(
     'attempt_overdue' => array(
         'capability' => 'mod/quiz:emailwarnoverdue',
         'defaults' => array(
-            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ),
     ),
 
     'attempt_grading_complete' => [
         'capability' => 'mod/quiz:emailnotifyattemptgraded',
         'defaults' => [
-            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ],
     ],
 );
