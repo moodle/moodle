@@ -2967,15 +2967,15 @@ class core_message_api_test extends core_message_messagelib_testcase {
         $this->setUser($user);
 
         // Set a couple of preferences to test.
-        set_user_preference('message_provider_mod_assign_assign_notification_loggedin', 'popup', $user);
-        set_user_preference('message_provider_mod_assign_assign_notification_loggedoff', 'email', $user);
+        set_user_preference('message_provider_mod_assign_assign_notification_enabled', 'popup', $user);
+        set_user_preference('message_provider_mod_feedback_submission_enabled', 'email', $user);
 
         $processors = get_message_processors();
         $providers = message_get_providers_for_user($user->id);
         $prefs = \core_message\api::get_all_message_preferences($processors, $providers, $user);
 
-        $this->assertEquals(1, $prefs->mod_assign_assign_notification_loggedin['popup']);
-        $this->assertEquals(1, $prefs->mod_assign_assign_notification_loggedoff['email']);
+        $this->assertEquals(1, $prefs->mod_assign_assign_notification_enabled['popup']);
+        $this->assertEquals(1, $prefs->mod_feedback_submission_enabled['email']);
     }
 
     /**

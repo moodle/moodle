@@ -1977,8 +1977,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($user);
 
         // Set a couple of preferences to test.
-        set_user_preference('message_provider_mod_assign_assign_notification_loggedin', 'popup', $user);
-        set_user_preference('message_provider_mod_assign_assign_notification_loggedoff', 'email', $user);
+        set_user_preference('message_provider_mod_assign_assign_notification_enabled', 'popup', $user);
 
         $prefs = core_message_external::get_user_notification_preferences();
         $prefs = external_api::clean_returnvalue(core_message_external::get_user_notification_preferences_returns(), $prefs);
@@ -1998,16 +1997,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
                 }
                 foreach ($prefdata['processors'] as $processor) {
                     if ($processor['name'] == 'popup') {
-                        $this->assertTrue($processor['loggedin']['checked']);
-                        $found++;
-                    } else if ($processor['name'] == 'email') {
-                        $this->assertTrue($processor['loggedoff']['checked']);
-                        $found++;
+                        $this->assertTrue($processor['enabled']);
+                        $found = 1;
                     }
                 }
             }
         }
-        $this->assertEquals(2, $found);
+        $this->assertEquals(1, $found);
     }
 
     /**
@@ -3491,8 +3487,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         set_config('messagingallusers', true);
 
         // Set a couple of preferences to test.
-        set_user_preference('message_provider_moodle_instantmessage_loggedin', 'email', $user);
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user);
         set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_SITE, $user);
 
         $prefs = core_message_external::get_user_message_preferences();
@@ -3512,8 +3507,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
                 }
                 foreach ($prefdata['processors'] as $processor) {
                     if ($processor['name'] == 'email') {
-                        $this->assertTrue($processor['loggedin']['checked']);
-                        $this->assertTrue($processor['loggedoff']['checked']);
+                        $this->assertTrue($processor['enabled']);
                         $found = true;
                     }
                 }

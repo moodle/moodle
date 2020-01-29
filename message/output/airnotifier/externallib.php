@@ -149,7 +149,6 @@ class message_airnotifier_external extends external_api {
                         break;
                     }
 
-
                     $prefstocheck = [];
                     $prefname = 'message_provider_'.$provider->component.'_'.$provider->name.'_enabled';
 

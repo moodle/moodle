@@ -865,8 +865,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->helper_spoof_message_inbound_setup();
 
         $author->emailstop = '0';
-        set_user_preference('message_provider_mod_forum_posts_loggedoff', 'email', $author);
-        set_user_preference('message_provider_mod_forum_posts_loggedin', 'email', $author);
+        set_user_preference('message_provider_mod_forum_posts_enabled', 'email', $author);
 
         // Run cron and check that the expected number of users received the notification.
         // Clear the mailsink, and close the messagesink.

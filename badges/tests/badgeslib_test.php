@@ -305,7 +305,7 @@ class badgeslib_test extends advanced_testcase {
         $sink = $this->redirectMessages();
 
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
-        set_user_preference('message_provider_moodle_badgerecipientnotice_loggedoff', 'email', $user1);
+        set_user_preference('message_provider_moodle_badgerecipientnotice_enabled', 'email', $user1);
 
         $badge->issue($user1->id, false);
         $this->assertDebuggingCalled(); // Expect debugging while baking a badge via phpunit.
