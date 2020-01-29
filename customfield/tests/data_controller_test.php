@@ -35,14 +35,6 @@ use core_customfield\data_controller;
 class core_customfield_data_controller_testcase extends advanced_testcase {
 
     /**
-     * Tear down to reset the singleton after each test.
-     */
-    public function tearDown() {
-        core_course\customfield\course_handler::reset_after_test();
-        parent::tearDown();
-    }
-
-    /**
      * Get generator.
      *
      * @return core_customfield_generator
