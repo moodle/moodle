@@ -39,14 +39,6 @@ use core_customfield\privacy\provider;
 class core_customfield_privacy_testcase extends provider_testcase {
 
     /**
-     * Tear down to reset the singleton after each test.
-     */
-    public function tearDown() {
-        core_course\customfield\course_handler::reset_after_test();
-        parent::tearDown();
-    }
-
-    /**
      * Generate data.
      *
      * @return array

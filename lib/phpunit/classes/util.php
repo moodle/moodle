@@ -252,6 +252,9 @@ class phpunit_util extends testing_util {
         if (class_exists('\core\update\checker')) {
             \core\update\checker::reset_caches(true);
         }
+        if (class_exists('\core_course\customfield\course_handler')) {
+            \core_course\customfield\course_handler::reset_caches();
+        }
 
         // Clear static cache within restore.
         if (class_exists('restore_section_structure_step')) {
