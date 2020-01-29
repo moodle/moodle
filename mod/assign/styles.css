@@ -195,7 +195,7 @@
 }
 
 .path-mod-assign.jsenabled .expandsummaryicon {
-    display: inline;
+    display: inline-block;
 }
 
 .path-mod-assign .hidefull {
