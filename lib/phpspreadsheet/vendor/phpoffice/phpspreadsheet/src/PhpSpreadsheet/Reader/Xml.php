@@ -41,7 +41,7 @@ class Xml extends BaseReader
      */
     public function __construct()
     {
-        $this->readFilter = new DefaultReadFilter();
+        parent::__construct();
         $this->securityScanner = XmlScanner::getInstance($this);
     }
 
@@ -285,9 +285,8 @@ class Xml extends BaseReader
     {
         $pixels = ($widthUnits / 256) * 7;
         $offsetWidthUnits = $widthUnits % 256;
-        $pixels += round($offsetWidthUnits / (256 / 7));
 
-        return $pixels;
+        return $pixels + round($offsetWidthUnits / (256 / 7));
     }
 
     protected static function hex2str($hex)
