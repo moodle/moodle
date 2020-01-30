@@ -3084,4 +3084,82 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Check if the webservice returns exactly what the exporter defines.
         $this->assertEquals($formatteddata, $result['allmodules']);
     }
+
+    /**
+     * Verify that content items can be added to user favourites.
+     */
+    public function test_add_content_item_to_user_favourites() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $this->setUser($user);
+
+        // Using the internal API, confirm that no items are set as favourites for the user.
+        $contentitemservice = new \core_course\local\service\content_item_service(
+            new \core_course\local\repository\content_item_readonly_repository()
+        );
+        $contentitems = $contentitemservice->get_all_content_items($user);
+        $favourited = array_filter($contentitems, function($contentitem) {
+            return $contentitem->favourite == true;
+        });
+        $this->assertCount(0, $favourited);
+
+        // Using the external API, favourite a content item for the user.
+        $assign = $contentitems[array_search('assign', array_column($contentitems, 'name'))];
+        $contentitem = core_course_external::add_content_item_to_user_favourites('mod_assign', $assign->id, $user->id);
+        $contentitem = external_api::clean_returnvalue(core_course_external::add_content_item_to_user_favourites_returns(),
+            $contentitem);
+
+        // Verify the returned item is a favourite.
+        $this->assertTrue($contentitem['favourite']);
+
+        // Using the internal API, confirm we see a single favourite item.
+        $contentitems = $contentitemservice->get_all_content_items($user);
+        $favourited = array_values(array_filter($contentitems, function($contentitem) {
+            return $contentitem->favourite == true;
+        }));
+        $this->assertCount(1, $favourited);
+        $this->assertEquals('assign', $favourited[0]->name);
+    }
+
+    /**
+     * Verify that content items can be removed from user favourites.
+     */
+    public function test_remove_content_item_from_user_favourites() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $this->setUser($user);
+
+        // Using the internal API, set a favourite for the user.
+        $contentitemservice = new \core_course\local\service\content_item_service(
+            new \core_course\local\repository\content_item_readonly_repository()
+        );
+        $contentitems = $contentitemservice->get_all_content_items($user);
+        $assign = $contentitems[array_search('assign', array_column($contentitems, 'name'))];
+        $contentitemservice->add_to_user_favourites($user, $assign->componentname, $assign->id);
+
+        $contentitems = $contentitemservice->get_all_content_items($user);
+        $favourited = array_filter($contentitems, function($contentitem) {
+            return $contentitem->favourite == true;
+        });
+        $this->assertCount(1, $favourited);
+
+        // Now, verify the external API can remove the favourite.
+        $contentitem = core_course_external::remove_content_item_from_user_favourites('mod_assign', $assign->id);
+        $contentitem = external_api::clean_returnvalue(core_course_external::remove_content_item_from_user_favourites_returns(),
+            $contentitem);
+
+        // Verify the returned item is a favourite.
+        $this->assertFalse($contentitem['favourite']);
+
+        // Using the internal API, confirm we see no favourite items.
+        $contentitems = $contentitemservice->get_all_content_items($user);
+        $favourited = array_filter($contentitems, function($contentitem) {
+            return $contentitem->favourite == true;
+        });
+        $this->assertCount(0, $favourited);
+    }
 }

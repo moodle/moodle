@@ -4222,4 +4222,111 @@ class core_course_external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function add_content_item_to_user_favourites_parameters() {
+        return new external_function_parameters([
+            'componentname' => new external_value(PARAM_TEXT,
+                'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
+            'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED)
+        ]);
+    }
+
+    /**
+     * Add a content item to a user's favourites.
+     *
+     * @param string $componentname the name of the component from which this content item originates.
+     * @param int $contentitemid the id of the content item.
+     * @return stdClass the exporter content item.
+     */
+    public static function add_content_item_to_user_favourites(string $componentname, int $contentitemid) {
+        global $USER;
+
+        [
+            'componentname' => $componentname,
+            'contentitemid' => $contentitemid,
+        ] = self::validate_parameters(self::add_content_item_to_user_favourites_parameters(),
+            [
+                'componentname' => $componentname,
+                'contentitemid' => $contentitemid,
+            ]
+        );
+
+        self::validate_context(context_user::instance($USER->id));
+
+        $contentitemservice = new \core_course\local\service\content_item_service(
+            new \core_course\local\repository\caching_content_item_readonly_repository(
+                \cache::make('core', 'user_course_content_items'),
+                new \core_course\local\repository\content_item_readonly_repository()
+            )
+        );
+
+        return $contentitemservice->add_to_user_favourites($USER, $componentname, $contentitemid);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function add_content_item_to_user_favourites_returns() {
+        return \core_course\local\exporters\course_content_item_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function remove_content_item_from_user_favourites_parameters() {
+        return new external_function_parameters([
+            'componentname' => new external_value(PARAM_TEXT,
+                'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
+            'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+        ]);
+    }
+
+    /**
+     * Remove a content item from a user's favourites.
+     *
+     * @param string $componentname the name of the component from which this content item originates.
+     * @param int $contentitemid the id of the content item.
+     * @return stdClass the exported content item.
+     */
+    public static function remove_content_item_from_user_favourites(string $componentname, int $contentitemid) {
+        global $USER;
+
+        [
+            'componentname' => $componentname,
+            'contentitemid' => $contentitemid,
+        ] = self::validate_parameters(self::remove_content_item_from_user_favourites_parameters(),
+            [
+                'componentname' => $componentname,
+                'contentitemid' => $contentitemid,
+            ]
+        );
+
+        self::validate_context(context_user::instance($USER->id));
+
+        $contentitemservice = new \core_course\local\service\content_item_service(
+            new \core_course\local\repository\caching_content_item_readonly_repository(
+                \cache::make('core', 'user_course_content_items'),
+                new \core_course\local\repository\content_item_readonly_repository()
+            )
+        );
+
+        return $contentitemservice->remove_from_user_favourites($USER, $componentname, $contentitemid);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function remove_content_item_from_user_favourites_returns() {
+        return \core_course\local\exporters\course_content_item_exporter::get_read_structure();
+    }
 }

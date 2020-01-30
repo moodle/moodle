@@ -629,6 +629,22 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'core_course_add_content_item_to_user_favourites' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'add_content_item_to_user_favourites',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Adds a content item (activity, resource or their subtypes) to the favourites for the user.',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+    'core_course_remove_content_item_from_user_favourites' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'remove_content_item_from_user_favourites',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Removes a content item (activity, resource or their subtypes) from the favourites for the user.',
+        'type' => 'write',
+        'ajax' => true,
+    ),
     'core_course_get_activity_picker_info' => array(
         'classname' => 'core_course_external',
         'methodname' => 'fetch_modules_activity_chooser',
