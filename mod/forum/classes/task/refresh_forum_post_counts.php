@@ -54,8 +54,11 @@ class refresh_forum_post_counts extends \core\task\adhoc_task {
     protected function update_null_forum_post_counts(): bool {
         global $CFG, $DB;
 
-        // Default to chunks of 5000 records per run, unless overridden in config.php
+        // Default to chunks of 5000 records per run, unless overridden in config.php.
         $chunksize = $CFG->forumpostcountchunksize ?? 5000;
+
+        // Initialize counter.
+        $recordscount = 0;
 
         $select = 'wordcount IS NULL OR charcount IS NULL';
         $recordset = $DB->get_recordset_select('forum_posts', $select, null, 'discussion', 'id, message', 0, $chunksize);
@@ -68,9 +71,9 @@ class refresh_forum_post_counts extends \core\task\adhoc_task {
         foreach ($recordset as $record) {
             \mod_forum\local\entities\post::add_message_counts($record);
             $DB->update_record('forum_posts', $record);
+            $recordscount++;
         }
 
-        $recordscount = count($recordset);
         $recordset->close();
 
         return ($recordscount == $chunksize);
