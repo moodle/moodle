@@ -1749,6 +1749,16 @@ abstract class admin_setting {
     }
 
     /**
+     * Set the required options flag on this admin setting.
+     *
+     * @param bool $enabled - One of self::OPTION_ENABLED or self::OPTION_DISABLED.
+     * @param bool $default - The default for the flag.
+     */
+    public function set_required_flag_options($enabled, $default) {
+        $this->set_flag_options($enabled, $default, 'required', new lang_string('required', 'core_admin'));
+    }
+
+    /**
      * Get the currently saved value for a setting flag
      *
      * @param admin_setting_flag $flag - One of the admin_setting_flag for this admin_setting.
@@ -2074,7 +2084,7 @@ abstract class admin_setting {
 
 /**
  * An additional option that can be applied to an admin setting.
- * The currently supported options are 'ADVANCED' and 'LOCKED'.
+ * The currently supported options are 'ADVANCED', 'LOCKED' and 'REQUIRED'.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

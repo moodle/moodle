@@ -1179,7 +1179,7 @@ abstract class moodleform_mod extends moodleform {
     }
 
     /**
-     * Get the list of admin settings for this module and apply any defaults/advanced/locked settings.
+     * Get the list of admin settings for this module and apply any defaults/advanced/locked/required settings.
      *
      * @param $datetimeoffsets array - If passed, this is an array of fieldnames => times that the
      *                         default date/time value should be relative to. If not passed, all
@@ -1220,6 +1220,10 @@ abstract class moodleform_mod extends moodleform {
                 $advancedsetting = $name . '_adv';
                 if (!empty($settings->$advancedsetting)) {
                     $mform->setAdvanced($name);
+                }
+                $requiredsetting = $name . '_required';
+                if (!empty($settings->$requiredsetting)) {
+                    $mform->addRule($name, null, 'required', null, 'client');
                 }
             }
         }

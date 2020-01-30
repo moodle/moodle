@@ -22,6 +22,12 @@ information provided here is intended especially for developers.
     incompatible takes a single int corresponding to the first incompatible branch. Any Moodle versions including and
     above this will be prevented from installing the plugin, and a message will be given when attempting installation.
 * Added the <component>_bulk_user_actions() callback which returns a list of custom action_links objects
+* Add 'required' admin flag for mod forms allows elements to be toggled between being required or not in admin settings.
+  - In mod settings, along with lock, advanced flags, the required flag can now be set with $setting->set_required_flag_options().
+    The name of the admin setting must be exactly the same as the mod_form element.
+  - Currently supported by:
+    - mod_assign
+    - mod_quiz
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
