@@ -88,7 +88,7 @@ class component_favourite_service_testcase extends advanced_testcase {
                 // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
                 foreach ($mockstore as $index => $mockrow) {
                     $mockrowarr = (array)$mockrow;
-                    if (array_diff($criteria, $mockrowarr) == []) {
+                    if (array_diff_assoc($criteria, $mockrowarr) == []) {
                         $returns[$index] = $mockrow;
                     }
                 }
@@ -107,7 +107,7 @@ class component_favourite_service_testcase extends advanced_testcase {
                 $crit = ['userid' => $userid, 'component' => $comp, 'itemtype' => $type, 'itemid' => $id, 'contextid' => $ctxid];
                 foreach ($mockstore as $fakerow) {
                     $fakerowarr = (array)$fakerow;
-                    if (array_diff($crit, $fakerowarr) == []) {
+                    if (array_diff_assoc($crit, $fakerowarr) == []) {
                         return $fakerow;
                     }
                 }
@@ -133,7 +133,7 @@ class component_favourite_service_testcase extends advanced_testcase {
                 // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
                 foreach ($mockstore as $index => $mockrow) {
                     $mockrowarr = (array)$mockrow;
-                    if (array_diff($criteria, $mockrowarr) == []) {
+                    if (array_diff_assoc($criteria, $mockrowarr) == []) {
                         $count++;
                     }
                 }
@@ -156,7 +156,7 @@ class component_favourite_service_testcase extends advanced_testcase {
                 // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
                 foreach ($mockstore as $index => $mockrow) {
                     $mockrowarr = (array)$mockrow;
-                    if (array_diff($criteria, $mockrowarr) == []) {
+                    if (array_diff_assoc($criteria, $mockrowarr) == []) {
                         unset($mockstore[$index]);
                     }
                 }
@@ -169,7 +169,7 @@ class component_favourite_service_testcase extends advanced_testcase {
                 foreach ($mockstore as $index => $mockrow) {
                     $mockrowarr = (array)$mockrow;
                     echo "Here";
-                    if (array_diff($criteria, $mockrowarr) == []) {
+                    if (array_diff_assoc($criteria, $mockrowarr) == []) {
                         return true;
                     }
                 }

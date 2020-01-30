@@ -37,29 +37,20 @@ use \core_customfield\field_controller;
 class core_customfield_category_controller_testcase extends advanced_testcase {
 
     /**
-     * This method is called after the last test of this test class is run.
-     */
-    public static function tearDownAfterClass() {
-        $handler = core_course\customfield\course_handler::create();
-        $handler->delete_all();
-    }
-
-    /**
-     * Tests set up.
-     */
-    public function setUp() {
-        $this->resetAfterTest();
-    }
-
-    /**
-     * Get generator
+     * Get generator.
+     *
      * @return core_customfield_generator
      */
-    protected function get_generator() : core_customfield_generator {
+    protected function get_generator(): core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 
+    /**
+     * Test for the field_controller::__construct function.
+     */
     public function test_constructor() {
+        $this->resetAfterTest();
+
         $c = category_controller::create(0, (object)['component' => 'core_course', 'area' => 'course', 'itemid' => 0]);
         $handler = $c->get_handler();
         $this->assertTrue($c instanceof category_controller);
@@ -83,6 +74,8 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
      */
     public function test_constructor_errors() {
         global $DB;
+        $this->resetAfterTest();
+
         $cat = $this->get_generator()->create_category();
         $catrecord = $cat->to_record();
 
@@ -181,6 +174,7 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
      * \core_customfield\category_controller::get()
      */
     public function test_create_category() {
+        $this->resetAfterTest();
 
         // Create the category.
         $lpg = $this->get_generator();
@@ -209,6 +203,8 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
      * Tests for \core_customfield\category_controller::set() behaviour.
      */
     public function test_rename_category() {
+        $this->resetAfterTest();
+
         // Create the category.
         $params = ['component' => 'core_course', 'area' => 'course', 'itemid' => 0, 'name' => 'Cat1',
             'contextid' => context_system::instance()->id];
@@ -232,6 +228,8 @@ class core_customfield_category_controller_testcase extends advanced_testcase {
      * Tests for \core_customfield\category_controller::delete() behaviour.
      */
     public function test_delete_category() {
+        $this->resetAfterTest();
+
         // Create the category.
         $lpg = $this->get_generator();
         $category0 = $lpg->create_category();

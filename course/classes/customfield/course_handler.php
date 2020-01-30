@@ -69,6 +69,17 @@ class course_handler extends \core_customfield\handler {
     }
 
     /**
+     * Run reset code after unit tests to reset the singleton usage.
+     */
+    public static function reset_caches(): void {
+        if (!PHPUNIT_TEST) {
+            throw new \coding_exception('This feature is only intended for use in unit tests');
+        }
+
+        static::$singleton = null;
+    }
+
+    /**
      * The current user can configure custom fields on this component.
      *
      * @return bool true if the current can configure custom fields, false otherwise
