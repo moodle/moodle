@@ -371,16 +371,22 @@ class question_type {
             $question->defaultmark = $form->defaultmark;
         }
 
-        if (isset($form->idnumber) && ((string) $form->idnumber !== '')) {
-            // While this check already exists in the form validation, this is a backstop preventing unnecessary errors.
-            if (strpos($form->category, ',') !== false) {
-                list($category, $categorycontextid) = explode(',', $form->category);
+        if (isset($form->idnumber)) {
+            if ((string) $form->idnumber === '') {
+                $question->idnumber = null;
             } else {
-                $category = $form->category;
-            }
-            if (!$DB->record_exists('question',
-                    ['idnumber' => $form->idnumber, 'category' => $category])) {
-                $question->idnumber = $form->idnumber;
+                // While this check already exists in the form validation,
+                // this is a backstop preventing unnecessary errors.
+                // Only set the idnumber if it has changed and will not cause a unique index violation.
+                if (strpos($form->category, ',') !== false) {
+                    list($category, $categorycontextid) = explode(',', $form->category);
+                } else {
+                    $category = $form->category;
+                }
+                if (!$DB->record_exists('question',
+                        ['idnumber' => $form->idnumber, 'category' => $category])) {
+                    $question->idnumber = $form->idnumber;
+                }
             }
         }
 
