@@ -38,71 +38,59 @@ use core_customfield\privacy\provider;
  */
 class core_customfield_privacy_testcase extends provider_testcase {
 
-    /** @var stdClass[]  */
-    private $courses = [];
-    /** @var \core_customfield\category_controller[] */
-    private $cfcats = [];
-    /** @var \core_customfield\field_controller[] */
-    private $cffields = [];
-
     /**
-     * This method is called after the last test of this test class is run.
+     * Generate data.
+     *
+     * @return array
      */
-    public static function tearDownAfterClass() {
-        $handler = core_course\customfield\course_handler::create();
-        $handler->delete_all();
-    }
-
-    /**
-     * Set up
-     */
-    public function setUp() {
+    protected function generate_test_data(): array {
         $this->resetAfterTest();
 
-        $this->cfcats[1] = $this->get_generator()->create_category();
-        $this->cfcats[2] = $this->get_generator()->create_category();
-        $this->cffields[11] = $this->get_generator()->create_field(
-            ['categoryid' => $this->cfcats[1]->get('id'), 'type' => 'checkbox']);
-        $this->cffields[12] = $this->get_generator()->create_field(
-            ['categoryid' => $this->cfcats[1]->get('id'), 'type' => 'date']);
-        $this->cffields[13] = $this->get_generator()->create_field(
-            ['categoryid' => $this->cfcats[1]->get('id'),
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+        $cfcats[1] = $generator->create_category();
+        $cfcats[2] = $generator->create_category();
+        $cffields[11] = $generator->create_field(
+            ['categoryid' => $cfcats[1]->get('id'), 'type' => 'checkbox']);
+        $cffields[12] = $generator->create_field(
+            ['categoryid' => $cfcats[1]->get('id'), 'type' => 'date']);
+        $cffields[13] = $generator->create_field(
+            ['categoryid' => $cfcats[1]->get('id'),
             'type' => 'select', 'configdata' => ['options' => "a\nb\nc"]]);
-        $this->cffields[14] = $this->get_generator()->create_field(
-            ['categoryid' => $this->cfcats[1]->get('id'), 'type' => 'text']);
-        $this->cffields[15] = $this->get_generator()->create_field(
-            ['categoryid' => $this->cfcats[1]->get('id'), 'type' => 'textarea']);
-        $this->cffields[21] = $this->get_generator()->create_field(
-            ['categoryid' => $this->cfcats[2]->get('id')]);
-        $this->cffields[22] = $this->get_generator()->create_field(
-            ['categoryid' => $this->cfcats[2]->get('id')]);
+        $cffields[14] = $generator->create_field(
+            ['categoryid' => $cfcats[1]->get('id'), 'type' => 'text']);
+        $cffields[15] = $generator->create_field(
+            ['categoryid' => $cfcats[1]->get('id'), 'type' => 'textarea']);
+        $cffields[21] = $generator->create_field(
+            ['categoryid' => $cfcats[2]->get('id')]);
+        $cffields[22] = $generator->create_field(
+            ['categoryid' => $cfcats[2]->get('id')]);
 
-        $this->courses[1] = $this->getDataGenerator()->create_course();
-        $this->courses[2] = $this->getDataGenerator()->create_course();
-        $this->courses[3] = $this->getDataGenerator()->create_course();
+        $courses[1] = $this->getDataGenerator()->create_course();
+        $courses[2] = $this->getDataGenerator()->create_course();
+        $courses[3] = $this->getDataGenerator()->create_course();
 
-        $this->get_generator()->add_instance_data($this->cffields[11], $this->courses[1]->id, 1);
-        $this->get_generator()->add_instance_data($this->cffields[12], $this->courses[1]->id, 1546300800);
-        $this->get_generator()->add_instance_data($this->cffields[13], $this->courses[1]->id, 2);
-        $this->get_generator()->add_instance_data($this->cffields[14], $this->courses[1]->id, 'Hello1');
-        $this->get_generator()->add_instance_data($this->cffields[15], $this->courses[1]->id,
+        $generator->add_instance_data($cffields[11], $courses[1]->id, 1);
+        $generator->add_instance_data($cffields[12], $courses[1]->id, 1546300800);
+        $generator->add_instance_data($cffields[13], $courses[1]->id, 2);
+        $generator->add_instance_data($cffields[14], $courses[1]->id, 'Hello1');
+        $generator->add_instance_data($cffields[15], $courses[1]->id,
             ['text' => '<p>Hi there</p>', 'format' => FORMAT_HTML]);
 
-        $this->get_generator()->add_instance_data($this->cffields[21], $this->courses[1]->id, 'hihi1');
+        $generator->add_instance_data($cffields[21], $courses[1]->id, 'hihi1');
 
-        $this->get_generator()->add_instance_data($this->cffields[14], $this->courses[2]->id, 'Hello2');
+        $generator->add_instance_data($cffields[14], $courses[2]->id, 'Hello2');
 
-        $this->get_generator()->add_instance_data($this->cffields[21], $this->courses[2]->id, 'hihi2');
+        $generator->add_instance_data($cffields[21], $courses[2]->id, 'hihi2');
 
-        $this->setUser($this->getDataGenerator()->create_user());
-    }
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
 
-    /**
-     * Get generator
-     * @return core_customfield_generator
-     */
-    protected function get_generator() : core_customfield_generator {
-        return $this->getDataGenerator()->get_plugin_generator('core_customfield');
+        return [
+            'user' => $user,
+            'cfcats' => $cfcats,
+            'cffields' => $cffields,
+            'courses' => $courses,
+        ];
     }
 
     /**
@@ -119,11 +107,17 @@ class core_customfield_privacy_testcase extends provider_testcase {
      */
     public function test_get_customfields_data_contexts() {
         global $DB;
-        list($sql, $params) = $DB->get_in_or_equal([$this->courses[1]->id, $this->courses[2]->id], SQL_PARAMS_NAMED);
+        [
+            'cffields' => $cffields,
+            'cfcats' => $cfcats,
+            'courses' => $courses,
+        ] = $this->generate_test_data();
+
+        list($sql, $params) = $DB->get_in_or_equal([$courses[1]->id, $courses[2]->id], SQL_PARAMS_NAMED);
         $r = provider::get_customfields_data_contexts('core_course', 'course', '=0',
             $sql, $params);
-        $this->assertEquals([context_course::instance($this->courses[1]->id)->id,
-            context_course::instance($this->courses[2]->id)->id],
+        $this->assertEquals([context_course::instance($courses[1]->id)->id,
+            context_course::instance($courses[2]->id)->id],
             $r->get_contextids(), '', 0, 10, true);
     }
 
@@ -131,6 +125,8 @@ class core_customfield_privacy_testcase extends provider_testcase {
      * Test for provider::get_customfields_configuration_contexts()
      */
     public function test_get_customfields_configuration_contexts() {
+        $this->generate_test_data();
+
         $r = provider::get_customfields_configuration_contexts('core_course', 'course');
         $this->assertEquals([context_system::instance()->id], $r->get_contextids());
     }
@@ -140,13 +136,20 @@ class core_customfield_privacy_testcase extends provider_testcase {
      */
     public function test_export_customfields_data() {
         global $USER, $DB;
+        $this->resetAfterTest();
+        [
+            'cffields' => $cffields,
+            'cfcats' => $cfcats,
+            'courses' => $courses,
+        ] = $this->generate_test_data();
+
         // Hack one of the fields so it has an invalid field type.
-        $invalidfieldid = $this->cffields[21]->get('id');
+        $invalidfieldid = $cffields[21]->get('id');
         $DB->update_record('customfield_field', ['id' => $invalidfieldid, 'type' => 'invalid']);
 
-        $context = context_course::instance($this->courses[1]->id);
+        $context = context_course::instance($courses[1]->id);
         $contextlist = new approved_contextlist($USER, 'core_customfield', [$context->id]);
-        provider::export_customfields_data($contextlist, 'core_course', 'course', '=0', '=:i', ['i' => $this->courses[1]->id]);
+        provider::export_customfields_data($contextlist, 'core_course', 'course', '=0', '=:i', ['i' => $courses[1]->id]);
         /** @var core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
@@ -155,7 +158,7 @@ class core_customfield_privacy_testcase extends provider_testcase {
         $invaldfieldischecked = false;
         foreach ($DB->get_records('customfield_data', []) as $dbrecord) {
             $data = $writer->get_data(['Custom fields data', $dbrecord->id]);
-            if ($dbrecord->instanceid == $this->courses[1]->id) {
+            if ($dbrecord->instanceid == $courses[1]->id) {
                 $this->assertEquals($dbrecord->fieldid, $data->fieldid);
                 $this->assertNotEmpty($data->fieldtype);
                 $this->assertNotEmpty($data->fieldshortname);
@@ -175,10 +178,17 @@ class core_customfield_privacy_testcase extends provider_testcase {
      */
     public function test_delete_customfields_data() {
         global $USER, $DB;
-        $approvedcontexts = new approved_contextlist($USER, 'core_course', [context_course::instance($this->courses[1]->id)->id]);
+        $this->resetAfterTest();
+        [
+            'cffields' => $cffields,
+            'cfcats' => $cfcats,
+            'courses' => $courses,
+        ] = $this->generate_test_data();
+
+        $approvedcontexts = new approved_contextlist($USER, 'core_course', [context_course::instance($courses[1]->id)->id]);
         provider::delete_customfields_data($approvedcontexts, 'core_course', 'course');
-        $this->assertEmpty($DB->get_records('customfield_data', ['instanceid' => $this->courses[1]->id]));
-        $this->assertNotEmpty($DB->get_records('customfield_data', ['instanceid' => $this->courses[2]->id]));
+        $this->assertEmpty($DB->get_records('customfield_data', ['instanceid' => $courses[1]->id]));
+        $this->assertNotEmpty($DB->get_records('customfield_data', ['instanceid' => $courses[2]->id]));
     }
 
     /**
@@ -186,9 +196,16 @@ class core_customfield_privacy_testcase extends provider_testcase {
      */
     public function test_delete_customfields_configuration() {
         global $USER, $DB;
+        $this->resetAfterTest();
+        [
+            'cffields' => $cffields,
+            'cfcats' => $cfcats,
+            'courses' => $courses,
+        ] = $this->generate_test_data();
+
         // Remember the list of fields in the category 2 before we delete it.
-        $catid1 = $this->cfcats[1]->get('id');
-        $catid2 = $this->cfcats[2]->get('id');
+        $catid1 = $cfcats[1]->get('id');
+        $catid2 = $cfcats[2]->get('id');
         $fids2 = $DB->get_fieldset_select('customfield_field', 'id', 'categoryid=?', [$catid2]);
         $this->assertNotEmpty($fids2);
         list($fsql, $fparams) = $DB->get_in_or_equal($fids2, SQL_PARAMS_NAMED);
@@ -216,9 +233,16 @@ class core_customfield_privacy_testcase extends provider_testcase {
      */
     public function test_delete_customfields_configuration_for_context() {
         global $USER, $DB;
+        $this->resetAfterTest();
+        [
+            'cffields' => $cffields,
+            'cfcats' => $cfcats,
+            'courses' => $courses,
+        ] = $this->generate_test_data();
+
         // Remember the list of fields in the category 2 before we delete it.
-        $catid1 = $this->cfcats[1]->get('id');
-        $catid2 = $this->cfcats[2]->get('id');
+        $catid1 = $cfcats[1]->get('id');
+        $catid2 = $cfcats[2]->get('id');
         $fids2 = $DB->get_fieldset_select('customfield_field', 'id', 'categoryid=?', [$catid2]);
         $this->assertNotEmpty($fids2);
         list($fsql, $fparams) = $DB->get_in_or_equal($fids2, SQL_PARAMS_NAMED);
@@ -246,12 +270,19 @@ class core_customfield_privacy_testcase extends provider_testcase {
      */
     public function test_delete_customfields_data_for_context() {
         global $DB;
+        $this->resetAfterTest();
+        [
+            'cffields' => $cffields,
+            'cfcats' => $cfcats,
+            'courses' => $courses,
+        ] = $this->generate_test_data();
+
         provider::delete_customfields_data_for_context('core_course', 'course',
-            context_course::instance($this->courses[1]->id));
+            context_course::instance($courses[1]->id));
         $fids2 = $DB->get_fieldset_select('customfield_field', 'id', '1=1', []);
         list($fsql, $fparams) = $DB->get_in_or_equal($fids2, SQL_PARAMS_NAMED);
-        $fparams['course1'] = $this->courses[1]->id;
-        $fparams['course2'] = $this->courses[2]->id;
+        $fparams['course1'] = $courses[1]->id;
+        $fparams['course2'] = $courses[2]->id;
         $this->assertEmpty($DB->get_records_select('customfield_data', 'instanceid = :course1 AND fieldid ' . $fsql, $fparams));
         $this->assertNotEmpty($DB->get_records_select('customfield_data', 'instanceid = :course2 AND fieldid ' . $fsql, $fparams));
     }
