@@ -39,25 +39,11 @@ use \core_customfield\field_controller;
 class core_customfield_field_controller_testcase extends advanced_testcase {
 
     /**
-     * This method is called after the last test of this test class is run.
-     */
-    public static function tearDownAfterClass() {
-        $handler = core_course\customfield\course_handler::create();
-        $handler->delete_all();
-    }
-
-    /**
-     * Tests set up.
-     */
-    public function setUp() {
-        $this->resetAfterTest();
-    }
-
-    /**
-     * Get generator
+     * Get generator.
+     *
      * @return core_customfield_generator
      */
-    protected function get_generator() : core_customfield_generator {
+    protected function get_generator(): core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 
@@ -66,6 +52,8 @@ class core_customfield_field_controller_testcase extends advanced_testcase {
      */
     public function test_constructor() {
         global $DB;
+        $this->resetAfterTest();
+
         // Create the category.
         $category0 = $this->get_generator()->create_category();
 
@@ -111,6 +99,8 @@ class core_customfield_field_controller_testcase extends advanced_testcase {
      */
     public function test_constructor_errors() {
         global $DB;
+        $this->resetAfterTest();
+
         // Create a category and a field.
         $category = $this->get_generator()->create_category();
         $field = $this->get_generator()->create_field(['categoryid' => $category->get('id')]);
@@ -183,6 +173,8 @@ class core_customfield_field_controller_testcase extends advanced_testcase {
      */
     public function test_create_field() {
         global $DB;
+        $this->resetAfterTest();
+
         $lpg = $this->get_generator();
         $category = $lpg->create_category();
         $fields = $DB->get_records(\core_customfield\field::TABLE, ['categoryid' => $category->get('id')]);
@@ -211,6 +203,8 @@ class core_customfield_field_controller_testcase extends advanced_testcase {
      */
     public function test_delete_field() {
         global $DB;
+        $this->resetAfterTest();
+
         $lpg = $this->get_generator();
         $category = $lpg->create_category();
         $fields = $DB->get_records(\core_customfield\field::TABLE, ['categoryid' => $category->get('id')]);
@@ -237,6 +231,8 @@ class core_customfield_field_controller_testcase extends advanced_testcase {
      * Tests for \core_customfield\field_controller::get_configdata_property() behaviour.
      */
     public function test_get_configdata_property() {
+        $this->resetAfterTest();
+
         $lpg = $this->get_generator();
         $category = $lpg->create_category();
         $configdata = ['a' => 'b', 'c' => ['d', 'e']];
