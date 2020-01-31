@@ -4329,4 +4329,55 @@ class core_course_external extends external_api {
     public static function remove_content_item_from_user_favourites_returns() {
         return \core_course\local\exporters\course_content_item_exporter::get_read_structure();
     }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function get_course_content_items_returns() {
+        return new external_single_structure([
+            'content_items' => new external_multiple_structure(
+                \core_course\local\exporters\course_content_item_exporter::get_read_structure()
+            ),
+        ]);
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_course_content_items_parameters() {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'ID of the course', VALUE_REQUIRED),
+        ]);
+    }
+
+    /**
+     * Given a course ID fetch all accessible modules for that course
+     *
+     * @param int $courseid The course we want to fetch the modules for
+     * @return array Contains array of modules and their metadata
+     */
+    public static function get_course_content_items(int $courseid) {
+        global $USER;
+
+        [
+            'courseid' => $courseid,
+        ] = self::validate_parameters(self::get_course_content_items_parameters(), [
+            'courseid' => $courseid,
+        ]);
+
+        $coursecontext = context_course::instance($courseid);
+        self::validate_context($coursecontext);
+        $course = get_course($courseid);
+
+        $contentitemservice = new \core_course\local\service\content_item_service(
+            new \core_course\local\repository\content_item_readonly_repository()
+        );
+
+        $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course);
+        return ['content_items' => $contentitems];
+    }
 }

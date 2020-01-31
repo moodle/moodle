@@ -653,6 +653,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'core_course_get_course_content_items' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_course_content_items',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Fetch all the content items (activities, resources and their subtypes) for the activity picker',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',
