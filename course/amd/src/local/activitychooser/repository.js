@@ -31,7 +31,7 @@ import ajax from 'core/ajax';
  */
 export const activityModules = (courseid) => {
     const request = {
-        methodname: 'core_course_get_activity_picker_info',
+        methodname: 'core_course_get_course_content_items',
         args: {
             courseid: courseid,
         },
