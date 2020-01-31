@@ -1,6 +1,11 @@
 This files describes API changes in /mod/lti/source/* - LTI source plugins,
 information provided here is intended especially for developers.
 
+=== 3.9 ===
+
+* The callback get_shortcuts() is now deprecated. Please use get_course_content_items and get_all_content_items instead.
+  See source code examples in get_course_content_items() and get_all_content_items() in mod/lti/lib.php for details.
+
 === 3.1 ===
 
 * Callback get_types() is deprecated, instead ltisource plugins can define callback get_shortcuts().
