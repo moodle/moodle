@@ -383,14 +383,32 @@ class format_singleactivity extends format_base {
      * @return bool|null (null if the check is not possible)
      */
     public function activity_has_subtypes() {
-        global $PAGE, $USER;
+        global $USER;
         if (!($modname = $this->get_activitytype())) {
             return null;
         }
-        $contentitemservice = new \core_course\local\service\content_item_service($PAGE->get_renderer('course'));
+        $contentitemservice = new \core_course\local\service\content_item_service(
+            new \core_course\local\repository\content_item_readonly_repository()
+        );
         $metadata = $contentitemservice->get_content_items_for_user_in_course($USER, $this->get_course());
+
+        // If there are multiple items originating from this mod_xxx component, then it's deemed to have subtypes.
+        // If there is only 1 item, but it's not a reference to the core content item for the module, then it's also deemed to
+        // have subtypes.
+        $count = 0;
         foreach ($metadata as $key => $moduledata) {
-            if (preg_match('/^'.$modname.':/', $key)) {
+            if ('mod_'.$modname === $moduledata->componentname) {
+                $count ++;
+            }
+        }
+        if ($count > 1) {
+            return true;
+        } else {
+            // Get the single item.
+            $itemmetadata = $metadata[array_search('mod_' . $modname, array_column($metadata, 'componentname'))];
+            $urlbase = new \moodle_url('/course/mod.php', ['id' => $this->get_course()->id]);
+            $referenceurl = new \moodle_url($urlbase, ['add' => $modname]);
+            if ($referenceurl->out(false) != $itemmetadata->link) {
                 return true;
             }
         }
