@@ -664,7 +664,7 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    echo $OUTPUT->heading(get_string('newsubmissions', 'assign').':', 3);
+    echo $OUTPUT->heading(get_string('newsubmissions', 'assign') . ':', 6);
 
     foreach ($show as $submission) {
         $cm = $modinfo->get_cm($submission->cmid);
