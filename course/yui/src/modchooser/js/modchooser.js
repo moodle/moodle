@@ -7,7 +7,7 @@
 var CSS = {
     PAGECONTENT: 'body',
     SECTION: null,
-    SECTIONMODCHOOSER: 'span.section-modchooser-link',
+    SECTIONMODCHOOSER: 'button.section-modchooser-link',
     SITEMENU: '.block_site_main_menu',
     SITETOPIC: 'div.sitetopic'
 };
