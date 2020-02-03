@@ -54,6 +54,11 @@ class behat_course extends behat_base {
                     "%core_course/activityChooser%//*[@data-region=%locator%][contains(concat(' ', @class, ' '), ' carousel-item ')]"
                 ]
             ),
+            new behat_component_named_selector(
+                'Activity chooser tab', [
+                    "%core_course/activityChooser%//*[@data-region=%locator%][contains(concat(' ', @class, ' '), ' tab-pane ')]"
+                ]
+            ),
         ];
     }
 

@@ -51,6 +51,12 @@ export default {
         carousel: getDataSelector('region', 'carousel'),
         help: getDataSelector('region', 'help'),
         modules: getDataSelector('region', 'modules'),
+        favouriteTabNav: getDataSelector('region', 'favourite-tab-nav'),
+        recommendedTabNav: getDataSelector('region', 'recommended-tab-nav'),
+        defaultTabNav: getDataSelector('region', 'default-tab-nav'),
+        favouriteTab: getDataSelector('region', 'favourites'),
+        recommendedTab: getDataSelector('region', 'recommended'),
+        defaultTab: getDataSelector('region', 'default'),
         getModuleSelector: modname => `[role="menuitem"][data-modname="${modname}"]`
     },
     actions: {

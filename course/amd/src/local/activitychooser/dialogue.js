@@ -137,11 +137,71 @@ const registerListenerEvents = (modal, mappedModules) => {
  * Initialise the keyboard navigation controls for the chooser.
  *
  * @method initKeyboardNavigation
- * @param {NodeElement} body Our modal that we are working with
+ * @param {HTMLElement} body Our modal that we are working with
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  */
 const initKeyboardNavigation = (body, mappedModules) => {
 
+    // Set up the tab handlers.
+    const favTabNav = body.querySelector(selectors.regions.favouriteTabNav);
+    const recommendedTabNav = body.querySelector(selectors.regions.recommendedTabNav);
+    const defaultTabNav = body.querySelector(selectors.regions.defaultTabNav);
+    const tabNavArray = [favTabNav, recommendedTabNav, defaultTabNav];
+    tabNavArray.forEach((element) => {
+        return element.addEventListener('keyup', (e) => {
+            const firstLink = e.target.parentElement.parentElement.firstElementChild.firstElementChild;
+            const lastLink = e.target.parentElement.parentElement.lastElementChild.firstElementChild;
+
+            if (e.keyCode === arrowRight) {
+                const nextLink = e.target.parentElement.nextElementSibling;
+                if (nextLink === null) {
+                    e.srcElement.tabIndex = -1;
+                    firstLink.tabIndex = 0;
+                    firstLink.focus();
+                } else if (nextLink.firstElementChild.classList.contains('d-none')) {
+                    e.srcElement.tabIndex = -1;
+                    lastLink.tabIndex = 0;
+                    lastLink.focus();
+                } else {
+                    e.srcElement.tabIndex = -1;
+                    nextLink.firstElementChild.tabIndex = 0;
+                    nextLink.firstElementChild.focus();
+                }
+            }
+            if (e.keyCode === arrowLeft) {
+                const previousLink = e.target.parentElement.previousElementSibling;
+                if (previousLink === null) {
+                    e.srcElement.tabIndex = -1;
+                    lastLink.tabIndex = 0;
+                    lastLink.focus();
+                } else if (previousLink.firstElementChild.classList.contains('d-none')) {
+                    e.srcElement.tabIndex = -1;
+                    firstLink.tabIndex = 0;
+                    firstLink.focus();
+                } else {
+                    e.srcElement.tabIndex = -1;
+                    previousLink.firstElementChild.tabIndex = 0;
+                    previousLink.firstElementChild.focus();
+                }
+            }
+            if (e.keyCode === home) {
+                e.srcElement.tabIndex = -1;
+                firstLink.tabIndex = 0;
+                firstLink.focus();
+            }
+            if (e.keyCode === end) {
+                e.srcElement.tabIndex = -1;
+                lastLink.tabIndex = 0;
+                lastLink.focus();
+            }
+            if (e.keyCode === space) {
+                e.preventDefault();
+                e.target.click();
+            }
+        });
+    });
+
+    // Set up the handlers for the modules.
     const chooserOptions = body.querySelectorAll(selectors.regions.chooserOption.container);
 
     Array.from(chooserOptions).forEach((element) => {
