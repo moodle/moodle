@@ -142,11 +142,8 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_modchooser($modules, $course) {
         debugging('course_modchooser() is deprecated. Please use course_activitychooser() instead.', DEBUG_DEVELOPER);
-        if (!$this->page->requires->should_create_one_time_item_now('core_course_modchooser')) {
-            return '';
-        }
-        $modchooser = new \core_course\output\modchooser($course, $modules);
-        return $this->render($modchooser);
+
+        return $this->course_activitychooser($course->id);
     }
 
     /**
@@ -161,7 +158,7 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $this->page->requires->js_call_amd('core_course/modchooser', 'init', [$courseid]);
+        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid]);
 
         return '';
     }
@@ -345,7 +342,6 @@ class core_course_renderer extends plugin_renderer_base {
                     'class' => 'section-modchooser-link btn btn-link',
                     'data-action' => 'open-chooser',
                     'data-sectionid' => $section,
-                    'disabled' => true
                 )
             );
             $modchooser.= html_writer::end_tag('div');
