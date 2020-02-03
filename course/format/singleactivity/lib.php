@@ -387,9 +387,7 @@ class format_singleactivity extends format_base {
         if (!($modname = $this->get_activitytype())) {
             return null;
         }
-        $contentitemservice = new \core_course\local\service\content_item_service(
-            new \core_course\local\repository\content_item_readonly_repository()
-        );
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
         $metadata = $contentitemservice->get_content_items_for_user_in_course($USER, $this->get_course());
 
         // If there are multiple items originating from this mod_xxx component, then it's deemed to have subtypes.

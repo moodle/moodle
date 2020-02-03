@@ -279,12 +279,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
 
         // Retrieve all modules with associated metadata
-        $contentitemservice = new \core_course\local\service\content_item_service(
-            new \core_course\local\repository\caching_content_item_readonly_repository(
-                \cache::make('core', 'user_course_content_items'),
-                new \core_course\local\repository\content_item_readonly_repository()
-            )
-        );
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
         $urlparams = ['section' => $section];
         if (!is_null($sectionreturn)) {
             $urlparams['sr'] = $sectionreturn;
