@@ -204,7 +204,7 @@ switch ($forum->get_type()) {
                     'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
                     'gradingcomponentsubtype' => $forumgradeitem->get_grading_component_subtype(),
                 ];
-                $OUTPUT->render_from_template('mod_forum/grades/view_grade_button', $gradeobj);
+                echo $OUTPUT->render_from_template('mod_forum/grades/view_grade_button', $gradeobj);
             }
         }
         $discussion = $discussionvault->get_last_discussion_in_forum($forum);
