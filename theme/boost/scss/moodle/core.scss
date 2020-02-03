@@ -2414,4 +2414,8 @@ $picker-emojis-per-row: 7 !default;
     max-height: 0;
     // Place these above any modals and other elements.
     z-index: 1051;
+
+    > :first-child {
+        margin-top: $spacer;
+    }
 }
