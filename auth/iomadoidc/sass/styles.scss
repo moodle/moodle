@@ -1,0 +1,13 @@
+.auth_oidc_ucp_indicator {
+	h4 {
+		display: inline-block;
+		margin-right: 0.5rem;
+	}
+	h5 {
+		display: inline-block;
+		margin-left: 0.5rem;
+		+ span {
+			display: block;
+		}
+	}
+}
