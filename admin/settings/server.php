@@ -98,7 +98,9 @@ $options = array(
     GETREMOTEADDR_SKIP_HTTP_CLIENT_IP => 'HTTP_X_FORWARDED_FOR, REMOTE_ADDR',
     GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR => 'HTTP_CLIENT, REMOTE_ADDR',
     GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR|GETREMOTEADDR_SKIP_HTTP_CLIENT_IP => 'REMOTE_ADDR');
-$temp->add(new admin_setting_configselect('getremoteaddrconf', new lang_string('getremoteaddrconf', 'admin'), new lang_string('configgetremoteaddrconf', 'admin'), 0, $options));
+$temp->add(new admin_setting_configselect('getremoteaddrconf', new lang_string('getremoteaddrconf', 'admin'),
+    new lang_string('configgetremoteaddrconf', 'admin'),
+    GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR|GETREMOTEADDR_SKIP_HTTP_CLIENT_IP, $options));
 
 $temp->add(new admin_setting_heading('webproxy', new lang_string('webproxy', 'admin'), new lang_string('webproxyinfo', 'admin')));
 $temp->add(new admin_setting_configtext('proxyhost', new lang_string('proxyhost', 'admin'), new lang_string('configproxyhost', 'admin'), '', PARAM_HOST));
