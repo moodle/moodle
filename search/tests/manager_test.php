@@ -791,7 +791,6 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals($contexts['block_html-content'], $limitedcontexts['block_html-content']);
 
         // Get block context ids for the blocks that appear.
-        global $DB;
         $blockcontextids = $DB->get_fieldset_sql('
             SELECT x.id
               FROM {block_instances} bi
@@ -809,6 +808,43 @@ class search_manager_testcase extends advanced_testcase {
         $contexts = $search->get_areas_user_accesses([$course2->id, $course3->id],
                 [$blockcontextids[0], $blockcontextids[2]])->usercontexts;
         $this->assertCount(1, $contexts['block_html-content']);
+    }
+
+    /**
+     * Tests retrieval of users search areas when limiting to a course the user is not enrolled in
+     */
+    public function test_search_users_accesses_limit_non_enrolled_course() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $search = testable_core_search::instance();
+        $search->add_core_search_areas();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        // Limit courses to search to only those the user is enrolled in.
+        set_config('searchallavailablecourses', 0);
+
+        $usercontexts = $search->get_areas_user_accesses([$course->id])->usercontexts;
+        $this->assertNotEmpty($usercontexts);
+        $this->assertArrayNotHasKey('core_course-course', $usercontexts);
+
+        // This config ensures the search will also include courses the user can view.
+        set_config('searchallavailablecourses', 1);
+
+        // Allow "Authenticated user" role to view the course without being enrolled in it.
+        $userrole = $DB->get_record('role', ['shortname' => 'user'], '*', MUST_EXIST);
+        role_change_permission($userrole->id, $context, 'moodle/course:view', CAP_ALLOW);
+
+        $usercontexts = $search->get_areas_user_accesses([$course->id])->usercontexts;
+        $this->assertNotEmpty($usercontexts);
+        $this->assertArrayHasKey('core_course-course', $usercontexts);
+        $this->assertEquals($context->id, reset($usercontexts['core_course-course']));
     }
 
     /**
