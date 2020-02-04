@@ -25,8 +25,7 @@
 global $CFG;
 require_once(__DIR__.'/lib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
-$companyid = iomad::get_my_companyid(context_system::instance());
-$company = new company($companyid);
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
 
 $configkey = new lang_string('cfg_opname_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_opname_desc', 'auth_iomadoidc');
