@@ -645,14 +645,6 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
-    'core_course_get_activity_picker_info' => array(
-        'classname' => 'core_course_external',
-        'methodname' => 'fetch_modules_activity_chooser',
-        'classpath' => 'course/externallib.php',
-        'description' => 'Fetch all the module information for the activity picker',
-        'type' => 'read',
-        'ajax' => true,
-    ),
     'core_course_get_course_content_items' => array(
         'classname' => 'core_course_external',
         'methodname' => 'get_course_content_items',

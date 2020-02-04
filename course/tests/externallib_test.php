@@ -3051,41 +3051,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test fetch_modules_activity_chooser
-     */
-    public function test_fetch_modules_activity_chooser() {
-        global $OUTPUT;
-
-        $this->resetAfterTest(true);
-
-        // Log in as Admin.
-        $this->setAdminUser();
-
-        $course1  = self::getDataGenerator()->create_course();
-
-        // Fetch course modules.
-        $result = core_course_external::fetch_modules_activity_chooser($course1->id);
-        $result = external_api::clean_returnvalue(core_course_external::fetch_modules_activity_chooser_returns(), $result);
-        // Check for 0 warnings.
-        $this->assertEquals(0, count($result['warnings']));
-        // Check we have the right number of standard modules.
-        $this->assertEquals(21, count($result['allmodules']));
-
-        $coursecontext = context_course::instance($course1->id);
-        $modnames = get_module_types_names();
-        $modules = get_module_metadata($course1, $modnames, null);
-        $related = [
-            'context' => $coursecontext
-        ];
-        // Export the module chooser data.
-        $modchooserdata = new \core_course\external\course_module_chooser_exporter($modules, $related);
-        $formatteddata = $modchooserdata->export($OUTPUT)->options;
-
-        // Check if the webservice returns exactly what the exporter defines.
-        $this->assertEquals($formatteddata, $result['allmodules']);
-    }
-
-    /**
      * Verify that content items can be added to user favourites.
      */
     public function test_add_content_item_to_user_favourites() {
