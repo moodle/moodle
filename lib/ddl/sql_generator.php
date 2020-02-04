@@ -653,7 +653,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct xmldb_table and the new name, returns the SQL statements
+     * Given one correct xmldb_table, returns the SQL statements
      * to drop it (inside one array). Works also for temporary tables.
      *
      * @param xmldb_table $xmldb_table The table to drop.
@@ -672,6 +672,17 @@ abstract class sql_generator {
         $results = array_merge($results, $extra_sentences);
 
         return $results;
+    }
+
+    /**
+     * Performs any clean up that needs to be done after a table is dropped.
+     *
+     * @param xmldb_table $table
+     */
+    public function cleanup_after_drop(xmldb_table $table): void {
+        if ($this->temptables->is_temptable($table->getName())) {
+            $this->temptables->delete_temptable($table->getName());
+        }
     }
 
     /**
