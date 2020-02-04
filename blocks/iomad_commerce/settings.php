@@ -38,6 +38,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+
 if ($ADMIN->fulltree) {
     $dir = dirname(__FILE__);
     require_once($dir .'/lib.php');
@@ -52,6 +54,14 @@ if ($ADMIN->fulltree) {
                                             get_string('commerce_externalshop_url', 'block_iomad_commerce'),
                                             '',
                                             PARAM_TEXT));
+
+    if (!empty($companyid)) {
+        $settings->add(new admin_setting_configtext('commerce_externalshop_url' . "_$companyid",
+                                                get_string('commerce_externalshop_url_company', 'block_iomad_commerce'),
+                                                get_string('commerce_externalshop_url_company', 'block_iomad_commerce'),
+                                                '',
+                                                PARAM_TEXT));
+    }
 
     $settings->add(new admin_setting_configtext('commerce_admin_firstname',
                                             get_string('commerce_admin_firstname', 'block_iomad_commerce'),
