@@ -52,10 +52,22 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 $categoryid = optional_param('category', null, PARAM_INT);
 $courseid = optional_param('course', SITEID, PARAM_INT);
 $view = optional_param('view', 'upcoming', PARAM_ALPHA);
+$day = optional_param('cal_d', 0, PARAM_INT);
+$mon = optional_param('cal_m', 0, PARAM_INT);
+$year = optional_param('cal_y', 0, PARAM_INT);
 $time = optional_param('time', 0, PARAM_INT);
 $lookahead = optional_param('lookahead', null, PARAM_INT);
 
 $url = new moodle_url('/calendar/view.php');
+
+// If a day, month and year were passed then convert it to a timestamp. If these were passed
+// then we can assume the day, month and year are passed as Gregorian, as no where in core
+// should we be passing these values rather than the time. This is done for BC.
+if (!empty($day) && !empty($mon) && !empty($year)) {
+    if (checkdate($mon, $day, $year)) {
+        $time = make_timestamp($year, $mon, $day);
+    }
+}
 
 if (empty($time)) {
     $time = time();
