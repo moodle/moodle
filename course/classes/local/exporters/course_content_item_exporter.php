@@ -77,7 +77,13 @@ class course_content_item_exporter extends exporter {
      */
     protected static function define_other_properties() {
         // This will hold user-dependant properties such as whether the item is starred or recommended.
-        return ['favourite' => ['type' => PARAM_BOOL, 'description' => 'Has the user favourited the content item']];
+        return [
+            'favourite' => ['type' => PARAM_BOOL, 'description' => 'Has the user favourited the content item'],
+            'legacyitem' => [
+                'type' => PARAM_BOOL,
+                'description' => 'If this item was pulled from the old callback and has no item id.'
+            ]
+        ];
     }
 
     /**
@@ -116,7 +122,8 @@ class course_content_item_exporter extends exporter {
             'help' => $this->contentitem->get_help(),
             'archetype' => $this->contentitem->get_archetype(),
             'componentname' => $this->contentitem->get_component_name(),
-            'favourite' => $favourite
+            'favourite' => $favourite,
+            'legacyitem' => ($this->contentitem->get_id() == -1)
         ];
 
         return $properties;

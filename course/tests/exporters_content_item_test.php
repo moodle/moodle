@@ -70,5 +70,52 @@ class exporters_course_content_item_testcase extends \advanced_testcase {
         $this->assertEquals($exporteditem->archetype, $contentitem->get_archetype());
         $this->assertObjectHasAttribute('componentname', $exporteditem);
         $this->assertEquals($exporteditem->componentname, $contentitem->get_component_name());
+        $this->assertObjectHasAttribute('legacyitem', $exporteditem);
+        $this->assertFalse($exporteditem->legacyitem);
+    }
+
+    /**
+     * Test that legacy items (with id of -1) are exported correctly.
+     */
+    public function test_export_course_content_item_legacy() {
+        $this->resetAfterTest();
+        global $PAGE;
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $contentitem = new \core_course\local\entity\content_item(
+            -1,
+            'test_name',
+            new \core_course\local\entity\string_title('test_title'),
+            new \moodle_url(''),
+            '',
+            '',
+            MOD_ARCHETYPE_OTHER,
+            'core_test'
+        );
+
+        $ciexporter = new course_content_item_exporter($contentitem, ['context' => \context_course::instance($course->id)]);
+        $renderer = $PAGE->get_renderer('core');
+        $exporteditem = $ciexporter->export($renderer);
+
+        $this->assertObjectHasAttribute('id', $exporteditem);
+        $this->assertEquals($exporteditem->id, $contentitem->get_id());
+        $this->assertObjectHasAttribute('name', $exporteditem);
+        $this->assertEquals($exporteditem->name, $contentitem->get_name());
+        $this->assertObjectHasAttribute('title', $exporteditem);
+        $this->assertEquals($exporteditem->title, $contentitem->get_title()->get_value());
+        $this->assertObjectHasAttribute('link', $exporteditem);
+        $this->assertEquals($exporteditem->link, $contentitem->get_link()->out(false));
+        $this->assertObjectHasAttribute('icon', $exporteditem);
+        $this->assertEquals($exporteditem->icon, $contentitem->get_icon());
+        $this->assertObjectHasAttribute('help', $exporteditem);
+        $this->assertEquals($exporteditem->help, $contentitem->get_help());
+        $this->assertObjectHasAttribute('archetype', $exporteditem);
+        $this->assertEquals($exporteditem->archetype, $contentitem->get_archetype());
+        $this->assertObjectHasAttribute('componentname', $exporteditem);
+        $this->assertEquals($exporteditem->componentname, $contentitem->get_component_name());
+        // Most important, is this a legacy item?
+        $this->assertObjectHasAttribute('legacyitem', $exporteditem);
+        $this->assertTrue($exporteditem->legacyitem);
     }
 }
