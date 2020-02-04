@@ -207,4 +207,47 @@ class core_competency_hooks_testcase extends advanced_testcase {
         $this->assertEquals(1, \core_competency\template_cohort::count_records(array('templateid' => $t1->get('id'))));
         $this->assertEquals(0, \core_competency\template_cohort::count_records(array('templateid' => $t2->get('id'))));
     }
+
+    public function test_hook_user_deleted() {
+        $this->resetAfterTest();
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+
+        $u1 = $dg->create_user();
+
+        $framework = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $framework->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $framework->get('id')]);
+
+        $c1 = $dg->create_course();
+        $cc1a = $ccg->create_course_competency(['competencyid' => $comp1->get('id'), 'courseid' => $c1->id]);
+        $cc1b = $ccg->create_course_competency(['competencyid' => $comp2->get('id'), 'courseid' => $c1->id]);
+        $assign1a = $dg->create_module('assign', ['course' => $c1]);
+        $assign1b = $dg->create_module('assign', ['course' => $c1]);
+        $cmc1a = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign1a->cmid]);
+        $cmc1b = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign1b->cmid]);
+        $ucc1a = $ccg->create_user_competency_course(['competencyid' => $comp1->get('id'), 'courseid' => $c1->id,
+            'userid' => $u1->id]);
+        $ucc1b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c1->id,
+            'userid' => $u1->id]);
+
+        $c2 = $dg->create_course();
+        $cc2a = $ccg->create_course_competency(['competencyid' => $comp1->get('id'), 'courseid' => $c2->id]);
+        $cc2b = $ccg->create_course_competency(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id]);
+        $assign2a = $dg->create_module('assign', ['course' => $c2]);
+        $assign2b = $dg->create_module('assign', ['course' => $c2]);
+        $cmc2a = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign2a->cmid]);
+        $cmc2b = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign2b->cmid]);
+        $ucc2a = $ccg->create_user_competency_course(['competencyid' => $comp1->get('id'), 'courseid' => $c2->id,
+            'userid' => $u1->id]);
+        $ucc2b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id,
+            'userid' => $u1->id]);
+
+        reset_course_userdata((object) ['id' => $c1->id, 'reset_competency_ratings' => true]);
+
+        delete_user($u1);
+
+        // Assert the records don't exist anymore.
+        $this->assertEquals(0, user_competency_course::count_records(['courseid' => $c1->id, 'userid' => $u1->id]));
+    }
 }

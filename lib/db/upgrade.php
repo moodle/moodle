@@ -3808,5 +3808,48 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019111801.02);
     }
 
+    if ($oldversion < 2019111801.05) {
+        global $DB;
+        // Delete any associated files.
+        $fs = get_file_storage();
+        $sql = "SELECT cuc.id, cuc.userid
+                  FROM {competency_usercomp} cuc
+             LEFT JOIN {user} u ON cuc.userid = u.id
+                 WHERE u.deleted = 1";
+        $usercompetencies = $DB->get_records_sql($sql);
+        foreach ($usercompetencies as $usercomp) {
+            $DB->delete_records('competency_evidence', ['usercompetencyid' => $usercomp->id]);
+            $DB->delete_records('competency_usercompcourse', ['userid' => $usercomp->userid]);
+            $DB->delete_records('competency_usercompplan', ['userid' => $usercomp->userid]);
+            $DB->delete_records('competency_usercomp', ['userid' => $usercomp->userid]);
+        }
+
+        $sql = "SELECT cue.id, cue.userid
+                  FROM {competency_userevidence} cue
+             LEFT JOIN {user} u ON cue.userid = u.id
+                 WHERE u.deleted = 1";
+        $userevidences = $DB->get_records_sql($sql);
+        foreach ($userevidences as $userevidence) {
+            $DB->delete_records('competency_userevidencecomp', ['userevidenceid' => $userevidence->id]);
+            $DB->delete_records('competency_userevidence', ['id' => $userevidence->id]);
+
+            $context = context_user::instance($userevidence->userid);
+            $fs->delete_area_files($context->id, 'core_competency', 'userevidence', $userevidence->id);
+        }
+
+        $sql = "SELECT cp.id
+                  FROM {competency_plan} cp
+             LEFT JOIN {user} u ON cp.userid = u.id
+                 WHERE u.deleted = 1";
+        $userplans = $DB->get_records_sql($sql);
+        foreach ($userplans as $userplan) {
+            $DB->delete_records('competency_plancomp', ['planid' => $userplan->id]);
+            $DB->delete_records('competency_plan', ['id' => $userplan->id]);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019111801.05);
+    }
+
     return true;
 }
