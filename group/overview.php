@@ -248,9 +248,11 @@ foreach ($members as $gpgid=>$groupdata) {
             $line[] = html_writer::tag('span', $name, array('class' => 'group_hoverdescription', 'data-groupid' => $gpid));
             $hoverevents[$gpid] = get_string('descriptiona', null, $jsdescription);
         }
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
         $fullnames = array();
         foreach ($users as $user) {
-            $fullnames[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user, true).'</a>';
+            $fullnames[] = html_writer::link(new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $course->id]),
+                fullname($user, $viewfullnames));
         }
         $line[] = implode(', ', $fullnames);
         $line[] = count($users);
