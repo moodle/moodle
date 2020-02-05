@@ -39,7 +39,7 @@ class quiz_add_random_form extends moodleform {
     protected function definition() {
         global $OUTPUT, $PAGE, $CFG;
 
-        $mform =& $this->_form;
+        $mform = $this->_form;
         $mform->setDisableShortforms();
 
         $contexts = $this->_customdata['contexts'];
@@ -72,6 +72,11 @@ class quiz_add_random_form extends moodleform {
             $mform->addHelpButton('fromtags', 'randomquestiontags', 'mod_quiz');
         }
 
+        // TODO: in the past, the drop-down used to only show sensible choices for
+        // number of questions to add. That is, if the currently selected filter
+        // only matched 9 questions (not already in the quiz), then the drop-down would
+        // only offer choices 1..9. This nice UI hint got lost when the UI became Ajax-y.
+        // We should add it back.
         $mform->addElement('select', 'numbertoadd', get_string('randomnumber', 'quiz'),
                 $this->get_number_of_questions_to_add_choices());
 
@@ -126,15 +131,13 @@ class quiz_add_random_form extends moodleform {
 
     /**
      * Return an arbitrary array for the dropdown menu
-     * @return array of integers array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+     *
+     * @param int $maxrand
+     * @return array of integers [1, 2, ..., 100] (or to the smaller of $maxrand and 100.)
      */
-    private function get_number_of_questions_to_add_choices() {
-        $maxrand = 100;
+    private function get_number_of_questions_to_add_choices($maxrand = 100) {
         $randomcount = array();
-        for ($i = 1; $i <= min(10, $maxrand); $i++) {
-            $randomcount[$i] = $i;
-        }
-        for ($i = 20; $i <= min(100, $maxrand); $i += 10) {
+        for ($i = 1; $i <= min(100, $maxrand); $i++) {
             $randomcount[$i] = $i;
         }
         return $randomcount;

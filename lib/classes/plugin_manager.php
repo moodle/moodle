@@ -59,11 +59,20 @@ class core_plugin_manager {
     const REQUIREMENT_STATUS_OUTDATED = 'outdated';
     /** the required dependency is not installed */
     const REQUIREMENT_STATUS_MISSING = 'missing';
+    /** the current Moodle version is too high for plugin. */
+    const REQUIREMENT_STATUS_NEWER = 'newer';
 
     /** the required dependency is available in the plugins directory */
     const REQUIREMENT_AVAILABLE = 'available';
     /** the required dependency is available in the plugins directory */
     const REQUIREMENT_UNAVAILABLE = 'unavailable';
+
+    /** the moodle version is explicitly supported */
+    const VERSION_SUPPORTED = 'supported';
+    /** the moodle version is not explicitly supported */
+    const VERSION_NOT_SUPPORTED = 'notsupported';
+    /** the plugin does not specify supports */
+    const VERSION_NO_SUPPORTS = 'nosupports';
 
     /** @var core_plugin_manager holds the singleton instance */
     protected static $singletoninstance;
@@ -737,10 +746,21 @@ class core_plugin_manager {
      *
      * @param int $moodleversion the version from version.php.
      * @param array $failedplugins to return the list of plugins with non-satisfied dependencies
+     * @param int $branch the current moodle branch, null if not provided
      * @return bool true if all the dependencies are satisfied for all plugins.
      */
-    public function all_plugins_ok($moodleversion, &$failedplugins = array()) {
-
+    public function all_plugins_ok($moodleversion, &$failedplugins = array(), $branch = null) {
+        global $CFG;
+        if (empty($branch)) {
+            $branch = $CFG->branch;
+            if (empty($branch)) {
+                // During initial install there is no branch set.
+                require($CFG->dirroot . '/version.php');
+                $branch = (int)$branch;
+                // Force CFG->branch to int value during install.
+                $CFG->branch = $branch;
+            }
+        }
         $return = true;
         foreach ($this->get_plugins() as $type => $plugins) {
             foreach ($plugins as $plugin) {
@@ -751,6 +771,11 @@ class core_plugin_manager {
                 }
 
                 if (!$this->are_dependencies_satisfied($plugin->get_other_required_plugins())) {
+                    $return = false;
+                    $failedplugins[] = $plugin->component;
+                }
+
+                if (!$plugin->is_core_compatible_satisfied($branch)) {
                     $return = false;
                     $failedplugins[] = $plugin->component;
                 }
@@ -794,7 +819,7 @@ class core_plugin_manager {
         }
 
         $reqs = array();
-        $reqcore = $this->resolve_core_requirements($plugin, $moodleversion);
+        $reqcore = $this->resolve_core_requirements($plugin, $moodleversion, $moodlebranch);
 
         if (!empty($reqcore)) {
             $reqs['core'] = $reqcore;
@@ -814,7 +839,7 @@ class core_plugin_manager {
      * @param string|int|double $moodleversion moodle core branch to check against
      * @return stdObject
      */
-    protected function resolve_core_requirements(\core\plugininfo\base $plugin, $moodleversion) {
+    protected function resolve_core_requirements(\core\plugininfo\base $plugin, $moodleversion, $moodlebranch) {
 
         $reqs = (object)array(
             'hasver' => null,
@@ -822,7 +847,6 @@ class core_plugin_manager {
             'status' => null,
             'availability' => null,
         );
-
         $reqs->hasver = $moodleversion;
 
         if (empty($plugin->versionrequires)) {
@@ -835,6 +859,14 @@ class core_plugin_manager {
             $reqs->status = self::REQUIREMENT_STATUS_OK;
         } else {
             $reqs->status = self::REQUIREMENT_STATUS_OUTDATED;
+        }
+
+        // Now check if there is an explicit incompatible, supersedes requires.
+        if (isset($plugin->pluginincompatible) && $plugin->pluginincompatible != null) {
+            if (!$plugin->is_core_compatible_satisfied($moodlebranch)) {
+
+                $reqs->status = self::REQUIREMENT_STATUS_NEWER;
+            }
         }
 
         return $reqs;
@@ -888,6 +920,49 @@ class core_plugin_manager {
         }
 
         return $reqs;
+    }
+
+    /**
+     * Helper method to determine whether a moodle version is explicitly supported.
+     *
+     * @param \core\plugininfo\base $plugin the plugin we are checking
+     * @param int $branch the moodle branch to check support for
+     * @return string
+     */
+    public function check_explicitly_supported($plugin, $branch) : string {
+        // Check for correctly formed supported.
+        if (isset($plugin->pluginsupported)) {
+            // Broken apart for readability.
+            $error = false;
+            if (!is_array($plugin->pluginsupported)) {
+                $error = true;
+            }
+            if (!is_int($plugin->pluginsupported[0]) || !is_int($plugin->pluginsupported[1])) {
+                $error = true;
+            }
+            if (count($plugin->pluginsupported) != 2) {
+                $error = true;
+            }
+            if ($error) {
+                throw new coding_exception(get_string('err_supported_syntax', 'core_plugin'));
+            }
+        }
+
+        if (isset($plugin->pluginsupported) && $plugin->pluginsupported != null) {
+            if ($plugin->pluginsupported[0] <= $branch && $branch <= $plugin->pluginsupported[1]) {
+                return self::VERSION_SUPPORTED;
+            } else {
+                return self::VERSION_NOT_SUPPORTED;
+            }
+        } else {
+            // If supports aren't specified, but incompatible is, return not supported if not incompatible.
+            if (!isset($plugin->pluginsupported) && isset($plugin->pluginincompatible) && !empty($plugin->pluginincompatible)) {
+                if (!$plugin->is_core_compatible_satisfied($branch)) {
+                    return self::VERSION_NOT_SUPPORTED;
+                }
+            }
+            return self::VERSION_NO_SUPPORTS;
+        }
     }
 
     /**

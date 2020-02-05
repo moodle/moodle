@@ -1639,6 +1639,10 @@ function print_object($object) {
     if (CLI_SCRIPT) {
         fwrite(STDERR, print_r($object, true));
         fwrite(STDERR, PHP_EOL);
+    } else if (AJAX_SCRIPT) {
+        foreach (explode("\n", print_r($object, true)) as $line) {
+            error_log($line);
+        }
     } else {
         echo html_writer::tag('pre', s(print_r($object, true)), array('class' => 'notifytiny'));
     }

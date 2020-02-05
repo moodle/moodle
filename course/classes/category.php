@@ -730,20 +730,45 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             return $rv;
         }
 
-        // IOMAD only want categories which are for my company or no company.
-        if (!$company = company::get_company_byuserid($USER->id)) {
-            $company = new stdclass();
-            $company->id = 0;
+        // Might need to rebuild the tree. Put a lock in place to ensure other requests don't try and do this in parallel.
+        $lockfactory = \core\lock\lock_config::get_lock_factory('core_coursecattree');
+        $lock = $lockfactory->get_lock('core_coursecattree_cache',
+                course_modinfo::COURSE_CACHE_LOCK_WAIT, course_modinfo::COURSE_CACHE_LOCK_EXPIRY);
+        if ($lock === false) {
+            // Couldn't get a lock to rebuild the tree.
+            return [];
         }
-        if (iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
-            $companysql = "";
-        } else {
-            $companysql = " WHERE cc.id NOT IN (
-                             SELECT category FROM {company}
-                             WHERE id != :companyid)";
+        $rv = $coursecattreecache->get($id);
+        if ($rv !== false) {
+            // Tree was built while we were waiting for the lock.
+            $lock->release();
+            return $rv;
         }
 
         // Re-build the tree.
+        try {
+            $all = self::rebuild_coursecattree_cache_contents();
+            $coursecattreecache->set_many($all);
+        } finally {
+            $lock->release();
+        }
+        if (array_key_exists($id, $all)) {
+            return $all[$id];
+        }
+        // Requested non-existing category.
+        return array();
+    }
+
+    /**
+     * Rebuild the course category tree as an array, including an extra "countall" field.
+     *
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    private static function rebuild_coursecattree_cache_contents() : array {
+        global $DB;
         $sql = "SELECT cc.id, cc.parent, cc.visible
                 FROM {course_categories} cc
                 $companysql
@@ -781,6 +806,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
         // We must add countall to all in case it was the requested ID.
         $all['countall'] = $count;
+<<<<<<< HEAD
         $coursecattreecache->set_many($all);
 
         if (array_key_exists($id, $all)) {
@@ -789,6 +815,9 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
 
         // Requested non-existing category.
         return array();
+=======
+        return $all;
+>>>>>>> cb38ab1e3926720b3230ce20b66a9c46c398eb80
     }
 
     /**

@@ -39,10 +39,6 @@
     border: 1px solid #dcdcdc;
 }
 
-body.jsenabled .questionflagcheckbox {
-    display: none;
-}
-
 #page-mod-quiz-attempt #connection-ok,
 #page-mod-quiz-attempt #connection-error {
     position: fixed;
@@ -689,13 +685,13 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit .section-heading {
-    font-size: 24px;
     margin-left: 20px;
     margin-bottom: 0;
     height: 40px;
 }
 
 #page-mod-quiz-edit .section-heading .instancesectioncontainer {
+    font-size: 24px;
     display: inline;
 }
 

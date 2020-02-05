@@ -1845,7 +1845,7 @@ function xmldb_main_upgrade($oldversion) {
                   FROM {event_subscriptions} es
              LEFT JOIN {user} u ON u.id = es.userid
                  WHERE u.deleted = 1 OR u.id IS NULL";
-        $deletedusers = $DB->get_field_sql($sql);
+        $deletedusers = $DB->get_fieldset_sql($sql);
         if ($deletedusers) {
             list($sql, $params) = $DB->get_in_or_equal($deletedusers);
 
@@ -2143,6 +2143,33 @@ function xmldb_main_upgrade($oldversion) {
         // Clean old upgrade setting not used anymore.
         unset_config('linkcoursesectionsupgradescriptwasrun');
         upgrade_main_savepoint(true, 2019122000.01);
+    }
+
+    if ($oldversion < 2020010900.02) {
+        $table = new xmldb_table('event');
+
+        // This index will improve the performance when the Events API retrieves category and group events.
+        $index = new xmldb_index('eventtype', XMLDB_INDEX_NOTUNIQUE, ['eventtype']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // This index improves the performance of backups, deletion and visibilty changes on activities.
+        $index = new xmldb_index('modulename-instance', XMLDB_INDEX_NOTUNIQUE, ['modulename', 'instance']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2020010900.02);
+    }
+
+    if ($oldversion < 2020011700.02) {
+        // Delete all orphaned subscription events.
+        $select = "subscriptionid IS NOT NULL
+                   AND subscriptionid NOT IN (SELECT id from {event_subscriptions})";
+        $DB->delete_records_select('event', $select);
+
+        upgrade_main_savepoint(true, 2020011700.02);
     }
 
     return true;

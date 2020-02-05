@@ -33,13 +33,12 @@
 
 }}
 <div>
-    <span class="switch">
-        <input type="checkbox" id="{{$switchid}}{{uniqid}}{{/switchid}}"
-               data-type="{{$type}}toggle-switch{{/type}}"
-               data-action="toggle" class="hidden"
-            {{$otherattributes}}{{/otherattributes}}/>
-        <label for="{{$switchid}}{{uniqid}}{{/switchid}}" class="line-height-4">
+    <div class="custom-control custom-switch mb-1">
+        <input type="checkbox" class="custom-control-input" id="{{$switchid}}{{uniqid}}{{/switchid}}"
+            data-type="{{$type}}toggle-switch{{/type}}" data-action="toggle"
+            {{$otherattributes}}{{/otherattributes}}>
+        <label class="custom-control-label" for="{{$switchid}}{{uniqid}}{{/switchid}}">
             {{$labeltext}}{{/labeltext}}
         </label>
-    </span>
+    </div>
 </div>

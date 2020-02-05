@@ -81,8 +81,9 @@ class framework_testcase extends \advanced_testcase {
 
         $this->resetAfterTest();
 
+        $library = 'H5P.Accordion';
         // Provide a valid URL to an external H5P content.
-        $url = "https://h5p.org/sites/default/files/h5p/exports/arithmetic-quiz-22-57860.h5p";
+        $url = $this->getExternalTestFileUrl('/'.$library.'.h5p');
 
         // Test fetching an external H5P content without defining a path to where the file should be stored.
         $data = $this->framework->fetchExternalData($url, null, true);
@@ -112,8 +113,9 @@ class framework_testcase extends \advanced_testcase {
 
         $this->resetAfterTest();
 
+        $library = 'H5P.Accordion';
         // Provide a valid URL to an external H5P content.
-        $url = "https://h5p.org/sites/default/files/h5p/exports/arithmetic-quiz-22-57860.h5p";
+        $url = $this->getExternalTestFileUrl('/'.$library.'.h5p');
 
         $h5pfolderpath = $CFG->tempdir . uniqid('/h5p-');
 
@@ -145,7 +147,7 @@ class framework_testcase extends \advanced_testcase {
         $this->resetAfterTest();
 
         // Provide an URL to an external file that is not an H5P content file.
-        $url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+        $url = $this->getExternalTestFileUrl('/h5pcontenttypes.json');
 
         $data = $this->framework->fetchExternalData($url, null, true);
 
@@ -156,7 +158,7 @@ class framework_testcase extends \advanced_testcase {
         // The uploaded file should exist on the filesystem with it's original extension.
         // NOTE: The file would be later validated by the H5P Validator.
         $h5pfolderpath = $this->framework->getUploadedH5pFolderPath();
-        $this->assertTrue(file_exists($h5pfolderpath . '.pdf'));
+        $this->assertTrue(file_exists($h5pfolderpath . '.json'));
     }
 
     /**

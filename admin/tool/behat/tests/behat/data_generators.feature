@@ -259,9 +259,9 @@ Feature: Set up contextual data for tests
     Then the "groups" select box should contain "Group 1 (1)"
     And the "groups" select box should contain "Group 2 (1)"
     And I set the field "groups" to "Group 1 (1)"
-    And the "members" select box should contain "Student 1"
+    And the "members" select box should contain "Student 1 (student1@example.com)"
     And I set the field "groups" to "Group 2 (1)"
-    And the "members" select box should contain "Student 2"
+    And the "members" select box should contain "Student 2 (student2@example.com)"
 
   Scenario: Add cohorts and cohort members with data generator
     Given the following "categories" exist:

@@ -123,7 +123,7 @@ Feature: A user can control their default discussion subscription settings
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject" "table_row"
     And I follow "Test post subject"
     When I follow "Reply"
     And I click on "Advanced" "button"
@@ -132,7 +132,7 @@ Feature: A user can control their default discussion subscription settings
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I click on "label[for^=subscription-toggle]" "css_element" in the "Test post subject" "table_row"
+    And I click on "input[id^=subscription-toggle]" "css_element" in the "Test post subject" "table_row"
     And I follow "Test post subject"
     And I follow "Reply"
     And I click on "Advanced" "button"

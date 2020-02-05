@@ -2117,6 +2117,46 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $unreadnotifications);
     }
 
+    public function test_mark_all_notifications_as_read_time_created_to() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $sender1 = $this->getDataGenerator()->create_user();
+        $sender2 = $this->getDataGenerator()->create_user();
+
+        $recipient = $this->getDataGenerator()->create_user();
+        $this->setUser($recipient);
+
+        // Record messages as sent on one second intervals.
+        $time = time();
+
+        $this->send_message($sender1, $recipient, 'Message 1', 1, $time);
+        $this->send_message($sender2, $recipient, 'Message 2', 1, $time + 1);
+        $this->send_message($sender1, $recipient, 'Message 3', 1, $time + 2);
+        $this->send_message($sender2, $recipient, 'Message 4', 1, $time + 3);
+
+        // Mark notifications sent from sender1 up until the second message; should only mark the first notification as read.
+        core_message_external::mark_all_notifications_as_read($recipient->id, $sender1->id, $time + 1);
+
+        $params = [$recipient->id];
+
+        $this->assertEquals(1, $DB->count_records_select('notifications', 'useridto = ? AND timeread IS NOT NULL', $params));
+        $this->assertEquals(3, $DB->count_records_select('notifications', 'useridto = ? AND timeread IS NULL', $params));
+
+        // Mark all notifications as read from any sender up to the time the third message was sent.
+        core_message_external::mark_all_notifications_as_read($recipient->id, 0, $time + 2);
+
+        $this->assertEquals(3, $DB->count_records_select('notifications', 'useridto = ? AND timeread IS NOT NULL', $params));
+        $this->assertEquals(1, $DB->count_records_select('notifications', 'useridto = ? AND timeread IS NULL', $params));
+
+        // Mark all notifications as read from any sender with a time after all messages were sent.
+        core_message_external::mark_all_notifications_as_read($recipient->id, 0, $time + 10);
+
+        $this->assertEquals(4, $DB->count_records_select('notifications', 'useridto = ? AND timeread IS NOT NULL', $params));
+        $this->assertEquals(0, $DB->count_records_select('notifications', 'useridto = ? AND timeread IS NULL', $params));
+    }
+
     /**
      * Test get_user_notification_preferences
      */

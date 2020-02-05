@@ -252,7 +252,7 @@ class qformat_examview_test extends question_testcase {
         $lines = $this->make_test_xml();
 
         $importer = new qformat_examview();
-        $text = implode($lines, ' ');
+        $text = implode(' ', $lines);
 
         $xml = xmlize($text, 0);
         $importer->parse_matching_groups($xml['examview']['#']['matching-group']);

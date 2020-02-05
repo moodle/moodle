@@ -423,6 +423,7 @@ $string['site:restore'] = 'Restore courses';
 $string['site:sendmessage'] = 'Send messages to any user';
 $string['site:trustcontent'] = 'Trust submitted content';
 $string['site:uploadusers'] = 'Upload new users from file';
+$string['site:viewanonymousevents'] = 'View anonymous events in reports';
 $string['site:viewfullnames'] = 'Always see full names of users';
 $string['site:viewparticipants'] = 'View participants';
 $string['site:viewreports'] = 'View reports';

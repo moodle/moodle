@@ -551,8 +551,13 @@ class mod_scorm_mod_form extends moodleform_mod {
         // Convert completionstatusrequired to a proper integer, if any.
         $total = 0;
         if (isset($data->completionstatusrequired) && is_array($data->completionstatusrequired)) {
-            foreach (array_keys($data->completionstatusrequired) as $state) {
-                $total |= $state;
+            foreach ($data->completionstatusrequired as $state => $value) {
+                if ($value) {
+                    $total |= $state;
+                }
+            }
+            if (!$total) {
+                $total  = null;
             }
             $data->completionstatusrequired = $total;
         }

@@ -49,6 +49,11 @@ abstract class backup implements checksumable {
     const INTERACTIVE_YES = true;
     const INTERACTIVE_NO  = false;
 
+    /** Release the session during backup/restore */
+    const RELEASESESSION_YES = true;
+    /** Don't release the session during backup/restore */
+    const RELEASESESSION_NO  = false;
+
     // Predefined modes (purposes) of the backup
     const MODE_GENERAL   = 10;
 

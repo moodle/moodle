@@ -556,7 +556,8 @@ class core_group_external extends external_api {
             require_capability('moodle/course:managegroups', $context);
 
             if (!groups_remove_member_allowed($group, $user)) {
-                throw new moodle_exception('errorremovenotpermitted', 'group', '', fullname($user));
+                $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+                throw new moodle_exception('errorremovenotpermitted', 'group', '', $fullname);
             }
             groups_remove_member($group, $user);
         }

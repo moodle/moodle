@@ -4,7 +4,7 @@
     <location>adodb</location>
     <name>AdoDB</name>
     <license>BSD/GPL</license>
-    <version>5.20.15</version>
+    <version>5.20.16</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
@@ -39,7 +39,7 @@
     <location>htmlpurifier</location>
     <name>HTML Purifier</name>
     <license>LGPL</license>
-    <version>4.10.0</version>
+    <version>4.12.0</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
@@ -192,7 +192,7 @@
     <location>mustache</location>
     <name>Mustache</name>
     <license>MIT</license>
-    <version>2.12.0</version>
+    <version>2.13.0</version>
   </library>
   <library>
     <location>amd/src/mustache.js</location>
@@ -222,7 +222,7 @@
     <location>scssphp</location>
     <name>scssphp</name>
     <license>MIT</license>
-    <version>1.0.2</version>
+    <version>1.0.6</version>
   </library>
   <library>
     <location>spout</location>

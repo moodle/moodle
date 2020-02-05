@@ -160,7 +160,7 @@ class filter_tex extends moodle_text_filter {
             '\\\\\((.+?)\\\\\)',
             '\\[tex\\](.+?)\\[\/tex\\]'
         );
-        $megarule = '/' . implode($rules, '|') . '/is';
+        $megarule = '/' . implode('|', $rules) . '/is';
         preg_match_all($megarule, $text, $matches);
         for ($i=0; $i<count($matches[0]); $i++) {
             $texexp = '';

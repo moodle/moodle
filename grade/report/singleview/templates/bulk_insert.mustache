@@ -36,13 +36,13 @@
     }
 }}
 <div class="enable">
-    <input type="checkbox" name="{{applyname}}" value="1" id="{{applyname}}">
+    <input type="checkbox" name="{{applyname}}" value="1" id="{{applyname}}" class="ml-0">
     <label for="{{applyname}}">{{applylabel}}</label>
 </div>
 <fieldset class="form-inline">
     <legend class="accesshide">{{label}}</legend>
     <label for="{{menuname}}">{{menulabel}}</label>
-    <select name="{{menuname}}" id="{{menuname}}" class="form-control">
+    <select name="{{menuname}}" id="{{menuname}}" class="form-control custom-select">
         {{#menuoptions}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
         {{/menuoptions}}

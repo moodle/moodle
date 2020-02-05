@@ -63,22 +63,11 @@ class Nested extends Formatter
 
         foreach ($block->lines as $index => $line) {
             if (substr($line, 0, 2) === '/*') {
-                $block->lines[$index] = preg_replace('/(\r|\n)+/', $glue, $line);
+                $block->lines[$index] = preg_replace('/[\r\n]+/', $glue, $line);
             }
         }
 
         $this->write($inner . implode($glue, $block->lines));
-    }
-
-    protected function hasFlatChild($block)
-    {
-        foreach ($block->children as $child) {
-            if (empty($child->selectors)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -109,7 +98,7 @@ class Nested extends Formatter
             array_pop($depths);
             $this->depth--;
 
-            if (!$this->depth && ($block->depth <= 1 || (!$this->indentLevel && $block->type === Type::T_COMMENT)) &&
+            if (! $this->depth && ($block->depth <= 1 || (! $this->indentLevel && $block->type === Type::T_COMMENT)) &&
                 (($block->selectors && ! $isMediaOrDirective) || $previousHasSelector)
             ) {
                 $downLevel = $this->break;
@@ -170,15 +159,18 @@ class Nested extends Formatter
             }
 
             $this->blockLines($block);
+
             $closeBlock = $this->break;
         }
 
         if (! empty($block->children)) {
-            if ($this->depth>0 && ($isMediaOrDirective || ! $this->hasFlatChild($block))) {
+            if ($this->depth > 0 && ($isMediaOrDirective || ! $this->hasFlatChild($block))) {
                 array_pop($depths);
+
                 $this->depth--;
                 $this->blockChildren($block);
                 $this->depth++;
+
                 $depths[] = $block->depth;
             } else {
                 $this->blockChildren($block);
@@ -193,13 +185,19 @@ class Nested extends Formatter
         if (! empty($block->selectors)) {
             $this->indentLevel--;
 
+            if (! $this->keepSemicolons) {
+                $this->strippedSemicolon = '';
+            }
+
             $this->write($this->close);
+
             $closeBlock = $this->break;
 
             if ($this->depth > 1 && ! empty($block->children)) {
                 array_pop($depths);
                 $this->depth--;
             }
+
             if (! $isMediaOrDirective) {
                 $previousHasSelector = true;
             }
@@ -208,5 +206,23 @@ class Nested extends Formatter
         if ($block->type === 'root') {
             $this->write($this->break);
         }
+    }
+
+    /**
+     * Block has flat child
+     *
+     * @param \ScssPhp\ScssPhp\Formatter\OutputBlock $block
+     *
+     * @return boolean
+     */
+    private function hasFlatChild($block)
+    {
+        foreach ($block->children as $child) {
+            if (empty($child->selectors)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -393,6 +393,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/site:viewanonymousevents' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
     'moodle/site:viewfullnames' => array(
 
         'captype' => 'read',

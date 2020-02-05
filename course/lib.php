@@ -1151,7 +1151,9 @@ function course_delete_module($cmid, $async = false) {
     }
 
     // Delete activity context questions and question categories.
-    question_delete_activity($cm);
+    $showinfo = !defined('AJAX_SCRIPT') || AJAX_SCRIPT == '0';
+
+    question_delete_activity($cm, $showinfo);
 
     // Call the delete_instance function, if it returns false throw an exception.
     if (!$deleteinstancefunction($cm->instance)) {
@@ -2209,6 +2211,7 @@ function move_courses($courseids, $categoryid) {
     foreach ($dbcourses as $dbcourse) {
         $course = new stdClass();
         $course->id = $dbcourse->id;
+        $course->timemodified = time();
         $course->category  = $category->id;
         $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
         if ($category->visible == 0) {

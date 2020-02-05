@@ -104,7 +104,7 @@ if ($getpdf) {
         }
         $list[] = $f;
     }
-    $c .= implode($list, ', ');
+    $c .= implode(', ', $list);
     $c .= '<p><i><small>Note: * Standard core fonts are not embedded in PDF files, PDF viewers are using local fonts.</small></i></p>';
 
     $c .= '<h3>Installed languages and their alphabets</h3>';

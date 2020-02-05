@@ -546,8 +546,16 @@ function forum_user_complete($course, $user, $mod, $forum) {
     };
 
     $grades = grade_get_grades($course->id, 'mod', 'forum', $forum->id, $user->id);
-    echo $getgradeinfo($grades->items[0]->grades, 'rating');
-    echo $getgradeinfo($grades->items[1]->grades, 'wholeforum');
+
+    // Item 0 is the rating.
+    if (!empty($grades->items[0]->grades)) {
+        echo $getgradeinfo($grades->items[0]->grades, 'rating');
+    }
+
+    // Item 1 is the whole-forum grade.
+    if (!empty($grades->items[1]->grades)) {
+        echo $getgradeinfo($grades->items[1]->grades, 'wholeforum');
+    }
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
@@ -632,13 +640,22 @@ function forum_print_overview() {
  * @return bool success
  */
 function forum_print_recent_activity($course, $viewfullnames, $timestart) {
-    global $CFG, $USER, $DB, $OUTPUT;
+    global $USER, $DB, $OUTPUT;
 
     // do not use log table if possible, it may be huge and is expensive to join with other tables
 
     $allnamefields = user_picture::fields('u', null, 'duserid');
-    if (!$posts = $DB->get_records_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid,
-                                              d.timestart, d.timeend, $allnamefields
+    if (!$posts = $DB->get_records_sql("SELECT p.*,
+                                              f.course, f.type AS forumtype, f.name AS forumname, f.intro, f.introformat, f.duedate,
+                                              f.cutoffdate, f.assessed AS forumassessed, f.assesstimestart, f.assesstimefinish,
+                                              f.scale, f.grade_forum, f.maxbytes, f.maxattachments, f.forcesubscribe,
+                                              f.trackingtype, f.rsstype, f.rssarticles, f.timemodified, f.warnafter, f.blockafter,
+                                              f.blockperiod, f.completiondiscussions, f.completionreplies, f.completionposts,
+                                              f.displaywordcount, f.lockdiscussionafter, f.grade_forum_notify,
+                                              d.name AS discussionname, d.firstpost, d.userid AS discussionstarter,
+                                              d.assessed AS discussionassessed, d.timemodified, d.usermodified, d.forum, d.groupid,
+                                              d.timestart, d.timeend, d.pinned, d.timelocked,
+                                              $allnamefields
                                          FROM {forum_posts} p
                                               JOIN {forum_discussions} d ON d.id = p.discussion
                                               JOIN {forum} f             ON f.id = d.forum
@@ -650,12 +667,14 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
 
     $modinfo = get_fast_modinfo($course);
 
-    $groupmodes = array();
-    $cms    = array();
-
     $strftimerecent = get_string('strftimerecent');
 
-    $printposts = array();
+    $managerfactory = mod_forum\local\container::get_manager_factory();
+    $entityfactory = mod_forum\local\container::get_entity_factory();
+
+    $discussions = [];
+    $capmanagers = [];
+    $printposts = [];
     foreach ($posts as $post) {
         if (!isset($modinfo->instances['forum'][$post->forum])) {
             // not visible
@@ -665,28 +684,81 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
         if (!$cm->uservisible) {
             continue;
         }
-        $context = context_module::instance($cm->id);
 
-        if (!has_capability('mod/forum:viewdiscussion', $context)) {
-            continue;
+        // Get the discussion. Cache if not yet available.
+        if (!isset($discussions[$post->discussion])) {
+            // Build the discussion record object from the post data.
+            $discussionrecord = (object)[
+                'id' => $post->discussion,
+                'course' => $post->course,
+                'forum' => $post->forum,
+                'name' => $post->discussionname,
+                'firstpost' => $post->firstpost,
+                'userid' => $post->discussionstarter,
+                'groupid' => $post->groupid,
+                'assessed' => $post->discussionassessed,
+                'timemodified' => $post->timemodified,
+                'usermodified' => $post->usermodified,
+                'timestart' => $post->timestart,
+                'timeend' => $post->timeend,
+                'pinned' => $post->pinned,
+                'timelocked' => $post->timelocked
+            ];
+            // Build the discussion entity from the factory and cache it.
+            $discussions[$post->discussion] = $entityfactory->get_discussion_from_stdclass($discussionrecord);
         }
+        $discussionentity = $discussions[$post->discussion];
 
-        if (!empty($CFG->forum_enabletimedposts) and $USER->id != $post->duserid
-          and (($post->timestart > 0 and $post->timestart > time()) or ($post->timeend > 0 and $post->timeend < time()))) {
-            if (!has_capability('mod/forum:viewhiddentimedposts', $context)) {
-                continue;
-            }
+        // Get the capability manager. Cache if not yet available.
+        if (!isset($capmanagers[$post->forum])) {
+            $context = context_module::instance($cm->id);
+            $coursemodule = $cm->get_course_module_record();
+            // Build the forum record object from the post data.
+            $forumrecord = (object)[
+                'id' => $post->forum,
+                'course' => $post->course,
+                'type' => $post->forumtype,
+                'name' => $post->forumname,
+                'intro' => $post->intro,
+                'introformat' => $post->introformat,
+                'duedate' => $post->duedate,
+                'cutoffdate' => $post->cutoffdate,
+                'assessed' => $post->forumassessed,
+                'assesstimestart' => $post->assesstimestart,
+                'assesstimefinish' => $post->assesstimefinish,
+                'scale' => $post->scale,
+                'grade_forum' => $post->grade_forum,
+                'maxbytes' => $post->maxbytes,
+                'maxattachments' => $post->maxattachments,
+                'forcesubscribe' => $post->forcesubscribe,
+                'trackingtype' => $post->trackingtype,
+                'rsstype' => $post->rsstype,
+                'rssarticles' => $post->rssarticles,
+                'timemodified' => $post->timemodified,
+                'warnafter' => $post->warnafter,
+                'blockafter' => $post->blockafter,
+                'blockperiod' => $post->blockperiod,
+                'completiondiscussions' => $post->completiondiscussions,
+                'completionreplies' => $post->completionreplies,
+                'completionposts' => $post->completionposts,
+                'displaywordcount' => $post->displaywordcount,
+                'lockdiscussionafter' => $post->lockdiscussionafter,
+                'grade_forum_notify' => $post->grade_forum_notify
+            ];
+            // Build the forum entity from the factory.
+            $forumentity = $entityfactory->get_forum_from_stdclass($forumrecord, $context, $coursemodule, $course);
+            // Get the capability manager of this forum and cache it.
+            $capmanagers[$post->forum] = $managerfactory->get_capability_manager($forumentity);
         }
+        $capabilitymanager = $capmanagers[$post->forum];
 
-        if (!forum_post_is_visible_privately($post, $cm)) {
-            continue;
-        }
+        // Get the post entity.
+        $postentity = $entityfactory->get_post_from_stdclass($post);
 
-        // Check that the user can see the discussion.
-        if (forum_is_user_group_discussion($cm, $post->groupid)) {
+        // Check if the user can view the post.
+        if ($capabilitymanager->can_view_post($USER, $discussionentity, $postentity)) {
             $printposts[] = $post;
         }
-
     }
     unset($posts);
 

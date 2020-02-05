@@ -85,6 +85,32 @@ class upgrade_requires_exception extends moodle_exception {
 }
 
 /**
+ * Exception thrown when attempting to install a plugin that declares incompatibility with moodle version
+ *
+ * @package    core
+ * @subpackage upgrade
+ * @copyright  2019 Peter Burnett <peterburnett@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class plugin_incompatible_exception extends moodle_exception {
+    /**
+     * Constructor function for exception
+     *
+     * @param \core\plugininfo\base $plugin The plugin causing the exception
+     * @param int $pluginversion The version of the plugin causing the exception
+     */
+    public function __construct($plugin, $pluginversion) {
+        global $CFG;
+        $a = new stdClass();
+        $a->pluginname      = $plugin;
+        $a->pluginversion   = $pluginversion;
+        $a->moodleversion   = $CFG->branch;
+
+        parent::__construct('pluginunsupported', 'error', "$CFG->wwwroot/$CFG->admin/index.php", $a);
+    }
+}
+
+/**
  * @package    core
  * @subpackage upgrade
  * @copyright  2009 Petr Skoda {@link http://skodak.org}
@@ -576,6 +602,13 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                 throw new upgrade_requires_exception($component, $plugin->version, $CFG->version, $plugin->requires);
             } else if ($plugin->requires < 2010000000) {
                 throw new plugin_defective_exception($component, 'Plugin is not compatible with Moodle 2.x or later.');
+            }
+        }
+
+        // Throw exception if plugin is incompatible with moodle version.
+        if (!empty($plugin->incompatible)) {
+            if ($CFG->branch <= $plugin->incompatible) {
+                throw new plugin_incompatible_exception($component, $plugin->version);
             }
         }
 

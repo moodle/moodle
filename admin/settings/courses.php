@@ -276,6 +276,8 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $maxkeptoptions = array(
         0 => new lang_string('all'), 1 => '1',
         2 => '2',
+        3 => '3',
+        4 => '4',
         5 => '5',
         10 => '10',
         20 => '20',

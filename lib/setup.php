@@ -793,7 +793,7 @@ if (CLI_SCRIPT) {
 
 // Start session and prepare global $SESSION, $USER.
 if (empty($CFG->sessiontimeout)) {
-    $CFG->sessiontimeout = 7200;
+    $CFG->sessiontimeout = 8 * 60 * 60;
 }
 \core\session\manager::start();
 
@@ -1052,7 +1052,7 @@ foreach ($pluginswithfunction as $plugins) {
     foreach ($plugins as $function) {
         try {
             $function();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             debugging("Exception calling '$function'", DEBUG_DEVELOPER, $e->getTrace());
         }
     }

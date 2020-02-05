@@ -26,3 +26,11 @@ Feature: List the system steps definitions
     Given I set the field "Contains" to "homepage"
     When I press "Filter"
     Then I should see "Opens Moodle homepage."
+
+  @javascript
+  Scenario: Filtering by the multiple words pattern
+    Given I set the field "Contains" to "should exist"
+    When I press "Filter"
+    Then I should not see "There aren't steps definitions matching this filter"
+    And I should see "Checks the provided element and selector type exists in the current page."
+    And I should see "Checks that an element and selector type exists in another element and selector type on the current page."

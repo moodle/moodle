@@ -118,7 +118,7 @@ class HTMLPurifier_EntityParser
         $entity = $matches[0];
         $hex_part = @$matches[1];
         $dec_part = @$matches[2];
-        $named_part = empty($matches[3]) ? @$matches[4] : $matches[3];
+        $named_part = empty($matches[3]) ? (empty($matches[4]) ? "" : $matches[4]) : $matches[3];
         if ($hex_part !== NULL && $hex_part !== "") {
             return HTMLPurifier_Encoder::unichr(hexdec($hex_part));
         } elseif ($dec_part !== NULL && $dec_part !== "") {
