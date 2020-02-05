@@ -26,62 +26,67 @@ global $CFG;
 require_once(__DIR__.'/lib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 $companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
 
 $configkey = new lang_string('cfg_opname_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_opname_desc', 'auth_iomadoidc');
 $configdefault = new lang_string('pluginname', 'auth_iomadoidc');
-$settings->add(new admin_setting_configtext('auth_iomadoidc/opname' . "_$companyid", $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext('auth_iomadoidc/opname' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
 
 $configkey = new lang_string('cfg_clientid_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_clientid_desc', 'auth_iomadoidc');
-$settings->add(new admin_setting_configtext('auth_iomadoidc/clientid' . "_$companyid", $configkey, $configdesc, '', PARAM_TEXT));
+$settings->add(new admin_setting_configtext('auth_iomadoidc/clientid' . $postfix, $configkey, $configdesc, '', PARAM_TEXT));
 
 $configkey = new lang_string('cfg_clientsecret_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_clientsecret_desc', 'auth_iomadoidc');
-$settings->add(new admin_setting_configtext('auth_iomadoidc/clientsecret' . "_$companyid", $configkey, $configdesc, '', PARAM_TEXT));
+$settings->add(new admin_setting_configtext('auth_iomadoidc/clientsecret' . $postfix, $configkey, $configdesc, '', PARAM_TEXT));
 
 $configkey = new lang_string('cfg_authendpoint_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_authendpoint_desc', 'auth_iomadoidc');
 $configdefault = 'https://login.microsoftonline.com/common/oauth2/authorize';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/authendpoint' . "_$companyid", $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext('auth_iomadoidc/authendpoint' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
 
 $configkey = new lang_string('cfg_tokenendpoint_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_tokenendpoint_desc', 'auth_iomadoidc');
 $configdefault = 'https://login.microsoftonline.com/common/oauth2/token';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/tokenendpoint' . "_$companyid", $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext('auth_iomadoidc/tokenendpoint' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
 
 $configkey = new lang_string('cfg_iomadoidcresource_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_iomadoidcresource_desc', 'auth_iomadoidc');
 $configdefault = 'https://graph.windows.net';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/iomadoidcresource' . "_$companyid", $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext('auth_iomadoidc/iomadoidcresource' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
 
 $configkey = new lang_string('cfg_redirecturi_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_redirecturi_desc', 'auth_iomadoidc');
-$settings->add(new \auth_iomadoidc\form\adminsetting\redirecturi('auth_iomadoidc/redirecturi' . "_$companyid", $configkey, $configdesc));
+$settings->add(new \auth_iomadoidc\form\adminsetting\redirecturi('auth_iomadoidc/redirecturi' . $postfix, $configkey, $configdesc));
 
 $configkey = new lang_string('cfg_autoappend_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_autoappend_desc', 'auth_iomadoidc');
 $configdefault = '';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/autoappend' . "_$companyid", $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext('auth_iomadoidc/autoappend' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
 
 $configkey = new lang_string('cfg_domainhint_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_domainhint_desc', 'auth_iomadoidc');
 $configdefault = '';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/domainhint' . "_$companyid", $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext('auth_iomadoidc/domainhint' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
 
 $configkey = new lang_string('cfg_loginflow_key', 'auth_iomadoidc');
 $configdesc = '';
 $configdefault = 'authcode';
-$settings->add(new \auth_iomadoidc\form\adminsetting\loginflow('auth_iomadoidc/loginflow' . "_$companyid", $configkey, $configdesc, $configdefault));
+$settings->add(new \auth_iomadoidc\form\adminsetting\loginflow('auth_iomadoidc/loginflow' . $postfix, $configkey, $configdesc, $configdefault));
 
 $configkey = new lang_string('cfg_userrestrictions_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_userrestrictions_desc', 'auth_iomadoidc');
 $configdefault = '';
-$settings->add(new admin_setting_configtextarea('auth_iomadoidc/userrestrictions' . "_$companyid", $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtextarea('auth_iomadoidc/userrestrictions' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
 
 $label = new lang_string('cfg_debugmode_key', 'auth_iomadoidc');
 $desc = new lang_string('cfg_debugmode_desc', 'auth_iomadoidc');
-$settings->add(new \admin_setting_configcheckbox('auth_iomadoidc/debugmode' . "_$companyid", $label, $desc, '0'));
+$settings->add(new \admin_setting_configcheckbox('auth_iomadoidc/debugmode' . $postfix, $label, $desc, '0'));
 
 $configkey = new lang_string('cfg_icon_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_icon_desc', 'auth_iomadoidc');
@@ -163,10 +168,10 @@ $icons = [
         'component' => 'moodle',
     ],
 ];
-$settings->add(new \auth_iomadoidc\form\adminsetting\iconselect('auth_iomadoidc/icon' . "_$companyid", $configkey, $configdesc, $configdefault, $icons));
+$settings->add(new \auth_iomadoidc\form\adminsetting\iconselect('auth_iomadoidc/icon' . $postfix, $configkey, $configdesc, $configdefault, $icons));
 
 $configkey = new lang_string('cfg_customicon_key', 'auth_iomadoidc');
 $configdesc = new lang_string('cfg_customicon_desc', 'auth_iomadoidc');
-$setting = new admin_setting_configstoredfile('auth_iomadoidc/customicon' . "_$companyid", $configkey, $configdesc, 'customicon');
+$setting = new admin_setting_configstoredfile('auth_iomadoidc/customicon' . $postfix, $configkey, $configdesc, 'customicon');
 $setting->set_updatedcallback('auth_iomadoidc_initialize_customicon');
 $settings->add($setting);
