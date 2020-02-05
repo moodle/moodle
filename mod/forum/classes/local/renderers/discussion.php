@@ -37,6 +37,7 @@ use mod_forum\local\factories\url as url_factory;
 use mod_forum\local\factories\vault as vault_factory;
 use mod_forum\local\managers\capability as capability_manager;
 use mod_forum\local\renderers\posts as posts_renderer;
+use forum_portfolio_caller;
 use core\output\notification;
 use context;
 use context_module;
@@ -52,6 +53,7 @@ use stdClass;
 use url_select;
 
 require_once($CFG->dirroot . '/mod/forum/lib.php');
+require_once($CFG->dirroot . '/mod/forum/locallib.php');
 
 /**
  * Discussion renderer class.
@@ -362,6 +364,15 @@ class discussion {
 
         require_once($CFG->libdir . '/portfoliolib.php');
         $discussion = $this->discussion;
+
+        // We use the portfolio caller to work out if user should be allowed to see this button.
+        $caller = new forum_portfolio_caller(['discussionid' => $discussion->get_id()]);
+        $caller->set_formats_from_button([]);
+        $caller->load_data();
+        if (!$caller->check_permissions()) {
+            return null;
+        }
+
         $button = new \portfolio_add_button();
         $button->set_callback_options('forum_portfolio_caller', ['discussionid' => $discussion->get_id()], 'mod_forum');
         $button = $button->to_html(PORTFOLIO_ADD_FULL_FORM, get_string('exportdiscussion', 'mod_forum'));
