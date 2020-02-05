@@ -942,7 +942,7 @@ abstract class moodleform_mod extends moodleform {
         $mform->setType('instance', PARAM_INT);
 
         $mform->addElement('hidden', 'add', 0);
-        $mform->setType('add', PARAM_ALPHA);
+        $mform->setType('add', PARAM_ALPHANUM);
 
         $mform->addElement('hidden', 'update', 0);
         $mform->setType('update', PARAM_INT);
