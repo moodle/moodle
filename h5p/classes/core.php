@@ -197,7 +197,7 @@ class core extends \H5PCore {
             if ($shoulddownload) {
                 $installed['id'] = $this->fetch_content_type($library);
                 if ($installed['id']) {
-                    $installed['name'] = $librarykey = \H5PCore::libraryToString($library);
+                    $installed['name'] = \H5PCore::libraryToString($library);
                     $typesinstalled[] = $installed;
                 }
             }
