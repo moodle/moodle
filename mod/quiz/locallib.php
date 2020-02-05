@@ -1423,9 +1423,9 @@ function quiz_attempt_state($quiz, $attempt) {
  * The the appropraite mod_quiz_display_options object for this attempt at this
  * quiz right now.
  *
- * @param object $quiz the quiz instance.
- * @param object $attempt the attempt in question.
- * @param $context the quiz context.
+ * @param stdClass $quiz the quiz instance.
+ * @param stdClass $attempt the attempt in question.
+ * @param context $context the quiz context.
  *
  * @return mod_quiz_display_options
  */
