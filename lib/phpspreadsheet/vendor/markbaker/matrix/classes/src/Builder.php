@@ -7,6 +7,7 @@
  * @copyright  Copyright (c) 2018 Mark Baker (https://github.com/MarkBaker/PHPMatrix)
  * @license    https://opensource.org/licenses/MIT    MIT
  */
+
 namespace Matrix;
 
 /**
@@ -20,9 +21,9 @@ class Builder
      * Create a new matrix of specified dimensions, and filled with a specified value
      * If the column argument isn't provided, then a square matrix will be created
      *
-     * @param $value
-     * @param $rows
-     * @param null $columns
+     * @param mixed $value
+     * @param int $rows
+     * @param int|null $columns
      * @return Matrix
      * @throws Exception
      */

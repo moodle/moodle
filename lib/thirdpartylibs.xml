@@ -24,9 +24,9 @@
   <library>
     <location>phpspreadsheet</location>
     <name>PhpSpreadsheet</name>
-    <license>LGPL</license>
-    <version>1.7.0</version>
-    <licenseversion>2.1+</licenseversion>
+    <license>MIT</license>
+    <version>1.10.1</version>
+    <licenseversion></licenseversion>
   </library>
   <library>
     <location>google</location>
