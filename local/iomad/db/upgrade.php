@@ -2109,5 +2109,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030107, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030108) {
+
+        // Define field previousemailtemplateid to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('previousemailtemplateid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'previousroletemplateid');
+
+        // Conditionally launch add field previousemailtemplateid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030108, 'local', 'iomad');
+    }
+
     return $result;
 }

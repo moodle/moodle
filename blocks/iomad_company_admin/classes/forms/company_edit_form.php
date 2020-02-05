@@ -39,6 +39,7 @@ class company_edit_form extends \company_moodleform {
         $this->firstcompany = $firstcompany;
         $this->parentcompanyid = $parentcompanyid;
         $this->previousroletemplateid = $companyrecord->previousroletemplateid;
+        $this->previousemailtemplateid = $companyrecord->previousemailtemplateid;
         if (!empty($companyrecord->templates)) {
             $this->companyrecord->templates = array();
         }
@@ -97,10 +98,12 @@ class company_edit_form extends \company_moodleform {
         $mform->addRule('shortname', $strrequired, 'required', null, 'client');
 
         $mform->addElement('hidden', 'previousroletemplateid');
+        $mform->addElement('hidden', 'previousemailtemplateid');
 
         $mform->setType('parentid', PARAM_INT);
         $mform->setType('templates', PARAM_RAW);
         $mform->setType('previousroletemplateid', PARAM_INT);
+        $mform->setType('previousemailtemplateid', PARAM_INT);
 
         $mform->addElement('text', 'city',
                             get_string('companycity', 'block_iomad_company_admin'),
@@ -146,7 +149,7 @@ class company_edit_form extends \company_moodleform {
         if (iomad::has_capability('local/email:edit', $context)) {
             // Add in the company email template selector.
             $emailtemplates = \company::get_email_templates($this->companyid);
-            $mform->addElement('select', 'emailtemplate', get_string('applyemailtemplate', 'block_iomad_company_admin'), $emailtemplates);
+            $mform->addElement('select', 'emailtemplate', get_string('applyemailtemplate', 'block_iomad_company_admin', $emailtemplates[$this->previousemailtemplateid]), $emailtemplates);
             $mform->addHelpButton('emailtemplate', 'applyemailtemplate', 'block_iomad_company_admin');
         }
 

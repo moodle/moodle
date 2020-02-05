@@ -86,6 +86,7 @@ if (!$new) {
     $companyrecord = new stdClass;
     $companyrecord->templates = null;
     $companyrecord->previousroletemplateid = 0;
+    $companyrecord->previousemailtemplateid = 0;
     $companyrecord->maxusers = 0;
 
     if (!empty($parentid) && iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
@@ -412,6 +413,11 @@ if ($mform->is_cancelled()) {
             } else {
                 $data->previousroletemplateid = -1;
             }
+        }
+
+        // Did we apply an email template?
+        if (!empty($data->emailtemplate)) {
+            $data->previousemailtemplateid = $data->emailtemplate;
         }
 
         $DB->update_record('company', $data);
