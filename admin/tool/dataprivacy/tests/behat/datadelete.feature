@@ -250,3 +250,31 @@ Feature: Data delete from the privacy API
     When I press "Save changes"
     Then I should see "Your request has been submitted and will be processed soon."
     And I should see "Approved" in the "Delete all of my personal data" "table_row"
+
+  @javascript
+  Scenario: Delete flow stay the same even allow filtering of exports by course setting is enabled.
+    Given the following config values are set as admin:
+      | allowfiltering | 1 | tool_dataprivacy |
+    And I log in as "victim"
+    And I should see "Victim User 1"
+    And I log out
+
+    And I log in as "admin"
+    And I navigate to "Users > Privacy and policies > Data requests" in site administration
+    And I follow "New request"
+    And I set the field "User" to "Victim User 1"
+    And I set the field "Type" to "Delete all of my personal data"
+    And I press "Save changes"
+    Then I should see "Victim User 1"
+    And I should see "Awaiting approval" in the "Victim User 1" "table_row"
+    And I open the action menu in "Victim User 1" "table_row"
+    And I follow "Approve request"
+    And I press "Approve request"
+    And I should see "Approved" in the "Victim User 1" "table_row"
+    And I run all adhoc tasks
+    And I reload the page
+    And I should see "Deleted" in the "Victim User 1" "table_row"
+
+    And I log out
+    And I log in as "victim"
+    And I should see "Invalid login"

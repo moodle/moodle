@@ -90,6 +90,15 @@ if ($hassiteconfig) {
             new lang_string('showdataretentionsummary', 'tool_dataprivacy'),
             new lang_string('showdataretentionsummary_desc', 'tool_dataprivacy'),
             1));
+
+        // Whether to allow PO to select courses for data export, instead of always exporting all data.
+        $privacysettings->add(new admin_setting_configcheckbox('tool_dataprivacy/allowfiltering',
+            new lang_string('allowfiltering', 'tool_dataprivacy'),
+            new lang_string('allowfiltering_desc', 'tool_dataprivacy'),
+            0));
+        // Prevent the case where the automaticdataexportapproval setting is set to automatically approve,
+        // but the allowfiltering option is also enabled and non-functional.
+        $privacysettings->hide_if('tool_dataprivacy/allowfiltering', 'tool_dataprivacy/automaticdataexportapproval', 'checked', 1);
     }
 }
 

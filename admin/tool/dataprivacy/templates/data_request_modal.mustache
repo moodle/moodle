@@ -30,12 +30,18 @@
 
     Example context (json):
     {
+        "approvedeny": true,
+        "allowfiltering": true,
+        "canmarkcomplete": true,
         "title": "Data request modal title"
     }
 }}
 {{< core/modal }}
     {{$footer}}
         {{#approvedeny}}
+            {{#allowfiltering}}
+                <button type="button" class="btn btn-primary" data-action="approve-selected-courses">{{#str}} approveselectedcourses, tool_dataprivacy {{/str}}</button>
+            {{/allowfiltering}}
             <button type="button" class="btn btn-primary" data-action="approve">{{#str}} approve, tool_dataprivacy {{/str}}</button>
             <button type="button" class="btn btn-secondary" data-action="deny">{{#str}} deny, tool_dataprivacy {{/str}}</button>
         {{/approvedeny}}

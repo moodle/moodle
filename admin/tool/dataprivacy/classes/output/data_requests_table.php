@@ -35,6 +35,7 @@ use moodle_url;
 use stdClass;
 use table_sql;
 use tool_dataprivacy\api;
+use tool_dataprivacy\data_request;
 use tool_dataprivacy\external\data_request_exporter;
 
 defined('MOODLE_INTERNAL') || die;
@@ -224,7 +225,8 @@ class data_requests_table extends table_sql {
 
         // View action.
         $actionurl = new moodle_url('#');
-        $actiondata = ['data-action' => 'view', 'data-requestid' => $requestid];
+        $actiondata = ['data-action' => 'view', 'data-requestid' => $requestid,
+            'data-contextid' => \context_system::instance()->id];
         $actiontext = get_string('viewrequest', 'tool_dataprivacy');
         $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
 
@@ -251,8 +253,20 @@ class data_requests_table extends table_sql {
                 }
                 // Approve.
                 $actiondata['data-action'] = 'approve';
-                $actiontext = get_string('approverequest', 'tool_dataprivacy');
-                $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+
+                if (get_config('tool_dataprivacy', 'allowfiltering') && $data->type == api::DATAREQUEST_TYPE_EXPORT) {
+                    $actiontext = get_string('approverequestall', 'tool_dataprivacy');
+                    $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+
+                    // Approve selected courses.
+                    $actiontext = get_string('filterexportdata', 'tool_dataprivacy');
+                    $actiondata = ['data-action' => 'approve-selected-courses', 'data-requestid' => $requestid,
+                        'data-contextid' => \context_system::instance()->id];
+                    $actions[] = new \action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+                } else {
+                    $actiontext = get_string('approverequest', 'tool_dataprivacy');
+                    $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+                }
 
                 // Deny.
                 $actiondata['data-action'] = 'deny';

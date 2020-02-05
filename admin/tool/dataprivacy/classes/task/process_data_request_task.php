@@ -82,6 +82,7 @@ class process_data_request_task extends adhoc_task {
 
         // Grab the manager.
         // We set an observer against it to handle failures.
+        $allowfiltering = get_config('tool_dataprivacy', 'allowfiltering');
         $manager = new \core_privacy\manager();
         $manager->set_observer(new \tool_dataprivacy\manager_observer());
 
@@ -94,8 +95,6 @@ class process_data_request_task extends adhoc_task {
         $contextlistcollection = $manager->get_contexts_for_userid($requestpersistent->get('userid'));
 
         mtrace('Fetching approved contextlists from collection');
-        $approvedclcollection = api::get_approved_contextlist_collection_for_collection(
-                $contextlistcollection, $foruser, $request->type);
 
         mtrace('Processing request...');
         $completestatus = api::DATAREQUEST_STATUS_COMPLETE;
@@ -103,6 +102,14 @@ class process_data_request_task extends adhoc_task {
 
         if ($request->type == api::DATAREQUEST_TYPE_EXPORT) {
             // Get the user context.
+            if ($allowfiltering) {
+                // Get the collection of approved_contextlist objects needed for core_privacy data export.
+                $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
+            } else {
+                $approvedclcollection = api::get_approved_contextlist_collection_for_collection(
+                    $contextlistcollection, $foruser, $request->type);
+            }
+
             $usercontext = \context_user::instance($foruser->id, IGNORE_MISSING);
             if (!$usercontext) {
                 mtrace("Request {$requestid} cannot be processed due to a missing user context instance for the user
@@ -132,6 +139,8 @@ class process_data_request_task extends adhoc_task {
             if (is_primary_admin($foruser->id)) {
                 $completestatus = api::DATAREQUEST_STATUS_REJECTED;
             } else {
+                $approvedclcollection = api::get_approved_contextlist_collection_for_collection(
+                    $contextlistcollection, $foruser, $request->type);
                 $manager = new \core_privacy\manager();
                 $manager->set_observer(new \tool_dataprivacy\manager_observer());
 
