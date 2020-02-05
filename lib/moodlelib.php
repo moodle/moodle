@@ -9104,24 +9104,13 @@ function cleardoubleslashes ($path) {
  * @return bool
  */
 function remoteip_in_list($list) {
-    $inlist = false;
     $clientip = getremoteaddr(null);
 
     if (!$clientip) {
         // Ensure access on cli.
         return true;
     }
-
-    $list = explode("\n", $list);
-    foreach ($list as $line) {
-        $tokens = explode('#', $line);
-        $subnet = trim($tokens[0]);
-        if (address_in_subnet($clientip, $subnet)) {
-            $inlist = true;
-            break;
-        }
-    }
-    return $inlist;
+    return \core\ip_utils::is_ip_in_subnet_list($clientip, $list);
 }
 
 /**
