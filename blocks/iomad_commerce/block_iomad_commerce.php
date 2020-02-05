@@ -36,12 +36,11 @@ class block_iomad_commerce extends block_base {
         // Hide the shop content if the user's company doesn't support ecommerce
         // Always show it if the user is a siteadmin
         // PWG
-        $ecommerce = $DB->get_field_sql("SELECT c.ecommerce
-                                         FROM {user} u
-                                         JOIN {company_users} cu ON cu.userid = u.id
-                                         JOIN {company} c ON cu.companyid = c.id
-                                         WHERE u.id = :userid",
-                                         array('userid' => $USER->id));
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        $ecommerce = $DB->get_field_sql("SELECT ecommerce
+                                         FROM {company} c
+                                         WHERE c.id = :companyid",
+                                         array('companyid' => $companyid));
 
         if (!is_siteadmin() && !$ecommerce && !$CFG->commerce_admin_enableall) {
             return null;
@@ -57,11 +56,9 @@ class block_iomad_commerce extends block_base {
         if (!empty($CFG->commerce_enable_external)) {
             // Get and store a one time token.
             $token = company_user::generate_token();
-            $companyid = iomad::get_my_companyid(context_system::instance(), false);
-            if (empty($CFG->commerce_externalshop_url . "_$companyid")) {
+            $configname = "commerce_externalshop_url_$companyid";
+            if (empty($CFG->$configname)) {
                 $configname = "commerce_externalshop_url";
-            } else {
-                $configname = "commerce_externalshop_url_$companyid";
             }
             $link = new moodle_url($CFG->$configname . '/wp-content/plugins/wooiomad/land.php', array('username' => $USER->username, 'token' => $token));
             $this->content->text = "<a class='btn' href='$link'>" . get_string('gotoshop', 'block_iomad_commerce') . '</a>';
