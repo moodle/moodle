@@ -401,7 +401,11 @@ if (!empty($save)) {
 
 $company = new company($companyid);
 // Check we can actually do anything on this page.
-iomad::require_capability('local/email:list', $context);
+if (empty($templatesetid)) {
+    iomad::require_capability('local/email:list', $context);
+} else {
+    iomad::require_capability('local/email:templateset_list', $context);
+}
 
 if (empty($manage)) {
     if (empty($templatesetid)) {
@@ -429,7 +433,13 @@ if (empty($manage)) {
     } else {
         $backurl = '';
     }
-    echo $output->templateset_buttons($saveurl, $manageurl, $backurl);
+    if (empty($templatesetid)) {
+        if(iomad::has_capability('local/email:templateset_list', $context)) {
+            echo $output->templateset_buttons($saveurl, $manageurl, $backurl);
+        }
+    } else {
+        echo $output->templateset_buttons($saveurl, $manageurl, $backurl);
+    }
 }
 
 // Sort the keys of the global $email object, the make sure we have that and the
