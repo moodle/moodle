@@ -376,4 +376,32 @@ class core_ip_utils_testcase extends basic_testcase {
             [false, 'trouble.com.au'] // The allowed domain (above) has a space at the front and so will return false.
         ];
     }
+
+    /**
+     * Data provider for test_is_ip_in_subnet_list.
+     *
+     * @return array
+     */
+    public function data_is_ip_in_subnet_list() {
+        return [
+            [true, '1.1.1.1', '1.1.1.1', "\n"],
+            [false, '1.1.1.1', '2.2.2.2', "\n"],
+            [true, '1.1.1.1', "1.1.1.5\n1.1.1.1", "\n"],
+            [true, '1.1.1.1', "1.1.1.5,1.1.1.1", ","],
+        ];
+    }
+
+    /**
+     * Test checking ips against a list of allowed domains.
+     *
+     * @param  bool $expected Expected result
+     * @param  string $ip IP address
+     * @param  string $list list of  IP subnets
+     * @param  string $delim delimiter of list
+     * @dataProvider data_is_ip_in_subnet_list
+     */
+    public function test_is_ip_in_subnet_list($expected, $ip, $list, $delim) {
+        $this->assertEquals($expected, \core\ip_utils::is_ip_in_subnet_list($ip, $list, $delim));
+    }
+
 }
