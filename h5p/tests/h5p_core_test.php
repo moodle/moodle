@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @runTestsInSeparateProcesses
  */
-class h5p_core_test extends \advanced_testcase {
+class h5p_core_testcase extends \advanced_testcase {
 
     protected function setup() {
         global $CFG;
@@ -146,5 +146,28 @@ class h5p_core_test extends \advanced_testcase {
 
         $this->assertEquals($numcontenttypes, count($contentfiles));
         $this->assertCount(0, $result->typesinstalled);
+    }
+
+    /**
+     * Test that if site_uuid is not set, the site is registered and site_uuid is set.
+     *
+     */
+    public function test_get_site_uuid(): void {
+        $this->resetAfterTest(true);
+
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
+        // Check that site_uuid does not have a value.
+        $this->assertFalse(get_config('core_h5p', 'site_uuid'));
+
+        $siteuuid = $this->core->get_site_uuid();
+
+        $this->assertSame($siteuuid, get_config('core_h5p', 'site_uuid'));
+
+        // Check that after a new request the site_uuid remains the same.
+        $siteuuid2 = $this->core->get_site_uuid();
+        $this->assertEquals( $siteuuid, $siteuuid2);
     }
 }
