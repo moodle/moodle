@@ -57,6 +57,26 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Ensure a button exists.
+     * @Then the button :button exists
+     * @param string $button
+     */
+    public function button_exists(string $button) {
+        $buttonnode = $this->find_button($button);
+        $this->ensure_node_is_visible($buttonnode);
+    }
+
+    /**
+     * Ensure that a button does not exist.
+     * @Then the button :button does not exist
+     * @param string $button
+     */
+    public function button_does_not_exist(string $button) {
+        $general = behat_context_helper::get('behat_general');
+        $general->should_not_exist($button, 'button');
+    }
+
+    /**
      * Press button with specified id|name|title|alt|value and switch to main window.
      *
      * @When /^I press "(?P<button_string>(?:[^"]|\\")*)" and switch to main window$/
