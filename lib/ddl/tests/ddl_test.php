@@ -1894,6 +1894,8 @@ class core_ddl_testcase extends database_driver_testcase {
         // Data of test_table2 should be intact.
         $this->assertEquals(true, $metacache->has('test_table2'));
 
+        // Delete the leftover temp table.
+        $dbman->drop_table($table1);
     }
 
     public function test_reset_sequence() {
