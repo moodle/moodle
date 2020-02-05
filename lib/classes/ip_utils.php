@@ -224,4 +224,25 @@ final class ip_utils {
         }
         return false;
     }
+
+    /**
+     * Is an ip in a given list of subnets?
+     *
+     * @param string $ip - the IP to test against the list
+     * @param string $list - the list of IP subnets
+     * @param string $delim a delimiter of the list
+     * @return bool
+     */
+    public static function is_ip_in_subnet_list($ip, $list, $delim = "\n") {
+        $list = explode($delim, $list);
+        foreach ($list as $line) {
+            $tokens = explode('#', $line);
+            $subnet = trim($tokens[0]);
+            if (address_in_subnet($ip, $subnet)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
