@@ -37,8 +37,11 @@ $gototop-bottom-position: 50px !default;
     @supports (position: sticky) {
         position: sticky;
     }
+    @supports (-ms-ime-align:auto) {
+        position: fixed; /* Edge compatibility hack */
+    }
     bottom: $gototop-bottom-position;
-
+    right: 0;
     a {
         position: absolute;
         right: 0;

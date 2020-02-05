@@ -9625,10 +9625,15 @@ input[disabled] {
   display: block;
   position: fixed;
   /* IE compatibility hack */
-  bottom: 50px; }
+  bottom: 50px;
+  right: 0; }
   @supports (position: sticky) {
     #goto-top-link {
       position: sticky; } }
+  @supports (-ms-ime-align: auto) {
+    #goto-top-link {
+      position: fixed;
+      /* Edge compatibility hack */ } }
   #goto-top-link a {
     position: absolute;
     right: 0;
