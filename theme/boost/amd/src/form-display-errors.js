@@ -44,6 +44,7 @@ define(['jquery', 'core/event'], function($, Event) {
                     feedback.html(msg);
 
                     // Only display and focus when the error was not already visible.
+                    // This is so that, when tabbing around the form, you don't get stuck.
                     if (!feedback.is(':visible')) {
                         feedback.show();
                         feedback.focus();
@@ -60,6 +61,16 @@ define(['jquery', 'core/event'], function($, Event) {
                     }
                 }
             });
+            var form = element.closest('form');
+            if (!('boostFormErrorsEnhanced' in form.dataset)) {
+                form.addEventListener('submit', function() {
+                    var visibleError = $('.form-control-feedback:visible');
+                    if (visibleError.length) {
+                        visibleError[0].focus();
+                    }
+                });
+                form.dataset.boostFormErrorsEnhanced = 1;
+            }
         }
     };
 });
