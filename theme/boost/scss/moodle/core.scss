@@ -26,6 +26,35 @@ $bg-inverse-link-color: #fff !default;
     margin-top: 4px;
 }
 
+$gototop-bottom-position: 50px !default;
+
+#goto-top-link {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .7s ease 0s, visibility .1s ease .8s;
+    display: block;
+    position: fixed; /* IE compatibility hack */
+    @supports (position: sticky) {
+        position: sticky;
+    }
+    @supports (-ms-ime-align:auto) {
+        position: fixed; /* Edge compatibility hack */
+    }
+    bottom: $gototop-bottom-position;
+    right: 0;
+    a {
+        position: absolute;
+        right: 0;
+        transform: translateY(-100%);
+    }
+}
+
+body.scrolled #goto-top-link {
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s ease 0s, opacity .7s ease .1s;
+}
+
 .context-header-settings-menu .dropdown-toggle > .icon,
 #region-main-settings-menu .dropdown-toggle > .icon {
     height: 24px;
