@@ -619,6 +619,7 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
     }
 
     function StoreData(data,storetotaltime) {
+        var datastring = '';
         if (storetotaltime) {
             if (cmi.core.lesson_status == 'not attempted') {
                 cmi.core.lesson_status = 'completed';
@@ -647,7 +648,12 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
 
         var myRequest = NewHttpReq();
         //alert('going to:' + "<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php" + "id=<?php p($id) ?>&a=<?php p($a) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
-        result = DoRequest(myRequest,datamodelurl,datamodelurlparams + datastring);
+        var result = DoRequest(myRequest, datamodelurl, datamodelurlparams + datastring);
+
+        if (result === false) {
+            return false;
+        }
+
         results = String(result).split('\n');
         errorCode = results[1];
         return results[0];
