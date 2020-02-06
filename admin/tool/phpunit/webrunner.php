@@ -131,11 +131,12 @@ if ($execute) {
             tool_phpunit_problem('Can not create configuration file');
         }
     }
-    $configdir = escapeshellarg($configdir);
-    // no cleanup of path - this is tricky because we can not use escapeshellarg and friends for escaping,
-    // this is from admin user so PARAM_PATH must be enough
     chdir($CFG->dirroot);
-    passthru("php $CFG->admin/tool/phpunit/cli/util.php --run -c $configdir $testclass $testpath", $code);
+    $configdir = escapeshellarg($configdir);
+    $cleanclass = escapeshellarg($testclass);
+    $cleanpath = escapeshellarg($testpath);
+
+    passthru("php $CFG->admin/tool/phpunit/cli/util.php --run -c $configdir $cleanclass $cleanpath", $code);
     chdir($oldcwd);
 
     echo '</pre>';
@@ -146,7 +147,7 @@ if ($execute) {
 }
 
 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-echo '<form method="get" action="webrunner.php">';
+echo '<form method="post" action="webrunner.php">';
 echo '<fieldset class="invisiblefieldset">';
 echo '<label for="testpath">Test one file</label> ';
 echo '<input type="text" id="testpath" name="testpath" value="'.s($testpath).'" size="50" /> (all test cases from webrunner.xml if empty)';
