@@ -182,19 +182,35 @@ function plagiarism_print_disclosure($cmid) {
 }
 
 /**
- * helper function - also loads lib file of plagiarism plugin
+ * Helper function - also loads lib file of plagiarism plugin
+ *
+ * @todo MDL-67872 the deprecated code in this function to be removed in Moodle 4.3
  * @return array of available plugins
  */
 function plagiarism_load_available_plugins() {
     global $CFG;
+    static $showndeprecatedmessage = array(); // Only show message once per page load.
+
     if (empty($CFG->enableplagiarism)) {
         return array();
     }
     $plagiarismplugins = core_component::get_plugin_list('plagiarism');
     $availableplugins = array();
-    foreach($plagiarismplugins as $plugin => $dir) {
-        //check this plugin is enabled and a lib file exists.
-        if (get_config('plagiarism', $plugin."_use") && file_exists($dir."/lib.php")) {
+    foreach ($plagiarismplugins as $plugin => $dir) {
+        // Check this plugin is enabled and a lib file exists.
+        if (get_config('plagiarism', $plugin."_use")) {
+            // Deprecated Since Moodle 3.9.
+            $pluginenabled = true;
+            if (empty($showndeprecatedmessage[$plugin])) {
+                $text = 'The setting plagiarism:'.$plugin.'_use is deprecated.';
+                $text .= ' Use plagiarism_' . $plugin . ':enabled instead';
+                debugging($text, DEBUG_DEVELOPER);
+                $showndeprecatedmessage[$plugin] = true;
+            }
+        } else {
+            $pluginenabled = get_config('plagiarism_'.$plugin, 'enabled');
+        }
+        if ($pluginenabled && file_exists($dir."/lib.php")) {
             require_once($dir.'/lib.php');
             $plagiarismclass = "plagiarism_plugin_$plugin";
             if (class_exists($plagiarismclass)) {
