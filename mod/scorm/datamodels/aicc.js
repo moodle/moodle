@@ -508,6 +508,7 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
     }
 
     function StoreData(data,storetotaltime) {
+        var datastring = '';
         if (storetotaltime) {
             if (cmi.core.lesson_mode == 'normal') {
                 if (cmi.core.credit == 'credit') {
@@ -531,9 +532,13 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
             datastring = CollectData(data,'cmi');
         }
 
-        //popupwin(datastring);
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,datamodelurl,datamodelurlparams + datastring);
+        var result = DoRequest(myRequest, datamodelurl, datamodelurlparams + datastring);
+
+        if (result === false) {
+            return false;
+        }
+
         results = String(result).split('\n');
         errorCode = results[1];
         return results[0];
