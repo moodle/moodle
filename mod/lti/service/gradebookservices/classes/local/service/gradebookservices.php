@@ -113,6 +113,16 @@ class gradebookservices extends service_base {
     }
 
     /**
+     * Get the scopes defined by this service.
+     *
+     * @return array
+     */
+    public function get_scopes() {
+        return [self::SCOPE_GRADEBOOKSERVICES_LINEITEM_READ, self::SCOPE_GRADEBOOKSERVICES_RESULT_READ,
+            self::SCOPE_GRADEBOOKSERVICES_SCORE, self::SCOPE_GRADEBOOKSERVICES_LINEITEM];
+    }
+
+    /**
      * Adds form elements for gradebook sync add/edit page.
      *
      * @param \MoodleQuickForm $mform Moodle quickform object definition

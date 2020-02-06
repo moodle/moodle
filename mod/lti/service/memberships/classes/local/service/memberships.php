@@ -103,6 +103,15 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
     }
 
     /**
+     * Get the scope(s) defined by this service.
+     *
+     * @return array
+     */
+    public function get_scopes() {
+        return [self::SCOPE_MEMBERSHIPS_READ];
+    }
+
+    /**
      * Get the JSON for members.
      *
      * @param \mod_lti\local\ltiservice\resource_base $resource       Resource handling the request
