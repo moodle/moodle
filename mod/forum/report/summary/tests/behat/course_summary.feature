@@ -58,7 +58,7 @@ Feature: Course level forum summary report
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum2"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     And I should see "Export posts"
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                    |                                   |
@@ -93,7 +93,7 @@ Feature: Course level forum summary report
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                    |                                    |
       | First name / Surname | -2-         | -3-     | Earliest post                      | Most recent post                   |
