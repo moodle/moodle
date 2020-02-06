@@ -89,6 +89,15 @@ class toolsettings extends \mod_lti\local\ltiservice\service_base {
     }
 
     /**
+     * Get the scope(s) defined this service.
+     *
+     * @return array
+     */
+    public function get_scopes() {
+        return [self::SCOPE_TOOL_SETTINGS];
+    }
+
+    /**
      * Get the distinct settings from each level by removing any duplicates from higher levels.
      *
      * @param array $systemsettings   System level settings

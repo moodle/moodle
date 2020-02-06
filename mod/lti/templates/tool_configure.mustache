@@ -29,6 +29,13 @@
     Context variables required for this template:
     *
 
+    Example context (json):
+    {
+        "configuremanualurl":"https://some.tool.example/mod/lti/typessettings.php?sesskey=OKl37bHflL&amp;returnto=toolconfigure",
+        "managetoolsurl":"https://some.tool.example/admin/settings.php?section=modsettinglti",
+        "managetoolproxiesurl":"https://some.tool.example/mod/lti/toolproxies.php"
+    }
+
 }}
 <h2>{{#str}} manage_external_tools, mod_lti {{/str}}</h2>
 <div id="main-content-container">
@@ -46,10 +53,16 @@
                             placeholder="{{#str}} toolurlplaceholder, mod_lti {{/str}}"
                             required>
                         <button id="tool-create-button" type="submit" class="btn btn-success">
-                            <span class="btn-text">{{#str}} add {{/str}}</span>
-                            <div class="btn-loader">
+                            <span class="btn-text">{{#str}} add_ltiadv, mod_lti {{/str}}</span>
+                            <span class="btn-loader">
                                 {{> mod_lti/loader }}
-                            </div>
+                            </span>
+                        </button>
+                        <button id="tool-createltilegacy-button" type="button" class="btn btn-warning">
+                            <span class="btn-text">{{#str}} add_ltilegacy, mod_lti {{/str}}</span>
+                            <span class="btn-loader">
+                                {{> mod_lti/loader }}
+                            </span>
                         </button>
                     </div>
                 </form>
