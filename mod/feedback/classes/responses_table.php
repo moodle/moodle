@@ -157,6 +157,7 @@ class mod_feedback_responses_table extends table_sql {
         $this->define_headers($tableheaders);
 
         $this->sortable(true, 'lastname', SORT_ASC);
+        $this->no_sorting('groups');
         $this->collapsible(true);
         $this->set_attribute('id', 'showentrytable');
 
