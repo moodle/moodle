@@ -227,6 +227,42 @@ abstract class service_base {
     }
 
     /**
+     * Called when a new LTI Instance is added.
+     *
+     * @param object $lti LTI Instance.
+     */
+    public function instance_added(object $lti): void {
+
+    }
+
+    /**
+     * Called when a new LTI Instance is updated.
+     *
+     * @param object $lti LTI Instance.
+     */
+    public function instance_updated(object $lti): void {
+
+    }
+
+    /**
+     * Called when a new LTI Instance is deleted.
+     *
+     * @param int $id LTI Instance.
+     */
+    public function instance_deleted(int $id): void {
+
+    }
+
+    /**
+     * Set the form data when displaying the LTI Instance form.
+     *
+     * @param object $defaultvalues Default form values.
+     */
+    public function set_instance_form_values(object $defaultvalues): void {
+
+    }
+
+    /**
      * Return an array with the names of the parameters that the service will be saving in the configuration
      *
      * @return array  Names list of the parameters that the service will be saving in the configuration
@@ -471,5 +507,4 @@ abstract class service_base {
         return $ok;
 
     }
-
 }

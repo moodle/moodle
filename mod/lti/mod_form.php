@@ -50,7 +50,6 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
-use ltiservice_gradebookservices\local\service\gradebookservices;
 
 class mod_lti_mod_form extends moodleform_mod {
 
@@ -339,21 +338,17 @@ class mod_lti_mod_form extends moodleform_mod {
     }
 
     /**
-     * Sets the current values for resource and tag in case of update.
+     * Sets the current values handled by services in case of update.
      *
      * @param object $defaultvalues default values to populate the form with.
      */
     public function set_data($defaultvalues) {
-        $defaultvalues->lineitemresourceid = '';
-        $defaultvalues->lineitemtag = '';
-        if (is_object($defaultvalues) && $defaultvalues->instance) {
-            $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lti($defaultvalues->instance);
-            if ($gbs) {
-                $defaultvalues->lineitemresourceid = $gbs->resourceid;
-                $defaultvalues->lineitemtag = $gbs->tag;
+        $services = lti_get_services();
+        if (is_object($defaultvalues)) {
+            foreach ($services as $service) {
+                $service->set_instance_form_values( $defaultvalues );
             }
         }
-
         parent::set_data($defaultvalues);
     }
 }

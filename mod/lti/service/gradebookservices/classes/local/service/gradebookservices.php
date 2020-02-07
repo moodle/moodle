@@ -650,6 +650,41 @@ class gradebookservices extends service_base {
     }
 
     /**
+     * Called when a new LTI Instance is added.
+     *
+     * @param object $lti LTI Instance.
+     */
+    public function instance_added(object $lti): void {
+        self::update_coupled_gradebookservices($lti, $lti->lineitemresourceid ?? '', $lti->lineitemtag ?? '');
+    }
+
+    /**
+     * Called when a new LTI Instance is updated.
+     *
+     * @param object $lti LTI Instance.
+     */
+    public function instance_updated(object $lti): void {
+        self::update_coupled_gradebookservices($lti, $lti->lineitemresourceid ?? '', $lti->lineitemtag ?? '');
+    }
+
+    /**
+     * Set the form data when displaying the LTI Instance form.
+     *
+     * @param object $defaultvalues Default form values.
+     */
+    public function set_instance_form_values(object $defaultvalues): void {
+        $defaultvalues->lineitemresourceid = '';
+        $defaultvalues->lineitemtag = '';
+        if (is_object($defaultvalues) && $defaultvalues->instance) {
+            $gbs = self::find_ltiservice_gradebookservice_for_lti($defaultvalues->instance);
+            if ($gbs) {
+                $defaultvalues->lineitemresourceid = $gbs->resourceid;
+                $defaultvalues->lineitemtag = $gbs->tag;
+            }
+        }
+    }
+
+    /**
      * Deletes orphaned rows from the 'ltiservice_gradebookservices' table.
      *
      * Sometimes, if a gradebook entry is deleted and it was a lineitem

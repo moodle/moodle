@@ -47,7 +47,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-use ltiservice_gradebookservices\local\service\gradebookservices;
 
 /**
  * List of features supported in URL module
@@ -119,7 +118,10 @@ function lti_add_instance($lti, $mform) {
         lti_grade_item_update($lti);
     }
 
-    gradebookservices::update_coupled_gradebookservices($lti, $lti->lineitemresourceid ?? '', $lti->lineitemtag ?? '');
+    $services = lti_get_services();
+    foreach ($services as $service) {
+        $service->instance_added( $lti );
+    }
 
     $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
     \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
@@ -168,7 +170,10 @@ function lti_update_instance($lti, $mform) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
 
-    gradebookservices::update_coupled_gradebookservices($lti, $lti->lineitemresourceid, $lti->lineitemtag);
+    $services = lti_get_services();
+    foreach ($services as $service) {
+        $service->instance_updated( $lti );
+    }
 
     $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
     \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
@@ -185,7 +190,8 @@ function lti_update_instance($lti, $mform) {
  * @return boolean Success/Failure
  **/
 function lti_delete_instance($id) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     if (! $basiclti = $DB->get_record("lti", array("id" => $id))) {
         return false;
@@ -206,7 +212,15 @@ function lti_delete_instance($id) {
     \core_completion\api::update_completion_date_event($cm->id, 'lti', $id, null);
 
     // We must delete the module record after we delete the grade item.
-    return $DB->delete_records("lti", array("id" => $basiclti->id));
+    if ($DB->delete_records("lti", array("id" => $basiclti->id)) ) {
+        $services = lti_get_services();
+        foreach ($services as $service) {
+            $service->instance_deleted( $id );
+        }
+        return true;
+    }
+    return false;
+
 }
 
 /**
