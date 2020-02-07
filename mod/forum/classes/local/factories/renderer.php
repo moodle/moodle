@@ -318,7 +318,7 @@ class renderer {
         return new posts_renderer(
             $this->rendererbase,
             $this->builderfactory->get_exported_posts_builder(),
-            'mod_forum/forum_posts_with_context_links',
+            'mod_forum/forum_search_results',
             // Post process the exported posts to add the highlighting of the search terms to the post
             // and also the additional context links in the subject.
             function($exportedposts, $forumsbyid, $discussionsbyid) use ($searchterms, $urlfactory) {
