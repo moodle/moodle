@@ -511,7 +511,8 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace,
         $newcategory = new stdClass();
         $newcategory->parent = question_get_top_category($newcontextid, true)->id;
         $newcategory->contextid = $newcontextid;
-        $newcategory->name = get_string('questionsrescuedfrom', 'question', $oldplace);
+        // Max length of column name in question_categories is 255.
+        $newcategory->name = shorten_text(get_string('questionsrescuedfrom', 'question', $oldplace), 255);
         $newcategory->info = get_string('questionsrescuedfrominfo', 'question', $oldplace);
         $newcategory->sortorder = 999;
         $newcategory->stamp = make_unique_id_code();
@@ -1356,7 +1357,8 @@ function question_make_default_categories($contexts) {
             // Otherwise, we need to make one
             $category = new stdClass();
             $contextname = $context->get_context_name(false, true);
-            $category->name = get_string('defaultfor', 'question', $contextname);
+            // Max length of name field is 255.
+            $category->name = shorten_text(get_string('defaultfor', 'question', $contextname), 255);
             $category->info = get_string('defaultinfofor', 'question', $contextname);
             $category->contextid = $context->id;
             $category->parent = $topcategory->id;
