@@ -1079,11 +1079,15 @@ function(
         }
 
         if (headerText) {
-            dialogueHeader.removeClass('hidden');
+            // Create the dialogue header.
+            dialogueHeader = $('<h3 class="h6" data-region="dialogue-header"></h3>');
             dialogueHeader.text(headerText);
-        } else {
-            dialogueHeader.addClass('hidden');
-            dialogueHeader.text('');
+            // Prepend it to the confirmation body.
+            var confirmDialogue = dialogue.find(SELECTORS.CONFIRM_DIALOGUE);
+            confirmDialogue.prepend(dialogueHeader);
+        } else if (dialogueHeader.length) {
+            // Header text is empty but dialogue header is present, so remove it.
+            dialogueHeader.remove();
         }
 
         buttons.forEach(function(button) {
@@ -1123,8 +1127,11 @@ function(
         cancelButton.removeClass('hidden');
         okayButton.removeClass('hidden');
         text.text('');
-        dialogueHeader.addClass('hidden');
-        dialogueHeader.text('');
+
+        // Remove dialogue header if present.
+        if (dialogueHeader.length) {
+            dialogueHeader.remove();
+        }
 
         header.find(SELECTORS.CAN_RECEIVE_FOCUS).first().focus();
         return true;

@@ -47,6 +47,7 @@ define([], function() {
         ACTION_VIEW_CONTACT: '[data-action="view-contact"]',
         ACTION_VIEW_GROUP_INFO: '[data-action="view-group-info"]',
         CAN_RECEIVE_FOCUS: 'input:not([type="hidden"]), a[href], button, textarea, select, [tabindex]',
+        CONFIRM_DIALOGUE: '[data-region="confirm-dialogue"]',
         CONFIRM_DIALOGUE_BUTTON_TEXT: '[data-region="dialogue-button-text"]',
         CONFIRM_DIALOGUE_CANCEL_BUTTON: '[data-action="cancel-confirm"]',
         CONFIRM_DIALOGUE_CONTAINER: '[data-region="confirm-dialogue-container"]',
