@@ -164,7 +164,7 @@ class core extends \H5PCore {
      */
     public function fetch_latest_content_types(): ?\stdClass {
 
-        $contenttypes = self::get_latest_content_types();
+        $contenttypes = $this->get_latest_content_types();
         if (!empty($contenttypes->error)) {
             return $contenttypes;
         }
@@ -184,7 +184,7 @@ class core extends \H5PCore {
                 'machineName' => $type->id,
                 'majorVersion' => $type->version->major,
                 'minorVersion' => $type->version->minor,
-                'patchVersion' => $type->version->patch
+                'patchVersion' => $type->version->patch,
             ];
 
             $shoulddownload = true;
@@ -197,7 +197,7 @@ class core extends \H5PCore {
             if ($shoulddownload) {
                 $installed['id'] = $this->fetch_content_type($library);
                 if ($installed['id']) {
-                    $installed['name'] = $librarykey = \H5PCore::libraryToString($library);
+                    $installed['name'] = \H5PCore::libraryToString($library);
                     $typesinstalled[] = $installed;
                 }
             }
@@ -256,14 +256,21 @@ class core extends \H5PCore {
     /**
      * Get H5P endpoints.
      *
-     * If $library is null, moodle_url is the endpoint of the latest version of the H5P content types. If library is the
-     * machine name of a content type, moodle_url is the endpoint to download the content type.
+     * If $endpoint = 'content' and $library is null, moodle_url is the endpoint of the latest version of the H5P content
+     * types; however, if $library is the machine name of a content type, moodle_url is the endpoint to download the content type.
+     * The SITES endpoint ($endpoint = 'site') may be use to get a site UUID or send site data.
      *
      * @param string|null $library The machineName of the library whose endpoint is requested.
+     * @param string $endpoint The endpoint required. Valid values: "site", "content".
      * @return moodle_url The endpoint moodle_url object.
      */
-    public function get_api_endpoint(?string $library): moodle_url {
-        $h5purl = \H5PHubEndpoints::createURL(\H5PHubEndpoints::CONTENT_TYPES ) . $library;
+    public function get_api_endpoint(?string $library = null, string $endpoint = 'content'): moodle_url {
+        if ($endpoint == 'site') {
+            $h5purl = \H5PHubEndpoints::createURL(\H5PHubEndpoints::SITES );
+        } else if ($endpoint == 'content') {
+            $h5purl = \H5PHubEndpoints::createURL(\H5PHubEndpoints::CONTENT_TYPES ) . $library;
+        }
+
         return new moodle_url($h5purl);
     }
 
@@ -275,9 +282,11 @@ class core extends \H5PCore {
      *     - array contentTypes: an object for each H5P content type with its information
      */
     public function get_latest_content_types(): \stdClass {
+        $siteuuid = $this->get_site_uuid() ?? md5($CFG->wwwroot);
+        $postdata = ['uuid' => $siteuuid];
+
         // Get the latest content-types json.
-        $postdata = ['uuid' => 'foo'];
-        $endpoint = $this->get_api_endpoint(null);
+        $endpoint = $this->get_api_endpoint();
         $request = download_file_content($endpoint, null, $postdata, true);
 
         if (!empty($request->error) || $request->status != '200' || empty($request->results)) {
@@ -291,6 +300,43 @@ class core extends \H5PCore {
         $contenttypes->error = '';
 
         return $contenttypes;
+    }
+
+    /**
+     * Get the site UUID. If site UUID is not defined, try to register the site.
+     *
+     * return $string The site UUID, null if it is not set.
+     */
+    public function get_site_uuid(): ?string {
+        // Check if the site_uuid is already set.
+        $siteuuid = get_config('core_h5p', 'site_uuid');
+
+        if (!$siteuuid) {
+            $siteuuid = $this->register_site();
+        }
+
+        return $siteuuid;
+    }
+
+    /**
+     * Get H5P generated site UUID.
+     *
+     * return ?string Returns H5P generated site UUID, null if can't get it.
+     */
+    private function register_site(): ?string {
+        $endpoint = $this->get_api_endpoint(null, 'site');
+        $siteuuid = download_file_content($endpoint, null, '');
+
+        // Successful UUID retrieval from H5P.
+        if ($siteuuid) {
+            $json = json_decode($siteuuid);
+            if (isset($json->uuid)) {
+                set_config('site_uuid', $json->uuid, 'core_h5p');
+                return $json->uuid;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -308,5 +354,4 @@ class core extends \H5PCore {
         }
         return true;
     }
-
 }
