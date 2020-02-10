@@ -653,6 +653,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'core_course_toggle_activity_recommendation' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'toggle_activity_recommendation',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Adds or removes an activity as a recommendation in the activity chooser.',
+        'type' => 'write',
+        'ajax' => true,
+    ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',

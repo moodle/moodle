@@ -427,4 +427,9 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
     ],
+
+    \core_course\local\service\content_item_service::RECOMMENDATION_CACHE => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+    ],
 );

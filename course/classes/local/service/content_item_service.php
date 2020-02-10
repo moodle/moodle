@@ -40,6 +40,15 @@ class content_item_service {
     /** @var content_item_readonly_repository_interface $repository a repository for content items. */
     private $repository;
 
+    /** string the component for this favourite. */
+    public const COMPONENT = 'core_course';
+    /** string the favourite prefix itemtype in the favourites table. */
+    public const FAVOURITE_PREFIX = 'contentitem_';
+    /** string the recommendation prefix itemtype in the favourites table. */
+    public const RECOMMENDATION_PREFIX = 'recommend_';
+    /** string the cache name for recommendations. */
+    public const RECOMMENDATION_CACHE = 'recommendation_favourite_course_content_items';
+
     /**
      * The content_item_service constructor.
      *
@@ -69,6 +78,47 @@ class content_item_service {
             return $favmods;
         }
 
+        $favourites = $this->get_content_favourites(self::FAVOURITE_PREFIX, \context_user::instance($user->id));
+
+        $favcache->set($key, $favourites);
+        return $favourites;
+    }
+
+    /**
+     * Returns an array of objects representing recommended content items.
+     *
+     * Each object contains the following properties:
+     * itemtype: a string containing the 'itemtype' key used by the favourites subsystem.
+     * ids[]: an array of ids, representing the content items within a component.
+     *
+     * Since two components can return (via their hook implementation) the same id, the itemtype is used for uniqueness.
+     *
+     * @return array
+     */
+    private function get_recommendations(): array {
+        global $CFG;
+
+        $recommendationcache = \cache::make('core', self::RECOMMENDATION_CACHE);
+        $key = $CFG->siteguest;
+        $favmods = $recommendationcache->get($key);
+        if ($favmods !== false) {
+            return $favmods;
+        }
+
+        $favourites = $this->get_content_favourites(self::RECOMMENDATION_PREFIX, \context_user::instance($CFG->siteguest));
+
+        $recommendationcache->set($CFG->siteguest, $favourites);
+        return $favourites;
+    }
+
+    /**
+     * Gets content favourites from the favourites system depending on the area.
+     *
+     * @param  string        $prefix      Prefix for the item type.
+     * @param  \context_user $usercontext User context for the favourite
+     * @return array An array of favourite objects.
+     */
+    private function get_content_favourites(string $prefix, \context_user $usercontext): array {
         // Get all modules and any submodules which implement get_course_content_items() hook.
         // This gives us the set of all itemtypes which we'll use to register favourite content items.
         // The ids that each plugin returns will be used together with the itemtype to uniquely identify
@@ -78,25 +128,24 @@ class content_item_service {
         $itemtypes = [];
         foreach ($plugins as $plugin) {
             // Add the mod itself.
-            $itemtypes[] = 'contentitem_mod_' . $plugin->name;
+            $itemtypes[] = $prefix . 'mod_' . $plugin->name;
 
             // Add any subplugins to the list of item types.
             $subplugins = $pluginmanager->get_subplugins_of_plugin('mod_' . $plugin->name);
             foreach ($subplugins as $subpluginname => $subplugininfo) {
                 if (component_callback_exists($subpluginname, 'get_course_content_items')) {
-                    $itemtypes[] = 'contentitem_' . $subpluginname;
+                    $itemtypes[] = $prefix . $subpluginname;
                 }
             }
         }
 
-        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($user->id));
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
         $favourites = [];
         foreach ($itemtypes as $itemtype) {
-            $favs = $ufservice->find_favourites_by_type('core_course', $itemtype);
+            $favs = $ufservice->find_favourites_by_type(self::COMPONENT, $itemtype);
             $favobj = (object) ['itemtype' => $itemtype, 'ids' => array_column($favs, 'itemid')];
             $favourites[] = $favobj;
         }
-        $favcache->set($key, $favourites);
         return $favourites;
     }
 
@@ -112,11 +161,13 @@ class content_item_service {
 
         // Export the objects to get the formatted objects for transfer/display.
         $favourites = $this->get_favourite_content_items_for_user($user);
+        $recommendations = $this->get_recommendations();
         $ciexporter = new course_content_items_exporter(
             $allcontentitems,
             [
                 'context' => \context_system::instance(),
-                'favouriteitems' => $favourites
+                'favouriteitems' => $favourites,
+                'recommended' => $recommendations
             ]
         );
         $exported = $ciexporter->export($PAGE->get_renderer('core'));
@@ -186,11 +237,13 @@ class content_item_service {
 
         // Export the objects to get the formatted objects for transfer/display.
         $favourites = $this->get_favourite_content_items_for_user($user);
+        $recommended = $this->get_recommendations();
         $ciexporter = new course_content_items_exporter(
             $availablecontentitems,
             [
                 'context' => \context_course::instance($course->id),
-                'favouriteitems' => $favourites
+                'favouriteitems' => $favourites,
+                'recommended' => $recommended
             ]
         );
         $exported = $ciexporter->export($PAGE->get_renderer('course'));
@@ -217,9 +270,9 @@ class content_item_service {
 
         // Because each plugin decides its own ids for content items, a combination of
         // itemtype and id is used to guarantee uniqueness across all content items.
-        $itemtype = 'contentitem_' . $componentname;
+        $itemtype = self::FAVOURITE_PREFIX . $componentname;
 
-        $ufservice->create_favourite('core_course', $itemtype, $contentitemid, $usercontext);
+        $ufservice->create_favourite(self::COMPONENT, $itemtype, $contentitemid, $usercontext);
 
         $favcache = \cache::make('core', 'user_favourite_course_content_items');
         $favcache->delete($user->id);
@@ -242,14 +295,46 @@ class content_item_service {
 
         // Because each plugin decides its own ids for content items, a combination of
         // itemtype and id is used to guarantee uniqueness across all content items.
-        $itemtype = 'contentitem_' . $componentname;
+        $itemtype = self::FAVOURITE_PREFIX . $componentname;
 
-        $ufservice->delete_favourite('core_course', $itemtype, $contentitemid, $usercontext);
+        $ufservice->delete_favourite(self::COMPONENT, $itemtype, $contentitemid, $usercontext);
 
         $favcache = \cache::make('core', 'user_favourite_course_content_items');
         $favcache->delete($user->id);
 
         $items = $this->get_all_content_items($user);
         return $items[array_search($contentitemid, array_column($items, 'id'))];
+    }
+
+    /**
+     * Toggle an activity to being recommended or not.
+     *
+     * @param  string $itemtype The component such as mod_assign, or assignsubmission_file
+     * @param  int    $itemid   The id related to this component item.
+     * @return bool True on creating a favourite, false on deleting it.
+     */
+    public function toggle_recommendation(string $itemtype, int $itemid): bool {
+        global $CFG;
+
+        $context = \context_system::instance();
+
+        $itemtype = self::RECOMMENDATION_PREFIX . $itemtype;
+
+        // Favourites are created using a user context. We'll use the site guest user ID as that should not change and there
+        // can be only one.
+        $usercontext = \context_user::instance($CFG->siteguest);
+
+        $recommendationcache = \cache::make('core', self::RECOMMENDATION_CACHE);
+
+        $favouritefactory = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        if ($favouritefactory->favourite_exists(self::COMPONENT, $itemtype, $itemid, $context)) {
+            $favouritefactory->delete_favourite(self::COMPONENT, $itemtype, $itemid, $context);
+            $result = $recommendationcache->delete($CFG->siteguest);
+            return false;
+        } else {
+            $favouritefactory->create_favourite(self::COMPONENT, $itemtype, $itemid, $context);
+            $result = $recommendationcache->delete($CFG->siteguest);
+            return true;
+        }
     }
 }

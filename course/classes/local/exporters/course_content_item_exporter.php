@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use core_course\local\entity\content_item;
+use core_course\local\service\content_item_service;
 
 /**
  * The course_content_item_exporter class.
@@ -82,7 +83,8 @@ class course_content_item_exporter extends exporter {
             'legacyitem' => [
                 'type' => PARAM_BOOL,
                 'description' => 'If this item was pulled from the old callback and has no item id.'
-            ]
+            ],
+            'recommended' => ['type' => PARAM_BOOL, 'description' => 'Has this item been recommended'],
         ];
     }
 
@@ -113,6 +115,16 @@ class course_content_item_exporter extends exporter {
             }
         }
 
+        $recommended = false;
+        $itemtype = content_item_service::RECOMMENDATION_PREFIX . $this->contentitem->get_component_name();
+        if (isset($this->related['recommended'])) {
+            foreach ($this->related['recommended'] as $favobj) {
+                if ($favobj->itemtype === $itemtype && in_array($this->contentitem->get_id(), $favobj->ids)) {
+                    $recommended = true;
+                }
+            }
+        }
+
         $properties = [
             'id' => $this->contentitem->get_id(),
             'name' => $this->contentitem->get_name(),
@@ -123,7 +135,8 @@ class course_content_item_exporter extends exporter {
             'archetype' => $this->contentitem->get_archetype(),
             'componentname' => $this->contentitem->get_component_name(),
             'favourite' => $favourite,
-            'legacyitem' => ($this->contentitem->get_id() == -1)
+            'legacyitem' => ($this->contentitem->get_id() == -1),
+            'recommended' => $recommended
         ];
 
         return $properties;
@@ -137,7 +150,8 @@ class course_content_item_exporter extends exporter {
     protected static function define_related(): array {
         return [
             'context' => '\context',
-            'favouriteitems' => '\stdClass[]?'
+            'favouriteitems' => '\stdClass[]?',
+            'recommended' => '\stdClass[]?'
         ];
     }
 }
