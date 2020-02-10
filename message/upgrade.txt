@@ -2,7 +2,6 @@ This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
 === 3.9 ===
-
 * Removed the following deprecated functions:
   - message_move_userfrom_unread2read
   - message_get_blocked_users

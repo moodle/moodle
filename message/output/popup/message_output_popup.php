@@ -111,4 +111,30 @@ class message_output_popup extends message_output {
 
         return !empty($CFG->messaging);
     }
+
+    /**
+     * Remove all popup notifications up to specified time
+     *
+     * @param int $notificationdeletetime
+     * @return void
+     */
+    public function cleanup_all_notifications(int $notificationdeletetime): void {
+        global $DB;
+
+        $DB->delete_records_select('message_popup_notifications',
+            'notificationid IN (SELECT id FROM {notifications} WHERE timecreated < ?)', [$notificationdeletetime]);
+    }
+
+    /**
+     * Remove read popup notifications up to specified time
+     *
+     * @param int $notificationdeletetime
+     * @return void
+     */
+    public function cleanup_read_notifications(int $notificationdeletetime): void {
+        global $DB;
+
+        $DB->delete_records_select('message_popup_notifications',
+            'notificationid IN (SELECT id FROM {notifications} WHERE timeread < ?)', [$notificationdeletetime]);
+    }
 }
