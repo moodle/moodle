@@ -348,12 +348,15 @@ class player {
         $url->remove_params(array_keys($url->params()));
         $path = $url->out_as_local_url();
 
+        // We only need the slasharguments.
+        $path = substr($path, strpos($path, '.php/') + 5);
         $parts = explode('/', $path);
         $filename = array_pop($parts);
-        // First is an empty row and then the pluginfile.php part. Both can be ignored.
-        array_shift($parts);
-        array_shift($parts);
 
+        // If the request is made by tokenpluginfile.php we need to avoid userprivateaccesskey.
+        if (strpos($this->url, '/tokenpluginfile.php')) {
+            array_shift($parts);
+        }
         // Get the contextid, component and filearea.
         $contextid = array_shift($parts);
         $component = array_shift($parts);
@@ -515,20 +518,40 @@ class player {
      */
     private function get_export_settings(bool $downloadenabled): ?\moodle_url {
 
-        if ( ! $downloadenabled) {
+        if (!$downloadenabled) {
             return null;
         }
 
         $systemcontext = \context_system::instance();
         $slug = $this->content['slug'] ? $this->content['slug'] . '-' : '';
-        $url  = \moodle_url::make_pluginfile_url(
-            $systemcontext->id,
-            \core_h5p\file_storage::COMPONENT,
-            \core_h5p\file_storage::EXPORT_FILEAREA,
-            '',
-            '',
-            "{$slug}{$this->content['id']}.h5p"
-        );
+        // We have to build the right URL.
+        // Depending the request was made through webservice/pluginfile.php or pluginfile.php.
+        if (strpos($this->url, '/webservice/pluginfile.php')) {
+            $url  = \moodle_url::make_webservice_pluginfile_url(
+                $systemcontext->id,
+                \core_h5p\file_storage::COMPONENT,
+                \core_h5p\file_storage::EXPORT_FILEAREA,
+                '',
+                '',
+                "{$slug}{$this->content['id']}.h5p"
+            );
+        } else {
+            // If the request is made by tokenpluginfile.php we need to indicates to generate a token for current user.
+            $includetoken = false;
+            if (strpos($this->url, '/tokenpluginfile.php')) {
+                $includetoken = true;
+            }
+            $url  = \moodle_url::make_pluginfile_url(
+                $systemcontext->id,
+                \core_h5p\file_storage::COMPONENT,
+                \core_h5p\file_storage::EXPORT_FILEAREA,
+                '',
+                '',
+                "{$slug}{$this->content['id']}.h5p",
+                false,
+                $includetoken
+            );
+        }
 
         return $url;
     }
