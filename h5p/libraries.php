@@ -67,10 +67,17 @@ $form->display();
 
 // Load installed Libraries.
 $framework = $h5pfactory->get_framework();
+$filestorage = $h5pfactory->get_core()->fs;
 $libraries = $framework->loadLibraries();
 $installed = [];
 foreach ($libraries as $libraryname => $versions) {
     foreach ($versions as $version) {
+        $version->icon = $filestorage->get_icon_url(
+            $version->id,
+            $version->machine_name,
+            $version->major_version,
+            $version->minor_version
+        );
         $installed[] = $version;
     }
 }

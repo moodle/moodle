@@ -45,6 +45,8 @@ class file_storage implements \H5PFileStorage {
     public const CACHED_ASSETS_FILEAREA = 'cachedassets';
     /** The export file area */
     public const EXPORT_FILEAREA = 'export';
+    /** The icon filename */
+    public const ICON_FILENAME = 'icon.svg';
 
     /**
      * @var \context $context Currently we use the system context everywhere.
@@ -345,6 +347,40 @@ class file_storage implements \H5PFileStorage {
      */
     public function moveContentDirectory($source, $contentid = null) {
         // This is to be implemented when the h5p editor is introduced / created.
+    }
+
+    /**
+     * Get the file URL or given library and then return it.
+     *
+     * @param int $itemid
+     * @param string $machinename
+     * @param int $majorversion
+     * @param int $minorversion
+     * @return string url or false if the file doesn't exist
+     */
+    public function get_icon_url(int $itemid, string $machinename, int $majorversion, int $minorversion) {
+        $filepath = '/' . "{$machinename}-{$majorversion}.{$minorversion}" . '/';
+        if ($file = $this->fs->get_file(
+            $this->context->id,
+            self::COMPONENT,
+            self::LIBRARY_FILEAREA,
+            $itemid,
+            $filepath,
+            self::ICON_FILENAME)
+        ) {
+            $iconurl  = \moodle_url::make_pluginfile_url(
+                $this->context->id,
+                self::COMPONENT,
+                self::LIBRARY_FILEAREA,
+                $itemid,
+                $filepath,
+                $file->get_filename());
+
+            // Return image URL.
+            return $iconurl->out();
+        }
+
+        return false;
     }
 
     /**
