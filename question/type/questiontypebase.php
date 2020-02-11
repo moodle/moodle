@@ -325,6 +325,9 @@ class question_type {
     public function save_question($question, $form) {
         global $USER, $DB, $OUTPUT;
 
+        // The actuall update/insert done with multiple DB access, so we do it in a transaction.
+        $transaction = $DB->start_delegated_transaction ();
+
         list($question->category) = explode(',', $form->category);
         $context = $this->get_context_by_category_id($question->category);
 
@@ -420,16 +423,6 @@ class question_type {
         }
         $DB->update_record('question', $question);
 
-        if ($newquestion) {
-            // Log the creation of this question.
-            $event = \core\event\question_created::create_from_question_instance($question, $context);
-            $event->trigger();
-        } else {
-            // Log the update of this question.
-            $event = \core\event\question_updated::create_from_question_instance($question, $context);
-            $event->trigger();
-        }
-
         // Now to save all the answers and type-specific options.
         $form->id = $question->id;
         $form->qtype = $question->qtype;
@@ -457,6 +450,18 @@ class question_type {
         // Give the question a unique version stamp determined by question_hash().
         $DB->set_field('question', 'version', question_hash($question),
                 array('id' => $question->id));
+
+        if ($newquestion) {
+            // Log the creation of this question.
+            $event = \core\event\question_created::create_from_question_instance($question, $context);
+            $event->trigger();
+        } else {
+            // Log the update of this question.
+            $event = \core\event\question_updated::create_from_question_instance($question, $context);
+            $event->trigger();
+        }
+
+        $transaction->allow_commit ();
 
         return $question;
     }
