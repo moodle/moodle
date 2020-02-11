@@ -773,7 +773,8 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
     if (!empty($iprestriction)) {
         $newtoken->iprestriction = $iprestriction;
     }
-    $newtoken->privatetoken = null;
+    // Generate the private token, it must be transmitted only via https.
+    $newtoken->privatetoken = random_string(64);
     $DB->insert_record('external_tokens', $newtoken);
     return $newtoken->token;
 }
