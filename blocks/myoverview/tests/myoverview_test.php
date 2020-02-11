@@ -109,7 +109,7 @@ class block_myoverview_testcase extends advanced_testcase {
         $this->assertEquals(1, $configs->plugin->displaygroupinghidden);
         $this->assertEquals(1, $configs->plugin->displaygroupinginprogress);
         $this->assertEquals(1, $configs->plugin->displaygroupingpast);
-        $this->assertEquals(1, $configs->plugin->displaygroupingstarred);
+        $this->assertEquals(1, $configs->plugin->displaygroupingfavourites);
         $this->assertEquals('card,list,summary', $configs->plugin->layouts);
         $this->assertEquals(get_config('block_myoverview', 'version'), $configs->plugin->version);
         // Test custom fields.
