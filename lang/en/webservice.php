@@ -60,7 +60,6 @@ $string['deletetokenconfirm'] = 'Do you really want to delete this web service t
 $string['disabledwarning'] = 'All web service protocols are disabled.  The "Enable web services" setting can be found in Advanced features.';
 $string['doc'] = 'Documentation';
 $string['docaccessrefused'] = 'You are not allowed to see the documentation for this token';
-$string['documentation'] = 'web service documentation';
 $string['downloadfiles'] = 'Can download files';
 $string['downloadfiles_help'] = 'If enabled, any user can download files with their security keys. Of course they are restricted to the files they are allowed to download in the site.';
 $string['editaservice'] = 'Edit service';
@@ -241,3 +240,6 @@ $string['wsdocumentationintro'] = 'To create a client we advise you to read the 
 $string['wsdocumentationlogin'] = 'or enter your web service username and password:';
 $string['wspassword'] = 'Web service password';
 $string['wsusername'] = 'Web service username';
+
+// Deprecated since Moodle 3.9.
+$string['documentation'] = 'web service documentation';
