@@ -1,0 +1,62 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_h5p/h5ptoolsoverview
+
+    Example context (json):
+    {
+        "tools": [
+            {
+                "tool": "h5ptasks",
+                "tool_description": "h5ptasks_description",
+                "link": "https://example.com/admin/tool/task/scheduledtasks.php",
+                "status": "On",
+                "status_class": "bade badge-success",
+                "status_action": "<a href=\"admin/tool/task/schedule_task.php?task=core_task_h5p_get_content_types_task\">Run now</a>"
+            },
+            {
+                "tool": "h5ptasks",
+                "tool_description": "h5ptasks_description",
+                "link": "https://example.com/admin/filters.php",
+                "status": "Off",
+                "status_class": "bade badge-danger"
+            }
+        ]
+    }
+
+}}
+<table class="admintable generaltable" id="h5ptools">
+    <thead>
+    <tr>
+        <th>{{#str}} feature, h5p {{/str}}</th>
+        <th class="text-center">{{#str}} status, h5p {{/str}}</th>
+        <th>{{#str}} description, h5p {{/str}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#tools}}
+        <tr class="">
+            <td><a href="{{{ link }}}" title="{{#str}} settings {{/str}}">{{{ tool }}}</a></td>
+            <td class="text-center">
+                <div class="{{{ status_class }}}">{{{ status }}}</div>
+                {{#status_action}}<div>{{{ status_action }}}</div>{{/status_action}}
+            </td>
+            <td>{{{ tool_description }}}</td>
+        </tr>
+    {{/tools}}
+    </tbody>
+</table>

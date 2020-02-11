@@ -782,6 +782,61 @@ class core_filterlib_testcase extends advanced_testcase {
         $this->assertInstanceOf('performance_measuring_filter_manager', $filterman);
     }
 
+    public function test_filter_get_active_state_contextid_parameter() {
+        $this->resetAfterTest();
+
+        filter_set_global_state('glossary', TEXTFILTER_ON);
+        // Using system context by default.
+        $active = filter_get_active_state('glossary');
+        $this->assertEquals($active, TEXTFILTER_ON);
+
+        $systemcontext = context_system::instance();
+        // Passing $systemcontext object.
+        $active = filter_get_active_state('glossary', $systemcontext);
+        $this->assertEquals($active, TEXTFILTER_ON);
+
+        // Passing $systemcontext id.
+        $active = filter_get_active_state('glossary', $systemcontext->id);
+        $this->assertEquals($active, TEXTFILTER_ON);
+
+        // Not system context.
+        filter_set_local_state('glossary', '123', TEXTFILTER_ON);
+        $active = filter_get_active_state('glossary', '123');
+        $this->assertEquals($active, TEXTFILTER_ON);
+    }
+
+    public function test_filter_get_active_state_filtername_parameter() {
+        $this->resetAfterTest();
+
+        filter_set_global_state('glossary', TEXTFILTER_ON);
+        // Using full filtername.
+        $active = filter_get_active_state('filter/glossary');
+        $this->assertEquals($active, TEXTFILTER_ON);
+
+        // Wrong filtername.
+        $this->expectException('coding_exception');
+        $active = filter_get_active_state('mod/glossary');
+    }
+
+    public function test_filter_get_active_state_after_change() {
+        $this->resetAfterTest();
+
+        filter_set_global_state('glossary', TEXTFILTER_ON);
+        $systemcontextid = context_system::instance()->id;
+        $active = filter_get_active_state('glossary', $systemcontextid);
+        $this->assertEquals($active, TEXTFILTER_ON);
+
+        filter_set_global_state('glossary', TEXTFILTER_OFF);
+        $systemcontextid = context_system::instance()->id;
+        $active = filter_get_active_state('glossary', $systemcontextid);
+        $this->assertEquals($active, TEXTFILTER_OFF);
+
+        filter_set_global_state('glossary', TEXTFILTER_DISABLED);
+        $systemcontextid = context_system::instance()->id;
+        $active = filter_get_active_state('glossary', $systemcontextid);
+        $this->assertEquals($active, TEXTFILTER_DISABLED);
+    }
+
     public function test_filter_get_globally_enabled_default() {
         $this->resetAfterTest();
         $enabledfilters = filter_get_globally_enabled();

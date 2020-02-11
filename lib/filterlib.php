@@ -710,6 +710,35 @@ function filter_set_global_state($filtername, $state, $move = 0) {
 }
 
 /**
+ * Returns the active state for a filter in the given context.
+ *
+ * @param string $filtername The filter name, for example 'tex'.
+ * @param integer $contextid The id of the context to get the data for.
+ * @return int value of active field for the given filter.
+ */
+function filter_get_active_state(string $filtername, $contextid = null): int {
+    global $DB;
+
+    if ($contextid === null) {
+        $contextid = context_system::instance()->id;
+    }
+    if (is_object($contextid)) {
+        $contextid = $contextid->id;
+    }
+
+    if (strpos($filtername, 'filter/') === 0) {
+        $filtername = substr($filtername, 7);
+    } else if (strpos($filtername, '/') !== false) {
+        throw new coding_exception("Invalid filter name '$filtername' used in filter_is_enabled()");
+    }
+    if ($active = $DB->get_field('filter_active', 'active', array('filter' => $filtername, 'contextid' => $contextid))) {
+        return $active;
+    }
+
+    return TEXTFILTER_DISABLED;
+}
+
+/**
  * @param string $filtername The filter name, for example 'tex'.
  * @return boolean is this filter allowed to be used on this site. That is, the
  *      admin has set the global 'active' setting to On, or Off, but available.

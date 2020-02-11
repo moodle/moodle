@@ -15,17 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * H5P settings link.
+ * Manage H5P tools status overview page.
  *
  * @package    core_h5p
  * @copyright  2019 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../config.php');
 
-// Settings page.
-$ADMIN->add('h5p', new admin_externalpage('h5poverview', get_string('h5poverview', 'core_h5p'),
-    new moodle_url('/h5p/overview.php'), ['moodle/site:config']));
-$ADMIN->add('h5p', new admin_externalpage('h5psettings', get_string('h5pmanage', 'core_h5p'),
-    new moodle_url('/h5p/libraries.php'), ['moodle/site:config', 'moodle/h5p:updatelibraries']));
+require_login(null, false);
+
+$context = context_system::instance();
+require_capability('moodle/site:config', $context);
+
+$pagetitle = get_string('h5poverview', 'core_h5p');
+$url = new \moodle_url("/h5p/overview.php");
+
+$PAGE->set_context($context);
+$PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title("$SITE->shortname: " . $pagetitle);
+$PAGE->set_heading($SITE->fullname);
+
+echo $OUTPUT->header();
+echo $OUTPUT->heading($pagetitle);
+
+$tools = \core_h5p\helper::get_h5p_tools_info();
+echo $OUTPUT->render_from_template('core_h5p/h5ptoolsoverview', array('tools' => $tools));
+
+echo $OUTPUT->footer();
