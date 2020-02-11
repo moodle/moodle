@@ -121,7 +121,7 @@ class main implements renderable, templatable {
      *
      * @var boolean
      */
-    private $displaygroupingstarred;
+    private $displaygroupingfavourites;
 
     /**
      * Store a course grouping option setting.
@@ -168,7 +168,13 @@ class main implements renderable, templatable {
         $config = get_config('block_myoverview');
 
         // Build the course grouping option name to check if the given grouping is enabled afterwards.
-        $groupingconfigname = 'displaygrouping'.$grouping;
+        if ($grouping === 'favourites') {
+            // There was a mismatch in parts of block between the name starred and favourites. This helps fix that.
+            $groupingconfigname = 'displaygroupingstarred';
+        } else {
+            $groupingconfigname = 'displaygrouping'.$grouping;
+        }
+
         // Check the given grouping and remember it if it is enabled.
         if ($grouping && $config->$groupingconfigname == true) {
             $this->grouping = $grouping;
@@ -214,7 +220,7 @@ class main implements renderable, templatable {
         $this->displaygroupinginprogress = $config->displaygroupinginprogress;
         $this->displaygroupingfuture = $config->displaygroupingfuture;
         $this->displaygroupingpast = $config->displaygroupingpast;
-        $this->displaygroupingstarred = $config->displaygroupingstarred;
+        $this->displaygroupingfavourites = $config->displaygroupingstarred; // Note the name mismatch!
         $this->displaygroupinghidden = $config->displaygroupinghidden;
         $this->displaygroupingcustomfield = ($config->displaygroupingcustomfield && $config->customfiltergrouping);
         $this->customfiltergrouping = $config->customfiltergrouping;
@@ -226,7 +232,7 @@ class main implements renderable, templatable {
                 $this->displaygroupinginprogress,
                 $this->displaygroupingfuture,
                 $this->displaygroupingpast,
-                $this->displaygroupingstarred,
+                $this->displaygroupingfavourites,
                 $this->displaygroupinghidden);
         $displaygroupingselectorscount = count(array_filter($displaygroupingselectors));
         if ($displaygroupingselectorscount > 1 || $this->displaygroupingcustomfield) {
@@ -439,7 +445,7 @@ class main implements renderable, templatable {
             'displaygroupinginprogress' => $this->displaygroupinginprogress,
             'displaygroupingfuture' => $this->displaygroupingfuture,
             'displaygroupingpast' => $this->displaygroupingpast,
-            'displaygroupingstarred' => $this->displaygroupingstarred,
+            'displaygroupingstarred' => $this->displaygroupingfavourites, // Note the name mismatch!
             'displaygroupinghidden' => $this->displaygroupinghidden,
             'displaygroupingselector' => $this->displaygroupingselector,
             'displaygroupingcustomfield' => $this->displaygroupingcustomfield && $customfieldvalues,
