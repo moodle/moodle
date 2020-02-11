@@ -76,8 +76,13 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/forum/report/summary/index.php',
-                ['courseid' => $this->courseid, 'forumid' => $this->other['forumid']]);
+        $params = ['courseid' => $this->courseid];
+
+        if (!empty($this->other['forumid'])) {
+            $params['forumid'] = $this->other['forumid'];
+        }
+
+        return new \moodle_url('/mod/forum/report/summary/index.php', $params);
     }
 
     /**

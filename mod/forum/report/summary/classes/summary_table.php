@@ -65,7 +65,10 @@ class summary_table extends table_sql {
     /** @var int The course ID containing the forum(s) being reported on. */
     protected $courseid;
 
-    /** @var bool True if reporting on all forums in course, false if reporting on specific forum(s) */
+    /** @var bool True if reporting on all forums in course user has access to, false if reporting on a single forum */
+    protected $iscoursereport = false;
+
+    /** @var bool True if user has access to all forums in the course (and is running course report), otherwise false. */
     protected $accessallforums = false;
 
     /** @var \stdClass The course module object(s) of the forum(s) being reported on. */
@@ -119,16 +122,18 @@ class summary_table extends table_sql {
      * @param bool $canseeprivatereplies Whether the user can see all private replies or not.
      * @param int $perpage The number of rows to display per page.
      * @param bool $canexport Is the user allowed to export records?
+     * @param bool $iscoursereport Whether the user is running a course level report
      * @param bool $accessallforums If user is running a course level report, do they have access to all forums in the course?
      */
     public function __construct(int $courseid, array $filters, bool $allowbulkoperations,
-            bool $canseeprivatereplies, int $perpage, bool $canexport, bool $accessallforums) {
-        global $USER, $OUTPUT;
+            bool $canseeprivatereplies, int $perpage, bool $canexport, bool $iscoursereport, bool $accessallforums) {
+        global $OUTPUT;
 
-        $uniqueid = $courseid . (empty($filters['forums']) ? '' : '_' . $filters['forums'][0]);
+        $uniqueid = $courseid . ($iscoursereport ? '' : '_' . $filters['forums'][0]);
         parent::__construct("summaryreport_{$uniqueid}");
 
         $this->courseid = $courseid;
+        $this->iscoursereport = $iscoursereport;
         $this->accessallforums = $accessallforums;
         $this->allowbulkoperations = $allowbulkoperations;
         $this->canseeprivatereplies = $canseeprivatereplies;
@@ -197,8 +202,8 @@ class summary_table extends table_sql {
     protected function set_forum_properties(array $forumids): void {
         global $USER;
 
-        // If no forum IDs filtered, reporting on all forums in the course the user has access to.
-        if ($this->accessallforums) {
+        // Course context if reporting on all forums in the course the user has access to.
+        if ($this->iscoursereport) {
             $this->userfieldscontext = \context_course::instance($this->courseid);
         }
 
@@ -269,7 +274,7 @@ class summary_table extends table_sql {
         }
 
         global $OUTPUT;
-        return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->courseid, 'includefullname' => true));
+        return $OUTPUT->user_picture($data, array('courseid' => $this->courseid, 'includefullname' => true));
     }
 
     /**
@@ -336,8 +341,7 @@ class summary_table extends table_sql {
         global $OUTPUT;
 
         // If no posts, nothing to export.
-        // If reporting on more than one forum (eg a course), unable to export (export only handles a single forum).
-        if (empty($data->earliestpost) || count($this->cms) > 1) {
+        if (empty($data->earliestpost)) {
             return '';
         }
 
@@ -682,7 +686,7 @@ class summary_table extends table_sql {
      * @return void.
      */
     protected function apply_filters(array $filters): void {
-        // Apply the forums filter if not reporting on whole course.
+        // Apply the forums filter if not reporting on every forum in a course.
         if (!$this->accessallforums) {
             $this->add_filter(self::FILTER_FORUM, $filters['forums']);
         }

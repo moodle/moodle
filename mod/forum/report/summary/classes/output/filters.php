@@ -142,6 +142,7 @@ class filters implements renderable, templatable {
         $coursegroups = groups_get_all_groups($this->courseid);
         $forumids = [];
         $allgroups = false;
+        $hasgroups = false;
 
         // Check if any forum gives the user access to all groups and no groups.
         foreach ($this->cms as $cm) {
@@ -156,6 +157,8 @@ class filters implements renderable, templatable {
                     continue;
                 }
 
+                $hasgroups = true;
+
                 // Fetch for the current cm's forum.
                 $context = \context_module::instance($cm->id);
                 $aag = has_capability('moodle/site:accessallgroups', $context);
@@ -164,6 +167,11 @@ class filters implements renderable, templatable {
                     $allgroups = true;
                 }
             }
+        }
+
+        // If no groups mode enabled, nothing to prepare.
+        if (!$hasgroups) {
+            return;
         }
 
         // Any groups, and no groups.
