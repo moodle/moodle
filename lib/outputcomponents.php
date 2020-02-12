@@ -3763,11 +3763,10 @@ class custom_menu extends custom_menu_item {
                 $setting = trim($setting);
                 if (!empty($setting)) {
                     switch ($i) {
-                        case 0:
+                        case 0: // Menu text.
                             $itemtext = ltrim($setting, '-');
-                            $itemtitle = $itemtext;
                             break;
-                        case 1:
+                        case 1: // URL.
                             try {
                                 $itemurl = new moodle_url($setting);
                             } catch (moodle_exception $exception) {
@@ -3776,10 +3775,10 @@ class custom_menu extends custom_menu_item {
                                 $itemurl = null;
                             }
                             break;
-                        case 2:
+                        case 2: // Title attribute.
                             $itemtitle = $setting;
                             break;
-                        case 3:
+                        case 3: // Language.
                             if (!empty($language)) {
                                 $itemlanguages = array_map('trim', explode(',', $setting));
                                 $itemvisible &= in_array($language, $itemlanguages);
