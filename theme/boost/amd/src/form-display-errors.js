@@ -25,6 +25,12 @@ define(['jquery', 'core/event'], function($, Event) {
     return {
         enhance: function(elementid) {
             var element = document.getElementById(elementid);
+            if (!element) {
+                // Some elements (e.g. static) don't have a form field.
+                // Hence there is no validation. So, no setup required here.
+                return;
+            }
+
             $(element).on(Event.Events.FORM_FIELD_VALIDATION, function(event, msg) {
                 event.preventDefault();
                 var parent = $(element).closest('.form-group');
@@ -61,6 +67,7 @@ define(['jquery', 'core/event'], function($, Event) {
                     }
                 }
             });
+
             var form = element.closest('form');
             if (!('boostFormErrorsEnhanced' in form.dataset)) {
                 form.addEventListener('submit', function() {
