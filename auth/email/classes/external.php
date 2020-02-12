@@ -146,7 +146,7 @@ class auth_email_external extends external_api {
                     new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'Profile field id', VALUE_OPTIONAL),
-                            'shortname' => new external_value(PARAM_ALPHANUM, 'Password policy', VALUE_OPTIONAL),
+                            'shortname' => new external_value(PARAM_ALPHANUMEXT, 'Profile field shortname', VALUE_OPTIONAL),
                             'name' => new external_value(PARAM_TEXT, 'Profield field name', VALUE_OPTIONAL),
                             'datatype' => new external_value(PARAM_ALPHANUMEXT, 'Profield field datatype', VALUE_OPTIONAL),
                             'description' => new external_value(PARAM_RAW, 'Profield field description', VALUE_OPTIONAL),
