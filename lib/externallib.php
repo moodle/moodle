@@ -252,7 +252,7 @@ class external_api {
 
             $response['error'] = false;
             $response['data'] = $result;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $exception = get_exception_info($e);
             unset($exception->a);
             $exception->backtrace = format_backtrace($exception->backtrace, true);
