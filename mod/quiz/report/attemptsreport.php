@@ -352,7 +352,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
                          WHERE {$allowedjoins->wheres} AND quiza.id = :attemptid";
             }
             $params = $allowedjoins->params + array('attemptid' => $attemptid);
-            $attempt = $DB->get_record_sql($sql, $params);
+            $attempt = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE);
             if (!$attempt || $attempt->quiz != $quiz->id || $attempt->preview != 0) {
                 // Ensure the attempt exists, belongs to this quiz and belongs to
                 // a student included in the report. If not skip.
