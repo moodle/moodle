@@ -167,7 +167,7 @@ module.exports = function(grunt) {
     // * fullRunDir             The full path to the runDir
     const gruntFilePath = fs.realpathSync(process.cwd());
     const cwd = getCwd(grunt);
-    const relativeCwd = cwd.replace(new RegExp(`${gruntFilePath}/?`), '');
+    const relativeCwd = path.relative(gruntFilePath, cwd);
     const componentDirectory = ComponentList.getOwningComponentDirectory(relativeCwd);
     const inComponent = !!componentDirectory;
     const runDir = inComponent ? componentDirectory : relativeCwd;
