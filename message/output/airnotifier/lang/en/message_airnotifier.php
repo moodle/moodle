@@ -35,6 +35,7 @@ $string['configairnotifiermobileappname'] = 'The Mobile app unique identifier (u
 $string['deletecheckdevicename'] = 'Delete your device: {$a->name}';
 $string['deletedevice'] = 'Delete the device. Note that an app can register the device again. If the device keeps reappearing, disable it.';
 $string['devicetoken'] = 'Device token';
+$string['enableprocessor'] = 'Enable Mobile notifications.';
 $string['errorretrievingkey'] = 'An error occurred while retrieving the access key. Your site must be registered to use this service. If your site is already registered, please try updating your registration.';
 $string['keyretrievedsuccessfully'] = 'Key retrieved successfully';
 $string['nodevices'] = 'No registered devices. Devices will automatically appear after you install the Moodle app and add this site.';
