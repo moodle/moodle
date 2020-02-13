@@ -320,6 +320,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/show' => 'fa-eye-slash',
             'core:i/siteevent' => 'fa-globe',
             'core:i/star' => 'fa-star',
+            'core:i/star-o' => 'fa-star-o',
             'core:i/star-rating' => 'fa-star',
             'core:i/stats' => 'fa-line-chart',
             'core:i/switch' => 'fa-exchange',

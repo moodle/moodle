@@ -62,10 +62,14 @@ export default {
     actions: {
         optionActions: {
             showSummary: getDataSelector('action', 'show-option-summary'),
+            manageFavourite: getDataSelector('action', 'manage-module-favourite'),
         },
         addChooser: getDataSelector('action', 'add-chooser-option'),
         closeOption: getDataSelector('action', 'close-chooser-option-summary'),
         hide: getDataSelector('action', 'hide')
+    },
+    render: {
+        favourites: getDataSelector('render', 'favourites-area'),
     },
     elements: {
         section: '.section',

@@ -85,9 +85,7 @@
                 <div class="tab-pane {{#favouritesFirst}}active{{/favouritesFirst}}" id="starred-{{uniqid}}" data-region="favourites" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
                     <div class="modchoosercontainer" data-region="chooser-container" aria-label="{{#str}} activitymodules {{/str}}">
                         <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="menubar" data-region="chooser-options-container" data-render="favourites-area">
-                            {{#favourites}}
-                                {{>core_course/chooser_item}}
-                            {{/favourites}}
+                            {{>core_course/chooser_favourites}}
                         </div>
                     </div>
                 </div>

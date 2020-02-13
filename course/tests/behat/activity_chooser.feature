@@ -68,3 +68,30 @@ Feature: Display and choose from the available activities in course
     Then I should see "Recommended" in the "Add an activity or resource" "dialogue"
     And I click on "Recommended" "link" in the "Add an activity or resource" "dialogue"
     And I should see "Book" in the "recommended" "core_course > Activity chooser tab"
+
+  Scenario: Favourite a module in the activity chooser
+    Given I open the activity chooser
+    And I should not see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
+    And I should see "Starred" in the "Add an activity or resource" "dialogue"
+    When I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    Then I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
+    And I click on "Information about the Assignment activity" "button" in the "favourites" "core_course > Activity chooser tab"
+    And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
+
+  Scenario: Add a favourite module and check it exists when reopening the chooser
+    Given I open the activity chooser
+    And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Star Forum module" "button" in the "Add an activity or resource" "dialogue"
+    And I should see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "Close" "button" in the "Add an activity or resource" "dialogue"
+    When I click on "Add an activity or resource" "button" in the "Topic 3" "section"
+    And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    Then I should see "Forum" in the "favourites" "core_course > Activity chooser tab"
+
+  Scenario: Add a favourite and then remove it whilst checking the tabs work as expected
+    Given I open the activity chooser
+    And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
+    Then I should not see "Starred" in the "Add an activity or resource" "dialogue"

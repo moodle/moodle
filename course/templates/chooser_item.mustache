@@ -29,7 +29,7 @@
         "icon": "<img class='icon' src='http://urltooptionicon'>"
     }
 }}
-<div role="menuitem" tabindex="-1" aria-label="{{label}}" class="option d-block text-center py-3 px-2" data-region="chooser-option-container" data-modname="{{componentname}}_{{link}}">
+<div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option d-block text-center py-3 px-2" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
     <div class="optioninfo w-100" data-region="chooser-option-info-container">
         <a class="d-block" href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="-1" data-action="add-chooser-option">
             <span class="optionicon d-block">
@@ -38,6 +38,30 @@
             <span class="optionname d-block">{{title}}</span>
         </a>
         <div class="optionactions btn-group" role="group" data-region="chooser-option-actions-container">
+            {{^legacyitem}}
+                <button class="btn btn-icon icon-no-margin icon-size-3 m-0 optionaction {{#favourite}}text-primary{{/favourite}}{{^favourite}}text-muted{{/favourite}}"
+                        data-action="manage-module-favourite"
+                        data-favourited="{{favourite}}"
+                        data-id="{{id}}"
+                        data-name="{{componentname}}"
+                        data-internal="{{name}}"
+                        {{^favourite}}
+                            aria-pressed="false"
+                        {{/favourite}}
+                        {{#favourite}}
+                            aria-pressed="true"
+                        {{/favourite}}
+                        aria-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                        tabindex="-1"
+                >
+                    {{#favourite}}
+                        {{#pix}} i/star, core {{/pix}}
+                    {{/favourite}}
+                    {{^favourite}}
+                        {{#pix}} i/star-o, core {{/pix}}
+                    {{/favourite}}
+                </button>
+            {{/legacyitem}}
             <button class="btn btn-icon icon-no-margin icon-size-3 m-0 optionaction" data-action="show-option-summary" tabindex="-1">
                 <span aria-hidden="true">{{#pix}} docs, core {{/pix}}</span>
                 <span class="sr-only">{{#str}} informationformodule, core_course, {{title}} {{/str}}</span>

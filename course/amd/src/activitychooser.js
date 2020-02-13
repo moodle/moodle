@@ -78,11 +78,13 @@ const registerListenerEvents = (courseId) => {
     events.forEach((event) => {
         document.addEventListener(event, async(e) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
+                const data = await fetchModuleData();
                 const caller = e.target.closest(selectors.elements.sectionmodchooser);
-                const builtModuleData = sectionIdMapper(await fetchModuleData(), caller.dataset.sectionid);
+                const favouriteFunction = partiallyAppliedFavouriteManager(data, caller.dataset.sectionid);
+                const builtModuleData = sectionIdMapper(data, caller.dataset.sectionid);
                 const sectionModal = await modalBuilder(builtModuleData);
 
-                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData);
+                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction);
             }
         });
     });
@@ -111,7 +113,7 @@ const sectionIdMapper = (webServiceData, id) => {
  *
  * @method modalBuilder
  * @param {Map} data our map of section ID's & modules to generate modals for
- * @return {Object} TODO
+ * @return {Object} Our modal that we are going to show the user
  */
 const modalBuilder = data => buildModal(templateDataBuilder(data));
 
@@ -124,7 +126,7 @@ const modalBuilder = data => buildModal(templateDataBuilder(data));
  */
 const templateDataBuilder = (data) => {
     // Filter the incoming data to find favourite & recommended modules.
-    const favourites = [];
+    const favourites = data.filter(mod => mod.favourite === true);
     const recommended = data.filter(mod => mod.recommended === true);
 
     // Given the results of the above filters lets figure out what tab to set active.
@@ -163,4 +165,106 @@ const buildModal = data => {
             classes: 'modchooser'
         }
     });
+};
+
+/**
+ * A small helper function to handle the case where there are no more favourites
+ * and we need to mess a bit with the available tabs in the chooser
+ *
+ * @method nullFavouriteDomManager
+ * @param {HTMLElement} favouriteTabNav Dom node of the favourite tab nav
+ * @param {HTMLElement} modalBody Our current modals' body
+ */
+const nullFavouriteDomManager = (favouriteTabNav, modalBody) => {
+    favouriteTabNav.classList.add('d-none');
+    // Need to set active to an available tab.
+    if (favouriteTabNav.classList.contains('active')) {
+        favouriteTabNav.classList.remove('active');
+        const favouriteTab = modalBody.querySelector(selectors.regions.favouriteTab);
+        favouriteTab.classList.remove('active');
+        const recommendedTabNav = modalBody.querySelector(selectors.regions.recommendedTabNav);
+        const defaultTabNav = modalBody.querySelector(selectors.regions.defaultTabNav);
+        if (recommendedTabNav.classList.contains('d-none') === false) {
+            recommendedTabNav.classList.add('active');
+            const recommendedTab = modalBody.querySelector(selectors.regions.recommendedTab);
+            recommendedTab.classList.add('active');
+        } else {
+            defaultTabNav.classList.add('active');
+            const defaultTab = modalBody.querySelector(selectors.regions.defaultTab);
+            defaultTab.classList.add('active');
+        }
+
+    }
+};
+
+/**
+ * Export a curried function where the builtModules has been applied.
+ * We have our array of modules so we can rerender the favourites area and have all of the items sorted.
+ *
+ * @method partiallyAppliedFavouriteManager
+ * @param {Array} moduleData This is our raw WS data that we need to manipulate
+ * @param {Number} sectionId We need this to add the sectionID to the URL's in the faves area after rerender
+ * @return {Function} partially applied function so we can manipulate DOM nodes easily & update our internal array
+ */
+const partiallyAppliedFavouriteManager = (moduleData, sectionId) => {
+    /**
+     * Curried function that is being returned.
+     *
+     * @param {String} internal Internal name of the module to manage
+     * @param {Boolean} favourite Is the caller adding a favourite or removing one?
+     * @param {HTMLElement} modalBody What we need to update whilst we are here
+     */
+    return async(internal, favourite, modalBody) => {
+        const favouriteArea = modalBody.querySelector(selectors.render.favourites);
+
+        // eslint-disable-next-line max-len
+        const favouriteButtons = modalBody.querySelectorAll(`[data-internal="${internal}"] ${selectors.actions.optionActions.manageFavourite}`);
+        const favouriteTabNav = modalBody.querySelector(selectors.regions.favouriteTabNav);
+        const result = moduleData.content_items.find(({name}) => name === internal);
+        const newFaves = {};
+        if (result) {
+            if (favourite) {
+                result.favourite = true;
+
+                newFaves.content_items = moduleData.content_items.filter(mod => mod.favourite === true);
+
+                const builtFaves = sectionIdMapper(newFaves, sectionId);
+
+                const {html, js} = await Templates.renderForPromise('core_course/chooser_favourites', {favourites: builtFaves});
+
+                await Templates.replaceNodeContents(favouriteArea, html, js);
+
+                Array.from(favouriteButtons).forEach((element) => {
+                    element.classList.remove('text-muted');
+                    element.classList.add('text-primary');
+                    element.dataset.favourited = 'true';
+                    element.setAttribute('aria-pressed', true);
+                    element.firstElementChild.classList.remove('fa-star-o');
+                    element.firstElementChild.classList.add('fa-star');
+                });
+
+                favouriteTabNav.classList.remove('d-none');
+            } else {
+                result.favourite = false;
+
+                const nodeToRemove = favouriteArea.querySelector(`[data-internal="${internal}"]`);
+
+                nodeToRemove.parentNode.removeChild(nodeToRemove);
+
+                Array.from(favouriteButtons).forEach((element) => {
+                    element.classList.add('text-muted');
+                    element.classList.remove('text-primary');
+                    element.dataset.favourited = 'false';
+                    element.setAttribute('aria-pressed', false);
+                    element.firstElementChild.classList.remove('fa-star');
+                    element.firstElementChild.classList.add('fa-star-o');
+                });
+                const newFaves = moduleData.content_items.filter(mod => mod.favourite === true);
+
+                if (newFaves.length === 0) {
+                    nullFavouriteDomManager(favouriteTabNav, modalBody);
+                }
+            }
+        }
+    };
 };

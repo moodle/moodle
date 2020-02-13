@@ -28,6 +28,8 @@ import selectors from 'core_course/local/activitychooser/selectors';
 import * as Templates from 'core/templates';
 import {end, arrowLeft, arrowRight, home, enter, space} from 'core/key_codes';
 import {addIconToContainer} from 'core/loadingicon';
+import * as Repository from 'core_course/local/activitychooser/repository';
+import Notification from 'core/notification';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -70,13 +72,41 @@ const showModuleHelp = (carousel, moduleData) => {
 };
 
 /**
+ * Given a user wants to change the favourite state of a module we either add or remove the status.
+ * We also propergate this change across our map of modals.
+ *
+ * @method manageFavouriteState
+ * @param {HTMLElement} modalBody The DOM node of the modal to manipulate
+ * @param {HTMLElement} caller
+ * @param {Function} partialFavourite Partially applied function we need to manage favourite status
+ */
+const manageFavouriteState = async(modalBody, caller, partialFavourite) => {
+    const isFavourite = caller.dataset.favourited;
+    const id = caller.dataset.id;
+    const name = caller.dataset.name;
+    const internal = caller.dataset.internal;
+    // Switch on fave or not.
+    if (isFavourite === 'true') {
+        await Repository.unfavouriteModule(name, id);
+
+        partialFavourite(internal, false, modalBody);
+    } else {
+        await Repository.favouriteModule(name, id);
+
+        partialFavourite(internal, true, modalBody);
+    }
+
+};
+
+/**
  * Register chooser related event listeners.
  *
  * @method registerListenerEvents
  * @param {Promise} modal Our modal that we are working with
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
+ * @param {Function} partialFavourite Partially applied function we need to manage favourite status
  */
-const registerListenerEvents = (modal, mappedModules) => {
+const registerListenerEvents = (modal, mappedModules, partialFavourite) => {
     const bodyClickListener = e => {
         if (e.target.closest(selectors.actions.optionActions.showSummary)) {
             const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
@@ -85,6 +115,11 @@ const registerListenerEvents = (modal, mappedModules) => {
             const moduleName = module.dataset.modname;
             const moduleData = mappedModules.get(moduleName);
             showModuleHelp(carousel, moduleData);
+        }
+
+        if (e.target.closest(selectors.actions.optionActions.manageFavourite)) {
+            const caller = e.target.closest(selectors.actions.optionActions.manageFavourite);
+            manageFavouriteState(modal.getBody()[0], caller, partialFavourite);
         }
 
         // From the help screen go back to the module overview.
@@ -273,18 +308,22 @@ const focusChooserOption = (currentChooserOption, previousChooserOption = false)
     if (previousChooserOption !== false) {
         const previousChooserOptionLink = previousChooserOption.querySelector(selectors.actions.addChooser);
         const previousChooserOptionHelp = previousChooserOption.querySelector(selectors.actions.optionActions.showSummary);
+        const previousChooserOptionFavourite = previousChooserOption.querySelector(selectors.actions.optionActions.manageFavourite);
         // Set tabindex to -1 to remove the previous chooser option element from the focus order.
         previousChooserOption.tabIndex = -1;
         previousChooserOptionLink.tabIndex = -1;
         previousChooserOptionHelp.tabIndex = -1;
+        previousChooserOptionFavourite.tabIndex = -1;
     }
 
     const currentChooserOptionLink = currentChooserOption.querySelector(selectors.actions.addChooser);
     const currentChooserOptionHelp = currentChooserOption.querySelector(selectors.actions.optionActions.showSummary);
+    const currentChooserOptionFavourite = currentChooserOption.querySelector(selectors.actions.optionActions.manageFavourite);
     // Set tabindex to 0 to add current chooser option element to the focus order.
     currentChooserOption.tabIndex = 0;
     currentChooserOptionLink.tabIndex = 0;
     currentChooserOptionHelp.tabIndex = 0;
+    currentChooserOptionFavourite.tabIndex = 0;
     // Focus the current chooser option element.
     currentChooserOption.focus();
 };
@@ -312,8 +351,9 @@ const clickErrorHandler = (item, fallback) => {
  * @param {HTMLElement} origin The calling button
  * @param {Object} modal Our created modal for the section
  * @param {Array} sectionModules An array of all of the built module information
+ * @param {Function} partialFavourite Partially applied function we need to manage favourite status
  */
-export const displayChooser = (origin, modal, sectionModules) => {
+export const displayChooser = (origin, modal, sectionModules, partialFavourite) => {
 
     // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
     const mappedModules = new Map();
@@ -322,7 +362,7 @@ export const displayChooser = (origin, modal, sectionModules) => {
     });
 
     // Register event listeners.
-    registerListenerEvents(modal, mappedModules);
+    registerListenerEvents(modal, mappedModules, partialFavourite);
 
     // We want to focus on the action select when the dialog is closed.
     modal.getRoot().on(ModalEvents.hidden, () => {
