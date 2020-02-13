@@ -172,13 +172,26 @@ module.exports = function(grunt) {
     const inComponent = !!componentDirectory;
     const runDir = inComponent ? componentDirectory : relativeCwd;
     const fullRunDir = fs.realpathSync(gruntFilePath + path.sep + runDir);
-    grunt.log.debug(`The cwd was detected as ${cwd} with a fullRunDir of ${fullRunDir}`);
+    grunt.log.debug('============================================================================');
+    grunt.log.debug(`= Node version:        ${process.versions.node}`);
+    grunt.log.debug(`= grunt version:       ${grunt.package.version}`);
+    grunt.log.debug(`= process.cwd:         '` + process.cwd() + `'`);
+    grunt.log.debug(`= process.env.PWD:     '${process.env.PWD}'`);
+    grunt.log.debug(`= path.sep             '${path.sep}'`);
+    grunt.log.debug('============================================================================');
+    grunt.log.debug(`= gruntFilePath:       '${gruntFilePath}'`);
+    grunt.log.debug(`= relativeCwd:         '${relativeCwd}'`);
+    grunt.log.debug(`= componentDirectory:  '${componentDirectory}'`);
+    grunt.log.debug(`= inComponent:         '${inComponent}'`);
+    grunt.log.debug(`= runDir:              '${runDir}'`);
+    grunt.log.debug(`= fullRunDir:          '${fullRunDir}'`);
+    grunt.log.debug('============================================================================');
 
     if (inComponent) {
         grunt.log.ok(`Running tasks for component directory ${componentDirectory}`);
     }
 
-    var files = null;
+    let files = null;
     if (grunt.option('files')) {
         // Accept a comma separated list of files to process.
         files = grunt.option('files').split(',');
