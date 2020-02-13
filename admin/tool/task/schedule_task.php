@@ -88,7 +88,7 @@ echo html_writer::start_tag('pre');
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified task (this will output an error if it doesn't exist).
-\tool_task\run_from_cli::execute($task);
+\core\task\manager::run_from_cli($task);
 
 echo html_writer::end_tag('pre');
 
