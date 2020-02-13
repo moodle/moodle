@@ -1,8 +1,0 @@
-{
-  "moodle-course-modchooser": {
-    "requires": [
-        "moodle-core-chooserdialogue",
-        "moodle-course-coursebase"
-    ]
-  }
-}

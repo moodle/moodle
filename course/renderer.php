@@ -141,11 +141,26 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string The composed HTML for the module
      */
     public function course_modchooser($modules, $course) {
+        debugging('course_modchooser() is deprecated. Please use course_activitychooser() instead.', DEBUG_DEVELOPER);
+
+        return $this->course_activitychooser($course->id);
+    }
+
+    /**
+     * Build the HTML for the module chooser javascript popup.
+     *
+     * @param int $courseid The course id to fetch modules for.
+     * @return string
+     */
+    public function course_activitychooser($courseid) {
+
         if (!$this->page->requires->should_create_one_time_item_now('core_course_modchooser')) {
             return '';
         }
-        $modchooser = new \core_course\output\modchooser($course, $modules);
-        return $this->render($modchooser);
+
+        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid]);
+
+        return '';
     }
 
     /**
@@ -323,7 +338,12 @@ class core_course_renderer extends plugin_renderer_base {
             $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
             $icon = $this->output->pix_icon('t/add', '');
             $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
-            $modchooser .= html_writer::tag('span', $icon . $span, array('class' => 'section-modchooser-link'));
+            $modchooser .= html_writer::tag('button', $icon . $span, array(
+                    'class' => 'section-modchooser-link btn btn-link',
+                    'data-action' => 'open-chooser',
+                    'data-sectionid' => $section,
+                )
+            );
             $modchooser.= html_writer::end_tag('div');
             $modchooser.= html_writer::end_tag('div');
 
@@ -337,7 +357,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $output = html_writer::tag('div', $output, array('class' => 'show addresourcedropdown'));
                 $modchooser = html_writer::tag('div', $modchooser, array('class' => 'hide addresourcemodchooser'));
             }
-            $output = $this->course_modchooser($modules, $course) . $modchooser . $output;
+            $output = $this->course_activitychooser($course->id) . $modchooser . $output;
         }
 
         return $output;
