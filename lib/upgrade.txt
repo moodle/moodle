@@ -32,6 +32,7 @@ information provided here is intended especially for developers.
 * The database drivers (moodle_database and subclasses) don't need to implement get_columns() anymore.
   They have to implement fetch_columns instead.
 * Added function cleanup_after_drop to the database_manager class to take care of all the cleanups that need to be done after a table is dropped.
+* grade_item::update_final_grade() can now take an optional parameter to set the grade->timemodified. If not present the current time will carry on being used.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
