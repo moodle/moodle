@@ -2,6 +2,13 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.9 ===
+* Following function has been deprecated, please use \core\task\manager::run_from_cli().
+    - cron_run_single_task()
+* Following class has been deprecated, please use \core\task\manager.
+    - \tool_task\run_from_cli
+* Following CLI scripts has been deprecated:
+  - admin/tool/task/cli/schedule_task.php please use admin/cli/scheduled_task.php
+  - admin/tool/task/cli/adhoc_task.php please use admin/cli/adhoc_task.php
 * Old Safe Exam Browser quiz access rule (quizaccess_safebrowser) replaced by new Safe Exam Browser access rule (quizaccess_seb).
   Experimental setting enablesafebrowserintegration was deleted.
 * New CFPropertyList library has been added to Moodle core in /lib/plist.

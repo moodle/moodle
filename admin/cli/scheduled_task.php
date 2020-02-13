@@ -17,17 +17,15 @@
 /**
  * CLI task execution.
  *
- * @deprecated since Moodle 3.9 MDL-63580. Please use the admin/cli/schedule_task.php.
- * @todo final deprecation. To be removed in Moodle 4.3 MDL-63594.
- *
- * @package    tool_task
+ * @package    core
+ * @subpackage cli
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('CLI_SCRIPT', true);
 
-require(__DIR__ . '/../../../../config.php');
+require(__DIR__ . '/../../config.php');
 require_once("$CFG->libdir/clilib.php");
 require_once("$CFG->libdir/cronlib.php");
 
@@ -36,8 +34,6 @@ list($options, $unrecognized) = cli_get_params(
     array('h' => 'help')
 );
 
-debugging('admin/tool/task/cli/schedule_task.php is deprecated. Please use admin/cli/scheduled_task.php instead.', DEBUG_DEVELOPER);
-
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
@@ -45,19 +41,19 @@ if ($unrecognized) {
 
 if ($options['help'] or (!$options['list'] and !$options['execute'])) {
     $help =
-"Scheduled cron tasks.
+    "Scheduled cron tasks.
 
-Options:
---execute=\\\\some\\\\task  Execute scheduled task manually
---list                List all scheduled tasks
---showsql             Show sql queries before they are executed
---showdebugging       Show developer level debugging information
--h, --help            Print out this help
+    Options:
+    --execute=\\some\\task  Execute scheduled task manually
+    --list                List all scheduled tasks
+    --showsql             Show sql queries before they are executed
+    --showdebugging       Show developer level debugging information
+    -h, --help            Print out this help
 
-Example:
-\$sudo -u www-data /usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\core\\\\task\\\\session_cleanup_task
+    Example:
+    \$sudo -u www-data /usr/bin/php admin/cli/scheduled_task.php --execute=\\core\\task\\session_cleanup_task
 
-";
+    ";
 
     echo $help;
     die;
@@ -70,7 +66,6 @@ if ($options['showdebugging']) {
 if ($options['showsql']) {
     $DB->set_debug(true);
 }
-
 if ($options['list']) {
     cli_heading("List of scheduled tasks ($CFG->wwwroot)");
 
@@ -132,14 +127,8 @@ if ($execute = $options['execute']) {
     // Emulate normal session - we use admin account by default.
     cron_setup_user();
 
-    $predbqueries = $DB->perf_get_queries();
-    $pretime = microtime(true);
-
-    \core\task\logmanager::start_logging($task);
-    $fullname = $task->get_name() . ' (' . get_class($task) . ')';
-    mtrace('Execute scheduled task: ' . $fullname);
-    // NOTE: it would be tricky to move this code to \core\task\manager class,
-    //       because we want to do detailed error reporting.
+    // Execute the task.
+    \core\local\cli\shutdown::script_supports_graceful_exit();
     $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
     if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
         mtrace('Cannot obtain cron lock');
@@ -158,34 +147,5 @@ if ($execute = $options['execute']) {
         $task->set_cron_lock($cronlock);
     }
 
-    try {
-        get_mailer('buffer');
-        $task->execute();
-        if (isset($predbqueries)) {
-            mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
-            mtrace("... used " . (microtime(1) - $pretime) . " seconds");
-        }
-        mtrace('Scheduled task complete: ' . $fullname);
-        \core\task\manager::scheduled_task_complete($task);
-        get_mailer('close');
-        exit(0);
-    } catch (Exception $e) {
-        if ($DB->is_transaction_started()) {
-            $DB->force_transaction_rollback();
-        }
-        mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
-        mtrace("... used " . (microtime(true) - $pretime) . " seconds");
-        mtrace('Scheduled task failed: ' . $fullname . ',' . $e->getMessage());
-        if ($CFG->debugdeveloper) {
-            if (!empty($e->debuginfo)) {
-                mtrace("Debug info:");
-                mtrace($e->debuginfo);
-            }
-            mtrace("Backtrace:");
-            mtrace(format_backtrace($e->getTrace(), true));
-        }
-        \core\task\manager::scheduled_task_failed($task);
-        get_mailer('close');
-        exit(1);
-    }
+    cron_run_inner_scheduled_task($task);
 }

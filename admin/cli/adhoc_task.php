@@ -17,17 +17,15 @@
 /**
  * Task executor for adhoc tasks.
  *
- * @deprecated since Moodle 3.9 MDL-63580. Please use the admin/cli/adhoc_task.php.
- * @todo final deprecation. To be removed in Moodle 4.3 MDL-63594.
- *
- * @package    tool_task
+ * @package    core
+ * @subpackage cli
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('CLI_SCRIPT', true);
 
-require(__DIR__ . '/../../../../config.php');
+require(__DIR__ . '/../../config.php');
 require_once("{$CFG->libdir}/clilib.php");
 require_once("{$CFG->libdir}/cronlib.php");
 
@@ -47,8 +45,6 @@ list($options, $unrecognized) = cli_get_params(
     ]
 );
 
-debugging('admin/tool/task/cli/adhoc_task.php is deprecated. Please use admin/cli/adhoc_task.php instead.', DEBUG_DEVELOPER);
-
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
@@ -67,7 +63,7 @@ Options:
  -i  --ignorelimits        Ignore task_adhoc_concurrency_limit and task_adhoc_max_runtime limits
 
 Example:
-\$sudo -u www-data /usr/bin/php admin/tool/task/cli/adhoc_task.php --execute
+\$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --execute
 
 EOT;
 
