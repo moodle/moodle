@@ -197,7 +197,9 @@ module.exports = function(grunt) {
         files = grunt.option('files').split(',');
     }
 
-    const inAMD = path.basename(cwd) == 'amd';
+    // If the cwd is the amd directory in the current component then it will be empty.
+    // If the cwd is a child of the component's AMD directory, the relative directory will not start with ..
+    const inAMD = !path.relative(`${componentDirectory}/amd`, cwd).startsWith('..');
 
     // Globbing pattern for matching all AMD JS source files.
     let amdSrc = [];
@@ -248,7 +250,7 @@ module.exports = function(grunt) {
             const nodes = xpath.select("/libraries/library/location/text()", doc);
 
             nodes.forEach(function(node) {
-                let lib = path.join(dirname, node.toString());
+                let lib = path.posix.join(dirname, node.toString());
                 if (grunt.file.isDir(lib)) {
                     // Ensure trailing slash on dirs.
                     lib = lib.replace(/\/?$/, '/');
