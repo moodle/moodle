@@ -871,7 +871,7 @@ function badges_get_default_issuer() {
     global $CFG, $SITE;
 
     $issuer = array();
-    $issuerurl = new moodle_url('/badges/issuer.php');
+    $issuerurl = new moodle_url('/');
     $issuer['name'] = $CFG->badges_defaultissuername;
     if (empty($issuer['name'])) {
         $issuer['name'] = $SITE->fullname ? $SITE->fullname : $SITE->shortname;
@@ -879,7 +879,8 @@ function badges_get_default_issuer() {
     $issuer['url'] = $issuerurl->out(false);
     $issuer['email'] = $CFG->badges_defaultissuercontact;
     $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
-    $issuer['id'] = $issuerurl->out(false);
+    $issuerid = new moodle_url('/badges/issuer_json.php');
+    $issuer['id'] = $issuerid->out(false);
     $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
     return $issuer;
 }
