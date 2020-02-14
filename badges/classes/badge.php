@@ -929,12 +929,12 @@ class badge {
      */
     public function get_badge_issuer() {
         $issuer = array();
-        $issuerurl = new moodle_url('/badges/badge_json.php', array('id' => $this->id, 'action' => 0));
         $issuer['name'] = $this->issuername;
         $issuer['url'] = $this->issuerurl;
         $issuer['email'] = $this->issuercontact;
         $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
-        $issuer['id'] = $this->issuerurl;
+        $issueridurl = new moodle_url('/badges/issuer_json.php', array('id' => $this->id));
+        $issuer['id'] = $issueridurl->out(false);
         $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
         return $issuer;
     }
