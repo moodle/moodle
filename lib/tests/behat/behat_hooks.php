@@ -688,20 +688,12 @@ class behat_hooks extends behat_base {
      * @param string $component
      */
     public function register_component_selectors_for_component(string $component) {
-        $componentclassname = "behat_{$component}";
+        $context = behat_context_helper::get_component_context($component);
 
-        if (!behat_context_helper::has_context($componentclassname)) {
-            if ("core_" === substr($component, 0, 5)) {
-                $componentclassname = "behat_" . substr($component, 5);
-                if (!behat_context_helper::has_context($componentclassname)) {
-                    return;
-                }
-            } else {
-                return;
-            }
+        if ($context === null) {
+            return;
         }
 
-        $context = behat_context_helper::get($componentclassname);
         $namedpartial = $this->getSession()->getSelectorsHandler()->getSelector('named_partial');
         $namedexact = $this->getSession()->getSelectorsHandler()->getSelector('named_exact');
 
