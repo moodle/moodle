@@ -90,31 +90,54 @@ class behat_context_helper {
      * @return behat_base
      */
     public static function get($classname) {
-        if (self::$environment->hasContextClass($classname)) {
-            return self::$environment->getContext($classname);
+        $definedclassname = self::get_theme_override($classname);
+        if ($definedclassname) {
+            return self::$environment->getContext($definedclassname);
         }
 
+        // Just fall back on getContext to ensure that we throw the correct exception.
+        return self::$environment->getContext($classname);
+    }
+
+    /**
+     * Get the context for the specified component or subsystem.
+     *
+     * @param string $component The component or subsystem to find the context for
+     * @return behat_base|null
+     */
+    public static function get_component_context(string $component): ?behat_base {
+        $component = str_replace('core_', '', $component);
+
+        if ($classname = self::get_theme_override("behat_{$component}")) {
+            return self::get($classname);
+        }
+
+        return null;
+    }
+
+    /**
+     * Check for any theme override of the specified class name.
+     *
+     * @param string $classname
+     * @return string|null
+     */
+    protected static function get_theme_override(string $classname): ?string {
         $suitename = self::$environment->getSuite()->getName();
         // If default suite, then get the default theme name.
         if ($suitename == 'default') {
             $suitename = theme_config::DEFAULT_THEME;
         }
-        $overridencontextname = 'behat_theme_'.$suitename.'_'.$classname;
 
-        // If contexts has not been checked before and doesn't exist then just use core one.
-        if (!isset(self::$nonexistingcontexts[$overridencontextname])) {
-            try {
-                $subcontext = self::$environment->getContext($overridencontextname);
-
-                return $subcontext;
-            } catch (Behat\Behat\Context\Exception\ContextNotFoundException $e) {
-                // If context not found then it's not overridden.
-                self::$nonexistingcontexts[$overridencontextname] = 1;
-            }
+        $overrideclassname = "behat_theme_{$suitename}_{$classname}";
+        if (self::$environment->hasContextClass($overrideclassname)) {
+            return $overrideclassname;
         }
 
-        // Get the actual context.
-        return self::$environment->getContext($classname);
+        if (self::$environment->hasContextClass($classname)) {
+            return $classname;
+        }
+
+        return null;
     }
 
     /**
