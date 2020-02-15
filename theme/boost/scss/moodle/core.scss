@@ -219,6 +219,17 @@ div.dropdown-item {
     padding: 0;
 }
 
+section a.movehere,
+.section li.movehere a.movehere {
+    outline: 0;
+    box-shadow: $input-btn-focus-box-shadow;
+}
+
+.editing .course-content .hidden.sectionname {
+    visibility: hidden;
+    display: initial;
+}
+
 .inline,
 .inline-list li {
     display: inline;

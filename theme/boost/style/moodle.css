@@ -9840,6 +9840,15 @@ div.dropdown-item:focus-within {
   margin: 0;
   padding: 0; }
 
+section a.movehere,
+.section li.movehere a.movehere {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.75); }
+
+.editing .course-content .hidden.sectionname {
+  visibility: hidden;
+  display: initial; }
+
 .inline,
 .inline-list li {
   display: inline; }
