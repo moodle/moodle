@@ -1004,7 +1004,6 @@ class core_course_renderer extends plugin_renderer_base {
         // check if we are currently in the process of moving a module with JavaScript disabled
         $ismoving = $this->page->user_is_editing() && ismoving($course->id);
         if ($ismoving) {
-            $movingpix = new pix_icon('movehere', get_string('movehere'), 'moodle', array('class' => 'movetarget'));
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
 
@@ -1032,7 +1031,7 @@ class core_course_renderer extends plugin_renderer_base {
                 if ($ismoving) {
                     $movingurl = new moodle_url('/course/mod.php', array('moveto' => $modnumber, 'sesskey' => sesskey()));
                     $sectionoutput .= html_writer::tag('li',
-                            html_writer::link($movingurl, $this->output->render($movingpix), array('title' => $strmovefull)),
+                            html_writer::link($movingurl, '', array('title' => $strmovefull, 'class' => 'movehere')),
                             array('class' => 'movehere'));
                 }
 
@@ -1042,7 +1041,7 @@ class core_course_renderer extends plugin_renderer_base {
             if ($ismoving) {
                 $movingurl = new moodle_url('/course/mod.php', array('movetosection' => $section->id, 'sesskey' => sesskey()));
                 $sectionoutput .= html_writer::tag('li',
-                        html_writer::link($movingurl, $this->output->render($movingpix), array('title' => $strmovefull)),
+                        html_writer::link($movingurl, '', array('title' => $strmovefull, 'class' => 'movehere')),
                         array('class' => 'movehere'));
             }
         }
