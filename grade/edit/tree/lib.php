@@ -233,7 +233,6 @@ class grade_edit_tree {
                 if ($this->moving && $this->moving != $child_eid) {
 
                     $strmove     = get_string('move');
-                    $strmovehere = get_string('movehere');
                     $actions = $moveaction = ''; // no action icons when moving
 
                     $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'move', 'eid' => $this->moving, 'moveafter' => $child_eid, 'sesskey' => sesskey()));
@@ -245,8 +244,7 @@ class grade_edit_tree {
                     $cell->colspan = 12;
                     $cell->attributes['class'] = 'movehere level' . ($level + 1) . ' level' . ($level % 2 ? 'even' : 'odd');
 
-                    $icon = new pix_icon('movehere', $strmovehere, null, array('class'=>'movetarget'));
-                    $cell->text = $OUTPUT->action_icon($aurl, $icon);
+                    $cell->text = html_writer::link($aurl, '', array('title' => get_string('movehere'), 'class' => 'movehere'));
 
                     $moveto = new html_table_row(array($cell));
                 }
