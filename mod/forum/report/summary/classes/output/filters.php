@@ -193,11 +193,11 @@ class filters implements renderable, templatable {
             list($forumidin, $forumidparams) = $DB->get_in_or_equal($forumids, SQL_PARAMS_NAMED);
             list($groupidin, $groupidparams) = $DB->get_in_or_equal($groupsselected, SQL_PARAMS_NAMED);
 
-            $dwhere = "course = :courseid AND forum {$forumidin} AND groupid {$groupidin}";
-            $dparams = ['courseid' => $this->courseid];
-            $dparams += $forumidparams + $groupidparams;
+            $discussionswhere = "course = :courseid AND forum {$forumidin} AND groupid {$groupidin}";
+            $discussionsparams = ['courseid' => $this->courseid];
+            $discussionsparams += $forumidparams + $groupidparams;
 
-            $discussionids = $DB->get_fieldset_select('forum_discussions', 'DISTINCT id', $dwhere, $dparams);
+            $discussionids = $DB->get_fieldset_select('forum_discussions', 'DISTINCT id', $discussionswhere, $discussionsparams);
 
             foreach ($discussionids as $discussionid) {
                 $this->discussionids[] = ['discid' => $discussionid];
