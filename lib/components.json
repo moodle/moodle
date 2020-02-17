@@ -103,7 +103,7 @@
         "rss": "rss",
         "role": "admin\/roles",
         "search": "search",
-        "table": null,
+        "table": "lib\/table",
         "tag": "tag",
         "timezones": null,
         "user": "user",

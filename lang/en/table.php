@@ -23,4 +23,4 @@
  */
 
 $string['downloadas'] = 'Download table data as';
-
+$string['privacy:metadata'] = 'The Table API does not currently store any user data';
