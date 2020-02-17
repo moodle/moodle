@@ -155,6 +155,9 @@ class antivirus_clamav_tcpsockethost_setting extends antivirus_clamav_socket_set
         }
         $runningmethod = get_config('antivirus_clamav', 'runningmethod');
         $tcpport = get_config('antivirus_clamav', 'tcpsocketport');
+        if ($tcpport === false) {
+            $tcpport = 3310;
+        }
         if ($runningmethod === 'tcpsocket') {
             return $this->validate_clamav_socket('tcp://' . $data . ':' . $tcpport);
         }
