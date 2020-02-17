@@ -183,6 +183,7 @@ $string['discussionsstartedbyrecent'] = 'Discussions recently started by {$a}';
 $string['discussionsstartedbyuserincourse'] = 'Discussions started by {$a->fullname} in {$a->coursename}';
 $string['discussionunpin'] = 'Unpin';
 $string['discussthistopic'] = 'Discuss this topic';
+$string['discusstopicname'] = 'Discuss the topic: {$a}';
 $string['displayend'] = 'Display end';
 $string['displayend_help'] = 'This setting specifies whether a forum post should be hidden after a certain date. Note that administrators can always view forum posts.';
 $string['displaymode'] = 'Display mode';
