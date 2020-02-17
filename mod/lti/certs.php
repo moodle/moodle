@@ -37,8 +37,8 @@ $jwk = array();
 $jwk['kty'] = 'RSA';
 $jwk['alg'] = 'RS256';
 $jwk['kid'] = get_config('mod_lti', 'kid');
-$jwk['e'] = strtr(base64_encode($details['rsa']['e']), '+/', '-_');
-$jwk['n'] = strtr(base64_encode($details['rsa']['n']), '+/', '-_');
+$jwk['e'] = rtrim(strtr(base64_encode($details['rsa']['e']), '+/', '-_'), '=');
+$jwk['n'] = rtrim(strtr(base64_encode($details['rsa']['n']), '+/', '-_'), '=');
 $jwk['use'] = 'sig';
 
 $jwks['keys'][] = $jwk;
