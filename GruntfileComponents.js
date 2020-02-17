@@ -163,8 +163,10 @@ const getComponentFromPath = path => {
 const getOwningComponentDirectory = checkPath => {
     const path = require('path');
 
-    const pathList = fetchComponentData().components;
-    for (const componentPath of Object.keys(pathList)) {
+    // Fetch all components into a reverse sorted array.
+    // This ensures that components which are within the directory of another component match first.
+    const pathList = Object.keys(fetchComponentData().components).sort().reverse();
+    for (const componentPath of pathList) {
         if (checkPath === componentPath) {
             return componentPath;
         }
