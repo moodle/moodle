@@ -561,7 +561,7 @@ class manager {
 
         $where = '(nextruntime IS NULL OR nextruntime < :timestart1)';
         $params = array('timestart1' => $timestart);
-        $records = $DB->get_records_select('task_adhoc', $where, $params);
+        $records = $DB->get_records_select('task_adhoc', $where, $params, 'nextruntime ASC, id ASC');
 
         $records = self::ensure_adhoc_task_qos($records);
 
