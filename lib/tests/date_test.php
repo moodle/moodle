@@ -166,6 +166,14 @@ class core_date_testcase extends advanced_testcase {
         }
     }
 
+    public function test_timezone_lang_strings() {
+        $phpzones = DateTimeZone::listIdentifiers();
+        $manager = get_string_manager();
+        foreach ($phpzones as $tz) {
+            $this->assertTrue($manager->string_exists(strtolower($tz), 'core_timezones'));
+        }
+    }
+
     public function test_get_localised_timezone() {
         $this->resetAfterTest();
 
