@@ -4398,7 +4398,7 @@ function guest_user() {
  * @return stdClass|false A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password, $ignorelockout=false, &$failurereason=null, $logintoken=false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE;
     require_once("$CFG->libdir/authlib.php");
 
     if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
@@ -4510,6 +4510,42 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
         // On auth fail fall through to the next plugin.
         if (!$authplugin->user_login($username, $password)) {
             continue;
+        }
+
+        // Before performing login actions, check if user still passes password policy, if admin setting is enabled.
+        if (!empty($CFG->passwordpolicycheckonlogin)) {
+            $errmsg = '';
+            $passed = check_password_policy($password, $errmsg, $user);
+            if (!$passed) {
+                // First trigger event for failure.
+                $failedevent = \core\event\user_password_policy_failed::create_from_user($user);
+                $failedevent->trigger();
+
+                // If able to change password, set flag and move on.
+                if ($authplugin->can_change_password()) {
+                    // Check if we are on internal change password page, or service is external, don't show notification.
+                    $internalchangeurl = new moodle_url('/login/change_password.php');
+                    if (!($PAGE->has_set_url() && $internalchangeurl->compare($PAGE->url)) && $authplugin->is_internal()) {
+                        \core\notification::error(get_string('passwordpolicynomatch', '', $errmsg));
+                    }
+                    set_user_preference('auth_forcepasswordchange', 1, $user);
+                } else if ($authplugin->can_reset_password()) {
+                    // Else force a reset if possible.
+                    \core\notification::error(get_string('forcepasswordresetnotice', '', $errmsg));
+                    redirect(new moodle_url('/login/forgot_password.php'));
+                } else {
+                    $notifymsg = get_string('forcepasswordresetfailurenotice', '', $errmsg);
+                    // If support page is set, add link for help.
+                    if (!empty($CFG->supportpage)) {
+                        $link = \html_writer::link($CFG->supportpage, $CFG->supportpage);
+                        $link = \html_writer::tag('p', $link);
+                        $notifymsg .= $link;
+                    }
+
+                    // If no change or reset is possible, add a notification for user.
+                    \core\notification::error($notifymsg);
+                }
+            }
         }
 
         // Successful authentication.
@@ -4980,7 +5016,8 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
  *
  * @param string $password the password to be checked against the password policy
  * @param string $errmsg the error message to display when the password doesn't comply with the policy.
- * @param stdClass $user the user object to perform password validation against. Defaults to null if not provided
+ * @param stdClass $user the user object to perform password validation against. Defaults to null if not provided.
+ *
  * @return bool true if the password is valid according to the policy. false otherwise.
  */
 function check_password_policy($password, &$errmsg, $user = null) {
