@@ -201,6 +201,7 @@ $string['discussionsstartedbyuserincourse'] = 'Discussions started by {$a->fulln
 $string['discussionunpin'] = 'Unpin';
 $string['discussionunsubscribed'] = 'You are now unsubscribed from this discussion.';
 $string['discussthistopic'] = 'Discuss this topic';
+$string['discusstopicname'] = 'Discuss the topic: {$a}';
 $string['displayend'] = 'Display end';
 $string['displayend_help'] = 'This setting specifies whether a forum post should be hidden after a certain date. Note that administrators can always view forum posts.';
 $string['displayenddate'] = 'Display end: {$a}.';
