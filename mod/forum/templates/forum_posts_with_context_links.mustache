@@ -33,36 +33,7 @@
 {{#posts}}
     {{< mod_forum/forum_discussion_post }}
         {{$subject}}
-            {{#coursename}}
-                {{#urls.viewcourse}}
-                    <a href="{{{urls.viewcourse}}}">{{{coursename}}}</a> ->
-                {{/urls.viewcourse}}
-                {{^urls.viewcourse}}
-                    {{coursename}} ->
-                {{/urls.viewcourse}}
-            {{/coursename}}
-            {{#urls.viewforum}}
-                <a href="{{{urls.viewforum}}}">{{{forumname}}}</a>
-            {{/urls.viewforum}}
-            {{^urls.viewforum}}
-                {{{forumname}}}
-            {{/urls.viewforum}}
-            {{#showdiscussionname}}
-                {{#urls.viewdiscussion}}
-                    -> <a href="{{{urls.viewdiscussion}}}">{{{discussionname}}}</a>
-                {{/urls.viewdiscussion}}
-                {{^urls.viewdiscussion}}
-                    {{{discussionname}}}
-                {{/urls.viewdiscussion}}
-                {{#hasparent}}
-                    {{#urls.viewparent}}
-                        -> <a href="{{{urls.viewparent}}}">{{{subject}}}</a>
-                    {{/urls.viewparent}}
-                    {{^urls.viewparent}}
-                        {{{subject}}}
-                    {{/urls.viewparent}}
-                {{/hasparent}}
-            {{/showdiscussionname}}
+            {{> mod_forum/forum_post_subject_with_context_links }}
         {{/subject}}
         {{$replies}}{{/replies}}
         {{$footer}}
