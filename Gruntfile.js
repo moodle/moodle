@@ -356,19 +356,31 @@ module.exports = function(grunt) {
     };
 
     tasks.gherkinlint = function() {
-        var done = this.async(),
-            options = grunt.config('gherkinlint.options');
+        const done = this.async();
+        const options = grunt.config('gherkinlint.options');
 
-        var args = grunt.file.expand(options.files);
-        args.unshift(path.normalize(__dirname + '/node_modules/.bin/gherkin-lint'));
-        grunt.util.spawn({
-            cmd: 'node',
-            args: args,
-            opts: {stdio: 'inherit', env: process.env}
-        }, function(error, result, code) {
-            // Propagate the exit code.
-            done(code === 0);
-        });
+        // Grab the gherkin-lint linter and required scaffolding.
+        const linter = require('gherkin-lint/src/linter.js');
+        const featureFinder = require('gherkin-lint/src/feature-finder.js');
+        const configParser = require('gherkin-lint/src/config-parser.js');
+        const formatter = require('gherkin-lint/src/formatters/stylish.js');
+
+        // Run the linter.
+        const results = linter.lint(
+            featureFinder.getFeatureFiles(grunt.file.expand(options.files)),
+            configParser.getConfiguration(configParser.defaultConfigFileName)
+        );
+
+        // Print the results out uncondtionally.
+        formatter.printResults(results);
+
+        // Report on the results.
+        // We exit 1 if there is at least one error, otherwise we exit cleanly.
+        if (results.some(result => result.errors.length > 0)) {
+            done(1);
+        } else {
+            done(0);
+        }
     };
 
     tasks.startup = function() {
