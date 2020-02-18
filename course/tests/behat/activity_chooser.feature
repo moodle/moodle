@@ -54,8 +54,17 @@ Feature: Display and choose from the available activities in course
     And "Back" "button" should not exist in the "modules" "core_course > Activity chooser screen"
     And I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "Add an activity or resource" "dialogue"
 
-  # Currently stubbed out in MDL-67321 as further issues will add more tabs.
-  Scenario: Navigate between module tabs
-    Given I open the activity chooser
-    And I should see "Activities" in the "Add an activity or resource" "dialogue"
-    Then I should see "Forum" in the "default" "core_course > Activity chooser tab"
+  Scenario: View recommended activities
+    When I log out
+    And I log in as "admin"
+    And I am on site homepage
+    And I navigate to "Courses > Recommended activities" in site administration
+    And I click on ".activity-recommend-checkbox" "css_element" in the "Book" "table_row"
+    # Setup done, lets check it works with a teacher.
+    And I log out
+    And I log in as "teacher"
+    And I am on "Course" course homepage with editing mode on
+    And I open the activity chooser
+    Then I should see "Recommended" in the "Add an activity or resource" "dialogue"
+    And I click on "Recommended" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Book" in the "recommended" "core_course > Activity chooser tab"
