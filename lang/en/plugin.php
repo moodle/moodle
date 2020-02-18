@@ -225,6 +225,7 @@ $string['validationmsg_onedir'] = 'Invalid structure of the ZIP package.';
 $string['validationmsg_onedir_help'] = 'The ZIP package must contain just one root directory that holds the plugin code. The name of that root directory must match the name of the plugin.';
 $string['validationmsg_pathwritable'] = 'Write access check';
 $string['validationmsg_pluginversion'] = 'Plugin version';
+$string['validationmsg_pluginversiontoolow'] = 'A higher version of this plugin is already installed';
 $string['validationmsg_release'] = 'Plugin release';
 $string['validationmsg_requiresmoodle'] = 'Required Moodle version';
 $string['validationmsg_rootdir'] = 'Name of the plugin to be installed';
