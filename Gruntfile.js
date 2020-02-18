@@ -151,6 +151,9 @@ module.exports = function(grunt) {
                 tasks: ['yui']
             },
             gherkinlint: {
+                options: {
+                    nospawn: false,
+                },
                 files: ['**/tests/behat/*.feature'],
                 tasks: ['gherkinlint']
             }
