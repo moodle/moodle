@@ -131,9 +131,11 @@ const getYuiSrcGlobList = relativeTo => {
  */
 const getThirdPartyLibsList = relativeTo => {
     const fs = require('fs');
+    const path = require('path');
 
     return fetchComponentData().pathList
-        .map(componentPath => componentPath.replace(relativeTo, '') + '/thirdpartylibs.xml')
+        .map(componentPath => path.relative(relativeTo, componentPath) + '/thirdpartylibs.xml')
+        .map(componentPath => componentPath.replace(/\\/g, '/'))
         .filter(path => fs.existsSync(path))
         .sort();
 };
@@ -157,7 +159,7 @@ const getComponentFromPath = path => {
 /**
  * Check whether the supplied path, relative to the Gruntfile.js, is in a known component.
  *
- * @param {String} checkPath The path to check
+ * @param {String} checkPath The path to check. This can be with either Windows, or Linux directory separators.
  * @returns {String|null}
  */
 const getOwningComponentDirectory = checkPath => {
@@ -167,10 +169,9 @@ const getOwningComponentDirectory = checkPath => {
     // This ensures that components which are within the directory of another component match first.
     const pathList = Object.keys(fetchComponentData().components).sort().reverse();
     for (const componentPath of pathList) {
-        if (checkPath === componentPath) {
-            return componentPath;
-        }
-        if (checkPath.startsWith(componentPath + path.sep)) {
+        // If the componentPath is the directory being checked, it will be empty.
+        // If the componentPath is a parent of the directory being checked, the relative directory will not start with ..
+        if (!path.relative(componentPath, checkPath).startsWith('..')) {
             return componentPath;
         }
     }

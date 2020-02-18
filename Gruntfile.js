@@ -172,19 +172,34 @@ module.exports = function(grunt) {
     const inComponent = !!componentDirectory;
     const runDir = inComponent ? componentDirectory : relativeCwd;
     const fullRunDir = fs.realpathSync(gruntFilePath + path.sep + runDir);
-    grunt.log.debug(`The cwd was detected as ${cwd} with a fullRunDir of ${fullRunDir}`);
+    grunt.log.debug('============================================================================');
+    grunt.log.debug(`= Node version:        ${process.versions.node}`);
+    grunt.log.debug(`= grunt version:       ${grunt.package.version}`);
+    grunt.log.debug(`= process.cwd:         '` + process.cwd() + `'`);
+    grunt.log.debug(`= process.env.PWD:     '${process.env.PWD}'`);
+    grunt.log.debug(`= path.sep             '${path.sep}'`);
+    grunt.log.debug('============================================================================');
+    grunt.log.debug(`= gruntFilePath:       '${gruntFilePath}'`);
+    grunt.log.debug(`= relativeCwd:         '${relativeCwd}'`);
+    grunt.log.debug(`= componentDirectory:  '${componentDirectory}'`);
+    grunt.log.debug(`= inComponent:         '${inComponent}'`);
+    grunt.log.debug(`= runDir:              '${runDir}'`);
+    grunt.log.debug(`= fullRunDir:          '${fullRunDir}'`);
+    grunt.log.debug('============================================================================');
 
     if (inComponent) {
         grunt.log.ok(`Running tasks for component directory ${componentDirectory}`);
     }
 
-    var files = null;
+    let files = null;
     if (grunt.option('files')) {
         // Accept a comma separated list of files to process.
         files = grunt.option('files').split(',');
     }
 
-    const inAMD = path.basename(cwd) == 'amd';
+    // If the cwd is the amd directory in the current component then it will be empty.
+    // If the cwd is a child of the component's AMD directory, the relative directory will not start with ..
+    const inAMD = !path.relative(`${componentDirectory}/amd`, cwd).startsWith('..');
 
     // Globbing pattern for matching all AMD JS source files.
     let amdSrc = [];
@@ -235,7 +250,7 @@ module.exports = function(grunt) {
             const nodes = xpath.select("/libraries/library/location/text()", doc);
 
             nodes.forEach(function(node) {
-                let lib = path.join(dirname, node.toString());
+                let lib = path.posix.join(dirname, node.toString());
                 if (grunt.file.isDir(lib)) {
                     // Ensure trailing slash on dirs.
                     lib = lib.replace(/\/?$/, '/');
