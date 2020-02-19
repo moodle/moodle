@@ -274,6 +274,55 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that deleting a question from the question bank works in the normal case.
+     */
+    public function test_question_delete_question() {
+        global $DB;
+
+        // Setup.
+        $context = context_system::instance();
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+        $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+        $q2 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+
+        // Do.
+        question_delete_question($q1->id);
+
+        // Verify.
+        $this->assertFalse($DB->record_exists('question', ['id' => $q1->id]));
+        // Check that we did not delete too much.
+        $this->assertTrue($DB->record_exists('question', ['id' => $q2->id]));
+    }
+
+    /**
+     * Test that deleting a broken question from the question bank does not cause fatal errors.
+     */
+    public function test_question_delete_question_broken_data() {
+        global $DB;
+
+        // Setup.
+        $context = context_system::instance();
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+        $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+
+        // Now delete the category, to simulate what happens in old sites where
+        // referential integrity has failed.
+        $DB->delete_records('question_categories', ['id' => $qcat->id]);
+
+        // Do.
+        question_delete_question($q1->id);
+
+        // Verify.
+        $this->assertDebuggingCalled('Deleting question ' . $q1->id .
+                ' which is no longer linked to a context. Assuming system context ' .
+                'to avoid errors, but this may mean that some data like ' .
+                'files, tags, are not cleaned up.');
+        $this->assertFalse($DB->record_exists('question', ['id' => $q1->id]));
+    }
+
+    /**
      * This function tests the question_category_delete_safe function.
      */
     public function test_question_category_delete_safe() {
