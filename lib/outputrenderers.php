@@ -1745,7 +1745,7 @@ class core_renderer extends renderer_base {
         $id = !empty($bc->attributes['id']) ? $bc->attributes['id'] : uniqid('block-');
         $context = new stdClass();
         $context->skipid = $bc->skipid;
-        $context->blockinstanceid = $bc->blockinstanceid;
+        $context->blockinstanceid = $bc->blockinstanceid ?: uniqid('fakeid-');
         $context->dockable = $bc->dockable;
         $context->id = $id;
         $context->hidden = $bc->collapsible == block_contents::HIDDEN;
