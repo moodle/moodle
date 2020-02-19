@@ -1644,6 +1644,7 @@ $string['readme'] = 'README';
 $string['recentactivity'] = 'Recent activity';
 $string['recentactivityreport'] = 'Full report of recent activity...';
 $string['recipientslist'] = 'Recipients list';
+$string['recommended'] = 'Recommended';
 $string['recreatedcategory'] = 'Recreated category {$a}';
 $string['redirect'] = 'Redirect';
 $string['reducesections'] = 'Reduce the number of sections';
