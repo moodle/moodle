@@ -332,16 +332,18 @@ function question_category_in_use($categoryid, $recursive = false) {
 /**
  * Deletes question and all associated data from the database
  *
- * It will not delete a question if it is used by an activity module
+ * It will not delete a question if it is used somewhere.
+ *
  * @param object $question  The question being deleted
  */
 function question_delete_question($questionid) {
     global $DB;
 
     $question = $DB->get_record_sql('
-            SELECT q.*, qc.contextid
+            SELECT q.*, ctx.id AS contextid
             FROM {question} q
-            JOIN {question_categories} qc ON qc.id = q.category
+            LEFT JOIN {question_categories} qc ON qc.id = q.category
+            LEFT JOIN {context} ctx ON ctx.id = qc.contextid
             WHERE q.id = ?', array($questionid));
     if (!$question) {
         // In some situations, for example if this was a child of a
@@ -355,6 +357,15 @@ function question_delete_question($questionid) {
         return;
     }
 
+    // This sometimes happens in old sites with bad data.
+    if (!$question->contextid) {
+        debugging('Deleting question ' . $question->id . ' which is no longer linked to a context. ' .
+                'Assuming system context to avoid errors, but this may mean that some data like files, ' .
+                'tags, are not cleaned up.');
+        $question->contextid = context_system::instance()->id;
+    }
+
+    // Delete previews of the question.
     $dm = new question_engine_data_mapper();
     $dm->delete_previews($questionid);
 
