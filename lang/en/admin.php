@@ -61,7 +61,7 @@ $string['allowindexingexceptlogin'] = 'Everywhere except login and signup pages'
 $string['allowindexingnowhere'] = 'Nowhere';
 $string['allowusermailcharset'] = 'Allow user to select character set';
 $string['allowframembedding'] = 'Allow frame embedding';
-$string['allowframembedding_help'] = 'If enabled, this site may be embedded in a frame in a remote system, as recommended when using the \'Publish as LTI tool\' enrolment plugin. Otherwise, it is recommended to leave frame embedding disabled for security reasons.<br />Please, note also that for the mobile app this setting is ignored and frame embedding is always allowed.';
+$string['allowframembedding_help'] = 'If enabled, this site may be embedded in a frame in a remote system, as recommended when using the \'Publish as LTI tool\' enrolment plugin. Otherwise, it is recommended to leave frame embedding disabled for security reasons. Please note that for the mobile app this setting is ignored and frame embedding is always allowed.';
 $string['allowguestmymoodle'] = 'Allow guest access to Dashboard';
 $string['allowobjectembed'] = 'Allow EMBED and OBJECT tags';
 $string['allowthemechangeonurl'] = 'Allow theme changes in the URL';
@@ -189,15 +189,15 @@ $string['configcourseswithsummarieslimit'] = 'The maximum number of courses to d
 $string['configcronclionly'] = 'Running the cron from a web browser can expose privileged information to anonymous users. Thus it is recommended to only run the cron from the command line or set a cron password for remote access.';
 $string['configcronremotepassword'] = 'This means that the cron.php script cannot be run from a web browser without supplying the password using the following form of URL:<pre> https://site.example.com/admin/cron.php?password=opensesame </pre>If this is left empty, no password is required.';
 $string['configcurlcache'] = 'Time-to-live for cURL cache, in seconds.';
-$string['configcustommenuitems'] = 'You can configure a custom menu here to be shown by themes. Each line consists of some menu text, a link URL (optional), a tooltip title (optional) and a language code or comma-separated list of codes (optional, for displaying the line to users of the specified language only), separated by pipe characters. Lines starting with a hyphen will appear as menu items in the previous top level menu, and dividers can be used by adding a line of one or more # characters where desired. For example:
+$string['configcustommenuitems'] = 'A custom menu may be configured here. Enter each menu item on a new line with format: menu text, a link URL (optional, not for a top menu item with sub-items), a tooltip title (optional) and a language code or comma-separated list of codes (optional, for displaying the line to users of the specified language only), separated by pipe characters. Lines starting with a hyphen will appear as menu items in the previous top level menu and ### makes a divider. For example:
 <pre>
-Moodle community|https://moodle.org
--Moodle free support|https://moodle.org/support
--Moodle Docs|https://docs.moodle.org|Moodle Docs
--German Moodle Docs|https://docs.moodle.org/de|Documentation in German|de
+Courses
+-All courses|/course/
+-Course search|/course/search.php
 -###
--Moodle development|https://moodle.org/development
-Moodle.com|https://moodle.com/
+-FAQ|https://someurl.xyz/faq
+-Preguntas más frecuentes|https://someurl.xyz/pmf||es
+Mobile app|https://someurl.xyz/app|Download our app
 </pre>';
 $string['configcustomusermenuitems'] = 'You can configure the contents of the user menu (with the exception of the log out link, which is automatically added). Each line is separated by pipe characters and consists of 1) a string in "langstringname, componentname" form or as plain text, 2) a URL, and 3) an icon either as a pix icon (in the folder pix with the structure [subfoldername]/[iconname], e.g. i/publish) or as a URL. Dividers can be used by adding a line of one or more # characters where desired.';
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions. Note that changing this setting now will log out all current users (including you). If you are using MySQL please make sure that \'max_allowed_packet\' in my.cnf (or my.ini) is at least 4M. Other session drivers can be configured directly in config.php, see config-dist.php for more information. This option disappears if you specify session driver in config.php file.';
@@ -236,7 +236,7 @@ $string['configenablerssfeedsdisabled2'] = 'RSS feeds are currently disabled at 
 $string['configenablesafebrowserintegration'] = 'This adds the choice \'Require Safe Exam Browser\' to the \'Browser security\' field on the quiz settings form. See https://www.safeexambrowser.org/ for more information.';
 $string['configenablestats'] = 'If you choose \'yes\' here, Moodle\'s cronjob will process the logs and gather some statistics.  Depending on the amount of traffic on your site, this can take awhile. If you enable this, you will be able to see some interesting graphs and statistics about each of your courses, or on a sitewide basis.';
 $string['configenabletrusttext'] = 'By default Moodle will always thoroughly clean text that comes from users to remove any possible bad scripts, media etc that could be a security risk.  The Trusted Content system is a way of giving particular users that you trust the ability to include these advanced features in their content without interference.  To enable this system, you need to first enable this setting, and then grant the Trusted Content permission to a specific Moodle role.  Texts created or uploaded by such users will be marked as trusted and will not be cleaned before display.';
-$string['configenablewebservices'] = 'Web services enable other systems to log in to this Moodle and perform operations.  For extra security this feature should be disabled unless you are really using it.';
+$string['configenablewebservices'] = 'Web services enable other systems, such as the Moodle app, to log in to the site and perform operations. For extra security, the setting should be disabled if you are not using the app, or an external tool/service that requires integration via web services.';
 $string['configenablewsdocumentation'] = 'Enable auto-generation of web services documentation. A user can access to his own documentation on his security keys page {$a}. It displays the documentation for the enabled protocols only.';
 $string['configerrorlevel'] = 'Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.';
 $string['configexportlookahead'] = 'Days to look ahead during export';

@@ -520,7 +520,7 @@ $string['displayonpage'] = 'Display on page';
 $string['dndcourse'] = 'You can drag and drop this course to alter its sorting or to move it to another category.';
 $string['dndenabled_inbox'] = 'You can drag and drop files here to add them.';
 $string['dndnotsupported'] = 'Drag and drop upload not supported';
-$string['dndnotsupported_help'] = 'Your browser does not support drag and drop upload.<br />This feature is available in all recent versions of Chrome, Firefox and Safari, as well as Internet Explorer v10 and above.';
+$string['dndnotsupported_help'] = 'Your browser does not support drag and drop upload. This feature is available in all recent versions of Chrome, Firefox and Safari, as well as Internet Explorer v10 and above.';
 $string['dndnotsupported_insentence'] = 'drag and drop not supported';
 $string['dnduploadwithoutcontent'] = 'This upload does not have any content';
 $string['dndworkingfiletextlink'] = 'Drag and drop files, text or links onto course sections to upload them';
@@ -1255,14 +1255,18 @@ $string['moddoesnotsupporttype'] = 'Module {$a->modname} does not support upload
 $string['modhide'] = 'Hide';
 $string['modshow'] = 'Show';
 $string['modvisible'] = 'Availability';
-$string['modvisible_help'] = 'If the availability is set to \'Show on course page\', the activity or resource is available to students (subject to any access restrictions which may be set).<br><br>
+$string['modvisible_help'] = 'If the availability is set to \'Show on course page\', the activity or resource is available to students (subject to any access restrictions which may be set).
+
 If the availability is set to \'Hide from students\', the activity or resource is only available to users with permission to view hidden activities (by default, users with the role of teacher or non-editing teacher).';
 $string['modvisiblewithstealth'] = 'Availability';
-$string['modvisiblewithstealth_help'] = 'If the availability is set to \'Show on course page\', the activity or resource is available to students (subject to any access restrictions which may be set).<br><br>
-If the availability is set to \'Hide from students\', the activity or resource is only available to users with permission to view hidden activities (by default, users with the role of teacher or non-editing teacher).<br><br>
+$string['modvisiblewithstealth_help'] = 'If the availability is set to \'Show on course page\', the activity or resource is available to students (subject to any access restrictions which may be set).
+
+If the availability is set to \'Hide from students\', the activity or resource is only available to users with permission to view hidden activities (by default, users with the role of teacher or non-editing teacher).
+
 If the course contains many activities or resources, the course page may be simplified by setting the availability to \'Make available but not shown on course page\'. In this case, a link to the activity or resource must be provided from elsewhere, such as from a page resource. The activity would still be listed in the gradebook and other reports.';
 $string['modvisiblehiddensection'] = 'Availability';
-$string['modvisiblehiddensection_help'] = 'If the availability is set to \'Hide from students\', the activity or resource is only available to users with permission to view hidden activities (by default, users with the role of teacher or non-editing teacher).<br><br>
+$string['modvisiblehiddensection_help'] = 'If the availability is set to \'Hide from students\', the activity or resource is only available to users with permission to view hidden activities (by default, users with the role of teacher or non-editing teacher).
+
 If the course contains many activities or resources, the course page may be simplified by setting the availability to \'Make available but not shown on course page\'. In this case, a link to the activity or resource must be provided from elsewhere, such as from a page resource. The activity would still be listed in the gradebook and other reports.';
 $string['moodlelogo'] = 'Moodle logo';
 $string['month'] = 'Month';
@@ -1658,7 +1662,11 @@ $string['registrationyes'] = 'Yes, notify me of new Moodle releases, security al
 $string['reject'] = 'Reject';
 $string['rejectdots'] = 'Reject...';
 $string['relativedatesmode'] = 'Relative dates mode';
-$string['relativedatesmode_help'] = 'Display course or activity dates relative to the user\'s start date in the course.<br />The user\'s course start date will be their enrolment start date, unless they are enrolled before the course begins in which case their start date will be the course start date.<br/><strong>WARNING: This is an experimental feature and not all activities may support it. Once the course has been created, this course setting can no longer be changed.</strong>';
+$string['relativedatesmode_help'] = 'Display course or activity dates relative to the user\'s start date in the course.
+
+The user\'s course start date will be their enrolment start date, unless they are enrolled before the course begins in which case their start date will be the course start date.
+
+WARNING: This is an experimental feature and not all activities may support it. Once the course has been created, this course setting can no longer be changed.';
 $string['relativedatesmode_warning'] = '<strong>Warning:</strong> Relative dates mode cannot be changed once the course has been created.';
 $string['reload'] = 'Reload';
 $string['remoteappuser'] = 'Remote {$a} User';

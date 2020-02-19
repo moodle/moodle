@@ -37,7 +37,8 @@ $string['no_right_issuers'] = 'None of the existing issuers implement all requir
 $string['chooseissuer'] = 'Issuer';
 $string['chooseissuer_help'] = 'To add a new issuer, go to Site administration / Server / OAuth 2 services.';
 $string['foldername'] = 'Name of folder created in Nextcloud users\' private space that holds all access-controlled links.';
-$string['foldername_help'] = 'To ensure that users find files shared with them, shares are saved into a specific folder. <br>
+$string['foldername_help'] = 'To ensure that users find files shared with them, shares are saved into a specific folder.
+
 This setting determines the name of the folder. It is recommended to choose a name associated with your Moodle instance.';
 $string['oauth2serviceslink'] = '<a href="{$a}" title="Link to OAuth 2 services configuration">OAuth 2 services configuration</a>';
 $string['privacy:metadata'] = 'The Nextcloud repository plugin neither stores any personal data nor transmits user data to the remote system.';
