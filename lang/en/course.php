@@ -51,14 +51,11 @@ $string['nocourseendtime'] = 'The course does not have an end time';
 $string['nocoursesections'] = 'No course sections';
 $string['nocoursestudents'] = 'No students';
 $string['noaccesssincestartinfomessage'] = 'Hi {$a->userfirstname},
-
-</br><br/>A number of students in {$a->coursename} have never accessed the course.';
+<p>A number of students in {$a->coursename} have never accessed the course.</p>';
 $string['norecentaccessesinfomessage'] = 'Hi {$a->userfirstname},
-
-</br><br/>A number of students in {$a->coursename} have not accessed the course recently.';
+<p>A number of students in {$a->coursename} have not accessed the course recently.</p>';
 $string['noteachinginfomessage'] = 'Hi {$a->userfirstname},
-
-</br><br/>Courses with start dates in the next week have been identified as having no teacher or student enrolments.';
+<p>Courses with start dates in the next week have been identified as having no teacher or student enrolments.</p>';
 $string['privacy:perpage'] = 'The number of courses to show per page.';
 $string['privacy:completionpath'] = 'Course completion';
 $string['privacy:favouritespath'] = 'Course starred information';
@@ -67,8 +64,7 @@ $string['privacy:metadata:completionsummary'] = 'The course contains completion 
 $string['privacy:metadata:favouritessummary'] = 'The course contains information relating to the course being starred by the user.';
 $string['studentsatriskincourse'] = 'Students at risk in {$a} course';
 $string['studentsatriskinfomessage'] = 'Hi {$a->userfirstname},
-
-</br><br/>Students in the {$a->coursename} course have been identified as being at risk.';
+<p>Students in the {$a->coursename} course have been identified as being at risk.</p>';
 $string['target:coursecompletion'] = 'Students at risk of not meeting the course completion conditions';
 $string['target:coursecompletion_help'] = 'This target describes whether the student is considered at risk of not meeting the course completion conditions.';
 $string['target:coursecompetencies'] = 'Students at risk of not achieving the competencies assigned to a course';
