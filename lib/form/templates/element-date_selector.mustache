@@ -1,10 +1,13 @@
-{{< core_form/element-template }}
+{{< core_form/element-group }}
     {{$element}}
-        <span class="fdate_selector d-flex">
-        {{#element.elements}}
-            {{{separator}}}
-            {{{html}}}
-        {{/element.elements}}
-        </span>
+        <fieldset class="m-0 p-0 border-0" id="{{element.id}}">
+            <legend class="sr-only">{{label}}</legend>
+            <span class="fdate_selector d-flex">
+            {{#element.elements}}
+                {{{separator}}}
+                {{{html}}}
+            {{/element.elements}}
+            </span>
+        </fieldset>
     {{/element}}
-{{/ core_form/element-template }}
+{{/ core_form/element-group }}
