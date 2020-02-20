@@ -318,7 +318,7 @@ export const displayChooser = (origin, modal, sectionModules) => {
     // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
     const mappedModules = new Map();
     sectionModules.forEach((module) => {
-        mappedModules.set(module.modulename, module);
+        mappedModules.set(module.componentname + '_' + module.link, module);
     });
 
     // Register event listeners.

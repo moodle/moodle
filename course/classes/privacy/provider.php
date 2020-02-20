@@ -56,6 +56,7 @@ class provider implements
     public static function get_metadata(collection $collection) : collection {
         $collection->add_subsystem_link('core_completion', [], 'privacy:metadata:completionsummary');
         $collection->add_subsystem_link('core_favourites', [], 'privacy:metadata:favouritessummary');
+        $collection->add_subsystem_link('core_favourites', [], 'privacy:metadata:activityfavouritessummary');
         $collection->add_user_preference('coursecat_management_perpage', 'privacy:perpage');
         return $collection;
     }

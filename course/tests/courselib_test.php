@@ -6923,4 +6923,26 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->setAdminUser();
         $this->assertTrue($request2->can_approve());
     }
+
+    /**
+     * Test the course allowed module method.
+     */
+    public function test_course_allowed_module() {
+        $this->resetAfterTest();
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $manager = $this->getDataGenerator()->create_and_enrol($course, 'manager');
+
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        assign_capability('mod/assign:addinstance', CAP_PROHIBIT, $teacherrole->id, \context_course::instance($course->id));
+
+        // Global user (teacher) has no permissions in this course.
+        $this->setUser($teacher);
+        $this->assertFalse(course_allowed_module($course, 'assign'));
+
+        // Manager has permissions.
+        $this->assertTrue(course_allowed_module($course, 'assign', $manager));
+    }
 }

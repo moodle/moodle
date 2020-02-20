@@ -4142,32 +4142,113 @@ class core_course_external extends external_api {
     }
 
     /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function add_content_item_to_user_favourites_parameters() {
+        return new external_function_parameters([
+            'componentname' => new external_value(PARAM_TEXT,
+                'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
+            'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED)
+        ]);
+    }
+
+    /**
+     * Add a content item to a user's favourites.
+     *
+     * @param string $componentname the name of the component from which this content item originates.
+     * @param int $contentitemid the id of the content item.
+     * @return stdClass the exporter content item.
+     */
+    public static function add_content_item_to_user_favourites(string $componentname, int $contentitemid) {
+        global $USER;
+
+        [
+            'componentname' => $componentname,
+            'contentitemid' => $contentitemid,
+        ] = self::validate_parameters(self::add_content_item_to_user_favourites_parameters(),
+            [
+                'componentname' => $componentname,
+                'contentitemid' => $contentitemid,
+            ]
+        );
+
+        self::validate_context(context_user::instance($USER->id));
+
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+
+        return $contentitemservice->add_to_user_favourites($USER, $componentname, $contentitemid);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function add_content_item_to_user_favourites_returns() {
+        return \core_course\local\exporters\course_content_item_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function remove_content_item_from_user_favourites_parameters() {
+        return new external_function_parameters([
+            'componentname' => new external_value(PARAM_TEXT,
+                'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
+            'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+        ]);
+    }
+
+    /**
+     * Remove a content item from a user's favourites.
+     *
+     * @param string $componentname the name of the component from which this content item originates.
+     * @param int $contentitemid the id of the content item.
+     * @return stdClass the exported content item.
+     */
+    public static function remove_content_item_from_user_favourites(string $componentname, int $contentitemid) {
+        global $USER;
+
+        [
+            'componentname' => $componentname,
+            'contentitemid' => $contentitemid,
+        ] = self::validate_parameters(self::remove_content_item_from_user_favourites_parameters(),
+            [
+                'componentname' => $componentname,
+                'contentitemid' => $contentitemid,
+            ]
+        );
+
+        self::validate_context(context_user::instance($USER->id));
+
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+
+        return $contentitemservice->remove_from_user_favourites($USER, $componentname, $contentitemid);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function remove_content_item_from_user_favourites_returns() {
+        return \core_course\local\exporters\course_content_item_exporter::get_read_structure();
+    }
+
+    /**
      * Returns description of method result value
      *
      * @return external_description
      */
-    public static function fetch_modules_activity_chooser_returns() {
+    public static function get_course_content_items_returns() {
         return new external_single_structure([
-            'allmodules' => new external_multiple_structure(
-                new external_single_structure([
-                    'label' => new external_value(PARAM_TEXT, 'Human readable module name', VALUE_OPTIONAL),
-                    'modulename' => new external_value(PARAM_TEXT, 'Module name', VALUE_OPTIONAL),
-                    'description' => new external_value(PARAM_RAW, 'Help panel information', VALUE_OPTIONAL),
-                    'urls' => new external_single_structure([
-                        'addoption' => new external_value(PARAM_URL, 'The edit link for the module', VALUE_OPTIONAL),
-                    ]),
-                    'icon' => new external_single_structure([
-                        'attributes' => new external_multiple_structure(
-                            new external_single_structure([
-                                'name' => new external_value(PARAM_RAW, 'HTML attr', VALUE_OPTIONAL),
-                                'value' => new external_value(PARAM_RAW, 'Value of the HTML attr', VALUE_OPTIONAL),
-                            ])
-                        ),
-                        'extraclasses' => new external_value(PARAM_RAW, 'Anything extra the module defines', VALUE_OPTIONAL),
-                    ]),
-                ])
+            'content_items' => new external_multiple_structure(
+                \core_course\local\exporters\course_content_item_exporter::get_read_structure()
             ),
-            'warnings' => new external_warnings()
         ]);
     }
 
@@ -4176,7 +4257,7 @@ class core_course_external extends external_api {
      *
      * @return external_function_parameters
      */
-    public static function fetch_modules_activity_chooser_parameters() {
+    public static function get_course_content_items_parameters() {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT, 'ID of the course', VALUE_REQUIRED),
         ]);
@@ -4187,39 +4268,23 @@ class core_course_external extends external_api {
      *
      * @param int $courseid The course we want to fetch the modules for
      * @return array Contains array of modules and their metadata
-     * @throws moodle_exception
      */
-    public static function fetch_modules_activity_chooser(int $courseid) {
-        global $DB, $OUTPUT;
+    public static function get_course_content_items(int $courseid) {
+        global $USER;
+
         [
             'courseid' => $courseid,
-        ] = self::validate_parameters(self::fetch_modules_activity_chooser_parameters(), [
+        ] = self::validate_parameters(self::get_course_content_items_parameters(), [
             'courseid' => $courseid,
         ]);
-        $warnings = array();
 
-        // Validate the course context.
         $coursecontext = context_course::instance($courseid);
         self::validate_context($coursecontext);
-        // Check to see if user can add menus and there are modules to add.
-        if (!has_capability('moodle/course:manageactivities', $coursecontext)
-            || !($modnames = get_module_types_names()) || empty($modnames)) {
-            return '';
-        }
+        $course = get_course($courseid);
 
-        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-        // Retrieve all modules with associated metadata.
-        $modules = get_module_metadata($course, $modnames, null);
-        $related = [
-            'context' => $coursecontext
-        ];
-        // Export the module chooser data.
-        $modchooserdata = new \core_course\external\course_module_chooser_exporter($modules, $related);
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
 
-        $result = [];
-        $result['allmodules'] = $modchooserdata->export($OUTPUT)->options;
-        $result['warnings'] = $warnings;
-        return $result;
+        $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course);
+        return ['content_items' => $contentitems];
     }
-
 }

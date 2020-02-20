@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,22 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MOODLE VERSION INFORMATION
- *
- * This file defines the current version of the core Moodle code being used.
- * This is compared against the values stored in the database to determine
- * whether upgrades should be performed (see lib/db/*.php)
+ * Contains the title value object interface, which provides a basic interface to a string.
  *
  * @package    core
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @subpackage course
+ * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_course\local\entity;
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2020021400.03;              // YYYYMMDD      = weekly release date of this DEV branch.
-                                        //         RR    = release increments - 00 in DEV branches.
-                                        //           .XX = incremental changes.
-$release  = '3.9dev (Build: 20200214)'; // Human-friendly version name
-$branch   = '39';                       // This version's branch.
-$maturity = MATURITY_ALPHA;             // This version's maturity level.
+interface title {
+
+    /**
+     * Get the value of this title.
+     */
+    public function get_value(): string;
+}

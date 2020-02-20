@@ -21,33 +21,34 @@
 
     Example context (json):
     {
-        "label": "Option name",
-        "description": "Option description",
-        "urls": {
-            "addoption": "http://addoptionurl.com"
-        },
-        "icon": "<img class='icon' src='http://urltooptionicon'>"
+        "id": 125,
+        "name": "assign",
+        "title": "Assignment",
+        "link": "http://yourmoodle/modedit.php?id=x&itemtype=y",
+        "icon": "<img class='icon' src='http://urltooptionicon'>",
+        "help": "This is a description of the assignment activity",
+        "archetype": 0,
+        "componentname": "mod_assign",
+        "favourite": 1
     }
 }}
 <div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container" aria-labelledby="optionsummary_label" aria-describedby="optionsumary_desc">
     <div class="content text-left mb-5 px-5 py-4" data-region="chooser-option-summary-content-container">
         <div class="heading mb-4">
             <h5 id="optionsummary_label">
-                {{#icon}}
-                    {{>core/pix_icon}}
-                {{/icon}}
-                {{label}}
+                {{{icon}}}
+                {{title}}
             </h5>
         </div>
         <div id="optionsumary_desc" class="description" data-region="summary-description" tabindex="0">
-            {{{description}}}
+            {{{help}}}
         </div>
     </div>
     <div class="actions fixed-bottom w-100 d-flex justify-content-between position-absolute py-3 px-4" data-region="chooser-option-summary-actions-container">
-        <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="0" data-modname="{{modulename}}">
+        <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="0" data-modname="{{componentname}}_{{link}}">
             {{#str}} back {{/str}}
         </button>
-        <a href="{{urls.addoption}}" title="{{#str}} addnew, moodle, {{label}} {{/str}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="0">
+        <a href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="0">
             {{#str}} add {{/str}}
         </a>
     </div>

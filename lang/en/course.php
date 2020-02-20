@@ -62,6 +62,7 @@ $string['noteachinginfomessage'] = 'Hi {$a->userfirstname},
 $string['privacy:perpage'] = 'The number of courses to show per page.';
 $string['privacy:completionpath'] = 'Course completion';
 $string['privacy:favouritespath'] = 'Course starred information';
+$string['privacy:metadata:activityfavouritessummary'] = 'The course system contains information about which items from the activity chooser have been starred by the user.';
 $string['privacy:metadata:completionsummary'] = 'The course contains completion information about the user.';
 $string['privacy:metadata:favouritessummary'] = 'The course contains information relating to the course being starred by the user.';
 $string['studentsatriskincourse'] = 'Students at risk in {$a} course';

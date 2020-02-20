@@ -100,10 +100,10 @@ const registerListenerEvents = (courseId) => {
 const sectionIdMapper = (webServiceData, id) => {
     // We need to take a fresh deep copy of the original data as an object is a reference type.
     const newData = JSON.parse(JSON.stringify(webServiceData));
-    newData.allmodules.forEach((module) => {
-        module.urls.addoption += '&section=' + id;
+    newData.content_items.forEach((module) => {
+        module.link += '&section=' + id;
     });
-    return newData.allmodules;
+    return newData.content_items;
 };
 
 /**
