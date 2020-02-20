@@ -49,16 +49,18 @@
             {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
             {{{helpbutton}}}
         </span>
-        {{^element.staticlabel}}
-        <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
-            {{{label}}}
-        </label>
-        {{/element.staticlabel}}
-        {{#element.staticlabel}}
-        <span class="col-form-label d-inline-block {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}">
-            {{{label}}}
-        </span>
-        {{/element.staticlabel}}
+        {{$ label }}
+            {{^element.staticlabel}}
+                <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+                    {{{label}}}
+                </label>
+            {{/element.staticlabel}}
+            {{#element.staticlabel}}
+                <span class="col-form-label d-inline-block {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}">
+                    {{{label}}}
+                </span>
+            {{/element.staticlabel}}
+        {{/ label }}
     </div>
     <div class="col-md-9 form-inline felement" data-fieldtype="{{element.type}}">
         {{$ element }}
