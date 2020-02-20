@@ -85,6 +85,10 @@ class behat_app extends behat_base {
         $this->getSession()->restart();
         $this->resize_window('360x720', true);
 
+        if (empty($this->ionicurl)) {
+            $this->ionicurl = $this->start_or_reuse_ionic();
+        }
+
         // Go to page and prepare browser for app.
         $this->prepare_browser($this->ionicurl);
     }
@@ -241,6 +245,7 @@ class behat_app extends behat_base {
             // the process.
             self::$ionicrunning = (object)['url' => $url, 'process' => $process, 'pipes' => $pipes,
                     'pid' => $pid];
+            $url = self::$ionicrunning->url;
         }
         return $url;
     }
