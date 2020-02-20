@@ -2421,3 +2421,9 @@ $picker-emojis-per-row: 7 !default;
         margin-top: $spacer;
     }
 }
+
+@each $color, $value in $theme-colors {
+    .alert-#{$color} a {
+        color: darken(theme-color-level($color, $alert-color-level), 10%);
+    }
+}
