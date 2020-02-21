@@ -215,6 +215,7 @@ define('SITEID', 1);
 
 //Database types
 $databases = array('mysqli' => moodle_database::get_driver_instance('mysqli', 'native'),
+                   'auroramysql' => moodle_database::get_driver_instance('auroramysql', 'native'),
                    'mariadb'=> moodle_database::get_driver_instance('mariadb', 'native'),
                    'pgsql'  => moodle_database::get_driver_instance('pgsql',  'native'),
                    'oci'    => moodle_database::get_driver_instance('oci',    'native'),
