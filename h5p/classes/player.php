@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_h5p\local\library\autoloader;
 use core_xapi\local\statement\item_activity;
-use core\lock\lock_config;
 
 /**
  * H5P player class, for displaying any local H5P content.
@@ -124,12 +123,21 @@ class player {
         $this->core = $this->factory->get_core();
 
         // Get the H5P identifier linked to this URL.
-        if ($this->h5pid = $this->get_h5p_id($url, $config)) {
-            // Load the content of the H5P content associated to this $url.
-            $this->content = $this->core->loadContent($this->h5pid);
+        list($file, $this->h5pid) = api::create_content_from_pluginfile_url(
+            $url,
+            $config,
+            $this->factory,
+            $this->messages
+        );
+        if ($file) {
+            $this->context = \context::instance_by_id($file->get_contextid());
+            if ($this->h5pid) {
+                // Load the content of the H5P content associated to this $url.
+                $this->content = $this->core->loadContent($this->h5pid);
 
-            // Get the embedtype to use for displaying the H5P content.
-            $this->embedtype = core::determineEmbedType($this->content['embedType'], $this->content['library']['embedTypes']);
+                // Get the embedtype to use for displaying the H5P content.
+                $this->embedtype = core::determineEmbedType($this->content['embedType'], $this->content['library']['embedTypes']);
+            }
         }
     }
 
@@ -174,20 +182,7 @@ class player {
      * @return stdClass with framework error messages.
      */
     public function get_messages(): \stdClass {
-        // Check if there are some errors and store them in $messages.
-        if (empty($this->messages->error)) {
-            $this->messages->error = $this->core->h5pF->getMessages('error') ?: false;
-        } else {
-            $this->messages->error = array_merge($this->messages->error, $this->core->h5pF->getMessages('error'));
-        }
-
-        if (empty($this->messages->info)) {
-            $this->messages->info = $this->core->h5pF->getMessages('info') ?: false;
-        } else {
-            $this->messages->info = array_merge($this->messages->info, $this->core->h5pF->getMessages('info'));
-        }
-
-        return $this->messages;
+        return helper::get_messages($this->messages, $this->factory);
     }
 
     /**
@@ -249,7 +244,7 @@ class player {
         \core_h5p\event\h5p_viewed::create([
             'objectid' => $this->h5pid,
             'userid' => $USER->id,
-            'context' => $this->context,
+            'context' => $this->get_context(),
             'other' => [
                 'url' => $this->url->out(),
                 'time' => time()
@@ -275,277 +270,6 @@ class player {
      */
     public function get_context(): \context {
         return $this->context;
-    }
-
-    /**
-     * Get the H5P DB instance id for a H5P pluginfile URL. The H5P file will be saved if it doesn't exist previously or
-     * if its content has changed. Besides, the displayoptions in the $config will be also updated when they have changed and
-     * the user has the right permissions.
-     *
-     * @param string $url H5P pluginfile URL.
-     * @param stdClass $config Configuration for H5P buttons.
-     *
-     * @return int|false H5P DB identifier.
-     */
-    private function get_h5p_id(string $url, \stdClass $config) {
-        global $DB, $USER;
-
-        $fs = get_file_storage();
-
-        // Deconstruct the URL and get the pathname associated.
-        $pathnamehash = $this->get_pluginfile_hash($url);
-        if (!$pathnamehash) {
-            $this->core->h5pF->setErrorMessage(get_string('h5pfilenotfound', 'core_h5p'));
-            return false;
-        }
-
-        // Get the file.
-        $file = $fs->get_file_by_hash($pathnamehash);
-        if (!$file) {
-            $this->core->h5pF->setErrorMessage(get_string('h5pfilenotfound', 'core_h5p'));
-            return false;
-        }
-
-        $h5p = $DB->get_record('h5p', ['pathnamehash' => $pathnamehash]);
-        $contenthash = $file->get_contenthash();
-        if ($h5p && $h5p->contenthash != $contenthash) {
-            // The content exists and it is different from the one deployed previously. The existing one should be removed before
-            // deploying the new version.
-            $this->delete_h5p($h5p);
-            $h5p = false;
-        }
-
-        if ($h5p) {
-            // The H5P content has been deployed previously.
-            $displayoptions = $this->get_display_options($config);
-            // Check if the user can set the displayoptions.
-            if ($displayoptions != $h5p->displayoptions && has_capability('moodle/h5p:setdisplayoptions', $this->context)) {
-                // If the displayoptions has changed and the user has permission to modify it, update this information in the DB.
-                $this->core->h5pF->updateContentFields($h5p->id, ['displayoptions' => $displayoptions]);
-            }
-            return $h5p->id;
-        } else {
-            // The H5P content hasn't been deployed previously.
-
-            // Check if the user uploading the H5P content is "trustable". If the file hasn't been uploaded by a user with this
-            // capability, the content won't be deployed and an error message will be displayed.
-            if (!helper::can_deploy_package($file)) {
-                $this->core->h5pF->setErrorMessage(get_string('nopermissiontodeploy', 'core_h5p'));
-                return false;
-            }
-
-            // The H5P content can be only deployed if the author of the .h5p file can update libraries or if all the
-            // content-type libraries exist, to avoid users without the h5p:updatelibraries capability upload malicious content.
-            $onlyupdatelibs = !helper::can_update_library($file);
-
-            // Start lock to prevent synchronous access to save the same h5p.
-            $lockfactory = lock_config::get_lock_factory('core_h5p');
-            $lockkey = 'core_h5p_' . $pathnamehash;
-            if ($lock = $lockfactory->get_lock($lockkey, 10)) {
-                try {
-                    // Validate and store the H5P content before displaying it.
-                    $h5pid = helper::save_h5p($this->factory, $file, $config, $onlyupdatelibs, false);
-                } finally {
-                    $lock->release();
-                }
-            } else {
-                $this->core->h5pF->setErrorMessage(get_string('lockh5pdeploy', 'core_h5p'));
-                return false;
-            };
-            if (!$h5pid && $file->get_userid() != $USER->id && has_capability('moodle/h5p:updatelibraries', $this->context)) {
-                // The user has permission to update libraries but the package has been uploaded by a different
-                // user without this permission. Check if there is some missing required library error.
-                $missingliberror = false;
-                $messages = $this->get_messages();
-                if (!empty($messages->error)) {
-                    foreach ($messages->error as $error) {
-                        if ($error->code == 'missing-required-library') {
-                            $missingliberror = true;
-                            break;
-                        }
-                    }
-                }
-                if ($missingliberror) {
-                    // The message about the permissions to upload libraries should be removed.
-                    $infomsg = "Note that the libraries may exist in the file you uploaded, but you're not allowed to upload " .
-                        "new libraries. Contact the site administrator about this.";
-                    if (($key = array_search($infomsg, $messages->info)) !== false) {
-                        unset($messages->info[$key]);
-                    }
-
-                    // No library will be installed and an error will be displayed, because this content is not trustable.
-                    $this->core->h5pF->setInfoMessage(get_string('notrustablefile', 'core_h5p'));
-                }
-                return false;
-
-            }
-            return $h5pid;
-        }
-    }
-
-    /**
-     * Get the pathnamehash from an H5P internal URL.
-     *
-     * @param  string $url H5P pluginfile URL poiting to an H5P file.
-     *
-     * @return string|false pathnamehash for the file in the internal URL.
-     */
-    private function get_pluginfile_hash(string $url) {
-        global $USER, $CFG;
-
-        // Decode the URL before start processing it.
-        $url = new \moodle_url(urldecode($url));
-
-        // Remove params from the URL (such as the 'forcedownload=1'), to avoid errors.
-        $url->remove_params(array_keys($url->params()));
-        $path = $url->out_as_local_url();
-
-        // We only need the slasharguments.
-        $path = substr($path, strpos($path, '.php/') + 5);
-        $parts = explode('/', $path);
-        $filename = array_pop($parts);
-
-        // If the request is made by tokenpluginfile.php we need to avoid userprivateaccesskey.
-        if (strpos($this->url, '/tokenpluginfile.php')) {
-            array_shift($parts);
-        }
-        // Get the contextid, component and filearea.
-        $contextid = array_shift($parts);
-        $component = array_shift($parts);
-        $filearea = array_shift($parts);
-
-        // Ignore draft files, because they are considered temporary files, so shouldn't be displayed.
-        if ($filearea == 'draft') {
-            return false;
-        }
-
-        // Get the context.
-        try {
-            list($this->context, $course, $cm) = get_context_info_array($contextid);
-        } catch (\moodle_exception $e) {
-            throw new \moodle_exception('invalidcontextid', 'core_h5p');
-        }
-
-        // For CONTEXT_USER, such as the private files, raise an exception if the owner of the file is not the current user.
-        if ($this->context->contextlevel == CONTEXT_USER && $USER->id !== $this->context->instanceid) {
-            throw new \moodle_exception('h5pprivatefile', 'core_h5p');
-        }
-
-        // For CONTEXT_COURSECAT No login necessary - unless login forced everywhere.
-        if ($this->context->contextlevel == CONTEXT_COURSECAT) {
-            if ($CFG->forcelogin) {
-                require_login(null, true, null, false, true);
-            }
-        }
-
-        // For CONTEXT_BLOCK.
-        if ($this->context->contextlevel == CONTEXT_BLOCK) {
-            if ($this->context->get_course_context(false)) {
-                // If block is in course context, then check if user has capability to access course.
-                require_course_login($course, true, null, false, true);
-            } else if ($CFG->forcelogin) {
-                // No login necessary - unless login forced everywhere.
-                require_login(null, true, null, false, true);
-            } else {
-                // Get parent context and see if user have proper permission.
-                $parentcontext = $this->context->get_parent_context();
-                if ($parentcontext->contextlevel === CONTEXT_COURSECAT) {
-                    // Check if category is visible and user can view this category.
-                    if (!core_course_category::get($parentcontext->instanceid, IGNORE_MISSING)) {
-                        send_file_not_found();
-                    }
-                } else if ($parentcontext->contextlevel === CONTEXT_USER && $parentcontext->instanceid != $USER->id) {
-                    // The block is in the context of a user, it is only visible to the user who it belongs to.
-                    send_file_not_found();
-                }
-                if ($filearea !== 'content') {
-                    send_file_not_found();
-                }
-            }
-        }
-
-        // For CONTEXT_MODULE and CONTEXT_COURSE check if the user is enrolled in the course.
-        // And for CONTEXT_MODULE has permissions view this .h5p file.
-        if ($this->context->contextlevel == CONTEXT_MODULE ||
-                $this->context->contextlevel == CONTEXT_COURSE) {
-            // Require login to the course first (without login to the module).
-            require_course_login($course, true, null, !$this->preventredirect, $this->preventredirect);
-
-            // Now check if module is available OR it is restricted but the intro is shown on the course page.
-            if ($this->context->contextlevel == CONTEXT_MODULE) {
-                $cminfo = \cm_info::create($cm);
-                if (!$cminfo->uservisible) {
-                    if (!$cm->showdescription || !$cminfo->is_visible_on_course_page()) {
-                        // Module intro is not visible on the course page and module is not available, show access error.
-                        require_course_login($course, true, $cminfo, !$this->preventredirect, $this->preventredirect);
-                    }
-                }
-            }
-        }
-
-        // Some components, such as mod_page or mod_resource, add the revision to the URL to prevent caching problems.
-        // So the URL contains this revision number as itemid but a 0 is always stored in the files table.
-        // In order to get the proper hash, a callback should be done (looking for those exceptions).
-        $pathdata = null;
-        if ($this->context->contextlevel == CONTEXT_MODULE || $this->context->contextlevel == CONTEXT_BLOCK) {
-            $pathdata = component_callback($component, 'get_path_from_pluginfile', [$filearea, $parts], null);
-        }
-        if (null === $pathdata) {
-            // Look for the components and fileareas which have empty itemid defined in xxx_pluginfile.
-            $hasnullitemid = false;
-            $hasnullitemid = $hasnullitemid || ($component === 'user' && ($filearea === 'private' || $filearea === 'profile'));
-            $hasnullitemid = $hasnullitemid || (substr($component, 0, 4) === 'mod_' && $filearea === 'intro');
-            $hasnullitemid = $hasnullitemid || ($component === 'course' &&
-                    ($filearea === 'summary' || $filearea === 'overviewfiles'));
-            $hasnullitemid = $hasnullitemid || ($component === 'coursecat' && $filearea === 'description');
-            $hasnullitemid = $hasnullitemid || ($component === 'backup' &&
-                    ($filearea === 'course' || $filearea === 'activity' || $filearea === 'automated'));
-            if ($hasnullitemid) {
-                $itemid = 0;
-            } else {
-                $itemid = array_shift($parts);
-            }
-
-            if (empty($parts)) {
-                $filepath = '/';
-            } else {
-                $filepath = '/' . implode('/', $parts) . '/';
-            }
-        } else {
-            // The itemid and filepath have been returned by the component callback.
-            [
-                'itemid' => $itemid,
-                'filepath' => $filepath,
-            ] = $pathdata;
-        }
-
-        $fs = get_file_storage();
-        return $fs->get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath, $filename);
-    }
-
-    /**
-     * Get the representation of display options as int.
-     * @param stdClass $config Button options config.
-     *
-     * @return int The representation of display options as int.
-     */
-    private function get_display_options(\stdClass $config): int {
-        $export = isset($config->export) ? $config->export : 0;
-        $embed = isset($config->embed) ? $config->embed : 0;
-        $copyright = isset($config->copyright) ? $config->copyright : 0;
-        $frame = ($export || $embed || $copyright);
-        if (!$frame) {
-            $frame = isset($config->frame) ? $config->frame : 0;
-        }
-
-        $disableoptions = [
-            core::DISPLAY_OPTION_FRAME     => $frame,
-            core::DISPLAY_OPTION_DOWNLOAD  => $export,
-            core::DISPLAY_OPTION_EMBED     => $embed,
-            core::DISPLAY_OPTION_COPYRIGHT => $copyright,
-        ];
-
-        return $this->core->getStorableDisplayOptions($disableoptions, 0);
     }
 
     /**
