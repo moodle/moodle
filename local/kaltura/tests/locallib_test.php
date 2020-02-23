@@ -998,9 +998,9 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
         $result = local_kaltura_get_kaf_publishing_data();
 
-        $json = '{"courses":[{"courseId":"'.$courseone->id.'","courseName":"'.$courseone->fullname.'","roles":"Instructor"}';
-        $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","roles":"Learner"}';
-        $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","roles":"Instructor"}]}';
+        $json = '{"courses":[{"courseId":"'.$courseone->id.'","courseName":"'.$courseone->fullname.'","courseShortName":"'.$courseone->shortname.'","roles":"Instructor"}';
+        $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","courseShortName":"'.$coursetwo->shortname.'","roles":"Learner"}';
+        $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","courseShortName":"'.$coursefour->shortname.'","roles":"Instructor"}]}';
 
         $this->assertEquals(base64_encode($json), $result);
     }
@@ -1041,10 +1041,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
         $result = local_kaltura_get_kaf_publishing_data();
 
-        $json = '{"courses":[{"courseId":"'.$courseone->id.'","courseName":"'.$courseone->fullname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
-        $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
-        $json .= ',{"courseId":"'.$coursethree->id.'","courseName":"'.$coursethree->fullname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
-        $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}]}';
+        $json = '{"courses":[{"courseId":"'.$courseone->id.'","courseName":"'.$courseone->fullname.'","courseShortName":"'.$courseone->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
+        $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","courseShortName":"'.$coursetwo->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
+        $json .= ',{"courseId":"'.$coursethree->id.'","courseName":"'.$coursethree->fullname.'","courseShortName":"'.$coursethree->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
+        $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","courseShortName":"'.$coursefour->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}]}';
 
         $this->assertEquals(base64_encode($json), $result);
     }
