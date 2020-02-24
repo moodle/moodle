@@ -3170,4 +3170,32 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertEmpty($result['content_items']);
     }
+
+    /**
+     * Test toggling the recommendation of an activity.
+     */
+    public function test_toggle_activity_recommendation() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $context = context_system::instance();
+        $usercontext = context_user::instance($CFG->siteguest);
+        $component = 'core_course';
+        $favouritefactory = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+
+        $areaname = 'test_core';
+        $areaid = 3;
+
+        // Test we have the favourite.
+        $this->setAdminUser();
+        $result = core_course_external::toggle_activity_recommendation($areaname, $areaid);
+        $this->assertTrue($favouritefactory->favourite_exists($component,
+                \core_course\local\service\content_item_service::RECOMMENDATION_PREFIX . $areaname, $areaid, $context));
+        $this->assertTrue($result['status']);
+        // Test that it is now gone.
+        $result = core_course_external::toggle_activity_recommendation($areaname, $areaid);
+        $this->assertFalse($favouritefactory->favourite_exists($component, $areaname, $areaid, $context));
+        $this->assertFalse($result['status']);
+    }
 }

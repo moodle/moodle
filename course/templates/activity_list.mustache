@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/activity_list
+
+    Displays a list of activities to recommend in the activity chooser.
+
+    No example given as the js will fire and create records from the template library page.
+}}
+{{#categories}}
+<h3>{{categoryname}}</h3>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr class="d-flex">
+            <th scope="col" class="col-7 c0">{{#str}}module, course{{/str}}</th>
+            <th scope="col" class="col-5 c1">{{#str}}recommend, course{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#categorydata}}
+        <tr class="d-flex">
+            <td class="font-weight-bold col-7 c0"><span>{{{icon}}}</span>{{name}}</td>
+            {{#id}}
+            <td class="col-5 c1 colselect">
+            <input class="activity-recommend-checkbox" type="checkbox" aria-label="{{#str}}recommendcheckbox, course, {{name}}{{/str}}" data-area="{{componentname}}" data-id="{{id}}" {{#recommended}}checked="checked"{{/recommended}}  />
+            </td>
+            {{/id}}
+            {{^id}}
+            <td class="col-5"></td>
+            {{/id}}
+        </tr>
+        {{/categorydata}}
+    </tbody>
+</table>
+{{/categories}}
+{{#js}}
+require([
+    'core_course/recommendations',
+], function(Recommendations) {
+    Recommendations.init();
+});
+{{/js}}

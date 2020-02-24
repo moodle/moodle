@@ -195,4 +195,34 @@ class services_content_item_service_testcase extends \advanced_testcase {
         $this->assertFalse($allitemsassign->favourite);
         $this->assertFalse($courseitemsassign->favourite);
     }
+
+    /**
+     * Test that toggling a recommendation works as anticipated.
+     */
+    public function test_toggle_recommendation() {
+        $this->resetAfterTest();
+
+        // Create a user in a course.
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $cis = new content_item_service(new content_item_readonly_repository());
+
+        // Grab a the assign content item, which we'll recommend for the user.
+        $items = $cis->get_all_content_items($user);
+        $assign = $items[array_search('assign', array_column($items, 'name'))];
+        $result = $cis->toggle_recommendation($assign->componentname, $assign->id);
+        $this->assertTrue($result);
+
+        $courseitems = $cis->get_all_content_items($user);
+        $courseitemsassign = $courseitems[array_search('assign', array_column($courseitems, 'name'))];
+        $this->assertTrue($courseitemsassign->recommended);
+
+        // Let's toggle the recommendation off.
+        $result = $cis->toggle_recommendation($assign->componentname, $assign->id);
+        $this->assertFalse($result);
+
+        $courseitems = $cis->get_all_content_items($user);
+        $courseitemsassign = $courseitems[array_search('assign', array_column($courseitems, 'name'))];
+        $this->assertFalse($courseitemsassign->recommended);
+    }
 }

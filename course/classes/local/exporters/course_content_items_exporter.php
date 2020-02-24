@@ -80,6 +80,7 @@ class course_content_items_exporter extends exporter {
                 [
                     'context' => $this->related['context'],
                     'favouriteitems' => $this->related['favouriteitems'],
+                    'recommended' => $this->related['recommended']
                 ]
             );
             return $exporter->export($output);
@@ -100,7 +101,8 @@ class course_content_items_exporter extends exporter {
     protected static function define_related() {
         return [
             'context' => '\context',
-            'favouriteitems' => '\stdClass[]?'
+            'favouriteitems' => '\stdClass[]?',
+            'recommended' => '\stdClass[]?'
         ];
     }
 }

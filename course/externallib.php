@@ -4287,4 +4287,53 @@ class core_course_external extends external_api {
         $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course);
         return ['content_items' => $contentitems];
     }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function toggle_activity_recommendation_parameters() {
+        return new external_function_parameters([
+            'area' => new external_value(PARAM_TEXT, 'The favourite area (itemtype)', VALUE_REQUIRED),
+            'id' => new external_value(PARAM_INT, 'id of the activity or whatever', VALUE_REQUIRED),
+        ]);
+    }
+
+    /**
+     * Update the recommendation for an activity item.
+     *
+     * @param  string $area identifier for this activity.
+     * @param  int $id Associated id. This is needed in conjunction with the area to find the recommendation.
+     * @return array some warnings or something.
+     */
+    public static function toggle_activity_recommendation(string $area, int $id): array {
+        ['area' => $area, 'id' => $id] = self::validate_parameters(self::toggle_activity_recommendation_parameters(),
+                ['area' => $area, 'id' => $id]);
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        require_capability('moodle/course:recommendactivity', $context);
+
+        $manager = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+
+        $status = $manager->toggle_recommendation($area, $id);
+        return ['id' => $id, 'area' => $area, 'status' => $status];
+    }
+
+    /**
+     * Returns warnings.
+     *
+     * @return external_description
+     */
+    public static function toggle_activity_recommendation_returns() {
+        return new external_single_structure(
+            [
+                'id' => new external_value(PARAM_INT, 'id of the activity or whatever'),
+                'area' => new external_value(PARAM_TEXT, 'The favourite area (itemtype)'),
+                'status' => new external_value(PARAM_BOOL, 'If created or deleted'),
+            ]
+        );
+    }
 }
