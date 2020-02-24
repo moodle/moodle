@@ -73,7 +73,7 @@
                         data-new-event-timestamp="{{neweventtimestamp}}">
                         <div class="d-none d-md-block hidden-phone text-xs-center">
                             {{#hasevents}}
-                                <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
+                                <a data-action="view-day-link" href="{{viewdaylink}}" class="day" aria-label="{{viewdaylinktitle}}">{{mday}}</a>
                             {{/hasevents}}
                             {{^hasevents}}
                                 {{mday}}
@@ -121,12 +121,10 @@
                         </div>
                         <div class="d-md-none hidden-desktop hidden-tablet">
                             {{#hasevents}}
-                                <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
+                                <a data-action="view-day-link" href="{{viewdaylink}}" class="day" aria-label="{{viewdaylinktitle}}">{{mday}}</a>
                             {{/hasevents}}
                             {{^hasevents}}
-                                <div data-region="day-content">
                                     {{mday}}
-                                </div>
                             {{/hasevents}}
                         </div>
                     </td>
