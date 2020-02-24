@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains renderers for the recommendations page.
+ * Contains activity_list renderable used for the recommended activities page.
  *
  * @package core_course
  * @copyright 2020 Adrian Greeve
@@ -25,7 +25,7 @@
 namespace core_course\output\recommendations;
 
 /**
- * Main renderer for the recommendations page.
+ * Activity list renderable.
  *
  * @package core_course
  * @copyright 2020 Adrian Greeve

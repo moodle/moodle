@@ -62,7 +62,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
     $ADMIN->add('courses',
-        new admin_externalpage('activitychooser', new lang_string('activitychooser', 'course'),
+        new admin_externalpage('activitychooser', new lang_string('activitychooserrecommendations', 'course'),
             new moodle_url('/course/recommendations.php'),
             array('moodle/course:recommendactivity')
         )
