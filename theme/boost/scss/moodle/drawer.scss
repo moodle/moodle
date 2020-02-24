@@ -24,6 +24,10 @@ $drawer-offscreen-gutter: 20px !default;
     left: -($drawer-width + $drawer-offscreen-gutter);
 }
 
+#nav-drawer[aria-hidden=true] .list-group-item {
+    display: none;
+}
+
 /* Use a variable for the drawer background colors. */
 $drawer-bg: darken($body-bg, 5%) !default;
 
