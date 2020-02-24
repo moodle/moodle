@@ -13884,6 +13884,9 @@ span.editinstructions {
 #nav-drawer.closed {
   left: -305px; }
 
+#nav-drawer[aria-hidden=true] .list-group-item {
+  display: none; }
+
 /* Use a variable for the drawer background colors. */
 [data-region="drawer"] {
   position: fixed;
