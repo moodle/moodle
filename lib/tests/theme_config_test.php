@@ -175,4 +175,42 @@ class core_theme_config_testcase extends advanced_testcase {
 
         $this->assertRegExp("/{$themerevision}_{$themesubrevision}/", $url->out(false));
     }
+
+    /**
+     * Confirm that editor_scss_to_css is correctly compiling for themes with no parent.
+     */
+    public function test_editor_scss_to_css_root_theme() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $theme = theme_config::load('boost');
+        $editorscss = $CFG->dirroot.'/theme/boost/scss/editor.scss';
+
+        $this->assertTrue(file_exists($editorscss));
+        $compiler = new core_scss();
+        $compiler->set_file($editorscss);
+        $cssexpected = $compiler->to_css();
+        $cssactual = $theme->editor_scss_to_css();
+
+        $this->assertEquals($cssexpected, $cssactual);
+    }
+
+    /**
+     * Confirm that editor_scss_to_css is compiling for a child theme not overriding its parent's editor SCSS.
+     */
+    public function test_editor_scss_to_css_child_theme() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $theme = theme_config::load('classic');
+        $editorscss = $CFG->dirroot.'/theme/boost/scss/editor.scss';
+
+        $this->assertTrue(file_exists($editorscss));
+        $compiler = new core_scss();
+        $compiler->set_file($editorscss);
+        $cssexpected = $compiler->to_css();
+        $cssactual = $theme->editor_scss_to_css();
+
+        $this->assertEquals($cssexpected, $cssactual);
+    }
 }
