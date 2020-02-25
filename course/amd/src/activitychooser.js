@@ -125,7 +125,7 @@ const modalBuilder = data => buildModal(templateDataBuilder(data));
 const templateDataBuilder = (data) => {
     // Filter the incoming data to find favourite & recommended modules.
     const favourites = [];
-    const recommended = [];
+    const recommended = data.filter(mod => mod.recommended === true);
 
     // Given the results of the above filters lets figure out what tab to set active.
 
