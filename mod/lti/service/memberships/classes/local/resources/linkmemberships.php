@@ -79,16 +79,16 @@ class linkmemberships extends resource_base {
             $limitfrom = 0;
         }
 
-        if (!$this->check_tool(null, $response->get_request_data(), memberships::SCOPE_MEMBERSHIPS_READ)) {
-            $response->set_code(403);
-            return;
-        }
         if (empty($linkid)) {
             $response->set_code(404);
             return;
         }
         if (!($lti = $DB->get_record('lti', array('id' => $linkid), 'id,course,typeid,servicesalt', IGNORE_MISSING))) {
             $response->set_code(404);
+            return;
+        }
+        if (!$this->check_tool($lti->typeid, $response->get_request_data(), array(memberships::SCOPE_MEMBERSHIPS_READ))) {
+            $response->set_code(403);
             return;
         }
         if (!($course = $DB->get_record('course', array('id' => $lti->course), 'id', IGNORE_MISSING))) {
@@ -106,7 +106,7 @@ class linkmemberships extends resource_base {
         if ($info->is_available_for_all()) {
             $info = null;
         }
-        $json = $this->get_service()->get_members_json($this, $context, $lti->course, $role,
+        $json = $this->get_service()->get_members_json($this, $context, $course, $role,
                                                        $limitfrom, $limitnum, $lti, $info, $response);
 
         $response->set_content_type($this->formats[0]);
