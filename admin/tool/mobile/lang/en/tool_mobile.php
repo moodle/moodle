@@ -62,6 +62,7 @@ $string['forcedurlscheme'] = 'If you want to allow only your custom branded app 
 $string['forcedurlscheme_key'] = 'URL scheme';
 $string['forcelogout'] = 'Force log out';
 $string['forcelogout_desc'] = 'If enabled, the app option \'Change site\' is replaced by \'Log out\'. This results in the user being completely logged out. They must then re-enter their password the next time they wish to access the site.';
+$string['h5poffline'] = 'View H5P content offline';
 $string['httpsrequired'] = 'HTTPS required';
 $string['insecurealgorithmwarning'] = 'It seems that the HTTPS certificate uses an insecure algorithm for signing (SHA-1). Please try updating the certificate.';
 $string['invalidcertificatechainwarning'] = 'It seems that the certificate chain is invalid.';
