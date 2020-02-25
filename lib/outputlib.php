@@ -961,12 +961,31 @@ class theme_config {
      */
     public function editor_scss_to_css() {
         $css = '';
+        $dir = $this->dir;
+        $filenames = [];
 
+        // Use editor_scss file(s) provided by this theme if set.
         if (!empty($this->editor_scss)) {
+            $filenames = $this->editor_scss;
+        } else {
+            // If no editor_scss set, move up theme hierarchy until one is found (if at all).
+            // This is so child themes only need to set editor_scss if an override is required.
+            foreach (array_reverse($this->parent_configs) as $parentconfig) {
+                if (!empty($parentconfig->editor_scss)) {
+                    $dir = $parentconfig->dir;
+                    $filenames = $parentconfig->editor_scss;
+
+                    // Config found, stop looking.
+                    break;
+                }
+            }
+        }
+
+        if (!empty($filenames)) {
             $compiler = new core_scss();
 
-            foreach ($this->editor_scss as $filename) {
-                $compiler->set_file("{$this->dir}/scss/{$filename}.scss");
+            foreach ($filenames as $filename) {
+                $compiler->set_file("{$dir}/scss/{$filename}.scss");
 
                 try {
                     $css .= $compiler->to_css();
