@@ -52,6 +52,6 @@ class uploadlibraries_form extends \moodleform {
         $mform->addHelpButton('h5ppackage', 'h5ppackage', 'core_h5p');
         $mform->addRule('h5ppackage', null, 'required');
 
-        $this->add_action_buttons(false, get_string('uploadlibraries', 'core_h5p'));
+        $mform->addElement('submit', 'uploadlibraries', get_string('uploadlibraries', 'core_h5p'));
     }
 }
