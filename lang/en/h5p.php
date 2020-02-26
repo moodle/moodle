@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['actions'] = 'Actions';
 $string['addedandupdatedpp'] = 'Added {$a->%new} new H5P libraries and updated {$a->%old} old ones.';
 $string['addedandupdatedps'] = 'Added {$a->%new} new H5P libraries and updated {$a->%old} old one.';
 $string['addedandupdatedsp'] = 'Added {$a->%new} new H5P library and updated {$a->%old} old ones.';
@@ -67,6 +68,9 @@ $string['couldNotParseJSONFromZip'] = 'Unable to parse JSON from the package: {$
 $string['couldNotReadFileFromZip'] = 'Unable to read file from the package: {$a->%fileName}';
 $string['creativecommons'] = 'Creative Commons';
 $string['date'] = 'Date';
+$string['deletelibraryconfirm'] = '<p>Are you sure you want to delete version <em>\'{$a->version}\'</em> from library <em>\'{$a->name}\'</em>? It will remove the library and all its uses.</p><p>This operation can not be undone.</p>';
+$string['deletelibraryversion'] = 'Delete version';
+$string['deleting'] = 'Deleting a library';
 $string['description'] = 'Description';
 $string['disablefullscreen'] = 'Disable fullscreen';
 $string['download'] = 'Download';

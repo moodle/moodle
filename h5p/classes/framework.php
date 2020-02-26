@@ -1133,15 +1133,8 @@ class framework implements \H5PFrameworkInterface {
      * @param stdClass $library Library object with id, name, major version and minor version
      */
     public function deleteLibrary($library) {
-        global $DB;
-
-        $fs = new \core_h5p\file_storage();
-        // Delete the library from the file system.
-        $fs->delete_library(array('libraryId' => $library->id));
-
-        // Remove library data from database.
-        $DB->delete_records('h5p_library_dependencies', array('libraryid' => $library->id));
-        $DB->delete_records('h5p_libraries', array('id' => $library->id));
+        $factory = new \core_h5p\factory();
+        \core_h5p\api::delete_library($factory, $library);
     }
 
     /**
@@ -1461,6 +1454,10 @@ class framework implements \H5PFrameworkInterface {
             list($sql, $params) = $DB->get_in_or_equal($hashes, SQL_PARAMS_NAMED);
             // Remove all invalid keys.
             $DB->delete_records_select('h5p_libraries_cachedassets', 'hash ' . $sql, $params);
+
+            // Remove also the cachedassets files.
+            $fs = new file_storage();
+            $fs->deleteCachedAssets($hashes);
         }
 
         return $hashes;
