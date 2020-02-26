@@ -11073,7 +11073,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .choosercontainer #chooseform .moduletypetitle {
   text-transform: uppercase;
   padding-top: 1.2em;
-  padding-bottom: 0.4em; }
+  padding-bottom: 0.4em;
+  margin-bottom: 0.5rem;
+  font-size: 100%; }
 
 .choosercontainer #chooseform .option .typename,
 .choosercontainer #chooseform .nonoption .typename {
