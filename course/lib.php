@@ -2612,31 +2612,68 @@ function update_course($data, $editoroptions = NULL) {
 }
 
 /**
- * Average number of participants
- * @return integer
+ * Calculate the average number of enrolled participants per course.
+ *
+ * This is intended for statistics purposes during the site registration. Only visible courses are taken into account.
+ * Front page enrolments are excluded.
+ *
+ * @param bool $onlyactive Consider only active enrolments in enabled plugins and obey the enrolment time restrictions.
+ * @param int $lastloginsince If specified, count only users who logged in after this timestamp.
+ * @return float
  */
-function average_number_of_participants() {
-    global $DB, $SITE;
+function average_number_of_participants(bool $onlyactive = false, int $lastloginsince = null): float {
+    global $DB;
 
-    //count total of enrolments for visible course (except front page)
-    $sql = 'SELECT COUNT(*) FROM (
-        SELECT DISTINCT ue.userid, e.courseid
-        FROM {user_enrolments} ue, {enrol} e, {course} c
-        WHERE ue.enrolid = e.id
-            AND e.courseid <> :siteid
-            AND c.id = e.courseid
-            AND c.visible = 1) total';
-    $params = array('siteid' => $SITE->id);
+    $params = [
+        'siteid' => SITEID,
+    ];
+
+    $sql = "SELECT DISTINCT ue.userid, e.courseid
+              FROM {user_enrolments} ue
+              JOIN {enrol} e ON e.id = ue.enrolid
+              JOIN {course} c ON c.id = e.courseid ";
+
+    if ($onlyactive || $lastloginsince) {
+        $sql .= "JOIN {user} u ON u.id = ue.userid ";
+    }
+
+    $sql .= "WHERE e.courseid <> :siteid
+               AND c.visible = 1 ";
+
+    if ($onlyactive) {
+        $sql .= "AND ue.status = :active
+                 AND e.status = :enabled
+                 AND ue.timestart < :now1
+                 AND (ue.timeend = 0 OR ue.timeend > :now2) ";
+
+        // Same as in the enrollib - the rounding should help caching in the database.
+        $now = round(time(), -2);
+
+        $params += [
+            'active' => ENROL_USER_ACTIVE,
+            'enabled' => ENROL_INSTANCE_ENABLED,
+            'now1' => $now,
+            'now2' => $now,
+        ];
+    }
+
+    if ($lastloginsince) {
+        $sql .= "AND u.lastlogin > :lastlogin ";
+        $params['lastlogin'] = $lastloginsince;
+    }
+
+    $sql = "SELECT COUNT(*)
+              FROM ($sql) total";
+
     $enrolmenttotal = $DB->count_records_sql($sql, $params);
 
+    // Get the number of visible courses (exclude the front page).
+    $coursetotal = $DB->count_records('course', ['visible' => 1]);
+    $coursetotal = $coursetotal - 1;
 
-    //count total of visible courses (minus front page)
-    $coursetotal = $DB->count_records('course', array('visible' => 1));
-    $coursetotal = $coursetotal - 1 ;
-
-    //average of enrolment
     if (empty($coursetotal)) {
         $participantaverage = 0;
+
     } else {
         $participantaverage = $enrolmenttotal / $coursetotal;
     }
