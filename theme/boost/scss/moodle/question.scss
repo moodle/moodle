@@ -225,12 +225,7 @@
 
 body.path-question-type {
     /* Hacks to display the labels within a form group. */
-    .fitem_fgroup .accesshide {
-        font: inherit;
-        position: static;
-        padding-right: .3em;
-    }
-    .form-group .sr-only {
+    .form-group .sr-only:not(legend) {
         position: static;
         width: auto;
         height: auto;
